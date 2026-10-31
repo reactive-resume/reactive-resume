@@ -313,3 +313,30 @@ export const careerScheduleInputSchema = careerScopeSchema.extend({
 	/** The interface language; a scheduled briefing is written in it. Kept when left out. */
 	locale: z.string().min(2).max(20).optional(),
 });
+
+/** Recorded retrieval context, not a promise that the employer is still accepting applications. */
+export const discoverySourceSchema = z.object({
+	query: z.string().max(500),
+	checkedAt: z.string().datetime(),
+});
+export type DiscoverySource = z.infer<typeof discoverySourceSchema>;
+
+export const roleSuggestionsInputSchema = z.object({
+	providerId: z.string().min(1),
+	/** Configuration disclosed when the user approved sharing, from aiProviders.list. */
+	recipientVersion: z.string().regex(/^[a-f0-9]{64}$/),
+	resumeId: z.string().min(1).nullable(),
+	includeKnowledge: z.boolean(),
+	locale: z.string().max(20).default("en-US"),
+});
+export const roleSuggestionsOutputSchema = z.object({
+	suggestions: z
+		.array(
+			z.object({
+				role: z.string().trim().min(1).max(200),
+				facts: z.array(z.object({ id: z.string(), text: z.string() })),
+				resumeQuote: z.string().max(500).nullable(),
+			}),
+		)
+		.max(5),
+});

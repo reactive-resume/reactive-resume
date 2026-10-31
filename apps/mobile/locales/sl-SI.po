@@ -210,6 +210,11 @@ msgstr "{0, plural, one {# stran} two {# strani} few {# strani} other {# strani}
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# predlagano urejanje} other {# predlagana urejanja}}"
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
+msgstr ""
+
 #. placeholder {0}: offerIds.length
 #: src/features/assistant/coach-screen.tsx
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
@@ -407,10 +412,23 @@ msgstr "{0} delovno mesto"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} je vrnil »{1}«. Vaše sporočilo se hrani."
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0} roles updated."
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
+#. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
+#: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "Izbrano: {0}"
+
+#. placeholder {0}: done.length
+#. placeholder {1}: failed.length
+#: src/features/career/today.tsx
+msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
+msgstr ""
 
 #. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
 #. placeholder {1}: [...answer].length
@@ -1282,6 +1300,10 @@ msgstr ""
 msgid "AI connection"
 msgstr "Povezava AI"
 
+#: src/features/career/role-suggestions.tsx
+msgid "AI connection receiving your context"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "AI connections are unavailable."
 msgstr "Povezave AI niso na voljo."
@@ -1305,6 +1327,10 @@ msgstr "AI urejanje"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "Obogatitev AI ni bila na voljo. Preglejte podrobnosti strani ali jih izpolnite ročno."
+
+#: src/features/career/schedule-sheet.tsx
+msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "AI provider"
@@ -1335,6 +1361,10 @@ msgstr "Ponudnikov AI ni bilo mogoče naložiti. Poskusite znova ali podrobnosti
 #: src/features/applications/add-sheet.tsx
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI prebere prilepljeno besedilo le, ko vprašate. Povezave lahko uporabljajo lastne podatke o delu strani brez AI."
+
+#: src/features/career/role-suggestions.tsx
+msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2310,6 +2340,10 @@ msgstr "Kitajščina (tradicionalna)"
 msgid "Choose a base resume"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Choose a connection"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Choose a country"
 msgstr ""
@@ -2675,6 +2709,10 @@ msgstr "Povežite ponudnika AI za branje podrobnosti iz prilepljenega besedila. 
 #: src/features/ai/web-access.tsx
 msgid "Connect an AI provider to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "Za uporabo pomočnika povežite ponudnika AI. Shranjevanje in priprava delovnih mest ga ne potrebujeta."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Connect and test an AI provider in Settings, or keep entering roles manually."
+msgstr ""
 
 #: src/features/assistant/provider.tsx
 msgid "Connect another…"
@@ -3242,6 +3280,10 @@ msgstr "Snemanja ni bilo mogoče začeti. Poskusite znova ali vnesite svoj odgov
 msgid "Couldn't start the conversation. Try again."
 msgstr "Pogovora ni bilo mogoče začeti. poskusi ponovno"
 
+#: src/features/career/role-suggestions.tsx
+msgid "Couldn't suggest roles. Try again or enter roles manually."
+msgstr ""
+
 #: src/features/assistant/provider.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "Modela ni bilo mogoče zamenjati. Poskusite znova."
@@ -3473,8 +3515,8 @@ msgid "Dark theme"
 msgstr "Temna tema"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
-msgstr "Skupna raba podatkov preklicana. Ponudniku AI ni bilo poslano nič."
+msgid "Data sharing canceled. Nothing was sent to the provider."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -3794,6 +3836,14 @@ msgstr "Želite zavreči urejanja brez povezave?"
 msgid "Dismiss"
 msgstr "Zavrzi"
 
+#: src/features/career/today.tsx
+msgid "Dismiss selected"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Do not share a resume"
+msgstr ""
+
 #: src/shell/builder-chrome.tsx
 msgid "Document menu"
 msgstr "Meni Dokument"
@@ -4037,6 +4087,10 @@ msgstr "Vsak odgovor, za katerega dobite povratne informacije, se hrani tukaj, n
 #: src/features/workspace/tabs/fit.tsx
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "Vsaka zahteva v oglasu se preveri glede na dejstva in zgodbe v vašem Znanju. Vrzeli so prikazane kot manjkajoči dokazi, nikoli kot manjkajoča sposobnost."
+
+#: src/features/career/today.tsx
+msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
@@ -4619,6 +4673,22 @@ msgstr "Oblikovanje"
 msgid "Found {0}"
 msgstr "Najdeno {0}"
 
+#. placeholder {0}: row.discoverySource.query
+#. placeholder {1}: time.when(row.discoverySource.checkedAt)
+#: src/features/career/today.tsx
+msgid "Found for “{0}”. Posting checked {1}."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and the sites being read."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
 msgid "Free-form"
@@ -4653,6 +4723,10 @@ msgstr "Polno ime"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "Polna širina"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Generate role suggestions"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -4997,7 +5071,7 @@ msgstr "Ikone v kontaktni vrstici"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Če izvira iz skena, je to pričakovano. V nasprotnem primeru ga odstranite; kadroviki to razumejo kot nabijanje s ključnimi besedami."
 
-#. placeholder {0}: reader ?? provider.provider
+#. placeholder {0}: reader ?? provider?.provider ?? ""
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "Če je uporabljen spletni dostop, gredo povezave in iskalni izrazi tudi na {0} in spletna mesta, ki se berejo."
@@ -5367,6 +5441,11 @@ msgstr "Ključi delujejo kot vi in lahko dostopajo do vaših dokumentov. Novi kl
 msgid "Keyword layout"
 msgstr "Postavitev ključnih besed"
 
+#. placeholder {0}: (row.keywordOverlap ?? []).join(" · ") || t`None`
+#: src/features/career/today.tsx
+msgid "Keyword overlap: {0}"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Keywords"
 msgstr "Ključne besede"
@@ -5387,6 +5466,10 @@ msgstr "Znanje"
 #: src/features/assistant/coach-screen.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "Znanja ni bilo mogoče naložiti. Poskusite znova ali pred pošiljanjem izklopite Znanje."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Knowledge:"
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Korean"
@@ -5446,6 +5529,11 @@ msgstr ""
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/application-profile.tsx
 msgid "Last reviewed: {0}"
+msgstr ""
+
+#. placeholder {0}: time.when(row.lastSeenAt)
+#: src/features/career/today.tsx
+msgid "Last seen in search: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -5947,6 +6035,10 @@ msgstr "Upravlja strežnik"
 #: src/features/ai/provider-list.tsx
 msgid "Managed by your server"
 msgstr "Upravlja ga vaš strežnik"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
@@ -6508,6 +6600,10 @@ msgstr "Običajnih naslovov razdelkov ni bilo mogoče najti."
 msgid "No conversations about this document yet."
 msgstr "O tem dokumentu še ni pogovorov."
 
+#: src/features/career/today.tsx
+msgid "No current target-role or location phrase matches."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No date"
 msgstr "Brez datuma"
@@ -6667,6 +6763,10 @@ msgstr "Še ni zgodb"
 msgid "No suggestions for this provider. Enter any model ID."
 msgstr "Ni predlogov za tega ponudnika. Vnesite poljuben ID modela."
 
+#: src/features/career/role-suggestions.tsx
+msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 #: src/features/ats-checker/messages.ts
 msgid "No text could be read from this file."
@@ -6690,6 +6790,7 @@ msgstr "Razdelka z delovnimi izkušnjami ni bilo mogoče najti."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
 #: src/features/write/entry-fields.tsx
 #: src/features/write/pickers.tsx
@@ -6907,10 +7008,6 @@ msgstr "Največ dni v pisarni na teden"
 msgid "Office days are unknown."
 msgstr "Dnevi v pisarni niso znani."
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "Dnevi v pisarni niso navedeni"
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -6986,6 +7083,14 @@ msgstr "Preverjenih je bilo le prvih 30 strani."
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
 msgstr "Preverjene so bile le prve strani."
+
+#: src/api/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
 
 #. placeholder {0}: getServer()
 #: src/features/ai/report-content.tsx
@@ -7426,6 +7531,10 @@ msgstr "Fotografija na strani."
 msgid "Photo removed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Pick {label}"
 msgstr "Izberite {label}"
@@ -7523,6 +7632,10 @@ msgstr "oglas"
 msgid "Posting"
 msgstr "Oglas za delo"
 
+#: src/features/career/today.tsx
+msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
@@ -7562,6 +7675,11 @@ msgstr "Raje uporabite en stolpec ali pa stranski stolpec omejite na kratke samo
 #: src/features/career/facts.tsx
 msgid "Preference"
 msgstr "Želja"
+
+#. placeholder {0}: row.matches.join(" · ")
+#: src/features/career/today.tsx
+msgid "Preference phrase matches: {0}"
+msgstr ""
 
 #: app/(tabs)/settings/index.tsx
 #: app/(tabs)/settings/preferences.tsx
@@ -8301,6 +8419,10 @@ msgstr "Ponovno naroči {0}"
 msgid "Reorder {title}"
 msgstr "Ponovno naroči {title}"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Repeats at this local time in the displayed timezone across clock changes. A skipped clock time moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery depends on the server runner."
+msgstr ""
+
 #: src/features/write/improve.tsx
 msgid "Replace"
 msgstr "Zamenjaj"
@@ -8324,6 +8446,10 @@ msgstr "Nadomestna stopnja"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "Nadomesti »{current}« v prijavi."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
@@ -8474,6 +8600,10 @@ msgstr "Predogled življenjepisa"
 msgid "Resume submitted (optional)"
 msgstr "oddan življenjepis (neobvezno)"
 
+#: src/features/career/role-suggestions.tsx
+msgid "Resume to share for suggestions"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Resumes"
 msgstr "Življenjepisi"
@@ -8533,9 +8663,14 @@ msgstr "Pridobljeno {0} z uporabo {1}. Čas pridobivanja ne določa svežine izv
 msgid "Retry"
 msgstr "Poskusi znova"
 
+#: src/features/career/role-suggestions.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "Retry AI connections"
 msgstr "Ponovno poskusite vzpostaviti povezave AI"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Retry documents"
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Retry linking to application"
@@ -8633,6 +8768,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Preglejte obvezne odgovore v obrazcu in odstranite nepodprte trditve."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Review target roles, one per line"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Review the details before saving. Retrieved content does not establish that the posting is still open."
@@ -8770,8 +8909,8 @@ msgid "Salary"
 msgstr "Plača"
 
 #: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "Plača ni navedena"
+msgid "Salary not detected"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
@@ -9145,9 +9284,15 @@ msgid "Select"
 msgstr "Izberite"
 
 #. placeholder {0}: document.name
+#. placeholder {0}: row.role
+#: src/features/career/today.tsx
 #: src/features/documents/library.tsx
 msgid "Select {0}"
 msgstr "Izberi {0}"
+
+#: src/features/career/today.tsx
+msgid "Select all roles"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
@@ -9170,6 +9315,10 @@ msgstr "Izberi vidne"
 #: src/preview/page.tsx
 msgid "Selected entry"
 msgstr "Izbran vnos"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Selected resume:"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Semantic CSS stylesheet"
@@ -9199,6 +9348,10 @@ msgstr "Podatki o pošiljatelju so kopirani v pismo"
 #: src/features/ai/report-content.tsx
 msgid "Sending…"
 msgstr "Pošiljanje ..."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
@@ -9251,6 +9404,10 @@ msgstr "Strežnik"
 msgid "Server address"
 msgstr "Naslov strežnika"
 
+#: src/api/ai-consent.ts
+msgid "Server web search"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr "Nastavi ponovni stik"
@@ -9279,6 +9436,10 @@ msgstr "Nastavi odkrivanje"
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
 msgstr "Nastavite spletno iskanje"
+
+#: src/api/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
@@ -9317,10 +9478,13 @@ msgstr "Delite"
 msgid "Share calendar event (.ics)"
 msgstr "Skupna raba koledarskega dogodka (.ics)"
 
-#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {0}?"
-msgstr "Deliti podatke z {0}?"
+msgid "Share data with {label}?"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Share enabled shared Knowledge"
+msgstr ""
 
 #: src/features/share/download.tsx
 msgid "Share PDF"
@@ -9747,6 +9911,11 @@ msgstr "Izvorna koda na GitHubu"
 msgid "Source employer"
 msgstr ""
 
+#. placeholder {0}: new URL(row.url).hostname
+#: src/features/career/today.tsx
+msgid "Source: {0}"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Sources"
@@ -9961,6 +10130,10 @@ msgstr "Oddan pripet življenjepis: {0}"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Success at 90 days · next step"
 msgstr "Uspeh po 90 dneh · naslednji korak"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Suggest target roles (optional AI)"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Suggested reply · edit before sending"
@@ -10937,6 +11110,10 @@ msgstr "Zneski se ne seštevajo. Bonus in lastniški deleži so odvisni od pogoj
 msgid "Track in Applications"
 msgstr "Spremljaj v Prijavah"
 
+#: src/features/career/today.tsx
+msgid "Track selected"
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11350,6 +11527,10 @@ msgstr "Uporabite povezavo do objave delovnega mesta; preglejte pred shranjevanj
 msgid "Use reviewed answer"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Use reviewed roles in preferences"
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Use server version"
 msgstr "Uporabi različico strežnika"
@@ -11430,8 +11611,8 @@ msgid "Uses the web search service set up in Settings. Search results wait for y
 msgstr "Uporablja storitev spletnega iskanja, nastavljeno v nastavitvah. Rezultati iskanja čakajo na vaš pregled."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
-msgstr "Uporablja spletno iskanje iz Nastavitev. Rezultati čakajo v Danes. Prijave in dokumenti se nikoli ne ustvarijo namesto vas."
+msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
@@ -11588,6 +11769,10 @@ msgstr "Spletna stran"
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
 msgstr "Spletno raziskovanje"
+
+#: src/api/ai-consent.ts
+msgid "Web search"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -11788,6 +11973,10 @@ msgstr ""
 #: src/features/ai/web-access.tsx
 msgid "Working…"
 msgstr "Delo …"
+
+#: src/features/career/today.tsx
+msgid "Workplace arrangement unknown"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Works without AI or new research"
@@ -12212,6 +12401,10 @@ msgstr "Neshranjene podrobnosti delovnega mesta bodo zavržene pred odprtjem te 
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening web search settings."
 msgstr "Vaše neshranjene podrobnosti o delu bodo zavržene, preden odprete nastavitve spletnega iskanja."
+
+#: src/api/ai-consent.ts
+msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx

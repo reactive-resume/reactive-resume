@@ -210,6 +210,11 @@ msgstr "{0, plural, one {# पृष्ठ} other {# पृष्ठ}}"
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# प्रस्तावित संपादन} other {# प्रस्तावित संपादन}}"
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
+msgstr ""
+
 #. placeholder {0}: offerIds.length
 #: src/features/assistant/coach-screen.tsx
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
@@ -407,10 +412,23 @@ msgstr "{0} नौकरी पोस्टिंग"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} ने \"{1}\" लौटाया। आपका संदेश रखा गया है."
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0} roles updated."
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
+#. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
+#: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "{0} चयनित"
+
+#. placeholder {0}: done.length
+#. placeholder {1}: failed.length
+#: src/features/career/today.tsx
+msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
+msgstr ""
 
 #. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
 #. placeholder {1}: [...answer].length
@@ -1282,6 +1300,10 @@ msgstr ""
 msgid "AI connection"
 msgstr "AI कनेक्शन"
 
+#: src/features/career/role-suggestions.tsx
+msgid "AI connection receiving your context"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "AI connections are unavailable."
 msgstr "AI कनेक्शन उपलब्ध नहीं हैं।"
@@ -1305,6 +1327,10 @@ msgstr "ऐ संपादित करें"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "AI संवर्धन अनुपलब्ध था. पृष्ठ विवरण की समीक्षा करें या उन्हें मैन्युअल रूप से भरें।"
+
+#: src/features/career/schedule-sheet.tsx
+msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "AI provider"
@@ -1335,6 +1361,10 @@ msgstr "AI प्रदाताओं को लोड नहीं किय�
 #: src/features/applications/add-sheet.tsx
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI चिपकाए गए टेक्स्ट को केवल तभी पढ़ता है जब आप पूछते हैं। लिंक AI के बिना पृष्ठ के स्वयं के कार्य डेटा का उपयोग कर सकते हैं।"
+
+#: src/features/career/role-suggestions.tsx
+msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2310,6 +2340,10 @@ msgstr "चीनी (परंपरागत)"
 msgid "Choose a base resume"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Choose a connection"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Choose a country"
 msgstr ""
@@ -2675,6 +2709,10 @@ msgstr "चिपकाए गए पाठ से विवरण पढ़न�
 #: src/features/ai/web-access.tsx
 msgid "Connect an AI provider to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "सहायक का उपयोग करने के लिए एक AI प्रदाता से कनेक्ट करें। नौकरियों को सहेजने और तैयार करने के लिए किसी की जरूरत नहीं है।"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Connect and test an AI provider in Settings, or keep entering roles manually."
+msgstr ""
 
 #: src/features/assistant/provider.tsx
 msgid "Connect another…"
@@ -3242,6 +3280,10 @@ msgstr "रिकॉर्डिंग प्रारंभ नहीं हो
 msgid "Couldn't start the conversation. Try again."
 msgstr "बातचीत शुरू नहीं हो सकी. पुनः प्रयास करें।"
 
+#: src/features/career/role-suggestions.tsx
+msgid "Couldn't suggest roles. Try again or enter roles manually."
+msgstr ""
+
 #: src/features/assistant/provider.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "मॉडल स्विच नहीं किया जा सका। पुनः प्रयास करें।"
@@ -3473,8 +3515,8 @@ msgid "Dark theme"
 msgstr "डार्क थीम"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
-msgstr "डेटा साझाकरण रद्द कर दिया गया। AI प्रदाता को कुछ भी नहीं भेजा गया।"
+msgid "Data sharing canceled. Nothing was sent to the provider."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -3794,6 +3836,14 @@ msgstr "क्या आप अपने ऑफ़लाइन संपाद�
 msgid "Dismiss"
 msgstr "नकार देना"
 
+#: src/features/career/today.tsx
+msgid "Dismiss selected"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Do not share a resume"
+msgstr ""
+
 #: src/shell/builder-chrome.tsx
 msgid "Document menu"
 msgstr "दस्तावेज़ मेनू"
@@ -4037,6 +4087,10 @@ msgstr "जिस भी जवाब पर आपको फ़ीडबैक 
 #: src/features/workspace/tabs/fit.tsx
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "पोस्टिंग की हर आवश्यकता को आपके ज्ञानकोश के तथ्यों और कहानियों से मिलाकर जाँचा जाता है। कमियाँ अनुपलब्ध प्रमाण के रूप में दिखती हैं, कभी भी क्षमता की कमी के रूप में नहीं।"
+
+#: src/features/career/today.tsx
+msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
@@ -4619,6 +4673,22 @@ msgstr "का प्रारूपण"
 msgid "Found {0}"
 msgstr "{0} मिला"
 
+#. placeholder {0}: row.discoverySource.query
+#. placeholder {1}: time.when(row.discoverySource.checkedAt)
+#: src/features/career/today.tsx
+msgid "Found for “{0}”. Posting checked {1}."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and the sites being read."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
 msgid "Free-form"
@@ -4653,6 +4723,10 @@ msgstr "पूरा नाम"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "पूर्ण चौड़ाई"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Generate role suggestions"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -4997,7 +5071,7 @@ msgstr "संपर्क पंक्ति में चिह्न"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "अगर यह स्कैन से आया है, तो यह अपेक्षित है। अन्यथा इसे हटा दें; भर्तीकर्ता इसे कीवर्ड स्टफ़िंग के रूप में देखते हैं।"
 
-#. placeholder {0}: reader ?? provider.provider
+#. placeholder {0}: reader ?? provider?.provider ?? ""
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "यदि वेब एक्सेस का उपयोग किया जाता है, तो लिंक और खोज शब्द {0} और पढ़ी जा रही साइटों पर भी जाते हैं।"
@@ -5367,6 +5441,11 @@ msgstr "कुंजियाँ आपकी तरह कार्य कर�
 msgid "Keyword layout"
 msgstr "कीवर्ड लेआउट"
 
+#. placeholder {0}: (row.keywordOverlap ?? []).join(" · ") || t`None`
+#: src/features/career/today.tsx
+msgid "Keyword overlap: {0}"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Keywords"
 msgstr "खोजशब्द"
@@ -5387,6 +5466,10 @@ msgstr "ज्ञानकोश"
 #: src/features/assistant/coach-screen.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "ज्ञानकोश लोड नहीं हो सका। फिर से प्रयास करें या भेजने से पहले ज्ञानकोश बंद करें।"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Knowledge:"
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Korean"
@@ -5446,6 +5529,11 @@ msgstr ""
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/application-profile.tsx
 msgid "Last reviewed: {0}"
+msgstr ""
+
+#. placeholder {0}: time.when(row.lastSeenAt)
+#: src/features/career/today.tsx
+msgid "Last seen in search: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -5947,6 +6035,10 @@ msgstr "सर्वर द्वारा प्रबंधित"
 #: src/features/ai/provider-list.tsx
 msgid "Managed by your server"
 msgstr "आपके सर्वर द्वारा प्रबंधित"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
@@ -6508,6 +6600,10 @@ msgstr "कोई पारंपरिक सेक्शन शीर्षक
 msgid "No conversations about this document yet."
 msgstr "इस दस्तावेज़ के बारे में अभी तक कोई बातचीत नहीं हुई है."
 
+#: src/features/career/today.tsx
+msgid "No current target-role or location phrase matches."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No date"
 msgstr "कोई तारीख नहीं"
@@ -6667,6 +6763,10 @@ msgstr "अभी कोई कहानी नहीं"
 msgid "No suggestions for this provider. Enter any model ID."
 msgstr "इस प्रदाता के लिए कोई सुझाव नहीं. कोई भी मॉडल आईडी दर्ज करें."
 
+#: src/features/career/role-suggestions.tsx
+msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 #: src/features/ats-checker/messages.ts
 msgid "No text could be read from this file."
@@ -6690,6 +6790,7 @@ msgstr "कोई कार्य-अनुभव सेक्शन नही�
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
 #: src/features/write/entry-fields.tsx
 #: src/features/write/pickers.tsx
@@ -6907,10 +7008,6 @@ msgstr "हफ़्ते में ऑफ़िस के दिन, अधि
 msgid "Office days are unknown."
 msgstr "ऑफ़िस जाने के दिन अज्ञात हैं।"
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "ऑफ़िस के दिन नहीं बताए गए"
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -6986,6 +7083,14 @@ msgstr "केवल पहले 30 पेजों की जाँच की 
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
 msgstr "केवल पहले पेज जांचे गए।"
+
+#: src/api/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
 
 #. placeholder {0}: getServer()
 #: src/features/ai/report-content.tsx
@@ -7426,6 +7531,10 @@ msgstr "पेज पर फोटो."
 msgid "Photo removed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Pick {label}"
 msgstr "{label} चुनें"
@@ -7523,6 +7632,10 @@ msgstr "पोस्टिंग"
 msgid "Posting"
 msgstr "नौकरी पोस्टिंग"
 
+#: src/features/career/today.tsx
+msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
@@ -7562,6 +7675,11 @@ msgstr "एक ही कॉलम को प्राथमिकता दे�
 #: src/features/career/facts.tsx
 msgid "Preference"
 msgstr "प्राथमिकता"
+
+#. placeholder {0}: row.matches.join(" · ")
+#: src/features/career/today.tsx
+msgid "Preference phrase matches: {0}"
+msgstr ""
 
 #: app/(tabs)/settings/index.tsx
 #: app/(tabs)/settings/preferences.tsx
@@ -8301,6 +8419,10 @@ msgstr "{0} को पुनः व्यवस्थित करें"
 msgid "Reorder {title}"
 msgstr "{title} को पुनः व्यवस्थित करें"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Repeats at this local time in the displayed timezone across clock changes. A skipped clock time moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery depends on the server runner."
+msgstr ""
+
 #: src/features/write/improve.tsx
 msgid "Replace"
 msgstr "प्रतिस्थापित करें"
@@ -8324,6 +8446,10 @@ msgstr "वैकल्पिक चरण"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "आवेदन पर \"{current}\" को बदलता है।"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
@@ -8474,6 +8600,10 @@ msgstr "रेज़्यूमे पूर्वावलोकन"
 msgid "Resume submitted (optional)"
 msgstr "बायोडाटा प्रस्तुत (वैकल्पिक)"
 
+#: src/features/career/role-suggestions.tsx
+msgid "Resume to share for suggestions"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Resumes"
 msgstr "रेज़्यूमे"
@@ -8533,9 +8663,14 @@ msgstr "{1} का उपयोग करके {0} को पुनः प्�
 msgid "Retry"
 msgstr "पुन: प्रयास करें"
 
+#: src/features/career/role-suggestions.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "Retry AI connections"
 msgstr "AI कनेक्शन पुनः प्रयास करें"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Retry documents"
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Retry linking to application"
@@ -8633,6 +8768,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "फ़ॉर्म के ज़रूरी जवाबों की समीक्षा करें और असमर्थित दावे हटाएँ।"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Review target roles, one per line"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Review the details before saving. Retrieved content does not establish that the posting is still open."
@@ -8770,8 +8909,8 @@ msgid "Salary"
 msgstr "वेतन"
 
 #: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "वेतन नहीं बताया गया"
+msgid "Salary not detected"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
@@ -9145,9 +9284,15 @@ msgid "Select"
 msgstr "चुनें"
 
 #. placeholder {0}: document.name
+#. placeholder {0}: row.role
+#: src/features/career/today.tsx
 #: src/features/documents/library.tsx
 msgid "Select {0}"
 msgstr "{0} चुनें"
+
+#: src/features/career/today.tsx
+msgid "Select all roles"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
@@ -9170,6 +9315,10 @@ msgstr "दृश्यमान का चयन करें"
 #: src/preview/page.tsx
 msgid "Selected entry"
 msgstr "चयनित प्रविष्टि"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Selected resume:"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Semantic CSS stylesheet"
@@ -9199,6 +9348,10 @@ msgstr "प्रेषक का विवरण पत्र में कॉ�
 #: src/features/ai/report-content.tsx
 msgid "Sending…"
 msgstr "भेजा जा रहा है..."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
@@ -9251,6 +9404,10 @@ msgstr "सर्वर"
 msgid "Server address"
 msgstr "सर्वर पता"
 
+#: src/api/ai-consent.ts
+msgid "Server web search"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr "अनुवर्ती कार्रवाई सेट करें"
@@ -9279,6 +9436,10 @@ msgstr "अवसर खोज सेट करें"
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
 msgstr "वेब खोज सेट करें"
+
+#: src/api/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
@@ -9317,10 +9478,13 @@ msgstr "शेयर करना"
 msgid "Share calendar event (.ics)"
 msgstr "कैलेंडर ईवेंट साझा करें (.ics)"
 
-#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {0}?"
-msgstr "{0} के साथ डेटा साझा करें?"
+msgid "Share data with {label}?"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Share enabled shared Knowledge"
+msgstr ""
 
 #: src/features/share/download.tsx
 msgid "Share PDF"
@@ -9747,6 +9911,11 @@ msgstr "GitHub पर स्रोत कोड"
 msgid "Source employer"
 msgstr ""
 
+#. placeholder {0}: new URL(row.url).hostname
+#: src/features/career/today.tsx
+msgid "Source: {0}"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Sources"
@@ -9961,6 +10130,10 @@ msgstr "संलग्न बायोडाटा प्रस्तुत क
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Success at 90 days · next step"
 msgstr "90 दिनों में सफलता · अगला कदम"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Suggest target roles (optional AI)"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Suggested reply · edit before sending"
@@ -10937,6 +11110,10 @@ msgstr "कुल रकम नहीं जोड़ी जाती। बो�
 msgid "Track in Applications"
 msgstr "आवेदनों में ट्रैक करें"
 
+#: src/features/career/today.tsx
+msgid "Track selected"
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11350,6 +11527,10 @@ msgstr "नौकरी विज्ञापन लिंक का उपय�
 msgid "Use reviewed answer"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Use reviewed roles in preferences"
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Use server version"
 msgstr "सर्वर संस्करण का प्रयोग करें"
@@ -11430,8 +11611,8 @@ msgid "Uses the web search service set up in Settings. Search results wait for y
 msgstr "समायोजन में तय वेब खोज सेवा का उपयोग करता है। परिणाम आपकी समीक्षा की प्रतीक्षा करते हैं।"
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
-msgstr "समायोजन में तय वेब खोज का उपयोग करता है। परिणाम आज में मिलेंगे। आपके लिए आवेदन और दस्तावेज़ कभी नहीं बनाए जाते।"
+msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
@@ -11588,6 +11769,10 @@ msgstr "वेब पेज"
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
 msgstr "वेब रिसर्च"
+
+#: src/api/ai-consent.ts
+msgid "Web search"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -11788,6 +11973,10 @@ msgstr ""
 #: src/features/ai/web-access.tsx
 msgid "Working…"
 msgstr "कार्यरत…"
+
+#: src/features/career/today.tsx
+msgid "Workplace arrangement unknown"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Works without AI or new research"
@@ -12212,6 +12401,10 @@ msgstr "यह आवेदन खोलने से पहले आपके 
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening web search settings."
 msgstr "वेब खोज सेटिंग खोलने से पहले आपके सहेजे न गए कार्य विवरण हटा दिए जाएंगे।"
+
+#: src/api/ai-consent.ts
+msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx

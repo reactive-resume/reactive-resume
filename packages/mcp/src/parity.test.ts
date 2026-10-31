@@ -20,6 +20,7 @@ import { registerTools } from "./tools";
 let client: Client;
 let server: McpServer;
 const calls = {
+	career: { suggestTargetRoles: vi.fn(), trackOpportunity: vi.fn(), dismissOpportunity: vi.fn() },
 	auth: { deleteAccount: vi.fn(), exportData: vi.fn() },
 	resume: { listVersions: vi.fn(), getById: vi.fn() },
 	rest: { fileUpload: vi.fn(), documentExports: { resume: vi.fn() } },
@@ -245,4 +246,59 @@ it("keeps private application profiles out of MCP tools and account export resul
 	expect(result.structuredContent).toMatchObject({ resumes: [], applications: [] });
 	expect(JSON.stringify(result)).not.toContain("PRIVATE-PROFILE");
 	expect(result.structuredContent).not.toHaveProperty("applicationProfile");
+});
+
+it("exposes explicit discovery context consent and blocks delegated read-only AI/triage", async () => {
+	const input = {
+		providerId: "synthetic",
+		recipientVersion: "a".repeat(64),
+		resumeId: null,
+		includeKnowledge: true,
+		locale: "en-US",
+	};
+	const { recipientVersion: _version, ...missingVersion } = input;
+	for (const args of [missingVersion, { ...input, recipientVersion: "invalid" }])
+		expect((await client.callTool({ name: "api_career_suggest_target_roles", arguments: args })).isError).toBe(true);
+	expect(calls.career.suggestTargetRoles).not.toHaveBeenCalled();
+	calls.career.suggestTargetRoles.mockResolvedValueOnce({ suggestions: [] });
+	const result = await client.callTool({ name: "api_career_suggest_target_roles", arguments: input });
+	expect(result.isError).not.toBe(true);
+	expect(calls.career.suggestTargetRoles).toHaveBeenCalledWith(input);
+	const limited = new McpServer({ name: "limited-discovery", version: "1.0.0" });
+	const limitedClient = new Client({ name: "limited", version: "1.0.0" });
+	registerParityTools(limited, calls as unknown as RouterClient<typeof MCP_ROUTER>, new Headers(), {
+		authentication: {
+			user: {
+				id: "owner-1",
+				name: "Owner",
+				email: "owner@example.test",
+				emailVerified: true,
+				createdAt: new Date(0),
+				updatedAt: new Date(0),
+			},
+			method: "bearer",
+			permissions: ["read"],
+		},
+		resHeaders: new Headers(),
+		locale: "en-US",
+		trustedClient: "127.0.0.1",
+	});
+	const [a, b] = InMemoryTransport.createLinkedPair();
+	try {
+		await limited.connect(b);
+		await limitedClient.connect(a);
+		for (const [name, args] of [
+			["api_career_suggest_target_roles", input],
+			["api_career_track_opportunity", { id: "role" }],
+			["api_career_dismiss_opportunity", { id: "role" }],
+		] as const) {
+			expect((await limitedClient.callTool({ name, arguments: args })).isError).toBe(true);
+		}
+		expect(calls.career.suggestTargetRoles).toHaveBeenCalledTimes(1);
+		expect(calls.career.trackOpportunity).not.toHaveBeenCalled();
+		expect(calls.career.dismissOpportunity).not.toHaveBeenCalled();
+	} finally {
+		await limitedClient.close();
+		await limited.close();
+	}
 });

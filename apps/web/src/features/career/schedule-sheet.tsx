@@ -130,10 +130,11 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	const phone = useBreakpoint() === "mobile";
 	const now = useNow();
 	const [shown, onClosingComplete] = useClosingValue(schedule ?? null);
-	const { when, timeZone, locale } = useCareerTime();
+	const { when, timeZone: accountTimeZone, locale } = useCareerTime();
 	const context = useRouteContext({ strict: false });
 	const user = context.session?.user;
 	const { data: schedules } = useQuery(orpc.career.schedules.queryOptions({ input: {} }));
+	const timeZone = schedules?.find((row) => row.id === shown)?.timezone ?? accountTimeZone;
 	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
 	const { data: applications } = useQuery(applicationsListQueryOptions());
 	const { data: webAccess } = useQuery(orpc.webAccess.status.queryOptions());
@@ -198,15 +199,17 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 		(form?.submitted || form?.touched[field]) && errors[field] ? errors[field] : null;
 	const smtp = context.flags?.smtpEnabled ?? false;
 	const verified = Boolean(user?.emailVerified);
+	const runnerAvailable = context.flags?.careerSchedulingEnabled ?? false;
 	const blocked =
+		(draft?.enabled && !runnerAvailable) ||
 		(draft?.kind === "prepare" && (!interview || providers.length === 0)) ||
 		(draft?.kind === "follow-up" && open.length === 0);
-	const needsWebSearch = draft?.kind === "discovery" && webAccess?.search === false;
+	const needsWebSearch = draft?.kind === "discovery" && draft.enabled && webAccess?.search === false;
 
 	const onSave = () => {
 		if (!form || !draft) return;
 		setForm({ ...form, submitted: true });
-		if (errors.query || errors.when || blocked) return;
+		if (errors.query || errors.when || blocked || needsWebSearch) return;
 		save.mutate(
 			{
 				...(form.existing ? { id: form.existing.id } : {}),
@@ -282,6 +285,13 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 							]}
 						/>
 
+						{!runnerAvailable && (
+							<p role="status" className="text-sm text-warn-text">
+								<Trans>
+									Scheduled work is not available on this server. Ask your server administrator to configure it.
+								</Trans>
+							</p>
+						)}
 						<Swap id={draft.kind} className="flex flex-col gap-[18px]">
 							{draft.kind === "discovery" && (
 								<>
@@ -301,6 +311,19 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 											/>
 										)}
 									</Field>
+									<p className="text-xs text-ink-3">
+										<Trans>
+											AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule.
+											Existing schedules keep this query until you edit and save it.
+										</Trans>
+									</p>
+									<Button
+										variant="link"
+										nativeButton={false}
+										render={<Link to="/dashboard/career/knowledge/preferences" />}
+									>
+										<Trans>Review target roles in Knowledge</Trans>
+									</Button>
 									<Segments
 										label={t`How often`}
 										value={draft.every}
@@ -314,9 +337,20 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 									<p className="flex gap-2.5 rounded-lg bg-info-soft px-3 py-2.5 text-[13px] leading-[19px] text-ink">
 										<Icon name="globe-simple" size={18} className="mt-px shrink-0 text-info-text" />
 										<Trans>
-											Uses the web search service set up in Settings. Results wait in Today for your review;
-											applications and documents are never created for you.
+											Uses the web search service set up in Settings. Only this query and search countries are sent;
+											your resume and Knowledge are not sent to search. The service may charge. Results wait in Today
+											for your review; applications and documents are never created for you.
 										</Trans>
+									</p>
+									<p className="text-xs text-ink-3">
+										{webAccess?.provider ? (
+											<Trans>
+												Found posting links are read by Reactive Resume and, when needed, {webAccess.provider} and the
+												sites being read. The reader may charge.
+											</Trans>
+										) : (
+											<Trans>Found posting links are read by Reactive Resume and the sites being read.</Trans>
+										)}
 									</p>
 								</>
 							)}
@@ -462,6 +496,13 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 										</Field>
 									</div>
 									<FieldError>{shownError("when")}</FieldError>
+									<p className="text-xs text-ink-3">
+										<Trans>
+											Repeats at this local time in the displayed timezone across clock changes. A skipped clock time
+											moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery
+											depends on the server runner.
+										</Trans>
+									</p>
 								</div>
 							)}
 						</Swap>
@@ -474,6 +515,13 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 								description={t`Paused schedules keep their settings.`}
 								className="rounded-none border-b border-line py-3.5"
 							/>
+							{!smtp && (
+								<p className="py-3 text-xs text-ink-3">
+									<Trans>
+										Email copies are unavailable on this server. In-app notifications still appear in Today.
+									</Trans>
+								</p>
+							)}
 							{smtp && (
 								<SwitchRow
 									checked={verified && draft.email}

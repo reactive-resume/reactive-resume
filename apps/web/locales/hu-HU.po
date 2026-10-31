@@ -211,6 +211,11 @@ msgstr "{0, plural, one {A # problémát figyelmen kívül hagyja.} other {A # p
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# javasolt szerkesztés} other {# javasolt szerkesztések}}"
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
+msgstr ""
+
 #. placeholder {0}: result.skipped
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
@@ -445,6 +450,16 @@ msgstr "{0} álláshirdetés"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "A {0} visszaküldte a következőt: „{1}”. Üzenetét megtartjuk."
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0} roles updated."
+msgstr ""
+
+#. placeholder {0}: selection.length
+#: src/features/career/today.tsx
+msgid "{0} selected"
+msgstr ""
+
 #. placeholder {0}: report.skippedChecks
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
@@ -462,6 +477,12 @@ msgstr "{0} alátámasztva, {1} részben alátámasztva, {2} még bizonyíték n
 #: src/features/ats-checker/report/report-view.tsx
 msgid "{0} to fix"
 msgstr "{0} javítandó"
+
+#. placeholder {0}: done.length
+#. placeholder {1}: failed.length
+#: src/features/career/today.tsx
+msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
+msgstr ""
 
 #. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
 #. placeholder {1}: [...answer].length
@@ -1664,6 +1685,10 @@ msgstr ""
 msgid "AI connection"
 msgstr "AI-kapcsolat"
 
+#: src/features/career/role-suggestions.tsx
+msgid "AI connection receiving your context"
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "AI connections are unavailable."
 msgstr "Az AI-kapcsolatok nem érhetők el."
@@ -1679,6 +1704,10 @@ msgstr "Az AI nem tudta kitölteni a részleteket. Az álláshirdetés megmarad;
 #: src/features/resume/share/format.ts
 msgid "AI edit"
 msgstr "AI szerkesztés"
+
+#: src/features/career/schedule-sheet.tsx
+msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/providers.tsx
@@ -1696,6 +1725,10 @@ msgstr "Az AI-szolgáltatók nem érhetők el ezen a szerveren, amíg a ENCRYPTI
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "Az AI-szolgáltatókat nem sikerült betölteni. Töltse be újra az újrapróbálkozáshoz."
+
+#: src/features/career/role-suggestions.tsx
+msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
+msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2874,6 +2907,10 @@ msgstr "kínai (hagyományos)"
 msgid "Choose a base resume"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Choose a connection"
+msgstr ""
+
 #: src/features/settings/account/application-profile.tsx
 msgid "Choose a country"
 msgstr ""
@@ -3257,6 +3294,10 @@ msgstr "Csatlakoztass egy AI-szolgáltatót a Beállításokban az automatikus f
 #: src/features/auth/pages/consent.tsx
 msgid "Connect an application"
 msgstr "Csatlakoztasson egy alkalmazást"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Connect and test an AI provider in Settings, or keep entering roles manually."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach.tsx
@@ -4011,6 +4052,10 @@ msgstr "Nem sikerült elindítani a felvételt. Válassz hangfájlt, vagy írd b
 msgid "Couldn't start the conversation. Try again."
 msgstr "Nem sikerült elindítani a beszélgetést. Próbáld újra."
 
+#: src/features/career/role-suggestions.tsx
+msgid "Couldn't suggest roles. Try again or enter roles manually."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Couldn't switch connections. Try again."
 msgstr "Nem sikerült kapcsolatot váltani. Próbáld újra."
@@ -4704,6 +4749,14 @@ msgstr "{providerName}-fiókod leválasztása…"
 msgid "Dismiss"
 msgstr "Elvetés"
 
+#: src/features/career/today.tsx
+msgid "Dismiss selected"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Do not share a resume"
+msgstr ""
+
 #: src/routes/dashboard/settings/route.tsx
 msgid "Docs"
 msgstr "Dokumentáció"
@@ -5004,6 +5057,10 @@ msgstr "A hirdetés minden követelményét összevetjük a Tudástárad tényei
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "Minden küldés frissen kezdődik ezzel az üzenettel és a kiválasztott fájlokkal. A korábbi beszélgetések előzményei itt maradnak."
 
+#: src/features/career/today.tsx
+msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "earlier messages in this chat"
 msgstr "a csevegés korábbi üzenetei"
@@ -5174,6 +5231,10 @@ msgstr "E-mail-cím"
 #: src/features/resume/editor/check/issues.ts
 msgid "Email address won't be recognized"
 msgstr "Az e-mail-címet a rendszerek nem fogják felismerni"
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Email copies are unavailable on this server. In-app notifications still appear in Today."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
@@ -5808,6 +5869,21 @@ msgstr "{0, plural, one {# szakasz} other {# szakasz}} és {1, plural, one {# be
 msgid "Found {0}"
 msgstr "Találva: {0}"
 
+#. placeholder {0}: row.discoverySource.query
+#. placeholder {1}: when(row.discoverySource.checkedAt)
+#: src/features/career/today.tsx
+msgid "Found for “{0}”. Posting checked {1}."
+msgstr ""
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and the sites being read."
+msgstr ""
+
+#. placeholder {0}: webAccess.provider
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and, when needed, {0} and the sites being read. The reader may charge."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Found the role and company on the page. Review the details before saving."
 msgstr "Megtaláltuk az oldalon a pozíciót és a céget. Mentés előtt ellenőrizd a részleteket."
@@ -5905,6 +5981,10 @@ msgstr "Teljes szélesség"
 #: src/dialogs/resume/index.tsx
 msgid "Generate a random name"
 msgstr "Véletlenszerű név generálása"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Generate role suggestions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -6877,6 +6957,11 @@ msgstr "A gombok úgy működnek, mint Ön, és olvashatják és szerkeszthetik 
 msgid "Keyword layout"
 msgstr "Kulcsszó-elrendezés"
 
+#. placeholder {0}: (row.keywordOverlap ?? []).join(" · ") || t`None`
+#: src/features/career/today.tsx
+msgid "Keyword overlap: {0}"
+msgstr ""
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Keywords"
 msgstr "Kulcsszavak"
@@ -6902,6 +6987,10 @@ msgstr "A Tudástár nem töltődött be. Próbáld újra, vagy küldés előtt 
 #: src/features/homepage/prepare.tsx
 msgid "Knowledge doesn’t mention mentoring."
 msgstr "A Tudástár nem említi a mentorálást."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Knowledge:"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Korean"
@@ -6960,6 +7049,11 @@ msgstr ""
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/account/application-profile.tsx
 msgid "Last reviewed: {0}"
+msgstr ""
+
+#. placeholder {0}: when(row.lastSeenAt)
+#: src/features/career/today.tsx
+msgid "Last seen in search: {0}"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -7551,6 +7645,10 @@ msgstr "Szerver által kezelt"
 #: src/features/settings/ai/providers.tsx
 msgid "Managed by your server"
 msgstr "Az Ön szervere kezeli"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
@@ -8180,6 +8278,10 @@ msgstr "Nincs javítás"
 msgid "No country matches."
 msgstr "Nem található ország."
 
+#: src/features/career/today.tsx
+msgid "No current target-role or location phrase matches."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
 msgstr "Nem található dátum."
@@ -8336,6 +8438,10 @@ msgstr "Még nincsenek történetek"
 msgid "No suggestions for this provider. Enter any model ID."
 msgstr "Nincsenek javaslatok ehhez a szolgáltatóhoz. Adjon meg bármilyen modellazonosítót."
 
+#: src/features/career/role-suggestions.tsx
+msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "No supporting facts. Link one before using this story."
 msgstr "Nincs alátámasztó tény. Kapcsolj hozzá egyet, mielőtt használod ezt a történetet."
@@ -8377,6 +8483,7 @@ msgstr "egyik sem"
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/career/today.tsx
 msgid "None"
 msgstr "Egyik sem"
 
@@ -8658,10 +8765,6 @@ msgstr "Ajánlatok"
 #: src/features/career/knowledge/preferences.tsx
 msgid "Office days a week, at most"
 msgstr "Irodai napok hetente, legfeljebb"
-
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "Irodai napok nincsenek megadva"
 
 #: src/features/career/offer-entry.tsx
 msgid "Office days per week"
@@ -9262,6 +9365,10 @@ msgstr "Fotó az oldalon."
 msgid "Photo removed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Pick a time after now."
 msgstr "Válassz jövőbeli időpontot."
@@ -9384,6 +9491,10 @@ msgstr "álláshirdetés forrása"
 msgid "Posting terms in your resume"
 msgstr "álláshirdetés feltételeit az önéletrajzában"
 
+#: src/features/career/today.tsx
+msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -9442,6 +9553,11 @@ msgstr "Részesítsd előnyben az egyoszlopos elrendezést, vagy tartsd meg az o
 #: src/features/career/knowledge/facts.tsx
 msgid "Preference"
 msgstr "Preferencia"
+
+#. placeholder {0}: matches.join(" · ")
+#: src/features/career/today.tsx
+msgid "Preference phrase matches: {0}"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/index.tsx
@@ -10359,6 +10475,10 @@ msgstr "Rendelje újra a {title}-t"
 msgid "Repeated far more often than the posting itself uses them: {0}. Recruiters notice."
 msgstr "Sokkal gyakrabban ismétlődnek, mint ahányszor maga a hirdetés használja őket: {0}. A toborzók ezt észreveszik."
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Repeats at this local time in the displayed timezone across clock changes. A skipped clock time moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery depends on the server runner."
+msgstr ""
+
 #: src/features/resume/editor/write/improve.tsx
 msgid "Replace"
 msgstr "Cserélje ki"
@@ -10374,6 +10494,10 @@ msgstr "Cseréld le a táblázatokat egyszerű bekezdésekre és listákra. A ce
 #: src/features/career/workspace/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "Lecseréli a jelentkezésen ezt: „{current}”."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
+msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
@@ -10562,6 +10686,10 @@ msgstr "önéletrajz oldal"
 msgid "Resume submitted (optional)"
 msgstr "önéletrajz beküldve (nem kötelező)"
 
+#: src/features/career/role-suggestions.tsx
+msgid "Resume to share for suggestions"
+msgstr ""
+
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
@@ -10598,6 +10726,14 @@ msgstr "Letöltve: {0}. Az eredet frissessége ismeretlen, hacsak nem jelentik b
 #: src/routes/dashboard/applications/index.tsx
 msgid "Retry"
 msgstr "Újrapróbálkozás"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Retry AI connections"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Retry documents"
+msgstr ""
 
 #: src/features/applications/components/application-notes.tsx
 msgid "Retry save"
@@ -10661,6 +10797,14 @@ msgstr ""
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Nézd át a kötelező űrlapválaszokat, és távolítsd el az alá nem támasztott állításokat."
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Review target roles in Knowledge"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Review target roles, one per line"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Review the selected resume and cover letter in their editors."
@@ -10811,8 +10955,8 @@ msgid "Salary"
 msgstr "Fizetés"
 
 #: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "Fizetés nincs megadva"
+msgid "Salary not detected"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Salary range"
@@ -11103,6 +11247,10 @@ msgstr "Interjú ütemezése"
 msgid "Schedule saved"
 msgstr "Ütemezés mentve"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Scheduled work is not available on this server. Ask your server administrator to configure it."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Scheduled work isn't available on this server."
 msgstr "Az ütemezett feladatok nem érhetők el ezen a szerveren."
@@ -11289,6 +11437,8 @@ msgid "Select"
 msgstr "Válassza ki"
 
 #. placeholder {0}: document.name
+#. placeholder {0}: row.role
+#: src/features/career/today.tsx
 #: src/features/documents/document-card.tsx
 msgid "Select {0}"
 msgstr "{0} kiválasztása"
@@ -11298,6 +11448,10 @@ msgstr "{0} kiválasztása"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "Válassza a {0}-t a {1}-nál"
+
+#: src/features/career/today.tsx
+msgid "Select all roles"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Select an AI provider"
@@ -11322,6 +11476,10 @@ msgstr "Kiválasztott dokumentumok"
 
 #: src/features/documents/trash-page.tsx
 msgid "Selected documents in Trash"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Selected resume:"
 msgstr ""
 
 #: src/features/homepage/footer.tsx
@@ -11358,6 +11516,10 @@ msgstr "A feladó adatai a levélbe másolva"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Sending password reset email..."
 msgstr "Jelszó‑visszaállító e‑mail küldése..."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
+msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
@@ -11494,6 +11656,10 @@ msgstr "Megosztás"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Ossza meg nyilvános linkjét, adjon hozzá jelszót, vagy tartsa privátban. Válasszon a 3 láthatósági lehetőség közül. Exportáljon PDF vagy Word formátumba, vagy vigye magával az összes adatot JSON néven."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Share enabled shared Knowledge"
+msgstr ""
 
 #: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
@@ -11917,6 +12083,11 @@ msgstr "Forráskód"
 msgid "Source employer"
 msgstr ""
 
+#. placeholder {0}: new URL(row.url).hostname
+#: src/features/career/today.tsx
+msgid "Source: {0}"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
@@ -12247,6 +12418,10 @@ msgstr "Siker 90 nap után · következő lépés"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Suggest again"
 msgstr "Javasolj újra"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Suggest target roles (optional AI)"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Suggested from the source and the job. Change it anytime."
@@ -13324,6 +13499,10 @@ msgstr "Kövesd nyomon az állást, amelyre jelentkezel, és kapcsold hozzá az 
 msgid "Track in Applications"
 msgstr "Követés a Jelentkezésekben"
 
+#: src/features/career/today.tsx
+msgid "Track selected"
+msgstr ""
+
 #: src/routes/dashboard/applications/index.tsx
 msgid "Track your first job"
 msgstr "Kövesse nyomon első munkáját"
@@ -13847,6 +14026,10 @@ msgstr "Használja az álláshirdetést"
 msgid "Use reviewed answer"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Use reviewed roles in preferences"
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "Minta használata"
@@ -13913,8 +14096,8 @@ msgid "Uses the linked application"
 msgstr "A linkelt álláspályázatot használja"
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
-msgstr "A Beállításokban megadott webes keresőszolgáltatást használja. Az eredmények a Ma nézetben várnak az áttekintésedre; jelentkezést és dokumentumot sosem hoz létre helyetted."
+msgid "Uses the web search service set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today for your review; applications and documents are never created for you."
+msgstr ""
 
 #. placeholder {0}: templates[template].name
 #: src/features/resume/share/share-panel.tsx
@@ -14418,6 +14601,10 @@ msgstr "A szavak összefolynak, amikor a szöveg kinyerésre kerül."
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Work authorization and sponsorship"
+msgstr ""
+
+#: src/features/career/today.tsx
+msgid "Workplace arrangement unknown"
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx

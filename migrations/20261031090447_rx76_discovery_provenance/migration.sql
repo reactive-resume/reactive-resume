@@ -1,0 +1,1 @@
+ALTER TABLE "career_opportunity" ADD COLUMN "discovery_source" jsonb;

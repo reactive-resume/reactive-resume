@@ -15,6 +15,7 @@ export const aiProviderResponseSchema = z.object({
 	testError: z.string().nullable(),
 	apiKeyPreview: z.string(),
 	apiKeyFingerprint: z.string(),
+	recipientVersion: z.string().regex(/^[a-f0-9]{64}$/),
 	lastTestedAt: z.date().nullable(),
 	lastUsedAt: z.date().nullable(),
 	createdAt: z.date(),

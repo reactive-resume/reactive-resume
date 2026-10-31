@@ -8,6 +8,7 @@ import { AppState, View } from "react-native";
 import { careerProfileDataSchema } from "@reactive-resume/schema/career";
 import { parseAmount } from "@reactive-resume/utils/amount";
 import { useCareerTime } from "./hooks";
+import { RoleSuggestions } from "./role-suggestions";
 import { SearchRegionsField } from "./search-regions-field";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
@@ -122,6 +123,7 @@ export function Preferences({ initial }: PreferencesProps) {
 				values={draft.targetRoles}
 				onChange={(targetRoles) => change({ targetRoles })}
 			/>
+			<RoleSuggestions locale={locale} onUse={(targetRoles) => change({ targetRoles })} />
 			<ChipInput
 				label={t`Where you want to work`}
 				values={draft.locations}

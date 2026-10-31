@@ -211,6 +211,11 @@ msgstr "{0, plural, one {#-kwessie word geïgnoreer.} other {#-kwessies word ge�
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# voorgestelde wysiging} other {# voorgestelde wysigings}}"
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
+msgstr ""
+
 #. placeholder {0}: result.skipped
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
@@ -445,6 +450,16 @@ msgstr "{0} posplasing"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} het \"{1}\" teruggestuur. Jou boodskap word bewaar."
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0} roles updated."
+msgstr ""
+
+#. placeholder {0}: selection.length
+#: src/features/career/today.tsx
+msgid "{0} selected"
+msgstr ""
+
 #. placeholder {0}: report.skippedChecks
 #: src/features/ats-checker/report/score-header.tsx
 msgid "{0} skipped"
@@ -462,6 +477,12 @@ msgstr "{0} gestaaf, {1} gedeeltelik gestaaf, {2} met nog geen bewys nie. {3}"
 #: src/features/ats-checker/report/report-view.tsx
 msgid "{0} to fix"
 msgstr "{0} om reg te maak"
+
+#. placeholder {0}: done.length
+#. placeholder {1}: failed.length
+#: src/features/career/today.tsx
+msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
+msgstr ""
 
 #. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
 #. placeholder {1}: [...answer].length
@@ -1664,6 +1685,10 @@ msgstr ""
 msgid "AI connection"
 msgstr "KI-verbinding"
 
+#: src/features/career/role-suggestions.tsx
+msgid "AI connection receiving your context"
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "AI connections are unavailable."
 msgstr "KI-verbindings is nie beskikbaar nie."
@@ -1679,6 +1704,10 @@ msgstr "KI kon nie die besonderhede invul nie. Die posplasing word behou; voltoo
 #: src/features/resume/share/format.ts
 msgid "AI edit"
 msgstr "AI wysig"
+
+#: src/features/career/schedule-sheet.tsx
+msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/providers.tsx
@@ -1696,6 +1725,10 @@ msgstr "KI-verskaffers is nie op hierdie bediener beskikbaar totdat ENCRYPTION_S
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "KI-verskaffers kon nie gelaai word nie. Herlaai om weer te probeer."
+
+#: src/features/career/role-suggestions.tsx
+msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
+msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2874,6 +2907,10 @@ msgstr "Chinees (Tradisioneel)"
 msgid "Choose a base resume"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Choose a connection"
+msgstr ""
+
 #: src/features/settings/account/application-profile.tsx
 msgid "Choose a country"
 msgstr ""
@@ -3257,6 +3294,10 @@ msgstr "Koppel 'n KI-verskaffer in Instellings om dit outomaties te verfris."
 #: src/features/auth/pages/consent.tsx
 msgid "Connect an application"
 msgstr "Koppel 'n toepassing"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Connect and test an AI provider in Settings, or keep entering roles manually."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach.tsx
@@ -4011,6 +4052,10 @@ msgstr "Kon nie begin opneem nie. Kies 'n klanklêer, of tik jou antwoord."
 msgid "Couldn't start the conversation. Try again."
 msgstr "Kon nie die gesprek begin nie. Probeer weer."
 
+#: src/features/career/role-suggestions.tsx
+msgid "Couldn't suggest roles. Try again or enter roles manually."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Couldn't switch connections. Try again."
 msgstr "Kon nie verbindings wissel nie. Probeer weer."
@@ -4704,6 +4749,14 @@ msgstr "Ontkoppel tans jou {providerName}-rekening…"
 msgid "Dismiss"
 msgstr "Maak toe"
 
+#: src/features/career/today.tsx
+msgid "Dismiss selected"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Do not share a resume"
+msgstr ""
+
 #: src/routes/dashboard/settings/route.tsx
 msgid "Docs"
 msgstr "Dokumentasie"
@@ -5004,6 +5057,10 @@ msgstr "Elke vereiste in die plasing word gekontroleer teen die feite en stories
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "Elke stuur begin nuut met hierdie boodskap en geselekteerde lêers. Vorige gesprekgeskiedenis bly hier."
 
+#: src/features/career/today.tsx
+msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "earlier messages in this chat"
 msgstr "vroeëre boodskappe in hierdie klets"
@@ -5174,6 +5231,10 @@ msgstr "E-posadres"
 #: src/features/resume/editor/check/issues.ts
 msgid "Email address won't be recognized"
 msgstr "E-posadres sal nie herken word nie"
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Email copies are unavailable on this server. In-app notifications still appear in Today."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
@@ -5808,6 +5869,21 @@ msgstr "{0, plural, one {# afdeling} other {# afdelings}} en {1, plural, one {# 
 msgid "Found {0}"
 msgstr "Gevind {0}"
 
+#. placeholder {0}: row.discoverySource.query
+#. placeholder {1}: when(row.discoverySource.checkedAt)
+#: src/features/career/today.tsx
+msgid "Found for “{0}”. Posting checked {1}."
+msgstr ""
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and the sites being read."
+msgstr ""
+
+#. placeholder {0}: webAccess.provider
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and, when needed, {0} and the sites being read. The reader may charge."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Found the role and company on the page. Review the details before saving."
 msgstr "Het die pos en maatskappy op die bladsy gevind. Hersien die besonderhede voordat jy bewaar."
@@ -5905,6 +5981,10 @@ msgstr "Volle breedte"
 #: src/dialogs/resume/index.tsx
 msgid "Generate a random name"
 msgstr "Genereer 'n ewekansige naam"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Generate role suggestions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -6877,6 +6957,11 @@ msgstr "Sleutels tree op soos jy en kan jou dokumente lees en redigeer."
 msgid "Keyword layout"
 msgstr "Sleutelwoorduitleg"
 
+#. placeholder {0}: (row.keywordOverlap ?? []).join(" · ") || t`None`
+#: src/features/career/today.tsx
+msgid "Keyword overlap: {0}"
+msgstr ""
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Keywords"
 msgstr "Sleutelwoorde"
@@ -6902,6 +6987,10 @@ msgstr "Kennis kon nie laai nie. Probeer weer of skakel Kennis af voordat jy stu
 #: src/features/homepage/prepare.tsx
 msgid "Knowledge doesn’t mention mentoring."
 msgstr "Kennis noem nie mentorskap nie."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Knowledge:"
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Korean"
@@ -6960,6 +7049,11 @@ msgstr ""
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/account/application-profile.tsx
 msgid "Last reviewed: {0}"
+msgstr ""
+
+#. placeholder {0}: when(row.lastSeenAt)
+#: src/features/career/today.tsx
+msgid "Last seen in search: {0}"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -7551,6 +7645,10 @@ msgstr "Bestuur deur bediener"
 #: src/features/settings/ai/providers.tsx
 msgid "Managed by your server"
 msgstr "Bestuur deur jou bediener"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
@@ -8180,6 +8278,10 @@ msgstr "Geen korreksies nie"
 msgid "No country matches."
 msgstr "Geen lande gevind nie."
 
+#: src/features/career/today.tsx
+msgid "No current target-role or location phrase matches."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No dates were found."
 msgstr "Geen datums is gevind nie."
@@ -8336,6 +8438,10 @@ msgstr "Nog geen stories nie"
 msgid "No suggestions for this provider. Enter any model ID."
 msgstr "Geen voorstelle vir hierdie verskaffer nie. Voer enige model-ID in."
 
+#: src/features/career/role-suggestions.tsx
+msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "No supporting facts. Link one before using this story."
 msgstr "Geen stawende feite nie. Koppel een voordat jy hierdie storie gebruik."
@@ -8377,6 +8483,7 @@ msgstr "geen"
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/career/today.tsx
 msgid "None"
 msgstr "Geen"
 
@@ -8658,10 +8765,6 @@ msgstr "Aanbiedinge"
 #: src/features/career/knowledge/preferences.tsx
 msgid "Office days a week, at most"
 msgstr "Kantoordae per week, hoogstens"
-
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "Kantoordae nie vermeld nie"
 
 #: src/features/career/offer-entry.tsx
 msgid "Office days per week"
@@ -9262,6 +9365,10 @@ msgstr "Foto op die bladsy."
 msgid "Photo removed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Pick a time after now."
 msgstr "Kies 'n tyd ná nou."
@@ -9384,6 +9491,10 @@ msgstr "Posplasingbron"
 msgid "Posting terms in your resume"
 msgstr "Posplasingterme in jou CV"
 
+#: src/features/career/today.tsx
+msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/prepare.tsx
@@ -9442,6 +9553,11 @@ msgstr "Verkies 'n enkele kolom, of hou die sykolom tot kort, selfstandige lyste
 #: src/features/career/knowledge/facts.tsx
 msgid "Preference"
 msgstr "Voorkeur"
+
+#. placeholder {0}: matches.join(" · ")
+#: src/features/career/today.tsx
+msgid "Preference phrase matches: {0}"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/index.tsx
@@ -10359,6 +10475,10 @@ msgstr "Herbestel {title}"
 msgid "Repeated far more often than the posting itself uses them: {0}. Recruiters notice."
 msgstr "Baie meer herhaal as wat die plasing self dit gebruik: {0}. Werwers let daarop."
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Repeats at this local time in the displayed timezone across clock changes. A skipped clock time moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery depends on the server runner."
+msgstr ""
+
 #: src/features/resume/editor/write/improve.tsx
 msgid "Replace"
 msgstr "Vervang"
@@ -10374,6 +10494,10 @@ msgstr "Vervang tabelle met gewone paragrawe en lyste. Selle word in bergingsord
 #: src/features/career/workspace/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "Vervang “{current}” op die aansoek."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
+msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/remember.tsx
@@ -10562,6 +10686,10 @@ msgstr "CV bladsy"
 msgid "Resume submitted (optional)"
 msgstr "CV ingedien (opsioneel)"
 
+#: src/features/career/role-suggestions.tsx
+msgid "Resume to share for suggestions"
+msgstr ""
+
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
@@ -10598,6 +10726,14 @@ msgstr "{0} herwin. Oorsprong varsheid is onbekend tensy gerapporteer."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Retry"
 msgstr "Probeer weer"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Retry AI connections"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Retry documents"
+msgstr ""
 
 #: src/features/applications/components/application-notes.tsx
 msgid "Retry save"
@@ -10661,6 +10797,14 @@ msgstr ""
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Hersien verpligte vormantwoorde en verwyder ongestaafde bewerings."
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Review target roles in Knowledge"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Review target roles, one per line"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Review the selected resume and cover letter in their editors."
@@ -10811,8 +10955,8 @@ msgid "Salary"
 msgstr "Salaris"
 
 #: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "Salaris nie gelys nie"
+msgid "Salary not detected"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Salary range"
@@ -11103,6 +11247,10 @@ msgstr "Beplan onderhoud"
 msgid "Schedule saved"
 msgstr "Skedule bewaar"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Scheduled work is not available on this server. Ask your server administrator to configure it."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Scheduled work isn't available on this server."
 msgstr "Geskeduleerde werk is nie op hierdie bediener beskikbaar nie."
@@ -11289,6 +11437,8 @@ msgid "Select"
 msgstr "Kies"
 
 #. placeholder {0}: document.name
+#. placeholder {0}: row.role
+#: src/features/career/today.tsx
 #: src/features/documents/document-card.tsx
 msgid "Select {0}"
 msgstr "Kies {0}"
@@ -11298,6 +11448,10 @@ msgstr "Kies {0}"
 #: src/features/applications/components/list-view.tsx
 msgid "Select {0} at {1}"
 msgstr "Kies {0} by {1}"
+
+#: src/features/career/today.tsx
+msgid "Select all roles"
+msgstr ""
 
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
 msgid "Select an AI provider"
@@ -11322,6 +11476,10 @@ msgstr "Gekose dokumente"
 
 #: src/features/documents/trash-page.tsx
 msgid "Selected documents in Trash"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Selected resume:"
 msgstr ""
 
 #: src/features/homepage/footer.tsx
@@ -11358,6 +11516,10 @@ msgstr "Senderbesonderhede in die brief gekopieer"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Sending password reset email..."
 msgstr "Stuur tans e-pos om wagwoord te herstel..."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
+msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
@@ -11494,6 +11656,10 @@ msgstr "Deel"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Deel 'n publieke skakel, voeg 'n wagwoord by of hou dit privaat. Kies uit 3 sigbaarheid opsies. Voer uit na PDF of Word, of neem al jou data saam as JSON."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Share enabled shared Knowledge"
+msgstr ""
 
 #: src/features/resume/editor/chrome/download-sheet.tsx
 msgid "Share sections"
@@ -11917,6 +12083,11 @@ msgstr "Bronkode"
 msgid "Source employer"
 msgstr ""
 
+#. placeholder {0}: new URL(row.url).hostname
+#: src/features/career/today.tsx
+msgid "Source: {0}"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
@@ -12247,6 +12418,10 @@ msgstr "Sukses ná 90 dae · volgende stap"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Suggest again"
 msgstr "Stel weer voor"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Suggest target roles (optional AI)"
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Suggested from the source and the job. Change it anytime."
@@ -13324,6 +13499,10 @@ msgstr "Volg 'n werk waarvoor jy aansoek doen en skakel die CV wat jy gestuur he
 msgid "Track in Applications"
 msgstr "Volg in Aansoeke"
 
+#: src/features/career/today.tsx
+msgid "Track selected"
+msgstr ""
+
 #: src/routes/dashboard/applications/index.tsx
 msgid "Track your first job"
 msgstr "Volg jou eerste werk"
@@ -13847,6 +14026,10 @@ msgstr "Gebruik posplasing"
 msgid "Use reviewed answer"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Use reviewed roles in preferences"
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "Gebruik voorbeeld"
@@ -13913,8 +14096,8 @@ msgid "Uses the linked application"
 msgstr "Gebruik die gekoppelde werksaansoek"
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Uses the web search service set up in Settings. Results wait in Today for your review; applications and documents are never created for you."
-msgstr "Gebruik die websoekdiens wat in Instellings opgestel is. Resultate wag in Vandag vir jou hersiening; aansoeke en dokumente word nooit vir jou geskep nie."
+msgid "Uses the web search service set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today for your review; applications and documents are never created for you."
+msgstr ""
 
 #. placeholder {0}: templates[template].name
 #: src/features/resume/share/share-panel.tsx
@@ -14418,6 +14601,10 @@ msgstr "Woorde loop saam wanneer die teks onttrek word."
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Work authorization and sponsorship"
+msgstr ""
+
+#: src/features/career/today.tsx
+msgid "Workplace arrangement unknown"
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx

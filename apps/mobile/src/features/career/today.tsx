@@ -50,6 +50,9 @@ export function TodayScreen() {
 	);
 	const [showRead, setShowRead] = useState(false);
 	const [expanded, setExpanded] = useState(false);
+	const [selected, setSelected] = useState<string[]>([]);
+	const [bulkStatus, setBulkStatus] = useState("");
+	const [bulkDone, setBulkDone] = useState<string[]>([]);
 	const scroll = useRef<ComponentRef<typeof ScrollView>>(null);
 	const rolesY = useRef(0);
 	const groupY = useRef(0);
@@ -61,11 +64,35 @@ export function TodayScreen() {
 		schedules.find((row) => row.kind === "discovery" && row.enabled) ??
 		schedules.find((row) => row.kind === "discovery");
 	const roles = (queries.opportunities.data ?? [])
-		.filter((row) => !row.trackedApplicationId && !undo.hidden.includes(row.id))
+		.filter((row) => !row.trackedApplicationId && !undo.hidden.includes(row.id) && !bulkDone.includes(row.id))
 		.sort(
 			(a, b) =>
 				b.matches.length - a.matches.length || new Date(b.firstSeenAt).getTime() - new Date(a.firstSeenAt).getTime(),
 		);
+	const selection = selected.filter((id) => roles.some((row) => row.id === id));
+	const bulk = (kind: "track" | "dismiss") => {
+		if (!selection.length) return;
+		void action.run(async () => {
+			const failed: string[] = [];
+			// Each write takes the owner's mutex; send one at a time instead of flooding the server's queue.
+			for (const id of selection) {
+				try {
+					if (kind === "track") await client.career.trackOpportunity({ id });
+					else await client.career.dismissOpportunity({ id });
+				} catch {
+					failed.push(id);
+				}
+			}
+			const done = selection.filter((id) => !failed.includes(id));
+			setBulkDone((current) => [...new Set([...current, ...done])]);
+			setSelected(failed);
+			setBulkStatus(
+				failed.length
+					? t`${done.length} updated; ${failed.length} failed. Failed roles remain selected. Refresh or retry.`
+					: plural(done.length, { one: "# role updated.", other: "# roles updated." }),
+			);
+		});
+	};
 	const notes = (queries.notifications.data ?? []).filter(
 		(row) => showRead || (!row.readAt && !undo.hidden.includes(row.id)),
 	);
@@ -187,6 +214,16 @@ export function TodayScreen() {
 														});
 													}}
 												/>
+											) : row.notice.type === "schedule-failed" || row.notice.type === "briefing-paused" ? (
+												<Button
+													label={t`Open the schedule`}
+													variant="secondary"
+													onPress={() => {
+														const id = row.url?.split("schedule=")[1];
+														const schedule = schedules.find((item) => item.id === id);
+														if (schedule) openSchedule(schedule);
+													}}
+												/>
 											) : row.applicationId ? (
 												<Button
 													label={row.notice.type === "briefing" ? t`Open briefing` : t`Open workspace`}
@@ -268,12 +305,62 @@ export function TodayScreen() {
 										/>
 									</>
 								) : null}
+								{roles.length ? (
+									<Actions>
+										<Button
+											variant="ghost"
+											label={t`Select all roles`}
+											disabled={action.pending}
+											onPress={() => setSelected(selection.length === roles.length ? [] : roles.map((row) => row.id))}
+										/>
+										<Text>{t`${selection.length} selected`}</Text>
+										<Button
+											variant="secondary"
+											label={t`Track selected`}
+											disabled={!selection.length || action.pending}
+											onPress={() => bulk("track")}
+										/>
+										<Button
+											variant="ghost"
+											label={t`Dismiss selected`}
+											disabled={!selection.length || action.pending}
+											onPress={() => bulk("dismiss")}
+										/>
+									</Actions>
+								) : null}
+								{bulkStatus ? <Text accessibilityLiveRegion="polite">{bulkStatus}</Text> : null}
 								{(expanded ? roles : roles.slice(0, 5)).map((row) => (
 									<Card key={row.id} style={{ gap: space.s3 }}>
+										<SwitchRow
+											label={t`Select ${row.role}`}
+											value={selection.includes(row.id)}
+											disabled={action.pending}
+											onValueChange={(on) =>
+												setSelected((current) =>
+													on ? [...new Set([...current, row.id])] : current.filter((id) => id !== row.id),
+												)
+											}
+										/>
 										<Text variant="title">{row.role}</Text>
 										<Text color="ink2">{[row.company, row.location].filter(Boolean).join(" · ")}</Text>
 										<Text variant="caption" color="ink3">{t`Found ${time.when(row.firstSeenAt)}`}</Text>
 										<Text>{row.snippet}</Text>
+										<Text color="ink3">
+											{t`Source: ${new URL(row.url).hostname}`} · {t`Last seen in search: ${time.when(row.lastSeenAt)}`}
+										</Text>
+										<Text color="ink3">
+											{row.discoverySource
+												? t`Found for “${row.discoverySource.query}”. Posting checked ${time.when(row.discoverySource.checkedAt)}.`
+												: t`Earlier discovery result. Search query and posting check time unknown.`}
+										</Text>
+										<Text color="ink3">{t`Postings can change or close. Publication date unknown; search coverage is incomplete.`}</Text>
+										<Text>
+											{row.matches.length
+												? t`Preference phrase matches: ${row.matches.join(" · ")}`
+												: t`No current target-role or location phrase matches.`}
+										</Text>
+										<Text color="ink3">{t`Keyword overlap: ${(row.keywordOverlap ?? []).join(" · ") || t`None`}`}</Text>
+										<Text color="ink3">{t`Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment.`}</Text>
 										<Actions>
 											{row.matches.map((match) => (
 												<Chip key={match} label={match} />
@@ -281,7 +368,7 @@ export function TodayScreen() {
 											{row.unknowns.map((unknown) => (
 												<Chip
 													key={unknown}
-													label={unknown === "salary" ? t`Salary not listed` : t`Office days not stated`}
+													label={unknown === "salary" ? t`Salary not detected` : t`Workplace arrangement unknown`}
 												/>
 											))}
 										</Actions>
@@ -309,6 +396,7 @@ export function TodayScreen() {
 											<Button
 												variant="ghost"
 												label={t`Not for me`}
+												disabled={action.pending}
 												onPress={() =>
 													undo.remove(row.id, t`Hidden from New roles`, () =>
 														client.career.dismissOpportunity({ id: row.id }),

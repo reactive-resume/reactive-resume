@@ -76,9 +76,10 @@ export async function generateJson<T>(
 	prompt: { system?: string; prompt: string },
 	schema: z.ZodType<T>,
 	signal?: AbortSignal,
+	maxRetries?: number,
 ) {
 	try {
-		return await sharedGenerateJson(model, prompt, schema, signal);
+		return await sharedGenerateJson(model, prompt, schema, signal, maxRetries);
 	} catch (error) {
 		if (isAiProviderGatewayError(error)) throwAiProviderGatewayError(error);
 		throw error;

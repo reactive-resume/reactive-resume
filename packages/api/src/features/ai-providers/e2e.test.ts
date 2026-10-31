@@ -51,6 +51,7 @@ vi.mock("drizzle-orm", () => ({
 vi.mock("@reactive-resume/env/server", () => ({
 	env: {
 		APP_URL: "http://localhost:3000",
+		AUTH_SECRET: "synthetic-test-auth-secret",
 		ENCRYPTION_SECRET: "e2e-encryption-secret",
 		FLAG_ALLOW_UNSAFE_AI_BASE_URL: true,
 	},

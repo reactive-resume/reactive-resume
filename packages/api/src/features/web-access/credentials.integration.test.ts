@@ -6,6 +6,7 @@ import { Pool } from "pg";
 
 const fixture = vi.hoisted(() => ({ db: undefined as ReturnType<typeof drizzle> | undefined }));
 const env = vi.hoisted(() => ({
+	AUTH_SECRET: "synthetic-test-auth-secret",
 	ENCRYPTION_SECRET: "integration-test-encryption-secret-32-chars",
 	WEB_ACCESS_PROVIDER: "" as "" | "firecrawl" | "tavily" | "exa",
 	WEB_ACCESS_API_KEY: "",

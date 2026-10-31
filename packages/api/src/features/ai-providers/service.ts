@@ -1,4 +1,6 @@
 import type { AIProvider } from "@reactive-resume/ai/types";
+import type { DbOrTx } from "@reactive-resume/db/client";
+import { createHmac } from "node:crypto";
 import { ORPCError } from "@orpc/client";
 import { and, asc, desc, eq, isNull, ne, sql } from "drizzle-orm";
 import { aiProviderSchema } from "@reactive-resume/ai/types";
@@ -24,6 +26,7 @@ export type AiProviderResponse = {
 	testError: string | null;
 	apiKeyPreview: string;
 	apiKeyFingerprint: string;
+	recipientVersion: string;
 	lastTestedAt: Date | null;
 	lastUsedAt: Date | null;
 	createdAt: Date;
@@ -50,6 +53,15 @@ type UpdateAiProviderInput = {
 	enabled?: boolean;
 };
 
+/** Stable across tests and usage; credential replacement requires fresh recipient approval. */
+function recipientVersion(row: AiProviderRecord, credentialRevision = row.encryptedApiKey) {
+	return createHmac("sha256", env.AUTH_SECRET)
+		.update(
+			JSON.stringify(["ai-recipient-v1", row.userId, row.id, row.provider, row.model, row.baseUrl, credentialRevision]),
+		)
+		.digest("hex");
+}
+
 function toResponse(row: AiProviderRecord): AiProviderResponse {
 	const provider = aiProviderSchema.parse(row.provider);
 
@@ -67,6 +79,7 @@ function toResponse(row: AiProviderRecord): AiProviderResponse {
 		apiKeyPreview: row.apiKeyPreview,
 		// The hash identifies the key without revealing it; the ciphertext and salt never leave the server.
 		apiKeyFingerprint: row.apiKeyHash,
+		recipientVersion: recipientVersion(row),
 		lastTestedAt: row.lastTestedAt,
 		lastUsedAt: row.lastUsedAt,
 		createdAt: row.createdAt,
@@ -116,6 +129,7 @@ function assertPersonalProvidersAllowed() {
 /** A persisted reference keeps Assistant thread foreign keys valid; server credentials stay in the environment. */
 async function serverProvider(userId: string) {
 	if (!env.AI_PROVIDER || !env.AI_MODEL) return null;
+	const apiKey = env.AI_API_KEY ?? "";
 	const values = {
 		userId,
 		label: "Server AI",
@@ -136,7 +150,13 @@ async function serverProvider(userId: string) {
 		.onConflictDoUpdate({ target: schema.aiProvider.id, set: values })
 		.returning();
 	if (!row) throw new Error("SERVER_AI_PROVIDER_UNAVAILABLE");
-	return { ...toResponse(row), apiKey: env.AI_API_KEY ?? "", baseURL: env.AI_BASE_URL ?? "" };
+	// Environment settings and key are captured together before the database await.
+	return {
+		...toResponse(row),
+		recipientVersion: recipientVersion(row, apiKey),
+		apiKey,
+		baseURL: values.baseUrl ?? "",
+	};
 }
 
 export const aiProvidersService = {
@@ -155,6 +175,23 @@ export const aiProvidersService = {
 			.orderBy(...automaticOrder);
 
 		return providers.map(toResponse);
+	},
+
+	/** Checks availability of an already captured recipient without resolving new settings or credentials. */
+	assertAvailable: async (input: { id: string; userId: string }, reader: DbOrTx) => {
+		if (input.id === serverProviderId(input.userId)) {
+			if (!env.AI_PROVIDER || !env.AI_MODEL)
+				throw new ORPCError("BAD_REQUEST", { message: "AI is no longer configured on this server." });
+			return;
+		}
+		const [provider] = await reader
+			.select({ enabled: schema.aiProvider.enabled, testStatus: schema.aiProvider.testStatus })
+			.from(schema.aiProvider)
+			.where(and(eq(schema.aiProvider.id, input.id), eq(schema.aiProvider.userId, input.userId)))
+			.for("share");
+		if (!provider) throw new ORPCError("NOT_FOUND");
+		if (!provider.enabled || provider.testStatus !== "success")
+			throw new ORPCError("BAD_REQUEST", { message: "Test and turn on this AI provider before using it." });
 	},
 
 	getRunnableById: async (input: { id: string; userId: string }) => {

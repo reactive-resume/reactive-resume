@@ -210,6 +210,11 @@ msgstr "{0, plural, other {#페이지}}"
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# 제안된 편집} other {# 제안된 편집}}"
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
+msgstr ""
+
 #. placeholder {0}: offerIds.length
 #: src/features/assistant/coach-screen.tsx
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
@@ -407,10 +412,23 @@ msgstr "{0} 채용 공고"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0}가 \"{1}\"를 반환했습니다. 귀하의 메시지는 보관됩니다."
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0} roles updated."
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
+#. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
+#: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "{0} 선택됨"
+
+#. placeholder {0}: done.length
+#. placeholder {1}: failed.length
+#: src/features/career/today.tsx
+msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
+msgstr ""
 
 #. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
 #. placeholder {1}: [...answer].length
@@ -1282,6 +1300,10 @@ msgstr ""
 msgid "AI connection"
 msgstr "AI 연결"
 
+#: src/features/career/role-suggestions.tsx
+msgid "AI connection receiving your context"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "AI connections are unavailable."
 msgstr "AI 연결을 사용할 수 없습니다."
@@ -1305,6 +1327,10 @@ msgstr "AI 편집"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "AI 강화를 사용할 수 없습니다. 페이지 세부정보를 검토하거나 수동으로 입력하세요."
+
+#: src/features/career/schedule-sheet.tsx
+msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "AI provider"
@@ -1335,6 +1361,10 @@ msgstr "AI 제공자를 불러올 수 없습니다. 다시 시도하거나 세�
 #: src/features/applications/add-sheet.tsx
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI는 요청할 때만 붙여넣은 텍스트를 읽습니다. 링크는 AI 없이 페이지 자체의 채용 정보를 사용할 수 있습니다."
+
+#: src/features/career/role-suggestions.tsx
+msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2310,6 +2340,10 @@ msgstr "중국어(번체)"
 msgid "Choose a base resume"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Choose a connection"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Choose a country"
 msgstr ""
@@ -2675,6 +2709,10 @@ msgstr "붙여넣은 텍스트의 세부정보를 읽으려면 AI 공급자를 �
 #: src/features/ai/web-access.tsx
 msgid "Connect an AI provider to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "어시스턴트를 사용하려면 AI 제공자를 연결하세요. 작업을 저장하고 준비하는 데는 필요하지 않습니다."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Connect and test an AI provider in Settings, or keep entering roles manually."
+msgstr ""
 
 #: src/features/assistant/provider.tsx
 msgid "Connect another…"
@@ -3242,6 +3280,10 @@ msgstr "녹음을 시작할 수 없습니다. 다시 시도하거나 답변을 �
 msgid "Couldn't start the conversation. Try again."
 msgstr "대화를 시작할 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/career/role-suggestions.tsx
+msgid "Couldn't suggest roles. Try again or enter roles manually."
+msgstr ""
+
 #: src/features/assistant/provider.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "모델을 전환할 수 없습니다. 다시 시도해 보세요."
@@ -3473,8 +3515,8 @@ msgid "Dark theme"
 msgstr "다크 테마"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
-msgstr "데이터 공유가 취소되었습니다. AI 제공자에게 아무것도 전송되지 않았습니다."
+msgid "Data sharing canceled. Nothing was sent to the provider."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -3794,6 +3836,14 @@ msgstr "오프라인 수정사항을 삭제하시겠습니까?"
 msgid "Dismiss"
 msgstr "해고하다"
 
+#: src/features/career/today.tsx
+msgid "Dismiss selected"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Do not share a resume"
+msgstr ""
+
 #: src/shell/builder-chrome.tsx
 msgid "Document menu"
 msgstr "문서 메뉴"
@@ -4037,6 +4087,10 @@ msgstr "피드백을 받은 답변은 모두 최신순으로 여기에 보관됩
 #: src/features/workspace/tabs/fit.tsx
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "채용 공고의 각 요건을 지식에 있는 사실 및 스토리와 대조합니다. 빈 부분은 능력이 아니라 근거가 부족하다는 뜻으로만 표시됩니다."
+
+#: src/features/career/today.tsx
+msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
@@ -4619,6 +4673,22 @@ msgstr "서식 지정"
 msgid "Found {0}"
 msgstr "{0} 발견"
 
+#. placeholder {0}: row.discoverySource.query
+#. placeholder {1}: time.when(row.discoverySource.checkedAt)
+#: src/features/career/today.tsx
+msgid "Found for “{0}”. Posting checked {1}."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and the sites being read."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
 msgid "Free-form"
@@ -4653,6 +4723,10 @@ msgstr "이름"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "전체 너비"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Generate role suggestions"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -4997,7 +5071,7 @@ msgstr "접촉선의 아이콘"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "스캔본이라면 자연스러운 현상입니다. 그렇지 않다면 제거하세요. 채용 담당자는 이를 키워드 남용으로 받아들입니다."
 
-#. placeholder {0}: reader ?? provider.provider
+#. placeholder {0}: reader ?? provider?.provider ?? ""
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "웹 액세스를 사용하는 경우 링크와 검색어도 {0} 및 읽고 있는 사이트로 이동합니다."
@@ -5367,6 +5441,11 @@ msgstr "키는 귀하의 역할을 하며 귀하의 문서에 액세스할 수 �
 msgid "Keyword layout"
 msgstr "키워드 레이아웃"
 
+#. placeholder {0}: (row.keywordOverlap ?? []).join(" · ") || t`None`
+#: src/features/career/today.tsx
+msgid "Keyword overlap: {0}"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Keywords"
 msgstr "키워드"
@@ -5387,6 +5466,10 @@ msgstr "지식"
 #: src/features/assistant/coach-screen.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "지식을 불러올 수 없습니다. 다시 시도하거나 보내기 전에 지식을 끄세요."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Knowledge:"
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Korean"
@@ -5446,6 +5529,11 @@ msgstr ""
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/application-profile.tsx
 msgid "Last reviewed: {0}"
+msgstr ""
+
+#. placeholder {0}: time.when(row.lastSeenAt)
+#: src/features/career/today.tsx
+msgid "Last seen in search: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -5947,6 +6035,10 @@ msgstr "서버에서 관리"
 #: src/features/ai/provider-list.tsx
 msgid "Managed by your server"
 msgstr "서버에서 관리"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
@@ -6508,6 +6600,10 @@ msgstr "일반적인 섹션 제목을 찾을 수 없습니다."
 msgid "No conversations about this document yet."
 msgstr "아직 이 문서에 관한 대화가 없습니다."
 
+#: src/features/career/today.tsx
+msgid "No current target-role or location phrase matches."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No date"
 msgstr "날짜 없음"
@@ -6667,6 +6763,10 @@ msgstr "아직 스토리가 없습니다"
 msgid "No suggestions for this provider. Enter any model ID."
 msgstr "이 제공업체에 대한 제안이 없습니다. 모델 ID를 입력하세요."
 
+#: src/features/career/role-suggestions.tsx
+msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 #: src/features/ats-checker/messages.ts
 msgid "No text could be read from this file."
@@ -6690,6 +6790,7 @@ msgstr "경력 섹션을 찾을 수 없습니다."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
 #: src/features/write/entry-fields.tsx
 #: src/features/write/pickers.tsx
@@ -6907,10 +7008,6 @@ msgstr "주당 최대 출근일"
 msgid "Office days are unknown."
 msgstr "근무일은 알려져 있지 않습니다."
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "출근일 명시 안 됨"
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -6986,6 +7083,14 @@ msgstr "처음 30페이지만 확인되었습니다."
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
 msgstr "처음 몇 페이지만 점검했습니다."
+
+#: src/api/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
 
 #. placeholder {0}: getServer()
 #: src/features/ai/report-content.tsx
@@ -7426,6 +7531,10 @@ msgstr "페이지의 사진."
 msgid "Photo removed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Pick {label}"
 msgstr "{label} 선택"
@@ -7523,6 +7632,10 @@ msgstr "채용 공고"
 msgid "Posting"
 msgstr "채용 공고"
 
+#: src/features/career/today.tsx
+msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
@@ -7562,6 +7675,11 @@ msgstr "단일 열을 사용하거나, 사이드 열은 짧고 독립적인 목�
 #: src/features/career/facts.tsx
 msgid "Preference"
 msgstr "선호 사항"
+
+#. placeholder {0}: row.matches.join(" · ")
+#: src/features/career/today.tsx
+msgid "Preference phrase matches: {0}"
+msgstr ""
 
 #: app/(tabs)/settings/index.tsx
 #: app/(tabs)/settings/preferences.tsx
@@ -8301,6 +8419,10 @@ msgstr "{0} 재주문"
 msgid "Reorder {title}"
 msgstr "{title} 재주문"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Repeats at this local time in the displayed timezone across clock changes. A skipped clock time moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery depends on the server runner."
+msgstr ""
+
 #: src/features/write/improve.tsx
 msgid "Replace"
 msgstr "바꾸다"
@@ -8324,6 +8446,10 @@ msgstr "대체 단계"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "지원 내역에서 “{current}” 값을 대체합니다."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
@@ -8474,6 +8600,10 @@ msgstr "이력서 미리보기"
 msgid "Resume submitted (optional)"
 msgstr "이력서 제출(선택)"
 
+#: src/features/career/role-suggestions.tsx
+msgid "Resume to share for suggestions"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Resumes"
 msgstr "이력서"
@@ -8533,9 +8663,14 @@ msgstr "{1}를 사용하여 {0}를 검색했습니다. 검색 시간은 원본 �
 msgid "Retry"
 msgstr "다시 해 보다"
 
+#: src/features/career/role-suggestions.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "Retry AI connections"
 msgstr "AI 연결 다시 시도"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Retry documents"
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Retry linking to application"
@@ -8633,6 +8768,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "필수 양식 답변을 검토하고 근거 없는 주장을 삭제하세요."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Review target roles, one per line"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Review the details before saving. Retrieved content does not establish that the posting is still open."
@@ -8770,8 +8909,8 @@ msgid "Salary"
 msgstr "급여"
 
 #: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "급여 미기재"
+msgid "Salary not detected"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
@@ -9145,9 +9284,15 @@ msgid "Select"
 msgstr "선택"
 
 #. placeholder {0}: document.name
+#. placeholder {0}: row.role
+#: src/features/career/today.tsx
 #: src/features/documents/library.tsx
 msgid "Select {0}"
 msgstr "{0} 선택"
+
+#: src/features/career/today.tsx
+msgid "Select all roles"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
@@ -9170,6 +9315,10 @@ msgstr "공개 선택"
 #: src/preview/page.tsx
 msgid "Selected entry"
 msgstr "선택한 항목"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Selected resume:"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Semantic CSS stylesheet"
@@ -9199,6 +9348,10 @@ msgstr "편지에 복사된 보낸 사람 정보"
 #: src/features/ai/report-content.tsx
 msgid "Sending…"
 msgstr "보내는 중…"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
@@ -9251,6 +9404,10 @@ msgstr "서버"
 msgid "Server address"
 msgstr "서버 주소"
 
+#: src/api/ai-consent.ts
+msgid "Server web search"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr "후속 조치 설정"
@@ -9279,6 +9436,10 @@ msgstr "탐색 설정"
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
 msgstr "웹 검색 설정"
+
+#: src/api/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
@@ -9317,10 +9478,13 @@ msgstr "공유하다"
 msgid "Share calendar event (.ics)"
 msgstr "캘린더 이벤트 공유(.ics)"
 
-#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {0}?"
-msgstr "{0}와 데이터를 공유하시겠습니까?"
+msgid "Share data with {label}?"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Share enabled shared Knowledge"
+msgstr ""
 
 #: src/features/share/download.tsx
 msgid "Share PDF"
@@ -9747,6 +9911,11 @@ msgstr "GitHub 소스 코드"
 msgid "Source employer"
 msgstr ""
 
+#. placeholder {0}: new URL(row.url).hostname
+#: src/features/career/today.tsx
+msgid "Source: {0}"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Sources"
@@ -9961,6 +10130,10 @@ msgstr "제출된 이력서: {0}"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Success at 90 days · next step"
 msgstr "90일 후의 성공 · 다음 단계"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Suggest target roles (optional AI)"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Suggested reply · edit before sending"
@@ -10937,6 +11110,10 @@ msgstr "합계는 계산하지 않습니다. 보너스와 지분은 조건에 �
 msgid "Track in Applications"
 msgstr "지원 목록에서 추적"
 
+#: src/features/career/today.tsx
+msgid "Track selected"
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11350,6 +11527,10 @@ msgstr "채용 공고 링크를 사용하세요. 저장하기 전에 검토하�
 msgid "Use reviewed answer"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Use reviewed roles in preferences"
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Use server version"
 msgstr "서버 버전 사용"
@@ -11430,8 +11611,8 @@ msgid "Uses the web search service set up in Settings. Search results wait for y
 msgstr "설정에 설정된 웹 검색 서비스를 사용합니다. 검색결과가 귀하의 검토를 기다립니다."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
-msgstr "설정에 구성된 웹 검색을 사용합니다. 결과는 오늘에서 확인할 수 있습니다. 지원 내역과 문서는 자동으로 생성되지 않습니다."
+msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
@@ -11588,6 +11769,10 @@ msgstr "웹 페이지"
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
 msgstr "웹 리서치"
+
+#: src/api/ai-consent.ts
+msgid "Web search"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -11788,6 +11973,10 @@ msgstr ""
 #: src/features/ai/web-access.tsx
 msgid "Working…"
 msgstr "일하는 중…"
+
+#: src/features/career/today.tsx
+msgid "Workplace arrangement unknown"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Works without AI or new research"
@@ -12212,6 +12401,10 @@ msgstr "이 지원서를 열기 전에 저장하지 않은 채용 정보가 삭�
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening web search settings."
 msgstr "저장되지 않은 채용 정보는 웹 검색 설정을 열기 전에 삭제됩니다."
+
+#: src/api/ai-consent.ts
+msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx

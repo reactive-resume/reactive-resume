@@ -3,6 +3,7 @@ import type {
 	CareerNotice,
 	CareerProfileData,
 	CareerSource,
+	DiscoverySource,
 	CareerStoryData,
 	CareerWorkspace,
 	SavedItemData,
@@ -146,6 +147,8 @@ export const careerOpportunity = pg.pgTable(
 		company: pg.text("company").notNull().default(""),
 		location: pg.text("location").notNull().default(""),
 		snippet: pg.text("snippet").notNull(),
+		/** Retrieval and posting-check provenance; null for results discovered before this metadata existed. */
+		discoverySource: pg.jsonb("discovery_source").$type<DiscoverySource>(),
 		/** The posting's text, saved with the application when it's tracked. */
 		description: pg.text("description").notNull().default(""),
 		firstSeenAt: pg.timestamp("first_seen_at", { withTimezone: true }).notNull().defaultNow(),

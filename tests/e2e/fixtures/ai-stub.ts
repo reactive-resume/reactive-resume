@@ -234,6 +234,24 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 			const asksForFit = parsed.messages.some((message) =>
 				text(message.content).includes("Check the posting's requirements"),
 			);
+			const asksForRoles = parsed.messages.some((message) =>
+				text(message.content).includes("Suggest up to five plausible target job titles"),
+			);
+			const context = asksForRoles
+				? (JSON.parse(text(parsed.messages.find((message) => message.role === "user")?.content)) as {
+						facts: Array<{ id: string }>;
+						resume: string | null;
+					})
+				: null;
+			const roles = {
+				suggestions: [
+					{
+						role: "Reliability engineer",
+						factIds: context?.facts.slice(0, 1).map((fact) => fact.id) ?? [],
+						resumeQuote: context?.resume?.slice(0, 60) ?? null,
+					},
+				],
+			};
 			response.writeHead(200, { "content-type": "application/json" });
 			response.end(
 				JSON.stringify({
@@ -244,7 +262,10 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 					choices: [
 						{
 							index: 0,
-							message: { role: "assistant", content: asksForFit ? JSON.stringify(FIT) : "1" },
+							message: {
+								role: "assistant",
+								content: asksForRoles ? JSON.stringify(roles) : asksForFit ? JSON.stringify(FIT) : "1",
+							},
 							finish_reason: "stop",
 						},
 					],

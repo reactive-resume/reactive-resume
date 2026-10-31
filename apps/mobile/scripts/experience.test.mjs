@@ -994,3 +994,173 @@ originalPhotoToast.action.onPress();
 assert.deepEqual(photoStore.getState().data, otherPhotoData);
 photoDraft.suspend();
 console.log("PASS native photo removal preserves shared upload and Undo restores only removal");
+
+// Actual native suggestion component callbacks; HTTP and platform sheets remain local boundaries.
+reset();
+let roleAiAvailable = false;
+let roleAccount = "alice";
+const roleRequests = [];
+const usedRoles = [];
+let roleReply = async () => ({
+	suggestions: [
+		{
+			role: "Reliability engineer",
+			facts: [{ id: "shared", text: "I maintain reliable services." }],
+			resumeQuote: null,
+		},
+	],
+});
+const { RoleSuggestions } = load("features/career/role-suggestions.tsx", {
+	"@tanstack/react-query": { useQuery: () => ({ isSuccess: true, data: [], refetch() {} }) },
+	"./hooks": { useCareerAction: () => ({ pending: false, run: async (operation) => operation() }) },
+	"./shared": { SwitchRow: "SwitchRow" },
+	"@/api/client": {
+		client: {
+			career: {
+				suggestTargetRoles: async (input) => {
+					roleRequests.push(input);
+					return roleReply();
+				},
+			},
+		},
+		orpc: { documents: { list: { queryOptions: () => ({ queryKey: ["documents"] }) } } },
+	},
+	"@/auth/session": {
+		useSession: () => ({ status: "signed-in", server: "http://localhost:3076" }),
+		getAccountScope: () => roleAccount,
+	},
+	"@/features/ai/providers": {
+		useHasAIProvider: () => ({
+			isUnavailable: false,
+			hasAIProvider: roleAiAvailable,
+			usableProviders: roleAiAvailable
+				? [
+						{
+							id: "local",
+							recipientVersion: "a".repeat(64),
+							label: "Local fixture",
+							provider: "openai-compatible",
+							model: "stub",
+						},
+					]
+				: [],
+		}),
+	},
+	"@/features/workspace/hooks": { workspaceError: (_cause, fallback) => fallback },
+});
+const roleProps = { locale: "en-US", onUse: (roles) => usedRoles.push(roles) };
+const roleView = () => render(RoleSuggestions, roleProps);
+let roleTree = roleView();
+control(roleTree, "Suggest target roles (optional AI)").onPress();
+roleTree = roleView();
+assert.match(JSON.stringify(roleTree), /keep entering roles manually/);
+assert.equal(roleRequests.length, 0);
+roleAiAvailable = true;
+roleTree = roleView();
+assert.equal(control(roleTree, "Generate role suggestions").disabled, true);
+control(roleTree, "AI connection receiving your context").onChange("local");
+roleTree = roleView();
+assert.equal(control(roleTree, "Generate role suggestions").disabled, true, "context is explicit, never preselected");
+control(roleTree, "Share enabled shared Knowledge").onValueChange(true);
+roleTree = roleView();
+control(roleTree, "Generate role suggestions").onPress();
+await settle();
+roleTree = roleView();
+assert.equal(usedRoles.length, 0, "generation must never use a role automatically");
+assert.deepEqual(roleRequests, [
+	{ providerId: "local", recipientVersion: "a".repeat(64), resumeId: null, includeKnowledge: true, locale: "en-US" },
+]);
+control(roleTree, "Review target roles, one per line").onChangeText("Platform engineer");
+roleTree = roleView();
+control(roleTree, "Use reviewed roles in preferences").onPress();
+assert.deepEqual(usedRoles, [["Platform engineer"]]);
+// A result from a departing account may not populate the new account's draft.
+let releaseRoles;
+roleReply = () =>
+	new Promise((resolve) => {
+		releaseRoles = resolve;
+	});
+roleTree = roleView();
+control(roleTree, "Generate role suggestions").onPress();
+await settle();
+roleAccount = "bob";
+releaseRoles({ suggestions: [{ role: "Old account role", facts: [], resumeQuote: null }] });
+await settle();
+roleTree = roleView();
+assert.equal(
+	nodes(roleTree).some((node) => node.props.label === "Review target roles, one per line"),
+	false,
+);
+console.log(
+	"PASS native discovery role opt-ins, no-AI fallback, editable-before-use roles and cross-account response isolation",
+);
+
+reset();
+const triageCalls = [];
+let triageActive = 0;
+let maxTriageActive = 0;
+const discovered = ["Platform engineer", "Reliability engineer"].map((role, index) => ({
+	id: `role-${index}`,
+	role,
+	company: "Fictional Labs",
+	url: `https://example.test/jobs/${index}`,
+	location: "",
+	snippet: "Maintain reliable services.",
+	matches: [],
+	unknowns: ["salary", "office"],
+	trackedApplicationId: null,
+	firstSeenAt: new Date(),
+	lastSeenAt: new Date(),
+	discoverySource: null,
+}));
+const { TodayScreen } = load("features/career/today.tsx", {
+	"expo-web-browser": { openBrowserAsync: async () => {} },
+	"./hooks": {
+		client: {
+			career: {
+				trackOpportunity: async ({ id }) => {
+					triageCalls.push(id);
+					triageActive++;
+					maxTriageActive = Math.max(maxTriageActive, triageActive);
+					await Promise.resolve();
+					triageActive--;
+					if (id === "role-1") throw new Error("Synthetic partial failure");
+					return { applicationId: "saved-role-0" };
+				},
+			},
+		},
+		useCareerAction: () => ({ pending: false, run: async (operation) => operation(), refresh: async () => {} }),
+		useCareerTime: () => ({ timeZone: "UTC", locale: "en-US", when: () => "31 Oct", profile: { refetch() {} } }),
+		useNow: () => new Date(),
+		useTodayQueries: () => ({
+			schedules: { data: [] },
+			opportunities: { data: discovered },
+			notifications: { data: [] },
+			briefings: { data: [] },
+		}),
+		useUndoRows: () => ({ hidden: [], remove() {} }),
+	},
+	"./schedule-sheet": { ScheduleSheet: "ScheduleSheet", scheduleTitle: (kind) => kind },
+	"./scheduling": { collectInterviews: () => [], rollForward: (at) => at },
+	"./shared": { Actions: "Actions", LoadState: "LoadState", Section: "Section", SwitchRow: "SwitchRow" },
+	"@/features/applications/lane-queries": { useApplicationLanes: () => ({ lanes: [] }) },
+	"@/features/applications/lanes": { getLaneLabel: () => "Saved", resolveLane: () => null },
+	"@/features/applications/next-step": { getNextStep: () => ({ kind: "none" }) },
+	"@/features/applications/queries": { useApplications: () => ({ data: [], refetch() {} }) },
+});
+let triageTree = render(TodayScreen);
+control(triageTree, "Select all roles").onPress();
+triageTree = render(TodayScreen);
+control(triageTree, "Track selected").onPress();
+await settle();
+triageTree = render(TodayScreen);
+assert.deepEqual(triageCalls, ["role-0", "role-1"]);
+assert.equal(maxTriageActive, 1, "bulk writes must not flood the owner queue");
+assert.equal(control(triageTree, "Select Reliability engineer").value, true, "failed role stays selected");
+assert.equal(
+	nodes(triageTree).some((node) => node.props.label === "Select Platform engineer"),
+	false,
+	"successful role leaves review queue",
+);
+assert.match(JSON.stringify(triageTree), /1 updated; 1 failed/);
+console.log("PASS native discovery serial bulk triage, partial-failure selection and success suppression");

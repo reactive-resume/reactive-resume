@@ -11145,6 +11145,10 @@
 											"apiKeyFingerprint": {
 												"type": "string"
 											},
+											"recipientVersion": {
+												"type": "string",
+												"pattern": "^[a-f0-9]{64}$"
+											},
 											"lastTestedAt": {
 												"anyOf": [
 													{
@@ -11193,6 +11197,7 @@
 											"testError",
 											"apiKeyPreview",
 											"apiKeyFingerprint",
+											"recipientVersion",
 											"lastTestedAt",
 											"lastUsedAt",
 											"createdAt",
@@ -11470,6 +11475,10 @@
 										"apiKeyFingerprint": {
 											"type": "string"
 										},
+										"recipientVersion": {
+											"type": "string",
+											"pattern": "^[a-f0-9]{64}$"
+										},
 										"lastTestedAt": {
 											"anyOf": [
 												{
@@ -11518,6 +11527,7 @@
 										"testError",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
+										"recipientVersion",
 										"lastTestedAt",
 										"lastUsedAt",
 										"createdAt",
@@ -11903,6 +11913,10 @@
 										"apiKeyFingerprint": {
 											"type": "string"
 										},
+										"recipientVersion": {
+											"type": "string",
+											"pattern": "^[a-f0-9]{64}$"
+										},
 										"lastTestedAt": {
 											"anyOf": [
 												{
@@ -11951,6 +11965,7 @@
 										"testError",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
+										"recipientVersion",
 										"lastTestedAt",
 										"lastUsedAt",
 										"createdAt",
@@ -12538,6 +12553,10 @@
 										"apiKeyFingerprint": {
 											"type": "string"
 										},
+										"recipientVersion": {
+											"type": "string",
+											"pattern": "^[a-f0-9]{64}$"
+										},
 										"lastTestedAt": {
 											"anyOf": [
 												{
@@ -12586,6 +12605,7 @@
 										"testError",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
+										"recipientVersion",
 										"lastTestedAt",
 										"lastUsedAt",
 										"createdAt",
@@ -12981,6 +13001,10 @@
 										"apiKeyFingerprint": {
 											"type": "string"
 										},
+										"recipientVersion": {
+											"type": "string",
+											"pattern": "^[a-f0-9]{64}$"
+										},
 										"lastTestedAt": {
 											"anyOf": [
 												{
@@ -13029,6 +13053,7 @@
 										"testError",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
+										"recipientVersion",
 										"lastTestedAt",
 										"lastUsedAt",
 										"createdAt",
@@ -41595,6 +41620,30 @@
 															"snippet": {
 																"type": "string"
 															},
+															"discoverySource": {
+																"anyOf": [
+																	{
+																		"type": "object",
+																		"properties": {
+																			"query": {
+																				"type": "string",
+																				"maxLength": 500
+																			},
+																			"checkedAt": {
+																				"type": "string",
+																				"format": "date-time"
+																			}
+																		},
+																		"required": [
+																			"query",
+																			"checkedAt"
+																		]
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
 															"description": {
 																"type": "string"
 															},
@@ -41641,6 +41690,7 @@
 															"company",
 															"location",
 															"snippet",
+															"discoverySource",
 															"description",
 															"firstSeenAt",
 															"lastSeenAt",
@@ -42069,6 +42119,175 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/auth/account\" --cookie \"<session-cookie>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
+				]
+			}
+		},
+		"/career/target-roles/suggest": {
+			"post": {
+				"operationId": "suggestCareerTargetRoles",
+				"summary": "Suggest editable target roles",
+				"description": "Sends only the explicitly selected owned resume and opted-in active shared Knowledge to the selected tested AI provider. Requires recipientVersion from the disclosed aiProviders.list configuration; changed settings return CONFLICT before sending. Returns unsaved suggestions with source quotes for user review. Does not search, schedule, save evidence or apply.",
+				"tags": [
+					"Career"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"providerId": {
+										"type": "string",
+										"minLength": 1
+									},
+									"recipientVersion": {
+										"type": "string",
+										"pattern": "^[a-f0-9]{64}$"
+									},
+									"resumeId": {
+										"anyOf": [
+											{
+												"type": "string",
+												"minLength": 1
+											},
+											{
+												"type": "null"
+											}
+										]
+									},
+									"includeKnowledge": {
+										"type": "boolean"
+									},
+									"locale": {
+										"type": "string",
+										"maxLength": 20,
+										"default": "en-US"
+									}
+								},
+								"required": [
+									"providerId",
+									"recipientVersion",
+									"resumeId",
+									"includeKnowledge"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"suggestions": {
+											"type": "array",
+											"maxItems": 5,
+											"items": {
+												"type": "object",
+												"properties": {
+													"role": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 200
+													},
+													"facts": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string"
+																},
+																"text": {
+																	"type": "string"
+																}
+															},
+															"required": [
+																"id",
+																"text"
+															]
+														}
+													},
+													"resumeQuote": {
+														"anyOf": [
+															{
+																"type": "string",
+																"maxLength": 500
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"role",
+													"facts",
+													"resumeQuote"
+												]
+											}
+										}
+									},
+									"required": [
+										"suggestions"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/target-roles/suggest\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"providerId\": \"<string>\",\n  \"recipientVersion\": \"<string>\",\n  \"resumeId\": \"<string>\",\n  \"includeKnowledge\": true\n}'"
 					}
 				]
 			}
@@ -44402,6 +44621,30 @@
 											"snippet": {
 												"type": "string"
 											},
+											"discoverySource": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"query": {
+																"type": "string",
+																"maxLength": 500
+															},
+															"checkedAt": {
+																"type": "string",
+																"format": "date-time"
+															}
+														},
+														"required": [
+															"query",
+															"checkedAt"
+														]
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
 											"firstSeenAt": {
 												"type": "string",
 												"format": "date-time",
@@ -44440,6 +44683,12 @@
 													"type": "string"
 												}
 											},
+											"keywordOverlap": {
+												"type": "array",
+												"items": {
+													"type": "string"
+												}
+											},
 											"unknowns": {
 												"type": "array",
 												"items": {
@@ -44461,6 +44710,7 @@
 											"company",
 											"location",
 											"snippet",
+											"discoverySource",
 											"firstSeenAt",
 											"lastSeenAt",
 											"dismissedAt",
@@ -114885,6 +115135,10 @@
 										"apiKeyFingerprint": {
 											"type": "string"
 										},
+										"recipientVersion": {
+											"type": "string",
+											"pattern": "^[a-f0-9]{64}$"
+										},
 										"lastTestedAt": {
 											"anyOf": [
 												{
@@ -114933,6 +115187,7 @@
 										"testError",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
+										"recipientVersion",
 										"lastTestedAt",
 										"lastUsedAt",
 										"createdAt",

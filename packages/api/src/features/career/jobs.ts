@@ -60,8 +60,16 @@ export const careerJobs = {
 		);
 		if (input.kind === "prepare" && interview?.type === "interview")
 			input.nextRunAt = prepareRunAt(new Date(interview.at), input.lead ?? "24h", input.timezone);
-		if (input.kind === "discovery" && !input.query)
+		if (input.kind === "discovery" && !input.query.trim())
 			throw new ORPCError("BAD_REQUEST", { message: "Enter a job search query." });
+		if (
+			input.kind === "discovery" &&
+			input.enabled &&
+			!webAccessService.canSearch(Boolean(await webAccessService.resolve(userId)))
+		)
+			throw new ORPCError("PRECONDITION_FAILED", {
+				message: "Set up web search in Settings before enabling discovery. AI is not required.",
+			});
 		if (input.kind !== "discovery" && !input.applicationId)
 			throw new ORPCError("BAD_REQUEST", { message: "Choose an application." });
 		if (input.kind === "prepare" && !input.interviewId)
@@ -171,10 +179,15 @@ export const careerJobs = {
 		return rows.map(({ description, ...row }) => ({ ...row, ...matchPosting({ ...row, description }, profile) }));
 	},
 	dismissOpportunity: async (userId: string, id: string) => {
-		await db
-			.update(tables.careerOpportunity)
-			.set({ dismissedAt: new Date() })
-			.where(and(eq(tables.careerOpportunity.id, id), eq(tables.careerOpportunity.userId, userId)));
+		await db.transaction(async (tx) => {
+			await lockUser(tx, userId);
+			const [row] = await tx
+				.update(tables.careerOpportunity)
+				.set({ dismissedAt: new Date() })
+				.where(and(eq(tables.careerOpportunity.id, id), eq(tables.careerOpportunity.userId, userId)))
+				.returning({ id: tables.careerOpportunity.id });
+			if (!row) throw new ORPCError("NOT_FOUND");
+		});
 	},
 };
 
@@ -462,6 +475,7 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 				location: (posting?.page?.location ?? "").slice(0, 200),
 				snippet: plainSnippet(hit.description || posting?.text || ""),
 				description: posting?.text ?? "",
+				discoverySource: posting ? { query: schedule.query, checkedAt: new Date().toISOString() } : null,
 				// Not a posting: kept out of New roles, and never read again.
 				...(posting ? {} : { dismissedAt: new Date() }),
 			};
@@ -476,6 +490,7 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 						location: values.location,
 						snippet: values.snippet,
 						description: values.description,
+						discoverySource: values.discoverySource,
 						lastSeenAt: new Date(),
 						...(posting ? {} : { dismissedAt: new Date() }),
 					},

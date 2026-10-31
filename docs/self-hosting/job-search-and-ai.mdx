@@ -228,3 +228,11 @@ The same web connection supports [automatic role discovery](/guides/finding-role
 Node.js and Docker run the scheduler in the long-running server. Vercel uses the checked-in cron configuration and requires `CRON_SECRET`; Cloudflare uses its Cron Trigger. Check platform limits and verify a due reminder in a dedicated test installation. See [Operating scheduled work](/contributing/career-platform#operate-scheduled-work) for setup, delivery and retry details.
 
 Optional email copies require a verified user email, explicit user opt-in and working SMTP. In-app results stay available in Today. A successful health check does not establish that schedules or provider connections work.
+
+## Discovery context and recurring searches
+
+AI role suggestions are optional and separate from retrieval. Preferences requires an explicitly selected tested provider and opted-in resume and/or active shared Knowledge. Suggestions are unsaved drafts until the user reviews and uses them; no application profile or answer library is included. Discovery schedules send only their saved query and current search countries to the configured search service. They do not need an AI provider.
+
+Enabling discovery requires available web search. A paused schedule can retain its query while the provider is unavailable. In-app results and failure notices appear in Today; email copies require verified email and SMTP. Scheduled discovery sends no push notification and never applies for a job. Saved schedule timezones remain fixed when account preferences change. Repeating runs preserve local time across daylight-saving changes and combine missed occurrences into one run. Configuration alone does not prove the runner is delivering ticks.
+
+The additive `career_opportunity.discovery_source` column records the successful posting check time and query for new or rechecked results. Null means historical provenance is unknown. Account export includes this metadata and account deletion cascades it with opportunities. This metadata does not certify current availability, publication date, completeness or hiring success. Apply migrations before deploying the new backend and mobile bundle.

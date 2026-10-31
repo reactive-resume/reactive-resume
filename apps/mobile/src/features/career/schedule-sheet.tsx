@@ -54,11 +54,12 @@ export function ScheduleSheet(props: ScheduleSheetProps) {
 		<ScheduleForm
 			{...props}
 			key={session.server}
-			timezone={account.timeZone}
+			timezone={props.schedule?.timezone ?? account.timeZone}
 			locale={account.locale}
 			profile={career.profile.data}
 			applications={applications.data}
 			search={web.data.search}
+			reader={web.data.provider}
 			available={flags.data.careerSchedulingEnabled ?? false}
 			smtp={flags.data.smtpEnabled}
 			verified={account.profile.data.emailVerified}
@@ -73,6 +74,7 @@ type FormProps = ScheduleSheetProps & {
 	profile: NonNullable<ReturnType<typeof useCareerQueries>["profile"]["data"]>;
 	applications: NonNullable<ReturnType<typeof useApplications>["data"]>;
 	search: boolean;
+	reader: string | null;
 	available: boolean;
 	smtp: boolean;
 	verified: boolean;
@@ -88,6 +90,7 @@ function ScheduleForm({
 	profile,
 	applications,
 	search,
+	reader,
 	available,
 	smtp,
 	verified,
@@ -134,7 +137,7 @@ function ScheduleForm({
 			? !interview || !ai.hasAIProvider
 			: draft.kind === "follow-up"
 				? !open.some((row) => row.id === draft.applicationId)
-				: !search);
+				: draft.enabled && !search);
 	const save = () => {
 		if (draft.kind === "discovery" && draft.query.trim().length < 3)
 			return setValidation(t`Add a role or company to look for.`);
@@ -209,8 +212,17 @@ function ScheduleForm({
 								{ value: "7", label: t`Every week` },
 							]}
 						/>
-						<Text color="ink3">{t`Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you.`}</Text>
-						{!search ? <Banner tone="warn" message={t`Set up web search in Settings to find roles.`} /> : null}
+						<Text color="ink3">{t`Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you.`}</Text>
+						<Text color="ink3">
+							{reader
+								? t`Found posting links are read by Reactive Resume and, when needed, ${reader} and the sites being read. The reader may charge.`
+								: t`Found posting links are read by Reactive Resume and the sites being read.`}
+						</Text>
+						<Text color="ink3">{t`AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it.`}</Text>
+						<Text color="ink3">{t`Repeats at this local time in the displayed timezone across clock changes. A skipped clock time moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery depends on the server runner.`}</Text>
+						{draft.enabled && !search ? (
+							<Banner tone="warn" message={t`Set up web search in Settings to find roles.`} />
+						) : null}
 					</>
 				) : draft.kind === "prepare" ? (
 					<>

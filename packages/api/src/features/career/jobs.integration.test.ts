@@ -42,7 +42,10 @@ vi.mock("@reactive-resume/env/server", async () => {
 // The external-service boundary is deterministic; queue ownership and all persistence remain real.
 vi.mock("../applications/posting", () => ({ searchJobPostings: fixture.search, readOpenPosting: fixture.read }));
 vi.mock("../web-access/credentials", () => ({
-	webAccessService: { resolve: async () => ({ provider: "tavily", apiKey: "synthetic-web-key" }) },
+	webAccessService: {
+		canSearch: () => true,
+		resolve: async () => ({ provider: "tavily", apiKey: "synthetic-web-key" }),
+	},
 }));
 vi.mock("@reactive-resume/email/transport", () => ({ sendCareerNotification: fixture.email }));
 // No live AI: the briefing writer is the boundary; the provider check only has to find the connection.
@@ -547,6 +550,100 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 			{ description: "Updated responsibilities" },
 		]);
 		expect((await jobs.notifications("alice")).filter((item) => item.notice.type === "opportunities")).toHaveLength(1);
+	});
+
+	it("serializes competing track and dismiss requests and retains per-item bulk failures", async () => {
+		const careers = (await import("./service")).careerService;
+		await schedule();
+		await run();
+		const [role] = await jobs.opportunities("alice");
+		if (!role) throw new Error("Expected discovered role");
+		const tracks = await Promise.all(Array.from({ length: 8 }, () => careers.trackOpportunity("alice", role.id)));
+		expect(new Set(tracks.map((result) => result.applicationId)).size).toBe(1);
+		expect(await getDb().select().from(tables.application)).toHaveLength(1);
+		await jobs.dismissOpportunity("alice", role.id);
+		expect(await careers.trackOpportunity("alice", role.id)).toEqual(tracks[0]);
+		expect(await jobs.opportunities("alice")).toEqual([]);
+		await expect(jobs.dismissOpportunity("bob", role.id)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		const [second] = await getDb()
+			.insert(tables.careerOpportunity)
+			.values({ userId: "alice", url: "https://example.test/jobs/43", role: "Engineer", snippet: "" })
+			.returning();
+		if (!second) throw new Error("Expected role");
+		const results = await Promise.allSettled([
+			jobs.dismissOpportunity("alice", second.id),
+			jobs.dismissOpportunity("alice", "foreign"),
+		]);
+		expect(results.map((result) => result.status)).toEqual(["fulfilled", "rejected"]);
+		await expect(careers.trackOpportunity("alice", second.id)).rejects.toMatchObject({ code: "CONFLICT" });
+		const [third] = await getDb()
+			.insert(tables.careerOpportunity)
+			.values({ userId: "alice", url: "https://example.test/jobs/44", role: "Engineer", snippet: "" })
+			.returning();
+		if (!third) throw new Error("Expected role");
+		await Promise.allSettled([jobs.dismissOpportunity("alice", third.id), careers.trackOpportunity("alice", third.id)]);
+		expect(await jobs.opportunities("alice")).toEqual([]);
+		const count = (await getDb().select().from(tables.application)).length;
+		expect(count).toBeLessThanOrEqual(2);
+	});
+
+	it("records check time separately from search sightings, preserves historical unknowns and exports provenance", async () => {
+		const careers = (await import("./service")).careerService;
+		await schedule();
+		await run();
+		const [first] = await jobs.opportunities("alice");
+		expect(first?.discoverySource).toMatchObject({
+			query: "Reliability engineering roles",
+			checkedAt: expect.any(String),
+		});
+		await schedule();
+		await run();
+		expect((await jobs.opportunities("alice"))[0]?.discoverySource).toEqual(first?.discoverySource);
+		expect(fixture.read).toHaveBeenCalledTimes(1);
+		expect((await careers.exportData("alice")).opportunities[0]?.discoverySource).toEqual(first?.discoverySource);
+		await getDb().update(tables.careerOpportunity).set({ discoverySource: null });
+		expect((await jobs.opportunities("alice"))[0]?.discoverySource).toBeNull();
+	});
+
+	it("measures a controlled discovery corpus without paid retrieval or AI", async () => {
+		fixture.search.mockResolvedValue([
+			...results,
+			{ title: "Product designer", url: "https://example.test/jobs/design", description: "Design products." },
+			{ title: "Closed role", url: "https://example.test/jobs/closed", description: "Closed" },
+			{ title: "200 jobs", url: "https://example.test/jobs/list", description: "A board" },
+			{ title: "Unreadable role", url: "https://example.test/jobs/unreadable", description: "Unavailable" },
+		]);
+		fixture.read.mockImplementation(async (url) => {
+			if (url.endsWith("unreadable")) throw new Error("Synthetic timeout");
+			if (url.endsWith("closed") || url.endsWith("list")) return null;
+			return url.endsWith("design")
+				? { ...posting, page: { ...posting.page, role: "Product designer", location: "" } }
+				: posting;
+		});
+		await getDb()
+			.insert(tables.careerProfile)
+			.values({
+				userId: "alice",
+				data: (await import("@reactive-resume/schema/career")).careerProfileDataSchema.parse({
+					targetRoles: ["Reliability engineer"],
+					locations: ["Berlin"],
+				}),
+			});
+		await schedule();
+		await run();
+		const rows = await jobs.opportunities("alice");
+		expect(rows).toHaveLength(2);
+		expect(new Set(rows.map((row) => row.url)).size).toBe(2);
+		expect(rows.filter((row) => row.matches.includes("Reliability engineer"))).toHaveLength(1);
+		expect(rows.filter((row) => row.discoverySource)).toHaveLength(2);
+		expect(fixture.search).toHaveBeenCalledTimes(1);
+		expect(fixture.read).toHaveBeenCalledTimes(8);
+		await schedule();
+		await run();
+		expect(await jobs.opportunities("alice")).toHaveLength(2);
+		expect(fixture.search).toHaveBeenCalledTimes(2);
+		expect(fixture.read).toHaveBeenCalledTimes(10);
+		expect(fixture.generate).not.toHaveBeenCalled();
 	});
 
 	it("reclaims an abandoned email attempt but never resends a delivered notification", async () => {

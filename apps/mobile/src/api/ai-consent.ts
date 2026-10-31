@@ -18,6 +18,9 @@ export async function authorizeAiRequest(
 	const operation = path.join(".");
 	const fields = input && typeof input === "object" ? (input as Record<string, unknown>) : {};
 	const scheduled = operation === "career.saveSchedule" && fields.enabled !== false;
+	const searchOnly = (scheduled && fields.kind === "discovery") || operation === "applications.ai.searchPostings";
+	// Follow-up reminders use only account storage and notification delivery, with no AI or web request.
+	if (scheduled && fields.kind === "follow-up") return;
 	const connectionTest = operation === "aiProviders.test";
 	const chat = operation === "agent.messages.send" || operation === "agent.attachments.create";
 	if (
@@ -28,6 +31,7 @@ export async function authorizeAiRequest(
 		!(path[0] === "applications" && path[1] === "ai") &&
 		operation !== "coverLetters.draft" &&
 		operation !== "career.generate" &&
+		operation !== "career.suggestTargetRoles" &&
 		operation !== "career.voice.speak" &&
 		operation !== "career.voice.transcribe"
 	)
@@ -53,31 +57,57 @@ export async function authorizeAiRequest(
 			(id ? providers.find((entry) => entry.id === id && (connectionTest || usable.includes(entry))) : usable[0])
 		);
 	};
-	const destinationOf = (entry: { id: string; provider: string; model: string; baseURL?: string | null }) =>
-		[entry.id, entry.provider, entry.model, entry.baseURL ?? ""].join("|");
-	const provider = await resolveProvider();
-	if (!provider) throw new Error(t`Choose a tested AI provider before sharing data.`);
-	const destination = `${provider.label} (${provider.provider}${provider.baseURL ? ` · ${new URL(provider.baseURL).origin}` : ""})`;
+	const destinationOf = (entry: {
+		id: string;
+		provider: string;
+		model: string;
+		baseURL?: string | null;
+		recipientVersion?: string;
+	}) => [entry.id, entry.provider, entry.model, entry.baseURL ?? "", entry.recipientVersion ?? ""].join("|");
+	const provider = searchOnly ? null : await resolveProvider();
+	if (!provider && !searchOnly) throw new Error(t`Choose a tested AI provider before sharing data.`);
+	if (
+		operation === "career.suggestTargetRoles" &&
+		(!provider?.recipientVersion ||
+			fields.providerId !== provider.id ||
+			fields.recipientVersion !== provider.recipientVersion)
+	)
+		throw new Error(t`Your AI settings changed while you were deciding. Nothing was sent; try again.`);
 	const web = path[0] === "applications" || chat || scheduled;
 	const webStatus = web ? await api.webAccess.status({}, options) : null;
+	if (searchOnly && !webStatus?.search)
+		throw new Error(t`Set up web search in Settings before enabling discovery. AI is not required.`);
+	const label = provider?.label ?? (webStatus?.searxng ? t`Server web search` : (webStatus?.provider ?? t`Web search`));
+	const destination = provider
+		? `${provider.label} (${provider.provider} · ${provider.model}${provider.baseURL ? ` · ${new URL(provider.baseURL).origin}` : ""})`
+		: label;
 	current();
 	const server = getServer();
-	const data = connectionTest
-		? t`Your server sends a test prompt and the saved API key to this provider.`
-		: operation === "career.voice.transcribe"
-			? t`Your recording is uploaded through your server to this transcription provider. It can contain personal information.`
-			: operation === "career.voice.speak"
-				? t`The text to read aloud is sent through your server to this speech provider. It can contain personal information.`
-				: t`Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information.`;
+	const data = searchOnly
+		? t`Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted.`
+		: operation === "career.suggestTargetRoles"
+			? t`Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded.`
+			: connectionTest
+				? t`Your server sends a test prompt and the saved API key to this provider.`
+				: operation === "career.voice.transcribe"
+					? t`Your recording is uploaded through your server to this transcription provider. It can contain personal information.`
+					: operation === "career.voice.speak"
+						? t`The text to read aloud is sent through your server to this speech provider. It can contain personal information.`
+						: t`Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information.`;
 	// Older servers leave `searxng` out. With it, searches go to the server's SearXNG and only reading uses the connection.
 	const reader = webStatus?.provider;
-	const webNotice = !web
-		? ""
-		: webStatus?.searxng !== true
-			? t`If web access is used, links and search terms also go to ${reader ?? provider.provider} and the sites being read.`
-			: reader
-				? t`If web access is used, search terms go to your server's search service and the search engines it uses, and links go to ${reader} and the sites being read.`
-				: t`If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read.`;
+	const webNotice =
+		scheduled && fields.kind === "discovery"
+			? reader
+				? t`Found posting links are read by Reactive Resume and, when needed, ${reader} and the sites being read. The reader may charge.`
+				: t`Found posting links are read by Reactive Resume and the sites being read.`
+			: !web || searchOnly
+				? ""
+				: webStatus?.searxng !== true
+					? t`If web access is used, links and search terms also go to ${reader ?? provider?.provider ?? ""} and the sites being read.`
+					: reader
+						? t`If web access is used, search terms go to your server's search service and the search engines it uses, and links go to ${reader} and the sites being read.`
+						: t`If web access is used, search terms go to your server's search service and the search engines it uses, and links go to the sites being read.`;
 	const scheduleNotice = scheduled
 		? t`This enables recurring processing while the schedule is on, using your server's selected providers. Turn the schedule off to stop future runs.`
 		: "";
@@ -86,7 +116,7 @@ export async function authorizeAiRequest(
 		current();
 		const allowed = await new Promise<boolean>((resolve) => {
 			Alert.alert(
-				t`Share data with ${provider.label}?`,
+				t`Share data with ${label}?`,
 				`${t`Server`}: ${server}\n${t`Provider`}: ${destination}\n\n${data}\n\n${webNotice}\n${scheduleNotice}\n${t`Provider retention and use follow its privacy policy. Declining prevents this operation and leaves other app features available.`}`,
 				[
 					{ text: t`Don't share`, style: "cancel", onPress: () => resolve(false) },
@@ -96,12 +126,19 @@ export async function authorizeAiRequest(
 			);
 		});
 		current();
-		if (!allowed) throw new DOMException(t`Data sharing canceled. Nothing was sent to the AI provider.`, "AbortError");
+		if (!allowed) throw new DOMException(t`Data sharing canceled. Nothing was sent to the provider.`, "AbortError");
 		// The approval covers the provider shown. If its settings or the default changed while the dialog was open,
 		// nothing is sent.
+		if (searchOnly) {
+			const approved = await api.webAccess.status({}, options);
+			current();
+			if (!approved.search || approved.provider !== webStatus?.provider || approved.searxng !== webStatus?.searxng)
+				throw new Error(t`Your web search settings changed while you were deciding. Nothing was sent; try again.`);
+			return;
+		}
 		const approved = await resolveProvider();
 		current();
-		if (!approved || destinationOf(approved) !== destinationOf(provider))
+		if (!approved || !provider || destinationOf(approved) !== destinationOf(provider))
 			throw new Error(t`Your AI settings changed while you were deciding. Nothing was sent; try again.`);
 	});
 	dialogs = result.catch(() => undefined);

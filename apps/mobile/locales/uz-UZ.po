@@ -210,6 +210,11 @@ msgstr "{0, plural, one {# sahifa} other {# sahifa}}"
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# taklif qilingan tahrir} other {# taklif qilingan tahrirlar}}"
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
+msgstr ""
+
 #. placeholder {0}: offerIds.length
 #: src/features/assistant/coach-screen.tsx
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
@@ -407,10 +412,23 @@ msgstr "{0} ish e'lonlari"
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr "{0} “{1}”ni qaytardi. Sizning xabaringiz saqlanadi."
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0} roles updated."
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
+#. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
+#: src/features/career/today.tsx
 msgid "{0} selected"
 msgstr "{0} tanlandi"
+
+#. placeholder {0}: done.length
+#. placeholder {1}: failed.length
+#: src/features/career/today.tsx
+msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
+msgstr ""
 
 #. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
 #. placeholder {1}: [...answer].length
@@ -1282,6 +1300,10 @@ msgstr ""
 msgid "AI connection"
 msgstr "AI ulanishi"
 
+#: src/features/career/role-suggestions.tsx
+msgid "AI connection receiving your context"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "AI connections are unavailable."
 msgstr "AI ulanishlari mavjud emas."
@@ -1305,6 +1327,10 @@ msgstr "AI tahrirlash"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "AI boyitish imkonsiz edi. Sahifa tafsilotlarini ko'rib chiqing yoki ularni qo'lda to'ldiring."
+
+#: src/features/career/schedule-sheet.tsx
+msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "AI provider"
@@ -1335,6 +1361,10 @@ msgstr "AI provayderlarini yuklab boʻlmadi. Qayta urinib ko'ring yoki tafsilotl
 #: src/features/applications/add-sheet.tsx
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI faqat siz soʻraganingizda qoʻyilgan matnni oʻqiydi. Havolalar sahifaning shaxsiy ish maʼlumotlaridan AIsiz foydalanishi mumkin."
+
+#: src/features/career/role-suggestions.tsx
+msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "AI-assisted draft"
@@ -2310,6 +2340,10 @@ msgstr "Xitoy (An’anaviy)"
 msgid "Choose a base resume"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Choose a connection"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Choose a country"
 msgstr ""
@@ -2675,6 +2709,10 @@ msgstr "Joylashtirilgan matndan tafsilotlarni o‘qish uchun AI provayderini ula
 #: src/features/ai/web-access.tsx
 msgid "Connect an AI provider to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "Assistentdan foydalanish uchun AI provayderini ulang. Ishlarni saqlash va tayyorlash uchun bitta kerak emas."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Connect and test an AI provider in Settings, or keep entering roles manually."
+msgstr ""
 
 #: src/features/assistant/provider.tsx
 msgid "Connect another…"
@@ -3242,6 +3280,10 @@ msgstr "Yozishni boshlab bo‘lmadi. Qayta urinib ko'ring yoki javobingizni yozi
 msgid "Couldn't start the conversation. Try again."
 msgstr "Suhbatni boshlab bo‘lmadi. Qayta urinib ko'ring."
 
+#: src/features/career/role-suggestions.tsx
+msgid "Couldn't suggest roles. Try again or enter roles manually."
+msgstr ""
+
 #: src/features/assistant/provider.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "Modellarni almashtirib bo‘lmadi. Qayta urinib ko'ring."
@@ -3473,8 +3515,8 @@ msgid "Dark theme"
 msgstr "To‘q mavzu"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
-msgstr "Maʼlumot almashish bekor qilindi. AI provayderiga hech narsa yuborilmadi."
+msgid "Data sharing canceled. Nothing was sent to the provider."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -3794,6 +3836,14 @@ msgstr "Oflayn tahrirlar bekor qilinsinmi?"
 msgid "Dismiss"
 msgstr "Bekor qilish"
 
+#: src/features/career/today.tsx
+msgid "Dismiss selected"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Do not share a resume"
+msgstr ""
+
 #: src/shell/builder-chrome.tsx
 msgid "Document menu"
 msgstr "Hujjat menyusi"
@@ -4037,6 +4087,10 @@ msgstr "Fikr-mulohaza olgan har bir javobingiz shu yerda saqlanadi, eng yangisi 
 #: src/features/workspace/tabs/fit.tsx
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "E'londagi har bir talab Bilimlaringizdagi faktlar va hikoyalar bilan solishtiriladi. Bo'shliqlar qobiliyat yetishmasligi sifatida emas, balki dalil yetishmasligi sifatida ko'rsatiladi."
+
+#: src/features/career/today.tsx
+msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
@@ -4619,6 +4673,22 @@ msgstr "Formatlash"
 msgid "Found {0}"
 msgstr "{0} topildi"
 
+#. placeholder {0}: row.discoverySource.query
+#. placeholder {1}: time.when(row.discoverySource.checkedAt)
+#: src/features/career/today.tsx
+msgid "Found for “{0}”. Posting checked {1}."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and the sites being read."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
 msgid "Free-form"
@@ -4653,6 +4723,10 @@ msgstr "To'liq ism"
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
 msgstr "To‘liq kenglik"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Generate role suggestions"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -4997,7 +5071,7 @@ msgstr "Kontakt liniyasidagi piktogrammalar"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Agar bu skanerdan kelgan boʻlsa, bu kutilgan holat. Aks holda uni olib tashlang; ishga qabul qiluvchilar buni kalit soʻzlarni sun'iy toʻldirish deb qabul qiladi."
 
-#. placeholder {0}: reader ?? provider.provider
+#. placeholder {0}: reader ?? provider?.provider ?? ""
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "Agar internetga kirish ishlatilsa, havolalar va qidiruv so'zlari ham {0} va o'qilayotgan saytlarga o'tadi."
@@ -5367,6 +5441,11 @@ msgstr "Kalitlar siz kabi ishlaydi va hujjatlaringizga kirishi mumkin. Yangi kal
 msgid "Keyword layout"
 msgstr "Kalit so'z tartibi"
 
+#. placeholder {0}: (row.keywordOverlap ?? []).join(" · ") || t`None`
+#: src/features/career/today.tsx
+msgid "Keyword overlap: {0}"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Keywords"
 msgstr "Kalit soʻzlar"
@@ -5387,6 +5466,10 @@ msgstr "Bilimlar"
 #: src/features/assistant/coach-screen.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "Bilimlar yuklanmadi. Qayta urinib ko'ring yoki yuborishdan oldin Bilimlarni o'chiring."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Knowledge:"
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Korean"
@@ -5446,6 +5529,11 @@ msgstr ""
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/application-profile.tsx
 msgid "Last reviewed: {0}"
+msgstr ""
+
+#. placeholder {0}: time.when(row.lastSeenAt)
+#: src/features/career/today.tsx
+msgid "Last seen in search: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -5947,6 +6035,10 @@ msgstr "Server tomonidan boshqariladi"
 #: src/features/ai/provider-list.tsx
 msgid "Managed by your server"
 msgstr "Serveringiz tomonidan boshqariladi"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Many bullets start with the same phrase."
@@ -6508,6 +6600,10 @@ msgstr "Odatiy boʻlim sarlavhalari topilmadi."
 msgid "No conversations about this document yet."
 msgstr "Ushbu hujjat haqida hali hech qanday suhbat yo'q."
 
+#: src/features/career/today.tsx
+msgid "No current target-role or location phrase matches."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No date"
 msgstr "Sana yo‘q"
@@ -6667,6 +6763,10 @@ msgstr "Hali hikoyalar yo'q"
 msgid "No suggestions for this provider. Enter any model ID."
 msgstr "Bu provayder uchun hech qanday taklif yo‘q. Har qanday model identifikatorini kiriting."
 
+#: src/features/career/role-suggestions.tsx
+msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 #: src/features/ats-checker/messages.ts
 msgid "No text could be read from this file."
@@ -6690,6 +6790,7 @@ msgstr "Ish tajribasi boʻlimi topilmadi."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
 #: src/features/write/entry-fields.tsx
 #: src/features/write/pickers.tsx
@@ -6907,10 +7008,6 @@ msgstr "Haftasiga ofis kunlari, ko'pi bilan"
 msgid "Office days are unknown."
 msgstr "Ofisdagi kunlar soni nomaʼlum."
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr "Ofis kunlari ko'rsatilmagan"
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -6986,6 +7083,14 @@ msgstr "Faqat dastlabki 30 sahifa tekshirildi."
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
 msgstr "Faqat birinchi sahifalar tekshirildi."
+
+#: src/api/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
 
 #. placeholder {0}: getServer()
 #: src/features/ai/report-content.tsx
@@ -7426,6 +7531,10 @@ msgstr "Sahifada fotosurat."
 msgid "Photo removed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Pick {label}"
 msgstr "{label} ni tanlang"
@@ -7523,6 +7632,10 @@ msgstr "e'lon"
 msgid "Posting"
 msgstr "Ish e’loni"
 
+#: src/features/career/today.tsx
+msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
@@ -7562,6 +7675,11 @@ msgstr "Bitta ustunni afzal koʻring yoki yon ustunni qisqa, mustaqil roʻyxatla
 #: src/features/career/facts.tsx
 msgid "Preference"
 msgstr "Afzallik"
+
+#. placeholder {0}: row.matches.join(" · ")
+#: src/features/career/today.tsx
+msgid "Preference phrase matches: {0}"
+msgstr ""
 
 #: app/(tabs)/settings/index.tsx
 #: app/(tabs)/settings/preferences.tsx
@@ -8301,6 +8419,10 @@ msgstr "{0}"
 msgid "Reorder {title}"
 msgstr "{title}"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Repeats at this local time in the displayed timezone across clock changes. A skipped clock time moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery depends on the server runner."
+msgstr ""
+
 #: src/features/write/improve.tsx
 msgid "Replace"
 msgstr "O'zgartiring"
@@ -8324,6 +8446,10 @@ msgstr "O‘rinbosar bosqich"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "Arizadagi “{current}” o'rnini egallaydi."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Reply"
@@ -8474,6 +8600,10 @@ msgstr "rezyume oldindan ko'rish"
 msgid "Resume submitted (optional)"
 msgstr "rezyume topshirildi (ixtiyoriy)"
 
+#: src/features/career/role-suggestions.tsx
+msgid "Resume to share for suggestions"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Resumes"
 msgstr "Rezyumelar"
@@ -8533,9 +8663,14 @@ msgstr "{1} yordamida {0} olindi. Qabul qilish vaqti kelib chiqishining yangilig
 msgid "Retry"
 msgstr "Qayta urinish"
 
+#: src/features/career/role-suggestions.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "Retry AI connections"
 msgstr "Qayta urinish AI ulanishlar"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Retry documents"
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Retry linking to application"
@@ -8633,6 +8768,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Majburiy forma javoblarini ko'rib chiqing va tasdiqlanmagan da'volarni olib tashlang."
+
+#: src/features/career/role-suggestions.tsx
+msgid "Review target roles, one per line"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Review the details before saving. Retrieved content does not establish that the posting is still open."
@@ -8770,8 +8909,8 @@ msgid "Salary"
 msgstr "Maosh"
 
 #: src/features/career/today.tsx
-msgid "Salary not listed"
-msgstr "Maosh ko'rsatilmagan"
+msgid "Salary not detected"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
@@ -9145,9 +9284,15 @@ msgid "Select"
 msgstr "Tanlang"
 
 #. placeholder {0}: document.name
+#. placeholder {0}: row.role
+#: src/features/career/today.tsx
 #: src/features/documents/library.tsx
 msgid "Select {0}"
 msgstr "{0} ni tanlash"
+
+#: src/features/career/today.tsx
+msgid "Select all roles"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/preview/page.tsx
@@ -9170,6 +9315,10 @@ msgstr "Ko'rinadiganni tanlang"
 #: src/preview/page.tsx
 msgid "Selected entry"
 msgstr "Tanlangan yozuv"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Selected resume:"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Semantic CSS stylesheet"
@@ -9199,6 +9348,10 @@ msgstr "Yuboruvchi ma'lumotlari xatga ko'chirildi"
 #: src/features/ai/report-content.tsx
 msgid "Sending…"
 msgstr "Yuborilmoqda…"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
@@ -9251,6 +9404,10 @@ msgstr "Server"
 msgid "Server address"
 msgstr "Server manzili"
 
+#: src/api/ai-consent.ts
+msgid "Server web search"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr "Kuzatuvni o'rnating"
@@ -9279,6 +9436,10 @@ msgstr "Qidiruvni sozlash"
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
 msgstr "Veb-qidiruvni sozlang"
+
+#: src/api/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
@@ -9317,10 +9478,13 @@ msgstr "Ulashish"
 msgid "Share calendar event (.ics)"
 msgstr "Taqvim tadbirini ulashing (.ics)"
 
-#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {0}?"
-msgstr "Maʼlumotlar {0} bilan baham koʻrilsinmi?"
+msgid "Share data with {label}?"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Share enabled shared Knowledge"
+msgstr ""
 
 #: src/features/share/download.tsx
 msgid "Share PDF"
@@ -9747,6 +9911,11 @@ msgstr "GitHub'dagi manba kodi"
 msgid "Source employer"
 msgstr ""
 
+#. placeholder {0}: new URL(row.url).hostname
+#: src/features/career/today.tsx
+msgid "Source: {0}"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Sources"
@@ -9961,6 +10130,10 @@ msgstr "Taqdim etilgan rezyume: {0}"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Success at 90 days · next step"
 msgstr "90 kundagi muvaffaqiyat · keyingi qadam"
+
+#: src/features/career/role-suggestions.tsx
+msgid "Suggest target roles (optional AI)"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Suggested reply · edit before sending"
@@ -10937,6 +11110,10 @@ msgstr "Jami summalar qo'shilmaydi. Bonus va kapital shartlarga bog'liq; kapital
 msgid "Track in Applications"
 msgstr "Arizalarda kuzatish"
 
+#: src/features/career/today.tsx
+msgid "Track selected"
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11350,6 +11527,10 @@ msgstr "Ishni e'lon qilish havolasidan foydalaning; saqlashdan oldin ko'rib chiq
 msgid "Use reviewed answer"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Use reviewed roles in preferences"
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Use server version"
 msgstr "Server versiyasidan foydalaning"
@@ -11430,8 +11611,8 @@ msgid "Uses the web search service set up in Settings. Search results wait for y
 msgstr "Sozlamalar da sozlangan veb-qidiruv xizmatidan foydalanadi. Qidiruv natijalari sizning sharhingizni kutadi."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
-msgstr "Sozlamalar da sozlangan veb-qidiruvdan foydalanadi. Natijalar Bugun ichida kutiladi. ishga arizalar va hujjatlar hech qachon siz uchun yaratilmaydi."
+msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
@@ -11588,6 +11769,10 @@ msgstr "Veb-sahifa"
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
 msgstr "Veb-tadqiqot"
+
+#: src/api/ai-consent.ts
+msgid "Web search"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -11788,6 +11973,10 @@ msgstr ""
 #: src/features/ai/web-access.tsx
 msgid "Working…"
 msgstr "Ishlamoqda…"
+
+#: src/features/career/today.tsx
+msgid "Workplace arrangement unknown"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Works without AI or new research"
@@ -12212,6 +12401,10 @@ msgstr "Bu arizani ochishdan oldin ish haqidagi saqlanmagan tafsilotlar bekor qi
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening web search settings."
 msgstr "Saqlanmagan ish tafsilotlari veb-qidiruv sozlamalarini ochishdan oldin olib tashlanadi."
+
+#: src/api/ai-consent.ts
+msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx

@@ -44,6 +44,8 @@ export const PARITY_TOOL_DESCRIPTIONS: Record<string, string> = {
 		"Read an owned conversation, messages and attachments. If its active run is stale, clear the dead run claim and settle its streaming message state before returning. Does not start generation or call an AI provider.",
 	"agent.threads.start":
 		"Start a document, application, or general career conversation using a tested saved AI provider. For scope=document, choose exactly one resumeId or coverLetterId. For scope=application, provide applicationId. For scope=career, omit document and application IDs.",
+	"career.suggestTargetRoles":
+		"Requires recipientVersion from aiProviders.list, disclosed with provider/model/origin before explicit user approval. Changed configuration returns CONFLICT without transmission; refresh and reconfirm. Send explicitly selected resume and opted-in shared Knowledge to the named AI connection for unsaved editable target roles. Requires user context consent. Never uses suggestions in searches or schedules before review and save.",
 	"career.profile":
 		"Read the user's career preferences: target roles, locations, what matters, minimum base salary, office days, notice period, timezone and memory mode (ask, auto or off).",
 	"career.saveProfile":

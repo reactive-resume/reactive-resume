@@ -1,3 +1,4 @@
+import type { CareerProfileData } from "@reactive-resume/schema/career";
 // @vitest-environment happy-dom
 import type { ReactNode } from "react";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
@@ -25,7 +26,7 @@ vi.mock("@/libs/orpc/client", () => {
 			queryFn: async () => {
 				api.read(name);
 				if (api.fail.has(name)) throw new Error("Offline");
-				return api.data[name];
+				return api.data[name] ?? (name === "providers" || name === "documents" ? [] : undefined);
 			},
 			retry: false,
 		}),
@@ -42,6 +43,8 @@ vi.mock("@/libs/orpc/client", () => {
 	});
 	return {
 		orpc: {
+			aiProviders: { list: endpoint("providers") },
+			documents: { list: endpoint("documents") },
 			career: Object.fromEntries(
 				[
 					"facts",
@@ -51,6 +54,7 @@ vi.mock("@/libs/orpc/client", () => {
 					"saveStory",
 					"saveProfile",
 					"saveFact",
+					"suggestTargetRoles",
 					"updateFact",
 					"createOffer",
 				].map((name) => [name, endpoint(name)]),
@@ -97,7 +101,7 @@ import { FactsPage } from "./facts";
 import { PreferencesPage } from "./preferences";
 import { StoriesPage } from "./stories";
 
-const profile = () => ({
+const profile = (): CareerProfileData => ({
 	targetRoles: [],
 	locations: [],
 	priorities: "",
@@ -460,5 +464,25 @@ it("blocks invalid optional learning and skipped DST deadlines without losing th
 			expect.objectContaining({ base: null, variable: null, learning: null, respondBy: null }),
 			expect.anything(),
 		),
+	);
+});
+
+it("publishes target roles to search consumers only after a successful preference save", async () => {
+	const write: { resolve?: (value: ReturnType<typeof profile>) => void } = {};
+	api.saveProfile.mockReturnValueOnce(
+		new Promise<ReturnType<typeof profile>>((resolve) => {
+			write.resolve = resolve;
+		}),
+	);
+	mount(<PreferencesPage />);
+	const field = await screen.findByRole("textbox", { name: "Target roles" });
+	fireEvent.change(field, { target: { value: "Reviewed platform engineer" } });
+	fireEvent.keyDown(field, { key: "Enter" });
+	fireEvent.blur(field);
+	await waitFor(() => expect(api.saveProfile).toHaveBeenCalled());
+	expect(clients.at(-1)?.getQueryData(["profile"])).toMatchObject({ targetRoles: [] });
+	write.resolve?.({ ...profile(), targetRoles: ["Reviewed platform engineer"] });
+	await waitFor(() =>
+		expect(clients.at(-1)?.getQueryData(["profile"])).toMatchObject({ targetRoles: ["Reviewed platform engineer"] }),
 	);
 });

@@ -91,6 +91,7 @@ const PARITY_PROCEDURES: Record<string, [AnyProcedure, BehaviorAnnotations]> = {
 	"agent.messages.setEditStatus": [router.agent.messages.setEditStatus, WRITE_DESTRUCTIVE],
 	"agent.attachments.create": [router.agent.attachments.create, WRITE_NON_IDEMPOTENT],
 	"agent.attachments.delete": [router.agent.attachments.delete, WRITE_DESTRUCTIVE],
+	"career.suggestTargetRoles": [router.career.suggestTargetRoles, READ_EXTERNAL],
 	"career.profile": [router.career.profile, READ_IDEMPOTENT],
 	"career.saveProfile": [router.career.saveProfile, WRITE_DESTRUCTIVE],
 	"career.facts": [router.career.facts, READ_IDEMPOTENT],

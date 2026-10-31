@@ -14,6 +14,7 @@ let dialog;
 let calls = [];
 const provider = {
 	id: "provider-a",
+	recipientVersion: "a".repeat(64),
 	label: "Fixture AI",
 	provider: "openai",
 	model: "fixture",
@@ -44,7 +45,7 @@ const modules = {
 			const value = url.includes("aiProviders/list")
 				? [provider]
 				: url.includes("webAccess/status")
-					? { provider: "tavily" }
+					? { provider: "tavily", search: true }
 					: url.includes("agent/threads/get")
 						? { thread: { aiProviderId: provider.id } }
 						: { id: "result" };
@@ -81,6 +82,13 @@ for (const request of [
 	() => client.ai.atsReview({ text: "fictional" }),
 	() => client.applications.ai.autofill({ jobDescription: "fictional" }),
 	() => streamClient.coverLetters.draft({ id: "fictional" }),
+	() =>
+		client.career.suggestTargetRoles({
+			providerId: provider.id,
+			recipientVersion: provider.recipientVersion,
+			resumeId: null,
+			includeKnowledge: true,
+		}),
 	() => client.career.generate({ applicationId: "fictional", task: { task: "fit" } }),
 	() => streamClient.agent.messages.send({ threadId: "fictional", message: { id: "m", role: "user", parts: [] } }),
 	() =>
@@ -144,9 +152,91 @@ assert.equal((await result).name, "AbortError");
 assert.deepEqual(sent(), []);
 
 reset();
+result = client.career.saveSchedule({ kind: "discovery", enabled: true, query: "Platform engineer" }).then(
+	() => null,
+	(error) => error,
+);
+await waitForDialog();
+assert.equal(
+	calls.some((path) => path.includes("aiProviders")),
+	false,
+	"manual discovery must never require an AI connection",
+);
+assert.match(dialog.message, /Only the search query/);
+assert.match(dialog.message, /tavily/);
+assert.match(dialog.message, /Found posting links are read by Reactive Resume/);
+assert.match(dialog.message, /links.*tavily[\s\S]*reader may charge/);
+assert.deepEqual(sent(), []);
+dialog.buttons[1].onPress();
+assert.equal(await result, null);
+assert.deepEqual(sent(), ["/api/rpc/career/saveSchedule"]);
+reset();
+result = client.applications.ai.searchPostings({ query: "Platform engineer" }).then(
+	() => null,
+	(error) => error,
+);
+await waitForDialog();
+assert.equal(
+	calls.some((path) => path.includes("aiProviders")),
+	false,
+	"manual search requires only web search",
+);
+assert.doesNotMatch(dialog.message, /Found posting links/);
+dialog.buttons[1].onPress();
+assert.equal(await result, null);
+assert.deepEqual(sent(), ["/api/rpc/applications/ai/searchPostings"]);
+reset();
+await client.career.saveSchedule({ kind: "follow-up", enabled: true });
+assert.equal(dialog, null, "local follow-up reminders need no AI sharing");
+assert.deepEqual(sent(), ["/api/rpc/career/saveSchedule"]);
+
+reset();
 await client.ai.reportContent({ source: "other", reason: "other", content: "fictional unsafe content" });
 assert.equal(dialog, null, "a safety report must not require AI-provider consent");
 assert.deepEqual(sent(), ["/api/rpc/ai/reportContent"]);
 console.log(
-	"PASS: ten AI entry points blocked before consent and on decline; acceptance, identity change, cancellation, and reporting exercised through real API client.",
+	"PASS: eleven AI entry points blocked before consent and on decline; acceptance, identity change, cancellation, and reporting exercised through real API client.",
 );
+
+// New suggestion requests carry the exact configuration shown in the screen.
+reset();
+let stale = await client.career
+	.suggestTargetRoles({
+		providerId: provider.id,
+		recipientVersion: "b".repeat(64),
+		resumeId: null,
+		includeKnowledge: true,
+	})
+	.catch((error) => error);
+assert.match(stale.message, /AI settings changed/);
+assert.equal(dialog, null);
+assert.deepEqual(sent(), []);
+reset();
+result = client.career
+	.suggestTargetRoles({
+		providerId: provider.id,
+		recipientVersion: provider.recipientVersion,
+		resumeId: null,
+		includeKnowledge: true,
+	})
+	.catch((error) => error);
+await waitForDialog();
+assert.match(dialog.message, /fixture/);
+provider.recipientVersion = "b".repeat(64); // Same displayed provider/model/origin, replaced credential.
+dialog.buttons[1].onPress();
+assert.match((await result).message, /AI settings changed/);
+assert.deepEqual(sent(), []);
+reset();
+result = client.career
+	.suggestTargetRoles({
+		providerId: provider.id,
+		recipientVersion: provider.recipientVersion,
+		resumeId: null,
+		includeKnowledge: true,
+	})
+	.catch((error) => error);
+await waitForDialog();
+dialog.buttons[1].onPress();
+await result;
+assert.deepEqual(sent(), ["/api/rpc/career/suggestTargetRoles"]);
+console.log("PASS native same-ID recipient revision cutoff before and during consent, unchanged approval transmitted");

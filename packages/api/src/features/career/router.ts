@@ -8,6 +8,8 @@ import {
 	careerStoryInputSchema,
 	careerWorkspaceSchema,
 	generateTaskSchema,
+	roleSuggestionsInputSchema,
+	roleSuggestionsOutputSchema,
 } from "@reactive-resume/schema/career";
 import { protectedProcedure } from "../../context";
 import {
@@ -23,6 +25,7 @@ import { searchScope } from "../web-access/regions";
 import { answerRouter } from "./answer-router";
 import { generateCareer } from "./generate";
 import { careerJobs } from "./jobs";
+import { suggestTargetRoles } from "./role-suggestions";
 import { careerService } from "./service";
 import { careerVoiceRouter } from "./voice";
 
@@ -38,6 +41,20 @@ const savedItemOutput = savedItemSchema.extend({
 });
 
 export const careerRouter = {
+	suggestTargetRoles: protectedProcedure
+		.use(aiRequestRateLimit)
+		.route({
+			method: "POST",
+			path: "/career/target-roles/suggest",
+			tags: ["Career"],
+			operationId: "suggestCareerTargetRoles",
+			summary: "Suggest editable target roles",
+			description:
+				"Sends only the explicitly selected owned resume and opted-in active shared Knowledge to the selected tested AI provider. Requires recipientVersion from the disclosed aiProviders.list configuration; changed settings return CONFLICT before sending. Returns unsaved suggestions with source quotes for user review. Does not search, schedule, save evidence or apply.",
+		})
+		.input(roleSuggestionsInputSchema)
+		.output(roleSuggestionsOutputSchema)
+		.handler(({ context, input, signal }) => suggestTargetRoles(context.user.id, input, signal)),
 	answers: answerRouter,
 	voice: careerVoiceRouter,
 	schedules: protectedProcedure

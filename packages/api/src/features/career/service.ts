@@ -22,6 +22,7 @@ import {
 import { countryForTimeZone } from "@reactive-resume/utils/region";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
+import { aiProvidersService } from "../ai-providers/service";
 import { applicationTransitionValues, ensureApplicationPipeline } from "../applications/lanes";
 import { applicationService, recordSentResume } from "../applications/service";
 import { lockUser } from "../documents/ownership";
@@ -794,10 +795,29 @@ export const careerService = {
 	assertMemoryVersion: (
 		userId: string,
 		expected: string,
-		knowledge?: { applicationId: string; version: string; pipelineRevision?: number | null },
+		knowledge?: { applicationId?: string | null; version: string; pipelineRevision?: number | null },
+		selectedResume?: Pick<typeof tables.resume.$inferSelect, "id" | "data" | "updatedAt">,
+		providerId?: string,
 	) =>
 		db.transaction(async (tx) => {
 			await lockUser(tx, userId);
+			if (selectedResume) {
+				const [current] = await tx
+					.select({ id: tables.resume.id, data: tables.resume.data, updatedAt: tables.resume.updatedAt })
+					.from(tables.resume)
+					.where(
+						and(
+							eq(tables.resume.id, selectedResume.id),
+							eq(tables.resume.userId, userId),
+							isNull(tables.resume.trashedAt),
+						),
+					)
+					.for("share");
+				if (!isDeepStrictEqual(current, selectedResume))
+					throw new ORPCError("CONFLICT", {
+						message: "Selected resume changed while preparing roles. Generate suggestions again.",
+					});
+			}
 			if (
 				expected !== (await memoryVersion(userId, tx)) ||
 				(knowledge &&
@@ -808,6 +828,7 @@ export const careerService = {
 				throw new ORPCError("CONFLICT", {
 					message: "Career knowledge changed while generating this result. Generate it again.",
 				});
+			if (providerId) await aiProvidersService.assertAvailable({ id: providerId, userId }, tx);
 		}),
 	deleteSavedItem: async (userId: string, id: string) => {
 		await db
@@ -1131,6 +1152,8 @@ export const careerService = {
 				.for("update");
 			if (!opportunity) throw new ORPCError("NOT_FOUND");
 			if (opportunity.trackedApplicationId) return { applicationId: opportunity.trackedApplicationId };
+			if (opportunity.dismissedAt)
+				throw new ORPCError("CONFLICT", { message: "This role was dismissed. Refresh the review queue." });
 			const [profile] = await tx.select().from(tables.careerProfile).where(eq(tables.careerProfile.userId, userId));
 			const { matches } = matchPosting(opportunity, careerProfileDataSchema.parse(profile?.data ?? {}));
 			const applicationId = generateId();

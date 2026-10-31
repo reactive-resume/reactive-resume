@@ -2,7 +2,7 @@ import type { Kind, Lead, Schedule } from "./schedule-sheet";
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Ref } from "react";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
@@ -27,7 +27,7 @@ import {
 } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { toastError } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
+import { client, orpc } from "@/libs/orpc/client";
 
 type Notification = RouterOutput["career"]["notifications"][number];
 type Opportunity = RouterOutput["career"]["opportunities"][number];
@@ -307,6 +307,9 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 	const [hidden, setHidden] = useState<string[]>([]);
 	const [tracked, setTracked] = useState<Tracked>({});
 	const [expanded, setExpanded] = useState(false);
+	const [selected, setSelected] = useState<string[]>([]);
+	const [bulkPending, setBulkPending] = useState(false);
+	const [bulkStatus, setBulkStatus] = useState("");
 	const invalidateRoles = () => queryClient.invalidateQueries({ queryKey: orpc.career.opportunities.key() });
 	// Callbacks live on the hooks, not on mutate(), so each of several quick calls gets its own.
 	const track = useMutation({
@@ -358,6 +361,33 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 	const discovery =
 		schedules?.filter((schedule) => schedule.kind === "discovery" && !deleted.includes(schedule.id)) ?? [];
 	const active = discovery.find((schedule) => schedule.enabled) ?? discovery[0];
+
+	const selectable = visible.filter((row) => !row.trackedApplicationId && !tracked[row.id]);
+	const selection = selected.filter((id) => selectable.some((row) => row.id === id));
+	const bulk = async (kind: "track" | "dismiss") => {
+		if (bulkPending || !selection.length) return;
+		setBulkPending(true);
+		const failed: string[] = [];
+		// Each write takes the owner's mutex; send one at a time instead of flooding the server's queue.
+		for (const id of selection) {
+			try {
+				if (kind === "track") await client.career.trackOpportunity({ id });
+				else await client.career.dismissOpportunity({ id });
+			} catch {
+				failed.push(id);
+			}
+		}
+		const done = selection.filter((id) => !failed.includes(id));
+		setHidden((current) => [...new Set([...current, ...done])]);
+		setSelected(failed);
+		setBulkStatus(
+			failed.length
+				? t`${done.length} updated; ${failed.length} failed. Failed roles remain selected. Refresh or retry.`
+				: plural(done.length, { one: "# role updated.", other: "# roles updated." }),
+		);
+		await Promise.all([invalidateRoles(), queryClient.invalidateQueries({ queryKey: orpc.applications.key() })]);
+		setBulkPending(false);
+	};
 
 	const onTrack = (row: Opportunity) => track.mutate({ id: row.id });
 	const onUndoTrack = (applicationId: string) => untrack.mutate({ id: applicationId });
@@ -436,6 +466,30 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 				)
 			) : (
 				<div>
+					<div className="mb-3 flex flex-wrap items-center gap-2">
+						<Button
+							variant="ghost"
+							disabled={bulkPending || track.isPending}
+							onClick={() => setSelected(selection.length === selectable.length ? [] : selectable.map((row) => row.id))}
+						>
+							<Trans>Select all roles</Trans>
+						</Button>
+						<span className="text-xs">{t`${selection.length} selected`}</span>
+						<Button
+							variant="secondary"
+							disabled={!selection.length || bulkPending || track.isPending}
+							onClick={() => void bulk("track")}
+						>
+							<Trans>Track selected</Trans>
+						</Button>
+						<Button
+							variant="ghost"
+							disabled={!selection.length || bulkPending || track.isPending}
+							onClick={() => void bulk("dismiss")}
+						>
+							<Trans>Dismiss selected</Trans>
+						</Button>
+					</div>
 					<AnimatePresence initial={false}>
 						{shown.map((row) => {
 							const offset = dayOffset(row.firstSeenAt, now);
@@ -451,7 +505,13 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 													: t`Found ${day(row.firstSeenAt)}`
 										}
 										tracked={tracked[row.id]}
-										pending={track.isPending && track.variables?.id === row.id}
+										pending={(track.isPending && track.variables?.id === row.id) || bulkPending}
+										selected={selection.includes(row.id)}
+										onSelect={() =>
+											setSelected((current) =>
+												current.includes(row.id) ? current.filter((id) => id !== row.id) : [...current, row.id],
+											)
+										}
 										onTrack={onTrack}
 										onUndo={onUndoTrack}
 										onDismiss={onDismiss}
@@ -467,12 +527,19 @@ function NewRoles({ ref, now, deleted, onOpenSchedule, className }: NewRolesProp
 					)}
 				</div>
 			)}
+			{bulkStatus && (
+				<p role="status" className="text-sm">
+					{bulkStatus}
+				</p>
+			)}
 		</section>
 	);
 }
 
 type RoleCardProps = {
 	row: Opportunity;
+	selected: boolean;
+	onSelect: () => void;
 	found: string;
 	tracked: Tracked[string] | undefined;
 	pending: boolean;
@@ -483,16 +550,23 @@ type RoleCardProps = {
 
 const companyOf = (row: Opportunity) => row.company || new URL(row.url).hostname.replace(/^www\./, "");
 
-function RoleCard({ row, found, tracked, pending, onTrack, onUndo, onDismiss }: RoleCardProps) {
+function RoleCard({ row, found, tracked, pending, selected, onSelect, onTrack, onUndo, onDismiss }: RoleCardProps) {
 	const { matches, unknowns } = row;
+	const { when } = useCareerTime();
 	const company = companyOf(row);
-	const unknownLabels = { salary: t`Salary not listed`, office: t`Office days not stated` };
+	const unknownLabels = { salary: t`Salary not detected`, office: t`Workplace arrangement unknown` };
 	return (
 		<article
 			data-role-card
 			aria-labelledby={`role-${row.id}`}
 			className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4"
 		>
+			{!tracked && (
+				<label className="flex items-center gap-2 text-xs">
+					<input type="checkbox" checked={selected} disabled={pending} onChange={onSelect} />
+					{t`Select ${row.role}`}
+				</label>
+			)}
 			<div className="flex items-start gap-3">
 				<span
 					aria-hidden="true"
@@ -508,6 +582,29 @@ function RoleCard({ row, found, tracked, pending, onTrack, onUndo, onDismiss }: 
 				</div>
 			</div>
 			{row.snippet && <p className="text-sm leading-[21px] text-ink-2">{row.snippet}</p>}
+			<p className="text-xs text-ink-3">
+				{t`Source: ${new URL(row.url).hostname}`} · {t`Last seen in search: ${when(row.lastSeenAt)}`}
+			</p>
+			<p className="text-xs text-ink-3">
+				{row.discoverySource
+					? t`Found for “${row.discoverySource.query}”. Posting checked ${when(row.discoverySource.checkedAt)}.`
+					: t`Earlier discovery result. Search query and posting check time unknown.`}
+			</p>
+			<p className="text-xs text-ink-3">
+				<Trans>Postings can change or close. Publication date unknown; search coverage is incomplete.</Trans>
+			</p>
+			<p className="text-xs text-ink-2">
+				{matches.length
+					? t`Preference phrase matches: ${matches.join(" · ")}`
+					: t`No current target-role or location phrase matches.`}
+			</p>
+			<p className="text-xs text-ink-3">{t`Keyword overlap: ${(row.keywordOverlap ?? []).join(" · ") || t`None`}`}</p>
+			<p className="text-xs text-ink-3">
+				<Trans>
+					Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not
+					been assessed. Track, then open Fit for an optional assessment.
+				</Trans>
+			</p>
 			{matches.length + unknowns.length > 0 && (
 				<div className="flex flex-wrap gap-1.5">
 					{matches.map((match) => (
@@ -556,6 +653,7 @@ function RoleCard({ row, found, tracked, pending, onTrack, onUndo, onDismiss }: 
 							<Icon name="arrow-square-out" size={16} />
 						</Button>
 						<Button
+							disabled={pending}
 							variant="ghost"
 							className="ms-auto h-8 px-2.5 text-[13px] text-ink-2"
 							onClick={() => onDismiss(row)}

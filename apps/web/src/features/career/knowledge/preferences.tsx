@@ -14,6 +14,7 @@ import { parseAmount } from "@reactive-resume/utils/amount";
 import { cn } from "@reactive-resume/utils/style";
 import { useDebouncedSave } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
+import { RoleSuggestions } from "../role-suggestions";
 import { useCareerTime, useNow } from "../shared";
 import { SearchRegionsField } from "./search-regions-field";
 import { toastError } from "@/libs/error-message";
@@ -70,8 +71,6 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 	const change = (patch: Partial<CareerProfileData>) => {
 		const next = { ...draft, ...patch };
 		setDraft(next);
-		// Times elsewhere follow the new timezone at once; the server copy follows within 2 seconds.
-		queryClient.setQueryData(orpc.career.profile.queryKey(), next);
 	};
 
 	// Called directly (not through a mutation hook) so the flush on unmount still saves.
@@ -82,6 +81,7 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 		saves.current = operation.catch(() => undefined);
 		operation
 			.then(() => {
+				queryClient.setQueryData(orpc.career.profile.queryKey(), next);
 				setSaved(next);
 				setStatus({ saving: false, failed: false, at: Date.now() });
 			})
@@ -146,6 +146,8 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 					/>
 				</div>
 			</div>
+
+			<RoleSuggestions onUse={(targetRoles) => change({ targetRoles })} />
 
 			<div className="grid gap-1.5">
 				<label htmlFor={`${id}-priorities`} className="text-xs font-medium text-ink-2">

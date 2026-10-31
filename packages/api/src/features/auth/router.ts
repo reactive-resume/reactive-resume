@@ -6,7 +6,7 @@ import { accountAuth, auth } from "@reactive-resume/auth/config";
 import * as schema from "@reactive-resume/db/schema";
 import { applicationProfileRecordSchema } from "@reactive-resume/schema/application-profile";
 import { applicationPipelineSchema } from "@reactive-resume/schema/applications/lanes";
-import { careerProfileDataSchema, careerWorkspaceSchema } from "@reactive-resume/schema/career";
+import { careerProfileDataSchema, careerWorkspaceSchema, discoverySourceSchema } from "@reactive-resume/schema/career";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { protectedProcedure, publicProcedure } from "../../context";
@@ -258,7 +258,9 @@ export const authRouter = {
 						}),
 					),
 					attachments: z.array(createSelectSchema(schema.agentAttachment)),
-					opportunities: z.array(createSelectSchema(schema.careerOpportunity)),
+					opportunities: z.array(
+						createSelectSchema(schema.careerOpportunity, { discoverySource: discoverySourceSchema.nullable() }),
+					),
 					jobs: z.array(createSelectSchema(schema.careerJob)),
 					transcripts: z.array(createSelectSchema(schema.careerTranscript)),
 					workspaces: z.array(createSelectSchema(schema.careerWorkspace, { data: careerWorkspaceSchema })),

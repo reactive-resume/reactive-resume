@@ -68,7 +68,7 @@ vi.mock("drizzle-orm", () => ({
 	ne: (left: unknown, right: unknown) => ({ type: "ne", left, right }),
 	sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({ type: "sql", strings: [...strings], values }),
 }));
-vi.mock("@reactive-resume/env/server", () => ({ env: {} }));
+vi.mock("@reactive-resume/env/server", () => ({ env: { AUTH_SECRET: "synthetic-test-auth-secret" } }));
 vi.mock("../ai/credentials", () => ({
 	assertCredentialEncryptionConfigured: vi.fn(),
 	decryptCredential: vi.fn(() => "decrypted-key"),
@@ -176,5 +176,23 @@ describe("aiProvidersService", () => {
 				{ type: "eq", left: "ai_provider.encrypted_api_key", right: "encrypted-key" },
 			]),
 		});
+	});
+	it("binds recipient version to owner, provider, model, full URL and encrypted credential revision", async () => {
+		queryState.rows = [providerRow()];
+		const original = await aiProvidersService.getDefaultRunnable({ userId: "user-1" });
+		expect(original?.recipientVersion).toMatch(/^[a-f0-9]{64}$/);
+		for (const change of [
+			{ id: "other" },
+			{ userId: "other" },
+			{ provider: "anthropic" },
+			{ model: "other" },
+			{ baseUrl: "https://other.example/v1" },
+			{ encryptedApiKey: "replacement" },
+		]) {
+			queryState.rows = [providerRow(change)];
+			expect((await aiProvidersService.getDefaultRunnable({ userId: "user-1" }))?.recipientVersion).not.toBe(
+				original?.recipientVersion,
+			);
+		}
 	});
 });

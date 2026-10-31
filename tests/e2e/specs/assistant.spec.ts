@@ -59,7 +59,8 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 	await expect(edits).toBeVisible({ timeout: 20_000 });
 	await expect(page.getByText("1 proposed", { exact: true })).toBeVisible();
 	// The page caption appears once the in-browser preview has fetched its fonts and rendered.
-	await expect(page.getByText(/proposed edit on this page/)).toBeVisible({ timeout: 30_000 });
+	const activePreview = page.locator('[data-resume-preview-template][aria-hidden="false"]');
+	await expect(activePreview.getByText(/proposed edit on this page/)).toBeVisible({ timeout: 30_000 });
 	expect(await resumeJson(page, resumeId)).not.toContain("(tightened by the stub)");
 
 	await edits.getByRole("button", { name: "Accept" }).click();

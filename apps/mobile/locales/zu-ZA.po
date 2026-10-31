@@ -210,6 +210,11 @@ msgstr ""
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr ""
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
+msgstr ""
+
 #. placeholder {0}: offerIds.length
 #: src/features/assistant/coach-screen.tsx
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
@@ -407,9 +412,22 @@ msgstr ""
 msgid "{0} returned “{1}”. Your message is kept."
 msgstr ""
 
+#. placeholder {0}: done.length
+#: src/features/career/today.tsx
+msgid "{0} roles updated."
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
+#. placeholder {0}: selection.length
 #: src/features/applications/list-screen.tsx
+#: src/features/career/today.tsx
 msgid "{0} selected"
+msgstr ""
+
+#. placeholder {0}: done.length
+#. placeholder {1}: failed.length
+#: src/features/career/today.tsx
+msgid "{0} updated; {1} failed. Failed roles remain selected. Refresh or retry."
 msgstr ""
 
 #. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
@@ -1282,6 +1300,10 @@ msgstr ""
 msgid "AI connection"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "AI connection receiving your context"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "AI connections are unavailable."
 msgstr ""
@@ -1304,6 +1326,10 @@ msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
+msgstr ""
+
+#: src/features/career/schedule-sheet.tsx
+msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
 msgstr ""
 
 #: src/features/check/writing.tsx
@@ -1334,6 +1360,10 @@ msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -2310,6 +2340,10 @@ msgstr ""
 msgid "Choose a base resume"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Choose a connection"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Choose a country"
 msgstr ""
@@ -2674,6 +2708,10 @@ msgstr ""
 
 #: src/features/ai/web-access.tsx
 msgid "Connect an AI provider to use the assistant. Saving and preparing jobs doesn't need one."
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Connect and test an AI provider in Settings, or keep entering roles manually."
 msgstr ""
 
 #: src/features/assistant/provider.tsx
@@ -3242,6 +3280,10 @@ msgstr ""
 msgid "Couldn't start the conversation. Try again."
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Couldn't suggest roles. Try again or enter roles manually."
+msgstr ""
+
 #: src/features/assistant/provider.tsx
 msgid "Couldn't switch models. Try again."
 msgstr ""
@@ -3473,7 +3515,7 @@ msgid "Dark theme"
 msgstr ""
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgid "Data sharing canceled. Nothing was sent to the provider."
 msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
@@ -3794,6 +3836,14 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Dismiss selected"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Do not share a resume"
+msgstr ""
+
 #: src/shell/builder-chrome.tsx
 msgid "Document menu"
 msgstr ""
@@ -4036,6 +4086,10 @@ msgstr ""
 
 #: src/features/workspace/tabs/fit.tsx
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
+msgstr ""
+
+#: src/features/career/today.tsx
+msgid "Earlier discovery result. Search query and posting check time unknown."
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
@@ -4619,6 +4673,22 @@ msgstr ""
 msgid "Found {0}"
 msgstr ""
 
+#. placeholder {0}: row.discoverySource.query
+#. placeholder {1}: time.when(row.discoverySource.checkedAt)
+#: src/features/career/today.tsx
+msgid "Found for “{0}”. Posting checked {1}."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and the sites being read."
+msgstr ""
+
+#: src/api/ai-consent.ts
+#: src/features/career/schedule-sheet.tsx
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
 msgid "Free-form"
@@ -4652,6 +4722,10 @@ msgstr ""
 #. Layout editor toggle label that makes a page single-column
 #: src/features/design/layout-screen.tsx
 msgid "Full width"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Generate role suggestions"
 msgstr ""
 
 #: src/features/application-detail/sections.tsx
@@ -4997,7 +5071,7 @@ msgstr ""
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr ""
 
-#. placeholder {0}: reader ?? provider.provider
+#. placeholder {0}: reader ?? provider?.provider ?? ""
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr ""
@@ -5367,6 +5441,11 @@ msgstr ""
 msgid "Keyword layout"
 msgstr ""
 
+#. placeholder {0}: (row.keywordOverlap ?? []).join(" · ") || t`None`
+#: src/features/career/today.tsx
+msgid "Keyword overlap: {0}"
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Keywords"
 msgstr ""
@@ -5386,6 +5465,10 @@ msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Knowledge:"
 msgstr ""
 
 #: src/features/settings/locale-names.ts
@@ -5446,6 +5529,11 @@ msgstr ""
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/application-profile.tsx
 msgid "Last reviewed: {0}"
+msgstr ""
+
+#. placeholder {0}: time.when(row.lastSeenAt)
+#: src/features/career/today.tsx
+msgid "Last seen in search: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
@@ -5946,6 +6034,10 @@ msgstr ""
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Managed by your server"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Manual roles and preferences work without AI. Suggestions never search or schedule anything."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -6508,6 +6600,10 @@ msgstr ""
 msgid "No conversations about this document yet."
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "No current target-role or location phrase matches."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No date"
 msgstr ""
@@ -6667,6 +6763,10 @@ msgstr ""
 msgid "No suggestions for this provider. Enter any model ID."
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 #: src/features/ats-checker/messages.ts
 msgid "No text could be read from this file."
@@ -6690,6 +6790,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
 #: src/features/write/entry-fields.tsx
 #: src/features/write/pickers.tsx
@@ -6907,10 +7008,6 @@ msgstr ""
 msgid "Office days are unknown."
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Office days not stated"
-msgstr ""
-
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Office days per week"
@@ -6985,6 +7082,14 @@ msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Only the first pages were checked."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
 msgstr ""
 
 #. placeholder {0}: getServer()
@@ -7426,6 +7531,10 @@ msgstr ""
 msgid "Photo removed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Pick {label}"
 msgstr ""
@@ -7523,6 +7632,10 @@ msgstr ""
 msgid "Posting"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/practise.tsx
 #: src/features/workspace/tabs/prepare.tsx
@@ -7561,6 +7674,11 @@ msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Preference"
+msgstr ""
+
+#. placeholder {0}: row.matches.join(" · ")
+#: src/features/career/today.tsx
+msgid "Preference phrase matches: {0}"
 msgstr ""
 
 #: app/(tabs)/settings/index.tsx
@@ -8301,6 +8419,10 @@ msgstr ""
 msgid "Reorder {title}"
 msgstr ""
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Repeats at this local time in the displayed timezone across clock changes. A skipped clock time moves forward. Missed runs combine into one search. Results and failures appear in Today; delivery depends on the server runner."
+msgstr ""
+
 #: src/features/write/improve.tsx
 msgid "Replace"
 msgstr ""
@@ -8323,6 +8445,10 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Replaces “{current}” on the application."
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Replaces target roles only after you choose Use. Wait for Saved before opening a new search schedule; existing schedules keep their saved query."
 msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
@@ -8474,6 +8600,10 @@ msgstr ""
 msgid "Resume submitted (optional)"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Resume to share for suggestions"
+msgstr ""
+
 #: src/features/search/search-screen.tsx
 msgid "Resumes"
 msgstr ""
@@ -8533,8 +8663,13 @@ msgstr ""
 msgid "Retry"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "Retry AI connections"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Retry documents"
 msgstr ""
 
 #: src/features/documents/new-document.tsx
@@ -8632,6 +8767,10 @@ msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Review target roles, one per line"
 msgstr ""
 
 #: src/features/applications/add-sheet.tsx
@@ -8770,7 +8909,7 @@ msgid "Salary"
 msgstr ""
 
 #: src/features/career/today.tsx
-msgid "Salary not listed"
+msgid "Salary not detected"
 msgstr ""
 
 #: src/features/applications/add-sheet.tsx
@@ -9145,8 +9284,14 @@ msgid "Select"
 msgstr ""
 
 #. placeholder {0}: document.name
+#. placeholder {0}: row.role
+#: src/features/career/today.tsx
 #: src/features/documents/library.tsx
 msgid "Select {0}"
+msgstr ""
+
+#: src/features/career/today.tsx
+msgid "Select all roles"
 msgstr ""
 
 #. placeholder {0}: index + 1
@@ -9169,6 +9314,10 @@ msgstr ""
 
 #: src/preview/page.tsx
 msgid "Selected entry"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Selected resume:"
 msgstr ""
 
 #: src/features/design/advanced.tsx
@@ -9198,6 +9347,10 @@ msgstr ""
 
 #: src/features/ai/report-content.tsx
 msgid "Sending…"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
@@ -9251,6 +9404,10 @@ msgstr ""
 msgid "Server address"
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Server web search"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr ""
@@ -9278,6 +9435,10 @@ msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -9317,9 +9478,12 @@ msgstr ""
 msgid "Share calendar event (.ics)"
 msgstr ""
 
-#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {0}?"
+msgid "Share data with {label}?"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Share enabled shared Knowledge"
 msgstr ""
 
 #: src/features/share/download.tsx
@@ -9747,6 +9911,11 @@ msgstr ""
 msgid "Source employer"
 msgstr ""
 
+#. placeholder {0}: new URL(row.url).hostname
+#: src/features/career/today.tsx
+msgid "Source: {0}"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Sources"
@@ -9960,6 +10129,10 @@ msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Success at 90 days · next step"
+msgstr ""
+
+#: src/features/career/role-suggestions.tsx
+msgid "Suggest target roles (optional AI)"
 msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
@@ -10937,6 +11110,10 @@ msgstr ""
 msgid "Track in Applications"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Track selected"
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design-presets.ts
 msgid "Traditional"
@@ -11350,6 +11527,10 @@ msgstr ""
 msgid "Use reviewed answer"
 msgstr ""
 
+#: src/features/career/role-suggestions.tsx
+msgid "Use reviewed roles in preferences"
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Use server version"
 msgstr ""
@@ -11430,7 +11611,7 @@ msgid "Uses the web search service set up in Settings. Search results wait for y
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Uses web search set up in Settings. Results wait in Today. Applications and documents are never created for you."
+msgid "Uses web search set up in Settings. Only this query and search countries are sent; your resume and Knowledge are not sent to search. The service may charge. Results wait in Today; applications and documents are never created for you."
 msgstr ""
 
 #: src/features/share/web-page.tsx
@@ -11587,6 +11768,10 @@ msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Web search"
 msgstr ""
 
 #: src/features/assistant/messages.tsx
@@ -11787,6 +11972,10 @@ msgstr ""
 
 #: src/features/ai/web-access.tsx
 msgid "Working…"
+msgstr ""
+
+#: src/features/career/today.tsx
+msgid "Workplace arrangement unknown"
 msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
@@ -12211,6 +12400,10 @@ msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening web search settings."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
 msgstr ""
 
 #: src/features/letters/page.tsx

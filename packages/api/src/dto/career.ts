@@ -6,6 +6,7 @@ import {
 	careerNoticeSchema,
 	careerSourceSchema,
 	careerStoryInputSchema,
+	discoverySourceSchema,
 	savedItemDataSchema,
 } from "@reactive-resume/schema/career";
 
@@ -31,11 +32,15 @@ export const careerNotificationSchema = createSelectSchema(tables.careerNotifica
 	title: z.string(),
 	body: z.string(),
 });
-export const careerOpportunitySchema = createSelectSchema(tables.careerOpportunity)
+export const careerOpportunitySchema = createSelectSchema(tables.careerOpportunity, {
+	discoverySource: discoverySourceSchema.nullable(),
+})
 	.omit({ description: true })
 	.extend({
 		/** Target roles and locations from Preferences that the posting matches, in the user's words. */
 		matches: z.array(z.string()),
+		/** Partial word overlap with target roles; never an AI fit assessment. */
+		keywordOverlap: z.array(z.string()).optional(),
 		/** What the posting doesn't say. */
 		unknowns: z.array(z.enum(["salary", "office"])),
 	});
