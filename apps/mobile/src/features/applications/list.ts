@@ -31,9 +31,10 @@ export function groupApplications(
 		...lane,
 		position: LIST_ORDER.indexOf(lane.category),
 	})),
+	timeZone = "UTC",
 ) {
 	const nextTime = (application: Application) => {
-		const step = getNextStep(application, now);
+		const step = getNextStep(application, now, lanes, timeZone);
 		return step.kind === "interview" || step.kind === "follow-up" ? step.at.getTime() : Infinity;
 	};
 	const compare = (a: Application, b: Application) => {

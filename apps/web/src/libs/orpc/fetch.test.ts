@@ -21,6 +21,15 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("RPC fetch", () => {
+	it("bounds keepalive to small requests instead of failing supported large drafts", async () => {
+		fetchMock.mockResolvedValue(new Response("ok"));
+		const { rpcFetch } = await import("./fetch");
+		await rpcFetch(rpcUrl, { method: "POST", body: "small draft" });
+		expect(fetchMock.mock.calls[0]?.[1]?.keepalive).toBe(true);
+		await rpcFetch(rpcUrl, { method: "POST", body: new Uint8Array(100000) });
+		expect(fetchMock.mock.calls[1]?.[1]?.keepalive).toBe(false);
+	});
+
 	it("uploads large wire bytes to Blob, then sends a tiny reference to the original RPC", async () => {
 		queueStaging();
 		const { rpcFetch } = await import("./fetch");

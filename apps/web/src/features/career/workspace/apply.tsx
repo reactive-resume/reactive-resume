@@ -26,7 +26,16 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
-import { latest, useDebouncedSave, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
+import { DraftRecovery } from "../draft-recovery";
+import {
+	latest,
+	useDebouncedSave,
+	useDefaultProvider,
+	useGenerate,
+	useSavedItems,
+	useSessionDraft,
+	useWorkspace,
+} from "../hooks";
 import { CollapseRow, Swap, withUndo, Working, workingSteps } from "../shared";
 import { AnswerLibrary } from "./answer-library";
 import { AiNotice } from "./fit";
@@ -287,8 +296,20 @@ function AnswerCard({
 	unit,
 	onToggleUnit,
 }: AnswerCardProps) {
-	const [text, setText] = useState(answer.answer);
-	const [question, setQuestion] = useState(answer.question);
+	const textDraft = useSessionDraft(
+		readOnly ? null : `answer:${applicationId}:${answer.id}`,
+		answer.answer,
+		(value) => (typeof value === "string" ? value : undefined),
+		true,
+	);
+	const questionDraft = useSessionDraft(
+		readOnly ? null : `question:${applicationId}:${answer.id}`,
+		answer.question,
+		(value) => (typeof value === "string" ? value : undefined),
+		true,
+	);
+	const { value: text, setValue: setText } = textDraft;
+	const { value: question, setValue: setQuestion } = questionDraft;
 	useLayoutEffect(
 		() => registerDraft(answer.id, () => ({ ...answer, question, answer: text })),
 		[answer, question, text, registerDraft],
@@ -299,11 +320,15 @@ function AnswerCard({
 	const [proposal, setProposal] = useState<{ text: string; factIds: string[] } | null>(null);
 	const generate = useGenerate(applicationId);
 	const { provider } = useDefaultProvider();
-	const flushAnswer = useDebouncedSave(disabled || readOnly ? answer.answer : text, answer.answer, (value) =>
-		onSave({ answer: value }),
+	const flushAnswer = useDebouncedSave(
+		disabled || readOnly || textDraft.restored ? answer.answer : text,
+		answer.answer,
+		(value) => onSave({ answer: value }),
 	);
-	const flushQuestion = useDebouncedSave(disabled || readOnly ? answer.question : question, answer.question, (value) =>
-		onSave({ question: value }),
+	const flushQuestion = useDebouncedSave(
+		disabled || readOnly || questionDraft.restored ? answer.question : question,
+		answer.question,
+		(value) => onSave({ question: value }),
 	);
 
 	const words = countWords(text);
@@ -318,6 +343,8 @@ function AnswerCard({
 
 	return (
 		<section className="grid gap-3 rounded-xl border border-line bg-surface p-4">
+			<DraftRecovery {...textDraft} />
+			<DraftRecovery {...questionDraft} />
 			<div className="flex items-start gap-3">
 				{editingQuestion && !readOnly ? (
 					<Textarea

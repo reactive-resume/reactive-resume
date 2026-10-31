@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· 自今天起} one {· 已過 # 天} other {· 已�
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "已完成 {done}/{count}"
@@ -902,6 +906,11 @@ msgstr "接受"
 msgid "Accept all"
 msgstr "全部接受"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "公認"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "接受了另一個報價"
@@ -1130,8 +1139,8 @@ msgid "Add offer"
 msgstr "新增錄取邀約"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "手動新增錄取邀約的條件，或選用「訊息」中的 AI 擷取功能。"
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1842,10 +1851,6 @@ msgstr "助理"
 msgid "Assistant conversations"
 msgstr "助理對話"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "當日09:00({timeZone})。"
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2243,6 +2248,11 @@ msgstr "無法儲存更改。繼續之前重試。"
 msgid "Changes section titles and date words only, not your content."
 msgstr "僅更改部分標題和日期單詞，而不更改您的內容。"
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "對「{name}」的改變被儲存在另一個裝置上。您所做的編輯仍然在此裝置上。選擇要保留的版本。"
@@ -2571,6 +2581,8 @@ msgstr "關閉…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "關閉"
 
@@ -3359,8 +3371,8 @@ msgid "Couldn't upload the photo."
 msgstr "無法上傳照片。"
 
 #: src/features/write/picture-screen.tsx
-msgid "Couldn't upload the photo. Try again."
-msgstr "無法上傳照片。請再試一次。"
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3389,6 +3401,7 @@ msgstr "裁切填滿"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3405,6 +3418,7 @@ msgid "Cover letter — {0}"
 msgstr "求職信 — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "求職信文件"
@@ -4631,6 +4645,7 @@ msgid "Follow-up date"
 msgstr "跟進日期"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "跟進備註"
 
@@ -5201,6 +5216,11 @@ msgstr "改進選定的線路"
 msgid "Improving…"
 msgstr "改善…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "包含已結束"
@@ -5607,6 +5627,7 @@ msgid "Later"
 msgstr "後來"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "最新"
 
@@ -7096,6 +7117,8 @@ msgid "Off. Only you can see this resume."
 msgstr "離開。只有您可以看到這份履歷。"
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "錄取"
@@ -8287,6 +8310,12 @@ msgstr "錄音時間"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "招募人員"
@@ -8696,6 +8725,7 @@ msgstr "結果"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8716,6 +8746,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "履歷回饋、產品協助與社群點子。"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "履歷檔案"
@@ -10764,6 +10795,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "伺服器傳回無效的匯入結果。請重新整理文件後再試。"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "無法載入伺服器版本。文字已保留，請重試。"
@@ -10895,6 +10927,8 @@ msgstr "此求職信檔案無效。"
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "您的時區不存在此日期或時間。請選擇其他時間。"
@@ -11714,6 +11748,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

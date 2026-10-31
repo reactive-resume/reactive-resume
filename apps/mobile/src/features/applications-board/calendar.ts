@@ -3,6 +3,7 @@
 // Pure: Node runs it in the M5-T3 scenarios.
 import type { ApplicationSummary as Application } from "../applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
+import { followUpInstant } from "@reactive-resume/schema/applications/follow-up";
 import { zonedParts } from "../reminders/schedule.ts";
 
 const DAY_MS = 86_400_000;
@@ -24,14 +25,9 @@ export type GridDay = { key: string; day: number; inMonth: boolean };
 /** The calendar date of an instant on a clock in `timeZone`. */
 export const dayKeyOf = (instant: Date | string, timeZone: string) => zonedParts(instant, timeZone).date;
 
-/**
- * A follow-up's day. The app stores 09:00 on the user's clock; web stores the bare date as UTC midnight. A UTC
- * midnight value is read as that UTC date (when 09:00 local is UTC midnight, the offset is +9 and the dates agree).
- */
-export function followUpDay(followUpAt: Date | string, timeZone: string) {
-	const date = new Date(followUpAt);
-	return date.getTime() % DAY_MS === 0 ? date.toISOString().slice(0, 10) : dayKeyOf(date, timeZone);
-}
+/** A follow-up is an instant, grouped on the account clock like its Today reminder. */
+export const followUpDay = (followUpAt: Date | string, timeZone: string, followUpDateOnly?: boolean) =>
+	dayKeyOf(followUpInstant({ followUpAt, followUpDateOnly }, timeZone) ?? followUpAt, timeZone);
 
 /** Interviews and follow-ups of open applications, soonest first. Closed applications stay off the calendar. */
 export function collectEvents(applications: readonly Application[], timeZone: string): CalendarEvent[] {
@@ -56,8 +52,8 @@ export function collectEvents(applications: readonly Application[], timeZone: st
 				kind: "follow-up",
 				id: `follow-up:${application.id}`,
 				application,
-				start: new Date(application.followUpAt),
-				day: followUpDay(application.followUpAt, timeZone),
+				start: followUpInstant(application, timeZone) ?? new Date(application.followUpAt),
+				day: followUpDay(application.followUpAt, timeZone, application.followUpDateOnly),
 			});
 		}
 	}

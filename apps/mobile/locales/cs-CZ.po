@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· od dneška} one {· po dobu # dne} other {· po do
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "Hotovo {done} z {count}"
@@ -902,6 +906,11 @@ msgstr "Přijmout"
 msgid "Accept all"
 msgstr "Přijměte všechny"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Přijato"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Přijal další nabídku"
@@ -1130,8 +1139,8 @@ msgid "Add offer"
 msgstr "Přidat nabídku"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Zadejte podmínky pracovní nabídky ručně nebo využijte volitelné získání údajů pomocí AI ve Zprávách."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1842,10 +1851,6 @@ msgstr "Asistent"
 msgid "Assistant conversations"
 msgstr "Konverzace s Asistentem"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "V 09:00 toho dne ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2243,6 +2248,11 @@ msgstr "Změny se nepodařilo uložit. Zkusit znovu, než budete pokračovat."
 msgid "Changes section titles and date words only, not your content."
 msgstr "Změní pouze názvy sekcí a data data, nikoli váš obsah."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Změny „{name}“ byly uloženy na jiném zařízení. Vaše úpravy jsou stále na tomto zařízení. Vyberte verzi, kterou chcete zachovat."
@@ -2571,6 +2581,8 @@ msgstr "Blízko…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "ZAVŘENO"
 
@@ -3359,8 +3371,8 @@ msgid "Couldn't upload the photo."
 msgstr "Fotku se nepodařilo nahrát."
 
 #: src/features/write/picture-screen.tsx
-msgid "Couldn't upload the photo. Try again."
-msgstr "Fotografii se nepodařilo nahrát. Zkuste to znovu."
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3389,6 +3401,7 @@ msgstr "Vyplnit"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3405,6 +3418,7 @@ msgid "Cover letter — {0}"
 msgstr "Průvodní dopis — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Soubor průvodního dopisu"
@@ -4631,6 +4645,7 @@ msgid "Follow-up date"
 msgstr "Datum následné kontroly"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Následná poznámka"
 
@@ -5201,6 +5216,11 @@ msgstr "Vylepšete vybraný řádek"
 msgid "Improving…"
 msgstr "Zlepšení…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Včetně uzavřených"
@@ -5607,6 +5627,7 @@ msgid "Later"
 msgstr "Později"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Nejnovější"
 
@@ -7096,6 +7117,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Vypnuto. Tento resumé můžete vidět pouze vy."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Nabídka"
@@ -8287,6 +8310,12 @@ msgstr "Doba nahrávání"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Náborář"
@@ -8696,6 +8725,7 @@ msgstr "Výsledek"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8716,6 +8746,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Zpětná vazba na životopisy, pomoc s produktem a nápady komunity."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Soubor životopisu"
@@ -10764,6 +10795,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "Server vrátil neplatný výsledek importu. Před dalším pokusem obnovte Dokumenty."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Verzi serveru se nepodařilo načíst. Váš text je zachován; zkuste to znovu."
@@ -10895,6 +10927,8 @@ msgstr "Tento soubor motivačního dopisu není platný."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Toto datum nebo čas ve vašem časovém pásmu neexistuje. Vyberte jiný čas."
@@ -11714,6 +11748,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

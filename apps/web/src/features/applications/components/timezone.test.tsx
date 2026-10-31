@@ -104,12 +104,12 @@ it.each([
 	expect(account.download).toHaveBeenCalledWith(expect.any(Blob), `Northstar-${date}.ics`);
 });
 
-it("keeps follow-up calendar filenames on the date selected by the browser-local editor", () => {
+it("names follow-up calendar downloads on the account date used by Today", () => {
 	account.timeZone = "Pacific/Honolulu";
 	const followUp = { ...application("2026-10-31T23:30:00Z"), activity: [], followUpAt: new Date(2026, 9, 30, 9) };
 	show(<NextStepCard application={followUp} onScheduleInterview={vi.fn()} />);
 	fireEvent.click(screen.getByRole("button", { name: "Add to calendar" }));
-	expect(account.download).toHaveBeenCalledWith(expect.any(Blob), "Northstar-2026-10-30.ics");
+	expect(account.download).toHaveBeenCalledWith(expect.any(Blob), "Northstar-2026-10-29.ics");
 });
 
 it.each([

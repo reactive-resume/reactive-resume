@@ -9,7 +9,7 @@ type Props = {
 	// A saved attachment, a locally picked file, or nothing.
 	value: FileAttachment | File | null;
 	onChange: (value: File | null) => void;
-	// Copy for the empty-state button, e.g. "Attach a cover letter (PDF)".
+	// Copy for the empty-state button, e.g. "Attach a cover letter (PDF, up to 10 MB)".
 	attachLabel: string;
 	disabled?: boolean;
 };
@@ -21,12 +21,19 @@ export function FileAttachmentField({ value, onChange, attachLabel, disabled }: 
 	const onSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (!file) return;
+		event.target.value = "";
 		if (file.type !== "application/pdf") {
 			toast.add({ type: "error", description: t`Choose a PDF file.` });
 			return;
 		}
+		if (file.size > 10 * 1024 * 1024) {
+			toast.add({
+				type: "error",
+				description: t`This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again.`,
+			});
+			return;
+		}
 		onChange(file);
-		event.target.value = "";
 	};
 
 	return (

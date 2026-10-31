@@ -604,6 +604,10 @@ msgstr "{days, plural, other {# ngày lên văn phòng, đúng giới hạn củ
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {Đã cập nhật # tài liệu} other {Đã cập nhật # tài liệu}}"
@@ -919,8 +923,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>Tổng số được cố ý không cộng lại.</0> Thưởng và cổ phần phụ thuộc vào điều kiện, và giá trị cổ phần đều chưa chắc chắn ở cả hai bên. Hãy đọc tài liệu gốc của các lời đề nghị trước khi so sánh tổng số."
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1177,6 +1181,8 @@ msgstr "Chấp nhận"
 msgid "Accept all"
 msgstr "Chấp nhận tất cả"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "Đã chấp nhận"
@@ -1481,8 +1487,8 @@ msgid "Add offer"
 msgstr "Thêm đề nghị tuyển dụng"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Thêm điều khoản của đề nghị tuyển dụng theo cách thủ công hoặc dùng tính năng trích xuất bằng AI tùy chọn trong Tin nhắn."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2337,12 +2343,12 @@ msgid "ATS-safe"
 msgstr "ATS-an toàn"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "Đính kèm thư xin việc (PDF)"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "Đính kèm tệp thư xin việc (PDF)"
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2354,8 +2360,8 @@ msgid "Attach a file instead"
 msgstr "Thay vào đó hãy đính kèm một tệp"
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "Đính kèm tệp CV (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2558,10 +2564,6 @@ msgstr "Bo viền"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Độ rộng bo viền"
-
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "Cả hai lời đề nghị đều bao gồm mọi mục được so sánh ở đây."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -2790,6 +2792,11 @@ msgstr "Nhật ký thay đổi"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Chỉ thay đổi tiêu đề của phần và từ ngày tháng chứ không phải nội dung của bạn."
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3121,6 +3128,8 @@ msgstr "Đóng…"
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Đã đóng"
 
@@ -3677,6 +3686,10 @@ msgstr "Không thể tạo thư. Hãy thử lại."
 msgid "Couldn't create your account. Try again."
 msgstr "Không thể tạo tài khoản của bạn. Hãy thử lại."
 
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
 msgstr "Không thể xóa câu chuyện đó. Hãy thử lại."
@@ -4174,8 +4187,10 @@ msgstr "Không thể cập nhật dòng thời gian. Hãy thử lại."
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Không thể cập nhật các phiên bản của thư này. Hãy thử lại."
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Không thể tải ảnh lên. Hãy thử lại."
@@ -4249,6 +4264,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "Thư xin việc · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "Tập tin thư xin việc"
@@ -5820,6 +5836,7 @@ msgid "Follow-up date"
 msgstr "Ngày theo dõi"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Ghi chú theo dõi"
 
@@ -6596,6 +6613,11 @@ msgstr "Cải thiện…"
 msgid "In good company"
 msgstr "Ở công ty tốt"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Tăng khoảng cách dòng để hai dòng không bị hợp nhất thành một."
@@ -7152,6 +7174,7 @@ msgstr "Lần sử dụng cuối cùng"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Mới nhất"
 
@@ -8513,6 +8536,10 @@ msgstr "Không có ảnh. Hầu hết ATS đều bỏ qua ảnh; một số khu 
 msgid "No postings found. Try different keywords."
 msgstr "Không tìm thấy tin tuyển dụng nào Hãy thử các từ khóa khác nhau."
 
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
 msgstr ""
@@ -8703,6 +8730,10 @@ msgstr "Không có trong lý lịch của bạn · chỉ thêm nếu đúng"
 msgid "Not now"
 msgstr "Để sau"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "Chưa ghi nhận. Để trống cho đến khi bạn có thể chứng minh."
@@ -8881,6 +8912,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "Tắt. Bật tùy chọn này để nhà tuyển dụng tìm thấy bạn trên Google."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9061,6 +9094,10 @@ msgstr "Mở trong Lời đề nghị"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "Mở Mong muốn"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -10320,6 +10357,10 @@ msgstr "Thời gian ghi âm"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "Nhà tuyển dụng"
@@ -10834,6 +10875,7 @@ msgid "Resume details"
 msgstr "chi tiết sơ yếu lý lịch"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "Tệp CV"
@@ -11233,6 +11275,10 @@ msgstr "Lưu đề nghị tuyển dụng"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -13343,6 +13389,10 @@ msgstr "Trình duyệt này không thể ghi âm ở đây. Hãy chọn tệp â
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
 msgstr "Trình duyệt này không hỗ trợ đọc chính tả, và không kết nối AI nào của bạn có thể chép lời giọng nói (OpenAI, Google Gemini, Mistral, xAI, Groq hoặc Vercel AI Gateway thì có thể). <0>Thêm một kết nối trong Cài đặt</0>, hoặc nhập câu trả lời."
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "Yêu cầu kết nối này không hợp lệ hoặc đã hết hạn. Hãy bắt đầu lại kết nối từ máy khách của bạn."
@@ -13358,6 +13408,11 @@ msgstr "Không thể mở cuộc trò chuyện này. Hãy làm mới trang để
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13415,6 +13470,10 @@ msgstr "Tệp này khá lớn đối với một sơ yếu lý lịch."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "Tệp này lớn hơn mức mà nhiều biểu mẫu ứng tuyển cho phép."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13484,9 +13543,17 @@ msgstr "PDF này không có lớp văn bản nên trình phân tích cú pháp k
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "PDF này là hình ảnh được quét. Không có văn bản để đọc. Hãy thử phiên bản Word hoặc bắt đầu để trống và dán các phần vào."
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "PDF này được bảo vệ bằng mật khẩu. Hãy lưu một bản không bảo vệ rồi thử lại."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14236,6 +14303,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "Dùng mẫu"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

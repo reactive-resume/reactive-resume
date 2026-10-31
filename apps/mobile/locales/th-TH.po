@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· ตั้งแต่วันนี้} one {· �
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "เสร็จแล้ว {done} จาก {count}"
@@ -902,6 +906,11 @@ msgstr "ยอมรับ"
 msgid "Accept all"
 msgstr "ยอมรับทั้งหมด"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "ได้รับการยอมรับ"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "ยอมรับข้อเสนออื่นแล้ว"
@@ -1130,8 +1139,8 @@ msgid "Add offer"
 msgstr "เพิ่มข้อเสนอ"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "เพิ่มเงื่อนไขข้อเสนองานด้วยตัวเอง หรือเลือกใช้ AI สกัดข้อมูลในข้อความ"
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1842,10 +1851,6 @@ msgstr "ผู้ช่วย"
 msgid "Assistant conversations"
 msgstr "การสนทนาของผู้ช่วย"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "เวลา 09:00 น. ของวันนั้น ({timeZone})"
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2243,6 +2248,11 @@ msgstr "ไม่สามารถบันทึกการเปลี่ย
 msgid "Changes section titles and date words only, not your content."
 msgstr "เปลี่ยนชื่อส่วนและคำวันที่เท่านั้น ไม่ใช่เนื้อหาของคุณ"
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "การเปลี่ยนแปลงใน “{name}” ได้รับการบันทึกบนอุปกรณ์อื่น การแก้ไขของคุณยังคงอยู่ในอุปกรณ์นี้ เลือกเวอร์ชันที่จะเก็บไว้"
@@ -2571,6 +2581,8 @@ msgstr "ปิด…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "ปิด"
 
@@ -3359,8 +3371,8 @@ msgid "Couldn't upload the photo."
 msgstr "ไม่สามารถอัปโหลดรูปภาพได้"
 
 #: src/features/write/picture-screen.tsx
-msgid "Couldn't upload the photo. Try again."
-msgstr "อัปโหลดรูปภาพไม่ได้ ลองอีกครั้ง"
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3389,6 +3401,7 @@ msgstr "เต็มกรอบ"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3405,6 +3418,7 @@ msgid "Cover letter — {0}"
 msgstr "จดหมายปะหน้า — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "ไฟล์จดหมายปะหน้า"
@@ -4631,6 +4645,7 @@ msgid "Follow-up date"
 msgstr "วันที่ติดตามผล"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "โน้ตติดตามผล"
 
@@ -5201,6 +5216,11 @@ msgstr "ปรับปรุงบรรทัดที่เลือก"
 msgid "Improving…"
 msgstr "กำลังปรับปรุง..."
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "รวมใบสมัครที่ปิดแล้ว"
@@ -5607,6 +5627,7 @@ msgid "Later"
 msgstr "ต่อมา"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "ล่าสุด"
 
@@ -7096,6 +7117,8 @@ msgid "Off. Only you can see this resume."
 msgstr "ปิด. มีเพียงคุณเท่านั้นที่เห็นประวัติย่อนี้"
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "ข้อเสนอ"
@@ -8287,6 +8310,12 @@ msgstr "เวลาบันทึกเสียง"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "นายหน้า"
@@ -8696,6 +8725,7 @@ msgstr "ผลลัพธ์"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8716,6 +8746,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "คำติชมประวัติย่อ ความช่วยเหลือเกี่ยวกับผลิตภัณฑ์ และไอเดียจากชุมชน"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "ไฟล์เรซูเม่"
@@ -10764,6 +10795,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "เซิร์ฟเวอร์ส่งคืนผลลัพธ์การนำเข้าที่ไม่ถูกต้อง รีเฟรชเอกสารก่อนที่จะลองอีกครั้ง"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "ไม่สามารถโหลดเวอร์ชันเซิร์ฟเวอร์ได้ ข้อความของคุณถูกเก็บไว้ ลองอีกครั้ง"
@@ -10895,6 +10927,8 @@ msgstr "ไฟล์จดหมายสมัครงานนี้ไม่
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "ไม่มีวันที่หรือเวลานี้ในเขตเวลาของคุณ เลือกเวลาอื่น"
@@ -11714,6 +11748,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

@@ -4,8 +4,12 @@ import { clearStoredThumbnails } from "@/features/documents/thumbnail-store";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { clearResumeDrafts } from "@/features/resume/builder/draft";
 
+let accountGeneration = 0;
+export const getAccountGeneration = () => accountGeneration;
+
 /** Forgets the account that just signed out or was deleted: cached queries, and thumbnails saved on this device. */
 export function clearAccountData(queryClient: QueryClient) {
+	accountGeneration += 1;
 	clearResumeDrafts();
 	useLetterEditorStore.getState().reset();
 	queryClient.clear();

@@ -5,6 +5,10 @@ description: "Compare saved offers against your preferences, keep unknown terms 
 
 One offer pays more. Another is remote. Both mention options, but neither explains their value. **Career → Offers** puts the terms side by side so you can see what is known and what you still need to ask.
 
+Offer-stage applications appear first in **Add offer**; applications closed as **Not selected** are omitted. Accepted applications remain available, with **Accepted** shown in the picker and comparison. Closing an application as accepted records the outcome, not the offer terms: add those separately. Accepted offers have no questions to ask before deciding.
+
+**Compare offers** in an application's workspace opens that application's newest terms on side A. The default comparison uses the newest version of each job. Pick older versions deliberately to review history. **Latest** marks the newest saved version; the version number distinguishes saves made in the same minute. Two versions of one application show **Changes since…** and signed money changes against the other version, without **Ask both**.
+
 ## Save each offer
 
 Choose **Add offer** in **Career → Offers**, or in the relevant application's **Messages** tab. Select an application, enter the three-letter currency code and pay period, then add the terms you know. Base salary, bonus and learning budget can stay blank when unknown; enter `0` only when the amount is confirmed as zero. Optional fields include bonus conditions, equity, location, office days, leave, other benefits and a response deadline in your account timezone. Choose **Save offer**. Manual entry needs no AI connection and sends no terms to an AI provider.
@@ -26,10 +30,17 @@ Saving terms records an offer; it does not accept it or reply to the employer.
 
 Open **Career → Offers**. Select the company heading on either side to choose a saved offer and its version. **Swap** exchanges the sides. If you have only one offer, you can still review its missing details while the other side is empty.
 
-<Frame caption="Manually entered offers keep their original currencies and pay periods. Unknown terms stay visible, and the Add offer action is available above the comparison.">
+<Frame caption="An accepted offer keeps its recorded terms and outcome. Questions before deciding apply only to the undecided offer.">
   <img
     src="/images/guides/career/offers.png"
-    alt="Brightpath yearly euro offer and Canopy Systems monthly dollar offer side by side, with different currencies explicitly not compared and an Add offer action above the terms"
+    alt="Accepted Northwind Labs offer beside Lumen Health, with original euro salaries and accepted status visible"
+  />
+</Frame>
+
+<Frame caption="Compare two versions of the same fictional application as changes, without asking both employers.">
+  <img
+    src="/images/guides/career/offer-version-changes.png"
+    alt="Written and verbal Lumen Health offers showing Changes since Verbal offer and plus 8000 euros versus the verbal version"
   />
 </Frame>
 
@@ -59,3 +70,5 @@ Copied questions include their intended recipients. Offer selections stay with t
 Choose **Plan what to ask** to open the coach with both offers as context. Review its context and privacy line before sending. You can ask for a conversation plan or a negotiation draft; you decide what to send and which offer to choose.
 
 If updated terms arrive, save another offer version and compare that version. The comparison does not replace the original offer documents or record an acceptance on your behalf.
+
+From an Offer-stage workspace, **Compare offers** opens that application's newest saved terms. The action stays unavailable while its saved offers load or a read fails; use **Try again** to retry a failed read. Your saved offer versions stay unchanged.

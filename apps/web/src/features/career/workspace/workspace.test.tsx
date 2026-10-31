@@ -11,6 +11,7 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { offerTermsSchema, EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
 import { useDebouncedSave } from "../hooks";
+import { pendingCommits } from "../pending-commits";
 import { ApplyTab } from "./apply";
 import { DebriefTab } from "./debrief";
 import { MessagesTab } from "./messages";
@@ -89,7 +90,7 @@ vi.mock("../shared", async (importOriginal) => ({
 	CollapseRow: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 	Swap: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
-vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
+vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn(), close: vi.fn() } }));
 
 const application: Application = {
 	id: "workspace-application",
@@ -207,6 +208,7 @@ beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 });
 afterEach(() => {
+	pendingCommits.clear();
 	cleanup();
 	clients.splice(0).forEach((client) => client.clear());
 	vi.useRealTimers();
@@ -466,4 +468,33 @@ it("keeps Saved offer provenance neutral for both manual and older offer shapes"
 	expect(screen.queryByText(/coach wrote/)).toBeNull();
 	expect(screen.queryByText(/used the message/)).toBeNull();
 	expect(screen.getByRole("link", { name: "Open in Offers" })).toBeTruthy();
+});
+
+it("keeps an unacknowledged message across pagehide and requires review after reopening against newer server state", async () => {
+	const view = mount(<MessagesTab {...props} />);
+	const field = await screen.findByRole("textbox", { name: `Paste a message from ${props.application.company}` });
+	fireEvent.change(field, { target: { value: "Durable employer message" } });
+	expect(localStorage.getItem(`career-draft:${api.userId}:message:${props.application.id}`)).toBe(
+		JSON.stringify("Durable employer message"),
+	);
+	window.dispatchEvent(new Event("pagehide"));
+	await waitFor(() => expect(api.save).toHaveBeenCalled());
+	view.unmount();
+	localStorage.setItem(
+		`career-draft:${api.userId}:message:${props.application.id}`,
+		JSON.stringify("Unacknowledged older text"),
+	);
+	api.save.mockClear();
+	api.data.workspace = { ...EMPTY_WORKSPACE, message: "Newer server text" };
+	mount(<MessagesTab {...props} />);
+	expect(await screen.findByRole("button", { name: "Save recovered draft" })).toBeTruthy();
+	expect(screen.getByRole("textbox", { name: `Paste a message from ${props.application.company}` })).toHaveValue(
+		"Unacknowledged older text",
+	);
+	window.dispatchEvent(new Event("pagehide"));
+	expect(api.save).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Use saved version" }));
+	expect(screen.getByRole("textbox", { name: `Paste a message from ${props.application.company}` })).toHaveValue(
+		"Newer server text",
+	);
 });

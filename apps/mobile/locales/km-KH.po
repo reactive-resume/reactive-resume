@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· ចាប់ពីថ្ងៃនេះ} one {· �
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "បានធ្វើរួច {done} នៃ {count}"
@@ -902,6 +906,11 @@ msgstr "ទទួលយក"
 msgid "Accept all"
 msgstr "ទទួលយកទាំងអស់។"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "ទទួលយក"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "បានទទួលយកការផ្តល់ជូនផ្សេងទៀត។"
@@ -1130,8 +1139,8 @@ msgid "Add offer"
 msgstr "បន្ថែមសំណើការងារ"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "បញ្ចូលលក្ខខណ្ឌនៃសំណើការងារដោយដៃ ឬប្រើមុខងារស្រង់ព័ត៌មានដោយ AI តាមជម្រើសនៅក្នុងសារ។"
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1842,10 +1851,6 @@ msgstr "ជំនួយការ"
 msgid "Assistant conversations"
 msgstr "ការសន្ទនារបស់ជំនួយការ"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "នៅម៉ោង 09:00 ថ្ងៃនោះ ({timeZone}) ។"
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2243,6 +2248,11 @@ msgstr "មិនអាចរក្សាទុកការផ្លាស់ប
 msgid "Changes section titles and date words only, not your content."
 msgstr "ផ្លាស់ប្តូរចំណងជើងផ្នែក និងពាក្យកាលបរិច្ឆេទតែប៉ុណ្ណោះ មិនមែនខ្លឹមសាររបស់អ្នកទេ។"
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "ការផ្លាស់ប្តូរទៅ “{name}” ត្រូវបានរក្សាទុកនៅលើឧបករណ៍ផ្សេងទៀត។ ការកែសម្រួលរបស់អ្នកនៅតែមាននៅលើឧបករណ៍នេះ។ ជ្រើសរើសកំណែណាដែលត្រូវរក្សាទុក។"
@@ -2571,6 +2581,8 @@ msgstr "បិទ…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "បិទ"
 
@@ -3359,8 +3371,8 @@ msgid "Couldn't upload the photo."
 msgstr "មិន​អាច​បង្ហោះ​រូបថត​បាន​ទេ។"
 
 #: src/features/write/picture-screen.tsx
-msgid "Couldn't upload the photo. Try again."
-msgstr "មិនអាចអាប់ឡូដរូបថតបានទេ។ ព្យាយាមម្តងទៀត។"
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -3389,6 +3401,7 @@ msgstr "បំពេញស៊ុម"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3405,6 +3418,7 @@ msgid "Cover letter — {0}"
 msgstr "សំបុត្រគម្រប - {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "ឯកសារលិខិតគម្រប"
@@ -4631,6 +4645,7 @@ msgid "Follow-up date"
 msgstr "កាលបរិច្ឆេទតាមដាន"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "កំណត់ចំណាំតាមដាន"
 
@@ -5201,6 +5216,11 @@ msgstr "កែលម្អបន្ទាត់ដែលបានជ្រើស
 msgid "Improving…"
 msgstr "កំពុងកែលម្អ…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "រួមទាំងពាក្យសុំដែលបានបិទ"
@@ -5607,6 +5627,7 @@ msgid "Later"
 msgstr "ពេលក្រោយ"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "ថ្មីបំផុត"
 
@@ -7096,6 +7117,8 @@ msgid "Off. Only you can see this resume."
 msgstr "បិទ។ មានតែអ្នកទេដែលអាចឃើញប្រវត្តិរូបសង្ខេបនេះ។"
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "ផ្តល់ការងារ"
@@ -8287,6 +8310,12 @@ msgstr "រយៈពេលថត"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "អ្នកជ្រើសរើសបុគ្គលិក"
@@ -8696,6 +8725,7 @@ msgstr "លទ្ធផល"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8716,6 +8746,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "មតិកែលម្អលើប្រវត្តិរូប ជំនួយផលិតផល និងគំនិតពីសហគមន៍។"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "ឯកសារប្រវត្តិរូបសង្ខេប"
@@ -10764,6 +10795,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "ម៉ាស៊ីនមេបានត្រឡប់លទ្ធផលនាំចូលមិនត្រឹមត្រូវ។ ផ្ទុកឯកសារឡើងវិញ មុនពេលព្យាយាមម្តងទៀត។"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "កំណែម៉ាស៊ីនមេមិនអាចផ្ទុកបានទេ។ អត្ថបទរបស់អ្នកត្រូវបានរក្សាទុក; ព្យាយាមម្តងទៀត។"
@@ -10895,6 +10927,8 @@ msgstr "ឯកសារលិខិតអមនេះមិនត្រឹមត
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "កាលបរិច្ឆេទ ឬពេលវេលានេះមិនមាននៅក្នុងតំបន់ពេលវេលារបស់អ្នកទេ។ ជ្រើសរើសពេលវេលាផ្សេងទៀត។"
@@ -11714,6 +11748,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

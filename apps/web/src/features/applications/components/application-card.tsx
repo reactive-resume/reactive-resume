@@ -16,7 +16,7 @@ type ApplicationCardProps = {
 /** A board card: the company's initial, role and company, and the next step (warn when it's overdue). */
 export function ApplicationCard({ application, onClick, withMenu = false, dragging = false }: ApplicationCardProps) {
 	const { locale, timeZone } = useCareerTime();
-	const next = describeNextStep(getNextStep(application), application, locale, timeZone);
+	const next = describeNextStep(getNextStep(application, undefined, timeZone), application, locale, timeZone);
 
 	return (
 		<div

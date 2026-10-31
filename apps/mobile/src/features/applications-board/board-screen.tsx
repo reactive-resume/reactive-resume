@@ -572,7 +572,12 @@ function BoardCard({ application, onMove }: BoardCardProps) {
 	const { space } = useTheme();
 	const { timeZone } = useUserTime();
 	const lanes = useApplicationLanes();
-	const next = describeNextStep(getNextStep(application, undefined, lanes.lanes), application, i18n.locale, timeZone);
+	const next = describeNextStep(
+		getNextStep(application, undefined, lanes.lanes, timeZone),
+		application,
+		i18n.locale,
+		timeZone,
+	);
 
 	return (
 		<Card>

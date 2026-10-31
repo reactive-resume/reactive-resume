@@ -53,3 +53,36 @@ describe("manual offer entry", () => {
 		expect(parseOfferEntry({ ...input, date: "" }).payload.success).toBe(true);
 	});
 });
+
+describe("offer selection", () => {
+	it("opens this job, upgrades remembered versions, and preserves explicit historical comparison", async () => {
+		const { selectOfferPair } = await import("./career-offer");
+		const offers = [
+			{ id: "other", applicationId: "north" },
+			{ id: "written", applicationId: "lumen" },
+			{ id: "verbal", applicationId: "lumen" },
+		];
+		expect(selectOfferPair(offers, { a: "written" }, { a: "other", b: "verbal" })).toEqual({
+			a: "written",
+			b: "other",
+		});
+		expect(selectOfferPair(offers, {}, { a: "verbal", b: "other" })).toEqual({ a: "written", b: "other" });
+		expect(selectOfferPair(offers, { a: "written", b: "verbal" })).toEqual({ a: "written", b: "verbal" });
+	});
+});
+
+it("prioritizes Offer-stage jobs while retaining accepted outcomes and omitting not-selected applications", async () => {
+	const { offerApplications } = await import("./career-offer");
+	expect(
+		offerApplications([
+			{ status: "saved", closedReason: null },
+			{ status: "closed", closedReason: "not-selected" },
+			{ status: "closed", closedReason: "accepted" },
+			{ status: "offer", closedReason: null },
+		]),
+	).toEqual([
+		{ status: "offer", closedReason: null },
+		{ status: "saved", closedReason: null },
+		{ status: "closed", closedReason: "accepted" },
+	]);
+});
