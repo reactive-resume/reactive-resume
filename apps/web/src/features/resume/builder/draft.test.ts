@@ -346,12 +346,106 @@ describe("builder resume autosave", () => {
 		const event = handler({ mutation: "update" });
 		await flushMicrotasks();
 		expect(useResumeStore.getState().undoStack).toHaveLength(1);
+		expect(useResumeStore.getState().resume?.name).toBe(saved.name);
 		response.resolve(renamed);
 		await writing;
 		await event;
 		expect(useResumeStore.getState().undoStack).toHaveLength(1);
 		expect(useResumeStore.getState().resume?.name).toBe("Manual title");
 		hook.unmount();
+	});
+
+	it("releases a stalled metadata request and stream, ignoring its late answer", async () => {
+		const initial = makeResume("metadata-stalled");
+		routerParamsMock.value = { resumeId: initial.id };
+		useResumeStore.getState().initialize(initial);
+		const answer = deferred<Resume>();
+		const write = vi.fn((_expected?: Date, _options?: { signal: AbortSignal }) => answer.promise);
+		let failure: unknown;
+		const writing = saveResumeMetadata(initial.id, write).catch((error: unknown) => {
+			failure = error;
+		});
+		await flushMicrotasks();
+		const remote = {
+			...withBasicsName(initial, "Remote body"),
+			name: "Remote title",
+			updatedAt: new Date(initial.updatedAt.getTime() + 2000),
+		};
+		orpcMocks.getResumeById.mockResolvedValueOnce(remote);
+		consumeEventIteratorMock.mockReturnValueOnce(async () => undefined);
+		const hook = renderHook(() => useBuilderResumeUpdateSubscription());
+		const event = consumeEventIteratorMock.mock.lastCall?.[1].onEvent({ mutation: "update" });
+		await flushMicrotasks();
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe(initial.data.basics.name);
+		await vi.advanceTimersByTimeAsync(10_000);
+		expect(failure).toMatchObject({ name: "TimeoutError" });
+		await writing;
+		await event;
+		expect(write.mock.lastCall?.[1]?.signal.aborted).toBe(true);
+		expect(useResumeStore.getState().resume).toMatchObject(remote);
+		answer.resolve({ ...initial, name: "Late title", updatedAt: new Date(initial.updatedAt.getTime() + 1000) });
+		await flushMicrotasks();
+		expect(useResumeStore.getState().resume).toMatchObject(remote);
+		const next = { ...remote, name: "Next title", updatedAt: new Date(remote.updatedAt.getTime() + 1000) };
+		const nextWrite = vi.fn(async (expected?: Date) => {
+			expect(expected).toEqual(remote.updatedAt);
+			return next;
+		});
+		await saveResumeMetadata(initial.id, nextWrite);
+		expect(useResumeStore.getState().resume?.name).toBe(next.name);
+		hook.unmount();
+	});
+
+	it("also bounds a library rename without an open draft", async () => {
+		const answer = deferred<Resume>();
+		const write = vi.fn((_expected?: Date, _options?: { signal: AbortSignal }) => answer.promise);
+		let failure: unknown;
+		const writing = saveResumeMetadata("library-rename", write).catch((error: unknown) => {
+			failure = error;
+		});
+		await vi.advanceTimersByTimeAsync(10_000);
+		expect(failure).toMatchObject({ name: "TimeoutError" });
+		await writing;
+		expect(write.mock.lastCall?.[0]).toBeUndefined();
+		expect(write.mock.lastCall?.[1]?.signal.aborted).toBe(true);
+		answer.resolve(makeResume("library-rename"));
+	});
+
+	it("keeps pending edits and receipts on the old revision after an uncertain metadata timeout", async () => {
+		const initial = makeResume("metadata-stalled-draft");
+		useResumeStore.getState().initialize(initial);
+		const answer = deferred<Resume>();
+		let failure: unknown;
+		const writing = saveResumeMetadata(initial.id, () => answer.promise).catch((error: unknown) => {
+			failure = error;
+		});
+		await flushMicrotasks();
+		useResumeStore.getState().updateResumeData(
+			(draft) => {
+				draft.summary.content = "<p>Keep this proposal</p>";
+			},
+			{ newStep: true, applied: [{ id: "pending-proposal", after: "<p>Keep this proposal</p>" }] },
+		);
+		orpcMocks.updateResume.mockRejectedValueOnce(new ORPCError("RESUME_VERSION_CONFLICT"));
+		await vi.advanceTimersByTimeAsync(10_000);
+		expect(failure).toMatchObject({ name: "TimeoutError" });
+		await writing;
+		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(1);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].expectedUpdatedAt).toEqual(initial.updatedAt);
+		expect(useResumeStore.getState().saveStatus).toBe("conflict");
+		expect(useResumeStore.getState().undoStack).toHaveLength(1);
+		expect(useResumeStore.getState().resume?.data.summary.content).toBe("<p>Keep this proposal</p>");
+		const recovery = Object.entries(window.localStorage).find(([key]) => key.includes(initial.id));
+		assert(recovery);
+		expect(JSON.parse(recovery[1])).toMatchObject({
+			baseUpdatedAt: initial.updatedAt.toISOString(),
+			pendingProposalApplications: { "pending-proposal": "<p>Keep this proposal</p>" },
+		});
+		answer.resolve({ ...initial, name: "Late title", updatedAt: new Date(initial.updatedAt.getTime() + 1000) });
+		await flushMicrotasks();
+		expect(useResumeStore.getState().resume?.name).toBe(initial.name);
+		expect(useResumeStore.getState().saveStatus).toBe("conflict");
+		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(1);
 	});
 
 	it("keeps the draft and does not send metadata if its earlier body save failed", async () => {
@@ -374,7 +468,10 @@ describe("builder resume autosave", () => {
 		const first = deferred<Resume>();
 		const earlier = saveResumeMetadata(initial.id, () => first.promise).catch((error: unknown) => error);
 		const renamed = { ...initial, name: "Second request", updatedAt: new Date(initial.updatedAt.getTime() + 2000) };
-		const write = vi.fn(async () => renamed);
+		const write = vi.fn(async (expected?: Date) => {
+			expect(expected).toEqual(fails ? initial.updatedAt : new Date(initial.updatedAt.getTime() + 1000));
+			return renamed;
+		});
 		const later = saveResumeMetadata(initial.id, write);
 		await flushMicrotasks();
 		expect(write).not.toHaveBeenCalled();
@@ -391,15 +488,41 @@ describe("builder resume autosave", () => {
 		useResumeStore.getState().initialize(initial);
 		const first = deferred<Resume>();
 		const earlier = saveResumeMetadata(initial.id, () => first.promise);
+		const earlierRejected = expect(earlier).rejects.toMatchObject({ name: "AbortError" });
 		await flushMicrotasks();
 		const write = vi.fn(async () => initial);
 		const later = saveResumeMetadata(initial.id, write);
 		const rejected = expect(later).rejects.toMatchObject({ name: "AbortError" });
 		clearResumeDrafts();
 		first.resolve(initial);
-		await earlier;
+		await earlierRejected;
 		await rejected;
 		expect(write).not.toHaveBeenCalled();
+	});
+
+	it("never applies an old visit's delayed metadata stream event to a new visit", async () => {
+		const initial = makeResume("metadata-stream-visit");
+		routerParamsMock.value = { resumeId: initial.id };
+		useResumeStore.getState().initialize(initial);
+		const response = deferred<Resume>();
+		const writing = saveResumeMetadata(initial.id, () => response.promise);
+		const rejected = expect(writing).rejects.toMatchObject({ name: "AbortError" });
+		await flushMicrotasks();
+		const old = { ...withBasicsName(initial, "Old visit"), updatedAt: new Date(initial.updatedAt.getTime() + 1000) };
+		orpcMocks.getResumeById.mockResolvedValueOnce(old);
+		consumeEventIteratorMock.mockReturnValueOnce(async () => undefined);
+		const hook = renderHook(() => useBuilderResumeUpdateSubscription());
+		const event = consumeEventIteratorMock.mock.lastCall?.[1].onEvent({ mutation: "update" });
+		await flushMicrotasks();
+		clearResumeDrafts();
+		const current = withBasicsName(initial, "New visit");
+		useResumeStore.getState().initialize(current);
+		await rejected;
+		await event;
+		response.resolve(old);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().resume).toMatchObject(current);
+		hook.unmount();
 	});
 
 	it("does not send metadata if its visit ends while the pending-save check settles", async () => {
@@ -492,13 +615,14 @@ describe("builder resume autosave", () => {
 		useResumeStore.getState().initialize(initial);
 		const answer = deferred<Resume>();
 		const writing = saveResumeMetadata(initial.id, () => answer.promise);
+		const result = revisit ? expect(writing).rejects.toMatchObject({ name: "AbortError" }) : writing;
 		await flushMicrotasks();
 		if (revisit) {
 			clearResumeDrafts();
 			useResumeStore.getState().initialize(initial);
 		}
 		answer.resolve({ ...server(initial), name: "Renamed", updatedAt: new Date(initial.updatedAt.getTime() + ms) });
-		await writing;
+		await result;
 		expect(useResumeStore.getState().resume?.name).toBe(name);
 		useResumeStore.getState().updateResumeData((draft) => {
 			draft.basics.headline = "Later headline";
