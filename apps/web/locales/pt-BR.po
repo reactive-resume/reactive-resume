@@ -453,6 +453,12 @@ msgstr "{0} comprovados, {1} parcialmente comprovados, {2} ainda sem evidências
 msgid "{0} to fix"
 msgstr "{0} para corrigir"
 
+#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
+#. placeholder {1}: [...answer].length
+#: src/features/career/workspace/answer-library.tsx
+msgid "{0} words · {1} characters"
+msgstr ""
+
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: index + 1
 #: src/features/resume/editor/write/entry-card.tsx
@@ -720,6 +726,10 @@ msgstr "{pendingOnPage, plural, one {# edição proposta nesta página · nada m
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# proposto} other {# proposto}}"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{sections, plural, one {# section} other {# sections}}"
@@ -1664,6 +1674,10 @@ msgstr "Os provedores de IA não estarão disponíveis neste servidor até que E
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "Não foi possível carregar os provedores de IA. Recarregue para tentar novamente."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "AI-assisted draft"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Albanian"
 msgstr "Albanês"
@@ -1703,6 +1717,10 @@ msgstr "Todos os pedidos de emprego (incluindo os fechados)"
 #: src/features/settings/account/data.tsx
 msgid "All documents and applications as JSON, in one zip"
 msgstr "Todos os documentos e formulários de emprego como JSON, em um único zip"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "All employers"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -1801,6 +1819,7 @@ msgstr "Outro de seus currículos usa este endereço."
 msgid "Another resume already uses this address. Choose a different one."
 msgstr "Outro currículo já usa este endereço. Escolha outro."
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
 msgid "Answer"
@@ -1811,12 +1830,17 @@ msgid "Answer by"
 msgstr "Responder até"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 msgid "Answer copied"
 msgstr "Resposta copiada"
 
 #: src/features/assistant/conversation.tsx
 msgid "Answer in your own words"
 msgstr "Responda com suas próprias palavras"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Answer source"
+msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
@@ -1932,6 +1956,7 @@ msgstr "Candidatura"
 msgid "Application added"
 msgstr "Candidatura adicionada"
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/homepage/remember.tsx
 msgid "Application answer"
 msgstr "Resposta da candidatura"
@@ -2961,6 +2986,7 @@ msgstr "ID do cliente"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -3362,6 +3388,7 @@ msgid "Copied"
 msgstr "Copiado"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3982,6 +4009,10 @@ msgstr "Não foi possível desvincular a candidatura. Tente novamente."
 msgid "Couldn't unlock the document. Try again."
 msgstr "Não foi possível desbloquear o documento. Tente novamente."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Couldn't update saved answers. Try again."
+msgstr ""
+
 #: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
@@ -4200,6 +4231,10 @@ msgstr "Moeda"
 msgid "Current drafts"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Current employer: {company}"
+msgstr ""
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
 msgstr "Filtros atuais"
@@ -4348,6 +4383,7 @@ msgstr "Grau"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
@@ -4416,6 +4452,10 @@ msgstr ""
 msgid "Delete provider"
 msgstr "Excluir provedor"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete saved answer"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Delete section"
 msgstr "Excluir seção"
@@ -4440,6 +4480,10 @@ msgstr "Excluir esta conversa?"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Delete this entry?"
 msgstr "Excluir esta entrada?"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete this library answer? Application drafts and submitted copies are kept."
+msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete version"
@@ -4994,6 +5038,10 @@ msgstr "Editar pergunta"
 msgid "Edit resume"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Edit saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "Editar agendamento"
@@ -5269,6 +5317,10 @@ msgstr "Todos os termos que o anúncio enfatiza já estão lá."
 msgid "Every week"
 msgstr "Toda semana"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Evidence changed or was removed. Edit and review before reuse."
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Troque feedback sobre currículos, tire dúvidas e ajude a moldar o Reactive Resume com a comunidade."
@@ -5326,6 +5378,10 @@ msgstr "exportação aberta"
 #: src/features/applications/components/insights-view.tsx
 msgid "Export PNG"
 msgstr "Exportar PNG"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Export saved answers"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Export saved profile"
@@ -6177,6 +6233,14 @@ msgstr "Eu posso ver este {kind}. As sugestões retornam como edições que voc�
 msgid "I interviewed 14 customers, mapped three drop-off points and prototyped a shorter setup with engineering."
 msgstr "Entrevistei 14 clientes, mapeei três pontos de abandono e prototipei uma configuração mais curta com a engenharia."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "I removed employer-specific wording and reviewed reuse across employers."
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "I reviewed this answer, its evidence and the application context."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "I withdrew"
 msgstr "Eu me retirei"
@@ -6825,6 +6889,10 @@ msgstr "Última verificação há {lastChecked}"
 msgid "Last edited"
 msgstr "Última edição"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Last reviewed"
+msgstr ""
+
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/account/application-profile.tsx
 msgid "Last reviewed: {0}"
@@ -7122,6 +7190,10 @@ msgstr ""
 msgid "Linked documents couldn't be loaded."
 msgstr "Não foi possível carregar os documentos vinculados."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Linked evidence unchanged since review"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Linked resume"
 msgstr "Currículo vinculado"
@@ -7250,6 +7322,10 @@ msgstr "Carregando provedores…"
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "Carregando currículos…"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Loading saved answers…"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Loading saved version…"
@@ -8093,6 +8169,10 @@ msgstr "Nenhuma linha parece ser um cargo associado a um empregador."
 #: src/features/resume/editor/check/issues.ts
 msgid "No location"
 msgstr "Sem localização"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "No matching saved answers. Clear the search to see all answers."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No new roles. Discovery is paused."
@@ -9571,6 +9651,10 @@ msgstr "Código QR para {url}"
 msgid "QR code for two-step verification"
 msgstr "Código QR para a verificação em duas etapas"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Question"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Question {position} of {total}"
 msgstr "Pergunta {position} de {total}"
@@ -10136,6 +10220,14 @@ msgstr "Remover tag"
 msgid "Remove the password?"
 msgstr "Remover a senha?"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable fact reference"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable story reference"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/settings/account/security.tsx
@@ -10294,6 +10386,10 @@ msgstr "Alterações restauradas que ainda não foram salvas."
 msgid "Restored the version from {0}. Your previous state is saved as “Before restore”."
 msgstr "Restaurou a versão de {0}. Seu estado anterior é salvo como “Antes da restauração”."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Restricted to its employer or application."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Result"
@@ -10401,6 +10497,7 @@ msgstr "{0} recuperado. O frescor da origem é desconhecido, a menos que seja re
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -10421,11 +10518,19 @@ msgstr "Tentar salvar novamente"
 msgid "Retrying…"
 msgstr "Tentando novamente…"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reuse scope"
+msgstr ""
+
 #: src/features/career/today.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
 msgstr "Análise"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review and use"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Review checks"
@@ -10442,6 +10547,10 @@ msgstr "Revisar rascunho"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Review each section before using this resume."
 msgstr "Revise cada seção antes de usar este currículo."
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review for this application"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Review my answer"
@@ -10467,9 +10576,17 @@ msgstr "Revise o currículo e a carta de apresentação selecionados nos editore
 msgid "Review with assistant"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
 msgstr "Escrita da revisão"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reviewed answer saved"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
@@ -10678,6 +10795,10 @@ msgstr "Salvar correção"
 msgid "Save first, then test search and reading. No test runs automatically."
 msgstr "Salve primeiro e depois teste a pesquisa e a leitura. Nenhum teste é executado automaticamente."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save for other applications"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Save interview"
 msgstr "Salvar entrevista"
@@ -10697,6 +10818,10 @@ msgstr "Salvar proposta de emprego"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save reviewed answer"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -10973,6 +11098,10 @@ msgstr "Pesquise ou execute…"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
 msgstr "Pesquise função, empresa ou contato"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Search saved answers"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "Search terms go to your web search service."
@@ -11680,6 +11809,10 @@ msgstr "Fonte"
 msgid "Source code"
 msgstr "Código fonte"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Source employer"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
@@ -12045,6 +12178,10 @@ msgstr "Apoiar"
 #: src/features/homepage/prepare.tsx
 msgid "Supported"
 msgstr "Comprovado"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Supporting Knowledge facts and stories"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -12713,6 +12850,10 @@ msgstr "Pensando"
 msgid "Thinking…"
 msgstr "Pensamento…"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "This application"
+msgstr ""
+
 #: src/features/career/workspace/shell.tsx
 msgid "This application couldn't be opened."
 msgstr "Não foi possível abrir esta candidatura."
@@ -12753,6 +12894,10 @@ msgstr "Este documento"
 #: src/features/assistant/assistant-panel.tsx
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Este documento está bloqueado. Desbloqueie-o para obter sugestões."
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "This employer"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "This entry"
@@ -13486,6 +13631,10 @@ msgstr "Use um formato internacional simples, como +1 555 010 1234."
 msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "Use um formato reconhecido, como “jan. de 2020 - mar. de 2022” ou “2020 - 2022”."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use a saved answer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
 msgstr "Use uma única coluna para qualquer coisa que precise ser lida em sequência."
@@ -13565,6 +13714,10 @@ msgstr "Use títulos simples como “Experiência”, “Formação” e “Habi
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Use posting"
 msgstr "Use anúncio de emprego"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use reviewed answer"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
@@ -14252,6 +14405,10 @@ msgstr "Ajuda na escrita, sugestões personalizadas e o assistente. O provedor p
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"
 msgstr "escrevendo, adaptando e enviando"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Written manually"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx

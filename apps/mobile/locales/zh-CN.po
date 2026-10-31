@@ -418,6 +418,12 @@ msgstr "{0} 返回“{1}”。您的留言将被保留。"
 msgid "{0} selected"
 msgstr "已选择{0}"
 
+#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
+#. placeholder {1}: [...answer].length
+#: src/features/workspace/answer-library.tsx
+msgid "{0} words · {1} characters"
+msgstr ""
+
 #. placeholder {0}: resume.data.basics.name || resume.name
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -611,6 +617,10 @@ msgstr "{pairing}型"
 #: src/features/assistant/page-marks.tsx
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {此页有#项修改建议 · 接受后才会更改} other {此页有#项修改建议 · 接受后才会更改}}"
+
+#: src/features/workspace/answer-library.tsx
+msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "{role} · {company}"
@@ -1310,6 +1320,10 @@ msgstr "无法加载 AI 提供商。请重试，或手动填写详情。"
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "仅在您提出请求时，AI才会读取粘贴的文本。链接可直接使用网页自身的职位数据，无需AI。"
 
+#: src/features/workspace/answer-library.tsx
+msgid "AI-assisted draft"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Albanian"
 msgstr "阿尔巴尼亚语"
@@ -1328,6 +1342,10 @@ msgstr "全部 ({0})"
 #: src/features/career/facts.tsx
 msgid "All applications"
 msgstr "所有申请"
+
+#: src/features/workspace/answer-library.tsx
+msgid "All employers"
+msgstr ""
 
 #: src/features/check/job-match.tsx
 msgid "All posting terms are covered."
@@ -1427,6 +1445,7 @@ msgstr "另一份简历已在使用此地址。请选择其他地址。"
 msgid "Another server"
 msgstr "另一台服务器"
 
+#: src/features/workspace/answer-library.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Answer"
 msgstr "回答"
@@ -1435,9 +1454,17 @@ msgstr "回答"
 msgid "Answer by"
 msgstr "回答方式"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Answer copied"
+msgstr "回答已复制"
+
 #: src/features/assistant/messages.tsx
 msgid "Answer in your own words"
 msgstr "用你自己的话回答"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Answer source"
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Answers"
@@ -1526,6 +1553,10 @@ msgstr "一旦有组织就会出现在页面上。"
 #: src/shell/workspace-chrome.tsx
 msgid "Application"
 msgstr "申请"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Application answer"
+msgstr "申请回答"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Application closed"
@@ -2741,6 +2772,7 @@ msgid "Copies it"
 msgstr "复制此内容"
 
 #: src/features/share/link.tsx
+#: src/features/workspace/answer-library.tsx
 msgid "Copy"
 msgstr "复制"
 
@@ -3210,6 +3242,10 @@ msgstr "无法解锁简历。请重试。"
 msgid "Couldn't unlock this resume. Try again."
 msgstr "无法解锁此简历。再试一次。"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Couldn't update saved answers. Try again."
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Couldn't update the application. Nothing was changed; try again."
 msgstr "无法更新申请。未做任何更改，请重试。"
@@ -3354,6 +3390,10 @@ msgstr "币种"
 msgid "Current drafts"
 msgstr ""
 
+#: src/features/workspace/answer-library.tsx
+msgid "Current employer: {company}"
+msgstr ""
+
 #: src/features/design/advanced.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
@@ -3491,6 +3531,7 @@ msgstr "学位"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/workspace/answer-library.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/features/write/entry-sheet.tsx
 msgid "Delete"
@@ -3568,6 +3609,10 @@ msgstr ""
 msgid "Delete provider"
 msgstr "删除提供商"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Delete saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Delete schedule"
 msgstr "删除日程"
@@ -3591,6 +3636,10 @@ msgstr "删除此对话？"
 #: src/features/application-detail/sections.tsx
 msgid "Delete this entry?"
 msgstr "删除此条目？"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Delete this library answer? Application drafts and submitted copies are kept."
+msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "Delete this provider?"
@@ -4016,6 +4065,10 @@ msgstr "编辑问题"
 msgid "Edit resume"
 msgstr ""
 
+#: src/features/workspace/answer-library.tsx
+msgid "Edit saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "编辑定时任务"
@@ -4220,6 +4273,10 @@ msgstr "招聘启事强调的每个术语都已经存在。"
 msgid "Every week"
 msgstr "每周"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Evidence changed or was removed. Edit and review before reuse."
+msgstr ""
+
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
 msgid "Experience"
@@ -4240,6 +4297,10 @@ msgstr "导出所有内容"
 #: src/features/ats-checker/messages.ts
 msgid "Export from the original document instead of scanning or screenshotting it."
 msgstr "从原始文档导出，而不是扫描或截图。"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Export saved answers"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Export saved profile"
@@ -4858,6 +4919,14 @@ msgstr "我可以看到这份简历和 {company} 职位发布。建议以编辑�
 msgid "I can see this resume. Suggestions come back as edits you can accept one by one."
 msgstr "我可以看到这份简历。建议以编辑形式返回，您可以一一接受。"
 
+#: src/features/workspace/answer-library.tsx
+msgid "I removed employer-specific wording and reviewed reuse across employers."
+msgstr ""
+
+#: src/features/workspace/answer-library.tsx
+msgid "I reviewed this answer, its evidence and the application context."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "I withdrew"
 msgstr "我退出了"
@@ -5328,6 +5397,10 @@ msgstr "上次检查于 {lastChecked}前"
 msgid "Last edited"
 msgstr "最后编辑"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Last reviewed"
+msgstr ""
+
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/application-profile.tsx
 msgid "Last reviewed: {0}"
@@ -5576,6 +5649,10 @@ msgstr ""
 msgid "Linked documents couldn't be loaded."
 msgstr "无法加载关联的文档。"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Linked evidence unchanged since review"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Linked resume"
 msgstr "链接简历"
@@ -5674,6 +5751,10 @@ msgstr "正在加载简历…"
 #: src/features/search/search-screen.tsx
 msgid "Loading resumes…"
 msgstr "正在加载简历…"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Loading saved answers…"
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
@@ -6450,6 +6531,10 @@ msgstr "没有匹配项"
 #: src/features/applications/list-screen.tsx
 msgid "No matching applications"
 msgstr "没有匹配的申请"
+
+#: src/features/workspace/answer-library.tsx
+msgid "No matching saved answers. Clear the search to see all answers."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No new roles. Discovery is paused."
@@ -7671,6 +7756,10 @@ msgstr "二维码"
 msgid "QR code for {url}"
 msgstr "{url} 的二维码"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Question"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Question {position} of {total}"
 msgstr "第 {position} 题，共 {total} 题"
@@ -8096,6 +8185,14 @@ msgstr "删除密码？"
 msgid "Remove this file?"
 msgstr "删除这个文件？"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Remove unavailable fact reference"
+msgstr ""
+
+#: src/features/workspace/answer-library.tsx
+msgid "Remove unavailable story reference"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Rename"
@@ -8257,6 +8354,10 @@ msgstr "恢复版本"
 msgid "Restored a version"
 msgstr "恢复了一个版本"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Restricted to its employer or application."
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Result"
 msgstr "结果"
@@ -8356,6 +8457,7 @@ msgstr "使用 {1} 检索 {0}。检索时间并不能确定来源的新鲜度。
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
+#: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8404,10 +8506,18 @@ msgstr "重试保存"
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "返回到 文档 并重新打开它，或重试连接。"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Reuse scope"
+msgstr ""
+
 #: src/features/assistant/page-marks.tsx
 #: src/features/career/today.tsx
 msgid "Review"
 msgstr "审查"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Review and use"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Review application"
@@ -8432,6 +8542,10 @@ msgstr "查看草稿"
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
 msgstr "使用此简历之前请先查看每个部分。"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Review for this application"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Review job details"
@@ -8465,9 +8579,17 @@ msgstr "在各自的编辑器中检查所选的简历和求职信。"
 msgid "Review with assistant"
 msgstr ""
 
+#: src/features/workspace/answer-library.tsx
+msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "评论写作"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Reviewed answer saved"
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Reviewing needs an AI connection. What you write here stays on this device until then."
@@ -8645,6 +8767,10 @@ msgstr "保存事实"
 msgid "Save first, then test search and reading. No test runs automatically."
 msgstr "先保存，然后测试搜索和阅读。没有测试自动运行。"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Save for other applications"
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Save interview"
 msgstr "保存面试"
@@ -8667,6 +8793,10 @@ msgstr "保存或共享文件"
 
 #: src/features/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/workspace/answer-library.tsx
+msgid "Save reviewed answer"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -8881,6 +9011,10 @@ msgstr "搜索语言"
 #: src/shell/app-tabs.tsx
 msgid "Search or run…"
 msgstr "搜索或运行..."
+
+#: src/features/workspace/answer-library.tsx
+msgid "Search saved answers"
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Search terms go to your web search service."
@@ -9542,6 +9676,10 @@ msgstr "来源和更正历史"
 msgid "Source code on GitHub"
 msgstr "GitHub 上的源代码"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Source employer"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Sources"
@@ -9782,6 +9920,10 @@ msgstr "支持"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Supported"
 msgstr "有证据"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Supporting Knowledge facts and stories"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -10315,6 +10457,10 @@ msgstr "思维…"
 msgid "Third-party software notices. Tap a dependency to read its license."
 msgstr "第三方软件声明。点按依赖项以阅读其许可证。"
 
+#: src/features/workspace/answer-library.tsx
+msgid "This application"
+msgstr ""
+
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/workspace/shell.tsx
 msgid "This application couldn't be opened."
@@ -10372,6 +10518,10 @@ msgstr "该文档已被锁定。您仍然可以下载并命名版本。解锁以
 #: src/features/documents/queries.ts
 msgid "This document is no longer available. Refresh and try again."
 msgstr "该文档不再可用。刷新并重试。"
+
+#: src/features/workspace/answer-library.tsx
+msgid "This employer"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "This enables recurring processing while the schedule is on, using your server's selected providers. Turn the schedule off to stop future runs."
@@ -10889,6 +11039,7 @@ msgstr "下划线链接"
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/write/hooks.ts
+#: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/ui/overlays.tsx
 msgid "Undo"
@@ -11036,6 +11187,10 @@ msgstr "使用简单的国际格式，例如 +1 555 010 1234。"
 msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "使用可识别的格式，例如“2020 年 1 月 - 2022 年 3 月”或“2020 年 - 2022 年”。"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Use a saved answer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
 msgstr "对于需要按顺序阅读的内容，使用单栏布局。"
@@ -11107,6 +11262,10 @@ msgstr "使用简单明了的标题，例如“工作经历”、“教育经历
 #: src/features/applications/add-sheet.tsx
 msgid "Use posting link; review before saving"
 msgstr "使用职位发布链接；保存前查看"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Use reviewed answer"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Use server version"
@@ -11631,6 +11790,10 @@ msgstr "文案"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "写作帮助、定制建议和助手。未单独选择提供商的地方都会使用默认提供商。您的密钥会加密保存。"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Written manually"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx

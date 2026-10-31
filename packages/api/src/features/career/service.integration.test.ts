@@ -8,8 +8,10 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as tables from "@reactive-resume/db/schema";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
+import { reviewedAnswerEvidence, reviewedAnswerInputSchema } from "@reactive-resume/schema/application-answers";
 import { careerOfferInputSchema, careerProfileDataSchema, savedItemDataSchema } from "@reactive-resume/schema/career";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { reviewedAnswers } from "./answers";
 
 const fixture = vi.hoisted(() => ({
 	db: undefined as ReturnType<typeof drizzle> | undefined,
@@ -279,6 +281,261 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 					uiMessage: { role: "user", parts: [{ type: "text", text: "Bob private accomplishment." }] },
 				},
 			]);
+	});
+
+	async function libraryInput(overrides: Partial<Parameters<typeof reviewedAnswers.save>[1]> = {}) {
+		return reviewedAnswerInputSchema.parse({
+			applicationId: "alice-app",
+			question: "Tell us about a project",
+			answer: "I restored the service.",
+			scope: "reusable",
+			source: "manual",
+			factIds: [],
+			storyIds: [],
+			expectedEvidence: [],
+			reviewed: true,
+			noEmployerWording: true,
+			...overrides,
+		});
+	}
+
+	it("links private profiles and reviewed answers atomically, preserving both on conflicts and copy failure", async () => {
+		const { applicationProfileService: profiles } = await import("../application-profile/service");
+		const { applicationProfileDataSchema } = await import("@reactive-resume/schema/application-profile");
+		const guestProfile = await profiles.save("alice", {
+			data: applicationProfileDataSchema.parse({ phone: "PRIVATE GUEST PHONE" }),
+			expectedRevision: null,
+		});
+		const ownerProfile = await profiles.save("bob", {
+			data: applicationProfileDataSchema.parse({ phone: "PRIVATE OWNER PHONE" }),
+			expectedRevision: null,
+		});
+		const evidence = await fact("alice", "Guest evidence");
+		const input = await libraryInput({
+			factIds: [evidence.id],
+			expectedEvidence: reviewedAnswerEvidence([evidence], [], [evidence.id], []),
+		});
+		const row = await reviewedAnswers.save("alice", input);
+		const { linkAnonymousAccount, setAccountLinkHook } = await import("@reactive-resume/auth/config");
+		await expect(linkAnonymousAccount({ fromUserId: "alice", toUserId: "bob" })).rejects.toMatchObject({
+			status: "CONFLICT",
+		});
+		expect(await profiles.get("alice")).toEqual(guestProfile);
+		expect(await profiles.get("bob")).toEqual(ownerProfile);
+		await profiles.delete("bob", ownerProfile.revision);
+		const duplicate = await reviewedAnswers.save("bob", await libraryInput({ applicationId: "bob-app" }));
+		await expect(linkAnonymousAccount({ fromUserId: "alice", toUserId: "bob" })).rejects.toMatchObject({
+			status: "CONFLICT",
+		});
+		expect((await reviewedAnswers.list("alice", "alice-app"))[0]?.id).toBe(row.id);
+		expect(await profiles.get("alice")).toEqual(guestProfile);
+		expect(await profiles.get("bob")).toBeNull();
+		await reviewedAnswers.delete("bob", duplicate.id, duplicate.revision);
+		setAccountLinkHook(async () => {
+			throw new Error("Synthetic copy failure");
+		});
+		try {
+			await expect(linkAnonymousAccount({ fromUserId: "alice", toUserId: "bob" })).rejects.toThrow(
+				"Synthetic copy failure",
+			);
+		} finally {
+			setAccountLinkHook();
+		}
+		expect(await profiles.get("alice")).toEqual(guestProfile);
+		expect(await profiles.get("bob")).toBeNull();
+		expect((await reviewedAnswers.list("alice", "alice-app"))[0]?.id).toBe(row.id);
+		expect(await reviewedAnswers.list("bob", "bob-app")).toEqual([]);
+		await linkAnonymousAccount({ fromUserId: "alice", toUserId: "bob" });
+		expect(await profiles.get("alice")).toBeNull();
+		const movedProfile = await profiles.get("bob");
+		expect(movedProfile?.data).toEqual(guestProfile.data);
+		expect(movedProfile?.revision).not.toBe(guestProfile.revision);
+		await getDb().delete(tables.user).where(eq(tables.user.id, "alice"));
+		expect((await reviewedAnswers.list("bob", "alice-app"))[0]).toMatchObject({
+			id: row.id,
+			answer: row.answer,
+			stale: true,
+			canReuse: false,
+		});
+	});
+
+	it("reuses reviewed wording manually and keeps both submitted copies independent of library edits and deletion", async () => {
+		const row = await reviewedAnswers.save("alice", await libraryInput());
+		for (const applicationId of ["alice-app", "alice-other"]) {
+			const copy = await reviewedAnswers.reuse("alice", {
+				id: row.id,
+				expectedRevision: row.revision,
+				applicationId,
+				answer: row.answer,
+				reviewed: true,
+			});
+			await getDb()
+				.update(tables.application)
+				.set({ status: "saved", activity: [] })
+				.where(eq(tables.application.id, applicationId));
+			await service.submitApplication(
+				"alice",
+				applicationId,
+				[{ id: applicationId, question: row.question, answer: copy.text, factIds: copy.factIds }],
+				[],
+			);
+		}
+		const updated = await reviewedAnswers.save(
+			"alice",
+			await libraryInput({ id: row.id, expectedRevision: row.revision, answer: "Later library revision" }),
+		);
+		await reviewedAnswers.delete("alice", updated.id, updated.revision);
+		for (const applicationId of ["alice-app", "alice-other"]) {
+			const snapshots = await service.savedItems({ userId: "alice", applicationId, kind: "answers" });
+			expect(snapshots).toHaveLength(1);
+			expect(snapshots[0]?.data).toMatchObject({ answers: [{ answer: row.answer }] });
+		}
+		expect(fixture.generate).not.toHaveBeenCalled();
+		expect(fixture.provider).not.toHaveBeenCalled();
+	});
+
+	it("rejects foreign ownership, unreviewed saves, cross-employer reuse and duplicate questions within one scope", async () => {
+		const input = await libraryInput({ scope: "employer" });
+		const row = await reviewedAnswers.save("alice", input);
+		await expect(
+			reviewedAnswers.save("alice", { ...input, question: " TELL US ABOUT A PROJECT " }),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		await expect(reviewedAnswers.save("bob", input)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect(() => reviewedAnswers.save("alice", { ...input, reviewed: false as never })).toThrow();
+		expect(() => reviewedAnswers.save("alice", { ...input, scope: "reusable", noEmployerWording: false })).toThrow();
+		await expect(reviewedAnswers.list("bob", "alice-app")).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(reviewedAnswers.delete("bob", row.id, row.revision)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(
+			reviewedAnswers.reuse("alice", {
+				id: row.id,
+				expectedRevision: row.revision,
+				applicationId: "alice-other",
+				answer: row.answer,
+				reviewed: true,
+			}),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		const copy = await reviewedAnswers.reuse("alice", {
+			id: row.id,
+			expectedRevision: row.revision,
+			applicationId: "alice-app",
+			answer: "Reviewed adaptation",
+			reviewed: true,
+		});
+		expect(copy.text).toBe("Reviewed adaptation");
+		const scoped = await reviewedAnswers.save("alice", await libraryInput({ scope: "application" }));
+		await expect(
+			reviewedAnswers.reuse("alice", {
+				id: scoped.id,
+				expectedRevision: scoped.revision,
+				applicationId: "alice-other",
+				answer: scoped.answer,
+				reviewed: true,
+			}),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+	});
+
+	it.each(["employer", "application"] as const)(
+		"does not move a %s answer when edited from another application",
+		async (scope) => {
+			const input = await libraryInput({ scope });
+			const row = await reviewedAnswers.save("alice", input);
+			await expect(
+				reviewedAnswers.save("alice", {
+					...input,
+					id: row.id,
+					expectedRevision: row.revision,
+					applicationId: "alice-other",
+					answer: "A typo correction",
+				}),
+			).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			expect((await reviewedAnswers.list("alice", "alice-app"))[0]).toMatchObject({
+				id: row.id,
+				employer: "ACME",
+				applicationId: row.applicationId,
+				answer: row.answer,
+				revision: row.revision,
+				canReuse: true,
+			});
+			expect((await reviewedAnswers.list("alice", "alice-other"))[0]?.canReuse).toBe(false);
+			const corrected = await reviewedAnswers.save("alice", {
+				...input,
+				id: row.id,
+				expectedRevision: row.revision,
+				answer: "A typo correction",
+			});
+			expect(corrected).toMatchObject({
+				employer: "ACME",
+				applicationId: row.applicationId,
+				answer: "A typo correction",
+				revision: row.revision + 1,
+			});
+		},
+	);
+
+	it("invalidates evidence revisions, rejects private evidence promotion and preserves explicit review across conflicts", async () => {
+		const evidence = await fact("alice", "Restored service");
+		const privateFact = await fact("alice", "Private context", "alice-app");
+		const savedStory = await service.saveStory("alice", story([evidence.id]));
+		const expectedEvidence = reviewedAnswerEvidence([evidence], [savedStory], [], [savedStory.id]);
+		const input = await libraryInput({ storyIds: [savedStory.id], expectedEvidence });
+		const row = await reviewedAnswers.save("alice", input);
+		await expect(
+			reviewedAnswers.save(
+				"alice",
+				await libraryInput({
+					factIds: [privateFact.id],
+					expectedEvidence: reviewedAnswerEvidence([privateFact], [], [privateFact.id], []),
+				}),
+			),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		await service.updateFact("alice", { id: evidence.id, text: "Corrected result" });
+		// Even a correction within the same timestamp must invalidate the fact reference.
+		await getDb()
+			.update(tables.careerFact)
+			.set({ updatedAt: evidence.updatedAt })
+			.where(eq(tables.careerFact.id, evidence.id));
+		expect((await reviewedAnswers.list("alice", "alice-app"))[0]).toMatchObject({
+			stale: true,
+			canReuse: false,
+			evidence: expect.arrayContaining([expect.objectContaining({ kind: "fact", status: "changed" })]),
+		});
+		await expect(
+			reviewedAnswers.reuse("alice", {
+				id: row.id,
+				expectedRevision: row.revision,
+				applicationId: "alice-app",
+				answer: row.answer,
+				reviewed: true,
+			}),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		await expect(
+			reviewedAnswers.save("alice", { ...input, id: row.id, expectedRevision: row.revision }),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		await service.forgetFact("alice", evidence.id);
+		expect((await reviewedAnswers.list("alice", "alice-app"))[0]?.evidence).toEqual(
+			expect.arrayContaining([expect.objectContaining({ kind: "fact", status: "removed" })]),
+		);
+		await service.deleteStory("alice", savedStory.id);
+		expect((await reviewedAnswers.list("alice", "alice-app"))[0]?.evidence).toEqual(
+			expect.arrayContaining([expect.objectContaining({ kind: "story", status: "removed" })]),
+		);
+		const updated = await reviewedAnswers.save(
+			"alice",
+			await libraryInput({ id: row.id, expectedRevision: row.revision, answer: "Corrected, reviewed wording" }),
+		);
+		expect((await reviewedAnswers.list("alice", "alice-app"))[0]).toMatchObject({
+			stale: false,
+			evidence: [],
+			revision: 2,
+		});
+		await expect(reviewedAnswers.delete("alice", row.id, row.revision)).rejects.toMatchObject({ code: "CONFLICT" });
+		await expect(
+			reviewedAnswers.save("alice", { ...input, id: row.id, expectedRevision: row.revision }),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+		expect((await service.exportData("alice")).reviewedAnswers).toMatchObject([{ id: updated.id }]);
+		expect((await service.exportData("bob")).reviewedAnswers).toEqual([]);
+		await getDb().delete(tables.user).where(eq(tables.user.id, "alice"));
+		expect(await getDb().select().from(tables.careerAnswer)).toEqual([]);
 	});
 
 	it("saves manual offers without AI, preserves terms and rejects another owner's application", async () => {

@@ -13,6 +13,7 @@ import { protectedProcedure, publicProcedure } from "../../context";
 import { applicationDto } from "../../dto/application";
 import {
 	savedItemSchema,
+	reviewedAnswerSchema,
 	careerFactSchema,
 	careerNotificationSchema,
 	careerScheduleSchema,
@@ -243,6 +244,7 @@ export const authRouter = {
 				aiContentReports: z.array(createSelectSchema(schema.aiContentReport)),
 				career: z.object({
 					profile: careerProfileDataSchema,
+					reviewedAnswers: z.array(reviewedAnswerSchema),
 					facts: z.array(careerFactSchema.omit({ usedBy: true, company: true })),
 					stories: z.array(careerStorySchema),
 					artifacts: z.array(savedItemSchema),

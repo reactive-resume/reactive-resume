@@ -453,6 +453,12 @@ msgstr "มีหลักฐาน {0} ข้อ มีหลักฐานบ
 msgid "{0} to fix"
 msgstr "ต้องแก้ไข {0} รายการ"
 
+#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
+#. placeholder {1}: [...answer].length
+#: src/features/career/workspace/answer-library.tsx
+msgid "{0} words · {1} characters"
+msgstr ""
+
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: index + 1
 #: src/features/resume/editor/write/entry-card.tsx
@@ -720,6 +726,10 @@ msgstr "{pendingOnPage, plural, one {# เสนอให้แก้ไขใ�
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# เสนอ} other {# เสนอ}}"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{sections, plural, one {# section} other {# sections}}"
@@ -1664,6 +1674,10 @@ msgstr "ผู้ให้บริการ AI จะไม่พร้อม�
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "ไม่สามารถโหลดผู้ให้บริการ AI ได้ โหลดซ้ำเพื่อลองอีกครั้ง"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "AI-assisted draft"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Albanian"
 msgstr "แอลเบเนีย"
@@ -1703,6 +1717,10 @@ msgstr "การสมัครงานทั้งหมด (รวมถึ�
 #: src/features/settings/account/data.tsx
 msgid "All documents and applications as JSON, in one zip"
 msgstr "เอกสารและสมัครงานทั้งหมดเป็น JSON ใน zip เดียว"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "All employers"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -1801,6 +1819,7 @@ msgstr "ประวัติย่ออีกฉบับของคุณใ
 msgid "Another resume already uses this address. Choose a different one."
 msgstr "ประวัติย่ออื่นใช้ที่อยู่นี้อยู่แล้ว เลือกที่อยู่อื่น"
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
 msgid "Answer"
@@ -1811,12 +1830,17 @@ msgid "Answer by"
 msgstr "ตอบด้วย"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 msgid "Answer copied"
 msgstr "คัดลอกคำตอบแล้ว"
 
 #: src/features/assistant/conversation.tsx
 msgid "Answer in your own words"
 msgstr "ตอบด้วยคำพูดของคุณเอง"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Answer source"
+msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
@@ -1932,6 +1956,7 @@ msgstr "ใบสมัคร"
 msgid "Application added"
 msgstr "เพิ่มใบสมัครแล้ว"
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/homepage/remember.tsx
 msgid "Application answer"
 msgstr "คำตอบในใบสมัคร"
@@ -2961,6 +2986,7 @@ msgstr "รหัสลูกค้า"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -3362,6 +3388,7 @@ msgid "Copied"
 msgstr "คัดลอกแล้ว"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3982,6 +4009,10 @@ msgstr "ยกเลิกการเชื่อมโยงใบสมัค
 msgid "Couldn't unlock the document. Try again."
 msgstr "ปลดล็อกเอกสารไม่ได้ ลองอีกครั้ง"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Couldn't update saved answers. Try again."
+msgstr ""
+
 #: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
@@ -4200,6 +4231,10 @@ msgstr "สกุลเงิน"
 msgid "Current drafts"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Current employer: {company}"
+msgstr ""
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
 msgstr "ตัวกรองปัจจุบัน"
@@ -4348,6 +4383,7 @@ msgstr "ปริญญา"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
@@ -4416,6 +4452,10 @@ msgstr ""
 msgid "Delete provider"
 msgstr "ลบผู้ให้บริการ"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete saved answer"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Delete section"
 msgstr "ลบส่วน"
@@ -4440,6 +4480,10 @@ msgstr "ลบการสนทนานี้ใช่ไหม"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Delete this entry?"
 msgstr "ลบรายการนี้ใช่ไหม"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete this library answer? Application drafts and submitted copies are kept."
+msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete version"
@@ -4994,6 +5038,10 @@ msgstr "แก้ไขคำถาม"
 msgid "Edit resume"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Edit saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "แก้ไขกำหนดการ"
@@ -5269,6 +5317,10 @@ msgstr "ทุกคำที่ประกาศรับสมัครงา
 msgid "Every week"
 msgstr "ทุกสัปดาห์"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Evidence changed or was removed. Edit and review before reuse."
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "แลกเปลี่ยนความคิดเห็นเกี่ยวกับเรซูเม่ ถามคำถาม และร่วมพัฒนา Reactive Resume ไปกับคอมมูนิตี้"
@@ -5326,6 +5378,10 @@ msgstr "เปิดการส่งออก"
 #: src/features/applications/components/insights-view.tsx
 msgid "Export PNG"
 msgstr "ส่งออก PNG"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Export saved answers"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Export saved profile"
@@ -6177,6 +6233,14 @@ msgstr "ผมเห็น {kind} นี้ครับ คำแนะนำจ
 msgid "I interviewed 14 customers, mapped three drop-off points and prototyped a shorter setup with engineering."
 msgstr "ฉันสัมภาษณ์ลูกค้า 14 ราย ระบุจุดที่ผู้ใช้หลุดออกสามจุด และทำต้นแบบขั้นตอนตั้งค่าที่สั้นลงร่วมกับทีมวิศวกรรม"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "I removed employer-specific wording and reviewed reuse across employers."
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "I reviewed this answer, its evidence and the application context."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "I withdrew"
 msgstr "ฉันถอนตัวออก"
@@ -6825,6 +6889,10 @@ msgstr "ตรวจสอบล่าสุดเมื่อ {lastChecked} ท
 msgid "Last edited"
 msgstr "แก้ไขครั้งล่าสุด"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Last reviewed"
+msgstr ""
+
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/account/application-profile.tsx
 msgid "Last reviewed: {0}"
@@ -7122,6 +7190,10 @@ msgstr ""
 msgid "Linked documents couldn't be loaded."
 msgstr "โหลดเอกสารที่ลิงก์ไว้ไม่ได้"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Linked evidence unchanged since review"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Linked resume"
 msgstr "ประวัติย่อที่เชื่อมโยง"
@@ -7250,6 +7322,10 @@ msgstr "กำลังโหลดผู้ให้บริการ…"
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "กำลังโหลดต่อ…"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Loading saved answers…"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Loading saved version…"
@@ -8093,6 +8169,10 @@ msgstr "ไม่มีบรรทัดใดที่ดูเหมือน
 #: src/features/resume/editor/check/issues.ts
 msgid "No location"
 msgstr "ไม่มีที่ตั้ง"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "No matching saved answers. Clear the search to see all answers."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No new roles. Discovery is paused."
@@ -9571,6 +9651,10 @@ msgstr "รหัส QR สำหรับ {url}"
 msgid "QR code for two-step verification"
 msgstr "รหัส QR สำหรับการยืนยันแบบสองขั้นตอน"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Question"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Question {position} of {total}"
 msgstr "คำถาม {position} จาก {total}"
@@ -10136,6 +10220,14 @@ msgstr "ลบแท็ก"
 msgid "Remove the password?"
 msgstr "ลบรหัสผ่าน?"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable fact reference"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable story reference"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/settings/account/security.tsx
@@ -10294,6 +10386,10 @@ msgstr "คืนค่าการเปลี่ยนแปลงที่ย
 msgid "Restored the version from {0}. Your previous state is saved as “Before restore”."
 msgstr "กู้คืนเวอร์ชันจาก {0} สถานะก่อนหน้าของคุณจะถูกบันทึกเป็น “ก่อนการคืนค่า”"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Restricted to its employer or application."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Result"
@@ -10401,6 +10497,7 @@ msgstr "ดึงข้อมูล {0} แล้ว ไม่ทราบคว
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -10421,11 +10518,19 @@ msgstr "ลองบันทึกอีกครั้ง"
 msgid "Retrying…"
 msgstr "กำลังลองอีกครั้ง..."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reuse scope"
+msgstr ""
+
 #: src/features/career/today.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
 msgstr "ทบทวน"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review and use"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Review checks"
@@ -10442,6 +10547,10 @@ msgstr "ตรวจทานร่าง"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Review each section before using this resume."
 msgstr "ทบทวนแต่ละส่วนก่อนใช้เรซูเม่นี้"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review for this application"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Review my answer"
@@ -10467,9 +10576,17 @@ msgstr "ตรวจทานเรซูเม่และจดหมายส
 msgid "Review with assistant"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
 msgstr "การเขียนรีวิว"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reviewed answer saved"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
@@ -10678,6 +10795,10 @@ msgstr "บันทึกการแก้ไข"
 msgid "Save first, then test search and reading. No test runs automatically."
 msgstr "บันทึกก่อน จากนั้นทดสอบการค้นหาและการอ่าน ไม่มีการทดสอบทำงานโดยอัตโนมัติ"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save for other applications"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Save interview"
 msgstr "บันทึกการสัมภาษณ์"
@@ -10697,6 +10818,10 @@ msgstr "บันทึกข้อเสนอ"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save reviewed answer"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -10973,6 +11098,10 @@ msgstr "ค้นหาหรือเรียกใช้..."
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
 msgstr "ค้นหาบทบาท บริษัท หรือผู้ติดต่อ"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Search saved answers"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "Search terms go to your web search service."
@@ -11680,6 +11809,10 @@ msgstr "แหล่งที่มา"
 msgid "Source code"
 msgstr "ซอร์สโค้ด"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Source employer"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
@@ -12045,6 +12178,10 @@ msgstr "สนับสนุน"
 #: src/features/homepage/prepare.tsx
 msgid "Supported"
 msgstr "มีหลักฐาน"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Supporting Knowledge facts and stories"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -12713,6 +12850,10 @@ msgstr "กำลังคิด"
 msgid "Thinking…"
 msgstr "กำลังคิด..."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "This application"
+msgstr ""
+
 #: src/features/career/workspace/shell.tsx
 msgid "This application couldn't be opened."
 msgstr "เปิดใบสมัครนี้ไม่ได้"
@@ -12753,6 +12894,10 @@ msgstr "เอกสารฉบับนี้"
 #: src/features/assistant/assistant-panel.tsx
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "เอกสารนี้ถูกล็อค ปลดล็อกเพื่อรับคำแนะนำ"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "This employer"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "This entry"
@@ -13486,6 +13631,10 @@ msgstr "ใช้รูปแบบสากลแบบธรรมดา เ�
 msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "ใช้รูปแบบที่เป็นที่รู้จัก เช่น \"Jan 2020 - Mar 2022\" หรือ \"2020 - 2022\""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use a saved answer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
 msgstr "ใช้คอลัมน์เดียวสำหรับเนื้อหาที่ต้องอ่านตามลำดับ"
@@ -13565,6 +13714,10 @@ msgstr "ใช้หัวข้อแบบธรรมดา เช่น \"Ex
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Use posting"
 msgstr "ใช้ประกาศรับสมัครงาน"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use reviewed answer"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
@@ -14252,6 +14405,10 @@ msgstr "ความช่วยเหลือในการเขียน �
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"
 msgstr "การเขียน การปรับตัว และการส่ง"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Written manually"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx

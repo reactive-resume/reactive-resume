@@ -20,6 +20,7 @@ import {
 } from "../../dto/career";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { searchScope } from "../web-access/regions";
+import { answerRouter } from "./answer-router";
 import { generateCareer } from "./generate";
 import { careerJobs } from "./jobs";
 import { careerService } from "./service";
@@ -37,6 +38,7 @@ const savedItemOutput = savedItemSchema.extend({
 });
 
 export const careerRouter = {
+	answers: answerRouter,
 	voice: careerVoiceRouter,
 	schedules: protectedProcedure
 		.route({

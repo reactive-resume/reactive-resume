@@ -1,3 +1,4 @@
+import type { AnswerEvidence } from "@reactive-resume/schema/application-answers";
 import type {
 	CareerNotice,
 	CareerProfileData,
@@ -184,4 +185,27 @@ export const careerTranscript = pg.pgTable(
 		model: pg.text("model").notNull(),
 	},
 	(t) => [pg.index().on(t.userId, t.applicationId)],
+);
+
+/** Explicitly reviewed reusable wording, independent of editable workspaces and submitted artifacts. */
+export const careerAnswer = pg.pgTable(
+	"career_answer",
+	{
+		...owned(),
+		question: pg.text("question").notNull(),
+		answer: pg.text("answer").notNull(),
+		source: pg.text("source").$type<"manual" | "application" | "ai-assisted">().notNull(),
+		scope: pg.text("scope").$type<"reusable" | "employer" | "application">().notNull(),
+		employer: pg.text("employer").notNull(),
+		applicationId: pg.text("application_id").references(() => application.id, { onDelete: "cascade" }),
+		sourceApplicationId: pg.text("source_application_id").references(() => application.id, { onDelete: "set null" }),
+		factIds: pg.jsonb("fact_ids").notNull().$type<string[]>(),
+		storyIds: pg.jsonb("story_ids").notNull().$type<string[]>(),
+		evidence: pg.jsonb("evidence").notNull().$type<AnswerEvidence[]>(),
+		reviewedAt: pg.timestamp("reviewed_at", { withTimezone: true }).notNull(),
+		revision: pg.integer("revision").notNull().default(1),
+		/** Normalized question plus scope target, hashed by the owning service. */
+		duplicateKey: pg.text("duplicate_key").notNull(),
+	},
+	(t) => [pg.uniqueIndex().on(t.userId, t.duplicateKey)],
 );

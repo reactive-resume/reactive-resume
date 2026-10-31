@@ -309,6 +309,19 @@ export async function linkAnonymousAccount({
 				.where(and(eq(schema.application.id, application.id), eq(schema.application.userId, fromUserId)));
 		}
 
+		const sourceAnswers = await tx.select().from(schema.careerAnswer).where(eq(schema.careerAnswer.userId, fromUserId));
+		const targetAnswers = await tx.select().from(schema.careerAnswer).where(eq(schema.careerAnswer.userId, toUserId));
+		if (sourceAnswers.some((answer) => targetAnswers.some((target) => target.duplicateKey === answer.duplicateKey)))
+			throw new APIError("CONFLICT", {
+				message:
+					"Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten.",
+			});
+		// Preserve wording. Knowledge currently stays with the guest, so missing references require review after linking.
+		await tx
+			.update(schema.careerAnswer)
+			.set({ userId: toUserId, updatedAt: schema.careerAnswer.updatedAt })
+			.where(eq(schema.careerAnswer.userId, fromUserId));
+
 		await tx
 			.delete(schema.resumeSlugRedirect)
 			.where(

@@ -453,6 +453,12 @@ msgstr "裏付けあり{0}件、一部裏付けあり{1}件、まだ根拠なし
 msgid "{0} to fix"
 msgstr "{0} 件の修正が必要"
 
+#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
+#. placeholder {1}: [...answer].length
+#: src/features/career/workspace/answer-library.tsx
+msgid "{0} words · {1} characters"
+msgstr ""
+
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: index + 1
 #: src/features/resume/editor/write/entry-card.tsx
@@ -720,6 +726,10 @@ msgstr "{pendingOnPage, plural, one {# がこのページで提案した編集 �
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# が提案されました} other {# が提案されました}}"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{sections, plural, one {# section} other {# sections}}"
@@ -1664,6 +1674,10 @@ msgstr "ENCRYPTION_SECRET が設定されるまで、このサーバーでは AI
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI プロバイダーを読み込めませんでした。リロードして再試行してください。"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "AI-assisted draft"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Albanian"
 msgstr "アルバニア語"
@@ -1703,6 +1717,10 @@ msgstr "すべての求人応募（終了したものを含む）"
 #: src/features/settings/account/data.tsx
 msgid "All documents and applications as JSON, in one zip"
 msgstr "すべてのドキュメントと求人応募書を JSON として 1 つの zip にまとめたもの"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "All employers"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -1801,6 +1819,7 @@ msgstr "あなたの別の履歴書がこのアドレスを使用しています
 msgid "Another resume already uses this address. Choose a different one."
 msgstr "別のレジュメがすでにこのアドレスを使用しています。別のアドレスを選んでください。"
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
 msgid "Answer"
@@ -1811,12 +1830,17 @@ msgid "Answer by"
 msgstr "回答方法"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 msgid "Answer copied"
 msgstr "回答をコピーしました"
 
 #: src/features/assistant/conversation.tsx
 msgid "Answer in your own words"
 msgstr "自分の言葉で回答"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Answer source"
+msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
@@ -1932,6 +1956,7 @@ msgstr "応募"
 msgid "Application added"
 msgstr "応募を追加しました"
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/homepage/remember.tsx
 msgid "Application answer"
 msgstr "応募フォームの回答"
@@ -2961,6 +2986,7 @@ msgstr "クライアント ID"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -3362,6 +3388,7 @@ msgid "Copied"
 msgstr "コピーされました"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3982,6 +4009,10 @@ msgstr "応募のリンクを解除できませんでした。もう一度お試
 msgid "Couldn't unlock the document. Try again."
 msgstr "書類のロックを解除できませんでした。もう一度お試しください。"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Couldn't update saved answers. Try again."
+msgstr ""
+
 #: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
@@ -4200,6 +4231,10 @@ msgstr "通貨"
 msgid "Current drafts"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Current employer: {company}"
+msgstr ""
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
 msgstr "現在のフィルター"
@@ -4348,6 +4383,7 @@ msgstr "学位"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
@@ -4416,6 +4452,10 @@ msgstr ""
 msgid "Delete provider"
 msgstr "プロバイダーを削除"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete saved answer"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Delete section"
 msgstr "セクションの削除"
@@ -4440,6 +4480,10 @@ msgstr "この会話を削除しますか?"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Delete this entry?"
 msgstr "このエントリを削除しますか?"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete this library answer? Application drafts and submitted copies are kept."
+msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete version"
@@ -4994,6 +5038,10 @@ msgstr "質問を編集"
 msgid "Edit resume"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Edit saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "スケジュールを編集"
@@ -5269,6 +5317,10 @@ msgstr "求人情報で強調されているすべての用語はすでに存在
 msgid "Every week"
 msgstr "毎週"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Evidence changed or was removed. Edit and review before reuse."
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "履歴書へのフィードバックを交換し、質問し、コミュニティと一緒に Reactive Resume を形づくりましょう。"
@@ -5326,6 +5378,10 @@ msgstr "エクスポートが開かれました"
 #: src/features/applications/components/insights-view.tsx
 msgid "Export PNG"
 msgstr "PNG をエクスポート"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Export saved answers"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Export saved profile"
@@ -6177,6 +6233,14 @@ msgstr "この{kind}が見えます。提案は編集として返され、1 つ�
 msgid "I interviewed 14 customers, mapped three drop-off points and prototyped a shorter setup with engineering."
 msgstr "14人の顧客にインタビューし、3つの離脱ポイントを洗い出し、エンジニアリングと一緒に短いセットアップを試作しました。"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "I removed employer-specific wording and reviewed reuse across employers."
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "I reviewed this answer, its evidence and the application context."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "I withdrew"
 msgstr "撤退しました"
@@ -6825,6 +6889,10 @@ msgstr "最終確認: {lastChecked}前"
 msgid "Last edited"
 msgstr "最終編集"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Last reviewed"
+msgstr ""
+
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/account/application-profile.tsx
 msgid "Last reviewed: {0}"
@@ -7122,6 +7190,10 @@ msgstr ""
 msgid "Linked documents couldn't be loaded."
 msgstr "リンクされたドキュメントを読み込めませんでした。"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Linked evidence unchanged since review"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Linked resume"
 msgstr "リンクされた履歴書"
@@ -7250,6 +7322,10 @@ msgstr "プロバイダーを読み込んでいます…"
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "履歴書を読み込み中…"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Loading saved answers…"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Loading saved version…"
@@ -8093,6 +8169,10 @@ msgstr "職種名と勤務先が対になっているような行が見つかり
 #: src/features/resume/editor/check/issues.ts
 msgid "No location"
 msgstr "場所がありません"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "No matching saved answers. Clear the search to see all answers."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No new roles. Discovery is paused."
@@ -9571,6 +9651,10 @@ msgstr "{url}のQRコード"
 msgid "QR code for two-step verification"
 msgstr "二段階認証用の QR コード"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Question"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Question {position} of {total}"
 msgstr "質問 {position}/{total}"
@@ -10136,6 +10220,14 @@ msgstr "タグを削除"
 msgid "Remove the password?"
 msgstr "パスワードを削除しますか?"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable fact reference"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable story reference"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/settings/account/security.tsx
@@ -10294,6 +10386,10 @@ msgstr "まだ保存されていない変更を復元しました。"
 msgid "Restored the version from {0}. Your previous state is saved as “Before restore”."
 msgstr "バージョンを{0}から復元しました。以前の状態は「復元前」として保存されます。"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Restricted to its employer or application."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Result"
@@ -10401,6 +10497,7 @@ msgstr "{0}を取得しました。産地の鮮度は報告がない限り不明
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -10421,11 +10518,19 @@ msgstr "保存を再試行してください"
 msgid "Retrying…"
 msgstr "再試行中…"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reuse scope"
+msgstr ""
+
 #: src/features/career/today.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
 msgstr "レビュー"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review and use"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Review checks"
@@ -10442,6 +10547,10 @@ msgstr "下書きを確認"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Review each section before using this resume."
 msgstr "この履歴書を使用する前に、各セクションを確認してください。"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review for this application"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Review my answer"
@@ -10467,9 +10576,17 @@ msgstr "選択した履歴書とカバーレターを、それぞれのエディ
 msgid "Review with assistant"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
 msgstr "レビューの書き方"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reviewed answer saved"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
@@ -10678,6 +10795,10 @@ msgstr "修正を保存"
 msgid "Save first, then test search and reading. No test runs automatically."
 msgstr "まず保存してから、検索と読み取りをテストします。テストは自動的には実行されません。"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save for other applications"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Save interview"
 msgstr "面接を保存"
@@ -10697,6 +10818,10 @@ msgstr "オファーを保存"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save reviewed answer"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -10973,6 +11098,10 @@ msgstr "検索または実行…"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
 msgstr "役割、会社、または連絡先を検索する"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Search saved answers"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "Search terms go to your web search service."
@@ -11680,6 +11809,10 @@ msgstr "ソース"
 msgid "Source code"
 msgstr "ソースコード"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Source employer"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
@@ -12045,6 +12178,10 @@ msgstr "サポート"
 #: src/features/homepage/prepare.tsx
 msgid "Supported"
 msgstr "裏付けあり"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Supporting Knowledge facts and stories"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -12713,6 +12850,10 @@ msgstr "考え中"
 msgid "Thinking…"
 msgstr "考え…"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "This application"
+msgstr ""
+
 #: src/features/career/workspace/shell.tsx
 msgid "This application couldn't be opened."
 msgstr "この応募を開けませんでした。"
@@ -12753,6 +12894,10 @@ msgstr "この文書"
 #: src/features/assistant/assistant-panel.tsx
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "この文書はロックされています。ロックを解除すると提案が表示されます。"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "This employer"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "This entry"
@@ -13486,6 +13631,10 @@ msgstr "+1 555 010 1234 のような、シンプルな国際形式を使用し�
 msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "「Jan 2020 - Mar 2022」や「2020 - 2022」のような、認識される形式を使用してください。"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use a saved answer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
 msgstr "順番に読む必要がある内容には、単一列を使用してください。"
@@ -13565,6 +13714,10 @@ msgstr "「Experience」「Education」「Skills」のような、シンプル�
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Use posting"
 msgstr "求人情報を利用する"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use reviewed answer"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
@@ -14252,6 +14405,10 @@ msgstr "文章作成の支援、カスタマイズされた提案、アシスタ
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"
 msgstr "執筆、翻案、送信"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Written manually"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx

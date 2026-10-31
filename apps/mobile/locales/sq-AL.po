@@ -418,6 +418,12 @@ msgstr "{0} ktheu “{1}”. Mesazhi juaj ruhet."
 msgid "{0} selected"
 msgstr "U zgjodh {0}"
 
+#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
+#. placeholder {1}: [...answer].length
+#: src/features/workspace/answer-library.tsx
+msgid "{0} words · {1} characters"
+msgstr ""
+
 #. placeholder {0}: resume.data.basics.name || resume.name
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -611,6 +617,10 @@ msgstr "Lloji {pairing}"
 #: src/features/assistant/page-marks.tsx
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# modifikim i propozuar në këtë faqe · asgjë nuk ndryshon derisa të pranoni} other {# modifikime të propozuara në këtë faqe · asgjë nuk ndryshon derisa të pranoni}}"
+
+#: src/features/workspace/answer-library.tsx
+msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "{role} · {company}"
@@ -1310,6 +1320,10 @@ msgstr "Ofruesit e AI nuk mund të ngarkoheshin. Provoni përsëri ose plotëson
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI lexon tekstin e ngjitur vetëm kur ju pyet. Lidhjet mund të përdorin të dhënat e punës së faqes pa AI."
 
+#: src/features/workspace/answer-library.tsx
+msgid "AI-assisted draft"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Albanian"
 msgstr "Shqip"
@@ -1328,6 +1342,10 @@ msgstr "Të gjitha ({0})"
 #: src/features/career/facts.tsx
 msgid "All applications"
 msgstr "Të gjitha aplikimet"
+
+#: src/features/workspace/answer-library.tsx
+msgid "All employers"
+msgstr ""
 
 #: src/features/check/job-match.tsx
 msgid "All posting terms are covered."
@@ -1427,6 +1445,7 @@ msgstr "Një CV tjetër e përdor tashmë këtë adresë. Zgjidhni një tjetër.
 msgid "Another server"
 msgstr "Një tjetër server"
 
+#: src/features/workspace/answer-library.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Answer"
 msgstr "Përgjigje"
@@ -1435,9 +1454,17 @@ msgstr "Përgjigje"
 msgid "Answer by"
 msgstr "Mënyra e përgjigjes"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Answer copied"
+msgstr "Përgjigjja u kopjua"
+
 #: src/features/assistant/messages.tsx
 msgid "Answer in your own words"
 msgstr "Përgjigjuni me fjalët tuaja"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Answer source"
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Answers"
@@ -1526,6 +1553,10 @@ msgstr "Shfaqet në faqe pasi të ketë një organizatë."
 #: src/shell/workspace-chrome.tsx
 msgid "Application"
 msgstr "Aplikimi"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Application answer"
+msgstr "Përgjigje në aplikim"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Application closed"
@@ -2741,6 +2772,7 @@ msgid "Copies it"
 msgstr "Kopjon tekstin"
 
 #: src/features/share/link.tsx
+#: src/features/workspace/answer-library.tsx
 msgid "Copy"
 msgstr "Kopjo"
 
@@ -3210,6 +3242,10 @@ msgstr "CV-ja nuk mund të zhbllokohej. Provoni përsëri."
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Kjo CV nuk mund të zhbllokohej. Provo sërish."
 
+#: src/features/workspace/answer-library.tsx
+msgid "Couldn't update saved answers. Try again."
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Couldn't update the application. Nothing was changed; try again."
 msgstr "Aplikimi nuk mund të përditësohej. Asgjë nuk u ndryshua; provoni përsëri."
@@ -3354,6 +3390,10 @@ msgstr "Monedha"
 msgid "Current drafts"
 msgstr ""
 
+#: src/features/workspace/answer-library.tsx
+msgid "Current employer: {company}"
+msgstr ""
+
 #: src/features/design/advanced.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
@@ -3491,6 +3531,7 @@ msgstr "Diploma"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/workspace/answer-library.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/features/write/entry-sheet.tsx
 msgid "Delete"
@@ -3568,6 +3609,10 @@ msgstr ""
 msgid "Delete provider"
 msgstr "Fshi ofruesin"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Delete saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Delete schedule"
 msgstr "Fshi orarin"
@@ -3591,6 +3636,10 @@ msgstr "Të fshihet kjo bisedë?"
 #: src/features/application-detail/sections.tsx
 msgid "Delete this entry?"
 msgstr "Të fshihet kjo hyrje?"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Delete this library answer? Application drafts and submitted copies are kept."
+msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "Delete this provider?"
@@ -4016,6 +4065,10 @@ msgstr "Modifiko pyetjen"
 msgid "Edit resume"
 msgstr ""
 
+#: src/features/workspace/answer-library.tsx
+msgid "Edit saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "Modifiko orarin"
@@ -4220,6 +4273,10 @@ msgstr "Çdo term që thekson shpallja e punës është tashmë aty."
 msgid "Every week"
 msgstr "Çdo javë"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Evidence changed or was removed. Edit and review before reuse."
+msgstr ""
+
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
 msgid "Experience"
@@ -4240,6 +4297,10 @@ msgstr "Eksporto gjithçka"
 #: src/features/ats-checker/messages.ts
 msgid "Export from the original document instead of scanning or screenshotting it."
 msgstr "Eksportoni nga dokumenti origjinal në vend që ta skanoni ose ta fotografoni ekranin."
+
+#: src/features/workspace/answer-library.tsx
+msgid "Export saved answers"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Export saved profile"
@@ -4858,6 +4919,14 @@ msgstr "Mund ta shoh këtë CV dhe shpalljen e punës për {company}. Sugjerimet
 msgid "I can see this resume. Suggestions come back as edits you can accept one by one."
 msgstr "Unë mund ta shoh këtë cv. Sugjerimet kthehen si modifikime që mund t'i pranoni një nga një."
 
+#: src/features/workspace/answer-library.tsx
+msgid "I removed employer-specific wording and reviewed reuse across employers."
+msgstr ""
+
+#: src/features/workspace/answer-library.tsx
+msgid "I reviewed this answer, its evidence and the application context."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "I withdrew"
 msgstr "u tërhoqa"
@@ -5328,6 +5397,10 @@ msgstr "Kontrolluar së fundi {lastChecked} më parë"
 msgid "Last edited"
 msgstr "Redaktimi i fundit"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Last reviewed"
+msgstr ""
+
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/application-profile.tsx
 msgid "Last reviewed: {0}"
@@ -5576,6 +5649,10 @@ msgstr ""
 msgid "Linked documents couldn't be loaded."
 msgstr "Dokumentet e lidhura nuk mund të ngarkoheshin."
 
+#: src/features/workspace/answer-library.tsx
+msgid "Linked evidence unchanged since review"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Linked resume"
 msgstr "CV e lidhur"
@@ -5674,6 +5751,10 @@ msgstr "CV po ngarkohet…"
 #: src/features/search/search-screen.tsx
 msgid "Loading resumes…"
 msgstr "Duke ngarkuar CV-të…"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Loading saved answers…"
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
@@ -6450,6 +6531,10 @@ msgstr "Nuk ka ndeshje"
 #: src/features/applications/list-screen.tsx
 msgid "No matching applications"
 msgstr "Nuk ka aplikimet që përputhen"
+
+#: src/features/workspace/answer-library.tsx
+msgid "No matching saved answers. Clear the search to see all answers."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No new roles. Discovery is paused."
@@ -7671,6 +7756,10 @@ msgstr "Kodi QR"
 msgid "QR code for {url}"
 msgstr "Kodi QR për {url}"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Question"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Question {position} of {total}"
 msgstr "Pyetja {position} nga {total}"
@@ -8096,6 +8185,14 @@ msgstr "Të hiqet fjalëkalimi?"
 msgid "Remove this file?"
 msgstr "Të hiqet ky skedar?"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Remove unavailable fact reference"
+msgstr ""
+
+#: src/features/workspace/answer-library.tsx
+msgid "Remove unavailable story reference"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Rename"
@@ -8257,6 +8354,10 @@ msgstr "Rikthe versionin"
 msgid "Restored a version"
 msgstr "Rivendos një version"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Restricted to its employer or application."
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Result"
 msgstr "Rezultati"
@@ -8356,6 +8457,7 @@ msgstr "{0} është marrë duke përdorur {1}. Koha e marrjes nuk përcakton fre
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
+#: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8404,10 +8506,18 @@ msgstr "Riprovoni ruajtjen"
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "Kthehuni te Dokumentet dhe rihapni atë, ose riprovoni lidhjen."
 
+#: src/features/workspace/answer-library.tsx
+msgid "Reuse scope"
+msgstr ""
+
 #: src/features/assistant/page-marks.tsx
 #: src/features/career/today.tsx
 msgid "Review"
 msgstr "Rishikimi"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Review and use"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Review application"
@@ -8432,6 +8542,10 @@ msgstr "Rishiko draftin"
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
 msgstr "Rishikoni çdo seksion përpara se të përdorni këtë CV."
+
+#: src/features/workspace/answer-library.tsx
+msgid "Review for this application"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Review job details"
@@ -8465,9 +8579,17 @@ msgstr "Rishikoni CV-në dhe letrën motivuese të zgjedhura në redaktuesit e t
 msgid "Review with assistant"
 msgstr ""
 
+#: src/features/workspace/answer-library.tsx
+msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "Rishikoni shkrimin"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Reviewed answer saved"
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Reviewing needs an AI connection. What you write here stays on this device until then."
@@ -8645,6 +8767,10 @@ msgstr "Ruaj faktin"
 msgid "Save first, then test search and reading. No test runs automatically."
 msgstr "Ruani fillimisht, pastaj provoni kërkimin dhe leximin. Asnjë test nuk funksionon automatikisht."
 
+#: src/features/workspace/answer-library.tsx
+msgid "Save for other applications"
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Save interview"
 msgstr "Ruaj intervistën"
@@ -8667,6 +8793,10 @@ msgstr "Ruani ose shpërndani skedarin"
 
 #: src/features/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/workspace/answer-library.tsx
+msgid "Save reviewed answer"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -8881,6 +9011,10 @@ msgstr "Kërkoni gjuhë"
 #: src/shell/app-tabs.tsx
 msgid "Search or run…"
 msgstr "Kërko ose ekzekuto…"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Search saved answers"
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Search terms go to your web search service."
@@ -9542,6 +9676,10 @@ msgstr "Historia e burimit dhe korrigjimit"
 msgid "Source code on GitHub"
 msgstr "Kodi burimor në GitHub"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Source employer"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Sources"
@@ -9782,6 +9920,10 @@ msgstr "Mbështetje"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Supported"
 msgstr "E mbështetur"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Supporting Knowledge facts and stories"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -10315,6 +10457,10 @@ msgstr "Duke menduar…"
 msgid "Third-party software notices. Tap a dependency to read its license."
 msgstr "Njoftime për softuer të palëve të treta. Prekni një varësi për të lexuar licencën e saj."
 
+#: src/features/workspace/answer-library.tsx
+msgid "This application"
+msgstr ""
+
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/workspace/shell.tsx
 msgid "This application couldn't be opened."
@@ -10372,6 +10518,10 @@ msgstr "Ky dokument është i kyçur. Ju ende mund të shkarkoni dhe emërtoni v
 #: src/features/documents/queries.ts
 msgid "This document is no longer available. Refresh and try again."
 msgstr "Ky dokument nuk është më i disponueshëm. Rifresko dhe provo sërish."
+
+#: src/features/workspace/answer-library.tsx
+msgid "This employer"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "This enables recurring processing while the schedule is on, using your server's selected providers. Turn the schedule off to stop future runs."
@@ -10889,6 +11039,7 @@ msgstr "Nënvizoni lidhjet"
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/write/hooks.ts
+#: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/ui/overlays.tsx
 msgid "Undo"
@@ -11036,6 +11187,10 @@ msgstr "Përdorni një format të thjeshtë ndërkombëtar, si +1 555 010 1234."
 msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "Përdorni një formë të njohur si \"Jan 2020 - Mar 2022\" ose \"2020 - 2022\"."
 
+#: src/features/workspace/answer-library.tsx
+msgid "Use a saved answer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
 msgstr "Përdorni një kolonë të vetme për çdo gjë që duhet lexuar në sekuencë."
@@ -11107,6 +11262,10 @@ msgstr "Përdorni tituj të thjeshtë si \"Experience\", \"Education\" dhe \"Ski
 #: src/features/applications/add-sheet.tsx
 msgid "Use posting link; review before saving"
 msgstr "Përdorni lidhjen e shpalljes së punës; rishikoni përpara se të ruani"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Use reviewed answer"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Use server version"
@@ -11631,6 +11790,10 @@ msgstr "Shkrimi"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "Ndihmë për shkrimin, sugjerime të përshtatura dhe asistenti. Ofruesi i parazgjedhur përdoret kudo ku nuk zgjidhni një. Çelësat tuaj mbeten të enkriptuar."
+
+#: src/features/workspace/answer-library.tsx
+msgid "Written manually"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx

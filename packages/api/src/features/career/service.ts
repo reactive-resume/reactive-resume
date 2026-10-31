@@ -1168,6 +1168,7 @@ export const careerService = {
 			jobs,
 			transcripts,
 			workspaces,
+			reviewedAnswers,
 		] = await Promise.all([
 			careerService.profile(userId),
 			db.select().from(tables.careerFact).where(eq(tables.careerFact.userId, userId)),
@@ -1200,6 +1201,7 @@ export const careerService = {
 			db.select().from(tables.careerJob).where(eq(tables.careerJob.userId, userId)),
 			db.select().from(tables.careerTranscript).where(eq(tables.careerTranscript.userId, userId)),
 			db.select().from(tables.careerWorkspace).where(eq(tables.careerWorkspace.userId, userId)),
+			db.select().from(tables.careerAnswer).where(eq(tables.careerAnswer.userId, userId)),
 		]);
 		return {
 			profile,
@@ -1215,6 +1217,7 @@ export const careerService = {
 			jobs,
 			transcripts,
 			workspaces,
+			reviewedAnswers,
 		};
 	},
 };

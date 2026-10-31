@@ -28,6 +28,7 @@ import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/fil
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDebouncedSave, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { CollapseRow, Swap, withUndo, Working, workingSteps } from "../shared";
+import { AnswerLibrary } from "./answer-library";
 import { AiNotice } from "./fit";
 import { Preparation } from "./preparation";
 import { SentDocuments } from "@/features/applications/components/detail/sent-documents";
@@ -187,6 +188,16 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 							</span>
 						))}
 				</div>
+				{!stored && (
+					<AnswerLibrary
+						company={application.company}
+						applicationId={application.id}
+						disabled={submitting || live.length >= 30}
+						onUse={(answer) =>
+							workspace.save({ answers: [...workspace.current().answers, { ...answer, id: crypto.randomUUID() }] })
+						}
+					/>
+				)}
 				{shown.length > 0 && (
 					<div>
 						<AnimatePresence initial={false}>
@@ -199,6 +210,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 										answer={answer}
 										facts={facts}
 										applicationId={application.id}
+										company={application.company}
 										readOnly={stored !== undefined}
 										disabled={submitting}
 										registerDraft={registerDraft}
@@ -248,6 +260,7 @@ type AnswerCardProps = {
 	answer: Answer;
 	facts: Fact[] | undefined;
 	applicationId: string;
+	company: string;
 	readOnly: boolean;
 	disabled: boolean;
 	registerDraft: (id: string, read: () => Answer) => () => void;
@@ -265,6 +278,7 @@ function AnswerCard({
 	answer,
 	facts,
 	applicationId,
+	company,
 	readOnly,
 	disabled,
 	registerDraft,
@@ -431,6 +445,19 @@ function AnswerCard({
 				)}
 			</Swap>
 
+			{!readOnly && (
+				<AnswerLibrary
+					company={company}
+					applicationId={applicationId}
+					current={{ ...answer, question, answer: text }}
+					disabled={disabled}
+					onUse={(value) => {
+						setText(value.answer);
+						setQuestion(value.question);
+						onSave(value);
+					}}
+				/>
+			)}
 			<div className="flex items-start gap-3">
 				{backing.length > 0 && (
 					<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">

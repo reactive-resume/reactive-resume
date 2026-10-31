@@ -15,6 +15,7 @@ import { Pressable, View } from "react-native";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
 import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
+import { AnswerLibrary } from "../answer-library";
 import {
 	clearDraft,
 	latest,
@@ -169,12 +170,23 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 					)
 				) : null}
 			</View>
+			{!stored ? (
+				<AnswerLibrary
+					company={application.company}
+					applicationId={application.id}
+					disabled={submitting || live.length >= 30}
+					onUse={(answer) => {
+						void workspace.save({ answers: [...workspace.current().answers, { ...answer, id: randomUUID() }] });
+					}}
+				/>
+			) : null}
 			{shown.map((answer) => (
 				<AnswerCard
 					key={stored ? `${version?.id ?? sentItem?.id}:${answer.id}` : answer.id}
 					answer={answer}
 					facts={facts.data}
 					applicationId={application.id}
+					company={application.company}
 					readOnly={stored !== undefined}
 					disabled={submitting}
 					registerDraft={registerDraft}
@@ -218,6 +230,7 @@ type AnswerCardProps = {
 	answer: Answer;
 	facts: Fact[] | undefined;
 	applicationId: string;
+	company: string;
 	readOnly: boolean;
 	disabled: boolean;
 	registerDraft: (id: string, read: () => Answer) => () => void;
@@ -235,6 +248,7 @@ function AnswerCard({
 	answer,
 	facts,
 	applicationId,
+	company,
 	readOnly,
 	disabled,
 	registerDraft,
@@ -397,6 +411,19 @@ function AnswerCard({
 					onBlur={answerSave.flush}
 				/>
 			)}
+			{!readOnly ? (
+				<AnswerLibrary
+					company={company}
+					applicationId={applicationId}
+					current={{ ...answer, question, answer: text }}
+					disabled={disabled}
+					onUse={(value) => {
+						setText(value.answer);
+						setQuestion(value.question);
+						void onSave(value);
+					}}
+				/>
+			) : null}
 			<SaveError autosave={questionSave} />
 			<SaveError autosave={answerSave} />
 

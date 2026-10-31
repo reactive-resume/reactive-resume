@@ -1,6 +1,7 @@
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
 import * as tables from "@reactive-resume/db/schema";
+import { answerEvidenceSchema, answerScopeSchema } from "@reactive-resume/schema/application-answers";
 import {
 	careerNoticeSchema,
 	careerSourceSchema,
@@ -38,3 +39,16 @@ export const careerOpportunitySchema = createSelectSchema(tables.careerOpportuni
 		/** What the posting doesn't say. */
 		unknowns: z.array(z.enum(["salary", "office"])),
 	});
+
+export const reviewedAnswerSchema = createSelectSchema(tables.careerAnswer, {
+	scope: answerScopeSchema,
+	source: z.enum(["manual", "application", "ai-assisted"]),
+	factIds: z.array(z.string()),
+	storyIds: z.array(z.string()),
+	evidence: z.array(answerEvidenceSchema),
+});
+export const reviewedAnswerViewSchema = reviewedAnswerSchema.extend({
+	evidence: z.array(answerEvidenceSchema.extend({ status: z.enum(["current", "changed", "removed"]) })),
+	stale: z.boolean(),
+	canReuse: z.boolean(),
+});

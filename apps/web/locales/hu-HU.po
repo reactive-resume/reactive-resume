@@ -453,6 +453,12 @@ msgstr "{0} alátámasztva, {1} részben alátámasztva, {2} még bizonyíték n
 msgid "{0} to fix"
 msgstr "{0} javítandó"
 
+#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
+#. placeholder {1}: [...answer].length
+#: src/features/career/workspace/answer-library.tsx
+msgid "{0} words · {1} characters"
+msgstr ""
+
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: index + 1
 #: src/features/resume/editor/write/entry-card.tsx
@@ -720,6 +726,10 @@ msgstr "{pendingOnPage, plural, one {# javasolt szerkesztés ezen az oldalon · 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {# javasolt} other {# javasolt}}"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{sections, plural, one {# section} other {# sections}}"
@@ -1664,6 +1674,10 @@ msgstr "Az AI-szolgáltatók nem érhetők el ezen a szerveren, amíg a ENCRYPTI
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "Az AI-szolgáltatókat nem sikerült betölteni. Töltse be újra az újrapróbálkozáshoz."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "AI-assisted draft"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Albanian"
 msgstr "albán"
@@ -1703,6 +1717,10 @@ msgstr "Minden álláspályázat (beleértve a lezárt állásokat is)"
 #: src/features/settings/account/data.tsx
 msgid "All documents and applications as JSON, in one zip"
 msgstr "Minden dokumentum és munkapályázat JSON formátumban, egy zip-ben"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "All employers"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -1801,6 +1819,7 @@ msgstr "Egy másik önéletrajza ezt a címet használja."
 msgid "Another resume already uses this address. Choose a different one."
 msgstr "Egy másik önéletrajz már ezt a címet használja. Válassz másikat."
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
 msgid "Answer"
@@ -1811,12 +1830,17 @@ msgid "Answer by"
 msgstr "Válasz módja"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 msgid "Answer copied"
 msgstr "Válasz másolva"
 
 #: src/features/assistant/conversation.tsx
 msgid "Answer in your own words"
 msgstr "Válasz saját szavakkal"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Answer source"
+msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
@@ -1932,6 +1956,7 @@ msgstr "Jelentkezés"
 msgid "Application added"
 msgstr "Jelentkezés hozzáadva"
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/homepage/remember.tsx
 msgid "Application answer"
 msgstr "Jelentkezési válasz"
@@ -2961,6 +2986,7 @@ msgstr "Ügyfél-azonosító"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -3362,6 +3388,7 @@ msgid "Copied"
 msgstr "Másolva"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3982,6 +4009,10 @@ msgstr "Nem sikerült leválasztani a jelentkezést. Próbáld újra."
 msgid "Couldn't unlock the document. Try again."
 msgstr "Nem sikerült feloldani a dokumentum zárolását. Próbáld újra."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Couldn't update saved answers. Try again."
+msgstr ""
+
 #: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
@@ -4200,6 +4231,10 @@ msgstr "Pénznem"
 msgid "Current drafts"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Current employer: {company}"
+msgstr ""
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
 msgstr "Aktuális szűrők"
@@ -4348,6 +4383,7 @@ msgstr "Fokozat"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
@@ -4416,6 +4452,10 @@ msgstr ""
 msgid "Delete provider"
 msgstr "Szolgáltató törlése"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete saved answer"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Delete section"
 msgstr "szakasz törlése"
@@ -4440,6 +4480,10 @@ msgstr "Törli ezt a beszélgetést?"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Delete this entry?"
 msgstr "Törli ezt a bejegyzést?"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete this library answer? Application drafts and submitted copies are kept."
+msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete version"
@@ -4994,6 +5038,10 @@ msgstr "Kérdés szerkesztése"
 msgid "Edit resume"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Edit saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "Ütemezés szerkesztése"
@@ -5269,6 +5317,10 @@ msgstr "Az álláshirdetés minden kifejezése már ott van."
 msgid "Every week"
 msgstr "Hetente"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Evidence changed or was removed. Edit and review before reuse."
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Cserélj visszajelzést önéletrajzokról, tegyél fel kérdéseket, és formáld a Reactive Resume-ot a közösséggel együtt."
@@ -5326,6 +5378,10 @@ msgstr "export megnyitva"
 #: src/features/applications/components/insights-view.tsx
 msgid "Export PNG"
 msgstr "PNG exportálása"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Export saved answers"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Export saved profile"
@@ -6177,6 +6233,14 @@ msgstr "Látom ezt a {kind}-t. A javaslatok szerkesztésként jelennek meg, amel
 msgid "I interviewed 14 customers, mapped three drop-off points and prototyped a shorter setup with engineering."
 msgstr "14 ügyféllel készítettem interjút, feltérképeztem három lemorzsolódási pontot, és a fejlesztőkkel prototípust készítettünk egy rövidebb beállításhoz."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "I removed employer-specific wording and reviewed reuse across employers."
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "I reviewed this answer, its evidence and the application context."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "I withdrew"
 msgstr "visszavonultam"
@@ -6825,6 +6889,10 @@ msgstr "Utoljára ellenőrizve: {lastChecked} ezelőtt"
 msgid "Last edited"
 msgstr "Utoljára szerkesztve"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Last reviewed"
+msgstr ""
+
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/account/application-profile.tsx
 msgid "Last reviewed: {0}"
@@ -7122,6 +7190,10 @@ msgstr ""
 msgid "Linked documents couldn't be loaded."
 msgstr "A csatolt dokumentumokat nem sikerült betölteni."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Linked evidence unchanged since review"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Linked resume"
 msgstr "Linkelt önéletrajz"
@@ -7250,6 +7322,10 @@ msgstr "Szolgáltatók betöltése…"
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "Önéletrajzok betöltése…"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Loading saved answers…"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Loading saved version…"
@@ -8093,6 +8169,10 @@ msgstr "Egyetlen sor sem hasonlít munkakör és munkáltató párosítására."
 #: src/features/resume/editor/check/issues.ts
 msgid "No location"
 msgstr "Nincs hely"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "No matching saved answers. Clear the search to see all answers."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No new roles. Discovery is paused."
@@ -9571,6 +9651,10 @@ msgstr "QR-kód: {url}"
 msgid "QR code for two-step verification"
 msgstr "QR-kód a kétlépcsős ellenőrzéshez"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Question"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Question {position} of {total}"
 msgstr "Kérdés {position}/{total}"
@@ -10136,6 +10220,14 @@ msgstr "Címke eltávolítása"
 msgid "Remove the password?"
 msgstr "Eltávolítja a jelszót?"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable fact reference"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable story reference"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/settings/account/security.tsx
@@ -10294,6 +10386,10 @@ msgstr "A még nem mentett módosítások visszaállítva."
 msgid "Restored the version from {0}. Your previous state is saved as “Before restore”."
 msgstr "A {0} verzió visszaállítása. Az előző állapot „Visszaállítás előtt” néven kerül mentésre."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Restricted to its employer or application."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Result"
@@ -10401,6 +10497,7 @@ msgstr "Letöltve: {0}. Az eredet frissessége ismeretlen, hacsak nem jelentik b
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -10421,11 +10518,19 @@ msgstr "Próbálja újra a mentést"
 msgid "Retrying…"
 msgstr "Újrapróbálkozás…"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reuse scope"
+msgstr ""
+
 #: src/features/career/today.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
 msgstr "Tekintse át"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review and use"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Review checks"
@@ -10442,6 +10547,10 @@ msgstr "Vázlat áttekintése"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Review each section before using this resume."
 msgstr "Az önéletrajz használata előtt tekintse át az egyes részeket."
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review for this application"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Review my answer"
@@ -10467,9 +10576,17 @@ msgstr "Nézd át a kiválasztott önéletrajzot és motivációs levelet a szer
 msgid "Review with assistant"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
 msgstr "Vélemény írás"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reviewed answer saved"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
@@ -10678,6 +10795,10 @@ msgstr "Javítás mentése"
 msgid "Save first, then test search and reading. No test runs automatically."
 msgstr "Először mentse, majd tesztelje a keresést és az olvasást. Egyetlen teszt sem fut automatikusan."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save for other applications"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Save interview"
 msgstr "Interjú mentése"
@@ -10697,6 +10818,10 @@ msgstr "Állásajánlat mentése"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save reviewed answer"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -10973,6 +11098,10 @@ msgstr "Keress vagy fuss…"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
 msgstr "Szerepkör, cég vagy kapcsolat keresése"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Search saved answers"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "Search terms go to your web search service."
@@ -11680,6 +11809,10 @@ msgstr "Forrás"
 msgid "Source code"
 msgstr "Forráskód"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Source employer"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
@@ -12045,6 +12178,10 @@ msgstr "Támogatás"
 #: src/features/homepage/prepare.tsx
 msgid "Supported"
 msgstr "Alátámasztva"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Supporting Knowledge facts and stories"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -12713,6 +12850,10 @@ msgstr "Gondolkodás"
 msgid "Thinking…"
 msgstr "Gondolkodás…"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "This application"
+msgstr ""
+
 #: src/features/career/workspace/shell.tsx
 msgid "This application couldn't be opened."
 msgstr "Ezt a jelentkezést nem sikerült megnyitni."
@@ -12753,6 +12894,10 @@ msgstr "Ez a dokumentum"
 #: src/features/assistant/assistant-panel.tsx
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Ez a dokumentum zárolva van. Oldja fel, hogy javaslatokat kapjon."
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "This employer"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "This entry"
@@ -13486,6 +13631,10 @@ msgstr "Használj egyszerű nemzetközi formátumot, például +1 555 010 1234."
 msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "Használj felismerhető formátumot, például \"2020. jan. - 2022. márc.\" vagy \"2020 - 2022\"."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use a saved answer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
 msgstr "Használj egyoszlopos elrendezést mindenhez, amit sorrendben kell olvasni."
@@ -13565,6 +13714,10 @@ msgstr "Használj egyszerű címsorokat, például \"Tapasztalat\", \"Tanulmány
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Use posting"
 msgstr "Használja az álláshirdetést"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use reviewed answer"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
@@ -14252,6 +14405,10 @@ msgstr "Írássegítség, testreszabott javaslatok és az asszisztens. Ahol nem 
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"
 msgstr "írás, adaptálás és küldés"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Written manually"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx

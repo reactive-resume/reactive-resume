@@ -418,6 +418,12 @@ msgstr "{0} \"{1}\" ተመልሷል። መልእክትህ ተቀምጧል።"
 msgid "{0} selected"
 msgstr "{0} ተመርጧል"
 
+#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
+#. placeholder {1}: [...answer].length
+#: src/features/workspace/answer-library.tsx
+msgid "{0} words · {1} characters"
+msgstr ""
+
 #. placeholder {0}: resume.data.basics.name || resume.name
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -611,6 +617,10 @@ msgstr "{pairing} አይነት"
 #: src/features/assistant/page-marks.tsx
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {በዚህ ገጽ # የታቀደ ማሻሻያ · እስኪቀበሉት ድረስ ምንም አይቀየርም} other {በዚህ ገጽ # የታቀዱ ማሻሻያዎች · እስኪቀበሉ ድረስ ምንም አይቀየርም}}"
+
+#: src/features/workspace/answer-library.tsx
+msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "{role} · {company}"
@@ -1310,6 +1320,10 @@ msgstr "AI አቅራቢዎችን መጫን አልተቻለም። እንደገና
 msgid "AI reads pasted text only when you ask. Links can use the page’s own job data without AI."
 msgstr "AI የተለጠፈ ጽሑፍ የሚያነቡት ሲጠይቁ ብቻ ነው። አገናኞች ያለ AI የገጹን የስራ ውሂብ መጠቀም ይችላሉ።"
 
+#: src/features/workspace/answer-library.tsx
+msgid "AI-assisted draft"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Albanian"
 msgstr "አልባኒኛ"
@@ -1328,6 +1342,10 @@ msgstr "ሁሉም ({0})"
 #: src/features/career/facts.tsx
 msgid "All applications"
 msgstr "ሁሉም ማመልከቻዎች"
+
+#: src/features/workspace/answer-library.tsx
+msgid "All employers"
+msgstr ""
 
 #: src/features/check/job-match.tsx
 msgid "All posting terms are covered."
@@ -1427,6 +1445,7 @@ msgstr "ሌላ የስራ ልምድ ማስረጃ ይህን አድራሻ አስቀ
 msgid "Another server"
 msgstr "ሌላ አገልጋይ"
 
+#: src/features/workspace/answer-library.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Answer"
 msgstr "መልስ"
@@ -1435,9 +1454,17 @@ msgstr "መልስ"
 msgid "Answer by"
 msgstr "የመመለሻ መንገድ"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Answer copied"
+msgstr "መልሱ ተቀድቷል"
+
 #: src/features/assistant/messages.tsx
 msgid "Answer in your own words"
 msgstr "በራስዎ ቃላት ይመልሱ"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Answer source"
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Answers"
@@ -1526,6 +1553,10 @@ msgstr "አንድ ጊዜ ድርጅት ካለው ገጹ ላይ ይታያል።"
 #: src/shell/workspace-chrome.tsx
 msgid "Application"
 msgstr "ማመልከቻ"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Application answer"
+msgstr "የማመልከቻ መልስ"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Application closed"
@@ -2741,6 +2772,7 @@ msgid "Copies it"
 msgstr "ጽሑፉን ይቀዳል"
 
 #: src/features/share/link.tsx
+#: src/features/workspace/answer-library.tsx
 msgid "Copy"
 msgstr "ቅጂ አድርግ"
 
@@ -3210,6 +3242,10 @@ msgstr "የስራ ልምድ ማስረጃውን መክፈት አልተቻለም�
 msgid "Couldn't unlock this resume. Try again."
 msgstr "ይህን የስራ ልምድ ማስረጃ መክፈት አልተቻለም። እንደገና ይሞክሩ።"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Couldn't update saved answers. Try again."
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Couldn't update the application. Nothing was changed; try again."
 msgstr "ማመልከቻውን ማዘመን አልተቻለም። ምንም አልተቀየረም፤ እንደገና ይሞክሩ።"
@@ -3354,6 +3390,10 @@ msgstr "ምንዛሪ"
 msgid "Current drafts"
 msgstr ""
 
+#: src/features/workspace/answer-library.tsx
+msgid "Current employer: {company}"
+msgstr ""
+
 #: src/features/design/advanced.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/design.tsx
@@ -3491,6 +3531,7 @@ msgstr "ዲግሪ"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
+#: src/features/workspace/answer-library.tsx
 #: src/features/workspace/tabs/saved.tsx
 #: src/features/write/entry-sheet.tsx
 msgid "Delete"
@@ -3568,6 +3609,10 @@ msgstr ""
 msgid "Delete provider"
 msgstr "አቅራቢን ሰርዝ"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Delete saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Delete schedule"
 msgstr "መርሐግብር ይሰርዙ"
@@ -3591,6 +3636,10 @@ msgstr "ይህ ውይይት ይሰረዝ?"
 #: src/features/application-detail/sections.tsx
 msgid "Delete this entry?"
 msgstr "ይህ ግቤት ይሰረዝ?"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Delete this library answer? Application drafts and submitted copies are kept."
+msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "Delete this provider?"
@@ -4016,6 +4065,10 @@ msgstr "ጥያቄውን አርትዕ"
 msgid "Edit resume"
 msgstr ""
 
+#: src/features/workspace/answer-library.tsx
+msgid "Edit saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "መርሐ ግብሩን አርትዕ"
@@ -4220,6 +4273,10 @@ msgstr "የሥራ ማስታወቂያው አጽንዖት የሰጣቸው ቃላ�
 msgid "Every week"
 msgstr "በየሳምንቱ"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Evidence changed or was removed. Edit and review before reuse."
+msgstr ""
+
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
 msgid "Experience"
@@ -4240,6 +4297,10 @@ msgstr "ሁሉንም ነገር ወደ ውጭ ላክ"
 #: src/features/ats-checker/messages.ts
 msgid "Export from the original document instead of scanning or screenshotting it."
 msgstr "ከመቃኘት ወይም ስክሪንሾት ከማንሳት ይልቅ ከዋናው ሰነድ ወደ ውጭ ይላኩ።"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Export saved answers"
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Export saved profile"
@@ -4858,6 +4919,14 @@ msgstr "ይህን የስራ ልምድ ማስረጃ እና {company} የስራ �
 msgid "I can see this resume. Suggestions come back as edits you can accept one by one."
 msgstr "ይህንን የስራ ልምድ ማስረጃ ማየት እችላለሁ። ጥቆማዎች እንደ አርትዖቶች አንድ በአንድ መቀበል ይችላሉ።"
 
+#: src/features/workspace/answer-library.tsx
+msgid "I removed employer-specific wording and reviewed reuse across employers."
+msgstr ""
+
+#: src/features/workspace/answer-library.tsx
+msgid "I reviewed this answer, its evidence and the application context."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "I withdrew"
 msgstr "ወጣሁ"
@@ -5328,6 +5397,10 @@ msgstr "ለመጨረሻ ጊዜ የተረጋገጠው ከ{lastChecked} በፊት"
 msgid "Last edited"
 msgstr "መጨረሻ የተስተካከለው"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Last reviewed"
+msgstr ""
+
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/application-profile.tsx
 msgid "Last reviewed: {0}"
@@ -5576,6 +5649,10 @@ msgstr ""
 msgid "Linked documents couldn't be loaded."
 msgstr "የተያያዙ ሰነዶችን መጫን አልተቻለም።"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Linked evidence unchanged since review"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Linked resume"
 msgstr "የተቆራኘ የትምህርት ማስረጃ"
@@ -5674,6 +5751,10 @@ msgstr "የስራ ልምድ ማስረጃን በመጫን ላይ…"
 #: src/features/search/search-screen.tsx
 msgid "Loading resumes…"
 msgstr "የስራ ልምድ ማስረጃዎችን በመጫን ላይ…"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Loading saved answers…"
+msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "Loading saved version…"
@@ -6450,6 +6531,10 @@ msgstr "ተዛማጅ ውጤቶች የሉም"
 #: src/features/applications/list-screen.tsx
 msgid "No matching applications"
 msgstr "ምንም ተዛማጅ የሥራ ማመልከቻዎች የሉም"
+
+#: src/features/workspace/answer-library.tsx
+msgid "No matching saved answers. Clear the search to see all answers."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No new roles. Discovery is paused."
@@ -7671,6 +7756,10 @@ msgstr "QR ኮድ"
 msgid "QR code for {url}"
 msgstr "የQR ኮድ ለ{url}"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Question"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Question {position} of {total}"
 msgstr "ጥያቄ {position} ከ{total}"
@@ -8096,6 +8185,14 @@ msgstr "የይለፍ ቃሉ ይወገድ?"
 msgid "Remove this file?"
 msgstr "ይህ ፋይል ይወገድ?"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Remove unavailable fact reference"
+msgstr ""
+
+#: src/features/workspace/answer-library.tsx
+msgid "Remove unavailable story reference"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Rename"
@@ -8257,6 +8354,10 @@ msgstr "ስሪቱን መልስ"
 msgid "Restored a version"
 msgstr "አንድ ስሪት ወደነበረበት ተመልሷል"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Restricted to its employer or application."
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Result"
 msgstr "ውጤት"
@@ -8356,6 +8457,7 @@ msgstr "{1} በመጠቀም የተገኘ {0}። የመልሶ ማግኛ ጊዜ �
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
 #: src/features/share/link.tsx
+#: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/write/picture-screen.tsx
@@ -8404,10 +8506,18 @@ msgstr "እንደገና ለማስቀመጥ ይሞክሩ"
 msgid "Return to Documents and reopen it, or retry the connection."
 msgstr "ወደ ሰነዶች ይመለሱ እና እንደገና ይክፈቱት፣ ወይም ግንኙነቱን እንደገና ይሞክሩ።"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Reuse scope"
+msgstr ""
+
 #: src/features/assistant/page-marks.tsx
 #: src/features/career/today.tsx
 msgid "Review"
 msgstr "ግምገማ"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Review and use"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Review application"
@@ -8432,6 +8542,10 @@ msgstr "ረቂቁን ገምግም"
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
 msgstr "ይህንን የትምህርት ማስረጃ ከመጠቀምዎ በፊት እያንዳንዱን ክፍል ይከልሱ።"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Review for this application"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Review job details"
@@ -8465,9 +8579,17 @@ msgstr "የተመረጡትን የሥራ ልምድ ማስረጃ እና የሽፋ�
 msgid "Review with assistant"
 msgstr ""
 
+#: src/features/workspace/answer-library.tsx
+msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "ጽሑፍን ይገምግሙ"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Reviewed answer saved"
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Reviewing needs an AI connection. What you write here stays on this device until then."
@@ -8645,6 +8767,10 @@ msgstr "እውነታን አስቀምጥ"
 msgid "Save first, then test search and reading. No test runs automatically."
 msgstr "መጀመሪያ ያስቀምጡ፣ ከዚያ ፍለጋ እና ማንበብ ይሞክሩ። ምንም ሙከራ በራስ-ሰር አይሰራም።"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Save for other applications"
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Save interview"
 msgstr "ቃለ መጠይቁን አስቀምጥ"
@@ -8667,6 +8793,10 @@ msgstr "ፋይል ያስቀምጡ ወይም ያጋሩ"
 
 #: src/features/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/workspace/answer-library.tsx
+msgid "Save reviewed answer"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -8881,6 +9011,10 @@ msgstr "ቋንቋዎችን ይፈልጉ"
 #: src/shell/app-tabs.tsx
 msgid "Search or run…"
 msgstr "ይፈልጉ ወይም ያሂዱ…"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Search saved answers"
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Search terms go to your web search service."
@@ -9542,6 +9676,10 @@ msgstr "ምንጭ እና እርማት ታሪክ"
 msgid "Source code on GitHub"
 msgstr "የምንጭ ኮድ በGitHub ላይ"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Source employer"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Sources"
@@ -9782,6 +9920,10 @@ msgstr "ድጋፍ"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Supported"
 msgstr "የተደገፈ"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Supporting Knowledge facts and stories"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -10315,6 +10457,10 @@ msgstr "በማሰብ…"
 msgid "Third-party software notices. Tap a dependency to read its license."
 msgstr "የሶስተኛ ወገን ሶፍትዌር ማሳወቂያዎች። ፈቃዱን ለማንበብ ጥገኝነትን ይንኩ።"
 
+#: src/features/workspace/answer-library.tsx
+msgid "This application"
+msgstr ""
+
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/workspace/shell.tsx
 msgid "This application couldn't be opened."
@@ -10372,6 +10518,10 @@ msgstr "ይህ ሰነድ ተቆልፏል። አሁንም ማውረድ እና ስ
 #: src/features/documents/queries.ts
 msgid "This document is no longer available. Refresh and try again."
 msgstr "ይህ ሰነድ ከአሁን በኋላ አይገኝም። ያድሱ እና እንደገና ይሞክሩ።"
+
+#: src/features/workspace/answer-library.tsx
+msgid "This employer"
+msgstr ""
 
 #: src/api/ai-consent.ts
 msgid "This enables recurring processing while the schedule is on, using your server's selected providers. Turn the schedule off to stop future runs."
@@ -10889,6 +11039,7 @@ msgstr "አገናኞችን አስምር"
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/write/hooks.ts
+#: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/ui/overlays.tsx
 msgid "Undo"
@@ -11036,6 +11187,10 @@ msgstr "እንደ +1 555 010 1234 ያለ ቀላል ዓለም አቀፍ ቅርጸ
 msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "እንደ \"Jan 2020 - Mar 2022\" ወይም \"2020 - 2022\" ያለ የታወቀ ቅርጸት ይጠቀሙ።"
 
+#: src/features/workspace/answer-library.tsx
+msgid "Use a saved answer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
 msgstr "በቅደም ተከተል መነበብ ላለበት ማንኛውም ነገር ነጠላ አምድ ይጠቀሙ።"
@@ -11107,6 +11262,10 @@ msgstr "እንደ \"Experience\"፣ \"Education\" እና \"Skills\" ያሉ ቀ�
 #: src/features/applications/add-sheet.tsx
 msgid "Use posting link; review before saving"
 msgstr "የስራ ማስታወቂያ አገናኝን ይጠቀሙ; ከማስቀመጥዎ በፊት ይገምግሙ"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Use reviewed answer"
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Use server version"
@@ -11631,6 +11790,10 @@ msgstr "አጻጻፍ"
 #: app/(tabs)/settings/ai-providers.tsx
 msgid "Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick one. Your keys stay encrypted."
 msgstr "የጽሑፍ እገዛ፣ የተበጁ ጥቆማዎች እና ረዳቱ። አንድ ባልመረጡበት ቦታ ሁሉ ነባሪው አቅራቢ ጥቅም ላይ ይውላል። ቁልፎችዎ ተመስጥረው ይቆያሉ።"
+
+#: src/features/workspace/answer-library.tsx
+msgid "Written manually"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx

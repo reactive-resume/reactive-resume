@@ -137,7 +137,7 @@ The server keeps the transcript, not the raw recording. After successful transcr
 
 Career storage ships through additive migrations, including new user-owned tables and conversation context fields. Back up your database and file storage, review generated SQL, and apply the normal migration workflow before deploying the update. Server startup also applies migrations.
 
-Account export includes `career.json`: preferences, facts and source/revision metadata, stories, saved items, workspace state (answers, checklist, plan ticks), schedules, notifications, discovery results, jobs, voice transcripts, and career conversations/messages with attachment metadata. Conversations include their application context. Provider credentials are not included. Attachment metadata is not a backup of the attachment's binary contents.
+Account export includes `career.json`: preferences, facts and source/revision metadata, stories, reviewed answer library entries (scope, source, evidence revision references and review time), saved items, workspace state (answers, checklist, plan ticks), schedules, notifications, discovery results, jobs, voice transcripts, and career conversations/messages with attachment metadata. Conversations include their application context. Provider credentials are not included. Attachment metadata is not a backup of the attachment's binary contents.
 
 Account deletion removes the user's dependent career records along with the existing account data and private upload storage. Deleting an individual fact, saved item, transcript, application, or conversation has narrower effects; it does not delete copies previously exported or sent to a provider. Include database backups and externally retained data in your installation's retention policy.
 

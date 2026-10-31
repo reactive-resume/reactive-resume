@@ -453,6 +453,12 @@ msgstr "{0} podložené, {1} čiastočne podložené, {2} zatiaľ bez dôkazov. 
 msgid "{0} to fix"
 msgstr "{0} na opravu"
 
+#. placeholder {0}: answer.split(/\s+/).filter(Boolean).length
+#. placeholder {1}: [...answer].length
+#: src/features/career/workspace/answer-library.tsx
+msgid "{0} words · {1} characters"
+msgstr ""
+
 #. placeholder {0}: title || t`Untitled`
 #. placeholder {1}: index + 1
 #: src/features/resume/editor/write/entry-card.tsx
@@ -720,6 +726,10 @@ msgstr "{pendingOnPage, plural, one {# navrhovanú úpravu na tejto stránke · 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{proposed, plural, one {# proposed} other {# proposed}}"
 msgstr "{proposed, plural, one {Navrhnuté #} other {Navrhnuté #}}"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{sections, plural, one {# section} other {# sections}}"
@@ -1664,6 +1674,10 @@ msgstr "Poskytovatelia AI nie sú na tomto serveri k dispozícii, kým nie je na
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "Poskytovateľov AI sa nepodarilo načítať. Znova načítajte a skúste to znova."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "AI-assisted draft"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Albanian"
 msgstr "Albánčina"
@@ -1703,6 +1717,10 @@ msgstr "Všetky žiadosti o zamestnanie (vrátane uzavretých)"
 #: src/features/settings/account/data.tsx
 msgid "All documents and applications as JSON, in one zip"
 msgstr "Všetky dokumenty a žiadosti o prácu ako JSON, v jednom zipsu"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "All employers"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -1801,6 +1819,7 @@ msgstr "Túto adresu používa ďalší z vašich životopisov."
 msgid "Another resume already uses this address. Choose a different one."
 msgstr "Túto adresu už používa iný životopis. Vyberte inú."
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
 msgid "Answer"
@@ -1811,12 +1830,17 @@ msgid "Answer by"
 msgstr "Spôsob odpovede"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 msgid "Answer copied"
 msgstr "Odpoveď skopírovaná"
 
 #: src/features/assistant/conversation.tsx
 msgid "Answer in your own words"
 msgstr "Odpovedzte vlastnými slovami"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Answer source"
+msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 msgid "Answers"
@@ -1932,6 +1956,7 @@ msgstr "Žiadosť"
 msgid "Application added"
 msgstr "Žiadosť bola pridaná"
 
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/homepage/remember.tsx
 msgid "Application answer"
 msgstr "Odpoveď v žiadosti"
@@ -2961,6 +2986,7 @@ msgstr "ID klienta"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/features/documents/new-document-dialog.tsx
@@ -3362,6 +3388,7 @@ msgid "Copied"
 msgstr "Skopírované"
 
 #: src/features/career/coach-chat.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/copy-text.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3982,6 +4009,10 @@ msgstr "Žiadosť sa nepodarilo odpojiť. Skúste to znova."
 msgid "Couldn't unlock the document. Try again."
 msgstr "Dokument sa nepodarilo odomknúť. Skúste to znova."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Couldn't update saved answers. Try again."
+msgstr ""
+
 #: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't update sharing. Try again."
@@ -4200,6 +4231,10 @@ msgstr "Mena"
 msgid "Current drafts"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Current employer: {company}"
+msgstr ""
+
 #: src/features/applications/components/export-applications-sheet.tsx
 msgid "Current filters"
 msgstr "Aktuálne filtre"
@@ -4348,6 +4383,7 @@ msgstr "Titul"
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
 #: src/features/career/schedule-sheet.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/share/history-tab.tsx
@@ -4416,6 +4452,10 @@ msgstr ""
 msgid "Delete provider"
 msgstr "Odstrániť poskytovateľa"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete saved answer"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Delete section"
 msgstr "Odstrániť sekciu"
@@ -4440,6 +4480,10 @@ msgstr "Chcete odstrániť túto konverzáciu?"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Delete this entry?"
 msgstr "Odstrániť tento záznam?"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Delete this library answer? Application drafts and submitted copies are kept."
+msgstr ""
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Delete version"
@@ -4994,6 +5038,10 @@ msgstr "Upraviť otázku"
 msgid "Edit resume"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Edit saved answer"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "Upraviť naplánovanú úlohu"
@@ -5269,6 +5317,10 @@ msgstr "Každý výraz, ktorý inzerát zdôrazňuje, tam už je."
 msgid "Every week"
 msgstr "Každý týždeň"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Evidence changed or was removed. Edit and review before reuse."
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "Exchange resume feedback, ask questions, and help shape Reactive Resume with the community."
 msgstr "Vymieňajte si spätnú väzbu k životopisom, pýtajte sa a pomôžte s komunitou formovať Reactive Resume."
@@ -5326,6 +5378,10 @@ msgstr "export otvorený"
 #: src/features/applications/components/insights-view.tsx
 msgid "Export PNG"
 msgstr "Exportovať PNG"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Export saved answers"
+msgstr ""
 
 #: src/features/settings/account/application-profile.tsx
 msgid "Export saved profile"
@@ -6177,6 +6233,14 @@ msgstr "Vidím toto {kind}. Návrhy sa vracajú ako úpravy, ktoré môžete pri
 msgid "I interviewed 14 customers, mapped three drop-off points and prototyped a shorter setup with engineering."
 msgstr "Rozhovory so 14 zákazníkmi, zmapovanie troch miest, kde ľudia odchádzali, a prototyp kratšieho nastavenia spolu s inžiniermi."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "I removed employer-specific wording and reviewed reuse across employers."
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "I reviewed this answer, its evidence and the application context."
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "I withdrew"
 msgstr "stiahol som sa"
@@ -6825,6 +6889,10 @@ msgstr "Naposledy skontrolované pred {lastChecked}"
 msgid "Last edited"
 msgstr "Naposledy upravené"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Last reviewed"
+msgstr ""
+
 #. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
 #: src/features/settings/account/application-profile.tsx
 msgid "Last reviewed: {0}"
@@ -7122,6 +7190,10 @@ msgstr ""
 msgid "Linked documents couldn't be loaded."
 msgstr "Prepojené dokumenty sa nepodarilo načítať."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Linked evidence unchanged since review"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Linked resume"
 msgstr "Prepojený životopis"
@@ -7250,6 +7322,10 @@ msgstr "Načítavajú sa poskytovatelia…"
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "Načítavajú sa životopisy…"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Loading saved answers…"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Loading saved version…"
@@ -8093,6 +8169,10 @@ msgstr "Žiadny riadok nevyzerá ako pracovná pozícia spárovaná so zamestná
 #: src/features/resume/editor/check/issues.ts
 msgid "No location"
 msgstr "Žiadna poloha"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "No matching saved answers. Clear the search to see all answers."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No new roles. Discovery is paused."
@@ -9571,6 +9651,10 @@ msgstr "QR kód pre {url}"
 msgid "QR code for two-step verification"
 msgstr "QR kód pre dvojstupňové overenie"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Question"
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Question {position} of {total}"
 msgstr "Otázka {position} z {total}"
@@ -10136,6 +10220,14 @@ msgstr "Odstrániť značku"
 msgid "Remove the password?"
 msgstr "Chcete odstrániť heslo?"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable fact reference"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Remove unavailable story reference"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/settings/account/security.tsx
@@ -10294,6 +10386,10 @@ msgstr "Boli obnovené zmeny, ktoré ešte neboli uložené."
 msgid "Restored the version from {0}. Your previous state is saved as “Before restore”."
 msgstr "Obnovená verzia z {0}. Váš predchádzajúci stav sa uloží ako „Pred obnovením“."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Restricted to its employer or application."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Result"
@@ -10401,6 +10497,7 @@ msgstr "Získané {0}. Čerstvosť pôvodu nie je známa, pokiaľ nie je uveden�
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
+#: src/features/career/workspace/answer-library.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -10421,11 +10518,19 @@ msgstr "Skúste uložiť znova"
 msgid "Retrying…"
 msgstr "Opakuje sa pokus…"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reuse scope"
+msgstr ""
+
 #: src/features/career/today.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/resume/share/download-tab.tsx
 msgid "Review"
 msgstr "recenzia"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review and use"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "Review checks"
@@ -10442,6 +10547,10 @@ msgstr "Skontrolovať koncept"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Review each section before using this resume."
 msgstr "Pred použitím tohto životopisu si prečítajte každú časť."
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review for this application"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Review my answer"
@@ -10467,9 +10576,17 @@ msgstr "Skontrolujte vybraný životopis a sprievodný list v ich editoroch."
 msgid "Review with assistant"
 msgstr ""
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "Review writing"
 msgstr "Písanie recenzií"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Reviewed answer saved"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
@@ -10678,6 +10795,10 @@ msgstr "Uložiť opravu"
 msgid "Save first, then test search and reading. No test runs automatically."
 msgstr "Najprv uložte, potom vyskúšajte vyhľadávanie a čítanie. Žiadny test sa nespustí automaticky."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save for other applications"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Save interview"
 msgstr "Uložiť pohovor"
@@ -10697,6 +10818,10 @@ msgstr "Uložiť pracovnú ponuku"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Save reviewed answer"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -10973,6 +11098,10 @@ msgstr "Vyhľadajte alebo spustite…"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
 msgstr "Rola vyhľadávania, spoločnosť alebo kontakt"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Search saved answers"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "Search terms go to your web search service."
@@ -11680,6 +11809,10 @@ msgstr "Zdroj"
 msgid "Source code"
 msgstr "Zdrojový kód"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Source employer"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
@@ -12045,6 +12178,10 @@ msgstr "Podpora"
 #: src/features/homepage/prepare.tsx
 msgid "Supported"
 msgstr "Podložené"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Supporting Knowledge facts and stories"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Swap"
@@ -12713,6 +12850,10 @@ msgstr "Premýšľame"
 msgid "Thinking…"
 msgstr "Premýšľanie…"
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "This application"
+msgstr ""
+
 #: src/features/career/workspace/shell.tsx
 msgid "This application couldn't be opened."
 msgstr "Túto žiadosť sa nepodarilo otvoriť."
@@ -12753,6 +12894,10 @@ msgstr "Tento dokument"
 #: src/features/assistant/assistant-panel.tsx
 msgid "This document is locked. Unlock it to get suggestions."
 msgstr "Tento dokument je uzamknutý. Odomknite ho a získajte návrhy."
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "This employer"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "This entry"
@@ -13486,6 +13631,10 @@ msgstr "Použite jednoduchý medzinárodný formát, napríklad +1 555 010 1234.
 msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
 msgstr "Použite rozpoznávaný formát, napríklad „Jan 2020 - Mar 2022“ alebo „2020 - 2022“."
 
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use a saved answer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Use a single column for anything that has to be read in sequence."
 msgstr "Použite jeden stĺpec pre všetko, čo sa musí čítať v poradí."
@@ -13565,6 +13714,10 @@ msgstr "Použite jednoduché nadpisy ako „Experience“, „Education“ a „
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Use posting"
 msgstr "Využite ponuku práce"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Use reviewed answer"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
@@ -14252,6 +14405,10 @@ msgstr "Pomoc s písaním, prispôsobené návrhy a asistent. Predvolený poskyt
 #: src/features/homepage/sections.tsx
 msgid "writing, tailoring and sending"
 msgstr "písanie, prispôsobenie a odoslanie"
+
+#: src/features/career/workspace/answer-library.tsx
+msgid "Written manually"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx

@@ -39580,6 +39580,149 @@
 														}
 													}
 												},
+												"reviewedAnswers": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"userId": {
+																"type": "string"
+															},
+															"createdAt": {
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															"updatedAt": {
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															"question": {
+																"type": "string"
+															},
+															"answer": {
+																"type": "string"
+															},
+															"source": {
+																"enum": [
+																	"manual",
+																	"application",
+																	"ai-assisted"
+																],
+																"type": "string"
+															},
+															"scope": {
+																"enum": [
+																	"reusable",
+																	"employer",
+																	"application"
+																],
+																"type": "string"
+															},
+															"employer": {
+																"type": "string"
+															},
+															"applicationId": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"sourceApplicationId": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"factIds": {
+																"type": "array",
+																"items": {
+																	"type": "string"
+																}
+															},
+															"storyIds": {
+																"type": "array",
+																"items": {
+																	"type": "string"
+																}
+															},
+															"evidence": {
+																"type": "array",
+																"items": {
+																	"type": "object",
+																	"properties": {
+																		"kind": {
+																			"enum": [
+																				"fact",
+																				"story"
+																			],
+																			"type": "string"
+																		},
+																		"id": {
+																			"type": "string",
+																			"minLength": 1,
+																			"maxLength": 255
+																		},
+																		"revision": {
+																			"type": "string",
+																			"minLength": 1,
+																			"maxLength": 100
+																		}
+																	},
+																	"required": [
+																		"kind",
+																		"id",
+																		"revision"
+																	]
+																}
+															},
+															"reviewedAt": {
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															"revision": {
+																"type": "integer",
+																"minimum": -2147483648,
+																"maximum": 2147483647
+															},
+															"duplicateKey": {
+																"type": "string"
+															}
+														},
+														"required": [
+															"id",
+															"userId",
+															"createdAt",
+															"updatedAt",
+															"question",
+															"answer",
+															"source",
+															"scope",
+															"employer",
+															"applicationId",
+															"sourceApplicationId",
+															"factIds",
+															"storyIds",
+															"evidence",
+															"reviewedAt",
+															"revision",
+															"duplicateKey"
+														]
+													}
+												},
 												"facts": {
 													"type": "array",
 													"items": {
@@ -41780,6 +41923,7 @@
 											},
 											"required": [
 												"profile",
+												"reviewedAnswers",
 												"facts",
 												"stories",
 												"artifacts",
@@ -41925,6 +42069,795 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/auth/account\" --cookie \"<session-cookie>\" --header \"Content-Type: application/json\" --data '{}'"
+					}
+				]
+			}
+		},
+		"/career/answers": {
+			"get": {
+				"operationId": "listReviewedAnswers",
+				"summary": "List reviewed answers with current evidence and reuse eligibility",
+				"tags": [
+					"Career"
+				],
+				"parameters": [
+					{
+						"name": "applicationId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"id": {
+												"type": "string"
+											},
+											"userId": {
+												"type": "string"
+											},
+											"createdAt": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											"updatedAt": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											"question": {
+												"type": "string"
+											},
+											"answer": {
+												"type": "string"
+											},
+											"source": {
+												"enum": [
+													"manual",
+													"application",
+													"ai-assisted"
+												],
+												"type": "string"
+											},
+											"scope": {
+												"enum": [
+													"reusable",
+													"employer",
+													"application"
+												],
+												"type": "string"
+											},
+											"employer": {
+												"type": "string"
+											},
+											"applicationId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"sourceApplicationId": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"factIds": {
+												"type": "array",
+												"items": {
+													"type": "string"
+												}
+											},
+											"storyIds": {
+												"type": "array",
+												"items": {
+													"type": "string"
+												}
+											},
+											"evidence": {
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"kind": {
+															"enum": [
+																"fact",
+																"story"
+															],
+															"type": "string"
+														},
+														"id": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 255
+														},
+														"revision": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 100
+														},
+														"status": {
+															"enum": [
+																"current",
+																"changed",
+																"removed"
+															],
+															"type": "string"
+														}
+													},
+													"required": [
+														"kind",
+														"id",
+														"revision",
+														"status"
+													]
+												}
+											},
+											"reviewedAt": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											"revision": {
+												"type": "integer",
+												"minimum": -2147483648,
+												"maximum": 2147483647
+											},
+											"duplicateKey": {
+												"type": "string"
+											},
+											"stale": {
+												"type": "boolean"
+											},
+											"canReuse": {
+												"type": "boolean"
+											}
+										},
+										"required": [
+											"id",
+											"userId",
+											"createdAt",
+											"updatedAt",
+											"question",
+											"answer",
+											"source",
+											"scope",
+											"employer",
+											"applicationId",
+											"sourceApplicationId",
+											"factIds",
+											"storyIds",
+											"evidence",
+											"reviewedAt",
+											"revision",
+											"duplicateKey",
+											"stale",
+											"canReuse"
+										]
+									}
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/career/answers?applicationId=<applicationId>\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			},
+			"post": {
+				"operationId": "saveReviewedAnswer",
+				"summary": "Explicitly review and save reusable wording",
+				"tags": [
+					"Career"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string",
+										"minLength": 1
+									},
+									"expectedRevision": {
+										"type": "integer",
+										"minimum": -9007199254740991,
+										"maximum": 9007199254740991,
+										"exclusiveMinimum": 0
+									},
+									"applicationId": {
+										"type": "string",
+										"minLength": 1
+									},
+									"question": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 2000
+									},
+									"answer": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 6000
+									},
+									"source": {
+										"enum": [
+											"manual",
+											"application",
+											"ai-assisted"
+										],
+										"type": "string"
+									},
+									"scope": {
+										"enum": [
+											"reusable",
+											"employer",
+											"application"
+										],
+										"type": "string"
+									},
+									"factIds": {
+										"type": "array",
+										"maxItems": 10,
+										"items": {
+											"type": "string",
+											"minLength": 1
+										}
+									},
+									"storyIds": {
+										"type": "array",
+										"maxItems": 10,
+										"items": {
+											"type": "string",
+											"minLength": 1
+										}
+									},
+									"expectedEvidence": {
+										"type": "array",
+										"maxItems": 320,
+										"items": {
+											"type": "object",
+											"properties": {
+												"kind": {
+													"enum": [
+														"fact",
+														"story"
+													],
+													"type": "string"
+												},
+												"id": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 255
+												},
+												"revision": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 100
+												}
+											},
+											"required": [
+												"kind",
+												"id",
+												"revision"
+											]
+										}
+									},
+									"reviewed": {
+										"const": true
+									},
+									"noEmployerWording": {
+										"type": "boolean"
+									}
+								},
+								"required": [
+									"applicationId",
+									"question",
+									"answer",
+									"source",
+									"scope",
+									"factIds",
+									"storyIds",
+									"expectedEvidence",
+									"reviewed",
+									"noEmployerWording"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"userId": {
+											"type": "string"
+										},
+										"createdAt": {
+											"type": "string",
+											"format": "date-time",
+											"x-native-type": "date"
+										},
+										"updatedAt": {
+											"type": "string",
+											"format": "date-time",
+											"x-native-type": "date"
+										},
+										"question": {
+											"type": "string"
+										},
+										"answer": {
+											"type": "string"
+										},
+										"source": {
+											"enum": [
+												"manual",
+												"application",
+												"ai-assisted"
+											],
+											"type": "string"
+										},
+										"scope": {
+											"enum": [
+												"reusable",
+												"employer",
+												"application"
+											],
+											"type": "string"
+										},
+										"employer": {
+											"type": "string"
+										},
+										"applicationId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"sourceApplicationId": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"factIds": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										},
+										"storyIds": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										},
+										"evidence": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"kind": {
+														"enum": [
+															"fact",
+															"story"
+														],
+														"type": "string"
+													},
+													"id": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 255
+													},
+													"revision": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 100
+													}
+												},
+												"required": [
+													"kind",
+													"id",
+													"revision"
+												]
+											}
+										},
+										"reviewedAt": {
+											"type": "string",
+											"format": "date-time",
+											"x-native-type": "date"
+										},
+										"revision": {
+											"type": "integer",
+											"minimum": -2147483648,
+											"maximum": 2147483647
+										},
+										"duplicateKey": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"id",
+										"userId",
+										"createdAt",
+										"updatedAt",
+										"question",
+										"answer",
+										"source",
+										"scope",
+										"employer",
+										"applicationId",
+										"sourceApplicationId",
+										"factIds",
+										"storyIds",
+										"evidence",
+										"reviewedAt",
+										"revision",
+										"duplicateKey"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/answers\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"applicationId\": \"<string>\",\n  \"question\": \"<string>\",\n  \"answer\": \"<string>\",\n  \"source\": \"manual\",\n  \"scope\": \"reusable\",\n  \"factIds\": [\n    \"<string>\"\n  ],\n  \"storyIds\": [\n    \"<string>\"\n  ],\n  \"expectedEvidence\": [\n    {\n      \"kind\": \"fact\",\n      \"id\": \"<string>\",\n      \"revision\": \"<string>\"\n    }\n  ],\n  \"reviewed\": true,\n  \"noEmployerWording\": true\n}'"
+					}
+				]
+			}
+		},
+		"/career/answers/{id}/reuse": {
+			"post": {
+				"operationId": "reuseReviewedAnswer",
+				"summary": "Review a scoped answer and return an independent draft copy",
+				"tags": [
+					"Career"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"expectedRevision": {
+										"type": "integer",
+										"minimum": -9007199254740991,
+										"maximum": 9007199254740991,
+										"exclusiveMinimum": 0
+									},
+									"applicationId": {
+										"type": "string",
+										"minLength": 1
+									},
+									"answer": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 6000
+									},
+									"reviewed": {
+										"const": true
+									}
+								},
+								"required": [
+									"expectedRevision",
+									"applicationId",
+									"answer",
+									"reviewed"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"text": {
+											"type": "string"
+										},
+										"factIds": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										}
+									},
+									"required": [
+										"text",
+										"factIds"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/answers/<id>/reuse\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123,\n  \"applicationId\": \"<string>\",\n  \"answer\": \"<string>\",\n  \"reviewed\": true\n}'"
+					}
+				]
+			}
+		},
+		"/career/answers/{id}": {
+			"delete": {
+				"operationId": "deleteReviewedAnswer",
+				"summary": "Delete a saved answer without changing submitted copies",
+				"tags": [
+					"Career"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"expectedRevision": {
+										"type": "integer",
+										"minimum": -9007199254740991,
+										"maximum": 9007199254740991,
+										"exclusiveMinimum": 0
+									}
+								},
+								"required": [
+									"expectedRevision"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/career/answers/<id>\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": 123\n}'"
 					}
 				]
 			}

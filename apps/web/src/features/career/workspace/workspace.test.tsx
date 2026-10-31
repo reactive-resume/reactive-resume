@@ -42,6 +42,13 @@ vi.mock("@/libs/orpc/client", () => {
 			applications: { update: endpoint("updateApplication") },
 			coverLetters: { create: endpoint("createLetter") },
 			career: {
+				answers: {
+					list: endpoint("reviewedAnswers"),
+					save: endpoint("saveAnswer"),
+					reuse: endpoint("reuseAnswer"),
+					delete: endpoint("deleteAnswer"),
+				},
+				stories: endpoint("stories"),
 				workspace: endpoint("workspace"),
 				savedItems: endpoint("savedItems"),
 				facts: endpoint("facts"),
