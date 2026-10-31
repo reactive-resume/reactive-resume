@@ -1,0 +1,50 @@
+# PDF import regressions
+
+These fictional resumes were exported by Reactive Resume during the October 2026 product audit. Original files were recovered from `.agents/docs/product-audit-evidence/` in the main checkout.
+
+- `senior.pdf`: RX-93's original three-page, single-column source. Ten roles, three wrapped bullets per role. Company/location occupy the first header row; position/dates occupy the second.
+- `freelancer-azurill.pdf`: two-column Azurill export from the same audit. Four roles, three wrapped bullets per role. A full-width contact header precedes Skills/Languages in the sidebar and Summary/Education/Experience in the main column. The last role continues on page two.
+
+`imports.test.ts` reads the actual bytes through PDF.js, the shared layout/text parser, schema validation, authenticated import, and the create-service boundary. Only authentication/database lookups and persistence are mocked; PDF extraction and parsing are real. Web adapter coverage lives in `apps/web/src/features/resume/import/pdf-text.test.ts` and supplies raw extraction at the worker boundary.
+
+The expanded suite also renders ten diverse roles through all 18 current templates and imports every shipped template PDF through the same authenticated handler. It checks experience company, position, location, dates and every bullet's full text; both audit fixtures additionally assert all skill text values, including Research. It does not claim exact education, language or grouped-skill reconstruction. Those existing defects and concrete follow-up acceptance are recorded in `.agents/docs/rx-93-import-followups.md`.
+
+V4 adds three frozen fictional PDFs from independent review:
+
+- `custom-only.pdf`: Onyx with SELECTED TALKS and no standard English section. Its complete summary must survive.
+- `ditto-short.pdf`: centered name/email above a single short role. Header contacts and aligned place/date stubs must not establish a sidebar.
+- `bullet-prose-page.pdf`: ordinary A4 Onyx. A completed bullet ends page one; a separately indented paragraph starts page two and must stay outside the list.
+
+The suite also exports six boundary variants through all 18 templates: English/localized custom-only sections, a short/empty role, and bullet-plus-paragraph on A4/small pages. It asserts every experience header field and complete description, or complete custom title/content. Exact basics checks target the centered Ditto header at normal page size. Wrapped-name reconstruction is an existing separate limit; these assertions do not certify every basics field on every layout. Real PostgreSQL and real web harvesting evidence for v4 is in `/tmp/rx93-rework-v4/proof.md`.
+
+V5 adds four unchanged fictional PDFs from the next independent review: `custom-flat.pdf`, `custom-no-name.pdf`, `indented-prose.pdf`, and `glalie-rail.pdf`. The rail fixture asserts all four roles, every company/title/location/date and both complete bullets per role, rather than only checking that Experience exists. A further 180 real exports cover ten variations across all 18 templates: custom headings with matching fonts, blank name, blank identity, title case and Unicode labels; short and wrapped bullets followed by indented prose at line heights 1.5, 2 and 2.5. Heading assertions conserve all displayed label characters; templates may intentionally uppercase labels.
+
+V5 proof is `/tmp/rx93-rework-v5/proof.md`. It includes actual PostgreSQL readback, field-by-field base/v4 comparisons inside already failing cases, and an explicit classification of the remaining column/header limits. PDF equality between adapters is reported separately from source fidelity.
+
+V6 adds `external-word-runs.pdf`, a fictional non-Forme PDF written with ordinary Helvetica/Helvetica-Bold/Helvetica-Oblique content streams. Explicit spaces separate `Built Important Systems for customers.`; adjacent font runs split `Inter` + `operable` without a space. The authenticated import test asserts complete wording and record fields. Shared extraction tests also shuffle raw items, preserve explicit separators, keep true split words joined, align mixed-size baselines, and prevent whitespace rectangles from bridging a gutter.
+
+V6 export/import cases exercise all 18 templates with Inline, Compact, Date column, Eyebrow and role-first headers; two/three item columns and four records; empty place fields; local list-item line heights 2/2.5 and 14pt text; rich font-run wording; matching-font custom date/URL/multiple-URL bodies, blank identity, custom sections after Experience, larger body typography, digit and sentence titles. Desired checks retain complete role fields and bullet association. Displayed uppercase Eyebrow wording is checked explicitly, because original source case is absent from that PDF text layer. PostgreSQL, full-field comparisons, counterexamples, omissions and cleanup receipts are in `/tmp/rx93-rework-v6/proof.md`.
+
+V7 integrates the complete feature onto main `ed8c13624d257326f5b0b4413e493c792e937f96`. `import-layouts.test.ts` checks whole identity (name, headline, email, phone, location, linked website and custom fields) and every company, position, location, period and complete description for all 18 shipped PDFs. `shipped-import.json` is an independent transcription: source PDF text checked with Poppler bbox extraction, complete contact targets checked against PDF link annotations. It is not a parser snapshot.
+
+Another 216 actual exports cover all 18 templates: first/middle/last single-year, month-year and empty periods; long wrapped company/title/place fields with dated and undated records; and rich wording plus whole identity. Normalized date objects are asserted against the source too. Intentional Persian uppercase names and Smeargle letter-spaced headlines are explicit displayed-text expectations. The wrapped rail fixture now checks every displayed name character, complete annotated email, absence of bogus custom sections, and its existing four complete roles. No company/title/place vocabulary chooses semantics.
+
+V7 evidence: `/tmp/rx93-rework-v7/proof.md`. Includes fail-before repros, field-level comparisons against pinned base/v5/v6, protected importer and SQL/getById readbacks, actual integrated-main pagination exports, browser login/PDF.js import, multipart HTTP used by native, cross-owner/no-write guards, exact checks and owned-resource cleanup. Remaining mapping/display limits are classified individually; no universal schema/style roundtrip is claimed.
+
+V8 is an integration-only refresh onto main `385271cd3ecefbeb1fe0af9b898a50989a90897f`. Runtime behavior, fixture bytes, independent shipped oracle and permanent assertions match frozen v7. Importer suites and fresh SQL/getById desired-output checks, including normalized dates, original audit and all shipped controls, were rerun; 54 actual current-main pagination exports and multipart HTTP also pass. The expensive v7 corpus replay is explicitly inherited with owner/source hashes, not reported as freshly executed. Proof: `/tmp/rx93-rework-v8/proof.md`.
+
+## V9 ownership and bounded-work regressions
+
+`pdf-ownership.ts` builds fictional complete-section sources for all 18 shipped templates: Education before/after Experience, default/full-width/two-column, empty/graded descriptions, small/loose typography, long identity and extra identity links. `import-ownership.test.ts` renders actual PDFs, exercises authenticated import, and compares full identity, Summary, Education, Projects, complete Experience, custom content and supported fields in other sections. `ownershipFields` exposes every section/URL data field for the external all-field oracle; it does not certify currently unresolved profile/proficiency/ancillary positional mappings.
+
+`dense-2p.pdf` is the independent review's synthetic Helvetica 6pt grid, 2 pages ×100 rows ×8 cells. Each cell is `w{page}x{row}y{column}`; no personal data. Source: `/tmp/rx93-v8-independent-r1/dense/grid-2p-100x8.pdf`. Permanent authenticated-import assertion requires all 1,600 cells in bounded fallback Summary. Deterministic candidate-budget tests live in `packages/import/src/pdf-geometry.test.ts`; actual dense 2/3/5/10-page costs, HTTP health, browser worker responsiveness and full-field source/base comparisons are archived at `/tmp/rx93-rework-v9/proof.md`.
+
+`glalie-narrow.pdf` preserves the earlier reviewer-generated fictional narrow identity rail. Its large name-font fragments must remain name text, not location, with both complete roles retained. Source: `/tmp/rx93-review-v4-ko74ewle/frozen-pdfs/glalie-sidebar-narrow.pdf`. The display-word boundaries are ambiguous; the test preserves every extracted fragment rather than inventing word joins.
+
+## V10 Education record ownership
+
+`pdf-education.ts` uses reviewer-authored Berkeley/Imperial source values, not parser output. The 54 core cases put a month-year, year-only or empty first period before a ranged second record on all 18 templates. Another 126 cases cover reverse ordering, two single periods, three mixed/reverse records loose wrapped-header layouts and linked recovered headers. `import-education.test.ts` compares whole Education items including dates/degree/area/grade/location/website/complete description, plus every source word. The same assertion fails on v9 before repair.
+
+`packages/import/src/pdf-lines.test.ts` checks external geometry: unassigned right-hand body text survives; a later uncorroborated title pair declines projection; identical typography keeps generic parsing. These guards keep ambiguous chunks from losing fields when precise reconstruction is unsupported. No dependency, template/company/degree vocabulary or migration was added. Original 180 all-section source assertions remain unchanged.
+
+Exact archived reviewer PDFs/source reconstruction, fresh base/v9/current per-field comparison, protected SQL/owner GET, failed-before/passing-after multipart and real built browser reader receipts: `/tmp/rx93-rework-v10/proof.md`. The no-website/custom-link slot ambiguity and intentional Summary duplication on bounded fallback are documented in `.agents/docs/rx-93-import-followups.md`.

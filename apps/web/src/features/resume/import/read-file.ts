@@ -176,18 +176,15 @@ export async function readResumeFile(
 		return client.ai.parsePdf({ file: { name: file.name, data: base64 } });
 	}
 
-	const [{ extractPdfLines }, { parseResumeText }] = await Promise.all([
-		import("./pdf-text"),
-		import("@reactive-resume/import/plain-text"),
-	]);
-	const lines = await extractPdfLines(file);
-	if (lines.length === 0) {
+	const { readPdfResume } = await import("./pdf-text");
+	const data = await readPdfResume(file);
+	if (!data) {
 		throw new ImportError(
 			t`This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in.`,
 		);
 	}
 	options.onRead?.(t`text layer found`);
-	return parseResumeText(lines.join("\n"));
+	return data;
 }
 
 /** What an import found: sections with content, their entries, and dates flagged for a look. */
