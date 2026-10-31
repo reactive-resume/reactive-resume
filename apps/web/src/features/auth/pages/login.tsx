@@ -154,7 +154,7 @@ export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin }:
 	return (
 		<>
 			<div className="space-y-1 text-center">
-				<h1 className="text-2xl font-semibold tracking-tight">
+				<h1 className="text-[30px] leading-9">
 					<Trans comment="Title on the login page">Sign in to your account</Trans>
 				</h1>
 

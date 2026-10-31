@@ -105,9 +105,15 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 	return (
 		<>
 			<div className="space-y-1 text-center">
-				<h1 className="text-2xl font-semibold tracking-tight">
-					<Trans>Create a new account</Trans>
+				<h1 className="text-[30px] leading-9">
+					<Trans comment="Title on the registration page">Start your resume</Trans>
 				</h1>
+
+				<p dir="auto" className="text-ink-2">
+					<Trans comment="Reassurance under the registration title, repeating the homepage's promise">
+						Free, no ads, no paywall.
+					</Trans>
+				</p>
 
 				<div className="text-ink-3">
 					<Trans>
@@ -260,7 +266,7 @@ function PostSignupScreen() {
 		// Replaces the form in place: fades up into the auth column, with the layout's 24px gap.
 		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
 			<div className="space-y-1 text-center">
-				<h1 className="text-2xl font-semibold tracking-tight">
+				<h1 className="text-[30px] leading-9">
 					<Trans>Check your email</Trans>
 				</h1>
 				<p className="text-ink-3">

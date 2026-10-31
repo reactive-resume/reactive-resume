@@ -232,7 +232,7 @@ test("bounds tag filters from chips and URLs and clears a first-load filter fail
 		expect(badResponses).toEqual([]);
 		await page.getByRole("button", { name: "Clear search and filters", exact: true }).click();
 		await expect(page.locator("article")).toHaveCount(100);
-		await page.route("**/api/rpc/documents/**", async (route) => {
+		await page.route("**/api/rpc/**", async (route) => {
 			const body = route.request().postData() ?? "";
 			if (body.includes("unavailable-tag")) await route.fulfill({ status: 503, body: "Unavailable" });
 			else await route.continue();
