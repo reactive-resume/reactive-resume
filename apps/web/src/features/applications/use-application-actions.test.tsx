@@ -24,7 +24,7 @@ vi.mock("@/libs/orpc/client", () => ({
 				},
 			},
 		},
-		documents: { list: { key: () => ["documents"] } },
+		documents: { key: () => ["documents"] },
 		career: { workspace: { queryKey: () => ["workspace"] } },
 	},
 }));
