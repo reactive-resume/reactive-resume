@@ -17,6 +17,7 @@ import {
 	readProposalApplications,
 	restoreProposalApplications,
 } from "@reactive-resume/resume/proposals";
+import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { syncResumeDates } from "@reactive-resume/schema/resume/dates";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { generateId } from "@reactive-resume/utils/string";
@@ -107,8 +108,12 @@ type Runtime = {
 	queryClient?: QueryClient;
 	hasPendingLocalChanges: boolean;
 	isSaving: boolean;
+	metadataWrite?: Promise<Resume> | undefined;
+	metadataWriting?: boolean | undefined;
 	/** Version of the data we accepted, never metadata fetched while local edits are pending. */
 	baseUpdatedAt?: Date | undefined;
+	/** The server's data at baseUpdatedAt, when known: proves whether a later metadata-only revision changed no data. */
+	baseData?: ResumeData | undefined;
 	conflict: boolean;
 	reloading: boolean;
 	copyId?: string;
@@ -358,6 +363,7 @@ function setRuntimeBaseline(resume: Resume) {
 	runtime.hasPendingLocalChanges = false;
 	runtime.pendingResume = undefined;
 	runtime.baseUpdatedAt = resume.updatedAt;
+	runtime.baseData = resume.data;
 	runtime.proposalSafety = "v1";
 	runtime.conflict = false;
 	runtime.saveFailed = false;
@@ -366,7 +372,15 @@ function setRuntimeBaseline(resume: Resume) {
 
 async function flushResumeSave(id: string) {
 	const runtime = runtimes.get(id);
-	if (!runtime || runtime.isSaving || runtime.conflict || !runtime.baseUpdatedAt || !runtime.pendingResume) return;
+	if (
+		!runtime ||
+		runtime.isSaving ||
+		runtime.metadataWriting ||
+		runtime.conflict ||
+		!runtime.baseUpdatedAt ||
+		!runtime.pendingResume
+	)
+		return;
 
 	const submitted = runtime.pendingResume;
 	const submittedData = structuredClone(submitted.data);
@@ -395,6 +409,7 @@ async function flushResumeSave(id: string) {
 			submittedApplications,
 		);
 		runtime.baseUpdatedAt = updated.updatedAt;
+		runtime.baseData = updated.data;
 		runtime.queryClient?.setQueryData(getResumeQueryKey(submitted.id), updated);
 
 		const currentResume = useResumeStore.getState().resume;
@@ -603,6 +618,7 @@ export const useResumeStore = create<ResumeStore>()(
 				});
 				const runtime = getRuntime(restored.id);
 				runtime.baseUpdatedAt = unsaved?.baseUpdatedAt ? new Date(unsaved.baseUpdatedAt) : undefined;
+				if (!sameRevision) runtime.baseData = undefined;
 				runtime.conflict = conflict;
 				runtime.hasPendingLocalChanges = true;
 				storeUnsavedResume(restored);
@@ -682,6 +698,9 @@ export const useResumeStore = create<ResumeStore>()(
 				state.resume.hasPassword = resume.hasPassword;
 				state.resume.isPublic = resume.isPublic;
 				state.resume.showDownloadButtons = resume.showDownloadButtons;
+				state.resume.showInSearchEngines = resume.showInSearchEngines;
+				state.resume.hideContactDetails = resume.hideContactDetails;
+				state.resume.isPrimary = resume.isPrimary;
 			});
 		},
 
@@ -860,6 +879,67 @@ export const usePreviewPausedStore = create<PreviewPausedStore>()((set) => ({
 	setPaused: (paused) => set({ paused }),
 }));
 
+/**
+ * Call before a metadata-only `resume.update` (name, tags, sharing) and pass the server's answer to the result. The
+ * answer reaches the open resume only in the visit that sent it, and never moves it back to an older revision.
+ * The write uses autosave's accepted revision, so an unseen body or receipt change still conflicts. Matching
+ * data in the answer lets autosave continue from the metadata revision without replacing its local history.
+ */
+function trackResumeMetadataWrite(id: string) {
+	const visit = runtimes.get(id);
+	return (updated: Resume) => {
+		const runtime = runtimes.get(id);
+		const current = useResumeStore.getState().resume;
+		if (!runtime || runtime !== visit || current?.id !== id || updated.updatedAt < current.updatedAt) return;
+		useResumeStore.getState().mergeResumeMetadata(updated);
+
+		if (
+			runtime.isSaving ||
+			runtime.conflict ||
+			!runtime.baseUpdatedAt ||
+			updated.updatedAt <= runtime.baseUpdatedAt ||
+			!runtime.baseData ||
+			!isEqual(parseResumeData(structuredClone(updated.data)), parseResumeData(structuredClone(runtime.baseData)))
+		)
+			return;
+		runtime.baseUpdatedAt = updated.updatedAt;
+		runtime.queryClient?.setQueryData(getResumeQueryKey(id), updated);
+		// Recovery keeps the revision its edits build on.
+		if (runtime.hasPendingLocalChanges) storeUnsavedResume(current);
+		else clearUnsavedResume(current);
+	};
+}
+
+/** Shares the autosave owner: finish earlier body writes, then hold later edits until this metadata revision is known. */
+export async function saveResumeMetadata<T extends Resume>(
+	id: string,
+	write: (expectedUpdatedAt: Date | undefined) => Promise<T>,
+): Promise<T> {
+	const runtime = runtimes.get(id);
+	if (!runtime) return write(undefined);
+	const acknowledge = trackResumeMetadataWrite(id);
+	const pending = (runtime.metadataWrite?.catch(() => undefined) ?? Promise.resolve()).then(async () => {
+		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
+		if (!(await savePendingChanges(id))) throw new Error(t`Couldn't save your changes. Try again before continuing.`);
+		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
+		runtime.metadataWriting = true;
+		try {
+			const updated = await write(runtime.baseUpdatedAt);
+			acknowledge(updated);
+			return updated;
+		} finally {
+			runtime.metadataWriting = false;
+			if (runtime.pendingResume && !runtime.saveFailed) void flushResumeSave(id);
+		}
+	});
+	runtime.metadataWrite = pending;
+	try {
+		return await pending;
+	} finally {
+		if (runtime.metadataWrite === pending) runtime.metadataWrite = undefined;
+	}
+}
+
 export function usePatchResume() {
 	return useResumeStore((state) => state.patchResume);
 }
@@ -962,6 +1042,8 @@ export function useBuilderResumeUpdateSubscription() {
 
 			bindRuntimeQueryClient(resumeId, queryClient);
 			const resume = (await orpc.resume.getById.call({ id: resumeId })) as Resume;
+			// Let this visit acknowledge its own metadata before an early stream echo can rebase its history.
+			await runtimes.get(resumeId)?.metadataWrite?.catch(() => undefined);
 
 			const runtime = runtimes.get(resumeId);
 			if (

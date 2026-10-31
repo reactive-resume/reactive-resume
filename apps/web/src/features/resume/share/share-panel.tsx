@@ -22,6 +22,7 @@ import {
 	useCurrentResume,
 	useIsResumeLocked,
 	usePatchResume,
+	saveResumeMetadata,
 	useResumeData,
 	useUpdateResumeData,
 } from "@/features/resume/builder/draft";
@@ -134,21 +135,17 @@ type ShareSetting = ReturnType<typeof useShareSetting>;
  */
 function useShareSetting() {
 	const resume = useCurrentResume();
-	const patchResume = usePatchResume();
 	const queryClient = useQueryClient();
-	const { mutateAsync: updateResume, isPending } = useMutation(orpc.resume.update.mutationOptions());
+	const options = orpc.resume.update.mutationOptions();
+	const { mutateAsync: updateResume, isPending } = useMutation({
+		...options,
+		mutationFn: (value) =>
+			saveResumeMetadata(value.id, (expectedUpdatedAt) => orpc.resume.update.call({ ...value, expectedUpdatedAt })),
+	});
 
 	const update = async (settings: ShareSettings) => {
 		try {
-			const updated = await updateResume({ id: resume.id, ...settings });
-			patchResume((draft) => {
-				draft.isPublic = updated.isPublic;
-				draft.showDownloadButtons = updated.showDownloadButtons;
-				draft.showInSearchEngines = updated.showInSearchEngines;
-				draft.hideContactDetails = updated.hideContactDetails;
-				draft.isPrimary = updated.isPrimary;
-				draft.slug = updated.slug;
-			});
+			await updateResume({ id: resume.id, ...settings });
 			// Another resume may have handed over its primary role.
 			if (settings.isPrimary) void queryClient.invalidateQueries({ queryKey: orpc.resume.list.key() });
 			return true;
