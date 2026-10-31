@@ -396,7 +396,7 @@ describe("builder resume autosave", () => {
 		hook.unmount();
 	});
 
-	it("also bounds a library rename without an open draft", async () => {
+	it("refuses an unversioned metadata write without an open draft", async () => {
 		const answer = deferred<Resume>();
 		const write = vi.fn((_expected?: Date, _options?: { signal: AbortSignal }) => answer.promise);
 		let failure: unknown;
@@ -404,11 +404,65 @@ describe("builder resume autosave", () => {
 			failure = error;
 		});
 		await vi.advanceTimersByTimeAsync(10_000);
-		expect(failure).toMatchObject({ name: "TimeoutError" });
+		expect(failure).toMatchObject({ name: "AbortError" });
 		await writing;
-		expect(write.mock.lastCall?.[0]).toBeUndefined();
-		expect(write.mock.lastCall?.[1]?.signal.aborted).toBe(true);
+		expect(write).not.toHaveBeenCalled();
 		answer.resolve(makeResume("library-rename"));
+	});
+
+	it("invalidates unproven same-body revisions after metadata timeout, including receipt history", async () => {
+		const store = useResumeStore.getState;
+		const initial = makeResume("metadata-unproven-echo");
+		routerParamsMock.value = { resumeId: initial.id };
+		store().initialize(initial);
+		let server = initial;
+		orpcMocks.updateResume.mockImplementation(async ({ data }: { data: ResumeData }) => {
+			server = { ...server, data, updatedAt: new Date(server.updatedAt.getTime() + 1000) };
+			return server;
+		});
+		store().updateResumeData(
+			(draft) => {
+				draft.summary.content = "<p>Accepted</p>";
+			},
+			{ newStep: true, applied: [{ id: "edit", after: "<p>Accepted</p>" }] },
+		);
+		expect(await savePendingChanges(initial.id)).toBe(true);
+		store().updateResumeData(
+			(draft) => {
+				draft.basics.headline = "Later edit";
+			},
+			{ newStep: true },
+		);
+		expect(await savePendingChanges(initial.id)).toBe(true);
+		store().undo();
+		expect(await savePendingChanges(initial.id)).toBe(true);
+		expect(store().undoStack).toHaveLength(1);
+		expect(store().redoStack).toHaveLength(1);
+		expect(store().proposalApplications).toEqual({ edit: "<p>Accepted</p>" });
+
+		const answer = deferred<Resume>();
+		const writing = saveResumeMetadata(initial.id, () => answer.promise);
+		const rejected = expect(writing).rejects.toMatchObject({ name: "TimeoutError" });
+		await flushMicrotasks();
+		// This read is indistinguishable from a rename followed by another client's receipt-only Undo.
+		const remote = { ...server, name: "Unproven rename", updatedAt: new Date(server.updatedAt.getTime() + 1000) };
+		orpcMocks.getResumeById.mockResolvedValueOnce(remote);
+		consumeEventIteratorMock.mockReturnValueOnce(async () => undefined);
+		const hook = renderHook(() => useBuilderResumeUpdateSubscription());
+		const event = consumeEventIteratorMock.mock.lastCall?.[1].onEvent({ mutation: "update" });
+		await vi.advanceTimersByTimeAsync(10_000);
+		await rejected;
+		await event;
+		expect(store().resume?.data).toEqual(server.data);
+		expect(store().undoStack).toEqual([]);
+		expect(store().redoStack).toEqual([]);
+		expect(store().proposalApplications).toEqual({});
+		answer.resolve(remote);
+		await flushMicrotasks();
+		store().redo();
+		expect(store().proposalApplications).toEqual({});
+		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(3);
+		hook.unmount();
 	});
 
 	it("keeps pending edits and receipts on the old revision after an uncertain metadata timeout", async () => {

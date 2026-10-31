@@ -652,8 +652,7 @@ export const useResumeStore = create<ResumeStore>()(
 			}
 			setRuntimeBaseline(resume);
 
-			// This runs both for the echo of our own autosave (identical data → keep history) and for
-			// external/cross-tab/AI rebases (different data → local undo history no longer applies).
+			// Only an acknowledged revision keeps history: identical body data can hide a remote receipt-only Undo.
 			const current = get().resume;
 			// An echo keeps the data object the store already holds: a new but identical one would make everything that
 			// renders from it run again, the preview's PDF render of every page included, after every save.
@@ -916,10 +915,12 @@ export async function saveResumeMetadata<T extends Resume>(
 	write: (expectedUpdatedAt: Date | undefined, options?: { signal: AbortSignal }) => Promise<T>,
 ): Promise<T> {
 	const runtime = runtimes.get(id);
+	if (!runtime?.baseUpdatedAt) throw new DOMException("", "AbortError");
+	/** Cancels transport and releases the local wait without trusting a late response. */
 	const writeWithDeadline = async (expectedUpdatedAt: Date | undefined) => {
 		const controller = new AbortController();
-		const endVisit = () => controller.abort(runtime?.abortController.signal.reason);
-		runtime?.abortController.signal.addEventListener("abort", endVisit, { once: true });
+		const endVisit = () => controller.abort(runtime.abortController.signal.reason);
+		runtime.abortController.signal.addEventListener("abort", endVisit, { once: true });
 		const timeout = setTimeout(
 			() =>
 				controller.abort(
@@ -935,10 +936,9 @@ export async function saveResumeMetadata<T extends Resume>(
 			return await Promise.race([write(expectedUpdatedAt, { signal: controller.signal }), aborted]);
 		} finally {
 			clearTimeout(timeout);
-			runtime?.abortController.signal.removeEventListener("abort", endVisit);
+			runtime.abortController.signal.removeEventListener("abort", endVisit);
 		}
 	};
-	if (!runtime) return writeWithDeadline(undefined);
 	const acknowledge = trackResumeMetadataWrite(id);
 	const pending = (runtime.metadataWrite?.catch(() => undefined) ?? Promise.resolve()).then(async () => {
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
