@@ -451,3 +451,142 @@ test("exact 10 MiB PDF accepted and cap-plus-one rejected before transport", asy
 		contentType: "application/json",
 	});
 });
+
+async function signUpSecondAccount(page: Page) {
+	const stamp = Date.now();
+	const email = `rx106-second-${stamp}@example.test`;
+	const username = `rx106s${stamp}`;
+	const response = await page.request.post("/api/auth/sign-up/email", {
+		headers: { origin: process.env.APP_URL ?? "" },
+		data: { name: "RX106 Second", email, password: "Review-Password-106!", username, displayUsername: username },
+	});
+	expect(response.ok(), await response.text()).toBe(true);
+	const { user } = (await response.json()) as { user: { id: string } };
+	return { email, id: user.id };
+}
+
+async function alicePreferences(page: Page) {
+	const initial = await (await page.request.get("/api/openapi/career/profile")).json();
+	const profile = { ...initial, targetRoles: ["Alice private role"], priorities: "Alice private priorities" };
+	expect((await page.request.put("/api/openapi/career/profile", { data: profile })).ok()).toBe(true);
+	return profile;
+}
+
+const profileRows = async (userId: string) =>
+	(await pool.query("SELECT user_id, data FROM career_profile WHERE user_id=$1", [userId])).rows;
+
+test("a sign-out in another tab closes the old account's open Preferences tab", async ({ authPage: page }, info) => {
+	const session = await (await page.request.get("/api/auth/get-session")).json();
+	const alice = session.user.id as string;
+	await alicePreferences(page);
+	await page.goto("/dashboard/career/knowledge/preferences");
+	await expect(page.getByLabel("What matters to you")).toHaveValue("Alice private priorities");
+
+	const other = await page.context().newPage();
+	let second: { email: string; id: string } | null = null;
+	try {
+		await other.goto("/dashboard/settings/account");
+		await other.getByRole("button", { name: "Sign out", exact: true }).last().click();
+		await expect(other).toHaveURL(/\/$/);
+		second = await signUpSecondAccount(other);
+		// This tab received the account change, fenced its queued saves and reloaded into the new session.
+		await expect(page.getByLabel("What matters to you")).toHaveCount(0);
+		const rows = await profileRows(second.id);
+		const [aliceRow] = await pool
+			.query("SELECT data FROM career_profile WHERE user_id=$1", [alice])
+			.then((r) => r.rows);
+		await info.attach("cross-tab-signout-readback", {
+			body: JSON.stringify({ alice, second: second.id, rows, aliceRow }, null, 2),
+			contentType: "application/json",
+		});
+		expect(rows).toEqual([]);
+		expect(aliceRow.data.targetRoles).toEqual(["Alice private role"]);
+	} finally {
+		await other.close();
+		if (second) await pool.query('DELETE FROM "user" WHERE email=$1', [second.email]);
+	}
+});
+
+test("a stale tab that missed the account change cannot autosave into the new account", async ({
+	authPage: page,
+}, info) => {
+	// A suspended tab never sees the cross-tab signal. Only the server-side account binding can stop its queued write.
+	await page.addInitScript(() => {
+		Reflect.deleteProperty(window, "BroadcastChannel");
+		const add = window.addEventListener.bind(window);
+		window.addEventListener = ((
+			type: string,
+			listener: EventListenerOrEventListenerObject,
+			options?: boolean | AddEventListenerOptions,
+		) => {
+			if (type === "storage") return;
+			add(type, listener, options);
+		}) as typeof window.addEventListener;
+	});
+	const session = await (await page.request.get("/api/auth/get-session")).json();
+	const alice = session.user.id as string;
+	await alicePreferences(page);
+	await page.goto("/dashboard/career/knowledge/preferences");
+	await expect(page.getByLabel("What matters to you")).toHaveValue("Alice private priorities");
+
+	let rejected = 0;
+	page.on("response", (response) => {
+		if (response.url().includes("/api/rpc/") && response.status() === 409) rejected++;
+	});
+	const other = await page.context().newPage();
+	let second: { email: string; id: string } | null = null;
+	try {
+		await other.goto("/dashboard/settings/account");
+		await other.getByRole("button", { name: "Sign out", exact: true }).last().click();
+		await expect(other).toHaveURL(/\/$/);
+		second = await signUpSecondAccount(other);
+		// This tab still shows the old account because it never observed the sign-out.
+		await expect(page.getByLabel("What matters to you")).toHaveValue("Alice private priorities");
+		await page.getByLabel("What matters to you").fill("Stale Alice tab edit");
+		await page.getByLabel("What matters to you").blur();
+		await expect.poll(() => rejected).toBeGreaterThan(0);
+		const rows = await profileRows(second.id);
+		await info.attach("stale-tab-boundary-readback", {
+			body: JSON.stringify({ alice, second: second.id, rejected, rows }, null, 2),
+			contentType: "application/json",
+		});
+		expect(rejected).toBeGreaterThan(0);
+		expect(rows).toEqual([]);
+	} finally {
+		await other.close();
+		if (second) await pool.query('DELETE FROM "user" WHERE email=$1', [second.email]);
+	}
+});
+
+test("HTTP profile writes bound to another account are refused and leave the new account empty", async ({
+	authPage: page,
+}, info) => {
+	const session = await (await page.request.get("/api/auth/get-session")).json();
+	const alice = session.user.id as string;
+	const profile = await alicePreferences(page);
+	const second = await signUpSecondAccount(page);
+	try {
+		const stale = await page.request.put("/api/openapi/career/profile", {
+			headers: { "x-account-id": alice },
+			data: { ...profile, priorities: "Stale tab write" },
+		});
+		expect(stale.status()).toBe(409);
+		const before = await profileRows(second.id);
+		const matched = await page.request.put("/api/openapi/career/profile", {
+			headers: { "x-account-id": second.id },
+			data: { ...profile, priorities: "Second account write" },
+		});
+		expect(matched.ok(), await matched.text()).toBe(true);
+		const after = await profileRows(second.id);
+		await info.attach("http-account-binding-readback", {
+			body: JSON.stringify({ alice, second: second.id, staleStatus: stale.status(), before, after }, null, 2),
+			contentType: "application/json",
+		});
+		expect(before).toEqual([]);
+		expect(after).toHaveLength(1);
+		expect(after[0].user_id).toBe(second.id);
+		expect(after[0].data.priorities).toBe("Second account write");
+	} finally {
+		await pool.query('DELETE FROM "user" WHERE email=$1', [second.email]);
+	}
+});

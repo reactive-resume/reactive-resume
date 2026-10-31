@@ -2,6 +2,7 @@ import { createRouter } from "@tanstack/react-router";
 import { ErrorScreen } from "./components/layout/error-screen";
 import { LoadingScreen } from "./components/layout/loading-screen";
 import { NotFoundScreen } from "./components/layout/not-found-screen";
+import { syncAccountDataAcrossTabs } from "./libs/auth/clear-account-data";
 import { orpc } from "./libs/orpc/client";
 import { getQueryClient } from "./libs/query/client";
 import { loadRootContext } from "./libs/root-context";
@@ -13,6 +14,7 @@ const supportsTransitionTypes = globalThis.CSS?.supports?.("selector(:active-vie
 
 export const getRouter = async () => {
 	const queryClient = getQueryClient();
+	syncAccountDataAcrossTabs(queryClient);
 
 	const { theme, locale, session, flags } = await loadRootContext(queryClient);
 

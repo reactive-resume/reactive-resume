@@ -1,5 +1,6 @@
 import type { AuthSession } from "@reactive-resume/auth/types";
 import type { QueryClient } from "@tanstack/react-query";
+import { setAccountScope } from "./auth/account-scope";
 import { getSession } from "./auth/session";
 import { getLocale, loadLocale } from "./locale";
 import { client } from "./orpc/client";
@@ -36,6 +37,8 @@ export async function loadRootContext(queryClient: QueryClient) {
 		queryClient.query({ queryKey: flagsQueryKey, queryFn: () => client.flags.get(), staleTime: 5 * 60_000 }),
 		loadLocale(locale),
 	]);
+	// Whatever this tab now renders for belongs to this session; a different account fences queued autosaves.
+	setAccountScope(session?.user.id ?? null);
 
 	return { theme, locale, session, flags };
 }

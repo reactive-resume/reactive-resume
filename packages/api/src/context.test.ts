@@ -1,3 +1,4 @@
+import type { RequestAuthentication } from "./context";
 import { describe, expect, it, vi } from "vite-plus/test";
 import { createProcedureClient } from "@orpc/server";
 import { env } from "@reactive-resume/env/server";
@@ -204,5 +205,48 @@ describe("credential authorization", () => {
 		);
 		await expect(operation(undefined)).rejects.toMatchObject({ code: "FORBIDDEN" });
 		expect(authMock.api.getSession).not.toHaveBeenCalled();
+	});
+});
+
+describe("account scope binding", () => {
+	const authentication = {
+		user: { id: "bob" },
+		method: "session" as const,
+		permissions: ["read", "write", "delete"] as const,
+	} as unknown as RequestAuthentication;
+	const operation = (
+		headers: Record<string, string>,
+		method: "GET" | "POST" | "DELETE",
+		handler = vi.fn(() => "executed"),
+	) =>
+		createProcedureClient(protectedProcedure.route({ method }).handler(handler), {
+			context: { locale: "en-US" as const, reqHeaders: new Headers(headers), authentication },
+		});
+
+	it.each(["POST", "DELETE"] as const)(
+		"refuses a %s rendered for another account before the handler runs",
+		async (method) => {
+			reset();
+			const handler = vi.fn(() => "executed");
+			await expect(operation({ "x-account-id": "alice" }, method, handler)(undefined)).rejects.toMatchObject({
+				code: "CONFLICT",
+			});
+			expect(handler).not.toHaveBeenCalled();
+		},
+	);
+
+	it("accepts a write when the page's account matches the signed-in session", async () => {
+		reset();
+		await expect(operation({ "x-account-id": "bob" }, "POST")(undefined)).resolves.toBe("executed");
+	});
+
+	it("keeps clients that send no account scope working", async () => {
+		reset();
+		await expect(operation({}, "POST")(undefined)).resolves.toBe("executed");
+	});
+
+	it("still allows reads from a page that has not caught up with the new session", async () => {
+		reset();
+		await expect(operation({ "x-account-id": "alice" }, "GET")(undefined)).resolves.toBe("executed");
 	});
 });

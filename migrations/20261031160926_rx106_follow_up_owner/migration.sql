@@ -24,10 +24,26 @@ FROM career_schedule s JOIN application a ON a.id=s.application_id AND a.user_id
 WHERE j.schedule_id=s.id AND s.kind='follow-up' AND j.status IN ('queued','running')
 AND ((CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END) IS DISTINCT FROM s.next_run_at OR NOT s.enabled);
 --> statement-breakpoint
-UPDATE career_schedule s SET next_run_at=CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END,query=COALESCE(a.follow_up_note,''),
-last_queued_at=CASE WHEN s.next_run_at=CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END THEN s.last_queued_at ELSE NULL END
-FROM application a WHERE s.application_id=a.id AND s.user_id=a.user_id AND s.kind='follow-up' AND a.follow_up_at IS NOT NULL
-AND NOT EXISTS(SELECT 1 FROM career_schedule newer WHERE newer.user_id=s.user_id AND newer.application_id=s.application_id AND newer.kind='follow-up' AND (newer.updated_at,newer.id)>(s.updated_at,s.id));
+-- Move the delivery index to the projected clock. A completed occurrence on the same logical day stays delivered: its
+-- watermark follows the projected instant, so the scheduler does not treat the new time as an undelivered occurrence.
+-- Completed history keeps its original due time; only pending queued/running work moves to the projected clock.
+WITH projected AS (
+ SELECT s.id,s.last_queued_at,s.next_run_at AS current_at,
+  CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END AS at,
+  COALESCE((SELECT j.status='completed' FROM career_job j WHERE j.schedule_id=s.id ORDER BY j.created_at DESC,j.id DESC LIMIT 1),false) AS completed,
+  a.follow_up_note
+ FROM career_schedule s JOIN application a ON a.id=s.application_id AND a.user_id=s.user_id
+ WHERE s.kind='follow-up' AND a.follow_up_at IS NOT NULL
+ AND NOT EXISTS(SELECT 1 FROM career_schedule newer WHERE newer.user_id=s.user_id AND newer.application_id=s.application_id AND newer.kind='follow-up' AND (newer.updated_at,newer.id)>(s.updated_at,s.id))
+)
+UPDATE career_schedule s SET next_run_at=p.at,query=COALESCE(p.follow_up_note,''),
+last_queued_at=CASE
+ WHEN p.at IS NOT DISTINCT FROM p.current_at THEN s.last_queued_at
+ WHEN s.last_queued_at IS NOT NULL AND p.completed
+  AND (p.at AT TIME ZONE s.timezone)::date=(s.last_queued_at AT TIME ZONE s.timezone)::date
+ THEN p.at
+ ELSE NULL END
+FROM projected p WHERE s.id=p.id;
 --> statement-breakpoint
 INSERT INTO career_schedule(id,user_id,application_id,kind,query,timezone,enabled,next_run_at)
 SELECT 'follow-up:'||a.id,a.user_id,a.id,'follow-up',COALESCE(a.follow_up_note,''),u.timezone,true,CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE u.timezone ELSE a.follow_up_at END

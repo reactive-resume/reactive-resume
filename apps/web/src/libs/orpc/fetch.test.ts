@@ -76,4 +76,13 @@ describe("RPC fetch", () => {
 			expect(Buffer.from(sent.body as ArrayBuffer).equals(Buffer.from(largeBody))).toBe(true);
 		}
 	});
+
+	it("sends the account the page was rendered for so a swapped session refuses its writes", async () => {
+		fetchMock.mockResolvedValue(new Response("ok"));
+		const { setAccountScope } = await import("@/libs/auth/account-scope");
+		const { rpcFetch } = await import("./fetch");
+		setAccountScope("alice");
+		await rpcFetch(rpcUrl, { method: "POST", body: "small draft" });
+		expect(new Headers(fetchMock.mock.calls[0]?.[1]?.headers).get("x-account-id")).toBe("alice");
+	});
 });

@@ -147,6 +147,13 @@ export const protectedProcedure = publicProcedure
 	.use(({ context, procedure, next }) => {
 		if (!context.user) throw new ORPCError("UNAUTHORIZED");
 		const permission = requiredPermission(procedure["~orpc"].route);
+		// A page sends the account it was rendered for. If a cookie changed after that page loaded (another tab signed
+		// out or signed in), a queued autosave must fail instead of writing the old account's text into the new one.
+		const scope = context.reqHeaders.get("x-account-id");
+		if (scope && scope !== context.user.id && permission !== "read")
+			throw new ORPCError("CONFLICT", {
+				message: "This page belongs to a different account now. Reload and try again.",
+			});
 		if (!context.authentication?.permissions.includes(permission)) {
 			context.resHeaders?.set("WWW-Authenticate", `Bearer error="insufficient_scope", scope="api:${permission}"`);
 			throw new ORPCError("FORBIDDEN", {

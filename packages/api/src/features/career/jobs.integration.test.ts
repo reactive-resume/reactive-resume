@@ -665,6 +665,204 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 		);
 	});
 
+	// Stages the shipped migrations so the two follow-up migrations run against a populated pre-patch schema. Drizzle
+	// migrations are forward-only here, so the safety property to prove is repeatability and preservation, not a down
+	// migration: re-running the same backfills must leave the upgraded rows byte-for-byte unchanged.
+	it("upgrades completed legacy reminders without delivering them twice and moves pending work", async () => {
+		const isolated = `rx106_upgrade_${randomUUID().replaceAll("-", "")}`;
+		await admin.query(`CREATE SCHEMA ${isolated}`);
+		const upgrade = new Pool({
+			connectionString: databaseUrl,
+			max: 1,
+			options: `-c search_path=${isolated} -c statement_timeout=10000`,
+		});
+		const readSchedule = async () =>
+			(
+				await upgrade.query(
+					"SELECT id,next_run_at,last_queued_at,timezone,enabled,query FROM career_schedule ORDER BY id",
+				)
+			).rows.map((row) => ({
+				id: row.id as string,
+				next: (row.next_run_at as Date).toISOString(),
+				queued: row.last_queued_at === null ? null : (row.last_queued_at as Date).toISOString(),
+				timezone: row.timezone as string,
+				enabled: row.enabled as boolean,
+				query: row.query as string,
+			}));
+		const readJobs = async () =>
+			(await upgrade.query("SELECT * FROM career_job ORDER BY due_at, id")).rows.map((row) => ({
+				id: row.id as string,
+				scheduleId: row.schedule_id as string,
+				dueAt: (row.due_at as Date).toISOString(),
+				status: row.status as string,
+			}));
+		const readNotifications = async () =>
+			(await upgrade.query("SELECT id,key,application_id FROM career_notification ORDER BY id")).rows.map((row) => ({
+				id: row.id as string,
+				key: row.key as string,
+				applicationId: row.application_id as string | null,
+			}));
+		try {
+			const migrations = new URL("../../../../../migrations/", import.meta.url);
+			const directories = (await readdir(migrations, { withFileTypes: true }))
+				.filter((entry) => entry.isDirectory() && /^\d+_/.test(entry.name))
+				.map((entry) => entry.name)
+				.sort();
+			const owner = "20261031160926_rx106_follow_up_owner";
+			const clock = "20261031174650_rx106_follow_up_clock";
+			const apply = async (name: string) => {
+				const file = new URL(`${name}/migration.sql`, migrations);
+				await upgrade.query((await readFile(file, "utf8")).replaceAll('"public".', ""));
+			};
+			for (const directory of directories) {
+				if (directory === owner) break;
+				await apply(directory);
+			}
+
+			// Valid pre-patch state: the exact-time reminder (08:00) and the date-only follow-up were independent
+			// surfaces. The 08:00 occurrence already ran; the pending reminder has not.
+			await upgrade.query(`
+				INSERT INTO "user"(id,name,email,username,display_username,timezone,email_verified)
+				VALUES('upgrade','Fictional Upgrade','upgrade@example.test','upgrade','upgrade','UTC',true);
+				INSERT INTO application(id,user_id,company,role,status,follow_up_at,follow_up_note) VALUES
+				 ('same-day','upgrade','Same Day Labs','Engineer','applied','2026-10-30T00:00:00Z','Already delivered'),
+				 ('other-day','upgrade','Other Day Labs','Engineer','applied','2026-10-28T00:00:00Z','New logical day'),
+				 ('pending','upgrade','Pending Labs','Engineer','applied','2026-10-30T00:00:00Z','Still pending');
+				INSERT INTO career_schedule(id,user_id,application_id,kind,query,timezone,enabled,next_run_at,last_queued_at) VALUES
+				 ('same-day','upgrade','same-day','follow-up','Already delivered','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z'),
+				 ('other-day','upgrade','other-day','follow-up','Earlier delivery','UTC',true,'2026-10-27T08:00:00Z','2026-10-27T08:00:00Z'),
+				 ('pending','upgrade','pending','follow-up','Still pending','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z');
+				INSERT INTO career_job(id,user_id,schedule_id,due_at,status,attempts) VALUES
+				 ('job-same-day','upgrade','same-day','2026-10-30T08:00:00Z','completed',1),
+				 ('job-other-day','upgrade','other-day','2026-10-27T08:00:00Z','completed',1),
+				 ('job-pending','upgrade','pending','2026-10-30T08:00:00Z','queued',0);
+				INSERT INTO career_notification(id,user_id,application_id,key,notice) VALUES
+				 ('notice-same-day','upgrade','same-day','job-same-day','{"type":"followup","company":"Same Day Labs","role":"Engineer","note":"Already delivered"}'),
+				 ('notice-other-day','upgrade','other-day','job-other-day','{"type":"followup","company":"Other Day Labs","role":"Engineer","note":"Earlier delivery"}');
+			`);
+
+			const preSchedules = await readSchedule();
+			const preJobs = await readJobs();
+			const preNotifications = await readNotifications();
+			expect(preSchedules).toEqual([
+				{
+					id: "other-day",
+					next: "2026-10-27T08:00:00.000Z",
+					queued: "2026-10-27T08:00:00.000Z",
+					timezone: "UTC",
+					enabled: true,
+					query: "Earlier delivery",
+				},
+				{
+					id: "pending",
+					next: "2026-10-30T08:00:00.000Z",
+					queued: "2026-10-30T08:00:00.000Z",
+					timezone: "UTC",
+					enabled: true,
+					query: "Still pending",
+				},
+				{
+					id: "same-day",
+					next: "2026-10-30T08:00:00.000Z",
+					queued: "2026-10-30T08:00:00.000Z",
+					timezone: "UTC",
+					enabled: true,
+					query: "Already delivered",
+				},
+			]);
+			expect(preJobs).toEqual([
+				{ id: "job-other-day", scheduleId: "other-day", dueAt: "2026-10-27T08:00:00.000Z", status: "completed" },
+				{ id: "job-pending", scheduleId: "pending", dueAt: "2026-10-30T08:00:00.000Z", status: "queued" },
+				{ id: "job-same-day", scheduleId: "same-day", dueAt: "2026-10-30T08:00:00.000Z", status: "completed" },
+			]);
+			expect(preNotifications).toHaveLength(2);
+
+			await apply(owner);
+			await apply(clock);
+
+			const migrated = await readSchedule();
+			expect(migrated).toEqual([
+				{
+					id: "other-day",
+					next: "2026-10-28T09:00:00.000Z",
+					queued: null,
+					timezone: "UTC",
+					enabled: true,
+					query: "New logical day",
+				},
+				{
+					id: "pending",
+					next: "2026-10-30T09:00:00.000Z",
+					queued: null,
+					timezone: "UTC",
+					enabled: true,
+					query: "Still pending",
+				},
+				{
+					id: "same-day",
+					next: "2026-10-30T09:00:00.000Z",
+					queued: "2026-10-30T09:00:00.000Z",
+					timezone: "UTC",
+					enabled: true,
+					query: "Already delivered",
+				},
+			]);
+			expect(await readJobs()).toEqual([
+				{ id: "job-other-day", scheduleId: "other-day", dueAt: "2026-10-27T08:00:00.000Z", status: "completed" },
+				{ id: "job-pending", scheduleId: "pending", dueAt: "2026-10-30T08:00:00.000Z", status: "canceled" },
+				{ id: "job-same-day", scheduleId: "same-day", dueAt: "2026-10-30T08:00:00.000Z", status: "completed" },
+			]);
+
+			const oldDb = fixture.db;
+			fixture.db = drizzle({ client: upgrade });
+			try {
+				// One worker serves one job per account per tick, so two due accounts need two ticks.
+				await run();
+				await run();
+			} finally {
+				fixture.db = oldDb;
+			}
+
+			const delivered = await readJobs();
+			expect(delivered.filter((row) => row.scheduleId === "same-day")).toEqual([
+				{ id: "job-same-day", scheduleId: "same-day", dueAt: "2026-10-30T08:00:00.000Z", status: "completed" },
+			]);
+			expect(delivered.filter((row) => row.scheduleId === "other-day")).toEqual([
+				{ id: "job-other-day", scheduleId: "other-day", dueAt: "2026-10-27T08:00:00.000Z", status: "completed" },
+				{ id: expect.any(String), scheduleId: "other-day", dueAt: "2026-10-28T09:00:00.000Z", status: "completed" },
+			]);
+			expect(delivered.filter((row) => row.scheduleId === "pending")).toEqual([
+				{ id: "job-pending", scheduleId: "pending", dueAt: "2026-10-30T08:00:00.000Z", status: "canceled" },
+				{ id: expect.any(String), scheduleId: "pending", dueAt: "2026-10-30T09:00:00.000Z", status: "completed" },
+			]);
+			const notifications = await readNotifications();
+			expect(notifications.filter((row) => row.key === "job-same-day")).toHaveLength(1);
+			expect(notifications).toHaveLength(4);
+
+			// Re-running the same forward-only backfills is safe: completed history, watermarks and deliveries hold.
+			const beforeRepeat = {
+				schedules: await readSchedule(),
+				jobs: await readJobs(),
+				notifications: await readNotifications(),
+			};
+			const ownerSql = await readFile(new URL(`${owner}/migration.sql`, migrations), "utf8");
+			await upgrade.query(
+				ownerSql.slice(ownerSql.indexOf("--> statement-breakpoint") + "--> statement-breakpoint".length),
+			);
+			await upgrade.query(
+				'UPDATE "user" SET timezone=timezone WHERE EXISTS (SELECT 1 FROM application a WHERE a.user_id="user".id AND a.follow_up_date_only AND a.follow_up_at IS NOT NULL)',
+			);
+			expect({
+				schedules: await readSchedule(),
+				jobs: await readJobs(),
+				notifications: await readNotifications(),
+			}).toEqual(beforeRepeat);
+		} finally {
+			await upgrade.end();
+			await admin.query(`DROP SCHEMA IF EXISTS ${isolated} CASCADE`);
+		}
+	});
+
 	it("distinguishes old-client dates from exact midnight reminders and preserves notes-only timestamps", async () => {
 		const { applicationService } = await import("../applications/service");
 		await getDb().update(tables.user).set({ timezone: "Asia/Tokyo" }).where(eq(tables.user.id, "alice"));
