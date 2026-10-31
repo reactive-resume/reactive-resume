@@ -1,4 +1,5 @@
 import type { ReadPageOutput } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import type { z } from "zod";
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import { buildAgentInstructions, buildAgentTools, MAX_AGENT_WEB_CALLS } from "./tools";
 
@@ -45,6 +46,29 @@ function execute(tools: ReturnType<typeof buildAgentTools>, name: string, input:
 }
 
 describe("assistant web tools", () => {
+	it("exposes typed resume operations and refuses legacy prose-only requests to create sections", () => {
+		const schema = build().tools.propose_edits?.inputSchema as z.ZodType;
+		expect(
+			schema.safeParse({
+				title: "Add Patents",
+				edits: [{ passageId: "project", text: "## Patents: ...", why: "Adds dedicated section." }],
+			}).success,
+		).toBe(false);
+		expect(
+			schema.safeParse({
+				title: "أضف قسم براءات الاختراع",
+				changes: [
+					{
+						kind: "section",
+						type: "publications",
+						title: "براءات الاختراع",
+						entriesJson: "[]",
+						why: "Requested section.",
+					},
+				],
+			}).success,
+		).toBe(true);
+	});
 	it("respects an explicit connection while keeping reading available without search credentials", async () => {
 		const fallback = build();
 		expect(fallback.tools.web_search).toBeUndefined();
@@ -100,5 +124,19 @@ describe("assistant web tools", () => {
 				canReadPage: true,
 			}),
 		).toContain("Use `search_web`");
+	});
+
+	it("explains partial translation and unsupported fields before suggesting resume edits", () => {
+		const instructions = buildAgentInstructions({
+			document: { kind: "resume", name: "Resume" },
+			posting: null,
+			searchTool: null,
+			canReadPage: true,
+		});
+		expect(instructions).toContain("Whole-resume translation is NOT supported");
+		expect(instructions).toContain("never claim the whole resume is translated");
+		expect(instructions).toContain("For mixed requests, propose each supported change");
+		expect(instructions).toContain("route to Write");
+		expect(instructions).not.toContain("{{EDIT_SCOPE}}");
 	});
 });

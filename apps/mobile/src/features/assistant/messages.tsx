@@ -7,7 +7,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { memo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-native";
-import { blockText } from "@reactive-resume/resume/proposals";
+import { proposalText } from "@reactive-resume/resume/proposals";
 import { webSources } from "./chat";
 import { AssistantMarkdown } from "./markdown";
 import { isProposeEdits, skippedCount, toProposals } from "./proposals";
@@ -317,8 +317,9 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 					{skipped > 0 ? (
 						<Text variant="caption" color="ink3">
 							{plural(skipped, {
-								one: "# edit couldn't be placed: its text changed. Ask again to redo it.",
-								other: "# edits couldn't be placed: their text changed. Ask again to redo them.",
+								one: "# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.",
+								other:
+									"# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.",
 							})}
 						</Text>
 					) : null}
@@ -522,7 +523,7 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetP
 					</View>
 					{proposal.before ? (
 						<Text variant="callout" color="ink3" style={{ textDecorationLine: "line-through" }}>
-							{blockText(proposal.before)}
+							{proposalText(proposal, "before")}
 						</Text>
 					) : null}
 					<Text
@@ -534,7 +535,7 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject }: ChangeSetP
 							backgroundColor: colors.accentSoft,
 						}}
 					>
-						{blockText(proposal.after)}
+						{proposalText(proposal, "after")}
 					</Text>
 					{proposal.why ? (
 						<Text variant="caption" color="ink2">

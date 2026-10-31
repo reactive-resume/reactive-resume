@@ -180,9 +180,11 @@ function ProposalItem(props: ProposalItemProps) {
 				</span>
 			</div>
 
-			<div className="grid gap-1.5 text-[13px] leading-[19px]">
-				<del className="text-ink-3">{passageText(proposal.before)}</del>
-				<ins className="rounded-md bg-accent-soft px-1 py-0.5 no-underline">{passageText(proposal.after)}</ins>
+			<div className="grid gap-1.5 text-[13px] leading-[19px] whitespace-pre-wrap">
+				<del className="text-ink-3">{proposal.snapshot ? proposal.before : passageText(proposal.before)}</del>
+				<ins className="rounded-md bg-accent-soft px-1 py-0.5 no-underline">
+					{proposal.snapshot ? proposal.after : passageText(proposal.after)}
+				</ins>
 				{proposal.why && <span className="text-xs text-ink-2">{proposal.why}</span>}
 			</div>
 

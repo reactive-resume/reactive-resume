@@ -9,6 +9,7 @@ import {
 	getProposalState,
 	readTarget,
 	replaceBlockText,
+	resumeStructureSnapshot,
 } from "@reactive-resume/resume/proposals";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 const mocks = vi.hoisted(() => ({ store: vi.fn(), toast: vi.fn() }));
@@ -70,6 +71,29 @@ describe("proposals", () => {
 			applyProposal(draft, proposal({ after: "<p>Cut costs by $& and $1</p>" }));
 		});
 		expect(readTarget(next, proposal().target)).toContain("<p>Cut costs by $& and $1</p>");
+	});
+
+	it("previews an atomic structural set without saving it or marking serialized data as HTML", () => {
+		const data = makeData();
+		const after = structuredClone(data);
+		after.basics.headline = "Design lead";
+		const structural = proposal({
+			target: { sectionId: "resume", field: "data" },
+			before: "Headline: —",
+			after: "Headline: Design lead",
+			snapshot: { before: resumeStructureSnapshot(data), after: resumeStructureSnapshot(after) },
+		});
+		data.picture.url = "https://example.com/updated-picture.png";
+		data.metadata.page.marginX = 21;
+		const preview = markProposals(data, [structural]);
+		expect(preview.basics.headline).toBe("Design lead");
+		expect(preview.picture.url).toBe("https://example.com/updated-picture.png");
+		expect(preview.metadata.page.marginX).toBe(21);
+		expect(structural.snapshot?.after).not.toContain('"picture"');
+		expect(structural.snapshot?.after).not.toContain('"stylesheet"');
+		expect(data.basics.headline).toBe("");
+		expect(getProposalState(data, structural)).toBe("pending");
+		expect(getProposalState(preview, { ...structural, status: "accepted" })).toBe("accepted");
 	});
 
 	it("replaces a block's text and escapes it, keeping the tag", () => {

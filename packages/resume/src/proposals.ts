@@ -1,4 +1,6 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { syncResumeDates, upgradeResumeDates } from "@reactive-resume/schema/resume/dates";
+import { parseResumeDataForWrite } from "@reactive-resume/schema/resume/write";
 import { escapeHtml, fnv1a } from "@reactive-resume/utils/string";
 
 /**
@@ -24,6 +26,8 @@ export type Proposal = {
 	why: string;
 	status: "pending" | "accepted" | "rejected";
 	source: ProposalSource;
+	/** Atomic structured changes; before/after remain readable for older clients. */
+	snapshot?: { before: string; after: string } | undefined;
 };
 
 /** Out of date is not stored: it's whenever the passage is no longer in the field. */
@@ -33,6 +37,53 @@ export type ProposalState = Proposal["status"] | "stale";
 export const LETTER_SECTION_ID = "letter";
 
 type Entry = { id: string } & Record<string, unknown>;
+
+function stableJson(value: unknown): string {
+	return JSON.stringify(value, (_key, item: unknown) =>
+		item && typeof item === "object" && !Array.isArray(item)
+			? Object.fromEntries(Object.entries(item).sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0)))
+			: item,
+	);
+}
+
+function normalizedSnapshot(value: string, data: ResumeData) {
+	try {
+		const snapshot = JSON.parse(value);
+		return resumeStructureSnapshot({
+			...data,
+			basics: snapshot.basics,
+			summary: snapshot.summary,
+			sections: snapshot.sections,
+			customSections: snapshot.customSections,
+			metadata: { ...data.metadata, layout: snapshot.layout },
+		});
+	} catch {
+		return value;
+	}
+}
+
+/** Content/layout only: proposal history must not duplicate pictures, styles or private metadata. */
+export function resumeStructureSnapshot(data: ResumeData): string {
+	// JSONB key order and read/save date upgrades must not make unchanged content stale.
+	const content = JSON.parse(
+		JSON.stringify({
+			basics: data.basics,
+			summary: data.summary,
+			sections: data.sections,
+			customSections: data.customSections,
+			metadata: { page: data.metadata.page, layout: data.metadata.layout },
+		}),
+	) as ResumeData;
+	upgradeResumeDates(content);
+	syncResumeDates(content);
+	return stableJson({
+		basics: content.basics,
+		summary: content.summary,
+		sections: content.sections,
+		customSections: content.customSections,
+		layout: content.metadata.layout,
+	});
+}
 
 function findEntry(data: ResumeData, { sectionId, itemId, roleId }: ProposalTarget): Entry | undefined {
 	const builtin = (data.sections as Record<string, { items: Entry[] } | undefined>)[sectionId];
@@ -146,7 +197,9 @@ function passageRange(value: string | undefined, before: string): { start: numbe
 export const canApplyTo = (value: string | undefined, { before }: Pick<Proposal, "before">) =>
 	passageRange(value, before) !== undefined;
 export const canApply = (data: ResumeData, proposal: Proposal) =>
-	canApplyTo(readTarget(data, proposal.target), proposal);
+	proposal.snapshot
+		? resumeStructureSnapshot(data) === normalizedSnapshot(proposal.snapshot.before, data)
+		: canApplyTo(readTarget(data, proposal.target), proposal);
 
 /** Recorded acceptance survives refinements and normalization. Text is placement evidence, never acceptance proof. */
 export function getStateIn(
@@ -158,11 +211,20 @@ export function getStateIn(
 	if (status !== "pending") return status;
 	return applyTo(value, proposal) !== undefined ? "pending" : "stale";
 }
-export const getProposalState = (
+export function getProposalState(
 	data: ResumeData,
 	proposal: Proposal,
 	applications: ProposalApplications = {},
-): ProposalState => getStateIn(readTarget(data, proposal.target), proposal, applications);
+): ProposalState {
+	if (!proposal.snapshot) return getStateIn(readTarget(data, proposal.target), proposal, applications);
+	const status = proposalStatus(proposal, applications);
+	if (status !== "pending") return status;
+	const current = resumeStructureSnapshot(data);
+	return current === normalizedSnapshot(proposal.snapshot.before, data) &&
+		current !== normalizedSnapshot(proposal.snapshot.after, data)
+		? "pending"
+		: "stale";
+}
 
 /** The text with `after` in place of the unique original passage, or undefined when it cannot be placed. */
 export function applyTo(value: string | undefined, proposal: Pick<Proposal, "before" | "after">) {
@@ -178,6 +240,36 @@ export function applyTo(value: string | undefined, proposal: Pick<Proposal, "bef
 }
 
 export function applyProposal(draft: ResumeData, proposal: Proposal): boolean {
+	if (proposal.snapshot) {
+		if (
+			proposal.target.sectionId !== "resume" ||
+			proposal.target.field !== "data" ||
+			resumeStructureSnapshot(draft) !== normalizedSnapshot(proposal.snapshot.before, draft)
+		)
+			return false;
+		try {
+			const snapshot = JSON.parse(proposal.snapshot.after);
+			const next = parseResumeDataForWrite({
+				...draft,
+				basics: snapshot.basics,
+				summary: snapshot.summary,
+				sections: snapshot.sections,
+				customSections: snapshot.customSections,
+				metadata: { ...draft.metadata, layout: snapshot.layout },
+			});
+			if (resumeStructureSnapshot(next) === resumeStructureSnapshot(draft)) return false;
+			Object.assign(draft, {
+				basics: next.basics,
+				summary: next.summary,
+				sections: next.sections,
+				customSections: next.customSections,
+				metadata: next.metadata,
+			});
+			return true;
+		} catch {
+			return false;
+		}
+	}
 	const next = applyTo(readTarget(draft, proposal.target), proposal);
 	if (next === undefined) return false;
 	writeTarget(draft, proposal.target, next);
@@ -185,7 +277,8 @@ export function applyProposal(draft: ResumeData, proposal: Proposal): boolean {
 }
 
 export type ProposalApplicationResult = { applied: Proposal[]; stale: Proposal[] };
-const isAddition = ({ before, after }: Proposal) => after.startsWith(before) && after.length > before.length;
+const isAddition = ({ before, after, snapshot }: Proposal) =>
+	!snapshot && after.startsWith(before) && after.length > before.length;
 
 /** Additions first (backwards at a shared anchor, yielding proposal order), then rewrites. Record only real writes. */
 export function applyProposals(
@@ -194,24 +287,50 @@ export function applyProposals(
 	write: (target: ProposalTarget, value: string) => void,
 	applications: ProposalApplications = {},
 ): ProposalApplicationResult {
+	return applyDecisions(
+		proposals,
+		(proposal) => {
+			if (proposal.snapshot) return false;
+			const next = applyTo(read(proposal.target), proposal);
+			if (next === undefined) return false;
+			write(proposal.target, next);
+			return true;
+		},
+		applications,
+	);
+}
+
+/** Resume snapshots and passage edits use the same ordering and successful-write receipts. */
+export function applyResumeProposals(
+	draft: ResumeData,
+	proposals: readonly Proposal[],
+	applications: ProposalApplications = {},
+): ProposalApplicationResult {
+	return applyDecisions(proposals, (proposal) => applyProposal(draft, proposal), applications);
+}
+
+function applyDecisions(
+	proposals: readonly Proposal[],
+	apply: (proposal: Proposal) => boolean,
+	applications: ProposalApplications,
+): ProposalApplicationResult {
 	const unique = [...new Map(proposals.map((proposal) => [proposal.id, proposal])).values()];
 	const applied = new Set<string>();
 	const stale = new Set<string>();
 	const ordered = [...unique.filter(isAddition).reverse(), ...unique.filter((proposal) => !isAddition(proposal))];
 	for (const proposal of ordered) {
 		if (applied.has(proposal.id) || proposalStatus(proposal, applications) !== "pending") continue;
-		const next = applyTo(read(proposal.target), proposal);
-		if (next === undefined) stale.add(proposal.id);
-		else {
-			write(proposal.target, next);
-			applied.add(proposal.id);
-		}
+		if (apply(proposal)) applied.add(proposal.id);
+		else stale.add(proposal.id);
 	}
 	return {
 		applied: unique.filter((proposal) => applied.has(proposal.id)),
 		stale: unique.filter((proposal) => stale.has(proposal.id)),
 	};
 }
+
+export const proposalText = (proposal: Pick<Proposal, "before" | "after" | "snapshot">, side: "before" | "after") =>
+	proposal.snapshot ? proposal[side] : blockText(proposal[side]);
 
 const BLOCK = /^(<(p|li)(?:\s[^>]*)?>)([\s\S]*)(<\/\2>)$/i;
 

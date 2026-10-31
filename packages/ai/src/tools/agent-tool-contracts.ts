@@ -3,6 +3,7 @@
 // runtime-universal (consumed by both the API tool definitions and the web chat UI).
 import type { UIDataTypes, UIMessage } from "ai";
 import z from "zod";
+import { resumeChangeSchema } from "@reactive-resume/resume/structural-proposals";
 import { careerStoryInputSchema } from "@reactive-resume/schema/career";
 
 export const askUserQuestionInputSchema = z.object({
@@ -140,6 +141,12 @@ export const proposeEditsInputSchema = z.object({
 	edits: z.array(proposedEditInputSchema).min(1).max(12),
 });
 
+export const proposeResumeEditsInputSchema = z.strictObject({
+	title: z.string().trim().min(1).max(80),
+	changes: z.array(resumeChangeSchema).min(1).max(24),
+});
+export type ProposeResumeEditsInput = z.infer<typeof proposeResumeEditsInputSchema>;
+
 const proposalTargetSchema = z.object({
 	sectionId: z.string(),
 	itemId: z.string().optional(),
@@ -156,6 +163,7 @@ export const proposedEditSchema = z.object({
 	after: z.string(),
 	why: z.string(),
 	status: z.enum(["pending", "accepted", "rejected"]),
+	snapshot: z.object({ before: z.string(), after: z.string() }).optional(),
 });
 
 export const proposeEditsOutputSchema = z.looseObject({
@@ -205,7 +213,7 @@ export type AgentTools = {
 	read_resume: { input: Record<string, never>; output: unknown };
 	read_letter: { input: Record<string, never>; output: unknown };
 	read_attachment: { input: { attachmentId: string }; output: unknown };
-	propose_edits: { input: ProposeEditsInput; output: ProposeEditsOutput };
+	propose_edits: { input: ProposeEditsInput | ProposeResumeEditsInput; output: ProposeEditsOutput };
 	search_web: {
 		input: z.infer<typeof searchWebInputSchema>;
 		output: SearchWebOutput;

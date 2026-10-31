@@ -1,7 +1,11 @@
 import type { getModel } from "../ai/service";
 import type { WebAccessConnection } from "../web-access/contracts";
 import type { AssistantDocument } from "./document";
-import type { ProposeEditsInput, ProposeEditsOutput } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import type {
+	ProposeEditsInput,
+	ProposeEditsOutput,
+	ProposeResumeEditsInput,
+} from "@reactive-resume/ai/tools/agent-tool-contracts";
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
 import type { FilePart, ImagePart, ModelMessage, TextPart, UIMessage, UIMessageChunk } from "ai";
 import { ORPCError } from "@orpc/client";
@@ -34,7 +38,7 @@ import { searchScope } from "../web-access/regions";
 import { readPage, searchWeb } from "../web-access/service";
 import { isRunAlive, monitorRunCancellation, requestRunCancellation } from "./cancellation";
 import { pruneAgentModelContext } from "./context";
-import { documentOf, documentView, findPosting, loadDocument, resolveEdits } from "./document";
+import { documentOf, documentView, findPosting, loadDocument, resolveDocumentEdits } from "./document";
 import { mergeClientToolResponses } from "./messages-merge";
 import {
 	applyStepToUiMessage,
@@ -731,10 +735,10 @@ async function proposeEdits(input: {
 	userId: string;
 	threadId: string;
 	document: AssistantDocument;
-	edits: ProposeEditsInput;
+	edits: ProposeEditsInput | ProposeResumeEditsInput;
 }): Promise<ProposeEditsOutput> {
 	const loaded = await loadDocument(input.userId, input.document);
-	const output = resolveEdits(loaded, input.edits);
+	const output = resolveDocumentEdits(loaded, input.edits);
 	if (output.edits.length > 0) {
 		await db
 			.update(schema.agentThread)
@@ -862,7 +866,7 @@ function createAgent(input: {
 					userId: input.userId,
 				}),
 			),
-			proposeEdits: timedToolHandler("propose_edits", (edits: ProposeEditsInput) => {
+			proposeEdits: timedToolHandler("propose_edits", (edits: ProposeEditsInput | ProposeResumeEditsInput) => {
 				if (!document) throw new Error("The document isn't shared with this message.");
 				return proposeEdits({
 					userId: input.userId,

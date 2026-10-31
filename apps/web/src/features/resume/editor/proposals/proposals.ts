@@ -2,14 +2,7 @@ import type { Proposal, ProposalApplicationResult, ProposalApplications } from "
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { plural, t } from "@lingui/core/macro";
 import { produce } from "immer";
-import {
-	applyProposals,
-	getProposalState,
-	readTarget,
-	splitBlock,
-	splitBlocks,
-	writeTarget,
-} from "@reactive-resume/resume/proposals";
+import { applyResumeProposals, getProposalState, splitBlock, splitBlocks } from "@reactive-resume/resume/proposals";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useResumeStore } from "@/features/resume/builder/draft";
 
@@ -65,10 +58,11 @@ export function markProposals(
 	if (pending.length === 0) return data;
 
 	return produce(data, (draft) => {
-		applyProposals(
-			pending.map((proposal) => ({ ...proposal, after: markChange(proposal.before, proposal.after) })),
-			(target) => readTarget(draft, target),
-			(target, value) => writeTarget(draft, target, value),
+		applyResumeProposals(
+			draft,
+			pending.map((proposal) =>
+				proposal.snapshot ? proposal : { ...proposal, after: markChange(proposal.before, proposal.after) },
+			),
 			applications,
 		);
 	});
@@ -96,12 +90,7 @@ export function acceptResumeProposals(proposals: readonly Proposal[]): ProposalA
 	if (!resume || resume.isLocked) return { applied: [], stale: [] };
 	let result: ProposalApplicationResult = { applied: [], stale: [] };
 	const next = produce(resume.data, (draft) => {
-		result = applyProposals(
-			proposals,
-			(target) => readTarget(draft, target),
-			(target, value) => writeTarget(draft, target, value),
-			store.proposalApplications,
-		);
+		result = applyResumeProposals(draft as ResumeData, proposals, store.proposalApplications);
 	});
 	if (result.applied.length > 0)
 		store.updateResumeData(

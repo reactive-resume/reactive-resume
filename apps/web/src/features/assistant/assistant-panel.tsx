@@ -8,8 +8,9 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -51,6 +52,8 @@ const belongsTo = (thread: ThreadSummary, document: AssistantDocument) =>
  * the page and as cards, and asks before writing anything the document doesn't say.
  */
 export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
+	const navigate = useNavigate();
+	const search = useSearch({ strict: false });
 	const queryClient = useQueryClient();
 	const providers = useHasUsableAiProvider();
 	const threads = useQuery(orpc.agent.threads.list.queryOptions());
@@ -182,6 +185,31 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 				<IconButton icon="x" label={t`Close the assistant`} shortcut="⌘J" className="text-ink-2" onClick={onClose} />
 			</header>
 
+			{document.kind === "resume" && (
+				<div className="grid gap-2 border-b border-line p-4 text-xs text-ink-2">
+					<p>
+						<Trans>
+							I can edit your summary, bullets and text fields, and add entries and sections. Review each set before
+							accepting it together. Some fields still need Write. I can't translate a whole resume.
+						</Trans>
+					</p>
+					<Button
+						size="sm"
+						variant="ghost"
+						onClick={() => {
+							useEditorStore.setState({ mobileView: "write", drawerOpen: true });
+							onClose();
+							void navigate({
+								to: "/builder/$resumeId",
+								params: { resumeId: document.id },
+								search: { ...search, mode: undefined, assistant: undefined },
+							});
+						}}
+					>
+						<Trans>Open Write</Trans>
+					</Button>
+				</div>
+			)}
 			{notSetUp ? (
 				<Notice>
 					<Trans>
@@ -412,10 +440,10 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 					{document.posting ? (
 						<Trans>
 							I can see this {kind} and the {document.posting.company} posting. Suggestions come back as edits you can
-							accept one by one.
+							review before accepting.
 						</Trans>
 					) : (
-						<Trans>I can see this {kind}. Suggestions come back as edits you can accept one by one.</Trans>
+						<Trans>I can see this {kind}. Suggestions come back as edits you can review before accepting.</Trans>
 					)}
 				</p>
 				{document.locked && (

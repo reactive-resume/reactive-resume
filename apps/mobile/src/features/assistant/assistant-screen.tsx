@@ -296,6 +296,26 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 					<IconButton icon="x" label={t`Close the assistant`} onPress={() => router.back()} />
 				</View>
 
+				{props.kind === "resume" ? (
+					<View style={{ gap: space.s2, padding: space.s3, borderBottomWidth: 1, borderColor: colors.line }}>
+						<Text variant="caption" color="ink2">
+							<Trans>
+								I can edit your summary, bullets and text fields, and add entries and sections. Review each set before
+								accepting it together. Some fields still need Write. I can't translate a whole resume.
+							</Trans>
+						</Text>
+						<Button
+							variant="link"
+							label={t`Open Write`}
+							onPress={() =>
+								router.replace({
+									pathname: routes.builder(props.documentId, "write"),
+									params: props.applicationId ? { applicationId: props.applicationId } : {},
+								})
+							}
+						/>
+					</View>
+				) : null}
 				{gate}
 
 				<ModelSheet
@@ -389,14 +409,15 @@ function Suggestions({ document, prepare, onPick }: SuggestionsProps) {
 								one.
 							</Trans>
 						) : (
-							<Trans>I can see this letter. Suggestions come back as edits you can accept one by one.</Trans>
+							<Trans>I can see this letter. Suggestions come back as edits you can review before accepting.</Trans>
 						)
 					) : company ? (
 						<Trans>
-							I can see this resume and the {company} posting. Suggestions come back as edits you can accept one by one.
+							I can see this resume and the {company} posting. Suggestions come back as edits you can review before
+							accepting.
 						</Trans>
 					) : (
-						<Trans>I can see this resume. Suggestions come back as edits you can accept one by one.</Trans>
+						<Trans>I can see this resume. Suggestions come back as edits you can review before accepting.</Trans>
 					)}
 				</Text>
 				{document.locked ? (

@@ -628,8 +628,8 @@ function ToolPartView({
 						<p className="text-xs text-ink-3">
 							<Plural
 								value={output.skipped.length}
-								one="# edit couldn't be placed: its text changed. Ask again to redo it."
-								other="# edits couldn't be placed: their text changed. Ask again to redo them."
+								one="# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly."
+								other="# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly."
 							/>
 						</p>
 					)}

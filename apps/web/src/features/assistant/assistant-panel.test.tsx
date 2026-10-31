@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
 	attach: vi.fn(),
 	setState: vi.fn(),
 	invalidate: vi.fn(),
+	navigate: vi.fn(),
 }));
 vi.mock("@tanstack/react-query", async (importOriginal) => ({
 	...(await importOriginal<typeof import("@tanstack/react-query")>()),
@@ -19,7 +20,11 @@ vi.mock("@tanstack/react-query", async (importOriginal) => ({
 		options.queryKey[0] === "threads" ? { data: mocks.threads, isPending: false } : {},
 	useQueryClient: () => ({ invalidateQueries: mocks.invalidate }),
 }));
-vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn(), Link: () => null }));
+vi.mock("@tanstack/react-router", () => ({
+	useNavigate: () => mocks.navigate,
+	useSearch: () => ({ applicationId: "application-2" }),
+	Link: () => null,
+}));
 vi.mock("@/features/resume/editor/store", () => ({
 	useEditorStore: Object.assign(
 		(select: (state: unknown) => unknown) => select({ assistantThread: mocks.selected, assistantPrompt: null }),
@@ -67,6 +72,25 @@ beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 });
 afterEach(cleanup);
+
+it("states resume scope before sending and routes Open Write to this resume", () => {
+	const onClose = vi.fn();
+	render(
+		<I18nProvider i18n={i18n}>
+			<AssistantPanel document={document} onClose={onClose} />
+		</I18nProvider>,
+	);
+	expect(screen.getByText(/I can't translate a whole resume/)).toBeDefined();
+	fireEvent.click(screen.getByRole("button", { name: "Open Write" }));
+	expect(onClose).toHaveBeenCalledOnce();
+	expect(mocks.navigate).toHaveBeenCalledWith({
+		to: "/builder/$resumeId",
+		params: { resumeId: "resume-1" },
+		search: { applicationId: "application-2", mode: undefined, assistant: undefined },
+	});
+	expect(mocks.setState).toHaveBeenCalledWith({ mobileView: "write", drawerOpen: true });
+	expect(mocks.start).not.toHaveBeenCalled();
+});
 
 it("keeps first-message text and attachments when the draft appears in a background thread-list refetch", async () => {
 	const panel = (

@@ -12,9 +12,10 @@ import type {
 } from "@reactive-resume/schema/resume/data";
 import type { ResumeDates } from "@reactive-resume/schema/resume/dates";
 import type { WritableDraft } from "immer";
+import { createEntry } from "@reactive-resume/resume/entries";
 import { moveItem as moveResumeItem } from "@reactive-resume/resume/move-item";
 import { sectionTypeSchema } from "@reactive-resume/schema/resume/data";
-import { EMPTY_RESUME_DATES, hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
+import { hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
 import { generateId, stripHtml } from "@reactive-resume/utils/string";
 
 type Data = ResumeData | WritableDraft<ResumeData>;
@@ -125,48 +126,7 @@ export function isDraftEntry(type: CustomSectionType, entry: Entry): boolean {
 	return typeof value !== "string" || !value.trim();
 }
 
-const website = () => ({ url: "", label: "", inlineLink: false });
-const dates = () => ({ ...EMPTY_RESUME_DATES });
-
-export function createEntry(type: CustomSectionType): Entry {
-	const base = { id: generateId(), hidden: false };
-	const fields: Record<CustomSectionType, Record<string, unknown>> = {
-		profiles: { icon: "", iconColor: "", network: "", username: "", website: website() },
-		experience: {
-			company: "",
-			position: "",
-			location: "",
-			period: "",
-			dates: dates(),
-			website: website(),
-			description: "",
-			roles: [],
-		},
-		education: {
-			school: "",
-			degree: "",
-			area: "",
-			grade: "",
-			location: "",
-			period: "",
-			dates: dates(),
-			website: website(),
-			description: "",
-		},
-		projects: { name: "", period: "", dates: dates(), website: website(), description: "" },
-		skills: { icon: "", iconColor: "", name: "", proficiency: "", level: 0, keywords: [] },
-		languages: { language: "", fluency: "", level: 0 },
-		interests: { icon: "", iconColor: "", name: "", keywords: [] },
-		awards: { title: "", awarder: "", date: "", dates: dates(), website: website(), description: "" },
-		certifications: { title: "", issuer: "", date: "", dates: dates(), website: website(), description: "" },
-		publications: { title: "", publisher: "", date: "", dates: dates(), website: website(), description: "" },
-		volunteer: { organization: "", location: "", period: "", dates: dates(), website: website(), description: "" },
-		references: { name: "", position: "", website: website(), phone: "", description: "" },
-		summary: { content: "" },
-		"cover-letter": { recipient: "", content: "" },
-	};
-	return { ...base, ...fields[type] } as Entry;
-}
+export { createEntry } from "@reactive-resume/resume/entries";
 
 const text = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 const join = (...parts: unknown[]) => parts.map(text).filter(Boolean).join(" · ");

@@ -15,6 +15,8 @@ import {
 	readTarget,
 	replaceBlockText,
 	writeTarget,
+	resumeStructureSnapshot,
+	applyResumeProposals,
 } from "./proposals";
 
 const labels = { body: "Letter", bullet: (n: number) => `bullet ${n}`, paragraph: (n: number) => `paragraph ${n}` };
@@ -123,6 +125,67 @@ it("refuses missing or ambiguous targets and no-op proposals without reporting w
 	expect(getProposalState(data, missing)).toBe("stale");
 	expect(applyProposal(data, missing)).toBe(false);
 	expect(applyTo("", { before: "", after: "" })).toBeUndefined();
+});
+
+it("compares structural snapshots by content across JSONB/date-normalized key order, including older snapshots", () => {
+	const data = structuredClone(defaultResumeData);
+	data.basics.name = "Sam Example";
+	data.sections.experience.items = [
+		{
+			id: "legacy",
+			hidden: false,
+			company: "Kettle",
+			position: "Designer",
+			location: "",
+			period: "",
+			website: { url: "", label: "", inlineLink: false },
+			description: "",
+			roles: [{ id: "legacy-role", position: "Designer", period: "2021 - 2022", description: "" }],
+		},
+	];
+	const { name, ...otherBasics } = data.basics;
+	const reordered = { ...data, basics: { ...otherBasics, name } };
+	expect(reordered).toEqual(data);
+	expect(JSON.stringify(reordered)).not.toBe(JSON.stringify(data));
+	const oldSnapshot = JSON.stringify({
+		basics: data.basics,
+		summary: data.summary,
+		sections: data.sections,
+		customSections: data.customSections,
+		layout: data.metadata.layout,
+	});
+	const after = structuredClone(data);
+	after.basics.headline = "Design lead";
+	const proposal = {
+		id: "snapshot",
+		source: "assistant" as const,
+		status: "pending" as const,
+		target: { sectionId: "resume", field: "data" },
+		location: "Resume",
+		before: "Headline: —",
+		after: "Headline: Design lead",
+		why: "Requested.",
+		snapshot: { before: oldSnapshot, after: resumeStructureSnapshot(after) },
+	};
+	expect(getProposalState(reordered, proposal)).toBe("pending");
+	const upgraded = structuredClone(reordered);
+	const role = upgraded.sections.experience.items[0]?.roles[0];
+	if (!role) throw new Error("Expected legacy role");
+	role.dates = { start: "2021", end: "2022", present: false };
+	role.period = "2021 – 2022";
+	expect(getProposalState(upgraded, proposal)).toBe("pending");
+	expect(data.sections.experience.items[0]?.roles[0]?.dates).toBeUndefined();
+	role.dates.end = "2023";
+	expect(getProposalState(upgraded, proposal)).toBe("stale");
+	expect(applyProposal(upgraded, proposal)).toBe(false);
+	expect(applyProposal(reordered, proposal)).toBe(true);
+	expect(reordered.basics.headline).toBe("Design lead");
+	expect(getProposalState(data, { ...proposal, status: "accepted" })).toBe("accepted");
+	expect(getProposalState(data, { ...proposal, status: "accepted" }, { [proposal.id]: false })).toBe("pending");
+	const changed = structuredClone(data);
+	changed.basics.name = "Different author change";
+	expect(applyProposal(changed, proposal)).toBe(false);
+	expect(changed.basics.name).toBe("Different author change");
 });
 
 it("rejects ambiguous paragraphs instead of replacing the first occurrence", () => {
@@ -258,4 +321,24 @@ it("does not acknowledge a newer Undo/Redo decision with an older save response"
 		later: true,
 	});
 	expect(acknowledgeProposalApplications({ edit: false, later: true }, { edit: false })).toEqual({ later: true });
+});
+
+
+it("records only real structural writes, retains accepted identity after refinement, and requires explicit Undo", () => {
+	const data = structuredClone(defaultResumeData);
+	const before = resumeStructureSnapshot(data);
+	const after = structuredClone(data);
+	after.basics.headline = "Design lead";
+	const edit: Proposal = { ...proposal("Headline: —", "Headline: Design lead"), target: { sectionId: "resume", field: "data" }, snapshot: { before, after: resumeStructureSnapshot(after) } };
+	const unchanged: Proposal = { ...edit, id: "no-change", snapshot: { before, after: before } };
+	expect(applyResumeProposals(data, [unchanged])).toEqual({ applied: [], stale: [unchanged] });
+	expect(data.basics.headline).toBe("");
+	expect(applyResumeProposals(data, [edit, edit])).toEqual({ applied: [edit], stale: [] });
+	data.basics.headline = "Manually refined";
+	const decisions = { [edit.id]: true };
+	expect(getProposalState(data, edit, decisions)).toBe("accepted");
+	expect(applyResumeProposals(data, [edit], decisions)).toEqual({ applied: [], stale: [] });
+	const undone = structuredClone(defaultResumeData);
+	expect(getProposalState(undone, { ...edit, status: "accepted" })).toBe("accepted");
+	expect(getProposalState(undone, { ...edit, status: "accepted" }, { [edit.id]: false })).toBe("pending");
 });

@@ -6,14 +6,7 @@ import { plural, t } from "@lingui/core/macro";
 import { produce } from "immer";
 import { useMemo } from "react";
 import { create } from "zustand";
-import {
-	applyProposals,
-	getProposalState,
-	readTarget,
-	splitBlock,
-	splitBlocks,
-	writeTarget,
-} from "@reactive-resume/resume/proposals";
+import { applyResumeProposals, getProposalState, splitBlock, splitBlocks } from "@reactive-resume/resume/proposals";
 import { getAccountScope } from "@/auth/session";
 import { useResumeStore } from "@/draft";
 import { dismissToast, showToast } from "@/ui";
@@ -78,12 +71,7 @@ export function acceptResumeProposals(proposals: readonly Proposal[]): ProposalA
 	if (!id || !store.data || store.locked) return result;
 	store.update(
 		(draft) => {
-			result = applyProposals(
-				proposals,
-				(target) => readTarget(draft as ResumeData, target),
-				(target, value) => writeTarget(draft as ResumeData, target, value),
-				store.proposalApplications,
-			);
+			result = applyResumeProposals(draft as ResumeData, proposals, store.proposalApplications);
 			proposalIds.push(...result.applied.map((proposal) => proposal.id));
 		},
 		{ newStep: true, proposalIds },
@@ -191,10 +179,11 @@ export function markProposals(
 	const pending = pendingProposals(data, proposals, applications);
 	if (pending.length === 0) return data;
 	return produce(data, (draft) => {
-		applyProposals(
-			pending.map((proposal) => ({ ...proposal, after: markChange(proposal.before, proposal.after) })),
-			(target) => readTarget(draft, target),
-			(target, value) => writeTarget(draft, target, value),
+		applyResumeProposals(
+			draft,
+			pending.map((proposal) =>
+				proposal.snapshot ? proposal : { ...proposal, after: markChange(proposal.before, proposal.after) },
+			),
 			applications,
 		);
 	});
