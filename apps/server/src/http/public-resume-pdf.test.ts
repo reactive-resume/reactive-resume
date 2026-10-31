@@ -15,10 +15,10 @@ describe("handlePublicResumePdf", () => {
 	beforeEach(() => vi.clearAllMocks());
 
 	it("returns the authorized on-demand PDF without forwarding compatibility metadata", async () => {
-		const body = new File(["%PDF"], "Ada_Lovelace.pdf", { type: "text/plain" });
+		const body = new File(["%PDF"], "Ada-Lovelace-Resume.pdf", { type: "text/plain" });
 		mocks.createPublicResumePdf.mockResolvedValueOnce({
 			body,
-			filename: "Ada_Lovelace.pdf",
+			filename: "Ada-Lovelace-Resume.pdf",
 			etag: '"abc"',
 		});
 		const request = new Request("https://example.com/api/resumes/jane/resume/pdf?ignored=true", {
@@ -29,7 +29,7 @@ describe("handlePublicResumePdf", () => {
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get("Content-Type")).toBe("application/pdf");
-		expect(response.headers.get("Content-Disposition")).toBe('inline; filename="Ada_Lovelace.pdf"');
+		expect(response.headers.get("Content-Disposition")).toBe('inline; filename="Ada-Lovelace-Resume.pdf"');
 		expect(response.headers.get("Cache-Control")).toBe("private, no-cache");
 		expect(response.headers.get("ETag")).toBe('"abc"');
 		expect(response.headers.get("Vary")).toBe("Cookie, Authorization, X-Api-Key");
@@ -42,6 +42,48 @@ describe("handlePublicResumePdf", () => {
 			trustedClient,
 			countDownload: false,
 		});
+	});
+
+	it("returns the Unicode full name in both RFC 5987 and legacy filename parts", async () => {
+		mocks.createPublicResumePdf.mockResolvedValueOnce({
+			body: new File(["%PDF"], "李明-Resume.pdf", { type: "text/plain" }),
+			filename: "李明-Resume.pdf",
+			etag: '"abc"',
+		});
+		const request = new Request("https://example.com/api/resumes/jane/untitled-resume/pdf?download");
+
+		const response = await handlePublicResumePdf(request, "jane", "untitled-resume", trustedClient);
+
+		expect(response.headers.get("Content-Disposition")).toBe(
+			"attachment; filename=\"Resume.pdf\"; filename*=UTF-8''%E6%9D%8E%E6%98%8E-Resume.pdf",
+		);
+		expect(mocks.createPublicResumePdf).toHaveBeenCalledWith(
+			expect.objectContaining({ countDownload: true, slug: "untitled-resume" }),
+		);
+	});
+
+	it("drops a stored name's separators and control characters before setting the header", async () => {
+		mocks.createPublicResumePdf.mockResolvedValueOnce({
+			body: new File(["%PDF"], "resume.pdf", { type: "text/plain" }),
+			filename: '../../etc/passwd"\r\nX-Injected: yes\r\n\r\nAda-Lovelace-Resume.pdf',
+			etag: '"abc"',
+		});
+
+		const response = await handlePublicResumePdf(
+			new Request("https://example.com/api/resumes/jane/resume/pdf?download"),
+			"jane",
+			"resume",
+			trustedClient,
+		);
+
+		expect(response.status).toBe(200);
+		expect(response.headers.get("Content-Type")).toBe("application/pdf");
+		expect(await response.text()).toBe("%PDF");
+		const header = response.headers.get("Content-Disposition") ?? "";
+		expect(header).toMatch(/^attachment; filename="/);
+		expect(header).not.toMatch(/[\r\n]/);
+		expect(header).not.toContain("/");
+		expect(response.headers.get("X-Injected")).toBeNull();
 	});
 
 	it("answers a current copy with 304 and keeps refusals uncacheable", async () => {

@@ -28,7 +28,7 @@ beforeEach(() => {
 it("exports saved data as round-trippable JSON, readable Markdown and a Word document", async () => {
 	const json = await call(documentExports.resume, { id: "resume-1", format: "json" }, { context });
 	expect(JSON.parse(await json.body.text())).toMatchObject({ basics: { name: "Ada Lovelace" } });
-	expect(json.headers["content-disposition"]).toContain(".json");
+	expect(json.headers["content-disposition"]).toBe('attachment; filename="Ada-Lovelace-Resume.json"');
 	const markdown = await call(documentExports.resume, { id: "resume-1", format: "md" }, { context });
 	expect(await markdown.body.text()).toContain("Builds analytical engines.");
 	const docx = await call(documentExports.resume, { id: "resume-1", format: "docx" }, { context });
