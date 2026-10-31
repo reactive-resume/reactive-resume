@@ -34,7 +34,7 @@ const documentSchema = z.object({
 
 export type DocumentSummary = z.infer<typeof documentSchema>;
 
-export const documentFiltersSchema = z.object({
+const documentFiltersSchema = z.object({
 	trashed: z.boolean().default(false),
 	type: z.enum(["all", "resume", "letter"]).default("all"),
 	q: z.string().max(500).default(""),
