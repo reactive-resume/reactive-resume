@@ -108,6 +108,7 @@ export function useSessionDraft<T>(
 export function useWorkspace(applicationId: string) {
 	const generation = useRef(getAccountGeneration());
 	const { session } = useRouteContext({ strict: false });
+	const [owner] = useState(() => session?.user.id ?? null);
 	const queryClient = useQueryClient();
 	const queryKey = orpc.career.workspace.queryKey({ input: { applicationId } });
 	const query = useQuery(orpc.career.workspace.queryOptions({ input: { applicationId } }));
@@ -116,7 +117,7 @@ export function useWorkspace(applicationId: string) {
 	let writes = byApplication.get(applicationId);
 	if (!writes) byApplication.set(applicationId, (writes = new Set()));
 	const pending = writes;
-	const workspaceMutation = orpc.career.saveWorkspace.mutationOptions();
+	const workspaceMutation = orpc.career.saveWorkspace.mutationOptions({ context: owner ? { accountId: owner } : {} });
 	const mutation = useMutation({
 		...workspaceMutation,
 		mutationFn: (input, context) => {

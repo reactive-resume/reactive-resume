@@ -590,3 +590,188 @@ test("HTTP profile writes bound to another account are refused and leave the new
 		await pool.query('DELETE FROM "user" WHERE email=$1', [second.email]);
 	}
 });
+
+// A tab that misses the cross-tab signal: no BroadcastChannel and no storage event. Only the server-side binding can
+// stop a write it builds for the account it is still showing.
+async function suppressAccountSignals(page: Page) {
+	await page.addInitScript(() => {
+		Reflect.deleteProperty(window, "BroadcastChannel");
+		const add = window.addEventListener.bind(window);
+		window.addEventListener = ((
+			type: string,
+			listener: EventListenerOrEventListenerObject,
+			options?: boolean | AddEventListenerOptions,
+		) => {
+			if (type === "storage") return;
+			add(type, listener, options);
+		}) as typeof window.addEventListener;
+	});
+}
+
+async function switchAccountInOtherTab(page: Page) {
+	const other = await page.context().newPage();
+	await other.goto("/dashboard/settings/account");
+	await other.getByRole("button", { name: "Sign out", exact: true }).last().click();
+	await expect(other).toHaveURL(/\/$/);
+	const second = await signUpSecondAccount(other);
+	return { other, second };
+}
+
+const userRows = async (id: string) => (await pool.query('SELECT * FROM "user" WHERE id=$1', [id])).rows;
+
+test("a root preload cannot relabel a stale Facts profile write as the new account's", async ({
+	authPage: page,
+}, info) => {
+	await suppressAccountSignals(page);
+	const initial = await (await page.request.get("/api/openapi/career/profile")).json();
+	const aliceProfile = {
+		...initial,
+		targetRoles: ["Alice private role"],
+		priorities: "Alice private priorities",
+		memoryMode: "ask",
+	};
+	expect((await page.request.put("/api/openapi/career/profile", { data: aliceProfile })).ok()).toBe(true);
+	await page.goto("/dashboard/career/knowledge/facts");
+	await expect(page.getByRole("radio", { name: "Never", exact: true })).toBeVisible();
+
+	let switched: Awaited<ReturnType<typeof switchAccountInOtherTab>> | null = null;
+	try {
+		switched = await switchAccountInOtherTab(page);
+		const before = await profileRows(switched.second.id);
+		expect(before).toEqual([]);
+		// Age the one-minute root session cache, as a tab left open naturally would.
+		await page.evaluate(() => {
+			const now = Date.now;
+			Date.now = () => now() + 120_000;
+		});
+		const refreshed = page.waitForResponse(
+			(response) => response.url().includes("/api/auth/get-session") && response.status() === 200,
+		);
+		await page.getByRole("link", { name: "Settings", exact: true }).hover();
+		await refreshed;
+		const write = page.waitForResponse((response) => response.url().includes("/api/rpc/career/saveProfile"));
+		await page.getByRole("radio", { name: "Never", exact: true }).click();
+		const response = await write;
+		const after = await profileRows(switched.second.id);
+		await info.attach("preload-stale-facts-readback", {
+			body: JSON.stringify(
+				{
+					before,
+					after,
+					status: response.status(),
+					header: response.request().headers()["x-account-id"],
+					body: response.request().postData(),
+				},
+				null,
+				2,
+			),
+			contentType: "application/json",
+		});
+		console.log(
+			"RX106_READBACK preload-stale-facts",
+			JSON.stringify({
+				before,
+				after,
+				status: response.status(),
+				header: response.request().headers()["x-account-id"],
+				body: response.request().postData(),
+			}),
+		);
+		expect(after).toEqual(before);
+		expect(response.status()).toBe(409);
+	} finally {
+		await switched?.other.close();
+		if (switched) await pool.query('DELETE FROM "user" WHERE id=$1', [switched.second.id]);
+	}
+});
+
+test("a stale account settings tab cannot rename the account it switched to", async ({ authPage: page }, info) => {
+	await suppressAccountSignals(page);
+	await page.goto("/dashboard/settings/account");
+	await expect(page.getByRole("textbox", { name: "Name", exact: true })).toBeVisible();
+
+	let switched: Awaited<ReturnType<typeof switchAccountInOtherTab>> | null = null;
+	try {
+		switched = await switchAccountInOtherTab(page);
+		const before = await userRows(switched.second.id);
+		const write = page.waitForResponse((response) => response.url().includes("/api/auth/update-user"));
+		await page.getByRole("textbox", { name: "Name", exact: true }).fill("Stale Alice private Name");
+		await page.getByRole("textbox", { name: "Name", exact: true }).blur();
+		const response = await write;
+		const after = await userRows(switched.second.id);
+		await info.attach("stale-auth-settings-readback", {
+			body: JSON.stringify({ before, after, status: response.status() }, null, 2),
+			contentType: "application/json",
+		});
+		console.log(
+			"RX106_READBACK stale-auth-settings",
+			JSON.stringify({ before: before[0]?.name, after: after[0]?.name, status: response.status() }),
+		);
+		expect(after).toEqual(before);
+		expect(response.status()).toBe(409);
+
+		// Positive control: a tab that committed the new session can rename it normally.
+		await page.goto("/dashboard/settings/account");
+		await expect(page.getByRole("textbox", { name: "Name", exact: true })).toHaveValue("RX106 Second");
+		await page.getByRole("textbox", { name: "Name", exact: true }).fill("RX106 Second Renamed");
+		await page.getByRole("textbox", { name: "Name", exact: true }).blur();
+		await expect.poll(async () => (await userRows(switched?.second.id ?? ""))[0]?.name).toBe("RX106 Second Renamed");
+	} finally {
+		await switched?.other.close();
+		if (switched) await pool.query('DELETE FROM "user" WHERE id=$1', [switched.second.id]);
+	}
+});
+
+test("HTTP auth settings writes bound to another account are refused and leave the new account unchanged", async ({
+	authPage: page,
+}, info) => {
+	const session = await (await page.request.get("/api/auth/get-session")).json();
+	const alice = session.user.id as string;
+	const second = await signUpSecondAccount(page);
+	try {
+		const before = await userRows(second.id);
+		const origin = process.env.APP_URL ?? "";
+		const stale = await page.request.post("/api/auth/update-user", {
+			headers: { origin, "x-account-id": alice },
+			data: { name: "Stale Alice private Name" },
+		});
+		const afterStale = await userRows(second.id);
+		const matched = await page.request.post("/api/auth/update-user", {
+			headers: { origin, "x-account-id": second.id },
+			data: { name: "Second account Name" },
+		});
+		const afterMatched = await userRows(second.id);
+		await info.attach("http-auth-binding-readback", {
+			body: JSON.stringify(
+				{
+					alice,
+					second: second.id,
+					staleStatus: stale.status(),
+					before,
+					afterStale,
+					matchedStatus: matched.status(),
+					afterMatched,
+				},
+				null,
+				2,
+			),
+			contentType: "application/json",
+		});
+		console.log(
+			"RX106_READBACK http-auth-binding",
+			JSON.stringify({
+				staleStatus: stale.status(),
+				before: before[0]?.name,
+				afterStale: afterStale[0]?.name,
+				matchedStatus: matched.status(),
+				afterMatched: afterMatched[0]?.name,
+			}),
+		);
+		expect(afterStale).toEqual(before);
+		expect(stale.status()).toBe(409);
+		expect(matched.ok(), await matched.text()).toBe(true);
+		expect(afterMatched[0]?.name).toBe("Second account Name");
+	} finally {
+		await pool.query('DELETE FROM "user" WHERE id=$1', [second.id]);
+	}
+});

@@ -668,7 +668,7 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 	// Stages the shipped migrations so the two follow-up migrations run against a populated pre-patch schema. Drizzle
 	// migrations are forward-only here, so the safety property to prove is repeatability and preservation, not a down
 	// migration: re-running the same backfills must leave the upgraded rows byte-for-byte unchanged.
-	it("upgrades completed legacy reminders without delivering them twice and moves pending work", async () => {
+	it("upgrades legacy reminders without duplicating or dropping occurrences", async () => {
 		const isolated = `rx106_upgrade_${randomUUID().replaceAll("-", "")}`;
 		await admin.query(`CREATE SCHEMA ${isolated}`);
 		const upgrade = new Pool({
@@ -676,7 +676,7 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 			max: 1,
 			options: `-c search_path=${isolated} -c statement_timeout=10000`,
 		});
-		const readSchedule = async () =>
+		const scheduleRows = async () =>
 			(
 				await upgrade.query(
 					"SELECT id,next_run_at,last_queued_at,timezone,enabled,query FROM career_schedule ORDER BY id",
@@ -689,16 +689,22 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 				enabled: row.enabled as boolean,
 				query: row.query as string,
 			}));
-		const readJobs = async () =>
+		const jobRows = async () =>
 			(await upgrade.query("SELECT * FROM career_job ORDER BY due_at, id")).rows.map((row) => ({
 				id: row.id as string,
 				scheduleId: row.schedule_id as string,
 				dueAt: (row.due_at as Date).toISOString(),
 				status: row.status as string,
 			}));
-		const readNotifications = async () =>
-			(await upgrade.query("SELECT id,key,application_id FROM career_notification ORDER BY id")).rows.map((row) => ({
-				id: row.id as string,
+		const wholeJob = async (id: string) => (await upgrade.query("SELECT * FROM career_job WHERE id=$1", [id])).rows[0];
+		const wholeSnapshot = async () => ({
+			schedules: (await upgrade.query("SELECT * FROM career_schedule ORDER BY id")).rows,
+			jobs: (await upgrade.query("SELECT * FROM career_job ORDER BY due_at, id")).rows,
+			notifications: (await upgrade.query("SELECT * FROM career_notification ORDER BY id")).rows,
+			applications: (await upgrade.query("SELECT * FROM application ORDER BY id")).rows,
+		});
+		const notifications = async () =>
+			(await upgrade.query("SELECT key,application_id FROM career_notification ORDER BY key")).rows.map((row) => ({
 				key: row.key as string,
 				applicationId: row.application_id as string | null,
 			}));
@@ -719,32 +725,72 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 				await apply(directory);
 			}
 
-			// Valid pre-patch state: the exact-time reminder (08:00) and the date-only follow-up were independent
-			// surfaces. The 08:00 occurrence already ran; the pending reminder has not.
+			// Valid pre-patch state: every reminder already ran at 08:00. The application's own follow-up is a separate
+			// surface: a logical-day date on the same day, a different day, a pending one, and two explicit times.
 			await upgrade.query(`
 				INSERT INTO "user"(id,name,email,username,display_username,timezone,email_verified)
 				VALUES('upgrade','Fictional Upgrade','upgrade@example.test','upgrade','upgrade','UTC',true);
 				INSERT INTO application(id,user_id,company,role,status,follow_up_at,follow_up_note) VALUES
 				 ('same-day','upgrade','Same Day Labs','Engineer','applied','2026-10-30T00:00:00Z','Already delivered'),
 				 ('other-day','upgrade','Other Day Labs','Engineer','applied','2026-10-28T00:00:00Z','New logical day'),
-				 ('pending','upgrade','Pending Labs','Engineer','applied','2026-10-30T00:00:00Z','Still pending');
+				 ('pending','upgrade','Pending Labs','Engineer','applied','2026-10-30T00:00:00Z','Still pending'),
+				 ('explicit-later','upgrade','Explicit Later Labs','Engineer','applied','2026-10-30T16:00:00Z','Distinct exact time'),
+				 ('explicit-same','upgrade','Explicit Same Labs','Engineer','applied','2026-10-30T08:00:00Z','Already delivered'),
+				 ('explicit-delivered','upgrade','Explicit Delivered Labs','Engineer','applied','2026-10-30T16:00:00Z','Delivered at this instant');
 				INSERT INTO career_schedule(id,user_id,application_id,kind,query,timezone,enabled,next_run_at,last_queued_at) VALUES
 				 ('same-day','upgrade','same-day','follow-up','Already delivered','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z'),
 				 ('other-day','upgrade','other-day','follow-up','Earlier delivery','UTC',true,'2026-10-27T08:00:00Z','2026-10-27T08:00:00Z'),
-				 ('pending','upgrade','pending','follow-up','Still pending','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z');
+				 ('pending','upgrade','pending','follow-up','Still pending','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z'),
+				 ('explicit-later','upgrade','explicit-later','follow-up','Distinct exact time','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z'),
+				 ('explicit-same','upgrade','explicit-same','follow-up','Already delivered','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z'),
+				 ('explicit-delivered','upgrade','explicit-delivered','follow-up','Delivered at this instant','UTC',true,'2026-10-30T17:00:00Z','2026-10-30T16:00:00Z');
 				INSERT INTO career_job(id,user_id,schedule_id,due_at,status,attempts) VALUES
 				 ('job-same-day','upgrade','same-day','2026-10-30T08:00:00Z','completed',1),
 				 ('job-other-day','upgrade','other-day','2026-10-27T08:00:00Z','completed',1),
-				 ('job-pending','upgrade','pending','2026-10-30T08:00:00Z','queued',0);
+				 ('job-pending','upgrade','pending','2026-10-30T08:00:00Z','queued',0),
+				 ('job-explicit-later','upgrade','explicit-later','2026-10-30T08:00:00Z','completed',1),
+				 ('job-explicit-same','upgrade','explicit-same','2026-10-30T08:00:00Z','completed',1),
+				 ('job-explicit-delivered','upgrade','explicit-delivered','2026-10-30T16:00:00Z','completed',1);
 				INSERT INTO career_notification(id,user_id,application_id,key,notice) VALUES
 				 ('notice-same-day','upgrade','same-day','job-same-day','{"type":"followup","company":"Same Day Labs","role":"Engineer","note":"Already delivered"}'),
-				 ('notice-other-day','upgrade','other-day','job-other-day','{"type":"followup","company":"Other Day Labs","role":"Engineer","note":"Earlier delivery"}');
+				 ('notice-other-day','upgrade','other-day','job-other-day','{"type":"followup","company":"Other Day Labs","role":"Engineer","note":"Earlier delivery"}'),
+				 ('notice-explicit-later','upgrade','explicit-later','job-explicit-later','{"type":"followup","company":"Explicit Later Labs","role":"Engineer","note":"Distinct exact time"}'),
+				 ('notice-explicit-same','upgrade','explicit-same','job-explicit-same','{"type":"followup","company":"Explicit Same Labs","role":"Engineer","note":"Already delivered"}'),
+				 ('notice-explicit-delivered','upgrade','explicit-delivered','job-explicit-delivered','{"type":"followup","company":"Explicit Delivered Labs","role":"Engineer","note":"Delivered at this instant"}');
 			`);
 
-			const preSchedules = await readSchedule();
-			const preJobs = await readJobs();
-			const preNotifications = await readNotifications();
-			expect(preSchedules).toEqual([
+			const before = {
+				sameDay: await wholeJob("job-same-day"),
+				otherDay: await wholeJob("job-other-day"),
+				explicitLater: await wholeJob("job-explicit-later"),
+				explicitSame: await wholeJob("job-explicit-same"),
+				explicitDelivered: await wholeJob("job-explicit-delivered"),
+			};
+			expect(await scheduleRows()).toEqual([
+				{
+					id: "explicit-delivered",
+					next: "2026-10-30T17:00:00.000Z",
+					queued: "2026-10-30T16:00:00.000Z",
+					timezone: "UTC",
+					enabled: true,
+					query: "Delivered at this instant",
+				},
+				{
+					id: "explicit-later",
+					next: "2026-10-30T08:00:00.000Z",
+					queued: "2026-10-30T08:00:00.000Z",
+					timezone: "UTC",
+					enabled: true,
+					query: "Distinct exact time",
+				},
+				{
+					id: "explicit-same",
+					next: "2026-10-30T08:00:00.000Z",
+					queued: "2026-10-30T08:00:00.000Z",
+					timezone: "UTC",
+					enabled: true,
+					query: "Already delivered",
+				},
 				{
 					id: "other-day",
 					next: "2026-10-27T08:00:00.000Z",
@@ -770,18 +816,36 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 					query: "Already delivered",
 				},
 			]);
-			expect(preJobs).toEqual([
-				{ id: "job-other-day", scheduleId: "other-day", dueAt: "2026-10-27T08:00:00.000Z", status: "completed" },
-				{ id: "job-pending", scheduleId: "pending", dueAt: "2026-10-30T08:00:00.000Z", status: "queued" },
-				{ id: "job-same-day", scheduleId: "same-day", dueAt: "2026-10-30T08:00:00.000Z", status: "completed" },
-			]);
-			expect(preNotifications).toHaveLength(2);
+			expect(await notifications()).toHaveLength(5);
 
 			await apply(owner);
 			await apply(clock);
 
-			const migrated = await readSchedule();
-			expect(migrated).toEqual([
+			expect(await scheduleRows()).toEqual([
+				{
+					id: "explicit-delivered",
+					next: "2026-10-30T16:00:00.000Z",
+					queued: "2026-10-30T16:00:00.000Z",
+					timezone: "UTC",
+					enabled: true,
+					query: "Delivered at this instant",
+				},
+				{
+					id: "explicit-later",
+					next: "2026-10-30T16:00:00.000Z",
+					queued: null,
+					timezone: "UTC",
+					enabled: true,
+					query: "Distinct exact time",
+				},
+				{
+					id: "explicit-same",
+					next: "2026-10-30T08:00:00.000Z",
+					queued: "2026-10-30T08:00:00.000Z",
+					timezone: "UTC",
+					enabled: true,
+					query: "Already delivered",
+				},
 				{
 					id: "other-day",
 					next: "2026-10-28T09:00:00.000Z",
@@ -807,44 +871,104 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 					query: "Already delivered",
 				},
 			]);
-			expect(await readJobs()).toEqual([
+			expect(await wholeJob("job-same-day")).toEqual(before.sameDay);
+			expect(await wholeJob("job-other-day")).toEqual(before.otherDay);
+			expect(await wholeJob("job-explicit-later")).toEqual(before.explicitLater);
+			expect(await wholeJob("job-explicit-delivered")).toEqual(before.explicitDelivered);
+			expect(await wholeJob("job-explicit-same")).toEqual(before.explicitSame);
+			expect(await jobRows()).toEqual([
 				{ id: "job-other-day", scheduleId: "other-day", dueAt: "2026-10-27T08:00:00.000Z", status: "completed" },
+				{
+					id: "job-explicit-later",
+					scheduleId: "explicit-later",
+					dueAt: "2026-10-30T08:00:00.000Z",
+					status: "completed",
+				},
+				{
+					id: "job-explicit-same",
+					scheduleId: "explicit-same",
+					dueAt: "2026-10-30T08:00:00.000Z",
+					status: "completed",
+				},
 				{ id: "job-pending", scheduleId: "pending", dueAt: "2026-10-30T08:00:00.000Z", status: "canceled" },
 				{ id: "job-same-day", scheduleId: "same-day", dueAt: "2026-10-30T08:00:00.000Z", status: "completed" },
+				{
+					id: "job-explicit-delivered",
+					scheduleId: "explicit-delivered",
+					dueAt: "2026-10-30T16:00:00.000Z",
+					status: "completed",
+				},
 			]);
 
 			const oldDb = fixture.db;
 			fixture.db = drizzle({ client: upgrade });
 			try {
-				// One worker serves one job per account per tick, so two due accounts need two ticks.
+				// One worker serves one job per account per tick: explicit-later, other-day and pending are due.
+				await run();
+				await run();
 				await run();
 				await run();
 			} finally {
 				fixture.db = oldDb;
 			}
 
-			const delivered = await readJobs();
-			expect(delivered.filter((row) => row.scheduleId === "same-day")).toEqual([
+			const delivered = await jobRows();
+			const forSchedule = (id: string) => delivered.filter((row) => row.scheduleId === id);
+			expect(forSchedule("same-day")).toEqual([
 				{ id: "job-same-day", scheduleId: "same-day", dueAt: "2026-10-30T08:00:00.000Z", status: "completed" },
 			]);
-			expect(delivered.filter((row) => row.scheduleId === "other-day")).toEqual([
+			expect(forSchedule("explicit-same")).toEqual([
+				{
+					id: "job-explicit-same",
+					scheduleId: "explicit-same",
+					dueAt: "2026-10-30T08:00:00.000Z",
+					status: "completed",
+				},
+			]);
+			expect(forSchedule("explicit-delivered")).toEqual([
+				{
+					id: "job-explicit-delivered",
+					scheduleId: "explicit-delivered",
+					dueAt: "2026-10-30T16:00:00.000Z",
+					status: "completed",
+				},
+			]);
+			expect(forSchedule("explicit-later")).toEqual([
+				{
+					id: "job-explicit-later",
+					scheduleId: "explicit-later",
+					dueAt: "2026-10-30T08:00:00.000Z",
+					status: "completed",
+				},
+				{
+					id: expect.any(String),
+					scheduleId: "explicit-later",
+					dueAt: "2026-10-30T16:00:00.000Z",
+					status: "completed",
+				},
+			]);
+			expect(forSchedule("other-day")).toEqual([
 				{ id: "job-other-day", scheduleId: "other-day", dueAt: "2026-10-27T08:00:00.000Z", status: "completed" },
 				{ id: expect.any(String), scheduleId: "other-day", dueAt: "2026-10-28T09:00:00.000Z", status: "completed" },
 			]);
-			expect(delivered.filter((row) => row.scheduleId === "pending")).toEqual([
+			expect(forSchedule("pending")).toEqual([
 				{ id: "job-pending", scheduleId: "pending", dueAt: "2026-10-30T08:00:00.000Z", status: "canceled" },
 				{ id: expect.any(String), scheduleId: "pending", dueAt: "2026-10-30T09:00:00.000Z", status: "completed" },
 			]);
-			const notifications = await readNotifications();
-			expect(notifications.filter((row) => row.key === "job-same-day")).toHaveLength(1);
-			expect(notifications).toHaveLength(4);
+			const notices = await notifications();
+			expect(notices).toHaveLength(8);
+			expect(notices.filter((row) => row.key === "job-same-day")).toHaveLength(1);
+			expect(notices.filter((row) => row.key === "job-explicit-same")).toHaveLength(1);
+			expect(notices.filter((row) => row.key === "job-explicit-later")).toHaveLength(1);
+			expect(notices.filter((row) => row.key === "job-explicit-delivered")).toHaveLength(1);
+			expect(notices.filter((row) => row.applicationId === "explicit-later")).toHaveLength(2);
+			expect(await wholeJob("job-same-day")).toEqual(before.sameDay);
+			expect(await wholeJob("job-explicit-same")).toEqual(before.explicitSame);
+			expect(await wholeJob("job-explicit-later")).toEqual(before.explicitLater);
+			expect(await wholeJob("job-explicit-delivered")).toEqual(before.explicitDelivered);
 
-			// Re-running the same forward-only backfills is safe: completed history, watermarks and deliveries hold.
-			const beforeRepeat = {
-				schedules: await readSchedule(),
-				jobs: await readJobs(),
-				notifications: await readNotifications(),
-			};
+			// Re-running the same forward-only backfills is safe: history, watermarks and deliveries hold.
+			const beforeRepeat = await wholeSnapshot();
 			const ownerSql = await readFile(new URL(`${owner}/migration.sql`, migrations), "utf8");
 			await upgrade.query(
 				ownerSql.slice(ownerSql.indexOf("--> statement-breakpoint") + "--> statement-breakpoint".length),
@@ -852,17 +976,19 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 			await upgrade.query(
 				'UPDATE "user" SET timezone=timezone WHERE EXISTS (SELECT 1 FROM application a WHERE a.user_id="user".id AND a.follow_up_date_only AND a.follow_up_at IS NOT NULL)',
 			);
-			expect({
-				schedules: await readSchedule(),
-				jobs: await readJobs(),
-				notifications: await readNotifications(),
-			}).toEqual(beforeRepeat);
+			fixture.db = drizzle({ client: upgrade });
+			try {
+				await run();
+				await run();
+			} finally {
+				fixture.db = oldDb;
+			}
+			expect(await wholeSnapshot()).toEqual(beforeRepeat);
 		} finally {
 			await upgrade.end();
 			await admin.query(`DROP SCHEMA IF EXISTS ${isolated} CASCADE`);
 		}
 	});
-
 	it("distinguishes old-client dates from exact midnight reminders and preserves notes-only timestamps", async () => {
 		const { applicationService } = await import("../applications/service");
 		await getDb().update(tables.user).set({ timezone: "Asia/Tokyo" }).where(eq(tables.user.id, "alice"));

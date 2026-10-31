@@ -3,6 +3,7 @@ import { APIError } from "better-auth/api";
 import { migrateUserStorage } from "@reactive-resume/api/features/storage";
 import { auth, setAccountLinkHook } from "@reactive-resume/auth/config";
 import { env } from "@reactive-resume/env/server";
+import { isSessionIntentPath } from "@reactive-resume/utils/auth-intent";
 import { TRUSTED_IP_HEADERS } from "@reactive-resume/utils/rate-limit";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
 
@@ -156,6 +157,23 @@ async function validateOAuthClientMetadata(request: Request): Promise<Response |
 	}
 }
 
+/**
+ * Account settings writes from the browser name the account whose page rendered them. If the cookie now belongs to a
+ * different account (another tab signed out or in), applying that write would change the wrong user; refuse it before
+ * Better Auth runs any effect. Requests without the header, and explicit sign-in/up/out intents, are unchanged.
+ */
+async function rejectMismatchedAccount(request: Request) {
+	const expected = request.headers.get("x-account-id");
+	if (!expected || request.method === "GET" || request.method === "HEAD") return null;
+	if (isSessionIntentPath(new URL(request.url).pathname)) return null;
+	const session = await auth.api.getSession({ headers: request.headers, query: { disableCookieCache: true } });
+	if (!session?.user || session.user.id === expected) return null;
+	return Response.json(
+		{ message: "This page belongs to a different account now. Reload and try again." },
+		{ status: 409, headers: { "Cache-Control": "no-store" } },
+	);
+}
+
 export async function handleAuth(incomingRequest: Request, trustedClient = "unknown") {
 	// Only the server adapter may supply the client address. Never forward client-sent proxy headers to auth.
 	const headers = new Headers(incomingRequest.headers);
@@ -167,6 +185,8 @@ export async function handleAuth(incomingRequest: Request, trustedClient = "unkn
 
 	const sanitizedRequest = sanitizeOAuthAuthorizeRequest(request);
 	const finalRequest = await defaultPublicClientRegistration(sanitizedRequest);
+	const mismatchedAccount = await rejectMismatchedAccount(finalRequest);
+	if (mismatchedAccount) return mismatchedAccount;
 
 	return auth.handler(finalRequest);
 }

@@ -10,8 +10,13 @@ export { getAccountGeneration } from "./account-scope";
 /** Forgets the account that just signed out or was deleted: cached queries, and thumbnails saved on this device. */
 export function clearAccountData(queryClient: QueryClient) {
 	invalidateAccountScope();
-	forgetAccountState(queryClient);
+	clearAccountState(queryClient);
 	broadcastAccountChange();
+}
+
+/** Drops everything cached for the account that is no longer current, before another identity is certified. */
+export function clearAccountState(queryClient: QueryClient) {
+	forgetAccountState(queryClient);
 	void clearStoredThumbnails();
 }
 

@@ -4,11 +4,26 @@ import {
 	getAccountGeneration,
 	getAccountId,
 	invalidateAccountScope,
+	registerAccountReset,
 	setAccountScope,
 	subscribeAccountChange,
 } from "./account-scope";
 
 describe("account scope", () => {
+	it("drops the previous account's data before adopting another account", () => {
+		const reset = vi.fn();
+		registerAccountReset(reset);
+		invalidateAccountScope();
+		setAccountScope("alice");
+		reset.mockClear();
+		setAccountScope("alice");
+		expect(reset).not.toHaveBeenCalled();
+		setAccountScope("bob");
+		expect(reset).toHaveBeenCalledOnce();
+		setAccountScope(null);
+		expect(reset).toHaveBeenCalledTimes(2);
+	});
+
 	it("advances the generation only when the account actually changes", () => {
 		invalidateAccountScope();
 		setAccountScope("alice");

@@ -24,11 +24,12 @@ FROM career_schedule s JOIN application a ON a.id=s.application_id AND a.user_id
 WHERE j.schedule_id=s.id AND s.kind='follow-up' AND j.status IN ('queued','running')
 AND ((CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END) IS DISTINCT FROM s.next_run_at OR NOT s.enabled);
 --> statement-breakpoint
--- Move the delivery index to the projected clock. A completed occurrence on the same logical day stays delivered: its
--- watermark follows the projected instant, so the scheduler does not treat the new time as an undelivered occurrence.
+-- Move the delivery index to the projected clock. A completed occurrence stays delivered only when the projection moves
+-- the same occurrence: a logical-day follow-up on the same calendar day, or an exact-time follow-up at the same instant.
+-- An explicit time that differs from the completed reminder is a new occurrence and must remain eligible for delivery.
 -- Completed history keeps its original due time; only pending queued/running work moves to the projected clock.
 WITH projected AS (
- SELECT s.id,s.last_queued_at,s.next_run_at AS current_at,
+ SELECT s.id,s.last_queued_at,s.next_run_at AS current_at,a.follow_up_date_only AS date_only,
   CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END AS at,
   COALESCE((SELECT j.status='completed' FROM career_job j WHERE j.schedule_id=s.id ORDER BY j.created_at DESC,j.id DESC LIMIT 1),false) AS completed,
   a.follow_up_note
@@ -39,9 +40,10 @@ WITH projected AS (
 UPDATE career_schedule s SET next_run_at=p.at,query=COALESCE(p.follow_up_note,''),
 last_queued_at=CASE
  WHEN p.at IS NOT DISTINCT FROM p.current_at THEN s.last_queued_at
- WHEN s.last_queued_at IS NOT NULL AND p.completed
-  AND (p.at AT TIME ZONE s.timezone)::date=(s.last_queued_at AT TIME ZONE s.timezone)::date
- THEN p.at
+ WHEN s.last_queued_at IS NOT NULL AND p.completed AND (
+  (p.date_only AND (p.at AT TIME ZONE s.timezone)::date=(s.last_queued_at AT TIME ZONE s.timezone)::date)
+  OR (NOT p.date_only AND s.last_queued_at=p.at)
+ ) THEN p.at
  ELSE NULL END
 FROM projected p WHERE s.id=p.id;
 --> statement-breakpoint

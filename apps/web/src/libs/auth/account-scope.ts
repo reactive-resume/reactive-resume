@@ -7,13 +7,23 @@
  */
 let accountId: string | null = null;
 let generation = 0;
+let resetAccountState: (() => void) | undefined;
 
 export const getAccountId = () => accountId;
 export const getAccountGeneration = () => generation;
 
-/** A session belonging to another account fences work queued for the previous one. */
+/** The app registers how to drop cached account data, so a discovered account change fences it before it is adopted. */
+export function registerAccountReset(reset: () => void) {
+	resetAccountState = reset;
+}
+
+/**
+ * A session belonging to another account fences work queued for the previous one. Data cached for the old account is
+ * dropped before the new identity is certified, so a stale payload can never be relabelled as the new account's.
+ */
 export function setAccountScope(id: string | null) {
 	if (id === accountId) return;
+	if (accountId !== null) resetAccountState?.();
 	accountId = id;
 	generation += 1;
 }

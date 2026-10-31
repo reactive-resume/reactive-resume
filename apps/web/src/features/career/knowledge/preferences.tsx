@@ -4,7 +4,7 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { useId, useRef, useState } from "react";
 import { careerProfileDataSchema } from "@reactive-resume/schema/career";
@@ -29,11 +29,15 @@ const saveFailed = (error: unknown) => toastError(error, t`Couldn't save your pr
 /** The Preferences profile, saved whole. The cache updates at once; a failed save puts the server copy back. */
 export function useProfile() {
 	const queryClient = useQueryClient();
+	const { session } = useRouteContext({ strict: false });
+	// The page belongs to the account it rendered for. Binding the write here keeps a profile read before a session
+	// swap from being re-labelled as the new account's, even if the transport's global scope moved on.
+	const [owner] = useState(() => session?.user.id ?? null);
 	const queryKey = orpc.career.profile.queryKey();
 	const query = useQuery(orpc.career.profile.queryOptions());
 	const profile = query.data;
 	const mutation = useMutation({
-		...orpc.career.saveProfile.mutationOptions(),
+		...orpc.career.saveProfile.mutationOptions({ context: owner ? { accountId: owner } : {} }),
 		onError: (error) => {
 			void queryClient.invalidateQueries({ queryKey });
 			saveFailed(error);
