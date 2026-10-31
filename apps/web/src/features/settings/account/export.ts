@@ -20,6 +20,7 @@ export function buildAccountZip(data: AccountExport): Uint8Array {
 		// Stage definitions, including removed ones that history still names. Servers before custom stages omit them.
 		...(data.applicationPipeline ? { "application-stages.json": json(data.applicationPipeline) } : {}),
 		"career.json": json(data.career),
+		...(data.applicationProfile ? { "application-profile.json": json(data.applicationProfile) } : {}),
 		"ai-content-reports.json": json(data.aiContentReports),
 	};
 	for (const resume of data.resumes) files[`resumes/${fileName(resume.name, resume.id)}`] = json(resume);

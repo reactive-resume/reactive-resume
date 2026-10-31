@@ -57,8 +57,14 @@ describe("buildAccountZip", () => {
 		);
 	});
 	it("exports individual documents that the importer accepts", () => {
+		const profile = {
+			data: { email: "private-application@example.test" },
+			revision: "r",
+			reviewedAt: "2030-01-01T00:00:00Z",
+		};
 		const files = unzipSync(
 			buildAccountZip({
+				applicationProfile: profile,
 				exportedAt: "2026-09-30T00:00:00.000Z",
 				user: {},
 				applications: [],
@@ -78,6 +84,8 @@ describe("buildAccountZip", () => {
 		);
 		const resumeText = strFromU8(files["resumes/resume-r1.json"] as Uint8Array);
 		expect(detectJsonImportKind(JSON.parse(resumeText))).toBe("reactive-resume-json");
+		expect(resumeText).not.toContain("private-application@example.test");
+		expect(JSON.parse(strFromU8(files["application-profile.json"] as Uint8Array))).toEqual(profile);
 		expect(parseResumeJson(resumeText, "reactive-resume-json").basics).toEqual(defaultResumeData.basics);
 		const letter = JSON.parse(strFromU8(files["letters/letter-l1.json"] as Uint8Array));
 		expect(detectJsonImportKind(letter)).toBe("cover-letter-json");

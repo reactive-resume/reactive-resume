@@ -4,6 +4,7 @@ import type { CareerWorkspace } from "@reactive-resume/schema/career";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
@@ -165,6 +166,9 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 					<h2 id="application-answers" tabIndex={-1} className="text-base font-semibold">
 						<Trans>Form answers</Trans>
 					</h2>
+					<Link to="/dashboard/settings/account" className="text-sm underline">
+						<Trans>Private application profile</Trans>
+					</Link>
 					{!version &&
 						hasApplicationSubmission(application) &&
 						(recorded ? (

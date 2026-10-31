@@ -212,7 +212,9 @@ const accountExportOutputSchema = z
 				"Career data: profile, facts, stories, artifacts, schedules, notifications, assistant threads, messages and attachments, opportunities, jobs, transcripts and workspaces.",
 			),
 	})
-	.describe("Everything in the account. Secrets such as password hashes, tokens and API keys are never included.");
+	.describe(
+		"Account backup excluding the private application profile. Export that profile in Settings → Account. Secrets such as password hashes, tokens and API keys are never included.",
+	);
 
 /** The live server and server card share static contracts, never request context or callbacks. */
 function parityToolContract(path: string, procedure: AnyProcedure): ParityToolContract {
@@ -415,6 +417,11 @@ export function registerParityTools(
 					});
 				} else {
 					result = await getClientCall(client, path)(input);
+					// Application-only data stays out of model tool results, including account backups.
+					if (path === "auth.exportData" && result && typeof result === "object") {
+						const { applicationProfile: _privateProfile, ...backup } = result as Record<string, unknown>;
+						result = backup;
+					}
 				}
 				if (streamingPaths.has(path)) {
 					const events: string[] = [];

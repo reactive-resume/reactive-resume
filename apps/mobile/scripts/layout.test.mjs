@@ -42,7 +42,11 @@ const mocks = {
 	"react-native": native,
 	"react-native-safe-area-context": safe,
 	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
-	"expo-router": { useRouter: () => router, usePathname: () => "/documents" },
+	"expo-router": {
+		useLocalSearchParams: () => ({}),
+		useRouter: () => router,
+		usePathname: () => "/documents",
+	},
 	"expo-observe": { useObserve: () => ({ markInteractive() {} }) },
 	"react-native-keyboard-controller": { KeyboardAwareScrollView: "ScrollView", useKeyboardState: () => false },
 	"react-native-reanimated": { useAnimatedReaction: (prepare, react) => effects.push(() => react(prepare(), null)) },
@@ -485,7 +489,16 @@ const { Segmented } = load("ui/fields.tsx", {
 	"@reactive-resume/utils/string": { filterOptions: (options) => options },
 });
 const { BarItem } = load("shell/app-tabs.tsx", { "react-native-reanimated": animation });
+let knowledgeParams = {};
 const { KnowledgeScreen } = load("features/career/knowledge.tsx", {
+	"expo-router": {
+		useLocalSearchParams: () => knowledgeParams,
+		useRouter: () => ({
+			setParams: (next) => {
+				knowledgeParams = next;
+			},
+		}),
+	},
 	"./facts": { Facts: "Facts" },
 	"./stories": { Stories: "Stories" },
 	"./preferences": { Preferences: "Preferences" },
@@ -594,6 +607,13 @@ for (const fontScale of [1, 1.95, 3.12]) {
 	assert.ok(choice, "Three Knowledge choices must remain inline");
 	const segments = render(Segmented, choice.props);
 	assert.equal(segments.props.style.flexDirection, fontScale > 1.3 ? "column" : "row");
+	choice.props.onChange("preferences");
+	assert.equal(
+		nodes(render(KnowledgeScreen)).find((node) => node.type === "Segmented").props.value,
+		"preferences",
+		"Profile navigation must reopen Preferences even when Knowledge is already mounted",
+	);
+	knowledgeParams = {};
 	for (const label of ["Documents", "Applications", "Career", "Settings", "Podania o pracę", "தொழில் வாழ்க்கை"]) {
 		const item = render(BarItem, { label, icon: "file-text", focused: false, onPress() {} });
 		const text = nodes(item).find((node) => node.props.children?.includes(label));

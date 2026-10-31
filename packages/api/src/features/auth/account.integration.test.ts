@@ -31,6 +31,7 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			"application",
 			"application_lane",
 			"application_pipeline",
+			"application_profile",
 			"resume_slug_redirect",
 			"released_username",
 		]) {
@@ -108,6 +109,34 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			{ id: "guest-redirect", user_id: "link-owner" },
 			{ id: "owner-redirect", user_id: "link-owner" },
 		]);
+	});
+
+	it("transfers a guest profile intact and refuses to overwrite a destination profile", async () => {
+		const data = { email: "guest-private@example.test" };
+		await pool.query(
+			`INSERT INTO application_profile (user_id,data,reviewed_at,revision) VALUES ('link-guest',$1,'2030-01-01T00:00:00Z','guest-revision')`,
+			[JSON.stringify(data)],
+		);
+		await withDatabasePool(pool, () => linkAnonymousAccount({ fromUserId: "link-guest", toUserId: "link-owner" }));
+		const transferred = (
+			await pool.query(`SELECT user_id,data,reviewed_at,revision FROM application_profile WHERE user_id='link-owner'`)
+		).rows[0];
+		expect(transferred).toMatchObject({ user_id: "link-owner", data, reviewed_at: new Date("2030-01-01T00:00:00Z") });
+		expect(transferred.revision).not.toBe("guest-revision");
+		await pool.query(
+			`INSERT INTO application_profile (user_id,data,reviewed_at,revision) VALUES ('link-guest','{}',now(),'second-profile')`,
+		);
+		await expect(
+			withDatabasePool(pool, () => linkAnonymousAccount({ fromUserId: "link-guest", toUserId: "link-owner" })),
+		).rejects.toThrow("Both accounts have a private application profile");
+		expect((await pool.query(`SELECT user_id FROM application_profile ORDER BY user_id`)).rows).toEqual([
+			{ user_id: "link-guest" },
+			{ user_id: "link-owner" },
+		]);
+		expect((await pool.query(`SELECT data FROM application_profile WHERE user_id='link-owner'`)).rows[0].data).toEqual(
+			data,
+		);
+		await pool.query("DELETE FROM application_profile");
 	});
 
 	it("rolls back ownership and URLs when upload copying fails", async () => {

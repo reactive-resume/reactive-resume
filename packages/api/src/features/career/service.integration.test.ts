@@ -1529,4 +1529,100 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			}
 		},
 	);
+	it("isolates private application answers from Career AI context, old preference saves and documents", async () => {
+		const { applicationProfileService: profiles } = await import("../application-profile/service");
+		const { applicationProfileDataSchema } = await import("@reactive-resume/schema/application-profile");
+		const data = applicationProfileDataSchema.parse({
+			email: "PRIVATE-PROFILE@example.test",
+			workAuthorization: [{ countryCode: "DE", authorized: "no", needsSponsorship: "unknown" }],
+			requestedSalary: { amount: 123456, currency: "EUR", period: "year" },
+			references: [{ name: "PRIVATE REFERENCE", relationship: "Manager", company: "Fiction", email: "", phone: "" }],
+		});
+		const saved = await profiles.save("alice", { data, expectedRevision: null });
+		expect(await profiles.get("bob")).toBeNull();
+		expect(await profiles.get("alice")).toEqual(saved);
+		await service.saveProfile(
+			"alice",
+			careerProfileDataSchema.parse({
+				priorities: "Older client save",
+				minBase: { amount: 80000, currency: "EUR", period: "year" },
+			}),
+		);
+		expect(await profiles.get("alice")).toEqual(saved);
+		const context = await service.context({ userId: "alice", applicationId: "alice-app" });
+		expect(JSON.stringify(context)).not.toMatch(/PRIVATE-PROFILE|PRIVATE REFERENCE|123456/);
+		expect(context.profile.minBase.amount).toBe(80000);
+		const [resume] = await getDb().select().from(tables.resume).where(eq(tables.resume.id, "shared-resume"));
+		expect(resume).toBeDefined();
+		expect(JSON.stringify(resume?.data)).not.toContain("PRIVATE-PROFILE");
+		const answers = [
+			{ id: "private-answer", question: "Requested salary", answer: "100000 EUR per year", factIds: [] },
+		];
+		await service.saveWorkspace("alice", "alice-app", { answers }, { answers: [] });
+		expect(await profiles.get("alice")).toEqual(saved);
+		expect((await service.profile("alice")).minBase.amount).toBe(80000);
+		await profiles.delete("bob", saved.revision);
+		expect(await profiles.get("alice")).toEqual(saved);
+		expect(fixture.generate).not.toHaveBeenCalled();
+	});
+
+	it("rejects stale profile writes/deletes and permits only one concurrent creation or update", async () => {
+		const { applicationProfileService: profiles } = await import("../application-profile/service");
+		const { applicationProfileDataSchema } = await import("@reactive-resume/schema/application-profile");
+		const data = applicationProfileDataSchema.parse({ phone: "FIRST" });
+		const created = await Promise.allSettled([
+			profiles.save("alice", { data, expectedRevision: null }),
+			profiles.save("alice", { data: { ...data, phone: "SECOND" }, expectedRevision: null }),
+		]);
+		expect(created.filter((entry) => entry.status === "fulfilled")).toHaveLength(1);
+		expect(created.find((entry) => entry.status === "rejected")).toMatchObject({ reason: { code: "CONFLICT" } });
+		const first = await profiles.get("alice");
+		if (!first) throw new Error("Created profile missing");
+		const updates = await Promise.allSettled([
+			profiles.save("alice", { data: { ...data, phone: "THIRD" }, expectedRevision: first.revision }),
+			profiles.save("alice", { data: { ...data, phone: "FOURTH" }, expectedRevision: first.revision }),
+		]);
+		expect(updates.filter((entry) => entry.status === "fulfilled")).toHaveLength(1);
+		await expect(profiles.delete("alice", first.revision)).rejects.toMatchObject({ code: "CONFLICT" });
+		expect((await profiles.get("alice"))?.revision).not.toBe(first.revision);
+		await expect(profiles.save("missing-owner", { data, expectedRevision: null })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+	});
+
+	it("preserves submitted answers when the profile is edited/deleted, exports it and cascades account deletion", async () => {
+		const { applicationProfileService: profiles } = await import("../application-profile/service");
+		const { applicationProfileDataSchema } = await import("@reactive-resume/schema/application-profile");
+		const saved = await profiles.save("alice", {
+			data: applicationProfileDataSchema.parse({ phone: "PRIVATE PHONE" }),
+			expectedRevision: null,
+		});
+		// This fixture application already has a sent document; use a fresh Saved application for a real submission.
+		await getDb()
+			.insert(tables.application)
+			.values({ id: "profile-submit", userId: "alice", company: "Fiction", role: "Engineer", status: "saved" });
+		const answers = [{ id: "phone", question: "Phone", answer: "PHONE SENT EXPLICITLY", factIds: [] }];
+		await service.submitApplication("alice", "profile-submit", answers, []);
+		const sent = (await service.savedItems({ userId: "alice", applicationId: "profile-submit" })).filter(
+			(item) => item.data.kind === "answers",
+		);
+		const updated = await profiles.save("alice", {
+			data: { ...saved.data, phone: "UPDATED PHONE" },
+			expectedRevision: saved.revision,
+		});
+		expect(await profiles.get("alice")).toEqual(updated);
+		await profiles.delete("alice", updated.revision);
+		expect(await profiles.get("alice")).toBeNull();
+		expect(
+			(await service.savedItems({ userId: "alice", applicationId: "profile-submit" })).filter(
+				(item) => item.data.kind === "answers",
+			),
+		).toEqual(sent);
+		expect(JSON.stringify(sent)).toContain("PHONE SENT EXPLICITLY");
+		await profiles.save("alice", { data: saved.data, expectedRevision: null });
+		await profiles.save("bob", { data: saved.data, expectedRevision: null });
+		await getDb().delete(tables.user).where(eq(tables.user.id, "alice"));
+		expect(await profiles.get("alice")).toBeNull();
+		expect(await profiles.get("bob")).not.toBeNull();
+	});
 });

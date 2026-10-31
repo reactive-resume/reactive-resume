@@ -20,7 +20,7 @@ import { registerTools } from "./tools";
 let client: Client;
 let server: McpServer;
 const calls = {
-	auth: { deleteAccount: vi.fn() },
+	auth: { deleteAccount: vi.fn(), exportData: vi.fn() },
 	resume: { listVersions: vi.fn(), getById: vi.fn() },
 	rest: { fileUpload: vi.fn(), documentExports: { resume: vi.fn() } },
 	coverLetters: { draft: vi.fn() },
@@ -226,4 +226,23 @@ it("embeds actual resume JSON in prompts and propagates inaccessible-document er
 	await expect(client.getPrompt({ name: "review_resume", arguments: { id: "resume-1" } })).rejects.not.toThrow(
 		"credential secret",
 	);
+});
+
+it("keeps private application profiles out of MCP tools and account export results", async () => {
+	const { tools } = await client.listTools();
+	expect(tools.some((tool) => /application_profile/.test(tool.name))).toBe(false);
+	calls.auth.exportData.mockResolvedValueOnce({
+		exportedAt: "2030-01-01T00:00:00Z",
+		user: {},
+		resumes: [],
+		coverLetters: [],
+		applications: [],
+		career: {},
+		applicationProfile: { data: { email: "PRIVATE-PROFILE@example.test" } },
+	});
+	const result = await client.callTool({ name: "api_auth_export_data", arguments: {} });
+	expect(result.isError).not.toBe(true);
+	expect(result.structuredContent).toMatchObject({ resumes: [], applications: [] });
+	expect(JSON.stringify(result)).not.toContain("PRIVATE-PROFILE");
+	expect(result.structuredContent).not.toHaveProperty("applicationProfile");
 });

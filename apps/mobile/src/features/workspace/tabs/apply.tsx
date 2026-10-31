@@ -9,6 +9,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
 import { randomUUID } from "expo-crypto";
+import { useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
@@ -39,6 +40,7 @@ import { PriorNoResponse } from "@/features/applications/prior-no-response";
 import { useInvalidateApplications } from "@/features/applications/queries";
 import { withUndo } from "@/features/career/undo";
 import { useDocuments } from "@/features/documents/queries";
+import { routes } from "@/routes";
 import { Banner, Button, Chip, IconButton, ListRow, Sheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type Answer = CareerWorkspace["answers"][number];
@@ -51,6 +53,7 @@ export function ApplyTab() {
 function Apply({ application, version, go }: WorkspaceTabProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
+	const router = useRouter();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
 	const facts = useFacts(application.id);
@@ -147,6 +150,11 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 
 			<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.s3 }}>
 				<Text variant="heading" accessibilityRole="header" style={{ flex: 1 }}>{t`Form answers`}</Text>
+				<Button
+					variant="link"
+					label={t`Private application profile`}
+					onPress={() => router.push(routes.settings("account"))}
+				/>
 				{!version && submitted ? (
 					recorded ? (
 						<Button

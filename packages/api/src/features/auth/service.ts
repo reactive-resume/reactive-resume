@@ -6,6 +6,7 @@ import { auth, isCustomOAuthProviderEnabled } from "@reactive-resume/auth/config
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
+import { applicationProfileService } from "../application-profile/service";
 import { applicationLaneService } from "../applications/lanes";
 import { careerService } from "../career/service";
 import { coverLetterService } from "../cover-letters/service";
@@ -104,6 +105,7 @@ export const authService = {
 				.from(schema.aiContentReport)
 				.where(eq(schema.aiContentReport.userId, input.userId)),
 			career: await careerService.exportData(input.userId),
+			applicationProfile: await applicationProfileService.get(input.userId),
 		};
 	},
 

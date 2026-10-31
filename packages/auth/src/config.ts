@@ -15,7 +15,7 @@ import { admin, anonymous, jwt, openAPI } from "better-auth/plugins";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { username } from "better-auth/plugins/username";
-import { and, eq, gt, ne, sql } from "drizzle-orm";
+import { and, eq, gt, inArray, ne, sql } from "drizzle-orm";
 import { createLocalJWKSet, jwtVerify } from "jose";
 import { createElement } from "react";
 import { createDefaultOwnedApplicationLanes, MAX_APPLICATION_LANES } from "@reactive-resume/db/application-lanes";
@@ -191,6 +191,22 @@ export async function linkAnonymousAccount({
 				.for("no key update");
 			if (!owner) throw new APIError("NOT_FOUND", { message: "The account is unavailable." });
 		}
+
+		const profiles = await tx
+			.select()
+			.from(schema.applicationProfile)
+			.where(inArray(schema.applicationProfile.userId, [fromUserId, toUserId]));
+		const sourceProfile = profiles.find((profile) => profile.userId === fromUserId);
+		if (sourceProfile && profiles.some((profile) => profile.userId === toUserId))
+			throw new APIError("CONFLICT", {
+				message:
+					"Both accounts have a private application profile. Export and delete one profile in Settings → Account before linking, so neither is silently overwritten.",
+			});
+		if (sourceProfile)
+			await tx
+				.update(schema.applicationProfile)
+				.set({ userId: toUserId, revision: generateId() })
+				.where(eq(schema.applicationProfile.userId, fromUserId));
 		const sourceLanes = await tx
 			.select()
 			.from(schema.applicationLane)

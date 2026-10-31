@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
 	predicates: [] as unknown[],
 	getLetter: vi.fn(),
 	exportCareer: vi.fn(),
+	getApplicationProfile: vi.fn(),
 	getPipeline: vi.fn(),
 }));
 vi.mock("@reactive-resume/db/client", () => ({ db: { select: mocks.select } }));
@@ -24,6 +25,7 @@ vi.mock("../storage/service", () => ({ getStorageService: vi.fn() }));
 vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: mocks.getLetter } }));
 vi.mock("../applications/lanes", () => ({ applicationLaneService: { get: mocks.getPipeline } }));
 vi.mock("../career/service", () => ({ careerService: { exportData: mocks.exportCareer } }));
+vi.mock("../application-profile/service", () => ({ applicationProfileService: { get: mocks.getApplicationProfile } }));
 const { authService } = await import("./service");
 
 describe("account backup", () => {
@@ -31,6 +33,11 @@ describe("account backup", () => {
 		vi.clearAllMocks();
 		mocks.predicates.length = 0;
 		mocks.getPipeline.mockResolvedValue({ revision: 0, lanes: [] });
+		mocks.getApplicationProfile.mockResolvedValue({
+			data: { email: "private@example.test" },
+			reviewedAt: "2030-01-01T00:00:00.000Z",
+			revision: "profile-revision",
+		});
 	});
 
 	it.each([false, true])(
@@ -103,6 +110,11 @@ describe("account backup", () => {
 			expect(mocks.predicates).toContainEqual({ column: "coverLetter.userId", value: "owner" });
 			expect(mocks.exportCareer).toHaveBeenCalledExactlyOnceWith("owner");
 			expect(exported.career).toEqual(career);
+			expect(mocks.getApplicationProfile).toHaveBeenCalledExactlyOnceWith("owner");
+			expect(exported.applicationProfile).toMatchObject({
+				data: { email: "private@example.test" },
+				revision: "profile-revision",
+			});
 			expect(exported.applicationPipeline).toEqual({ revision: 0, lanes: [] });
 			expect(mocks.getPipeline).toHaveBeenCalledExactlyOnceWith("owner");
 			expect(exported.aiContentReports).toEqual([{ id: "report", userId: "owner", content: "Reported output" }]);

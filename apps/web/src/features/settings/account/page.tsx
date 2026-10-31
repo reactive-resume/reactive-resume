@@ -5,6 +5,7 @@ import { useNavigate, useRouteContext, useRouter, useSearch } from "@tanstack/re
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { ApplicationProfileSection } from "./application-profile";
 import { DataSection } from "./data";
 import { ProfileSection } from "./profile";
 import { SecuritySection } from "./security";
@@ -21,6 +22,7 @@ export function AccountSettings() {
 			<PageHeader title={<Trans>Account</Trans>} />
 			<ProfileSection session={session} />
 			<SecuritySection />
+			<ApplicationProfileSection key={session.user.id} />
 			<DataSection openDeletion={deleteAccount ?? false} />
 			<div className="border-t border-line pt-6">
 				<SignOutButton />

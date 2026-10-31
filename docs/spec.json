@@ -260,6 +260,1074 @@
 				]
 			}
 		},
+		"/application-profile": {
+			"get": {
+				"operationId": "getApplicationProfile",
+				"summary": "Read your private application profile",
+				"tags": [
+					"Application Profile"
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"type": "object",
+											"properties": {
+												"data": {
+													"type": "object",
+													"properties": {
+														"givenName": {
+															"type": "string",
+															"maxLength": 200,
+															"default": ""
+														},
+														"familyName": {
+															"type": "string",
+															"maxLength": 200,
+															"default": ""
+														},
+														"email": {
+															"anyOf": [
+																{
+																	"const": ""
+																},
+																{
+																	"type": "string",
+																	"maxLength": 320,
+																	"format": "email"
+																}
+															],
+															"default": ""
+														},
+														"phone": {
+															"type": "string",
+															"maxLength": 200,
+															"default": ""
+														},
+														"links": {
+															"type": "array",
+															"maxItems": 20,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"label": {
+																		"type": "string",
+																		"minLength": 1,
+																		"maxLength": 200
+																	},
+																	"url": {
+																		"type": "string",
+																		"maxLength": 2000,
+																		"format": "uri"
+																	}
+																},
+																"required": [
+																	"label",
+																	"url"
+																],
+																"additionalProperties": false
+															},
+															"default": []
+														},
+														"address": {
+															"type": "object",
+															"properties": {
+																"line1": {
+																	"type": "string",
+																	"maxLength": 200,
+																	"default": ""
+																},
+																"line2": {
+																	"type": "string",
+																	"maxLength": 200,
+																	"default": ""
+																},
+																"city": {
+																	"type": "string",
+																	"maxLength": 200,
+																	"default": ""
+																},
+																"region": {
+																	"type": "string",
+																	"maxLength": 200,
+																	"default": ""
+																},
+																"postalCode": {
+																	"type": "string",
+																	"maxLength": 200,
+																	"default": ""
+																},
+																"countryCode": {
+																	"anyOf": [
+																		{
+																			"type": "string",
+																			"pattern": "^[A-Z]{2}$"
+																		},
+																		{
+																			"type": "null"
+																		}
+																	],
+																	"default": null
+																}
+															},
+															"additionalProperties": false,
+															"default": {
+																"line1": "",
+																"line2": "",
+																"city": "",
+																"region": "",
+																"postalCode": "",
+																"countryCode": null
+															}
+														},
+														"workAuthorization": {
+															"type": "array",
+															"maxItems": 50,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"countryCode": {
+																		"type": "string",
+																		"pattern": "^[A-Z]{2}$"
+																	},
+																	"authorized": {
+																		"enum": [
+																			"unknown",
+																			"yes",
+																			"no"
+																		],
+																		"type": "string",
+																		"default": "unknown"
+																	},
+																	"needsSponsorship": {
+																		"enum": [
+																			"unknown",
+																			"yes",
+																			"no"
+																		],
+																		"type": "string",
+																		"default": "unknown"
+																	}
+																},
+																"required": [
+																	"countryCode"
+																],
+																"additionalProperties": false
+															},
+															"default": []
+														},
+														"willingToRelocate": {
+															"enum": [
+																"unknown",
+																"yes",
+																"no"
+															],
+															"type": "string",
+															"default": "unknown"
+														},
+														"requestedSalary": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"amount": {
+																			"anyOf": [
+																				{
+																					"type": "number",
+																					"minimum": 0,
+																					"maximum": 9007199254740991,
+																					"multipleOf": 0.01
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
+																		"currency": {
+																			"anyOf": [
+																				{
+																					"type": "string",
+																					"pattern": "^[A-Z]{3}$"
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		},
+																		"period": {
+																			"anyOf": [
+																				{
+																					"enum": [
+																						"hour",
+																						"month",
+																						"year"
+																					],
+																					"type": "string"
+																				},
+																				{
+																					"type": "null"
+																				}
+																			]
+																		}
+																	},
+																	"required": [
+																		"amount",
+																		"currency",
+																		"period"
+																	],
+																	"additionalProperties": false
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														},
+														"references": {
+															"type": "array",
+															"maxItems": 10,
+															"items": {
+																"type": "object",
+																"properties": {
+																	"name": {
+																		"type": "string",
+																		"minLength": 1,
+																		"maxLength": 200
+																	},
+																	"relationship": {
+																		"type": "string",
+																		"maxLength": 200
+																	},
+																	"company": {
+																		"type": "string",
+																		"maxLength": 200
+																	},
+																	"email": {
+																		"anyOf": [
+																			{
+																				"const": ""
+																			},
+																			{
+																				"type": "string",
+																				"maxLength": 320,
+																				"format": "email"
+																			}
+																		]
+																	},
+																	"phone": {
+																		"type": "string",
+																		"maxLength": 200
+																	}
+																},
+																"required": [
+																	"name",
+																	"relationship",
+																	"company",
+																	"email",
+																	"phone"
+																],
+																"additionalProperties": false
+															},
+															"default": []
+														}
+													},
+													"additionalProperties": false
+												},
+												"reviewedAt": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"revision": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 64
+												}
+											},
+											"required": [
+												"data",
+												"reviewedAt",
+												"revision"
+											]
+										},
+										{
+											"type": "null"
+										}
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/application-profile\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			},
+			"put": {
+				"operationId": "saveApplicationProfile",
+				"summary": "Save and mark your private application profile reviewed",
+				"tags": [
+					"Application Profile"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"data": {
+										"type": "object",
+										"properties": {
+											"givenName": {
+												"type": "string",
+												"maxLength": 200,
+												"default": ""
+											},
+											"familyName": {
+												"type": "string",
+												"maxLength": 200,
+												"default": ""
+											},
+											"email": {
+												"anyOf": [
+													{
+														"const": ""
+													},
+													{
+														"type": "string",
+														"maxLength": 320,
+														"format": "email"
+													}
+												],
+												"default": ""
+											},
+											"phone": {
+												"type": "string",
+												"maxLength": 200,
+												"default": ""
+											},
+											"links": {
+												"type": "array",
+												"maxItems": 20,
+												"items": {
+													"type": "object",
+													"properties": {
+														"label": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 200
+														},
+														"url": {
+															"type": "string",
+															"maxLength": 2000,
+															"format": "uri"
+														}
+													},
+													"required": [
+														"label",
+														"url"
+													],
+													"additionalProperties": false
+												},
+												"default": []
+											},
+											"address": {
+												"type": "object",
+												"properties": {
+													"line1": {
+														"type": "string",
+														"maxLength": 200,
+														"default": ""
+													},
+													"line2": {
+														"type": "string",
+														"maxLength": 200,
+														"default": ""
+													},
+													"city": {
+														"type": "string",
+														"maxLength": 200,
+														"default": ""
+													},
+													"region": {
+														"type": "string",
+														"maxLength": 200,
+														"default": ""
+													},
+													"postalCode": {
+														"type": "string",
+														"maxLength": 200,
+														"default": ""
+													},
+													"countryCode": {
+														"anyOf": [
+															{
+																"type": "string",
+																"pattern": "^[A-Z]{2}$"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"default": null
+													}
+												},
+												"additionalProperties": false,
+												"default": {
+													"line1": "",
+													"line2": "",
+													"city": "",
+													"region": "",
+													"postalCode": "",
+													"countryCode": null
+												}
+											},
+											"workAuthorization": {
+												"type": "array",
+												"maxItems": 50,
+												"items": {
+													"type": "object",
+													"properties": {
+														"countryCode": {
+															"type": "string",
+															"pattern": "^[A-Z]{2}$"
+														},
+														"authorized": {
+															"enum": [
+																"unknown",
+																"yes",
+																"no"
+															],
+															"type": "string",
+															"default": "unknown"
+														},
+														"needsSponsorship": {
+															"enum": [
+																"unknown",
+																"yes",
+																"no"
+															],
+															"type": "string",
+															"default": "unknown"
+														}
+													},
+													"required": [
+														"countryCode"
+													],
+													"additionalProperties": false
+												},
+												"default": []
+											},
+											"willingToRelocate": {
+												"enum": [
+													"unknown",
+													"yes",
+													"no"
+												],
+												"type": "string",
+												"default": "unknown"
+											},
+											"requestedSalary": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"amount": {
+																"anyOf": [
+																	{
+																		"type": "number",
+																		"minimum": 0,
+																		"maximum": 9007199254740991,
+																		"multipleOf": 0.01
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"currency": {
+																"anyOf": [
+																	{
+																		"type": "string",
+																		"pattern": "^[A-Z]{3}$"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"period": {
+																"anyOf": [
+																	{
+																		"enum": [
+																			"hour",
+																			"month",
+																			"year"
+																		],
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															}
+														},
+														"required": [
+															"amount",
+															"currency",
+															"period"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											},
+											"references": {
+												"type": "array",
+												"maxItems": 10,
+												"items": {
+													"type": "object",
+													"properties": {
+														"name": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 200
+														},
+														"relationship": {
+															"type": "string",
+															"maxLength": 200
+														},
+														"company": {
+															"type": "string",
+															"maxLength": 200
+														},
+														"email": {
+															"anyOf": [
+																{
+																	"const": ""
+																},
+																{
+																	"type": "string",
+																	"maxLength": 320,
+																	"format": "email"
+																}
+															]
+														},
+														"phone": {
+															"type": "string",
+															"maxLength": 200
+														}
+													},
+													"required": [
+														"name",
+														"relationship",
+														"company",
+														"email",
+														"phone"
+													],
+													"additionalProperties": false
+												},
+												"default": []
+											}
+										},
+										"additionalProperties": false
+									},
+									"expectedRevision": {
+										"anyOf": [
+											{
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64
+											},
+											{
+												"type": "null"
+											}
+										]
+									}
+								},
+								"required": [
+									"data",
+									"expectedRevision"
+								],
+								"additionalProperties": false
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"givenName": {
+													"type": "string",
+													"maxLength": 200,
+													"default": ""
+												},
+												"familyName": {
+													"type": "string",
+													"maxLength": 200,
+													"default": ""
+												},
+												"email": {
+													"anyOf": [
+														{
+															"const": ""
+														},
+														{
+															"type": "string",
+															"maxLength": 320,
+															"format": "email"
+														}
+													],
+													"default": ""
+												},
+												"phone": {
+													"type": "string",
+													"maxLength": 200,
+													"default": ""
+												},
+												"links": {
+													"type": "array",
+													"maxItems": 20,
+													"items": {
+														"type": "object",
+														"properties": {
+															"label": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 200
+															},
+															"url": {
+																"type": "string",
+																"maxLength": 2000,
+																"format": "uri"
+															}
+														},
+														"required": [
+															"label",
+															"url"
+														],
+														"additionalProperties": false
+													},
+													"default": []
+												},
+												"address": {
+													"type": "object",
+													"properties": {
+														"line1": {
+															"type": "string",
+															"maxLength": 200,
+															"default": ""
+														},
+														"line2": {
+															"type": "string",
+															"maxLength": 200,
+															"default": ""
+														},
+														"city": {
+															"type": "string",
+															"maxLength": 200,
+															"default": ""
+														},
+														"region": {
+															"type": "string",
+															"maxLength": 200,
+															"default": ""
+														},
+														"postalCode": {
+															"type": "string",
+															"maxLength": 200,
+															"default": ""
+														},
+														"countryCode": {
+															"anyOf": [
+																{
+																	"type": "string",
+																	"pattern": "^[A-Z]{2}$"
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														}
+													},
+													"additionalProperties": false,
+													"default": {
+														"line1": "",
+														"line2": "",
+														"city": "",
+														"region": "",
+														"postalCode": "",
+														"countryCode": null
+													}
+												},
+												"workAuthorization": {
+													"type": "array",
+													"maxItems": 50,
+													"items": {
+														"type": "object",
+														"properties": {
+															"countryCode": {
+																"type": "string",
+																"pattern": "^[A-Z]{2}$"
+															},
+															"authorized": {
+																"enum": [
+																	"unknown",
+																	"yes",
+																	"no"
+																],
+																"type": "string",
+																"default": "unknown"
+															},
+															"needsSponsorship": {
+																"enum": [
+																	"unknown",
+																	"yes",
+																	"no"
+																],
+																"type": "string",
+																"default": "unknown"
+															}
+														},
+														"required": [
+															"countryCode"
+														],
+														"additionalProperties": false
+													},
+													"default": []
+												},
+												"willingToRelocate": {
+													"enum": [
+														"unknown",
+														"yes",
+														"no"
+													],
+													"type": "string",
+													"default": "unknown"
+												},
+												"requestedSalary": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"amount": {
+																	"anyOf": [
+																		{
+																			"type": "number",
+																			"minimum": 0,
+																			"maximum": 9007199254740991,
+																			"multipleOf": 0.01
+																		},
+																		{
+																			"type": "null"
+																		}
+																	]
+																},
+																"currency": {
+																	"anyOf": [
+																		{
+																			"type": "string",
+																			"pattern": "^[A-Z]{3}$"
+																		},
+																		{
+																			"type": "null"
+																		}
+																	]
+																},
+																"period": {
+																	"anyOf": [
+																		{
+																			"enum": [
+																				"hour",
+																				"month",
+																				"year"
+																			],
+																			"type": "string"
+																		},
+																		{
+																			"type": "null"
+																		}
+																	]
+																}
+															},
+															"required": [
+																"amount",
+																"currency",
+																"period"
+															],
+															"additionalProperties": false
+														},
+														{
+															"type": "null"
+														}
+													],
+													"default": null
+												},
+												"references": {
+													"type": "array",
+													"maxItems": 10,
+													"items": {
+														"type": "object",
+														"properties": {
+															"name": {
+																"type": "string",
+																"minLength": 1,
+																"maxLength": 200
+															},
+															"relationship": {
+																"type": "string",
+																"maxLength": 200
+															},
+															"company": {
+																"type": "string",
+																"maxLength": 200
+															},
+															"email": {
+																"anyOf": [
+																	{
+																		"const": ""
+																	},
+																	{
+																		"type": "string",
+																		"maxLength": 320,
+																		"format": "email"
+																	}
+																]
+															},
+															"phone": {
+																"type": "string",
+																"maxLength": 200
+															}
+														},
+														"required": [
+															"name",
+															"relationship",
+															"company",
+															"email",
+															"phone"
+														],
+														"additionalProperties": false
+													},
+													"default": []
+												}
+											},
+											"additionalProperties": false
+										},
+										"reviewedAt": {
+											"type": "string",
+											"format": "date-time"
+										},
+										"revision": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 64
+										}
+									},
+									"required": [
+										"data",
+										"reviewedAt",
+										"revision"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request PUT \"https://rxresu.me/api/openapi/application-profile\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"data\": {},\n  \"expectedRevision\": \"<string>\"\n}'"
+					}
+				]
+			},
+			"delete": {
+				"operationId": "deleteApplicationProfile",
+				"summary": "Delete your private application profile",
+				"tags": [
+					"Application Profile"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"expectedRevision": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 64
+									}
+								},
+								"required": [
+									"expectedRevision"
+								],
+								"additionalProperties": false
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/application-profile\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"expectedRevision\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
 		"/ai/content-reports": {
 			"post": {
 				"operationId": "reportAiContent",
@@ -32267,6 +33335,292 @@
 									"properties": {
 										"exportedAt": {
 											"type": "string"
+										},
+										"applicationProfile": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"data": {
+															"type": "object",
+															"properties": {
+																"givenName": {
+																	"type": "string",
+																	"maxLength": 200,
+																	"default": ""
+																},
+																"familyName": {
+																	"type": "string",
+																	"maxLength": 200,
+																	"default": ""
+																},
+																"email": {
+																	"anyOf": [
+																		{
+																			"const": ""
+																		},
+																		{
+																			"type": "string",
+																			"maxLength": 320,
+																			"format": "email"
+																		}
+																	],
+																	"default": ""
+																},
+																"phone": {
+																	"type": "string",
+																	"maxLength": 200,
+																	"default": ""
+																},
+																"links": {
+																	"type": "array",
+																	"maxItems": 20,
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"label": {
+																				"type": "string",
+																				"minLength": 1,
+																				"maxLength": 200
+																			},
+																			"url": {
+																				"type": "string",
+																				"maxLength": 2000,
+																				"format": "uri"
+																			}
+																		},
+																		"required": [
+																			"label",
+																			"url"
+																		],
+																		"additionalProperties": false
+																	},
+																	"default": []
+																},
+																"address": {
+																	"type": "object",
+																	"properties": {
+																		"line1": {
+																			"type": "string",
+																			"maxLength": 200,
+																			"default": ""
+																		},
+																		"line2": {
+																			"type": "string",
+																			"maxLength": 200,
+																			"default": ""
+																		},
+																		"city": {
+																			"type": "string",
+																			"maxLength": 200,
+																			"default": ""
+																		},
+																		"region": {
+																			"type": "string",
+																			"maxLength": 200,
+																			"default": ""
+																		},
+																		"postalCode": {
+																			"type": "string",
+																			"maxLength": 200,
+																			"default": ""
+																		},
+																		"countryCode": {
+																			"anyOf": [
+																				{
+																					"type": "string",
+																					"pattern": "^[A-Z]{2}$"
+																				},
+																				{
+																					"type": "null"
+																				}
+																			],
+																			"default": null
+																		}
+																	},
+																	"additionalProperties": false,
+																	"default": {
+																		"line1": "",
+																		"line2": "",
+																		"city": "",
+																		"region": "",
+																		"postalCode": "",
+																		"countryCode": null
+																	}
+																},
+																"workAuthorization": {
+																	"type": "array",
+																	"maxItems": 50,
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"countryCode": {
+																				"type": "string",
+																				"pattern": "^[A-Z]{2}$"
+																			},
+																			"authorized": {
+																				"enum": [
+																					"unknown",
+																					"yes",
+																					"no"
+																				],
+																				"type": "string",
+																				"default": "unknown"
+																			},
+																			"needsSponsorship": {
+																				"enum": [
+																					"unknown",
+																					"yes",
+																					"no"
+																				],
+																				"type": "string",
+																				"default": "unknown"
+																			}
+																		},
+																		"required": [
+																			"countryCode"
+																		],
+																		"additionalProperties": false
+																	},
+																	"default": []
+																},
+																"willingToRelocate": {
+																	"enum": [
+																		"unknown",
+																		"yes",
+																		"no"
+																	],
+																	"type": "string",
+																	"default": "unknown"
+																},
+																"requestedSalary": {
+																	"anyOf": [
+																		{
+																			"type": "object",
+																			"properties": {
+																				"amount": {
+																					"anyOf": [
+																						{
+																							"type": "number",
+																							"minimum": 0,
+																							"maximum": 9007199254740991,
+																							"multipleOf": 0.01
+																						},
+																						{
+																							"type": "null"
+																						}
+																					]
+																				},
+																				"currency": {
+																					"anyOf": [
+																						{
+																							"type": "string",
+																							"pattern": "^[A-Z]{3}$"
+																						},
+																						{
+																							"type": "null"
+																						}
+																					]
+																				},
+																				"period": {
+																					"anyOf": [
+																						{
+																							"enum": [
+																								"hour",
+																								"month",
+																								"year"
+																							],
+																							"type": "string"
+																						},
+																						{
+																							"type": "null"
+																						}
+																					]
+																				}
+																			},
+																			"required": [
+																				"amount",
+																				"currency",
+																				"period"
+																			],
+																			"additionalProperties": false
+																		},
+																		{
+																			"type": "null"
+																		}
+																	],
+																	"default": null
+																},
+																"references": {
+																	"type": "array",
+																	"maxItems": 10,
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"name": {
+																				"type": "string",
+																				"minLength": 1,
+																				"maxLength": 200
+																			},
+																			"relationship": {
+																				"type": "string",
+																				"maxLength": 200
+																			},
+																			"company": {
+																				"type": "string",
+																				"maxLength": 200
+																			},
+																			"email": {
+																				"anyOf": [
+																					{
+																						"const": ""
+																					},
+																					{
+																						"type": "string",
+																						"maxLength": 320,
+																						"format": "email"
+																					}
+																				]
+																			},
+																			"phone": {
+																				"type": "string",
+																				"maxLength": 200
+																			}
+																		},
+																		"required": [
+																			"name",
+																			"relationship",
+																			"company",
+																			"email",
+																			"phone"
+																		],
+																		"additionalProperties": false
+																	},
+																	"default": []
+																}
+															},
+															"additionalProperties": false
+														},
+														"reviewedAt": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"revision": {
+															"type": "string",
+															"minLength": 1,
+															"maxLength": 64
+														}
+													},
+													"required": [
+														"data",
+														"reviewedAt",
+														"revision"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"user": {
 											"type": "object",

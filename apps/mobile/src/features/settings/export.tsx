@@ -2,7 +2,9 @@ import { useLingui } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import { clearAccountExportCache } from "./export-cache";
 import { client } from "@/api/client";
+import { getAccountScope } from "@/auth/session";
 import { ListRow, showToast } from "@/ui";
 
 export function ExportDataRow() {
@@ -10,13 +12,18 @@ export function ExportDataRow() {
 	const exportData = useMutation({
 		mutationKey: ["settings", "export"],
 		mutationFn: async () => {
-			for (const file of Paths.cache.list()) {
-				if (file instanceof File && /^reactive-resume-\d+\.json$/.test(file.name)) file.delete();
-			}
+			const scope = getAccountScope();
+			if (!scope) return;
+			clearAccountExportCache();
 			if (!(await Sharing.isAvailableAsync())) throw new Error("Sharing unavailable");
-			const data = await client.auth.exportData();
+			const data = await client.auth.exportData(undefined, { context: { scope } });
+			if (getAccountScope() !== scope) return;
 			const file = new File(Paths.cache, `reactive-resume-${Date.now()}.json`);
 			await file.write(`${JSON.stringify(data, null, 2)}\n`);
+			if (getAccountScope() !== scope) {
+				file.delete();
+				return;
+			}
 			// Android recipients may still read this file after shareAsync resolves; sweep it on the next export.
 			await Sharing.shareAsync(file.uri, {
 				mimeType: "application/json",

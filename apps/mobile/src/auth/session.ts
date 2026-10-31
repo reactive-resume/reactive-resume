@@ -227,6 +227,8 @@ export function restoreSession(): Promise<void> {
 
 async function readStoredSession(): Promise<void> {
 	try {
+		const { clearAccountExportCache } = await import("@/features/settings/export-cache");
+		clearAccountExportCache();
 		const storedServer = await SecureStore.getItemAsync(serverKey);
 		const server = storedServer && isAllowedServer(storedServer) ? storedServer : DEFAULT_SERVER;
 		const stored = await SecureStore.getItemAsync(tokensKey(server));
@@ -293,6 +295,8 @@ export async function signIn(server: string): Promise<boolean> {
 			await revoke(origin, next.refreshToken);
 			return false;
 		}
+		const { clearAccountExportCache } = await import("@/features/settings/export-cache");
+		clearAccountExportCache();
 		await SecureStore.setItemAsync(tokensKey(origin), JSON.stringify(next));
 		await SecureStore.setItemAsync(serverKey, origin);
 		await SecureStore.deleteItemAsync(refreshMarkerKey(origin));
@@ -442,6 +446,10 @@ export function signOut(): Promise<void> {
 			const { clearStoredThumbnails } = await import("@/features/documents/thumbnail-store");
 			await clearStoredThumbnails();
 		});
+		await attempt(async () => {
+			const { clearAccountExportCache } = await import("@/features/settings/export-cache");
+			clearAccountExportCache();
+		});
 		const { scope } = departing;
 		if (scope) {
 			await attempt(async () => {
@@ -559,7 +567,12 @@ async function expire(account: number): Promise<void> {
 	tokens = null;
 	changeIdentity();
 	setSession({ status: "expired", server });
-	await retireTokens(server);
+	try {
+		const { clearAccountExportCache } = await import("@/features/settings/export-cache");
+		clearAccountExportCache();
+	} finally {
+		await retireTokens(server);
+	}
 }
 
 /**

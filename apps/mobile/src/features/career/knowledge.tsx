@@ -1,5 +1,5 @@
 import { useLingui } from "@lingui/react/macro";
-import { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useWindowDimensions } from "react-native";
 import { Facts } from "./facts";
 import { useCareerQueries } from "./hooks";
@@ -11,7 +11,9 @@ import { Screen, Segmented, Text, useTheme } from "@/ui";
 
 export function KnowledgeScreen() {
 	const { t } = useLingui();
-	const [tab, setTab] = useState("facts");
+	const params = useLocalSearchParams<{ tab?: string }>();
+	const router = useRouter();
+	const tab = params.tab === "preferences" || params.tab === "stories" ? params.tab : "facts";
 	const { fontScale } = useWindowDimensions();
 	const { size } = useTheme();
 	const session = useSession();
@@ -24,7 +26,7 @@ export function KnowledgeScreen() {
 				orientation={fontScale > 1.3 ? "vertical" : "horizontal"}
 				label={t`Knowledge`}
 				value={tab}
-				onChange={setTab}
+				onChange={(tab) => router.setParams({ tab })}
 				options={[
 					{ value: "facts", label: t`Facts` },
 					{ value: "stories", label: t`Stories` },

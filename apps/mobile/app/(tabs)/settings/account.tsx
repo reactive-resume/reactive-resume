@@ -2,6 +2,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/api/client";
 import { ApiKeys } from "@/features/settings/api-keys";
+import { ApplicationProfileSection } from "@/features/settings/application-profile";
 import { openAccountSettings } from "@/features/settings/browser";
 import { ExportDataRow } from "@/features/settings/export";
 import { SettingsGroup, SettingsPage } from "@/features/settings/layout";
@@ -83,6 +84,7 @@ export default function AccountScreen() {
 						/>
 					</SettingsGroup>
 					<ApiKeys userId={profile.data.id} />
+					<ApplicationProfileSection />
 					<SettingsGroup title={t`Your data`}>
 						<ExportDataRow />
 						<ListRow
