@@ -62,6 +62,23 @@ The mode switcher in the middle of the bar changes what the panel shows. The pag
 
 When you're not typing in a field, press <kbd>1</kbd>, <kbd>2</kbd>, <kbd>3</kbd> or <kbd>4</kbd> to switch to Write, Design, Check or Share. The mode is part of the page address, so reloading the page or opening a bookmark keeps you in the same mode.
 
+### The editor's address
+
+Each resume has its own editor page. Its address is your instance's address followed by `/builder/` and the resume's ID, for example `https://rxresu.me/builder/01a0efa5-6529-745e-950a-521ef5b8afc7`. Opening that address loads the resume for editing; you must be signed in to your account, and you can only open resumes that belong to you. The ID is the same one the API uses for a resume. See [Using the API](/guides/using-the-api).
+
+The address can carry extra settings, which the editor reads when the page opens:
+
+| Setting            | Opens the editor with                                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `?mode=design`     | The Design panel. Use `write`, `design`, `check` or `share` to pick any mode.                                       |
+| `?version=<id>`    | A past version, read-only. See [Undoing changes and version history](/guides/undoing-changes-and-version-history). |
+| `?assistant=new`   | The assistant open on a new conversation.                                                                          |
+| `?ask=<text>`      | The assistant's composer filled in, ready to send.                                                                 |
+| `?applicationId=`  | The editor prepared for one job application.                                                                       |
+| `?imported=<file>` | A note that the resume came from an imported file.                                                                 |
+
+Cover letters work the same way and open at `/builder/letter/<cover-letter-id>`. See [Writing a cover letter](/guides/writing-a-cover-letter).
+
 ## The page canvas
 
 The page on the right is a live preview of the PDF you'll download. Each page has a label above it, such as **Page 1**.
