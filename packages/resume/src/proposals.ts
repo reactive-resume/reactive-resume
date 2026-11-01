@@ -493,7 +493,10 @@ export function applyProposal(draft: ResumeData, proposal: Proposal): boolean {
 
 export type ProposalApplicationResult = { applied: Proposal[]; stale: Proposal[] };
 
-/** Whether accepting this needs the user's own check first: it adds a detail (the server also sets this for claims nothing checked backs). */
+/**
+ * Whether accepting this needs the user's own check first: it adds a detail. The server also sets it for a figure,
+ * date, employer, title, skill or responsibility nothing checked backs.
+ */
 export const needsConfirmation = (proposal: Pick<Proposal, "addsClaims">) => proposal.addsClaims === true;
 const isAddition = ({ before, after, snapshot }: Proposal) =>
 	!snapshot && after.startsWith(before) && after.length > before.length;

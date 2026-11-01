@@ -285,7 +285,8 @@ function reviewer(document: LoadedDocument, review: ReviewContext) {
 			...(evidence.length > 0 ? { evidence } : {}),
 			...(unresolved > 0 ? { unresolved } : {}),
 			...(unsupported.length > 0 ? { unsupported } : {}),
-			...(fields.addsClaims || unsupported.length > 0 ? { addsClaims: true } : {}),
+			// A word the document doesn't use ("term") is too weak a sign on its own: most rewrites have one.
+			...(fields.addsClaims || unsupported.some((claim) => claim.kind !== "term") ? { addsClaims: true } : {}),
 		};
 	};
 	return { byId, cite, reviewOf };

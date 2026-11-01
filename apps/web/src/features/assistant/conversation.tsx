@@ -728,13 +728,16 @@ function ToolPartView({
 							title={
 								<>
 									{output.title && <span>{output.title} · </span>}
-									{pending > 0 ? (
-										<Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />
-									) : (
-										<Trans>
-											{accepted} of {proposals.length} applied
-										</Trans>
-									)}
+									{/* Its own element, so the count reads (and is found) on its own. */}
+									<span>
+										{pending > 0 ? (
+											<Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />
+										) : (
+											<Trans>
+												{accepted} of {proposals.length} applied
+											</Trans>
+										)}
+									</span>
 								</>
 							}
 							onAccept={(chosen) => {
