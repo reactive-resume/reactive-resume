@@ -1,12 +1,14 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
-import { useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useRouter } from "@tanstack/react-router";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { PasswordInput } from "@/components/input/password-input";
+import { clearAccountData } from "@/libs/auth/clear-account-data";
 import { authClient } from "@/libs/auth/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -23,6 +25,8 @@ type Props = {
 
 export function ResetPasswordPage({ token }: Props) {
 	const navigate = useNavigate();
+	const router = useRouter();
+	const queryClient = useQueryClient();
 
 	const form = useAppForm({
 		defaultValues: { password: "" },
@@ -46,13 +50,31 @@ export function ResetPasswordPage({ token }: Props) {
 				return;
 			}
 
+			// The reset signs the reset account out everywhere. A session that's still here belongs to another account
+			// (the link was opened in its browser): keep that one and its data, and say whose password changed.
+			const { data: still } = await authClient.getSession({ query: { disableCookieCache: true } });
+			if (still?.user) {
+				toast.add({
+					type: "success",
+					description: t`That account's password changed and it's signed out everywhere. This browser is still signed in as ${still.user.email}.`,
+					id: toastId,
+				});
+				await router.invalidate();
+				void navigate({ to: "/dashboard", replace: true });
+				return;
+			}
+
 			toast.add({
 				type: "success",
-				description: t`Password reset. Sign in with your new password.`,
+				description: t`Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again.`,
 				id: toastId,
 			});
 
-			void navigate({ to: "/auth/login" });
+			// The reset revoked this browser's session too: forget the account here, or sign-in would read the cached
+			// session and send the user to a dashboard that can no longer load.
+			clearAccountData(queryClient);
+			await router.invalidate();
+			void navigate({ to: "/auth/login", replace: true });
 		},
 	});
 
@@ -66,7 +88,9 @@ export function ResetPasswordPage({ token }: Props) {
 				</h1>
 
 				<div className="text-ink-3">
-					<Trans>Enter a new password for your account.</Trans>
+					<Trans>
+						Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps.
+					</Trans>
 				</div>
 			</div>
 

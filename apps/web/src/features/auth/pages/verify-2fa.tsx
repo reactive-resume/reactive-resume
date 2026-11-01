@@ -185,6 +185,21 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 				</div>
 			</form>
 
+			{backupCode && (
+				<details className="justify-self-center text-center text-sm text-ink-2">
+					<summary className="cursor-pointer underline underline-offset-2">
+						<Trans>No backup codes either?</Trans>
+					</summary>
+					<p className="mt-2 max-w-sm">
+						<Trans>
+							If you never verified your email address, a password reset turns two-step verification off. Otherwise a
+							reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account.
+							Then sign in with your password and turn it on again with a new authenticator.
+						</Trans>
+					</p>
+				</details>
+			)}
+
 			{!backupCode && (
 				<Button
 					variant="link"

@@ -39,6 +39,7 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 			"application_profile",
 			"career_answer",
 			"career_fact",
+			"career_profile",
 			"career_story",
 			"resume_slug_redirect",
 			"released_username",

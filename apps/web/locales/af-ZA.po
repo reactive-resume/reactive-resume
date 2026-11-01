@@ -1455,6 +1455,10 @@ msgstr "Voeg 'n ligging by"
 msgid "Add a newer offer"
 msgstr ""
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
 msgstr "Voeg 'n persoon by"
@@ -2712,6 +2716,10 @@ msgstr "Rugsteun kode"
 msgid "Backup codes copied"
 msgstr "Rugsteunkodes gekopieer"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "Gebalanseerd"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2898,6 +2906,10 @@ msgstr "lysinskrywing {n}"
 msgid "Bulleted list"
 msgstr "Kolpuntlys"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "Bordeauxrooi"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -2950,6 +2962,7 @@ msgstr "Kan sagteware jou CV lees?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -3051,6 +3064,15 @@ msgstr "Verander hierdie tydlyninskrywing."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "Verander tydsone"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3277,6 +3299,10 @@ msgstr "Kies 'n lêer"
 msgid "Choose a file to import"
 msgstr "Kies 'n lêer om in te voer"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "Kies 'n wagwoord wat verskil van jou huidige een."
@@ -3371,12 +3397,17 @@ msgid "Clarify"
 msgstr "Verduidelik"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "Klassiek"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "Sober"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -3429,6 +3460,7 @@ msgstr "Kliënt-ID"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -4503,9 +4535,17 @@ msgstr "Kon nie die wagwoord stel nie. Probeer weer."
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "Kon nie twee-stap verifikasie opstel nie. Probeer weer."
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "Kon nie die PDF-voorskou wys nie. Laai die lêer weer op."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -5924,10 +5964,6 @@ msgstr "Voer 'n volle bedrag in, soos 95000. Jou vorige bedrag bly onveranderd."
 msgid "Enter a name, up to 64 characters."
 msgstr "Voer 'n naam in, tot 64 karakters."
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "Voer 'n nuwe wagwoord vir jou rekening in."
-
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
@@ -6775,6 +6811,10 @@ msgstr "Google"
 msgid "Grade"
 msgstr "Punt"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "Grafiet"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "Grys"
@@ -7114,10 +7154,6 @@ msgstr "As die toepassing nie oopgemaak het nie, probeer weer op 'n toestel waar
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
-#: src/features/auth/email-text.ts
-msgid "If this was not you, you can ignore this message and your password will remain unchanged."
-msgstr ""
-
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -7133,6 +7169,10 @@ msgstr ""
 
 #: src/features/auth/email-text.ts
 msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr ""
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -7269,6 +7309,10 @@ msgstr "Indonesies"
 #: src/features/career/workspace/fit.tsx
 msgid "Inferred"
 msgstr "Afgelei"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "Ink blou"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
@@ -7621,6 +7665,14 @@ msgstr "Behou toegang wanneer jy nie die toepassing gebruik nie."
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "Hou rekening"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "Behou verbinding"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "Behou domein"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8306,6 +8358,11 @@ msgstr "Laai gekoppelde dokumente…"
 msgid "Loading providers…"
 msgstr "Laai verskaffers…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "Laai CV-bladsy {pageNumber} van {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "Laai CV's…"
@@ -8750,6 +8807,10 @@ msgstr "Meer as een e-posadres verskyn."
 msgid "Morning of"
 msgstr "Dieselfde oggend"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "Mosgroen"
+
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
 msgstr "Meeste kolpunte begin met vulsel eerder as iets wat jy gedoen het."
@@ -9048,6 +9109,7 @@ msgstr "Nuwe bladsy"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "Nuwe wagwoord"
@@ -9157,6 +9219,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Nog geen werksaansoeke nie. Voeg eers een by werksaansoeke by."
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -9703,6 +9769,10 @@ msgstr "Genommerde lys"
 msgid "Observation"
 msgstr "Waarneming"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "Oker"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "Odia"
@@ -10158,11 +10228,13 @@ msgid "Page"
 msgstr "Bladsy"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "Bladsy {0}"
@@ -10181,6 +10253,16 @@ msgstr "Bladsy {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "Bladsy {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "Bladsy {pageNumber} van {pageCount}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "Bladsy {pageNumber} van {totalPages}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10255,6 +10337,10 @@ msgstr "Pasleutel"
 msgid "Passkeys"
 msgstr "Pasleutels"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -10275,17 +10361,21 @@ msgstr "Wagwoord"
 msgid "Password changed"
 msgstr "Wagwoord verander"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Wagwoord verwyder"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "Wagwoord herstel. Meld aan met jou nuwe wagwoord."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Wagwoord gestel"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -10529,6 +10619,10 @@ msgstr "Beplan jou week"
 #: src/features/homepage/sections.tsx
 msgid "Play the list of languages"
 msgstr "Speel die lys tale"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "Pruimpers"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -10812,6 +10906,10 @@ msgstr "Produk Ontwerper"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "Produkontwerper met nege jaar ervaring in die ontwikkeling van <0>ontwerpstelsels</0> en navorsingsgebaseerde produkte vir B2B-spanne."
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "Professionele styl"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11544,6 +11642,10 @@ msgstr "Verwyder {value}"
 msgid "Remove connection"
 msgstr "Verwyder verbinding"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "Verwyder domein"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "Verwyder veld"
@@ -11596,9 +11698,17 @@ msgstr "Verwyder fase"
 msgid "Remove tag"
 msgstr "Verwyder merker"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "Verwyder die pasgemaakte domein?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Verwyder die wagwoord?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "Verwyder die webverbinding?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11719,6 +11829,10 @@ msgstr "Vereistes"
 msgid "Requirements and your evidence"
 msgstr "Vereistes en jou bewyse"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "Bespaar hoofletters vir kort opskrifte. Dit vertraag lees en kan hoofletter-sensitiewe soektogte verongeluk."
@@ -11742,6 +11856,10 @@ msgstr ""
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "Herstel jou wagwoord"
+
+#: src/features/auth/email-text.ts
+msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
+msgstr ""
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
@@ -11888,6 +12006,11 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Resume page"
 msgstr "CV bladsy"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "CV-bladsy {pageNumber} van {totalPages}"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -12176,6 +12299,10 @@ msgstr "Loop op bladsy {next}"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "Russies"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "Roesbruin"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -12771,6 +12898,10 @@ msgstr "Stuur"
 msgid "Send reset link"
 msgstr "Stuur herstelskakel"
 
+#: src/features/settings/account/profile.tsx
+msgid "Send the approval link again"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "Stuur die CV self eerder as 'n portefeulje-omhulsel."
@@ -12895,10 +13026,13 @@ msgstr "Serwies"
 msgid "Set a follow-up…"
 msgstr "Stel 'n opvolg..."
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "Stel 'n wagwoord in"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "Stel wagwoord"
@@ -12933,6 +13067,10 @@ msgstr "Stel jou magtigingstoep op"
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -14000,6 +14138,10 @@ msgstr "Teikenposte"
 msgid "Task"
 msgstr "Taak"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "Blauwgroen"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "Tegnies"
@@ -14168,6 +14310,11 @@ msgstr ""
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "Dankie, Sam. Hier is een: by Northwind Labs het ek die aanboord-herontwerp gelei, van 14 kliëntonderhoude tot 'n korter opstelling."
+
+#. placeholder {0}: still.user.email
+#: src/features/auth/pages/reset-password.tsx
+msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -14911,6 +15058,14 @@ msgstr "Hierdie gestoorde weergawe kon nie gelaai word nie."
 msgid "This saved version is no longer available."
 msgstr "Hierdie gestoorde weergawe is nie meer beskikbaar nie."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
@@ -15076,6 +15231,10 @@ msgstr "Volg jou eerste werk"
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "Nasporing"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Tradisioneel"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -15517,6 +15676,7 @@ msgstr "Gebruik 3 tot 64 kleinletters, syfers, kolletjies, koppeltekens en onder
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15560,6 +15720,7 @@ msgid "Use at least 3 characters."
 msgstr "Gebruik ten minste 3 karakters."
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15794,6 +15955,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "Verifieer eers jou e-pos in Instellings"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -16519,6 +16684,10 @@ msgstr "Jy meld aan sonder een"
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "Jy sal dit altyd in Vandag sien. E-pos hang af van jou bediener se e-posopstelling."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "Jy sal die sleutel weer moet invoer om weer te koppel. Die ingeboude leser bly aktief."
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "Jy sal verantwoordelik wees vir ons <0>ontwerpstelsels</0>, <1>gebruikersnavorsing</1> met kliënte uitvoer en hoë standaarde vir <2>toeganklikheid</2> handhaaf binne ’n <3>kruisfunksionele</3> span."
@@ -16550,6 +16719,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "Jy het {MAX_APPLICATION_LANES} fases bereik. Verwyder een om nog een by te voeg."
+
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -16655,6 +16828,10 @@ msgstr "Jou besonderhede het op die CV verander. Die brief is ook bygewerk."
 msgid "Your domain"
 msgstr "Jou domein"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "Jou domein sal nie meer jou primêre CV oopmaak nie. Jy kan dit later weer koppel."
+
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."
 msgstr ""
@@ -16709,7 +16886,7 @@ msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has and the guest's Career profile if it has its own. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

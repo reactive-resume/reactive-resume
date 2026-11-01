@@ -269,8 +269,9 @@ export function WebAccessSettings() {
 			</Sheet>
 			<ConfirmDialog
 				open={confirmRemove}
-				title={t`Remove connection?`}
-				message={t`The built-in reader remains active.`}
+				title={t`Remove the web connection?`}
+				message={t`You'll need to enter the key again to reconnect. The built-in reader remains active.`}
+				cancelLabel={t`Keep connection`}
 				confirmLabel={t`Remove connection`}
 				destructive
 				onConfirm={() => void run("delete")}

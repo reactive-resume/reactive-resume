@@ -1455,6 +1455,10 @@ msgstr "Lägg till en plats"
 msgid "Add a newer offer"
 msgstr ""
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
 msgstr "Lägg till en person"
@@ -2712,6 +2716,10 @@ msgstr "Säkerhetskopieringskod"
 msgid "Backup codes copied"
 msgstr "Reservkoder kopierade"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "Balanserad"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2898,6 +2906,10 @@ msgstr "listpost {n}"
 msgid "Bulleted list"
 msgstr "Punktlista"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "Bourgogne"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -2950,6 +2962,7 @@ msgstr "Kan programvara läsa ditt CV?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -3051,6 +3064,15 @@ msgstr "Ändra denna tidslinjepost."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "Byt tidszon"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3277,6 +3299,10 @@ msgstr "Välj en fil"
 msgid "Choose a file to import"
 msgstr "Välj en fil att importera"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "Välj ett lösenord som skiljer sig från ditt nuvarande."
@@ -3371,12 +3397,17 @@ msgid "Clarify"
 msgstr "Förtydliga"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "Klassisk"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "Ren"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -3429,6 +3460,7 @@ msgstr "Klient-ID"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -4503,9 +4535,17 @@ msgstr "Det gick inte att ange lösenordet. Försök igen."
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "Det gick inte att konfigurera tvåstegsverifiering. Försök igen."
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "Kunde inte visa PDF-förhandsgranskningen. Ladda upp filen igen."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -5924,10 +5964,6 @@ msgstr "Ange ett helt belopp, till exempel 95000. Ditt tidigare belopp är oför
 msgid "Enter a name, up to 64 characters."
 msgstr "Ange ett namn, upp till 64 tecken."
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "Ange ett nytt lösenord för ditt konto."
-
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
@@ -6775,6 +6811,10 @@ msgstr "Google"
 msgid "Grade"
 msgstr "Betyg"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "Grafit"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "Grå"
@@ -7114,10 +7154,6 @@ msgstr "Om appen inte öppnades, försök igen på en enhet där den är install
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
-#: src/features/auth/email-text.ts
-msgid "If this was not you, you can ignore this message and your password will remain unchanged."
-msgstr ""
-
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -7133,6 +7169,10 @@ msgstr ""
 
 #: src/features/auth/email-text.ts
 msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr ""
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -7269,6 +7309,10 @@ msgstr "Indonesiska"
 #: src/features/career/workspace/fit.tsx
 msgid "Inferred"
 msgstr "Härlett"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "Bläck blått"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
@@ -7621,6 +7665,14 @@ msgstr "Behålla åtkomst när du inte använder applikationen."
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "Håll konto"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "Behåll anslutning"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "Behåll domän"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8306,6 +8358,11 @@ msgstr "Laddar länkade dokument…"
 msgid "Loading providers…"
 msgstr "Laddar leverantörer…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "Läser in CV-sida {pageNumber} av {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "Läser in CV…"
@@ -8750,6 +8807,10 @@ msgstr "Fler än en e-postadress förekommer."
 msgid "Morning of"
 msgstr "Samma morgon"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "Mossgrön"
+
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
 msgstr "De flesta punkter inleds med utfyllnad istället för något du faktiskt gjorde."
@@ -9048,6 +9109,7 @@ msgstr "Ny sida"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "Nytt lösenord"
@@ -9157,6 +9219,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Inga jobbansökningar ännu. Lägg till en i Ansökningar först."
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -9703,6 +9769,10 @@ msgstr "Numrerad lista"
 msgid "Observation"
 msgstr "Observation"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "Ockra"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "Odia"
@@ -10158,11 +10228,13 @@ msgid "Page"
 msgstr "Sida"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "Sida {0}"
@@ -10181,6 +10253,16 @@ msgstr "Sida {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "Sida {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "Sida {pageNumber} av {pageCount}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "Sida {pageNumber} av {totalPages}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10255,6 +10337,10 @@ msgstr "Passkey"
 msgid "Passkeys"
 msgstr "Passkeys"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -10275,17 +10361,21 @@ msgstr "Lösenord"
 msgid "Password changed"
 msgstr "Lösenordet har ändrats"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Lösenordet har tagits bort"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "Lösenordet har återställts. Logga in med ditt nya lösenord."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Lösenord inställt"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -10529,6 +10619,10 @@ msgstr "Planerar din vecka"
 #: src/features/homepage/sections.tsx
 msgid "Play the list of languages"
 msgstr "Spela upp listan över språk"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "Plommonlila"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -10812,6 +10906,10 @@ msgstr "Produktdesigner"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "Produktdesigner med nio års erfarenhet av att utveckla <0>designsystem</0> och forskningsbaserade produkter för B2B-team."
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "Professionell stil"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11544,6 +11642,10 @@ msgstr "Ta bort {value}"
 msgid "Remove connection"
 msgstr "Ta bort anslutningen"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "Ta bort domän"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "Ta bort fält"
@@ -11596,9 +11698,17 @@ msgstr "Ta bort fas"
 msgid "Remove tag"
 msgstr "Ta bort tagg"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "Ta bort den anpassade domänen?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Ta bort lösenordet?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "Ta bort webbanslutningen?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11719,6 +11829,10 @@ msgstr "Krav"
 msgid "Requirements and your evidence"
 msgstr "Krav och dina belägg"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "Reservera versaler för korta rubriker. De saktar ner läsningen och kan omintetgöra skiftlägeskänslig sökning."
@@ -11742,6 +11856,10 @@ msgstr ""
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "Återställ ditt lösenord"
+
+#: src/features/auth/email-text.ts
+msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
+msgstr ""
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
@@ -11888,6 +12006,11 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Resume page"
 msgstr "cv sida"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "CV-sida {pageNumber} av {totalPages}"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -12176,6 +12299,10 @@ msgstr "Körs på sidan {next}"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "Ryska"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "Rostbrun"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -12771,6 +12898,10 @@ msgstr "Skicka"
 msgid "Send reset link"
 msgstr "Skicka återställningslänk"
 
+#: src/features/settings/account/profile.tsx
+msgid "Send the approval link again"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "Skicka själva CV:t istället för ett portföljomslag."
@@ -12895,10 +13026,13 @@ msgstr "Serbiska"
 msgid "Set a follow-up…"
 msgstr "Ställ in en uppföljning..."
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "Ange ett lösenord"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "Ange lösenord"
@@ -12933,6 +13067,10 @@ msgstr "Konfigurera din autentiseringsapp"
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -14000,6 +14138,10 @@ msgstr "Målroller"
 msgid "Task"
 msgstr "Uppgift"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "Blågrön"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "Teknisk"
@@ -14168,6 +14310,11 @@ msgstr ""
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "Tack, Sam. Här är ett: på Northwind Labs ledde jag omdesignen av introduktionsflödet, från 14 kundintervjuer till en kortare uppstart."
+
+#. placeholder {0}: still.user.email
+#: src/features/auth/pages/reset-password.tsx
+msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -14911,6 +15058,14 @@ msgstr "Det gick inte att ladda den sparade versionen."
 msgid "This saved version is no longer available."
 msgstr "Den här sparade versionen är inte längre tillgänglig."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
@@ -15076,6 +15231,10 @@ msgstr "Spåra ditt första jobb"
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "Spårning"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Traditionell stil"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -15517,6 +15676,7 @@ msgstr "Använd 3 till 64 gemener, siffror, punkter, bindestreck och understreck
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15560,6 +15720,7 @@ msgid "Use at least 3 characters."
 msgstr "Använd minst 3 tecken."
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15794,6 +15955,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "Verifiera din e-postadress i Inställningar först"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -16519,6 +16684,10 @@ msgstr "Du loggar in utan en"
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "Du ser det alltid under I dag. Mejl beror på serverns e-postinställningar."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "Du måste ange nyckeln igen för att ansluta på nytt. Den inbyggda läsaren förblir aktiv."
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "Du ansvarar för våra <0>designsystem</0>, genomför <1>användarundersökningar</1> med kunder och ställer höga krav på <2>tillgänglighet</2> i ett <3>tvärfunktionellt</3> team."
@@ -16550,6 +16719,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "Du har nått gränsen på {MAX_APPLICATION_LANES} faser. Ta bort en för att lägga till en annan."
+
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -16655,6 +16828,10 @@ msgstr "Dina uppgifter har ändrats i CV:t. Brevet uppdaterades också."
 msgid "Your domain"
 msgstr "Din domän"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "Din domän kommer inte längre att öppna ditt primära CV. Du kan ansluta den igen senare."
+
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."
 msgstr ""
@@ -16709,7 +16886,7 @@ msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has and the guest's Career profile if it has its own. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

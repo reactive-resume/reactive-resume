@@ -96,6 +96,17 @@ describe("linkAnonymousAccount", () => {
 		warn.mockRestore();
 	});
 
+	it("moves the guest's Knowledge facts, stories and career profile with the documents", async () => {
+		await linkAnonymousAccount({ fromUserId: "guest-123", toUserId: "user-456" });
+		const moved = (table: unknown) =>
+			mocks.update.mock.calls.some(
+				(call, index) => call[0] === table && mocks.updateSet.mock.calls[index]?.[0]?.userId === "user-456",
+			);
+		expect(moved(schema.careerFact)).toBe(true);
+		expect(moved(schema.careerStory)).toBe(true);
+		expect(moved(schema.careerProfile)).toBe(true);
+	});
+
 	it("updates document ownership, rewrites upload URLs in DB, and executes registered hooks", async () => {
 		const hook = vi.fn().mockResolvedValue(undefined);
 		setAccountLinkHook(hook);

@@ -96,7 +96,7 @@ function AuthEmailLayout({
 						</Section>
 
 						<Section className="mt-6">
-							<Heading className="font-heading text-2xl leading-0 font-medium tracking-tighter whitespace-break-spaces md:text-5xl">
+							<Heading className="font-heading text-2xl leading-tight font-medium tracking-tighter whitespace-break-spaces md:text-5xl">
 								{heading}
 							</Heading>
 
@@ -115,9 +115,9 @@ function AuthEmailLayout({
 							</Button>
 
 							<Section className="mt-8">
-								<Text className="leading-0">{messages.linkFallback}</Text>
+								<Text>{messages.linkFallback}</Text>
 								{/* The address reads left to right in every language. */}
-								<Link dir="ltr" className="leading-0 text-zinc-200/60 underline underline-offset-2" href={actionUrl}>
+								<Link dir="ltr" className="break-all text-zinc-200/60 underline underline-offset-2" href={actionUrl}>
 									{actionUrl}
 								</Link>
 							</Section>

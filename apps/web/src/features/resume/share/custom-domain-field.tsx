@@ -9,6 +9,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { CvDomainCard } from "./cv-domain-card";
 import { DnsRecordsDialog } from "./dns-records-dialog";
+import { useConfirm } from "@/hooks/use-confirm";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
@@ -19,6 +20,7 @@ type CustomDomainFieldProps = {
 
 /** Connects the account's own domain: the domain, the DNS records to add in a dialog, a check, and the result. */
 export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
+	const confirm = useConfirm();
 	const id = useId();
 	const queryClient = useQueryClient();
 	const { data: domain, isPending: loading } = useQuery(orpc.customDomain.get.queryOptions());
@@ -117,7 +119,17 @@ export function CustomDomainField({ suggest }: CustomDomainFieldProps) {
 					variant="ghost"
 					size="sm"
 					loading={remove.isPending}
-					onClick={() => remove.mutate(undefined, { onError })}
+					disabled={set.isPending || verify.isPending}
+					onClick={async () => {
+						if (
+							await confirm(t`Remove the custom domain?`, {
+								description: t`Your domain will stop opening your primary resume. You can reconnect it later.`,
+								confirmText: t`Remove domain`,
+								cancelText: t`Keep domain`,
+							})
+						)
+							remove.mutate(undefined, { onError });
+					}}
 				>
 					<Trans>Remove</Trans>
 				</Button>

@@ -394,11 +394,33 @@ export async function linkAnonymousAccount({
 				message:
 					"Both accounts have duplicate saved application answers. Export and delete one copy before linking, so neither is silently overwritten.",
 			});
-		// Preserve wording. Knowledge currently stays with the guest, so missing references require review after linking.
+		// Preserve wording; the Knowledge facts the answers cite move with them below.
 		await tx
 			.update(schema.careerAnswer)
 			.set({ userId: toUserId, updatedAt: schema.careerAnswer.updatedAt })
 			.where(eq(schema.careerAnswer.userId, fromUserId));
+
+		// The guest was invited to build Knowledge like any user: facts, stories and the career profile move too. A fact
+		// the account already holds from the same source stays the account's; the guest's copy goes with the guest.
+		await tx
+			.update(schema.careerFact)
+			.set({ userId: toUserId })
+			.where(
+				and(
+					eq(schema.careerFact.userId, fromUserId),
+					sql`not exists (select 1 from career_fact f where f.user_id = ${toUserId} and f.source_key = career_fact.source_key)`,
+				),
+			);
+		await tx.update(schema.careerStory).set({ userId: toUserId }).where(eq(schema.careerStory.userId, fromUserId));
+		await tx
+			.update(schema.careerProfile)
+			.set({ userId: toUserId })
+			.where(
+				and(
+					eq(schema.careerProfile.userId, fromUserId),
+					sql`not exists (select 1 from career_profile p where p.user_id = ${toUserId})`,
+				),
+			);
 
 		await tx
 			.delete(schema.resumeSlugRedirect)
