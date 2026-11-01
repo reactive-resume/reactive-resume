@@ -30,6 +30,7 @@ import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { Combobox } from "@/components/ui/combobox";
 import { useCareerTime } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
+import { toastError } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
 
@@ -50,6 +51,7 @@ const emptyForm = () => ({
 	/** A lane picked in this form; null keeps the current one (Saved for a new application). */
 	laneId: null as string | null,
 	resumeId: "",
+	coverLetterId: "",
 	tags: [] as string[],
 	sourceUrl: "",
 	stageEnteredAt: todayInputValue(),
@@ -76,6 +78,7 @@ function toForm(app: Application, timeZone: string): FormState {
 		source: app.source ?? "",
 		laneId: null,
 		resumeId: app.resumeId ?? "",
+		coverLetterId: app.coverLetterId ?? "",
 		tags: app.tags,
 		sourceUrl: app.sourceUrl ?? "",
 		stageEnteredAt: "",
@@ -109,6 +112,7 @@ function toPayload(form: FormState, timeZone: string, application: Application |
 		salary: form.salary.trim() || null,
 		source: form.source.trim() || null,
 		resumeId: form.resumeId || null,
+		coverLetterId: form.coverLetterId || null,
 		tags: form.tags,
 		sourceUrl: form.sourceUrl.trim() || null,
 		jobDescription: form.jobDescription.trim() || null,
@@ -178,7 +182,7 @@ function JobDescriptionAutofill({ value, onChange, onFill }: JobDescriptionAutof
 					<p className="text-xs text-ink-3">
 						<Trans>
 							Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and
-							keep the text with this application for match scoring and tailoring.
+							keep the text with this application for a fit check and tailoring.
 						</Trans>
 					</p>
 					<Textarea
@@ -243,6 +247,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 		setForm(application ? toForm(application, timeZone) : emptyForm());
 	}
 
+	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const { data: resumes } = useQuery(orpc.resume.list.queryOptions());
 	const resumeOptions = (resumes ?? []).map((resume) => ({ value: resume.id, label: resume.name }));
 
@@ -284,7 +289,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 				toast.add({ type: "success", description: t`Application updated` });
 				onOpenChange(false);
 			},
-			onError: () => toast.add({ type: "error", description: t`Couldn't save your changes. Try again.` }),
+			onError: (error) => toastError(error, t`Couldn't save your changes. Try again.`),
 		}),
 	);
 
@@ -472,7 +477,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 									onChange={(value) => set("resumeFile", value)}
 								/>
 								<p className="text-[11px] text-ink-3">
-									<Trans>Link a Reactive Resume to use AI match scoring and tailoring.</Trans>
+									<Trans>Link a Reactive Resume to use a fit check against each requirement and tailoring.</Trans>
 								</p>
 							</div>
 						)}
@@ -481,11 +486,34 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 					{/* The attach button below names itself; the file picker has no labelable control. */}
 					<Field label={t`Cover letter`}>
 						{() => (
-							<FileAttachmentField
-								value={form.coverLetter}
-								attachLabel={t`Attach a cover letter (PDF, up to 10 MB)`}
-								onChange={(value) => set("coverLetter", value)}
-							/>
+							<div className="grid gap-2">
+								<select
+									aria-label={t`Link an existing letter`}
+									value={form.coverLetterId}
+									disabled={Boolean(application?.sentCoverLetterVersionId)}
+									onChange={(event) => set("coverLetterId", event.target.value)}
+									className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
+								>
+									<option value="">{t`No letter`}</option>
+									{documents
+										?.filter(
+											(item) =>
+												item.type === "letter" &&
+												(item.id === form.coverLetterId ||
+													(!item.isLocked && (!item.application || item.application.id === application?.id))),
+										)
+										.map((item) => (
+											<option key={item.id} value={item.id}>
+												{item.name}
+											</option>
+										))}
+								</select>
+								<FileAttachmentField
+									value={form.coverLetter}
+									attachLabel={t`Attach a cover letter (PDF, up to 10 MB)`}
+									onChange={(value) => set("coverLetter", value)}
+								/>
+							</div>
 						)}
 					</Field>
 

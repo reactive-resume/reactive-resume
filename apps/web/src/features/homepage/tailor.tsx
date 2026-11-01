@@ -7,8 +7,6 @@ import { SCENE, useLanding } from "./scroll";
 import { Sheet } from "./sheet";
 import { Doodle, labelClass, SceneCaption, Stamp } from "./ui";
 
-/** Job match as each of the posting's four keywords is matched. */
-const MATCH = [62, 70, 78, 85, 91];
 const KEYWORDS = ["a", "b", "c", "d"] as const;
 
 type PostingKeywordProps = { id: (typeof KEYWORDS)[number]; children: ReactNode };
@@ -25,7 +23,7 @@ function PostingKeyword({ id, children }: PostingKeywordProps) {
 
 /**
  * 04 Tailor. The verb is stitched together, then threads run from each keyword in a job posting to its match on the
- * resume, the match score climbs, a cover letter slides out and the role moves from Saved to Applied.
+ * resume, supported requirements accumulate, a cover letter slides out and the role moves from Saved to Applied.
  */
 export function Tailor() {
 	const { i18n } = useLingui();
@@ -78,7 +76,7 @@ export function Tailor() {
 					title={tailor}
 					className="min-[900px]:short:hidden absolute end-(--gutter) top-[13vh] hidden w-[min(24em,30vw)] min-[900px]:flex"
 				>
-					{t`Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role.`}
+					{t`Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role.`}
 				</SceneCaption>
 
 				<svg
@@ -133,9 +131,9 @@ export function Tailor() {
 							</Trans>
 						</p>
 						<div className="flex items-baseline justify-between border-t border-line pt-3">
-							<span className={cn(labelClass, "text-[10.5px] text-ink-3")}>{t`Job match`}</span>
+							<span className={cn(labelClass, "text-[10.5px] text-ink-3")}>{t`Supported`}</span>
 							<span className="font-anybody text-[40px] leading-none font-light tracking-[-.03em] text-accent-text tabular-nums">
-								{i18n.number((MATCH[matched] ?? 0) / 100, { style: "percent" })}
+								{i18n.number(matched)} / {i18n.number(KEYWORDS.length)}
 							</span>
 						</div>
 					</div>

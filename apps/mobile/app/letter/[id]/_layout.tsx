@@ -14,15 +14,19 @@ import { useKeyCommands } from "@/shell/key-commands";
 import { IconButton } from "@/ui";
 
 /** Fills the chrome from the draft once for every pane: name and save status. ⌘Z / ⇧⌘Z undo and redo. */
-function DraftChrome({ id }: { id: string }) {
+type DraftChromeProps = { id: string; origin?: string | undefined };
+
+function DraftChrome({ id, origin }: DraftChromeProps) {
 	const router = useRouter();
 	const { t } = useLingui();
 	const name = useLetterStore((state) => state.document?.name);
+	const applicationId = useLetterStore((state) => state.document?.sourceApplicationId);
 	const status = useLetterStore((state) => state.status);
 	const locked = useLetterStore((state) => state.locked);
 	const retry = useLetterStore((state) => state.retry);
 	useBuilderChrome({
 		title: name,
+		applicationId: origin ?? applicationId,
 		save: name ? { status, locked, onRetry: retry } : undefined,
 		actions: <IconButton icon="sparkle" label={t`Assistant`} onPress={() => router.push(routes.letterAssistant(id))} />,
 	});
@@ -39,7 +43,10 @@ function DraftChrome({ id }: { id: string }) {
  */
 export default function LetterLayout() {
 	const { t } = useLingui();
-	const { id } = useLocalSearchParams<{ id: string }>();
+	const { id, applicationId } = useLocalSearchParams<{ id: string; applicationId?: string }>();
+	// Pushed entries and history omit the query; keep this editor visit bound to the job it opened from.
+	const [origin, setOrigin] = useState({ id, applicationId });
+	if (origin.id !== id || (applicationId && applicationId !== origin.applicationId)) setOrigin({ id, applicationId });
 	// `?version=` (Applications' "What you sent") opens History on that version; it's the child route's param.
 	const { version } = useGlobalSearchParams<{ version?: string }>();
 	const [sharing, setSharing] = useState(!!version);
@@ -56,9 +63,24 @@ export default function LetterLayout() {
 	}, [id]);
 
 	const panes: PaneTab<LetterPane>[] = [
-		{ pane: "write", label: t`Write`, icon: "pencil-simple", href: routes.letter(id, "write") },
-		{ pane: "page", label: t`Page`, icon: "file-text", href: routes.letter(id, "page") },
-		{ pane: "design", label: t`Design`, icon: "palette", href: routes.letter(id, "design") },
+		{
+			pane: "write",
+			label: t`Write`,
+			icon: "pencil-simple",
+			href: routes.letter(id, "write", undefined, origin.applicationId),
+		},
+		{
+			pane: "page",
+			label: t`Page`,
+			icon: "file-text",
+			href: routes.letter(id, "page", undefined, origin.applicationId),
+		},
+		{
+			pane: "design",
+			label: t`Design`,
+			icon: "palette",
+			href: routes.letter(id, "design", undefined, origin.applicationId),
+		},
 	];
 
 	return (
@@ -70,7 +92,7 @@ export default function LetterLayout() {
 			onExport={() => setSharing(true)}
 			modals={["assistant"]}
 		>
-			<DraftChrome id={id} />
+			<DraftChrome id={id} origin={origin.applicationId} />
 			<LetterConflictSheet />
 			<LetterShareSheet id={id} open={sharing} onClose={() => setSharing(false)} version={version} />
 		</BuilderChrome>

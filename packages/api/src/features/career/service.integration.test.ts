@@ -1370,6 +1370,36 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		});
 	});
 
+	it("does not record a late-linked letter as sent when a reply advances an already-applied job", async () => {
+		const { coverLetterService } = await import("../cover-letters/service");
+		const { documentsService } = await import("../documents/service");
+		await applications.update({ userId: "alice", id: "alice-app", status: "applied" });
+		const letter = await coverLetterService.create({ userId: "alice", name: "Late letter" });
+		await documentsService.linkApplication({
+			userId: "alice",
+			type: "letter",
+			id: letter.id,
+			applicationId: "alice-app",
+		});
+		const reply = await savedItem("alice-app", {
+			kind: "reply",
+			message: "We'd like to move you to screening.",
+			title: "Next step",
+			asks: [],
+			unconfirmed: [],
+			reply: "",
+			changes: [{ type: "stage", stage: "screening" }],
+			offer: null,
+		});
+		await service.applyReply("alice", reply.id, [0]);
+		const applied = await applications.getById({ userId: "alice", id: "alice-app" });
+		expect(applied).toMatchObject({
+			status: "screening",
+			coverLetterId: letter.id,
+			sentCoverLetterVersionId: null,
+		});
+	});
+
 	it("keeps workspace keys a partial save leaves out, and only the owner can write it", async () => {
 		const answers = [{ id: "why", question: "Why ACME?", answer: "Reliability work.", factIds: [] }];
 		await service.saveWorkspace("alice", "alice-app", { answers, checklist: [1] }, { answers: [], checklist: [] });

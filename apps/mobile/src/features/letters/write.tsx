@@ -163,6 +163,8 @@ function ForSection({ application, applications, disabled }: ForSectionProps) {
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState("");
 	const search = query.trim().toLocaleLowerCase();
+	const letterId = useLetterStore((state) => state.document?.id);
+	const submitted = Boolean(application?.sentCoverLetterVersionId && application.coverLetterId === letterId);
 	const choices = applications
 		.filter((item) => item.status !== "closed" || item.id === application?.id)
 		.filter((item) => !search || `${item.role} ${item.company}`.toLocaleLowerCase().includes(search));
@@ -241,7 +243,13 @@ function ForSection({ application, applications, disabled }: ForSectionProps) {
 							</View>
 						</View>
 					</View>
-					<Button size="sm" variant="secondary" label={t`Change`} disabled={disabled} onPress={() => setOpen(true)} />
+					<Button
+						size="sm"
+						variant="secondary"
+						label={t`Change`}
+						disabled={disabled || submitted}
+						onPress={() => setOpen(true)}
+					/>
 				</View>
 			) : (
 				<>
@@ -249,7 +257,7 @@ function ForSection({ application, applications, disabled }: ForSectionProps) {
 						variant="secondary"
 						icon="briefcase"
 						label={t`Link an application`}
-						disabled={disabled}
+						disabled={disabled || submitted}
 						onPress={() => setOpen(true)}
 					/>
 					<Text variant="caption" color="ink3">
@@ -280,9 +288,14 @@ function ForSection({ application, applications, disabled }: ForSectionProps) {
 							<ListRow
 								key={item.id}
 								title={item.role}
-								subtitle={`${item.company} · ${getLaneLabel(resolveLane(lanes.lanes, item))}`}
+								subtitle={
+									item.sentCoverLetterVersionId && item.coverLetterId !== letterId
+										? `${item.company} · ${t`Letter already sent`}`
+										: `${item.company} · ${getLaneLabel(resolveLane(lanes.lanes, item))}`
+								}
 								leading="briefcase"
 								selected={item.id === application?.id}
+								disabled={Boolean(item.sentCoverLetterVersionId && item.coverLetterId !== letterId)}
 								onPress={() => choose(item)}
 							/>
 						))}

@@ -1392,7 +1392,6 @@ msgstr "פָּעִיל"
 msgid "Activity"
 msgstr "פְּעִילוּת"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1447,14 +1446,6 @@ msgstr "הוסף מיקום"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "הוסף הערה"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "הוסף הערה…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2645,6 +2636,11 @@ msgstr "BA, עיצוב תקשורת"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "בְּחֲזָרָה"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3921,8 +3917,8 @@ msgid "Copy stylesheet"
 msgstr "העתקת גיליון סגנונות"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "העתק את תיאור המשרה המלא מהמודעה והדבק אותו למטה. נמלא עבורך את השדות ונשמור את הטקסט יחד עם מועמדות זו לצורך ניקוד ההתאמה והתאמה אישית."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4691,6 +4687,10 @@ msgstr "מכתב נלווה - {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "מכתב נלווה · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4908,6 +4908,10 @@ msgstr "עמודת תאריכים"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "פורמט תאריך"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7500,7 +7504,6 @@ msgstr "תיאור משרה"
 msgid "Job link or posting text"
 msgstr "קישור לעבודה או טקסט פרסום עבודה"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "התאמה לעבודה"
@@ -7979,6 +7982,11 @@ msgstr "מכתב · עדיין לא נשלח"
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "גוף האות"
@@ -8079,8 +8087,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "קשר Reactive Resume (מומלץ)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "קשר קורות חיים מ-Reactive Resume כדי להשתמש בציון התאמה ובהתאמה אישית מבוססי בינה מלאכותית."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8095,6 +8103,10 @@ msgstr "קישור בקשת עבודה"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "קישור להגשת מועמדות לעבודה..."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8331,6 +8343,18 @@ msgstr "נעול"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "נָעוּל. בטל את הנעילה כדי לערוך."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9217,6 +9241,10 @@ msgstr "עדיין אין עבודה"
 msgid "No keys yet."
 msgstr "עדיין אין מפתחות."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "אין שורות שנראות כמו תפקיד יחד עם מעסיק."
@@ -9295,6 +9323,7 @@ msgstr "אין תגובה"
 msgid "No results found."
 msgstr "לא נמצאו תוצאות."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "אין קורות חיים"
@@ -10238,8 +10267,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "הדבק קישור לעבודה. אנו נשמור את פרסום המשרה כדי ש-Check, העוזר והמכתב שלך יוכלו להשתמש בו."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "הדבק מודעת דרושים פעם אחת. היא מזינה עותק מותאם של קורות החיים שלך, ציון התאמה, טיוטת מכתב מקדים ומקום למעקב אחר התפקיד."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11805,6 +11834,10 @@ msgstr "פרטי קורות חיים"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "קובץ קורות חיים"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13461,6 +13494,10 @@ msgstr "תוצאת השלב"
 msgid "Stage stays {stage}"
 msgstr "השלב נשאר {stage}"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13751,6 +13788,7 @@ msgstr "תְמִיכָה"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "נתמך"
 
@@ -14171,8 +14209,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "האפליקציה ששלחה אותך לכאן ביצעה בקשת הרשאה לא חוקית. חזור לאפליקציה ונסה שוב."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "מכתב זה מיועד להגשת מועמדות לעבודה."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14556,6 +14594,10 @@ msgstr "לא ניתן היה לפתוח את המועמדות הזו."
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "לבקשת עבודה זו לא נשמר עדיין פרסום עבודה. הדבק אותו כדי להתאים אותו."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "הדפדפן הזה לא יכול להקליט כאן. בחר קובץ שמע או הקלד את התשובה."
@@ -14692,8 +14734,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "האות הזו ו-\"{resumeName}\" כשתי PDFs, בשם להתאים."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "המכתב הזה נעול. בטל את הנעילה מהתפריט שלו כדי לערוך."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15451,6 +15502,14 @@ msgstr "השתמש בעמודה אחת לכל דבר שצריך להיקרא ב�
 #: src/features/ats-checker/messages.ts
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "השתמש ב־A4 או ב־US Letter כדי שהפריסה תישמר בעת עיבוד מחדש."
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
 
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
@@ -16220,6 +16279,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "כתוב מכתב"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
