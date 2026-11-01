@@ -397,17 +397,16 @@ export function Closing() {
 							<span className="text-lg leading-tight font-semibold">Google Play</span>
 						</span>
 					</a>
-					<button
-						type="button"
-						disabled
-						className="inline-flex min-h-14 cursor-not-allowed items-center gap-3 rounded-xl border border-line px-5 py-2.5 text-start font-ui text-ink-3"
+					<a
+						href="https://testflight.apple.com/join/desWgpRk"
+						className="inline-flex min-h-14 items-center gap-3 rounded-xl border border-line-2 bg-raised px-5 py-2.5 text-start font-ui text-ink transition-[background-color,transform] duration-[160ms] ease-out-strong hover:bg-hover motion-safe:active:scale-[.97]"
 					>
 						<AppleLogoIcon aria-hidden="true" size={28} weight="fill" className="shrink-0" />
 						<span className="flex flex-col gap-0.5">
-							<span className="text-xs leading-tight">{t`Coming soon`}</span>
-							<span className="text-lg leading-tight font-semibold">App Store</span>
+							<span className="text-xs leading-tight text-ink-2">{t`Get the beta on`}</span>
+							<span className="text-lg leading-tight font-semibold">TestFlight</span>
 						</span>
-					</button>
+					</a>
 				</div>
 			</div>
 		</section>
