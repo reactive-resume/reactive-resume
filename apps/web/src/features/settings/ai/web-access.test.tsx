@@ -5,6 +5,7 @@ import { afterEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 
 const api = vi.hoisted(() => ({ status: vi.fn(), test: vi.fn() }));
 vi.mock("@/libs/orpc/client", () => ({
@@ -40,7 +41,9 @@ function renderSection() {
 	render(
 		<I18nProvider i18n={i18n}>
 			<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
-				<WebAccessSection />
+				<ConfirmDialogProvider>
+					<WebAccessSection />
+				</ConfirmDialogProvider>
 			</QueryClientProvider>
 		</I18nProvider>,
 	);

@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { createSampleResumeFromDashboard, makeResumePublic, openSidebarSection } from "../fixtures/resume";
+import { failRpcProcedure } from "../fixtures/rpc-failure";
 import { expect, test } from "../fixtures/test";
 
 test("counts a visitor's PDF download without counting the preview", async ({ browser, authPage: page }, testInfo) => {
@@ -111,22 +112,26 @@ test("a failed primary lookup stops Copy for a cached primary that is no longer 
 
 	// The primary is unpublished outside this page. The cached row still says it is public until the list is read again.
 	expect((await page.request.put(`/api/openapi/resumes/${primaryId}`, { data: { isPublic: false } })).ok()).toBe(true);
+	expect((await page.request.get(`/${account.username}`)).status()).toBe(404);
 	// Let the cached list go stale, then make its read fail. Remounting Share asks for it again (refetchOnMount).
-	await page.waitForTimeout(62_000);
-	await page.route("**/*", (route) =>
-		route.request().url().includes("/api/rpc/resume/list") ? route.abort("failed") : route.continue(),
-	);
+	await page.clock.install();
+	await page.clock.fastForward(62_000);
+	let failedLists = 0;
+	await page.route("**/api/rpc/**", async (route) => {
+		if (await failRpcProcedure(route, "/api/rpc/resume/list", "Primary lookup unavailable")) failedLists++;
+	});
 	await page.getByRole("link", { name: "Back to documents", exact: true }).click();
 	await page.getByRole("link", { name: secondName, exact: true }).click();
 	await openSidebarSection(page, "Sharing");
 
+	await expect.poll(() => failedLists).toBeGreaterThan(0);
 	await expect(addresses.getByText(/Couldn't check which resume opens your short link/)).toBeVisible();
 	await expect(copy).toBeDisabled();
 	// The cached target really is dead: this is the 404 Copy must never copy.
 	expect((await page.request.get(`/${account.username}`)).status()).toBe(404);
 
 	// A successful retry returns to the truthful no-primary state, still without a dead Copy.
-	await page.unroute("**/*");
+	await page.unroute("**/api/rpc/**");
 	await page.getByRole("link", { name: "Back to documents", exact: true }).click();
 	await page.getByRole("link", { name: secondName, exact: true }).click();
 	await openSidebarSection(page, "Sharing");

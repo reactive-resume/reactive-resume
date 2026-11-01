@@ -6,6 +6,7 @@ import type {
 	RenderTask,
 } from "pdfjs-dist/legacy/build/pdf.mjs";
 import type { ReactNode } from "react";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@reactive-resume/utils/style";
 import { AnnotationMode, getDocument, getPdfWorker, RenderingCancelledException } from "./pdfjs";
@@ -100,6 +101,7 @@ export function PdfCanvasPage({
 	showPageNumbers,
 	totalPages,
 }: PdfCanvasPageProps) {
+	const { t } = useLingui();
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const onLoadSuccessRef = useRef(onLoadSuccess);
 	const onRenderSuccessRef = useRef(onRenderSuccess);
@@ -201,12 +203,18 @@ export function PdfCanvasPage({
 			{caption ??
 				(showPageNumbers ? (
 					<figcaption className="mb-1 text-[0.625rem] font-medium text-ink-3">
-						Page {pageNumber} of {totalPages}
+						<Trans>
+							Page {pageNumber} of {totalPages}
+						</Trans>
 					</figcaption>
 				) : null)}
 
 			<div style={scaledPageSize} className={cn("relative aspect-page overflow-hidden rounded-md", className)}>
-				<canvas ref={canvasRef} aria-label={`Resume page ${pageNumber} of ${totalPages}`} className="block size-full" />
+				<canvas
+					ref={canvasRef}
+					aria-label={t`Resume page ${pageNumber} of ${totalPages}`}
+					className="block size-full"
+				/>
 				{overlay}
 			</div>
 		</figure>
