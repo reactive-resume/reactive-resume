@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# मुद्दाले तपाईंला�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {चेकसँग समीक्षा गर्न # चीज छ। तपाईं अझै पनि डाउनलोड गर्न सक्नुहुन्छ।} other {चेकसँग समीक्षा गर्न # चीजहरू छन्। तपाईं अझै पनि डाउनलोड गर्न सक्नुहुन्छ।}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} सुरु भएकै ठाउँमा फर्कियो।"
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} राख्न मिल्ने ठाउँमाथि छैन।"
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} यसमाथि छ: {place}।"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} यहाँ राखियो: {place}।"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} जान नमिल्ने ठाउँमा राखियो। केही पनि सारिएन।"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} सुरु भएकै ठाउँमा राखियो। केही पनि सारिएन।"
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "सम्पर्कहरू"
 msgid "Contain"
 msgstr "पूरै चित्र"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "सामग्री"
@@ -5169,6 +5194,10 @@ msgstr "तान्नुहोस् · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "खण्डहरू स्तम्भहरू बीच सार्न यहाँ तानेर राख्नुहोस्"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "सार्न पोइन्टरले तान्नुहोस्, वा यसको मेनु प्रयोग गर्नुहोस्।"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "नाम दिइएका चरणहरू आयात गर्नुअघि आफ्ना चरणहरू लोड गर्नुहोस्। तपाईंको CSV डेटा सुरक्षित रहन्छ।"
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "लोड गर्दै"
 
@@ -8264,6 +8294,10 @@ msgstr "{label} मा सारियो"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "आवेदनलाई {0} बाट सार्छ।"
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} सार्ने काम रद्द गरियो। केही पनि सारिएन।"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "पृष्ठ"
 msgid "Page {0}"
 msgstr "पृष्ठ {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "पृष्ठ {0}, साइडबार"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "पृष्ठ {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "एउटा ढाँचा छान्नुहोस् र सब�
 msgid "Pick two examples"
 msgstr "दुई उदाहरण छान्नुहोस्"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} उठाइयो।"
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "तपाईंका कथाहरू छान्दै"
@@ -9806,6 +9854,16 @@ msgstr "पोर्चुगाली (पोर्चुगल)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "पद"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total} मध्ये स्थान {position}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total} मध्ये स्थान {position}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "शीर्षक"
 msgid "To"
 msgstr "को"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "उठाउन Space वा Enter थिच्नुहोस्। सार्न एरो कुञ्जीहरू, राख्न Space वा Enter, वा रद्द गर्न Escape प्रयोग गर्नुहोस्।"
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "अनाम पासकी"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "शीर्षकविहीन"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "शीर्षकविहीन वस्तु"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

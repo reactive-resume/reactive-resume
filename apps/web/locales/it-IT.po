@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {Il problema # potrebbe costarti una corrispondenza
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {L'assegno ha qualcosa # da rivedere. Puoi ancora scaricare.} other {Il controllo ha # cose da rivedere. Puoi ancora scaricare.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} è tornato al punto di partenza."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} non è sopra un punto in cui può essere rilasciato."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} è sopra {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} è stato rilasciato su {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} è stato rilasciato in un punto non consentito. Non è stato spostato nulla."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} è stato rilasciato nel punto di partenza. Non è stato spostato nulla."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "Contatti"
 msgid "Contain"
 msgstr "Adatta"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Contenuto"
@@ -5169,6 +5194,10 @@ msgstr "trascina · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Trascina e rilascia qui le sezioni per spostarle tra le colonne"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Trascinalo con il puntatore per spostarlo oppure usa il suo menu."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Carica le tue fasi prima di importare quelle con un nome. I dati CSV vengono conservati."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Caricamento in corso"
 
@@ -8264,6 +8294,10 @@ msgstr "Spostata in {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Sposta la candidatura da {0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Spostamento di {item} annullato. Non è stato spostato nulla."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "Pagina"
 msgid "Page {0}"
 msgstr "Pagina {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Pagina {0}, barra laterale"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Pagina {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "Scegli un formato e usalo ovunque."
 msgid "Pick two examples"
 msgstr "Scegli due esempi"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} selezionato."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Scelgo le tue storie"
@@ -9806,6 +9854,16 @@ msgstr "Portoghese (Portogallo)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Posizione"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "la posizione {position} di {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "la posizione {position} di {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "Titolo"
 msgid "To"
 msgstr "A"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Per selezionarlo, premi Spazio o Invio. Usa i tasti freccia per spostarlo, Spazio o Invio per rilasciarlo oppure Esc per annullare."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "Chiave d'accesso senza nome"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Senza titolo"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Elemento senza titolo"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

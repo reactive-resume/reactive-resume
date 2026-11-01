@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# の問題により、マッチが失われる可
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {# の項目を確認してください。まだダウンロードできます。} other {# の確認事項があることを確認してください。まだダウンロードできます。}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item}は元の位置に戻りました。"
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item}はドロップできる場所の上にありません。"
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item}は{place}の上にあります。"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item}を{place}にドロップしました。"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item}を置けない場所にドロップしました。何も移動していません。"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item}を元の位置にドロップしました。何も移動していません。"
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "連絡先"
 msgid "Contain"
 msgstr "全体表示"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "コンテンツ"
@@ -5169,6 +5194,10 @@ msgstr "ドラッグ · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "ここにセクションをドラッグ＆ドロップして、列間で移動します"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "ポインターでドラッグして移動するか、メニューを使用してください。"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "名前付きのステージをインポートする前に、ステージを読み込んでください。CSVデータは保持されます。"
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "読み込み中"
 
@@ -8264,6 +8294,10 @@ msgstr "{label}に移動"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "応募を{0}から移動します。"
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item}の移動をキャンセルしました。何も移動していません。"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "ページ"
 msgid "Page {0}"
 msgstr "ページ {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "ページ {0}、サイドバー"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "ページ {page}、{column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "1つの形式を選び、全体を通して使用してください。"
 msgid "Pick two examples"
 msgstr "例を2つ選ぶ"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item}を持ち上げました。"
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "ストーリーを選定中"
@@ -9806,6 +9854,16 @@ msgstr "ポルトガル語（ポルトガル）"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "役職"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total}件中{position}番目"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total}件中{position}番目、{group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "タイトル"
 msgid "To"
 msgstr "に"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "持ち上げるには Space または Enter を押します。矢印キーで移動し、Space または Enter でドロップ、Escape でキャンセルします。"
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "名前なしのパスキー"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "無題"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "無題の項目"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

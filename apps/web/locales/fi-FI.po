@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {#-ongelma voi maksaa sinulle ottelun.} other {#-on
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Checkissä on # asia, jota kannattaa tarkistaa. Voit silti ladata.} other {Checkissä on # asioita, jotka kannattaa tarkistaa. Voit silti ladata.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} on taas lähtöpaikassaan."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} ei ole paikan päällä, johon sen voi pudottaa."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} on kohteen {place} päällä."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} pudotettiin kohteeseen {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} pudotettiin paikkaan, johon se ei voi mennä. Mitään ei siirretty."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} pudotettiin lähtöpaikkaansa. Mitään ei siirretty."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "Yhteystiedot"
 msgid "Contain"
 msgstr "Sovita"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Sisältö"
@@ -5169,6 +5194,10 @@ msgstr "vedä · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Vedä ja pudota osiot tänne siirtääksesi niitä sarakkeiden välillä"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Siirrä sitä vetämällä osoittimella tai käytä sen valikkoa."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Lataa vaiheesi ennen nimettyjen vaiheiden tuontia. CSV-tietosi säilytetään."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Ladataan"
 
@@ -8264,6 +8294,10 @@ msgstr "Siirretty vaiheeseen {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Siirtää hakemuksen vaiheesta {0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Kohteen {item} siirto peruttiin. Mitään ei siirretty."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "Sivu"
 msgid "Page {0}"
 msgstr "Sivu {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Sivu {0}, sivupalkki"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Sivu {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "Valitse yksi muoto ja käytä sitä kaikkialla."
 msgid "Pick two examples"
 msgstr "Valitse kaksi esimerkkiä"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} poimittu."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Valitaan tarinoitasi"
@@ -9806,6 +9854,16 @@ msgstr "portugali (Portugali)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Tehtävänimike"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "sijainti {position}/{total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "sijainti {position}/{total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "Otsikko"
 msgid "To"
 msgstr "Vastaanottaja"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Poimi se painamalla välilyöntiä tai Enteriä. Siirrä sitä nuolinäppäimillä, pudota välilyönnillä tai Enterillä tai peru Escillä."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "Nimetön kulkuavain"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Nimetön"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Nimetön kohde"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

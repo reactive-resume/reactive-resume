@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# numeris gali jums kainuoti.} other {# problemos 
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Čekis turi # dalyką, kurį reikia peržiūrėti. Jūs vis dar galite atsisiųsti.} other {Čeke yra # dalykų, kuriuos reikia peržiūrėti. Jūs vis dar galite atsisiųsti.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} grįžo į pradinę vietą."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} nėra virš vietos, kur jį galima padėti."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} yra virš: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} padėtas ant: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} padėtas ten, kur negali būti. Niekas nebuvo perkelta."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} padėtas pradinėje vietoje. Niekas nebuvo perkelta."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "Kontaktai"
 msgid "Contain"
 msgstr "Sutalpinti"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Turinys"
@@ -5169,6 +5194,10 @@ msgstr "vilkite · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Vilkite ir numeskite skyrius čia, kad perkeltumėte juos tarp stulpelių"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Vilkite jį žymekliu, kad perkeltumėte, arba naudokite jo meniu."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Prieš importuodami pavadintus etapus įkelkite savo etapus. Jūsų CSV duomenys išsaugomi."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Įkeliama"
 
@@ -8264,6 +8294,10 @@ msgstr "Perkelta į {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Perkelia paraišką iš etapo „{0}“."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Elemento „{item}“ perkėlimas atšauktas. Niekas nebuvo perkelta."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "Puslapis"
 msgid "Page {0}"
 msgstr "Puslapis {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Puslapis {0}, šoninė juosta"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Puslapis {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "Pasirinkite vieną formatą ir naudokite jį visur."
 msgid "Pick two examples"
 msgstr "Pasirinkite du pavyzdžius"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "Paimta: {item}."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Atrenkamos jūsų istorijos"
@@ -9806,6 +9854,16 @@ msgstr "Portugalų (Portugalija)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Pareigos"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{position} vieta iš {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{position} vieta iš {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "Pavadinimas"
 msgid "To"
 msgstr "Į"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Norėdami paimti, paspauskite tarpo arba Enter klavišą. Perkelkite rodyklių klavišais, padėkite tarpo arba Enter klavišu, atšaukite Escape klavišu."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "Neįvardytas passkey"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Be pavadinimo"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Elementas be pavadinimo"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

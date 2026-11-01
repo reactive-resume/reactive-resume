@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# പ്രശ്നത്തിന് നിങ�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {പരിശോധിക്കാൻ # കാര്യമുണ്ട്. നിങ്ങൾക്ക് ഇപ്പോഴും ഡൗൺലോഡ് ചെയ്യാം.} other {പരിശോധിക്കാൻ # കാര്യങ്ങൾ ഉണ്ട്. നിങ്ങൾക്ക് ഇപ്പോഴും ഡൗൺലോഡ് ചെയ്യാം.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} തുടങ്ങിയ സ്ഥലത്ത് തിരിച്ചെത്തി."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} വയ്ക്കാൻ കഴിയുന്ന സ്ഥലത്തിന് മുകളിലല്ല."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} ഇതിന് മുകളിലാണ്: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} ഇവിടെ വച്ചു: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} പോകാൻ കഴിയാത്ത സ്ഥലത്ത് വച്ചു. ഒന്നും നീക്കിയില്ല."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} തുടങ്ങിയ സ്ഥലത്തുതന്നെ വച്ചു. ഒന്നും നീക്കിയില്ല."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "ബന്ധങ്ങൾ"
 msgid "Contain"
 msgstr "മുഴുവൻ ചിത്രം"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "ഉള്ളടക്കം"
@@ -5169,6 +5194,10 @@ msgstr "വലിച്ചിടുക · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "സെക്ഷനുകൾ കോളങ്ങൾക്കിടയിൽ നീക്കാൻ ഇവിടെ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "നീക്കാൻ പോയിന്റർ ഉപയോഗിച്ച് വലിക്കുക, അല്ലെങ്കിൽ അതിന്റെ മെനു ഉപയോഗിക്കുക."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "പേരുള്ള ഘട്ടങ്ങൾ ഇറക്കുമതി ചെയ്യുന്നതിന് മുമ്പ് നിങ്ങളുടെ ഘട്ടങ്ങൾ ലോഡ് ചെയ്യുക. നിങ്ങളുടെ CSV ഡാറ്റ സൂക്ഷിക്കും."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "ലോഡ് ചെയ്യുന്നു"
 
@@ -8264,6 +8294,10 @@ msgstr "{label} എന്നതിലേക്ക് നീക്കി"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "അപേക്ഷ “{0}” ഘട്ടത്തിൽ നിന്ന് മാറ്റുന്നു."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} നീക്കുന്നത് റദ്ദാക്കി. ഒന്നും നീക്കിയില്ല."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "പേജ്"
 msgid "Page {0}"
 msgstr "പേജ് {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "പേജ് {0}, സൈഡ്ബാർ"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "പേജ് {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "ഒരു ഫോർമാറ്റ് തിരഞ്ഞെടുത്�
 msgid "Pick two examples"
 msgstr "രണ്ട് ഉദാഹരണങ്ങൾ തിരഞ്ഞെടുക്കുക"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} എടുത്തു."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "നിങ്ങളുടെ കഥകൾ തിരഞ്ഞെടുക്കുന്നു"
@@ -9806,6 +9854,16 @@ msgstr "പോർച്ചുഗീസ് (പോർച്ചുഗൽ)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "പദവി"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total}-ൽ സ്ഥാനം {position}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total}-ൽ സ്ഥാനം {position}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "ടൈറ്റിൽ"
 msgid "To"
 msgstr "ലേക്ക്"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "എടുക്കാൻ Space അല്ലെങ്കിൽ Enter അമർത്തുക. നീക്കാൻ ആരോ കീകളും, വയ്ക്കാൻ Space അല്ലെങ്കിൽ Enter-ഉം, റദ്ദാക്കാൻ Escape-ഉം ഉപയോഗിക്കുക."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "പേരില്ലാത്ത പാസ്‌കീ"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ശീർഷകമില്ലാത്തത്"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "ശീർഷകമില്ലാത്ത ഇനം"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

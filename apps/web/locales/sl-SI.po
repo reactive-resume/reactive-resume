@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {Težava # vas lahko stane ujemanja.} other {Težav
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Ček ima # stvar za pregled. Še vedno lahko prenesete.} other {Check ima # stvari za pregled. Še vedno lahko prenesete.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} je spet na začetnem mestu."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} ni nad mestom, kamor ga je mogoče spustiti."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} je nad: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} je bil spuščen na: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} je bil spuščen tja, kamor ne more. Nič ni bilo premaknjeno."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} je bil spuščen na začetno mesto. Nič ni bilo premaknjeno."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "Kontakti"
 msgid "Contain"
 msgstr "Prilagodi"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Vsebina"
@@ -5169,6 +5194,10 @@ msgstr "povlecite · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Povlecite in spustite razdelke tukaj, da jih premaknete med stolpci"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Premaknite ga tako, da ga povlečete s kazalcem, ali uporabite njegov meni."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Pred uvozom poimenovanih stopenj naložite svoje stopnje. Vaši podatki CSV se ohranijo."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Nalaganje"
 
@@ -8264,6 +8294,10 @@ msgstr "Premaknjeno v {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Premakne prijavo s stopnje {0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Premikanje elementa {item} je bilo preklicano. Nič ni bilo premaknjeno."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "Stran"
 msgid "Page {0}"
 msgstr "Stran {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Stran {0}, stranska vrstica"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Stran {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "Izberite en format in ga uporabljajte povsod."
 msgid "Pick two examples"
 msgstr "Izberite dva primera"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "Pobrano: {item}."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Izbiranje vaših zgodb"
@@ -9806,6 +9854,16 @@ msgstr "portugalščina (Portugalska)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Položaj"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "položaj {position} od {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "položaj {position} od {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "Naziv"
 msgid "To"
 msgstr "Za"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Za dvig pritisnite preslednico ali Enter. S puščicami ga premaknite, s preslednico ali Enter ga spustite ali s tipko Escape prekličite."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "Neimenovani ključ passkey"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Brez naslova"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Element brez naslova"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

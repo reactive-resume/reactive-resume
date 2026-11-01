@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# 问题可能会让您失去比赛机会。} othe
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {检查有 # 的东西要审查。您仍然可以下载。} other {检查有 # 需要审核的内容。您仍然可以下载。}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} 已回到原位。"
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} 不在可放置的位置上方。"
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} 位于 {place} 上方。"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} 已放到 {place}。"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} 被放到了不能放置的位置。未移动任何内容。"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} 被放回原位。未移动任何内容。"
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "联系人"
 msgid "Contain"
 msgstr "完整显示"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "内容"
@@ -5169,6 +5194,10 @@ msgstr "拖动·⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "在此拖放章节，可在不同栏之间移动它们"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "用指针拖动即可移动，也可以使用其菜单。"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "导入带名称的阶段前，请先加载您的阶段。您的 CSV 数据会保留。"
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "加载中"
 
@@ -8264,6 +8294,10 @@ msgstr "已移至{label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "将申请从“{0}”移出。"
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "已取消移动 {item}。未移动任何内容。"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "页面"
 msgid "Page {0}"
 msgstr "第 {0} 页"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "第 {0} 页，侧边栏"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "第 {page} 页，{column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "选定一种格式，并在所有地方保持一致。"
 msgid "Pick two examples"
 msgstr "选两个例子"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "已拿起 {item}。"
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "正在挑选您的故事"
@@ -9806,6 +9854,16 @@ msgstr "葡萄牙语（葡萄牙）"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "职位"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "第 {position} 个，共 {total} 个"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "第 {position} 个，共 {total} 个，{group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "标题"
 msgid "To"
 msgstr "到"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "按空格键或 Enter 键拿起。使用方向键移动，按空格键或 Enter 键放下，或按 Escape 键取消。"
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "未命名通行密钥"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "无题"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "无标题条目"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

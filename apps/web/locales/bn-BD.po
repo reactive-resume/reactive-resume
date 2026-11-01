@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# ইস্যুতে আপনার একট�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {চেকের কাছে পর্যালোচনা করার জন্য # জিনিস রয়েছে। আপনি এখনও ডাউনলোড করতে পারেন.} other {চেকের কাছে পর্যালোচনা করার জন্য # জিনিস রয়েছে। আপনি এখনও ডাউনলোড করতে পারেন.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} আবার শুরুর জায়গায় ফিরে এসেছে।"
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} এমন কোনো জায়গার ওপরে নেই যেখানে এটি রাখা যায়।"
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} এর ওপরে আছে: {place}।"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} এখানে রাখা হয়েছে: {place}।"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} এমন জায়গায় রাখা হয়েছে যেখানে এটি যেতে পারে না। কিছুই সরানো হয়নি।"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} শুরুর জায়গাতেই রাখা হয়েছে। কিছুই সরানো হয়নি।"
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "যোগাযোগ"
 msgid "Contain"
 msgstr "পুরোটা দেখান"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "বিষয়বস্তু"
@@ -5169,6 +5194,10 @@ msgstr "টেনে আনুন · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "কলামের মধ্যে বিভাগগুলোকে সরাতে হলে এখানে ড্র্যাগ ও ড্রপ করুন"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "সরাতে পয়েন্টার দিয়ে টেনে নিন, অথবা এর মেনু ব্যবহার করুন।"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "নামযুক্ত পর্যায় আমদানির আগে আপনার পর্যায়গুলো লোড করুন। আপনার CSV ডেটা রাখা হবে।"
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "লোড হচ্ছে"
 
@@ -8264,6 +8294,10 @@ msgstr "{label}-এ সরানো হয়েছে"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "আবেদনটিকে {0} থেকে সরিয়ে নেয়।"
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} সরানো বাতিল করা হয়েছে। কিছুই সরানো হয়নি।"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "পৃষ্ঠা"
 msgid "Page {0}"
 msgstr "পৃষ্ঠা {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "পৃষ্ঠা {0}, সাইডবার"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "পৃষ্ঠা {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "একটি ফরম্যাট বেছে নিয়ে সব�
 msgid "Pick two examples"
 msgstr "দুটি উদাহরণ বেছে নিন"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} তোলা হয়েছে।"
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "আপনার গল্পগুলো বাছাই করা হচ্ছে"
@@ -9806,6 +9854,16 @@ msgstr "পর্তুগিজ (পর্তুগাল)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "পদবি"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total}-এর মধ্যে অবস্থান {position}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total}-এর মধ্যে অবস্থান {position}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "শিরোনাম"
 msgid "To"
 msgstr "প্রতি"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "তুলতে Space বা Enter চাপুন। সরাতে তীর কী, রাখতে Space বা Enter, অথবা বাতিল করতে Escape ব্যবহার করুন।"
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "অনামকৃত পাসকি"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "শিরোনামহীন"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "শিরোনামহীন আইটেম"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

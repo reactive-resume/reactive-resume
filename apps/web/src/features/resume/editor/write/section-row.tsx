@@ -1,4 +1,5 @@
 import type { WriteSection } from "./model";
+import type { DndLabel } from "@/libs/dnd";
 import type { SectionType } from "@reactive-resume/schema/resume/data";
 import type { KeyboardEvent, ReactNode } from "react";
 import { useSortable } from "@dnd-kit/sortable";
@@ -49,6 +50,8 @@ export function useSectionTitle(section: WriteSection) {
 type SectionRowProps = {
 	section: WriteSection;
 	locked: boolean;
+	/** The page and column the row prints in, read out while it's dragged. */
+	dragGroup?: string | undefined;
 	/** ⌥↑ / ⌥↓ on the focused title. Hidden sections sit outside the print order, so they have none. */
 	onMove?: ((direction: "up" | "down") => void) | undefined;
 	children: ReactNode;
@@ -58,7 +61,7 @@ type SectionRowProps = {
  * An outline row: drag handle, title (opens the section), entry count, the eye (hidden sections keep their
  * content but aren't printed), the chevron and the ⋯ menu. Open, it shows the section's entries.
  */
-export function SectionRow({ section, locked, onMove, children }: SectionRowProps) {
+export function SectionRow({ section, locked, dragGroup, onMove, children }: SectionRowProps) {
 	const title = useSectionTitle(section);
 	const hidden = useCurrentBuilderResumeSelector((resume) => getSectionObject(resume.data, section)?.hidden ?? false);
 	const count = useCurrentBuilderResumeSelector((resume) => getEntries(resume.data, section).length);
@@ -70,6 +73,7 @@ export function SectionRow({ section, locked, onMove, children }: SectionRowProp
 	const updateResumeData = useUpdateResumeData();
 	const { setNodeRef, transform, transition, isDragging, attributes, listeners } = useSortable({
 		id: section.id,
+		data: { label: title, group: dragGroup } satisfies DndLabel,
 		disabled: locked || hidden,
 		transition: DRAG_SETTLE,
 	});

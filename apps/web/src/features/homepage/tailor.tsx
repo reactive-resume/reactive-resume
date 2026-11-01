@@ -44,7 +44,7 @@ export function Tailor() {
 			data-scene={SCENE.tailor}
 			data-pin
 			aria-labelledby="tailor-title"
-			className="relative h-[260vh] motion-reduce:h-svh min-[900px]:h-[300vh]"
+			className="relative h-[260vh] min-[900px]:h-[300vh]"
 		>
 			<div className="sticky top-0 h-svh overflow-clip [--ap:clamp(0,(var(--p)-.74)/.1,1)] [--cv:clamp(0,(var(--p)-.64)/.12,1)] [--cvx:-60%] [--kwa:var(--t1)] [--kwb:var(--t2)] [--kwc:var(--t3)] [--kwd:var(--t4)] [--pw:min(56vw,36vh)] [--sw:clamp(0,var(--p)/.14,1)] [--t1:clamp(0,(var(--p)-.14)/.1,1)] [--t2:clamp(0,(var(--p)-.26)/.1,1)] [--t3:clamp(0,(var(--p)-.38)/.1,1)] [--t4:clamp(0,(var(--p)-.5)/.1,1)] min-[900px]:[--cvx:-40%] min-[900px]:[--pw:min(23vw,46vh)]">
 				<Doodle

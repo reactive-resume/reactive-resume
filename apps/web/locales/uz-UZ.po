@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# muammosi sizga qimmatga tushishi mumkin.} other 
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Tekshirish uchun # narsa bor. Siz hali ham yuklab olishingiz mumkin.} other {Tekshirish uchun # narsalarni ko'rib chiqish kerak. Siz hali ham yuklab olishingiz mumkin.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} boshlang‘ich joyiga qaytdi."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} qo‘yish mumkin bo‘lgan joy ustida emas."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} quyidagi ustida: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} bu yerga qo‘yildi: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} qo‘yib bo‘lmaydigan joyga tashlandi. Hech narsa ko‘chirilmadi."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} boshlang‘ich joyiga qo‘yildi. Hech narsa ko‘chirilmadi."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "Kontaktlar"
 msgid "Contain"
 msgstr "Sig'dirish"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Mazmun"
@@ -5169,6 +5194,10 @@ msgstr "torting · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Bo‘limlarni ustunlar orasida ko‘chirish uchun shu yergа tortib tashlang"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Ko‘chirish uchun ko‘rsatkich bilan torting yoki uning menyusidan foydalaning."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Nomlangan bosqichlarni import qilishdan oldin bosqichlaringizni yuklang. CSV ma’lumotlaringiz saqlanadi."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Yuklanmoqda"
 
@@ -8264,6 +8294,10 @@ msgstr "{label}ga ko‘chirildi"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Arizani “{0}” bosqichidan o'tkazadi."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} ko‘chirilishi bekor qilindi. Hech narsa ko‘chirilmadi."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "Sahifa"
 msgid "Page {0}"
 msgstr "{0} sahifa"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "{0} sahifa, yon panel"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "{page} sahifa, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "Bitta formatni tanlang va uni hamma joyda ishlating."
 msgid "Pick two examples"
 msgstr "Ikkita misol tanlang"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} olindi."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Hikoyalaringiz tanlanmoqda"
@@ -9806,6 +9854,16 @@ msgstr "Portugalcha (Portugaliya)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Lavozim"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total} tadan {position}-o‘rin"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total} tadan {position}-o‘rin, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "Sarlavha"
 msgid "To"
 msgstr "Kimga"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Olish uchun Probel yoki Enter tugmasini bosing. Ko‘chirish uchun strelka tugmalaridan, qo‘yish uchun Probel yoki Enter tugmasidan, bekor qilish uchun Escape tugmasidan foydalaning."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "Nomsiz kirish kaliti"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Sarlavhasiz"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Sarlavhasiz element"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

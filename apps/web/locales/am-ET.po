@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {የ# ችግር ግጥሚያ ሊያስወጣዎት 
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {ቼክ የሚገመገም # ነገር አለው። አሁንም ማውረድ ትችላለህ።} other {ቼክ የሚገመገሙ # ነገሮች አሉት። አሁንም ማውረድ ትችላለህ።}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} ወደ መነሻ ቦታው ተመልሷል።"
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} ሊቀመጥ የሚችልበት ቦታ ላይ አይደለም።"
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} በዚህ ላይ ነው፦ {place}።"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} እዚህ ተቀምጧል፦ {place}።"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} ሊሄድ በማይችልበት ቦታ ተቀምጧል። ምንም አልተንቀሳቀሰም።"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} በመነሻ ቦታው ተቀምጧል። ምንም አልተንቀሳቀሰም።"
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "እውቂያዎች"
 msgid "Contain"
 msgstr "ሙሉውን አሳይ"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "ይዘት"
@@ -5169,6 +5194,10 @@ msgstr "ጎትት · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "ክፍሎችን ከአንዱ አምድ ወደ ሌላ ለማንቀሳቀስ እዚህ ጎትቱ እና ጥልቀቁ ያድርጉአቸው"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "ለማንቀሳቀስ በጠቋሚው ይጎትቱት ወይም ምናሌውን ይጠቀሙ።"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "በስም የተሰየሙ ደረጃዎችን ከማስመጣትዎ በፊት ደረጃዎችዎን ይጫኑ። የCSV ውሂብዎ ይጠበቃል።"
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "በመጫን ላይ"
 
@@ -8264,6 +8294,10 @@ msgstr "ወደ {label} ተዛውሯል"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "ማመልከቻውን ከ{0} ያዛውራል።"
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item}ን ማንቀሳቀስ ተሰርዟል። ምንም አልተንቀሳቀሰም።"
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "ገጽ"
 msgid "Page {0}"
 msgstr "ገጽ {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "ገጽ {0}፣ የጎን አሞሌ"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "ገጽ {page}፣ {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "አንድ ቅርጸት ይምረጡ እና በሁሉም ቦታ ይጠቀ
 msgid "Pick two examples"
 msgstr "ሁለት ምሳሌዎችን ይምረጡ"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} ተነስቷል።"
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "ታሪኮችዎን በመምረጥ ላይ"
@@ -9806,6 +9854,16 @@ msgstr "ፖርቹጋልኛ (ፖርቱጋል)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "አቀማመጥ"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "ቦታ {position} ከ{total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "ቦታ {position} ከ{total}፣ {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "ርዕስ"
 msgid "To"
 msgstr "ለ"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "ለማንሳት Space ወይም Enter ይጫኑ። ለማንቀሳቀስ የቀስት ቁልፎችን፣ ለማስቀመጥ Space ወይም Enter፣ ለመሰረዝ ደግሞ Escape ይጠቀሙ።"
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "ስም የሌለው ፓስኪ"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ርዕስ አልባ"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "ርዕስ አልባ ንጥል"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

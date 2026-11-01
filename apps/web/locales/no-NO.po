@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {#-problemet kan koste deg en kamp.} other {#-probl
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Sjekk har # ting å vurdere. Du kan fortsatt laste ned.} other {Sjekk har # ting å vurdere. Du kan fortsatt laste ned.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} er tilbake der det startet."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} er ikke over et sted der det kan plasseres."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} er over {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} ble sluppet på {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} ble sluppet der det ikke kan være. Ingenting ble flyttet."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} ble sluppet der det startet. Ingenting ble flyttet."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3480,6 +3504,7 @@ msgstr "Kontakter"
 msgid "Contain"
 msgstr "Tilpass"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Innhold"
@@ -5169,6 +5194,10 @@ msgstr "dra · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Dra og slipp seksjoner her for å flytte dem mellom kolonner"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Dra det med pekeren for å flytte det, eller bruk menyen."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7691,6 +7720,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Last inn trinnene dine før du importerer navngitte trinn. CSV-dataene dine beholdes."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Laster"
 
@@ -8264,6 +8294,10 @@ msgstr "Flyttet til {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Flytter søknaden fra {0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Flytting av {item} ble avbrutt. Ingenting ble flyttet."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9445,6 +9479,16 @@ msgstr "Side"
 msgid "Page {0}"
 msgstr "Side {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Side {0}, sidepanel"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Side {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9732,6 +9776,10 @@ msgstr "Velg ett format og bruk det overalt."
 msgid "Pick two examples"
 msgstr "Velg to eksempler"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} plukket opp."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Velger historiene dine"
@@ -9806,6 +9854,16 @@ msgstr "Portugisisk (Portugal)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Posisjon"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "posisjon {position} av {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "posisjon {position} av {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13965,6 +14023,10 @@ msgstr "Tittel"
 msgid "To"
 msgstr "Til"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Trykk på mellomrom eller Enter for å plukke det opp. Bruk piltastene for å flytte det, mellomrom eller Enter for å slippe det, eller Escape for å avbryte."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14345,6 +14407,10 @@ msgstr "Navnløs passnøkkel"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Uten tittel"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Element uten tittel"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
