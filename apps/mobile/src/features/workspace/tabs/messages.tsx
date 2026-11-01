@@ -206,7 +206,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	const lanes = useApplicationLanes();
 	const current =
 		application.followUpNote ||
-		describeNextStep(getNextStep(application, now, lanes.lanes), application, i18n.locale, timeZone).title;
+		describeNextStep(getNextStep(application, now), application, i18n.locale, timeZone).title;
 	const from = getLaneLabel(resolveLane(lanes.lanes, application));
 
 	const describe = (change: (typeof changes)[number]) => {

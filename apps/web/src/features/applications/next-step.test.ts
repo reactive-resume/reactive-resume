@@ -4,7 +4,7 @@ import { i18n } from "@lingui/core";
 
 i18n.load("en", {});
 i18n.activate("en");
-import { daysInLane, describeNextStep, getNextStep } from "./next-step";
+import { daysInLane, describeNextStep, getNextStep, needsAttention } from "./next-step";
 
 const NOW = new Date("2026-09-28T12:00:00Z");
 const day = (offset: number) => new Date(NOW.getTime() + offset * 86_400_000);
@@ -52,6 +52,21 @@ describe("getNextStep", () => {
 		expect(getNextStep(quiet, NOW)).toEqual({ kind: "no-reply", days: 12 });
 	});
 
+	it.each([
+		["interview", [interview(day(-2))], "Waiting for interview feedback"],
+		["interview", [], "No interview scheduled"],
+		["offer", [], "Decide on the offer"],
+		["screening", [], "Waiting to hear back"],
+	] as const)("tells a %s-stage application what it is actually waiting on", (status, interviews, title) => {
+		const source = application({
+			status,
+			activity: [{ id: "s", type: "stage", stage: status, at: day(-4) }, ...interviews],
+		});
+		const text = describeNextStep(getNextStep(source, NOW), { status, closedReason: null }, "en-GB", "UTC");
+		expect(text.title).toBe(title);
+		expect(text.sub).toBe(title === "No interview scheduled" ? "Add the date when you have it" : "For 4 days");
+	});
+
 	it("keeps the no-reply clock running across a move between two Applied lanes, while time in lane restarts", () => {
 		const moved = {
 			...application({
@@ -85,4 +100,23 @@ it("keeps a follow-up on the calendar date selected in its browser-local editor"
 	for (const timeZone of ["Pacific/Honolulu", "Pacific/Kiritimati"]) {
 		expect(describeNextStep(step, { status: "applied", closedReason: null }, "en-GB", timeZone).sub).toBe(expected);
 	}
+});
+
+it.each([
+	["an interview within a week", { activity: [interview(day(6))] }, true],
+	["an interview further out", { activity: [interview(day(9))] }, false],
+	["a follow-up due tomorrow", { followUpAt: day(0.5) }, true],
+	["an overdue follow-up", { followUpAt: day(-1) }, true],
+	["a follow-up next week", { followUpAt: day(7) }, false],
+	["no reply after twelve days", { activity: [{ id: "s", type: "stage", stage: "applied", at: day(-12) }] }, true],
+	["a recent application", {}, false],
+	[
+		"an offer to decide",
+		{ status: "offer", activity: [{ id: "s", type: "stage", stage: "offer", at: day(-1) }] },
+		true,
+	],
+	["a saved job", { status: "saved" }, false],
+	["a closed application", { status: "closed" }, false],
+] as const)("decides whether %s needs the user", (_, patch, expected) => {
+	expect(needsAttention(getNextStep(application(patch as Partial<Source>), NOW), NOW)).toBe(expected);
 });

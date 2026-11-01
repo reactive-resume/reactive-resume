@@ -44,8 +44,12 @@ const lanes = load("features/applications/lanes.ts", {
 	"@reactive-resume/schema/applications/lanes": schemaLanes,
 	"./stages": stages,
 });
-const history = load("features/applications/history.ts");
+const domainNextStep = load("../../../packages/schema/src/applications/next-step.ts");
+const history = load("features/applications/history.ts", {
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
+});
 const nextStep = load("features/applications/next-step.ts", {
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
 	"./stages": stages,
 	"./history": history,
 	"@/ui": {},
@@ -464,6 +468,67 @@ const appliedLaneMove = {
 };
 assert.equal(nextStep.daysInStage(appliedLaneMove, new Date("2026-01-11")), 3);
 assert.deepEqual(nextStep.getNextStep(appliedLaneMove, new Date("2026-01-11")), { kind: "no-reply", days: 10 });
+// J4-20: Interview and Offer rows say what they're waiting on, never "Waiting to hear back".
+const stageOnly = (status, extra = []) => ({
+	...full[0],
+	status,
+	laneId: null,
+	followUpAt: null,
+	activity: [stage(`${status}-entry`, status, "2026-01-01"), ...extra],
+});
+const day11 = new Date("2026-01-11");
+assert.deepEqual(nextStep.getNextStep(stageOnly("interview", [interview("past", "2026-01-05T10:00:00.000Z")]), day11), {
+	kind: "interview-feedback",
+	days: 10,
+});
+assert.deepEqual(nextStep.getNextStep(stageOnly("interview"), day11), { kind: "no-interview", days: 10 });
+assert.deepEqual(nextStep.getNextStep(stageOnly("offer"), day11), { kind: "offer", days: 10 });
+assert.deepEqual(nextStep.getNextStep(stageOnly("screening"), day11), { kind: "waiting", days: 10 });
+assert.equal(
+	nextStep.describeNextStep({ kind: "offer", days: 10 }, { status: "offer", closedReason: null }, "en", "UTC").title,
+	"Decide on the offer",
+);
+// J4-09: one rule for what needs the user, shared by Today and the Applications banner.
+assert.deepEqual(
+	[
+		{ kind: "no-reply", days: 12 },
+		{ kind: "offer", days: 1 },
+		{ kind: "interview", at: new Date("2026-01-15"), interview: {} },
+		{ kind: "interview", at: new Date("2026-01-30"), interview: {} },
+		{ kind: "follow-up", at: new Date("2026-01-11T12:00:00Z"), note: "", overdue: false },
+		{ kind: "follow-up", at: new Date("2026-01-20"), note: "", overdue: false },
+		{ kind: "waiting", days: 3 },
+		{ kind: "not-applied" },
+	].map((step) => [nextStep.needsAttention(step, day11), nextStep.needsFollowUp(step, day11)]),
+	[
+		[true, true],
+		[true, false],
+		[true, false],
+		[false, false],
+		[true, true],
+		[false, false],
+		[false, false],
+		[false, false],
+	],
+);
+// J4-07: a group imported in one go orders by each row's own stage date, longest wait first.
+const imported = [
+	["niantic", 9],
+	["bethesda", 35],
+	["sucker-punch", 21],
+].map(([id, days]) => ({
+	...stageOnly("applied"),
+	id,
+	updatedAt: new Date("2026-02-10"),
+	appliedAt: new Date(new Date("2026-02-10").getTime() - days * 86_400_000),
+	activity: [stage(`${id}-applied`, "applied", new Date(new Date("2026-02-10").getTime() - days * 86_400_000))],
+}));
+assert.deepEqual(
+	list
+		.groupApplications(imported, "next", "asc", new Date("2026-02-10"))
+		.flatMap((group) => group.data.map(({ id }) => id)),
+	["bethesda", "sucker-punch", "niantic"],
+);
 for (const status of ["closed", "applied"]) {
 	const outcomes = insights.computeOutcomes(
 		[

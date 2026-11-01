@@ -187,3 +187,25 @@ it("sorts by role with company as the tiebreak, and by soonest next step with no
 	fireEvent.click(screen.getByRole("button", { name: "Next step" }));
 	expect(order()).toEqual(["Zeta", "Acme", "Mid"]);
 });
+
+it("orders a stage by its own stage dates, longest wait first, when every row was imported at once", () => {
+	const importedAt = new Date("2026-10-19T00:00:00.000Z");
+	const appliedDaysAgo = (id: string, company: string, days: number) =>
+		application({
+			id,
+			company,
+			location: null,
+			updatedAt: importedAt,
+			appliedAt: new Date(Date.now() - days * 86_400_000),
+			activity: [{ id: `${id}-stage`, type: "stage", stage: "applied", at: new Date(Date.now() - days * 86_400_000) }],
+		});
+	const { container } = renderList([
+		appliedDaysAgo("a", "Niantic", 9),
+		appliedDaysAgo("b", "Bethesda", 35),
+		appliedDaysAgo("c", "Sucker Punch", 21),
+	]);
+	const order = Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
+
+	expect(order).toEqual(["Bethesda", "Sucker Punch", "Niantic"]);
+	expect(header(container, "Next step").getAttribute("aria-sort")).toBe("ascending");
+});

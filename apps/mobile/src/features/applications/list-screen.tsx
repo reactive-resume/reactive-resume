@@ -3,6 +3,7 @@ import type { ApplicationClosedReason } from "@reactive-resume/schema/applicatio
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
+import Storage from "expo-sqlite/kv-store";
 import { useRef, useState } from "react";
 import { RefreshControl, Pressable, SectionList, View } from "react-native";
 import Animated from "react-native-reanimated";
@@ -10,7 +11,7 @@ import { applicationError } from "./error";
 import { useApplicationLanes } from "./lane-queries";
 import { getLaneLabel, laneInput, resolveLane } from "./lanes";
 import { filterApplications, groupApplications, visibleSelection } from "./list";
-import { describeNextStep, getNextStep } from "./next-step";
+import { describeNextStep, getNextStep, needsFollowUp } from "./next-step";
 import { useApplicationDetailPrefetch, useApplicationMutations, useApplications } from "./queries";
 import { CLOSED_REASONS, getClosedReasonLabel } from "./stages";
 import { useSession } from "@/auth/session";
@@ -39,6 +40,18 @@ import {
 import { usePullRefresh } from "@/ui/use-pull-refresh";
 
 const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 30 };
+
+// Dismissed follow-up nudges, remembered on this device as on web.
+const NUDGE_STORAGE_KEY = "applications-follow-up-dismissed";
+
+function readDismissed(): string[] {
+	try {
+		const parsed: unknown = JSON.parse(Storage.getItemSync(NUDGE_STORAGE_KEY) ?? "[]");
+		return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+	} catch {
+		return [];
+	}
+}
 
 export function ApplicationsListScreen() {
 	const session = useSession();
@@ -69,8 +82,9 @@ function ApplicationsList() {
 	const { search, setSearch } = useApplicationSearch();
 	const [tag, setTag] = useState("");
 	const [showClosed, setShowClosed] = useState(false);
-	const [sort, setSort] = useState<ApplicationSort>("updated");
-	const [direction, setDirection] = useState<"asc" | "desc">("desc");
+	// Next step first, as on web: what's dated soonest, then whatever has waited longest in its stage.
+	const [sort, setSort] = useState<ApplicationSort>("next");
+	const [direction, setDirection] = useState<"asc" | "desc">("asc");
 	const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [selecting, setSelecting] = useState(false);
@@ -87,9 +101,33 @@ function ApplicationsList() {
 	const [result, setResult] = useState<string | null>(null);
 	const lock = useRef(false);
 	const applications = query.data ?? [];
-	const filtered = filterApplications(applications, { search, tag, showClosed });
-	const filtersActive = Boolean(search.trim() || tag || showClosed);
-	const groups = groupApplications(filtered, sort, direction, now, lanes.supported ? lanes.lanes : undefined);
+	const laneList = lanes.supported ? lanes.lanes : undefined;
+	const [followUpOnly, setFollowUpOnly] = useState(false);
+	const [dismissed, setDismissed] = useState(readDismissed);
+	// Same rule as web and Career → Today: a due follow-up, or ten days without a reply.
+	const owesFollowUp = (application: (typeof applications)[number]) =>
+		needsFollowUp(getNextStep(application, now), now);
+	const owed = applications
+		.filter((application) => !dismissed.includes(application.id) && owesFollowUp(application))
+		.map((application) => ({ application, step: getNextStep(application, now) }))
+		.sort((a, b) => (b.step.kind === "no-reply" ? b.step.days : -1) - (a.step.kind === "no-reply" ? a.step.days : -1));
+	const company = owed[0]?.application.company ?? "";
+	const count = owed.length;
+	const days = owed[0]?.step.kind === "no-reply" ? owed[0].step.days : 0;
+	const dismissOwed = () => {
+		const next = [...dismissed, ...owed.map(({ application }) => application.id)].slice(-1000);
+		setDismissed(next);
+		try {
+			Storage.setItemSync(NUDGE_STORAGE_KEY, JSON.stringify(next));
+		} catch {
+			// Without storage the nudge is dismissed for this visit only.
+		}
+	};
+	const filtered = filterApplications(applications, { search, tag, showClosed }).filter(
+		(application) => !followUpOnly || owesFollowUp(application),
+	);
+	const filtersActive = Boolean(search.trim() || tag || showClosed || followUpOnly);
+	const groups = groupApplications(filtered, sort, direction, now, laneList);
 	const selectedIds = visibleSelection(groups, collapsed, selected);
 	const onViewableItemsChanged = useApplicationDetailPrefetch();
 	const tags = [...new Set(applications.flatMap((item) => item.tags))].sort();
@@ -179,6 +217,48 @@ function ApplicationsList() {
 					{showClosed ? ` · ${t`Including closed`}` : ""}
 				</Text>
 			)}
+			{followUpOnly ? (
+				<Banner
+					tone="info"
+					icon="clock"
+					message={plural(filtered.length, {
+						one: "Showing # application that needs a follow-up.",
+						other: "Showing # applications that need a follow-up.",
+					})}
+					action={{ label: t`Show all`, onPress: () => changeFilters(() => setFollowUpOnly(false)) }}
+				/>
+			) : owed[0] ? (
+				<Banner
+					tone="warn"
+					icon="clock"
+					message={
+						owed.length > 1
+							? plural(count, {
+									one: "# application needs a follow-up.",
+									other: "# applications need a follow-up.",
+								})
+							: owed[0].step.kind === "no-reply"
+								? plural(days, {
+										one: `${company}: no reply for # day. A short follow-up is usually fine now.`,
+										other: `${company}: no reply for # days. A short follow-up is usually fine now.`,
+									})
+								: t`${company}: a follow-up is due.`
+					}
+					action={
+						owed.length > 1
+							? {
+									label: t`Show`,
+									onPress: () =>
+										changeFilters(() => {
+											setShowClosed(false);
+											setFollowUpOnly(true);
+										}),
+								}
+							: { label: t`Open`, onPress: () => router.push(routes.application(owed[0]?.application.id ?? "")) }
+					}
+					onDismiss={dismissOwed}
+				/>
+			) : null}
 			{failure && bulk === null && <Banner tone="danger" message={failure} onDismiss={() => setFailure(null)} />}
 			{result && <Banner tone="info" message={result} onDismiss={() => setResult(null)} />}
 			{query.isError && (
@@ -363,7 +443,7 @@ function ApplicationsList() {
 						</Pressable>
 					)}
 					renderItem={({ item, index }) => {
-						const next = describeNextStep(getNextStep(item, now, lanes.lanes), item, i18n.locale, timeZone);
+						const next = describeNextStep(getNextStep(item, now), item, i18n.locale, timeZone);
 						return (
 							<Animated.View
 								{...listItemMotion(index, firstAppearance)}

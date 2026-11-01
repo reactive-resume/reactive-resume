@@ -295,6 +295,11 @@ msgstr "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "{closed} closed"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr "{company}: a follow-up is due."
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# document updated} other {# documents updated}}"
@@ -515,6 +524,10 @@ msgstr "{cost} a year"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "{cost} the first year"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length}m"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1081,6 +1098,10 @@ msgstr "Add cover letter"
 msgid "Add dates"
 msgstr "Add dates"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr "Add each offer's terms to compare it. Nothing is filled in for you."
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "Add education"
@@ -1206,6 +1227,10 @@ msgstr "Add tag"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "Add text"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr "Add the date when you have it"
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3121,6 +3146,7 @@ msgstr "Couldn't load this version's page."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Couldn't load this. Check your connection and try again."
 
@@ -3648,6 +3674,10 @@ msgstr "Debrief"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "Debrief interview"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr "Decide on the offer"
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5262,6 +5292,10 @@ msgstr "Improve selected line"
 msgid "Improving…"
 msgstr "Improving…"
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr "In the Offer stage, terms not added"
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Including closed"
@@ -6036,6 +6070,7 @@ msgstr "Loading your public address…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6797,6 +6832,10 @@ msgstr "No facts yet"
 msgid "No icons match."
 msgstr "No icons match."
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr "No interview scheduled"
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "No job yet"
@@ -6879,10 +6918,6 @@ msgstr "No recorded answers are available."
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr "No replies to chart yet"
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "No reply yet"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7296,6 +7331,7 @@ msgstr "Onsite"
 msgid "Onsite interview"
 msgstr "Onsite interview"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Open"
@@ -8866,6 +8902,7 @@ msgstr "Retrieved {0} using {1}. Retrieval time does not establish origin freshn
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -8953,10 +8990,6 @@ msgstr "Review checks"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr "Review checks only reflect what you checked yourself."
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "Review draft"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9796,6 +9829,10 @@ msgstr "Shorten questions to 2,000 characters and answers to 6,000 characters be
 msgid "Shorter"
 msgstr "Shorter"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "Show"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Show “Made with Reactive Resume”"
@@ -9809,9 +9846,14 @@ msgstr "Show {0} more"
 msgid "Show {title} on the page"
 msgstr "Show {title} on the page"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Show all"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "Show all letters"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12094,6 +12136,10 @@ msgstr "Volunteer"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "Wait for your account timezone to load, retry if it failed, or clear the deadline."
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr "Waiting for interview feedback"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

@@ -1,79 +1,37 @@
 import type { ApplicationSummary } from "./types";
-import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
+import type { ApplicationStageSource, NextStep } from "@reactive-resume/schema/applications/next-step";
+export type { NextStep } from "@reactive-resume/schema/applications/next-step";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
-import { interviewKindOf, isInterview } from "./interviews";
-import { isCanonicalStageEvent, isCurrentLaneEvent } from "./lanes";
+import { interviewKindOf } from "./interviews";
+import { isCurrentLaneEvent } from "./lanes";
 import { getClosedReasonLabel } from "./stages";
 
-const DAY_MS = 86_400_000;
-
-/** Days without a reply after applying before a follow-up is suggested. */
-const FOLLOW_UP_AFTER_DAYS = 10;
-
-type NextStepSource = Pick<ApplicationSummary, "status" | "activity" | "followUpAt" | "followUpNote" | "appliedAt">;
-type StageSource = Pick<ApplicationSummary, "status" | "activity" | "appliedAt"> & {
+type StageSource = ApplicationStageSource & {
 	laneId?: string | null | undefined;
 };
 
-/**
- * What an application needs next, derived rather than stored: the earliest interview still to come, else the
- * follow-up date, else how long it has been waiting. Closed applications need nothing.
- */
-export type NextStep =
-	| { kind: "interview"; interview: InterviewTimelineEntry; at: Date }
-	| { kind: "follow-up"; at: Date; note: string; overdue: boolean }
-	| { kind: "no-reply"; days: number }
-	| { kind: "waiting"; days: number }
-	| { kind: "not-applied" }
-	| { kind: "closed" };
+export {
+	getNextStep,
+	needsAttention,
+	needsFollowUp,
+	nextStepSortKey,
+	compareNextStepSortKeys,
+} from "@reactive-resume/schema/applications/next-step";
 
-/** The latest matching stage entry's date, or when the application was added. */
-function since(application: StageSource, matches: (entry: ApplicationSummary["activity"][number]) => boolean): Date {
-	const entries = application.activity.filter(matches).map((entry) => new Date(entry.at).getTime());
-	return new Date(entries.length > 0 ? Math.max(...entries) : new Date(application.appliedAt).getTime());
-}
-
-const daysBetween = (from: Date, to: Date) => Math.max(0, Math.floor((to.getTime() - from.getTime()) / DAY_MS));
-
-/** Whole days the application has spent in its current lane. */
-export const daysInLane = (application: StageSource, now = new Date()) =>
-	daysBetween(
-		since(application, (entry) => isCurrentLaneEvent(entry, application)),
-		now,
-	);
-
-/** Whole days since the application entered its current stage; moving between lanes of that stage doesn't count. */
-const daysInStage = (application: StageSource, now: Date) =>
-	daysBetween(
-		since(
-			application,
-			(entry) => entry.type === "stage" && entry.stage === application.status && isCanonicalStageEvent(entry),
+/** Whole days in the current lane, including lane-only moves. */
+export const daysInLane = (application: StageSource, now = new Date()) => {
+	const entries = application.activity
+		.filter((entry) => isCurrentLaneEvent(entry, application))
+		.map((entry) => new Date(entry.at).getTime());
+	return Math.max(
+		0,
+		Math.floor(
+			(now.getTime() - (entries.length ? Math.max(...entries) : new Date(application.appliedAt).getTime())) /
+				86_400_000,
 		),
-		now,
 	);
-
-export function getNextStep(application: NextStepSource, now = new Date()): NextStep {
-	if (application.status === "closed") return { kind: "closed" };
-
-	const upcoming = application.activity
-		.filter(isInterview)
-		.map((interview) => ({ interview, at: new Date(interview.at) }))
-		.filter(({ interview, at }) => at.getTime() + interview.durationMinutes * 60_000 >= now.getTime())
-		.sort((a, b) => a.at.getTime() - b.at.getTime())[0];
-	if (upcoming) return { kind: "interview", ...upcoming };
-
-	if (application.followUpAt) {
-		const at = new Date(application.followUpAt);
-		return { kind: "follow-up", at, note: application.followUpNote ?? "", overdue: at.getTime() < now.getTime() };
-	}
-
-	if (application.status === "saved") return { kind: "not-applied" };
-
-	const days = daysInStage(application, now);
-	if (application.status === "applied" && days >= FOLLOW_UP_AFTER_DAYS) return { kind: "no-reply", days };
-	return { kind: "waiting", days };
-}
+};
 
 export type NextStepText = { icon: IconName; title: string; sub: string; tone: "normal" | "warn" | "muted" };
 
@@ -135,6 +93,27 @@ export function describeNextStep(
 						sub: plural(step.days, { one: "For # day", other: "For # days" }),
 						tone: "normal",
 					};
+		case "interview-feedback":
+			return {
+				icon: "hourglass",
+				title: t`Waiting for interview feedback`,
+				sub: plural(step.days, { one: "For # day", other: "For # days" }),
+				tone: "normal",
+			};
+		case "no-interview":
+			return {
+				icon: "calendar-dot",
+				title: t`No interview scheduled`,
+				sub: t`Add the date when you have it`,
+				tone: "normal",
+			};
+		case "offer":
+			return {
+				icon: "scales",
+				title: t`Decide on the offer`,
+				sub: plural(step.days, { one: "For # day", other: "For # days" }),
+				tone: "warn",
+			};
 		case "not-applied":
 			return { icon: "bookmark-simple", title: t`Not applied yet`, sub: "", tone: "muted" };
 		case "closed":

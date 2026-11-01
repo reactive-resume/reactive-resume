@@ -295,6 +295,11 @@ msgstr "{0, plural, one {履歷（#）} other {履歷（#）}}"
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {重新顯示 # 個已忽略問題} other {重新顯示 # 個已忽略問題}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "{closed} 已關閉"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {已更新 # 份文件} other {已更新 # 份文件}}"
@@ -515,6 +524,10 @@ msgstr "每年 {cost}"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "首年 {cost}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length} 分鐘"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· 自今天起} one {· 已過 # 天} other {· 已過 # 天}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, other {{company}：# 天未回覆。現在寄一封簡短的後續追蹤信通常沒問題。}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1081,6 +1098,10 @@ msgstr "新增求職信"
 msgid "Add dates"
 msgstr "新增日期"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "新增教育背景"
@@ -1206,6 +1227,10 @@ msgstr "新增標籤"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "新增文字"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3121,6 +3146,7 @@ msgstr "無法載入該版本的頁面。"
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "無法載入此內容。檢查您的連線並重試。"
 
@@ -3648,6 +3674,10 @@ msgstr "回顧"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "回顧面試"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5262,6 +5292,10 @@ msgstr "改進選定的線路"
 msgid "Improving…"
 msgstr "改善…"
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "包含已結束"
@@ -6036,6 +6070,7 @@ msgstr "正在載入您的公用位址…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6797,6 +6832,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "沒有圖示符合。"
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "還沒有工作"
@@ -6879,10 +6918,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "尚未回復"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7296,6 +7331,7 @@ msgstr "現場面試"
 msgid "Onsite interview"
 msgstr "現場面試"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "開啟"
@@ -8866,6 +8902,7 @@ msgstr "使用 {1} 檢索 {0}。檢索時間並不能確定來源的新鮮度。
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -8953,10 +8990,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "查看草稿"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9796,6 +9829,10 @@ msgstr "標記為已申請前，請將問題縮短至 2,000 個字元、回答�
 msgid "Shorter"
 msgstr "較短"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "展示"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "顯示「使用 Reactive Resume 製作」"
@@ -9809,9 +9846,14 @@ msgstr "再顯示 {0} 個"
 msgid "Show {title} on the page"
 msgstr "頁面顯示{title}"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "顯示全部"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "顯示所有求職信"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12094,6 +12136,10 @@ msgstr "志工服務"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "請等待帳號時區載入；若載入失敗，請重試，或清除截止期限。"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

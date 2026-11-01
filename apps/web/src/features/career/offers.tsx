@@ -1,4 +1,5 @@
 import type { SavedData, SavedItem } from "./hooks";
+import type { ApplicationSummary } from "@/features/applications/types";
 import type { CareerProfileData } from "@reactive-resume/schema/career";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
@@ -26,6 +27,7 @@ import { CareerLoadError } from "./load-state";
 import { defaultPair, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry } from "./offer-entry";
 import { useCareerTime, useNow } from "./shared";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { orpc } from "@/libs/orpc/client";
 
 type Offer = SavedItem & { data: SavedData<"offer"> };
@@ -52,6 +54,47 @@ const writePair = (a: string | undefined, b: string | undefined) => {
 const companyOf = (offer: Offer) => offer.application?.company ?? t`Deleted application`;
 const versionLabel = (offer: Offer) => (offer.data.version === "verbal" ? t`Verbal offer` : t`Written offer`);
 
+type OfferStageApplicationsProps = { offers: Offer[]; applications: ApplicationSummary[] };
+
+/**
+ * Applications in the Offer stage that have no saved terms yet. They're listed so none is missed, each with its own
+ * Add offer form; nothing is compared until the user enters the terms.
+ */
+function OfferStageApplications({ offers, applications }: OfferStageApplicationsProps) {
+	const withTerms = new Set(offers.map((offer) => offer.applicationId));
+	const pending = applications.filter(
+		(application) => application.status === "offer" && !withTerms.has(application.id),
+	);
+	if (pending.length === 0) return null;
+
+	return (
+		<section aria-labelledby="offer-stage" className="grid gap-2.5">
+			<div className="grid gap-0.5">
+				<h2 id="offer-stage" className="text-[17px] font-semibold">
+					<Trans>In the Offer stage, terms not added</Trans>
+				</h2>
+				<p className="text-sm text-ink-2">
+					<Trans>Add each offer's terms to compare it. Nothing is filled in for you.</Trans>
+				</p>
+			</div>
+			<ul className="grid gap-2">
+				{pending.map((application) => (
+					<li
+						key={application.id}
+						className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface p-4"
+					>
+						<div className="grid min-w-0 gap-0.5">
+							<p className="truncate text-sm font-semibold">{application.company}</p>
+							<p className="truncate text-[13px] text-ink-2">{application.role}</p>
+						</div>
+						<OfferEntry application={{ id: application.id, company: application.company, role: application.role }} />
+					</li>
+				))}
+			</ul>
+		</section>
+	);
+}
+
 type OffersPageProps = { a: string | undefined; b: string | undefined };
 
 /** C20: two saved offers side by side, in their own currency and pay period, against the user's requirements. */
@@ -59,6 +102,7 @@ export function OffersPage({ a, b }: OffersPageProps) {
 	const navigate = useNavigate();
 	const query = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "offer" } }));
 	const profileQuery = useQuery(orpc.career.profile.queryOptions());
+	const applications = useQuery(applicationsListQueryOptions());
 	const offers = query.data?.filter((item): item is Offer => item.data.kind === "offer");
 
 	const setPair = (next: { a: string | undefined; b: string | undefined }) =>
@@ -83,16 +127,21 @@ export function OffersPage({ a, b }: OffersPageProps) {
 			void navigate({ to: "/dashboard/career/offers", search: { a: next.a, b: next.b }, replace: true });
 	}, [query.data, a, b, navigate]);
 
-	if ((query.isError && !query.data) || (profileQuery.isError && !profileQuery.data))
+	if (
+		(applications.isError && !applications.data) ||
+		(query.isError && !query.data) ||
+		(profileQuery.isError && !profileQuery.data)
+	)
 		return (
 			<CareerLoadError
 				onRetry={() => {
 					void query.refetch();
 					void profileQuery.refetch();
+					void applications.refetch();
 				}}
 			/>
 		);
-	if (query.isPending || profileQuery.isPending)
+	if (query.isPending || profileQuery.isPending || applications.isPending)
 		return (
 			<div className="grid gap-4">
 				<Skeleton className="h-9 w-2/3" />
@@ -102,11 +151,23 @@ export function OffersPage({ a, b }: OffersPageProps) {
 
 	if (!offers?.length)
 		return (
-			<EmptyState
-				title={<Trans>No offers to compare yet</Trans>}
-				description={<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>}
-				action={<OfferEntry primary />}
-			/>
+			<div className="grid gap-5">
+				{applications.isError && (
+					<CareerLoadError
+						onRetry={() => {
+							void applications.refetch();
+						}}
+					/>
+				)}
+				<OfferStageApplications offers={[]} applications={applications.data} />
+				{!applications.isError && (
+					<EmptyState
+						title={<Trans>No offers to compare yet</Trans>}
+						description={<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>}
+					/>
+				)}
+				<OfferEntry primary />
+			</div>
 		);
 
 	const left = offers.find((offer) => offer.id === a);
@@ -115,7 +176,15 @@ export function OffersPage({ a, b }: OffersPageProps) {
 
 	return (
 		<div className="grid gap-5">
+			{applications.isError && (
+				<CareerLoadError
+					onRetry={() => {
+						void applications.refetch();
+					}}
+				/>
+			)}
 			<OfferEntry />
+			<OfferStageApplications offers={offers} applications={applications.data} />
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<p className="text-sm text-ink-2">
 					<Trans>

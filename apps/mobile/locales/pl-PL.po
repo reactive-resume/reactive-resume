@@ -295,6 +295,11 @@ msgstr "{0, plural, one {CV (#)} other {CV (#)}}"
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {Pokaż ponownie # zignorowany problem} few {Pokaż ponownie # zignorowane problemy} many {Pokaż ponownie # zignorowanych problemów} other {Pokaż ponownie # zignorowanego problemu}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "Zamknięte: {closed}"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {Zaktualizowano # dokument} few {Zaktualizowano # dokumenty} many {Zaktualizowano # dokumentów} other {Zaktualizowano # dokumentu}}"
@@ -515,6 +524,10 @@ msgstr "{cost} rocznie"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "{cost} za pierwszy rok"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length} min"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· od dzisiaj} one {· od # dnia} other {· od # dni}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: brak odpowiedzi od # dnia. Krótkie przypomnienie jest teraz zwykle w porządku.} few {{company}: brak odpowiedzi od # dni. Krótkie przypomnienie jest teraz zwykle w porządku.} many {{company}: brak odpowiedzi od # dni. Krótkie przypomnienie jest teraz zwykle w porządku.} other {{company}: brak odpowiedzi od # dnia. Krótkie przypomnienie jest teraz zwykle w porządku.}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1081,6 +1098,10 @@ msgstr "Dodaj list motywacyjny"
 msgid "Add dates"
 msgstr "Dodaj daty"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "Dodaj edukację"
@@ -1206,6 +1227,10 @@ msgstr "Dodaj tag"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "Dodaj tekst"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3121,6 +3146,7 @@ msgstr "Nie można załadować strony tej wersji."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Nie można tego załadować. Sprawdź połączenie i spróbuj ponownie."
 
@@ -3648,6 +3674,10 @@ msgstr "Omówienie"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "Wywiad podsumowujący"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5262,6 +5292,10 @@ msgstr "Popraw wybraną linię"
 msgid "Improving…"
 msgstr "Udoskonalanie…"
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Także zamknięte"
@@ -6036,6 +6070,7 @@ msgstr "Ładowanie Twojego adresu publicznego…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6797,6 +6832,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "Żadne ikony nie pasują."
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "Nie ma jeszcze pracy"
@@ -6879,10 +6918,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "Nie ma jeszcze odpowiedzi"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7296,6 +7331,7 @@ msgstr "Na miejscu"
 msgid "Onsite interview"
 msgstr "Rozmowa na miejscu"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Otwórz"
@@ -8866,6 +8902,7 @@ msgstr "Pobrano {0} przy użyciu {1}. Czas pobrania nie określa świeżości po
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -8953,10 +8990,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "Przejrzyj szkic"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9796,6 +9829,10 @@ msgstr "Skróć pytania do 2000 znaków, a odpowiedzi do 6000 znaków, zanim ozn
 msgid "Shorter"
 msgstr "Krótszy"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "Pokazywać"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Pokazuj „Utworzono w Reactive Resume”"
@@ -9809,9 +9846,14 @@ msgstr "Pokaż więcej {0}"
 msgid "Show {title} on the page"
 msgstr "Pokaż {title} na stronie"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Pokaż wszystko"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "Pokaż wszystkie listy motywacyjne"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12094,6 +12136,10 @@ msgstr "Wolontariat"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "Poczekaj na wczytanie strefy czasowej konta, spróbuj ponownie, jeśli wczytywanie się nie powiodło, lub usuń termin."
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

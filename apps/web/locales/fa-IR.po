@@ -319,6 +319,11 @@ msgstr "{0, plural, one {خواندن متن # از رزومه شما…} other 
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {# واقعیت به خاطر سپرده شود؟} other {# واقعیت به خاطر سپرده شود؟}}"
 
+#. placeholder {0}: filtered.length
+#: src/routes/dashboard/applications/index.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -547,6 +552,10 @@ msgstr "{column, plural, one {ستون #} other {ستون های #}}"
 msgid "{company} only"
 msgstr "فقط {company}"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} پاسخ نداد."
@@ -558,6 +567,10 @@ msgstr "سالانه {cost}"
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "{cost} the first year"
 msgstr "{cost} برای سال اول"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
@@ -1431,6 +1444,10 @@ msgstr "پوشش نامه اضافه کنید"
 msgid "Add dates"
 msgstr "اضافه کردن تاریخ"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add education"
 msgstr "آموزش را اضافه کنید"
@@ -1568,6 +1585,10 @@ msgstr "افزودن برچسب"
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "متن اضافه کنید"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1933,10 +1954,6 @@ msgstr "یک ورودی تاریخ ندارد"
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "یک خطا"
-
-#: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
-msgstr "یک خطای غیرمنتظره مانع بارگذاری این صفحه شد. دوباره امتحان کنید یا به داشبورد بروید."
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -3883,6 +3900,10 @@ msgstr ""
 msgid "Couldn't load interviews. Retry"
 msgstr "مصاحبه‌ها بارگیری نشدند. تلاش دوباره"
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Couldn't load letters. Try again."
+msgstr "بارگیری نامه‌های معرفی ممکن نشد. دوباره تلاش کنید."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "بارگذاری یا ذخیرهٔ تنظیمات دسترسی به وب ممکن نشد. دوباره امتحان کنید."
@@ -4577,6 +4598,10 @@ msgstr "تیم استخدامی محترم"
 #: src/features/homepage/prepare.tsx
 msgid "Debrief"
 msgstr "مرور"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Deep breath."
@@ -5492,6 +5517,10 @@ msgstr "یک آدرس وب مانند مثال.com وارد کنید"
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "برای دسترسی به حساب خود، یکی از کدهای پشتیبان ذخیره‌شده را وارد کنید."
+
+#: src/features/documents/documents-page.tsx
+msgid "Enter opens the first result. Down arrow moves to the results. Escape clears."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -6711,6 +6740,10 @@ msgstr "در حال بهبود…"
 msgid "In good company"
 msgstr "در شرکت خوب"
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "فاصلهٔ خطوط را افزایش دهید تا دو خط در یکی ادغام نشوند."
@@ -7423,6 +7456,7 @@ msgstr "نامه تکثیر شد"
 msgid "Letter page"
 msgstr "صفحه نامه"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
 msgstr "نامه ها"
@@ -8564,6 +8598,10 @@ msgstr "هنوز واقعیتی برای پیوند نیست. آن‌ها را �
 
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -10565,6 +10603,7 @@ msgstr "رد شد"
 msgid "Relationship"
 msgstr ""
 
+#: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
@@ -10577,6 +10616,10 @@ msgstr ""
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/components/layout/error-screen.tsx
+msgid "Reload to try again."
 msgstr ""
 
 #: src/features/settings/profile.tsx
@@ -12077,6 +12120,7 @@ msgid "Shorter"
 msgstr "کوتاه تر"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Show"
 msgstr "نمایش دهید"
 
@@ -12103,6 +12147,26 @@ msgstr "{title} را در صفحه نشان دهید"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Show again"
 msgstr "دوباره نمایش دهید"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all applications"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all conversations"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all letters"
+msgstr "نمایش همه نامه‌های معرفی"
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all resumes"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Show all types"
@@ -14014,7 +14078,6 @@ msgstr "{0} را امتحان کنید"
 msgid "Try a sample"
 msgstr "یک نمونه را امتحان کنید"
 
-#: src/components/layout/error-screen.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -14740,6 +14803,10 @@ msgstr "تنظیمات صدا"
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "داوطلبانه"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Waiting for you"

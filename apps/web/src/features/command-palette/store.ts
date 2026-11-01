@@ -5,11 +5,14 @@ type CommandPaletteState = {
 	search: string;
 	askDraft: string | null;
 	pages: string[];
+	/** The highlighted item's value; Enter runs it. */
+	selected: string;
 };
 
 type CommandPaletteActions = {
 	setOpen: (open: boolean) => void;
 	setSearch: (search: string) => void;
+	setSelected: (selected: string) => void;
 	pushPage: (page: string) => void;
 	peekPage: () => string | undefined;
 	reset: () => void;
@@ -23,6 +26,7 @@ const initialState: CommandPaletteState = {
 	search: "",
 	askDraft: null,
 	pages: [],
+	selected: "",
 };
 
 export const useCommandPaletteStore = create<CommandPaletteStore>((set, get) => ({
@@ -34,6 +38,8 @@ export const useCommandPaletteStore = create<CommandPaletteStore>((set, get) => 
 	},
 
 	setSearch: (search) => set({ search }),
+
+	setSelected: (selected) => set({ selected }),
 
 	peekPage: () => get().pages[get().pages.length - 1],
 

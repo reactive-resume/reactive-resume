@@ -295,6 +295,11 @@ msgstr "{0, plural, one {Življenjepis (#)} other {Življenjepisi (#)}}"
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {Znova pokaži # prezrto težavo} two {Znova pokaži # prezrti težavi} few {Znova pokaži # prezrte težave} other {Znova pokaži # prezrtih težav}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "Zaključene: {closed}"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {Posodobljen # dokument} two {Posodobljena # dokumenta} few {Posodobljeni # dokumenti} other {Posodobljenih # dokumentov}}"
@@ -515,6 +524,10 @@ msgstr "{cost} na leto"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "{cost} za prvo leto"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length} min"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· od danes} one {· že # dan} two {· že # dneva} other {· že # dni}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: brez odgovora # dan. Kratko nadaljnje sporočilo je zdaj običajno v redu.} two {{company}: brez odgovora # dneva. Kratko nadaljnje sporočilo je zdaj običajno v redu.} few {{company}: brez odgovora # dni. Kratko nadaljnje sporočilo je zdaj običajno v redu.} other {{company}: brez odgovora # dni. Kratko nadaljnje sporočilo je zdaj običajno v redu.}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1081,6 +1098,10 @@ msgstr "Dodajte spremno pismo"
 msgid "Add dates"
 msgstr "Dodajte datume"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "Dodajte izobrazbo"
@@ -1206,6 +1227,10 @@ msgstr "Dodaj oznako"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "Dodajte besedilo"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3121,6 +3146,7 @@ msgstr "Strani te različice ni bilo mogoče naložiti."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Tega ni bilo mogoče naložiti. Preverite povezavo in poskusite znova."
 
@@ -3648,6 +3674,10 @@ msgstr "Analiza"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "Povzetek intervjuja"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5262,6 +5292,10 @@ msgstr "Izboljšaj izbrano vrstico"
 msgid "Improving…"
 msgstr "Izboljšanje ..."
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Vključno z zaključenimi"
@@ -6036,6 +6070,7 @@ msgstr "Nalaganje vašega javnega naslova …"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6797,6 +6832,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "Nobena ikona se ne ujema."
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "Brez službe še"
@@ -6879,10 +6918,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "Še ni odgovora"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7296,6 +7331,7 @@ msgstr "Na lokaciji"
 msgid "Onsite interview"
 msgstr "Razgovor na lokaciji"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Odpri"
@@ -8866,6 +8902,7 @@ msgstr "Pridobljeno {0} z uporabo {1}. Čas pridobivanja ne določa svežine izv
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -8953,10 +8990,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "Preglej osnutek"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9796,6 +9829,10 @@ msgstr "Preden to označite kot prijavljeno, skrajšajte vprašanja na 2.000 zna
 msgid "Shorter"
 msgstr "Krajši"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "Prikaži"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Prikaži „Narejeno z Reactive Resume“"
@@ -9809,9 +9846,14 @@ msgstr "Pokaži še {0}"
 msgid "Show {title} on the page"
 msgstr "Pokaži {title} na strani"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Prikaži vse"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "Prikaži vsa spremna pisma"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12094,6 +12136,10 @@ msgstr "Prostovoljec"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "Počakajte, da se naloži časovni pas vašega računa, poskusite znova, če nalaganje ni uspelo, ali počistite rok."
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

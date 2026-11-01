@@ -1,7 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useHotkeys } from "@tanstack/react-hotkeys";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Command, CommandEmpty, CommandInput, CommandList } from "@reactive-resume/ui/components/command";
 import {
 	Dialog,
@@ -19,8 +19,16 @@ import { useCommandPaletteStore } from "./store";
 export default function CommandPaletteContent() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const commandRef = useRef<HTMLDivElement>(null);
-	const [selectedValue, setSelectedValue] = useState("");
-	const { open, search, pages, setOpen, setSearch, goBack } = useCommandPaletteStore();
+	const {
+		open,
+		search,
+		pages,
+		selected: selectedValue,
+		setOpen,
+		setSearch,
+		setSelected: setSelectedValue,
+		goBack,
+	} = useCommandPaletteStore();
 
 	const isFirstPage = pages.length === 0;
 	const currentPage = pages[pages.length - 1];
@@ -68,7 +76,7 @@ export default function CommandPaletteContent() {
 
 		if (value) setSelectedValue(value);
 		inputRef.current?.focus();
-	}, [open, commandListPage]);
+	}, [open, commandListPage, setSelectedValue]);
 
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>

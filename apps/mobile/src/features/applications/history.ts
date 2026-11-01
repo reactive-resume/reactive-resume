@@ -25,9 +25,4 @@ export function currentLaneEntry(application: HistorySource, lanes: readonly App
 export const laneSince = (application: HistorySource, lanes: readonly ApplicationLane[] = []) =>
 	new Date(currentLaneEntry(application, lanes)?.at ?? application.appliedAt);
 
-export const categorySince = (application: HistorySource) => {
-	const entries = canonicalStageEntries(application).filter((entry) => entry.stage === application.status);
-	return new Date(
-		entries.length ? Math.max(...entries.map((entry) => new Date(entry.at).getTime())) : application.appliedAt,
-	);
-};
+export { applicationStageSince as categorySince } from "@reactive-resume/schema/applications/next-step";

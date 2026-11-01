@@ -1,7 +1,7 @@
 import type { ApplicationLane } from "./lanes";
 import type { ApplicationSummary as Application } from "./types";
 import { createDefaultApplicationLanes, resolveLane, visibleLanes } from "./lanes";
-import { getNextStep } from "./next-step";
+import { compareNextStepSortKeys, nextStepSortKey } from "./next-step";
 import { LIST_ORDER } from "./stages";
 
 export type ApplicationSort = "updated" | "role" | "next";
@@ -32,21 +32,18 @@ export function groupApplications(
 		position: LIST_ORDER.indexOf(lane.category),
 	})),
 ) {
-	const nextTime = (application: Application) => {
-		const step = getNextStep(application, now);
-		return step.kind === "interview" || step.kind === "follow-up" ? step.at.getTime() : Infinity;
-	};
+	// Next step reads the same keys as web: dated steps soonest first, then the longest wait in the stage.
+	const keys = new Map(
+		sort === "next" ? applications.map((application) => [application.id, nextStepSortKey(application, now)]) : [],
+	);
 	const compare = (a: Application, b: Application) => {
-		const left = sort === "next" ? nextTime(a) : new Date(a.updatedAt).getTime();
-		const right = sort === "next" ? nextTime(b) : new Date(b.updatedAt).getTime();
-		const order =
-			sort === "role"
-				? a.role.localeCompare(b.role) || a.company.localeCompare(b.company)
-				: left === right
-					? 0
-					: left < right
-						? -1
-						: 1;
+		let order: number;
+		if (sort === "role") order = a.role.localeCompare(b.role) || a.company.localeCompare(b.company);
+		else if (sort === "next") {
+			const [rankA, timeA] = keys.get(a.id) ?? [1, 0];
+			const [rankB, timeB] = keys.get(b.id) ?? [1, 0];
+			return compareNextStepSortKeys([rankA, timeA], [rankB, timeB], a.id, b.id, direction);
+		} else order = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
 		return (direction === "asc" ? order : -order) || a.id.localeCompare(b.id);
 	};
 	return visibleLanes(lanes, applications)

@@ -295,6 +295,11 @@ msgstr "{0, plural, one {CV (#)} other {CV-të (#)}}"
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {Shfaq sërish # problem të shpërfillur} other {Shfaq sërish # probleme të shpërfillura}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "{closed} mbyllur"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# dokument u përditësua} other {# dokumente u përditësuan}}"
@@ -515,6 +524,10 @@ msgstr "{cost} në vit"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "{cost} për vitin e parë"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length}m"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· që nga sot} one {· për # ditë} other {· për # ditë}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: asnjë përgjigje për # ditë. Një mesazh i shkurtër vijues zakonisht është në rregull tani.} other {{company}: asnjë përgjigje për # ditë. Një mesazh i shkurtër vijues zakonisht është në rregull tani.}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1081,6 +1098,10 @@ msgstr "Shto letrën e motivimit"
 msgid "Add dates"
 msgstr "Shtoni datat"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "Shtoni arsimin"
@@ -1206,6 +1227,10 @@ msgstr "Shto etiketë"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "Shto tekst"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3121,6 +3146,7 @@ msgstr "Faqja e këtij versioni nuk mund të ngarkohej."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Kjo nuk mund të ngarkohej. Verifikoni lidhjen tuaj dhe provoni përsëri."
 
@@ -3648,6 +3674,10 @@ msgstr "Analiza"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "Intervistë e shkurtër"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5262,6 +5292,10 @@ msgstr "Përmirëso linjën e zgjedhur"
 msgid "Improving…"
 msgstr "Po përmirësohet…"
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Përfshirë të mbyllurat"
@@ -6036,6 +6070,7 @@ msgstr "Adresa juaj publike po ngarkohet…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6797,6 +6832,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "Asnjë ikonë nuk përputhet."
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "Ende nuk ka punë"
@@ -6879,10 +6918,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "Asnjë përgjigje ende"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7296,6 +7331,7 @@ msgstr "Në zyrë"
 msgid "Onsite interview"
 msgstr "Intervistë në vend"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Hap"
@@ -8866,6 +8902,7 @@ msgstr "{0} është marrë duke përdorur {1}. Koha e marrjes nuk përcakton fre
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -8953,10 +8990,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "Rishiko draftin"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9796,6 +9829,10 @@ msgstr "Shkurtojini pyetjet në 2.000 karaktere dhe përgjigjet në 6.000 karakt
 msgid "Shorter"
 msgstr "Më e shkurtër"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "Shfaq"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Shfaq “Bërë me Reactive Resume”"
@@ -9809,9 +9846,14 @@ msgstr "Shfaq {0} më shumë"
 msgid "Show {title} on the page"
 msgstr "Shfaq {title} në faqe"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Trego të gjitha"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "Shfaq të gjitha letrat e motivimit"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12094,6 +12136,10 @@ msgstr "Punë vullnetare"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "Prisni të ngarkohet zona kohore e llogarisë suaj, provoni përsëri nëse ngarkimi dështoi, ose hiqni afatin."
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

@@ -319,6 +319,11 @@ msgstr "{0, plural, one {Ansioluettelosi kohdan # lukeminen…} other {Ansioluet
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {Muistetaanko # fakta?} other {Muistetaanko # faktaa?}}"
 
+#. placeholder {0}: filtered.length
+#: src/routes/dashboard/applications/index.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -547,6 +552,10 @@ msgstr "{column, plural, one {# kolonni} other {# sarakkeet}}"
 msgid "{company} only"
 msgstr "Vain {company}"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} ei vastannut."
@@ -558,6 +567,10 @@ msgstr "{cost} vuodessa"
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "{cost} the first year"
 msgstr "{cost} ensimmäisenä vuonna"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
@@ -1431,6 +1444,10 @@ msgstr "Lisää saatekirje"
 msgid "Add dates"
 msgstr "Lisää päivämäärät"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add education"
 msgstr "Lisää koulutus"
@@ -1568,6 +1585,10 @@ msgstr "Lisää tunniste"
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "Lisää tekstiä"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1933,10 +1954,6 @@ msgstr "Merkinnällä ei ole päivämääriä"
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "virhe"
-
-#: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
-msgstr "Odottamaton virhe esti tämän sivun latautumisen. Yritä uudelleen tai siirry hallintapaneeliin."
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -3883,6 +3900,10 @@ msgstr ""
 msgid "Couldn't load interviews. Retry"
 msgstr "Haastatteluja ei voitu ladata. Yritä uudelleen"
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Couldn't load letters. Try again."
+msgstr "Hakemuskirjeitä ei voitu ladata. Yritä uudelleen."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "Verkkoyhteyden asetuksia ei voitu ladata tai tallentaa. Yritä uudelleen."
@@ -4577,6 +4598,10 @@ msgstr "Arvoisa rekrytointitiimi,"
 #: src/features/homepage/prepare.tsx
 msgid "Debrief"
 msgstr "Jälkipuinti"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Deep breath."
@@ -5492,6 +5517,10 @@ msgstr "Anna verkko-osoite, kuten esimerkki.com"
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Syötä jokin tallentamistasi varmuuskoodeista päästäksesi tilillesi."
+
+#: src/features/documents/documents-page.tsx
+msgid "Enter opens the first result. Down arrow moves to the results. Escape clears."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -6711,6 +6740,10 @@ msgstr "Parannetaan…"
 msgid "In good company"
 msgstr "Hyvässä seurassa"
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Kasvata riviväliä, jotta kaksi riviä ei sulaudu yhdeksi."
@@ -7423,6 +7456,7 @@ msgstr "Kirje monistettu"
 msgid "Letter page"
 msgstr "Kirjeen sivu"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
 msgstr "Kirjeet"
@@ -8564,6 +8598,10 @@ msgstr "Ei vielä linkitettäviä faktoja. Lisää niitä Faktat-osiossa."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -10565,6 +10603,7 @@ msgstr "Hylätty"
 msgid "Relationship"
 msgstr ""
 
+#: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
@@ -10577,6 +10616,10 @@ msgstr ""
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/components/layout/error-screen.tsx
+msgid "Reload to try again."
 msgstr ""
 
 #: src/features/settings/profile.tsx
@@ -12077,6 +12120,7 @@ msgid "Shorter"
 msgstr "Lyhyempi"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Show"
 msgstr "Näytä"
 
@@ -12103,6 +12147,26 @@ msgstr "Näytä sivulla {title}"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Show again"
 msgstr "Näytä uudelleen"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all applications"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all conversations"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all letters"
+msgstr "Näytä kaikki hakemuskirjeet"
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all resumes"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Show all types"
@@ -14014,7 +14078,6 @@ msgstr "Kokeile {0}"
 msgid "Try a sample"
 msgstr "Kokeile näytettä"
 
-#: src/components/layout/error-screen.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -14740,6 +14803,10 @@ msgstr "Ääniasetukset"
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "Vapaaehtoistyö"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Waiting for you"

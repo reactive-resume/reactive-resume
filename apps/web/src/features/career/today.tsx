@@ -26,6 +26,13 @@ import {
 	interviewKindOf,
 	upcomingInterviews,
 } from "@/features/applications/interviews";
+import {
+	compareNextStepSortKeys,
+	describeNextStep,
+	getNextStep,
+	needsAttention,
+	nextStepSortKey,
+} from "@/features/applications/next-step";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
@@ -133,7 +140,7 @@ type NeedsYouProps = { now: Date; onReview: () => void; className?: string };
 function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	const queryClient = useQueryClient();
 	const router = useRouter();
-	const { time, when, locale } = useCareerTime();
+	const { time, when, locale, timeZone } = useCareerTime();
 	const dayOffset = useDayOffset();
 	const queryKey = orpc.career.notifications.queryKey({ input: {} });
 	const { data, isError, refetch } = useQuery(orpc.career.notifications.queryOptions({ input: {} }));
@@ -156,6 +163,13 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	const unread = data?.filter(isUnread) ?? [];
 	const read = data?.filter((row) => !isUnread(row)) ?? [];
 	const rows = showRead ? (data ?? []) : unread;
+	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
+	const attention = (applications ?? [])
+		.flatMap((application) => {
+			const step = getNextStep(application, now);
+			return needsAttention(step, now) ? [{ application, step, key: nextStepSortKey(application, now) }] : [];
+		})
+		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.application.id, b.application.id));
 
 	// Hidden at once; the server hears about it when the toast closes. The cache edit drops the sidebar count too,
 	// while `pending` keeps the row hidden through any refetch.
@@ -197,7 +211,11 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 
 	return (
 		<section aria-labelledby="needs-you" className={cn("flex flex-col gap-2.5", className)}>
-			<SectionHeading id="needs-you" title={t`Needs you`} count={data ? unread.length : undefined} />
+			<SectionHeading
+				id="needs-you"
+				title={t`Needs you`}
+				count={data && applications ? unread.length + attention.length : undefined}
+			/>
 			{isError || applicationQuery.isError ? (
 				<CareerLoadError
 					onRetry={() => {
@@ -205,11 +223,11 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 						void applicationQuery.refetch();
 					}}
 				/>
-			) : !data ? (
+			) : !data || !applications ? (
 				<Skeleton className="h-40 rounded-xl" />
 			) : (
-				<Swap id={rows.length > 0 ? "list" : "empty"}>
-					{rows.length > 0 ? (
+				<Swap id={rows.length + attention.length > 0 ? "list" : "empty"}>
+					{rows.length + attention.length > 0 ? (
 						<div role="list" className="overflow-hidden rounded-xl border border-line bg-surface">
 							<AnimatePresence initial={false}>
 								{rows.map((row) => {
@@ -254,6 +272,59 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 														onClick={() => dismiss(row)}
 													/>
 												)}
+											</div>
+										</CollapseRow>
+									);
+								})}
+								{attention.map(({ application, step }) => {
+									const text = describeNextStep(step, application, locale, timeZone);
+									return (
+										<CollapseRow
+											key={`application-${application.id}`}
+											role="listitem"
+											className="border-t border-line first:border-t-0"
+										>
+											<div
+												role="group"
+												aria-labelledby={`attention-${application.id}`}
+												className="flex items-start gap-3.5 px-4 py-3.5 [contain-intrinsic-size:auto_96px] [content-visibility:auto]"
+											>
+												<span
+													aria-hidden="true"
+													className={cn(
+														"grid size-[34px] shrink-0 place-items-center rounded-lg",
+														text.tone === "warn" ? "bg-warn-soft text-warn-text" : "bg-accent-soft text-accent-text",
+													)}
+												>
+													<Icon name={text.icon} size={20} />
+												</span>
+												<div className="flex min-w-0 flex-1 flex-wrap items-start gap-x-3 gap-y-2">
+													<div className="grid min-w-0 flex-1 basis-56 gap-0.5">
+														<p id={`attention-${application.id}`} className="text-sm leading-5 font-semibold">
+															{text.title}
+														</p>
+														{text.sub && <p className="text-[13px] leading-[19px] text-ink-2">{text.sub}</p>}
+														<p className="mt-0.5 text-xs text-ink-3">
+															{application.company} · {application.role}
+														</p>
+													</div>
+													<Button
+														variant="secondary"
+														nativeButton={false}
+														className="h-8 px-3 text-[13px]"
+														render={
+															<Link
+																to="/dashboard/applications/$applicationId/{-$tab}"
+																params={{
+																	applicationId: application.id,
+																	tab: step.kind === "interview" ? "prepare" : "messages",
+																}}
+															/>
+														}
+													>
+														<Trans>Open workspace</Trans>
+													</Button>
+												</div>
 											</div>
 										</CollapseRow>
 									);

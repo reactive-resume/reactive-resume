@@ -158,8 +158,7 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 	const { locale, timeZone, when, time, day } = useUserTime();
 	const [followUpOpen, setFollowUpOpen] = useState(false);
 	const [reminderOpen, setReminderOpen] = useState(false);
-	const lanes = useApplicationLanes();
-	const step = getNextStep(application, undefined, lanes.lanes);
+	const step = getNextStep(application);
 	const text = describeNextStep(step, application, locale, timeZone);
 	const followUpDue = step.kind === "no-reply" || (step.kind === "follow-up" && step.overdue);
 	const tab = step.kind === "interview" ? "prepare" : followUpDue ? "messages" : workspaceTabFor(application);

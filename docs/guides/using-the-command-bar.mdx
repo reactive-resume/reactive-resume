@@ -1,9 +1,9 @@
 ---
 title: "Using the command bar"
-description: "Open the command bar with ⌘K to search your resumes and applications, jump to any page, change theme or language, or ask the assistant a question."
+description: "Open the command bar with ⌘K to search your resumes, letters and applications, jump to any page, change theme or language, or ask the assistant a question."
 ---
 
-The command bar is a search box that runs commands. Use it to open a resume or application by name, jump to any page,
+The command bar is a search box that runs commands. Use it to open a resume, letter or application by name, jump to any page,
 switch the theme or language, or prepare a question for the assistant, without reaching for the mouse.
 
 <Frame caption="The command bar, scrolled to its Go to… rows">
@@ -37,6 +37,33 @@ To close it, press <kbd>Esc</kbd> or press <kbd>⌘</kbd> <kbd>K</kbd> again.
   </Step>
 </Steps>
 
+## Find a document or application
+
+When you're signed in, typing on the first list also searches your documents and applications. Matches appear above
+the commands, the top match is selected, and <kbd>Enter</kbd> opens it:
+
+- **Resumes** and **Letters** match a document's name, its tags, and the company or role of the application it was
+  made for. A resume's public address isn't searched, because it can still carry an earlier name.
+- **Applications** match the company, role, location, tags or a contact's name.
+- **Assistant conversations** match the conversation's title or its document's name.
+
+Each group shows its first few matches. **Show all resumes**, **Show all applications** and **Show all conversations**
+open the full list for that kind. **Show all letters** opens **Documents** filtered to letters, keeping the text you typed. The library keeps that search as you move between pages. If a read fails, choose **Try again** (web) or **Retry** (native); a failed read does not mean there are no matches.
+
+<Frame caption="Typing a tag finds the letter that carries it">
+  <img
+    src="/images/guides/using-the-command-bar/command-bar-search.webp"
+    alt='The command bar with "unreal" typed in the search box, the letter "Studio note" selected under Letters, and Ask the assistant "unreal" below it.'
+  />
+</Frame>
+
+<Frame caption="More than eight matching letters continue into the filtered Documents library">
+  <img
+    src="/images/guides/using-the-command-bar/letters-continuation.png"
+    alt="The command bar finds eight fictional letters by tag and offers Show all letters to continue into Documents."
+  />
+</Frame>
+
 ## What you can do
 
 The command bar groups its rows by what they do. Rows that need an account appear or become available once you're
@@ -44,11 +71,11 @@ signed in.
 
 ### Search for…
 
-| Row                         | What it does                                                                                                                                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Resumes**                 | Lists your resumes, most recently edited first. Type to filter by name, then press <kbd>Enter</kbd> to open one in the editor. The first row, **Create a new resume**, opens the **New** dialog. |
-| **Applications**            | Lists your job applications. Type a company or role to filter, then open one to see its details. **Save job** starts a new one.                                                                  |
-| **Assistant conversations** | Lists your past conversations with the assistant. Opening one takes you to its document with the conversation showing.                                                                           |
+| Row                         | What it does                                                                                                                                                                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Resumes**                 | Lists your 100 most recently edited resumes. Type to search all of them by name, tag or linked application, then press <kbd>Enter</kbd> to open one in the editor. The first row, **Create a new resume**, opens the **New** dialog. |
+| **Applications**            | Lists your job applications. Type a company, role, location, tag or contact to filter, then open one to see its details. **Save job** starts a new one.                                                                              |
+| **Assistant conversations** | Lists your past conversations with the assistant. Opening one takes you to its document with the conversation showing.                                                                                                               |
 
 ### Preferences
 

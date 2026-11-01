@@ -1,4 +1,5 @@
 import type { SavedItem } from "./hooks";
+import type { ApplicationSummary } from "@/features/applications/types";
 import type { CareerProfileData, OfferTerms } from "@reactive-resume/schema/career";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
@@ -9,6 +10,7 @@ import { useCareerQueries, useCareerTime, useNow, useOffers } from "./hooks";
 import { defaultPair, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry } from "./offer-entry";
 import { Actions, LoadState } from "./shared";
+import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
 import { Banner, Button, Card, EmptyState, Screen, SelectSheet, Text, useTheme } from "@/ui";
 
@@ -23,6 +25,7 @@ export function OffersScreen() {
 	const router = useRouter();
 	const query = useOffers();
 	const { profile } = useCareerQueries();
+	const applications = useApplications();
 	const offers = (query.data ?? []).filter((item): item is Offer => item.data.kind === "offer");
 	const [selected, setSelected] = useState<(string | undefined)[]>([]);
 	const defaults = defaultPair(offers);
@@ -30,13 +33,30 @@ export function OffersScreen() {
 	const b =
 		offers.find((row) => row.id === selected[1] && row.id !== a?.id) ??
 		offers.find((row) => row.id === defaults[1] && row.id !== a?.id);
+	if (
+		query.isPending ||
+		(query.isError && !query.data) ||
+		profile.isPending ||
+		(profile.isError && !profile.data) ||
+		applications.isPending ||
+		(applications.isError && !applications.data)
+	)
+		return (
+			<Screen onRefresh={() => Promise.allSettled([query.refetch(), profile.refetch(), applications.refetch()])}>
+				<LoadState query={query} />
+				<LoadState query={profile} />
+				<LoadState query={applications} />
+			</Screen>
+		);
 	return (
-		<Screen onRefresh={() => Promise.allSettled([query.refetch(), profile.refetch()])}>
+		<Screen onRefresh={() => Promise.allSettled([query.refetch(), profile.refetch(), applications.refetch()])}>
 			<Text color="ink3">{t`Compared in their original currency and pay period. Comparing doesn't share anything with the coach.`}</Text>
 			<OfferEntry primary={!query.isPending && !query.isError && !offers.length} />
 			<LoadState query={query} />
 			<LoadState query={profile} />
-			{!query.isError && !query.isPending && !offers.length ? (
+			<LoadState query={applications} />
+			<OfferStageApplications offers={offers} applications={applications.data} />
+			{!query.isError && !query.isPending && !applications.isError && !offers.length ? (
 				<EmptyState
 					variant="card"
 					title={t`No offers to compare yet`}
@@ -98,6 +118,35 @@ export function OffersScreen() {
 				</>
 			) : null}
 		</Screen>
+	);
+}
+
+type OfferStageApplicationsProps = { offers: Offer[]; applications: ApplicationSummary[] };
+
+/**
+ * Applications in the Offer stage that have no saved terms yet, as on web. They're listed so none is missed, each with
+ * its own Add offer form; nothing is compared until the user enters the terms.
+ */
+function OfferStageApplications({ offers, applications }: OfferStageApplicationsProps) {
+	const { t } = useLingui();
+	const { space } = useTheme();
+	const withTerms = new Set(offers.map((offer) => offer.applicationId));
+	const pending = applications.filter(
+		(application) => application.status === "offer" && !withTerms.has(application.id),
+	);
+	if (pending.length === 0) return null;
+	return (
+		<View style={{ gap: space.s3 }}>
+			<Text variant="title">{t`In the Offer stage, terms not added`}</Text>
+			<Text color="ink3">{t`Add each offer's terms to compare it. Nothing is filled in for you.`}</Text>
+			{pending.map((application) => (
+				<Card key={application.id} style={{ gap: space.s3 }}>
+					<Text weight={600}>{application.company}</Text>
+					<Text color="ink2">{application.role}</Text>
+					<OfferEntry application={{ id: application.id, company: application.company, role: application.role }} />
+				</Card>
+			))}
+		</View>
 	);
 }
 

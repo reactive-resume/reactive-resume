@@ -301,7 +301,10 @@ assert.equal(
 );
 
 const stages = load("features/applications/stages.ts");
-const history = load("features/applications/history.ts");
+const domainNextStep = load("../../../packages/schema/src/applications/next-step.ts");
+const history = load("features/applications/history.ts", {
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
+});
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
 const applicationData = load("../../../packages/schema/src/applications/data.ts", {
 	zod,
@@ -316,7 +319,11 @@ const defaultLanes = schemaLanes.createDefaultApplicationLanes();
 const laneQuery = {
 	useApplicationLanes: () => ({ lanes: defaultLanes, active: defaultLanes, supported: false, ready: true }),
 };
-const nextSteps = load("features/applications/next-step.ts", { "./stages": stages, "./history": history });
+const nextSteps = load("features/applications/next-step.ts", {
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
+	"./stages": stages,
+	"./history": history,
+});
 const time = { locale: "en-US", timeZone: "UTC", when: String, time: String, day: String, utcDay: String };
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
 	"@tanstack/react-query": {},
@@ -433,7 +440,7 @@ console.log(
 let applications = [];
 let applicationSearch = "";
 const listLogic = load("features/applications/list.ts", {
-	"./next-step": { getNextStep: () => ({ kind: "none" }) },
+	"./next-step": { nextStepSortKey: () => [1, 0] },
 	"./stages": { LIST_ORDER: ["saved", "applied", "closed"] },
 	"./lanes": lanes,
 });
@@ -444,7 +451,12 @@ const { ApplicationsListScreen } = load("features/applications/list-screen.tsx",
 	"./lane-queries": laneQuery,
 	"./lanes": lanes,
 	"./list": listLogic,
-	"./next-step": { getNextStep: () => ({}), describeNextStep: () => ({ title: "Saved" }) },
+	"./next-step": {
+		getNextStep: () => ({}),
+		describeNextStep: () => ({ title: "Saved" }),
+		needsFollowUp: () => false,
+	},
+	"expo-sqlite/kv-store": { getItemSync: () => null, setItemSync: () => {} },
 	"./queries": {
 		useApplications: () => ({ data: applications }),
 		useApplicationMutations: () => ({}),

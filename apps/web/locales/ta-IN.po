@@ -319,6 +319,11 @@ msgstr "{0, plural, one {உங்கள் ரெஸ்யூமேயின்
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {# உண்மையை நினைவில் வைக்கவா?} other {# உண்மைகளை நினைவில் வைக்கவா?}}"
 
+#. placeholder {0}: filtered.length
+#: src/routes/dashboard/applications/index.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -547,6 +552,10 @@ msgstr "{column, plural, one {# நெடுவரிசை} other {# நெட�
 msgid "{company} only"
 msgstr "{company} மட்டும்"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} பதிலளிக்கவில்லை."
@@ -558,6 +567,10 @@ msgstr "ஆண்டுக்கு {cost}"
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "{cost} the first year"
 msgstr "முதல் ஆண்டுக்கு {cost}"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
@@ -1431,6 +1444,10 @@ msgstr "கவர் கடிதம் சேர்க்கவும்"
 msgid "Add dates"
 msgstr "தேதிகளைச் சேர்க்கவும்"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add education"
 msgstr "கல்வியைச் சேர்க்கவும்"
@@ -1568,6 +1585,10 @@ msgstr "குறிச்சொல்லைச் சேர்க்கவு�
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "உரையைச் சேர்க்கவும்"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1933,10 +1954,6 @@ msgstr "ஒரு நுழைவுக்கு தேதிகள் இல்
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "ஒரு பிழை"
-
-#: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
-msgstr "எதிர்பாராத பிழை காரணமாக இந்தப் பக்கம் ஏற்றப்படவில்லை. மீண்டும் முயற்சிக்கவும் அல்லது டாஷ்போர்டுக்குச் செல்லவும்."
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -3883,6 +3900,10 @@ msgstr ""
 msgid "Couldn't load interviews. Retry"
 msgstr "நேர்காணல்களை ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்"
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Couldn't load letters. Try again."
+msgstr "அறிமுகக் கடிதங்களை ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "இணைய அணுகல் அமைப்புகளை ஏற்றவோ சேமிக்கவோ முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
@@ -4577,6 +4598,10 @@ msgstr "அன்புள்ள பணியமர்த்தல் குழ�
 #: src/features/homepage/prepare.tsx
 msgid "Debrief"
 msgstr "மீளாய்வு"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Deep breath."
@@ -5492,6 +5517,10 @@ msgstr "உதாரணம்.com போன்ற இணைய முகவர�
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "உங்கள் கணக்கை அணுக, சேமித்த காப்புக் குறியீடுகளில் ஒன்றை உள்ளிடவும்."
+
+#: src/features/documents/documents-page.tsx
+msgid "Enter opens the first result. Down arrow moves to the results. Escape clears."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -6711,6 +6740,10 @@ msgstr "மேம்படுத்துகிறது…"
 msgid "In good company"
 msgstr "நல்ல நிறுவனத்தில்"
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "இரண்டு வரிகள் ஒன்றாக இணையாமல் இருக்க வரி இடைவெளியை அதிகரிக்கவும்."
@@ -7423,6 +7456,7 @@ msgstr "கடிதம் நகலாக்கப்பட்டது"
 msgid "Letter page"
 msgstr "கடிதப் பக்கம்"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
 msgstr "கடிதங்கள்"
@@ -8564,6 +8598,10 @@ msgstr "இணைக்க இன்னும் உண்மைகள் இல
 
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -10565,6 +10603,7 @@ msgstr "நிராகரிக்கப்பட்டது"
 msgid "Relationship"
 msgstr ""
 
+#: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
@@ -10577,6 +10616,10 @@ msgstr ""
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/components/layout/error-screen.tsx
+msgid "Reload to try again."
 msgstr ""
 
 #: src/features/settings/profile.tsx
@@ -12077,6 +12120,7 @@ msgid "Shorter"
 msgstr "குட்டையானது"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Show"
 msgstr "காட்டு"
 
@@ -12103,6 +12147,26 @@ msgstr "பக்கத்தில் {title} ஐக் காட்டு"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Show again"
 msgstr "மீண்டும் காட்டு"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all applications"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all conversations"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all letters"
+msgstr "அனைத்து அறிமுகக் கடிதங்களையும் காட்டு"
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all resumes"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Show all types"
@@ -14014,7 +14078,6 @@ msgstr "{0} முயற்சிக்கவும்"
 msgid "Try a sample"
 msgstr "ஒரு மாதிரியை முயற்சிக்கவும்"
 
-#: src/components/layout/error-screen.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -14740,6 +14803,10 @@ msgstr "குரல் அமைப்புகள்"
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "தன்னார்வம்"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Waiting for you"

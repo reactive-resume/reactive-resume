@@ -319,6 +319,11 @@ msgstr "{0, plural, one {Skaitydami savo gyvenimo aprašymo ištrauką #…} oth
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {Įsiminti # faktą?} few {Įsiminti # faktus?} many {Įsiminti # fakto?} other {Įsiminti # faktų?}}"
 
+#. placeholder {0}: filtered.length
+#: src/routes/dashboard/applications/index.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -547,6 +552,10 @@ msgstr "{column, plural, one {# kolonėlė} other {# kolonos}}"
 msgid "{company} only"
 msgstr "Tik {company}"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} neatsakė."
@@ -558,6 +567,10 @@ msgstr "{cost} per metus"
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "{cost} the first year"
 msgstr "{cost} pirmiesiems metams"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
@@ -1431,6 +1444,10 @@ msgstr "Pridėkite motyvacinį laišką"
 msgid "Add dates"
 msgstr "Pridėkite datas"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add education"
 msgstr "Pridėti išsilavinimą"
@@ -1568,6 +1585,10 @@ msgstr "Pridėti žymą"
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "Pridėti tekstą"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1933,10 +1954,6 @@ msgstr "Įrašas neturi datų"
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "klaida"
-
-#: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
-msgstr "Dėl netikėtos klaidos šis puslapis neįsikėlė. Bandykite dar kartą arba eikite į valdymo skydelį."
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -3883,6 +3900,10 @@ msgstr ""
 msgid "Couldn't load interviews. Retry"
 msgstr "Nepavyko įkelti pokalbių. Bandyti dar kartą"
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Couldn't load letters. Try again."
+msgstr "Nepavyko įkelti motyvacinių laiškų. Bandykite dar kartą."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "Nepavyko įkelti ar išsaugoti žiniatinklio prieigos nustatymų. Bandykite dar kartą."
@@ -4577,6 +4598,10 @@ msgstr "Miela nuomos komanda,"
 #: src/features/homepage/prepare.tsx
 msgid "Debrief"
 msgstr "Aptarimas"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Deep breath."
@@ -5492,6 +5517,10 @@ msgstr "Įveskite žiniatinklio adresą, pvz., .com"
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Įveskite vieną iš išsaugotų atsarginių kodų, kad pasiektumėte paskyrą."
+
+#: src/features/documents/documents-page.tsx
+msgid "Enter opens the first result. Down arrow moves to the results. Escape clears."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -6711,6 +6740,10 @@ msgstr "Tobulinama…"
 msgid "In good company"
 msgstr "Geroje kompanijoje"
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Padidinkite eilučių intervalą, kad dvi eilutės nesusilietų į vieną."
@@ -7423,6 +7456,7 @@ msgstr "Laiškas dubliuotas"
 msgid "Letter page"
 msgstr "Laiško puslapis"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
 msgstr "Laiškai"
@@ -8564,6 +8598,10 @@ msgstr "Kol kas nėra faktų, kuriuos galima susieti. Pridėkite juos skiltyje �
 
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -10565,6 +10603,7 @@ msgstr "Atmesta"
 msgid "Relationship"
 msgstr ""
 
+#: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
@@ -10577,6 +10616,10 @@ msgstr ""
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/components/layout/error-screen.tsx
+msgid "Reload to try again."
 msgstr ""
 
 #: src/features/settings/profile.tsx
@@ -12077,6 +12120,7 @@ msgid "Shorter"
 msgstr "Trumpesnis"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Show"
 msgstr "Rodyti"
 
@@ -12103,6 +12147,26 @@ msgstr "Puslapyje parodykite {title}"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Show again"
 msgstr "Rodyti dar kartą"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all applications"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all conversations"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all letters"
+msgstr "Rodyti visus motyvacinius laiškus"
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all resumes"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Show all types"
@@ -14014,7 +14078,6 @@ msgstr "Išbandykite {0}"
 msgid "Try a sample"
 msgstr "Išbandykite pavyzdį"
 
-#: src/components/layout/error-screen.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -14740,6 +14803,10 @@ msgstr "Balso nustatymai"
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "Savanorystė"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Waiting for you"
