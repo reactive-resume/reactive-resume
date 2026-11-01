@@ -95,7 +95,12 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 					</p>
 				)}
 			</div>
-			{isAnonymous ? (
+			{/* A dead request comes first: its sign-up links would only resume a request that can't continue. */}
+			{!validRequest || isError ? (
+				<p key="invalid" role="alert" className={ENTER_CLASS}>
+					<Trans>This connection request is invalid or has expired. Start the connection again from your client.</Trans>
+				</p>
+			) : isAnonymous ? (
 				<div className="space-y-4">
 					<p>
 						<Trans>Create an account to connect apps. Guest accounts are temporary.</Trans>
@@ -130,10 +135,6 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 						</p>
 					)}
 				</div>
-			) : !validRequest || isError ? (
-				<p key="invalid" role="alert" className={ENTER_CLASS}>
-					<Trans>This connection request is invalid or has expired. Start the connection again from your client.</Trans>
-				</p>
 			) : isPending ? (
 				<p role="status">
 					<Trans>Loading connection request...</Trans>

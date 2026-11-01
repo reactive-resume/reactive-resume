@@ -1,8 +1,13 @@
 import { createHash, randomBytes } from "node:crypto";
 import { expect, test } from "../fixtures/test";
 
+const invalidRequest =
+	"This connection request is invalid or has expired. Start the connection again from your client.";
+
 test("requires explicit OAuth consent before denying or allowing access", async ({ authPage: page, baseURL }) => {
 	const origin = new URL(baseURL ?? "http://localhost:3000").origin;
+	await page.goto("/auth/consent?client_id=unknown-client&sig=forged");
+	await expect(page.getByText(invalidRequest)).toBeVisible();
 	const metadata = await page.request.get("/.well-known/oauth-protected-resource");
 	expect(metadata.status()).toBe(200);
 	const advertisedResource = (await metadata.json()).resource;
@@ -272,6 +277,13 @@ test("keeps OAuth callbacks through registration while refusing guests and missi
 	expect(new URL(page.url()).searchParams.get("callbackURL")).toBe(login.searchParams.get("callbackURL"));
 	const guest = await page.request.post("/api/auth/sign-in/anonymous", { headers: { origin }, data: {} });
 	expect(guest.status()).toBe(200);
+	// A dead request tells guests so too, instead of offering sign-up links that resume it.
+	for (const dead of [`client_id=${client.client_id}`, "client_id=unknown-client&sig=forged"]) {
+		await page.goto(`/auth/consent?${dead}`);
+		await expect(page.getByText(invalidRequest)).toBeVisible();
+		await expect(page.getByText("Create an account to connect apps. Guest accounts are temporary.")).toHaveCount(0);
+		await expect(page.getByRole("button", { name: "Create account", exact: true })).toHaveCount(0);
+	}
 	await page.goto(`/api/auth/oauth2/authorize?${query}`);
 	await expect(page.getByText("Create an account to connect apps. Guest accounts are temporary.")).toBeVisible();
 	await expect(page.getByRole("button", { name: "Allow access" })).toHaveCount(0);
