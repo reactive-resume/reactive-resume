@@ -224,7 +224,7 @@ test("Applications, Career Today and Offers read one next-step rule", async ({ a
 		/Niantic/,
 	]);
 	const rowFor = (company: string) => page.locator("tr[data-application-id]").filter({ hasText: company });
-	await expect(rowFor("Ubisoft")).toContainText("Decide on the offer");
+	await expect(rowFor("Ubisoft")).toContainText("Add the offer's terms");
 	await expect(rowFor("Insomniac")).toContainText("Waiting for interview feedback");
 	await expect(rowFor("Bungie")).toContainText("Waiting to hear back");
 	await expect(page.getByText("2 applications need a follow-up.", { exact: true })).toBeVisible();
@@ -239,7 +239,7 @@ test("Applications, Career Today and Offers read one next-step rule", async ({ a
 	await page.goto("/dashboard/career");
 	const needsYou = page.locator("section[aria-labelledby='needs-you']");
 	await expect(needsYou.getByText("3", { exact: true })).toBeVisible();
-	await expect(needsYou.getByText("Decide on the offer")).toBeVisible();
+	await expect(needsYou.getByText("Add the offer's terms")).toBeVisible();
 	await expect(needsYou.getByText("No reply in 35 days")).toBeVisible();
 	await expect(needsYou.getByText("No reply in 21 days")).toBeVisible();
 	await expect(needsYou.getByText("You're up to date")).toHaveCount(0);
@@ -255,6 +255,14 @@ test("Applications, Career Today and Offers read one next-step rule", async ({ a
 		list.find((row: { company: string }) => row.company === "Ubisoft").id,
 	);
 	await capture(page, testInfo, "offers-stage.png");
+	await pending.getByLabel("Currency").fill("EUR");
+	await pending.getByLabel("Base salary").fill("182000");
+	await pending.getByRole("button", { name: "Save offer" }).click();
+	await expect(page.getByText("No offers to compare yet")).toHaveCount(0);
+	await page.goto("/dashboard/applications");
+	await expect(rowFor("Ubisoft")).toContainText("Decide on the offer");
+	await page.goto("/dashboard/career");
+	await expect(needsYou.getByText("Decide on the offer")).toBeVisible();
 });
 
 test("a failure outside every page shows the app's error screen, never the router's raw error", async ({
