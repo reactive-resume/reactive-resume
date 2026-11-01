@@ -55,6 +55,8 @@ export function WebAccessSettings() {
 	const [result, setResult] = useState<RouterOutput["webAccess"]["test"] | null>(null);
 	const [confirmRemove, setConfirmRemove] = useState(false);
 	const status = session.status === "signed-in" && query.isSuccess ? query.data : null;
+	const testResult = result ?? status?.testResult;
+	const needsAttention = testResult && (!testResult.search.success || !testResult.read.success);
 	const connected = status?.provider ? services[status.provider] : null;
 	// Older servers leave `searxng` out.
 	const serverSearch = status?.searxng === true;
@@ -80,6 +82,7 @@ export function WebAccessSettings() {
 		} catch (error) {
 			setFailure(aiSettingsError(error));
 		} finally {
+			void queryClient.invalidateQueries({ queryKey: orpc.webAccess.status.key() });
 			busy.current = false;
 			setPending(false);
 		}
@@ -122,7 +125,13 @@ export function WebAccessSettings() {
 				) : (
 					<>
 						<Text color="ink2">
-							{status.managed ? t`Managed by server` : status.configured ? t`Connection saved` : t`Optional`}
+							{status.managed
+								? t`Managed by server`
+								: needsAttention
+									? t`Needs attention`
+									: status.configured
+										? t`Connection saved`
+										: t`Optional`}
 						</Text>
 						{status.managed && (
 							<Text color="ink2">{t`Provided by your server: ${connected}. Search and reading are set up for everyone here. Ask your administrator about changes.`}</Text>
@@ -174,17 +183,22 @@ export function WebAccessSettings() {
 						{failure}
 					</Text>
 				)}
-				{result && (
+				{testResult && (
 					<>
-						<TestCapability result={result.search} label={result.search.success ? t`Search works` : t`Search failed`} />
+						<TestCapability
+							result={testResult.search}
+							label={testResult.search.success ? t`Search works` : t`Search failed`}
+						/>
 						{/* Without a connection only the built-in reader reads, and the test doesn't cover it. */}
 						{connected && (
 							<TestCapability
-								result={result.read}
-								label={result.read.success ? t`Reading works` : t`Enhanced reading failed`}
+								result={testResult.read}
+								label={testResult.read.success ? t`Reading works` : t`Enhanced reading failed`}
 							/>
 						)}
-						{connected && !result.read.success && <Text color="ink3">{t`The built-in reader remains active.`}</Text>}
+						{connected && !testResult.read.success && (
+							<Text color="ink3">{t`The built-in reader remains active.`}</Text>
+						)}
 						<Text variant="callout" color="ink3">
 							{!serverSearch
 								? t`Tested with ${connected}. Only this service was tested.`
@@ -263,5 +277,41 @@ export function WebAccessSettings() {
 				onCancel={() => setConfirmRemove(false)}
 			/>
 		</>
+	);
+}
+
+export function SetUpWebAccess() {
+	const { t } = useLingui();
+	const [open, setOpen] = useState(false);
+	return (
+		<>
+			<Button variant="secondary" label={t`Set up web access`} onPress={() => setOpen(true)} />
+			<Sheet open={open} onClose={() => setOpen(false)} title={t`Web access`} detents={[0.9]}>
+				<WebAccessSettings />
+			</Sheet>
+		</>
+	);
+}
+
+export function WebAccessAttention() {
+	const { t } = useLingui();
+	const session = useSession();
+	const options = orpc.webAccess.status.queryOptions();
+	const query = useQuery({
+		...options,
+		queryKey: [...options.queryKey, session.server],
+		enabled: session.status === "signed-in",
+	});
+	const status = query.data;
+	if (!status?.testResult || (status.testResult.search.success && status.testResult.read.success)) return null;
+	return (
+		<View>
+			<Banner
+				tone="warn"
+				message={`${status.provider} · ${webTestFailure(status.testResult.search.error ?? status.testResult.read.error)}`}
+			/>
+			<Text>{t`Paste the posting text or a public link to continue. The built-in reader remains available.`}</Text>
+			<SetUpWebAccess />
+		</View>
 	);
 }

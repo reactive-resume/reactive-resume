@@ -1143,6 +1143,10 @@ msgstr "এমন একটি গল্প যা আপনি পরে মু
 msgid "A strong match, with one question to resolve"
 msgstr "জোরালো মিল, একটি প্রশ্নের সমাধান বাকি"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "A test prompt and saved API key."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "সময় ধরে পরিকল্পনা, আপনার সূচনা বক্তব্য, যে গল্পগুলো বলবেন আর যে প্রশ্নগুলো করবেন। কলের 10 মিনিট আগে এটি আপনার চেকলিস্ট হয়ে যায়।"
@@ -1450,6 +1454,10 @@ msgstr "প্রমাণ যোগ করুন"
 msgid "Add experience"
 msgstr "অভিজ্ঞতা যোগ করুন"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Add facts"
+msgstr ""
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Add field"
 msgstr "ক্ষেত্র যোগ করুন"
@@ -1714,6 +1722,10 @@ msgid "Against your requirements"
 msgstr "আপনার প্রয়োজনীয়তার তুলনায়"
 
 #: src/features/command-palette/pages/navigation.tsx
+msgid "AI"
+msgstr ""
+
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -1748,10 +1760,15 @@ msgstr "এআই বিশদটি পূরণ করতে পারেন�
 msgid "AI edit"
 msgstr "এআই সম্পাদনা"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
 msgstr ""
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers"
@@ -1768,6 +1785,12 @@ msgstr "ENCRYPTION_SECRET সেট না হওয়া পর্যন্ত
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI প্রদানকারী লোড করা যায়নি। আবার চেষ্টা করতে পুনরায় লোড করুন।"
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/documents/new-document-dialog.tsx
+msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
@@ -1832,6 +1855,14 @@ msgstr "আপনার সব নথিপত্র, চাকরির আব�
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
 msgstr "অ্যাক্সেসের অনুমতি দিন"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow scheduled sharing"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow this operation"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Almost none of your bullets carry a number."
@@ -2619,9 +2650,17 @@ msgstr "ছয়টি পণ্য দলের ব্যবহৃত এক�
 msgid "Built from the posting, Sam’s message and your two strongest stories."
 msgstr "চাকরির বিজ্ঞপ্তি, Sam-এর বার্তা এবং আপনার সবচেয়ে শক্তিশালী দুটি গল্প থেকে তৈরি।"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "অন্তর্নির্মিত পাঠক"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Bulgarian"
@@ -2802,6 +2841,10 @@ msgstr ""
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
 msgstr "এটি পরিবর্তন করা নতুন ঠিকানায় একটি নিশ্চিতকরণ পাঠায়। আপনার ব্যবহারকারীর নাম প্রতিটি পাবলিক লিঙ্কের অংশ।"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Changing your password…"
 msgstr "আপনার পাসওয়ার্ড পরিবর্তন করা হচ্ছে…"
@@ -2957,6 +3000,14 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
+msgstr ""
+
+#: src/features/command-palette/pages/ask.tsx
+msgid "Choose a document; review your question before sending"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "একটি ফাইল নির্বাচন করুন"
@@ -2973,6 +3024,10 @@ msgstr "আপনার বর্তমান পাসওয়ার্ড থ
 msgid "Choose a PDF file."
 msgstr "একটি PDF ফাইল বেছে নিন।"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Choose a resume"
+msgstr ""
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "এর ডিজাইনের সাথে মেলে লিখতে একটি জীবনবৃত্তান্ত চয়ন করুন। ততক্ষণ পর্যন্ত চিঠির নিজস্বতা আছে।"
@@ -2982,9 +3037,17 @@ msgstr "এর ডিজাইনের সাথে মেলে লিখত�
 msgid "Choose a stage"
 msgstr "একটি পর্যায় বেছে নিন"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a tested AI provider before sharing data."
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
 msgstr "{timeZone} টাইমজোনে একটি বৈধ তারিখ ও সময় বেছে নিন, অথবা সময়সীমা মুছে দিন।"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -3013,6 +3076,10 @@ msgstr "অন্য ফাইল নির্বাচন করুন"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "রঙ চয়ন করুন"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Choose how to read this file"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3314,12 +3381,6 @@ msgstr "একটি AI প্রদানকারীকে সংযুক্�
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect an AI provider above to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "সহকারী ব্যবহার করতে উপরে একটি AI প্রদানকারীকে সংযুক্ত করুন। সঞ্চয় এবং চাকরির প্রস্তুতির প্রয়োজন নেই।"
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/career/workspace/fit.tsx
-#: src/features/career/workspace/prepare.tsx
-msgid "Connect an AI provider in Settings"
-msgstr "সেটিংসে একটি এআই প্রদানকারী সংযুক্ত করুন"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
@@ -3629,6 +3690,10 @@ msgstr "এই সময়সূচি পরিবর্তন করা য�
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "আপনার পাসওয়ার্ড পরিবর্তন করা যায়নি। আপনার বর্তমান পাসওয়ার্ড যাচাই করে আবার চেষ্টা করুন।"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -3791,6 +3856,10 @@ msgstr "সেই প্রদানকারী অ্যাকাউন্ট�
 msgid "Couldn't link the application. Try again."
 msgstr "আবেদনটি লিঙ্ক করা যায়নি। আবার চেষ্টা করুন।"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't load AI connections. Try again before importing this file."
 msgstr "এআই সংযোগ লোড করা যায়নি। এই ফাইলটি ইমপোর্ট করার আগে আবার চেষ্টা করুন।"
@@ -3811,6 +3880,10 @@ msgstr "সংযুক্ত অ্যাপ্লিকেশনগুলো �
 msgid "Couldn't load documents"
 msgstr "নথি লোড করা যায়নি"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Couldn't load documents. Try again."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't load interviews. Retry"
 msgstr "ইন্টারভিউগুলো লোড করা যায়নি। পুনরায় চেষ্টা করুন"
@@ -3822,6 +3895,10 @@ msgstr "ওয়েব অ্যাক্সেস সেটিংস লোড
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "নমুনা ফাইল লোড করা যায়নি. আবার চেষ্টা করুন"
+
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
@@ -4109,6 +4186,7 @@ msgid "Couldn't switch connections. Try again."
 msgstr "সংযোগ পরিবর্তন করা যায়নি। আবার চেষ্টা করুন।"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "মডেল পরিবর্তন করা যায়নি। আবার চেষ্টা করুন।"
 
@@ -4301,8 +4379,8 @@ msgid "Create a new resume"
 msgstr "একটি নতুন জীবনবৃত্তান্ত তৈরি করুন"
 
 #: src/features/command-palette/pages/ask.tsx
-msgid "Create a resume first, then ask about it."
-msgstr "প্রথমে একটি জীবনবৃত্তান্ত তৈরি করুন, তারপর এটি সম্পর্কে জিজ্ঞাসা করুন।"
+msgid "Create a resume or letter first."
+msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Create account"
@@ -4443,6 +4521,10 @@ msgstr "ডার্ক"
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "ডার্ক থিম"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -4865,6 +4947,10 @@ msgstr "অ্যাকাউন্ট নেই? <0/>"
 msgid "Don't send {0}"
 msgstr "{0} পাঠাবেন না"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Don't share"
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -5057,8 +5143,8 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "আপলোড করার আগে অবস্থান পরিবর্তন করতে টেনে নিন এবং জুম করতে স্লাইডার ব্যবহার করুন।"
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
-msgstr "এখানে একটি ফাইল ড্রপ বা ব্রাউজ করুন. PDF, Word, Reactive Resume বা JSON Resume। আমরা প্রতিটি বিভাগ পূরণ করি এবং আমরা অনিশ্চিত কিছু পতাকাঙ্কিত করি।"
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Drop a PDF here or choose a file"
@@ -5119,6 +5205,10 @@ msgstr "প্রতিটি প্রেরণ এই বার্তা এ�
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -5407,10 +5497,6 @@ msgstr "একটি বৈধ ইমেল ঠিকানা লিখুন."
 msgid "Enter a web address, like example.com"
 msgstr "একটি ওয়েব ঠিকানা লিখুন, যেমন .com"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "আপনার এন্ডপয়েন্ট দ্বারা সমর্থিত যেকোন মডেল আইডি লিখুন।"
-
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "আপনার অ্যাকাউন্টে প্রবেশ করতে সংরক্ষিত ব্যাকআপ কোডগুলোর একটি লিখুন।"
@@ -5423,6 +5509,10 @@ msgstr "শর্তগুলো নিজে লিখুন। এআইকে
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter the 6-digit code."
 msgstr "6-সংখ্যার কোডটি লিখুন।"
+
+#: src/features/settings/ai/test-error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
@@ -5661,8 +5751,8 @@ msgid "Feedback"
 msgstr "মতামত"
 
 #: src/features/career/workspace/practise.tsx
-msgid "Feedback needs an AI connection. <0>Add one in Settings</0>. Nothing is sent until you ask."
-msgstr "মতামতের জন্য একটি এআই সংযোগ প্রয়োজন। <0>সেটিংসে একটি যোগ করুন</0>। আপনি না চাওয়া পর্যন্ত কিছুই পাঠানো হয় না।"
+msgid "Feedback needs an AI connection. <0/>. Nothing is sent until you ask."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -5711,8 +5801,8 @@ msgid "Fill fields"
 msgstr "ঘর পূরণ করুন"
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Fill in the role and company. Connect an AI provider in Settings to read them from the posting."
-msgstr "পদ ও কোম্পানি পূরণ করুন। চাকরির বিজ্ঞপ্তি থেকে সেগুলো পড়তে সেটিংসে একটি AI প্রদানকারী সংযুক্ত করুন।"
+msgid "Fill in the role and company, or use Set up AI to read them from the posting."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Fill in the role and company. The posting is saved with the application."
@@ -5746,6 +5836,10 @@ msgstr "পদ খুঁজুন"
 msgid "Find weak bullets"
 msgstr "দুর্বল তালিকা এন্ট্রি খুঁজুন"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "বিভাগ খোঁজা"
@@ -5777,6 +5871,10 @@ msgstr "উপযুক্ততা"
 #: src/features/career/workspace/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "উপযুক্ততা যাচাই, ব্রিফিং, সাক্ষাৎকার অনুশীলনের মতামত, সাক্ষাৎকারের পর ফিরে দেখা, ফর্মের উত্তর, জবাব ও চাকরির অফার সংরক্ষণ করলে এখানে দেখা যাবে।"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Fit page to width"
@@ -5961,12 +6059,17 @@ msgid "Found for “{0}”. Posting checked {1}."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/libs/orpc/ai-consent.ts
 msgid "Found posting links are read by Reactive Resume and the sites being read."
 msgstr ""
 
 #. placeholder {0}: webAccess.provider
 #: src/features/career/schedule-sheet.tsx
 msgid "Found posting links are read by Reactive Resume and, when needed, {0} and the sites being read. The reader may charge."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -6839,10 +6942,9 @@ msgstr "ইটালিক"
 msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
 msgstr "এটির আবেদনগুলো আপনার বেছে নেওয়া পর্যায়ে সরানো হবে। সেগুলোর ইতিহাসে “{label}” নামটি থাকবে।"
 
-#. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
-msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
-msgstr "এর সংযোগটি বন্ধ বা সরানো হয়েছে, তাই আপনি অন্য একটি বেছে না নেওয়া পর্যন্ত এটি {0}-এ চলবে।"
+msgid "Its connection is unavailable. Choose and approve a connection before enabling this schedule."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
@@ -7578,6 +7680,10 @@ msgstr "সংযোগ লোড হচ্ছে..."
 msgid "Loading conversations…"
 msgstr "কথোপকথন লোড হচ্ছে..."
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Loading documents…"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Loading interviews…"
 msgstr "ইন্টারভিউ লোড হচ্ছে…"
@@ -7590,10 +7696,6 @@ msgstr "পাঠানোর আগে জ্ঞানভান্ডার ল
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "লিংক করা নথি লোড হচ্ছে…"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "মডেল সাজেশন লোড হচ্ছে... আপনি যেকোনো মডেল আইডিও লিখতে পারেন।"
 
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
@@ -7897,6 +7999,10 @@ msgstr "মাঝারি"
 msgid "Mentor other designers"
 msgstr "অন্য ডিজাইনারদের মেন্টর করুন"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Message saved with this application"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Message the assistant"
 msgstr "সহকারীকে মেসেজ করুন"
@@ -7951,10 +8057,6 @@ msgstr "মডেল"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "{label}-এর মডেল"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "মডেল পরামর্শ অনুপলব্ধ. আপনি এখনও যেকোনো মডেল আইডি লিখতে পারেন।"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Model: {label}"
@@ -8216,6 +8318,7 @@ msgid "narrow margins"
 msgstr "সংকীর্ণ মার্জিন"
 
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "মনোযোগ প্রয়োজন"
 
@@ -8363,6 +8466,10 @@ msgstr "কোনো সক্রিয় চাকরির আবেদন �
 
 #: src/features/career/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -8587,10 +8694,6 @@ msgstr "সেই চাকরির বিবরণ থেকে নির্�
 #: src/features/career/knowledge/stories.tsx
 msgid "No stories yet"
 msgstr "এখনও কোনো গল্প নেই"
-
-#: src/features/settings/ai/providers.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "এই প্রদানকারীর জন্য কোন পরামর্শ নেই। যেকোনো মডেল আইডি লিখুন।"
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -9037,6 +9140,18 @@ msgstr "একবারে কেবল প্রথম {MAX_IMPORT}টি স�
 msgid "Only the first pages were checked."
 msgstr "শুধুমাত্র প্রথম কয়েকটি পৃষ্ঠা চেক করা হয়েছে।"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "এগুলো শুধু তুমিই দেখো"
@@ -9044,6 +9159,10 @@ msgstr "এগুলো শুধু তুমিই দেখো"
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "শুধুমাত্র আপনি, যতক্ষণ না আপনি এটি ভাগ করুন. একটি জীবনবৃত্তান্ত ব্যক্তিগত থাকতে পারে, একটি সর্বজনীন লিঙ্কে লাইভ হতে পারে, বা একটি পাসওয়ার্ড দিয়ে সুরক্ষিত থাকতে পারে এবং আপনি যে কোনো সময় এটি পরিবর্তন করতে পারেন৷ আপনার অ্যাকাউন্ট মুছে ফেললে এটির সাথে আপনার জীবনবৃত্তান্ত মুছে যায়।"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Onsite"
@@ -9059,11 +9178,6 @@ msgstr "খুলুন"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Open {title}"
 msgstr "{title} খুলুন"
-
-#: src/features/resume/editor/check/writing-tab.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Open AI settings"
-msgstr "AI সেটিংস খুলুন"
 
 #: src/features/career/today.tsx
 msgid "Open briefing"
@@ -9233,6 +9347,10 @@ msgstr "কমলা"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
 msgstr "প্রতিষ্ঠান"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -9445,6 +9563,10 @@ msgstr "স্বাক্ষর ছাড়া ইমেইল বা বা�
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "সম্পূর্ণ কাজের বিবরণ এখানে পেস্ট করুন…"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
@@ -9974,6 +10096,10 @@ msgstr "আপনার সার্ভার দ্বারা সরবরা
 msgid "Provider"
 msgstr "প্রদানকারী"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Provider retention follows its own policy. Your provider may charge for this request."
+msgstr ""
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -10154,6 +10280,10 @@ msgstr "ব্রিফিং পড়ুন"
 msgid "Read it for me"
 msgstr "আমার হয়ে পড়ে দিন"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Read on this device (free)"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
 msgstr "শুধুমাত্র-পঠন অ্যাক্সেস"
@@ -10196,6 +10326,7 @@ msgid "Read the self-hosting guide"
 msgstr "স্ব-হোস্টিং গাইড পড়ুন"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Read with AI"
 msgstr ""
 
@@ -10273,6 +10404,12 @@ msgstr "লেখা পড়া"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "আপনার শেয়ার করা বিষয় পড়া হচ্ছে"
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading with AI sends this posting to {0} · {1}. Public links also go to the reader and the site being read. You can fill details manually."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
@@ -10866,6 +11003,10 @@ msgstr "জীবনবৃত্তান্ত তৈরির"
 msgid "Resume builder"
 msgstr "জীবনবৃত্তান্ত নির্মাতা"
 
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "জীবনবৃত্তান্তের বিষয়বস্তু"
@@ -10896,6 +11037,10 @@ msgstr "জীবনবৃত্তান্ত জমা দেওয়া (�
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/career/workspace/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -10929,6 +11074,7 @@ msgstr "পুনরুদ্ধার করা হয়েছে {0}. রি�
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/workspace/answer-library.tsx
+#: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -11036,13 +11182,18 @@ msgstr ""
 msgid "Review writing"
 msgstr "পর্যালোচনা লেখা"
 
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Reviewed {0}"
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
-msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
-msgstr "পর্যালোচনার জন্য একটি এআই সংযোগ প্রয়োজন। <0>সেটিংসে একটি যোগ করুন</0>। ততক্ষণ পর্যন্ত এখানে যা লিখবেন তা এই ব্রাউজারেই থাকবে।"
+msgid "Reviewing needs an AI connection. <0/>. What you write here stays in this browser until then."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke"
@@ -11264,6 +11415,10 @@ msgstr "ইন্টারভিউ সংরক্ষণ করুন"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "চাকরি বাঁচান"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Save message without AI"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Save name"
@@ -11735,18 +11890,25 @@ msgstr "পাসওয়ার্ড রিসেটের ইমেইল প
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
 msgstr "এই আবেদন (চাকরির বিজ্ঞপ্তি, নোট, ইন্টারভিউয়ের বিস্তারিত) এবং চালু থাকা জ্ঞানভান্ডার {label}-এ পাঠায়।"
 
 #. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
 #: src/features/career/workspace/fit.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0}."
-msgstr "এই আবেদনের চাকরির বিজ্ঞপ্তি, নোট ও নথি, সাথে চালু থাকা জ্ঞানভান্ডার, {0}-এ পাঠায়।"
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0} · {1}."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it."
-msgstr "এই আবেদনের চাকরির বিজ্ঞপ্তি, নোট ও নথি, সাথে চালু থাকা জ্ঞানভান্ডার, এই সংযোগে পাঠায়। আপনার প্রদানকারী এর জন্য চার্জ নিতে পারে।"
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
@@ -11755,6 +11917,12 @@ msgstr "এই চিঠি এবং চাকরির পোস্টিং �
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter to {provider} with your key, only when you press send."
 msgstr "আপনার কী সহ এই চিঠিটি {provider}-এ পাঠায়, শুধুমাত্র আপনি যখন পাঠান চাপবেন।"
+
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
@@ -11826,13 +11994,25 @@ msgstr "পাসওয়ার্ড সেট করুন"
 msgid "Set the document language when exporting."
 msgstr "এক্সপোর্ট করার সময় ডকুমেন্টের ভাষা নির্ধারণ করুন।"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "অনুসন্ধান সেট আপ করুন"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings"
 msgstr "সেটিংসে ওয়েব সার্চ সেট আপ করুন"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
@@ -11870,6 +12050,11 @@ msgstr "শেয়ার করুন"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "একটি সর্বজনীন লিঙ্ক শেয়ার করুন, একটি পাসওয়ার্ড যোগ করুন বা এটি ব্যক্তিগত রাখুন। 3টি দৃশ্যমানতার বিকল্প থেকে বেছে নিন। PDF বা Word এ রপ্তানি করুন, অথবা JSON হিসাবে আপনার সমস্ত ডেটা আপনার সাথে নিয়ে যান।"
+
+#. placeholder {0}: provider.label
+#: src/libs/orpc/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -12655,10 +12840,6 @@ msgstr "উত্স এবং কাজ থেকে প্রস্তাব�
 msgid "Suggested reply · edit before sending"
 msgstr "প্রস্তাবিত জবাব · পাঠানোর আগে সম্পাদনা করুন"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Suggestions from <0>models.dev</0>. You can also enter any model ID."
-msgstr "<0>models.dev</0> থেকে প্রস্তাবনা। আপনি যেকোনো মডেল আইডিও লিখতে পারেন।"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "কাটার পরামর্শ দেয়, নিজে থেকে কখনো মুছে যায় না"
@@ -13047,6 +13228,10 @@ msgstr "{label} ফাইলটি তৈরি করা যায়নি। 
 msgid "The 13-point activation lift. Knowledge has the before and after."
 msgstr "অ্যাক্টিভেশনে 13 পয়েন্টের বৃদ্ধি। জ্ঞানভান্ডারে আগের ও পরের তথ্য আছে।"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The account changed. Try again."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "ঠিকানায় শুধুমাত্র ছোট হাতের লাতিন অক্ষর এবং সংখ্যা থাকতে হবে, যা একক ড্যাশ দ্বারা পৃথক করা হবে।"
@@ -13066,10 +13251,6 @@ msgstr "যে চাকরির আবেদনের জন্য এই চ�
 #: src/features/assistant/assistant-panel.tsx
 msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
 msgstr "এই সার্ভারে সহকারী সেট আপ করা নেই৷ যে এটি চালায় তাকে ENCRYPTION_SECRET সেট করতে হবে। এটি ছাড়া বাকি সবকিছু কাজ করে।"
-
-#: src/features/assistant/provider-setup.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "সহকারী আপনার নিজের কী ব্যবহার করে। আপনি একটি সংযোগ না করা পর্যন্ত কিছুই কোথাও পাঠানো হয় না."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The built-in reader remains active."
@@ -13099,6 +13280,18 @@ msgstr "কোচ শুধু এই আবেদনের জন্য এগ�
 msgid "The coach saves facts you state, and tells you. You can undo."
 msgstr "আপনার বলা তথ্যগুলো কোচ সংরক্ষণ করে এবং আপনাকে জানায়। আপনি তা পূর্বাবস্থায় ফেরাতে পারেন।"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The complete PDF file."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "অনুলিপিটি চাকরির আবেদনের সাথে লিঙ্ক করা আছে, তাই চেক ও সহকারী এর চাকরির বিজ্ঞপ্তি ব্যবহার করে।"
@@ -13127,6 +13320,10 @@ msgstr "অভিবাদন নাম অনুসরণ করে।"
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "কীটি সার্ভারে এনক্রিপ্ট করা হয়েছে এবং আর কখনও দেখানো হয় না। সেভিং কানেকশন পরীক্ষা করে।"
 
+#: src/features/settings/ai/test-error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "চিঠি যেমন আছে"
@@ -13150,6 +13347,10 @@ msgstr "আপনি জিজ্ঞাসা করার পর থেকে �
 #: src/features/career/workspace/saved.tsx
 msgid "the message"
 msgstr "বার্তাটি"
+
+#: src/features/settings/ai/test-error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The morning of the interview has passed, so the briefing runs now."
@@ -13199,9 +13400,9 @@ msgstr "চাকরির পোস্টিং পড়া যায়নি
 msgid "The posting saved with this application."
 msgstr "চাকরির পোস্টিং এই চাকরির আবেদনের সাথে সংরক্ষণ করা হয়েছে।"
 
-#: src/features/assistant/provider-setup.tsx
-msgid "The provider didn't answer. Check the key and the model."
-msgstr "প্রদানকারী উত্তর দেয়নি। কী এবং মডেল পরীক্ষা করুন।"
+#: src/libs/orpc/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
@@ -13211,9 +13412,17 @@ msgstr "প্রদানকারী উত্তর দেয়নি। ক
 msgid "The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method."
 msgstr "প্রদানকারী কোনো ইমেইল ঠিকানা শেয়ার করেনি, যা প্রয়োজন। প্রদানকারী জিজ্ঞাসা করলে ইমেইল অ্যাক্সেসের অনুমতি দিন, অথবা অন্য কোনো সাইন-ইন পদ্ধতি ব্যবহার করুন।"
 
+#: src/features/settings/ai/test-error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "The provider rejected this sign-in attempt. Try again."
 msgstr "প্রদানকারী এই সাইন-ইনের চেষ্টা প্রত্যাখ্যান করেছে। আবার চেষ্টা করুন।"
+
+#: src/features/settings/ai/test-error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The provider returned a review that couldn't be read. Try again."
@@ -13281,6 +13490,18 @@ msgstr ""
 msgid "The selected documents will be deleted for good and can't be restored."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected line, surrounding field text, and your rewrite instructions."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected resume and this letter's recipient and posting information."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
 msgstr "সেবাটি সময়মতো সাড়া দেয়নি। আবার চেষ্টা করুন।"
@@ -13308,6 +13529,10 @@ msgstr "টেক্সট অপাঠযোগ্য হয়ে বের �
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "প্রথম পৃষ্ঠার শীর্ষটি একটি নামের মতো দেখাচ্ছে না।"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The Word document's text."
+msgstr ""
 
 #. Menu item that opens appearance theme selection submenu
 #: src/features/command-palette/pages/navigation.tsx
@@ -13369,6 +13594,10 @@ msgstr "ভাবা হচ্ছে"
 msgid "Thinking…"
 msgstr "ভাবছেন…"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This allows recurring processing until you turn the schedule off."
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "This application"
 msgstr ""
@@ -13386,8 +13615,8 @@ msgid "This browser can't record here. Choose an audio file, or type your answer
 msgstr "এই ব্রাউজার এখানে রেকর্ড করতে পারে না। একটি অডিও ফাইল বেছে নিন, অথবা আপনার উত্তর টাইপ করুন।"
 
 #: src/features/career/workspace/practise.tsx
-msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
-msgstr "এই ব্রাউজার ডিক্টেশন নিতে পারে না, এবং আপনার কোনো এআই সংযোগ স্পিচ ট্রান্সক্রাইব করতে পারে না (OpenAI, Google Gemini, Mistral, xAI, Groq বা Vercel AI Gateway পারে)। <0>সেটিংসে একটি যোগ করুন</0>, অথবা আপনার উত্তর টাইপ করুন।"
+msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
+msgstr ""
 
 #: src/features/career/draft-recovery.tsx
 msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
@@ -13405,6 +13634,11 @@ msgstr "এই কথোপকথন খোলা যাবে না."
 #: src/features/career/coach-thread.tsx
 msgid "This conversation couldn't be opened. Refresh the page to try again."
 msgstr "এই কথোপকথনটি খোলা যায়নি। আবার চেষ্টা করতে পৃষ্ঠাটি রিফ্রেশ করুন।"
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/career/coach.tsx
+msgid "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
@@ -13618,6 +13852,10 @@ msgstr "এই সংরক্ষিত সংস্করণটি লোড �
 #: src/features/career/workspace/shell.tsx
 msgid "This saved version is no longer available."
 msgstr "এই সংরক্ষিত সংস্করণটি আর উপলব্ধ নেই।"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
@@ -14135,6 +14373,10 @@ msgstr "জীবনবৃত্তান্ত আপডেট করুন"
 msgid "Update this application's details."
 msgstr "এই আবেদনটির বিবরণ আপডেট করুন।"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/components/list-view.tsx
 msgid "Updated"
 msgstr "আপডেট করা হয়েছে"
@@ -14316,6 +14558,10 @@ msgstr "স্ট্যান্ডার্ড শিরোনাম ব্য�
 msgid "Use these answers"
 msgstr "এই উত্তরগুলো ব্যবহার করুন"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Use this destination"
+msgstr ""
+
 #: src/features/settings/preferences.tsx
 msgid "Use this device's timezone ({device})"
 msgstr "এই ডিভাইসের টাইমজোন ব্যবহার করুন ({device})"
@@ -14323,6 +14569,14 @@ msgstr "এই ডিভাইসের টাইমজোন ব্যবহা
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "এই প্রদানকারী ব্যবহার করুন"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
@@ -14575,9 +14829,15 @@ msgstr "পরিবর্তনটি অনুমোদনের জন্য 
 msgid "We sent a new verification link to {0}."
 msgstr "আমরা {0} এ একটি নতুন যাচাইকরণ লিঙ্ক পাঠিয়েছি।"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "ওয়েব অ্যাক্সেস"
+
+#. placeholder {0}: access?.searxng ? t`your server's search service` : (access?.provider ?? t`built-in reader`)
+#: src/libs/orpc/ai-consent.ts
+msgid "Web destination: {0}."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Web page"
@@ -14870,6 +15130,10 @@ msgstr "এক প্রান্তিকের মধ্যে অ্যাক
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "একটি ছাড়া, আপনি নিজেই প্রাপক পূরণ করেন এবং ড্রাফটিং শুধুমাত্র আপনার জীবনবৃত্তান্ত ব্যবহার করে।"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
 msgstr "টেক্সট এক্সট্র্যাক্ট করা হলে শব্দগুলো একসাথে মিশে যায়।"
@@ -15150,6 +15414,10 @@ msgstr "আপনার এআই সংযোগ"
 msgid "Your AI connection"
 msgstr "আপনার এআই সংযোগ"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your AI settings changed. Nothing was sent; try again."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Your answer"
 msgstr "আপনার উত্তর"
@@ -15358,6 +15626,10 @@ msgstr "আপনার প্রদানকারী"
 msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
 msgstr "ট্রান্সক্রাইব করার জন্য আপনার রেকর্ডিং {0}-এ যায়, যা সেই অ্যাকাউন্টের টোকেন ব্যবহার করতে পারে।"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "Your requirements"
 msgstr "আপনার প্রয়োজনীয়তা"
@@ -15382,6 +15654,10 @@ msgstr "আপনার জীবনবৃত্তান্তের অনু�
 msgid "Your resume has been updated."
 msgstr "আপনার জীবনবৃত্তান্ত আপডেট করা হয়েছে।"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your resume text, selected passages, and check findings."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "আপনার জীবনবৃত্তান্তে \"I\" এবং \"my\" ব্যবহার করা হয়েছে।"
@@ -15390,6 +15666,14 @@ msgstr "আপনার জীবনবৃত্তান্তে \"I\" এব�
 msgid "Your resume, live at"
 msgstr "আপনার জীবনবৃত্তান্ত, লাইভ এ"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Your saved AI connections need attention. Test or edit them below. History and saved proposals remain available."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your search terms. These also go to the configured search service."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
 msgstr "আপনার নির্বাচিত ফন্ট কিছু অক্ষর দেখাতে পারে না। এগুলো “?” হিসেবে দেখায়। ডিজাইন-এ এমন একটি ফন্ট বেছে নিন যাতে এগুলো আছে।"
@@ -15397,6 +15681,10 @@ msgstr "আপনার নির্বাচিত ফন্ট কিছু �
 #: src/features/settings/ai/web-access.tsx
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "আপনার সার্ভার আবেদন বিভাগে এবং সহকারীর জন্য ওয়েব অনুসন্ধান প্রদান করে। অন্তর্নির্মিত পাঠক পড়তে পারে না এমন ওয়েব পৃষ্ঠাগুলি পড়ার জন্য একটি পরিষেবা সংযুক্ত করুন৷"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "your server's search service"
+msgstr ""
 
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
@@ -15434,6 +15722,10 @@ msgstr "আপনার দুই মিনিটের পরিচিতি"
 #: src/features/resume/share/share-panel.tsx
 msgid "Your web page is live"
 msgstr "আপনার ওয়েব পেজ এখন লাইভ"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your web settings changed. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Your wording"

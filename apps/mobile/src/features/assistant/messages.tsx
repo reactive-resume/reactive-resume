@@ -327,7 +327,7 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 						<ChangeSet
 							proposals={list}
 							states={states}
-							locked={readOnly || proposals.locked || forJobCopy}
+							locked={proposals.locked || forJobCopy}
 							onAccept={(chosen) => proposals.onAccept(message, part, chosen)}
 							onReject={(chosen) => proposals.onReject(message, part, chosen)}
 							onEdit={(proposal, text) => proposals.onEdit(message, part, proposal, text)}

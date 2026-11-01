@@ -60,7 +60,7 @@ test("target roles stay drafts until reviewed; manual setup needs no AI", async 
 	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
 	const beforeStaleApproval = stub.requests.length;
 	await page.getByRole("button", { name: "Generate role suggestions" }).click();
-	await expect(page.getByRole("alert")).toContainText("AI connection changed");
+	await expect(page.getByRole("alert")).toHaveText("Your AI settings changed. Nothing was sent; try again.");
 	expect(stub.requests.length).toBe(beforeStaleApproval);
 	await page.getByRole("button", { name: "Retry AI connections" }).click();
 	await expect(
@@ -68,6 +68,10 @@ test("target roles stay drafts until reviewed; manual setup needs no AI", async 
 	).toBeAttached();
 	await page.getByLabel("AI connection receiving your context").selectOption(providerId);
 	await page.getByRole("button", { name: "Generate role suggestions" }).click();
+	const roleConsent = page.getByRole("alertdialog", { name: "Share data with Fictional local provider?" });
+	await expect(roleConsent).toContainText(`Fictional local provider · stub-retested · ${stub.baseURL}`);
+	expect(stub.requests.length).toBe(beforeStaleApproval);
+	await roleConsent.getByRole("button", { name: "Allow this operation", exact: true }).click();
 	await expect(page.getByLabel("Review target roles, one per line")).toHaveValue("Reliability engineer");
 	expect((await profile()).targetRoles).toEqual(["Operations lead"]);
 	await expect(await page.request.get("/api/openapi/career/schedules")).toBeOK();
@@ -140,8 +144,14 @@ test("target roles stay drafts until reviewed; manual setup needs no AI", async 
 	await expect(
 		page.getByText(/Found posting links are read by Reactive Resume and, when needed, tavily/),
 	).toBeVisible();
+	const beforeManualSchedule = stub.requests.length;
 	await page.getByRole("button", { name: "Save schedule", exact: true }).click();
+	const webConsent = page.getByRole("alertdialog", { name: "Use web access?" });
+	await expect(webConsent).toContainText("No AI provider is used for this operation.");
+	await expect(webConsent).toContainText("Only the search query and search countries");
+	await webConsent.getByRole("button", { name: "Allow scheduled sharing", exact: true }).click();
 	await expect(page.getByRole("dialog", { name: "New schedule", exact: true })).toBeHidden();
+	expect(stub.requests.length).toBe(beforeManualSchedule);
 	const schedules = await page.request.get("/api/openapi/career/schedules");
 	await expect(schedules).toBeOK();
 	const savedSchedules = await schedules.json();

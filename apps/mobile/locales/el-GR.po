@@ -1025,6 +1025,7 @@ msgstr "Προσθέστε μια περίληψη ή περιγράψτε πρ�
 msgid "Add a tag"
 msgstr "Προσθέστε μια ετικέτα"
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Add AI provider"
 msgstr "Προσθήκη παρόχου AI"
@@ -1105,6 +1106,10 @@ msgstr "Προσθήκη τεκμηρίων"
 #: src/features/write/fields.ts
 msgid "Add experience"
 msgstr "Προσθέστε εμπειρία"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Add facts"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add field"
@@ -1363,6 +1368,10 @@ msgstr "Επεξεργασία AI"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "Ο εμπλουτισμός AI δεν ήταν διαθέσιμος. Ελέγξτε τις λεπτομέρειες της σελίδας ή συμπληρώστε τις χειροκίνητα."
+
+#: src/features/assistant/provider.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
@@ -2108,9 +2117,17 @@ msgstr "Η ανανέωση της ενημέρωσης είναι ενεργο�
 msgid "Briefing refresh paused"
 msgstr "Η ανανέωση του ενημερωτικού έχει τεθεί σε παύση"
 
+#: src/api/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "Ενσωματωμένος αναγνώστης"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Bulgarian"
@@ -2256,6 +2273,10 @@ msgstr ""
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Οι αλλαγές στο \"{name}\" αποθηκεύτηκαν σε άλλη συσκευή. Οι τροποποιήσεις σας εξακολουθούν να βρίσκονται σε αυτήν τη συσκευή. Επιλέξτε ποια έκδοση θα διατηρήσετε."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
 
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
@@ -2439,6 +2460,10 @@ msgstr "Επιλέξτε μια έγκυρη ημερομηνία παρακολ
 #: src/draft/conflict-sheet.tsx
 msgid "Choose a version to continue. Back will not close this sheet."
 msgstr "Επιλέξτε έκδοση για να συνεχίσετε. Η επιστροφή δεν κλείνει αυτό το παράθυρο."
+
+#: src/api/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -2948,6 +2973,10 @@ msgstr "Δεν ήταν δυνατός ο έλεγχος προηγούμενω�
 msgid "Couldn't check your AI providers."
 msgstr "Δεν ήταν δυνατός ο έλεγχος των παρόχων AI σας."
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Δεν ήταν δυνατή η ολοκλήρωση του αιτήματος. Ελέγξτε τη σύνδεσή σας και προσπαθήστε ξανά."
@@ -3024,6 +3053,10 @@ msgstr "Δεν ήταν δυνατή η εισαγωγή αυτού του αρ�
 msgid "Couldn't link the application. Check Applications before retrying."
 msgstr "Δεν ήταν δυνατή η σύνδεση της αίτησης. Ελέγξτε τις αιτήσεις πριν προσπαθήσετε ξανά."
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load AI connections. PDF text and JSON imports still work."
 msgstr "Δεν ήταν δυνατή η φόρτωση των συνδέσεων AI. Το κείμενο PDF και οι εισαγωγές JSON εξακολουθούν να λειτουργούν."
@@ -3080,6 +3113,10 @@ msgstr "Δεν ήταν δυνατή η φόρτωση του βιογραφικ
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "Δεν ήταν δυνατή η φόρτωση του δείγματος αρχείου. Προσπαθήστε ξανά."
+
+#: src/features/check/writing.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3555,8 +3592,8 @@ msgid "Dark theme"
 msgstr "Σκουρόχρωμο θέμα"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the provider."
-msgstr ""
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "Η κοινή χρήση δεδομένων ακυρώθηκε. Δεν στάλθηκε τίποτα στον πάροχο τεχνητής νοημοσύνης."
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -4140,6 +4177,10 @@ msgstr "Κάθε απαίτηση της αγγελίας ελέγχεται μ�
 msgid "Earlier discovery result. Search query and posting check time unknown."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
 msgstr "προηγούμενα μηνύματα σε αυτή τη συνομιλία"
@@ -4356,10 +4397,6 @@ msgstr "Εισαγάγετε έναν ακέραιο αριθμό από το 0 
 msgid "Enter an address like resume.example.org."
 msgstr "Εισαγάγετε διεύθυνση όπως resume.example.org."
 
-#: src/features/ai/provider-editor.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "Εισαγάγετε οποιοδήποτε αναγνωριστικό μοντέλου που υποστηρίζεται από το τελικό σημείο σας."
-
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr "Εισαγάγετε τους όρους εσείς. Δεν αποστέλλεται αίτημα σε τεχνητή νοημοσύνη. Αφήστε κενά τα άγνωστα ποσά."
@@ -4367,6 +4404,10 @@ msgstr "Εισαγάγετε τους όρους εσείς. Δεν αποστέ
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "Εισαγάγετε τη διεύθυνση στην οποία ανοίγετε το Reactive Resume σε ένα πρόγραμμα περιήγησης. Η εφαρμογή ελέγχει ότι είναι διακομιστής Reactive Resume που επιτρέπει τη σύνδεση στην εφαρμογή προτού συνεχίσετε."
+
+#: src/features/ai/error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Enter your details below. Choosing a resume replaces them and links its design."
@@ -4565,6 +4606,10 @@ msgstr "Εύρεση θέσεων"
 msgid "Find weak bullets"
 msgstr "Βρείτε καταχωρήσεις αδύνατης λίστας"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Finding what works"
 msgstr "Αναζήτηση του τι λειτουργεί"
@@ -4600,6 +4645,10 @@ msgstr "Καταλληλότητα"
 #: src/features/workspace/tabs/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "Έλεγχοι καταλληλότητας για τη θέση, ενημερωτικά προετοιμασίας, ανατροφοδότηση από εξάσκηση συνέντευξης, απολογισμοί συνεντεύξεων, απαντήσεις φορμών, απαντήσεις σε μηνύματα και προσφορές εργασίας εμφανίζονται εδώ καθώς τα αποθηκεύετε."
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -5138,7 +5187,7 @@ msgstr "Εικονίδια στη γραμμή επαφής"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Αν προέρχεται από σάρωση, αυτό είναι αναμενόμενο. Διαφορετικά, αφαιρέστε το· οι υπεύθυνοι προσλήψεων το εκλαμβάνουν ως υπερφόρτωση λέξεων-κλειδιών."
 
-#. placeholder {0}: reader ?? provider?.provider ?? ""
+#. placeholder {0}: reader ?? provider?.provider ?? t`built-in reader`
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "Εάν χρησιμοποιείται πρόσβαση στον ιστό, οι σύνδεσμοι και οι όροι αναζήτησης πηγαίνουν επίσης στο {0} και στους ιστότοπους που διαβάζονται."
@@ -5962,10 +6011,6 @@ msgid "Loading linked documents…"
 msgstr "Φόρτωση συνδεδεμένων εγγράφων…"
 
 #: src/features/ai/provider-editor.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "Φόρτωση προτάσεων μοντέλων… Μπορείτε επίσης να εισαγάγετε οποιοδήποτε αναγνωριστικό μοντέλου."
-
-#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Loading providers…"
 msgstr "Φόρτωση παρόχων…"
@@ -6285,10 +6330,6 @@ msgstr "Μικτή"
 msgid "Model"
 msgstr "Μοντέλο"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "Οι προτάσεις μοντέλων δεν είναι διαθέσιμες. Μπορείτε ακόμα να εισαγάγετε οποιοδήποτε αναγνωριστικό μοντέλου."
-
 #: src/features/assistant/provider.tsx
 msgid "Model: {label}"
 msgstr "Μοντέλο: {label}"
@@ -6534,6 +6575,7 @@ msgid "Native & fonts"
 msgstr "Εγγενής κώδικας και γραμματοσειρές"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "Χρειάζεται προσοχή"
 
@@ -6668,6 +6710,10 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/features/ai/provider-list.tsx
@@ -6878,10 +6924,6 @@ msgstr "Δεν μπορούσαν να εξαχθούν συγκεκριμένο
 #: src/features/career/stories.tsx
 msgid "No stories yet"
 msgstr "Δεν υπάρχουν ακόμη ιστορίες"
-
-#: src/features/ai/provider-editor.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "Δεν υπάρχουν προτάσεις για αυτόν τον πάροχο. Εισαγάγετε οποιοδήποτε αναγνωριστικό μοντέλου."
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -7236,6 +7278,10 @@ msgstr ""
 msgid "Only the text below and your reason are sent privately to the operator of {0} for safety review. Remove personal information you don't want to share. Reports are deleted with your account."
 msgstr "Μόνο το παρακάτω κείμενο και ο λόγος σας αποστέλλονται ιδιωτικά στον χειριστή του {0} για έλεγχο ασφαλείας. Καταργήστε τα προσωπικά στοιχεία που δεν θέλετε να κοινοποιήσετε. Οι αναφορές διαγράφονται με τον λογαριασμό σας."
 
+#: src/api/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Only this device schedules the notification."
 msgstr "Μόνο αυτή η συσκευή προγραμματίζει την ειδοποίηση."
@@ -7247,6 +7293,10 @@ msgstr "Μόνο αυτή η συσκευή προγραμματίζει την 
 #: src/features/share/link.tsx
 msgid "Only you see these"
 msgstr "Μόνο εσύ τα βλέπεις αυτά"
+
+#: src/api/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -7262,7 +7312,6 @@ msgid "Open"
 msgstr "Άνοιγμα"
 
 #: src/features/assistant/provider.tsx
-#: src/features/letters/write.tsx
 msgid "Open AI settings"
 msgstr "Ανοίξτε τις ρυθμίσεις AI"
 
@@ -7415,6 +7464,10 @@ msgstr "Ή με δικά σας λόγια…"
 #: src/features/write/fields.ts
 msgid "Organization"
 msgstr "Οργανισμός"
+
+#: src/features/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -7572,6 +7625,10 @@ msgstr "Επικολλήστε ένα μήνυμα από το {company}"
 msgid "Paste the email or message, without the signature."
 msgstr "Επικολλήστε το email ή το μήνυμα χωρίς την υπογραφή."
 
+#: src/features/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
 msgstr "Επικολλήστε την ανάρτηση εργασίας για να δείτε ποιους από τους όρους της έχει ήδη το βιογραφικό σας."
@@ -7617,13 +7674,13 @@ msgstr "Ο έλεγχος PDF ακυρώθηκε. Δοκιμάστε ξανά ό
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
 msgstr "Μόνο PDF · έως 10 MB το καθένα. Η σύνδεση βιογραφικού Reactive Resume επιτρέπει βαθμολόγηση αντιστοίχισης και προσαρμογή με AI."
 
+#: src/features/documents/new-document.tsx
+msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
+msgstr ""
+
 #: src/features/design/advanced.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "Τα στυλ PDF υποστηρίζουν ένα υποσύνολο του CSS. Η περιστροφή, τα διακεκομμένα και διακεκομμένα περιγράμματα και ορισμένες ιδιότητες διάταξης αγνοούνται."
-
-#: src/features/documents/new-document.tsx
-msgid "PDF uses your AI provider when one is ready. Turn off the AI switch to read its text layer on your server. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
-msgstr "Τα PDF χρησιμοποιούν τον πάροχο AI όταν είναι διαθέσιμος. Απενεργοποιήστε το AI για ανάγνωση του επιπέδου κειμένου στον διακομιστή. Το Word (.docx) απαιτεί πάροχο AI. Υποστηρίζονται οι τρέχουσες και v4 μορφές Reactive Resume JSON, συνοδευτικές επιστολές, JSON Resume και εξαγωγές LinkedIn (.zip). Έως 10 MB."
 
 #: src/features/documents/new-document.tsx
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
@@ -8737,6 +8794,10 @@ msgstr "Βιογραφικό σημείωμα"
 msgid "Resume + letter"
 msgstr "βιογραφικό + επιστολή"
 
+#: src/features/check/writing.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Resume details"
 msgstr "λεπτομέρειες βιογραφικού"
@@ -8771,6 +8832,10 @@ msgstr "υποβλήθηκε βιογραφικό (προαιρετικό)"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/search/search-screen.tsx
@@ -8827,6 +8892,7 @@ msgstr "Ανακτήθηκε το {0} χρησιμοποιώντας το {1}. �
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -8962,6 +9028,11 @@ msgstr ""
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "Κριτική γραφής"
+
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/check/writing.tsx
+msgid "Reviewed {0}"
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
@@ -9159,6 +9230,10 @@ msgstr "Αποθήκευση εργασίας"
 msgid "Save lane"
 msgstr "Αποθήκευση σταδίου"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Save message without AI"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
 msgstr "Αποθήκευση προσφοράς"
@@ -9233,6 +9308,18 @@ msgstr "Αποθηκεύτηκε"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "Αποθηκεύτηκε μια ιστορία: {title}"
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention"
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "Saved AI connections need attention. Choose one to fix, or add another."
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention. History and saved proposals remain available."
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9514,17 +9601,29 @@ msgstr "Αποστολή…"
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
 msgstr "Στέλνει αυτήν την αίτηση (αγγελία, σημειώσεις, στοιχεία συνέντευξης) και την ενεργοποιημένη Γνώση στον πάροχο {name}."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. If it becomes unavailable, scheduled work can use your default usable connection."
-msgstr "Στέλνει αυτήν την αίτηση και την ενεργοποιημένη Γνώση σε αυτήν τη σύνδεση. Ο πάροχος ενδέχεται να χρεώσει. Αν δεν είναι διαθέσιμη, οι προγραμματισμένες εργασίες μπορούν να χρησιμοποιήσουν την προεπιλεγμένη λειτουργική σύνδεσή σας."
+msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
 msgstr "Στέλνει την αγγελία, τις σημειώσεις και τα έγγραφα αυτής της αίτησης, μαζί με την ενεργοποιημένη Γνώση, στον πάροχο {label}."
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
@@ -9565,10 +9664,6 @@ msgstr "Διακομιστής"
 msgid "Server address"
 msgstr "Διεύθυνση διακομιστή"
 
-#: src/api/ai-consent.ts
-msgid "Server web search"
-msgstr ""
-
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr "Ορισμός επανεπικοινωνίας"
@@ -9586,6 +9681,11 @@ msgstr "Ορίστε τη γλώσσα του εγγράφου κατά την �
 msgid "Set up a provider"
 msgstr "Ρυθμίστε έναν πάροχο"
 
+#: src/features/assistant/provider.tsx
+#: src/features/letters/write.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
 msgstr "Ρυθμίστε τον πάροχο AI"
@@ -9593,6 +9693,10 @@ msgstr "Ρυθμίστε τον πάροχο AI"
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "Ρύθμιση αναζήτησης ευκαιριών"
+
+#: src/features/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
@@ -9639,9 +9743,10 @@ msgstr "Κοινοποίηση"
 msgid "Share calendar event (.ics)"
 msgstr "Κοινή χρήση συμβάντος ημερολογίου (.ics)"
 
+#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {label}?"
-msgstr ""
+msgid "Share data with {0}?"
+msgstr "Κοινή χρήση δεδομένων με το {0};"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -10318,10 +10423,6 @@ msgstr ""
 msgid "Suggested reply · edit before sending"
 msgstr "Προτεινόμενη απάντηση · επεξεργαστείτε πριν από την αποστολή"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Suggestions from models.dev. You can also enter any model ID."
-msgstr "Προτάσεις από models.dev. Μπορείτε επίσης να εισαγάγετε οποιοδήποτε αναγνωριστικό μοντέλου."
-
 #: src/features/assistant/assistant-screen.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "Προτείνει περικοπές, ποτέ δεν διαγράφει από μόνο του"
@@ -10637,10 +10738,6 @@ msgstr "Ο βοηθός πραγματοποιεί αναζήτηση με τη�
 msgid "The assistant uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "Ο βοηθός χρησιμοποιεί την αναζήτηση ιστού του ίδιου του παρόχου AI όπου υποστηρίζεται και διαβάζει συνδέσμους με την ενσωματωμένη συσκευή ανάγνωσης."
 
-#: src/features/assistant/provider.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "Ο βοηθός χρησιμοποιεί το δικό σας κλειδί. Τίποτα δεν αποστέλλεται πουθενά μέχρι να συνδέσετε ένα."
-
 #: src/features/ai/web-access.tsx
 msgid "The built-in reader remains active."
 msgstr "Ο ενσωματωμένος αναγνώστης παραμένει ενεργός."
@@ -10673,6 +10770,14 @@ msgstr "Ο σύμβουλος αποθηκεύει γεγονότα που δη�
 msgid "The connection couldn't be loaded or saved. Try again."
 msgstr "Δεν ήταν δυνατή η φόρτωση ή η αποθήκευση της σύνδεσης. Προσπαθήστε ξανά."
 
+#: src/features/ai/error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -10702,6 +10807,10 @@ msgstr "Η συνέντευξη αποθηκεύτηκε. Για να λάβετ
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Το κλειδί είναι κρυπτογραφημένο στον διακομιστή και δεν εμφανίζεται ποτέ ξανά. Η αποθήκευση ελέγχει τη σύνδεση."
 
+#: src/features/ai/error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
 msgstr "Ο χρόνος προετοιμασίας πέρασε. Η αποθήκευση εκτελεί την ενημέρωση αμέσως."
@@ -10730,6 +10839,10 @@ msgstr "Η γραμμή άλλαξε από τότε που το ζητήσατ�
 msgid "the message"
 msgstr "το μήνυμα"
 
+#: src/features/ai/error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "Η σειρά με την οποία είναι αποθηκευμένο το κείμενο διαφέρει σημαντικά από τη σειρά ανάγνωσής του."
@@ -10746,10 +10859,17 @@ msgstr "Οι σελίδες είναι εικόνες, χωρίς κείμενο
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "Το PDF ελέγχεται στον διακομιστή και δεν αποθηκεύεται. Στείλτε αυτήν την προεπισκόπηση για να δείτε τι διαβάζει το λογισμικό."
 
-#: src/features/ai/provider-editor.tsx
-#: src/features/ai/provider-list.tsx
-msgid "The provider didn't answer. Check the key, the model and the base URL."
-msgstr "Ο πάροχος δεν απάντησε. Ελέγξτε το κλειδί, το μοντέλο και τη βάση URL."
+#: src/api/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
@@ -10800,6 +10920,10 @@ msgstr "Ο διακομιστής επέστρεψε ένα μη έγκυρο α
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Δεν ήταν δυνατή η φόρτωση της έκδοσης διακομιστή. Το κείμενό σας διατηρείται. δοκιμάστε ξανά."
 
+#: src/features/ai/error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "The service couldn't be reached. Try again or fill the details manually."
 msgstr "Δεν ήταν δυνατή η πρόσβαση στην υπηρεσία. Προσπαθήστε ξανά ή συμπληρώστε τα στοιχεία χειροκίνητα."
@@ -10828,13 +10952,17 @@ msgstr "Το τεστ δεν εκτελέστηκε. Προσπαθήστε ξα
 msgid "The text comes out unreadable."
 msgstr "Το κείμενο βγαίνει μη αναγνώσιμο."
 
-#: src/api/ai-consent.ts
-msgid "The text to read aloud is sent through your server to this speech provider. It can contain personal information."
-msgstr "Το κείμενο προς ανάγνωση αποστέλλεται μέσω του διακομιστή σας σε αυτόν τον πάροχο ομιλίας. Μπορεί να περιέχει προσωπικές πληροφορίες."
-
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "Η κορυφή της πρώτης σελίδας δεν μοιάζει με όνομα."
+
+#: src/features/applications/error.ts
+msgid "The web service quota is used up. Fix web access or paste a posting."
+msgstr ""
+
+#: src/features/applications/error.ts
+msgid "The web service rejected its key. Fix web access or paste a posting."
+msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/search/search-screen.tsx
@@ -11161,6 +11289,10 @@ msgstr "Αυτή η αποθηκευμένη έκδοση δεν είναι πλ
 #: app/_layout.tsx
 msgid "This screen stopped working"
 msgstr "Αυτή η οθόνη σταμάτησε να λειτουργεί"
+
+#: src/api/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/auth/messages.ts
 msgid "This server is too old for the app. Ask your administrator to update it."
@@ -11585,6 +11717,10 @@ msgstr ""
 msgid "Update posting details"
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "Ενημερώστε τον διακομιστή σας πριν μεταφέρετε αιτήσεις σε προσαρμοσμένο στάδιο."
@@ -11795,9 +11931,17 @@ msgstr "Χρησιμοποιήστε αυτό το γεγονός"
 msgid "Use this provider"
 msgstr "Χρησιμοποιήστε αυτόν τον πάροχο"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "Χρησιμοποιήστε αυτή τη φορά"
+
+#: src/api/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
@@ -11981,6 +12125,7 @@ msgstr "Περιμένοντας να ακούσω πίσω"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/ai/web-access.tsx
 msgid "Web access"
 msgstr "Πρόσβαση στον Ιστό"
 
@@ -11995,10 +12140,6 @@ msgstr "Ιστοσελίδα"
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
 msgstr "Έρευνα στον ιστό"
-
-#: src/api/ai-consent.ts
-msgid "Web search"
-msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -12543,10 +12684,6 @@ msgid "Your recording goes to {transcriberName} after you stop, to be transcribe
 msgstr "Η εγγραφή σας πηγαίνει στο {transcriberName} αφού σταματήσετε, για μεταγραφή. Ο πάροχος μπορεί να χρεώσει. Ο διακομιστής διατηρεί μεταγραφές, ποτέ ηχογραφήσεις."
 
 #: src/api/ai-consent.ts
-msgid "Your recording is uploaded through your server to this transcription provider. It can contain personal information."
-msgstr "Η εγγραφή σας μεταφορτώνεται μέσω του διακομιστή σας σε αυτόν τον πάροχο μεταγραφής. Μπορεί να περιέχει προσωπικές πληροφορίες."
-
-#: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
 msgstr "Το αίτημα και το σχετικό βιογραφικό, η επιστολή, η αγγελία εργασίας, η αίτηση, οι πληροφορίες σταδιοδρομίας, το ιστορικό συνομιλιών και τα συνημμένα αποστέλλονται μέσω του διακομιστή σας σε αυτόν τον πάροχο τεχνητής νοημοσύνης, σύμφωνα με τη δυνατότητα και το πλαίσιο που επιλέξατε. Μπορούν να περιέχουν προσωπικές πληροφορίες."
 
@@ -12565,6 +12702,10 @@ msgstr "Το βιογραφικό σας χρησιμοποιεί τα «εγώ�
 #: app/(auth)/sign-in.tsx
 msgid "Your resumes, letters and applications, on {host}."
 msgstr "Τα βιογραφικά σας, οι συνοδευτικές επιστολές και οι αιτήσεις σας, στο {host}."
+
+#: src/api/ai-consent.ts
+msgid "Your search terms and public links go through your server to the selected web services and sites. No AI provider is used."
+msgstr ""
 
 #: src/features/share/messages.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
@@ -12624,7 +12765,7 @@ msgid "Your unsaved job details will be discarded before opening web search sett
 msgstr "Οι μη αποθηκευμένες λεπτομέρειες της εργασίας σας θα απορριφθούν πριν ανοίξετε τις ρυθμίσεις αναζήτησης ιστού."
 
 #: src/api/ai-consent.ts
-msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgid "Your web settings changed. Nothing was sent; try again."
 msgstr ""
 
 #: src/features/assistant/messages.tsx

@@ -3,12 +3,11 @@ import type { CheckIssue } from "./issues";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { collectPassages } from "@reactive-resume/resume/proposals";
-import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
@@ -18,6 +17,8 @@ import { useEditorStore } from "../store";
 import { describeEntry } from "../write/model";
 import { getSectionName } from "./issues";
 import { mapWritingReview } from "./review";
+import { SetUpAi } from "@/features/assistant/provider-setup";
+import { useResumeStore } from "@/features/resume/builder/draft";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { AiProviderPicker } from "@/features/settings/integrations/components/ai-provider-picker";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -37,6 +38,15 @@ type WritingTabProps = { data: ResumeData; issues: readonly CheckIssue[] };
  * and paragraphs as proposals to accept or reject, and is never part of the score. Its errors stay in this tab.
  */
 export function WritingTab({ data, issues }: WritingTabProps) {
+	const resumeId = useResumeStore((state) => state.resume?.id);
+	const queryClient = useQueryClient();
+	const saved = useQuery({
+		...orpc.ai.writingReview.queryOptions({ input: { resumeId: resumeId ?? "" } }),
+		enabled: !!resumeId,
+	});
+	const hydrated = useRef<string | null>(null);
+	const [reviewInput, setReviewInput] = useState<string | null>(null);
+	const [reviewedAt, setReviewedAt] = useState<Date | null>(null);
 	const providerState = useHasUsableAiProvider();
 	const { usableProviders, hasUsableProvider } = providerState;
 	const [providerOverride, setProviderOverride] = useState<string | null>(null);
@@ -53,20 +63,41 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 		paragraph: (n) => t`paragraph ${n}`,
 	}).slice(0, MAX_PASSAGES);
 
+	const inputText = buildMarkdown(data).slice(0, MAX_TEXT_CHARS).trim();
+	useEffect(() => {
+		const entry = saved.data;
+		if (!entry || useResumeStore.getState().resume?.id !== resumeId) return;
+		const identity = `${resumeId}:${entry.reviewedAt.toISOString()}`;
+		if (hydrated.current === identity) return;
+		hydrated.current = identity;
+		const current = entry.inputText === inputText;
+		const { proposals: next, notes } = mapWritingReview(
+			entry.review.suggestions,
+			current ? passages : [],
+			entry.passages,
+		);
+		useEditorStore.setState({
+			proposals: next,
+			writingReview: { summary: entry.review.summary, strengths: entry.review.strengths, notes },
+		});
+		setReviewInput(entry.inputText);
+		setReviewedAt(entry.reviewedAt);
+	}, [saved.data, inputText, passages, resumeId]);
+
 	const { mutate, isPending, error, reset } = useMutation({
 		...orpc.ai.atsReview.mutationOptions(),
-		onSuccess: (result) => {
-			const { proposals: next, notes } = mapWritingReview(result.suggestions, passages);
-			useEditorStore.setState({
-				proposals: next,
-				writingReview: { summary: result.summary, strengths: result.strengths, notes },
+		onSuccess: async (_result, input) => {
+			await queryClient.invalidateQueries({
+				queryKey: orpc.ai.writingReview.queryKey({ input: { resumeId: input.resumeId ?? "" } }),
 			});
 		},
 	});
 
 	const run = () => {
+		if (!provider || isPending || !resumeId) return;
 		reset();
 		mutate({
+			resumeId,
 			...(provider ? { aiProviderId: provider.id } : {}),
 			extractedText: buildMarkdown(data).slice(0, MAX_TEXT_CHARS),
 			findings: issues.slice(0, MAX_FINDINGS).map((issue) => ({
@@ -82,9 +113,20 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 		});
 	};
 
-	if (providerState.isUnavailable) return <AiProviderLoadState state={providerState} />;
+	if (saved.isError && !review)
+		return (
+			<div role="alert" className="grid gap-2 p-4">
+				<p>
+					<Trans>Couldn't load the saved review.</Trans>
+				</p>
+				<Button onClick={() => void saved.refetch()}>
+					<Trans>Retry</Trans>
+				</Button>
+			</div>
+		);
+	if (providerState.isUnavailable && !review) return <AiProviderLoadState state={providerState} />;
 
-	if (!hasUsableProvider) {
+	if (!hasUsableProvider && !review) {
 		return (
 			<div className="grid gap-3 rounded-xl border border-line p-4">
 				<strong className="text-sm font-semibold">
@@ -96,12 +138,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 						match need no provider.
 					</Trans>
 				</p>
-				<Link
-					to="/dashboard/settings/ai"
-					className={buttonVariants({ size: "sm", variant: "secondary", className: "w-fit" })}
-				>
-					<Trans>Open AI settings</Trans>
-				</Link>
+				<SetUpAi />
 			</div>
 		);
 	}
@@ -142,9 +179,7 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 					<Button size="sm" onClick={run}>
 						<Trans>Retry</Trans>
 					</Button>
-					<Link to="/dashboard/settings/ai" className={buttonVariants({ size: "sm", variant: "secondary" })}>
-						<Trans>Open AI settings</Trans>
-					</Link>
+					<SetUpAi />
 				</div>
 				<p className="text-xs text-ink-3">
 					<Trans>Issues and Job match still work without AI.</Trans>
@@ -206,6 +241,17 @@ export function WritingTab({ data, issues }: WritingTabProps) {
 
 	return (
 		<div className="grid gap-3">
+			{reviewedAt && (
+				<p className="text-xs text-ink-3">
+					<Trans>Reviewed {reviewedAt.toLocaleString()}</Trans>
+				</p>
+			)}
+			{reviewInput !== null && reviewInput !== inputText && (
+				<p role="status" className="text-xs text-warn-text">
+					<Trans>Resume changed since this review. Review these suggestions as out of date or run again.</Trans>
+				</p>
+			)}
+			{!hasUsableProvider && <SetUpAi />}
 			{review.summary && <p className="text-[13px] leading-[19px] text-ink-2">{review.summary}</p>}
 
 			{proposals.length > 0 && <ProposalList proposals={proposals} data={data} onSuggestAgain={run} />}
@@ -265,6 +311,7 @@ function WritingNoteCard({ note }: { note: WritingNote }) {
 			<p className="text-[13px] leading-[19px]">
 				{note.quote && <i className="text-ink-2">“{note.quote}”</i>} {note.note}
 			</p>
+			{note.rewrite && <p className="text-[13px] leading-[19px] text-accent-text">{note.rewrite}</p>}
 			{note.target && (
 				<Button size="sm" variant="secondary" className="w-fit" onClick={showOnPage}>
 					<Trans>Show on page</Trans>

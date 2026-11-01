@@ -4,6 +4,7 @@ import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { BatchLinkPlugin } from "@orpc/client/plugins";
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";
+import { authorizeAiRequest } from "./ai-consent";
 import { rpcFetch } from "./fetch";
 import { getAccountId } from "@/libs/auth/account-scope";
 
@@ -11,25 +12,34 @@ import { getAccountId } from "@/libs/auth/account-scope";
  * The account a call belongs to. Captured when the call starts (before any await, batching or body staging), so a
  * session switch during dispatch cannot relabel a payload that was built for the previous account. `bound` marks a call
  * whose caller named its account explicitly: those never batch, so a mixed batch can never hide one under another.
+ * The AI/web destination fields are the per-call consent context added by the AI consent owner.
  */
-export type ClientContext = { accountId?: string; bound?: boolean };
+export type ClientContext = {
+	accountId?: string;
+	bound?: boolean;
+	aiDestination?: string;
+	webDestination?: string;
+};
 
 const getRpcUrl = () => `${window.location.origin}/api/rpc`;
 
-const accountHeaders = (options: { context: ClientContext }) =>
-	options.context.accountId ? { "x-account-id": options.context.accountId } : {};
+const headers = ({ context }: { context: ClientContext }) => ({
+	...(context.accountId ? { "x-account-id": context.accountId } : {}),
+	...(context.aiDestination ? { "x-ai-destination": context.aiDestination } : {}),
+	...(context.webDestination ? { "x-web-destination": context.webDestination } : {}),
+});
 
 export const client: RouterClient<typeof router, ClientContext> = createORPCClient(
 	new RPCLink<ClientContext>({
 		url: getRpcUrl,
+		headers,
 		fetch: rpcFetch,
-		headers: accountHeaders,
 		plugins: [
 			new BatchLinkPlugin<ClientContext>({
 				mode: "streaming",
 				groups: [{ condition: () => true, context: {} }],
-				// An explicitly bound call must keep its own envelope; batching could merge it with another account.
-				exclude: (options) => options.context.bound === true,
+				// A consent-scoped AI call and an explicitly bound call must each keep their own request envelope.
+				exclude: ({ context }) => context.bound === true || Boolean(context.aiDestination || context.webDestination),
 			}),
 		],
 		interceptors: [
@@ -43,6 +53,10 @@ export const client: RouterClient<typeof router, ClientContext> = createORPCClie
 					context: accountId ? { ...options.context, accountId, ...(bound ? { bound: true } : {}) } : options.context,
 				});
 			},
+			async (options) => {
+				const destination = await authorizeAiRequest(options.path, options.input, client, options.signal);
+				return options.next({ ...options, context: { ...options.context, ...destination } });
+			},
 			onError((error) => {
 				if (error instanceof DOMException && error.name === "AbortError") return;
 				console.warn("[oRPC client]", error);
@@ -54,8 +68,8 @@ export const client: RouterClient<typeof router, ClientContext> = createORPCClie
 export const streamClient: RouterClient<typeof router, ClientContext> = createORPCClient(
 	new RPCLink<ClientContext>({
 		url: getRpcUrl,
+		headers,
 		fetch: rpcFetch,
-		headers: accountHeaders,
 		interceptors: [
 			(options) => {
 				const bound = options.context.accountId !== undefined;
@@ -64,6 +78,10 @@ export const streamClient: RouterClient<typeof router, ClientContext> = createOR
 					...options,
 					context: accountId ? { ...options.context, accountId, ...(bound ? { bound: true } : {}) } : options.context,
 				});
+			},
+			async (options) => {
+				const destination = await authorizeAiRequest(options.path, options.input, client, options.signal);
+				return options.next({ ...options, context: { ...options.context, ...destination } });
 			},
 			onError((error) => {
 				if (error instanceof DOMException && error.name === "AbortError") return;

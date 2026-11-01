@@ -5,7 +5,7 @@ import { careerWorkspaceSchema, savedItemDataSchema } from "@reactive-resume/sch
 import { aiProvidersService } from "../ai-providers/service";
 import { getModel } from "../ai/service";
 import { generateJson } from "../applications/ai";
-import { careerService } from "./service";
+import { careerService, hasFitEvidence } from "./service";
 
 const shape = (kind: SavedItemData["kind"]) =>
 	savedItemDataSchema.options.find((option) => option.shape.kind.value === kind) as unknown as z.ZodObject<
@@ -91,6 +91,7 @@ type GenerateInput = {
 	task: GenerateTask;
 	/** The scheduled job's connection; tabs use the default one. */
 	providerId?: string | null;
+	providerVersion?: string | null;
 	jobId?: string;
 	jobLease?: string;
 	signal?: AbortSignal;
@@ -98,6 +99,10 @@ type GenerateInput = {
 
 /** One structured AI write for a workspace tab. Saves the result, except a drafted or tightened answer. */
 export async function generateCareer(input: GenerateInput) {
+	if (input.jobId && (!input.providerId || !input.providerVersion || !input.jobLease))
+		throw new ORPCError("BAD_REQUEST", {
+			message: "Scheduled preparation requires its selected AI connection and lease.",
+		});
 	const { task } = input;
 	const interviewId = "interviewId" in task ? task.interviewId : null;
 	const context = await careerService.context({
@@ -107,6 +112,10 @@ export async function generateCareer(input: GenerateInput) {
 	});
 	const application = context.application;
 	if (!application) throw new ORPCError("NOT_FOUND");
+	if (task.task === "fit" && !hasFitEvidence(context))
+		throw new ORPCError("BAD_REQUEST", {
+			message: "Add evidence to Knowledge or explicitly link a resume before checking fit.",
+		});
 	if (task.task === "briefing" && !context.interview)
 		throw new ORPCError("BAD_REQUEST", { message: "Choose an interview to prepare for." });
 	const selectedStory =
@@ -116,13 +125,16 @@ export async function generateCareer(input: GenerateInput) {
 			message: "The selected story is unavailable in this application's Knowledge. Choose another story.",
 		});
 
-	// A schedule's own connection while it's usable; once it's switched off or removed, the default.
-	const chosen = input.providerId
-		? await aiProvidersService.getRunnableById({ userId: input.userId, id: input.providerId }).catch(() => null)
-		: null;
-	const provider = chosen ?? (await aiProvidersService.getDefaultRunnable({ userId: input.userId }));
+	// A schedule stays on the approved connection; unavailable connections require user action.
+	const provider = input.providerId
+		? await aiProvidersService.getRunnableById({ userId: input.userId, id: input.providerId })
+		: await aiProvidersService.getDefaultRunnable({ userId: input.userId });
 	if (!provider)
 		throw new ORPCError("PRECONDITION_FAILED", { message: "Connect an AI provider in Settings to use the coach." });
+	if (input.jobId && (provider.id !== input.providerId || provider.recipientVersion !== input.providerVersion))
+		throw new ORPCError("CONFLICT", {
+			message: "The scheduled AI connection changed. Review and enable the schedule again.",
+		});
 	const model = getModel({
 		provider: provider.provider,
 		model: provider.model,
@@ -220,6 +232,27 @@ export async function generateCareer(input: GenerateInput) {
 		contextMayBeExcerpted: true,
 	});
 	const generationSignal = AbortSignal.any([AbortSignal.timeout(120_000), ...(input.signal ? [input.signal] : [])]);
+	const assertCurrent = () =>
+		careerService.assertMemoryVersion(
+			input.userId,
+			context.memoryVersion,
+			{
+				applicationId: application.id,
+				version: context.knowledgeVersion,
+				pipelineRevision: context.pipelineRevision,
+				application,
+				documents: [context.resume, context.letter].filter(
+					(entry): entry is NonNullable<typeof entry> => entry !== null,
+				),
+				...(input.jobId && input.jobLease && input.providerVersion
+					? { job: { id: input.jobId, lease: input.jobLease, providerVersion: input.providerVersion } }
+					: {}),
+			},
+			undefined,
+			provider.id,
+		);
+	await assertCurrent();
+	generationSignal.throwIfAborted();
 	const output = await generateJson(
 		model,
 		{
@@ -228,6 +261,7 @@ export async function generateCareer(input: GenerateInput) {
 		},
 		schema,
 		generationSignal,
+		0,
 	);
 
 	generationSignal.throwIfAborted();

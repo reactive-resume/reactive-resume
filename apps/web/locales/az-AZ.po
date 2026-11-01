@@ -1143,6 +1143,10 @@ msgstr "Sonradan sildiyiniz hekayə"
 msgid "A strong match, with one question to resolve"
 msgstr "Güclü uyğunluq, aydınlaşdırılmalı bir sualla"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "A test prompt and saved API key."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Vaxta bölünmüş plan, girişiniz, gətirəcəyiniz hekayələr və verəcəyiniz suallar. Zəngdən 10 dəqiqə əvvəl yoxlama siyahınıza çevrilir."
@@ -1450,6 +1454,10 @@ msgstr "Sübut əlavə et"
 msgid "Add experience"
 msgstr "Təcrübə əlavə edin"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Add facts"
+msgstr ""
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Add field"
 msgstr "Sahə əlavə edin"
@@ -1714,6 +1722,10 @@ msgid "Against your requirements"
 msgstr "Tələblərinizlə müqayisədə"
 
 #: src/features/command-palette/pages/navigation.tsx
+msgid "AI"
+msgstr ""
+
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -1748,10 +1760,15 @@ msgstr "AI təfərrüatları doldura bilmədi. İş elanı saxlanılır; sahəl�
 msgid "AI edit"
 msgstr "AI redaktəsi"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
 msgstr ""
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers"
@@ -1768,6 +1785,12 @@ msgstr "ENCRYPTION_SECRET təyin olunana qədər AI təminatçıları bu serverd
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI provayderlərini yükləmək mümkün olmadı. Yenidən cəhd etmək üçün yenidən yükləyin."
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/documents/new-document-dialog.tsx
+msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
@@ -1832,6 +1855,14 @@ msgstr "Bütün sənədləriniz, iş müraciətləriniz, API açarlarınız və 
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
 msgstr "Girişə icazə verin"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow scheduled sharing"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow this operation"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Almost none of your bullets carry a number."
@@ -2619,9 +2650,17 @@ msgstr "Altı məhsul komandasının istifadə etdiyi ortaq dizayn sistemi qurdu
 msgid "Built from the posting, Sam’s message and your two strongest stories."
 msgstr "İş elanı, Sam-in mesajı və ən güclü iki hekayəniz əsasında hazırlanıb."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "Quraşdırılmış oxucu"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Bulgarian"
@@ -2802,6 +2841,10 @@ msgstr ""
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
 msgstr "Onun dəyişdirilməsi yeni ünvana təsdiq göndərir. İstifadəçi adınız hər bir ictimai linkin bir hissəsidir."
 
+#: src/features/settings/ai/providers.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Changing your password…"
 msgstr "Parolunuz dəyişdirilir…"
@@ -2957,6 +3000,14 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
+msgstr ""
+
+#: src/features/command-palette/pages/ask.tsx
+msgid "Choose a document; review your question before sending"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "Fayl seçin"
@@ -2973,6 +3024,10 @@ msgstr "Hazırkı parolunuzdan fərqli bir parol seçin."
 msgid "Choose a PDF file."
 msgstr "PDF faylı seçin."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Choose a resume"
+msgstr ""
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Dizaynına uyğun yazmaq üçün CV seçin. O vaxta qədər məktubun öz var."
@@ -2982,9 +3037,17 @@ msgstr "Dizaynına uyğun yazmaq üçün CV seçin. O vaxta qədər məktubun ö
 msgid "Choose a stage"
 msgstr "Mərhələ seçin"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a tested AI provider before sharing data."
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
 msgstr "{timeZone} saat qurşağında etibarlı tarix və vaxt seçin və ya son tarix sahəsini boşaldın."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -3013,6 +3076,10 @@ msgstr "Başqa fayl seçin"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "Rəng seçin"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Choose how to read this file"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3314,12 +3381,6 @@ msgstr "AI provayderini birləşdirin"
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect an AI provider above to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "Assistentdən istifadə etmək üçün yuxarıdakı AI provayderini birləşdirin. İşləri saxlamaq və hazırlamaq üçün birinə ehtiyac yoxdur."
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/career/workspace/fit.tsx
-#: src/features/career/workspace/prepare.tsx
-msgid "Connect an AI provider in Settings"
-msgstr "Parametrlərdə AI provayderi qoşun"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
@@ -3629,6 +3690,10 @@ msgstr "Bu cədvəli dəyişmək mümkün olmadı. Yenidən cəhd edin."
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "Parolunuzu dəyişmək mümkün olmadı. Hazırkı parolunuzu yoxlayın və yenidən cəhd edin."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -3791,6 +3856,10 @@ msgstr "Həmin provayder hesabını qoşmaq mümkün olmadı. Yenidən cəhd edi
 msgid "Couldn't link the application. Try again."
 msgstr "Müraciəti əlaqələndirmək mümkün olmadı. Yenidən cəhd edin."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't load AI connections. Try again before importing this file."
 msgstr "AI bağlantılarını yükləmək mümkün olmadı. Bu faylı idxal etməzdən əvvəl yenidən cəhd edin."
@@ -3811,6 +3880,10 @@ msgstr "Qoşulmuş tətbiqləri yükləmək mümkün olmadı. Yenidən cəhd etm
 msgid "Couldn't load documents"
 msgstr "Sənədləri yükləmək mümkün olmadı"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Couldn't load documents. Try again."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't load interviews. Retry"
 msgstr "Müsahibələri yükləmək mümkün olmadı. Yenidən cəhd et"
@@ -3822,6 +3895,10 @@ msgstr "Veb girişi parametrlərini yükləmək və ya saxlamaq mümkün olmadı
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "Nümunə faylı yükləmək mümkün olmadı. Yenidən cəhd edin."
+
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
@@ -4109,6 +4186,7 @@ msgid "Couldn't switch connections. Try again."
 msgstr "Bağlantıları dəyişmək mümkün olmadı. Yenidən cəhd edin."
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "Modelləri dəyişmək mümkün olmadı. Yenidən cəhd edin."
 
@@ -4301,8 +4379,8 @@ msgid "Create a new resume"
 msgstr "Yeni özgeçmiş yaradın"
 
 #: src/features/command-palette/pages/ask.tsx
-msgid "Create a resume first, then ask about it."
-msgstr "Əvvəlcə rezyume yaradın, sonra bu barədə soruşun."
+msgid "Create a resume or letter first."
+msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Create account"
@@ -4443,6 +4521,10 @@ msgstr "Tünd"
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Tünd mövzu"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -4865,6 +4947,10 @@ msgstr "Hesabınız yoxdur? <0/>"
 msgid "Don't send {0}"
 msgstr "{0} göndərməyin"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Don't share"
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -5057,8 +5143,8 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Yükləməzdən əvvəl yenidən yerləşdirmək üçün sürüşdürün və böyütmək üçün sürgüdən istifadə edin."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
-msgstr "Faylı bura buraxın və ya gözdən keçirin. PDF, Word, Reactive Resume və ya JSON Resume. Biz hər bölməni doldururuq və əmin olmadığımız hər şeyi qeyd edirik."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Drop a PDF here or choose a file"
@@ -5119,6 +5205,10 @@ msgstr "Hər göndərmə bu mesaj və seçilmiş fayllarla təzə başlayır. Ə
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -5407,10 +5497,6 @@ msgstr "Etibarlı e-poçt ünvanı daxil edin."
 msgid "Enter a web address, like example.com"
 msgstr "Məsələn.com kimi veb ünvanı daxil edin"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "Son nöqtəniz tərəfindən dəstəklənən istənilən model ID-sini daxil edin."
-
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Hesabınıza daxil olmaq üçün saxlanılmış ehtiyat kodlarınızdan birini daxil edin."
@@ -5423,6 +5509,10 @@ msgstr "Şərtləri özünüz daxil edin. Süni intellektə sorğu göndərilmir
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter the 6-digit code."
 msgstr "6 rəqəmli kodu daxil edin."
+
+#: src/features/settings/ai/test-error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
@@ -5661,8 +5751,8 @@ msgid "Feedback"
 msgstr "Rəy"
 
 #: src/features/career/workspace/practise.tsx
-msgid "Feedback needs an AI connection. <0>Add one in Settings</0>. Nothing is sent until you ask."
-msgstr "Rəy üçün AI bağlantısı lazımdır. <0>Parametrlərdə əlavə edin</0>. Siz istəməyincə heç nə göndərilmir."
+msgid "Feedback needs an AI connection. <0/>. Nothing is sent until you ask."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -5711,8 +5801,8 @@ msgid "Fill fields"
 msgstr "Sahələri doldur"
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Fill in the role and company. Connect an AI provider in Settings to read them from the posting."
-msgstr "Rolu və şirkəti doldurun. İş elanından onları oxumaq üçün Parametrlərdə AI provayderini qoşun."
+msgid "Fill in the role and company, or use Set up AI to read them from the posting."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Fill in the role and company. The posting is saved with the application."
@@ -5746,6 +5836,10 @@ msgstr "Vəzifə tap"
 msgid "Find weak bullets"
 msgstr "Zəif siyahı girişlərini tapın"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "Bölmələrin tapılması"
@@ -5777,6 +5871,10 @@ msgstr "Uyğunluq"
 #: src/features/career/workspace/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "Uyğunluq yoxlamaları, brifinqlər, məşq rəyləri, müsahibə sonrası təhlillər, forma cavabları, cavab mesajları və iş təklifləri yadda saxladıqca burada görünür."
+
+#: src/features/career/workspace/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Fit page to width"
@@ -5961,12 +6059,17 @@ msgid "Found for “{0}”. Posting checked {1}."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/libs/orpc/ai-consent.ts
 msgid "Found posting links are read by Reactive Resume and the sites being read."
 msgstr ""
 
 #. placeholder {0}: webAccess.provider
 #: src/features/career/schedule-sheet.tsx
 msgid "Found posting links are read by Reactive Resume and, when needed, {0} and the sites being read. The reader may charge."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -6839,10 +6942,9 @@ msgstr "Kursiv"
 msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
 msgstr "Onun müraciətləri seçdiyiniz mərhələyə köçürülür. Onların tarixçəsində “{label}” adı saxlanılır."
 
-#. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
-msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
-msgstr "Onun bağlantısı söndürülüb və ya silinib, ona görə də başqasını seçənə qədər {0} ilə işləyir."
+msgid "Its connection is unavailable. Choose and approve a connection before enabling this schedule."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
@@ -7578,6 +7680,10 @@ msgstr "Əlaqələr yüklənir..."
 msgid "Loading conversations…"
 msgstr "Söhbətlər yüklənir..."
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Loading documents…"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Loading interviews…"
 msgstr "Müsahibələr yüklənir…"
@@ -7590,10 +7696,6 @@ msgstr "Göndərməzdən əvvəl Biliklər yüklənir…"
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "Əlaqəli sənədlər yüklənir…"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "Model təklifləri yüklənir... Siz həmçinin istənilən model ID-sini daxil edə bilərsiniz."
 
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
@@ -7897,6 +7999,10 @@ msgstr "Orta"
 msgid "Mentor other designers"
 msgstr "Digər dizaynerlərə mentorluq etmək"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Message saved with this application"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Message the assistant"
 msgstr "Köməkçiyə mesaj göndərin"
@@ -7951,10 +8057,6 @@ msgstr "Model"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "{label} üçün model"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "Model təklifləri əlçatan deyil. Siz hələ də istənilən model ID-ni daxil edə bilərsiniz."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Model: {label}"
@@ -8216,6 +8318,7 @@ msgid "narrow margins"
 msgstr "dar kənarlar"
 
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "Diqqət lazımdır"
 
@@ -8363,6 +8466,10 @@ msgstr "Aktiv iş müraciətləri yoxdur."
 
 #: src/features/career/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -8587,10 +8694,6 @@ msgstr "Bu iş təsvirindən konkret terminlər çıxarıla bilmədi, ona görə
 #: src/features/career/knowledge/stories.tsx
 msgid "No stories yet"
 msgstr "Hələ hekayə yoxdur"
-
-#: src/features/settings/ai/providers.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "Bu provayder üçün təklif yoxdur. İstənilən model ID-ni daxil edin."
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -9037,6 +9140,18 @@ msgstr "Bir dəfəyə yalnız ilk {MAX_IMPORT} sətir idxal olunur, {overflow} s
 msgid "Only the first pages were checked."
 msgstr "Yalnız ilk səhifələr yoxlanıldı."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Bunları ancaq sən görürsən"
@@ -9044,6 +9159,10 @@ msgstr "Bunları ancaq sən görürsən"
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "Paylaşana qədər yalnız siz. CV məxfi qala bilər, ictimai linkdə yayımlana bilər və ya parolla qoruna bilər və siz onu istənilən vaxt dəyişə bilərsiniz. Hesabınızın silinməsi onunla CV-lərinizi silir."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Onsite"
@@ -9059,11 +9178,6 @@ msgstr "Aç"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Open {title}"
 msgstr "{title} açın"
-
-#: src/features/resume/editor/check/writing-tab.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Open AI settings"
-msgstr "AI parametrlərini açın"
 
 #: src/features/career/today.tsx
 msgid "Open briefing"
@@ -9233,6 +9347,10 @@ msgstr "Narıncı"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
 msgstr "Təşkilat"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -9445,6 +9563,10 @@ msgstr "E-poçtu və ya mesajı imzasız yapışdırın."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "İş təsvirinin tam mətnini bura yapışdırın…"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
@@ -9974,6 +10096,10 @@ msgstr "Serveriniz tərəfindən təmin edilmişdir: {connectedProvider}."
 msgid "Provider"
 msgstr "Provayder"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Provider retention follows its own policy. Your provider may charge for this request."
+msgstr ""
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -10154,6 +10280,10 @@ msgstr "Brifinqi oxu"
 msgid "Read it for me"
 msgstr "Mənim üçün oxu"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Read on this device (free)"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
 msgstr "Yalnız oxumaq üçün giriş"
@@ -10196,6 +10326,7 @@ msgid "Read the self-hosting guide"
 msgstr "Öz-özünə hostinq təlimatını oxuyun"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Read with AI"
 msgstr ""
 
@@ -10273,6 +10404,12 @@ msgstr "Mətni oxumaq"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "Paylaşdığınız oxunur"
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading with AI sends this posting to {0} · {1}. Public links also go to the reader and the site being read. You can fill details manually."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
@@ -10866,6 +11003,10 @@ msgstr "CV hazırlama"
 msgid "Resume builder"
 msgstr "rezyume qurucusu"
 
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "CV məzmunu"
@@ -10896,6 +11037,10 @@ msgstr "CV təqdim edildi (isteğe bağlı)"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/career/workspace/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -10929,6 +11074,7 @@ msgstr "Alındı ​​{0}. Məlumat verilmədikcə mənşə təzəliyi məlum d
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/workspace/answer-library.tsx
+#: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -11036,13 +11182,18 @@ msgstr ""
 msgid "Review writing"
 msgstr "Rəy yazısı"
 
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Reviewed {0}"
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
-msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
-msgstr "Nəzərdən keçirmə üçün AI bağlantısı lazımdır. <0>Parametrlərdə əlavə edin</0>. O vaxta qədər burada yazdıqlarınız bu brauzerdə qalır."
+msgid "Reviewing needs an AI connection. <0/>. What you write here stays in this browser until then."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke"
@@ -11264,6 +11415,10 @@ msgstr "Müsahibəni saxla"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "İşə qənaət edin"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Save message without AI"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Save name"
@@ -11735,18 +11890,25 @@ msgstr "Parol sıfırlama e‑poçtu göndərilir..."
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
 msgstr "Bu müraciəti (iş elanı, qeydlər, müsahibə təfərrüatları) və aktiv Bilikləri {label} provayderinə göndərir."
 
 #. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
 #: src/features/career/workspace/fit.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0}."
-msgstr "Bu müraciətin iş elanını, qeydlərini və sənədlərini, həmçinin aktiv Bilikləri {0} provayderinə göndərir."
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0} · {1}."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it."
-msgstr "Bu müraciətin iş elanını, qeydlərini və sənədlərini, həmçinin aktiv Bilikləri bu bağlantıya göndərir. Provayderiniz bunun üçün ödəniş ala bilər."
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
@@ -11755,6 +11917,12 @@ msgstr "Bu məktubu və iş elanını açarınızla birlikdə {provider}-a gönd
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter to {provider} with your key, only when you press send."
 msgstr "Bu məktubu {provider}-a açarınızla göndərir, yalnız siz göndər düyməsini basdığınız zaman."
+
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
@@ -11826,13 +11994,25 @@ msgstr "Parol təyin et"
 msgid "Set the document language when exporting."
 msgstr "İxrac edərkən sənəd dilini təyin edin."
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "Axtarışı qur"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings"
 msgstr "Parametrlərdə veb axtarışı qurun"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
@@ -11870,6 +12050,11 @@ msgstr "Paylaşın"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "İctimai bir keçid paylaşın, parol əlavə edin və ya gizli saxlayın. 3 görünmə variantından birini seçin. PDF və ya Word-ə ixrac edin və ya JSON kimi bütün məlumatlarınızı özünüzlə aparın."
+
+#. placeholder {0}: provider.label
+#: src/libs/orpc/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -12655,10 +12840,6 @@ msgstr "Mənbədən və işdən təklif olunur. İstənilən vaxt dəyişdirin."
 msgid "Suggested reply · edit before sending"
 msgstr "Təklif olunan cavab · göndərməzdən əvvəl redaktə edin"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Suggestions from <0>models.dev</0>. You can also enter any model ID."
-msgstr "<0>models.dev</0>-dan təkliflər. Siz həmçinin istənilən model ID-ni daxil edə bilərsiniz."
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "Kəsmə təklif edir, heç vaxt öz-özünə silmir"
@@ -13047,6 +13228,10 @@ msgstr "{label} faylı yaradıla bilmədi. Yenidən cəhd edin və ya əvəzinə
 msgid "The 13-point activation lift. Knowledge has the before and after."
 msgstr "Aktivləşmədə 13 faiz bəndi artım. Biliklərdə əvvəlki və sonrakı göstəricilər var."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The account changed. Try again."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "Ünvan yalnız tək tire ilə ayrılmış kiçik hərflərdən və rəqəmlərdən ibarət olmalıdır."
@@ -13066,10 +13251,6 @@ msgstr "Bu məktub üçün iş müraciəti."
 #: src/features/assistant/assistant-panel.tsx
 msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
 msgstr "Köməkçi bu serverdə quraşdırılmayıb. Kim işlədirsə, ENCRYPTION_SECRET təyin etməlidir. Qalan hər şey onsuz işləyir."
-
-#: src/features/assistant/provider-setup.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "Köməkçi öz açarınızdan istifadə edir. Siz birini bağlayana qədər heç bir yerə heç nə göndərilmir."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The built-in reader remains active."
@@ -13099,6 +13280,18 @@ msgstr "Kouç bunları yalnız bu müraciət üçün oxuyur."
 msgid "The coach saves facts you state, and tells you. You can undo."
 msgstr "Kouç dediyiniz faktları saxlayır və sizə bildirir. Geri qaytara bilərsiniz."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The complete PDF file."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "Surət iş ərizəsi ilə əlaqələndirilir, ona görə də Check və köməkçi onun iş elanından istifadə edir."
@@ -13127,6 +13320,10 @@ msgstr "Salamlama addan sonra gəlir."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Açar serverdə şifrələnir və bir daha göstərilmir. Yadda saxlamaq əlaqəni yoxlayır."
 
+#: src/features/settings/ai/test-error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "Məktub olduğu kimi"
@@ -13150,6 +13347,10 @@ msgstr "Siz xahiş etdiyinizdən sonra xətt dəyişdi, ona görə də dəyişdi
 #: src/features/career/workspace/saved.tsx
 msgid "the message"
 msgstr "mesaj"
+
+#: src/features/settings/ai/test-error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The morning of the interview has passed, so the briefing runs now."
@@ -13199,9 +13400,9 @@ msgstr "İş elanını oxumaq mümkün olmadı. Rolu və şirkəti doldurun."
 msgid "The posting saved with this application."
 msgstr "İş elanı bu iş müraciəti ilə yadda saxlanıldı."
 
-#: src/features/assistant/provider-setup.tsx
-msgid "The provider didn't answer. Check the key and the model."
-msgstr "Provayder cavab vermədi. Açarı və modeli yoxlayın."
+#: src/libs/orpc/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
@@ -13211,9 +13412,17 @@ msgstr "Provayder cavab vermədi. Açarı, modeli və URL əsasını yoxlayın."
 msgid "The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method."
 msgstr "Provayder tələb olunan e-poçt ünvanını paylaşmadı. Provayder soruşduqda e-poçta girişə icazə verin və ya başqa giriş üsulundan istifadə edin."
 
+#: src/features/settings/ai/test-error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "The provider rejected this sign-in attempt. Try again."
 msgstr "Provayder bu giriş cəhdini rədd etdi. Yenidən cəhd edin."
+
+#: src/features/settings/ai/test-error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The provider returned a review that couldn't be read. Try again."
@@ -13281,6 +13490,18 @@ msgstr ""
 msgid "The selected documents will be deleted for good and can't be restored."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected line, surrounding field text, and your rewrite instructions."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected resume and this letter's recipient and posting information."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
 msgstr "Xidmət vaxtında cavab vermədi. Yenidən cəhd edin."
@@ -13308,6 +13529,10 @@ msgstr "Mətn oxunmaz şəkildə çıxır."
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "Birinci səhifənin yuxarı hissəsi ad kimi görünmür."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The Word document's text."
+msgstr ""
 
 #. Menu item that opens appearance theme selection submenu
 #: src/features/command-palette/pages/navigation.tsx
@@ -13369,6 +13594,10 @@ msgstr "Düşünülür"
 msgid "Thinking…"
 msgstr "Düşünür..."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This allows recurring processing until you turn the schedule off."
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "This application"
 msgstr ""
@@ -13386,8 +13615,8 @@ msgid "This browser can't record here. Choose an audio file, or type your answer
 msgstr "Bu brauzer burada səs yaza bilmir. Səs faylı seçin və ya cavabınızı yazın."
 
 #: src/features/career/workspace/practise.tsx
-msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
-msgstr "Bu brauzer diktəni qəbul edə bilmir və AI bağlantılarınızdan heç biri nitqi transkripsiya edə bilmir (OpenAI, Google Gemini, Mistral, xAI, Groq və ya Vercel AI Gateway bunu bacarır). <0>Parametrlərdə əlavə edin</0> və ya cavabınızı yazın."
+msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
+msgstr ""
 
 #: src/features/career/draft-recovery.tsx
 msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
@@ -13405,6 +13634,11 @@ msgstr "Bu söhbəti açmaq mümkün olmadı."
 #: src/features/career/coach-thread.tsx
 msgid "This conversation couldn't be opened. Refresh the page to try again."
 msgstr "Bu söhbəti açmaq mümkün olmadı. Yenidən cəhd etmək üçün səhifəni yeniləyin."
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/career/coach.tsx
+msgid "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
@@ -13618,6 +13852,10 @@ msgstr "Bu saxlanılmış versiyanı yükləmək mümkün olmadı."
 #: src/features/career/workspace/shell.tsx
 msgid "This saved version is no longer available."
 msgstr "Bu saxlanılmış versiya artıq mövcud deyil."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
@@ -14135,6 +14373,10 @@ msgstr "CV-ni yenilə"
 msgid "Update this application's details."
 msgstr "Bu müraciətin məlumatlarını yeniləyin."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/components/list-view.tsx
 msgid "Updated"
 msgstr "Yenilənib"
@@ -14316,6 +14558,10 @@ msgstr "Standart başlıqdan istifadə edin"
 msgid "Use these answers"
 msgstr "Bu cavablardan istifadə et"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Use this destination"
+msgstr ""
+
 #: src/features/settings/preferences.tsx
 msgid "Use this device's timezone ({device})"
 msgstr "Bu cihazın saat qurşağından istifadə et ({device})"
@@ -14323,6 +14569,14 @@ msgstr "Bu cihazın saat qurşağından istifadə et ({device})"
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "Bu provayderdən istifadə edin"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
@@ -14575,9 +14829,15 @@ msgstr "Dəyişikliyi təsdiqləmək üçün {currentEmail} ünvanına keçid g�
 msgid "We sent a new verification link to {0}."
 msgstr "{0}-a yeni doğrulama linki göndərdik."
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Veb girişi"
+
+#. placeholder {0}: access?.searxng ? t`your server's search service` : (access?.provider ?? t`built-in reader`)
+#: src/libs/orpc/ai-consent.ts
+msgid "Web destination: {0}."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Web page"
@@ -14870,6 +15130,10 @@ msgstr "Bir rüb ərzində aktivləşmə 31%-dən 44%-ə çatdı."
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "Bir olmadan, siz alıcını özünüz doldurursunuz və layihənin hazırlanmasında yalnız rezyumeniz istifadə olunur."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
 msgstr "Mətn çıxarıldıqda sözlər bir-birinə qarışır."
@@ -15150,6 +15414,10 @@ msgstr "AI bağlantınız"
 msgid "Your AI connection"
 msgstr "AI bağlantınız"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your AI settings changed. Nothing was sent; try again."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Your answer"
 msgstr "Cavabınız"
@@ -15358,6 +15626,10 @@ msgstr "provayderiniz"
 msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
 msgstr "Səs yazınız transkripsiya üçün {0} provayderinə göndərilir, bu da həmin hesabda tokenlərdən istifadə edə bilər."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "Your requirements"
 msgstr "Tələbləriniz"
@@ -15382,6 +15654,10 @@ msgstr "CV-niz dublikat edildi."
 msgid "Your resume has been updated."
 msgstr "CV-niz yeniləndi."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your resume text, selected passages, and check findings."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "CV-nizdə \"I\" və \"my\" istifadə olunur."
@@ -15390,6 +15666,14 @@ msgstr "CV-nizdə \"I\" və \"my\" istifadə olunur."
 msgid "Your resume, live at"
 msgstr "CV, canlı ünvanda"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Your saved AI connections need attention. Test or edit them below. History and saved proposals remain available."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your search terms. These also go to the configured search service."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
 msgstr "Seçdiyiniz şrift bəzi simvolları göstərə bilmir. Onlar “?” kimi görünür. Dizayn bölməsində onları dəstəkləyən şrift seçin."
@@ -15397,6 +15681,10 @@ msgstr "Seçdiyiniz şrift bəzi simvolları göstərə bilmir. Onlar “?” ki
 #: src/features/settings/ai/web-access.tsx
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "Serveriniz Müraciətlər bölməsində və köməkçi üçün veb axtarışını təmin edir. Daxili oxucunun oxuya bilmədiyi veb səhifələri oxumaq üçün xidmətə qoşulun."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "your server's search service"
+msgstr ""
 
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
@@ -15434,6 +15722,10 @@ msgstr "İki dəqiqəlik təqdimatınız"
 #: src/features/resume/share/share-panel.tsx
 msgid "Your web page is live"
 msgstr "Veb səhifəniz yayımdadır"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your web settings changed. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Your wording"

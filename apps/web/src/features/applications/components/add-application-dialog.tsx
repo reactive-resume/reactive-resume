@@ -26,6 +26,8 @@ import { useInvalidateApplications } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { useDialogStore } from "@/dialogs/store";
+import { SetUpAi } from "@/features/assistant/provider-setup";
+import { SetUpWebAccess, testFailureMessage } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
@@ -98,6 +100,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 	const [coverLetterId, setCoverLetterId] = useState("");
 	const [location, setLocation] = useState(initialCapture?.location ?? "");
 	const [salary, setSalary] = useState("");
+	const authored = useRef(new Set<"role" | "company" | "location" | "salary">());
 	const [pasteOpen, setPasteOpen] = useState(!!initialCapture?.description);
 	const [pastedText, setPastedText] = useState(initialCapture?.description ?? "");
 	const [description, setDescription] = useState<string | null>(initialCapture?.description || null);
@@ -172,10 +175,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 				onSuccess: (result) => {
 					if (request.signal.aborted) return;
 					setReading({ text, result });
-					setRole((current) => current || result.role);
-					setCompany((current) => current || result.company);
-					setLocation((current) => current || result.location);
-					setSalary((current) => current || result.salary);
+					setRole((current) => (authored.current.has("role") ? current : result.role));
+					setCompany((current) => (authored.current.has("company") ? current : result.company));
+					setLocation((current) => (authored.current.has("location") ? current : result.location));
+					setSalary((current) => (authored.current.has("salary") ? current : result.salary));
 					setDescription(result.jobDescription);
 				},
 				onError: (error) => {
@@ -233,6 +236,24 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 				void add(false);
 			}}
 		>
+			{!providerState.isUnavailable && !hasUsableProvider && <SetUpAi />}
+			{hasUsableProvider && (
+				<p className="text-xs text-ink-3">
+					<Trans>
+						Reading with AI sends this posting to {providerState.usableProviders[0]?.label} ·{" "}
+						{providerState.usableProviders[0]?.model}. Public links also go to the reader and the site being read. You
+						can fill details manually.
+					</Trans>
+				</p>
+			)}
+			{webAccess?.testResult && !webAccess.testResult.search.success && (
+				<div role="alert" className="grid gap-2 text-sm text-warn-text">
+					<p>
+						{webAccess.provider} · {testFailureMessage(webAccess.testResult.search.error)}
+					</p>
+					<SetUpWebAccess />
+				</div>
+			)}
 			<DialogHeader>
 				<DialogTitle>
 					<Trans>Save a job</Trans>
@@ -321,10 +342,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 												setPasteOpen(false);
 												setDescription(null);
 												resetRead();
-												setRole("");
-												setCompany("");
-												setLocation("");
-												setSalary("");
+												if (!authored.current.has("role")) setRole("");
+												if (!authored.current.has("company")) setCompany("");
+												if (!authored.current.has("location")) setLocation("");
+												if (!authored.current.has("salary")) setSalary("");
 												search.reset();
 											}}
 										>
@@ -540,13 +561,27 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 					<Label htmlFor={`${id}-role`}>
 						<Trans>Role</Trans>
 					</Label>
-					<Input id={`${id}-role`} value={role} onChange={(event) => setRole(event.target.value)} />
+					<Input
+						id={`${id}-role`}
+						value={role}
+						onChange={(event) => {
+							authored.current.add("role");
+							setRole(event.target.value);
+						}}
+					/>
 				</div>
 				<div className="grid gap-1.5">
 					<Label htmlFor={`${id}-company`}>
 						<Trans>Company</Trans>
 					</Label>
-					<Input id={`${id}-company`} value={company} onChange={(event) => setCompany(event.target.value)} />
+					<Input
+						id={`${id}-company`}
+						value={company}
+						onChange={(event) => {
+							authored.current.add("company");
+							setCompany(event.target.value);
+						}}
+					/>
 				</div>
 			</div>
 			<PriorNoResponseNotice company={company} />
@@ -588,13 +623,27 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 					<Label htmlFor={`${id}-location`}>
 						<Trans>Location</Trans>
 					</Label>
-					<Input id={`${id}-location`} value={location} onChange={(event) => setLocation(event.target.value)} />
+					<Input
+						id={`${id}-location`}
+						value={location}
+						onChange={(event) => {
+							authored.current.add("location");
+							setLocation(event.target.value);
+						}}
+					/>
 				</div>
 				<div className="grid gap-1.5">
 					<Label htmlFor={`${id}-salary`}>
 						<Trans>Salary</Trans>
 					</Label>
-					<Input id={`${id}-salary`} value={salary} onChange={(event) => setSalary(event.target.value)} />
+					<Input
+						id={`${id}-salary`}
+						value={salary}
+						onChange={(event) => {
+							authored.current.add("salary");
+							setSalary(event.target.value);
+						}}
+					/>
 				</div>
 			</div>
 			{stage !== "saved" && (
@@ -740,7 +789,7 @@ function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadSt
 			) : ai ? (
 				<Trans>Fill in the role and company. The posting is saved with the application.</Trans>
 			) : (
-				<Trans>Fill in the role and company. Connect an AI provider in Settings to read them from the posting.</Trans>
+				<Trans>Fill in the role and company, or use Set up AI to read them from the posting.</Trans>
 			)}
 		</p>
 	);

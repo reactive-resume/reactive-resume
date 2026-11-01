@@ -7,6 +7,7 @@ import { getTrustedOrigins } from "@reactive-resume/auth/trusted-origins";
 import { db } from "@reactive-resume/db/client";
 import { user } from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
+import { withAiDestination, withWebDestination } from "./features/ai/destination";
 
 export type RequestPermission = "read" | "write" | "delete";
 export type RequestAuthentication = {
@@ -167,10 +168,15 @@ export const protectedProcedure = publicProcedure
 			});
 		}
 
-		return next({
-			context: {
-				...context,
-				user: context.user,
-			},
-		});
+		const authenticatedUser = context.user;
+		return withAiDestination(context.reqHeaders.get("x-ai-destination"), () =>
+			withWebDestination(context.reqHeaders.get("x-web-destination"), () =>
+				next({
+					context: {
+						...context,
+						user: authenticatedUser,
+					},
+				}),
+			),
+		);
 	});

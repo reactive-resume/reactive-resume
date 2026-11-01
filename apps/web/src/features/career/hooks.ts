@@ -219,7 +219,7 @@ export function latest<K extends SavedItem["data"]["kind"]>(
 	);
 }
 
-/** The connection tab AI uses: the most recently used tested one, as on the server. */
+/** The connection tab AI uses: the explicit default or stable oldest usable fallback, as on the server. */
 export function useDefaultProvider() {
 	const state = useHasUsableAiProvider();
 	return { ...state, provider: state.usableProviders[0] ?? null };

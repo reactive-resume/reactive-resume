@@ -18,7 +18,11 @@ import { getAccountScope, getCredentials, recoverFromUnauthorized, rejectCredent
  * Per-call context. `scope` binds a call to one account (the draft store's scope, `JSON.stringify([server, user id])`):
  * the call fails instead of going out when the session no longer belongs to that account.
  */
-export type ClientContext = { scope?: string | undefined };
+export type ClientContext = {
+	scope?: string | undefined;
+	aiDestination?: string | undefined;
+	webDestination?: string | undefined;
+};
 
 export class SessionChangedError extends Error {
 	constructor() {
@@ -84,13 +88,17 @@ const isAbort = (error: unknown) => error instanceof Error && error.name === "Ab
 const createLink = (label: string) =>
 	new RPCLink<ClientContext>({
 		url: `${placeholder}/api/rpc`,
+		headers: ({ context }) => ({
+			...(context.aiDestination ? { "x-ai-destination": context.aiDestination } : {}),
+			...(context.webDestination ? { "x-web-destination": context.webDestination } : {}),
+		}),
 		fetch: rpcFetch,
 		interceptors: [
 			async (options) => {
 				const { path, input, context, signal, next } = options;
 				const scope = context.scope ?? getAccountScope();
-				await authorizeAiRequest(path, input, client, scope, signal);
-				return next({ ...options, context: { ...context, ...(scope ? { scope } : {}) } });
+				const destination = await authorizeAiRequest(path, input, client, scope, signal);
+				return next({ ...options, context: { ...context, ...(scope ? { scope } : {}), ...destination } });
 			},
 			// Logs the failure only: errors can carry request data, which must never reach the device log.
 			onError((error) => {
@@ -120,11 +128,12 @@ export type RouterOutput = InferRouterOutputs<typeof router>;
  * The body is sent again after a token refresh, so pass a repeatable one (string, `FormData`, bytes), never a stream.
  */
 export async function rest(path: `/${string}`, init: RequestInit = {}, scope = getAccountScope()): Promise<Response> {
+	let approved: Awaited<ReturnType<typeof authorizeAiRequest>>;
 	if (path === "/career/voice/transcribe") {
 		if (!(init.body instanceof FormData)) throw new Error("Expected a recording form.");
-		await authorizeAiRequest(
+		approved = await authorizeAiRequest(
 			["career", "voice", "transcribe"],
-			{ providerId: init.body.get("providerId") },
+			{ providerId: init.body.get("providerId"), model: init.body.get("model") },
 			client,
 			scope,
 			init.signal ?? undefined,
@@ -133,7 +142,13 @@ export async function rest(path: `/${string}`, init: RequestInit = {}, scope = g
 	return withCredentials(async (credentials) => {
 		const response = await expoFetch(`${credentials.server}/api/openapi${path}`, {
 			method: init.method ?? "GET",
-			headers: bearer(credentials, new Headers(init.headers)),
+			headers: bearer(
+				credentials,
+				new Headers({
+					...Object.fromEntries(new Headers(init.headers)),
+					...(approved?.aiDestination ? { "x-ai-destination": approved.aiDestination } : {}),
+				}),
+			),
 			body: init.body ?? null,
 			signal: init.signal ?? null,
 		});

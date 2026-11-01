@@ -135,13 +135,17 @@ export function buildCareerTools(input: CareerToolsInput): ToolSet {
 			inputSchema: careerStoryInputSchema
 				.omit({ applicationId: true })
 				.extend({ factIds: z.array(z.string()).min(1).max(30) }),
-			execute: (story) =>
-				careerService.saveStory(
+			execute: async (story) => {
+				const saved = await careerService.saveStory(
 					input.userId,
 					{ ...story, applicationId: scope.applicationId },
 					undefined,
 					input.context.memoryVersion,
-				),
+				);
+				// The next model step revalidates stories returned by tools too.
+				input.context.stories.push(saved);
+				return saved;
+			},
 		});
 		const mode = input.context.profile.memoryMode;
 		const sourceMessageId = input.sourceMessageId;

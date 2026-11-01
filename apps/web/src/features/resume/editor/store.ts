@@ -21,6 +21,7 @@ export type WritingNote = {
 	location: string;
 	impact: "high" | "medium" | "low";
 	quote: string;
+	rewrite?: string;
 	note: string;
 	target: PageMapTarget | null;
 };

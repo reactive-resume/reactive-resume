@@ -59,7 +59,9 @@ vi.mock("../web-access/credentials", () => ({
 vi.mock("@reactive-resume/email/transport", () => ({ sendCareerNotification: fixture.email }));
 // No live AI: the briefing writer is the boundary; the provider check only has to find the connection.
 vi.mock("./generate", () => ({ generateCareer: fixture.generate }));
-vi.mock("../ai-providers/service", () => ({ aiProvidersService: { getRunnableById: async () => ({}) } }));
+vi.mock("../ai-providers/service", () => ({
+	aiProvidersService: { getRunnableById: async () => ({ recipientVersion: "fixture-revision" }) },
+}));
 
 function getDb() {
 	if (!fixture.db) throw new Error("Test database is not initialized.");
@@ -1136,17 +1138,16 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 				.map((entry) => entry.name)
 				.sort();
 			const owner = "20261031160926_rx106_follow_up_owner";
-			const clock = "20261031174650_rx106_follow_up_clock";
 			const recovery = "20261101090000_rx106_follow_up_watermark_recovery";
 			const apply = async (name: string) => {
 				const file = new URL(`${name}/migration.sql`, migrations);
 				await pool.query((await readFile(file, "utf8")).replaceAll('"public".', ""));
 			};
+			let beforeRecovery: Awaited<ReturnType<typeof normalized>> | undefined;
 			for (const directory of directories) {
-				if (directory === owner) break;
-				await apply(directory);
-			}
-			await pool.query(`
+				if (directory === recovery) beforeRecovery = await normalized(pool);
+				if (directory === owner) {
+					await pool.query(`
 				INSERT INTO "user"(id,name,email,username,display_username,timezone,email_verified)
 				VALUES('upgrade','Fictional Upgrade','upgrade@example.test','upgrade','upgrade','UTC',true);
 				INSERT INTO application(id,user_id,company,role,status,follow_up_at,follow_up_note) VALUES
@@ -1168,12 +1169,14 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 				 ('notice-same-day','upgrade','same-day','job-same-day','{"type":"followup","company":"Same Day Labs","role":"Engineer","note":"Already delivered"}'),
 				 ('notice-explicit-later','upgrade','explicit-later','job-explicit-later','{"type":"followup","company":"Explicit Later Labs","role":"Engineer","note":"Distinct exact time"}'),
 				 ('notice-explicit-same','upgrade','explicit-same','job-explicit-same','{"type":"followup","company":"Explicit Same Labs","role":"Engineer","note":"Already delivered"}');
-			`);
-			if (ownerSql) await pool.query(ownerSql);
-			else await apply(owner);
-			await apply(clock);
-			const beforeRecovery = await normalized(pool);
-			await apply(recovery);
+				`);
+					if (ownerSql) await pool.query(ownerSql);
+					else await apply(owner);
+					continue;
+				}
+				await apply(directory);
+			}
+			if (!beforeRecovery) throw new Error("Recovery migration is missing from the chain");
 			const afterRecovery = await normalized(pool);
 			const oldDb = fixture.db;
 			fixture.db = drizzle({ client: pool });
@@ -1499,6 +1502,7 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 				applicationId: "alice-app",
 				task: { task: "briefing", interviewId: "interview-round" },
 				providerId: "preparation-provider",
+				providerVersion: "fixture-revision",
 				jobId: job?.id,
 			}),
 		);

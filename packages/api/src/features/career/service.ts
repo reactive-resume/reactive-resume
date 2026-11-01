@@ -26,8 +26,8 @@ import { aiProvidersService } from "../ai-providers/service";
 import { findTrackedPosting } from "../applications/duplicates";
 import { syncFollowUp } from "../applications/follow-up";
 import { applicationTransitionValues, ensureApplicationPipeline } from "../applications/lanes";
-import { applicationService, recordSentResume } from "../applications/service";
-import { lockUser } from "../documents/ownership";
+import { applicationService, assertApplicationVersion, recordSentResume } from "../applications/service";
+import { assertSharedDocument, lockUser } from "../documents/ownership";
 import { matchPosting } from "./matching";
 import { noticeText } from "./notices";
 
@@ -301,6 +301,14 @@ async function invalidateMemory(userId: string, id: string, tx: DbOrTx, forgotte
 	await Promise.all(
 		threads.flatMap((thread) => (thread.runId ? [requestRunCancellation(thread.runId, "MEMORY_CHANGED")] : [])),
 	);
+}
+
+export function hasFitEvidence(context: {
+	facts: readonly unknown[];
+	stories: readonly unknown[];
+	resume: { text: string } | null;
+}) {
+	return context.facts.length > 0 || context.stories.length > 0 || !!context.resume?.text.trim();
 }
 
 export const careerService = {
@@ -799,12 +807,24 @@ export const careerService = {
 	assertMemoryVersion: (
 		userId: string,
 		expected: string,
-		knowledge?: { applicationId?: string | null; version: string; pipelineRevision?: number | null },
+		knowledge?: {
+			applicationId?: string | null;
+			version?: string;
+			pipelineRevision?: number | null;
+			application?: { id: string; updatedAt: Date };
+			documents?: readonly { source: { kind: string; id: string }; version: string }[];
+			job?: { id: string; lease: string; providerVersion: string };
+			sources?: {
+				facts: readonly { id: string; updatedAt: Date }[];
+				stories: readonly { id: string; updatedAt: Date }[];
+				profile: CareerProfileData & { timezone: string };
+			};
+		},
 		selectedResume?: Pick<typeof tables.resume.$inferSelect, "id" | "data" | "updatedAt">,
 		providerId?: string,
-	) =>
-		db.transaction(async (tx) => {
-			await lockUser(tx, userId);
+		reader?: DbOrTx,
+	) => {
+		const validate = async (tx: DbOrTx) => {
 			if (selectedResume) {
 				const [current] = await tx
 					.select({ id: tables.resume.id, data: tables.resume.data, updatedAt: tables.resume.updatedAt })
@@ -825,15 +845,95 @@ export const careerService = {
 			if (
 				expected !== (await memoryVersion(userId, tx)) ||
 				(knowledge &&
-					(knowledge.version !== (await knowledgeVersion({ userId, applicationId: knowledge.applicationId }, tx)) ||
+					((knowledge.version !== undefined &&
+						knowledge.version !== (await knowledgeVersion({ userId, applicationId: knowledge.applicationId }, tx))) ||
 						(knowledge.pipelineRevision !== undefined &&
 							knowledge.pipelineRevision !== (await pipelineRevision(userId, tx)))))
 			)
 				throw new ORPCError("CONFLICT", {
 					message: "Career knowledge changed while generating this result. Generate it again.",
 				});
+			if (knowledge?.application) await assertApplicationVersion(tx, userId, knowledge.application);
+			for (const document of knowledge?.documents ?? []) await assertSharedDocument(tx, userId, document);
+			if (knowledge?.job) {
+				const [job] = await tx
+					.select({
+						enabled: tables.careerSchedule.enabled,
+						aiProviderId: tables.careerSchedule.aiProviderId,
+						aiProviderVersion: tables.careerSchedule.aiProviderVersion,
+						status: tables.careerJob.status,
+						lease: tables.careerJob.lease,
+						leaseUntil: tables.careerJob.leaseUntil,
+					})
+					.from(tables.careerJob)
+					.innerJoin(tables.careerSchedule, eq(tables.careerJob.scheduleId, tables.careerSchedule.id))
+					.where(and(eq(tables.careerJob.id, knowledge.job.id), eq(tables.careerJob.userId, userId)))
+					.for("share");
+				if (
+					!job?.enabled ||
+					!providerId ||
+					job.aiProviderId !== providerId ||
+					job.aiProviderVersion !== knowledge.job.providerVersion ||
+					job.status !== "running" ||
+					job.lease !== knowledge.job.lease ||
+					!job.leaseUntil ||
+					job.leaseUntil <= new Date()
+				)
+					throw new ORPCError("CONFLICT", { message: "Scheduled work was paused or canceled. Nothing was sent." });
+			}
+			if (knowledge?.sources) {
+				const expectedSources = knowledge.sources;
+				const [facts, stories, [profile], [owner]] = await Promise.all([
+					tx
+						.select({ id: tables.careerFact.id, updatedAt: tables.careerFact.updatedAt })
+						.from(tables.careerFact)
+						.where(
+							and(
+								eq(tables.careerFact.userId, userId),
+								visible(tables.careerFact.applicationId, knowledge.applicationId),
+								eq(tables.careerFact.status, "active"),
+							),
+						),
+					tx
+						.select({ id: tables.careerStory.id, updatedAt: tables.careerStory.updatedAt })
+						.from(tables.careerStory)
+						.where(
+							and(
+								eq(tables.careerStory.userId, userId),
+								knowledge.applicationId
+									? or(
+											isNull(tables.careerStory.applicationId),
+											eq(tables.careerStory.applicationId, knowledge.applicationId),
+										)
+									: isNull(tables.careerStory.applicationId),
+							),
+						),
+					tx.select().from(tables.careerProfile).where(eq(tables.careerProfile.userId, userId)),
+					tx.select({ timezone: tables.user.timezone }).from(tables.user).where(eq(tables.user.id, userId)),
+				]);
+				const changed = (before: readonly { id: string; updatedAt: Date }[], now: { id: string; updatedAt: Date }[]) =>
+					before.some(
+						(entry) => !now.some((row) => row.id === entry.id && row.updatedAt.getTime() === entry.updatedAt.getTime()),
+					);
+				if (
+					changed(expectedSources.facts, facts) ||
+					changed(expectedSources.stories, stories) ||
+					!isDeepStrictEqual(
+						{ ...careerProfileDataSchema.parse(profile?.data ?? {}), timezone: owner?.timezone ?? "UTC" },
+						expectedSources.profile,
+					)
+				)
+					throw new ORPCError("CONFLICT", { message: "Shared Knowledge changed. Start a new reply." });
+			}
 			if (providerId) await aiProvidersService.assertAvailable({ id: providerId, userId }, tx);
-		}),
+		};
+		return reader
+			? validate(reader)
+			: db.transaction(async (tx) => {
+					await lockUser(tx, userId);
+					await validate(tx);
+				});
+	},
 	deleteSavedItem: async (userId: string, id: string) => {
 		await db
 			.delete(tables.careerArtifact)

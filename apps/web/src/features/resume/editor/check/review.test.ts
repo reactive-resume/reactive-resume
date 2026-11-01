@@ -21,3 +21,30 @@ it("does not reuse an accepted proposal identity for a fresh writing review", ()
 	expect(next.id).not.toBe(first.id);
 	expect(getStateIn("<p>Original</p>", next, { [first.id]: true })).toBe("pending");
 });
+
+it("keeps stale original and rewrite readable without an applicable proposal", () => {
+	const result = mapWritingReview(
+		[
+			{
+				section: "Summary",
+				passageId: "old",
+				issue: "Be specific",
+				rewrite: "Built fictional systems",
+				impact: "medium",
+			},
+		],
+		[],
+		[{ id: "old", where: "Summary paragraph 1", text: "Worked on fictional systems" }],
+	);
+	expect(result.proposals).toEqual([]);
+	expect(result.notes).toEqual([
+		{
+			location: "Summary paragraph 1",
+			impact: "medium",
+			quote: "Worked on fictional systems",
+			rewrite: "Built fictional systems",
+			note: "Be specific",
+			target: null,
+		},
+	]);
+});

@@ -1025,6 +1025,7 @@ msgstr "قم بإضافة ملخص أو وصف الدور أولاً؛ لا يو
 msgid "Add a tag"
 msgstr "أضف علامة"
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Add AI provider"
 msgstr "إضافة مزود الذكاء الاصطناعي"
@@ -1105,6 +1106,10 @@ msgstr "أضف دليلًا"
 #: src/features/write/fields.ts
 msgid "Add experience"
 msgstr "أضف الخبرة"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Add facts"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add field"
@@ -1363,6 +1368,10 @@ msgstr "تحرير الذكاء الاصطناعي"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "AI لم يكن التخصيب متاحًا. قم بمراجعة تفاصيل الصفحة أو قم بملئها يدويًا."
+
+#: src/features/assistant/provider.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
@@ -2108,9 +2117,17 @@ msgstr "تم تمكين التحديث التلقائي للإحاطة · {next}
 msgid "Briefing refresh paused"
 msgstr "تحديث الإحاطة متوقف مؤقتًا"
 
+#: src/api/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "قارئ مدمج"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Bulgarian"
@@ -2256,6 +2273,10 @@ msgstr ""
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "تم حفظ التغييرات التي تم إجراؤها على «{name}» على جهاز آخر. لا تزال تعديلاتك موجودة على هذا الجهاز. اختر الإصدار الذي تريد الاحتفاظ به."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
 
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
@@ -2439,6 +2460,10 @@ msgstr "اختر تاريخ متابعة صالحًا قبل الحفظ."
 #: src/draft/conflict-sheet.tsx
 msgid "Choose a version to continue. Back will not close this sheet."
 msgstr "اختر إصدارًا للمتابعة. لن يؤدي الضغط على «رجوع» إلى إغلاق هذه اللوحة."
+
+#: src/api/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -2948,6 +2973,10 @@ msgstr "تعذّر التحقق من طلبات التوظيف السابقة. �
 msgid "Couldn't check your AI providers."
 msgstr "تعذّر التحقق من مزودي AI لديك."
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "تعذّر إكمال الطلب. تحقق من اتصالك وحاول مرة أخرى."
@@ -3024,6 +3053,10 @@ msgstr "تعذر استيراد هذا الملف. تحقق من التنسيق 
 msgid "Couldn't link the application. Check Applications before retrying."
 msgstr "تعذّر ربط الطلب. راجع «الطلبات» قبل المحاولة مجددًا."
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load AI connections. PDF text and JSON imports still work."
 msgstr "تعذر تحميل اتصالات AI. لا يزال نص PDF وواردات JSON يعملان."
@@ -3080,6 +3113,10 @@ msgstr "تعذّر تحميل السيرة الذاتية."
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "تعذر تحميل ملف العينة. حاول ثانية."
+
+#: src/features/check/writing.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3555,8 +3592,8 @@ msgid "Dark theme"
 msgstr "سمة داكنة"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the provider."
-msgstr ""
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "تم إلغاء مشاركة البيانات. لم يتم إرسال أي شيء إلى مزود الذكاء الاصطناعي."
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -4140,6 +4177,10 @@ msgstr "يُطابَق كل متطلب في إعلان الوظيفة مع ال�
 msgid "Earlier discovery result. Search query and posting check time unknown."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
 msgstr "الرسائل السابقة في هذه المحادثة"
@@ -4356,10 +4397,6 @@ msgstr "أدخل رقمًا صحيحًا من 0 إلى 52، أو اتركه فا
 msgid "Enter an address like resume.example.org."
 msgstr "أدخل عنوانًا مثل resume.example.org."
 
-#: src/features/ai/provider-editor.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "أدخل أي معرف نموذج تدعمه نقطة النهاية الخاصة بك."
-
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr "أدخل الشروط بنفسك. لن يُرسل أي طلب إلى الذكاء الاصطناعي. اترك المبالغ غير المعروفة فارغة."
@@ -4367,6 +4404,10 @@ msgstr "أدخل الشروط بنفسك. لن يُرسل أي طلب إلى ا�
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "أدخل العنوان الذي تستخدمه لفتح Reactive Resume في المتصفح. قبل المتابعة، يتحقق تطبيق الهاتف المحمول من أن هذا هو خادم Reactive Resume مع تمكين تسجيل الدخول عبر الهاتف المحمول."
+
+#: src/features/ai/error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Enter your details below. Choosing a resume replaces them and links its design."
@@ -4565,6 +4606,10 @@ msgstr "ابحث عن وظائف"
 msgid "Find weak bullets"
 msgstr "ابحث عن إدخالات القائمة الضعيفة"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Finding what works"
 msgstr "جارٍ البحث عمّا ينجح"
@@ -4600,6 +4645,10 @@ msgstr "الملاءمة"
 #: src/features/workspace/tabs/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "تظهر هنا فحوص الملاءمة والإحاطات وملاحظات التمرين ومراجعات ما بعد المقابلة والإجابات والردود والعروض الوظيفية كلما حفظتها."
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -5138,7 +5187,7 @@ msgstr "الرموز في خط الاتصال"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "إذا جاء من مسح ضوئي، فهذا متوقّع. وإلا فاحذفه؛ فمسؤولو التوظيف يعتبرونه حشوًا للكلمات المفتاحية."
 
-#. placeholder {0}: reader ?? provider?.provider ?? ""
+#. placeholder {0}: reader ?? provider?.provider ?? t`built-in reader`
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "إذا تم استخدام الوصول إلى الويب، فإن الروابط ومصطلحات البحث تنتقل أيضًا إلى {0} والمواقع التي تتم قراءتها."
@@ -5962,10 +6011,6 @@ msgid "Loading linked documents…"
 msgstr "جارٍ تحميل المستندات المرتبطة…"
 
 #: src/features/ai/provider-editor.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "جارٍ تحميل اقتراحات النموذج... يمكنك أيضًا إدخال أي معرف نموذج."
-
-#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Loading providers…"
 msgstr "جارٍ تحميل مزودي الخدمة…"
@@ -6285,10 +6330,6 @@ msgstr "متباين"
 msgid "Model"
 msgstr "النموذج"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "اقتراحات النماذج غير متوفرة. لا يزال بإمكانك إدخال أي معرف نموذج."
-
 #: src/features/assistant/provider.tsx
 msgid "Model: {label}"
 msgstr "الموديل: {label}"
@@ -6534,6 +6575,7 @@ msgid "Native & fonts"
 msgstr "الكود الأصلي والخطوط"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "يحتاج إلى اهتمام"
 
@@ -6668,6 +6710,10 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/features/ai/provider-list.tsx
@@ -6878,10 +6924,6 @@ msgstr "لا يمكن سحب أي مصطلحات محددة من هذا الوص
 #: src/features/career/stories.tsx
 msgid "No stories yet"
 msgstr "لا توجد قصص بعد"
-
-#: src/features/ai/provider-editor.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "لا توجد اقتراحات لهذا المزود. أدخل أي معرف النموذج."
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -7236,6 +7278,10 @@ msgstr ""
 msgid "Only the text below and your reason are sent privately to the operator of {0} for safety review. Remove personal information you don't want to share. Reports are deleted with your account."
 msgstr "يتم فقط إرسال النص أدناه والسبب الخاص بك بشكل خاص إلى مشغل {0} لمراجعة الأمان. قم بإزالة المعلومات الشخصية التي لا ترغب في مشاركتها. يتم حذف التقارير مع حسابك."
 
+#: src/api/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Only this device schedules the notification."
 msgstr "هذا الجهاز فقط هو من يقوم بجدولة الإعلام."
@@ -7247,6 +7293,10 @@ msgstr "هذا الجهاز فقط هو من يقوم بجدولة الإعلا�
 #: src/features/share/link.tsx
 msgid "Only you see these"
 msgstr "أنت فقط ترى هذه"
+
+#: src/api/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -7262,7 +7312,6 @@ msgid "Open"
 msgstr "افتح"
 
 #: src/features/assistant/provider.tsx
-#: src/features/letters/write.tsx
 msgid "Open AI settings"
 msgstr "افتح إعدادات الذكاء الاصطناعي"
 
@@ -7415,6 +7464,10 @@ msgstr "أو بكلامك.."
 #: src/features/write/fields.ts
 msgid "Organization"
 msgstr "المنظمة"
+
+#: src/features/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -7572,6 +7625,10 @@ msgstr "الصق رسالة من {company}"
 msgid "Paste the email or message, without the signature."
 msgstr "الصق البريد الإلكتروني أو الرسالة، دون التوقيع."
 
+#: src/features/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
 msgstr "الصق إعلان الوظيفة لمعرفة أي من مصطلحاته تحتوي عليها سيرتك الذاتية بالفعل."
@@ -7617,13 +7674,13 @@ msgstr "أُلغي فحص PDF. حاول مجددًا عندما تكون مست�
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
 msgstr "PDF فقط · حتى 10 MB لكل ملف. ربط سيرة ذاتية من Reactive Resume يتيح تقييم ملاءمتها للوظيفة وتخصيصها باستخدام AI."
 
+#: src/features/documents/new-document.tsx
+msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
+msgstr ""
+
 #: src/features/design/advanced.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "تدعم أنماط PDF مجموعة فرعية من CSS. يتم تجاهل التدوير والحدود المتقطعة والمنقطة وبعض خصائص التخطيط."
-
-#: src/features/documents/new-document.tsx
-msgid "PDF uses your AI provider when one is ready. Turn off the AI switch to read its text layer on your server. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
-msgstr "يستخدم PDF مزود AI لديك عند توفره. أوقف خيار AI لقراءة طبقة النص على خادمك. يتطلب Word (.docx) مزود AI. تُدعم ملفات Reactive Resume JSON الحالية وv4، وخطابات التقديم، وJSON Resume، وصادرات LinkedIn (.zip). حتى 10 MB."
 
 #: src/features/documents/new-document.tsx
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
@@ -8737,6 +8794,10 @@ msgstr "سيرة ذاتية"
 msgid "Resume + letter"
 msgstr "السيرة الذاتية + الرسالة"
 
+#: src/features/check/writing.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Resume details"
 msgstr "تفاصيل السيرة الذاتية"
@@ -8771,6 +8832,10 @@ msgstr "السيرة الذاتية المقدمة (اختياري)"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/search/search-screen.tsx
@@ -8827,6 +8892,7 @@ msgstr "تم استرجاع {0} باستخدام {1}. وقت الاسترجاع 
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -8962,6 +9028,11 @@ msgstr ""
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "مراجعة الكتابة"
+
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/check/writing.tsx
+msgid "Reviewed {0}"
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
@@ -9159,6 +9230,10 @@ msgstr "حفظ الوظيفة"
 msgid "Save lane"
 msgstr "حفظ المرحلة"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Save message without AI"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
 msgstr "حفظ العرض الوظيفي"
@@ -9233,6 +9308,18 @@ msgstr "محفوظ"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "المحفوظات قصة: {title}"
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention"
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "Saved AI connections need attention. Choose one to fix, or add another."
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention. History and saved proposals remain available."
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9514,17 +9601,29 @@ msgstr "إرسال…"
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
 msgstr "يرسل هذا الطلب (الإعلان والملاحظات وتفاصيل المقابلة) والمعرفة المفعّلة إلى {name}."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. If it becomes unavailable, scheduled work can use your default usable connection."
-msgstr "يرسل هذا الطلب والمعرفة المفعّلة إلى هذا الاتصال. قد يفرض مزودك رسومًا. إذا تعذّر الاتصال، يمكن للمهام المجدولة استخدام اتصالك الافتراضي المتاح."
+msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
 msgstr "يرسل إعلان هذا الطلب وملاحظاته ومستنداته، مع المعرفة المفعّلة، إلى {label}."
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
@@ -9565,10 +9664,6 @@ msgstr "خادم"
 msgid "Server address"
 msgstr "عنوان الخادم"
 
-#: src/api/ai-consent.ts
-msgid "Server web search"
-msgstr ""
-
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr "قم بتعيين تذكير للمتابعة"
@@ -9586,6 +9681,11 @@ msgstr "حدّد لغة المستند عند التصدير."
 msgid "Set up a provider"
 msgstr "قم بإعداد الموفر"
 
+#: src/features/assistant/provider.tsx
+#: src/features/letters/write.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
 msgstr "قم بإعداد موفر AI"
@@ -9593,6 +9693,10 @@ msgstr "قم بإعداد موفر AI"
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "أعدّ الاكتشاف"
+
+#: src/features/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
@@ -9639,9 +9743,10 @@ msgstr "يشارك"
 msgid "Share calendar event (.ics)"
 msgstr "مشاركة حدث التقويم (.ics)"
 
+#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {label}?"
-msgstr ""
+msgid "Share data with {0}?"
+msgstr "هل تريد مشاركة البيانات مع {0}؟"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -10318,10 +10423,6 @@ msgstr ""
 msgid "Suggested reply · edit before sending"
 msgstr "رد مقترح · عدّله قبل الإرسال"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Suggestions from models.dev. You can also enter any model ID."
-msgstr "اقتراحات من models.dev. يمكنك أيضًا إدخال أي معرف نموذج."
-
 #: src/features/assistant/assistant-screen.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "يقترح القطع، ولا يحذف أبدًا من تلقاء نفسه"
@@ -10637,10 +10738,6 @@ msgstr "يبحث المساعد باستخدام بحث الخادم الخاص 
 msgid "The assistant uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "يستخدم المساعد بحث الويب الخاص بموفر AI الخاص بك عندما يكون مدعومًا، ويقرأ الروابط باستخدام القارئ المدمج."
 
-#: src/features/assistant/provider.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "يستخدم المساعد المفتاح الخاص بك. لا يتم إرسال أي شيء إلى أي مكان حتى تقوم بتوصيل واحد."
-
 #: src/features/ai/web-access.tsx
 msgid "The built-in reader remains active."
 msgstr "يظل القارئ المدمج نشطًا."
@@ -10673,6 +10770,14 @@ msgstr "يحفظ المدرّب الحقائق التي تذكرها، ويخب�
 msgid "The connection couldn't be loaded or saved. Try again."
 msgstr "لا يمكن تحميل الاتصال أو حفظه. حاول ثانية."
 
+#: src/features/ai/error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -10702,6 +10807,10 @@ msgstr "تم حفظ المقابلة. للحصول على تذكير، قم با
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "يتم تشفير المفتاح على الخادم ولن يتم عرضه مرة أخرى. حفظ اختبارات الاتصال."
 
+#: src/features/ai/error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
 msgstr "لقد مر وقت التحضير المقرر. يؤدي الحفظ إلى بدء الإحاطة على الفور."
@@ -10730,6 +10839,10 @@ msgstr "لقد تغير الخط منذ أن طلبت ذلك، لذلك لم ي�
 msgid "the message"
 msgstr "الرسالة"
 
+#: src/features/ai/error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "يختلف ترتيب تخزين النص اختلافًا كبيرًا عن ترتيب قراءته."
@@ -10746,10 +10859,17 @@ msgstr "الصفحات عبارة عن صور، بلا نص خلفها."
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "يتم فحص PDF على الخادم ولا يتم تخزينه. أرسل هذه المعاينة لترى ما يقرأه البرنامج."
 
-#: src/features/ai/provider-editor.tsx
-#: src/features/ai/provider-list.tsx
-msgid "The provider didn't answer. Check the key, the model and the base URL."
-msgstr "لم يجيب المزود. تحقق من المفتاح والنموذج وقاعدة URL."
+#: src/api/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
@@ -10800,6 +10920,10 @@ msgstr "أرجع الخادم نتيجة استيراد غير صالحة. قم 
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "تعذّر تحميل النسخة المحفوظة على الخادم. نصك محفوظ؛ حاول مجددًا."
 
+#: src/features/ai/error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "The service couldn't be reached. Try again or fill the details manually."
 msgstr "تعذّر الوصول إلى الخدمة. حاول مرة أخرى أو املأ التفاصيل يدويًا."
@@ -10828,13 +10952,17 @@ msgstr "لم يتم تشغيل الاختبار. حاول مرة أخرى."
 msgid "The text comes out unreadable."
 msgstr "يخرج النص غير قابل للقراءة."
 
-#: src/api/ai-consent.ts
-msgid "The text to read aloud is sent through your server to this speech provider. It can contain personal information."
-msgstr "يتم إرسال النص المراد قراءته بصوت عالٍ عبر الخادم الخاص بك إلى موفر الكلام هذا. يمكن أن تحتوي على معلومات شخصية."
-
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "لا يبدو أعلى الصفحة الأولى كاسم."
+
+#: src/features/applications/error.ts
+msgid "The web service quota is used up. Fix web access or paste a posting."
+msgstr ""
+
+#: src/features/applications/error.ts
+msgid "The web service rejected its key. Fix web access or paste a posting."
+msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/search/search-screen.tsx
@@ -11161,6 +11289,10 @@ msgstr "لم تعد هذه النسخة المحفوظة متاحة."
 #: app/_layout.tsx
 msgid "This screen stopped working"
 msgstr "توقفت هذه الشاشة عن العمل"
+
+#: src/api/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/auth/messages.ts
 msgid "This server is too old for the app. Ask your administrator to update it."
@@ -11585,6 +11717,10 @@ msgstr ""
 msgid "Update posting details"
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "حدّث خادمك قبل نقل طلبات التوظيف إلى مرحلة مخصصة."
@@ -11795,9 +11931,17 @@ msgstr "استخدم هذه الحقيقة"
 msgid "Use this provider"
 msgstr "استخدم هذا المزود"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "استخدم هذه المرة"
+
+#: src/api/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
@@ -11981,6 +12125,7 @@ msgstr "في انتظار سماع الرد"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/ai/web-access.tsx
 msgid "Web access"
 msgstr "الوصول إلى الويب"
 
@@ -11995,10 +12140,6 @@ msgstr "صفحة الويب"
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
 msgstr "البحث على الويب"
-
-#: src/api/ai-consent.ts
-msgid "Web search"
-msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -12543,10 +12684,6 @@ msgid "Your recording goes to {transcriberName} after you stop, to be transcribe
 msgstr "ينتقل تسجيلك إلى {transcriberName} بعد التوقف ليتم تحويله إلى نص. قد يتقاضى مزود الخدمة الخاص بك. يحتفظ الخادم بالنصوص، وليس التسجيلات أبدًا."
 
 #: src/api/ai-consent.ts
-msgid "Your recording is uploaded through your server to this transcription provider. It can contain personal information."
-msgstr "يتم تحميل التسجيل الخاص بك من خلال الخادم الخاص بك إلى مزود النسخ هذا. يمكن أن تحتوي على معلومات شخصية."
-
-#: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
 msgstr "يتم إرسال طلبك والسيرة الذاتية ذات الصلة، والخطاب، ونشر الوظيفة، والطلب، والمعلومات المهنية، وسجل المحادثات، والمرفقات من خلال الخادم الخاص بك إلى موفر الذكاء الاصطناعي هذا، وفقًا للميزة والسياق الذي حددته. يمكن أن تحتوي على معلومات شخصية."
 
@@ -12565,6 +12702,10 @@ msgstr "تستخدم سيرتك الذاتية \"I\" و\"my\" (أنا وملكي
 #: app/(auth)/sign-in.tsx
 msgid "Your resumes, letters and applications, on {host}."
 msgstr "سيرك الذاتية وخطابات التقديم وطلباتك، على {host}."
+
+#: src/api/ai-consent.ts
+msgid "Your search terms and public links go through your server to the selected web services and sites. No AI provider is used."
+msgstr ""
 
 #: src/features/share/messages.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
@@ -12624,7 +12765,7 @@ msgid "Your unsaved job details will be discarded before opening web search sett
 msgstr "سيتم تجاهل تفاصيل المهمة غير المحفوظة قبل فتح إعدادات بحث الويب."
 
 #: src/api/ai-consent.ts
-msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgid "Your web settings changed. Nothing was sent; try again."
 msgstr ""
 
 #: src/features/assistant/messages.tsx

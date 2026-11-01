@@ -1025,6 +1025,7 @@ msgstr "เพิ่มบทสรุปหรืออธิบายบทบ
 msgid "Add a tag"
 msgstr "เพิ่มแท็ก"
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Add AI provider"
 msgstr "เพิ่มผู้ให้บริการ AI"
@@ -1105,6 +1106,10 @@ msgstr "เพิ่มหลักฐาน"
 #: src/features/write/fields.ts
 msgid "Add experience"
 msgstr "เพิ่มประสบการณ์"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Add facts"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add field"
@@ -1363,6 +1368,10 @@ msgstr "เอไอแก้ไข"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "ไม่สามารถเสริมข้อมูลด้วย AI ได้ ตรวจสอบข้อมูลจากหน้าเว็บหรือกรอกด้วยตนเอง"
+
+#: src/features/assistant/provider.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
@@ -2108,9 +2117,17 @@ msgstr "เปิดการรีเฟรชการบรรยายสร
 msgid "Briefing refresh paused"
 msgstr "หยุดการรีเฟรชสรุปย่อชั่วคราว"
 
+#: src/api/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "เครื่องอ่านในตัว"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Bulgarian"
@@ -2256,6 +2273,10 @@ msgstr ""
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "การเปลี่ยนแปลงใน “{name}” ได้รับการบันทึกบนอุปกรณ์อื่น การแก้ไขของคุณยังคงอยู่ในอุปกรณ์นี้ เลือกเวอร์ชันที่จะเก็บไว้"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
 
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
@@ -2439,6 +2460,10 @@ msgstr "เลือกวันที่ติดตามผลที่ถู
 #: src/draft/conflict-sheet.tsx
 msgid "Choose a version to continue. Back will not close this sheet."
 msgstr "เลือกเวอร์ชันเพื่อดำเนินการต่อ การย้อนกลับจะไม่ปิดแผงนี้"
+
+#: src/api/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -2948,6 +2973,10 @@ msgstr "ตรวจสอบใบสมัครก่อนหน้าไม
 msgid "Couldn't check your AI providers."
 msgstr "ไม่สามารถตรวจสอบผู้ให้บริการ AI ของคุณได้"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "ดำเนินการตามคำขอไม่ได้ ตรวจสอบการเชื่อมต่อของคุณแล้วลองอีกครั้ง"
@@ -3024,6 +3053,10 @@ msgstr "ไม่สามารถนำเข้าไฟล์นี้ ต�
 msgid "Couldn't link the application. Check Applications before retrying."
 msgstr "ไม่สามารถเชื่อมโยงใบสมัครได้ ตรวจสอบใบสมัครก่อนลองอีกครั้ง"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load AI connections. PDF text and JSON imports still work."
 msgstr "ไม่สามารถโหลดการเชื่อมต่อ AI การนำเข้าข้อความ PDF และการนำเข้า JSON ยังคงใช้งานได้"
@@ -3080,6 +3113,10 @@ msgstr "โหลดประวัติย่อไม่ได้"
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "ไม่สามารถโหลดไฟล์ตัวอย่างได้ ลองอีกครั้ง"
+
+#: src/features/check/writing.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3555,8 +3592,8 @@ msgid "Dark theme"
 msgstr "ธีมมืด"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the provider."
-msgstr ""
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "การแชร์ข้อมูลถูกยกเลิก ไม่มีอะไรถูกส่งไปยังผู้ให้บริการ AI"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -4140,6 +4177,10 @@ msgstr "ข้อกำหนดแต่ละข้อในประกาศ
 msgid "Earlier discovery result. Search query and posting check time unknown."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
 msgstr "ข้อความก่อนหน้าในแชตนี้"
@@ -4356,10 +4397,6 @@ msgstr "ป้อนจำนวนเต็มตั้งแต่ 0 ถึง
 msgid "Enter an address like resume.example.org."
 msgstr "ป้อนที่อยู่ เช่น resume.example.org"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "ป้อนรหัสรุ่นใดๆ ที่ตำแหน่งข้อมูลของคุณรองรับ"
-
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr "กรอกเงื่อนไขด้วยตัวเอง ไม่มีการส่งคำขอไปยัง AI เว้นจำนวนเงินที่ยังไม่ทราบไว้"
@@ -4367,6 +4404,10 @@ msgstr "กรอกเงื่อนไขด้วยตัวเอง ไ�
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "ป้อนที่อยู่ที่คุณเปิด Reactive Resume ในเบราว์เซอร์ แอปตรวจสอบว่าเป็นเซิร์ฟเวอร์ Reactive Resume ที่อนุญาตให้ลงชื่อเข้าใช้แอปก่อนดำเนินการต่อ"
+
+#: src/features/ai/error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Enter your details below. Choosing a resume replaces them and links its design."
@@ -4565,6 +4606,10 @@ msgstr "ค้นหาตำแหน่งงาน"
 msgid "Find weak bullets"
 msgstr "ค้นหารายการรายการที่อ่อนแอ"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Finding what works"
 msgstr "กำลังหาสิ่งที่ได้ผล"
@@ -4600,6 +4645,10 @@ msgstr "ความเหมาะสม"
 #: src/features/workspace/tabs/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "ผลตรวจความเหมาะสมกับตำแหน่ง สรุปย่อเพื่อเตรียมตัว คำติชมการฝึกซ้อมสัมภาษณ์ สรุปผลหลังสัมภาษณ์ คำตอบในแบบฟอร์ม คำตอบกลับข้อความ และข้อเสนองานจะปรากฏที่นี่เมื่อคุณบันทึก"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -5138,7 +5187,7 @@ msgstr "ไอคอนในสายติดต่อ"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "หากมาจากการสแกน ถือเป็นเรื่องปกติ แต่ถ้าไม่ใช่ ให้ลบออก เพราะผู้รับสมัครงานจะมองว่าเป็นการยัดคำสำคัญ"
 
-#. placeholder {0}: reader ?? provider?.provider ?? ""
+#. placeholder {0}: reader ?? provider?.provider ?? t`built-in reader`
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "หากใช้การเข้าถึงเว็บ ลิงก์และคำค้นหาจะไปที่ {0} และไซต์ที่กำลังอ่านอยู่ด้วย"
@@ -5962,10 +6011,6 @@ msgid "Loading linked documents…"
 msgstr "กำลังโหลดเอกสารที่ลิงก์ไว้…"
 
 #: src/features/ai/provider-editor.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "กำลังโหลดคำแนะนำโมเดล... คุณยังสามารถป้อนรหัสโมเดลใดก็ได้"
-
-#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Loading providers…"
 msgstr "กำลังโหลดผู้ให้บริการ…"
@@ -6285,10 +6330,6 @@ msgstr "ปนกัน"
 msgid "Model"
 msgstr "โมเดล"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "ข้อเสนอแนะโมเดลไม่พร้อมใช้งาน คุณยังคงป้อนรหัสรุ่นใดก็ได้"
-
 #: src/features/assistant/provider.tsx
 msgid "Model: {label}"
 msgstr "รุ่น: {label}"
@@ -6534,6 +6575,7 @@ msgid "Native & fonts"
 msgstr "ส่วนประกอบเนทีฟและแบบอักษร"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "ต้องการความสนใจ"
 
@@ -6668,6 +6710,10 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/features/ai/provider-list.tsx
@@ -6878,10 +6924,6 @@ msgstr "ไม่สามารถดึงคำศัพท์เฉพาะ
 #: src/features/career/stories.tsx
 msgid "No stories yet"
 msgstr "ยังไม่มีเรื่องราว"
-
-#: src/features/ai/provider-editor.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "ไม่มีข้อเสนอแนะสำหรับผู้ให้บริการรายนี้ ป้อนรหัสรุ่นใดก็ได้"
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -7236,6 +7278,10 @@ msgstr ""
 msgid "Only the text below and your reason are sent privately to the operator of {0} for safety review. Remove personal information you don't want to share. Reports are deleted with your account."
 msgstr "เฉพาะข้อความด้านล่างและเหตุผลของคุณเท่านั้นที่จะถูกส่งถึงเจ้าหน้าที่ควบคุม {0} แบบส่วนตัวเพื่อตรวจสอบด้านความปลอดภัย ลบข้อมูลส่วนบุคคลที่คุณไม่ต้องการแบ่งปัน รายงานจะถูกลบด้วยบัญชีของคุณ"
 
+#: src/api/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Only this device schedules the notification."
 msgstr "เฉพาะอุปกรณ์นี้เท่านั้นที่กำหนดเวลาการแจ้งเตือน"
@@ -7247,6 +7293,10 @@ msgstr "เฉพาะอุปกรณ์นี้เท่านั้นท
 #: src/features/share/link.tsx
 msgid "Only you see these"
 msgstr "มีเพียงคุณเท่านั้นที่เห็นสิ่งเหล่านี้"
+
+#: src/api/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -7262,7 +7312,6 @@ msgid "Open"
 msgstr "เปิด"
 
 #: src/features/assistant/provider.tsx
-#: src/features/letters/write.tsx
 msgid "Open AI settings"
 msgstr "เปิดการตั้งค่า AI"
 
@@ -7415,6 +7464,10 @@ msgstr "หรือคำพูดของคุณเอง…"
 #: src/features/write/fields.ts
 msgid "Organization"
 msgstr "องค์กร"
+
+#: src/features/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -7572,6 +7625,10 @@ msgstr "วางข้อความจาก {company}"
 msgid "Paste the email or message, without the signature."
 msgstr "วางอีเมลหรือข้อความ โดยไม่รวมลายเซ็น"
 
+#: src/features/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
 msgstr "วางประกาศรับสมัครงานเพื่อดูว่าเรซูเม่ของคุณมีเงื่อนไขอะไรบ้าง"
@@ -7617,13 +7674,13 @@ msgstr "การตรวจสอบ PDF ถูกยกเลิก ลอง
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
 msgstr "PDF เท่านั้น · ไฟล์ละไม่เกิน 10 MB การเชื่อมโยงประวัติย่อใน Reactive Resume จะเปิดใช้การให้คะแนนความเหมาะสมและปรับแต่งด้วย AI"
 
+#: src/features/documents/new-document.tsx
+msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
+msgstr ""
+
 #: src/features/design/advanced.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "สไตล์ PDF รองรับชุดย่อยของ CSS การหมุน เส้นประ และเส้นประ และคุณสมบัติเค้าโครงบางอย่างจะถูกละเว้น"
-
-#: src/features/documents/new-document.tsx
-msgid "PDF uses your AI provider when one is ready. Turn off the AI switch to read its text layer on your server. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
-msgstr "PDF ใช้ผู้ให้บริการ AI ของคุณเมื่อพร้อม ปิดสวิตช์ AI เพื่ออ่านเลเยอร์ข้อความบนเซิร์ฟเวอร์ของคุณ Word (.docx) ต้องการผู้ให้บริการ AI รองรับการส่งออก Reactive Resume JSON ปัจจุบันและ v4, จดหมายสมัครงาน, การส่งออก JSON Resume และ LinkedIn (.zip) สูงสุด 10 เมกะไบต์"
 
 #: src/features/documents/new-document.tsx
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
@@ -8737,6 +8794,10 @@ msgstr "ประวัติย่อ"
 msgid "Resume + letter"
 msgstr "ประวัติย่อ + จดหมาย"
 
+#: src/features/check/writing.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Resume details"
 msgstr "รายละเอียดประวัติย่อ"
@@ -8771,6 +8832,10 @@ msgstr "ส่งประวัติย่อ (ไม่จำเป็น)"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/search/search-screen.tsx
@@ -8827,6 +8892,7 @@ msgstr "ดึงข้อมูล {0} โดยใช้ {1} เวลาใ�
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -8962,6 +9028,11 @@ msgstr ""
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "การเขียนรีวิว"
+
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/check/writing.tsx
+msgid "Reviewed {0}"
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
@@ -9159,6 +9230,10 @@ msgstr "บันทึกงาน"
 msgid "Save lane"
 msgstr "บันทึกขั้นตอน"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Save message without AI"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
 msgstr "บันทึกข้อเสนอ"
@@ -9233,6 +9308,18 @@ msgstr "บันทึกแล้ว"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "บันทึกเรื่องราว: {title}"
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention"
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "Saved AI connections need attention. Choose one to fix, or add another."
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention. History and saved proposals remain available."
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9514,17 +9601,29 @@ msgstr "กำลังส่ง..."
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
 msgstr "ส่งใบสมัครนี้ (ประกาศงาน โน้ต และรายละเอียดสัมภาษณ์) พร้อมข้อมูลที่เปิดใช้ในคลังความรู้ไปยัง {name}"
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. If it becomes unavailable, scheduled work can use your default usable connection."
-msgstr "ส่งใบสมัครนี้และข้อมูลที่เปิดใช้ในคลังความรู้ผ่านการเชื่อมต่อนี้ ผู้ให้บริการอาจคิดค่าบริการ หากใช้การเชื่อมต่อนี้ไม่ได้ งานตามกำหนดเวลาอาจใช้การเชื่อมต่อเริ่มต้นที่พร้อมใช้งาน"
+msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
 msgstr "ส่งประกาศงาน โน้ต และเอกสารของใบสมัครนี้ พร้อมข้อมูลที่เปิดใช้ในคลังความรู้ไปยัง {label}"
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
@@ -9565,10 +9664,6 @@ msgstr "เซิร์ฟเวอร์"
 msgid "Server address"
 msgstr "ที่อยู่เซิร์ฟเวอร์"
 
-#: src/api/ai-consent.ts
-msgid "Server web search"
-msgstr ""
-
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr "ตั้งค่าการติดตามผล"
@@ -9586,6 +9681,11 @@ msgstr "ตั้งค่าภาษาของเอกสารเมื่
 msgid "Set up a provider"
 msgstr "ตั้งค่าผู้ให้บริการ"
 
+#: src/features/assistant/provider.tsx
+#: src/features/letters/write.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
 msgstr "ตั้งค่าผู้ให้บริการ AI"
@@ -9593,6 +9693,10 @@ msgstr "ตั้งค่าผู้ให้บริการ AI"
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "ตั้งค่าการค้นหาโอกาส"
+
+#: src/features/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
@@ -9639,9 +9743,10 @@ msgstr "แบ่งปัน"
 msgid "Share calendar event (.ics)"
 msgstr "แชร์กิจกรรมในปฏิทิน (.ics)"
 
+#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {label}?"
-msgstr ""
+msgid "Share data with {0}?"
+msgstr "แบ่งปันข้อมูลกับ {0} หรือไม่"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -10318,10 +10423,6 @@ msgstr ""
 msgid "Suggested reply · edit before sending"
 msgstr "คำตอบกลับที่แนะนำ · แก้ไขก่อนส่ง"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Suggestions from models.dev. You can also enter any model ID."
-msgstr "คำแนะนำจาก models.dev คุณยังสามารถป้อนรหัสรุ่นใดก็ได้"
-
 #: src/features/assistant/assistant-screen.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "แนะนำการตัดไม่เคยลบด้วยตัวเอง"
@@ -10637,10 +10738,6 @@ msgstr "ผู้ช่วยค้นหาด้วยการค้นหา
 msgid "The assistant uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "ผู้ช่วยใช้การค้นหาเว็บของผู้ให้บริการ AI ของคุณหากรองรับ และอ่านลิงก์ด้วยโปรแกรมอ่านในตัว"
 
-#: src/features/assistant/provider.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "ผู้ช่วยใช้กุญแจของคุณเอง ไม่มีสิ่งใดถูกส่งไปทุกที่จนกว่าคุณจะเชื่อมต่อ"
-
 #: src/features/ai/web-access.tsx
 msgid "The built-in reader remains active."
 msgstr "เครื่องอ่านในตัวยังคงทำงานอยู่"
@@ -10673,6 +10770,14 @@ msgstr "โค้ชจะบันทึกข้อเท็จจริงท
 msgid "The connection couldn't be loaded or saved. Try again."
 msgstr "ไม่สามารถโหลดหรือบันทึกการเชื่อมต่อได้ ลองอีกครั้ง"
 
+#: src/features/ai/error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -10702,6 +10807,10 @@ msgstr "บันทึกการสัมภาษณ์แล้ว หา�
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "คีย์ถูกเข้ารหัสบนเซิร์ฟเวอร์และจะไม่แสดงอีก กำลังบันทึกการทดสอบการเชื่อมต่อ"
 
+#: src/features/ai/error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
 msgstr "เลยเวลาเตรียมล่วงหน้าแล้ว การบันทึกจะเริ่มสรุปข้อมูลทันที"
@@ -10730,6 +10839,10 @@ msgstr "เส้นเปลี่ยนไปตั้งแต่คุณถ
 msgid "the message"
 msgstr "ข้อความ"
 
+#: src/features/ai/error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "ลำดับการจัดเก็บข้อความไม่ตรงกับลำดับการอ่านอย่างมาก"
@@ -10746,10 +10859,17 @@ msgstr "หน้าเหล่านี้เป็นรูปภาพ ไ�
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "PDF จะถูกตรวจสอบบนเซิร์ฟเวอร์โดยไม่จัดเก็บ ส่งตัวอย่างนี้เพื่อดูว่าซอฟต์แวร์อ่านอะไรได้บ้าง"
 
-#: src/features/ai/provider-editor.tsx
-#: src/features/ai/provider-list.tsx
-msgid "The provider didn't answer. Check the key, the model and the base URL."
-msgstr "ผู้ให้บริการไม่ตอบ ตรวจสอบกุญแจ รุ่น และฐาน URL"
+#: src/api/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
@@ -10800,6 +10920,10 @@ msgstr "เซิร์ฟเวอร์ส่งคืนผลลัพธ์
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "ไม่สามารถโหลดเวอร์ชันเซิร์ฟเวอร์ได้ ข้อความของคุณถูกเก็บไว้ ลองอีกครั้ง"
 
+#: src/features/ai/error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "The service couldn't be reached. Try again or fill the details manually."
 msgstr "เข้าถึงบริการไม่ได้ ลองอีกครั้งหรือกรอกรายละเอียดด้วยตนเอง"
@@ -10828,13 +10952,17 @@ msgstr "การทดสอบไม่ทำงาน ลองอีกค�
 msgid "The text comes out unreadable."
 msgstr "ข้อความที่ออกมาอ่านไม่ได้"
 
-#: src/api/ai-consent.ts
-msgid "The text to read aloud is sent through your server to this speech provider. It can contain personal information."
-msgstr "ข้อความที่จะอ่านออกเสียงจะถูกส่งผ่านเซิร์ฟเวอร์ของคุณไปยังผู้ให้บริการเสียงพูดนี้ อาจมีข้อมูลส่วนบุคคล"
-
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "ด้านบนของหน้าแรกไม่เหมือนชื่อ"
+
+#: src/features/applications/error.ts
+msgid "The web service quota is used up. Fix web access or paste a posting."
+msgstr ""
+
+#: src/features/applications/error.ts
+msgid "The web service rejected its key. Fix web access or paste a posting."
+msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/search/search-screen.tsx
@@ -11161,6 +11289,10 @@ msgstr "เวอร์ชันที่บันทึกไว้นี้ไ
 #: app/_layout.tsx
 msgid "This screen stopped working"
 msgstr "หน้าจอนี้หยุดทำงาน"
+
+#: src/api/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/auth/messages.ts
 msgid "This server is too old for the app. Ask your administrator to update it."
@@ -11585,6 +11717,10 @@ msgstr ""
 msgid "Update posting details"
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "อัปเดตเซิร์ฟเวอร์ก่อนย้ายใบสมัครไปยังขั้นตอนที่กำหนดเอง"
@@ -11795,9 +11931,17 @@ msgstr "ใช้ข้อเท็จจริงนี้"
 msgid "Use this provider"
 msgstr "ใช้ผู้ให้บริการรายนี้"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "ใช้เวลานี้"
+
+#: src/api/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
@@ -11981,6 +12125,7 @@ msgstr "รอฟังกลับครับ"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/ai/web-access.tsx
 msgid "Web access"
 msgstr "การเข้าถึงเว็บ"
 
@@ -11995,10 +12140,6 @@ msgstr "หน้าเว็บ"
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
 msgstr "การค้นคว้าบนเว็บ"
-
-#: src/api/ai-consent.ts
-msgid "Web search"
-msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -12543,10 +12684,6 @@ msgid "Your recording goes to {transcriberName} after you stop, to be transcribe
 msgstr "เมื่อหยุดบันทึก เสียงจะถูกส่งไปยัง {transcriberName} เพื่อถอดเสียง ผู้ให้บริการอาจคิดค่าบริการ เซิร์ฟเวอร์เก็บเฉพาะข้อความถอดเสียง ไม่เก็บเสียงบันทึก"
 
 #: src/api/ai-consent.ts
-msgid "Your recording is uploaded through your server to this transcription provider. It can contain personal information."
-msgstr "การบันทึกของคุณถูกอัปโหลดผ่านเซิร์ฟเวอร์ของคุณไปยังผู้ให้บริการถอดเสียงรายนี้ อาจมีข้อมูลส่วนบุคคล"
-
-#: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
 msgstr "คำขอของคุณและประวัติย่อที่เกี่ยวข้อง จดหมาย ประกาศรับสมัครงาน ข้อมูลอาชีพ ประวัติการสนทนา และเอกสารแนบจะถูกส่งผ่านเซิร์ฟเวอร์ของคุณไปยังผู้ให้บริการ AI รายนี้ ตามคุณสมบัติและบริบทที่คุณเลือก พวกเขาสามารถมีข้อมูลส่วนบุคคลได้"
 
@@ -12565,6 +12702,10 @@ msgstr "เรซูเม่ของคุณใช้คำว่า \"I\" �
 #: app/(auth)/sign-in.tsx
 msgid "Your resumes, letters and applications, on {host}."
 msgstr "ประวัติย่อ จดหมายสมัครงาน และใบสมัครของคุณบน {host}"
+
+#: src/api/ai-consent.ts
+msgid "Your search terms and public links go through your server to the selected web services and sites. No AI provider is used."
+msgstr ""
 
 #: src/features/share/messages.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
@@ -12624,7 +12765,7 @@ msgid "Your unsaved job details will be discarded before opening web search sett
 msgstr "รายละเอียดงานที่ยังไม่ได้บันทึกของคุณจะถูกละทิ้งก่อนที่จะเปิดการตั้งค่าการค้นหาเว็บ"
 
 #: src/api/ai-consent.ts
-msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgid "Your web settings changed. Nothing was sent; try again."
 msgstr ""
 
 #: src/features/assistant/messages.tsx

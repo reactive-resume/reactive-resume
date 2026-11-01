@@ -21,6 +21,8 @@ type AskOptions = {
 	cancelText?: string;
 	/** Prompts only: the text the field starts with. */
 	defaultValue?: string;
+	/** An aborted request dismisses its pending confirmation. */
+	signal?: AbortSignal;
 	/** Confirmations only: the confirm button must be held, for actions that can't be undone. */
 	hold?: boolean;
 };
@@ -35,6 +37,13 @@ type AskState = AskOptions & {
 
 type Ask = (title: string, options: AskOptions | undefined, withInput: boolean) => Promise<string | null>;
 
+let requestConfirm: Ask | null = null;
+
+/** Non-React request code uses the same accessible confirmation dialog as task controls. */
+export async function confirmOperation(title: string, options: AskOptions) {
+	return requestConfirm ? (await requestConfirm(title, options, false)) !== null : false;
+}
+
 const AskContext = React.createContext<Ask | null>(null);
 
 /** One dialog answers both `useConfirm` and `usePrompt`: a question, and a text field when it's a prompt. */
@@ -42,11 +51,35 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 	const [state, setState] = React.useState<AskState>({ open: false, title: "", withInput: false, resolve: null });
 	const [value, setValue] = React.useState("");
 
+	const pending = React.useRef<((value: string | null) => void) | null>(null);
 	const ask: Ask = (title, options, withInput) =>
 		new Promise((resolve) => {
+			pending.current?.(null);
+			const finish = (value: string | null) => {
+				options?.signal?.removeEventListener("abort", cancel);
+				if (pending.current === finish) pending.current = null;
+				resolve(value);
+			};
+			const cancel = () => {
+				finish(null);
+				setState((previous) => (previous.resolve === finish ? { ...previous, open: false, resolve: null } : previous));
+			};
+			if (options?.signal?.aborted) {
+				resolve(null);
+				return;
+			}
+			pending.current = finish;
+			options?.signal?.addEventListener("abort", cancel, { once: true });
 			setValue(options?.defaultValue ?? "");
-			setState({ ...options, open: true, title, withInput, resolve });
+			setState({ ...options, open: true, title, withInput, resolve: finish });
 		});
+
+	React.useEffect(() => {
+		requestConfirm = ask;
+		return () => {
+			requestConfirm = null;
+		};
+	});
 
 	// Cancelling answers null; confirming answers the text (empty for a confirmation). The state stays while closing.
 	const answer = (result: string | null) => {

@@ -81,7 +81,7 @@ Before each coach web search, review the exact query and select **Search the web
 
 Choices persist for that conversation. Earlier messages in the same chat can already contain information shared before a control was turned off.
 
-Workspace buttons such as **Check fit** and **Read it for me** are separate AI actions. Their privacy lines describe their own inputs; chat context choices do not turn those inputs off. They use the default usable AI connection. A schedule can specify a connection; if it is no longer usable, it falls back to the default. [Provider selection](/guides/using-ai#which-provider-is-used) explains this further.
+Workspace buttons such as **Check fit** and **Read it for me** are separate AI actions. Their privacy lines describe their own inputs; chat context choices do not turn those inputs off. They use the default usable AI connection. Scheduled preparation requires a selected connection and never falls back to the default. If you delete or switch off its connection, or change its key, model or address, review the paused schedule, choose a tested connection and approve it before enabling work again. [Provider selection](/guides/using-ai#which-provider-is-used) explains this further.
 
 ## Discovery review
 
@@ -169,3 +169,7 @@ A failed load shows an error and **Retry**. It does not mean your records are em
 **Settings → Profile** stores application-only details separately from Career preferences and documents. Web and native mobile support manual create/edit, **Save** or **Update**, **Manage profile** for reloading saved data, exporting and confirmed deletion, without AI. The last-updated time appears beside the save action. Existing locations, office days, notice period and minimum base salary remain in **Career preferences**; requested salary and relocation have separate meanings. Missing authorization, sponsorship and relocation answers remain **Unknown**. No self-identification is collected.
 
 Private profile content stays out of automatic AI context, MCP results and document/public-link exports. Explicitly entered application answers keep their own values and submitted snapshots. Account export includes the profile; account deletion cascades it. Conflicting guest/permanent profiles stop account linking until the user exports and deletes one. [Detailed controls](/guides/building-career-knowledge#keep-application-details-private).
+
+## Set up AI without leaving a task
+
+**Set up AI** opens the shared connection setup in place, retaining typed input. Every AI request names its provider, model and data for approval. With no AI, **Messages → Save message without AI** saves the pasted message in the workspace. Discovery states its search requirement before you fill the schedule; **Set up web access** retains the schedule form. Editing a scheduled preparation connection's key, model or address pauses affected schedules until you enable them again.

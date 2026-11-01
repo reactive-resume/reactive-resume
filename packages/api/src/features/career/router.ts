@@ -26,7 +26,7 @@ import { answerRouter } from "./answer-router";
 import { generateCareer } from "./generate";
 import { careerJobs } from "./jobs";
 import { suggestTargetRoles } from "./role-suggestions";
-import { careerService } from "./service";
+import { careerService, hasFitEvidence } from "./service";
 import { careerVoiceRouter } from "./voice";
 
 const id = z.object({ id: z.string().min(1) });
@@ -339,6 +339,19 @@ export const careerRouter = {
 		.input(id.extend({ changes: z.array(z.number().int().min(0)).max(4) }))
 		.output(z.void())
 		.handler(({ context, input }) => careerService.applyReply(context.user.id, input.id, input.changes)),
+	fitEvidence: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/career/fit-evidence/{applicationId}",
+			tags: ["Career"],
+			operationId: "getCareerFitEvidence",
+			summary: "Check whether Fit has usable evidence",
+		})
+		.input(applicationInput)
+		.output(z.object({ usable: z.boolean() }))
+		.handler(async ({ context, input }) => ({
+			usable: hasFitEvidence(await careerService.context({ userId: context.user.id, ...input })),
+		})),
 	workspace: protectedProcedure
 		.route({
 			method: "GET",

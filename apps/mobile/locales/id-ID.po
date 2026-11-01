@@ -1025,6 +1025,7 @@ msgstr "Tambahkan ringkasan atau jelaskan peran terlebih dahulu; belum ada yang 
 msgid "Add a tag"
 msgstr "Tambahkan tanda"
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Add AI provider"
 msgstr "Tambahkan penyedia AI"
@@ -1105,6 +1106,10 @@ msgstr "Tambah bukti"
 #: src/features/write/fields.ts
 msgid "Add experience"
 msgstr "Tambahkan pengalaman"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Add facts"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add field"
@@ -1363,6 +1368,10 @@ msgstr "Sunting AI"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "Pengayaan AI tidak tersedia. Tinjau detail halaman atau isi secara manual."
+
+#: src/features/assistant/provider.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
@@ -2108,9 +2117,17 @@ msgstr "Penyegaran ringkasan aktif · {next}"
 msgid "Briefing refresh paused"
 msgstr "Penyegaran briefing dijeda"
 
+#: src/api/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "Pembaca bawaan"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Bulgarian"
@@ -2256,6 +2273,10 @@ msgstr ""
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Perubahan pada “{name}” disimpan di perangkat lain. Hasil edit Anda masih ada di perangkat ini. Pilih versi mana yang akan disimpan."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
 
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
@@ -2439,6 +2460,10 @@ msgstr "Pilih tanggal tindak lanjut yang valid sebelum menyimpan."
 #: src/draft/conflict-sheet.tsx
 msgid "Choose a version to continue. Back will not close this sheet."
 msgstr "Pilih versi untuk melanjutkan. Kembali tidak akan menutup lembar ini."
+
+#: src/api/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -2948,6 +2973,10 @@ msgstr "Lamaran sebelumnya tidak dapat diperiksa. Anda tetap dapat menyimpan lam
 msgid "Couldn't check your AI providers."
 msgstr "Tidak dapat memeriksa penyedia AI Anda."
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Tidak dapat menyelesaikan permintaan. Periksa koneksi Anda dan coba lagi."
@@ -3024,6 +3053,10 @@ msgstr "Tidak dapat mengimpor file ini. Periksa format yang dipilih. PDF memerlu
 msgid "Couldn't link the application. Check Applications before retrying."
 msgstr "Tidak dapat menautkan lamaran pekerjaan. Periksa lamaran pekerjaan sebelum mencoba lagi."
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load AI connections. PDF text and JSON imports still work."
 msgstr "Tidak dapat memuat koneksi AI. Impor teks PDF dan JSON masih berfungsi."
@@ -3080,6 +3113,10 @@ msgstr "Tidak dapat memuat CV."
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "Tidak dapat memuat file sampel. Coba lagi."
+
+#: src/features/check/writing.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3555,8 +3592,8 @@ msgid "Dark theme"
 msgstr "Tema gelap"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the provider."
-msgstr ""
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "Berbagi data dibatalkan. Tidak ada yang dikirim ke penyedia AI."
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -4140,6 +4177,10 @@ msgstr "Setiap persyaratan dalam lowongan diperiksa terhadap fakta dan cerita di
 msgid "Earlier discovery result. Search query and posting check time unknown."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
 msgstr "pesan sebelumnya di chat ini"
@@ -4356,10 +4397,6 @@ msgstr "Masukkan bilangan bulat dari 0 hingga 52, atau biarkan kosong."
 msgid "Enter an address like resume.example.org."
 msgstr "Masukkan alamat seperti resume.example.org."
 
-#: src/features/ai/provider-editor.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "Masukkan ID model apa pun yang didukung oleh titik akhir Anda."
-
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr "Masukkan ketentuan sendiri. Tidak ada permintaan yang dikirim ke AI. Biarkan nominal yang belum diketahui kosong."
@@ -4367,6 +4404,10 @@ msgstr "Masukkan ketentuan sendiri. Tidak ada permintaan yang dikirim ke AI. Bia
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "Masukkan alamat tempat Anda membuka Reactive Resume di browser. Aplikasi memeriksa bahwa itu adalah server Reactive Resume yang mengizinkan masuk aplikasi sebelum Anda melanjutkan."
+
+#: src/features/ai/error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Enter your details below. Choosing a resume replaces them and links its design."
@@ -4565,6 +4606,10 @@ msgstr "Cari posisi"
 msgid "Find weak bullets"
 msgstr "Temukan entri daftar yang lemah"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Finding what works"
 msgstr "Mencari yang berhasil"
@@ -4600,6 +4645,10 @@ msgstr "Kecocokan"
 #: src/features/workspace/tabs/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "Pemeriksaan kecocokan dengan posisi, briefing persiapan, masukan latihan wawancara, evaluasi setelah wawancara, jawaban formulir, balasan pesan, dan penawaran kerja muncul di sini saat Anda menyimpannya."
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -5138,7 +5187,7 @@ msgstr "Ikon di baris kontak"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Jika berasal dari hasil pindai, itu wajar. Jika tidak, hapuslah; perekrut akan menganggapnya sebagai penjejalan kata kunci."
 
-#. placeholder {0}: reader ?? provider?.provider ?? ""
+#. placeholder {0}: reader ?? provider?.provider ?? t`built-in reader`
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "Jika akses web digunakan, tautan dan istilah pencarian juga menuju ke {0} dan situs yang sedang dibaca."
@@ -5962,10 +6011,6 @@ msgid "Loading linked documents…"
 msgstr "Memuat dokumen tertaut…"
 
 #: src/features/ai/provider-editor.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "Memuat saran model… Anda juga dapat memasukkan ID model apa pun."
-
-#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Loading providers…"
 msgstr "Memuat penyedia…"
@@ -6285,10 +6330,6 @@ msgstr "Campuran"
 msgid "Model"
 msgstr "Model"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "Saran model tidak tersedia. Anda masih dapat memasukkan ID model apa pun."
-
 #: src/features/assistant/provider.tsx
 msgid "Model: {label}"
 msgstr "Model: {label}"
@@ -6534,6 +6575,7 @@ msgid "Native & fonts"
 msgstr "Kode native & font"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "Perlu perhatian"
 
@@ -6668,6 +6710,10 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/features/ai/provider-list.tsx
@@ -6878,10 +6924,6 @@ msgstr "Tidak ada istilah khusus yang dapat ditarik dari uraian pekerjaan itu."
 #: src/features/career/stories.tsx
 msgid "No stories yet"
 msgstr "Belum ada cerita"
-
-#: src/features/ai/provider-editor.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "Tidak ada saran untuk penyedia ini. Masukkan ID model apa pun."
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -7236,6 +7278,10 @@ msgstr ""
 msgid "Only the text below and your reason are sent privately to the operator of {0} for safety review. Remove personal information you don't want to share. Reports are deleted with your account."
 msgstr "Hanya teks di bawah dan alasan Anda yang dikirim secara pribadi ke operator {0} untuk tinjauan keamanan. Hapus informasi pribadi yang tidak ingin Anda bagikan. Laporan dihapus dengan akun Anda."
 
+#: src/api/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Only this device schedules the notification."
 msgstr "Hanya perangkat ini yang menjadwalkan notifikasi."
@@ -7247,6 +7293,10 @@ msgstr "Hanya perangkat ini yang menjadwalkan notifikasi. Izinkan pemberitahuan 
 #: src/features/share/link.tsx
 msgid "Only you see these"
 msgstr "Hanya Anda yang melihat ini"
+
+#: src/api/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -7262,7 +7312,6 @@ msgid "Open"
 msgstr "Buka"
 
 #: src/features/assistant/provider.tsx
-#: src/features/letters/write.tsx
 msgid "Open AI settings"
 msgstr "Buka pengaturan AI"
 
@@ -7415,6 +7464,10 @@ msgstr "Atau dengan kata-kata Anda sendiri…"
 #: src/features/write/fields.ts
 msgid "Organization"
 msgstr "Organisasi"
+
+#: src/features/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -7572,6 +7625,10 @@ msgstr "Tempelkan pesan dari {company}"
 msgid "Paste the email or message, without the signature."
 msgstr "Tempel email atau pesan, tanpa tanda tangan."
 
+#: src/features/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
 msgstr "Tempelkan postingan pekerjaan untuk melihat ketentuan mana yang sudah ada dalam resume Anda."
@@ -7617,13 +7674,13 @@ msgstr "Pemeriksaan PDF dibatalkan. Coba lagi saat siap."
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
 msgstr "PDF saja · masing-masing hingga 10 MB. Menautkan Reactive Resume memungkinkan penilaian dan penyesuaian kecocokan AI."
 
+#: src/features/documents/new-document.tsx
+msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
+msgstr ""
+
 #: src/features/design/advanced.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "Gaya PDF mendukung subset CSS. Rotasi, batas putus-putus dan putus-putus, serta beberapa properti tata letak diabaikan."
-
-#: src/features/documents/new-document.tsx
-msgid "PDF uses your AI provider when one is ready. Turn off the AI switch to read its text layer on your server. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
-msgstr "PDF memakai penyedia AI jika siap. Matikan AI untuk membaca lapisan teks di server Anda. Word (.docx) memerlukan penyedia AI. Mendukung JSON Reactive Resume versi saat ini dan v4, surat lamaran, JSON Resume, serta ekspor LinkedIn (.zip). Maksimal 10 MB."
 
 #: src/features/documents/new-document.tsx
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
@@ -8737,6 +8794,10 @@ msgstr "CV"
 msgid "Resume + letter"
 msgstr "resume + surat"
 
+#: src/features/check/writing.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Resume details"
 msgstr "rincian resume"
@@ -8771,6 +8832,10 @@ msgstr "resume dikirimkan (opsional)"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/search/search-screen.tsx
@@ -8827,6 +8892,7 @@ msgstr "Mengambil {0} menggunakan {1}. Waktu pengambilan tidak menentukan kesega
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -8962,6 +9028,11 @@ msgstr ""
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "Penulisan ulasan"
+
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/check/writing.tsx
+msgid "Reviewed {0}"
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
@@ -9159,6 +9230,10 @@ msgstr "Simpan pekerjaan"
 msgid "Save lane"
 msgstr "Simpan tahap"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Save message without AI"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
 msgstr "Simpan penawaran"
@@ -9233,6 +9308,18 @@ msgstr "Tersimpan"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "Tersimpan cerita: {title}"
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention"
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "Saved AI connections need attention. Choose one to fix, or add another."
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention. History and saved proposals remain available."
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9514,17 +9601,29 @@ msgstr "Mengirim…"
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
 msgstr "Kirimkan lamaran pekerjaan ini (lowongan, catatan, detail wawancara) dan Pengetahuan yang diaktifkan ke {name}."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. If it becomes unavailable, scheduled work can use your default usable connection."
-msgstr "Kirimkan lamaran pekerjaan ini dan aktifkan Pengetahuan ke koneksi ini. Penyedia Anda mungkin mengenakan biaya. Jika tidak tersedia, pekerjaan terjadwal dapat menggunakan koneksi default Anda yang dapat digunakan."
+msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
 msgstr "Mengirim lowongan, catatan, dan dokumen lamaran pekerjaan ini, ditambah Pengetahuan yang diaktifkan, ke {label}."
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
@@ -9565,10 +9664,6 @@ msgstr "pelayan"
 msgid "Server address"
 msgstr "Alamat server"
 
-#: src/api/ai-consent.ts
-msgid "Server web search"
-msgstr ""
-
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr "Tetapkan tindak lanjut"
@@ -9586,6 +9681,11 @@ msgstr "Atur bahasa dokumen saat mengekspor."
 msgid "Set up a provider"
 msgstr "Siapkan penyedia"
 
+#: src/features/assistant/provider.tsx
+#: src/features/letters/write.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
 msgstr "Siapkan penyedia AI"
@@ -9593,6 +9693,10 @@ msgstr "Siapkan penyedia AI"
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "Atur pencarian peluang"
+
+#: src/features/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
@@ -9639,9 +9743,10 @@ msgstr "Membagikan"
 msgid "Share calendar event (.ics)"
 msgstr "Bagikan acara kalender (.ics)"
 
+#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {label}?"
-msgstr ""
+msgid "Share data with {0}?"
+msgstr "Bagikan data dengan {0}?"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -10318,10 +10423,6 @@ msgstr ""
 msgid "Suggested reply · edit before sending"
 msgstr "Saran balasan · edit sebelum mengirim"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Suggestions from models.dev. You can also enter any model ID."
-msgstr "Saran dari models.dev. Anda juga dapat memasukkan ID model apa pun."
-
 #: src/features/assistant/assistant-screen.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "Menyarankan pemotongan, tidak pernah menghapus sendiri"
@@ -10637,10 +10738,6 @@ msgstr "Asisten mencari dengan pencarian server Anda dan membaca halaman dengan 
 msgid "The assistant uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "Asisten menggunakan penelusuran web milik penyedia AI Anda jika didukung, dan membaca tautan dengan pembaca bawaan."
 
-#: src/features/assistant/provider.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "Asisten menggunakan kunci Anda sendiri. Tidak ada yang dikirim ke mana pun sampai Anda menghubungkannya."
-
 #: src/features/ai/web-access.tsx
 msgid "The built-in reader remains active."
 msgstr "Pembaca internal tetap aktif."
@@ -10673,6 +10770,14 @@ msgstr "Coach menyimpan fakta yang Anda sebutkan, dan memberi tahu Anda. Anda bi
 msgid "The connection couldn't be loaded or saved. Try again."
 msgstr "Koneksi tidak dapat dimuat atau disimpan. Coba lagi."
 
+#: src/features/ai/error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -10702,6 +10807,10 @@ msgstr "Wawancara disimpan. Untuk mendapatkan pengingat, izinkan notifikasi di s
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Kuncinya dienkripsi di server dan tidak pernah ditampilkan lagi. Menyimpan menguji koneksi."
 
+#: src/features/ai/error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
 msgstr "Waktu tunggu telah berlalu. Menyimpan menjalankan pengarahan sekarang."
@@ -10730,6 +10839,10 @@ msgstr "Salurannya berubah sejak Anda memintanya, jadi tidak diganti."
 msgid "the message"
 msgstr "pesan"
 
+#: src/features/ai/error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "Urutan penyimpanan teks sangat berbeda dari urutan bacanya."
@@ -10746,10 +10859,17 @@ msgstr "Halaman-halaman berupa gambar, tanpa teks di baliknya."
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "PDF diperiksa di server dan tidak disimpan. Kirim pratinjau ini untuk melihat perangkat lunak apa yang dibaca."
 
-#: src/features/ai/provider-editor.tsx
-#: src/features/ai/provider-list.tsx
-msgid "The provider didn't answer. Check the key, the model and the base URL."
-msgstr "Penyedia tidak menjawab. Periksa kunci, model dan basis URL."
+#: src/api/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
@@ -10800,6 +10920,10 @@ msgstr "Server mengembalikan hasil impor yang tidak valid. Segarkan Dokumen sebe
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Versi server tidak dapat dimuat. Teks Anda disimpan; coba lagi."
 
+#: src/features/ai/error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "The service couldn't be reached. Try again or fill the details manually."
 msgstr "Layanan tidak dapat dihubungi. Coba lagi atau isi detailnya secara manual."
@@ -10828,13 +10952,17 @@ msgstr "Tes tidak berjalan. Coba lagi."
 msgid "The text comes out unreadable."
 msgstr "Teks yang dihasilkan tidak dapat dibaca."
 
-#: src/api/ai-consent.ts
-msgid "The text to read aloud is sent through your server to this speech provider. It can contain personal information."
-msgstr "Teks untuk dibacakan dikirim melalui server Anda ke penyedia ucapan ini. Itu dapat berisi informasi pribadi."
-
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "Bagian atas halaman pertama tidak tampak seperti sebuah nama."
+
+#: src/features/applications/error.ts
+msgid "The web service quota is used up. Fix web access or paste a posting."
+msgstr ""
+
+#: src/features/applications/error.ts
+msgid "The web service rejected its key. Fix web access or paste a posting."
+msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/search/search-screen.tsx
@@ -11161,6 +11289,10 @@ msgstr "Versi tersimpan ini sudah tidak tersedia."
 #: app/_layout.tsx
 msgid "This screen stopped working"
 msgstr "Layar ini berhenti berfungsi"
+
+#: src/api/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/auth/messages.ts
 msgid "This server is too old for the app. Ask your administrator to update it."
@@ -11585,6 +11717,10 @@ msgstr ""
 msgid "Update posting details"
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "Perbarui server Anda sebelum memindahkan lamaran ke tahap khusus."
@@ -11795,9 +11931,17 @@ msgstr "Gunakan fakta ini"
 msgid "Use this provider"
 msgstr "Gunakan penyedia ini"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "Gunakan kali ini"
+
+#: src/api/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
@@ -11981,6 +12125,7 @@ msgstr "Menunggu untuk mendengarnya kembali"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/ai/web-access.tsx
 msgid "Web access"
 msgstr "Akses web"
 
@@ -11995,10 +12140,6 @@ msgstr "Halaman web"
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
 msgstr "Riset web"
-
-#: src/api/ai-consent.ts
-msgid "Web search"
-msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -12543,10 +12684,6 @@ msgid "Your recording goes to {transcriberName} after you stop, to be transcribe
 msgstr "Rekaman Anda disimpan di {transcriberName} setelah Anda berhenti, untuk ditranskripsi. Penyedia Anda mungkin mengenakan biaya. Server menyimpan transkrip, tidak pernah merekam."
 
 #: src/api/ai-consent.ts
-msgid "Your recording is uploaded through your server to this transcription provider. It can contain personal information."
-msgstr "Rekaman Anda diunggah melalui server Anda ke penyedia transkripsi ini. Itu dapat berisi informasi pribadi."
-
-#: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
 msgstr "Permintaan Anda dan resume, surat, postingan pekerjaan, lamaran, informasi karier, riwayat percakapan, dan lampiran yang relevan dikirim melalui server Anda ke penyedia AI ini, sesuai dengan fitur dan konteks yang Anda pilih. Mereka mungkin berisi informasi pribadi."
 
@@ -12565,6 +12702,10 @@ msgstr "Resume Anda menggunakan \"I\" dan \"my\"."
 #: app/(auth)/sign-in.tsx
 msgid "Your resumes, letters and applications, on {host}."
 msgstr "CV, surat lamaran, dan lamaran pekerjaan Anda, di {host}."
+
+#: src/api/ai-consent.ts
+msgid "Your search terms and public links go through your server to the selected web services and sites. No AI provider is used."
+msgstr ""
 
 #: src/features/share/messages.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
@@ -12624,7 +12765,7 @@ msgid "Your unsaved job details will be discarded before opening web search sett
 msgstr "Detail pekerjaan Anda yang belum disimpan akan dibuang sebelum membuka pengaturan pencarian web."
 
 #: src/api/ai-consent.ts
-msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgid "Your web settings changed. Nothing was sent; try again."
 msgstr ""
 
 #: src/features/assistant/messages.tsx

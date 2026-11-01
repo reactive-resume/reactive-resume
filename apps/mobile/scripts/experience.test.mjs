@@ -70,6 +70,7 @@ const mocks = {
 	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
 	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
 	"@/routes": { routes },
+	"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
 	"@/ui": ui,
 	"@/ui/use-pull-refresh": { usePullRefresh: () => ({ refreshing: false, onRefresh: () => undefined }) },
 	"react-native-reanimated": {
@@ -1414,3 +1415,199 @@ await settle();
 assert.equal(scheduleWrites.length, 1, "changed past time must still be rejected");
 assert.match(JSON.stringify(render(scheduleForm.type, scheduleForm.props)), /Pick a time after now/);
 console.log("PASS native Today past note edit preserves exact seconds and changed-past-time guard");
+{
+	// Writing publishes the persisted query, never a completed mutation's discarded response.
+	reset();
+	let savedWriting = null;
+	let publishedWriting = null;
+	let resolveOld;
+	let resolveNew;
+	let writingRequest = 0;
+	const writingCleanup = [];
+	const queryKey = ({ input }) => ["writing", input.resumeId];
+	const { Writing } = load("features/check/writing.tsx", {
+		react: {
+			...react,
+			useEffect: (effect) => {
+				const cleanup = effect();
+				if (cleanup) writingCleanup.push(cleanup);
+			},
+		},
+		"@tanstack/react-query": {
+			useQuery: () => ({ data: savedWriting }),
+			useQueryClient: () => ({ invalidateQueries: async (options) => calls.push(options.queryKey) }),
+		},
+		"@reactive-resume/resume/markdown": { buildMarkdown: () => "Fictional original" },
+		"@reactive-resume/resume/proposals": {
+			collectPassages: () => [{ id: "p1", location: "Summary", text: "Fictional original" }],
+		},
+		"./actions": {},
+		"./issues": { getSectionName: () => "Summary" },
+		"./review": { mapWritingReview: () => ({ proposals: [], notes: [] }) },
+		"@/draft": { useResumeStore: (select) => select({ proposalApplications: {} }) },
+		"@/api/client": {
+			client: {
+				ai: {
+					atsReview: () =>
+						new Promise((resolve) => {
+							if (++writingRequest === 1) resolveOld = resolve;
+							else resolveNew = resolve;
+						}),
+				},
+			},
+			orpc: { ai: { writingReview: { queryOptions: queryKey, queryKey } } },
+		},
+		"@/features/ai/providers": {
+			AIProviderSetupSheet: "Setup",
+			useHasAIProvider: () => ({
+				usableProviders: [{ id: "provider" }],
+				defaultProvider: { id: "provider" },
+				hasAIProvider: true,
+			}),
+		},
+		"@/features/ai/report-content": { ReportAiContent: "Report" },
+	});
+	const writingProps = {
+		id: "resume-a",
+		data: {},
+		issues: [],
+		offline: false,
+		locked: false,
+		review: null,
+		setReview: (value) => {
+			publishedWriting = value;
+		},
+	};
+	control(render(Writing, writingProps), "Review writing").onPress();
+	await settle();
+	for (const cleanup of writingCleanup.splice(0)) cleanup();
+	reset();
+	control(render(Writing, writingProps), "Review writing").onPress();
+	await settle();
+	resolveNew({ summary: "Unsaved response" });
+	await settle();
+	assert.equal(publishedWriting, null, "Mutation results cannot manufacture a published review");
+	savedWriting = {
+		inputText: "Fictional original",
+		passages: [],
+		review: { summary: "Latest saved", strengths: [], suggestions: [] },
+		reviewedAt: new Date("2030-01-01T00:00:02Z"),
+	};
+	render(Writing, writingProps);
+	assert.equal(publishedWriting.summary, "Latest saved");
+	resolveOld({ summary: "Older discarded response" });
+	await settle();
+	assert.equal(publishedWriting.summary, "Latest saved");
+	assert.deepEqual(
+		calls,
+		[["writing", "resume-a"]],
+		"An unmounted canceled request cannot publish or invalidate a different document",
+	);
+	console.log("PASS native Writing authoritative publication and unmounted request order");
+
+	reset();
+	let linkedResume;
+	const { FitTab } = load("features/workspace/tabs/fit.tsx", {
+		"@tanstack/react-query": {
+			useQuery: (options) =>
+				options.kind === "evidence"
+					? { data: { usable: false } }
+					: { data: [{ id: "chosen", type: "resume", name: "Chosen fictional resume" }] },
+			useQueryClient: () => ({ invalidateQueries: async () => {} }),
+			useMutation: () => ({
+				mutate: (input) => {
+					linkedResume = input.resumeId;
+				},
+			}),
+		},
+		"expo-crypto": {},
+		"../hooks": {
+			useSavedItems: () => ({ data: [] }),
+			useWorkspace: () => ({ data: {} }),
+			useGenerate: () => ({ run: () => assert.fail("No evidence cannot generate") }),
+			useFacts: () => ({ data: [] }),
+			latest: () => undefined,
+		},
+		"../parts": {
+			EmptyNotice: "EmptyNotice",
+			AiNotice: "AiNotice",
+			useWorking: (_pending, _steps, label) => label,
+			workingSteps: () => [],
+		},
+		"../shell": { WorkspaceScreen: "WorkspaceScreen" },
+		"@/api/client": {
+			orpc: {
+				career: {
+					fitEvidence: { queryOptions: () => ({ kind: "evidence" }) },
+					forgetFact: { mutationOptions: () => ({}) },
+				},
+				documents: { list: { queryOptions: () => ({ kind: "documents" }) } },
+				applications: { update: { mutationOptions: () => ({}) } },
+			},
+		},
+		"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: { id: "provider" } }) },
+	});
+	const fitProps = { application: { id: "app" } };
+	const fitComponent = FitTab().props.children[0](fitProps).type;
+	let fitTree = render(fitComponent, fitProps);
+	assert.equal(control(fitTree, "Check fit").disabled, true);
+	assert.ok(control(fitTree, "Add facts"));
+	control(fitTree, "Resume to use as evidence").onChange("chosen");
+	fitTree = render(fitComponent, fitProps);
+	control(fitTree, "Use this resume as evidence").onPress();
+	assert.equal(linkedResume, "chosen", "Fit links only the user's explicit resume choice");
+	console.log("PASS native Fit uses filtered evidence and explicit resume selection");
+
+	// Exercise the shipped preparation form, including setup visibility and retry callbacks.
+	let scheduleAi;
+	let scheduleRetries = 0;
+	const scheduleHooks = {
+		useCareerTime: () => ({ profile: { data: { emailVerified: true } }, timeZone: "UTC", locale: "en-US" }),
+		useCareerQueries: () => ({ profile: { data: { targetRoles: [], locations: [] } } }),
+		useCareerAction: () => ({ pending: false }),
+		useNow: () => new Date("2026-10-31T12:00:00Z"),
+	};
+	const { ScheduleSheet } = load("features/career/schedule-sheet.tsx", {
+		"@react-native-community/datetimepicker": { default: "DateTimePicker" },
+		"@tanstack/react-query": { useQuery: () => ({ data: { search: true, provider: null } }) },
+		"@reactive-resume/schema/career": {},
+		"@reactive-resume/utils/timezone": { fromZonedDateTime: () => new Date("2026-11-02T12:00:00Z") },
+		"./hooks": scheduleHooks,
+		"./scheduling": {
+			collectInterviews: () => [],
+			nextCareerRun: () => new Date("2026-11-02T12:00:00Z"),
+			toZoned: () => ({ date: "2026-11-02", time: "12:00" }),
+		},
+		"./shared": { EditorSheet: "EditorSheet", SwitchRow: "SwitchRow" },
+		"@/api/client": { orpc: { webAccess: { status: { queryOptions: () => ({}), key: () => [] } } } },
+		"@/api/flags": { useFlags: () => ({ data: { careerSchedulingEnabled: true } }) },
+		"@/auth/session": { useSession: () => ({ status: "signed-in", server: "https://fictional.example" }) },
+		"@/features/ai/providers": { useHasAIProvider: () => scheduleAi },
+		"@/features/ai/web-access": {},
+		"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+	});
+	for (const state of ["loading", "error", "empty", "configured"]) {
+		reset();
+		const provider = { id: "fictional", label: "Fictional connection" };
+		scheduleAi = {
+			isLoading: state === "loading",
+			isUnavailable: state === "loading" || state === "error",
+			error: state === "error" ? new Error("Offline") : null,
+			usableProviders: state === "configured" ? [provider] : [],
+			defaultProvider: state === "configured" ? provider : null,
+			hasAIProvider: state === "configured",
+			retry: () => scheduleRetries++,
+		};
+		const form = render(ScheduleSheet, { schedule: null, kind: "prepare", onClose() {}, onDelete() {} });
+		const formTree = render(form.type, form.props);
+		assert.equal(
+			nodes(formTree).some((node) => node.props.label === "Connect AI provider"),
+			state === "empty" || state === "configured",
+			`Setup availability for ${state}`,
+		);
+		if (state === "error") control(formTree, "Retry AI connections").onPress();
+		if (state === "configured") assert.equal(control(formTree, "AI connection").value, provider.id);
+	}
+	assert.equal(scheduleRetries, 1);
+	console.log("PASS native preparation distinguishes loading/error from empty/configured AI lookup");
+}

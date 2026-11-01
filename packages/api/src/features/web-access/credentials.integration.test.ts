@@ -24,6 +24,8 @@ vi.mock("@reactive-resume/db/client", () => ({
 	},
 }));
 
+vi.mock("../ai/service", () => ({ testConnection: vi.fn(async () => ({ ok: true as const })) }));
+
 // Opt in with a disposable PostgreSQL database. Each run owns and removes a separate schema.
 describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration credentials and server precedence", () => {
 	let web: typeof import("./credentials").webAccessService;
@@ -40,7 +42,7 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 		});
 		fixture.db = drizzle({ client: pool });
 		await pool.query(
-			'CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY); CREATE TABLE application (id text PRIMARY KEY)',
+			'CREATE TABLE "user" (id text PRIMARY KEY); CREATE TABLE resume (id text PRIMARY KEY, user_id text REFERENCES "user"(id) ON DELETE CASCADE, trashed_at timestamptz, updated_at timestamptz NOT NULL DEFAULT now()); CREATE TABLE application (id text PRIMARY KEY); CREATE TABLE career_schedule (id text PRIMARY KEY DEFAULT gen_random_uuid()::text, user_id text, ai_provider_id text, ai_provider_version text, enabled boolean, updated_at timestamptz); CREATE TABLE career_job (id text PRIMARY KEY, user_id text, schedule_id text REFERENCES career_schedule(id), status text, lease text, lease_until timestamptz, updated_at timestamptz)',
 		);
 		for (const name of [
 			"20260513181752_bent_human_cannonball",
@@ -58,6 +60,18 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 				.split("--> statement-breakpoint")
 				.filter((statement) => !owned || owned.test(statement.trim()));
 			await pool.query(statements.join("\n").replaceAll('"public".', ""));
+		}
+		const upgrade = await readFile(
+			new URL("../../../../../migrations/20261031125221_thankful_outlaw_kid/migration.sql", import.meta.url),
+			"utf8",
+		);
+		for (const statement of upgrade.split("--> statement-breakpoint")) {
+			if (
+				/^(?:CREATE TABLE|ALTER TABLE) "(?:ai_providers|web_access_credentials|resume_writing_review)"|^UPDATE "ai_providers"/.test(
+					statement.trim(),
+				)
+			)
+				await pool.query(statement);
 		}
 		web = (await import("./credentials")).webAccessService;
 		ai = (await import("../ai-providers/service")).aiProvidersService;
@@ -193,6 +207,133 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 		await expect(ai.getRunnableById({ userId: "alice", id: global.id })).rejects.toMatchObject({ code: "NOT_FOUND" });
 	});
 
+	it("keeps the first working default stable across concurrent tests, edits and explicit Off", async () => {
+		const first = await ai.create({
+			userId: "alice",
+			label: "First",
+			provider: "openai",
+			model: "model",
+			apiKey: "first-key",
+		});
+		const second = await ai.create({
+			userId: "alice",
+			label: "Second",
+			provider: "openai",
+			model: "model",
+			apiKey: "second-key",
+		});
+		await Promise.all([ai.test({ userId: "alice", id: first.id }), ai.test({ userId: "alice", id: second.id })]);
+		const defaults = (await ai.list({ userId: "alice" })).filter((p) => p.isDefault);
+		expect(defaults).toHaveLength(1);
+		const chosen = defaults[0];
+		if (!chosen) throw new Error("No default was saved");
+		const other = chosen.id === first.id ? second : first;
+		await ai.markUsed({ userId: "alice", id: other.id });
+		expect((await ai.getDefaultRunnable({ userId: "alice" }))?.id).toBe(chosen.id);
+		await ai.update({ userId: "alice", id: chosen.id, enabled: false });
+		expect(await ai.test({ userId: "alice", id: chosen.id })).toMatchObject({
+			enabled: false,
+			testStatus: "success",
+			isDefault: true,
+		});
+		await pool.query("INSERT INTO career_schedule (user_id,ai_provider_id,enabled) VALUES ('alice',$1,true)", [
+			chosen.id,
+		]);
+		await ai.update({ userId: "alice", id: chosen.id, apiKey: "replacement-key" });
+		expect(
+			(await pool.query("SELECT enabled FROM career_schedule WHERE ai_provider_id=$1", [chosen.id])).rows[0]?.enabled,
+		).toBe(false);
+		expect(await ai.test({ userId: "alice", id: chosen.id })).toMatchObject({ enabled: false, testStatus: "success" });
+		await ai.update({ userId: "alice", id: chosen.id, enabled: true });
+		expect((await ai.getDefaultRunnable({ userId: "alice" }))?.id).toBe(chosen.id);
+	});
+
+	it("retains web test failures, clears them on replacement, and rejects stale test writes", async () => {
+		await web.save("alice", "tavily", "old-key");
+		const connection = await web.resolve("alice", true);
+		const failed = { search: { success: false, error: "auth" }, read: { success: false, error: "auth" } };
+		await web.recordTest("alice", connection, failed);
+		expect(await web.status("alice")).toMatchObject({ configured: true, search: false, testResult: failed });
+		expect(await web.resolve("alice")).toBeNull();
+		expect(await web.resolve("alice", true)).toMatchObject({ apiKey: "old-key" });
+		await web.save("alice", "exa", "new-key");
+		await web.recordTest("alice", connection, failed);
+		expect(await web.status("alice")).toMatchObject({ provider: "exa", search: true, testResult: null });
+	});
+
+	it("binds web consent to the same credential snapshot used for reading", async () => {
+		const { withWebDestination } = await import("../ai/destination");
+		await web.save("alice", "tavily", "first-key");
+		const approved = await web.status("alice");
+		await web.save("alice", "tavily", "replacement-key");
+		await expect(withWebDestination(approved.revision, () => web.resolve("alice"))).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+	});
+
+	it("keeps paid writing reviews with their input version, isolates owners, and discards a late older result", async () => {
+		const { beginWritingReview, saveWritingReview, readWritingReview } = await import("../ai/writing-review");
+		await pool.query(`INSERT INTO resume(id,user_id) VALUES ('resume-alice','alice'),('resume-bob','bob')`);
+		const input = {
+			resumeId: "resume-alice",
+			userId: "alice",
+			inputText: "Original wording",
+			passages: [{ id: "p1", where: "Summary", text: "Original wording" }],
+			review: { summary: "Latest review", suggestions: [], strengths: [], jdAlignment: null },
+			requestedAt: new Date("2026-10-31T10:00:02Z"),
+			reviewedAt: new Date("2026-10-31T10:00:03Z"),
+		};
+		const older = await beginWritingReview("alice", "resume-alice");
+		const newer = await beginWritingReview("alice", "resume-alice");
+		await saveWritingReview({ ...input, requestGeneration: newer.generation });
+		await saveWritingReview({
+			requestGeneration: older.generation,
+			...input,
+			inputText: "Old wording",
+			review: { ...input.review, summary: "Old review" },
+			requestedAt: input.requestedAt,
+		});
+		expect(await readWritingReview("alice", "resume-alice")).toMatchObject({
+			inputText: "Original wording",
+			review: { summary: "Latest review" },
+		});
+		const pendingReview = await beginWritingReview("alice", "resume-alice");
+		expect(await readWritingReview("alice", "resume-alice")).toMatchObject({ review: { summary: "Latest review" } });
+		await saveWritingReview({ ...input, requestGeneration: pendingReview.generation });
+		expect((await readWritingReview("alice", "resume-alice"))?.reviewedAt.getTime()).toBeGreaterThan(
+			input.reviewedAt.getTime(),
+		);
+		await expect(readWritingReview("bob", "resume-alice")).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(
+			saveWritingReview({ ...input, requestGeneration: newer.generation, resumeId: "resume-bob" }),
+		).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await pool.query(`UPDATE resume SET trashed_at=now() WHERE id='resume-alice'`);
+		await expect(saveWritingReview({ ...input, requestGeneration: newer.generation })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await pool.query(`DELETE FROM "user" WHERE id='alice'`);
+		expect((await pool.query("SELECT * FROM resume_writing_review")).rows).toHaveLength(0);
+	});
+
+	it("rejects a changed AI destination at the actual service boundary", async () => {
+		const { aiDestination } = await import("@reactive-resume/ai/types");
+		const { withAiDestination } = await import("../ai/destination");
+		const first = await ai.create({
+			userId: "alice",
+			label: "First",
+			provider: "openai",
+			model: "model",
+			apiKey: "key-one",
+		});
+		await ai.test({ userId: "alice", id: first.id });
+		const approved = await ai.getRunnableById({ userId: "alice", id: first.id });
+		await ai.update({ userId: "alice", id: first.id, apiKey: "key-two" });
+		await ai.test({ userId: "alice", id: first.id });
+		await expect(
+			withAiDestination(aiDestination(approved), () => ai.getRunnableById({ userId: "alice", id: first.id })),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+	});
+
 	it("uses the default provider while it's usable, and keeps one default per account", async () => {
 		const add = (label: string) =>
 			ai.create({ userId: "alice", label, provider: "openai", model: "model", apiKey: `${label}-key` });
@@ -200,7 +341,7 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 		const second = await add("second");
 		await pool.query("UPDATE ai_providers SET test_status = 'success', enabled = true");
 		await pool.query("UPDATE ai_providers SET last_used_at = now() WHERE id = $1", [first.id]);
-		// Without a default, the most recently used one.
+		// Legacy configurations without a default use stable creation order.
 		expect((await ai.getDefaultRunnable({ userId: "alice" }))?.id).toBe(first.id);
 		await ai.setDefault({ userId: "alice", id: second.id });
 		await ai.markUsed({ userId: "alice", id: first.id });
@@ -216,5 +357,9 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)("integration creden
 		await ai.setDefault({ userId: "alice", id: second.id });
 		await expect(ai.setDefault({ userId: "alice", id: first.id })).rejects.toMatchObject({ code: "BAD_REQUEST" });
 		await expect(ai.setDefault({ userId: "bob", id: second.id })).rejects.toMatchObject({ code: "NOT_FOUND" });
+		const survivor = await add("third");
+		await ai.test({ userId: "alice", id: survivor.id });
+		await ai.delete({ userId: "alice", id: second.id });
+		expect((await ai.list({ userId: "alice" })).find((provider) => provider.isDefault)?.id).toBe(survivor.id);
 	});
 });

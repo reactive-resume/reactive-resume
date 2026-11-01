@@ -4,7 +4,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { AI_PROVIDER_DEFAULT_BASE_URLS } from "@reactive-resume/ai/types";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -21,15 +21,8 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
-import {
-	describeTest,
-	keyEnding,
-	loadModelSuggestions,
-	modelsDevProviderIds,
-	providerDefaults,
-	providerLabel,
-	providerOptions,
-} from "./catalog";
+import { describeTest, keyEnding, providerDefaults, providerLabel, providerOptions } from "./catalog";
+import { providerTestError } from "./test-error";
 import { Combobox } from "@/components/ui/combobox";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -57,7 +50,7 @@ export function ProvidersSection() {
 	const managed = providers?.find((provider) => provider.managed);
 	// The server lists the default first, so the first usable provider is the one every automatic choice uses.
 	const usable = providers?.filter((provider) => provider.enabled && provider.testStatus === "success") ?? [];
-	const defaultId = usable[0]?.id;
+	const defaultId = providers?.find((provider) => provider.isDefault)?.id;
 	const makeDefault = useMutation(orpc.aiProviders.setDefault.mutationOptions());
 
 	return (
@@ -104,7 +97,7 @@ export function ProvidersSection() {
 							<ProviderRow
 								key={provider.id}
 								provider={provider}
-								isDefault={provider.id === defaultId && (providers?.length ?? 0) > 1}
+								isDefault={provider.isDefault}
 								onMakeDefault={
 									usable.length > 1 && provider.id !== defaultId && usable.includes(provider)
 										? () =>
@@ -143,31 +136,20 @@ export function ProvidersSection() {
 			</div>
 
 			<AddProviderDialog open={adding} onOpenChange={setAdding} />
-			<EditProviderDialog provider={editing} onClose={() => setEditing(null)} />
+			<EditProviderDialog
+				provider={providers?.find((item) => item.id === editing?.id) ?? editing}
+				onClose={() => setEditing(null)}
+			/>
 		</section>
 	);
 }
 
 type ProviderLogoProps = { provider: AIProvider; className?: string };
 
-function ProviderLogo({ provider, className }: ProviderLogoProps) {
-	const [failed, setFailed] = useState(false);
-	const id = modelsDevProviderIds[provider];
+function ProviderLogo({ className }: ProviderLogoProps) {
 	return (
 		<span aria-hidden className={cn("grid size-6 shrink-0 place-items-center", className)}>
-			{id && !failed ? (
-				<img
-					src={`https://models.dev/logos/${id}.svg`}
-					alt=""
-					width={24}
-					height={24}
-					className="size-5 object-contain brightness-0 dark:invert"
-					referrerPolicy="no-referrer"
-					onError={() => setFailed(true)}
-				/>
-			) : (
-				<Icon name="sparkle" size={20} />
-			)}
+			<Icon name="sparkle" size={20} />
 		</span>
 	);
 }
@@ -190,7 +172,11 @@ function useProviderTest() {
 		const started = performance.now();
 		try {
 			const tested = await test.mutateAsync({ id });
-			const next = describeTest(tested, performance.now() - started, { connected: t`Connected`, failed: t`Failed` });
+			const next = describeTest(
+				{ ...tested, testError: tested.testStatus === "failure" ? providerTestError(tested.testErrorKind) : null },
+				performance.now() - started,
+				{ connected: t`Connected`, failed: t`Failed` },
+			);
 			setResult(next);
 			return next;
 		} catch (error) {
@@ -219,7 +205,11 @@ type ProviderRowProps = {
 
 function ProviderRow({ provider, isDefault, onMakeDefault, makingDefault, onEdit }: ProviderRowProps) {
 	const test = useProviderTest();
-	const error = test.result ? test.result.error : provider.testStatus === "failure" ? provider.testError : null;
+	const error = test.result
+		? test.result.error
+		: provider.testStatus === "failure"
+			? providerTestError(provider.testErrorKind)
+			: null;
 
 	return (
 		<div className="grid gap-2 rounded-lg border border-line p-3">
@@ -285,6 +275,11 @@ function ProviderRow({ provider, isDefault, onMakeDefault, makingDefault, onEdit
 					</Button>
 				</div>
 			</div>
+			{test.result?.ok && !provider.enabled && (
+				<p className="text-xs text-ink-3">
+					<Trans>The connection works. Turn on Use this provider to use it.</Trans>
+				</p>
+			)}
 			{error && (
 				<p role="alert" className="ms-12 text-xs text-danger-text">
 					{error}
@@ -310,19 +305,7 @@ function ProviderFieldsForm({ provider, value, onChange, keyOptional, keyAgain }
 	const id = useId();
 	const set = (patch: Partial<ProviderFields>) => onChange({ ...value, ...patch });
 	const defaults = providerDefaults(provider);
-	const catalogId = modelsDevProviderIds[provider];
-	const {
-		data: catalog,
-		isPending: loadingModels,
-		isError: modelsUnavailable,
-	} = useQuery({
-		queryKey: ["models.dev"],
-		queryFn: ({ signal }) => loadModelSuggestions(signal),
-		enabled: catalogId !== null,
-		staleTime: 60 * 60 * 1000,
-		retry: false,
-	});
-	const models = catalogId ? (catalog?.[catalogId] ?? []) : [];
+	const models = defaults.model ? [{ id: defaults.model, name: defaults.model }] : [];
 
 	return (
 		<div className="grid gap-3 sm:grid-cols-2">
@@ -377,28 +360,7 @@ function ProviderFieldsForm({ provider, value, onChange, keyOptional, keyAgain }
 					))}
 				</datalist>
 				<p id={`${id}-model-hint`} className="text-xs leading-5 text-ink-3">
-					{!catalogId ? (
-						<Trans>Enter any model ID supported by your endpoint.</Trans>
-					) : modelsUnavailable ? (
-						<Trans>Model suggestions are unavailable. You can still enter any model ID.</Trans>
-					) : loadingModels ? (
-						<Trans>Loading model suggestions… You can also enter any model ID.</Trans>
-					) : models.length === 0 ? (
-						<Trans>No suggestions for this provider. Enter any model ID.</Trans>
-					) : (
-						<Trans>
-							Suggestions from{" "}
-							<a
-								href="https://models.dev/"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="underline underline-offset-2 hover:text-ink"
-							>
-								models.dev
-							</a>
-							. You can also enter any model ID.
-						</Trans>
-					)}
+					<Trans>Built-in suggestion. You can enter any model ID supported by your endpoint.</Trans>
 				</p>
 			</div>
 			<div className="grid gap-1.5 sm:col-span-2">
@@ -439,15 +401,21 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 	const [fields, setFields] = useState<ProviderFields>({ label: "", apiKey: "", ...providerDefaults("openai") });
 	const [failure, setFailure] = useState<string | null>(null);
 	const create = useMutation(orpc.aiProviders.create.mutationOptions({ meta: { noInvalidate: true } }));
+	const update = useMutation(orpc.aiProviders.update.mutationOptions({ meta: { noInvalidate: true } }));
+	const createdId = useRef<string | null>(null);
+	const busy = useRef(false);
 	const test = useMutation(orpc.aiProviders.test.mutationOptions({ meta: { noInvalidate: true } }));
 
 	const reset = () => {
+		createdId.current = null;
 		setProvider("openai");
 		setFields({ label: "", apiKey: "", ...providerDefaults("openai") });
 		setFailure(null);
 	};
 
 	const save = async () => {
+		if (busy.current) return;
+		busy.current = true;
 		setFailure(null);
 		const input = {
 			label: fields.label.trim() || providerLabel(provider),
@@ -458,7 +426,10 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 		};
 		let tested: Awaited<ReturnType<typeof test.mutateAsync>> | undefined;
 		try {
-			const created = await create.mutateAsync(input);
+			const created = createdId.current
+				? await update.mutateAsync({ id: createdId.current, ...input })
+				: await create.mutateAsync(input);
+			createdId.current = created.id;
 			tested = await test.mutateAsync({ id: created.id });
 		} catch (error) {
 			setFailure(
@@ -471,18 +442,23 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 				}),
 			);
 		}
+		busy.current = false;
 		void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
 		if (!tested) return;
 		if (tested.testStatus === "success") {
 			onOpenChange(false);
 		} else {
 			// The provider is saved either way; its row keeps the error and a Test button.
-			setFailure(tested.testError ?? t`The provider didn't answer. Check the key, the model and the base URL.`);
+			setFailure(providerTestError(tested.testErrorKind));
 		}
 	};
 
-	const pending = create.isPending || test.isPending;
-	const ready = Boolean((provider === "ollama" || fields.apiKey.trim()) && fields.model.trim());
+	const pending = create.isPending || update.isPending || test.isPending;
+	const ready = Boolean(
+		(provider === "ollama" || fields.apiKey.trim()) &&
+		fields.model.trim() &&
+		(provider !== "openai-compatible" || fields.baseURL.trim()),
+	);
 
 	return (
 		<Dialog
@@ -633,7 +609,13 @@ function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
 		<>
 			<DialogHeader>
 				<DialogTitle>{provider.label}</DialogTitle>
-				<DialogDescription>{providerLabel(provider.provider)}</DialogDescription>
+				<DialogDescription>
+					{providerLabel(provider.provider)} ·{" "}
+					<Trans>
+						Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its
+						destination.
+					</Trans>
+				</DialogDescription>
 			</DialogHeader>
 			<form
 				className="grid gap-4"

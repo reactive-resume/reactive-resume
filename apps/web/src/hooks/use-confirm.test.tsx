@@ -3,7 +3,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vite-plus/test";
 import { i18n } from "@lingui/core";
-import { ConfirmDialogProvider, useConfirm } from "./use-confirm";
+import { confirmOperation, ConfirmDialogProvider, useConfirm } from "./use-confirm";
 
 type HookWrapperProps = {
 	children: React.ReactNode;
@@ -36,4 +36,16 @@ describe("useConfirm", () => {
 
 		await expect(promise).resolves.toBe(false);
 	});
+});
+
+it("dismisses an operation confirmation when its request is aborted", async () => {
+	const { unmount } = renderHook(() => useConfirm(), { wrapper });
+	const controller = new AbortController();
+	let promise!: Promise<boolean>;
+	await act(() => {
+		promise = confirmOperation("Share fictional data?", { signal: controller.signal });
+	});
+	await act(() => controller.abort());
+	await expect(promise).resolves.toBe(false);
+	unmount();
 });

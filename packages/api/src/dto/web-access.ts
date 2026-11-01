@@ -6,8 +6,11 @@ const capabilityTest = z.object({ success: z.boolean(), error: z.string().option
 export const webAccessDto = {
 	status: {
 		output: z.object({
+			revision: z.string(),
 			builtInReader: z.literal(true),
 			configured: z.boolean(),
+			testResult: z.object({ search: capabilityTest, read: capabilityTest }).nullable(),
+			lastTestedAt: z.date().nullable(),
 			provider: webAccessProviderSchema.nullable(),
 			managed: z.boolean(),
 			canSave: z.boolean(),

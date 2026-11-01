@@ -10,7 +10,9 @@ vi.mock("ai", async (importOriginal) => ({
 vi.mock("../../context", async () => ({ protectedProcedure: (await import("@orpc/server")).os }));
 vi.mock("../../middleware/rate-limit", () => ({ aiRequestRateLimit: ({ next }: { next: () => unknown }) => next() }));
 vi.mock("../ai/service", () => ({ getModel: vi.fn() }));
-vi.mock("../ai-providers/service", () => ({ aiProvidersService: { getDefaultRunnable: vi.fn() } }));
+vi.mock("../ai-providers/service", () => ({
+	aiProvidersService: { getDefaultRunnable: vi.fn(), authorize: vi.fn() },
+}));
 vi.mock("../resume/service", () => ({ resumeService: { getById: vi.fn(), create: vi.fn() } }));
 vi.mock("../cover-letters/service", () => ({ coverLetterService: { create: vi.fn() } }));
 // A copy, so a test can set the server's SearXNG URL.
@@ -109,6 +111,7 @@ describe("posting import", () => {
 	beforeEach(() => {
 		vi.mocked(generateText).mockReset();
 		vi.mocked(aiProvidersService.getDefaultRunnable).mockReset();
+		vi.mocked(aiProvidersService.authorize).mockReset().mockResolvedValue(undefined);
 	});
 	it("retains fetched evidence and page fields when optional AI enrichment fails", async () => {
 		const source = {
@@ -125,6 +128,7 @@ describe("posting import", () => {
 			source,
 		});
 		vi.mocked(aiProvidersService.getDefaultRunnable).mockResolvedValue({
+			id: "fixture-provider",
 			provider: "openai",
 			model: "gpt-5",
 			apiKey: "test",
@@ -142,6 +146,7 @@ describe("posting import", () => {
 			filledBy: "page",
 			enrichmentWarning: "ai-unavailable",
 		});
+		expect(generateText).toHaveBeenCalledTimes(1);
 	});
 
 	it("uses complete structured fields without even resolving an AI provider, including legacy callers", async () => {
@@ -176,6 +181,7 @@ describe("posting import", () => {
 
 	it("keeps malicious posting markers inert through explicit optional AI extraction", async () => {
 		vi.mocked(aiProvidersService.getDefaultRunnable).mockResolvedValue({
+			id: "fixture-provider",
 			provider: "openai",
 			model: "fixture",
 			apiKey: "synthetic",

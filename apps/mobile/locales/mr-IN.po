@@ -1025,6 +1025,7 @@ msgstr "सारांश जोडा किंवा प्रथम भू�
 msgid "Add a tag"
 msgstr "टॅग जोडा"
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Add AI provider"
 msgstr "AI प्रदाता जोडा"
@@ -1105,6 +1106,10 @@ msgstr "पुरावा जोडा"
 #: src/features/write/fields.ts
 msgid "Add experience"
 msgstr "अनुभव जोडा"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Add facts"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add field"
@@ -1363,6 +1368,10 @@ msgstr "AI संपादन"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "AI संवर्धन अनुपलब्ध होते. पान तपशीलांचे पुनरावलोकन करा किंवा ते व्यक्तिचलितपणे भरा."
+
+#: src/features/assistant/provider.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
@@ -2108,9 +2117,17 @@ msgstr "ब्रीफिंग रिफ्रेश चालू आहे ·
 msgid "Briefing refresh paused"
 msgstr "ब्रीफिंग रिफ्रेश थांबवले"
 
+#: src/api/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "अंगभूत वाचक"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Bulgarian"
@@ -2256,6 +2273,10 @@ msgstr ""
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "“{name}” मधील बदल दुसऱ्या डिव्हाइसवर सेव्ह केले गेले. तुमची संपादने अजूनही या डिव्हाइसवर आहेत. कोणती आवृत्ती ठेवायची ते निवडा."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
 
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
@@ -2439,6 +2460,10 @@ msgstr "जतन करण्यापूर्वी वैध फॉलो-�
 #: src/draft/conflict-sheet.tsx
 msgid "Choose a version to continue. Back will not close this sheet."
 msgstr "सुरू ठेवण्यासाठी आवृत्ती निवडा. परत हे पॅनेल बंद करणार नाही."
+
+#: src/api/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -2948,6 +2973,10 @@ msgstr "आधीचे अर्ज तपासता आले नाही�
 msgid "Couldn't check your AI providers."
 msgstr "तुमचे AI प्रदाते तपासता आले नाहीत."
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "विनंती पूर्ण करता आली नाही. तुमचे कनेक्शन तपासा आणि पुन्हा प्रयत्न करा."
@@ -3024,6 +3053,10 @@ msgstr "ही फाइल इंपोर्ट करू शकलो ना�
 msgid "Couldn't link the application. Check Applications before retrying."
 msgstr "नोकरीच्या अर्जाचा दुवा जोडू शकलो नाही. पुन्हा प्रयत्न करण्यापूर्वी नोकरीचे अर्ज तपासा."
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load AI connections. PDF text and JSON imports still work."
 msgstr "AI कनेक्शन लोड करू शकलो नाही. PDF मजकूर आणि JSON आयात अजूनही कार्य करतात."
@@ -3080,6 +3113,10 @@ msgstr "रेझ्युमे लोड करता आला नाही."
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "नमुना फाइल लोड करू शकलो नाही. पुन्हा प्रयत्न करा."
+
+#: src/features/check/writing.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3555,8 +3592,8 @@ msgid "Dark theme"
 msgstr "गडद थीम"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the provider."
-msgstr ""
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "डेटा शेअरिंग रद्द केले. AI प्रदात्याला काहीही पाठवले नाही."
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -4140,6 +4177,10 @@ msgstr "जॉब पोस्टिंगमधील प्रत्येक 
 msgid "Earlier discovery result. Search query and posting check time unknown."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
 msgstr "या चॅटमधील आधीचे संदेश"
@@ -4356,10 +4397,6 @@ msgstr "0 ते 52 पर्यंत पूर्ण संख्या प्
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org सारखा पत्ता द्या."
 
-#: src/features/ai/provider-editor.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "तुमच्या एंडपॉईंटद्वारे समर्थित कोणताही मॉडेल आयडी एंटर करा."
-
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr "अटी स्वतः भरा. AI ला कोणतीही विनंती पाठवली जात नाही. माहीत नसलेल्या रकमा रिकाम्या ठेवा."
@@ -4367,6 +4404,10 @@ msgstr "अटी स्वतः भरा. AI ला कोणतीही व
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "ब्राउझरमध्ये तुम्ही Reactive Resume उघडलेला पत्ता एंटर करा. ॲप हे Reactive Resume सर्व्हर असल्याचे तपासते जे तुम्ही सुरू ठेवण्यापूर्वी ॲपला साइन इन करण्यास अनुमती देते."
+
+#: src/features/ai/error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Enter your details below. Choosing a resume replaces them and links its design."
@@ -4565,6 +4606,10 @@ msgstr "भूमिका शोधा"
 msgid "Find weak bullets"
 msgstr "कमकुवत यादी नोंदी शोधा"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Finding what works"
 msgstr "काय उपयोगी ठरते ते शोधत आहे"
@@ -4600,6 +4645,10 @@ msgstr "जुळणी"
 #: src/features/workspace/tabs/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "पदाशी जुळणीच्या तपासण्या, तयारीसाठी ब्रीफिंग, मुलाखतीच्या सरावावरील अभिप्राय, मुलाखतीनंतरचे आढावे, फॉर्ममधील उत्तरे, संदेशांना प्रत्युत्तरे आणि नोकरीच्या ऑफर्स तुम्ही जतन केल्यावर येथे दिसतात."
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -5138,7 +5187,7 @@ msgstr "संपर्क ओळीत चिन्ह"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "ते स्कॅनमधून आले असेल, तर ते अपेक्षित आहे. अन्यथा ते काढून टाका; भर्ती करणारे त्याला कीवर्ड स्टफिंग समजतात."
 
-#. placeholder {0}: reader ?? provider?.provider ?? ""
+#. placeholder {0}: reader ?? provider?.provider ?? t`built-in reader`
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "वेब ॲक्सेस वापरल्यास, लिंक्स आणि शोध संज्ञा {0} आणि वाचल्या जात असलेल्या साइटवर देखील जातात."
@@ -5962,10 +6011,6 @@ msgid "Loading linked documents…"
 msgstr "लिंक केलेले दस्तऐवज लोड करत आहे…"
 
 #: src/features/ai/provider-editor.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "मॉडेल सूचना लोड करत आहे... तुम्ही कोणताही मॉडेल आयडी देखील एंटर करू शकता."
-
-#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Loading providers…"
 msgstr "प्रदाते लोड होत आहेत…"
@@ -6285,10 +6330,6 @@ msgstr "संमिश्र"
 msgid "Model"
 msgstr "मॉडेल"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "मॉडेल सूचना अनुपलब्ध आहेत. तुम्ही तरीही कोणताही मॉडेल आयडी टाकू शकता."
-
 #: src/features/assistant/provider.tsx
 msgid "Model: {label}"
 msgstr "मॉडेल: {label}"
@@ -6534,6 +6575,7 @@ msgid "Native & fonts"
 msgstr "नेटिव्ह घटक आणि फॉन्ट"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "लक्ष देण्याची गरज आहे"
 
@@ -6668,6 +6710,10 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/features/ai/provider-list.tsx
@@ -6878,10 +6924,6 @@ msgstr "या नोकरीच्या वर्णनातून विश
 #: src/features/career/stories.tsx
 msgid "No stories yet"
 msgstr "अद्याप कथा नाहीत"
-
-#: src/features/ai/provider-editor.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "या प्रदात्यासाठी कोणत्याही सूचना नाहीत. कोणताही मॉडेल आयडी एंटर करा."
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -7236,6 +7278,10 @@ msgstr ""
 msgid "Only the text below and your reason are sent privately to the operator of {0} for safety review. Remove personal information you don't want to share. Reports are deleted with your account."
 msgstr "फक्त खालील मजकूर आणि तुमचे कारण सुरक्षिततेच्या पुनरावलोकनासाठी {0} च्या ऑपरेटरला खाजगीरित्या पाठवले आहे. तुम्ही शेअर करू इच्छित नसलेली वैयक्तिक माहिती काढून टाका. तुमच्या खात्यासह अहवाल हटवले जातात."
 
+#: src/api/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Only this device schedules the notification."
 msgstr "फक्त हे डिव्हाइस सूचना शेड्यूल करते."
@@ -7247,6 +7293,10 @@ msgstr "फक्त हे डिव्हाइस सूचना शेड�
 #: src/features/share/link.tsx
 msgid "Only you see these"
 msgstr "हे फक्त तुम्हीच पाहता"
+
+#: src/api/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -7262,7 +7312,6 @@ msgid "Open"
 msgstr "उघडा"
 
 #: src/features/assistant/provider.tsx
-#: src/features/letters/write.tsx
 msgid "Open AI settings"
 msgstr "AI सेटिंग्ज उघडा"
 
@@ -7415,6 +7464,10 @@ msgstr "किंवा तुमच्याच शब्दात..."
 #: src/features/write/fields.ts
 msgid "Organization"
 msgstr "संघटना"
+
+#: src/features/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -7572,6 +7625,10 @@ msgstr "{company} चा संदेश पेस्ट करा"
 msgid "Paste the email or message, without the signature."
 msgstr "ईमेल किंवा संदेश सहीशिवाय पेस्ट करा."
 
+#: src/features/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
 msgstr "तुमच्या रेझ्युममध्ये आधीपासून कोणत्या अटी आहेत हे पाहण्यासाठी जॉब पोस्टिंग पेस्ट करा."
@@ -7617,13 +7674,13 @@ msgstr "PDF तपासणी रद्द केली. तयार असा
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
 msgstr "फक्त PDF · प्रत्येकी 10 MB पर्यंत. Reactive Resume मधील रेझ्युमे लिंक केल्यास AI द्वारे जुळणीचे गुणांकन आणि सानुकूलन करता येते."
 
+#: src/features/documents/new-document.tsx
+msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
+msgstr ""
+
 #: src/features/design/advanced.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "PDF शैली CSS च्या सबसेटला समर्थन देतात. रोटेशन, डॅश आणि डॉटेड बॉर्डर आणि काही लेआउट गुणधर्मांकडे दुर्लक्ष केले जाते."
-
-#: src/features/documents/new-document.tsx
-msgid "PDF uses your AI provider when one is ready. Turn off the AI switch to read its text layer on your server. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
-msgstr "तयार असलेला AI प्रदाता PDF साठी वापरला जातो. सर्व्हरवर मजकूर स्तर वाचण्यासाठी AI स्विच बंद करा. Word (.docx) साठी AI प्रदाता आवश्यक आहे. सध्याचे आणि v4 Reactive Resume JSON, कव्हर लेटर, JSON Resume आणि LinkedIn निर्यात (.zip) समर्थित आहेत. 10 MB पर्यंत."
 
 #: src/features/documents/new-document.tsx
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
@@ -8737,6 +8794,10 @@ msgstr "रेझ्युमे"
 msgid "Resume + letter"
 msgstr "रेझ्युमे + अक्षर"
 
+#: src/features/check/writing.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Resume details"
 msgstr "रेझ्युमे तपशील"
@@ -8771,6 +8832,10 @@ msgstr "रेझ्युमे सबमिट केला (पर्या�
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/search/search-screen.tsx
@@ -8827,6 +8892,7 @@ msgstr "{1} वापरून {0} पुनर्प्राप्त के�
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -8962,6 +9028,11 @@ msgstr ""
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "पुनरावलोकन लेखन"
+
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/check/writing.tsx
+msgid "Reviewed {0}"
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
@@ -9159,6 +9230,10 @@ msgstr "नोकरी वाचवा"
 msgid "Save lane"
 msgstr "टप्पा जतन करा"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Save message without AI"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
 msgstr "ऑफर जतन करा"
@@ -9233,6 +9308,18 @@ msgstr "जतन केले"
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "कथा जतन केली: {title}"
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention"
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "Saved AI connections need attention. Choose one to fix, or add another."
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention. History and saved proposals remain available."
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9514,17 +9601,29 @@ msgstr "पाठवत आहे..."
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
 msgstr "हा अर्ज (जाहिरात, नोट्स, मुलाखतीचे तपशील) आणि सक्षम केलेला ज्ञानसंग्रह {name} कडे पाठवतो."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. If it becomes unavailable, scheduled work can use your default usable connection."
-msgstr "हा अर्ज आणि सक्षम केलेला ज्ञानसंग्रह या कनेक्शनकडे पाठवतो. प्रदाता शुल्क आकारू शकतो. ते उपलब्ध नसेल तर नियोजित काम तुमचे डीफॉल्ट कार्यरत कनेक्शन वापरू शकते."
+msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
 msgstr "या अर्जाची जाहिरात, नोट्स, दस्तऐवज आणि सक्षम केलेला ज्ञानसंग्रह {label} कडे पाठवतो."
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
@@ -9565,10 +9664,6 @@ msgstr "सर्व्हर"
 msgid "Server address"
 msgstr "सर्व्हरचा पत्ता"
 
-#: src/api/ai-consent.ts
-msgid "Server web search"
-msgstr ""
-
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
 msgstr "पाठपुरावा ठरवा"
@@ -9586,6 +9681,11 @@ msgstr "निर्यात करताना दस्तऐवजाची 
 msgid "Set up a provider"
 msgstr "प्रदाता सेट करा"
 
+#: src/features/assistant/provider.tsx
+#: src/features/letters/write.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
 msgstr "AI प्रदाता सेट करा"
@@ -9593,6 +9693,10 @@ msgstr "AI प्रदाता सेट करा"
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "शोध सेट करा"
+
+#: src/features/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
@@ -9639,9 +9743,10 @@ msgstr "शेअर करा"
 msgid "Share calendar event (.ics)"
 msgstr "कॅलेंडर कार्यक्रम शेअर करा (.ics)"
 
+#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {label}?"
-msgstr ""
+msgid "Share data with {0}?"
+msgstr "{0} सह डेटा शेअर करायचा?"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -10318,10 +10423,6 @@ msgstr ""
 msgid "Suggested reply · edit before sending"
 msgstr "सुचवलेले प्रत्युत्तर · पाठवण्यापूर्वी संपादित करा"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Suggestions from models.dev. You can also enter any model ID."
-msgstr "models.dev कडील सूचना. तुम्ही कोणताही मॉडेल ID देऊ शकता."
-
 #: src/features/assistant/assistant-screen.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "कट सुचवतो, स्वतःहून कधीही हटवत नाही"
@@ -10637,10 +10738,6 @@ msgstr "सहाय्यक तुमच्या सर्व्हरच्�
 msgid "The assistant uses your AI provider's own web search where supported, and reads links with the built-in reader."
 msgstr "सुविधा उपलब्ध असल्यास सहाय्यक तुमच्या AI प्रदात्याचा वेब शोध वापरतो आणि अंगभूत वाचकाने लिंक वाचतो."
 
-#: src/features/assistant/provider.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "असिस्टंट तुमची स्वतःची की वापरतो. जोपर्यंत तुम्ही कनेक्ट करत नाही तोपर्यंत काहीही कुठेही पाठवले जात नाही."
-
 #: src/features/ai/web-access.tsx
 msgid "The built-in reader remains active."
 msgstr "अंगभूत वाचक सक्रिय राहतो."
@@ -10673,6 +10770,14 @@ msgstr "तुम्ही सांगितलेली तथ्ये को
 msgid "The connection couldn't be loaded or saved. Try again."
 msgstr "कनेक्शन लोड किंवा जतन करता आले नाही. पुन्हा प्रयत्न करा."
 
+#: src/features/ai/error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -10702,6 +10807,10 @@ msgstr "मुलाखत जतन केली. स्मरणपत्र�
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "की सर्व्हरवर एनक्रिप्ट केलेली आहे आणि पुन्हा कधीही दर्शविली जात नाही. जतन करणे कनेक्शनची चाचणी घेते."
 
+#: src/features/ai/error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
 msgstr "पूर्वतयारीची वेळ निघून गेली. जतन केल्यावर आढावा लगेच तयार होईल."
@@ -10730,6 +10839,10 @@ msgstr "तुम्ही विचारल्यापासून ओळ ब
 msgid "the message"
 msgstr "संदेश"
 
+#: src/features/ai/error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "मजकूर साठवलेला क्रम आणि तो वाचला जाणारा क्रम यांच्यात मोठा फरक आहे."
@@ -10746,10 +10859,17 @@ msgstr "पाने प्रतिमा आहेत, त्यांच्�
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "PDF सर्व्हरवर तपासला जातो, जतन होत नाही. सॉफ्टवेअर काय वाचते ते पाहण्यासाठी हे पूर्वावलोकन पाठवा."
 
-#: src/features/ai/provider-editor.tsx
-#: src/features/ai/provider-list.tsx
-msgid "The provider didn't answer. Check the key, the model and the base URL."
-msgstr "प्रदात्याने उत्तर दिले नाही. की, मॉडेल आणि बेस URL तपासा."
+#: src/api/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
@@ -10800,6 +10920,10 @@ msgstr "सर्व्हरने अवैध आयात निकाल �
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "सर्व्हरवरील आवृत्ती लोड झाली नाही. मजकूर जतन आहे; पुन्हा प्रयत्न करा."
 
+#: src/features/ai/error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "The service couldn't be reached. Try again or fill the details manually."
 msgstr "सेवेशी संपर्क होऊ शकला नाही. पुन्हा प्रयत्न करा किंवा तपशील स्वतः भरा."
@@ -10828,13 +10952,17 @@ msgstr "चाचणी चालली नाही. पुन्हा प्�
 msgid "The text comes out unreadable."
 msgstr "मजकूर वाचनीय नसलेल्या स्वरूपात येतो."
 
-#: src/api/ai-consent.ts
-msgid "The text to read aloud is sent through your server to this speech provider. It can contain personal information."
-msgstr "मोठ्याने वाचण्यासाठी मजकूर तुमच्या सर्व्हरद्वारे या स्पीच प्रदात्याला पाठवला जातो. त्यात वैयक्तिक माहिती असू शकते."
-
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "पहिल्या पानाचा वरचा भाग नावासारखा दिसत नाही."
+
+#: src/features/applications/error.ts
+msgid "The web service quota is used up. Fix web access or paste a posting."
+msgstr ""
+
+#: src/features/applications/error.ts
+msgid "The web service rejected its key. Fix web access or paste a posting."
+msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/search/search-screen.tsx
@@ -11161,6 +11289,10 @@ msgstr "ही जतन केलेली आवृत्ती आता उ�
 #: app/_layout.tsx
 msgid "This screen stopped working"
 msgstr "ही स्क्रीन काम करणे थांबले"
+
+#: src/api/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/auth/messages.ts
 msgid "This server is too old for the app. Ask your administrator to update it."
@@ -11585,6 +11717,10 @@ msgstr ""
 msgid "Update posting details"
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "अर्ज सानुकूल टप्प्यावर हलवण्यापूर्वी तुमचा सर्व्हर अद्ययावत करा."
@@ -11795,9 +11931,17 @@ msgstr "हे तथ्य वापरा"
 msgid "Use this provider"
 msgstr "हे प्रदाता वापरा"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "ही वेळ वापरा"
+
+#: src/api/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
@@ -11981,6 +12125,7 @@ msgstr "परत ऐकण्याची वाट पाहत आहे"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/ai/web-access.tsx
 msgid "Web access"
 msgstr "वेब प्रवेश"
 
@@ -11995,10 +12140,6 @@ msgstr "वेब पेज"
 #: src/features/assistant/coach-screen.tsx
 msgid "Web research"
 msgstr "वेब संशोधन"
-
-#: src/api/ai-consent.ts
-msgid "Web search"
-msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -12543,10 +12684,6 @@ msgid "Your recording goes to {transcriberName} after you stop, to be transcribe
 msgstr "रेकॉर्डिंग थांबवल्यावर लिप्यंतरणासाठी {transcriberName} कडे पाठवले जाते. प्रदाता शुल्क आकारू शकतो. सर्व्हर लिप्यंतरण ठेवतो, रेकॉर्डिंग कधीही नाही."
 
 #: src/api/ai-consent.ts
-msgid "Your recording is uploaded through your server to this transcription provider. It can contain personal information."
-msgstr "तुमचे रेकॉर्डिंग तुमच्या सर्व्हरद्वारे या ट्रान्सक्रिप्शन प्रदात्यावर अपलोड केले जाते. त्यात वैयक्तिक माहिती असू शकते."
-
-#: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
 msgstr "तुमची विनंती आणि संबंधित रेझ्युमे, पत्र, जॉब पोस्टिंग, अर्ज, करिअर माहिती, संभाषण इतिहास आणि संलग्नक तुमच्या सर्व्हरद्वारे या AI प्रदात्याकडे पाठवले जातात, तुम्ही निवडलेल्या वैशिष्ट्य आणि संदर्भानुसार. त्यामध्ये वैयक्तिक माहिती असू शकते."
 
@@ -12565,6 +12702,10 @@ msgstr "तुमचा रेझ्युमे \"I\" आणि \"my\" वा�
 #: app/(auth)/sign-in.tsx
 msgid "Your resumes, letters and applications, on {host}."
 msgstr "{host} वरील तुमचे रेझ्युमे, पत्रे आणि अर्ज."
+
+#: src/api/ai-consent.ts
+msgid "Your search terms and public links go through your server to the selected web services and sites. No AI provider is used."
+msgstr ""
 
 #: src/features/share/messages.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
@@ -12624,7 +12765,7 @@ msgid "Your unsaved job details will be discarded before opening web search sett
 msgstr "वेब शोध सेटिंग्ज उघडण्यापूर्वी तुमचे जतन न केलेले जॉब तपशील टाकून दिले जातील."
 
 #: src/api/ai-consent.ts
-msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+msgid "Your web settings changed. Nothing was sent; try again."
 msgstr ""
 
 #: src/features/assistant/messages.tsx

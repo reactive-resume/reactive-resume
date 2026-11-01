@@ -1143,6 +1143,10 @@ msgstr "Príbeh, ktorý ste medzitým odstránili"
 msgid "A strong match, with one question to resolve"
 msgstr "Silná zhoda s jednou otázkou na vyjasnenie"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "A test prompt and saved API key."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Časovaný plán, váš úvod, príbehy, ktoré si pripraviť, a otázky, ktoré položiť. 10 minút pred hovorom sa z neho stane váš kontrolný zoznam."
@@ -1450,6 +1454,10 @@ msgstr "Pridať dôkaz"
 msgid "Add experience"
 msgstr "Pridajte skúsenosti"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Add facts"
+msgstr ""
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Add field"
 msgstr "Pridať pole"
@@ -1714,6 +1722,10 @@ msgid "Against your requirements"
 msgstr "V porovnaní s vašimi požiadavkami"
 
 #: src/features/command-palette/pages/navigation.tsx
+msgid "AI"
+msgstr ""
+
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -1748,10 +1760,15 @@ msgstr "AI nedokázala vyplniť podrobnosti. Pracovná ponuka sa zachová; vypl�
 msgid "AI edit"
 msgstr "AI upraviť"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
 msgstr ""
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers"
@@ -1768,6 +1785,12 @@ msgstr "Poskytovatelia AI nie sú na tomto serveri k dispozícii, kým nie je na
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "Poskytovateľov AI sa nepodarilo načítať. Znova načítajte a skúste to znova."
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/documents/new-document-dialog.tsx
+msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
@@ -1832,6 +1855,14 @@ msgstr "Všetky vaše dokumenty, žiadosti o zamestnanie, kľúče API a verejn�
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
 msgstr "Povoliť prístup"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow scheduled sharing"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow this operation"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Almost none of your bullets carry a number."
@@ -2619,9 +2650,17 @@ msgstr "Vytvorenie spoločného dizajnového systému, ktorý používa šesť p
 msgid "Built from the posting, Sam’s message and your two strongest stories."
 msgstr "Zostavené z inzerátu, správy, ktorú poslal Sam, a vašich dvoch najsilnejších príbehov."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "Vstavaná čítačka"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Bulgarian"
@@ -2802,6 +2841,10 @@ msgstr ""
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
 msgstr "Pri jej zmene sa odošle potvrdenie na novú adresu. Vaše používateľské meno je súčasťou každého verejného odkazu."
 
+#: src/features/settings/ai/providers.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Changing your password…"
 msgstr "Mení sa vaše heslo…"
@@ -2957,6 +3000,14 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
+msgstr ""
+
+#: src/features/command-palette/pages/ask.tsx
+msgid "Choose a document; review your question before sending"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "Vyberte súbor"
@@ -2973,6 +3024,10 @@ msgstr "Zvoľte heslo, ktoré sa líši od aktuálneho."
 msgid "Choose a PDF file."
 msgstr "Vyberte súbor PDF."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Choose a resume"
+msgstr ""
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Vyberte si životopis v aplikácii Write tak, aby zodpovedal jeho dizajnu. Dovtedy má list svoje."
@@ -2982,9 +3037,17 @@ msgstr "Vyberte si životopis v aplikácii Write tak, aby zodpovedal jeho dizajn
 msgid "Choose a stage"
 msgstr "Vyberte etapu"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a tested AI provider before sharing data."
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
 msgstr "Vyberte platný dátum a čas v časovom pásme {timeZone} alebo vymažte pole termínu."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -3013,6 +3076,10 @@ msgstr "Vyberte iný súbor"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "Vyberte farbu"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Choose how to read this file"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3314,12 +3381,6 @@ msgstr "Pripojte poskytovateľa AI"
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect an AI provider above to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "Ak chcete používať asistenta, pripojte poskytovateľa AI vyššie. Ukladanie a príprava úloh to nepotrebuje."
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/career/workspace/fit.tsx
-#: src/features/career/workspace/prepare.tsx
-msgid "Connect an AI provider in Settings"
-msgstr "Pripojte poskytovateľa AI v Nastaveniach"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
@@ -3629,6 +3690,10 @@ msgstr "Túto naplánovanú úlohu sa nepodarilo zmeniť. Skúste to znova."
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "Heslo sa nepodarilo zmeniť. Skontrolujte aktuálne heslo a skúste to znova."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -3791,6 +3856,10 @@ msgstr "Tento účet poskytovateľa sa nepodarilo prepojiť. Skúste to znova."
 msgid "Couldn't link the application. Try again."
 msgstr "Žiadosť sa nepodarilo prepojiť. Skúste to znova."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't load AI connections. Try again before importing this file."
 msgstr "Pripojenia AI sa nepodarilo načítať. Pred importom tohto súboru to skúste znova."
@@ -3811,6 +3880,10 @@ msgstr "Pripojené aplikácie sa nepodarilo načítať. Obnovte stránku a skús
 msgid "Couldn't load documents"
 msgstr "Nepodarilo sa načítať dokumenty"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Couldn't load documents. Try again."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't load interviews. Retry"
 msgstr "Pohovory sa nepodarilo načítať. Skúsiť znova"
@@ -3822,6 +3895,10 @@ msgstr "Nastavenia webového prístupu sa nepodarilo načítať ani uložiť. Sk
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "Nepodarilo sa načítať vzorový súbor. Skúste to znova."
+
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
@@ -4109,6 +4186,7 @@ msgid "Couldn't switch connections. Try again."
 msgstr "Pripojenie sa nepodarilo prepnúť. Skúste to znova."
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "Model sa nepodarilo prepnúť. Skúste to znova."
 
@@ -4301,8 +4379,8 @@ msgid "Create a new resume"
 msgstr "Vytvoriť nový životopis"
 
 #: src/features/command-palette/pages/ask.tsx
-msgid "Create a resume first, then ask about it."
-msgstr "Najprv vytvorte životopis a potom sa naň pýtajte."
+msgid "Create a resume or letter first."
+msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Create account"
@@ -4443,6 +4521,10 @@ msgstr "Tmavá"
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Tmavá téma"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -4865,6 +4947,10 @@ msgstr "Nemáte účet? <0/>"
 msgid "Don't send {0}"
 msgstr "Neposielajte {0}"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Don't share"
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -5057,8 +5143,8 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Pred nahraním potiahnutím zmeňte polohu a pomocou posúvača priblížte obrázok."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
-msgstr "Sem presuňte súbor alebo ho prehliadajte. PDF, Word, Reactive Resume alebo JSON Resume. Vyplníme každú sekciu a označíme čokoľvek, čím si nie sme istí."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Drop a PDF here or choose a file"
@@ -5119,6 +5205,10 @@ msgstr "Každé odoslanie začína odznova s ​​touto správou a vybranými s
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -5407,10 +5497,6 @@ msgstr "Zadajte platnú e-mailovú adresu."
 msgid "Enter a web address, like example.com"
 msgstr "Zadajte webovú adresu, napríklad example.com"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "Zadajte akékoľvek ID modelu podporované vaším koncovým bodom."
-
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Zadajte jeden z uložených záložných kódov a získajte prístup k účtu."
@@ -5423,6 +5509,10 @@ msgstr "Zadajte podmienky sami. Žiadna požiadavka na AI sa neodošle. Neznáme
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter the 6-digit code."
 msgstr "Zadajte 6-ciferný kód."
+
+#: src/features/settings/ai/test-error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
@@ -5661,8 +5751,8 @@ msgid "Feedback"
 msgstr "Spätná väzba"
 
 #: src/features/career/workspace/practise.tsx
-msgid "Feedback needs an AI connection. <0>Add one in Settings</0>. Nothing is sent until you ask."
-msgstr "Spätná väzba vyžaduje pripojenie AI. <0>Pridajte ho v Nastaveniach</0>. Nič sa neodošle, kým o to nepožiadate."
+msgid "Feedback needs an AI connection. <0/>. Nothing is sent until you ask."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -5711,8 +5801,8 @@ msgid "Fill fields"
 msgstr "Vyplniť polia"
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Fill in the role and company. Connect an AI provider in Settings to read them from the posting."
-msgstr "Vyplňte pozíciu a spoločnosť. Pripojte poskytovateľa AI v Nastaveniach, aby sa načítali z inzerátu."
+msgid "Fill in the role and company, or use Set up AI to read them from the posting."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Fill in the role and company. The posting is saved with the application."
@@ -5746,6 +5836,10 @@ msgstr "Nájsť pozície"
 msgid "Find weak bullets"
 msgstr "Nájdite slabé položky zoznamu"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "Hľadanie sekcií"
@@ -5777,6 +5871,10 @@ msgstr "Zhoda"
 #: src/features/career/workspace/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "Kontroly zhody s pracovnou pozíciou, brífingy, spätná väzba z nácviku, rozbory pohovorov, odpovede do formulárov, návrhy odpovedí na správy a pracovné ponuky sa tu objavia, keď ich uložíte."
+
+#: src/features/career/workspace/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Fit page to width"
@@ -5961,12 +6059,17 @@ msgid "Found for “{0}”. Posting checked {1}."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/libs/orpc/ai-consent.ts
 msgid "Found posting links are read by Reactive Resume and the sites being read."
 msgstr ""
 
 #. placeholder {0}: webAccess.provider
 #: src/features/career/schedule-sheet.tsx
 msgid "Found posting links are read by Reactive Resume and, when needed, {0} and the sites being read. The reader may charge."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -6839,10 +6942,9 @@ msgstr "Kurzíva"
 msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
 msgstr "Žiadosti z tejto etapy sa presunú do vybranej etapy. V ich histórii zostane názov „{label}“."
 
-#. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
-msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
-msgstr "Jeho pripojenie bolo vypnuté alebo odstránené, takže beží cez {0}, kým nevyberiete iné."
+msgid "Its connection is unavailable. Choose and approve a connection before enabling this schedule."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
@@ -7578,6 +7680,10 @@ msgstr "Načítavajú sa pripojenia..."
 msgid "Loading conversations…"
 msgstr "Načítavajú sa konverzácie…"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Loading documents…"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Loading interviews…"
 msgstr "Načítavajú sa pohovory…"
@@ -7590,10 +7696,6 @@ msgstr "Pred odoslaním sa načítavajú Znalosti…"
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "Načítavajú sa prepojené dokumenty…"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "Načítavajú sa návrhy modelov... Môžete tiež zadať ľubovoľné ID modelu."
 
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
@@ -7897,6 +7999,10 @@ msgstr "Stredná"
 msgid "Mentor other designers"
 msgstr "Mentorovať ďalších dizajnérov"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Message saved with this application"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Message the assistant"
 msgstr "Pošlite správu asistentovi"
@@ -7951,10 +8057,6 @@ msgstr "Model"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Model pre {label}"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "Návrhy modelov nie sú k dispozícii. Stále môžete zadať akékoľvek ID modelu."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Model: {label}"
@@ -8216,6 +8318,7 @@ msgid "narrow margins"
 msgstr "úzke okraje"
 
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "Vyžaduje pozornosť"
 
@@ -8363,6 +8466,10 @@ msgstr "Žiadne aktívne žiadosti o zamestnanie."
 
 #: src/features/career/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -8587,10 +8694,6 @@ msgstr "Z tohto popisu pracovnej pozície sa nepodarilo vyňať žiadne konkrét
 #: src/features/career/knowledge/stories.tsx
 msgid "No stories yet"
 msgstr "Zatiaľ žiadne príbehy"
-
-#: src/features/settings/ai/providers.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "Žiadne návrhy pre tohto poskytovateľa. Zadajte akékoľvek ID modelu."
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -9037,6 +9140,18 @@ msgstr "Naraz sa importuje len prvých {MAX_IMPORT} riadkov, {overflow} zostane 
 msgid "Only the first pages were checked."
 msgstr "Skontrolované boli iba prvé strany."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Toto vidíš len ty"
@@ -9044,6 +9159,10 @@ msgstr "Toto vidíš len ty"
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "Iba vy, kým to nebudete zdieľať. Životopis môže zostať súkromný, môže byť zverejnený na verejnom odkaze alebo môže byť chránený heslom, čo môžete kedykoľvek zmeniť. Odstránením účtu sa odstránia aj vaše životopisy s ním."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Onsite"
@@ -9059,11 +9178,6 @@ msgstr "Otvoriť"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Open {title}"
 msgstr "Otvorte {title}"
-
-#: src/features/resume/editor/check/writing-tab.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Open AI settings"
-msgstr "Otvorte nastavenia AI"
 
 #: src/features/career/today.tsx
 msgid "Open briefing"
@@ -9233,6 +9347,10 @@ msgstr "Oranžová"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
 msgstr "Organizácia"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -9445,6 +9563,10 @@ msgstr "Vložte e-mail alebo správu bez podpisu."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "Sem vložte celý popis práce…"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
@@ -9974,6 +10096,10 @@ msgstr "Poskytuje váš server: {connectedProvider}."
 msgid "Provider"
 msgstr "Poskytovateľ"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Provider retention follows its own policy. Your provider may charge for this request."
+msgstr ""
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -10154,6 +10280,10 @@ msgstr "Prečítať brífing"
 msgid "Read it for me"
 msgstr "Prečítať za mňa"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Read on this device (free)"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
 msgstr "Prístup len na čítanie"
@@ -10196,6 +10326,7 @@ msgid "Read the self-hosting guide"
 msgstr "Prečítajte si sprievodcu vlastným hosťovaním"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Read with AI"
 msgstr ""
 
@@ -10273,6 +10404,12 @@ msgstr "Čítanie textu"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "Čítame, čo ste zdieľali"
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading with AI sends this posting to {0} · {1}. Public links also go to the reader and the site being read. You can fill details manually."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
@@ -10866,6 +11003,10 @@ msgstr "na tvorbu životopisov"
 msgid "Resume builder"
 msgstr "tvorca životopisov"
 
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "Obsah životopisu"
@@ -10896,6 +11037,10 @@ msgstr "životopis odoslaný (voliteľné)"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/career/workspace/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -10929,6 +11074,7 @@ msgstr "Získané {0}. Čerstvosť pôvodu nie je známa, pokiaľ nie je uveden�
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/workspace/answer-library.tsx
+#: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -11036,13 +11182,18 @@ msgstr ""
 msgid "Review writing"
 msgstr "Písanie recenzií"
 
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Reviewed {0}"
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
-msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
-msgstr "Posúdenie vyžaduje pripojenie AI. <0>Pridajte ho v Nastaveniach</0>. Dovtedy zostane to, čo sem napíšete, v tomto prehliadači."
+msgid "Reviewing needs an AI connection. <0/>. What you write here stays in this browser until then."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke"
@@ -11264,6 +11415,10 @@ msgstr "Uložiť pohovor"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "Uložiť úlohu"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Save message without AI"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Save name"
@@ -11735,18 +11890,25 @@ msgstr "Odosielam e‑mail na obnovenie hesla..."
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
 msgstr "Odošle túto žiadosť (inzerát, poznámky, podrobnosti pohovoru) a zapnuté Znalosti do {label}."
 
 #. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
 #: src/features/career/workspace/fit.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0}."
-msgstr "Odošle inzerát, poznámky a dokumenty tejto žiadosti spolu so zapnutými Znalosťami do {0}."
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0} · {1}."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it."
-msgstr "Odošle inzerát, poznámky a dokumenty tejto žiadosti spolu so zapnutými Znalosťami do tohto pripojenia. Váš poskytovateľ si za to môže účtovať poplatok."
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
@@ -11755,6 +11917,12 @@ msgstr "Odošle tento list a pracovnú ponuku na {provider} s vaším kľúčom,
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter to {provider} with your key, only when you press send."
 msgstr "Odošle tento list do {provider} s vaším kľúčom, iba ak stlačíte odoslať."
+
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
@@ -11826,13 +11994,25 @@ msgstr "Nastaviť heslo"
 msgid "Set the document language when exporting."
 msgstr "Pri exporte nastavte jazyk dokumentu."
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "Nastaviť vyhľadávanie"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings"
 msgstr "Nastavte webové vyhľadávanie v Nastaveniach"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
@@ -11870,6 +12050,11 @@ msgstr "Zdieľať"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Zdieľajte verejný odkaz, pridajte heslo alebo ho ponechajte ako súkromný. Vyberte si z 3 možností viditeľnosti. Exportujte do PDF alebo Word alebo si vezmite všetky svoje údaje so sebou ako JSON."
+
+#. placeholder {0}: provider.label
+#: src/libs/orpc/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -12655,10 +12840,6 @@ msgstr "Odporúčané zo zdroja a práce. Zmeňte to kedykoľvek."
 msgid "Suggested reply · edit before sending"
 msgstr "Navrhovaná odpoveď · pred odoslaním upravte"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Suggestions from <0>models.dev</0>. You can also enter any model ID."
-msgstr "Návrhy od <0>models.dev</0>. Môžete tiež zadať akékoľvek ID modelu."
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "Navrhuje rezy, nikdy sa sám neodstráni"
@@ -13047,6 +13228,10 @@ msgstr "Súbor {label} sa nepodarilo vygenerovať. Skúste to znova alebo si sti
 msgid "The 13-point activation lift. Knowledge has the before and after."
 msgstr "Nárast aktivácie o 13 bodov. Znalosti majú hodnoty pred a po."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The account changed. Try again."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "Adresa musí obsahovať iba malé písmená a čísla, oddelené jednotlivými spojovníkmi."
@@ -13066,10 +13251,6 @@ msgstr "Žiadosť o zamestnanie, na ktorú je tento list určený."
 #: src/features/assistant/assistant-panel.tsx
 msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
 msgstr "Asistent nie je nastavený na tomto serveri. Kto to prevádzkuje, potrebuje nastaviť ENCRYPTION_SECRET. Všetko ostatné funguje aj bez toho."
-
-#: src/features/assistant/provider-setup.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "Asistent používa váš vlastný kľúč. Nič sa nikam neposiela, kým jeden nepripojíte."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The built-in reader remains active."
@@ -13099,6 +13280,18 @@ msgstr "Kouč ich číta len pre túto žiadosť."
 msgid "The coach saves facts you state, and tells you. You can undo."
 msgstr "Kouč ukladá fakty, ktoré uvediete, a oznámi vám to. Môžete to vrátiť späť."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The complete PDF file."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "Kópia je prepojená so žiadosťou o prácu, takže Check a asistent používajú jej inzerát."
@@ -13127,6 +13320,10 @@ msgstr "Za menom nasleduje pozdrav."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Kľúč je na serveri zašifrovaný a už sa nikdy nezobrazí. Uloženie testuje pripojenie."
 
+#: src/features/settings/ai/test-error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "List taký, aký je"
@@ -13150,6 +13347,10 @@ msgstr "Riadok sa od vašej žiadosti zmenil, takže nebol nahradený."
 #: src/features/career/workspace/saved.tsx
 msgid "the message"
 msgstr "správa"
+
+#: src/features/settings/ai/test-error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The morning of the interview has passed, so the briefing runs now."
@@ -13199,9 +13400,9 @@ msgstr "Pracovnú ponuku sa nepodarilo prečítať. Vyplňte rolu a spoločnosť
 msgid "The posting saved with this application."
 msgstr "Pracovná ponuka bola uložená s touto žiadosťou o zamestnanie."
 
-#: src/features/assistant/provider-setup.tsx
-msgid "The provider didn't answer. Check the key and the model."
-msgstr "Poskytovateľ neodpovedal. Skontrolujte kľúč a model."
+#: src/libs/orpc/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
@@ -13211,9 +13412,17 @@ msgstr "Poskytovateľ neodpovedal. Skontrolujte kľúč, model a základňu URL.
 msgid "The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method."
 msgstr "Poskytovateľ nezdieľal e-mailovú adresu, ktorá je povinná. Povoľte prístup k e-mailu, keď o to poskytovateľ požiada, alebo použite iný spôsob prihlásenia."
 
+#: src/features/settings/ai/test-error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "The provider rejected this sign-in attempt. Try again."
 msgstr "Poskytovateľ odmietol tento pokus o prihlásenie. Skúste to znova."
+
+#: src/features/settings/ai/test-error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The provider returned a review that couldn't be read. Try again."
@@ -13281,6 +13490,18 @@ msgstr ""
 msgid "The selected documents will be deleted for good and can't be restored."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected line, surrounding field text, and your rewrite instructions."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected resume and this letter's recipient and posting information."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
 msgstr "Služba nereagovala včas. Skúste to znova."
@@ -13308,6 +13529,10 @@ msgstr "Text vychádza nečitateľný."
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "Vrch prvej strany nevyzerá ako meno."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The Word document's text."
+msgstr ""
 
 #. Menu item that opens appearance theme selection submenu
 #: src/features/command-palette/pages/navigation.tsx
@@ -13369,6 +13594,10 @@ msgstr "Premýšľame"
 msgid "Thinking…"
 msgstr "Premýšľanie…"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This allows recurring processing until you turn the schedule off."
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "This application"
 msgstr ""
@@ -13386,8 +13615,8 @@ msgid "This browser can't record here. Choose an audio file, or type your answer
 msgstr "Tento prehliadač tu nedokáže nahrávať. Vyberte zvukový súbor alebo odpoveď napíšte."
 
 #: src/features/career/workspace/practise.tsx
-msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
-msgstr "Tento prehliadač nepodporuje diktovanie a žiadne z vašich pripojení AI nedokáže prepisovať reč (OpenAI, Google Gemini, Mistral, xAI, Groq alebo Vercel AI Gateway to dokážu). <0>Pridajte ho v Nastaveniach</0> alebo odpoveď napíšte."
+msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
+msgstr ""
 
 #: src/features/career/draft-recovery.tsx
 msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
@@ -13405,6 +13634,11 @@ msgstr "Túto konverzáciu sa nepodarilo otvoriť."
 #: src/features/career/coach-thread.tsx
 msgid "This conversation couldn't be opened. Refresh the page to try again."
 msgstr "Túto konverzáciu sa nepodarilo otvoriť. Obnovte stránku a skúste to znova."
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/career/coach.tsx
+msgid "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
@@ -13618,6 +13852,10 @@ msgstr "Túto uloženú verziu sa nepodarilo načítať."
 #: src/features/career/workspace/shell.tsx
 msgid "This saved version is no longer available."
 msgstr "Táto uložená verzia už nie je k dispozícii."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
@@ -14135,6 +14373,10 @@ msgstr "Aktualizovať životopis"
 msgid "Update this application's details."
 msgstr "Aktualizujte podrobnosti tejto žiadosti."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/components/list-view.tsx
 msgid "Updated"
 msgstr "Aktualizované"
@@ -14316,6 +14558,10 @@ msgstr "Použite štandardný nadpis"
 msgid "Use these answers"
 msgstr "Použiť tieto odpovede"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Use this destination"
+msgstr ""
+
 #: src/features/settings/preferences.tsx
 msgid "Use this device's timezone ({device})"
 msgstr "Použiť časové pásmo tohto zariadenia ({device})"
@@ -14323,6 +14569,14 @@ msgstr "Použiť časové pásmo tohto zariadenia ({device})"
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "Použite tohto poskytovateľa"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
@@ -14575,9 +14829,15 @@ msgstr "Na adresu {currentEmail} sme poslali odkaz na schválenie zmeny. Potom o
 msgid "We sent a new verification link to {0}."
 msgstr "Poslali sme nový overovací odkaz na {0}."
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Webový prístup"
+
+#. placeholder {0}: access?.searxng ? t`your server's search service` : (access?.provider ?? t`built-in reader`)
+#: src/libs/orpc/ai-consent.ts
+msgid "Web destination: {0}."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Web page"
@@ -14870,6 +15130,10 @@ msgstr "Za štvrťrok aktivácia stúpla z 31 % na 44 %."
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "Bez neho vyplníte príjemcu sami a na vypracovanie sa použije iba váš životopis."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
 msgstr "Pri extrahovaní textu sa slová spájajú dokopy."
@@ -15150,6 +15414,10 @@ msgstr "vaše pripojenie AI"
 msgid "Your AI connection"
 msgstr "Vaše pripojenie AI"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your AI settings changed. Nothing was sent; try again."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Your answer"
 msgstr "Vaša odpoveď"
@@ -15358,6 +15626,10 @@ msgstr "vášho poskytovateľa"
 msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
 msgstr "Vaša nahrávka sa odošle do {0} na prepis, čo môže čerpať tokeny z daného účtu."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "Your requirements"
 msgstr "Vaše požiadavky"
@@ -15382,6 +15654,10 @@ msgstr "Váš životopis bol duplikovaný."
 msgid "Your resume has been updated."
 msgstr "Váš životopis bol aktualizovaný."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your resume text, selected passages, and check findings."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "Váš životopis používa „I“ a „my“."
@@ -15390,6 +15666,14 @@ msgstr "Váš životopis používa „I“ a „my“."
 msgid "Your resume, live at"
 msgstr "Váš životopis naživo"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Your saved AI connections need attention. Test or edit them below. History and saved proposals remain available."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your search terms. These also go to the configured search service."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
 msgstr "Vybrané písmo nedokáže zobraziť niektoré znaky. Zobrazujú sa ako “?”. V časti Dizajn vyberte písmo, ktoré ich obsahuje."
@@ -15397,6 +15681,10 @@ msgstr "Vybrané písmo nedokáže zobraziť niektoré znaky. Zobrazujú sa ako 
 #: src/features/settings/ai/web-access.tsx
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "Váš server poskytuje vyhľadávanie na webe v sekcii Žiadosti a pre asistenta. Pripojte službu na čítanie webových stránok, ktoré vstavaná čítačka nedokáže prečítať."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "your server's search service"
+msgstr ""
 
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
@@ -15434,6 +15722,10 @@ msgstr "Vaše dvojminútové predstavenie"
 #: src/features/resume/share/share-panel.tsx
 msgid "Your web page is live"
 msgstr "Vaša webová stránka je zverejnená"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your web settings changed. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Your wording"

@@ -24,7 +24,7 @@ On wide screens the assistant opens as a third column. On smaller laptops it tak
 
 You can also reach it from elsewhere:
 
-- In the command bar (<kbd>⌘</kbd> <kbd>K</kbd>), type a question and choose **Ask the assistant**. Outside the editor, this opens the document you edited last and sends the question there. See [Using the command bar](/guides/using-the-command-bar).
+- In the command bar (<kbd>⌘</kbd> <kbd>K</kbd>), type a question and choose **Ask the assistant**. Outside the editor, choose the document first. The question appears in its composer; review it and press send when ready. See [Using the command bar](/guides/using-the-command-bar).
 
 For job search and interview coaching, open **Career → Coach**, or select **Open workspace** in an application and then **Ask the coach**. That coach works with your Knowledge and application context. This guide covers editing resumes and letters; [Career and Application Workspaces](/guides/career-overview) covers the career coach.
 
@@ -179,7 +179,7 @@ The conversation shows search/read progress, failures and retrieved **Sources**.
 
 ## Switch models
 
-The model chip in the assistant's header shows the model in use. Select it to switch to another connected provider for this conversation, or choose **Connect another…** to add one in settings.
+The model chip in the assistant's header shows the model in use. Select it to choose another connected provider and approve transferring earlier messages on your next send, or choose **Connect another…** to add one in settings.
 
 <Frame caption="The model menu">
   <img
@@ -209,7 +209,7 @@ Each conversation belongs to one document. Opening the assistant continues that 
 
 Conversations are titled by your first message and show how many edits you accepted. Conversations about your other documents appear under **Other documents**; opening one takes you to that document. To delete a conversation, hover over it, select **×**, then confirm. Its messages and attachments are deleted, but edits you accepted stay in your document.
 
-A conversation becomes read-only if its document is locked or deleted, or its provider was deleted. Unlock the document, or pick another model from the model chip, to continue.
+A locked or deleted document keeps its conversation read-only. If a provider is off, broken or deleted, history and pending edits stay readable. You can accept saved edits and undo document changes while sending pauses. Repair the connection through **Set up AI**, or choose another model and approve its destination. The app never moves a conversation automatically.
 
 <Info>
   Replies stream while the conversation is open. On instances without Redis (some self-hosted setups), a reply that's
@@ -232,3 +232,17 @@ A conversation becomes read-only if its document is locked or deleted, or its pr
     Use the assistant on letters, too.
   </Card>
 </CardGroup>
+
+<Frame caption="Pending edits remain after an explicitly approved connection change.">
+  <img
+    src="/images/guides/using-the-assistant/rx98-explicit-destination.png"
+    alt="Fictional assistant conversation retaining its proposed rewrite, with the alternate connection named under the composer."
+  />
+</Frame>
+
+<Frame caption="An existing proposal remains actionable while its AI connection is Off.">
+  <img
+    src="/images/guides/using-the-assistant/rx98-off-local-accept.png"
+    alt="Fictional resume with its saved rewrite marked Applied while the original AI connection is unavailable and the message composer is disabled."
+  />
+</Frame>

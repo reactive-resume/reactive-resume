@@ -164,6 +164,7 @@ export async function transcribe(input: {
 	providerId: string;
 	model: string;
 	applicationId: string;
+	signal?: AbortSignal;
 }) {
 	const file = new File(input.recording.uri);
 	const form = new FormData();
@@ -174,7 +175,7 @@ export async function transcribe(input: {
 	// sends any part with `bytes()`, `name` and `type`.
 	const audio = { name: input.recording.name, type: input.recording.type, bytes: () => file.bytes() };
 	form.append("audio", audio as unknown as Blob);
-	const response = await rest("/career/voice/transcribe", { method: "POST", body: form });
+	const response = await rest("/career/voice/transcribe", { method: "POST", body: form, signal: input.signal ?? null });
 	if (!response.ok) throw new Error(`Transcription failed (${response.status})`);
 	return (await response.json()) as { id: string; text: string };
 }
@@ -220,8 +221,12 @@ export function usePlayer() {
 }
 
 /** Reads `text` with the chosen speech connection; returns a temporary file the caller plays and then deletes. */
-export async function speak(choice: NonNullable<VoiceChoice>, text: string) {
-	const result = await client.career.voice.speak({ providerId: choice.providerId, model: choice.model, text });
+export async function speak(choice: NonNullable<VoiceChoice>, text: string, signal?: AbortSignal) {
+	const result = await client.career.voice.speak(
+		{ providerId: choice.providerId, model: choice.model, text },
+		signal ? { signal } : {},
+	);
+	signal?.throwIfAborted();
 	const file = new File(Paths.cache, `practise-speech-${Date.now()}.${speechExtension(result.mediaType)}`);
 	await file.write(result.audio, { encoding: "base64" });
 	return file;
