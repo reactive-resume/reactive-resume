@@ -791,7 +791,7 @@ const getAuthConfig = () => {
 					await validateOAuthGrant(payload);
 				} catch (error) {
 					// Only a refused grant makes the token inactive; a failed lookup is a server error, not a revocation.
-					if (!isAPIError(error)) throw error;
+					if (!isAPIError(error) || error.statusCode !== 401) throw error;
 					return ctx.json({ active: false });
 				}
 			}),
@@ -979,7 +979,7 @@ const getAuthConfig = () => {
 								try {
 									await validateOAuthGrant(jwt);
 								} catch (error) {
-									if (!isAPIError(error)) throw error;
+									if (!isAPIError(error) || error.statusCode !== 401) throw error;
 									throw new APIError("UNAUTHORIZED", {
 										error: "invalid_token",
 										error_description: "Reconnect the application to restore access.",

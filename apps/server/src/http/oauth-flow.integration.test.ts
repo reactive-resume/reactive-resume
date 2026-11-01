@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { describe, expect, it, vi } from "vite-plus/test";
+import { APIError } from "better-auth";
 
 vi.mock("@reactive-resume/email/transport", () => ({ sendEmail: vi.fn() }));
 
@@ -203,6 +204,25 @@ describe.skipIf(!databaseURL)("MCP OAuth flow with PostgreSQL", () => {
 				expect(active.status).toBe(200);
 				await expect(active.json()).resolves.toMatchObject({ active: true });
 			}
+			const { db } = await import("@reactive-resume/db/client");
+			const schema = await import("@reactive-resume/db/schema");
+			const select = db.select.bind(db);
+			const lookup = vi.spyOn(db, "select").mockImplementation(() => {
+				const query = select();
+				const from = query.from.bind(query);
+				vi.spyOn(query, "from").mockImplementation((table) => {
+					if (table === schema.oauthConsent) throw new APIError("INTERNAL_SERVER_ERROR");
+					return from(table);
+				});
+				return query;
+			});
+			try {
+				expect.soft((await userinfo()).status).toBe(500);
+				if (client.client_secret) expect.soft((await introspect()).status).toBe(500);
+			} finally {
+				lookup.mockRestore();
+			}
+			expect((await userinfo()).status).toBe(200);
 			const [consent] = await consents();
 			const disconnected = await handleAuth(request("oauth2/delete-consent", { id: consent.id }, cookie));
 			expect(disconnected.status).toBe(200);
