@@ -5,7 +5,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
-import { formatTimeSince, publicResumeUrl, summarizeViews } from "@reactive-resume/resume/sharing";
+import {
+	formatTimeSince,
+	publicResumeUrl,
+	shareListState,
+	shortLinkOpens,
+	summarizeViews,
+} from "@reactive-resume/resume/sharing";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
@@ -169,10 +175,15 @@ function AddressesSection({ origin, username, setting }: AddressesSectionProps) 
 	const { flags } = useRouteContext({ strict: false });
 	const { data: resumes, isPending, isError } = useQuery(orpc.resume.list.queryOptions());
 	const current = resumes?.find((item) => item.isPrimary && item.id !== resume.id);
-	const listState = isPending ? "pending" : isError ? "error" : "ready";
+	const listState = shareListState({ isPending, isError });
 	const shortLink = publicResumeUrl(origin, { username, slug: resume.slug, isPrimary: true });
 	// The short link opens the primary resume only while it's published; at any other time it would copy a dead link.
-	const shortLinkOpens = resume.isPrimary ? (resume.isPublic ?? false) : (current?.isPublic ?? false);
+	const opens = shortLinkOpens({
+		isPrimary: resume.isPrimary ?? false,
+		isPublic: resume.isPublic ?? false,
+		listState,
+		otherPrimaryIsPublic: current?.isPublic,
+	});
 
 	return (
 		<>
@@ -186,7 +197,7 @@ function AddressesSection({ origin, username, setting }: AddressesSectionProps) 
 					<span className="min-w-0 flex-1 truncate font-mono text-[13px] font-medium text-ink-2" dir="ltr">
 						{shortLink.replace(/^https?:\/\//, "")}
 					</span>
-					<CopyLinkButton url={shortLink} disabled={!shortLinkOpens} className="h-8 gap-1.5" />
+					<CopyLinkButton url={shortLink} disabled={!opens} className="h-8 gap-1.5" />
 				</div>
 				{flags?.customDomains && <CustomDomainField suggest={flags.olacvSuggestion ?? false} />}
 			</section>
@@ -244,7 +255,7 @@ function PrimaryRow({ setting: { update, isPending }, current, listState }: Prim
 									: t`Your short link and custom domain point to “${current.name}”, which isn't published.`
 								: isPublic
 									? t`Turn this on to open this resume at your short link and custom domain.`
-									: t`Publish this resume to open it at your short link and custom domain.`
+									: `${t`Publish this resume to open it at your short link and custom domain.`} ${t`If another resume holds Primary, turn it on for this one instead.`}`
 			}
 			className="items-start py-0"
 		/>

@@ -8,7 +8,7 @@ import * as Clipboard from "expo-clipboard";
 import { openBrowserAsync } from "expo-web-browser";
 import { useState } from "react";
 import { View } from "react-native";
-import { publicResumeUrl } from "@reactive-resume/resume/sharing";
+import { publicResumeUrl, shareListState, shortLinkOpens } from "@reactive-resume/resume/sharing";
 import { CustomDomain } from "./custom-domain";
 import { flushResume } from "./document";
 import { client, orpc } from "@/api/client";
@@ -42,11 +42,16 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 	const [confirmation, setConfirmation] = useState("");
 	const disabled = resume.isLocked || offline || operations.busy;
 	const otherPrimary = list.data?.find((item) => item.isPrimary && item.id !== resume.id);
-	const listState = offline ? "offline" : list.isPending ? "pending" : list.isError ? "error" : "ready";
+	const listState = offline ? "offline" : shareListState(list);
 	const searchBlocked = !resume.isPublic || resume.hasPassword;
 	const shortLink = username ? publicResumeUrl(origin, { username, slug: resume.slug, isPrimary: true }) : undefined;
 	// The short link opens the primary resume only while it's published; at any other time it would copy a dead link.
-	const shortLinkOpens = resume.isPrimary ? resume.isPublic : (otherPrimary?.isPublic ?? false);
+	const opens = shortLinkOpens({
+		isPrimary: resume.isPrimary,
+		isPublic: resume.isPublic,
+		listState,
+		otherPrimaryIsPublic: otherPrimary?.isPublic,
+	});
 
 	const preview = () =>
 		operations.run(async () => {
@@ -99,7 +104,7 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 											: t`Your short link and custom domain point to “${otherPrimary.name}”, which isn't published.`
 										: resume.isPublic
 											? t`Turn this on to open this resume at your short link and custom domain.`
-											: t`Publish this resume to open it at your short link and custom domain.`
+											: `${t`Publish this resume to open it at your short link and custom domain.`} ${t`If another resume holds Primary, turn it on for this one instead.`}`
 					}
 					trailing={
 						<Switch
@@ -116,7 +121,7 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 					<ListRow
 						title={shortLink.replace(/^https?:\/\//, "")}
 						leading="link-simple-horizontal"
-						disabled={offline || !shortLinkOpens}
+						disabled={offline || !opens}
 						onPress={() =>
 							void operations.run(async () => {
 								await Clipboard.setStringAsync(shortLink);

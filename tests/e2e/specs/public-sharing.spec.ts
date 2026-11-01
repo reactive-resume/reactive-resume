@@ -81,3 +81,55 @@ test("a non-primary resume can copy the short link another published primary ser
 	await expect(addresses.getByRole("button", { name: "Copy", exact: true })).toBeEnabled();
 	await expect(addresses).toContainText(`open “${primaryName}”`);
 });
+
+test("a failed primary lookup stops Copy for a cached primary that is no longer published", async ({
+	authPage: page,
+	account,
+}, testInfo) => {
+	test.setTimeout(150_000);
+	const primaryName = await createSampleResumeFromDashboard(page, testInfo);
+	await openSidebarSection(page, "Sharing");
+	await page.getByRole("button", { name: "Publish", exact: true }).click();
+	await expect(page.getByRole("switch", { name: "Primary resume", exact: true })).toBeChecked();
+
+	const list = (await (await page.request.get("/api/openapi/resumes")).json()) as
+		| { id: string; name: string }[]
+		| { items: { id: string; name: string }[] };
+	const primaryId = (Array.isArray(list) ? list : list.items).find((resume) => resume.name === primaryName)?.id;
+	if (!primaryId) throw new Error("The published resume is missing from the list.");
+
+	const secondName = "Second private resume";
+	const created = await page.request.post("/api/openapi/resumes", { data: { name: secondName, tags: [] } });
+	expect(created.ok()).toBe(true);
+	const secondId = (await created.json()) as string;
+	await page.goto(`/builder/${secondId}`);
+	await openSidebarSection(page, "Sharing");
+	const addresses = page.getByRole("region", { name: "Short link and domain" });
+	const copy = addresses.getByRole("button", { name: "Copy", exact: true });
+	await expect(copy).toBeEnabled();
+	await expect(addresses).toContainText(`open “${primaryName}”`);
+
+	// The primary is unpublished outside this page. The cached row still says it is public until the list is read again.
+	expect((await page.request.put(`/api/openapi/resumes/${primaryId}`, { data: { isPublic: false } })).ok()).toBe(true);
+	// Let the cached list go stale, then make its read fail. Remounting Share asks for it again (refetchOnMount).
+	await page.waitForTimeout(62_000);
+	await page.route("**/*", (route) =>
+		route.request().url().includes("/api/rpc/resume/list") ? route.abort("failed") : route.continue(),
+	);
+	await page.getByRole("link", { name: "Back to documents", exact: true }).click();
+	await page.getByRole("link", { name: secondName, exact: true }).click();
+	await openSidebarSection(page, "Sharing");
+
+	await expect(addresses.getByText(/Couldn't check which resume opens your short link/)).toBeVisible();
+	await expect(copy).toBeDisabled();
+	// The cached target really is dead: this is the 404 Copy must never copy.
+	expect((await page.request.get(`/${account.username}`)).status()).toBe(404);
+
+	// A successful retry returns to the truthful no-primary state, still without a dead Copy.
+	await page.unroute("**/*");
+	await page.getByRole("link", { name: "Back to documents", exact: true }).click();
+	await page.getByRole("link", { name: secondName, exact: true }).click();
+	await openSidebarSection(page, "Sharing");
+	await expect(addresses.getByText(/Couldn't check which resume opens your short link/)).toBeHidden();
+	await expect(addresses.getByRole("button", { name: "Copy", exact: true })).toBeDisabled();
+});
