@@ -178,7 +178,7 @@ for (const dated of [true, false])
 		await page.getByRole("button", { name: "Read it for me" }).click();
 		const answered = page.waitForResponse((response) => response.url().includes("/career/applyReply"));
 		await page.getByRole("button", { name: "Apply 1 change" }).click({ timeout: 30_000 });
-		// The Undo window closes and the change is saved.
+		// Apply commits before its response; Undo can reverse the committed change.
 		expect((await answered).ok()).toBe(true);
 		// Back on the list before its reload lands (slow network): the list still shows Applied.
 		const list = await holdCarrying(page, "listSummary");

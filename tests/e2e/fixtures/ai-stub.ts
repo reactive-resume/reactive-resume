@@ -11,6 +11,7 @@ import { createServer } from "node:http";
 type ChatMessage = { role: string; content?: unknown; tool_call_id?: string; tool_calls?: unknown[] };
 type ChatRequest = {
 	messages: ChatMessage[];
+	model?: string;
 	tools?: Array<{ function: { name: string; parameters?: { properties?: Record<string, unknown> } } }>;
 	stream?: boolean;
 };
@@ -308,11 +309,12 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 				text(message.content).includes("Check the posting's requirements"),
 			);
 			const prompt = parsed.messages.map((message) => text(message.content)).join("\n");
-			const structured = prompt.includes("Read the employer's message")
-				? REPLY
-				: prompt.includes("Write the user's answer to the application form question")
-					? TIGHTENED
-					: null;
+			const structured =
+				parsed.model === "offer-fixture" && prompt.includes("Read the employer's message")
+					? REPLY
+					: prompt.includes("Write the user's answer to the application form question")
+						? TIGHTENED
+						: null;
 			const asksForRoles = parsed.messages.some((message) =>
 				text(message.content).includes("Suggest up to five plausible target job titles"),
 			);

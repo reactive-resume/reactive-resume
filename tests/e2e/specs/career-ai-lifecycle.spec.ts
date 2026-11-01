@@ -19,9 +19,9 @@ test.beforeEach(async ({ authPage }) => {
 	test.setTimeout(120_000);
 });
 
-async function connect(page: Page, label = "Demo connection") {
+async function connect(page: Page, label = "Demo connection", model = "stub") {
 	const provider = await page.request.post("/api/openapi/ai-providers", {
-		data: { label, provider: "openai-compatible", model: "stub", baseURL: stub.baseURL, apiKey: "stub-key" },
+		data: { label, provider: "openai-compatible", model, baseURL: stub.baseURL, apiKey: "stub-key" },
 	});
 	await expect(provider).toBeOK();
 	const { id } = (await provider.json()) as { id: string };
@@ -105,7 +105,7 @@ test("a provider's refusal is told in the app's words with a way to change conne
 
 test("Apply is saved before a reload, and Undo reverses only what it set", async ({ authPage: page }, testInfo) => {
 	await page.setViewportSize({ width: 1440, height: 1000 });
-	await connect(page);
+	await connect(page, "Demo connection", "offer-fixture");
 	const id = await createApplication(page, "Brightpath");
 	const application = async () =>
 		(await (await page.request.get(`/api/openapi/applications/${id}`)).json()) as {

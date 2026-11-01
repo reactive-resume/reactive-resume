@@ -162,7 +162,11 @@ test("Job match on a base resume saves the job with a copy and keeps the base un
 	});
 	await page.getByRole("button", { name: "Save job and make a copy" }).click();
 	// A dropped connection is reported as such; the form stays, ready to try again.
-	await expect(page.getByRole("region", { name: "Notifications" }).getByText("Failed to fetch")).toBeVisible();
+	await expect(
+		page
+			.getByRole("region", { name: "Notifications" })
+			.getByText("Couldn't reach Reactive Resume. Check your internet connection, then try again."),
+	).toBeVisible();
 	await page.getByRole("button", { name: "Save job and make a copy" }).click();
 
 	await page.waitForURL((url) => url.pathname.startsWith("/builder/") && !url.pathname.endsWith(base));
@@ -362,6 +366,8 @@ for (const outcome of ["saved", "failed"] as const)
 		await expect(page.getByText("1 application moved to Offer")).toBeVisible();
 		expect(heldWrites).toBe(1);
 		release();
+		// A longer connection-error toast can appear under the pointer and pause the Undo countdown.
+		await page.mouse.move(0, 0);
 
 		await expect.poll(async () => (await application(page, a)).status, { timeout: 15_000 }).toBe("offer");
 		const history = await api<{ activity: { type: string; stage?: string }[] }>(page, "get", `/applications/${a}`);
