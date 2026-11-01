@@ -21,6 +21,8 @@ export const Route = createFileRoute("/dashboard/applications/$applicationId/{-$
 		story: z.string().min(1).optional().catch(undefined),
 		// "Add the offer's terms": Messages opens with the offer form.
 		offer: z.literal("new").optional().catch(undefined),
+		// The interview round to work on, from links to a later round of the same application.
+		round: z.string().min(1).optional().catch(undefined),
 	}),
 	component: RouteComponent,
 });

@@ -439,7 +439,7 @@ it("hands the selected story to Practise for the next interview", async () => {
 	expect(api.navigate).toHaveBeenCalledWith(
 		expect.objectContaining({
 			params: { applicationId: "next-application", tab: "practise" },
-			search: { speak: true, story: "chosen-story" },
+			search: { speak: true, story: "chosen-story", round: "next-interview" },
 		}),
 	);
 });

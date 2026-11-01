@@ -43,7 +43,6 @@ export function useOpportunities() {
 	return useQuery({
 		...orpc.career.opportunities.queryOptions({ input: {} }),
 		enabled: session.status === "signed-in",
-		retry: false,
 		queryKey: [...orpc.career.opportunities.key(), session.server],
 	});
 }

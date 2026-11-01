@@ -211,7 +211,7 @@ export function TodayScreen() {
 										<Pressable
 											key={item.interview.id}
 											accessibilityRole="link"
-											onPress={() => router.push(routes.application(item.application.id, "prepare"))}
+											onPress={() => router.push(routes.application(item.application.id, "prepare", item.interview.id))}
 											style={{ minHeight: size.hit, justifyContent: "center" }}
 										>
 											<Text color="ink2">
@@ -491,7 +491,7 @@ export function TodayScreen() {
 										{row.lastRun?.status === "failed"
 											? row.intervalDays
 												? t`Last run failed`
-												: t`Failed · open to try again`
+												: t`Failed · open to check it`
 											: !row.intervalDays && row.lastQueuedAt
 												? row.lastRun?.status === "queued" || row.lastRun?.status === "running"
 													? t`Running`

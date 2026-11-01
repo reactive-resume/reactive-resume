@@ -336,7 +336,8 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 	const { when } = useCareerTime();
 	const knowledge = useCoachKnowledge(null);
 	const { data: applications, isPending, isError, refetch } = useQuery(applicationsListQueryOptions());
-	const upcoming = upcomingInterviews(collectInterviews(applications ?? []), now).slice(0, 5);
+	const open = (applications ?? []).filter((application) => application.status !== "closed");
+	const upcoming = upcomingInterviews(collectInterviews(open), now).slice(0, 5);
 	const story = knowledge.allStories.find((item) => item.id === storyId);
 	const usable = knowledge.stories.some((item) => item.id === storyId);
 	const label = (
@@ -394,20 +395,16 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 			</Tooltip>
 		);
 
-	const practise = (applicationId: string) =>
+	const practise = (item: (typeof upcoming)[number]) =>
 		void navigate({
 			to: "/dashboard/applications/$applicationId/{-$tab}",
-			params: { applicationId, tab: "practise" },
-			search: { speak: true, story: storyId },
+			params: { applicationId: item.application.id, tab: "practise" },
+			search: { speak: true, story: storyId, round: item.interview.id },
 		});
 	const [next] = upcoming;
 	if (upcoming.length === 1 && next)
 		return (
-			<Button
-				variant="ghost"
-				className="h-8 px-2.5 text-[13px] text-ink-2"
-				onClick={() => practise(next.application.id)}
-			>
+			<Button variant="ghost" className="h-8 px-2.5 text-[13px] text-ink-2" onClick={() => practise(next)}>
 				<Icon name="microphone" size={18} />
 				<Trans context="Button: rehearse interview answers">Practice for {next.application.company}</Trans>
 			</Button>
@@ -425,7 +422,7 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 						<Trans>Practice for which interview?</Trans>
 					</DropdownMenuLabel>
 					{upcoming.map((item) => (
-						<DropdownMenuItem key={item.interview.id} onClick={() => practise(item.application.id)}>
+						<DropdownMenuItem key={item.interview.id} onClick={() => practise(item)}>
 							<span className="grid min-w-0">
 								<span className="truncate">{item.application.company}</span>
 								<span className="text-xs text-ink-3">{when(item.start)}</span>

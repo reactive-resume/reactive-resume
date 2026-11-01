@@ -857,6 +857,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 							<Link
 								to="/dashboard/applications/$applicationId/{-$tab}"
 								params={{ applicationId: item.application.id, tab: "prepare" }}
+								search={{ round: item.interview.id }}
 								className="flex min-w-0 items-baseline gap-2 rounded-sm text-[13px] hover:underline"
 							>
 								<span className="shrink-0 text-ink-3">{when(item.start)}</span>
@@ -939,7 +940,7 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 		// A one-off's queued run goes by its outcome: still running or retrying, failed after its last try, or done.
 		if (!row.intervalDays && row.lastQueuedAt) {
 			const run = row.lastRun?.status;
-			if (run === "failed") return t`Failed · ${day(row.nextRunAt)} · open to try again`;
+			if (run === "failed") return t`Failed · ${day(row.nextRunAt)} · open to check it`;
 			if (run === "queued" || run === "running") return t`Running · ${day(row.nextRunAt)}`;
 			return t`Done · ${day(row.nextRunAt)}`;
 		}

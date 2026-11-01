@@ -81,7 +81,8 @@ export const careerJobs = {
 					),
 				),
 			)
-			.orderBy(tables.careerJob.scheduleId, desc(tables.careerJob.dueAt));
+			// The run queued last, not the one due last: a schedule moved earlier queues a run due before an older one.
+			.orderBy(tables.careerJob.scheduleId, desc(tables.careerJob.createdAt), desc(tables.careerJob.id));
 		const latest = new Map(runs.map((run) => [run.scheduleId, run]));
 		return listed.map((row) => {
 			const run = latest.get(row.id);

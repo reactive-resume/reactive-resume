@@ -125,6 +125,8 @@ function ScheduleForm({
 		};
 	});
 	const [draft, setDraft] = useState(initial);
+	// A lead the person picked stays; until then it follows the chosen interview (web schedule sheet).
+	const [leadChosen, setLeadChosen] = useState(false);
 	const [picker, setPicker] = useState<"date" | "time" | null>(null);
 	const [setup, setSetup] = useState(false);
 	const [validation, setValidation] = useState<string>();
@@ -244,7 +246,13 @@ function ScheduleForm({
 						<SelectSheet
 							label={t`Interview`}
 							value={draft.interviewId}
-							onChange={(interviewId) => set({ interviewId })}
+							onChange={(interviewId) => {
+								const chosen = upcoming.find((row) => row.interview.id === interviewId);
+								set({
+									interviewId,
+									...(leadChosen || schedule?.lead || !chosen ? {} : { lead: firstLeadAhead(chosen.start, timezone) }),
+								});
+							}}
 							options={upcoming.map((row) => ({
 								value: row.interview.id,
 								label: `${row.application.company} · ${new Intl.DateTimeFormat(locale, { timeZone: timezone, dateStyle: "short", timeStyle: "short" }).format(row.start)}`,
@@ -254,7 +262,10 @@ function ScheduleForm({
 						<SelectSheet
 							label={t`Prepare a briefing`}
 							value={draft.lead}
-							onChange={(lead) => set({ lead })}
+							onChange={(lead) => {
+								setLeadChosen(true);
+								set({ lead });
+							}}
 							options={[
 								{ value: "24h", label: t`24 hours before` },
 								{ value: "2h", label: t`2 hours before` },

@@ -704,12 +704,14 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 		await getDb()
 			.insert(tables.careerJob)
 			.values([
+				// Queued first for a later time, then the schedule moved earlier and queued again: the newer run counts.
 				{
 					id: "earlier-completed",
 					userId: "alice",
 					scheduleId: saved.id,
-					dueAt: new Date("2026-10-29T08:00:00Z"),
+					dueAt: new Date("2026-10-31T08:00:00Z"),
 					status: "completed",
+					createdAt: new Date("2026-10-29T08:00:00Z"),
 				},
 				{
 					id: "latest-failed",
@@ -718,6 +720,7 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 					dueAt: new Date("2026-10-30T08:00:00Z"),
 					status: "failed",
 					error: "This schedule failed.",
+					createdAt: new Date("2026-10-30T08:00:00Z"),
 				},
 			]);
 		expect(await jobs.list("alice")).toMatchObject([

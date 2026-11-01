@@ -156,6 +156,8 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 
 	// The form starts once its data is in, and again for each schedule opened; closing drops it.
 	const [form, setForm] = useState<Form | null>(null);
+	// A lead the person picked stays; until then it follows the chosen interview.
+	const [leadChosen, setLeadChosen] = useState(false);
 	if (shown && form?.target !== shown && schedules && profile && applications && !providersLoading) {
 		const [head, kind, applicationId] = shown.split(":");
 		const existing = head === "new" ? null : (schedules.find((row) => row.id === shown) ?? null);
@@ -178,6 +180,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 			email: existing?.email ?? false,
 		};
 		setForm({ target: shown, existing, initial, draft: initial, touched: {}, submitted: false, discarding: false });
+		setLeadChosen(false);
 	}
 
 	const draft = form?.draft;
@@ -401,7 +404,15 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 												{...props}
 												disabled={choices.length === 0}
 												value={draft.interviewId}
-												onChange={(event) => set({ interviewId: event.target.value })}
+												onChange={(event) => {
+													const chosen = choices.find((item) => item.interview.id === event.target.value);
+													set({
+														interviewId: event.target.value,
+														...(leadChosen || form?.existing?.lead || !chosen
+															? {}
+															: { lead: firstLeadAhead(chosen.start, timeZone, now) }),
+													});
+												}}
 												className="pointer-coarse:text-base"
 											>
 												{choices.map((item) => (
@@ -419,7 +430,10 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 									<Segments
 										label={t`Prepare a briefing`}
 										value={draft.lead}
-										onChange={(lead) => set({ lead: lead as Lead })}
+										onChange={(lead) => {
+											setLeadChosen(true);
+											set({ lead: lead as Lead });
+										}}
 										options={[
 											{ value: "24h", label: t`24 hours before` },
 											{ value: "2h", label: t`2 hours before` },

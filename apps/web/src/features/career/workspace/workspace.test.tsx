@@ -80,6 +80,7 @@ vi.mock("@/features/applications/use-application-actions", () => ({
 vi.mock("../coach-thread", () => ({
 	useCoachKnowledge: () => ({
 		stories: api.stories,
+		allStories: api.stories,
 		loaded: !api.knowledgeError,
 		isError: api.knowledgeError,
 		retry: api.retryKnowledge,
@@ -366,9 +367,7 @@ it("sends the selected story with feedback and offers recovery if Knowledge cann
 	api.knowledgeError = false;
 	api.stories = [];
 	view.rerender(<PractiseTab {...props} story="story-1" />);
-	expect(screen.getByRole("alert")).toHaveTextContent(
-		"This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it.",
-	);
+	expect(screen.getByRole("alert")).toHaveTextContent("This story is unavailable or uses facts that are switched off.");
 	expect(screen.queryByRole("button", { name: "Get feedback" })).toBeNull();
 	expect(api.generate).toHaveBeenCalledOnce();
 });
