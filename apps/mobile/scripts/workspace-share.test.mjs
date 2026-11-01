@@ -3,8 +3,8 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { test } from "node:test";
 
-const require = createRequire(new URL("../../server/package.json", import.meta.url));
-const { transformSync } = createRequire(require.resolve("tsx"))("esbuild");
+const serverRequire = createRequire(new URL("../../server/package.json", import.meta.url));
+const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const source = transformSync(readFileSync(new URL("../src/features/workspace/share.ts", import.meta.url), "utf8"), {
 	loader: "ts",
 	format: "cjs",
