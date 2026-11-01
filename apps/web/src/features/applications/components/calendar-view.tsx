@@ -43,7 +43,7 @@ type ApplicationCalendarProps = {
 };
 
 export function ApplicationCalendar({ compact, applications, allApplications, onOpen }: ApplicationCalendarProps) {
-	const { locale, timeZone, time } = useCareerTime();
+	const { locale, timeZone, plainTime, timeRange } = useCareerTime();
 	const now = useNow();
 	const todayKey = dayKey(now, timeZone);
 	// Grid dates are civil days carried in UTC; interview start/end remain absolute instants.
@@ -191,7 +191,7 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 											<InterviewChip
 												key={item.interview.id}
 												item={item}
-												time={time(item.start)}
+												time={plainTime(item.start)}
 												onOpen={() => edit(item)}
 											/>
 										))}
@@ -213,7 +213,7 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 														<InterviewChip
 															key={item.interview.id}
 															item={item}
-															time={time(item.start)}
+															time={plainTime(item.start)}
 															onOpen={() => edit(item)}
 														/>
 													))}
@@ -268,7 +268,7 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 									<UpcomingCard
 										key={item.interview.id}
 										item={item}
-										timeRange={`${time(item.start)} – ${time(item.end)}`}
+										timeRange={timeRange(item.start, item.end)}
 										locale={locale}
 										onEdit={() => edit(item)}
 										onOpenApplication={() => onOpen(item.application)}

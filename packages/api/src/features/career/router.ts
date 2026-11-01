@@ -18,6 +18,7 @@ import {
 	careerFactSchema,
 	careerNotificationSchema,
 	careerOpportunitySchema,
+	careerScheduleListItemSchema,
 	careerScheduleSchema,
 	careerStorySchema,
 	savedItemSchema,
@@ -75,7 +76,7 @@ export const careerRouter = {
 			summary: "List career schedules",
 		})
 		.input(z.object({}))
-		.output(z.array(careerScheduleSchema))
+		.output(z.array(careerScheduleListItemSchema))
 		.handler(({ context }) => careerJobs.list(context.user.id)),
 	saveSchedule: protectedProcedure
 		.route({

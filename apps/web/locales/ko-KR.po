@@ -1181,6 +1181,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "이후에 잊은 사실"
@@ -4502,7 +4506,7 @@ msgstr "이야기를 저장할 수 없습니다. 다시 시도해 보세요."
 msgid "Couldn't save the tags. Try again."
 msgstr "태그를 저장할 수 없습니다. 다시 시도해 보세요."
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "시간대를 저장할 수 없습니다. 다시 시도해 보세요."
 
@@ -6274,6 +6278,11 @@ msgstr "지식에서 켜 둔 사실, 스토리, 선호 사항"
 msgid "Failed"
 msgstr "실패한"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to check it"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
@@ -6936,9 +6945,18 @@ msgstr "헤브루어"
 msgid "Help & docs"
 msgstr "도움말 및 문서"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "성과를 상황, 과제, 행동, 결과, 성찰 스토리로 만들도록 도와주세요."
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7919,6 +7937,10 @@ msgstr "마지막으로 수정됨"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7932,6 +7954,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "마지막으로 사용됨"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8190,6 +8216,10 @@ msgstr ""
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -10758,6 +10788,16 @@ msgstr "연습 · 오프닝, 소리 내어 약 40초"
 msgid "Practice another question"
 msgstr "다른 질문 연습하기"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "{company} 면접을 연습하세요."
@@ -12328,6 +12368,11 @@ msgstr "다시 실행"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "고객 리서치 진행"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -15144,8 +15189,12 @@ msgid "This step is optional, but recommended."
 msgstr "이 단계는 선택 사항이지만 권장됩니다."
 
 #: src/features/career/workspace/practise.tsx
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
+
+#: src/features/career/workspace/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
-msgstr "이 스토리를 사용할 수 없거나 꺼진 사실을 사용하고 있습니다."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -15215,6 +15264,10 @@ msgstr "시간, 링크, 만날 사람, 보낸 내용"
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "시간은 {timeZone} 기준으로 표시됩니다."
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15892,6 +15945,10 @@ msgstr ""
 msgid "Use this device's timezone ({device})"
 msgstr "이 기기의 시간대 사용({device})"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "이 제공업체를 이용하세요"
@@ -16318,6 +16375,10 @@ msgstr "검사 내용"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "해당 기본 단계에 따라 알림, 제출한 문서, 인사이트의 처리가 결정됩니다. 나중에 변경할 수 없으므로 변경하려면 새 단계를 추가하세요."
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"

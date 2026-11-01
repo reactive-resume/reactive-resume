@@ -1,7 +1,7 @@
 import type { RouterOutput } from "@/api/client";
 import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
 import { withUndo } from "./undo";
@@ -37,6 +37,16 @@ export function useCareerQueries() {
 	return { facts, stories, profile };
 }
 
+/** Roles discovery found, shared by Today and the coach's starters. */
+export function useOpportunities() {
+	const session = useSession();
+	return useQuery({
+		...orpc.career.opportunities.queryOptions({ input: {} }),
+		enabled: session.status === "signed-in",
+		queryKey: [...orpc.career.opportunities.key(), session.server],
+	});
+}
+
 export function useTodayQueries() {
 	const session = useSession();
 	const options = { enabled: session.status === "signed-in", retry: false };
@@ -45,11 +55,7 @@ export function useTodayQueries() {
 		...options,
 		queryKey: [...orpc.career.notifications.key(), session.server],
 	});
-	const opportunities = useQuery({
-		...orpc.career.opportunities.queryOptions({ input: {} }),
-		...options,
-		queryKey: [...orpc.career.opportunities.key(), session.server],
-	});
+	const opportunities = useOpportunities();
 	const schedules = useQuery({
 		...orpc.career.schedules.queryOptions({ input: {} }),
 		...options,
@@ -77,15 +83,41 @@ export function useCareerTime() {
 	const profile = useProfile();
 	const { i18n } = useLingui();
 	const timeZone = profile.data?.timezone ?? "UTC";
+	const device = Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
+	// When the account's timezone isn't this device's, times say which zone they're in ("16:56 UTC").
+	const labelled = !!device && device !== timeZone;
 	return {
 		profile,
 		timeZone,
+		/** This device's timezone, when it differs from the account's. */
+		deviceTimeZone: labelled ? device : undefined,
 		locale: i18n.locale,
 		when: (value: Date | string) =>
-			new Intl.DateTimeFormat(i18n.locale, { timeZone, dateStyle: "medium", timeStyle: "short" }).format(
-				new Date(value),
-			),
+			new Intl.DateTimeFormat(i18n.locale, {
+				timeZone,
+				month: "short",
+				day: "numeric",
+				year: "numeric",
+				hour: "numeric",
+				minute: "2-digit",
+				...(labelled ? { timeZoneName: "short" as const } : {}),
+			}).format(new Date(value)),
 	};
+}
+
+/** Saves the account's timezone, as Settings → Preferences does. */
+export function useSaveTimezone() {
+	const { t } = useLingui();
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationKey: ["settings", "timezone"],
+		mutationFn: async (value: string) => {
+			const result = await client.auth.updateProfile({ timezone: value });
+			if (!result.status) throw new Error("Timezone update rejected");
+		},
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: orpc.auth.getProfile.key() }),
+		onError: () => showToast({ message: t`Couldn't save the timezone. Try again.` }),
+	});
 }
 
 export function useNow() {

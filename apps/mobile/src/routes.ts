@@ -31,7 +31,10 @@ export const routes = {
 	newJob: () => "/applications?create=1" as const,
 	search: () => "/search" as const,
 	atsChecker: () => "/ats-checker" as const,
-	application: (id: string, tab: ApplicationTab = "apply") => `/applications/${segment(id)}/${tab}` as const,
+	application: (id: string, tab: ApplicationTab = "apply", round?: string) =>
+		(round
+			? `/applications/${segment(id)}/${tab}?round=${encodeURIComponent(round)}`
+			: `/applications/${segment(id)}/${tab}`) as `/applications/${string}`,
 	/** The application detail; it shares the dynamic `[tab]` route with the workspace tabs. */
 	applicationDetails: (id: string) => `/applications/${segment(id)}/details` as const,
 	publicResume: (username: string, slug: string) => `/r/${segment(username)}/${segment(slug)}` as const,

@@ -80,6 +80,7 @@ vi.mock("@/features/applications/use-application-actions", () => ({
 vi.mock("../coach-thread", () => ({
 	useCoachKnowledge: () => ({
 		stories: api.stories,
+		allStories: api.stories,
 		loaded: !api.knowledgeError,
 		isError: api.knowledgeError,
 		retry: api.retryKnowledge,

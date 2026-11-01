@@ -1181,6 +1181,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "Fakt, ktorý ste medzitým nechali zabudnúť"
@@ -4502,7 +4506,7 @@ msgstr "Príbeh sa nepodarilo uložiť. Skúste to znova."
 msgid "Couldn't save the tags. Try again."
 msgstr "Tagy sa nepodarilo uložiť. Skúste to znova."
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "Časové pásmo sa nepodarilo uložiť. Skúste to znova."
 
@@ -6274,6 +6278,11 @@ msgstr "Fakty, príbehy a preferencie zapnuté v Znalostiach"
 msgid "Failed"
 msgstr "Nepodarilo sa"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to check it"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
@@ -6936,9 +6945,18 @@ msgstr "Hebrejčina"
 msgid "Help & docs"
 msgstr "Pomocník a dokumenty"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "Pomôž mi premeniť úspech na príbeh v štruktúre Situácia, Úloha, Akcia, Výsledok a Reflexia."
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7919,6 +7937,10 @@ msgstr "Naposledy upravené"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7932,6 +7954,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "Naposledy použité"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8190,6 +8216,10 @@ msgstr ""
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -10758,6 +10788,16 @@ msgstr "Nácvik · Váš úvod, asi 40 sekúnd nahlas"
 msgid "Practice another question"
 msgstr "Nacvičiť ďalšiu otázku"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "Nacvičte si pohovory v {company}."
@@ -12328,6 +12368,11 @@ msgstr "Spustiť znova"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "Robiť výskum so zákazníkmi"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -15144,8 +15189,12 @@ msgid "This step is optional, but recommended."
 msgstr "Tento krok je voliteľný, ale odporúčaný."
 
 #: src/features/career/workspace/practise.tsx
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
+
+#: src/features/career/workspace/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
-msgstr "Tento príbeh nie je k dispozícii alebo používa vypnuté fakty."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -15215,6 +15264,10 @@ msgstr "Čas, odkaz, s kým, čo ste poslali"
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "Časy sú zobrazené v pásme {timeZone}."
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15892,6 +15945,10 @@ msgstr ""
 msgid "Use this device's timezone ({device})"
 msgstr "Použiť časové pásmo tohto zariadenia ({device})"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "Použite tohto poskytovateľa"
@@ -16318,6 +16375,10 @@ msgstr "Čo kontroluje"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "To, ako sa etapa počíta, určuje pripomienky, odoslané dokumenty a Prehľady. Neskôr to nemožno zmeniť; pridajte radšej novú etapu."
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"

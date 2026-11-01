@@ -1181,6 +1181,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "その後忘れさせた事実"
@@ -4502,7 +4506,7 @@ msgstr "ストーリーを保存できませんでした。もう一度お試し
 msgid "Couldn't save the tags. Try again."
 msgstr "タグを保存できませんでした。もう一度お試しください。"
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "タイムゾーンを保存できませんでした。もう一度お試しください。"
 
@@ -6274,6 +6278,11 @@ msgstr "ナレッジでオンになっている事実、ストーリー、希望
 msgid "Failed"
 msgstr "失敗した"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to check it"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
@@ -6936,9 +6945,18 @@ msgstr "ヘブライ語"
 msgid "Help & docs"
 msgstr "ヘルプとドキュメント"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "実績を、状況・課題・行動・結果・学びのストーリーにまとめるのを手伝ってください。"
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7919,6 +7937,10 @@ msgstr "最終編集"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7932,6 +7954,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "最後に使用した"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8190,6 +8216,10 @@ msgstr ""
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -10758,6 +10788,16 @@ msgstr "練習 · 冒頭トーク、声に出して約40秒"
 msgid "Practice another question"
 msgstr "別の質問を練習"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "{company}の面接に向けて練習しましょう。"
@@ -12328,6 +12368,11 @@ msgstr "再実行"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "顧客とのリサーチを実施する"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -15144,8 +15189,12 @@ msgid "This step is optional, but recommended."
 msgstr "このステップは任意ですが、実施することをおすすめします。"
 
 #: src/features/career/workspace/practise.tsx
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
+
+#: src/features/career/workspace/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
-msgstr "このストーリーは利用できないか、オフになっている事実を使用しています。"
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -15215,6 +15264,10 @@ msgstr "時間、リンク、面接相手、送信した内容"
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "時刻は{timeZone}で表示されます。"
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15892,6 +15945,10 @@ msgstr ""
 msgid "Use this device's timezone ({device})"
 msgstr "このデバイスのタイムゾーンを使用（{device}）"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "このプロバイダーを使用する"
@@ -16318,6 +16375,10 @@ msgstr "チェック内容"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "対応する標準ステージによって、リマインダー、提出書類、インサイトでの扱いが決まります。後から変更できないため、変更する場合は新しいステージを追加してください。"
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
