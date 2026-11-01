@@ -61,7 +61,7 @@ test("Fit and Interview prep keep notices in a vertical body above the action", 
 	await expect(await page.request.post(`/api/openapi/ai-providers/${providerId}/test`)).toBeOK();
 
 	await page.goto(`/dashboard/applications/${id}/fit`);
-	const fitNotice = page.getByText(/Sends this application's posting, notes and documents/);
+	const fitNotice = page.getByText("Sends your preferences to Fictional local provider.", { exact: true });
 	const fitAction = page.getByRole("button", { name: "Check fit", exact: true });
 	await expect(fitNotice).toBeVisible();
 	await expect(fitAction).toBeVisible();
@@ -73,7 +73,9 @@ test("Fit and Interview prep keep notices in a vertical body above the action", 
 	});
 
 	await page.goto(`/dashboard/applications/${id}/prepare`);
-	const prepNotice = page.getByText(/Sends this application \(posting, notes, interview details\)/);
+	const prepNotice = page.getByText("Sends your preferences and the interview details to Fictional local provider.", {
+		exact: true,
+	});
 	const prepAction = page.getByRole("button", { name: "Plan my preparation", exact: true });
 	await expect(prepNotice).toBeVisible();
 	await expect(prepAction).toBeVisible();
