@@ -47,7 +47,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			show_in_search_engines boolean NOT NULL DEFAULT false, hide_contact_details boolean NOT NULL DEFAULT false,
 			is_primary boolean NOT NULL DEFAULT false, is_locked boolean NOT NULL DEFAULT false, auto_name boolean NOT NULL DEFAULT false,
 			auto_slug boolean NOT NULL DEFAULT false,
-			trashed_at timestamptz, password text, application_id text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
+			trashed_at timestamptz, password text, application_id text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), edited_at timestamptz DEFAULT now());
 			CREATE TABLE resume_version (id text PRIMARY KEY, resume_id text, user_id text, data jsonb, kind text, session_id text, name text, created_at timestamptz NOT NULL DEFAULT now());
 			CREATE UNIQUE INDEX resume_version_session_unique ON resume_version(resume_id,session_id) WHERE kind='auto'; CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz, resume_id text, status text DEFAULT 'saved', sent_resume_version_id text);`,
 		);
@@ -56,6 +56,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			"20260905121445_cover_letter_library",
 			"20261001042749_v6_release",
 			"20261009132123_left_proteus",
+			"20261101050044_rx114_content_edited_at",
 		]) {
 			const migration = await readFile(
 				new URL(`../../../../../migrations/${name}/migration.sql`, import.meta.url),
@@ -63,11 +64,12 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			);
 			// This fixture owns only the letter tables; full upgrade coverage lives in the DB package.
 			for (const statement of migration.split("--> statement-breakpoint")) {
-				const sql = statement.trim().replace(/^--[^\n]*\n/, "");
+				const sql = statement.trim().replace(/^(?:--[^\n]*\n)+/, "");
 				if (
 					/^(?:CREATE TABLE|ALTER TABLE) "cover_letter(?:_version)?"|^CREATE (?:UNIQUE )?INDEX .* ON "cover_letter(?:_version)?"/.test(
 						sql,
 					) ||
+					/^CREATE FUNCTION "touch_edited_at"|^CREATE TRIGGER "cover_letter_edited_at"/.test(sql) ||
 					/^ALTER TABLE "application" .*"sent_cover_letter_version_id"/.test(sql)
 				) {
 					await fixture.pool.query(sql.replaceAll('"public".', ""));

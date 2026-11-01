@@ -96,16 +96,34 @@ export function serveResumePage(
 		: showPage(request, match, trustedClient, options);
 }
 
+/**
+ * A moved public page. A slug's old address is a stable redirect to the same document, so it stays a permanent 301;
+ * a username's old address stops working after 30 days and the name can then be claimed by another account, so its
+ * redirect must not be cached as permanent (a browser-cached 301 would skip the server and land on the new owner).
+ * Slug mappings expire too; no-store lets a reused slug resolve to its current document.
+ */
+export function movedResponse(
+	request: Request,
+	moved: { username: string; slug: string; isPrimary: boolean; movedBy: "username" | "slug" },
+) {
+	const target = new URL(request.url);
+	target.pathname = publicResumePath(moved);
+	const permanent = moved.movedBy === "slug";
+	return new Response(null, {
+		status: permanent ? 301 : 302,
+		headers: {
+			Location: `${target.pathname}${target.search}`,
+			"Cache-Control": "no-store",
+		},
+	});
+}
+
 async function showPage(request: Request, match: ResumeMatch, trustedClient: string, options: PageOptions) {
 	const previewToken = new URL(request.url).searchParams.get("preview") ?? undefined;
 	const result = await loadPublicWebPage({ match, requestHeaders: request.headers, trustedClient, previewToken });
 
 	if (result.status === "unavailable") return unavailableResponse(request);
-	if (result.status === "moved") {
-		const target = new URL(request.url);
-		target.pathname = publicResumePath({ username: result.username, slug: result.slug });
-		return new Response(null, { status: 301, headers: { Location: `${target.pathname}${target.search}` } });
-	}
+	if (result.status === "moved") return movedResponse(request, result);
 	if (result.status === "password") {
 		const lang = result.locale;
 		const wrongPassword = new URL(request.url).searchParams.has("wrong-password");

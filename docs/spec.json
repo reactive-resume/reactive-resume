@@ -64102,7 +64102,25 @@
 											"updatedAt": {
 												"type": "string",
 												"format": "date-time",
-												"x-native-type": "date"
+												"x-native-type": "date",
+												"description": "When anything about the document last changed, its details included."
+											},
+											"editedAt": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date",
+												"description": "When its content was last edited: a resume's data, or a letter's text, recipient and design. Renames, tags, sharing, locks and Trash don't move it. Library sorting by edited uses it."
+											},
+											"recipient": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "Who a letter is to: its recipient company, else the recipient's name. Null for resumes and blank letters."
 											},
 											"application": {
 												"anyOf": [
@@ -64143,6 +64161,8 @@
 											"trashedAt",
 											"createdAt",
 											"updatedAt",
+											"editedAt",
+											"recipient",
 											"application"
 										]
 									}
@@ -64407,7 +64427,25 @@
 													"updatedAt": {
 														"type": "string",
 														"format": "date-time",
-														"x-native-type": "date"
+														"x-native-type": "date",
+														"description": "When anything about the document last changed, its details included."
+													},
+													"editedAt": {
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date",
+														"description": "When its content was last edited: a resume's data, or a letter's text, recipient and design. Renames, tags, sharing, locks and Trash don't move it. Library sorting by edited uses it."
+													},
+													"recipient": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "Who a letter is to: its recipient company, else the recipient's name. Null for resumes and blank letters."
 													},
 													"application": {
 														"anyOf": [
@@ -64448,6 +64486,8 @@
 													"trashedAt",
 													"createdAt",
 													"updatedAt",
+													"editedAt",
+													"recipient",
 													"application"
 												]
 											}

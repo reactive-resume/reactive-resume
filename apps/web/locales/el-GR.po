@@ -860,7 +860,15 @@ msgstr "{toCheck, plural, one {Το πεδίο # χρειάζεται μια μ�
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# για έλεγχο} other {# για έλεγχο}}"
 
-#. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
+#: src/features/settings/account/profile.tsx
+msgid "{total, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {# document} other {# documents}}"
+msgstr ""
+
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr "{type} · Επεξεργάστηκε {0}"
@@ -1282,6 +1290,11 @@ msgstr "Προσθέστε μια χώρα"
 #: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Προσθέστε ένα γεγονός, π.χ. \"Καθοδήγησα δύο associate PM το 2025\""
+
+#: src/features/documents/document-actions.tsx
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/components/input/chip-input.tsx
 msgid "Add a keyword..."
@@ -2734,6 +2747,7 @@ msgstr ""
 msgid "Capture does not use AI. Review every field before saving."
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
@@ -2756,6 +2770,7 @@ msgstr "Καταλανικά"
 msgid "Certifications"
 msgstr "Πιστοποιήσεις"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/settings/account/security.tsx
@@ -2809,6 +2824,10 @@ msgstr "Αλλάξτε αυτήν την καταχώριση στο χρονο�
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "Αλλαγή ζώνης ώρας"
+
+#: src/features/settings/account/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Change your password"
@@ -3009,6 +3028,7 @@ msgstr ""
 msgid "Choose a file"
 msgstr "Επιλέξτε ένα αρχείο"
 
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose a file to import"
 msgstr "Επιλέξτε ένα αρχείο για εισαγωγή"
@@ -3201,6 +3221,7 @@ msgstr "Έκλεισε ως {label}"
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "Σύμβουλος"
@@ -4313,6 +4334,7 @@ msgstr "Κάλυψη"
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/navigation.tsx
 msgid "Cover letter"
 msgstr "Συνοδευτική επιστολή"
 
@@ -4900,6 +4922,7 @@ msgid "Documentation"
 msgstr "Τεκμηρίωση"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5006,6 +5029,7 @@ msgid "Download failed. Try again."
 msgstr "Η λήψη απέτυχε. Προσπαθήστε ξανά."
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -6670,9 +6694,17 @@ msgstr "Πρόοδος εισαγωγής"
 msgid "Import steps"
 msgstr "Βήματα εισαγωγής"
 
+#: src/features/documents/documents-page.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
 msgstr "Εισαγάγετε αυτό το αρχείο σε ένα δωρεάν Reactive Resume. Κάθε θέμα σας περιμένει στο Check."
+
+#: src/features/documents/documents-page.tsx
+msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a PDF, Word or JSON file."
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
@@ -7123,6 +7155,10 @@ msgstr "Περιοριστείτε σε δύο ή τρεις οικογένει�
 msgid "Keep together"
 msgstr "Μείνετε μαζί"
 
+#: src/features/settings/account/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Keeps the most specific parts"
 msgstr "Διατηρεί τα πιο συγκεκριμένα μέρη"
@@ -7173,6 +7209,7 @@ msgstr "Χμερ"
 msgid "Kind regards,"
 msgstr "Με εκτίμηση,"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -7386,6 +7423,8 @@ msgid "letter"
 msgstr "επιστολή"
 
 #: src/features/assistant/document.ts
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7597,6 +7636,10 @@ msgstr "Σύνδεση…"
 #: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "Εδαφος διά παιγνίδι γκολφ"
+
+#: src/features/settings/account/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/homepage/hero.tsx
 msgid "Lisbon"
@@ -8354,6 +8397,8 @@ msgstr "Νέα αίτηση"
 msgid "New conversation"
 msgstr "Νέα συνομιλία"
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter"
 msgstr ""
@@ -8384,6 +8429,10 @@ msgstr "Νέα σελίδα"
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "Νέος κωδικός πρόσβασης"
+
+#: src/features/documents/documents-page.tsx
+msgid "New resume"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "New roles from your search"
@@ -8475,6 +8524,9 @@ msgid "No applications yet"
 msgstr "Δεν υπάρχουν ακόμη αιτήσεις εργασίας"
 
 #: src/features/documents/document-actions.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Δεν υπάρχουν ακόμη αιτήσεις εργασίας. Προσθέστε ένα στις αιτήσεις εργασίας πρώτα."
@@ -8515,6 +8567,10 @@ msgstr "Χωρίς διορθώσεις"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "No country matches."
 msgstr "Δεν βρέθηκαν χώρες."
+
+#: src/features/documents/documents-page.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -8651,6 +8707,10 @@ msgstr "Δεν βρέθηκαν αποτελέσματα."
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "Χωρίς βιογραφικό"
+
+#: src/features/documents/documents-page.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
@@ -9010,6 +9070,7 @@ msgstr "Η προσφορά αποθηκεύτηκε"
 msgid "Offer type"
 msgstr "Τύπος προσφοράς"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "Προσφορές"
@@ -9444,6 +9505,10 @@ msgstr "Parcel & Co."
 #: src/features/homepage/write.tsx
 msgid "Parcel & Co. · Porto"
 msgstr "Parcel & Co. · Porto"
+
+#: src/features/settings/account/profile.tsx
+msgid "Part of every public link. Old links keep working for 30 days after a change."
+msgstr ""
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
@@ -10939,6 +11004,7 @@ msgstr "περίληψη"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -12033,6 +12099,10 @@ msgstr "Κοινή χρήση ενοτήτων"
 #: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Κοινοποίηση μέσω…"
+
+#: src/features/documents/document-actions.tsx
+msgid "Share…"
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
@@ -13901,7 +13971,13 @@ msgstr "Τίτλος"
 msgid "To"
 msgstr "Να"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/document-card.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/applications/components/calendar-view.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
@@ -13984,6 +14060,7 @@ msgid "Translations"
 msgstr "Μεταφράσεις"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Trash"
@@ -15171,6 +15248,10 @@ msgstr "Γράψτε τους αριθμούς με ψηφία"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Γράψτε σε πέντε μέρη μια ιστορία για κάτι που κάνατε. Αφήστε κενά τα πεδία «Αποτέλεσμα» και «Αναστοχασμός» μέχρι να μπορείτε να τα τεκμηριώσετε."
 
+#: src/features/documents/documents-page.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "Γράψτε την πλήρη διεύθυνση ώστε να αναγνωρίζεται ως σύνδεσμος."
@@ -15486,6 +15567,14 @@ msgstr "Το αρχείο σας"
 msgid "Your focus"
 msgstr "Η εστίασή σας"
 
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest documents and applications are in this account."
+msgstr ""
+
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Οι επικεφαλίδες σας μοιάζουν με το κύριο κείμενό σας."
@@ -15565,6 +15654,10 @@ msgstr "οι προτιμήσεις σας"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "τον παροχέα σας"
+
+#: src/features/settings/account/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #. placeholder {0}: voice.settings.transcribe.label
 #: src/features/career/workspace/practise.tsx

@@ -7,7 +7,14 @@ vi.mock("@reactive-resume/auth/config", () => ({
 	verifyOAuthToken: vi.fn(),
 }));
 vi.mock("@reactive-resume/db/client", () => ({
-	db: { select: () => ({ from: () => ({ where: () => ({ limit: async () => [{ id: "owner", banned: false }] }) }) }) },
+	db: {
+		select: () => ({
+			from: () => ({
+				// The owner lookup takes one row; the import's name lookup finds no other resume named the same.
+				where: () => Object.assign(Promise.resolve([]), { limit: async () => [{ id: "owner", banned: false }] }),
+			}),
+		}),
+	},
 }));
 const { importResumeFile } = await import("./imports");
 

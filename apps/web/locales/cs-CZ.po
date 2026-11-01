@@ -860,7 +860,15 @@ msgstr "{toCheck, plural, one {Pole # potřebuje pohled.} other {Pole # je třeb
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# ke kontrole} other {# ke kontrole}}"
 
-#. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
+#: src/features/settings/account/profile.tsx
+msgid "{total, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {# document} other {# documents}}"
+msgstr ""
+
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr "{type} · Upraveno {0}"
@@ -1282,6 +1290,11 @@ msgstr "Přidejte zemi"
 #: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Přidejte fakt, například „Mentoring dvou juniorních PM v roce 2025“"
+
+#: src/features/documents/document-actions.tsx
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/components/input/chip-input.tsx
 msgid "Add a keyword..."
@@ -2734,6 +2747,7 @@ msgstr ""
 msgid "Capture does not use AI. Review every field before saving."
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
@@ -2756,6 +2770,7 @@ msgstr "Katalánština"
 msgid "Certifications"
 msgstr "Osvědčení"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/settings/account/security.tsx
@@ -2809,6 +2824,10 @@ msgstr "Změňte tento záznam na časové ose."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "Změnit časové pásmo"
+
+#: src/features/settings/account/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Change your password"
@@ -3009,6 +3028,7 @@ msgstr ""
 msgid "Choose a file"
 msgstr "Vyberte soubor"
 
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose a file to import"
 msgstr "Vyberte soubor, který chcete importovat"
@@ -3201,6 +3221,7 @@ msgstr "Uzavřeno jako {label}"
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "Kouč"
@@ -4313,6 +4334,7 @@ msgstr "Vyplnit"
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/navigation.tsx
 msgid "Cover letter"
 msgstr "Motivační dopis"
 
@@ -4900,6 +4922,7 @@ msgid "Documentation"
 msgstr "Dokumentace"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5006,6 +5029,7 @@ msgid "Download failed. Try again."
 msgstr "Stahování se nezdařilo. Zkuste to znovu."
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -6670,9 +6694,17 @@ msgstr "Průběh importu"
 msgid "Import steps"
 msgstr "Kroky importu"
 
+#: src/features/documents/documents-page.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
 msgstr "Importujte tento soubor do bezplatného Reactive Resume. Každý problém na vás čeká v Checku."
+
+#: src/features/documents/documents-page.tsx
+msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a PDF, Word or JSON file."
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
@@ -7123,6 +7155,10 @@ msgstr "Držte se dvou až tří rodin písem. Každé další písmo je další
 msgid "Keep together"
 msgstr "Držte pohromadě"
 
+#: src/features/settings/account/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Keeps the most specific parts"
 msgstr "Zachovává nejkonkrétnější části"
@@ -7173,6 +7209,7 @@ msgstr "Khmerština"
 msgid "Kind regards,"
 msgstr "s pozdravem"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -7386,6 +7423,8 @@ msgid "letter"
 msgstr "dopis"
 
 #: src/features/assistant/document.ts
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7597,6 +7636,10 @@ msgstr "Propojování…"
 #: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "Odkazy"
+
+#: src/features/settings/account/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/homepage/hero.tsx
 msgid "Lisbon"
@@ -8354,6 +8397,8 @@ msgstr "Nová žádost"
 msgid "New conversation"
 msgstr "Nový rozhovor"
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter"
 msgstr ""
@@ -8384,6 +8429,10 @@ msgstr "Nová stránka"
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "Nové heslo"
+
+#: src/features/documents/documents-page.tsx
+msgid "New resume"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "New roles from your search"
@@ -8475,6 +8524,9 @@ msgid "No applications yet"
 msgstr "Zatím žádné žádosti o zaměstnání"
 
 #: src/features/documents/document-actions.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Zatím žádné žádosti o zaměstnání. Nejprve přidejte jeden do žádostí o zaměstnání."
@@ -8515,6 +8567,10 @@ msgstr "Bez oprav"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "No country matches."
 msgstr "Nebyly nalezeny žádné země."
+
+#: src/features/documents/documents-page.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -8651,6 +8707,10 @@ msgstr "Nebyly nalezeny žádné výsledky."
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "Žádné resumé"
+
+#: src/features/documents/documents-page.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
@@ -9010,6 +9070,7 @@ msgstr "Nabídka uložena"
 msgid "Offer type"
 msgstr "Typ nabídky"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "Nabídky"
@@ -9444,6 +9505,10 @@ msgstr "Parcel & Co."
 #: src/features/homepage/write.tsx
 msgid "Parcel & Co. · Porto"
 msgstr "Parcel & Co. · Porto"
+
+#: src/features/settings/account/profile.tsx
+msgid "Part of every public link. Old links keep working for 30 days after a change."
+msgstr ""
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
@@ -10939,6 +11004,7 @@ msgstr "životopis"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -12033,6 +12099,10 @@ msgstr "Sdílejte sekce"
 #: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "Sdílet přes…"
+
+#: src/features/documents/document-actions.tsx
+msgid "Share…"
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
@@ -13901,7 +13971,13 @@ msgstr "Název"
 msgid "To"
 msgstr "Na"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/document-card.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/applications/components/calendar-view.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
@@ -13984,6 +14060,7 @@ msgid "Translations"
 msgstr "Překlady"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Trash"
@@ -15171,6 +15248,10 @@ msgstr "Čísla pište číslicemi"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Popište v pěti částech něco, co jste udělali. Části „Výsledek“ a „Reflexe“ nechte prázdné, dokud je nebudete moci doložit."
 
+#: src/features/documents/documents-page.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "Napište celou adresu, aby byla rozpoznána jako odkaz."
@@ -15486,6 +15567,14 @@ msgstr "Váš soubor"
 msgid "Your focus"
 msgstr "Vaše zaměření"
 
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest documents and applications are in this account."
+msgstr ""
+
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Vaše nadpisy vypadají stejně jako běžný text."
@@ -15565,6 +15654,10 @@ msgstr "vaše předvolby"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "vašeho poskytovatele"
+
+#: src/features/settings/account/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #. placeholder {0}: voice.settings.transcribe.label
 #: src/features/career/workspace/practise.tsx

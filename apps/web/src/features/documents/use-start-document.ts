@@ -9,8 +9,19 @@ import { useDialogStore } from "@/dialogs/store";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
+/** The files the importer reads: the New dialog's picker and first run's "Choose a file". */
+export const IMPORT_ACCEPT = ".pdf,.docx,.json,.zip,application/pdf,application/json,application/zip";
+
 // One create at a time across every caller: a click repeated, or a dialog reopened, while one is in flight does nothing.
 let starting = false;
+
+/** `base`, or `base 2`, `base 3`… whichever no name in `taken` uses. */
+function freeName(base: string, taken: readonly string[]) {
+	const names = new Set(taken.map((name) => name.toLowerCase()));
+	let name = base;
+	for (let number = 2; names.has(name.toLowerCase()); number++) name = `${base} ${number}`;
+	return name;
+}
 
 /** Start blank, try a sample, or a new letter: each creates the document at once and opens it. */
 export function useStartDocument(applicationId?: string) {
@@ -67,10 +78,18 @@ export function useStartDocument(applicationId?: string) {
 			}),
 		newLetter: () =>
 			start(async () => {
-				// A new letter takes its sender details and design from the resume edited most recently.
-				const [resume] = await client.documents.list({ type: "resume", limit: 1 });
+				// A new letter takes its sender details and design from the resume edited most recently, and a number when an
+				// untitled one already exists, so the library can tell them apart until they're named.
+				const base = t`Untitled letter`;
+				const [[resume], letters] = await Promise.all([
+					client.documents.list({ type: "resume", limit: 1 }),
+					client.documents.list({ type: "letter", q: base }),
+				]);
 				const input = {
-					name: t`Untitled letter`,
+					name: freeName(
+						base,
+						letters.map((letter) => letter.name),
+					),
 					recipient: "",
 					content: "",
 					...(resume ? { resumeId: resume.id } : {}),

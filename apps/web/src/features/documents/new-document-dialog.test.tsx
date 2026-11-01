@@ -36,7 +36,7 @@ it("explains a missing source resume and offers import or creation when copying 
 	queryClient.setQueryData(orpc.documents.list.queryKey({ input: { trashed: false } }), []);
 	queryClient.setQueryData(orpc.aiProviders.list.queryKey(), []);
 	queryClient.setQueryData(applicationsListQueryKey(), [
-		{ id: "application-1", company: "ABOUT YOU", status: "saved" } as Application,
+		{ id: "application-1", company: "ABOUT YOU", role: "", status: "saved" } as Application,
 	]);
 
 	render(

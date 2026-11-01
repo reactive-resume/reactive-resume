@@ -16,6 +16,7 @@ import { documentError, useDocumentRefresh, useDocuments } from "./queries";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
+import { AddApplicationSheet } from "@/features/applications/add-sheet";
 import { routes } from "@/routes";
 import { Banner, Button, Card, ListRow, Screen, SelectSheet, Switch, Text, TextField, useTheme } from "@/ui";
 
@@ -50,6 +51,7 @@ export function NewDocument() {
 	const [created, setCreated] = useState<ImportedDocument | null>(null);
 	const [applicationLinked, setApplicationLinked] = useState(false);
 	const [summary, setSummary] = useState<string | null>(null);
+	const [addingJob, setAddingJob] = useState(false);
 	const running = useRef(false);
 	const mounted = useRef(true);
 	const abort = useRef<AbortController | null>(null);
@@ -129,10 +131,19 @@ export function NewDocument() {
 		run(async (signal) => {
 			let document: ImportedDocument;
 			if (kind === "letter") {
-				const latest = resumes.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())[0];
+				const latest = resumes.toSorted((a, b) => b.editedAt.getTime() - a.editedAt.getTime())[0];
+				// A number when an untitled letter already exists, so the library can tell them apart until they're named.
+				const base = t`Untitled letter`;
+				const taken = new Set(
+					(await client.documents.list({ type: "letter", q: base }, { signal })).map((letter) =>
+						letter.name.toLowerCase(),
+					),
+				);
+				let name = base;
+				for (let number = 2; taken.has(name.toLowerCase()); number++) name = `${base} ${number}`;
 				const letter = await client.coverLetters.create(
 					{
-						name: t`Untitled letter`,
+						name,
 						recipient: "",
 						content: "",
 						...(latest ? { resumeId: latest.id } : {}),
@@ -402,6 +413,23 @@ export function NewDocument() {
 											setName(null);
 										}}
 									/>
+									<Button
+										label={t`Add a job…`}
+										icon="plus"
+										variant="secondary"
+										disabled={busy}
+										onPress={() => setAddingJob(true)}
+									/>
+									{addingJob && (
+										<AddApplicationSheet
+											onClose={() => setAddingJob(false)}
+											onAdded={(id) => {
+												setJobId(id);
+												setName(null);
+												void applications.refetch();
+											}}
+										/>
+									)}
 									<TextField
 										label={t`Name`}
 										value={name ?? suggested}

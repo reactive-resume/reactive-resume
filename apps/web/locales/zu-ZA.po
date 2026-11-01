@@ -855,7 +855,15 @@ msgstr ""
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr ""
 
-#. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
+#: src/features/settings/account/profile.tsx
+msgid "{total, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {# document} other {# documents}}"
+msgstr ""
+
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr ""
@@ -1276,6 +1284,11 @@ msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
@@ -2729,6 +2742,7 @@ msgstr ""
 msgid "Capture does not use AI. Review every field before saving."
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
@@ -2751,6 +2765,7 @@ msgstr ""
 msgid "Certifications"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/settings/account/security.tsx
@@ -2803,6 +2818,10 @@ msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change username"
 msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
@@ -3004,6 +3023,7 @@ msgstr ""
 msgid "Choose a file"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose a file to import"
 msgstr ""
@@ -3196,6 +3216,7 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr ""
@@ -4308,6 +4329,7 @@ msgstr ""
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/navigation.tsx
 msgid "Cover letter"
 msgstr ""
 
@@ -4895,6 +4917,7 @@ msgid "Documentation"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5001,6 +5024,7 @@ msgid "Download failed. Try again."
 msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -6665,8 +6689,16 @@ msgstr ""
 msgid "Import steps"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a PDF, Word or JSON file."
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
@@ -7118,6 +7150,10 @@ msgstr ""
 msgid "Keep together"
 msgstr ""
 
+#: src/features/settings/account/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Keeps the most specific parts"
 msgstr ""
@@ -7168,6 +7204,7 @@ msgstr ""
 msgid "Kind regards,"
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -7381,6 +7418,8 @@ msgid "letter"
 msgstr ""
 
 #: src/features/assistant/document.ts
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7591,6 +7630,10 @@ msgstr ""
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/settings/profile.tsx
 msgid "Links"
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
 msgstr ""
 
 #: src/features/homepage/hero.tsx
@@ -8349,6 +8392,8 @@ msgstr ""
 msgid "New conversation"
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter"
 msgstr ""
@@ -8378,6 +8423,10 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "New resume"
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -8470,6 +8519,9 @@ msgid "No applications yet"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr ""
@@ -8509,6 +8561,10 @@ msgstr ""
 
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "No country matches."
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "No cover letters yet"
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -8645,6 +8701,10 @@ msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "No resumes yet"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -9005,6 +9065,7 @@ msgstr ""
 msgid "Offer type"
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr ""
@@ -9438,6 +9499,10 @@ msgstr ""
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/write.tsx
 msgid "Parcel & Co. · Porto"
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Part of every public link. Old links keep working for 30 days after a change."
 msgstr ""
 
 #: src/features/career/shared.tsx
@@ -10934,6 +10999,7 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -12027,6 +12093,10 @@ msgstr ""
 
 #: src/features/resume/share/address-field.tsx
 msgid "Share via…"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "Share…"
 msgstr ""
 
 #: src/features/documents/documents-page.tsx
@@ -13896,7 +13966,13 @@ msgstr ""
 msgid "To"
 msgstr ""
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/document-card.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/applications/components/calendar-view.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
@@ -13979,6 +14055,7 @@ msgid "Translations"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Trash"
@@ -15166,6 +15243,10 @@ msgstr ""
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr ""
@@ -15481,6 +15562,14 @@ msgstr ""
 msgid "Your focus"
 msgstr ""
 
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest documents and applications are in this account."
+msgstr ""
+
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr ""
@@ -15559,6 +15648,10 @@ msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Your public links will change"
 msgstr ""
 
 #. placeholder {0}: voice.settings.transcribe.label

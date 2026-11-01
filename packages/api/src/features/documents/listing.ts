@@ -23,6 +23,9 @@ function library(database: DbOrTx, input: ListInput) {
 			trashedAt: resume.trashedAt,
 			createdAt: resume.createdAt,
 			updatedAt: resume.updatedAt,
+			// The migration backfills existing documents from updated_at; coalesce only covers a row that slipped in null.
+			editedAt: sql<Date>`coalesce(${resume.editedAt}, ${resume.updatedAt})`.mapWith(resume.updatedAt).as("edited_at"),
+			recipient: sql<string | null>`null::text`.as("recipient"),
 			applicationId: sql<string | null>`${application.id}`.as("application_id"),
 			company: application.company,
 			role: application.role,
@@ -44,6 +47,14 @@ function library(database: DbOrTx, input: ListInput) {
 			trashedAt: coverLetter.trashedAt,
 			createdAt: coverLetter.createdAt,
 			updatedAt: coverLetter.updatedAt,
+			editedAt: sql<Date>`coalesce(${coverLetter.editedAt}, ${coverLetter.updatedAt})`
+				.mapWith(coverLetter.updatedAt)
+				.as("edited_at"),
+			recipient: sql<
+				string | null
+			>`coalesce(nullif(${coverLetter.recipientCompany}, ''), nullif(${coverLetter.recipientName}, ''))`.as(
+				"recipient",
+			),
 			applicationId: sql<string | null>`${application.id}`.as("application_id"),
 			company: application.company,
 			role: application.role,
@@ -87,7 +98,7 @@ async function readDocuments(database: DbOrTx, input: ListInput) {
 	const order =
 		input.sort === "name"
 			? asc(sql`lower(${rows.name})`)
-			: desc(input.sort === "created" ? rows.createdAt : rows.updatedAt);
+			: desc(input.sort === "created" ? rows.createdAt : rows.editedAt);
 	const query = database.select().from(rows).where(where).orderBy(order, asc(rows.type), asc(rows.id)).$dynamic();
 	const paginated = input.limit !== undefined || input.offset !== undefined;
 	const items = await (paginated ? query.limit(input.limit ?? 20).offset(input.offset ?? 0) : query);

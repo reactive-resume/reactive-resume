@@ -4,6 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { CommandLoading } from "cmdk";
+import { useDebounceValue } from "usehooks-ts";
 import { CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
@@ -25,6 +26,60 @@ const matchesSearch = (search: string, values: Array<string | null | undefined>)
 	const query = search.trim().toLowerCase();
 	return !query || values.some((value) => value?.toLowerCase().includes(query));
 };
+
+/**
+ * The first screen's search: resumes and letters whose name, tags or linked job match, ranked by the palette like any
+ * command. The server searches the whole library, so large accounts don't load it into the palette.
+ */
+export function DocumentsCommandGroup() {
+	const { session } = useRouteContext({ strict: false });
+	const pages = useCommandPaletteStore((state) => state.pages);
+	const search = useCommandPaletteStore((state) => state.search);
+	const navigate = useNavigate();
+	const reset = useCommandPaletteStore((state) => state.reset);
+	const [query] = useDebounceValue(search.trim().slice(0, 500), 150);
+	const { data } = useQuery({
+		...orpc.documents.page.queryOptions({
+			input: { trashed: false, type: "all", q: query, tags: [], sort: "edited", public: false, limit: 8, offset: 0 },
+		}),
+		enabled: Boolean(session) && pages.length === 0 && query !== "",
+		placeholderData: (previous) => previous,
+	});
+	if (!session || search.trim() === "" || !data?.items.length) return null;
+
+	const open = async (document: (typeof data.items)[number]) => {
+		reset();
+		if (document.type === "letter")
+			await navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: document.id } });
+		else await navigate({ to: "/builder/$resumeId", params: { resumeId: document.id } });
+	};
+
+	return (
+		<BaseCommandGroup heading={<Trans>Documents</Trans>}>
+			{data.items.map((document) => (
+				<CommandItem
+					key={`${document.type}:${document.id}`}
+					value={`document ${document.type} ${document.id}`}
+					keywords={[
+						document.name,
+						...document.tags,
+						document.application?.company ?? "",
+						document.application?.role ?? "",
+						document.recipient ?? "",
+					]}
+					onSelect={() => void open(document)}
+				>
+					<Icon name={document.type === "resume" ? "file-text" : "envelope-simple"} size={16} />
+					<span className="min-w-0 truncate">{document.name}</span>
+					<span className="truncate text-xs text-ink-3">
+						{document.application?.company ??
+							(document.type === "resume" ? <Trans>Resume</Trans> : <Trans>Letter</Trans>)}
+					</span>
+				</CommandItem>
+			))}
+		</BaseCommandGroup>
+	);
+}
 
 export function ResumesCommandGroup() {
 	const { session } = useRouteContext({ strict: false });

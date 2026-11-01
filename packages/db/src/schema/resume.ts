@@ -53,6 +53,10 @@ export const resume = pg.pgTable(
 			.notNull()
 			.defaultNow()
 			.$onUpdate(() => /* @__PURE__ */ new Date()),
+		// When the content (`data`) last changed, for "Last edited". Existing documents were backfilled from
+		// `updated_at` (the time the library already showed); metadata writes move only `updated_at`, the concurrency
+		// check, and stay out of this. A trigger in the migration keeps this one current on every write path.
+		editedAt: pg.timestamp("edited_at", { withTimezone: true }).defaultNow(),
 	},
 	(t) => [
 		pg.unique().on(t.slug, t.userId),

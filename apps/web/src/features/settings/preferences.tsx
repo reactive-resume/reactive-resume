@@ -67,7 +67,13 @@ export function PreferencesSettings() {
 	);
 }
 
-const timeZones = Intl.supportedValuesOf("timeZone").map((zone) => ({ value: zone, label: zone }));
+// Browsers list canonical zones only: UTC, the default for older accounts, and aliases a device reports are missing.
+const timeZones = Intl.supportedValuesOf("timeZone");
+const timeZoneOptions = (current: string) =>
+	(timeZones.includes(current) ? timeZones : [...timeZones, current].toSorted()).map((zone) => ({
+		value: zone,
+		label: zone,
+	}));
 
 /** The account's timezone, which interview times, reminders and schedules use. Saved as soon as it's chosen. */
 function TimezoneSetting({ id }: { id: string }) {
@@ -103,7 +109,7 @@ function TimezoneSetting({ id }: { id: string }) {
 				<Combobox
 					id={id}
 					showClear={false}
-					options={timeZones}
+					options={timeZoneOptions(value)}
 					value={value}
 					placeholder={t`Search timezones`}
 					emptyMessage={t`No timezone matches.`}

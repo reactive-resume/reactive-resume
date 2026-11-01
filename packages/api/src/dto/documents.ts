@@ -25,7 +25,18 @@ const documentSchema = z.object({
 	slug: z.string().nullable().describe("A resume's public address, /{username}/{slug}; null for letters."),
 	trashedAt: z.date().nullable().describe("When the document moved to Trash; null while it's live."),
 	createdAt: z.date(),
-	updatedAt: z.date(),
+	updatedAt: z.date().describe("When anything about the document last changed, its details included."),
+	editedAt: z
+		.date()
+		.describe(
+			"When its content was last edited: a resume's data, or a letter's text, recipient and design. Renames, tags, sharing, locks and Trash don't move it. Library sorting by edited uses it.",
+		),
+	recipient: z
+		.string()
+		.nullable()
+		.describe(
+			"Who a letter is to: its recipient company, else the recipient's name. Null for resumes and blank letters.",
+		),
 	application: z
 		.object({ id: z.string(), company: z.string(), role: z.string() })
 		.nullable()

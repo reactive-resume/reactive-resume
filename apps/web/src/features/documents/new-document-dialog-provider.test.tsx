@@ -113,3 +113,16 @@ it("creates one cover letter while a create is in flight, even across repeat cli
 	fireEvent.click(screen.getByRole("button", { name: "New cover letter instead" }));
 	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledTimes(2));
 });
+
+it("numbers a new letter while untitled ones exist, so the library can tell them apart", async () => {
+	api.listDocuments.mockImplementation(async (input: { type: string }) =>
+		input.type === "letter"
+			? [{ name: "Untitled letter" }, { name: "untitled letter 2" }, { name: "Cover for Acme" }]
+			: [],
+	);
+	api.createLetter.mockResolvedValue({ id: "letter-3" });
+	mount();
+	fireEvent.click(screen.getByRole("button", { name: "New cover letter instead" }));
+	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledOnce());
+	expect(api.createLetter.mock.calls[0]?.[0]).toMatchObject({ name: "Untitled letter 3" });
+});

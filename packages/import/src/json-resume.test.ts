@@ -4,9 +4,32 @@ import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { parseJSONResume } from "./json-resume";
 
 describe("parseJSONResume", () => {
-	it.each(["2024-13", "2024-01-32", "2024-1"])("rejects the malformed date %s and names the field", (startDate) => {
+	it.each(["2024-13", "2024-01-32", "2024-1"])("rejects the malformed date %s and names the entry", (startDate) => {
 		const json = JSON.stringify({ work: [{ name: "Acme", position: "Engineer", startDate }] });
-		expect(() => parseJSONResume(json)).toThrow(/work\.0\.startDate \(Must be a valid ISO 8601 date/);
+		expect(() => parseJSONResume(json)).toThrow("The start date for your role at Acme isn't a date.");
+		expect(() => parseJSONResume(json)).not.toThrow(/work\.0/);
+	});
+
+	it("keeps the date wording and still reports the file's other invalid fields", () => {
+		const json = JSON.stringify({
+			basics: { email: "not-an-email" },
+			work: [{ name: "Acme", position: "Engineer", startDate: "2024-13" }],
+		});
+		expect(() => parseJSONResume(json)).toThrow(/The start date for your role at Acme isn't a date\./);
+		expect(() => parseJSONResume(json)).toThrow(/Other problem: basics\.email/);
+	});
+
+	it("imports a current role whose exporter wrote an empty end date, and empty links", () => {
+		const json = JSON.stringify({
+			basics: { name: "Jordan Rivera", email: "", url: "" },
+			work: [{ name: "Northwind Labs", position: "Engineer", startDate: "2021-03", endDate: "", url: "" }],
+			education: [{ institution: "State University", startDate: "", endDate: "" }],
+		});
+
+		const result = parseJSONResume(json);
+		expect(result.basics.email).toBe("");
+		expect(result.sections.experience.items[0]!.dates).toEqual({ start: "2021-03", end: null, present: true });
+		expect(result.sections.education.items[0]!.dates).toEqual({ start: null, end: null, present: false });
 	});
 
 	it.each(["2024", "2024-02-29"])("still accepts the valid date %s", (startDate) => {

@@ -39,9 +39,10 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
    CREATE TABLE application (id text PRIMARY KEY, user_id text, company text, role text);
    CREATE TABLE resume (id text PRIMARY KEY, user_id text, name text, tags text[] DEFAULT '{}', is_locked boolean DEFAULT false,
     is_public boolean DEFAULT false, slug text DEFAULT 'resume', trashed_at timestamptz, created_at timestamptz DEFAULT '2026-01-01',
-    updated_at timestamptz DEFAULT '2026-01-01', application_id text);
+    updated_at timestamptz DEFAULT '2026-01-01', edited_at timestamptz, application_id text);
    CREATE TABLE cover_letter (LIKE resume INCLUDING DEFAULTS);
-   ALTER TABLE cover_letter ADD COLUMN source_application_id text;
+   ALTER TABLE cover_letter ADD COLUMN source_application_id text, ADD COLUMN recipient_name text DEFAULT '',
+    ADD COLUMN recipient_company text DEFAULT '';
    INSERT INTO application VALUES ('job', 'owner', 'Orbital', 'Design lead'), ('foreign-job', 'stranger', 'Secret', 'Private');
    INSERT INTO resume (id, user_id, name, tags, is_public, application_id) VALUES
     ('same', 'owner', 'Alpha', ARRAY['design','shared'], true, 'job'),

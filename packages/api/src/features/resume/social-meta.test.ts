@@ -31,8 +31,8 @@ describe("getPublicResumeCardData", () => {
 		const card = await getPublicResumeCardData({ username: "jane", slug: "resume" });
 
 		const [query] = pg.queries;
-		expect(query?.text).toContain('"resume"."is_public" = $4');
-		expect(query?.params[3]).toBe(true);
+		expect(query?.text).toContain('"resume"."is_public" = $5');
+		expect(query?.params[4]).toBe(true);
 		expect(query?.text).toContain('"resume"."password" is null');
 		expect(query?.text).toContain('"resume"."trashed_at" is null');
 		expect(card?.data.summary.content).toBe("");
@@ -50,11 +50,11 @@ describe("getPublicResumeCardData", () => {
 		expect(query?.text).toContain('"resume_slug_redirect"');
 		expect(query?.text).toContain('"resume_slug_redirect"."expires_at" > now()');
 		expect(query?.text).toContain('"resume_slug_redirect"."user_id" = "resume"."user_id"');
-		expect(query?.text).toContain('order by "resume"."slug" = $5 desc');
+		expect(query?.text).toContain('order by "user"."username" = $6 desc, "resume"."slug" = $7 desc');
 		expect(query?.params[0]).toBe("old-slug");
 		expect(query?.params[1]).toBe("old-slug");
 		expect(query?.params[2]).toBe("jane");
-		expect(query?.params[4]).toBe("old-slug");
+		expect(query?.params[6]).toBe("old-slug");
 		expect(card?.data.basics.name).toBe("Jane Doe");
 	});
 
