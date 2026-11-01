@@ -250,3 +250,53 @@ describe("account scope binding", () => {
 		await expect(operation({ "x-account-id": "alice" }, "GET")(undefined)).resolves.toBe("executed");
 	});
 });
+
+describe("per-item account binding", () => {
+	const authentication = {
+		user: { id: "bob" },
+		method: "session" as const,
+		permissions: ["read", "write", "delete"] as const,
+	} as unknown as RequestAuthentication;
+	const itemOperation = (
+		envelope: string | undefined,
+		item: string | undefined,
+		method: "GET" | "POST" = "POST",
+		handler = vi.fn(() => "executed"),
+	) =>
+		createProcedureClient(protectedProcedure.route({ method }).handler(handler), {
+			context: {
+				locale: "en-US" as const,
+				reqHeaders: new Headers(envelope ? { "x-account-id": envelope } : {}),
+				...(item ? { rpcItemAccountId: item } : {}),
+				authentication,
+			},
+		});
+
+	it.each([
+		{ envelope: "bob", item: "alice", why: "a mixed batch item keeps its own old account" },
+		{ envelope: "alice", item: "bob", why: "the envelope and the item disagree" },
+		{ envelope: undefined, item: "alice", why: "only the item is bound and it is stale" },
+	])("refuses a write when $why", async ({ envelope, item }) => {
+		reset();
+		const handler = vi.fn(() => "executed");
+		await expect(itemOperation(envelope, item, "POST", handler)(undefined)).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		expect(handler).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		{ envelope: "bob", item: "bob" },
+		{ envelope: "bob", item: undefined },
+		{ envelope: undefined, item: "bob" },
+		{ envelope: undefined, item: undefined },
+	])("allows a write whose known bindings all match ($envelope / $item)", async ({ envelope, item }) => {
+		reset();
+		await expect(itemOperation(envelope, item)(undefined)).resolves.toBe("executed");
+	});
+
+	it("does not block a read item carrying another page's account", async () => {
+		reset();
+		await expect(itemOperation("bob", "alice", "GET")(undefined)).resolves.toBe("executed");
+	});
+});

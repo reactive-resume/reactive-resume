@@ -31,4 +31,23 @@ describe("RPC account binding", () => {
 		await pending;
 		expect(sentAccount()).toBe("carol");
 	});
+
+	it("never batches an explicitly bound call with another account's call", async () => {
+		const { setAccountScope } = await import("@/libs/auth/account-scope");
+		const { client } = await import("./client");
+		setAccountScope("bob");
+		await Promise.allSettled([
+			client.career.saveProfile({} as never, { context: { accountId: "alice" } }),
+			client.career.saveFact({} as never),
+		]);
+		const sent = fetchMock.mock.calls.map(([input, init]) => ({
+			url: String(input),
+			headers: new Headers(init?.headers),
+		}));
+		expect(sent).toHaveLength(2);
+		expect(sent.map((call) => call.headers.get("x-account-id")).sort()).toEqual(["alice", "bob"]);
+		const bound = sent.find((call) => call.headers.get("x-account-id") === "alice");
+		expect(bound?.headers.get("x-orpc-batch")).toBeNull();
+		expect(bound?.url).not.toContain("__batch__");
+	});
 });

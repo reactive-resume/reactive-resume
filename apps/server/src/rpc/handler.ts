@@ -7,6 +7,21 @@ import { getRequestLocale } from "./locale";
 
 const rpcHandler = new RPCHandler(router, {
 	plugins: [new BatchHandlerPlugin(), new RequestHeadersPlugin(), new StrictGetMethodPlugin()],
+	// Runs after the batch plugin maps each item and before RequestHeadersPlugin reads the envelope. A batch item may
+	// carry its own account expectation; authentication keeps using the envelope, so an item cannot swap the cookie.
+	rootInterceptors: [
+		(interceptorOptions) => {
+			const header = interceptorOptions.request.headers["x-account-id"];
+			const accountId = Array.isArray(header) ? header[0] : header;
+			return interceptorOptions.next({
+				...interceptorOptions,
+				context: {
+					...interceptorOptions.context,
+					...(accountId ? { rpcItemAccountId: accountId } : {}),
+				},
+			});
+		},
+	],
 	interceptors: [
 		onError((error) => {
 			// Signed-out or expired callers are routine; their 401 still reaches the client.

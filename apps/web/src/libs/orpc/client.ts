@@ -9,9 +9,10 @@ import { getAccountId } from "@/libs/auth/account-scope";
 
 /**
  * The account a call belongs to. Captured when the call starts (before any await, batching or body staging), so a
- * session switch during dispatch cannot relabel a payload that was built for the previous account.
+ * session switch during dispatch cannot relabel a payload that was built for the previous account. `bound` marks a call
+ * whose caller named its account explicitly: those never batch, so a mixed batch can never hide one under another.
  */
-export type ClientContext = { accountId?: string };
+export type ClientContext = { accountId?: string; bound?: boolean };
 
 const getRpcUrl = () => `${window.location.origin}/api/rpc`;
 
@@ -27,14 +28,20 @@ export const client: RouterClient<typeof router, ClientContext> = createORPCClie
 			new BatchLinkPlugin<ClientContext>({
 				mode: "streaming",
 				groups: [{ condition: () => true, context: {} }],
+				// An explicitly bound call must keep its own envelope; batching could merge it with another account.
+				exclude: (options) => options.context.bound === true,
 			}),
 		],
 		interceptors: [
 			// Runs before the request is encoded, so the header carries the account this call was made for, not whichever
 			// account the tab discovered while the request was being prepared.
 			(options) => {
+				const bound = options.context.accountId !== undefined;
 				const accountId = options.context.accountId ?? getAccountId() ?? undefined;
-				return options.next({ ...options, context: accountId ? { ...options.context, accountId } : options.context });
+				return options.next({
+					...options,
+					context: accountId ? { ...options.context, accountId, ...(bound ? { bound: true } : {}) } : options.context,
+				});
 			},
 			onError((error) => {
 				if (error instanceof DOMException && error.name === "AbortError") return;
@@ -51,8 +58,12 @@ export const streamClient: RouterClient<typeof router, ClientContext> = createOR
 		headers: accountHeaders,
 		interceptors: [
 			(options) => {
+				const bound = options.context.accountId !== undefined;
 				const accountId = options.context.accountId ?? getAccountId() ?? undefined;
-				return options.next({ ...options, context: accountId ? { ...options.context, accountId } : options.context });
+				return options.next({
+					...options,
+					context: accountId ? { ...options.context, accountId, ...(bound ? { bound: true } : {}) } : options.context,
+				});
 			},
 			onError((error) => {
 				if (error instanceof DOMException && error.name === "AbortError") return;

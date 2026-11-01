@@ -989,6 +989,276 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 			await admin.query(`DROP SCHEMA IF EXISTS ${isolated} CASCADE`);
 		}
 	});
+	// Exact owner migrations shipped by the earlier repair rounds. Installations that recorded one of these names never
+	// re-run the edited SQL, so the forward correction must repair the state they leave behind.
+	const V2_OWNER_SQL = `ALTER TABLE "application" ADD COLUMN "follow_up_date_only" boolean DEFAULT false NOT NULL;
+--> statement-breakpoint
+-- Preserve legacy raw dates; discriminator keeps their calendar day separate from exact reminder times.
+UPDATE application SET follow_up_date_only=true WHERE follow_up_at IS NOT NULL AND follow_up_at=date_trunc('day',follow_up_at AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';
+--> statement-breakpoint
+-- Adopt the newest existing reminder only when the application has no follow-up.
+-- Existing application dates/notes stay authoritative. Duplicate delivery rows are consolidated.
+WITH newest AS (
+ SELECT DISTINCT ON (s.user_id, s.application_id) s.* FROM career_schedule s
+ JOIN application a ON a.id=s.application_id AND a.user_id=s.user_id
+ WHERE s.kind='follow-up'
+ ORDER BY s.user_id,s.application_id,s.updated_at DESC,s.id DESC
+)
+UPDATE application a SET follow_up_at=n.next_run_at, follow_up_note=COALESCE(a.follow_up_note,NULLIF(n.query,''))
+FROM newest n WHERE a.id=n.application_id AND a.user_id=n.user_id AND a.follow_up_at IS NULL;
+--> statement-breakpoint
+-- Keep duplicate reminders and job history in account exports, but only the newest row delivers.
+UPDATE career_schedule s SET enabled=false FROM career_schedule newer
+WHERE s.kind='follow-up' AND newer.kind='follow-up' AND s.user_id=newer.user_id
+AND s.application_id=newer.application_id AND (s.updated_at,s.id)<(newer.updated_at,newer.id);
+--> statement-breakpoint
+UPDATE career_job j SET status='canceled',lease=NULL,lease_until=NULL
+FROM career_schedule s JOIN application a ON a.id=s.application_id AND a.user_id=s.user_id
+WHERE j.schedule_id=s.id AND s.kind='follow-up' AND j.status IN ('queued','running')
+AND ((CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END) IS DISTINCT FROM s.next_run_at OR NOT s.enabled);
+--> statement-breakpoint
+UPDATE career_schedule s SET next_run_at=CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END,query=COALESCE(a.follow_up_note,''),
+last_queued_at=CASE WHEN s.next_run_at=CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END THEN s.last_queued_at ELSE NULL END
+FROM application a WHERE s.application_id=a.id AND s.user_id=a.user_id AND s.kind='follow-up' AND a.follow_up_at IS NOT NULL
+AND NOT EXISTS(SELECT 1 FROM career_schedule newer WHERE newer.user_id=s.user_id AND newer.application_id=s.application_id AND newer.kind='follow-up' AND (newer.updated_at,newer.id)>(s.updated_at,s.id));
+--> statement-breakpoint
+INSERT INTO career_schedule(id,user_id,application_id,kind,query,timezone,enabled,next_run_at)
+SELECT 'follow-up:'||a.id,a.user_id,a.id,'follow-up',COALESCE(a.follow_up_note,''),u.timezone,true,CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE u.timezone ELSE a.follow_up_at END
+FROM application a JOIN "user" u ON u.id=a.user_id WHERE a.follow_up_at IS NOT NULL
+AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.application_id=a.id AND s.kind='follow-up');
+`;
+	const V3_OWNER_SQL = `ALTER TABLE "application" ADD COLUMN "follow_up_date_only" boolean DEFAULT false NOT NULL;
+--> statement-breakpoint
+-- Preserve legacy raw dates; discriminator keeps their calendar day separate from exact reminder times.
+UPDATE application SET follow_up_date_only=true WHERE follow_up_at IS NOT NULL AND follow_up_at=date_trunc('day',follow_up_at AT TIME ZONE 'UTC') AT TIME ZONE 'UTC';
+--> statement-breakpoint
+-- Adopt the newest existing reminder only when the application has no follow-up.
+-- Existing application dates/notes stay authoritative. Duplicate delivery rows are consolidated.
+WITH newest AS (
+ SELECT DISTINCT ON (s.user_id, s.application_id) s.* FROM career_schedule s
+ JOIN application a ON a.id=s.application_id AND a.user_id=s.user_id
+ WHERE s.kind='follow-up'
+ ORDER BY s.user_id,s.application_id,s.updated_at DESC,s.id DESC
+)
+UPDATE application a SET follow_up_at=n.next_run_at, follow_up_note=COALESCE(a.follow_up_note,NULLIF(n.query,''))
+FROM newest n WHERE a.id=n.application_id AND a.user_id=n.user_id AND a.follow_up_at IS NULL;
+--> statement-breakpoint
+-- Keep duplicate reminders and job history in account exports, but only the newest row delivers.
+UPDATE career_schedule s SET enabled=false FROM career_schedule newer
+WHERE s.kind='follow-up' AND newer.kind='follow-up' AND s.user_id=newer.user_id
+AND s.application_id=newer.application_id AND (s.updated_at,s.id)<(newer.updated_at,newer.id);
+--> statement-breakpoint
+UPDATE career_job j SET status='canceled',lease=NULL,lease_until=NULL
+FROM career_schedule s JOIN application a ON a.id=s.application_id AND a.user_id=s.user_id
+WHERE j.schedule_id=s.id AND s.kind='follow-up' AND j.status IN ('queued','running')
+AND ((CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END) IS DISTINCT FROM s.next_run_at OR NOT s.enabled);
+--> statement-breakpoint
+-- Move the delivery index to the projected clock. A completed occurrence on the same logical day stays delivered: its
+-- watermark follows the projected instant, so the scheduler does not treat the new time as an undelivered occurrence.
+-- Completed history keeps its original due time; only pending queued/running work moves to the projected clock.
+WITH projected AS (
+ SELECT s.id,s.last_queued_at,s.next_run_at AS current_at,
+  CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END AS at,
+  COALESCE((SELECT j.status='completed' FROM career_job j WHERE j.schedule_id=s.id ORDER BY j.created_at DESC,j.id DESC LIMIT 1),false) AS completed,
+  a.follow_up_note
+ FROM career_schedule s JOIN application a ON a.id=s.application_id AND a.user_id=s.user_id
+ WHERE s.kind='follow-up' AND a.follow_up_at IS NOT NULL
+ AND NOT EXISTS(SELECT 1 FROM career_schedule newer WHERE newer.user_id=s.user_id AND newer.application_id=s.application_id AND newer.kind='follow-up' AND (newer.updated_at,newer.id)>(s.updated_at,s.id))
+)
+UPDATE career_schedule s SET next_run_at=p.at,query=COALESCE(p.follow_up_note,''),
+last_queued_at=CASE
+ WHEN p.at IS NOT DISTINCT FROM p.current_at THEN s.last_queued_at
+ WHEN s.last_queued_at IS NOT NULL AND p.completed
+  AND (p.at AT TIME ZONE s.timezone)::date=(s.last_queued_at AT TIME ZONE s.timezone)::date
+ THEN p.at
+ ELSE NULL END
+FROM projected p WHERE s.id=p.id;
+--> statement-breakpoint
+INSERT INTO career_schedule(id,user_id,application_id,kind,query,timezone,enabled,next_run_at)
+SELECT 'follow-up:'||a.id,a.user_id,a.id,'follow-up',COALESCE(a.follow_up_note,''),u.timezone,true,CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE u.timezone ELSE a.follow_up_at END
+FROM application a JOIN "user" u ON u.id=a.user_id WHERE a.follow_up_at IS NOT NULL
+AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.application_id=a.id AND s.kind='follow-up');
+`;
+
+	it("forward correction repairs installations recorded with an earlier owner migration", async () => {
+		const schemas: string[] = [];
+		const pools: Pool[] = [];
+		const normalized = async (pool: Pool) => {
+			const snapshot = {
+				schedules: (
+					(await pool.query("SELECT id,next_run_at,last_queued_at,enabled,query FROM career_schedule ORDER BY id"))
+						.rows as Array<Record<string, unknown>>
+				).map((row) => ({
+					id: row.id,
+					next: (row.next_run_at as Date).toISOString(),
+					queued: row.last_queued_at === null ? null : (row.last_queued_at as Date).toISOString(),
+					enabled: row.enabled,
+					query: row.query,
+				})),
+				jobs: [] as Array<Record<string, unknown>>,
+				notifications: [] as Array<Record<string, unknown>>,
+			};
+			const jobRows = (
+				(await pool.query("SELECT id,schedule_id,due_at,status FROM career_job ORDER BY due_at,id")).rows as Array<
+					Record<string, unknown>
+				>
+			).map((row) => ({
+				id: row.id,
+				scheduleId: row.schedule_id,
+				dueAt: (row.due_at as Date).toISOString(),
+				status: row.status,
+			}));
+			// New occurrences get fresh job ids; compare them by schedule instead of by the random id.
+			const jobKey = new Map(
+				jobRows.map((row) => [row.id, String(row.id).startsWith("job-") ? row.id : `${row.scheduleId}:new`]),
+			);
+			snapshot.jobs = jobRows.map((row) => ({ ...row, id: jobKey.get(row.id) }));
+			snapshot.notifications = (
+				(await pool.query("SELECT key,application_id FROM career_notification ORDER BY key")).rows as Array<
+					Record<string, unknown>
+				>
+			).map((row) => ({ key: jobKey.get(row.key as string) ?? row.key, applicationId: row.application_id }));
+			return snapshot;
+		};
+		const recordedUpgrade = async (label: string, ownerSql: string | null) => {
+			const schema = `rx106_recovery_${label}_${randomUUID().replaceAll("-", "")}`;
+			await admin.query(`CREATE SCHEMA ${schema}`);
+			schemas.push(schema);
+			const pool = new Pool({
+				connectionString: databaseUrl,
+				max: 1,
+				options: `-c search_path=${schema} -c statement_timeout=10000`,
+			});
+			pools.push(pool);
+			const migrations = new URL("../../../../../migrations/", import.meta.url);
+			const directories = (await readdir(migrations, { withFileTypes: true }))
+				.filter((entry) => entry.isDirectory() && /^\d+_/.test(entry.name))
+				.map((entry) => entry.name)
+				.sort();
+			const owner = "20261031160926_rx106_follow_up_owner";
+			const clock = "20261031174650_rx106_follow_up_clock";
+			const recovery = "20261101090000_rx106_follow_up_watermark_recovery";
+			const apply = async (name: string) => {
+				const file = new URL(`${name}/migration.sql`, migrations);
+				await pool.query((await readFile(file, "utf8")).replaceAll('"public".', ""));
+			};
+			for (const directory of directories) {
+				if (directory === owner) break;
+				await apply(directory);
+			}
+			await pool.query(`
+				INSERT INTO "user"(id,name,email,username,display_username,timezone,email_verified)
+				VALUES('upgrade','Fictional Upgrade','upgrade@example.test','upgrade','upgrade','UTC',true);
+				INSERT INTO application(id,user_id,company,role,status,follow_up_at,follow_up_note) VALUES
+				 ('same-day','upgrade','Same Day Labs','Engineer','applied','2026-10-30T00:00:00Z','Already delivered'),
+				 ('explicit-later','upgrade','Explicit Later Labs','Engineer','applied','2026-10-30T16:00:00Z','Distinct exact time'),
+				 ('pending','upgrade','Pending Labs','Engineer','applied','2026-10-30T00:00:00Z','Still pending'),
+				 ('explicit-same','upgrade','Explicit Same Labs','Engineer','applied','2026-10-30T08:00:00Z','Already delivered');
+				INSERT INTO career_schedule(id,user_id,application_id,kind,query,timezone,enabled,next_run_at,last_queued_at) VALUES
+				 ('same-day','upgrade','same-day','follow-up','Already delivered','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z'),
+				 ('explicit-later','upgrade','explicit-later','follow-up','Distinct exact time','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z'),
+				 ('pending','upgrade','pending','follow-up','Still pending','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z'),
+				 ('explicit-same','upgrade','explicit-same','follow-up','Already delivered','UTC',true,'2026-10-30T08:00:00Z','2026-10-30T08:00:00Z');
+				INSERT INTO career_job(id,user_id,schedule_id,due_at,status,attempts) VALUES
+				 ('job-same-day','upgrade','same-day','2026-10-30T08:00:00Z','completed',1),
+				 ('job-explicit-later','upgrade','explicit-later','2026-10-30T08:00:00Z','completed',1),
+				 ('job-pending','upgrade','pending','2026-10-30T08:00:00Z','queued',0),
+				 ('job-explicit-same','upgrade','explicit-same','2026-10-30T08:00:00Z','completed',1);
+				INSERT INTO career_notification(id,user_id,application_id,key,notice) VALUES
+				 ('notice-same-day','upgrade','same-day','job-same-day','{"type":"followup","company":"Same Day Labs","role":"Engineer","note":"Already delivered"}'),
+				 ('notice-explicit-later','upgrade','explicit-later','job-explicit-later','{"type":"followup","company":"Explicit Later Labs","role":"Engineer","note":"Distinct exact time"}'),
+				 ('notice-explicit-same','upgrade','explicit-same','job-explicit-same','{"type":"followup","company":"Explicit Same Labs","role":"Engineer","note":"Already delivered"}');
+			`);
+			if (ownerSql) await pool.query(ownerSql);
+			else await apply(owner);
+			await apply(clock);
+			const beforeRecovery = await normalized(pool);
+			await apply(recovery);
+			const afterRecovery = await normalized(pool);
+			const oldDb = fixture.db;
+			fixture.db = drizzle({ client: pool });
+			try {
+				// One worker serves one job per account per tick.
+				await run();
+				await run();
+				await run();
+			} finally {
+				fixture.db = oldDb;
+			}
+			return { beforeRecovery, afterRecovery, afterScheduler: await normalized(pool) };
+		};
+		try {
+			const v2 = await recordedUpgrade("v2", V2_OWNER_SQL);
+			const v3 = await recordedUpgrade("v3", V3_OWNER_SQL);
+			const fresh = await recordedUpgrade("fresh", null);
+
+			// The old chains really leave the defects behind.
+			expect(v2.beforeRecovery.schedules.find((row) => row.id === "same-day")?.queued).toBeNull();
+			expect(v3.beforeRecovery.schedules.find((row) => row.id === "explicit-later")?.queued).toBe(
+				"2026-10-30T16:00:00.000Z",
+			);
+			expect(v3.beforeRecovery.schedules.find((row) => row.id === "same-day")?.queued).toBe("2026-10-30T09:00:00.000Z");
+
+			// The correction converges every recorded history on the fresh-chain state before and after real delivery.
+			expect(v2.afterRecovery).toEqual(fresh.afterRecovery);
+			expect(v3.afterRecovery).toEqual(fresh.afterRecovery);
+			expect(v2.afterScheduler).toEqual(fresh.afterScheduler);
+			expect(v3.afterScheduler).toEqual(fresh.afterScheduler);
+
+			const after = fresh.afterScheduler;
+			expect(after.schedules).toEqual([
+				{
+					id: "explicit-later",
+					next: "2026-10-30T16:00:00.000Z",
+					queued: "2026-10-30T16:00:00.000Z",
+					enabled: true,
+					query: "Distinct exact time",
+				},
+				{
+					id: "explicit-same",
+					next: "2026-10-30T08:00:00.000Z",
+					queued: "2026-10-30T08:00:00.000Z",
+					enabled: true,
+					query: "Already delivered",
+				},
+				{
+					id: "pending",
+					next: "2026-10-30T09:00:00.000Z",
+					queued: "2026-10-30T09:00:00.000Z",
+					enabled: true,
+					query: "Still pending",
+				},
+				{
+					id: "same-day",
+					next: "2026-10-30T09:00:00.000Z",
+					queued: "2026-10-30T09:00:00.000Z",
+					enabled: true,
+					query: "Already delivered",
+				},
+			]);
+			expect(after.jobs.filter((row) => row.scheduleId === "explicit-later")).toEqual([
+				{
+					id: "job-explicit-later",
+					scheduleId: "explicit-later",
+					dueAt: "2026-10-30T08:00:00.000Z",
+					status: "completed",
+				},
+				{
+					id: expect.any(String),
+					scheduleId: "explicit-later",
+					dueAt: "2026-10-30T16:00:00.000Z",
+					status: "completed",
+				},
+			]);
+			expect(after.jobs.filter((row) => row.scheduleId === "same-day")).toHaveLength(1);
+			expect(after.jobs.filter((row) => row.scheduleId === "explicit-same")).toHaveLength(1);
+			expect(after.notifications).toHaveLength(5);
+		} finally {
+			await Promise.all(pools.map((pool) => pool.end()));
+			for (const schema of schemas) await admin.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`);
+		}
+	});
+
 	it("distinguishes old-client dates from exact midnight reminders and preserves notes-only timestamps", async () => {
 		const { applicationService } = await import("../applications/service");
 		await getDb().update(tables.user).set({ timezone: "Asia/Tokyo" }).where(eq(tables.user.id, "alice"));
