@@ -13,6 +13,7 @@ export function useHasUsableAiProvider() {
 		: [];
 
 	return {
+		providers: query.isSuccess ? query.data : [],
 		error: query.error,
 		hasUsableProvider: usableProviders.length > 0,
 		isLoading: query.isPending,

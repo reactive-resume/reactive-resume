@@ -28,7 +28,6 @@ import { cn } from "@reactive-resume/utils/style";
 import { ImprovePanel, lineAtCaret } from "./improve";
 import { richTextExtensions } from "@/components/input/rich-text-extensions";
 import { hasUnsupportedTableMarkup, toPreviewHtml } from "@/components/input/rich-text-markup";
-import { openAssistantFrom } from "@/features/assistant/open";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { usePrompt } from "@/hooks/use-confirm";
@@ -271,7 +270,6 @@ export function RichTextEditor({
 	const startImprove = () => {
 		if (!editor || ai.isUnavailable) return;
 		// Without a provider, the assistant's inline setup connects one.
-		if (!ai.hasUsableProvider) return void openAssistantFrom({ assistant: "new" });
 		setImproving(lineAtCaret(editor));
 	};
 

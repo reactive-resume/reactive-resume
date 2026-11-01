@@ -15,6 +15,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { PrivacyLine, StatusPill, Swap, Working, workingSteps } from "../shared";
+import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -32,22 +33,10 @@ export function AiNotice({ className }: AiNoticeProps) {
 	const connection = useDefaultProvider();
 	const { provider } = connection;
 	if (connection.isUnavailable) return <AiProviderLoadState state={connection} />;
-	if (!provider)
-		return (
-			<Link
-				to="/dashboard/settings/ai"
-				className={cn(
-					"flex w-fit items-center gap-1.5 text-[13px] text-accent-text underline-offset-4 hover:underline",
-					className,
-				)}
-			>
-				<Icon name="key" size={16} />
-				<Trans>Connect an AI provider in Settings</Trans>
-			</Link>
-		);
+	if (!provider) return <SetUpAi />;
 	return (
 		<PrivacyLine className={cn(className)}>
-			{t`Sends this application's posting, notes and documents, plus Knowledge that's switched on, to ${provider.label}.`}
+			{t`Sends this application's posting, notes and documents, plus Knowledge that's switched on, to ${provider.label} · ${provider.model}.`}
 		</PrivacyLine>
 	);
 }
@@ -60,6 +49,12 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 	const generate = useGenerate(application.id);
 	const { provider } = useDefaultProvider();
 	const { data: facts } = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
+	const evidenceState = useQuery(orpc.career.fitEvidence.queryOptions({ input: { applicationId: application.id } }));
+	const documents = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	const linkResume = useMutation(orpc.applications.update.mutationOptions());
+	const [resumeChoice, setResumeChoice] = useState("");
+	const [evidenceFailure, setEvidenceFailure] = useState(false);
+	const hasEvidence = evidenceState.data?.usable === true;
 	const forget = useMutation(orpc.career.forgetFact.mutationOptions());
 	const readOnly = version?.data.kind === "fit";
 	const item = (readOnly ? version : latest(saved.data, "fit")) as FitItem | undefined;
@@ -72,7 +67,10 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 			</div>
 		);
 
-	const check = () => void generate.run({ task: "fit" }).catch(() => undefined);
+	const check = () => {
+		if (!hasEvidence || evidenceState.isPending) return;
+		void generate.run({ task: "fit" }).catch(() => undefined);
+	};
 
 	if (!item)
 		return (
@@ -86,7 +84,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 				}
 				action={
 					provider ? (
-						<Button loading={generate.isPending} onClick={check}>
+						<Button disabled={!hasEvidence || evidenceState.isPending} loading={generate.isPending} onClick={check}>
 							<Icon name="list-checks" size={18} />
 							{generate.isPending ? <Working steps={workingSteps("fit")} /> : <Trans>Check fit</Trans>}
 						</Button>
@@ -94,6 +92,71 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 				}
 			>
 				<AiNotice className="max-w-[420px] text-start" />
+				{evidenceState.isError && (
+					<div role="alert">
+						<p>
+							<Trans>Couldn't check your evidence.</Trans>
+						</p>
+						<Button onClick={() => void evidenceState.refetch()}>
+							<Trans>Retry</Trans>
+						</Button>
+					</div>
+				)}
+				{!hasEvidence && (
+					<div className="grid gap-2 text-sm">
+						<p>
+							<Trans>
+								Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request.
+							</Trans>
+						</p>
+						<Link to="/dashboard/career/knowledge">
+							<Trans>Add facts</Trans>
+						</Link>
+						<label htmlFor="fit-evidence">
+							<Trans>Resume to use as evidence</Trans>
+						</label>
+						<select
+							id="fit-evidence"
+							className="rounded border border-line bg-surface p-2"
+							value={resumeChoice}
+							onChange={(event) => setResumeChoice(event.target.value)}
+						>
+							<option value="">{t`Choose a resume`}</option>
+							{documents.data
+								?.filter((d) => d.type === "resume")
+								.map((d) => (
+									<option key={d.id} value={d.id}>
+										{d.name}
+									</option>
+								))}
+						</select>
+						<Button
+							type="button"
+							size="sm"
+							disabled={!resumeChoice || linkResume.isPending}
+							onClick={() =>
+								linkResume.mutate(
+									{ id: application.id, resumeId: resumeChoice },
+									{
+										onSuccess: () => {
+											setEvidenceFailure(false);
+											void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
+											void queryClient.invalidateQueries({ queryKey: orpc.career.fitEvidence.key() });
+										},
+										onError: () => setEvidenceFailure(true),
+									},
+								)
+							}
+						>
+							<Trans>Use this resume as evidence</Trans>
+						</Button>
+						{evidenceFailure && (
+							<p role="alert">
+								<Trans>Couldn't link the resume. Try again.</Trans>
+							</p>
+						)}
+					</div>
+				)}
 			</EmptyState>
 		);
 

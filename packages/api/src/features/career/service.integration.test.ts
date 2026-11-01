@@ -16,7 +16,13 @@ import { reviewedAnswers } from "./answers";
 const fixture = vi.hoisted(() => ({
 	db: undefined as ReturnType<typeof drizzle> | undefined,
 	generate: vi.fn(),
-	provider: vi.fn(async () => ({ id: "fixture", provider: "openai", model: "fixture", apiKey: "synthetic" })),
+	provider: vi.fn(async () => ({
+		id: "fixture",
+		recipientVersion: "fixture-revision",
+		provider: "openai",
+		model: "fixture",
+		apiKey: "synthetic",
+	})),
 	storageDelete: vi.fn().mockResolvedValue(undefined),
 }));
 vi.mock("@reactive-resume/db/client", () => ({
@@ -28,7 +34,14 @@ vi.mock("@reactive-resume/db/client", () => ({
 vi.mock("../applications/ai", () => ({ generateJson: fixture.generate }));
 vi.mock("../ai-providers/service", () => ({
 	aiProvidersService: {
-		getRunnableById: async () => ({ id: "fixture", provider: "openai", model: "fixture", apiKey: "synthetic" }),
+		assertAvailable: async () => {},
+		getRunnableById: async () => ({
+			id: "fixture",
+			recipientVersion: "fixture-revision",
+			provider: "openai",
+			model: "fixture",
+			apiKey: "synthetic",
+		}),
 		getDefaultRunnable: fixture.provider,
 	},
 }));
@@ -1400,6 +1413,17 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 	});
 
 	it.each(["paused", "closed"] as const)("discards a briefing when %s while the provider runs", async (state) => {
+		await getDb().insert(tables.aiProvider).values({
+			id: "fixture",
+			userId: "alice",
+			label: "Fixture",
+			provider: "openai",
+			model: "fixture",
+			encryptedApiKey: "synthetic",
+			apiKeySalt: "synthetic",
+			apiKeyHash: "synthetic",
+			apiKeyPreview: "synthetic",
+		});
 		const started = Promise.withResolvers<void>();
 		const release = Promise.withResolvers<void>();
 		fixture.generate.mockImplementationOnce(async () => {
@@ -1426,6 +1450,8 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			.values({
 				id: "pause-me",
 				userId: "alice",
+				aiProviderId: "fixture",
+				aiProviderVersion: "fixture-revision",
 				applicationId: "alice-app",
 				interviewId: "alice-round",
 				kind: "prepare",
@@ -1881,5 +1907,36 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		await getDb().delete(tables.user).where(eq(tables.user.id, "alice"));
 		expect(await profiles.get("alice")).toBeNull();
 		expect(await profiles.get("bob")).not.toBeNull();
+	});
+	it("uses filtered Fit evidence, retaining explicit resume choice and private/excluded source boundaries", async () => {
+		const { hasFitEvidence } = await import("./service");
+		await getDb()
+			.insert(tables.application)
+			.values({ id: "fit-empty", userId: "alice", company: "Fictional", role: "Engineer" });
+		const context = () => service.context({ userId: "alice", applicationId: "fit-empty" });
+		await service.saveStory("alice", story([]));
+		const privateFact = await fact("alice", "Only for another application", "alice-app");
+		await service.saveStory("alice", story([privateFact.id], "alice-app"));
+		expect(hasFitEvidence(await context())).toBe(false);
+		const usable = await fact("alice", "I maintained fictional systems");
+		await service.saveStory("alice", story([usable.id]));
+		expect(hasFitEvidence(await context())).toBe(true);
+		await service.forgetFact("alice", usable.id);
+		expect(hasFitEvidence(await context())).toBe(false);
+		await getDb()
+			.update(tables.application)
+			.set({ resumeId: "shared-resume" })
+			.where(eq(tables.application.id, "fit-empty"));
+		expect((await context()).resume?.source.id).toBe("shared-resume");
+		expect(hasFitEvidence(await context())).toBe(true);
+		const source = await fact("alice", "LIVE UNSUBMITTED DRAFT", null, {
+			kind: "resume",
+			id: "shared-resume",
+			quote: "LIVE UNSUBMITTED DRAFT",
+		});
+		await service.forgetFact("alice", source.id);
+		expect((await context()).resume).toBeNull();
+		expect(hasFitEvidence(await context())).toBe(false);
+		expect(hasFitEvidence({ facts: [], stories: [], resume: { text: "  \n" } })).toBe(false);
 	});
 });

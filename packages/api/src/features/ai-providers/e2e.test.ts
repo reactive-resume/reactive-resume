@@ -15,12 +15,14 @@ const { dbMock, dbState } = vi.hoisted(() => {
 	const selectChain = {
 		from: () => selectChain,
 		where: () => selectChain,
+		for: async () => state.rows,
 		orderBy: async () => state.rows,
 		limit: async () => state.rows,
 	};
 
 	const db = {
 		select: () => selectChain,
+		transaction: async (run: (tx: unknown) => Promise<unknown>) => run(db),
 		update: () => ({
 			set: (values: Record<string, unknown>) => ({
 				where: () => {

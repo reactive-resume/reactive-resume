@@ -624,11 +624,24 @@ describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQ
 				.values({ id: "selected", userId: user.id, name: "Synthetic", slug: "selected", data: sampleResumeData });
 			const lock = await pool.connect();
 			await lock.query("BEGIN");
-			await lock.query(
-				phase === "preparation"
-					? "LOCK TABLE resume IN ACCESS EXCLUSIVE MODE"
-					: "SELECT id FROM resume WHERE id='selected' FOR UPDATE",
-			);
+			let entered!: () => void;
+			let release!: () => void;
+			const arrived = new Promise<void>((resolve) => {
+				entered = resolve;
+			});
+			const held = new Promise<void>((resolve) => {
+				release = resolve;
+			});
+			const original = careerService.assertMemoryVersion;
+			const guard =
+				phase === "validation"
+					? vi.spyOn(careerService, "assertMemoryVersion").mockImplementation(async (...args) => {
+							entered();
+							await held;
+							return original(...args);
+						})
+					: null;
+			if (phase === "preparation") await lock.query("LOCK TABLE resume IN ACCESS EXCLUSIVE MODE");
 			const before = a.requests.length;
 			const beforeB = b.requests.length;
 			const pending = client()
@@ -638,12 +651,14 @@ describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQ
 					(error) => ({ value: null, code: error.code }),
 				);
 			try {
-				await vi.waitFor(async () => {
-					const blocked = await admin.query(
-						"SELECT count(*)::int AS count FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE 'select %from \"resume\"%' AND pid <> pg_backend_pid()",
-					);
-					expect(blocked.rows[0]?.count).toBeGreaterThan(0);
-				});
+				if (phase === "validation") await arrived;
+				else
+					await vi.waitFor(async () => {
+						const blocked = await admin.query(
+							"SELECT count(*)::int AS count FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE 'select %from \"resume\"%' AND pid <> pg_backend_pid()",
+						);
+						expect(blocked.rows[0]?.count).toBeGreaterThan(0);
+					});
 				if (change === "retarget-off") {
 					await client().providers.update({
 						id: disclosed.id,
@@ -658,12 +673,15 @@ describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQ
 				else Object.assign(env, { AI_PROVIDER: undefined, AI_MODEL: undefined });
 				expect(a.requests.length).toBe(before);
 				await lock.query("COMMIT");
+				release();
 				const result = await pending;
 				expect(a.requests.slice(before).filter((request) => request.roles)).toEqual([]);
 				expect(b.requests.slice(beforeB).filter((request) => request.roles)).toEqual([]);
 				expect(result.value).toBeNull();
 				expect(result.code).toBe(change === "delete" ? "NOT_FOUND" : "BAD_REQUEST");
 			} finally {
+				release();
+				guard?.mockRestore();
 				await lock.query("ROLLBACK");
 				lock.release();
 				await pending;

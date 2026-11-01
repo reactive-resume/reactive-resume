@@ -24,7 +24,7 @@ export const savedItemSchema = createSelectSchema(tables.careerArtifact, {
 	data: savedItemDataSchema,
 	evidence: z.object({ factIds: z.array(z.string()), storyIds: z.array(z.string()) }),
 });
-export const careerScheduleSchema = createSelectSchema(tables.careerSchedule);
+export const careerScheduleSchema = createSelectSchema(tables.careerSchedule).omit({ aiProviderVersion: true });
 export const careerNotificationSchema = createSelectSchema(tables.careerNotification, {
 	notice: careerNoticeSchema,
 }).extend({

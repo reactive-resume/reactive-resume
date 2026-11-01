@@ -5,10 +5,12 @@ import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
+import { assertDocumentVersion } from "../documents/ownership";
 import { atsReviewInputSchema, atsReviewOutputSchema, reviewResumeText } from "./ats-review";
 import { improveInputSchema, improveLine, improveOutputSchema } from "./improve";
 import { reportAiContent } from "./reports";
 import { aiService, fileInputSchema } from "./service";
+import { beginWritingReview, readWritingReview, saveWritingReview } from "./writing-review";
 
 /**
  * Every AI procedure fails the same ways: no ENCRYPTION_SECRET, a bad base URL, the provider erroring (its cause kept
@@ -59,6 +61,31 @@ async function getRunnableProvider(userId: string, aiProviderId?: string) {
 
 export const aiRouter = {
 	reportContent: reportAiContent,
+	capabilities: protectedProcedure
+		.route({ method: "GET", path: "/ai/capabilities", tags: ["AI"], operationId: "getAiCapabilities" })
+		.input(z.object({}).default({}))
+		.output(z.object({ recipientApproval: z.literal(1), explicitNoAi: z.literal(true) }))
+		.handler(() => ({ recipientApproval: 1 as const, explicitNoAi: true as const })),
+	writingReview: protectedProcedure
+		.route({
+			method: "GET",
+			path: "/ai/writing-review/{resumeId}",
+			tags: ["AI"],
+			operationId: "getWritingReview",
+			summary: "Get the saved writing review for a resume",
+		})
+		.input(z.object({ resumeId: z.string() }))
+		.output(
+			z
+				.object({
+					inputText: z.string(),
+					passages: z.array(z.object({ id: z.string(), where: z.string(), text: z.string() })),
+					review: atsReviewOutputSchema,
+					reviewedAt: z.date(),
+				})
+				.nullable(),
+		)
+		.handler(({ context, input }) => readWritingReview(context.user.id, input.resumeId)),
 	parsePdf: protectedProcedure
 		.route({
 			method: "POST",
@@ -74,15 +101,18 @@ export const aiRouter = {
 		.use(aiRequestRateLimit)
 		.errors(aiErrors)
 		.output(resumeDataSchema)
-		.handler(async ({ context, input }) => {
+		.handler(async ({ context, input, signal }) => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
+				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
+				signal?.throwIfAborted();
 				return await aiService.parsePdf({
 					provider: provider.provider,
 					model: provider.model,
 					apiKey: provider.apiKey,
 					baseURL: provider.baseURL ?? "",
 					file: input.file,
+					signal,
 				});
 			} catch (error) {
 				rethrowAiError(error, "The AI returned resume data in the wrong format. Try again, or choose another model.");
@@ -113,9 +143,11 @@ export const aiRouter = {
 		.use(aiRequestRateLimit)
 		.errors(aiErrors)
 		.output(resumeDataSchema)
-		.handler(async ({ context, input }) => {
+		.handler(async ({ context, input, signal }) => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
+				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
+				signal?.throwIfAborted();
 				return await aiService.parseDocx({
 					provider: provider.provider,
 					model: provider.model,
@@ -123,6 +155,7 @@ export const aiRouter = {
 					baseURL: provider.baseURL ?? "",
 					mediaType: input.mediaType,
 					file: input.file,
+					signal,
 				});
 			} catch (error) {
 				rethrowAiError(error, "The AI returned resume data in the wrong format. Try again, or choose another model.");
@@ -144,17 +177,36 @@ export const aiRouter = {
 		.use(aiRequestRateLimit)
 		.output(atsReviewOutputSchema)
 		.errors(aiErrors)
-		.handler(async ({ context, input }) => {
+		.handler(async ({ context, input, signal }) => {
 			try {
+				const requestedAt = new Date();
+				const resume = input.resumeId ? await beginWritingReview(context.user.id, input.resumeId) : null;
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
+				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, async (tx) => {
+					if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
+				});
+				signal?.throwIfAborted();
 
-				return await reviewResumeText({
+				const review = await reviewResumeText({
 					...input,
+					signal,
 					provider: provider.provider,
 					model: provider.model,
 					apiKey: provider.apiKey,
 					baseURL: provider.baseURL ?? "",
 				});
+				if (input.resumeId && resume)
+					await saveWritingReview({
+						requestGeneration: resume.generation,
+						resumeId: input.resumeId,
+						userId: context.user.id,
+						inputText: input.extractedText,
+						passages: input.passages,
+						review,
+						requestedAt,
+						reviewedAt: new Date(),
+					});
+				return review;
 			} catch (error) {
 				rethrowAiError(error, "The AI returned the review in the wrong format. Try again, or choose another model.");
 			}
@@ -175,12 +227,15 @@ export const aiRouter = {
 		.use(aiRequestRateLimit)
 		.output(improveOutputSchema)
 		.errors(aiErrors)
-		.handler(async ({ context, input }) => {
+		.handler(async ({ context, input, signal }) => {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
+				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
+				signal?.throwIfAborted();
 
 				return await improveLine({
 					...input,
+					signal,
 					provider: provider.provider,
 					model: provider.model,
 					apiKey: provider.apiKey,

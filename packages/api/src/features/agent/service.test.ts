@@ -45,10 +45,13 @@ const resumeServiceMock = {
 };
 
 const aiProvidersServiceMock = {
+	authorize: vi.fn(),
 	getRunnableById: vi.fn(),
 	getDefaultRunnable: vi.fn(),
 	markUsed: vi.fn(),
 };
+
+vi.mock("../applications/service", () => ({ assertApplicationVersion: vi.fn() }));
 
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
 vi.mock("@reactive-resume/db/redis", () => ({
@@ -247,6 +250,7 @@ beforeEach(() => {
 	for (const mock of Object.values(storageServiceMock)) mock.mockReset();
 	for (const mock of Object.values(resumeServiceMock)) mock.mockReset();
 	for (const mock of Object.values(aiProvidersServiceMock)) mock.mockReset();
+	aiProvidersServiceMock.authorize.mockResolvedValue(undefined);
 	for (const mock of Object.values(documentMock)) mock.mockReset();
 	documentMock.loadDocument.mockResolvedValue({
 		kind: "resume",

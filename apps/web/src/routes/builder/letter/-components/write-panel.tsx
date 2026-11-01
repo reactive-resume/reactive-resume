@@ -6,11 +6,10 @@ import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { useReducedMotion } from "motion/react";
 import { useId, useRef, useState } from "react";
 import { coverLetterTextToHtml, defaultCoverLetterSignOff, greetingName } from "@reactive-resume/resume/cover-letter";
-import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -30,6 +29,7 @@ import { templates } from "@/dialogs/resume/template/data";
 import { getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
+import { SetUpAi } from "@/features/assistant/provider-setup";
 import { useLetterWords } from "@/features/letters/compose";
 import { countWords, LETTER_LENGTH, letterLength } from "@/features/letters/length";
 import { discardLetterDraft, startLetterDraft, useLetterEditorStore } from "@/features/letters/store";
@@ -535,12 +535,17 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 				</Button>
 			</div>
 			{canDraft && <AiProviderLoadState state={providerState} />}
+			{canDraft && hasUsableProvider && (
+				<p className="text-xs text-ink-3">
+					<Trans>
+						Sends the linked resume, posting and letter details to {providerState.usableProviders[0]?.label} ·{" "}
+						{providerState.usableProviders[0]?.model}. Your provider may charge.
+					</Trans>
+				</p>
+			)}
 			{canDraft && !providerState.isUnavailable && !hasUsableProvider && (
 				<p className="text-xs text-ink-3">
-					<Trans>Drafting needs an AI provider.</Trans>{" "}
-					<Link to="/dashboard/settings/ai" className={buttonVariants({ variant: "link", size: "sm" })}>
-						<Trans>Open AI settings</Trans>
-					</Link>
+					<Trans>Drafting needs an AI provider.</Trans> <SetUpAi />
 				</p>
 			)}
 		</div>

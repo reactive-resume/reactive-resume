@@ -1,16 +1,10 @@
 import type { AIProvider, SavedProvider } from "./catalog";
 import { useLingui } from "@lingui/react/macro";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
-import {
-	loadModelSuggestions,
-	modelsDevProviderIds,
-	providerDefaults,
-	providerLabel,
-	providerOptions,
-} from "./catalog";
-import { aiSettingsError } from "./error";
+import { providerDefaults, providerLabel, providerOptions } from "./catalog";
+import { aiSettingsError, providerTestError } from "./error";
 import { useHasAIProvider } from "./provider-state";
 import { client, orpc } from "@/api/client";
 import { getServer } from "@/auth/session";
@@ -39,6 +33,8 @@ export function AIProviderSetupSheet({ open, onClose, onReady }: AIProviderSetup
 	const { t } = useLingui();
 	const state = useHasAIProvider();
 	const managed = state.providers.some((provider) => provider.managed);
+	const [selected, setSelected] = useState<SavedProvider | null>(null);
+	const [adding, setAdding] = useState(false);
 	return (
 		<Sheet open={open} onClose={onClose} title={t`Set up a provider`} detents={[0.9]}>
 			{open &&
@@ -49,8 +45,20 @@ export function AIProviderSetupSheet({ open, onClose, onReady }: AIProviderSetup
 						</Text>
 						{state.error && <Button label={t`Try again`} onPress={state.retry} />}
 					</>
+				) : state.providers.length && !selected && !adding ? (
+					<View>
+						<Text>{t`Saved AI connections need attention. Choose one to fix, or add another.`}</Text>
+						{state.providers.map((provider) => (
+							<Button
+								key={provider.id}
+								label={`${provider.label} · ${provider.model}`}
+								onPress={() => setSelected(provider)}
+							/>
+						))}
+						<Button label={t`Add AI provider`} onPress={() => setAdding(true)} />
+					</View>
 				) : (
-					<ProviderForm onClose={onClose} onReady={onReady} />
+					<ProviderForm key={selected?.id ?? "new"} saved={selected ?? undefined} onClose={onClose} onReady={onReady} />
 				))}
 		</Sheet>
 	);
@@ -99,15 +107,8 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 	const [reveal, setReveal] = useState(false);
 	const [confirmDelete, setConfirmDelete] = useState(false);
 	const [modelFocused, setModelFocused] = useState(false);
-	const catalogId = modelsDevProviderIds[provider];
-	const suggestions = useQuery({
-		queryKey: ["models.dev"],
-		queryFn: ({ signal }) => loadModelSuggestions(signal),
-		enabled: catalogId !== null,
-		staleTime: 60 * 60 * 1000,
-		retry: false,
-	});
-	const models = catalogId ? (suggestions.data?.[catalogId] ?? []) : [];
+	const defaultModel = providerDefaults(provider).model;
+	const models = defaultModel ? [{ id: defaultModel, name: defaultModel }] : [];
 	const invalidate = () => queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
 	const set = (patch: Partial<typeof fields>) => setFields((previous) => ({ ...previous, ...patch }));
 	const baseline = saved ?? current;
@@ -163,11 +164,16 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 			setCurrent(tested);
 			await invalidate();
 			if (!mounted.current || getServer() !== server) return;
-			if (tested.testStatus === "success") {
+			if (tested.testStatus === "success" && tested.enabled) {
 				set({ apiKey: "" });
 				onReady?.();
 				onClose();
-			} else setFailure(tested.testError || t`The provider didn't answer. Check the key, the model and the base URL.`);
+			} else
+				setFailure(
+					tested.testStatus === "success"
+						? t`The connection works. Turn on Use this provider to use it.`
+						: providerTestError(tested.testErrorKind),
+				);
 		} catch (error) {
 			setFailure(aiSettingsError(error, testing));
 		} finally {
@@ -217,6 +223,9 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 	return (
 		<View style={{ gap: space.s4, padding: space.s4 }}>
 			<Text color="ink2">{t`The key is encrypted on the server and never shown again. Saving tests the connection.`}</Text>
+			{current && (
+				<Text color="ink3">{t`Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination.`}</Text>
+			)}
 			<SelectSheet
 				label={t`Provider`}
 				value={provider}
@@ -269,17 +278,7 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 				editable={!pending}
 				onFocus={() => setModelFocused(true)}
 				onBlur={() => setModelFocused(false)}
-				helper={
-					!catalogId
-						? t`Enter any model ID supported by your endpoint.`
-						: suggestions.isError
-							? t`Model suggestions are unavailable. You can still enter any model ID.`
-							: suggestions.isPending
-								? t`Loading model suggestions… You can also enter any model ID.`
-								: models.length
-									? t`Suggestions from models.dev. You can also enter any model ID.`
-									: t`No suggestions for this provider. Enter any model ID.`
-				}
+				helper={t`Built-in suggestion. You can enter any model ID supported by your endpoint.`}
 			/>
 			{modelFocused &&
 				models

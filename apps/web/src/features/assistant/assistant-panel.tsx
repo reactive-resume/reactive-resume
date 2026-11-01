@@ -22,9 +22,8 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
-import { useConversationConnection } from "./chat";
 import { Composer, Conversation } from "./conversation";
-import { ProviderSetup } from "./provider-setup";
+import { ProviderSetup, SetUpAi } from "./provider-setup";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { formatVersionTime } from "@/features/resume/share/format";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -76,9 +75,10 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const summary = threads.data?.find((item) => item.id === threadId);
 
 	const usable = providers.usableProviders;
-	// A conversation runs on its own connection; one switched off or removed moves to the default.
-	const provider = usable.find((item) => item.id === (threadId ? summary?.aiProviderId : providerId)) ?? usable[0];
-	useConversationConnection(threadId ? summary : undefined, provider);
+	// Existing conversations keep their destination until the user explicitly chooses another.
+	const provider =
+		usable.find((item) => item.id === (threadId ? summary?.aiProviderId : providerId)) ??
+		(threadId ? undefined : usable[0]);
 	const providerLabel = provider?.label ?? summary?.providerLabel ?? t`your provider`;
 
 	const ensureThread = async (): Promise<string> => {
@@ -210,6 +210,15 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 					</Button>
 				</div>
 			)}
+			{threadId && !provider && (
+				<Notice>
+					<Trans>
+						This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose
+						a model before sending again.
+					</Trans>
+					<SetUpAi />
+				</Notice>
+			)}
 			{notSetUp ? (
 				<Notice>
 					<Trans>
@@ -217,7 +226,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						works without it.
 					</Trans>
 				</Notice>
-			) : providers.error ? (
+			) : providers.error && view !== "history" && !threadId ? (
 				<AiProviderLoadState
 					state={{
 						...providers,
@@ -227,11 +236,11 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						},
 					}}
 				/>
-			) : providers.isLoading || threads.isPending ? (
+			) : (providers.isLoading && view !== "history" && !threadId) || threads.isPending ? (
 				<div className="grid flex-1 place-items-center">
 					<Spinner />
 				</div>
-			) : !providers.hasUsableProvider ? (
+			) : !providers.hasUsableProvider && view !== "history" && !threadId ? (
 				<div className="min-h-0 flex-1 overflow-y-auto">
 					<ProviderSetup />
 				</div>
@@ -259,6 +268,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						setPromptAttachments([]);
 					}}
 					onSwitchModel={() => setModelMenuOpen(true)}
+					destinationUnavailable={!provider}
 				/>
 			) : (
 				<>
@@ -293,10 +303,11 @@ type ConversationLoaderProps = {
 	initialContext: MessageContext;
 	onPromptSent: () => void;
 	onSwitchModel: () => void;
+	destinationUnavailable: boolean;
 };
 
 /** Reads the conversation fresh each time it opens: the chat takes its messages once, when it mounts. */
-function ConversationLoader({ threadId, document, ...props }: ConversationLoaderProps) {
+function ConversationLoader({ threadId, document, destinationUnavailable, ...props }: ConversationLoaderProps) {
 	const thread = useQuery({
 		...orpc.agent.threads.get.queryOptions({ input: { id: threadId } }),
 		refetchOnMount: "always",
@@ -323,7 +334,8 @@ function ConversationLoader({ threadId, document, ...props }: ConversationLoader
 			initialMessages={thread.data.messages}
 			activeRun={Boolean(thread.data.thread.activeRunId)}
 			document={document}
-			readOnly={thread.data.isReadOnly || document.locked}
+			readOnly={thread.data.isReadOnly || document.locked || destinationUnavailable}
+			localEditsLocked={document.locked || !thread.data.document}
 			{...props}
 		/>
 	);
@@ -375,7 +387,7 @@ function ModelMenu({ open, onOpenChange, providers, current, label, onChoose }: 
 }
 
 function Notice({ children }: { children: ReactNode }) {
-	return <p className="m-4 rounded-xl bg-sunken p-4 text-sm text-ink-2">{children}</p>;
+	return <div className="m-4 rounded-xl bg-sunken p-4 text-sm text-ink-2">{children}</div>;
 }
 
 type Suggestion = { icon: IconName; label: string; hint: string };

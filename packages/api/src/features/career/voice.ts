@@ -16,13 +16,14 @@ import { protectedProcedure } from "../../context";
 import { aiVoiceRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
 import { aiTransport, resolveAiBaseUrl } from "../ai/url-policy";
+import { assertApplicationVersion } from "../applications/service";
 import { requireCareerApplication } from "./service";
 
 const procedure = protectedProcedure.use(aiVoiceRateLimit);
 
 /** The connection for one voice job, refused unless it offers that model (see `AI_VOICE_MODELS`). */
 async function voiceConnection(userId: string, id: string, kind: "transcription" | "speech", model: string) {
-	const provider = await aiProvidersService.getRunnableById({ userId, id });
+	const provider = await aiProvidersService.getRunnableById({ userId, id, voice: { kind, model } });
 	if (provider.id !== id || !AI_VOICE_MODELS[provider.provider]?.[kind].includes(model))
 		throw new ORPCError("BAD_REQUEST", {
 			message:
@@ -32,6 +33,7 @@ async function voiceConnection(userId: string, id: string, kind: "transcription"
 		});
 	return {
 		provider: provider.provider,
+		captured: provider,
 		settings: { apiKey: provider.apiKey, baseURL: resolveAiBaseUrl(provider), ...aiTransport() },
 	};
 }
@@ -97,18 +99,26 @@ export const careerVoiceRouter = {
 			}),
 		)
 		.output(z.object({ id: z.string(), text: z.string() }))
-		.handler(async ({ context, input }) => {
-			await requireCareerApplication({ userId: context.user.id, applicationId: input.applicationId });
+		.handler(async ({ context, input, signal }) => {
+			const application = await requireCareerApplication({
+				userId: context.user.id,
+				applicationId: input.applicationId,
+			});
 			const connection = await voiceConnection(context.user.id, input.providerId, "transcription", input.model);
 			const model = transcriptionModel(connection, input.model);
 			if (!model) throw new ORPCError("BAD_REQUEST", { message: "Choose a connection that can transcribe speech." });
+			const audio = new Uint8Array(await input.audio.arrayBuffer());
+			await aiProvidersService.authorize({ userId: context.user.id, id: connection.captured.id }, async (tx) => {
+				if (application) await assertApplicationVersion(tx, context.user.id, application);
+			});
+			signal?.throwIfAborted();
 			try {
 				// Raw audio exists only for this request; no storage object or operational log contains it.
 				const result = await transcribe({
 					model,
-					audio: new Uint8Array(await input.audio.arrayBuffer()),
+					audio,
 					maxRetries: 0,
-					abortSignal: AbortSignal.timeout(60_000),
+					abortSignal: AbortSignal.any([AbortSignal.timeout(60_000), ...(signal ? [signal] : [])]),
 					telemetry: { recordInputs: false, recordOutputs: false },
 				});
 				const text = result.text.slice(0, 40_000);
@@ -171,10 +181,12 @@ export const careerVoiceRouter = {
 			}),
 		)
 		.output(z.object({ audio: z.string(), mediaType: z.string() }))
-		.handler(async ({ context, input }) => {
+		.handler(async ({ context, input, signal }) => {
 			const connection = await voiceConnection(context.user.id, input.providerId, "speech", input.model);
 			const model = speechModel(connection, input.model);
 			if (!model) throw new ORPCError("BAD_REQUEST", { message: "Choose a connection that can read text aloud." });
+			await aiProvidersService.authorize({ userId: context.user.id, id: connection.captured.id });
+			signal?.throwIfAborted();
 			try {
 				const result = await generateSpeech({
 					model,
@@ -182,7 +194,7 @@ export const careerVoiceRouter = {
 					// OpenAI's speech models need a voice; the others have a default one.
 					...(connection.provider === "openai" || input.model.startsWith("openai/") ? { voice: "alloy" } : {}),
 					maxRetries: 0,
-					abortSignal: AbortSignal.timeout(30_000),
+					abortSignal: AbortSignal.any([AbortSignal.timeout(30_000), ...(signal ? [signal] : [])]),
 					telemetry: { recordInputs: false, recordOutputs: false },
 				});
 				return { audio: result.audio.base64, mediaType: result.audio.mediaType };

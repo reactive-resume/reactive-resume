@@ -21,6 +21,15 @@ export function NavigationCommandGroup() {
 	return (
 		<>
 			<BaseCommandGroup heading={<Trans>Go to…</Trans>}>
+				<CommandItem
+					disabled={!session}
+					keywords={[t`AI`, t`AI providers`, t`Web access`, t`API keys`]}
+					value="navigation.ai"
+					onSelect={() => onNavigate("/dashboard/settings/ai")}
+				>
+					<Icon name="key" size={16} />
+					<Trans>AI &amp; developer</Trans>
+				</CommandItem>
 				<CommandItem keywords={[t`Home`]} value="navigation.home" onSelect={() => onNavigate("/")}>
 					<Icon name="house" size={16} />
 					<Trans>Home</Trans>

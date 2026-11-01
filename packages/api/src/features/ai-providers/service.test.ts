@@ -19,6 +19,7 @@ const { dbMock, queryMock, queryState } = vi.hoisted(() => {
 			return query;
 		}),
 		limit: vi.fn(async () => state.rows),
+		for: vi.fn(async () => state.rows),
 	};
 	const update = {
 		set: vi.fn(() => update),
@@ -29,8 +30,13 @@ const { dbMock, queryMock, queryState } = vi.hoisted(() => {
 		returning: vi.fn(async () => state.updateRows ?? state.rows),
 	};
 
+	const db = {
+		select: vi.fn(() => query),
+		update: vi.fn(() => update),
+		transaction: vi.fn(async (run: (tx: unknown) => Promise<unknown>) => run(db)),
+	};
 	return {
-		dbMock: { select: vi.fn(() => query), update: vi.fn(() => update) },
+		dbMock: db,
 		queryMock: query,
 		queryState: state,
 	};
@@ -38,6 +44,9 @@ const { dbMock, queryMock, queryState } = vi.hoisted(() => {
 
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
 vi.mock("@reactive-resume/db/schema", () => ({
+	user: { id: "user.id" },
+	careerSchedule: { id: "schedule.id", userId: "schedule.user_id", aiProviderId: "schedule.ai_provider_id" },
+	careerJob: { userId: "job.user_id", scheduleId: "job.schedule_id", status: "job.status" },
 	aiProvider: {
 		id: "ai_provider.id",
 		userId: "ai_provider.user_id",
@@ -64,6 +73,7 @@ vi.mock("drizzle-orm", () => ({
 	asc: (value: unknown) => ({ type: "asc", value }),
 	desc: (value: unknown) => ({ type: "desc", value }),
 	eq: (left: unknown, right: unknown) => ({ type: "eq", left, right }),
+	inArray: (left: unknown, right: unknown) => ({ type: "inArray", left, right }),
 	isNull: (value: unknown) => ({ type: "isNull", value }),
 	ne: (left: unknown, right: unknown) => ({ type: "ne", left, right }),
 	sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({ type: "sql", strings: [...strings], values }),
@@ -79,6 +89,7 @@ vi.mock("../ai/url-policy", () => ({ resolveAiBaseUrl: vi.fn() }));
 
 const { aiProvidersService } = await import("./service");
 const { resolveAiBaseUrl } = await import("../ai/url-policy");
+const { testConnection } = await import("../ai/service");
 
 function providerRow(overrides: Record<string, unknown> = {}) {
 	return {
@@ -114,7 +125,7 @@ describe("aiProvidersService", () => {
 		queryState.updateWhere = undefined;
 	});
 
-	it("prefers the default enabled and tested provider, then the most recently used, then creation order", async () => {
+	it("prefers the default enabled and tested provider, then stable creation order", async () => {
 		queryState.rows = [providerRow({ id: "first-created" })];
 
 		await expect(aiProvidersService.getDefaultRunnable({ userId: "user-1" })).resolves.toMatchObject({
@@ -133,15 +144,8 @@ describe("aiProvidersService", () => {
 		});
 		expect(queryState.orderByArgs).toEqual([
 			{ type: "desc", value: "ai_provider.is_default" },
-			{
-				type: "desc",
-				value: {
-					type: "sql",
-					strings: ["coalesce(", ", '1970-01-01T00:00:00.000Z'::timestamptz)"],
-					values: ["ai_provider.last_used_at"],
-				},
-			},
 			{ type: "asc", value: "ai_provider.created_at" },
+			{ type: "asc", value: "ai_provider.id" },
 		]);
 		expect(queryMock.limit).toHaveBeenCalledWith(1);
 	});
@@ -195,4 +199,12 @@ describe("aiProvidersService", () => {
 			);
 		}
 	});
+});
+
+it("keeps a deliberately switched-off provider off after a passing health check", async () => {
+	queryState.rows = [providerRow({ enabled: false, userDisabled: true })];
+	queryState.updateRows = undefined;
+	vi.mocked(testConnection).mockResolvedValue({ ok: true });
+	await aiProvidersService.test({ id: "provider-1", userId: "user-1" });
+	expect(dbMock.update().set).toHaveBeenCalledWith(expect.objectContaining({ enabled: false, testStatus: "success" }));
 });

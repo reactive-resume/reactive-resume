@@ -4,6 +4,7 @@ import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { Dispatch, SetStateAction } from "react";
 import { useLingui } from "@lingui/react/macro";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
@@ -17,7 +18,7 @@ import {
 import { editWithUndo } from "./actions";
 import { getSectionName } from "./issues";
 import { mapWritingReview } from "./review";
-import { client } from "@/api/client";
+import { client, orpc } from "@/api/client";
 import { useResumeStore } from "@/draft";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { ReportAiContent } from "@/features/ai/report-content";
@@ -38,6 +39,11 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 	const { t } = useLingui();
 	const applications = useResumeStore((state) => state.proposalApplications);
 	const { space } = useTheme();
+	const queryClient = useQueryClient();
+	const saved = useQuery(orpc.ai.writingReview.queryOptions({ input: { resumeId: id } }));
+	const hydrated = useRef<string | null>(null);
+	const [reviewInput, setReviewInput] = useState<string | null>(null);
+	const [reviewedAt, setReviewedAt] = useState<Date | null>(null);
 	const providers = useHasAIProvider();
 	const [setup, setSetup] = useState(false);
 	const [providerId, setProviderId] = useState<string | null>(null);
@@ -55,6 +61,21 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 		paragraph: (n) => t`paragraph ${n}`,
 	}).slice(0, 120);
 
+	const inputText = buildMarkdown(data).slice(0, 50_000).trim();
+	useEffect(() => {
+		const entry = saved.data;
+		const identity = `${id}:${entry?.reviewedAt.toISOString()}`;
+		if (!entry || hydrated.current === identity) return;
+		hydrated.current = identity;
+		setReview({
+			summary: entry.review.summary,
+			strengths: entry.review.strengths,
+			...mapWritingReview(entry.review.suggestions, entry.inputText === inputText ? passages : [], entry.passages),
+		});
+		setReviewInput(entry.inputText);
+		setReviewedAt(entry.reviewedAt);
+	}, [saved.data, inputText, passages, setReview, id]);
+
 	const run = async () => {
 		if (controller.current || offline || !provider || !passages.length) return;
 		const request = new AbortController();
@@ -62,9 +83,10 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 		setPending(true);
 		setError(false);
 		try {
-			const result = await client.ai.atsReview(
+			await client.ai.atsReview(
 				{
 					aiProviderId: provider.id,
+					resumeId: id,
 					extractedText: buildMarkdown(data).slice(0, 50_000),
 					findings: issues.slice(0, 120).map((issue) => ({
 						code: issue.finding.code,
@@ -80,11 +102,7 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 				{ signal: request.signal },
 			);
 			if (!request.signal.aborted)
-				setReview({
-					summary: result.summary,
-					strengths: result.strengths,
-					...mapWritingReview(result.suggestions, passages),
-				});
+				await queryClient.invalidateQueries({ queryKey: orpc.ai.writingReview.queryKey({ input: { resumeId: id } }) });
 		} catch {
 			if (!request.signal.aborted) setError(true);
 		} finally {
@@ -120,6 +138,20 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 	return (
 		<View style={{ gap: space.s3 }}>
 			<Text variant="title">{t`A second opinion on your wording`}</Text>
+			{saved.isError && (
+				<Banner
+					tone="danger"
+					message={t`Couldn't load the saved review.`}
+					action={{ label: t`Retry`, onPress: () => void saved.refetch() }}
+				/>
+			)}
+			{reviewedAt && <Text variant="caption" color="ink3">{t`Reviewed ${reviewedAt.toLocaleString()}`}</Text>}
+			{reviewInput !== null && reviewInput !== inputText && (
+				<Banner
+					tone="warn"
+					message={t`Resume changed since this review. Review these suggestions as out of date or run again.`}
+				/>
+			)}
 			<Text color="ink2">{t`The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score.`}</Text>
 			{providers.isLoading ? (
 				<Skeleton height={space.s12} />
@@ -216,7 +248,9 @@ export function Writing({ id, data, issues, offline, locked, review, setReview }
 					{review.notes.map((note, index) => (
 						<Card key={index}>
 							<Text variant="caption">{note.location}</Text>
+							{note.quote && <Text color="ink2">{note.quote}</Text>}
 							<Text>{note.note}</Text>
+							{note.rewrite && <Text color="accentText">{note.rewrite}</Text>}
 						</Card>
 					))}
 					<Text variant="title">{t`What's working`}</Text>

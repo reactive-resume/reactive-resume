@@ -10,9 +10,11 @@ import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
 import { dataBlock } from "../ai/data-block";
+import { isNoAiDestination } from "../ai/destination";
 import { aiDeadline, generateJson as sharedGenerateJson } from "../ai/generate-json";
 import { getModel } from "../ai/service";
 import { coverLetterService } from "../cover-letters/service";
+import { assertDocumentVersion } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { webAccessService } from "../web-access/credentials";
 import { searchScope } from "../web-access/regions";
@@ -24,7 +26,7 @@ import {
 	postingSearchResult,
 	searchJobPostings,
 } from "./posting";
-import { applicationService } from "./service";
+import { applicationService, assertApplicationVersion } from "./service";
 
 const reserved = { tags: ["Applications", "AI"] } as const;
 const MAX_PASTED_JOB_DESCRIPTION_CHARS = 20_000;
@@ -37,12 +39,15 @@ async function resolveModel(userId: string) {
 			message: "No AI provider is set up. Add one in Settings → AI & developer to use AI features.",
 		});
 	}
-	return getModel({
-		provider: provider.provider,
-		model: provider.model,
-		apiKey: provider.apiKey,
-		...(provider.baseURL ? { baseURL: provider.baseURL } : {}),
-	});
+	return {
+		provider,
+		model: getModel({
+			provider: provider.provider,
+			model: provider.model,
+			apiKey: provider.apiKey,
+			...(provider.baseURL ? { baseURL: provider.baseURL } : {}),
+		}),
+	};
 }
 
 // --- AI provider failure translation ------------------------------------------
@@ -72,7 +77,7 @@ function throwAiProviderGatewayError(cause?: unknown): never {
  * Exported for tests.
  */
 export async function generateJson<T>(
-	model: Awaited<ReturnType<typeof resolveModel>>,
+	model: Parameters<typeof sharedGenerateJson>[0],
 	prompt: { system?: string; prompt: string },
 	schema: z.ZodType<T>,
 	signal?: AbortSignal,
@@ -87,11 +92,16 @@ export async function generateJson<T>(
 }
 
 /** Exported for tests: provider-failure translation shared by every copilot procedure. */
-export async function generatePlainText(model: Awaited<ReturnType<typeof resolveModel>>, prompt: string) {
+export async function generatePlainText(
+	model: Parameters<typeof sharedGenerateJson>[0],
+	prompt: string,
+	signal?: AbortSignal,
+) {
 	try {
 		const { text } = await generateText({
 			model,
-			abortSignal: aiDeadline(),
+			abortSignal: aiDeadline(signal),
+			maxRetries: 0,
 			system: safetySystemPrompt,
 			messages: [{ role: "user", content: prompt }],
 		});
@@ -186,6 +196,8 @@ export const aiRouter = {
 		.output(z.array(postingSearchResult))
 		.errors({
 			SEARCH_UNAVAILABLE: { message: "Job search isn't configured on this server.", status: 503 },
+			SEARCH_AUTH: { message: "The web service rejected its key. Fix web access or paste a posting.", status: 502 },
+			SEARCH_QUOTA: { message: "The web service quota is used up. Fix web access or paste a posting.", status: 502 },
 			SEARCH_FAILED: { message: "Job search couldn't be reached. Try again or paste a posting link.", status: 502 },
 			RATE_LIMIT_EXCEEDED: { message: "Too many web requests. Try again later.", status: 429 },
 		})
@@ -207,6 +219,10 @@ export const aiRouter = {
 				signal?.throwIfAborted();
 				if (error instanceof PostingFetchError && error.reason === "rate-limit")
 					throw new ORPCError("RATE_LIMIT_EXCEEDED", { status: 429 });
+				if (error instanceof PostingFetchError && error.reason === "auth")
+					throw new ORPCError("SEARCH_AUTH", { status: 502 });
+				if (error instanceof PostingFetchError && error.reason === "quota")
+					throw new ORPCError("SEARCH_QUOTA", { status: 502 });
 				// Provider errors can include request credentials or echo them in their response.
 				throw new ORPCError("SEARCH_FAILED", { status: 502 });
 			}
@@ -288,7 +304,9 @@ export const aiRouter = {
 			if (input.useAI === false || (input.useAI !== true && page?.role && page.company && page.description))
 				return fallback;
 			try {
-				const provider = await aiProvidersService.getDefaultRunnable({ userId: context.user.id });
+				const provider = isNoAiDestination()
+					? null
+					: await aiProvidersService.getDefaultRunnable({ userId: context.user.id });
 				if (!provider) return fallback;
 
 				const model = getModel({
@@ -297,6 +315,8 @@ export const aiRouter = {
 					apiKey: provider.apiKey,
 					...(provider.baseURL ? { baseURL: provider.baseURL } : {}),
 				});
+				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
+				signal?.throwIfAborted();
 				const fields = await generateJson(
 					model,
 					{
@@ -306,6 +326,7 @@ export const aiRouter = {
 					},
 					postingFieldsOutput,
 					signal,
+					0,
 				);
 
 				return {
@@ -334,15 +355,19 @@ export const aiRouter = {
 		.use(aiRequestRateLimit)
 		.output(autofillOutput)
 		.errors(aiErrors)
-		.handler(async ({ context, input }) => {
-			const model = await resolveModel(context.user.id);
+		.handler(async ({ context, input, signal }) => {
+			const { model, provider } = await resolveModel(context.user.id);
 
+			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
+			signal?.throwIfAborted();
 			return generateJson(
 				model,
 				{
 					prompt: `Extract the following fields from this job posting. Return ONLY JSON with keys company, role, location, salary. Use an empty string for anything not stated.\n\nJOB POSTING:\n${dataBlock("POSTING", input.jobDescription)}`,
 				},
 				autofillOutput,
+				signal,
+				0,
 			);
 		}),
 
@@ -358,7 +383,7 @@ export const aiRouter = {
 		.use(aiRequestRateLimit)
 		.output(matchScoreOutput)
 		.errors(aiErrors)
-		.handler(async ({ context, input }) => {
+		.handler(async ({ context, input, signal }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
 			if (!application.resumeId)
 				throw new ORPCError("BAD_REQUEST", { message: "Link a resume to this application first." });
@@ -366,17 +391,24 @@ export const aiRouter = {
 				throw new ORPCError("BAD_REQUEST", { message: "Paste the job description into this application first." });
 			}
 
-			const [model, resume] = await Promise.all([
+			const [{ model, provider }, resume] = await Promise.all([
 				resolveModel(context.user.id),
 				resumeService.getById({ id: application.resumeId, userId: context.user.id }),
 			]);
 
+			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, async (tx) => {
+				await assertApplicationVersion(tx, context.user.id, application);
+				if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
+			});
+			signal?.throwIfAborted();
 			const result = await generateJson(
 				model,
 				{
 					prompt: `Compare this resume against the job description. Return ONLY JSON with keys score (integer 0-100 fit), gaps (array of short missing-qualification strings), strengths (array of short matching-strength strings).\n\nRESUME:\n${JSON.stringify(resume.data)}\n\nJOB DESCRIPTION:\n${dataBlock("POSTING", application.jobDescription)}`,
 				},
 				matchScoreOutput,
+				signal,
+				0,
 			);
 
 			await applicationService.setAiResult({
@@ -401,9 +433,9 @@ export const aiRouter = {
 		.use(aiRequestRateLimit)
 		.output(z.object({ text: z.string(), coverLetterId: z.string().optional() }))
 		.errors(aiErrors)
-		.handler(async ({ context, input }) => {
+		.handler(async ({ context, input, signal }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
-			const model = await resolveModel(context.user.id);
+			const { model, provider } = await resolveModel(context.user.id);
 			const resume = application.resumeId
 				? await resumeService.getById({ id: application.resumeId, userId: context.user.id }).catch(() => null)
 				: null;
@@ -415,7 +447,12 @@ export const aiRouter = {
 					? `Write a concise, specific cover letter (250-350 words, no placeholders like [Name]) for this application, drawing on the resume. Return only the letter text.\n\n${context_}`
 					: `Write a short, polite follow-up message (80-120 words) to a recruiter checking in on this application. Warm but not pushy. Return only the message text.\n\n${context_}`;
 
-			const text = await generatePlainText(model, prompt);
+			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, async (tx) => {
+				await assertApplicationVersion(tx, context.user.id, application);
+				if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
+			});
+			signal?.throwIfAborted();
+			const text = await generatePlainText(model, prompt, signal);
 			if (input.kind === "follow-up") return { text };
 			const letter = await coverLetterService.create({
 				userId: context.user.id,
@@ -439,7 +476,7 @@ export const aiRouter = {
 		.use(aiRequestRateLimit)
 		.output(z.object({ resumeId: z.string(), name: z.string() }))
 		.errors(aiErrors)
-		.handler(async ({ context, input }) => {
+		.handler(async ({ context, input, signal }) => {
 			const application = await applicationService.getById({ id: input.id, userId: context.user.id });
 			if (!application.resumeId)
 				throw new ORPCError("BAD_REQUEST", { message: "Link a resume to this application first." });
@@ -447,17 +484,24 @@ export const aiRouter = {
 				throw new ORPCError("BAD_REQUEST", { message: "Paste the job description into this application first." });
 			}
 
-			const [model, resume] = await Promise.all([
+			const [{ model, provider }, resume] = await Promise.all([
 				resolveModel(context.user.id),
 				resumeService.getById({ id: application.resumeId, userId: context.user.id }),
 			]);
 
+			await aiProvidersService.authorize({ userId: context.user.id, id: provider.id }, async (tx) => {
+				await assertApplicationVersion(tx, context.user.id, application);
+				if (resume) await assertDocumentVersion(tx, context.user.id, { kind: "resume", ...resume });
+			});
+			signal?.throwIfAborted();
 			const { summary } = await generateJson(
 				model,
 				{
 					prompt: `Rewrite this candidate's professional summary to target the job below. Return ONLY JSON { "summary": "<one to two sentence HTML paragraph, e.g. <p>…</p>>" }. Keep it truthful to the resume.\n\nRESUME:\n${JSON.stringify(resume.data)}\n\nJOB:\n${dataBlock("POSTING", JSON.stringify({ role: application.role, company: application.company, description: application.jobDescription }))}`,
 				},
 				z.object({ summary: z.string() }),
+				signal,
+				0,
 			);
 
 			const name = `Tailored — ${application.company} · ${application.role}`.slice(0, 60);

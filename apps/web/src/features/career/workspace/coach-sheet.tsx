@@ -5,8 +5,8 @@ import type { WorkspaceTab } from "@reactive-resume/schema/career";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -20,10 +20,11 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-res
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { CoachThread, connectionName, deleteConversation, titleFor, useConversationDate } from "../coach-thread";
 import { PrivacyLine, tabLabel } from "../shared";
-import { useConversationConnection } from "@/features/assistant/chat";
-import { ProviderSetup } from "@/features/assistant/provider-setup";
+import { ProviderSetup, SetUpAi } from "@/features/assistant/provider-setup";
+import { WebAccessAttention } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
+import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
 type ThreadSummary = RouterOutput["agent"]["threads"]["list"][number];
@@ -106,7 +107,7 @@ function CoachSheetBody({
 	onConversationChange,
 	onDelete,
 }: CoachSheetBodyProps) {
-	const navigate = useNavigate();
+	const [choosingModel, setChoosingModel] = useState(false);
 	const queryClient = useQueryClient();
 	const providers = useHasUsableAiProvider();
 	const threads = useQuery(orpc.agent.threads.list.queryOptions());
@@ -123,9 +124,8 @@ function CoachSheetBody({
 	const threadId = summary?.id ?? null;
 	const usable = providers.usableProviders;
 	const tabName = tabLabel(tab);
-	const provider = usable.find((item) => item.id === summary?.aiProviderId) ?? usable[0];
+	const provider = usable.find((item) => item.id === summary?.aiProviderId) ?? (summary ? undefined : usable[0]);
 	const connection = connectionName(provider?.label ?? summary?.providerLabel ?? t`Your AI`);
-	useConversationConnection(summary, provider);
 
 	const open = (next: CoachConversation) => {
 		setSession((current) => current + 1);
@@ -172,7 +172,7 @@ function CoachSheetBody({
 		</header>
 	);
 
-	if (providers.error)
+	if (providers.error && !threadId)
 		return (
 			<AiProviderLoadState
 				state={{
@@ -184,10 +184,11 @@ function CoachSheetBody({
 				}}
 			/>
 		);
-	if (providers.isLoading || threads.isPending)
+	if ((providers.isLoading && !threadId) || threads.isPending)
 		return (
 			<>
 				{header}
+				<WebAccessAttention />
 				<div className="grid flex-1 place-items-center">
 					<Spinner />
 				</div>
@@ -197,6 +198,7 @@ function CoachSheetBody({
 		return (
 			<>
 				{header}
+				<WebAccessAttention />
 				<div className="min-h-0 flex-1 overflow-y-auto">
 					<ProviderSetup />
 				</div>
@@ -206,6 +208,36 @@ function CoachSheetBody({
 	return (
 		<>
 			{header}
+			<WebAccessAttention />
+			{providers.error && <AiProviderLoadState state={providers} />}
+			{(!provider || choosingModel) && (
+				<div className="grid gap-2 p-3">
+					<p className="text-xs text-warn-text">
+						<Trans>Choose a destination before continuing. Earlier messages may be sent to the chosen provider.</Trans>
+					</p>
+					{usable.map((item) => (
+						<Button
+							key={item.id}
+							size="sm"
+							variant="secondary"
+							onClick={async () => {
+								if (!threadId) return;
+								try {
+									await client.agent.threads.update({ id: threadId, aiProviderId: item.id });
+									await queryClient.invalidateQueries({ queryKey: orpc.agent.threads.key() });
+									setChoosingModel(false);
+								} catch (error) {
+									if (!(error instanceof DOMException && error.name === "AbortError"))
+										toastError(error, t`Couldn't switch models. Try again.`);
+								}
+							}}
+						>
+							{item.label} · {item.model}
+						</Button>
+					))}
+					<SetUpAi />
+				</div>
+			)}
 			<CoachThread
 				key={session}
 				threadId={threadId}
@@ -215,7 +247,7 @@ function CoachSheetBody({
 				company={application.company}
 				context={context}
 				connection={connection}
-				onChangeConnection={() => void navigate({ to: "/dashboard/settings/ai" })}
+				onChangeConnection={() => setChoosingModel(!choosingModel)}
 				header={() => null}
 				empty={() => (
 					<p className="text-sm text-ink-2">
@@ -232,7 +264,7 @@ function CoachSheetBody({
 				}
 				placeholder={t`Ask about this application…`}
 				draftKey={`application:${application.id}`}
-				disabled={!providers.hasUsableProvider}
+				disabled={!provider}
 				variant="sheet"
 			/>
 		</>

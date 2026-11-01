@@ -3,6 +3,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
@@ -18,7 +19,7 @@ const PROVIDERS = { firecrawl: "Firecrawl", tavily: "Tavily", exa: "Exa" } as co
 const PROVIDER_SITES = { firecrawl: "firecrawl.dev", tavily: "tavily.com", exa: "exa.ai" } as const;
 type Provider = keyof typeof PROVIDERS;
 
-function testFailureMessage(error: string | undefined) {
+export function testFailureMessage(error: string | undefined) {
 	if (error === "auth") return t`The service rejected the API key. Check the key and save it again.`;
 	if (error === "quota")
 		return t`The service's quota is used up. Check your plan with the service, or try again later.`;
@@ -44,7 +45,13 @@ export function WebAccessSection() {
 	};
 	const save = useMutation(orpc.webAccess.save.mutationOptions({ onSuccess: refresh }));
 	const remove = useMutation(orpc.webAccess.delete.mutationOptions({ onSuccess: refresh }));
-	const test = useMutation(orpc.webAccess.test.mutationOptions());
+	const test = useMutation(
+		orpc.webAccess.test.mutationOptions({
+			onSettled: () => queryClient.invalidateQueries({ queryKey: orpc.webAccess.status.key() }),
+		}),
+	);
+	const testResult = test.data ?? status?.testResult;
+	const needsAttention = testResult && (!testResult.search.success || !testResult.read.success);
 	const pending = save.isPending || remove.isPending || test.isPending;
 	const failure = error || save.error || remove.error || test.error;
 	const connectedProvider = status?.provider ? PROVIDERS[status.provider] : null;
@@ -104,11 +111,17 @@ export function WebAccessSection() {
 								<span
 									className={cn(
 										"rounded-sm px-2 py-0.5 text-xs font-medium",
-										status.configured ? "bg-accent-soft text-accent-text" : "bg-sunken text-ink-2",
+										needsAttention
+											? "bg-warn-soft text-warn-text"
+											: status.configured
+												? "bg-accent-soft text-accent-text"
+												: "bg-sunken text-ink-2",
 									)}
 								>
 									{status.managed ? (
 										<Trans>Managed by server</Trans>
+									) : needsAttention ? (
+										<Trans>Needs attention</Trans>
 									) : status.configured ? (
 										<Trans>Connection saved</Trans>
 									) : (
@@ -241,16 +254,16 @@ export function WebAccessSection() {
 								)}
 							</p>
 						)}
-						{test.data && (
+						{testResult && (
 							<div role="status" className="grid gap-2 text-[13px] leading-5">
 								{[
-									{ result: test.data.search, label: test.data.search.success ? t`Search works` : t`Search failed` },
+									{ result: testResult.search, label: testResult.search.success ? t`Search works` : t`Search failed` },
 									// Without a connection only the built-in reader reads, and the test doesn't cover it.
 									...(connectedProvider
 										? [
 												{
-													result: test.data.read,
-													label: test.data.read.success ? t`Reading works` : t`Enhanced reading failed`,
+													result: testResult.read,
+													label: testResult.read.success ? t`Reading works` : t`Enhanced reading failed`,
 												},
 											]
 										: []),
@@ -266,7 +279,7 @@ export function WebAccessSection() {
 										</span>
 									</p>
 								))}
-								{connectedProvider && !test.data.read.success && (
+								{connectedProvider && !testResult.read.success && (
 									<p className="text-ink-3">
 										<Trans>The built-in reader remains active.</Trans>
 									</p>
@@ -423,5 +436,45 @@ export function WebAccessSection() {
 				</div>
 			</footer>
 		</section>
+	);
+}
+
+/** Search setup returns to the calling task with its draft intact. */
+export function SetUpWebAccess() {
+	const [open, setOpen] = useState(false);
+	return (
+		<>
+			<Button type="button" size="sm" variant="secondary" onClick={() => setOpen(true)}>
+				<Trans>Set up web access</Trans>
+			</Button>
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent className="max-h-[85svh] overflow-y-auto">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Web access</Trans>
+						</DialogTitle>
+					</DialogHeader>
+					<WebAccessSection />
+				</DialogContent>
+			</Dialog>
+		</>
+	);
+}
+
+/** Failed saved credentials stay visible where search is used, with repair and manual fallbacks. */
+export function WebAccessAttention() {
+	const { data: status } = useQuery(orpc.webAccess.status.queryOptions());
+	const failed = status?.testResult && (!status.testResult.search.success || !status.testResult.read.success);
+	if (!failed) return null;
+	return (
+		<div role="status" className="grid justify-items-start gap-2 rounded-lg bg-warn-soft p-3 text-xs text-warn-text">
+			<span>
+				{status.provider} · {testFailureMessage(status.testResult?.search.error ?? status.testResult?.read.error)}
+			</span>
+			<span>
+				<Trans>Paste the posting text or a public link to continue. The built-in reader remains available.</Trans>
+			</span>
+			<SetUpWebAccess />
+		</div>
 	);
 }

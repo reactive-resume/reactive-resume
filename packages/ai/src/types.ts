@@ -70,3 +70,12 @@ export const AI_VOICE_MODELS: Partial<
 		speech: ["openai/tts-1", "google/gemini-3.8-flash-tts"],
 	},
 };
+
+/** Explicit manual/web-only approval is different from an older client's absent approval header. */
+export const NO_AI_DESTINATION = "none";
+export type AiVoiceOperation = { kind: "speech" | "transcription"; model: string };
+
+/** Opaque provider-owned recipient identity, plus the concrete voice operation when used. */
+export function aiDestination(provider: { id: string; recipientVersion: string }, voice?: AiVoiceOperation) {
+	return JSON.stringify([provider.id, provider.recipientVersion, ...(voice ? [voice] : [])]);
+}

@@ -50,7 +50,9 @@ vi.mock("../web-access/credentials", () => ({
 vi.mock("@reactive-resume/email/transport", () => ({ sendCareerNotification: fixture.email }));
 // No live AI: the briefing writer is the boundary; the provider check only has to find the connection.
 vi.mock("./generate", () => ({ generateCareer: fixture.generate }));
-vi.mock("../ai-providers/service", () => ({ aiProvidersService: { getRunnableById: async () => ({}) } }));
+vi.mock("../ai-providers/service", () => ({
+	aiProvidersService: { getRunnableById: async () => ({ recipientVersion: "fixture-revision" }) },
+}));
 
 function getDb() {
 	if (!fixture.db) throw new Error("Test database is not initialized.");
@@ -315,6 +317,7 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 				applicationId: "alice-app",
 				task: { task: "briefing", interviewId: "interview-round" },
 				providerId: "preparation-provider",
+				providerVersion: "fixture-revision",
 				jobId: job?.id,
 			}),
 		);

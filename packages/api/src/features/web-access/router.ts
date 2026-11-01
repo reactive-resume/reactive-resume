@@ -68,7 +68,7 @@ export const webAccessRouter = {
 		.output(webAccessDto.test.output)
 		.handler(async ({ context, signal }) => {
 			const [connection, { regions }] = await Promise.all([
-				webAccessService.resolve(context.user.id),
+				webAccessService.resolve(context.user.id, true),
 				searchScope(context.user.id, context.reqHeaders.get("x-client-timezone") ?? undefined),
 			]);
 			// The server's SearXNG can be tested without a connection; reading then reports the built-in reader only.
@@ -77,11 +77,13 @@ export const webAccessRouter = {
 					message: "Set up web access in Settings → AI & developer first.",
 				});
 			try {
-				return await probeWebAccess(connection, {
+				const result = await probeWebAccess(connection, {
 					userId: context.user.id,
 					region: regions[0],
 					...(signal ? { signal } : {}),
 				});
+				if (!signal?.aborted) await webAccessService.recordTest(context.user.id, connection, result);
+				return result;
 			} catch (error) {
 				if (!signal?.aborted && error instanceof WebAccessError && error.reason === "rate-limit")
 					throw new ORPCError("RATE_LIMIT_EXCEEDED", {

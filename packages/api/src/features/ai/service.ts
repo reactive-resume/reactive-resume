@@ -151,7 +151,7 @@ export const fileInputSchema = z.object({
 
 type TestConnectionInput = z.infer<typeof aiCredentialsSchema>;
 
-type TestConnectionResult = { ok: true } | { ok: false; message: string };
+type TestConnectionResult = { ok: true } | { ok: false; message: string; kind: string };
 
 const NETWORK_ERROR_CODES = new Set([
 	"ECONNREFUSED",
@@ -206,6 +206,21 @@ function redactApiKey(message: string, apiKey: string): string {
 	return message.replaceAll(apiKey, "***");
 }
 
+function testFailureKind(error: unknown): string {
+	if (isTimeout(error) || findNetworkErrorCode(error)) return "network";
+	if (LoadAPIKeyError.isInstance(error)) return "auth";
+	if (NoSuchModelError.isInstance(error)) return "model";
+	if (error instanceof Error && error.message === "INVALID_AI_BASE_URL") return "url";
+	if (APICallError.isInstance(error)) {
+		if (error.statusCode === 401 || error.statusCode === 403) return "auth";
+		if (error.statusCode === 404) return "model";
+		if (error.statusCode === 429) return "rate-limit";
+		if (error.statusCode === 405) return "url";
+		if ((error.statusCode ?? 0) >= 500) return "server";
+	}
+	return "unknown";
+}
+
 function describeTestConnectionFailure(input: TestConnectionInput, error: unknown): string {
 	const provider = AI_PROVIDER_DISPLAY_NAMES[input.provider];
 	const endpoint = input.baseURL.trim() || AI_PROVIDER_DEFAULT_BASE_URLS[input.provider];
@@ -246,7 +261,9 @@ function describeTestConnectionFailure(input: TestConnectionInput, error: unknow
 	return `${provider} couldn't be tested and reported no reason. Try again.`;
 }
 
-export async function testConnection(input: TestConnectionInput): Promise<TestConnectionResult> {
+export async function testConnection(
+	input: TestConnectionInput & { signal?: AbortSignal | undefined },
+): Promise<TestConnectionResult> {
 	const RESPONSE_OK = "1";
 	const provider = AI_PROVIDER_DISPLAY_NAMES[input.provider];
 
@@ -262,11 +279,15 @@ export async function testConnection(input: TestConnectionInput): Promise<TestCo
 			maxOutputTokens: TEST_CONNECTION_MAX_OUTPUT_TOKENS,
 			// A connection test must not silently multiply its own wait by retrying behind the user.
 			maxRetries: 0,
-			abortSignal: AbortSignal.timeout(TEST_CONNECTION_TIMEOUT_MS),
+			abortSignal: aiDeadline(
+				input.signal
+					? AbortSignal.any([input.signal, AbortSignal.timeout(TEST_CONNECTION_TIMEOUT_MS)])
+					: AbortSignal.timeout(TEST_CONNECTION_TIMEOUT_MS),
+			),
 			messages: [{ role: "user", content: `Respond only with the single character: ${RESPONSE_OK}` }],
 		});
 	} catch (error) {
-		return { ok: false, message: describeTestConnectionFailure(input, error) };
+		return { ok: false, message: describeTestConnectionFailure(input, error), kind: testFailureKind(error) };
 	}
 
 	if (result.text.trim() === RESPONSE_OK) return { ok: true };
@@ -274,23 +295,27 @@ export async function testConnection(input: TestConnectionInput): Promise<TestCo
 	if (result.finishReason === "length") {
 		return {
 			ok: false,
+			kind: "model",
 			message: `${provider} is reachable, but the model returned too much text during the test. Try a model that follows short instructions.`,
 		};
 	}
 
 	return {
 		ok: false,
+		kind: "model",
 		message: `${provider} is reachable, but the model replied with unexpected output instead of a simple confirmation. Try another model.`,
 	};
 }
 
 type ParsePdfInput = z.infer<typeof aiCredentialsSchema> & {
 	file: z.infer<typeof fileInputSchema>;
+	signal?: AbortSignal | undefined;
 };
 
 type BuildResumeParsingMessagesInput = {
 	userPrompt: string;
 	file: z.infer<typeof fileInputSchema>;
+	signal?: AbortSignal | undefined;
 	mediaType: string;
 };
 
@@ -329,7 +354,8 @@ async function parsePdf(input: ParsePdfInput): Promise<ResumeData> {
 
 	const result = await generateText({
 		model,
-		abortSignal: aiDeadline(),
+		abortSignal: aiDeadline(input.signal),
+		maxRetries: 0,
 		system: buildResumeParsingSystemPrompt(pdfParserSystemPrompt),
 		messages: buildResumeParsingMessages({
 			userPrompt: pdfParserUserPrompt,
@@ -343,6 +369,7 @@ async function parsePdf(input: ParsePdfInput): Promise<ResumeData> {
 
 type ParseDocxInput = z.infer<typeof aiCredentialsSchema> & {
 	file: z.infer<typeof fileInputSchema>;
+	signal?: AbortSignal | undefined;
 	mediaType: "application/msword" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 };
 
@@ -398,7 +425,8 @@ async function parseDocx(input: ParseDocxInput): Promise<ResumeData> {
 
 	const result = await generateText({
 		model,
-		abortSignal: aiDeadline(),
+		abortSignal: aiDeadline(input.signal),
+		maxRetries: 0,
 		system: buildResumeParsingSystemPrompt(docxParserSystemPrompt),
 		messages,
 	}).catch((error: unknown) => logAndRethrow("Failed to generate the text with the model", error));

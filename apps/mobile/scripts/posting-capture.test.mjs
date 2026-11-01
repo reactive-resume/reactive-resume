@@ -115,7 +115,13 @@ const auth = {
 	subscribeIdentity: (fn) => (identity.add(fn), () => identity.delete(fn)),
 	subscribeSession: (fn) => (sessions.add(fn), () => sessions.delete(fn)),
 };
+const aiDefaults = load(new URL("../../../packages/ai/src/defaults.ts", import.meta.url).pathname);
+const aiTypes = load(new URL("../../../packages/ai/src/types.ts", import.meta.url).pathname, {
+	zod,
+	"./defaults": aiDefaults,
+});
 const { authorizeAiRequest } = load(source("api/ai-consent.ts"), {
+	"@reactive-resume/ai/types": aiTypes,
 	"@orpc/client": { ORPCError },
 	"react-native": {
 		Alert: {
@@ -251,6 +257,7 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 		AIProviderSetupSheet: "AIProviderSetupSheet",
 		useHasAIProvider: () => ({ hasAIProvider: hasProvider }),
 	},
+	"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
 	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
 	"@/routes": { routes: { applicationDetails: (id) => `/applications/${id}` } },
 	"@/ui": ui,
