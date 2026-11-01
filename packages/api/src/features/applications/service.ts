@@ -13,6 +13,7 @@ import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
+import { isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
 import { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
@@ -25,6 +26,7 @@ import { resumeService } from "../resume/service";
 import { writeVersion } from "../resume/version-history";
 import { getStorageService, uploadFile } from "../storage/service";
 import { assertUntrackedPosting, findTrackedPosting } from "./duplicates";
+import { syncFollowUp } from "./follow-up";
 import { applicationTransitionValues, ensureApplicationPipeline } from "./lanes";
 
 function timelineDate(value: Date | string): Date {
@@ -423,6 +425,8 @@ const applicationSummarySelect = {
 	status: schema.application.status,
 	closedReason: schema.application.closedReason,
 	resumeId: schema.application.resumeId,
+	resumeFileUrl: schema.application.resumeFileUrl,
+	coverLetterUrl: schema.application.coverLetterUrl,
 	coverLetterId: schema.application.coverLetterId,
 	source: schema.application.source,
 	tags: schema.application.tags,
@@ -430,6 +434,7 @@ const applicationSummarySelect = {
 	matchScore: schema.application.matchScore,
 	followUpAt: schema.application.followUpAt,
 	followUpNote: schema.application.followUpNote,
+	followUpDateOnly: schema.application.followUpDateOnly,
 	contacts: schema.application.contacts,
 	activity: sql<
 		ApplicationTimelineEntry[]
@@ -581,6 +586,7 @@ export const applicationService = {
 			},
 	) => {
 		const { userId, status, laneId, stageEnteredAt, closedReason, resumeFile, coverLetterFile, ...fields } = input;
+		fields.followUpDateOnly ??= isDateOnlyFollowUp({ followUpAt: fields.followUpAt ?? null });
 		const id = generateId();
 		await assertOwnedResume(userId, fields.resumeId);
 		await assertOwnedCoverLetter(userId, fields.coverLetterId);
@@ -599,7 +605,10 @@ export const applicationService = {
 					.insert(schema.application)
 					.values({ id, userId, ...fields, ...uploadedFields, ...values })
 					.returning();
-				if (row) await recordSentResume(row, tx);
+				if (row) {
+					await recordSentResume(row, tx);
+					if (row.followUpAt) await syncFollowUp(tx, row);
+				}
 				return id;
 			}),
 		);
@@ -641,10 +650,19 @@ export const applicationService = {
 					stageEnteredAt ? atFromDateString(stageEnteredAt) : new Date(),
 					pipeline,
 				);
-				values.push({ id: generateId(), userId: input.userId, ...fields, ...transition.values });
+				values.push({
+					id: generateId(),
+					userId: input.userId,
+					...fields,
+					followUpDateOnly: fields.followUpDateOnly ?? isDateOnlyFollowUp({ followUpAt: fields.followUpAt ?? null }),
+					...transition.values,
+				});
 			}
 			const rows = await tx.insert(schema.application).values(values).returning();
-			for (const row of rows) await recordSentResume(row, tx);
+			for (const row of rows) {
+				await recordSentResume(row, tx);
+				if (row.followUpAt) await syncFollowUp(tx, row);
+			}
 			return { imported: rows.length };
 		});
 	},
@@ -712,6 +730,11 @@ export const applicationService = {
 					.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)))
 					.for("update");
 				if (!current) throw new ORPCError("NOT_FOUND");
+				if (fields.followUpAt !== undefined && fields.followUpDateOnly === undefined)
+					fields.followUpDateOnly =
+						fields.followUpAt?.getTime() === current.followUpAt?.getTime()
+							? current.followUpDateOnly
+							: isDateOnlyFollowUp({ followUpAt: fields.followUpAt });
 				await assertUntrackedPosting(tx, userId, fields.sourceUrl, id);
 				assertAttachmentPermission(current);
 				if (
@@ -748,6 +771,12 @@ export const applicationService = {
 					.returning();
 
 				if (!updated) throw new ORPCError("NOT_FOUND");
+				if (
+					fields.followUpAt !== undefined ||
+					fields.followUpNote !== undefined ||
+					fields.followUpDateOnly !== undefined
+				)
+					await syncFollowUp(tx, updated);
 				if (current.status === "saved" && updated.resumeId !== current.resumeId) {
 					const [workspace] = await tx
 						.select()

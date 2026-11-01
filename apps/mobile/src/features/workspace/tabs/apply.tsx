@@ -258,8 +258,8 @@ function AnswerCard({
 	const { colors, radius, space } = useTheme();
 	// Typed text stays on the device until the server has it, so a failed save survives leaving the tab.
 	const draftName = readOnly ? null : `answer:${applicationId}:${answer.id}`;
-	const answerDraft = useDraft(draftName && `${draftName}:answer`, answer.answer);
-	const questionDraft = useDraft(draftName && `${draftName}:question`, answer.question);
+	const answerDraft = useDraft(draftName && `${draftName}:answer`, answer.answer, true);
+	const questionDraft = useDraft(draftName && `${draftName}:question`, answer.question, true);
 	const text = answerDraft.value;
 	const question = questionDraft.value;
 	const setText = answerDraft.setValue;

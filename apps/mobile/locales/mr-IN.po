@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· आजपासून} one {· # दिवसा�
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{count} पैकी {done} पूर्ण"
@@ -906,6 +910,11 @@ msgstr "स्वीकारा"
 msgid "Accept all"
 msgstr "सर्व स्वीकारा"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "स्वीकारले"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "दुसरी ऑफर स्वीकारली"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "ऑफर जोडा"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "नोकरीच्या ऑफरच्या अटी स्वतः भरा किंवा संदेशांमधील ऐच्छिक AI माहिती काढण्याची सुविधा वापरा."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "सहाय्यक"
 msgid "Assistant conversations"
 msgstr "सहाय्यक संभाषणे"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "त्या दिवशी 09:00 वाजता ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "बदल जतन करणे शक्य झाले नाही.
 msgid "Changes section titles and date words only, not your content."
 msgstr "केवळ विभाग शीर्षके आणि तारीख शब्द बदलते, तुमची सामग्री नाही."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "“{name}” मधील बदल दुसऱ्या डिव्हाइसवर सेव्ह केले गेले. तुमची संपादने अजूनही या डिव्हाइसवर आहेत. कोणती आवृत्ती ठेवायची ते निवडा."
@@ -2618,6 +2628,8 @@ msgstr "बंद करा…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "बंद"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "फोटो अपलोड करू शकलो नाही."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "फोटो अपलोड करता आला नाही. पुन्हा प्रयत्न करा."
 
@@ -3462,6 +3478,7 @@ msgstr "फ्रेम भरा"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "कव्हर लेटर — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "कव्हर लेटर फाइल"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "फॉलो-अप तारीख"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "फॉलो-अप टीप"
 
@@ -5296,6 +5315,11 @@ msgstr "निवडलेल्या ओळीत सुधारणा कर
 msgid "Improving…"
 msgstr "सुधारत आहे..."
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "बंद केलेल्यांसह"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "नंतर"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "नवीनतम"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "बंद. हा रेझ्युमे फक्त तुम्हीच पाहू शकता."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "ऑफर"
@@ -8414,6 +8441,12 @@ msgstr "रेकॉर्डिंगची वेळ"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "भर्ती करणारा"
@@ -8823,6 +8856,7 @@ msgstr "परिणाम"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "रेझ्युमे अभिप्राय, उत्पादन मदत आणि समुदायाच्या कल्पना."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "रेझ्युमे फाइल"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "सर्व्हरने अवैध आयात निकाल दिला. पुन्हा प्रयत्न करण्यापूर्वी दस्तऐवज रिफ्रेश करा."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "सर्व्हरवरील आवृत्ती लोड झाली नाही. मजकूर जतन आहे; पुन्हा प्रयत्न करा."
@@ -11098,6 +11134,8 @@ msgstr "ही कव्हर लेटर फाइल वैध नाही.
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "तुमच्या टाइमझोनमध्ये ही तारीख किंवा वेळ अस्तित्वात नाही. दुसरी वेळ निवडा."
@@ -11387,6 +11425,7 @@ msgstr "एका पानावर घट्ट करा"
 msgid "Tightening"
 msgstr "संक्षिप्त करत आहे"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "वेळ"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

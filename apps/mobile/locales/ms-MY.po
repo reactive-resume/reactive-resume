@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· sejak hari ini} one {· selama # hari} other {· s
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done} daripada {count} selesai"
@@ -906,6 +910,11 @@ msgstr "Terima"
 msgid "Accept all"
 msgstr "Terima semua"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Diterima"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Menerima tawaran lain"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "Tambah tawaran kerja"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Tambah terma tawaran kerja secara manual, atau gunakan pengekstrakan AI pilihan dalam Mesej."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "Penolong"
 msgid "Assistant conversations"
 msgstr "Perbualan pembantu"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "Pada pukul 09:00 hari itu ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "Perubahan tidak dapat disimpan. Cuba semula sebelum meneruskan."
 msgid "Changes section titles and date words only, not your content."
 msgstr "Menukar tajuk bahagian dan perkataan tarikh sahaja, bukan kandungan anda."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Perubahan kepada “{name}” telah disimpan pada peranti lain. Suntingan anda masih ada pada peranti ini. Pilih versi yang hendak disimpan."
@@ -2618,6 +2628,8 @@ msgstr "Tutup…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "tertutup"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "Tidak dapat memuat naik foto."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Tidak dapat memuat naik foto. Cuba lagi."
 
@@ -3462,6 +3478,7 @@ msgstr "Penuhi bingkai"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "Surat lamaran — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Fail surat iringan"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "Tarikh susulan"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Nota susulan"
 
@@ -5296,6 +5315,11 @@ msgstr "Perbaik baris yang dipilih"
 msgid "Improving…"
 msgstr "Meningkatkan…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Termasuk yang ditutup"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "Nanti"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Terkini"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Mati. Hanya anda yang boleh melihat resume ini."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Tawaran"
@@ -8414,6 +8441,12 @@ msgstr "Masa rakaman"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Perekrut"
@@ -8823,6 +8856,7 @@ msgstr "Hasil"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Maklum balas resume, bantuan produk dan idea komuniti."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Fail resume"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "Pelayan mengembalikan hasil import yang tidak sah. Muat semula Dokumen sebelum mencuba semula."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Versi pelayan tidak dapat dimuatkan. Teks anda disimpan; cuba lagi."
@@ -11098,6 +11134,8 @@ msgstr "Fail surat iringan ini tidak sah."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Tarikh atau masa ini tidak wujud dalam zon waktu anda. Pilih masa lain."
@@ -11387,6 +11425,7 @@ msgstr "Ketatkan kepada satu muka surat"
 msgid "Tightening"
 msgstr "Meringkaskan"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Masa"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

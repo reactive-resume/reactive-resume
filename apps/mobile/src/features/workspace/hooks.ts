@@ -11,6 +11,7 @@ import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Storage from "expo-sqlite/kv-store";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { AppState } from "react-native";
 import { EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
 import { createAutosave, createDraftStore, nextDraftState, saveFailure } from "./state";
 import { orpc } from "@/api/client";
@@ -251,7 +252,15 @@ export function useAutosave(
 			autosave.block({ value: blockedValue, code: blockedCode });
 	}, [autosave, blockedValue, blockedCode]);
 	useEffect(() => autosave.update(value, saved), [autosave, value, saved]);
-	useEffect(() => () => autosave.dispose(), [autosave]);
+	useEffect(() => {
+		const listener = AppState.addEventListener("change", (state) => {
+			if (state !== "active") autosave.flush();
+		});
+		return () => {
+			listener.remove();
+			autosave.dispose();
+		};
+	}, [autosave]);
 	return {
 		flush: autosave.flush,
 		retry: autosave.retry,
@@ -339,7 +348,7 @@ function useDraftScope() {
  * A draft kept on the device until the server or the coach has it: it survives leaving the screen and restarting the
  * app, scoped by server and account. `clear(sent)` removes it only while it is still that revision.
  */
-export function useDraft<T>(name: string | null, initial: T) {
+export function useDraft<T>(name: string | null, initial: T, reviewOnRestore = false) {
 	const scope = useDraftScope();
 	const key = name !== null && scope !== null ? `${draftPrefix(scope)}${name}` : null;
 	const [state, setState] = useState<DraftState<T>>(() => ({ key, owner: key, value: initial, touched: false }));
@@ -354,7 +363,15 @@ export function useDraft<T>(name: string | null, initial: T) {
 	if (blocked.key !== key)
 		setBlockedState({
 			key,
-			value: key === null ? blocked.value : (draftStore.read<Blocked>(`${key}${BLOCKED}`) ?? null),
+			value:
+				key === null
+					? blocked.value
+					: (draftStore.read<Blocked>(`${key}${BLOCKED}`) ??
+						(reviewOnRestore &&
+						draftStore.read<T>(key) !== undefined &&
+						JSON.stringify(draftStore.read<T>(key)) !== JSON.stringify(initial)
+							? { value: JSON.stringify(draftStore.read<T>(key)), code: "RECOVERED_DRAFT" }
+							: null)),
 		});
 	const current = useRef(state);
 	useLayoutEffect(() => {

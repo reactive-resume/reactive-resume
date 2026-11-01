@@ -1,9 +1,16 @@
+import { getAccountId } from "@/libs/auth/account-scope";
+
 let stagingUnavailable = false;
 
 /** Large RPC bodies bypass the hosting ingress limit while retaining their original wire format. */
 export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
 	const request = new Request(input, { ...init, credentials: "include" });
 	request.headers.set("x-client-timezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
+	// A call-bound account (captured when the procedure was invoked) wins; a direct fetch gets the live scope.
+	if (!request.headers.has("x-account-id")) {
+		const accountId = getAccountId();
+		if (accountId) request.headers.set("x-account-id", accountId);
+	}
 	if (request.method !== "POST") return fetch(request);
 	// Buffer as bytes: a teed stream needs duplex mode, and a Blob body is not visible to DevTools/CDP.
 	const body = await request.arrayBuffer();
@@ -12,6 +19,7 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 			method: "POST",
 			headers: request.headers,
 			body,
+			keepalive: body.byteLength <= 60 * 1024,
 			credentials: "include",
 			signal: request.signal,
 		});

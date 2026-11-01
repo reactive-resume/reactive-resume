@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
+import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { parseDateOnly } from "./date";
 import { applicationError } from "./error";
 import { LaneNotice } from "./lane-notice";
@@ -20,6 +21,7 @@ import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { WebAccessAttention } from "@/features/ai/web-access";
 import { WallClockField } from "@/features/application-detail/date-field";
+import { useUserTime } from "@/features/application-detail/hooks";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -60,6 +62,7 @@ const today = () => {
 export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApplicationSheetProps) {
 	const router = useRouter();
 	const { t } = useLingui();
+	const { timeZone } = useUserTime();
 	const { space } = useTheme();
 	const session = useSession();
 	const accountScope = getAccountScope();
@@ -217,6 +220,9 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 		void run("save", async (signal) => {
 			if (!ready || duplicate.data) return;
 			const text = description.slice(0, 20_000);
+			const followUpAt = followUpDate ? fromZonedDateTime(followUpDate, "09:00", timeZone) : null;
+			if (followUpDate && !followUpAt)
+				throw new Error(t`This date or time does not exist in your timezone. Choose another time.`);
 			const id = await create.mutateAsync({
 				company: company.trim(),
 				role: role.trim(),
@@ -234,7 +240,8 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 				coverLetterId: stage !== "saved" ? letterId || null : null,
 				tags,
 				notes: notes || null,
-				followUpAt: followUpDate ? new Date(`${followUpDate}T12:00:00`) : null,
+				followUpAt,
+				followUpDateOnly: false,
 				followUpNote: followUpNote.trim() || null,
 			});
 			if (!current(signal)) return;

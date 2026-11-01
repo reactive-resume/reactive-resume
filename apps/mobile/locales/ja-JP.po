@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· 今日から} one {· #日間} other {· #日間}}
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done}/{count}件完了"
@@ -906,6 +910,11 @@ msgstr "受け入れる"
 msgid "Accept all"
 msgstr "すべてを受け入れる"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "受け入れ済み"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "別のオファーを受け入れました"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "オファーを追加"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "オファーの条件を手動で入力するか、必要に応じて「メッセージ」でAIによる抽出を利用してください。"
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "アシスタント"
 msgid "Assistant conversations"
 msgstr "アシスタントの会話"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "その日の午前 9 時 ({timeZone})。"
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "変更を保存できませんでした。続行する前に リトラ�
 msgid "Changes section titles and date words only, not your content."
 msgstr "セクションのタイトルと日付の単語のみが変更され、コンテンツは変更されません。"
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "「{name}」への変更は別のデバイスに保存されました。編集内容はまだこのデバイス上にあります。保持するバージョンを選択します。"
@@ -2618,6 +2628,8 @@ msgstr "近い…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "閉店"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "写真をアップロードできませんでした。"
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "写真をアップロードできませんでした。もう一度お試しください。"
 
@@ -3462,6 +3478,7 @@ msgstr "切り抜き"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "カバーレター — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "カバーレターファイル"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "フォローアップ日"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "フォローアップメモ"
 
@@ -5296,6 +5315,11 @@ msgstr "選択した行を改善します"
 msgid "Improving…"
 msgstr "改善中…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "終了した応募を含む"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "後で"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "最新"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "オフ。この履歴書はあなただけが見ることができます。"
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "内定"
@@ -8414,6 +8441,12 @@ msgstr "録音時間"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "採用担当者"
@@ -8823,6 +8856,7 @@ msgstr "結果"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "履歴書へのフィードバック、製品のヘルプ、コミュニティのアイデア。"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "履歴書ファイル"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "サーバーは無効なインポート結果を返しました。再試行する前に 書類 を更新してください。"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "サーバーのバージョンを読み込めませんでした。あなたのテキストは保存されます。もう一度やり直してください。"
@@ -11098,6 +11134,8 @@ msgstr "このカバーレターファイルは無効です。"
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "この日付または時刻はあなたのタイムゾーンには存在しません。別の時間を選択してください。"
@@ -11387,6 +11425,7 @@ msgstr "1ページに絞る"
 msgid "Tightening"
 msgstr "簡潔にしています"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "時刻"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

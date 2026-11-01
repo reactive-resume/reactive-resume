@@ -17646,6 +17646,10 @@
 													}
 												]
 											},
+											"followUpDateOnly": {
+												"type": "boolean",
+												"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+											},
 											"followUpNote": {
 												"anyOf": [
 													{
@@ -18234,6 +18238,10 @@
 											}
 										]
 									},
+									"followUpDateOnly": {
+										"type": "boolean",
+										"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+									},
 									"contacts": {
 										"type": "array",
 										"items": {
@@ -18557,6 +18565,10 @@
 												"type": "null"
 											}
 										]
+									},
+									"followUpDateOnly": {
+										"type": "boolean",
+										"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 									},
 									"contacts": {
 										"type": "array",
@@ -19172,6 +19184,26 @@
 												],
 												"description": "The linked saved cover letter, if any."
 											},
+											"resumeFileUrl": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"coverLetterUrl": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
 											"source": {
 												"anyOf": [
 													{
@@ -19232,6 +19264,10 @@
 														"type": "null"
 													}
 												]
+											},
+											"followUpDateOnly": {
+												"type": "boolean",
+												"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 											},
 											"contacts": {
 												"type": "array",
@@ -19821,6 +19857,10 @@
 															}
 														]
 													},
+													"followUpDateOnly": {
+														"type": "boolean",
+														"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+													},
 													"followUpNote": {
 														"anyOf": [
 															{
@@ -20120,6 +20160,8 @@
 											"closedReason",
 											"resumeId",
 											"coverLetterId",
+											"resumeFileUrl",
+											"coverLetterUrl",
 											"source",
 											"tags",
 											"sourceUrl",
@@ -20578,6 +20620,10 @@
 													"type": "null"
 												}
 											]
+										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 										},
 										"followUpNote": {
 											"anyOf": [
@@ -21156,6 +21202,10 @@
 											}
 										]
 									},
+									"followUpDateOnly": {
+										"type": "boolean",
+										"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+									},
 									"contacts": {
 										"type": "array",
 										"items": {
@@ -21476,6 +21526,10 @@
 												"type": "null"
 											}
 										]
+									},
+									"followUpDateOnly": {
+										"type": "boolean",
+										"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 									},
 									"contacts": {
 										"type": "array",
@@ -21943,6 +21997,10 @@
 													"type": "null"
 												}
 											]
+										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 										},
 										"followUpNote": {
 											"anyOf": [
@@ -22594,6 +22652,10 @@
 											}
 										]
 									},
+									"followUpDateOnly": {
+										"type": "boolean",
+										"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+									},
 									"contacts": {
 										"type": "array",
 										"items": {
@@ -22914,6 +22976,10 @@
 												"type": "null"
 											}
 										]
+									},
+									"followUpDateOnly": {
+										"type": "boolean",
+										"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 									},
 									"contacts": {
 										"type": "array",
@@ -23381,6 +23447,10 @@
 													"type": "null"
 												}
 											]
+										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 										},
 										"followUpNote": {
 											"anyOf": [
@@ -23957,6 +24027,10 @@
 															"type": "null"
 														}
 													]
+												},
+												"followUpDateOnly": {
+													"type": "boolean",
+													"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 												},
 												"contacts": {
 													"type": "array",
@@ -24545,6 +24619,10 @@
 													"type": "null"
 												}
 											]
+										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 										},
 										"followUpNote": {
 											"anyOf": [
@@ -25256,6 +25334,10 @@
 													"type": "null"
 												}
 											]
+										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 										},
 										"followUpNote": {
 											"anyOf": [
@@ -25991,6 +26073,10 @@
 													"type": "null"
 												}
 											]
+										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 										},
 										"followUpNote": {
 											"anyOf": [
@@ -26796,6 +26882,10 @@
 												}
 											]
 										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+										},
 										"followUpNote": {
 											"anyOf": [
 												{
@@ -27598,6 +27688,10 @@
 												}
 											]
 										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+										},
 										"followUpNote": {
 											"anyOf": [
 												{
@@ -28398,6 +28492,10 @@
 												}
 											]
 										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+										},
 										"followUpNote": {
 											"anyOf": [
 												{
@@ -29138,6 +29236,10 @@
 												}
 											]
 										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+										},
 										"followUpNote": {
 											"anyOf": [
 												{
@@ -29855,6 +29957,10 @@
 													"type": "null"
 												}
 											]
+										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 										},
 										"followUpNote": {
 											"anyOf": [
@@ -30593,6 +30699,10 @@
 													"type": "null"
 												}
 											]
+										},
+										"followUpDateOnly": {
+											"type": "boolean",
+											"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 										},
 										"followUpNote": {
 											"anyOf": [
@@ -39515,6 +39625,10 @@
 															}
 														]
 													},
+													"followUpDateOnly": {
+														"type": "boolean",
+														"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
+													},
 													"followUpNote": {
 														"anyOf": [
 															{
@@ -41647,6 +41761,9 @@
 																				"type": "string"
 																			},
 																			"role": {
+																				"type": "string"
+																			},
+																			"note": {
 																				"type": "string"
 																			}
 																		},
@@ -44360,8 +44477,8 @@
 									},
 									"query": {
 										"type": "string",
-										"maxLength": 500,
-										"default": ""
+										"default": "",
+										"description": "Discovery search query (up to 500 characters), or the application follow-up note."
 									},
 									"interviewId": {
 										"anyOf": [
@@ -44810,6 +44927,9 @@
 																"type": "string"
 															},
 															"role": {
+																"type": "string"
+															},
+															"note": {
 																"type": "string"
 															}
 														},
@@ -48133,6 +48253,26 @@
 															},
 															"role": {
 																"type": "string"
+															},
+															"status": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"closedReason": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
 															}
 														},
 														"required": [
@@ -115908,6 +116048,10 @@
 															"type": "null"
 														}
 													]
+												},
+												"followUpDateOnly": {
+													"type": "boolean",
+													"description": "True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight."
 												},
 												"contacts": {
 													"type": "array",

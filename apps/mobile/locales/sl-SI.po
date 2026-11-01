@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· od danes} one {· že # dan} two {· že # dneva} 
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "Opravljeno: {done} od {count}"
@@ -906,6 +910,11 @@ msgstr "Sprejmi"
 msgid "Accept all"
 msgstr "Sprejmi vse"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Sprejeto"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Sprejel drugo ponudbo"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "Dodaj ponudbo"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Pogoje ponudbe za zaposlitev vnesite ročno ali uporabite izbirno pridobivanje podatkov z UI v Sporočilih."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "Pomočnik"
 msgid "Assistant conversations"
 msgstr "Pogovori s pomočnikom"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "Ob 09:00 tistega dne ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "Sprememb ni bilo mogoče shraniti. Poskusite znova, preden nadaljujete."
 msgid "Changes section titles and date words only, not your content."
 msgstr "Spremeni samo naslove razdelkov in datumske besede, ne pa tudi vaše vsebine."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Spremembe »{name}« so bile shranjene v drugi napravi. Vaše spremembe so še vedno v tej napravi. Izberite, katero različico želite obdržati."
@@ -2618,6 +2628,8 @@ msgstr "Zapri …"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Zaprto"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "Fotografije ni bilo mogoče naložiti."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Fotografije ni bilo mogoče naložiti. Poskusite znova."
 
@@ -3462,6 +3478,7 @@ msgstr "Zapolni"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "Spremno pismo — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Datoteka s spremnim pismom"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "Datum spremljanja"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Nadaljnja opomba"
 
@@ -5296,6 +5315,11 @@ msgstr "Izboljšaj izbrano vrstico"
 msgid "Improving…"
 msgstr "Izboljšanje ..."
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Vključno z zaključenimi"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "Kasneje"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Najnovejše"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Izključeno. Samo vi lahko vidite ta življenjepis."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Ponudba"
@@ -8414,6 +8441,12 @@ msgstr "Čas snemanja"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Zaposlovalec"
@@ -8823,6 +8856,7 @@ msgstr "Rezultat"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Povratne informacije o življenjepisu, pomoč pri izdelku in ideje skupnosti."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Datoteka življenjepisa"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "Strežnik je vrnil neveljaven rezultat uvoza. Pred ponovnim poskusom osvežite dokumente."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Različice strežnika ni bilo mogoče naložiti. Vaše besedilo se hrani; Poskusite znova.."
@@ -11098,6 +11134,8 @@ msgstr "Ta datoteka s spremnim pismom ni veljavna."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Ta datum ali ura ne obstaja v vašem časovnem pasu. Izberite drug čas."
@@ -11387,6 +11425,7 @@ msgstr "Zategnite na eno stran"
 msgid "Tightening"
 msgstr "Zgoščevanje"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Ura"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

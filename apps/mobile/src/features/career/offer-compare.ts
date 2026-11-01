@@ -30,10 +30,3 @@ export const matchingPlace = (location: string, places: string[]) => {
 		return where.includes(wanted) || wanted.includes(where);
 	});
 };
-
-/** The pair to open with: the newest offer, and the newest one from a different application. */
-export function defaultPair(offers: { id: string; applicationId: string | null }[]) {
-	const [first] = offers;
-	const second = offers.find((offer) => offer.applicationId !== first?.applicationId);
-	return [first?.id, second?.id] as const;
-}

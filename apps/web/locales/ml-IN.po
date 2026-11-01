@@ -604,6 +604,10 @@ msgstr "{days, plural, one {# ഓഫീസ് ദിവസം, നിങ്ങ�
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# പ്രമാണം അപ്ഡേറ്റ് ചെയ്തു} other {# പ്രമാണങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു}}"
@@ -951,8 +955,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>ആകെ തുകകൾ മനഃപൂർവം കൂട്ടിച്ചേർക്കുന്നില്ല.</0> ബോണസും ഇക്വിറ്റിയും വ്യവസ്ഥകളെ ആശ്രയിച്ചിരിക്കുന്നു, രണ്ട് ഓഫറുകളിലും ഇക്വിറ്റിയുടെ മൂല്യം അനിശ്ചിതമാണ്. ആകെ തുകകൾ താരതമ്യം ചെയ്യുന്നതിന് മുമ്പ് യഥാർത്ഥ ഓഫർ രേഖകൾ വായിക്കുക."
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1213,6 +1217,8 @@ msgstr "സ്വീകരിക്കുക"
 msgid "Accept all"
 msgstr "എല്ലാം സ്വീകരിക്കുക"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "സ്വീകരിച്ചു"
@@ -1526,8 +1532,8 @@ msgid "Add offer"
 msgstr "ജോലി ഓഫർ ചേർക്കുക"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "ജോലി ഓഫറിന്റെ നിബന്ധനകൾ സ്വയം ചേർക്കുക, അല്ലെങ്കിൽ ആവശ്യമെങ്കിൽ സന്ദേശങ്ങളിൽ AI ഉപയോഗിച്ച് വിവരങ്ങൾ വേർതിരിച്ചെടുക്കാനുള്ള സൗകര്യം ഉപയോഗിക്കുക."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2405,12 +2411,12 @@ msgid "ATS-safe"
 msgstr "ATS-സുരക്ഷിതം"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "ഒരു കവർ ലെറ്റർ അറ്റാച്ചുചെയ്യുക (PDF)"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "ഒരു കവർ ലെറ്റർ ഫയൽ അറ്റാച്ചുചെയ്യുക (PDF)"
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2422,8 +2428,8 @@ msgid "Attach a file instead"
 msgstr "പകരം ഒരു ഫയൽ അറ്റാച്ചുചെയ്യുക"
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "ഒരു റെസ്യൂമേ ഫയൽ അറ്റാച്ച് ചെയ്യുക (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2626,10 +2632,6 @@ msgstr "ബോർഡർ റേഡിയസ്"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "ബോർഡർ വീതി"
-
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "ഇവിടെ താരതമ്യം ചെയ്യുന്നതെല്ലാം രണ്ട് ഓഫറുകളിലുമുണ്ട്."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -2876,6 +2878,11 @@ msgstr "മാറ്റങ്ങൾ രേഖപ്പെടുത്തിയ �
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "വിഭാഗ ശീർഷകങ്ങളും തീയതി വാക്കുകളും മാത്രം മാറ്റുന്നു, നിങ്ങളുടെ ഉള്ളടക്കമല്ല."
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3240,6 +3247,8 @@ msgstr "അടയ്ക്കുക..."
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "അടച്ചു"
 
@@ -3801,6 +3810,10 @@ msgstr "കത്ത് സൃഷ്ടിക്കാനായില്ല. വ
 msgid "Couldn't create your account. Try again."
 msgstr "നിങ്ങളുടെ അക്കൗണ്ട് സൃഷ്ടിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
 msgstr "ആ കഥ ഇല്ലാതാക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
@@ -4315,8 +4328,10 @@ msgstr "ടൈംലൈൻ അപ്ഡേറ്റ് ചെയ്യാനാ�
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "ഈ കത്തിന്റെ പതിപ്പുകൾ അപ്‌ഡേറ്റ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
@@ -4391,6 +4406,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "കവർ ലെറ്റർ · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "കവർ ലെറ്റർ ഫയൽ"
@@ -6019,6 +6035,7 @@ msgid "Follow-up date"
 msgstr "ഫോളോ-അപ്പ് തീയതി"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "ഫോളോ-അപ്പ് കുറിപ്പ്"
 
@@ -6821,6 +6838,11 @@ msgstr "മെച്ചപ്പെടുത്തുന്നു..."
 msgid "In good company"
 msgstr "നല്ല കമ്പനിയിൽ"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "രണ്ട് വരികൾ ഒന്നായി ലയിക്കാതിരിക്കാൻ വരി അകലം കൂട്ടുക."
@@ -7386,6 +7408,7 @@ msgstr "അവസാനം ഉപയോഗിച്ചത്"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "ഏറ്റവും പുതിയത്"
 
@@ -8633,10 +8656,6 @@ msgid "No commands match that search."
 msgstr "ആ തിരയലിന് ചേരുന്ന കമാൻഡുകളൊന്നുമില്ല."
 
 #: src/features/settings/ai/connected-apps.tsx
-#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
-#~ msgstr "ഇതുവരെ ബന്ധിപ്പിച്ച ആപ്ലിക്കേഷനുകളൊന്നുമില്ല. നിങ്ങളുടെ അക്കൗണ്ട് ആക്സസ് ചെയ്യാൻ നിങ്ങൾ അനുവദിക്കുന്ന ആപ്പുകൾ ഇവിടെ ദൃശ്യമാകും."
-
-#: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
 msgstr "ഇതുവരെ ബന്ധിപ്പിച്ച ആപ്ലിക്കേഷനുകളൊന്നുമില്ല. നിങ്ങളുടെ അക്കൗണ്ട് ആക്സസ് ചെയ്യാൻ നിങ്ങൾ അനുവദിക്കുന്ന ആപ്പുകൾ ഇവിടെ ദൃശ്യമാകും."
 
@@ -8779,6 +8798,10 @@ msgstr "ഫോട്ടോ ഇല്ല. മിക്ക ATS ഫോട്ടോ�
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "No postings found. Try different keywords."
 msgstr "ജോലി പോസ്റ്റിംഗുകളൊന്നും കണ്ടെത്തിയില്ല. വ്യത്യസ്ത കീവേഡുകൾ പരീക്ഷിക്കുക."
+
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
@@ -8970,6 +8993,10 @@ msgstr "നിങ്ങളുടെ റെസ്യൂമെയിൽ ഇല്�
 msgid "Not now"
 msgstr "ഇപ്പോൾ വേണ്ട"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "ഇതുവരെ രേഖപ്പെടുത്തിയിട്ടില്ല. പിന്തുണയ്ക്കാൻ കഴിയുന്നത് വരെ ഇത് ശൂന്യമായി വിടുക."
@@ -9148,6 +9175,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "ഓഫാണ്. ഇത് ഓണാക്കിയാൽ റിക്രൂട്ടർമാർക്ക് നിങ്ങളെ Google-ൽ കണ്ടെത്താം."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9340,6 +9369,10 @@ msgstr "ഓഫറുകളിൽ തുറക്കുക"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "പ്രിഫറൻസുകൾ തുറക്കുക"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -10662,6 +10695,10 @@ msgstr "റെക്കോർഡിംഗ് സമയം"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "റിക്രൂട്ടർ"
@@ -11181,6 +11218,7 @@ msgid "Resume details"
 msgstr "റെസ്യൂമെ വിശദാംശങ്ങൾ"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "റെസ്യൂമേ ഫയൽ"
@@ -11367,14 +11405,6 @@ msgstr "അസാധുവാക്കുക"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0} അസാധുവാക്കുക"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke access"
-#~ msgstr "ആക്സസ് റദ്ദാക്കുക"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke an application's access to your account."
-#~ msgstr "നിങ്ങളുടെ അക്കൗണ്ടിലേക്കുള്ള ഒരു ആപ്ലിക്കേഷൻ്റെ ആക്‌സസ് റദ്ദാക്കുക."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -11594,6 +11624,10 @@ msgstr "ജോലി ഓഫർ സേവ് ചെയ്യുക"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -13784,6 +13818,10 @@ msgstr "ഈ ബ്രൗസറിന് ഇവിടെ റെക്കോർഡ
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "ഈ കണക്ഷൻ അഭ്യർത്ഥന അസാധുവാണ് അല്ലെങ്കിൽ കാലഹരണപ്പെട്ടു. നിങ്ങളുടെ ക്ലയന്റിൽ നിന്ന് കണക്ഷൻ വീണ്ടും ആരംഭിക്കുക."
@@ -13804,6 +13842,11 @@ msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13861,6 +13904,10 @@ msgstr "ഒരു റിസ്യൂമിന് ഈ ഫയൽ വലുതാ�
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "പല അപേക്ഷാ ഫോമുകളും സ്വീകരിക്കുന്നതിലും വലുതാണ് ഈ ഫയൽ."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13930,9 +13977,17 @@ msgstr "ഈ PDF-ന് ടെക്സ്റ്റ് ലെയർ ഇല്ല,
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "ഈ PDF ഒരു സ്കാൻ ചെയ്ത ചിത്രമാണ്. വായിക്കാൻ വാചകമൊന്നുമില്ല. Word പതിപ്പ് പരീക്ഷിക്കുക, അല്ലെങ്കിൽ ശൂന്യമായി ആരംഭിച്ച് വിഭാഗങ്ങൾ ഒട്ടിക്കുക."
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "ഈ PDF പാസ്‌വേഡ് സംരക്ഷിതമാണ്. സംരക്ഷിക്കപ്പെടാത്ത ഒരു പകർപ്പ് സേവ് ചെയ്ത് വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14058,6 +14113,8 @@ msgstr "ഒരു പേജിലേക്ക് മുറുക്കുക"
 msgid "Tightening"
 msgstr "ചുരുക്കുന്നു"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "സമയം"
@@ -14709,6 +14766,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "സാമ്പിൾ ഉപയോഗിക്കുക"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

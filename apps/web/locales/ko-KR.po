@@ -604,6 +604,10 @@ msgstr "{days, plural, other {주 #일 출근, 한도와 같음}}"
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {서류 #개를 업데이트했습니다} other {서류 #개를 업데이트했습니다}}"
@@ -951,8 +955,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>합계는 일부러 계산하지 않습니다.</0> 보너스와 지분은 조건에 따라 달라지며, 두 오퍼 모두 지분 가치가 불확실합니다. 합계를 비교하기 전에 원본 오퍼 문서를 읽어 보세요."
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1213,6 +1217,8 @@ msgstr "수용하다"
 msgid "Accept all"
 msgstr "모두 수락"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "수락됨"
@@ -1526,8 +1532,8 @@ msgid "Add offer"
 msgstr "오퍼 추가"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "오퍼 조건을 직접 입력하거나, 필요하면 메시지에서 AI 추출을 사용하세요."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2405,12 +2411,12 @@ msgid "ATS-safe"
 msgstr "ATS-안전"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "커버레터 첨부(PDF)"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "자기 소개서 파일(PDF)을 첨부하세요."
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2422,8 +2428,8 @@ msgid "Attach a file instead"
 msgstr "대신 파일을 첨부하세요."
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "이력서 파일 첨부 (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2626,10 +2632,6 @@ msgstr "테두리 반경"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "테두리 두께"
-
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "두 오퍼 모두 여기서 비교하는 모든 항목을 포함합니다."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -2876,6 +2878,11 @@ msgstr "변경 로그"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "콘텐츠가 아닌 섹션 제목과 날짜 단어만 변경합니다."
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3240,6 +3247,8 @@ msgstr "닫다…"
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "닫은"
 
@@ -3801,6 +3810,10 @@ msgstr "레터를 만들 수 없습니다. 다시 시도해 보세요."
 msgid "Couldn't create your account. Try again."
 msgstr "계정을 만들 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
 msgstr "해당 이야기를 삭제할 수 없습니다. 다시 시도해 보세요."
@@ -4315,8 +4328,10 @@ msgstr "타임라인을 업데이트할 수 없습니다. 다시 시도해 보�
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "이 레터의 버전을 업데이트할 수 없습니다. 다시 시도해 보세요."
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "사진을 업로드할 수 없습니다. 다시 시도해 보세요."
@@ -4391,6 +4406,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "자기 소개서 · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "자기소개서 파일"
@@ -6019,6 +6035,7 @@ msgid "Follow-up date"
 msgstr "후속 조치 날짜"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "후속 조치 메모"
 
@@ -6821,6 +6838,11 @@ msgstr "개선 중…"
 msgid "In good company"
 msgstr "좋은 회사에서"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "두 줄이 하나로 합쳐지지 않도록 줄 간격을 늘리세요."
@@ -7386,6 +7408,7 @@ msgstr "마지막으로 사용됨"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "최신"
 
@@ -8633,10 +8656,6 @@ msgid "No commands match that search."
 msgstr "검색과 일치하는 명령이 없습니다."
 
 #: src/features/settings/ai/connected-apps.tsx
-#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
-#~ msgstr "아직 연결된 애플리케이션이 없습니다. 계정 접근을 허용한 앱이 여기에 표시됩니다."
-
-#: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
 msgstr "아직 연결된 애플리케이션이 없습니다. 계정 접근을 허용한 앱이 여기에 표시됩니다."
 
@@ -8779,6 +8798,10 @@ msgstr "사진이 없습니다. 대부분의 ATS는 사진을 무시합니다. �
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "No postings found. Try different keywords."
 msgstr "채용공고를 찾을 수 없습니다. 다른 키워드를 사용해 보세요."
+
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
@@ -8970,6 +8993,10 @@ msgstr "이력서에 없음 · 사실인 경우에만 추가하세요"
 msgid "Not now"
 msgstr "나중에"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "아직 기록되지 않았습니다. 뒷받침할 수 있을 때까지 비워 두세요."
@@ -9148,6 +9175,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "꺼짐. 켜면 채용 담당자가 Google에서 찾을 수 있습니다."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9340,6 +9369,10 @@ msgstr "오퍼에서 열기"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "환경설정 열기"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -10662,6 +10695,10 @@ msgstr "녹음 시간"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "모집자"
@@ -11181,6 +11218,7 @@ msgid "Resume details"
 msgstr "이력서 세부정보"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "이력서 파일"
@@ -11367,14 +11405,6 @@ msgstr "취소"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0} 취소"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke access"
-#~ msgstr "액세스 취소"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke an application's access to your account."
-#~ msgstr "귀하의 계정에 대한 애플리케이션의 액세스를 취소하십시오."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -11594,6 +11624,10 @@ msgstr "오퍼 저장"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -13784,6 +13818,10 @@ msgstr "이 브라우저에서는 녹음할 수 없습니다. 오디오 파일�
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "이 연결 요청이 잘못되었거나 만료되었습니다. 클라이언트에서 연결을 다시 시작하세요."
@@ -13804,6 +13842,11 @@ msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13861,6 +13904,10 @@ msgstr "이력서치고 파일 크기가 큽니다."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "이 파일이 많은 지원서 양식이 허용하는 크기보다 큽니다."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13930,9 +13977,17 @@ msgstr "이 PDF에는 텍스트 레이어가 없으므로 파서는 이 레이�
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "이 PDF는 스캔한 이미지입니다. 읽을 텍스트가 없습니다. Word 버전을 사용해 보거나 공백으로 시작하여 섹션을 붙여넣으세요."
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "이 PDF는 비밀번호로 보호되어 있습니다. 보호되지 않은 사본을 저장한 뒤 다시 시도하세요."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14058,6 +14113,8 @@ msgstr "한 페이지로 압축"
 msgid "Tightening"
 msgstr "간결하게 다듬는 중"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "시간"
@@ -14709,6 +14766,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "샘플 사용"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

@@ -3,6 +3,7 @@ import type { IconName } from "@/ui";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { ApplicationLane } from "@reactive-resume/schema/applications/lanes";
 import { plural, t } from "@lingui/core/macro";
+import { followUpInstant } from "@reactive-resume/schema/applications/follow-up";
 import { categorySince, laneSince } from "./history";
 import { getClosedReasonLabel } from "./stages";
 
@@ -14,7 +15,10 @@ const DAY_MS = 86_400_000;
 /** Days without a reply after applying before a follow-up is suggested. */
 const FOLLOW_UP_AFTER_DAYS = 10;
 
-type NextStepSource = Pick<Application, "status" | "activity" | "followUpAt" | "followUpNote" | "appliedAt" | "laneId">;
+type NextStepSource = Pick<
+	Application,
+	"status" | "activity" | "followUpAt" | "followUpDateOnly" | "followUpNote" | "appliedAt" | "laneId"
+>;
 
 /**
  * What an application needs next, derived rather than stored: the earliest interview still to come, else the
@@ -41,6 +45,7 @@ export function getNextStep(
 	application: NextStepSource,
 	now = new Date(),
 	lanes: readonly ApplicationLane[] = [],
+	timeZone = "UTC",
 ): NextStep {
 	if (application.status === "closed") return { kind: "closed" };
 
@@ -52,7 +57,7 @@ export function getNextStep(
 	if (upcoming) return { kind: "interview", ...upcoming };
 
 	if (application.followUpAt) {
-		const at = new Date(application.followUpAt);
+		const at = followUpInstant(application, timeZone) ?? new Date(application.followUpAt);
 		return { kind: "follow-up", at, note: application.followUpNote ?? "", overdue: at.getTime() < now.getTime() };
 	}
 

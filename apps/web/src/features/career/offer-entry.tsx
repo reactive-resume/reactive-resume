@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
-import { parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
+import { offerApplications, parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -20,7 +20,7 @@ import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { MoreOptions } from "@/features/resume/editor/write/fields";
 import { orpc } from "@/libs/orpc/client";
 
-type Application = { id: string; company: string; role: string };
+type Application = { id: string; company: string; role: string; status?: string; closedReason?: string | null };
 type OfferEntryProps = {
 	application?: Application;
 	primary?: boolean;
@@ -61,6 +61,7 @@ function FirstApplication({ variant, children }: FirstApplicationProps) {
 type OfferFormProps = { application?: Application; onClose: () => void };
 function OfferForm({ application, onClose }: OfferFormProps) {
 	const id = useId();
+	const navigate = useNavigate();
 	const { locale, timeZone } = useCareerTime();
 	const queryClient = useQueryClient();
 	const applications = useQuery({ ...applicationsListQueryOptions(), enabled: !application });
@@ -99,7 +100,8 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 	const showDeadlineError = !!deadlineMessage && (submitted || touched.deadline);
 	const save = useMutation({
 		...orpc.career.createOffer.mutationOptions(),
-		onSuccess: () => {
+		onSuccess: (result) => {
+			if (!application && result) void navigate({ to: "/dashboard/career/offers", search: { a: result.id } });
 			void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
 			toast.add({ description: t`Offer saved` });
 			onClose();
@@ -168,9 +170,16 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						required
 					>
 						<option value="">{t`Choose an application`}</option>
-						{(application ? [application] : (applications.data ?? [])).map((row) => (
+						{(application ? [application] : offerApplications(applications.data ?? [])).map((row) => (
 							<option key={row.id} value={row.id}>
-								{row.company} · {row.role}
+								{row.company} · {row.role} ·{" "}
+								{row.closedReason === "accepted"
+									? t`Accepted`
+									: row.status === "offer"
+										? t`Offer`
+										: row.status === "closed"
+											? t`Closed`
+											: t`In progress`}
 							</option>
 						))}
 					</NativeSelect>

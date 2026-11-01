@@ -23,6 +23,8 @@ interface ORPCContext {
 	trustedClient?: string;
 	/** Set only by a server adapter after authenticating this request. */
 	authentication?: RequestAuthentication | null;
+	/** The account expectation of this batch item (or whole request), mapped by the RPC adapter. */
+	rpcItemAccountId?: string;
 }
 
 const TRUSTED_ORIGINS = getTrustedOrigins(env.APP_URL);
@@ -148,6 +150,17 @@ export const protectedProcedure = publicProcedure
 	.use(({ context, procedure, next }) => {
 		if (!context.user) throw new ORPCError("UNAUTHORIZED");
 		const permission = requiredPermission(procedure["~orpc"].route);
+		// A page sends the account it was rendered for. If a cookie changed after that page loaded (another tab signed
+		// out or signed in), a queued autosave must fail instead of writing the old account's text into the new one.
+		// Every known binding must agree with the authenticated user: the request envelope (cookie-level) and the
+		// per-item binding a batch item may carry. A batch cannot relabel one item with another account's live scope.
+		const bindings = [context.reqHeaders.get("x-account-id"), context.rpcItemAccountId].filter(
+			(value): value is string => Boolean(value),
+		);
+		if (permission !== "read" && bindings.some((accountId) => accountId !== context.user?.id))
+			throw new ORPCError("CONFLICT", {
+				message: "This page belongs to a different account now. Reload and try again.",
+			});
 		if (!context.authentication?.permissions.includes(permission)) {
 			context.resHeaders?.set("WWW-Authenticate", `Bearer error="insufficient_scope", scope="api:${permission}"`);
 			throw new ORPCError("FORBIDDEN", {

@@ -804,7 +804,8 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 	const describe = (row: Schedule) => {
 		const application = applications?.find((item) => item.id === row.applicationId);
 		if (row.kind === "discovery") return row.query;
-		if (row.kind === "follow-up") return application ? `${application.company} · ${application.role}` : "";
+		if (row.kind === "follow-up")
+			return [application ? `${application.company} · ${application.role}` : "", row.query].filter(Boolean).join(" · ");
 		const interview = application?.activity.find((entry) => entry.type === "interview" && entry.id === row.interviewId);
 		const kind = interview?.type === "interview" ? (interviewKindOf(interview.kind)?.label ?? interview.kind) : null;
 		return [application?.company, kind ? t`${kind} interview` : null].filter(Boolean).join(" · ");

@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· nuo šiandien} one {· jau # dieną} few {· jau #
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "Atlikta {done} iš {count}"
@@ -906,6 +910,11 @@ msgstr "Priimti"
 msgid "Accept all"
 msgstr "Priimti visus"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Priimta"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Priėmė kitą pasiūlymą"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "Pridėti pasiūlymą"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Darbo pasiūlymo sąlygas įveskite rankiniu būdu arba pasinaudokite pasirenkamu išgavimu naudojant DI skiltyje „Žinutės“."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "Padėjėjas"
 msgid "Assistant conversations"
 msgstr "Asistento pokalbiai"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "Tą dieną 09:00 ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "Pakeitimų išsaugoti nepavyko. Bandyti dar kartą prieš tęsdami."
 msgid "Changes section titles and date words only, not your content."
 msgstr "Keičiami tik skilčių pavadinimai ir datos žodžiai, o ne jūsų turinys."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "„{name}“ pakeitimai buvo išsaugoti kitame įrenginyje. Jūsų pakeitimai vis dar yra šiame įrenginyje. Pasirinkite, kurią versiją palikti."
@@ -2618,6 +2628,8 @@ msgstr "Uždaryti…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Uždaryta"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "Nepavyko įkelti nuotraukos."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Nepavyko įkelti nuotraukos. Bandykite dar kartą."
 
@@ -3462,6 +3478,7 @@ msgstr "Užpildyti"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "Motyvacinis laiškas – {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Motyvacinio laiško failas"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "Priminimo data"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Priminimo pastaba"
 
@@ -5296,6 +5315,11 @@ msgstr "Pagerinkite pasirinktą eilutę"
 msgid "Improving…"
 msgstr "Tobulinama…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Įskaitant uždarytas"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "Vėliau"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Naujausia"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Išjungta. Tik jūs galite matyti šį gyvenimo aprašymą."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Pasiūlymas"
@@ -8414,6 +8441,12 @@ msgstr "Įrašymo laikas"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Verbuotojas"
@@ -8823,6 +8856,7 @@ msgstr "Rezultatas"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Atsiliepimai apie gyvenimo aprašymą, pagalba dėl produkto ir bendruomenės idėjos."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Gyvenimo aprašymo failas"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "Serveris pateikė neteisingą importavimo rezultatą. Prieš bandydami dar kartą atnaujinkite Dokumentai."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Nepavyko įkelti serverio versijos. Jūsų tekstas saugomas; bandykite dar kartą."
@@ -11098,6 +11134,8 @@ msgstr "Šis motyvacinio laiško failas negalioja."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Šios datos ar laiko jūsų laiko juostoje nėra. Pasirinkite kitą laiką."
@@ -11387,6 +11425,7 @@ msgstr "Priveržkite iki vieno puslapio"
 msgid "Tightening"
 msgstr "Trumpinama"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Laikas"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

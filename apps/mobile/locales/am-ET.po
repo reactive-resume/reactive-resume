@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· ከዛሬ ጀምሮ} one {· ለ# ቀን} other {�
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "ከ{count} {done} ተጠናቀዋል"
@@ -906,6 +910,11 @@ msgstr "ተቀበል"
 msgid "Accept all"
 msgstr "ሁሉንም ተቀበል"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "ተቀባይነት አግኝቷል"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "ሌላ ቅናሽ ተቀብሏል።"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "የሥራ አቅርቦት አክል"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "የሥራ አቅርቦቱን ውሎች በእጅ ያስገቡ፣ ወይም በመልዕክቶች ውስጥ ያለውን አማራጭ የAI ማውጣት ባህሪ ይጠቀሙ።"
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "ረዳት"
 msgid "Assistant conversations"
 msgstr "ረዳት ንግግሮች"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "በዚያ ቀን 09፡00 ላይ ({timeZone})።"
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "ለውጦች ሊቀመጡ አልቻሉም። ከመቀጠልዎ በፊ�
 msgid "Changes section titles and date words only, not your content."
 msgstr "ይዘትዎን ሳይሆን ክፍል ርዕሶችን እና የቀን ቃላትን ብቻ ይለውጣል።"
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "በ«{name}» ላይ የተደረጉ ለውጦች በሌላ መሣሪያ ላይ ተቀምጠዋል። የእርስዎ አርትዖቶች አሁንም በዚህ መሣሪያ ላይ ናቸው። የትኛውን ስሪት እንደሚይዝ ይምረጡ።"
@@ -2618,6 +2628,8 @@ msgstr "ገጠመ…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "ዝግ"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "ፎቶውን መስቀል አልተቻለም።"
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "ፎቶውን መስቀል አልተቻለም። እንደገና ይሞክሩ።"
 
@@ -3462,6 +3478,7 @@ msgstr "ሙላ"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "የሽፋን ደብዳቤ - {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "የሽፋን ደብዳቤ ፋይል"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "የክትትል ቀን"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "የክትትል ማስታወሻ"
 
@@ -5296,6 +5315,11 @@ msgstr "የተመረጠውን መስመር አሻሽል።"
 msgid "Improving…"
 msgstr "በማሻሻል ላይ…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "ዝግን ጨምሮ"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "በኋላ"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "የቅርብ ጊዜ"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "ጠፍቷል እርስዎ ብቻ ይህንን የትምህርት ማስረጃ ማየት ይችላሉ።"
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "የሥራ ቅናሽ"
@@ -8414,6 +8441,12 @@ msgstr "የመቅጃ ጊዜ"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "መልማይ"
@@ -8823,6 +8856,7 @@ msgstr "ውጤት"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "የስራ ልምድ ማስረጃ ግብረ መልስ፣ የምርት እገዛ እና የማኅበረሰብ ሐሳቦች።"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "የሪዙሜ ፋይል"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "አገልጋዩ የተሳሳተ የማስመጣት ውጤት መልሷል። እንደገና ከመሞከርዎ በፊት ሰነዶችን ያድሱ።"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "የአገልጋዩ ሥሪት ሊጫን አልቻለም። የእርስዎ ጽሑፍ ተቀምጧል; እንደገና ይሞክሩ።"
@@ -11098,6 +11134,8 @@ msgstr "ይህ የሽፋን ደብዳቤ ፋይል ልክ ያልሆነ ነው።
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "ይህ ቀን ወይም ሰዓት በሰዓት ሰቅዎ ውስጥ የለም። ሌላ ጊዜ ይምረጡ።"
@@ -11387,6 +11425,7 @@ msgstr "ወደ አንድ ገጽ አጥብቅ"
 msgid "Tightening"
 msgstr "በማጥበቅ ላይ"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "ሰዓት"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

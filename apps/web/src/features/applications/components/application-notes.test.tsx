@@ -18,7 +18,12 @@ vi.mock("@/libs/orpc/client", () => ({
 vi.mock("../use-application-actions", () => ({ useInvalidateApplications: () => mocks.invalidate }));
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
 
-afterEach(() => vi.resetAllMocks());
+afterEach(() => {
+	vi.resetAllMocks();
+	sessionStorage.clear();
+	localStorage.clear();
+});
+vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { id: "notes-owner" } } }) }));
 
 function open(id: string, client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })) {
 	i18n.load("en", {});
@@ -44,6 +49,7 @@ it("retains a failed note across closing and reopening, then retries it", async 
 	mocks.update.mockResolvedValue({});
 	open("failed-notes");
 	expect((screen.getByRole("textbox", { name: "Notes" }) as HTMLTextAreaElement).value).toBe("Keep this draft");
+	fireEvent.click(screen.getByRole("button", { name: "Save recovered draft" }));
 	await waitFor(
 		() =>
 			expect(mocks.update).toHaveBeenLastCalledWith(

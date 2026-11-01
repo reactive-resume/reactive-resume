@@ -8,8 +8,10 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ApplicationList } from "./list-view";
 
-const mocks = vi.hoisted(() => ({ breakpoint: "desktop", invalidate: vi.fn() }));
-vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
+const mocks = vi.hoisted(() => ({ breakpoint: "desktop", timeZone: "UTC", invalidate: vi.fn() }));
+vi.mock("@tanstack/react-router", () => ({
+	useRouteContext: () => ({ session: { user: { timezone: mocks.timeZone } } }),
+}));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		applications: {
@@ -186,4 +188,32 @@ it("sorts by role with company as the tiebreak, and by soonest next step with no
 	expect(order()).toEqual(["Mid", "Acme", "Zeta"]);
 	fireEvent.click(screen.getByRole("button", { name: "Next step" }));
 	expect(order()).toEqual(["Zeta", "Acme", "Mid"]);
+});
+
+it("sorts legacy date-only follow-ups by their account-clock delivery time", () => {
+	mocks.timeZone = "Pacific/Honolulu";
+	try {
+		const { container } = renderList([
+			application({
+				id: "legacy",
+				location: null,
+				company: "Legacy",
+				followUpAt: new Date("2030-01-03T00:00:00Z"),
+				followUpDateOnly: true,
+			}),
+			application({
+				id: "exact",
+				location: null,
+				company: "Exact",
+				followUpAt: new Date("2030-01-03T12:00:00Z"),
+				followUpDateOnly: false,
+			}),
+		]);
+		fireEvent.click(screen.getByRole("button", { name: "Next step" }));
+		expect(
+			Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent),
+		).toEqual(["Exact", "Legacy"]);
+	} finally {
+		mocks.timeZone = "UTC";
+	}
 });

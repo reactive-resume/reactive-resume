@@ -202,6 +202,7 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 type HeaderProps = { application: Application; onAskCoach: () => void };
 
 function Header({ application, onAskCoach }: HeaderProps) {
+	const saved = useSavedItems(application.id);
 	const lanes = useApplicationLanes();
 	const { t } = useLingui();
 	const { radius, space } = useTheme();
@@ -245,7 +246,14 @@ function Header({ application, onAskCoach }: HeaderProps) {
 						variant="secondary"
 						icon="scales"
 						label={t`Compare offers`}
-						onPress={() => router.push(routes.career("offers"))}
+						loading={saved.isPending}
+						disabled={saved.isPending || saved.isError || !saved.data}
+						onPress={() =>
+							router.push({
+								pathname: routes.career("offers"),
+								params: { a: saved.data?.find((item) => item.data.kind === "offer")?.id },
+							})
+						}
 					/>
 				) : null}
 			</View>

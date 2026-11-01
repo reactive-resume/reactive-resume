@@ -216,6 +216,67 @@ describe("OAuth provider response validation", () => {
 	);
 });
 
+describe("account-bound settings writes", () => {
+	const request = (path: string, headers: Record<string, string> = {}, method = "POST") =>
+		new Request(`http://localhost:3000${path}`, {
+			method,
+			headers: { "content-type": "application/json", ...headers },
+			...(method === "GET"
+				? {}
+				: {
+						body: JSON.stringify(
+							path.endsWith("/oauth2/update-client")
+								? { client_id: "fixture", update: { client_name: "Fixture" } }
+								: {},
+						),
+					}),
+		});
+
+	it.each(["/api/auth/update-user", "/api/auth/oauth2/update-client", "/api/auth/oauth2/delete-client"])(
+		"refuses stale account write %s before Better Auth runs",
+		async (path) => {
+			const { handleAuth } = await import("./auth");
+			mocks.getSession.mockResolvedValueOnce({ user: { id: "bob" } });
+			const response = await handleAuth(request(path, { "x-account-id": "alice" }));
+			expect(response.status).toBe(409);
+			await expect(response.json()).resolves.toMatchObject({
+				message: "This page belongs to a different account now. Reload and try again.",
+			});
+			expect(mocks.handler).not.toHaveBeenCalled();
+		},
+	);
+
+	it("allows the same account's settings write", async () => {
+		const { handleAuth } = await import("./auth");
+		mocks.getSession.mockResolvedValueOnce({ user: { id: "bob" } });
+		const response = await handleAuth(request("/api/auth/update-user", { "x-account-id": "bob" }));
+		expect(await response.text()).toBe("ok");
+		expect(mocks.handler).toHaveBeenCalledOnce();
+	});
+
+	it("leaves clients without the optional header unchanged", async () => {
+		const { handleAuth } = await import("./auth");
+		await handleAuth(request("/api/auth/update-user"));
+		expect(mocks.getSession).not.toHaveBeenCalled();
+		expect(mocks.handler).toHaveBeenCalledOnce();
+	});
+
+	it("does not block explicit sign-out or sign-in intents", async () => {
+		const { handleAuth } = await import("./auth");
+		mocks.getSession.mockResolvedValue({ user: { id: "bob" } });
+		await handleAuth(request("/api/auth/sign-out", { "x-account-id": "alice" }));
+		await handleAuth(request("/api/auth/sign-in/email", { "x-account-id": "alice" }));
+		expect(mocks.handler).toHaveBeenCalledTimes(2);
+	});
+
+	it("does not treat reads as writes", async () => {
+		const { handleAuth } = await import("./auth");
+		await handleAuth(request("/api/auth/get-session", { "x-account-id": "alice" }, "GET"));
+		expect(mocks.getSession).not.toHaveBeenCalled();
+		expect(mocks.handler).toHaveBeenCalledOnce();
+	});
+});
+
 describe("account link storage migration", () => {
 	it("sets an account link hook that delegates to migrateUserStorage", async () => {
 		await import("./auth");

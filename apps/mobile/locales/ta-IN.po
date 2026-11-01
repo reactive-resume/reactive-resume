@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· இன்று முதல்} one {· # நா�
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{count}-இல் {done} முடிந்தது"
@@ -906,6 +910,11 @@ msgstr "ஏற்றுக்கொள்"
 msgid "Accept all"
 msgstr "அனைத்தையும் ஏற்றுக்கொள்"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "ஏற்றுக்கொள்ளப்பட்டது"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "மற்றொரு சலுகையை ஏற்றுக்கொண்டார்"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "வேலைவாய்ப்புச் சலுகையைச் சேர்"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "வேலைவாய்ப்புச் சலுகையின் நிபந்தனைகளை நீங்களே சேர்க்கவும் அல்லது செய்திகளில் விருப்பமான AI பிரித்தெடுத்தலைப் பயன்படுத்தவும்."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr "ஏற்றுக்கொண்ட சலுகைகள் உட்பட சலுகையின் நிபந்தனைகளை கைமுறையாகச் சேர்க்கவும் அல்லது செய்திகளில் விருப்பமான AI பிரித்தெடுத்தலைப் பயன்படுத்தவும். ஏற்றுக்கொண்டதாக மூடுவது நிபந்தனைகளைப் பதிவு செய்யாது."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "உதவியாளர்"
 msgid "Assistant conversations"
 msgstr "உதவியாளர் உரையாடல்கள்"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "அன்று 09:00 மணிக்கு ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "மாற்றங்களைச் சேமிக்க முடி�
 msgid "Changes section titles and date words only, not your content."
 msgstr "பிரிவு தலைப்புகள் மற்றும் தேதி வார்த்தைகளை மட்டும் மாற்றுகிறது, உங்கள் உள்ளடக்கத்தை அல்ல."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "“{name}”க்கான மாற்றங்கள் மற்றொரு சாதனத்தில் சேமிக்கப்பட்டன. உங்கள் திருத்தங்கள் இன்னும் இந்தச் சாதனத்தில் உள்ளன. எந்த பதிப்பை வைத்திருக்க வேண்டும் என்பதை தேர்வு செய்யவும்."
@@ -2618,6 +2628,8 @@ msgstr "மூடு…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "மூடப்பட்டது"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "படத்தைப் பதிவேற்ற முடியவில்லை."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr "புகைப்படத்தைப் பதிவேற்ற முடியவில்லை. 10 MB வரையிலான படிக்கக்கூடிய PNG, JPEG, WebP அல்லது GIF புகைப்படத்தைத் தேர்ந்தெடுத்து மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "புகைப்படத்தைப் பதிவேற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
@@ -3462,6 +3478,7 @@ msgstr "நிரப்பு"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "அட்டை கடிதம் - {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "கவர் கடிதம் கோப்பு"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "பின்தொடர்தல் தேதி"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "பின்தொடர்தல் குறிப்பு"
 
@@ -5296,6 +5315,11 @@ msgstr "தேர்ந்தெடுக்கப்பட்ட வரிய�
 msgid "Improving…"
 msgstr "மேம்படுத்துகிறது…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "மூடப்பட்டவையும் உட்பட"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "பின்னர்"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "சமீபத்தியது"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "ஆஃப். இந்த ரெஸ்யூமேவை நீங்கள் மட்டுமே பார்க்க முடியும்."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "சலுகை"
@@ -8414,6 +8441,12 @@ msgstr "பதிவு நேரம்"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "பணியமர்த்துபவர்"
@@ -8823,6 +8856,7 @@ msgstr "முடிவு"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "ரெஸ்யூம் கருத்து, தயாரிப்பு உதவி மற்றும் சமூக யோசனைகள்."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "ரெஸ்யூம் கோப்பு"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "சேவையகம் தவறான இறக்குமதி முடிவை வழங்கியது. மீண்டும் முயற்சிக்கும் முன் ஆவணங்கள்ஐப் புதுப்பிக்கவும்."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "சேவையகப் பதிப்பை ஏற்ற முடியவில்லை. உங்கள் உரை பாதுகாக்கப்பட்டுள்ளது; மீண்டும் முயலவும்."
@@ -11098,6 +11134,8 @@ msgstr "இந்த கவர் கடிதம் கோப்பு தவ�
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "இந்த தேதி அல்லது நேரம் உங்கள் நேர மண்டலத்தில் இல்லை. மற்றொரு நேரத்தை தேர்வு செய்யவும்."
@@ -11387,6 +11425,7 @@ msgstr "ஒரு பக்கமாக இறுக்கவும்"
 msgid "Tightening"
 msgstr "சுருக்குகிறது"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "நேரம்"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

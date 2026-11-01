@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· từ hôm nay} one {· trong # ngày} other {· tr
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "Đã xong {done}/{count}"
@@ -906,6 +910,11 @@ msgstr "Chấp nhận"
 msgid "Accept all"
 msgstr "Chấp nhận tất cả"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Đã chấp nhận"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Đã chấp nhận một lời đề nghị khác"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "Thêm đề nghị tuyển dụng"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Thêm điều khoản của đề nghị tuyển dụng theo cách thủ công hoặc dùng tính năng trích xuất bằng AI tùy chọn trong Tin nhắn."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "Trợ lý"
 msgid "Assistant conversations"
 msgstr "cuộc trò chuyện của trợ lý"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "Vào lúc 09:00 ngày hôm đó ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "Không thể lưu các thay đổi. Hãy thử lại trước khi tiếp
 msgid "Changes section titles and date words only, not your content."
 msgstr "Chỉ thay đổi tiêu đề của phần và từ ngày tháng chứ không phải nội dung của bạn."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Các thay đổi đối với “{name}” đã được lưu trên một thiết bị khác. Các chỉnh sửa của bạn vẫn còn trên thiết bị này. Chọn phiên bản nào để giữ."
@@ -2618,6 +2628,8 @@ msgstr "Đóng…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Đã đóng"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "Không thể tải ảnh lên."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Không thể tải ảnh lên. Hãy thử lại."
 
@@ -3462,6 +3478,7 @@ msgstr "Phủ kín"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "Thư xin việc — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Tập tin thư xin việc"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "Ngày theo dõi"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Ghi chú theo dõi"
 
@@ -5296,6 +5315,11 @@ msgstr "Cải thiện dòng đã chọn"
 msgid "Improving…"
 msgstr "Cải thiện…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Gồm cả đã đóng"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "sau"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Mới nhất"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Tắt. Chỉ có bạn mới có thể xem sơ yếu lý lịch này."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Đề nghị"
@@ -8414,6 +8441,12 @@ msgstr "Thời gian ghi âm"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Nhà tuyển dụng"
@@ -8823,6 +8856,7 @@ msgstr "Kết quả"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Góp ý sơ yếu lý lịch, trợ giúp sản phẩm và ý tưởng từ cộng đồng."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Tệp CV"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "Máy chủ trả về kết quả nhập không hợp lệ. Hãy làm mới Tài liệu trước khi thử lại."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Không thể tải phiên bản từ máy chủ. Văn bản của bạn vẫn được giữ; hãy thử lại."
@@ -11098,6 +11134,8 @@ msgstr "Tệp thư xin việc này không hợp lệ."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Ngày hoặc giờ này không tồn tại trong múi giờ của bạn. Hãy chọn thời điểm khác."
@@ -11387,6 +11425,7 @@ msgstr "Thắt chặt vào một trang"
 msgid "Tightening"
 msgstr "Đang rút gọn"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Giờ"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

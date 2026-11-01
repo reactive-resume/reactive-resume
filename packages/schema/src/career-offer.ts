@@ -35,6 +35,34 @@ export function parseOfferEntry({ applicationId, terms, amounts, date, time, loc
 	};
 }
 
+type OfferVersion = { id: string; applicationId: string | null };
+/** Explicit versions stay explicit; remembered selections follow each application's newest saved terms. */
+export function selectOfferPair<T extends OfferVersion>(
+	offers: T[],
+	requested: { a?: string | undefined; b?: string | undefined },
+	remembered: { a?: string | undefined; b?: string | undefined } = {},
+) {
+	const find = (id: string | undefined) => offers.find((offer) => offer.id === id);
+	const newest = (id: string | undefined) => {
+		const old = find(id);
+		return old?.applicationId ? offers.find((offer) => offer.applicationId === old.applicationId) : old;
+	};
+	const a = find(requested.a) ?? newest(remembered.a) ?? offers[0];
+	const candidate = find(requested.b) ?? newest(remembered.b);
+	const b =
+		candidate && candidate.id !== a?.id
+			? candidate
+			: offers.find((offer) => offer.id !== a?.id && offer.applicationId !== a?.applicationId);
+	return { a: a?.id, b: b?.id };
+}
+
+/** Offer entry prioritizes current offers and excludes applications closed as not selected. */
+export function offerApplications<T extends { status: string; closedReason: string | null }>(applications: T[]) {
+	return applications
+		.filter((row) => !(row.status === "closed" && row.closedReason === "not-selected"))
+		.sort((a, b) => Number(b.status === "offer") - Number(a.status === "offer"));
+}
+
 type SavedOffer = { createdAt: Date | string; data: { kind: string; currency?: string } };
 
 /**

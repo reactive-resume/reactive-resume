@@ -36,13 +36,13 @@ import { orpc } from "@/libs/orpc/client";
 type SortKey = "role" | "next" | "updated";
 type Sort = { key: SortKey; direction: "asc" | "desc" };
 
-const nextStepTime = (application: ApplicationSummary) => {
-	const step = getNextStep(application);
+const nextStepTime = (application: ApplicationSummary, timeZone: string) => {
+	const step = getNextStep(application, undefined, timeZone);
 	return step.kind === "interview" || step.kind === "follow-up" ? step.at.getTime() : Number.POSITIVE_INFINITY;
 };
 
 // Sort keys are computed once per row, not once per comparison.
-const sortValue: Record<SortKey, (application: ApplicationSummary) => string | number> = {
+const sortValue: Record<SortKey, (application: ApplicationSummary, timeZone: string) => string | number> = {
 	role: (application) => application.role,
 	next: nextStepTime,
 	updated: (application) => new Date(application.updatedAt).getTime(),
@@ -65,6 +65,7 @@ type ListViewProps = {
  */
 export function ApplicationList({ applications, showClosed, selectedId, onOpen }: ListViewProps) {
 	const breakpoint = useBreakpoint();
+	const { timeZone } = useCareerTime();
 	const phone = breakpoint === "mobile";
 	const { lanes, active } = useApplicationLanes();
 	const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
@@ -85,7 +86,9 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 
 	const groups = useMemo(() => {
 		const sign = sort.direction === "asc" ? 1 : -1;
-		const keys = new Map(applications.map((application) => [application.id, sortValue[sort.key](application)]));
+		const keys = new Map(
+			applications.map((application) => [application.id, sortValue[sort.key](application, timeZone)]),
+		);
 		const key = (application: ApplicationSummary) => keys.get(application.id) ?? 0;
 		const rowsByLane = new Map<string, ApplicationSummary[]>();
 		for (const application of applications) {
@@ -105,7 +108,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 				),
 			}))
 			.filter((group) => group.rows.length > 0);
-	}, [applications, showClosed, sort, lanes, active]);
+	}, [applications, showClosed, sort, lanes, active, timeZone]);
 
 	const toggleGroup = (status: string) =>
 		setCollapsed((current) => {
@@ -263,7 +266,7 @@ const ApplicationRow = memo(function ApplicationRow({
 }: ApplicationRowProps) {
 	const { i18n } = useLingui();
 	const { timeZone } = useCareerTime();
-	const next = describeNextStep(getNextStep(application), application, i18n.locale, timeZone);
+	const next = describeNextStep(getNextStep(application, undefined, timeZone), application, i18n.locale, timeZone);
 	const sent = application.status !== "saved";
 	const tone = next.tone === "warn" ? "text-warn-text" : next.tone === "muted" ? "text-ink-3" : "text-ink-2";
 
@@ -340,10 +343,35 @@ const ApplicationRow = memo(function ApplicationRow({
 				</span>
 			</td>
 			<td className="px-2">
-				{application.resumeId || application.coverLetterId ? (
+				{application.resumeId ||
+				application.coverLetterId ||
+				application.resumeFileUrl ||
+				application.coverLetterUrl ? (
 					<span className="flex items-center gap-1 text-ink-2">
-						{application.resumeId && <Icon name="file-text" size={18} aria-label={t`Resume`} />}
-						{application.coverLetterId && <Icon name="envelope-simple" size={18} aria-label={t`Cover letter`} />}
+						{application.resumeFileUrl && (
+							<>
+								<Icon name="file-pdf" size={18} />
+								<span className="sr-only">{t`Resume file`}</span>
+							</>
+						)}
+						{application.coverLetterUrl && (
+							<>
+								<Icon name="file-pdf" size={18} />
+								<span className="sr-only">{t`Cover letter file`}</span>
+							</>
+						)}
+						{application.resumeId && (
+							<>
+								<Icon name="file-text" size={18} />
+								<span className="sr-only">{t`Resume`}</span>
+							</>
+						)}
+						{application.coverLetterId && (
+							<>
+								<Icon name="envelope-simple" size={18} />
+								<span className="sr-only">{t`Cover letter`}</span>
+							</>
+						)}
 					</span>
 				) : (
 					<span className={cn("text-xs", sent ? "text-warn-text" : "text-ink-3")}>

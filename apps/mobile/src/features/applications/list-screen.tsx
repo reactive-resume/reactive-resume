@@ -89,7 +89,7 @@ function ApplicationsList() {
 	const applications = query.data ?? [];
 	const filtered = filterApplications(applications, { search, tag, showClosed });
 	const filtersActive = Boolean(search.trim() || tag || showClosed);
-	const groups = groupApplications(filtered, sort, direction, now, lanes.supported ? lanes.lanes : undefined);
+	const groups = groupApplications(filtered, sort, direction, now, lanes.supported ? lanes.lanes : undefined, timeZone);
 	const selectedIds = visibleSelection(groups, collapsed, selected);
 	const onViewableItemsChanged = useApplicationDetailPrefetch();
 	const tags = [...new Set(applications.flatMap((item) => item.tags))].sort();
@@ -363,7 +363,15 @@ function ApplicationsList() {
 						</Pressable>
 					)}
 					renderItem={({ item, index }) => {
-						const next = describeNextStep(getNextStep(item, now, lanes.lanes), item, i18n.locale, timeZone);
+						const next = describeNextStep(getNextStep(item, now, lanes.lanes, timeZone), item, i18n.locale, timeZone);
+						const sentDocuments = [
+							item.resumeId ? t`Resume` : null,
+							item.coverLetterId ? t`Cover letter` : null,
+							item.resumeFileUrl ? t`Resume file` : null,
+							item.coverLetterUrl ? t`Cover letter file` : null,
+						]
+							.filter(Boolean)
+							.join(" · ");
 						return (
 							<Animated.View
 								{...listItemMotion(index, firstAppearance)}
@@ -377,7 +385,7 @@ function ApplicationsList() {
 								<View style={{ flex: 1 }}>
 									<ListRow
 										title={item.role}
-										subtitle={`${item.company}${item.location ? ` · ${item.location}` : ""}\n${next.title}${next.sub ? ` · ${next.sub}` : ""}`}
+										subtitle={`${item.company}${item.location ? ` · ${item.location}` : ""}\n${next.title}${next.sub ? ` · ${next.sub}` : ""}${sentDocuments ? `\n${sentDocuments}` : ""}`}
 										selected={selectedIds.includes(item.id)}
 										leading={selecting ? (selectedIds.includes(item.id) ? "check-square" : "square") : undefined}
 										accessibilityHint={selecting ? t`Toggle selection` : t`Open application`}

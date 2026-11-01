@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· kopš šodienas} one {· # dienu} other {· # dien
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "Paveikti {done} no {count}"
@@ -906,6 +910,11 @@ msgstr "Pieņemt"
 msgid "Accept all"
 msgstr "Pieņemt visu"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Pieņemts"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Pieņēma citu piedāvājumu"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "Pievienot darba piedāvājumu"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Pievienojiet darba piedāvājuma nosacījumus manuāli vai pēc izvēles izmantojiet MI datu izgūšanu sadaļā Ziņojumi."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "Asistents"
 msgid "Assistant conversations"
 msgstr "Asistentu sarunas"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "Tajā dienā plkst. 9:00 ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "Izmaiņas nevarēja saglabāt. Pirms turpināt, mēģiniet vēlreiz."
 msgid "Changes section titles and date words only, not your content."
 msgstr "Maina tikai sadaļu nosaukumus un datuma vārdus, nevis jūsu saturu."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Izmaiņas “{name}” tika saglabātas citā ierīcē. Jūsu labojumi joprojām ir šajā ierīcē. Izvēlieties, kuru versiju paturēt."
@@ -2618,6 +2628,8 @@ msgstr "Aizvērt…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Slēgts"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "Nevarēja augšupielādēt fotoattēlu."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Nevarēja augšupielādēt fotoattēlu. Mēģiniet vēlreiz."
 
@@ -3462,6 +3478,7 @@ msgstr "Aizpildīt"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "Pavadvēstule — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Pavadvēstules fails"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "Sekošanas datums"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Sekošanas piezīme"
 
@@ -5296,6 +5315,11 @@ msgstr "Uzlabot atlasīto līniju"
 msgid "Improving…"
 msgstr "Notiek uzlabošana…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Arī slēgtie"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "Vēlāk"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Jaunākais"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Izslēgts. Tikai jūs varat redzēt šo CV."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Piedāvājums"
@@ -8414,6 +8441,12 @@ msgstr "Ieraksta laiks"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Vervētājs"
@@ -8823,6 +8856,7 @@ msgstr "Rezultāts"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Atsauksmes par CV, palīdzība ar produktu un kopienas idejas."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "CV fails"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "Serveris atgrieza nederīgu importēšanas rezultātu. Pirms atkārtotas mēģinājuma atsvaidziniet Dokumenti."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Nevarēja ielādēt serverī saglabāto versiju. Jūsu teksts ir paturēts; mēģiniet vēlreiz."
@@ -11098,6 +11134,8 @@ msgstr "Šis motivācijas vēstules fails nav derīgs."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Šis datums vai laiks jūsu laika joslā nepastāv. Izvēlieties citu laiku."
@@ -11387,6 +11425,7 @@ msgstr "Pievelciet līdz vienai lapai"
 msgid "Tightening"
 msgstr "Saīsina"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Laiks"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

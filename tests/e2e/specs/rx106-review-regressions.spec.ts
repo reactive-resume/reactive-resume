@@ -1,0 +1,846 @@
+import type { Page } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+import { Pool } from "pg";
+import { expect, test } from "../fixtures/test";
+// Playwright can reuse this worker for separate fixture groups from the same file.
+// Recreate the pool whenever that group starts, matching its afterAll cleanup.
+let pool: Pool;
+test.beforeAll(() => {
+	pool = new Pool({ connectionString: process.env.DATABASE_URL });
+});
+test.afterAll(async () => {
+	await pool.end();
+});
+const at = "2030-01-03T00:00:00.000Z";
+async function create(page: Page, company: string, data: Record<string, unknown> = {}) {
+	const r = await page.request.post("/api/openapi/applications", {
+		data: { company, role: "Review Engineer", status: "applied", ...data },
+	});
+	expect(r.ok(), await r.text()).toBe(true);
+	return (await r.json()) as string;
+}
+async function get(page: Page, id: string) {
+	const r = await page.request.get(`/api/openapi/applications/${id}`);
+	expect(r.ok()).toBe(true);
+	return await r.json();
+}
+async function schedules(page: Page) {
+	return await (await page.request.get("/api/openapi/career/schedules")).json();
+}
+test("HTTP unchanged old-client echo preserves exact midnight", async ({ authPage: page }, info) => {
+	const id = await create(page, "Review exact midnight");
+	await pool.query('UPDATE "user" SET timezone=$1 WHERE id=(SELECT user_id FROM application WHERE id=$2)', [
+		"Pacific/Honolulu",
+		id,
+	]);
+	expect(
+		(
+			await page.request.patch(`/api/openapi/applications/${id}`, {
+				data: { followUpAt: at, followUpDateOnly: false, followUpNote: "Original" },
+			})
+		).ok(),
+	).toBe(true);
+	expect((await get(page, id)).followUpDateOnly).toBe(false);
+	const before = await schedules(page);
+	expect(
+		(
+			await page.request.patch(`/api/openapi/applications/${id}`, {
+				data: { followUpAt: at, followUpNote: "Old-client echo" },
+			})
+		).ok(),
+	).toBe(true);
+	const after = await get(page, id);
+	const rows = await schedules(page);
+	await info.attach("midnight-readback", {
+		body: JSON.stringify({ before, after, rows }, null, 2),
+		contentType: "application/json",
+	});
+	expect.soft(after.followUpDateOnly).toBe(false);
+	expect.soft(rows[0].nextRunAt).toBe(at);
+});
+test("HTTP note-only edit preserves one notification and completed job", async ({ authPage: page }, info) => {
+	const id = await create(page, "Review delivered note");
+	const due = new Date(Date.now() - 60000).toISOString();
+	expect(
+		(
+			await page.request.post("/api/openapi/career/schedules", {
+				data: { kind: "follow-up", applicationId: id, nextRunAt: due, timezone: "UTC", query: "Original note" },
+			})
+		).ok(),
+	).toBe(true);
+	const tick = async () => {
+		const r = await page.request.post("/api/career/run", {
+			headers: { authorization: `Bearer ${process.env.CRON_SECRET}` },
+		});
+		expect(r.ok(), await r.text()).toBe(true);
+	};
+	const notices = async () => await (await page.request.get("/api/openapi/career/notifications")).json();
+	await tick();
+	expect(await notices()).toHaveLength(1);
+	const beforeJobs = (
+		await pool.query("SELECT * FROM career_job WHERE user_id=(SELECT user_id FROM application WHERE id=$1)", [id])
+	).rows;
+	await page.request.patch(`/api/openapi/applications/${id}`, { data: { followUpNote: "Original note" } });
+	await tick();
+	expect(await notices()).toHaveLength(1);
+	await page.request.patch(`/api/openapi/applications/${id}`, { data: { followUpNote: "Corrected note" } });
+	const [current] = await schedules(page);
+	await page.goto(`/dashboard/career?schedule=${current.id}`);
+	await page.getByLabel("Follow-up note", { exact: true }).fill("Today note edit");
+	await page.getByRole("button", { name: "Save schedule", exact: true }).click();
+	await expect.poll(async () => (await get(page, id)).followUpNote).toBe("Today note edit");
+	expect((await get(page, id)).followUpAt).toBe(due);
+
+	await tick();
+	const afterNotices = await notices();
+	const afterJobs = (
+		await pool.query("SELECT * FROM career_job WHERE user_id=(SELECT user_id FROM application WHERE id=$1)", [id])
+	).rows;
+	await info.attach("redelivery-readback", {
+		body: JSON.stringify({ beforeJobs, afterJobs, afterNotices }, null, 2),
+		contentType: "application/json",
+	});
+	expect.soft(afterNotices).toHaveLength(1);
+	expect.soft(afterJobs).toEqual(beforeJobs);
+});
+test("HTTP user-lock barrier serializes application and schedule writers; nonowner rolls back", async ({
+	authPage: page,
+	browser,
+}, info) => {
+	const id = await create(page, "Review barrier");
+	const owner = (await pool.query("SELECT user_id FROM application WHERE id=$1", [id])).rows[0].user_id;
+	const connection = await pool.connect();
+	let released = false;
+	try {
+		await connection.query("BEGIN");
+		await connection.query('SELECT id FROM "user" WHERE id=$1 FOR NO KEY UPDATE', [owner]);
+		const first = page.request.patch(`/api/openapi/applications/${id}`, {
+			data: { followUpAt: "2030-01-04T10:15:37.123Z", followUpDateOnly: false, followUpNote: "Application writer" },
+		});
+		const second = page.request.post("/api/openapi/career/schedules", {
+			data: {
+				kind: "follow-up",
+				applicationId: id,
+				nextRunAt: "2030-01-05T12:15:42.456Z",
+				timezone: "Europe/Berlin",
+				query: "Schedule writer",
+			},
+		});
+		await expect
+			.poll(
+				async () =>
+					Number(
+						(
+							await pool.query(
+								"SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE '%user%' ",
+							)
+						).rows[0].count,
+					),
+				{ timeout: 10000 },
+			)
+			.toBeGreaterThanOrEqual(2);
+		await connection.query("COMMIT");
+		released = true;
+		expect((await first).ok()).toBe(true);
+		expect((await second).ok()).toBe(true);
+		const app = await get(page, id);
+		const rows = await schedules(page);
+		expect(rows).toHaveLength(1);
+		expect(rows[0].nextRunAt).toBe(app.followUpAt);
+		expect(rows[0].query).toBe(app.followUpNote);
+		const foreign = await browser.newContext({ baseURL: process.env.APP_URL });
+		try {
+			const email = `rx106-foreign-${Date.now()}@example.test`;
+			const signup = await foreign.request.post("/api/auth/sign-up/email", {
+				headers: { origin: process.env.APP_URL ?? "" },
+				data: {
+					name: "Review Foreign",
+					email,
+					password: "Review-Password-106!",
+					username: `rx106f${Date.now()}`,
+					displayUsername: `rx106f${Date.now()}`,
+				},
+			});
+			expect(signup.ok(), await signup.text()).toBe(true);
+			const attempt = await foreign.request.post("/api/openapi/career/schedules", {
+				data: {
+					id: rows[0].id,
+					kind: "follow-up",
+					applicationId: id,
+					nextRunAt: at,
+					timezone: "UTC",
+					query: "Foreign overwrite",
+				},
+			});
+			expect(attempt.status()).toBe(404);
+			expect(await get(page, id)).toEqual(app);
+			await pool.query('DELETE FROM "user" WHERE email=$1', [email]);
+		} finally {
+			await foreign.close();
+		}
+		await info.attach("barrier-readback", {
+			body: JSON.stringify({ app, rows }, null, 2),
+			contentType: "application/json",
+		});
+	} finally {
+		if (!released) await connection.query("ROLLBACK");
+		connection.release();
+	}
+});
+
+test("browser legacy date-only workspace uses account clock", async ({ authPage: page }, info) => {
+	const id = await create(page, "Review clock");
+	await pool.query('UPDATE "user" SET timezone=$1 WHERE id=(SELECT user_id FROM application WHERE id=$2)', [
+		"Pacific/Honolulu",
+		id,
+	]);
+	expect(
+		(
+			await page.request.patch(`/api/openapi/applications/${id}`, {
+				data: { followUpAt: at, followUpDateOnly: true, followUpNote: "Review clock note" },
+			})
+		).ok(),
+	).toBe(true);
+	await page.goto(`/dashboard/applications/${id}/messages`);
+	const section = page
+		.locator("section")
+		.filter({ has: page.getByText("Next step", { exact: true }) })
+		.first();
+	await expect(section).toContainText("Review clock note");
+	const text = await section.innerText();
+	const rows = await schedules(page);
+	await info.attach("clock-readback", {
+		body: JSON.stringify({ text, rows }, null, 2),
+		contentType: "application/json",
+	});
+	await page.screenshot({ path: info.outputPath("workspace-clock.png") });
+	expect(text).toContain("Jan 3");
+});
+
+test("browser cold Compare offers cannot discard contextual application", async ({ authPage: page }, info) => {
+	const first = await create(page, "Review selected application", { status: "offer" });
+	const a = await (
+		await page.request.post("/api/openapi/career/offers", {
+			data: { applicationId: first, version: "written", base: 100000, variable: null, currency: "EUR", period: "year" },
+		})
+	).json();
+	expect(a.id).toBeTruthy();
+	const second = await create(page, "Review other application", { status: "offer" });
+	await page.request.post("/api/openapi/career/offers", {
+		data: { applicationId: second, version: "written", base: 90000, variable: null, currency: "EUR", period: "year" },
+	});
+	const connection = await pool.connect();
+	await connection.query("BEGIN");
+	await connection.query("LOCK TABLE career_artifact IN ACCESS EXCLUSIVE MODE");
+	try {
+		await page.goto(`/dashboard/applications/${first}/messages`);
+		await expect
+			.poll(async () =>
+				Number(
+					(
+						await pool.query(
+							"SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE '%career_artifact%' ",
+						)
+					).rows[0].count,
+				),
+			)
+			.toBeGreaterThan(0);
+		await expect(page.getByRole("button", { name: "Compare offers" })).toBeDisabled();
+		await expect(page.getByRole("link", { name: "Compare offers" })).toHaveCount(0);
+		await info.attach("cold-context-gate", {
+			body: JSON.stringify({ first, a, disabled: true }),
+			contentType: "application/json",
+		});
+	} finally {
+		await connection.query("ROLLBACK");
+		connection.release();
+	}
+	await page.getByRole("link", { name: "Compare offers" }).click();
+	await expect(page).toHaveURL(new RegExp(`a=${a.id}`));
+});
+test("date-only delivery index and ICS agree after account timezone changes", async ({ authPage: page }, info) => {
+	const id = await create(page, "Review timezone change");
+	await pool.query('UPDATE "user" SET timezone=$1 WHERE id=(SELECT user_id FROM application WHERE id=$2)', [
+		"Asia/Tokyo",
+		id,
+	]);
+	expect(
+		(
+			await page.request.patch(`/api/openapi/applications/${id}`, {
+				data: { followUpAt: at, followUpDateOnly: true, followUpNote: "Timezone note" },
+			})
+		).ok(),
+	).toBe(true);
+	const [originalClock] = await schedules(page);
+	await pool.query('UPDATE "user" SET timezone=$1 WHERE id=(SELECT user_id FROM application WHERE id=$2)', [
+		"Pacific/Honolulu",
+		id,
+	]);
+	await page.goto("/dashboard/applications");
+	await page.getByText("Review timezone change", { exact: true }).click();
+	const downloaded = page.waitForEvent("download");
+	await page.getByRole("button", { name: "Add to calendar", exact: true }).click();
+	const download = await downloaded;
+	const stream = await download.createReadStream();
+	if (!stream) throw new Error("Calendar download stream unavailable");
+	const chunks = [];
+	for await (const chunk of stream) chunks.push(chunk);
+	const ics = Buffer.concat(chunks).toString();
+	const rows = await schedules(page);
+	await info.attach("timezone-ics-readback", {
+		body: JSON.stringify({ ics, rows }, null, 2),
+		contentType: "application/json",
+	});
+	expect(rows).toMatchObject([{ timezone: "Pacific/Honolulu", nextRunAt: "2030-01-03T19:00:00.000Z" }]);
+	expect(ics).toContain("DTSTART:20300103T190000Z");
+	expect((await page.request.patch("/api/openapi/auth/profile", { data: { timezone: "Asia/Tokyo" } })).ok()).toBe(true);
+	expect(await schedules(page)).toMatchObject([{ timezone: "Asia/Tokyo", nextRunAt: at }]);
+	expect(
+		(
+			await page.request.post("/api/auth/update-user", {
+				headers: { origin: process.env.APP_URL ?? "" },
+				data: { timezone: "Pacific/Honolulu" },
+			})
+		).ok(),
+	).toBe(true);
+	expect(await schedules(page)).toMatchObject([
+		{ timezone: "Pacific/Honolulu", nextRunAt: "2030-01-03T19:00:00.000Z" },
+	]);
+	expect(
+		(
+			await page.request.post("/api/openapi/career/schedules", {
+				data: {
+					id: originalClock.id,
+					kind: "follow-up",
+					applicationId: id,
+					nextRunAt: originalClock.nextRunAt,
+					timezone: originalClock.timezone,
+					query: "Today logical note edit",
+				},
+			})
+		).ok(),
+	).toBe(true);
+	expect(await get(page, id)).toMatchObject({
+		followUpAt: at,
+		followUpDateOnly: true,
+		followUpNote: "Today logical note edit",
+	});
+});
+
+test("large Notes retain recovery after transport failure and need explicit replay", async ({
+	authPage: page,
+}, info) => {
+	const id = await create(page, "Review large recovery", { notes: "Server original" });
+	await page.goto(`/dashboard/applications/${id}/messages`);
+	const notes = page.getByLabel("Notes", { exact: true });
+	const large = "Large durable notes. ".repeat(3500);
+	expect(Buffer.byteLength(large)).toBeGreaterThan(60 * 1024);
+	let blocked = 0;
+	await page.route("**/api/rpc/applications/update**", async (route) => {
+		blocked++;
+		await route.abort("failed");
+	});
+	await notes.fill(large);
+	await notes.blur();
+	await expect.poll(() => blocked).toBeGreaterThan(0);
+	expect((await get(page, id)).notes).toBe("Server original");
+	const context = page.context();
+	await page.close();
+	const reopened = await context.newPage();
+	await reopened.goto(`/dashboard/applications/${id}/messages`);
+	await expect(reopened.getByLabel("Notes", { exact: true })).toHaveValue(large);
+	await expect(reopened.getByRole("button", { name: "Save recovered draft" })).toBeVisible();
+	expect((await get(reopened, id)).notes).toBe("Server original");
+	await reopened.getByRole("button", { name: "Save recovered draft" }).click();
+	await expect.poll(async () => (await get(reopened, id)).notes).toBe(large);
+	await info.attach("large-recovery-readback", {
+		body: JSON.stringify({
+			bytes: Buffer.byteLength(large),
+			blocked,
+			serverLength: (await get(reopened, id)).notes.length,
+		}),
+		contentType: "application/json",
+	});
+});
+test("denied draft storage reports unavailable recovery and still saves", async ({ authPage: page }, info) => {
+	const id = await create(page, "Review storage denied");
+	await page.addInitScript(() => {
+		const original = Storage.prototype.setItem;
+		Storage.prototype.setItem = function (key, value) {
+			if (key.startsWith("career-draft:")) throw new DOMException("Review storage denied", "QuotaExceededError");
+			return original.call(this, key, value);
+		};
+	});
+	await page.goto(`/dashboard/applications/${id}/messages`);
+	const notes = page.getByLabel("Notes", { exact: true });
+	await notes.fill("Save despite denied recovery");
+	await expect(
+		page.getByText("This browser could not keep a recovery copy. Wait for saving to finish before leaving."),
+	).toBeVisible();
+	await expect.poll(async () => (await get(page, id)).notes).toBe("Save despite denied recovery");
+	await info.attach("denied-storage-readback", {
+		body: JSON.stringify(await get(page, id)),
+		contentType: "application/json",
+	});
+});
+
+test("valid photo transport failure cannot replace saved picture", async ({ authPage: page }, info) => {
+	const created = await page.request.post("/api/openapi/resumes", { data: { name: "Review photo owner", tags: [] } });
+	expect(created.ok()).toBe(true);
+	const id = await created.json();
+	const resume = await (await page.request.get(`/api/openapi/resumes/${id}`)).json();
+	const original = "https://example.test/prior-photo.png";
+	resume.data.picture.url = original;
+	resume.data.picture.fit = "contain";
+	expect((await page.request.put(`/api/openapi/resumes/${id}`, { data: { data: resume.data } })).ok()).toBe(true);
+	await page.goto(`/builder/${id}`);
+	await page.getByRole("button", { name: "Edit", exact: true }).first().click();
+	let attempted = false;
+	await page.route("**/api/rpc/storage/uploadFile**", async (route) => {
+		attempted = true;
+		await route.fulfill({
+			status: 500,
+			contentType: "application/json",
+			body: JSON.stringify({
+				json: { defined: false, code: "INTERNAL_SERVER_ERROR", status: 500, message: "Synthetic upload failure" },
+			}),
+		});
+	});
+	const png = Buffer.from(
+		"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==",
+		"base64",
+	);
+	await page
+		.locator('input[type="file"][accept*="image"]')
+		.first()
+		.setInputFiles({ name: "valid.png", mimeType: "image/png", buffer: png });
+	await expect(page.getByText("Synthetic upload failure", { exact: true })).toBeVisible();
+	expect(attempted).toBe(true);
+	const saved = await (await page.request.get(`/api/openapi/resumes/${id}`)).json();
+	expect(saved.data.picture.url).toBe(original);
+	await info.attach("photo-upload-failure-readback", {
+		body: JSON.stringify({ attempted, picture: saved.data.picture }),
+		contentType: "application/json",
+	});
+});
+
+test("exact 10 MiB PDF accepted and cap-plus-one rejected before transport", async ({ authPage: page }, info) => {
+	const id = await create(page, "Review attachment boundary");
+	await page.goto(`/dashboard/applications/${id}/apply`);
+	await page.getByRole("button", { name: "Attach a file instead", exact: true }).click();
+	const seed = await readFile("apps/web/public/templates/pdf/azurill.pdf");
+	expect(seed.length).toBeLessThan(10 * 1024 * 1024);
+	const pdf = Buffer.concat([seed, Buffer.alloc(10 * 1024 * 1024 - seed.length, 32)]);
+	const input = page.locator('input[type="file"][accept="application/pdf"]').first();
+	let uploads = 0;
+	page.on("request", (request) => {
+		if (request.url().includes("attachDocument")) uploads++;
+	});
+	await input.setInputFiles({
+		name: "plus-one.pdf",
+		mimeType: "application/pdf",
+		buffer: Buffer.concat([pdf, Buffer.from(" ")]),
+	});
+	await expect(
+		page.getByText("This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."),
+	).toBeVisible();
+	expect(uploads).toBe(0);
+	await input.setInputFiles({ name: "exact-cap.pdf", mimeType: "application/pdf", buffer: pdf });
+	await expect.poll(async () => (await get(page, id)).resumeFileUrl).not.toBeNull();
+	const saved = await get(page, id);
+	expect(saved.resumeFileName).toBe("exact-cap.pdf");
+	await info.attach("attachment-cap-readback", {
+		body: JSON.stringify({ bytes: pdf.length, uploads, saved }),
+		contentType: "application/json",
+	});
+});
+
+async function signUpSecondAccount(page: Page) {
+	const stamp = Date.now();
+	const email = `rx106-second-${stamp}@example.test`;
+	const username = `rx106s${stamp}`;
+	const response = await page.request.post("/api/auth/sign-up/email", {
+		headers: { origin: process.env.APP_URL ?? "" },
+		data: { name: "RX106 Second", email, password: "Review-Password-106!", username, displayUsername: username },
+	});
+	expect(response.ok(), await response.text()).toBe(true);
+	const { user } = (await response.json()) as { user: { id: string } };
+	return { email, id: user.id };
+}
+
+async function alicePreferences(page: Page) {
+	const initial = await (await page.request.get("/api/openapi/career/profile")).json();
+	const profile = { ...initial, targetRoles: ["Alice private role"], priorities: "Alice private priorities" };
+	expect((await page.request.put("/api/openapi/career/profile", { data: profile })).ok()).toBe(true);
+	return profile;
+}
+
+const profileRows = async (userId: string) =>
+	(await pool.query("SELECT user_id, data FROM career_profile WHERE user_id=$1", [userId])).rows;
+
+test("a sign-out in another tab clears the old account's open Preferences tab", async ({ authPage: page }, info) => {
+	const session = await (await page.request.get("/api/auth/get-session")).json();
+	const alice = session.user.id as string;
+	await alicePreferences(page);
+	await page.goto("/dashboard/career/knowledge/preferences");
+	await expect(page.getByLabel("What matters to you")).toHaveValue("Alice private priorities");
+
+	const other = await page.context().newPage();
+	let second: { email: string; id: string } | null = null;
+	try {
+		await other.goto("/dashboard/settings/account");
+		await other.getByRole("button", { name: "Sign out", exact: true }).last().click();
+		await expect(other).toHaveURL(/\/$/);
+		second = await signUpSecondAccount(other);
+		// The reload may finish before or after signup: either auth or fresh Preferences is valid.
+		// In both cases, the old account's private text must be gone.
+		await expect(async () => {
+			const field = page.getByLabel("What matters to you");
+			if (await field.count()) {
+				await expect(field).toHaveValue("", { timeout: 500 });
+				await expect(page.getByRole("complementary", { name: "App navigation" })).toContainText("RX106 Second", {
+					timeout: 500,
+				});
+			} else {
+				await expect(page).toHaveURL(/\/auth\/login/, { timeout: 500 });
+			}
+		}).toPass({ timeout: 10_000 });
+		const rows = await profileRows(second.id);
+		const [aliceRow] = await pool
+			.query("SELECT data FROM career_profile WHERE user_id=$1", [alice])
+			.then((r) => r.rows);
+		await info.attach("cross-tab-signout-readback", {
+			body: JSON.stringify({ alice, second: second.id, rows, aliceRow }, null, 2),
+			contentType: "application/json",
+		});
+		expect(rows).toEqual([]);
+		expect(aliceRow.data.targetRoles).toEqual(["Alice private role"]);
+	} finally {
+		await other.close();
+		if (second) await pool.query('DELETE FROM "user" WHERE email=$1', [second.email]);
+	}
+});
+
+test("a stale tab that missed the account change cannot autosave into the new account", async ({
+	authPage: page,
+}, info) => {
+	// A suspended tab never sees the cross-tab signal. Only the server-side account binding can stop its queued write.
+	await page.addInitScript(() => {
+		Reflect.deleteProperty(window, "BroadcastChannel");
+		const add = window.addEventListener.bind(window);
+		window.addEventListener = ((
+			type: string,
+			listener: EventListenerOrEventListenerObject,
+			options?: boolean | AddEventListenerOptions,
+		) => {
+			if (type === "storage") return;
+			add(type, listener, options);
+		}) as typeof window.addEventListener;
+	});
+	const session = await (await page.request.get("/api/auth/get-session")).json();
+	const alice = session.user.id as string;
+	await alicePreferences(page);
+	await page.goto("/dashboard/career/knowledge/preferences");
+	await expect(page.getByLabel("What matters to you")).toHaveValue("Alice private priorities");
+
+	let rejected = 0;
+	page.on("response", (response) => {
+		if (response.url().includes("/api/rpc/") && response.status() === 409) rejected++;
+	});
+	const other = await page.context().newPage();
+	let second: { email: string; id: string } | null = null;
+	try {
+		await other.goto("/dashboard/settings/account");
+		await other.getByRole("button", { name: "Sign out", exact: true }).last().click();
+		await expect(other).toHaveURL(/\/$/);
+		second = await signUpSecondAccount(other);
+		// This tab still shows the old account because it never observed the sign-out.
+		await expect(page.getByLabel("What matters to you")).toHaveValue("Alice private priorities");
+		await page.getByLabel("What matters to you").fill("Stale Alice tab edit");
+		await page.getByLabel("What matters to you").blur();
+		await expect.poll(() => rejected).toBeGreaterThan(0);
+		const rows = await profileRows(second.id);
+		await info.attach("stale-tab-boundary-readback", {
+			body: JSON.stringify({ alice, second: second.id, rejected, rows }, null, 2),
+			contentType: "application/json",
+		});
+		expect(rejected).toBeGreaterThan(0);
+		expect(rows).toEqual([]);
+	} finally {
+		await other.close();
+		if (second) await pool.query('DELETE FROM "user" WHERE email=$1', [second.email]);
+	}
+});
+
+test("HTTP profile writes bound to another account are refused and leave the new account empty", async ({
+	authPage: page,
+}, info) => {
+	const session = await (await page.request.get("/api/auth/get-session")).json();
+	const alice = session.user.id as string;
+	const profile = await alicePreferences(page);
+	const second = await signUpSecondAccount(page);
+	try {
+		const stale = await page.request.put("/api/openapi/career/profile", {
+			headers: { "x-account-id": alice },
+			data: { ...profile, priorities: "Stale tab write" },
+		});
+		expect(stale.status()).toBe(409);
+		const before = await profileRows(second.id);
+		const matched = await page.request.put("/api/openapi/career/profile", {
+			headers: { "x-account-id": second.id },
+			data: { ...profile, priorities: "Second account write" },
+		});
+		expect(matched.ok(), await matched.text()).toBe(true);
+		const after = await profileRows(second.id);
+		await info.attach("http-account-binding-readback", {
+			body: JSON.stringify({ alice, second: second.id, staleStatus: stale.status(), before, after }, null, 2),
+			contentType: "application/json",
+		});
+		expect(before).toEqual([]);
+		expect(after).toHaveLength(1);
+		expect(after[0].user_id).toBe(second.id);
+		expect(after[0].data.priorities).toBe("Second account write");
+	} finally {
+		await pool.query('DELETE FROM "user" WHERE email=$1', [second.email]);
+	}
+});
+
+// A tab that misses the cross-tab signal: no BroadcastChannel and no storage event. Only the server-side binding can
+// stop a write it builds for the account it is still showing.
+async function suppressAccountSignals(page: Page) {
+	await page.addInitScript(() => {
+		Reflect.deleteProperty(window, "BroadcastChannel");
+		const add = window.addEventListener.bind(window);
+		window.addEventListener = ((
+			type: string,
+			listener: EventListenerOrEventListenerObject,
+			options?: boolean | AddEventListenerOptions,
+		) => {
+			if (type === "storage") return;
+			add(type, listener, options);
+		}) as typeof window.addEventListener;
+	});
+}
+
+async function switchAccountInOtherTab(page: Page) {
+	const other = await page.context().newPage();
+	await other.goto("/dashboard/settings/account");
+	await other.getByRole("button", { name: "Sign out", exact: true }).last().click();
+	await expect(other).toHaveURL(/\/$/);
+	const second = await signUpSecondAccount(other);
+	return { other, second };
+}
+
+const userRows = async (id: string) => (await pool.query('SELECT * FROM "user" WHERE id=$1', [id])).rows;
+
+test("a root preload cannot relabel a stale Facts profile write as the new account's", async ({
+	authPage: page,
+}, info) => {
+	await suppressAccountSignals(page);
+	const initial = await (await page.request.get("/api/openapi/career/profile")).json();
+	const aliceProfile = {
+		...initial,
+		targetRoles: ["Alice private role"],
+		priorities: "Alice private priorities",
+		memoryMode: "ask",
+	};
+	expect((await page.request.put("/api/openapi/career/profile", { data: aliceProfile })).ok()).toBe(true);
+	await page.goto("/dashboard/career/knowledge/facts");
+	await expect(page.getByRole("radio", { name: "Never", exact: true })).toBeVisible();
+
+	let switched: Awaited<ReturnType<typeof switchAccountInOtherTab>> | null = null;
+	try {
+		switched = await switchAccountInOtherTab(page);
+		const before = await profileRows(switched.second.id);
+		expect(before).toEqual([]);
+		// Age the one-minute root session cache, as a tab left open naturally would.
+		await page.evaluate(() => {
+			const now = Date.now;
+			Date.now = () => now() + 120_000;
+		});
+		const refreshed = page.waitForResponse(
+			(response) => response.url().includes("/api/auth/get-session") && response.status() === 200,
+		);
+		await page.getByRole("link", { name: "Settings", exact: true }).hover();
+		await refreshed;
+		const write = page.waitForResponse((response) => response.url().includes("/api/rpc/career/saveProfile"));
+		await page.getByRole("radio", { name: "Never", exact: true }).click();
+		const response = await write;
+		const after = await profileRows(switched.second.id);
+		await info.attach("preload-stale-facts-readback", {
+			body: JSON.stringify(
+				{
+					before,
+					after,
+					status: response.status(),
+					header: response.request().headers()["x-account-id"],
+					body: response.request().postData(),
+				},
+				null,
+				2,
+			),
+			contentType: "application/json",
+		});
+		console.log(
+			"RX106_READBACK preload-stale-facts",
+			JSON.stringify({
+				before,
+				after,
+				status: response.status(),
+				header: response.request().headers()["x-account-id"],
+				body: response.request().postData(),
+			}),
+		);
+		expect(after).toEqual(before);
+		expect(response.status()).toBe(409);
+	} finally {
+		await switched?.other.close();
+		if (switched) await pool.query('DELETE FROM "user" WHERE id=$1', [switched.second.id]);
+	}
+});
+
+test("a stale account settings tab cannot rename the account it switched to", async ({ authPage: page }, info) => {
+	await suppressAccountSignals(page);
+	await page.goto("/dashboard/settings/account");
+	await expect(page.getByRole("textbox", { name: "Name", exact: true })).toBeVisible();
+
+	let switched: Awaited<ReturnType<typeof switchAccountInOtherTab>> | null = null;
+	try {
+		switched = await switchAccountInOtherTab(page);
+		const before = await userRows(switched.second.id);
+		const write = page.waitForResponse((response) => response.url().includes("/api/auth/update-user"));
+		await page.getByRole("textbox", { name: "Name", exact: true }).fill("Stale Alice private Name");
+		await page.getByRole("textbox", { name: "Name", exact: true }).blur();
+		const response = await write;
+		const after = await userRows(switched.second.id);
+		await info.attach("stale-auth-settings-readback", {
+			body: JSON.stringify({ before, after, status: response.status() }, null, 2),
+			contentType: "application/json",
+		});
+		console.log(
+			"RX106_READBACK stale-auth-settings",
+			JSON.stringify({ before: before[0]?.name, after: after[0]?.name, status: response.status() }),
+		);
+		expect(after).toEqual(before);
+		expect(response.status()).toBe(409);
+
+		// Positive control: a tab that committed the new session can rename it normally.
+		await page.goto("/dashboard/settings/account");
+		await expect(page.getByRole("textbox", { name: "Name", exact: true })).toHaveValue("RX106 Second");
+		await page.getByRole("textbox", { name: "Name", exact: true }).fill("RX106 Second Renamed");
+		await page.getByRole("textbox", { name: "Name", exact: true }).blur();
+		await expect.poll(async () => (await userRows(switched?.second.id ?? ""))[0]?.name).toBe("RX106 Second Renamed");
+	} finally {
+		await switched?.other.close();
+		if (switched) await pool.query('DELETE FROM "user" WHERE id=$1', [switched.second.id]);
+	}
+});
+
+test("HTTP auth settings writes bound to another account are refused and leave the new account unchanged", async ({
+	authPage: page,
+}, info) => {
+	const session = await (await page.request.get("/api/auth/get-session")).json();
+	const alice = session.user.id as string;
+	const second = await signUpSecondAccount(page);
+	try {
+		const before = await userRows(second.id);
+		const origin = process.env.APP_URL ?? "";
+		const stale = await page.request.post("/api/auth/update-user", {
+			headers: { origin, "x-account-id": alice },
+			data: { name: "Stale Alice private Name" },
+		});
+		const afterStale = await userRows(second.id);
+		const matched = await page.request.post("/api/auth/update-user", {
+			headers: { origin, "x-account-id": second.id },
+			data: { name: "Second account Name" },
+		});
+		const afterMatched = await userRows(second.id);
+		await info.attach("http-auth-binding-readback", {
+			body: JSON.stringify(
+				{
+					alice,
+					second: second.id,
+					staleStatus: stale.status(),
+					before,
+					afterStale,
+					matchedStatus: matched.status(),
+					afterMatched,
+				},
+				null,
+				2,
+			),
+			contentType: "application/json",
+		});
+		console.log(
+			"RX106_READBACK http-auth-binding",
+			JSON.stringify({
+				staleStatus: stale.status(),
+				before: before[0]?.name,
+				afterStale: afterStale[0]?.name,
+				matchedStatus: matched.status(),
+				afterMatched: afterMatched[0]?.name,
+			}),
+		);
+		expect(afterStale).toEqual(before);
+		expect(stale.status()).toBe(409);
+		expect(matched.ok(), await matched.text()).toBe(true);
+		expect(afterMatched[0]?.name).toBe("Second account Name");
+	} finally {
+		await pool.query('DELETE FROM "user" WHERE id=$1', [second.id]);
+	}
+});
+
+test("using a reviewed answer clears recovered drafts and resumes later autosaves", async ({ authPage: page }) => {
+	const id = await create(page, "Fictional Harbor Answers");
+	const answer = {
+		id: "project",
+		question: "Describe your project",
+		answer: "I wrote a setup checklist.",
+		factIds: [],
+	};
+	await expect(
+		await page.request.patch(`/api/openapi/career/workspace/${id}`, {
+			data: { answers: [answer], expected: { answers: [] } },
+		}),
+	).toBeOK();
+	await page.goto(`/dashboard/applications/${id}/apply`);
+	await page.getByRole("button", { name: "Save for other applications", exact: true }).click();
+	let dialog = page.getByRole("dialog", { name: "Save for other applications", exact: true });
+	await dialog
+		.getByRole("checkbox", { name: "I reviewed this answer, its evidence and the application context." })
+		.check();
+	await dialog.getByRole("button", { name: "Save reviewed answer", exact: true }).click();
+	await expect(dialog).toBeHidden();
+	const profile = (await (await page.request.get("/api/openapi/auth/profile")).json()) as { id: string };
+	await page.evaluate(
+		({ userId, applicationId }) => {
+			localStorage.setItem(
+				`career-draft:${userId}:answer:${applicationId}:project`,
+				JSON.stringify("Recovered answer"),
+			);
+			localStorage.setItem(
+				`career-draft:${userId}:question:${applicationId}:project`,
+				JSON.stringify("Describe your project again"),
+			);
+		},
+		{ userId: profile.id, applicationId: id },
+	);
+	await page.reload();
+	await expect(page.getByRole("button", { name: "Save recovered draft", exact: true })).toHaveCount(2);
+	await page.getByRole("button", { name: "Use a saved answer", exact: true }).last().click();
+	dialog = page.getByRole("dialog", { name: "Use a saved answer", exact: true });
+	await dialog.getByRole("button", { name: "Review and use", exact: true }).click();
+	dialog = page.getByRole("dialog", { name: "Review for this application", exact: true });
+	await dialog
+		.getByRole("checkbox", { name: "I reviewed this answer, its evidence and the application context." })
+		.check();
+	await dialog.getByRole("button", { name: "Use reviewed answer", exact: true }).click();
+	await expect(dialog).toBeHidden();
+	await expect(page.getByRole("button", { name: "Save recovered draft", exact: true })).toHaveCount(0);
+	const field = page.getByRole("textbox", { name: "Describe your project again", exact: true });
+	await field.fill("Later answer edit after library review");
+	await field.blur();
+	await expect
+		.poll(async () => (await (await page.request.get(`/api/openapi/career/workspace/${id}`)).json()).answers[0].answer)
+		.toBe("Later answer edit after library review");
+});

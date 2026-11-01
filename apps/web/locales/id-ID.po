@@ -604,6 +604,10 @@ msgstr "{days, plural, other {# hari di kantor, sesuai batas Anda}}"
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# dokumen diperbarui} other {# dokumen diperbarui}}"
@@ -951,8 +955,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>Total sengaja tidak dijumlahkan.</0> Bonus dan ekuitas bergantung pada syarat tertentu, dan nilai ekuitas tidak pasti untuk keduanya. Baca dokumen penawaran asli sebelum membandingkan total."
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1213,6 +1217,8 @@ msgstr "Menerima"
 msgid "Accept all"
 msgstr "Terima semuanya"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "Diterima"
@@ -1526,8 +1532,8 @@ msgid "Add offer"
 msgstr "Tambah penawaran"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Tambahkan ketentuan penawaran kerja secara manual, atau gunakan ekstraksi AI opsional di Pesan."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr "Tambahkan ketentuan penawaran secara manual, termasuk penawaran yang diterima, atau gunakan ekstraksi AI opsional di Pesan. Menutup sebagai diterima tidak mencatat ketentuan."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2405,12 +2411,12 @@ msgid "ATS-safe"
 msgstr "ATS-aman"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "Lampirkan surat lamaran (PDF)"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "Lampirkan file surat lamaran (PDF)"
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2422,8 +2428,8 @@ msgid "Attach a file instead"
 msgstr "Lampirkan file sebagai gantinya"
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "Lampirkan file resume (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2626,10 +2632,6 @@ msgstr "Radius tepi"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Lebar tepi"
-
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "Kedua penawaran mencakup semua yang dibandingkan di sini."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -2876,6 +2878,11 @@ msgstr "Changelog"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Mengubah judul bagian dan kata tanggal saja, bukan konten Anda."
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3240,6 +3247,8 @@ msgstr "Menutup…"
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Tertutup"
 
@@ -3801,6 +3810,10 @@ msgstr "Tidak dapat membuat surat. Coba lagi."
 msgid "Couldn't create your account. Try again."
 msgstr "Tidak dapat membuat akun Anda. Coba lagi."
 
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
 msgstr "Tidak dapat menghapus cerita itu. Coba lagi."
@@ -4315,8 +4328,10 @@ msgstr "Tidak dapat memperbarui garis waktu. Coba lagi."
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Tidak dapat memperbarui versi surat ini. Coba lagi."
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr "Tidak dapat mengunggah foto. Pilih foto PNG, JPEG, WebP, atau GIF yang dapat dibaca hingga 10 MB, lalu coba lagi."
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Tidak dapat mengunggah foto. Coba lagi."
@@ -4391,6 +4406,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "Surat lamaran · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "Berkas surat lamaran"
@@ -6019,6 +6035,7 @@ msgid "Follow-up date"
 msgstr "Tanggal tindak lanjut"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Catatan tindak lanjut"
 
@@ -6821,6 +6838,11 @@ msgstr "Meningkatkan…"
 msgid "In good company"
 msgstr "Di perusahaan yang baik"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Tambah spasi antar baris agar dua baris tidak menyatu menjadi satu."
@@ -7386,6 +7408,7 @@ msgstr "Terakhir digunakan"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Terbaru"
 
@@ -8633,10 +8656,6 @@ msgid "No commands match that search."
 msgstr "Tidak ada perintah yang cocok dengan pencarian itu."
 
 #: src/features/settings/ai/connected-apps.tsx
-#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
-#~ msgstr "Belum ada aplikasi yang terhubung. Aplikasi yang Anda izinkan mengakses akun Anda akan muncul di sini."
-
-#: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
 msgstr "Belum ada aplikasi yang terhubung. Aplikasi yang Anda izinkan mengakses akun Anda akan muncul di sini."
 
@@ -8779,6 +8798,10 @@ msgstr "Tidak ada foto. Kebanyakan ATS mengabaikan foto; beberapa daerah menghar
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "No postings found. Try different keywords."
 msgstr "Tidak ada lowongan pekerjaan yang ditemukan. Coba kata kunci yang berbeda."
+
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
@@ -8970,6 +8993,10 @@ msgstr "Tidak ada dalam resume Anda · tambahkan hanya jika benar"
 msgid "Not now"
 msgstr "Jangan sekarang"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "Belum dicatat. Biarkan kosong sampai Anda bisa mendukungnya."
@@ -9148,6 +9175,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "Nonaktif. Aktifkan agar perekrut dapat menemukan Anda di Google."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9340,6 +9369,10 @@ msgstr "Buka di Penawaran"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "Buka preferensi"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -10662,6 +10695,10 @@ msgstr "Waktu rekaman"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "Perekrut"
@@ -11181,6 +11218,7 @@ msgid "Resume details"
 msgstr "rincian resume"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "File resume"
@@ -11367,14 +11405,6 @@ msgstr "Menarik kembali"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "Cabut {0}"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke access"
-#~ msgstr "Cabut akses"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke an application's access to your account."
-#~ msgstr "Cabut akses aplikasi ke akun Anda."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -11594,6 +11624,10 @@ msgstr "Simpan penawaran"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -13784,6 +13818,10 @@ msgstr "Browser ini tidak dapat merekam di sini. Pilih file audio, atau ketik ja
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "Permintaan koneksi ini tidak valid atau telah kedaluwarsa. Mulai koneksi lagi dari klien Anda."
@@ -13804,6 +13842,11 @@ msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13861,6 +13904,10 @@ msgstr "File ini besar untuk ukuran sebuah resume."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "File ini lebih besar dari yang diterima banyak formulir lamaran."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13930,9 +13977,17 @@ msgstr "PDF ini tidak memiliki lapisan teks, jadi parser tidak membaca apa pun d
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "PDF ini adalah gambar yang dipindai. Tidak ada teks untuk dibaca. Coba versi Word, atau mulai kosongkan dan tempelkan bagiannya."
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "PDF ini dilindungi kata sandi. Simpan salinan yang tidak dilindungi dan coba lagi."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14058,6 +14113,8 @@ msgstr "Kencangkan menjadi satu halaman"
 msgid "Tightening"
 msgstr "Memadatkan"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Waktu"
@@ -14709,6 +14766,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "Gunakan contoh"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

@@ -604,6 +604,10 @@ msgstr "{days, plural, one {# jour au bureau, votre limite} other {# jours au bu
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# document mis à jour} other {# documents mis à jour}}"
@@ -951,8 +955,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>Les totaux ne sont volontairement pas additionnés.</0> La prime et les actions dépendent de conditions, et la valeur des actions est incertaine dans les deux cas. Lisez les documents d'offre originaux avant de comparer des totaux."
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr "<0>Les totaux ne sont volontairement pas additionnés.</0> La prime et les actions dépendent de conditions, et la valeur des actions est incertaine. Lisez les documents d'offre originaux avant de comparer des totaux."
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1213,6 +1217,8 @@ msgstr "Accepter"
 msgid "Accept all"
 msgstr "Acceptez tout"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "Accepté"
@@ -1526,8 +1532,8 @@ msgid "Add offer"
 msgstr "Ajouter une offre d’emploi"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Ajoutez les conditions d’une offre d’emploi manuellement ou utilisez l’extraction facultative par IA dans Messages."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2405,12 +2411,12 @@ msgid "ATS-safe"
 msgstr "ATS-coffre-fort"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "Joindre une lettre de motivation (PDF)"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "Joindre un fichier de lettre de motivation (PDF)"
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2422,8 +2428,8 @@ msgid "Attach a file instead"
 msgstr "Joindre plutôt un fichier"
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "Joindre un fichier de CV (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2626,10 +2632,6 @@ msgstr "Coins arrondis"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "Largeur de la bordure"
-
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "Les deux offres couvrent tout ce qui est comparé ici."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -2876,6 +2878,11 @@ msgstr "Historique des modifications"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Modifie uniquement les titres des sections et les mots de date, pas votre contenu."
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3240,6 +3247,8 @@ msgstr "Fermer…"
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Fermé"
 
@@ -3801,6 +3810,10 @@ msgstr "Impossible de créer la lettre. Réessayez."
 msgid "Couldn't create your account. Try again."
 msgstr "Impossible de créer votre compte. Réessayez."
 
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
 msgstr "Impossible de supprimer ce récit. Réessayez."
@@ -4315,8 +4328,10 @@ msgstr "Impossible de mettre à jour la chronologie. Essayer à nouveau."
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "Impossible de mettre à jour les versions de cette lettre. Réessayez."
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Impossible d'envoyer la photo. Réessayez."
@@ -4391,6 +4406,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "Lettre de motivation · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "Dossier de lettre de motivation"
@@ -6019,6 +6035,7 @@ msgid "Follow-up date"
 msgstr "Date de relance"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Note de relance"
 
@@ -6821,6 +6838,11 @@ msgstr "Améliorer…"
 msgid "In good company"
 msgstr "En bonne compagnie"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Augmentez l'interligne pour que deux lignes ne fusionnent pas en une seule."
@@ -7386,6 +7408,7 @@ msgstr "Dernière utilisation"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Plus récent"
 
@@ -8633,10 +8656,6 @@ msgid "No commands match that search."
 msgstr "Aucune commande ne correspond à cette recherche."
 
 #: src/features/settings/ai/connected-apps.tsx
-#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
-#~ msgstr "Aucune application connectée pour l'instant. Les applications que vous autorisez à accéder à votre compte apparaissent ici."
-
-#: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
 msgstr "Aucune application connectée pour l'instant. Les applications que vous autorisez à accéder à votre compte apparaissent ici."
 
@@ -8779,6 +8798,10 @@ msgstr "Aucune photo. La plupart des ATS ignorent les photos ; certaines région
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "No postings found. Try different keywords."
 msgstr "Aucune offre d'emploi trouvée. Essayez différents mots-clés."
+
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
@@ -8970,6 +8993,10 @@ msgstr "Pas dans votre CV · ajoutez seulement si c'est vrai"
 msgid "Not now"
 msgstr "Pas maintenant"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "Pas encore renseigné. Laissez vide tant que vous ne pouvez pas l'étayer."
@@ -9148,6 +9175,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "Désactivé. Activez cette option pour que les recruteurs vous trouvent sur Google."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9340,6 +9369,10 @@ msgstr "Ouvrir dans Offres"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "Ouvrir les préférences"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -10662,6 +10695,10 @@ msgstr "Durée d'enregistrement"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "Recruteur"
@@ -11181,6 +11218,7 @@ msgid "Resume details"
 msgstr "détails du curriculum vitae"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "Fichier de CV"
@@ -11367,14 +11405,6 @@ msgstr "Révoquer"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "Révoquer {0}"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke access"
-#~ msgstr "Révoquer l'accès"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke an application's access to your account."
-#~ msgstr "Révoquer l'accès d'une application à votre compte."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -11594,6 +11624,10 @@ msgstr "Enregistrer l’offre d’emploi"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -13784,6 +13818,10 @@ msgstr "Ce navigateur ne peut pas enregistrer ici. Choisissez un fichier audio o
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "Cette demande de connexion est invalide ou a expiré. Relancez la connexion depuis votre client."
@@ -13804,6 +13842,11 @@ msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13861,6 +13904,10 @@ msgstr "Ce fichier est volumineux pour un CV."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "Ce fichier est plus volumineux que ce qu'acceptent de nombreux formulaires de candidature."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13930,9 +13977,17 @@ msgstr "Ce PDF n'a pas de couche de texte, donc un analyseur n'en lit rien."
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "Ce PDF est une image numérisée. Il n'y a pas de texte à lire. Essayez la version Word ou démarrez des sections vides et collez-y."
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Ce PDF est protégé par mot de passe. Enregistrez une copie non protégée et réessayez."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14058,6 +14113,8 @@ msgstr "Serrer à une page"
 msgid "Tightening"
 msgstr "Resserrement"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Heure"
@@ -14709,6 +14766,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "Utiliser l'exemple"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

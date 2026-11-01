@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· আজ থেকে} one {· # দিন ধরে
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{count}টির মধ্যে {done}টি সম্পন্ন"
@@ -906,6 +910,11 @@ msgstr "গ্রহণ করুন"
 msgid "Accept all"
 msgstr "সব মেনে নিন"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "গৃহীত"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "আরেকটি প্রস্তাব গ্রহণ"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "চাকরির অফার যোগ করুন"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "চাকরির অফারের শর্ত নিজে যোগ করুন, অথবা বার্তায় ঐচ্ছিক এআই নিষ্কাশন ব্যবহার করুন।"
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "সহকারী"
 msgid "Assistant conversations"
 msgstr "সহকারী কথোপকথন"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "সেদিন সকাল 09:00টায় ({timeZone})।"
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "পরিবর্তনগুলি সংরক্ষণ করা য
 msgid "Changes section titles and date words only, not your content."
 msgstr "শুধুমাত্র বিভাগের শিরোনাম এবং তারিখের শব্দ পরিবর্তন করে, আপনার বিষয়বস্তু নয়।"
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "“{name}”-এ করা পরিবর্তন অন্য ডিভাইসে সেভ করা হয়েছে। আপনার সম্পাদনাগুলি এখনও এই ডিভাইসে রয়েছে৷ কোন সংস্করণ রাখতে হবে তা বেছে নিন।"
@@ -2618,6 +2628,8 @@ msgstr "বন্ধ..."
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "বন্ধ"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "ফটো আপলোড করা যায়নি."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "ছবিটি আপলোড করা যায়নি। আবার চেষ্টা করুন।"
 
@@ -3462,6 +3478,7 @@ msgstr "ভরাট"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "কভার লেটার — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "কভার লেটার ফাইল"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "ফলো-আপ তারিখ"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "পরবর্তী নোট"
 
@@ -5296,6 +5315,11 @@ msgstr "নির্বাচিত লাইন উন্নত করুন"
 msgid "Improving…"
 msgstr "উন্নতি হচ্ছে..."
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "বন্ধগুলোসহ"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "পরে"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "সর্বশেষ"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "বন্ধ শুধুমাত্র আপনি এই জীবনবৃত্তান্ত দেখতে পারেন."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "অফার"
@@ -8414,6 +8441,12 @@ msgstr "রেকর্ডিংয়ের সময়"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "নিয়োগকারী"
@@ -8823,6 +8856,7 @@ msgstr "ফলাফল"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "জীবনবৃত্তান্তের মতামত, পণ্য সহায়তা ও কমিউনিটির আইডিয়া।"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "জীবনবৃত্তান্ত ফাইল"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "সার্ভারটি একটি অবৈধ আমদানি ফলাফল ফিরিয়ে দিয়েছে৷ পুনরায় চেষ্টা করার আগে নথিপত্র রিফ্রেশ করুন।"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "সার্ভার সংস্করণ লোড করা যায়নি. আপনার লেখা রাখা আছে; আবার চেষ্টা করুন"
@@ -11098,6 +11134,8 @@ msgstr "এই কাভার লেটার ফাইলটি বৈধ ন�
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "এই তারিখ বা সময় আপনার টাইমজোনে বিদ্যমান নেই। অন্য সময় বেছে নিন।"
@@ -11387,6 +11425,7 @@ msgstr "এক পৃষ্ঠায় শক্ত করুন"
 msgid "Tightening"
 msgstr "আঁটসাঁট করা হচ্ছে"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "সময়"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

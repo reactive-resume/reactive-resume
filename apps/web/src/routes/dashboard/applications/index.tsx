@@ -39,6 +39,7 @@ import {
 	hydrateApplicationDetail,
 } from "@/features/applications/queries";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
+import { useCareerTime } from "@/features/career/shared";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 
@@ -460,13 +461,14 @@ type FollowUpNudgeProps = { applications: ApplicationSummary[]; onOpen: (id: str
  * remembered on this device; it doesn't come back for that application.
  */
 function FollowUpNudge({ applications, onOpen }: FollowUpNudgeProps) {
+	const { timeZone } = useCareerTime();
 	const [dismissed, setDismissed] = useState(readDismissed);
 
 	const dismissedIds = new Set(dismissed);
 	const waiting = applications
 		.filter((application) => !dismissedIds.has(application.id))
 		.flatMap((application) => {
-			const step = getNextStep(application);
+			const step = getNextStep(application, undefined, timeZone);
 			return step.kind === "no-reply" ? [{ application, days: step.days }] : [];
 		})
 		.sort((a, b) => b.days - a.days)[0];

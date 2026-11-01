@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· da oggi} one {· da # giorno} other {· da # giorn
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done} di {count} completati"
@@ -906,6 +910,11 @@ msgstr "Accettare"
 msgid "Accept all"
 msgstr "Accetta tutto"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Accettato"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Accettato un'altra offerta"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "Aggiungi offerta di lavoro"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Aggiungi manualmente le condizioni dell’offerta di lavoro oppure usa l’estrazione facoltativa tramite IA in Messaggi."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr "Aggiungi manualmente le condizioni dell'offerta, incluse le offerte accettate, oppure usa l'estrazione facoltativa con IA in Messaggi. Chiudere come accettata non registra le condizioni."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "Assistente"
 msgid "Assistant conversations"
 msgstr "Conversazioni dell'assistente"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "Alle 09:00 di quel giorno ({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "Impossibile salvare le modifiche. Riprovare prima di continuare."
 msgid "Changes section titles and date words only, not your content."
 msgstr "Modifica solo i titoli delle sezioni e le parole relative alla data, non il contenuto."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Le modifiche a «{name}» sono state salvate su un altro dispositivo. Le tue modifiche sono ancora su questo dispositivo. Scegli quale versione mantenere."
@@ -2618,6 +2628,8 @@ msgstr "Vicino…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Chiuso"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "Impossibile caricare la foto."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr "Impossibile caricare la foto. Scegli una foto leggibile in formato PNG, JPEG, WebP o GIF, fino a 10 MB, poi riprova."
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Impossibile caricare la foto. Riprova."
 
@@ -3462,6 +3478,7 @@ msgstr "Riempi"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "Lettera di presentazione — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "File della lettera di presentazione"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "Data follow-up"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Nota follow-up"
 
@@ -5296,6 +5315,11 @@ msgstr "Migliora la linea selezionata"
 msgid "Improving…"
 msgstr "Migliorare…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Incluse le chiuse"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "Più tardi"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Più recente"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Spento. Solo tu puoi vedere questo curriculum."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Offerta"
@@ -8414,6 +8441,12 @@ msgstr "Tempo di registrazione"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Reclutatore"
@@ -8823,6 +8856,7 @@ msgstr "Risultato"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Feedback sul curriculum, aiuto sul prodotto e idee della community."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "File curriculum"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "Il server ha restituito un risultato di importazione non valido. Aggiorna Documenti prima di riprovare."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Impossibile caricare la versione dal server. Il testo è conservato; riprova."
@@ -11098,6 +11134,8 @@ msgstr "Questo file della lettera di presentazione non è valido."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Questa data o ora non esiste nel tuo fuso orario. Scegli un altro orario."
@@ -11387,6 +11425,7 @@ msgstr "Stringere a una pagina"
 msgid "Tightening"
 msgstr "Sintetizzo"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Ora"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

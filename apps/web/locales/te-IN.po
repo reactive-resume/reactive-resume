@@ -604,6 +604,10 @@ msgstr "{days, plural, one {# ఆఫీసు రోజు, మీ పరిమ�
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# పత్రం అప్‌డేట్ చేయబడింది} other {# పత్రాలు అప్‌డేట్ చేయబడ్డాయి}}"
@@ -951,8 +955,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>మొత్తాలను ఉద్దేశపూర్వకంగానే కూడలేదు.</0> బోనస్, ఈక్విటీ షరతులపై ఆధారపడి ఉంటాయి, రెండింటిలోనూ ఈక్విటీ విలువ అనిశ్చితం. మొత్తాలను పోల్చే ముందు అసలు ఆఫర్ పత్రాలను చదవండి."
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1213,6 +1217,8 @@ msgstr "అంగీకరించు"
 msgid "Accept all"
 msgstr "అన్నింటినీ అంగీకరించండి"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "అంగీకరించబడింది"
@@ -1526,8 +1532,8 @@ msgid "Add offer"
 msgstr "ఉద్యోగ ఆఫర్‌ను జోడించండి"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "ఉద్యోగ ఆఫర్ నిబంధనలను స్వయంగా నమోదు చేయండి లేదా సందేశాల్లో AI ద్వారా వివరాలను వెలికితీసే ఐచ్ఛిక సదుపాయాన్ని ఉపయోగించండి."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr "ఆమోదించిన ఆఫర్‌లతో సహా ఆఫర్ నిబంధనలను మాన్యువల్‌గా జోడించండి లేదా సందేశాలలో ఐచ్ఛిక AI వెలికితీతను ఉపయోగించండి. ఆమోదించినట్లుగా మూసివేయడం నిబంధనలను నమోదు చేయదు."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2405,12 +2411,12 @@ msgid "ATS-safe"
 msgstr "ATS-సురక్షితమైనది"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "కవర్ లెటర్‌ను జతచేయండి (PDF)"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "కవర్ లెటర్ ఫైల్‌ను అటాచ్ చేయండి (PDF)"
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2422,8 +2428,8 @@ msgid "Attach a file instead"
 msgstr "బదులుగా ఫైల్‌ను అటాచ్ చేయండి"
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "రెజ్యూమే ఫైల్‌ను జతచేయండి (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2626,10 +2632,6 @@ msgstr "సరిహద్దు వ్యాసార్థం"
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Border width"
 msgstr "సరిహద్దు వెడల్పు"
-
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "ఇక్కడ పోల్చిన అన్నింటినీ రెండు ఆఫర్‌లూ కవర్ చేస్తాయి."
 
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
@@ -2876,6 +2878,11 @@ msgstr "చేంజ్‌లాగ్"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "విభాగం శీర్షికలు మరియు తేదీ పదాలను మాత్రమే మారుస్తుంది, మీ కంటెంట్ కాదు."
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3240,6 +3247,8 @@ msgstr "మూసివేయి..."
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "మూసివేయబడింది"
 
@@ -3801,6 +3810,10 @@ msgstr "లేఖను సృష్టించడం సాధ్యపడల�
 msgid "Couldn't create your account. Try again."
 msgstr "మీ ఖాతాను సృష్టించడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
 
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
 msgstr "ఆ కథను తొలగించడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -4315,8 +4328,10 @@ msgstr "టైమ్‌లైన్‌ని అప్‌డేట్ చేయ�
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "ఈ లేఖ సంస్కరణలను నవీకరించడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr "ఫోటోను అప్‌లోడ్ చేయలేకపోయాము. 10 MB వరకు చదవగలిగే PNG, JPEG, WebP లేదా GIF ఫోటోను ఎంచుకుని మళ్లీ ప్రయత్నించండి."
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "ఫోటోను అప్‌లోడ్ చేయడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -4391,6 +4406,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "కవర్ లెటర్ · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "కవర్ లెటర్ ఫైల్"
@@ -6019,6 +6035,7 @@ msgid "Follow-up date"
 msgstr "ఫాలో-అప్ తేదీ"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "ఫాలో-అప్ గమనిక"
 
@@ -6821,6 +6838,11 @@ msgstr "మెరుగుపడుతోంది..."
 msgid "In good company"
 msgstr "మంచి కంపెనీలో"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "రెండు లైన్లు ఒకటిగా విలీనం కాకుండా లైన్ స్పేసింగ్‌ను పెంచండి."
@@ -7386,6 +7408,7 @@ msgstr "చివరిగా ఉపయోగించబడింది"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "తాజాది"
 
@@ -8633,10 +8656,6 @@ msgid "No commands match that search."
 msgstr "ఆ శోధనకు సరిపోయే కమాండ్లు ఏవీ లేవు."
 
 #: src/features/settings/ai/connected-apps.tsx
-#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
-#~ msgstr "ఇంకా కనెక్ట్ చేయబడిన అప్లికేషన్‌లు లేవు. మీ ఖాతాను యాక్సెస్ చేయడానికి మీరు అనుమతించే యాప్‌లు ఇక్కడ కనిపిస్తాయి."
-
-#: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
 msgstr "ఇంకా కనెక్ట్ చేయబడిన అప్లికేషన్‌లు లేవు. మీ ఖాతాను యాక్సెస్ చేయడానికి మీరు అనుమతించే యాప్‌లు ఇక్కడ కనిపిస్తాయి."
 
@@ -8779,6 +8798,10 @@ msgstr "ఫోటో లేదు. చాలా ATS ఫోటోలను వి
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "No postings found. Try different keywords."
 msgstr "ఉద్యోగ నియామకాలు ఏవీ కనుగొనబడలేదు. విభిన్న కీలకపదాలను ప్రయత్నించండి."
+
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
@@ -8970,6 +8993,10 @@ msgstr "మీ రెజ్యూమెలో లేదు · నిజమైత
 msgid "Not now"
 msgstr "ఇప్పుడు కాదు"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
 msgstr "ఇంకా నమోదు చేయలేదు. ఆధారం చూపగలిగే వరకు ఖాళీగా వదిలేయండి."
@@ -9148,6 +9175,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "ఆఫ్‌లో ఉంది. దీన్ని ఆన్ చేస్తే రిక్రూటర్‌లు మిమ్మల్ని Googleలో కనుగొనగలరు."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9340,6 +9369,10 @@ msgstr "ఆఫర్‌లలో తెరువు"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "ప్రాధాన్యతలను తెరువు"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -10662,6 +10695,10 @@ msgstr "రికార్డింగ్ సమయం"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "రిక్రూటర్"
@@ -11181,6 +11218,7 @@ msgid "Resume details"
 msgstr "రెజ్యూమే వివరాలు"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "రెజ్యూమే ఫైల్"
@@ -11367,14 +11405,6 @@ msgstr "ఉపసంహరించుకోండి"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0}ని రద్దు చేయండి"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke access"
-#~ msgstr "యాక్సెస్‌ని రద్దు చేయండి"
-
-#: src/features/settings/ai/connected-apps.tsx
-#~ msgid "Revoke an application's access to your account."
-#~ msgstr "మీ ఖాతాకు అప్లికేషన్ యాక్సెస్‌ను ఉపసంహరించుకోండి."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -11594,6 +11624,10 @@ msgstr "ఉద్యోగ ఆఫర్‌ను సేవ్ చేయండి
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -13784,6 +13818,10 @@ msgstr "ఈ బ్రౌజర్ ఇక్కడ రికార్డ్ చ�
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "ఈ కనెక్షన్ అభ్యర్థన చెల్లనిది లేదా గడువు ముగిసింది. మీ క్లయింట్ నుండి కనెక్షన్‌ను మళ్ళీ ప్రారంభించండి."
@@ -13804,6 +13842,11 @@ msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13861,6 +13904,10 @@ msgstr "రెజ్యూమ్‌కు ఈ ఫైల్ పెద్దది
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "చాలా అప్లికేషన్ ఫారమ్‌లు అంగీకరించే దానికంటే ఈ ఫైల్ పెద్దది."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13930,9 +13977,17 @@ msgstr "ఈ PDFకి టెక్స్ట్ లేయర్ లేదు, క
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "ఈ PDF స్కాన్ చేయబడిన చిత్రం. చదవడానికి వచనం లేదు. Word సంస్కరణను ప్రయత్నించండి లేదా ఖాళీని ప్రారంభించి, విభాగాలను అతికించండి."
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "ఈ PDF పాస్‌వర్డ్‌తో రక్షించబడింది. రక్షణ లేని కాపీని సేవ్ చేసి మళ్లీ ప్రయత్నించండి."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -14058,6 +14113,8 @@ msgstr "ఒక పేజీకి బిగించండి"
 msgid "Tightening"
 msgstr "కుదిస్తోంది"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "సమయం"
@@ -14709,6 +14766,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "నమూనాను ఉపయోగించండి"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

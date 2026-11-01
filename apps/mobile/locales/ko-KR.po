@@ -536,6 +536,10 @@ msgstr "{days, plural, =0 {· 오늘부터} one {· #일째} other {· #일째}}
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{count}개 중 {done}개 완료"
@@ -906,6 +910,11 @@ msgstr "수용하다"
 msgid "Accept all"
 msgstr "모두 수락"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "수락됨"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "다른 제안을 수락함"
@@ -1144,8 +1153,8 @@ msgid "Add offer"
 msgstr "오퍼 추가"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "오퍼 조건을 직접 입력하거나, 필요하면 메시지에서 AI 추출을 사용하세요."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1864,10 +1873,6 @@ msgstr "어시스턴트"
 msgid "Assistant conversations"
 msgstr "어시스턴트 대화"
 
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "그날 09:00({timeZone})."
-
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
 #: src/features/search/search-screen.tsx
@@ -2278,6 +2283,11 @@ msgstr "변경 사항을 저장하지 못했습니다. 계속하기 전에 다�
 msgid "Changes section titles and date words only, not your content."
 msgstr "콘텐츠가 아닌 섹션 제목과 날짜 단어만 변경합니다."
 
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "'{name}'에 대한 변경사항이 다른 기기에 저장되었습니다. 수정사항이 아직 이 기기에 남아 있습니다. 유지할 버전을 선택하세요."
@@ -2618,6 +2628,8 @@ msgstr "닫다…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "닫은"
 
@@ -3432,6 +3444,10 @@ msgid "Couldn't upload the photo."
 msgstr "사진을 업로드할 수 없습니다."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "사진을 업로드할 수 없습니다. 다시 시도해 보세요."
 
@@ -3462,6 +3478,7 @@ msgstr "채우기"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3478,6 +3495,7 @@ msgid "Cover letter — {0}"
 msgstr "자기 소개서 — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "자기소개서 파일"
@@ -4717,6 +4735,7 @@ msgid "Follow-up date"
 msgstr "후속 조치 날짜"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "후속 조치 메모"
 
@@ -5296,6 +5315,11 @@ msgstr "선택한 라인 개선"
 msgid "Improving…"
 msgstr "개선 중…"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "종료된 지원 포함"
@@ -5707,6 +5731,7 @@ msgid "Later"
 msgstr "나중에"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "최신"
 
@@ -7205,6 +7230,8 @@ msgid "Off. Only you can see this resume."
 msgstr "끄다. 이 이력서는 나만 볼 수 있습니다."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "오퍼"
@@ -8414,6 +8441,12 @@ msgstr "녹음 시간"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "모집자"
@@ -8823,6 +8856,7 @@ msgstr "결과"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8847,6 +8881,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "이력서 피드백, 제품 도움말, 커뮤니티 아이디어."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "이력서 파일"
@@ -10959,6 +10994,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "서버가 잘못된 가져오기 결과를 반환했습니다. 다시 시도하기 전에 서류를 새로 고치세요."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "서버 버전을 로드할 수 없습니다. 귀하의 텍스트는 보관됩니다. 다시 시도해 보세요."
@@ -11098,6 +11134,8 @@ msgstr "이 소개서 파일은 유효하지 않습니다."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "해당 날짜 또는 시간이 귀하의 시간대에 존재하지 않습니다. 다른 시간을 선택하세요."
@@ -11387,6 +11425,7 @@ msgstr "한 페이지로 압축"
 msgid "Tightening"
 msgstr "간결하게 다듬는 중"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "시간"
@@ -11936,6 +11975,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 

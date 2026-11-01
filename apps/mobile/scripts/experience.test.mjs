@@ -309,6 +309,11 @@ assert.equal(
 const stages = load("features/applications/stages.ts");
 const history = load("features/applications/history.ts");
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
+const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
+const followUpDomain = load("../../../packages/schema/src/applications/follow-up.ts", {
+	"@reactive-resume/utils/timezone": timeParser,
+});
+mocks["@reactive-resume/schema/applications/follow-up"] = followUpDomain;
 const applicationData = load("../../../packages/schema/src/applications/data.ts", {
 	zod,
 	"@reactive-resume/utils/timezone": { timezoneSchema: zod.z.string() },
@@ -620,6 +625,8 @@ console.log("PASS native New preserves Applications views, pushes from a workspa
 let finishSave;
 let matchedPosting = null;
 const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
+	"@reactive-resume/utils/timezone": timeParser,
+	"@/features/application-detail/hooks": { useUserTime: () => ({ timeZone: "UTC" }) },
 	react: { ...react, useEffect: () => {} },
 	"@orpc/client": { ORPCError: class extends Error {} },
 	"@tanstack/react-query": {
@@ -816,7 +823,6 @@ console.log("PASS native calendar follows account month/day and preserves explic
 
 // Manual offers use the production parser; only native widgets, transport and profile loading are boundaries.
 const amountParser = load("../../../packages/utils/src/amount.ts");
-const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
 const careerSchema = load("../../../packages/schema/src/career.ts", {
 	zod,
 	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
@@ -1083,8 +1089,14 @@ const photoHooks = load("features/write/hooks.ts", {
 	"./fields": {},
 	"./model": {},
 });
+let pictureOptions;
 const { PictureScreen } = load("features/write/picture-screen.tsx", {
-	"@tanstack/react-query": { useMutation: () => ({}) },
+	"@tanstack/react-query": {
+		useMutation: (options) => {
+			pictureOptions = options;
+			return {};
+		},
+	},
 	"expo-file-system": {},
 	"expo-image": { Image: "Image" },
 	"expo-image-picker": {},
@@ -1371,200 +1383,310 @@ for (const kind of ["resume", "letter"]) {
 	assert.equal(calls.at(-1), "use-theirs");
 }
 console.log("PASS native older-draft refusal explains cause and offers only copy or saved-version recovery");
-// Writing publishes the persisted query, never a completed mutation's discarded response.
-reset();
-let savedWriting = null;
-let publishedWriting = null;
-let resolveOld;
-let resolveNew;
-let writingRequest = 0;
-const writingCleanup = [];
-const queryKey = ({ input }) => ["writing", input.resumeId];
-const { Writing } = load("features/check/writing.tsx", {
-	react: {
-		...react,
-		useEffect: (effect) => {
-			const cleanup = effect();
-			if (cleanup) writingCleanup.push(cleanup);
-		},
+
+let headerSaved = { data: undefined, isPending: true, isError: false, refetch: () => calls.push("retry-saved") };
+const { WorkspaceScreen } = load("features/workspace/shell.tsx", {
+	"@reactive-resume/schema/career": careerSchema,
+	"./coach-sheet": { CoachSheet: "CoachSheet" },
+	"./hooks": {
+		useSavedItems: () => headerSaved,
+		useWorkspace: () => ({ isPending: false, query: { isError: false, data: {}, refetch: () => {} } }),
 	},
-	"@tanstack/react-query": {
-		useQuery: () => ({ data: savedWriting }),
-		useQueryClient: () => ({ invalidateQueries: async (options) => calls.push(options.queryKey) }),
-	},
-	"@reactive-resume/resume/markdown": { buildMarkdown: () => "Fictional original" },
-	"@reactive-resume/resume/proposals": {
-		collectPassages: () => [{ id: "p1", location: "Summary", text: "Fictional original" }],
-	},
-	"./actions": {},
-	"./issues": { getSectionName: () => "Summary" },
-	"./review": { mapWritingReview: () => ({ proposals: [], notes: [] }) },
-	"@/draft": { useResumeStore: (select) => select({ proposalApplications: {} }) },
-	"@/api/client": {
-		client: {
-			ai: {
-				atsReview: () =>
-					new Promise((resolve) => {
-						if (++writingRequest === 1) resolveOld = resolve;
-						else resolveNew = resolve;
-					}),
-			},
-		},
-		orpc: { ai: { writingReview: { queryOptions: queryKey, queryKey } } },
-	},
-	"@/features/ai/providers": {
-		AIProviderSetupSheet: "Setup",
-		useHasAIProvider: () => ({
-			usableProviders: [{ id: "provider" }],
-			defaultProvider: { id: "provider" },
-			hasAIProvider: true,
+	"./logic": { currentInterview: () => undefined },
+	"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => time },
+	"@/features/application-detail/interview-sheet": { InterviewSheet: "InterviewSheet" },
+	"@/features/applications/error": { applicationError: String },
+	"@/features/applications/lane-queries": laneQuery,
+	"@/features/applications/lanes": lanes,
+	"@/features/applications/queries": {
+		useApplication: () => ({
+			data: { ...application, status: "offer", company: "Context job", role: "Engineer" },
+			isPending: false,
 		}),
 	},
-	"@/features/ai/report-content": { ReportAiContent: "Report" },
+	"@/routes": { routes: { ...routes, career: (tab) => `/career/${tab}` } },
+	"@/shell/workspace-chrome": { useWorkspaceChrome: () => {} },
+	"@/ui/keyboard": { useKeyboardScrollSpace: () => 0 },
+	"react-native-keyboard-controller": { KeyboardAwareScrollView: "KeyboardAwareScrollView" },
 });
-const writingProps = {
-	id: "resume-a",
-	data: {},
-	issues: [],
-	offline: false,
-	locked: false,
-	review: null,
-	setReview: (value) => {
-		publishedWriting = value;
-	},
+const workspaceHeader = () => {
+	reset();
+	const screen = render(WorkspaceScreen, { tab: "messages", children: () => null });
+	const header = nodes(screen).find((node) => node.type?.name === "Header");
+	assert.ok(header);
+	return { screen, header: render(header.type, header.props) };
 };
-control(render(Writing, writingProps), "Review writing").onPress();
-await settle();
-for (const cleanup of writingCleanup.splice(0)) cleanup();
-reset();
-control(render(Writing, writingProps), "Review writing").onPress();
-await settle();
-resolveNew({ summary: "Unsaved response" });
-await settle();
-assert.equal(publishedWriting, null, "Mutation results cannot manufacture a published review");
-savedWriting = {
-	inputText: "Fictional original",
-	passages: [],
-	review: { summary: "Latest saved", strengths: [], suggestions: [] },
-	reviewedAt: new Date("2030-01-01T00:00:02Z"),
-};
-render(Writing, writingProps);
-assert.equal(publishedWriting.summary, "Latest saved");
-resolveOld({ summary: "Older discarded response" });
-await settle();
-assert.equal(publishedWriting.summary, "Latest saved");
-assert.deepEqual(
-	calls,
-	[["writing", "resume-a"]],
-	"An unmounted canceled request cannot publish or invalidate a different document",
-);
-console.log("PASS native Writing authoritative publication and unmounted request order");
+assert.equal(control(workspaceHeader().header, "Compare offers").disabled, true);
+headerSaved = { ...headerSaved, isPending: false, isError: true };
+const failedHeader = workspaceHeader();
+assert.equal(control(failedHeader.header, "Compare offers").disabled, true);
+assert.ok(control(failedHeader.screen, "Try again"));
+headerSaved = { ...headerSaved, isError: false, data: [{ id: "context-latest", data: { kind: "offer" } }] };
+const loadedHeader = control(workspaceHeader().header, "Compare offers");
+assert.equal(loadedHeader.disabled, false);
+loadedHeader.onPress();
+assert.deepEqual(calls.at(-1), { pathname: "/career/offers", params: { a: "context-latest" } });
+console.log("PASS native contextual offers gated cold/error and retain latest offer when loaded");
 
 reset();
-let linkedResume;
-const { FitTab } = load("features/workspace/tabs/fit.tsx", {
-	"@tanstack/react-query": {
-		useQuery: (options) =>
-			options.kind === "evidence"
-				? { data: { usable: false } }
-				: { data: [{ id: "chosen", type: "resume", name: "Chosen fictional resume" }] },
-		useQueryClient: () => ({ invalidateQueries: async () => {} }),
-		useMutation: () => ({
-			mutate: (input) => {
-				linkedResume = input.resumeId;
-			},
-		}),
-	},
-	"expo-crypto": {},
-	"../hooks": {
-		useSavedItems: () => ({ data: [] }),
-		useWorkspace: () => ({ data: {} }),
-		useGenerate: () => ({ run: () => assert.fail("No evidence cannot generate") }),
-		useFacts: () => ({ data: [] }),
-		latest: () => undefined,
-	},
-	"../parts": {
-		EmptyNotice: "EmptyNotice",
-		AiNotice: "AiNotice",
-		useWorking: (_pending, _steps, label) => label,
-		workingSteps: () => [],
-	},
-	"../shell": { WorkspaceScreen: "WorkspaceScreen" },
-	"@/api/client": {
-		orpc: {
-			career: {
-				fitEvidence: { queryOptions: () => ({ kind: "evidence" }) },
-				forgetFact: { mutationOptions: () => ({}) },
-			},
-			documents: { list: { queryOptions: () => ({ kind: "documents" }) } },
-			applications: { update: { mutationOptions: () => ({}) } },
-		},
-	},
-	"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: { id: "provider" } }) },
-});
-const fitProps = { application: { id: "app" } };
-const fitComponent = FitTab().props.children[0](fitProps).type;
-let fitTree = render(fitComponent, fitProps);
-assert.equal(control(fitTree, "Check fit").disabled, true);
-assert.ok(control(fitTree, "Add facts"));
-control(fitTree, "Resume to use as evidence").onChange("chosen");
-fitTree = render(fitComponent, fitProps);
-control(fitTree, "Use this resume as evidence").onPress();
-assert.equal(linkedResume, "chosen", "Fit links only the user's explicit resume choice");
-console.log("PASS native Fit uses filtered evidence and explicit resume selection");
-
-// Exercise the shipped preparation form, including setup visibility and retry callbacks.
-let scheduleAi;
-let scheduleRetries = 0;
-const scheduleHooks = {
-	useCareerTime: () => ({ profile: { data: { emailVerified: true } }, timeZone: "UTC", locale: "en-US" }),
-	useCareerQueries: () => ({ profile: { data: { targetRoles: [], locations: [] } } }),
-	useCareerAction: () => ({ pending: false }),
-	useNow: () => new Date("2026-10-31T12:00:00Z"),
+const scheduleWrites = [];
+const scheduleRow = {
+	id: "follow-up-a",
+	kind: "follow-up",
+	applicationId: application.id,
+	nextRunAt: new Date("2030-01-03T09:15:37.123Z"),
+	timezone: "UTC",
+	query: "Original note",
+	intervalDays: null,
+	enabled: true,
+	email: false,
 };
+const ready = (data) => ({ data, isPending: false, isError: false });
+const scheduleTime = { timeZone: "UTC", locale: "en-US", profile: ready({ emailVerified: true }) };
+const scheduleCareer = { profile: ready({ targetRoles: [], locations: [] }) };
+const scheduleApi = { career: { saveSchedule: async (input) => scheduleWrites.push(input) } };
+const scheduling = load("features/career/scheduling.ts", { "@reactive-resume/utils/timezone": timeParser });
 const { ScheduleSheet } = load("features/career/schedule-sheet.tsx", {
 	"@react-native-community/datetimepicker": { default: "DateTimePicker" },
-	"@tanstack/react-query": { useQuery: () => ({ data: { search: true, provider: null } }) },
-	"@reactive-resume/schema/career": {},
-	"@reactive-resume/utils/timezone": { fromZonedDateTime: () => new Date("2026-11-02T12:00:00Z") },
-	"./hooks": scheduleHooks,
-	"./scheduling": {
-		collectInterviews: () => [],
-		nextCareerRun: () => new Date("2026-11-02T12:00:00Z"),
-		toZoned: () => ({ date: "2026-11-02", time: "12:00" }),
+	"@tanstack/react-query": { useQuery: () => ready({ search: false, provider: null }) },
+	"@reactive-resume/schema/career": careerSchema,
+	"@reactive-resume/utils/timezone": timeParser,
+	"./hooks": {
+		client: scheduleApi,
+		useCareerAction: () => ({
+			pending: false,
+			run: async (operation, done) => {
+				await operation();
+				done();
+			},
+		}),
+		useCareerQueries: () => scheduleCareer,
+		useCareerTime: () => scheduleTime,
+		useNow: () => new Date("2030-01-04T12:00:00Z"),
 	},
-	"./shared": { EditorSheet: "EditorSheet", SwitchRow: "SwitchRow" },
+	"./scheduling": scheduling,
+	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState", SwitchRow: "SwitchRow" },
 	"@/api/client": { orpc: { webAccess: { status: { queryOptions: () => ({}), key: () => [] } } } },
-	"@/api/flags": { useFlags: () => ({ data: { careerSchedulingEnabled: true } }) },
-	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "https://fictional.example" }) },
-	"@/features/ai/providers": { useHasAIProvider: () => scheduleAi },
-	"@/features/ai/web-access": {},
-	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+	"@/api/flags": { useFlags: () => ready({ careerSchedulingEnabled: true, smtpEnabled: false }) },
+	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "https://example.test" }) },
+	"@/features/ai/providers": {
+		AIProviderSetupSheet: "AIProviderSetupSheet",
+		useHasAIProvider: () => ({ usableProviders: [], defaultProvider: null, hasAIProvider: false }),
+	},
+	"@/features/applications/queries": { useApplications: () => ready([{ ...application, status: "applied" }]) },
 });
-for (const state of ["loading", "error", "empty", "configured"]) {
+const scheduleForm = render(ScheduleSheet, { schedule: scheduleRow, kind: "follow-up", onClose() {}, onDelete() {} });
+let scheduleTree = render(scheduleForm.type, scheduleForm.props);
+control(scheduleTree, "Follow-up note").onChangeText("Updated completed note");
+scheduleTree = render(scheduleForm.type, scheduleForm.props);
+control(scheduleTree, "Save schedule").onPress();
+await settle();
+assert.equal(scheduleWrites.length, 1, "past unchanged occurrence remains editable");
+assert.equal(scheduleWrites[0].query, "Updated completed note");
+assert.equal(scheduleWrites[0].nextRunAt.toISOString(), "2030-01-03T09:15:37.123Z");
+control(scheduleTree, "Time (HH:mm)").onChangeText("09:16");
+scheduleTree = render(scheduleForm.type, scheduleForm.props);
+control(scheduleTree, "Save schedule").onPress();
+await settle();
+assert.equal(scheduleWrites.length, 1, "changed past time must still be rejected");
+assert.match(JSON.stringify(render(scheduleForm.type, scheduleForm.props)), /Pick a time after now/);
+console.log("PASS native Today past note edit preserves exact seconds and changed-past-time guard");
+{
+	// Writing publishes the persisted query, never a completed mutation's discarded response.
 	reset();
-	const provider = { id: "fictional", label: "Fictional connection" };
-	scheduleAi = {
-		isLoading: state === "loading",
-		isUnavailable: state === "loading" || state === "error",
-		error: state === "error" ? new Error("Offline") : null,
-		usableProviders: state === "configured" ? [provider] : [],
-		defaultProvider: state === "configured" ? provider : null,
-		hasAIProvider: state === "configured",
-		retry: () => scheduleRetries++,
+	let savedWriting = null;
+	let publishedWriting = null;
+	let resolveOld;
+	let resolveNew;
+	let writingRequest = 0;
+	const writingCleanup = [];
+	const queryKey = ({ input }) => ["writing", input.resumeId];
+	const { Writing } = load("features/check/writing.tsx", {
+		react: {
+			...react,
+			useEffect: (effect) => {
+				const cleanup = effect();
+				if (cleanup) writingCleanup.push(cleanup);
+			},
+		},
+		"@tanstack/react-query": {
+			useQuery: () => ({ data: savedWriting }),
+			useQueryClient: () => ({ invalidateQueries: async (options) => calls.push(options.queryKey) }),
+		},
+		"@reactive-resume/resume/markdown": { buildMarkdown: () => "Fictional original" },
+		"@reactive-resume/resume/proposals": {
+			collectPassages: () => [{ id: "p1", location: "Summary", text: "Fictional original" }],
+		},
+		"./actions": {},
+		"./issues": { getSectionName: () => "Summary" },
+		"./review": { mapWritingReview: () => ({ proposals: [], notes: [] }) },
+		"@/draft": { useResumeStore: (select) => select({ proposalApplications: {} }) },
+		"@/api/client": {
+			client: {
+				ai: {
+					atsReview: () =>
+						new Promise((resolve) => {
+							if (++writingRequest === 1) resolveOld = resolve;
+							else resolveNew = resolve;
+						}),
+				},
+			},
+			orpc: { ai: { writingReview: { queryOptions: queryKey, queryKey } } },
+		},
+		"@/features/ai/providers": {
+			AIProviderSetupSheet: "Setup",
+			useHasAIProvider: () => ({
+				usableProviders: [{ id: "provider" }],
+				defaultProvider: { id: "provider" },
+				hasAIProvider: true,
+			}),
+		},
+		"@/features/ai/report-content": { ReportAiContent: "Report" },
+	});
+	const writingProps = {
+		id: "resume-a",
+		data: {},
+		issues: [],
+		offline: false,
+		locked: false,
+		review: null,
+		setReview: (value) => {
+			publishedWriting = value;
+		},
 	};
-	const form = render(ScheduleSheet, { schedule: null, kind: "prepare", onClose() {}, onDelete() {} });
-	const formTree = render(form.type, form.props);
-	assert.equal(
-		nodes(formTree).some((node) => node.props.label === "Connect AI provider"),
-		state === "empty" || state === "configured",
-		`Setup availability for ${state}`,
+	control(render(Writing, writingProps), "Review writing").onPress();
+	await settle();
+	for (const cleanup of writingCleanup.splice(0)) cleanup();
+	reset();
+	control(render(Writing, writingProps), "Review writing").onPress();
+	await settle();
+	resolveNew({ summary: "Unsaved response" });
+	await settle();
+	assert.equal(publishedWriting, null, "Mutation results cannot manufacture a published review");
+	savedWriting = {
+		inputText: "Fictional original",
+		passages: [],
+		review: { summary: "Latest saved", strengths: [], suggestions: [] },
+		reviewedAt: new Date("2030-01-01T00:00:02Z"),
+	};
+	render(Writing, writingProps);
+	assert.equal(publishedWriting.summary, "Latest saved");
+	resolveOld({ summary: "Older discarded response" });
+	await settle();
+	assert.equal(publishedWriting.summary, "Latest saved");
+	assert.deepEqual(
+		calls,
+		[["writing", "resume-a"]],
+		"An unmounted canceled request cannot publish or invalidate a different document",
 	);
-	if (state === "error") control(formTree, "Retry AI connections").onPress();
-	if (state === "configured") assert.equal(control(formTree, "AI connection").value, provider.id);
+	console.log("PASS native Writing authoritative publication and unmounted request order");
+
+	reset();
+	let linkedResume;
+	const { FitTab } = load("features/workspace/tabs/fit.tsx", {
+		"@tanstack/react-query": {
+			useQuery: (options) =>
+				options.kind === "evidence"
+					? { data: { usable: false } }
+					: { data: [{ id: "chosen", type: "resume", name: "Chosen fictional resume" }] },
+			useQueryClient: () => ({ invalidateQueries: async () => {} }),
+			useMutation: () => ({
+				mutate: (input) => {
+					linkedResume = input.resumeId;
+				},
+			}),
+		},
+		"expo-crypto": {},
+		"../hooks": {
+			useSavedItems: () => ({ data: [] }),
+			useWorkspace: () => ({ data: {} }),
+			useGenerate: () => ({ run: () => assert.fail("No evidence cannot generate") }),
+			useFacts: () => ({ data: [] }),
+			latest: () => undefined,
+		},
+		"../parts": {
+			EmptyNotice: "EmptyNotice",
+			AiNotice: "AiNotice",
+			useWorking: (_pending, _steps, label) => label,
+			workingSteps: () => [],
+		},
+		"../shell": { WorkspaceScreen: "WorkspaceScreen" },
+		"@/api/client": {
+			orpc: {
+				career: {
+					fitEvidence: { queryOptions: () => ({ kind: "evidence" }) },
+					forgetFact: { mutationOptions: () => ({}) },
+				},
+				documents: { list: { queryOptions: () => ({ kind: "documents" }) } },
+				applications: { update: { mutationOptions: () => ({}) } },
+			},
+		},
+		"@/features/ai/providers": { useHasAIProvider: () => ({ defaultProvider: { id: "provider" } }) },
+	});
+	const fitProps = { application: { id: "app" } };
+	const fitComponent = FitTab().props.children[0](fitProps).type;
+	let fitTree = render(fitComponent, fitProps);
+	assert.equal(control(fitTree, "Check fit").disabled, true);
+	assert.ok(control(fitTree, "Add facts"));
+	control(fitTree, "Resume to use as evidence").onChange("chosen");
+	fitTree = render(fitComponent, fitProps);
+	control(fitTree, "Use this resume as evidence").onPress();
+	assert.equal(linkedResume, "chosen", "Fit links only the user's explicit resume choice");
+	console.log("PASS native Fit uses filtered evidence and explicit resume selection");
+
+	// Exercise the shipped preparation form, including setup visibility and retry callbacks.
+	let scheduleAi;
+	let scheduleRetries = 0;
+	const scheduleHooks = {
+		useCareerTime: () => ({ profile: { data: { emailVerified: true } }, timeZone: "UTC", locale: "en-US" }),
+		useCareerQueries: () => ({ profile: { data: { targetRoles: [], locations: [] } } }),
+		useCareerAction: () => ({ pending: false }),
+		useNow: () => new Date("2026-10-31T12:00:00Z"),
+	};
+	const { ScheduleSheet } = load("features/career/schedule-sheet.tsx", {
+		"@react-native-community/datetimepicker": { default: "DateTimePicker" },
+		"@tanstack/react-query": { useQuery: () => ({ data: { search: true, provider: null } }) },
+		"@reactive-resume/schema/career": {},
+		"@reactive-resume/utils/timezone": { fromZonedDateTime: () => new Date("2026-11-02T12:00:00Z") },
+		"./hooks": scheduleHooks,
+		"./scheduling": {
+			collectInterviews: () => [],
+			nextCareerRun: () => new Date("2026-11-02T12:00:00Z"),
+			toZoned: () => ({ date: "2026-11-02", time: "12:00" }),
+		},
+		"./shared": { EditorSheet: "EditorSheet", SwitchRow: "SwitchRow" },
+		"@/api/client": { orpc: { webAccess: { status: { queryOptions: () => ({}), key: () => [] } } } },
+		"@/api/flags": { useFlags: () => ({ data: { careerSchedulingEnabled: true } }) },
+		"@/auth/session": { useSession: () => ({ status: "signed-in", server: "https://fictional.example" }) },
+		"@/features/ai/providers": { useHasAIProvider: () => scheduleAi },
+		"@/features/ai/web-access": {},
+		"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+	});
+	for (const state of ["loading", "error", "empty", "configured"]) {
+		reset();
+		const provider = { id: "fictional", label: "Fictional connection" };
+		scheduleAi = {
+			isLoading: state === "loading",
+			isUnavailable: state === "loading" || state === "error",
+			error: state === "error" ? new Error("Offline") : null,
+			usableProviders: state === "configured" ? [provider] : [],
+			defaultProvider: state === "configured" ? provider : null,
+			hasAIProvider: state === "configured",
+			retry: () => scheduleRetries++,
+		};
+		const form = render(ScheduleSheet, { schedule: null, kind: "prepare", onClose() {}, onDelete() {} });
+		const formTree = render(form.type, form.props);
+		assert.equal(
+			nodes(formTree).some((node) => node.props.label === "Connect AI provider"),
+			state === "empty" || state === "configured",
+			`Setup availability for ${state}`,
+		);
+		if (state === "error") control(formTree, "Retry AI connections").onPress();
+		if (state === "configured") assert.equal(control(formTree, "AI connection").value, provider.id);
+	}
+	assert.equal(scheduleRetries, 1);
+	console.log("PASS native preparation distinguishes loading/error from empty/configured AI lookup");
 }
-assert.equal(scheduleRetries, 1);
-console.log("PASS native preparation distinguishes loading/error from empty/configured AI lookup");
 
 const { CustomFields } = load("features/write/basics-screen.tsx", {
 	"expo-image": { Image: "Image" },
@@ -1715,3 +1837,54 @@ await assert.rejects(profileMutationResult, /Invalid profile field/);
 assert.deepEqual(calls, [], "invalid draft never reaches profile API after confirmation");
 assert.equal(control(profileView(), "Username").value, "!", "failed validation preserves draft");
 console.log("PASS native username revalidates after asynchronous public-link confirmation");
+
+reset();
+pictureOptions.onError(new Error("Network request failed"));
+assert.equal(calls.at(-1).message, "Couldn't upload the photo. Try again.");
+pictureOptions.onError(new Error("Choose a photo smaller than 10 MB."));
+assert.equal(calls.at(-1).message, "Choose a photo smaller than 10 MB.");
+console.log("PASS native photo failure distinguishes network retry from size guidance");
+
+let preferenceDraft;
+let preferenceLocale;
+const { Preferences } = load("features/career/preferences.tsx", {
+	react: { ...react, useEffect() {}, useLayoutEffect() {} },
+	"@tanstack/react-query": { useQueryClient: () => ({}) },
+	"@reactive-resume/schema/career": careerSchema,
+	"@reactive-resume/utils/amount": amountParser,
+	"./hooks": {
+		useCareerTime: () => ({ locale: preferenceLocale, timeZone: "UTC", profile: { data: { id: "owner" } } }),
+	},
+	"./role-suggestions": { RoleSuggestions: "RoleSuggestions" },
+	"./search-regions-field": { SearchRegionsField: "SearchRegionsField" },
+	"@/api/client": {},
+	"@/auth/session": { useSession: () => ({ server: "test" }) },
+	"@/features/workspace/hooks": {
+		useDraft: (_key, initial) => {
+			preferenceDraft ??= { ...initial, amount: "Invalid draft" };
+			return {
+				value: preferenceDraft,
+				blocked: true,
+				reset: (value) => {
+					preferenceDraft = value;
+				},
+			};
+		},
+	},
+});
+for (const locale of ["de-DE", "fr-FR"]) {
+	reset();
+	preferenceLocale = locale;
+	preferenceDraft = null;
+	const initial = careerSchema.careerProfileDataSchema.parse({
+		minBase: { amount: 1234.56, currency: "EUR", period: "month" },
+	});
+	control(render(Preferences, { initial }), "Use saved version").onPress();
+	assert.equal(
+		amountParser.parseAmount(preferenceDraft.amount, locale),
+		1234.56,
+		`${locale}: restored amount retains exact saved value`,
+	);
+	assert.equal(preferenceDraft.amount, new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(1234.56));
+}
+console.log("PASS native saved Preferences amounts round-trip in comma-decimal locales");

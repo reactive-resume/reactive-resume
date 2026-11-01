@@ -7,6 +7,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { selectOfferPair } from "@reactive-resume/schema/career-offer";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -23,7 +24,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
-import { defaultPair, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
+import { formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry } from "./offer-entry";
 import { useCareerTime, useNow } from "./shared";
 import { orpc } from "@/libs/orpc/client";
@@ -50,6 +51,15 @@ const writePair = (a: string | undefined, b: string | undefined) => {
 };
 
 const companyOf = (offer: Offer) => offer.application?.company ?? t`Deleted application`;
+const outcomeLabel = (offer: Offer) =>
+	offer.application?.closedReason === "accepted"
+		? t`Accepted`
+		: offer.application?.status === "closed"
+			? t`Closed`
+			: offer.application?.status === "offer"
+				? t`Offer`
+				: t`In progress`;
+const isDeciding = (offer: Offer) => offer.application?.status !== "closed";
 const versionLabel = (offer: Offer) => (offer.data.version === "verbal" ? t`Verbal offer` : t`Written offer`);
 
 type OffersPageProps = { a: string | undefined; b: string | undefined };
@@ -73,12 +83,7 @@ export function OffersPage({ a, b }: OffersPageProps) {
 			writePair(a, b);
 			return;
 		}
-		const stored = readPair();
-		const [first, second] =
-			exists(stored.a) && exists(stored.b) && stored.a !== stored.b ? [stored.a, stored.b] : defaultPair(offers);
-		// No distinct second offer leaves the right column empty, never a copy of the left.
-		const nextA = exists(a) ? a : first;
-		const next = { a: nextA, b: exists(b) && b !== nextA ? b : nextA === second ? first : second };
+		const next = selectOfferPair(offers, { a, b }, readPair());
 		if (next.a !== a || next.b !== b)
 			void navigate({ to: "/dashboard/career/offers", search: { a: next.a, b: next.b }, replace: true });
 	}, [query.data, a, b, navigate]);
@@ -107,7 +112,12 @@ export function OffersPage({ a, b }: OffersPageProps) {
 				frame={(action) => (
 					<EmptyState
 						title={<Trans>No offers to compare yet</Trans>}
-						description={<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>}
+						description={
+							<Trans>
+								Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing
+								as accepted does not record terms.
+							</Trans>
+						}
 						action={action}
 					/>
 				)}
@@ -117,10 +127,15 @@ export function OffersPage({ a, b }: OffersPageProps) {
 	const left = offers.find((offer) => offer.id === a);
 	const right = offers.find((offer) => offer.id === b);
 	const pair = [left, right].filter((offer): offer is Offer => offer !== undefined);
+	const sameApplication = !!left?.applicationId && left.applicationId === right?.applicationId;
+	const earlier = sameApplication
+		? offers.filter((offer) => pair.some((item) => item.id === offer.id)).at(-1)
+		: undefined;
 
 	return (
 		<div className="grid gap-5">
 			<OfferEntry />
+			{earlier && <h2 className="text-base font-semibold">{t`Changes since ${versionLabel(earlier)}`}</h2>}
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<p className="text-sm text-ink-2">
 					<Trans>
@@ -155,14 +170,19 @@ export function OffersPage({ a, b }: OffersPageProps) {
 			/>
 
 			<div className="grid items-start gap-5 md:grid-cols-2">
-				<OpenQuestions offers={pair} />
+				<OpenQuestions
+					offers={
+						sameApplication
+							? offers.filter((offer) => pair.some((selected) => selected.id === offer.id)).slice(0, 1)
+							: pair
+					}
+				/>
 				<p className="flex gap-3 rounded-xl bg-warn-soft p-4 text-[13px] leading-[19px] text-warn-text">
 					<Icon name="info" size={18} className="mt-px shrink-0" />
 					<span>
 						<Trans>
 							<strong className="font-semibold">Totals aren't added up on purpose.</strong> Bonus and equity depend on
-							conditions, and equity value is uncertain for both. Read the original offer documents before comparing
-							totals.
+							conditions, and equity value is uncertain. Read the original offer documents before comparing totals.
 						</Trans>
 					</span>
 				</p>
@@ -222,7 +242,10 @@ function ComparisonTable({ offers, left, right, onChoose }: ComparisonTableProps
 										<Trans>Save another offer to compare</Trans>
 									</p>
 									<p className="text-[13px] text-ink-3">
-										<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>
+										<Trans>
+											Add offer terms manually, including accepted offers, or use optional AI extraction in Messages.
+											Closing as accepted does not record terms.
+										</Trans>
 									</p>
 									{offers.length > 1 && (
 										<OfferHeader
@@ -359,7 +382,10 @@ function OfferHeader({ offer, offers, otherId, onChoose }: OfferHeaderProps) {
 								<span className="truncate text-[13px] text-ink-2">{offer.application.role}</span>
 							)}
 							<span className="text-xs text-ink-3">
-								{versionLabel(offer)} · {t`saved ${when(offer.createdAt)}`}
+								{versionLabel(offer)} · {t`saved ${when(offer.createdAt)}`} · {outcomeLabel(offer)} ·{" "}
+								{offers
+									.filter((item) => item.applicationId === offer.applicationId)
+									.findIndex((item) => item.id === offer.id) + 1}
 							</span>
 						</span>
 						<Icon name="caret-down" size={18} className="shrink-0 text-ink-3" />
@@ -376,12 +402,13 @@ function OfferHeader({ offer, offers, otherId, onChoose }: OfferHeaderProps) {
 						<DropdownMenuGroup key={first.id}>
 							<DropdownMenuLabel>
 								{companyOf(first)}
-								{first.application?.role ? ` · ${first.application.role}` : ""}
+								{first.application?.role ? ` · ${first.application.role}` : ""} · {outcomeLabel(first)}
 							</DropdownMenuLabel>
 							{versions.map((item) => (
 								<DropdownMenuItem key={item.id} disabled={item.id === otherId} onClick={() => onChoose(item.id)}>
 									<span className="flex-1">
-										{versionLabel(item)} · {when(item.createdAt)}
+										{versionLabel(item)} · {when(item.createdAt)} · {versions.indexOf(item) + 1}
+										{item.id === first.id ? ` · ${t`Latest`}` : ""}
 									</span>
 									{item.id === offer?.id && <Icon name="check" size={16} />}
 								</DropdownMenuItem>
@@ -404,7 +431,13 @@ function useCells() {
 		const company = companyOf(offer);
 		const unknown: Cell = {
 			value: <span className="text-ink-3">{t`Unknown`}</span>,
-			notes: [{ icon: "question", tone: "warn", text: t`Not in the offer · ask ${company}` }],
+			notes: [
+				{
+					icon: "question",
+					tone: "warn",
+					text: isDeciding(offer) ? t`Not in the offer · ask ${company}` : t`Not recorded`,
+				},
+			],
 		};
 		const money = (amount: number) => {
 			const value = formatMoney(locale, terms.currency, amount);
@@ -413,6 +446,16 @@ function useCells() {
 		const better = (key: "base" | "variable" | "learning"): Note[] => {
 			if (!other) return [];
 			const difference = moneyDifference(terms, other.data, key);
+			if (
+				offer.applicationId &&
+				offer.applicationId === other.applicationId &&
+				difference !== null &&
+				difference !== 0
+			) {
+				const delta = `${difference > 0 ? "+" : "−"}${formatMoney(locale, terms.currency, Math.abs(difference))}`;
+				const version = versionLabel(other);
+				return [{ icon: "info", tone: "muted", text: t`${delta} vs ${version}` }];
+			}
 			if (difference !== null && difference > 0)
 				return [{ icon: "arrow-up", tone: "better", text: t`${formatMoney(locale, terms.currency, difference)} more` }];
 			if (key === "base" && difference === null && other.data.base !== null && terms.base !== null)
@@ -479,7 +522,9 @@ function useCells() {
 				respondBy && hoursLeft !== null
 					? {
 							value: when(respondBy),
-							notes: [{ icon: "clock", tone: hoursLeft < 48 ? "warn" : "muted", text: relative(respondBy, now) }],
+							notes: isDeciding(offer)
+								? [{ icon: "clock", tone: hoursLeft < 48 ? "warn" : "muted", text: relative(respondBy, now) }]
+								: [],
 						}
 					: unknown,
 		};
@@ -550,7 +595,7 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 		[t`When do they need your answer?`, (terms) => terms.respondBy === null],
 	];
 	const questions = checks.flatMap(([question, open]) => {
-		const who = offers.filter((offer) => open(offer.data));
+		const who = offers.filter((offer) => isDeciding(offer) && open(offer.data));
 		return who.length
 			? [{ question, ask: who.length === offers.length && offers.length > 1 ? t`Ask both` : t`Ask ${names(who)}` }]
 			: [];
@@ -574,17 +619,17 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 	return (
 		<section className="grid gap-3 rounded-xl border border-line bg-surface p-4">
 			<h2 className="text-sm font-semibold">
-				<Trans>Not in either offer yet</Trans>
+				{offers.length > 1 ? <Trans>Not in either offer yet</Trans> : <Trans>Open questions</Trans>}
 			</h2>
 			{questions.length === 0 ? (
 				<p className="text-[13px] text-ink-2">
-					<Trans>Both offers cover everything compared here.</Trans>
+					<Trans>No questions to ask before deciding.</Trans>
 				</p>
 			) : (
 				<>
 					<p className="text-[13px] leading-[19px] text-ink-2">
 						{said
-							? offers.length > 1
+							? offers.filter(isDeciding).length > 1
 								? t`You said: “${said}” Ask both companies before deciding.`
 								: t`You said: “${said}” Ask before deciding.`
 							: t`Ask before deciding.`}
