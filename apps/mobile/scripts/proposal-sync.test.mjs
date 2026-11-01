@@ -459,3 +459,52 @@ for (const kind of ["resume", "letter"]) {
 		await o.store.getState().close();
 	});
 }
+
+test("resume: its own Share write keeps Undo and confirmed decisions; the stream echo doesn't clear them (RX-161)", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	accept(s, "resume");
+	await s().flush();
+	assert.equal(s().canUndo, true);
+	const confirmed = s().proposalApplications;
+	assert.notDeepEqual(confirmed, {});
+	await o.writeMetadata(async (baseline) => ({
+		...baseline,
+		...(await network("resume").update({ id: "resume", isPublic: true, expectedUpdatedAt: baseline.updatedAt })),
+	}));
+	assert.equal(s().document.isPublic, true);
+	assert.equal(s().canUndo, true);
+	assert.deepEqual(s().proposalApplications, confirmed);
+	await o.refresh();
+	assert.equal(s().canUndo, true, "The echo of this app's own revision is not someone else's");
+	assert.deepEqual(s().proposalApplications, confirmed);
+	// Content saved after it builds on the Share revision instead of conflicting with it.
+	s().update((d) => void (d.basics.headline = "After share"), { newStep: true });
+	await s().flush();
+	assert.equal(s().status, "saved");
+	assert.equal(documents.resume.data.basics.headline, "After share");
+	assert.equal(documents.resume.isPublic, true);
+});
+
+test("resume: a Share write after a revision from elsewhere fails its version check and keeps the draft (RX-161)", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	accept(s, "resume");
+	await s().flush();
+	documents.resume = { ...documents.resume, updatedAt: new Date(documents.resume.updatedAt.getTime() + 5) };
+	await assert.rejects(
+		o.writeMetadata(async (baseline) => ({
+			...baseline,
+			...(await network("resume").update({ id: "resume", isPublic: true, expectedUpdatedAt: baseline.updatedAt })),
+		})),
+	);
+	assert.equal(s().document.isPublic, false);
+	// The foreign revision still reaches the draft the usual way, and clears what it can't vouch for.
+	await o.refresh();
+	assert.equal(s().canUndo, false);
+	assert.deepEqual(s().proposalApplications, {});
+});

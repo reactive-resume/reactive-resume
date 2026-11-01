@@ -94,6 +94,8 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 	let persistenceTimer: ReturnType<typeof setTimeout> | undefined;
 	let queueGeneration = 0;
 	let inflight: Promise<void> | null = null;
+	// A sharing or other metadata write of this app's own: content saves wait for it, then build on its revision.
+	let metadataWrite: Promise<unknown> | null = null;
 	let replaying: Promise<void> | null = null;
 	let resolving = false;
 	let force = false;
@@ -406,6 +408,10 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			await inflight;
 			return flush();
 		}
+		if (metadataWrite) {
+			await metadataWrite.catch(() => undefined);
+			return flush();
+		}
 		if (!record || !dirty || state().conflict || state().locked) return;
 		if (!env.online()) {
 			store.setState({ status: durable ? "offline" : "error" });
@@ -525,6 +531,45 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			throw error;
 		} finally {
 			resolving = false;
+		}
+	}
+
+	/**
+	 * Runs this app's own conditional write of fields next to the data (sharing settings) against the saved revision,
+	 * and takes its answer as that revision. Unlike a refresh, which treats any newer revision as someone else's, this
+	 * keeps Undo, Redo, confirmed assistant decisions and edits typed meanwhile. A revision from elsewhere still fails
+	 * the write's version check, and a draft that changed visit or account in between is left to refresh as before.
+	 */
+	async function writeMetadata(write: (baseline: D) => Promise<D>): Promise<D> {
+		if (inflight) await inflight;
+		if (!record) throw new Error("No draft is open.");
+		const active = record;
+		const visit = generation;
+		const before = active.baseline;
+		const run = write(before);
+		metadataWrite = run;
+		try {
+			const written = await run;
+			if (
+				record === active &&
+				visit === generation &&
+				active.baseline === before &&
+				adapter.version(written) > adapter.version(before) &&
+				(await currentOwner()) &&
+				record === active
+			) {
+				active.baseline = written;
+				// Local fields changed since the saved revision stay; the rest is the server's answer.
+				active.document = adapter.merge(written, before, active.document);
+				publish(active.document);
+				store.setState({ locked: written.isLocked });
+				if (dirty) persist();
+				else settleStored();
+			}
+			return written;
+		} finally {
+			if (metadataWrite === run) metadataWrite = null;
+			if (dirty && record === active) void flush();
 		}
 	}
 
@@ -676,6 +721,7 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			return () => pendingListeners.delete(listener);
 		},
 		refresh,
+		writeMetadata,
 		replay,
 		blur,
 		clearDraftsFor,
