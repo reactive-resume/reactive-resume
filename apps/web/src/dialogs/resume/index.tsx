@@ -45,7 +45,9 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 	const update = useMutation({
 		...updateOptions,
 		mutationFn: (value) =>
-			saveResumeMetadata(value.id, (expectedUpdatedAt) => orpc.resume.update.call({ ...value, expectedUpdatedAt })),
+			saveResumeMetadata(value.id, (expectedUpdatedAt, options) =>
+				orpc.resume.update.call({ ...value, expectedUpdatedAt }, options),
+			),
 	});
 	const duplicate = useMutation(orpc.resume.duplicate.mutationOptions());
 

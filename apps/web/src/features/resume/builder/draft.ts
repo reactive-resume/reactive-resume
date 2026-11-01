@@ -144,7 +144,7 @@ type ResumeUpdateSubscriptionOptions = {
 };
 
 const SAVE_DEBOUNCE_MS = 500;
-const NAVIGATION_SAVE_WAIT_MS = 10_000;
+const SAVE_WAIT_MS = 10_000;
 // Edits without a field key coalesce within this window (e.g. dragging); keyed edits to the same field
 // coalesce within FIELD_COALESCE_MS (typing a sentence).
 const HISTORY_COALESCE_MS = 500;
@@ -652,8 +652,7 @@ export const useResumeStore = create<ResumeStore>()(
 			}
 			setRuntimeBaseline(resume);
 
-			// This runs both for the echo of our own autosave (identical data → keep history) and for
-			// external/cross-tab/AI rebases (different data → local undo history no longer applies).
+			// Only an acknowledged revision keeps history: identical body data can hide a remote receipt-only Undo.
 			const current = get().resume;
 			// An echo keeps the data object the store already holds: a new but identical one would make everything that
 			// renders from it run again, the preview's PDF render of every page included, after every save.
@@ -913,10 +912,33 @@ function trackResumeMetadataWrite(id: string) {
 /** Shares the autosave owner: finish earlier body writes, then hold later edits until this metadata revision is known. */
 export async function saveResumeMetadata<T extends Resume>(
 	id: string,
-	write: (expectedUpdatedAt: Date | undefined) => Promise<T>,
+	write: (expectedUpdatedAt: Date | undefined, options?: { signal: AbortSignal }) => Promise<T>,
 ): Promise<T> {
 	const runtime = runtimes.get(id);
-	if (!runtime) return write(undefined);
+	if (!runtime?.baseUpdatedAt) throw new DOMException("", "AbortError");
+	/** Cancels transport and releases the local wait without trusting a late response. */
+	const writeWithDeadline = async (expectedUpdatedAt: Date | undefined) => {
+		const controller = new AbortController();
+		const endVisit = () => controller.abort(runtime.abortController.signal.reason);
+		runtime.abortController.signal.addEventListener("abort", endVisit, { once: true });
+		const timeout = setTimeout(
+			() =>
+				controller.abort(
+					new DOMException(t`Saving is taking longer than expected. Your changes are still open.`, "TimeoutError"),
+				),
+			SAVE_WAIT_MS,
+		);
+		const aborted = new Promise<never>((_, reject) => {
+			controller.signal.addEventListener("abort", () => reject(controller.signal.reason), { once: true });
+		});
+		try {
+			// A cancelled request may have committed; late answers cannot certify its revision.
+			return await Promise.race([write(expectedUpdatedAt, { signal: controller.signal }), aborted]);
+		} finally {
+			clearTimeout(timeout);
+			runtime.abortController.signal.removeEventListener("abort", endVisit);
+		}
+	};
 	const acknowledge = trackResumeMetadataWrite(id);
 	const pending = (runtime.metadataWrite?.catch(() => undefined) ?? Promise.resolve()).then(async () => {
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
@@ -924,7 +946,7 @@ export async function saveResumeMetadata<T extends Resume>(
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
 		runtime.metadataWriting = true;
 		try {
-			const updated = await write(runtime.baseUpdatedAt);
+			const updated = await writeWithDeadline(runtime.baseUpdatedAt);
 			acknowledge(updated);
 			return updated;
 		} finally {
@@ -1039,15 +1061,18 @@ export function useBuilderResumeUpdateSubscription() {
 	const onUpdate = useCallback(
 		async (event: ResumeUpdateEvent) => {
 			if (!resumeId) return;
+			const visit = runtimes.get(resumeId);
+			if (!visit) return;
 
 			bindRuntimeQueryClient(resumeId, queryClient);
 			const resume = (await orpc.resume.getById.call({ id: resumeId })) as Resume;
 			// Let this visit acknowledge its own metadata before an early stream echo can rebase its history.
-			await runtimes.get(resumeId)?.metadataWrite?.catch(() => undefined);
+			await visit.metadataWrite?.catch(() => undefined);
 
 			const runtime = runtimes.get(resumeId);
 			if (
 				!runtime ||
+				runtime !== visit ||
 				useResumeStore.getState().resume?.id !== resumeId ||
 				(runtime.baseUpdatedAt && resume.updatedAt < runtime.baseUpdatedAt)
 			)
@@ -1137,7 +1162,7 @@ export function savePendingChanges(id: string): boolean | Promise<boolean> {
 				id: runtime.slowSaveToastId,
 				timeout: 0,
 			});
-		}, NAVIGATION_SAVE_WAIT_MS);
+		}, SAVE_WAIT_MS);
 		void flushResumeSave(id);
 	});
 }
