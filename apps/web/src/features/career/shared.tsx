@@ -13,6 +13,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
+import { pendingCommits } from "./pending-commits";
 import { D2, EASE, EXIT } from "@/libs/motion";
 
 // ---- Time: always in the user's timezone, "Thu 8 Oct, 17:58". Relative time is secondary text. ----
@@ -76,13 +77,6 @@ type UndoInput = {
 	/** Restores what was hidden. */
 	onUndo: () => void;
 };
-
-/** Commits waiting on an open undo toast; leaving the page runs them rather than dropping them. */
-const pendingCommits = new Set<() => void>();
-if (typeof document !== "undefined")
-	document.addEventListener("visibilitychange", () => {
-		if (document.visibilityState === "hidden") for (const flush of pendingCommits) flush();
-	});
 
 /**
  * Forget, delete, dismiss, apply: the caller hides or shows the change at once and this commits it when the toast

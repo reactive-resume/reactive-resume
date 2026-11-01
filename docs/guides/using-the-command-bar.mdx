@@ -40,7 +40,7 @@ To close it, press <kbd>Esc</kbd> or press <kbd>⌘</kbd> <kbd>K</kbd> again.
 ## Find a document or application
 
 When you're signed in, typing on the first list also searches your documents and applications. Matches appear above
-the commands, the top match is selected, and <kbd>Enter</kbd> opens it:
+the commands, the top match is selected until you move the highlight, and <kbd>Enter</kbd> opens it:
 
 - **Resumes** and **Letters** match a document's name, its tags, and the company or role of the application it was
   made for. A resume's public address isn't searched, because it can still carry an earlier name.
@@ -64,10 +64,24 @@ open the full list for that kind. **Show all letters** opens **Documents** filte
   />
 </Frame>
 
+The **Resumes** list loads 100 matches per page. Use **Next** and **Previous** to reach older matches. **Show all resumes** keeps the search you typed. In the native app, **Show all** opens the paginated Documents library when Search reaches 100 matches. Wait for document results to load before pressing Search on the keyboard; selecting a visible result also opens it.
+
+<Frame caption="A second page in the command bar's resume results">
+  <img
+    src="/images/guides/using-the-command-bar/command-bar-resume-pages.png"
+    alt="The command bar shows Archive resume 101 on the second page and a Previous action, keeping the archive-resume search."
+  />
+</Frame>
+
 ## What you can do
 
 The command bar groups its rows by what they do. Rows that need an account appear or become available once you're
 signed in.
+
+### Documents
+
+When you're signed in and type on the first screen, your resumes and letters whose name, tags, or linked job's company
+or role match appear first, above commands. Press <kbd>Enter</kbd> to open the top match in its editor.
 
 ### Search for…
 
@@ -86,16 +100,18 @@ signed in.
 
 ### Go to…
 
-| Row              | Where it goes                                                                              |
-| ---------------- | ------------------------------------------------------------------------------------------ |
-| **Home**         | The Reactive Resume home page.                                                             |
-| **Documents**    | Your resumes and cover letters.                                                            |
-| **New document** | Opens the **New** dialog.                                                                  |
-| **Trash**        | Documents you moved to Trash.                                                              |
-| **ATS checker**  | The public [ATS checker](/guides/using-the-ats-checker) for any PDF resume.                |
-| **Applications** | Your job application tracker.                                                              |
-| **Save job**     | Opens the Save job dialog.                                                                 |
-| **Settings**     | Opens a second list with **Account**, **Profile**, **Preferences** and **AI & developer**. |
+| Row                  | Where it goes                                                                              |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| **Home**             | The Reactive Resume home page.                                                             |
+| **Documents**        | Your resumes and cover letters.                                                            |
+| **New document**     | Opens the **New** dialog.                                                                  |
+| **New cover letter** | Creates a letter and opens it, like **New cover letter instead** in the New dialog.        |
+| **Trash**            | Documents you moved to Trash.                                                              |
+| **ATS checker**      | The public [ATS checker](/guides/using-the-ats-checker) for any PDF resume.                |
+| **Applications**     | Your job application tracker.                                                              |
+| **Career**           | Career: Today, Coach, Knowledge and Offers.                                                |
+| **Save job**         | Opens the Save job dialog.                                                                 |
+| **Settings**         | Opens a second list with **Account**, **Profile**, **Preferences** and **AI & developer**. |
 
 ## Ask the assistant
 

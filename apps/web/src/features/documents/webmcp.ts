@@ -21,14 +21,15 @@ function createDocumentTools(router: ReturnType<typeof useRouter>): readonly Web
 		execute: async (_, signal) => {
 			const documents = await client.documents.list({ trashed: false }, signal ? { signal } : {});
 			return [...documents]
-				.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-				.map(({ type, id, name, tags, isLocked, updatedAt, application }) => ({
+				.sort((a, b) => b.editedAt.getTime() - a.editedAt.getTime())
+				.map(({ type, id, name, tags, isLocked, updatedAt, editedAt, application }) => ({
 					type,
 					id,
 					name,
 					tags,
 					isLocked,
 					updatedAt,
+					editedAt,
 					application,
 				}));
 		},

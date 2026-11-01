@@ -60,3 +60,35 @@ it("ranks dated actions first, sorts their dates, and breaks equal keys by stabl
 	expect(compareNextStepSortKeys(nextStepSortKey(dated, now), nextStepSortKey(a, now), dated.id, a.id)).toBeLessThan(0);
 	expect(compareNextStepSortKeys([0, 100], [0, 200], "B", "A")).toBeLessThan(0);
 });
+
+it("uses only the current Interview visit when deciding whether feedback is due", () => {
+	const application = app("A", "interview", "2026-10-25", "2026-10-30");
+	const interview: ApplicationTimelineEntry = {
+		id: "interview",
+		type: "interview",
+		at: new Date("2026-10-20T10:00:00Z"),
+		kind: "technical",
+		durationMinutes: 60,
+		location: "",
+		notes: "",
+		participants: [],
+		audience: "practitioner",
+		timezone: "UTC",
+	};
+	application.activity.push(interview);
+	expect(getNextStep(application, now).kind).toBe("no-interview");
+	application.activity.push({ ...interview, id: "current", at: new Date("2026-10-27T10:00:00Z") });
+	expect(getNextStep(application, now).kind).toBe("interview-feedback");
+});
+
+it("shares account-clock sorting while preserving explicitly timed midnight follow-ups", () => {
+	const application = { ...app("A", "applied", "2026-10-25", "2026-10-30"), followUpAt: new Date("2030-01-03") };
+	expect(nextStepSortKey({ ...application, followUpDateOnly: true }, now, "Pacific/Honolulu")).toEqual([
+		0,
+		new Date("2030-01-03T19:00:00Z").getTime(),
+	]);
+	expect(nextStepSortKey({ ...application, followUpDateOnly: false }, now, "Pacific/Honolulu")).toEqual([
+		0,
+		application.followUpAt.getTime(),
+	]);
+});

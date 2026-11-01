@@ -16,8 +16,9 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { formatFileSize } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { useNewDocumentsStore } from "./new-documents";
-import { useStartDocument } from "./use-start-document";
+import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { useDialogStore } from "@/dialogs/store";
+import { AddApplicationDialog } from "@/features/applications/components/add-application-dialog";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { detectImportKind, ImportError, readResumeFile, summarizeImport } from "@/features/resume/import/read-file";
@@ -52,8 +53,6 @@ type Step =
 	| { name: "copy" };
 
 type OpenResumeOptions = { withAssistant?: boolean; importedFrom?: string };
-
-const ACCEPT = ".pdf,.docx,.json,.zip,application/pdf,application/json,application/zip";
 
 function requireImportKind(kind: ImportKind | null): ImportKind {
 	if (!kind) {
@@ -231,7 +230,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 			<input
 				ref={inputRef}
 				type="file"
-				accept={ACCEPT}
+				accept={IMPORT_ACCEPT}
 				className="hidden"
 				aria-label={t`Choose a file to import`}
 				onChange={(event) => {
@@ -247,6 +246,8 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						initialSourceId={data?.sourceResumeId}
 						initialJobId={data?.applicationId}
 						onBack={() => setStep({ name: "choose" })}
+						// Opened straight on this step (a card's Copy for a job…): there's no choice to go back to.
+						onCancel={data?.step === "copy" ? closeDialog : undefined}
 						onCreated={(resumeId, forJob) => {
 							markNew(resumeId);
 							void refreshDocuments();
@@ -594,18 +595,25 @@ type CopyForJobProps = {
 	initialSourceId?: string | undefined;
 	initialJobId?: string | undefined;
 	onBack: () => void;
+	/** Replaces Back when the dialog opened on this step. */
+	onCancel?: (() => void) | undefined;
 	/** The new resume, and whether it was made for a job. */
 	onCreated: (resumeId: string, forJob: boolean) => void;
 };
 
-/** Pick a resume and a job; the copy is named from both and linked to the application. */
-function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyForJobProps) {
+/**
+ * Pick a resume and a job; the copy is named from both and linked to the application. Opened from a resume, that
+ * resume is a summary row (Change shows the list); a job not saved yet can be added without leaving.
+ */
+function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated }: CopyForJobProps) {
 	const { i18n } = useLingui();
 	const nameId = useId();
+	const [changingSource, setChangingSource] = useState(!initialSourceId);
+	const [addingJob, setAddingJob] = useState(false);
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
-	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const applications = useQuery(applicationsListQueryOptions());
 	const resumes = (documents ?? []).filter((document) => document.type === "resume");
-	const jobs = (applications ?? []).filter((application) => application.status !== "closed");
+	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
 	const [sourceId, setSourceId] = useState(initialSourceId);
 	const [jobId, setJobId] = useState<string | null>(initialJobId ?? null);
 	const [name, setName] = useState<string | null>(null);
@@ -613,22 +621,23 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 
 	const source = resumes.find((resume) => resume.id === sourceId) ?? resumes[0];
 	const job = jobs.find((application) => application.id === jobId);
+	const waitingForJob = !!jobId && !job && applications.isFetching;
 	const base = (source?.name ?? "").split(" — ")[0] ?? "";
-	const suggested = job ? `${base} — ${job.company}` : t`${base} (copy)`;
+	const suggested = (job ? `${base} — ${job.company}` : t`${base} (copy)`).slice(0, 100);
 	const finalName = (name ?? suggested).trim();
 
 	const create = async () => {
-		if (!source) return;
+		if (!source || waitingForJob) return;
 		const input = {
 			resumeId: source.id,
-			...(job ? { applicationId: job.id } : {}),
+			...(jobId ? { applicationId: jobId } : {}),
 			...(finalName ? { name: finalName } : {}),
 		};
 		const message = job ? t`Created and linked to ${job.company}` : t`Created “${finalName}”`;
 		try {
 			const resumeId = await copyForJob(input);
 			toast.add({ description: message });
-			onCreated(resumeId, Boolean(job));
+			onCreated(resumeId, Boolean(jobId));
 		} catch (error) {
 			toastError(error, t`Couldn't copy the resume. Try again.`);
 		}
@@ -653,33 +662,46 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 						</Trans>
 					</p>
 				)}
-				<div className="grid max-h-56 gap-1 overflow-y-auto">
-					{resumes.map((resume) => (
-						<label
-							key={resume.id}
-							className={cn(
-								"relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors duration-quick",
-								resume.id === source?.id ? "border-accent bg-accent-soft" : "border-line hover:bg-hover",
-							)}
-						>
-							<input
-								type="radio"
-								name="copy-source"
-								className="sr-only"
-								checked={resume.id === source?.id}
-								onChange={() => {
-									setSourceId(resume.id);
-									setName(null);
-								}}
-							/>
-							<Icon name="file-text" className="text-ink-2" />
-							<span className="grid min-w-0 flex-1">
-								<span className="truncate text-sm font-medium">{resume.name}</span>
-								<span className="text-xs text-ink-3">{formatRelativeTime(resume.updatedAt, i18n.locale)}</span>
-							</span>
-						</label>
-					))}
-				</div>
+				{!changingSource && source ? (
+					<div className="flex items-center gap-3 rounded-lg border border-accent bg-accent-soft px-3 py-2.5">
+						<Icon name="file-text" className="text-ink-2" />
+						<span className="grid min-w-0 flex-1">
+							<span className="truncate text-sm font-medium">{source.name}</span>
+							<span className="text-xs text-ink-3">{formatRelativeTime(source.editedAt, i18n.locale)}</span>
+						</span>
+						<Button variant="ghost" size="sm" onClick={() => setChangingSource(true)}>
+							<Trans>Change</Trans>
+						</Button>
+					</div>
+				) : (
+					<div className="grid max-h-56 gap-1 overflow-y-auto">
+						{resumes.map((resume) => (
+							<label
+								key={resume.id}
+								className={cn(
+									"relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors duration-quick",
+									resume.id === source?.id ? "border-accent bg-accent-soft" : "border-line hover:bg-hover",
+								)}
+							>
+								<input
+									type="radio"
+									name="copy-source"
+									className="sr-only"
+									checked={resume.id === source?.id}
+									onChange={() => {
+										setSourceId(resume.id);
+										setName(null);
+									}}
+								/>
+								<Icon name="file-text" className="text-ink-2" />
+								<span className="grid min-w-0 flex-1">
+									<span className="truncate text-sm font-medium">{resume.name}</span>
+									<span className="text-xs text-ink-3">{formatRelativeTime(resume.editedAt, i18n.locale)}</span>
+								</span>
+							</label>
+						))}
+					</div>
+				)}
 			</fieldset>
 
 			<fieldset className="grid gap-1.5">
@@ -688,7 +710,11 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 				</legend>
 				<div className="flex flex-wrap gap-1.5">
 					{[
-						...jobs.map((application) => ({ id: application.id, label: application.company })),
+						// Two roles at one company stay apart.
+						...jobs.map((application) => ({
+							id: application.id,
+							label: application.role.trim() ? `${application.role} · ${application.company}` : application.company,
+						})),
 						{ id: null, label: t`No job yet` },
 					].map((option) => (
 						<button
@@ -710,7 +736,25 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 							{option.label}
 						</button>
 					))}
+					<button
+						type="button"
+						onClick={() => setAddingJob(true)}
+						className="flex h-8 items-center gap-1.5 rounded-sm border border-dashed border-line-2 px-3 text-[13px] text-ink-2 transition-[background-color,scale] duration-quick ease-enter hover:bg-hover active:scale-[0.97]"
+					>
+						<Icon name="plus" size={16} />
+						<Trans>Add a job…</Trans>
+					</button>
 				</div>
+				<AddApplicationDialog
+					forPicker
+					open={addingJob}
+					onOpenChange={setAddingJob}
+					onAdded={(applicationId) => {
+						setJobId(applicationId);
+						setName(null);
+						void applications.refetch();
+					}}
+				/>
 				{job && (
 					<span className="text-xs text-ink-3">
 						<Trans>The copy is linked to the application, so Check and the assistant use its posting.</Trans>
@@ -734,10 +778,16 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 			</div>
 
 			<div className="flex flex-wrap justify-end gap-2">
-				<Button variant="ghost" onClick={onBack}>
-					{documents && resumes.length === 0 ? <Trans>Import or create a resume</Trans> : <Trans>Back</Trans>}
-				</Button>
-				<Button disabled={!source || !finalName || isPending} onClick={() => void create()}>
+				{documents && resumes.length === 0 ? (
+					<Button variant="ghost" onClick={onBack}>
+						<Trans>Import or create a resume</Trans>
+					</Button>
+				) : (
+					<Button variant="ghost" onClick={onCancel ?? onBack}>
+						{onCancel ? <Trans>Cancel</Trans> : <Trans>Back</Trans>}
+					</Button>
+				)}
+				<Button disabled={!source || !finalName || isPending || waitingForJob} onClick={() => void create()}>
 					<Trans>Create and open</Trans>
 				</Button>
 			</div>

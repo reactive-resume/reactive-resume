@@ -52,7 +52,7 @@ export function Write() {
 			data-scene={SCENE.write}
 			data-pin
 			aria-labelledby="write-title"
-			className="relative h-[280vh] motion-reduce:h-svh min-[900px]:h-[330vh]"
+			className="relative h-[280vh] min-[900px]:h-[330vh]"
 		>
 			<div
 				className="sticky top-0 h-svh overflow-clip [--card:calc(1-var(--cl))] [--chip:var(--cl)] [--cl:clamp(0,(var(--p)-.8)/.08,1)] [--cm:clamp(0,(var(--p)-.36)/.08,1)] [--in:clamp(0,var(--p)/.12,1)] [--oc:var(--cl)] [--st:clamp(0,(var(--p)-.48)/.08,1)] [--ta:clamp(0,(var(--p)-.12)/.22,1)] [--ti:clamp(0,(var(--p)-.56)/.2,1)]"

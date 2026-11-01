@@ -83,7 +83,7 @@ const common = {
 		Platform: { OS: "android" },
 		BackHandler: { addEventListener: () => ({ remove() {} }) },
 	},
-	"expo-router": { useRouter: () => router, Stack: { Screen: "StackScreen" } },
+	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },
 	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
 	"@lingui/core/macro": { t: tag, plural: (value, forms) => forms.other.replace("#", String(value)) },
 	"@/ui": ui,
@@ -139,9 +139,27 @@ const state = (over = {}) => ({
 let applications = state();
 const saved = state();
 const profile = state({ data: {} });
+const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
+const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
+const careerSchema = load("../../../packages/schema/src/career.ts", {
+	zod,
+	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
+	"@reactive-resume/utils/timezone": timeParser,
+});
+const offerDomain = load("../../../packages/schema/src/career-offer.ts", {
+	"./career": careerSchema,
+	"@reactive-resume/utils/amount": load("../../../packages/utils/src/amount.ts"),
+	"@reactive-resume/utils/timezone": timeParser,
+});
 const shared = load("features/career/shared.tsx");
 const { OffersScreen } = load("features/career/offers.tsx", {
-	"./hooks": { useOffers: () => saved, useCareerQueries: () => ({ profile }) },
+	"./hooks": {
+		useOffers: () => saved,
+		useCareerQueries: () => ({ profile }),
+		useCareerTime: () => ({ locale: "en-US", timeZone: "UTC", when: String }),
+		useNow: () => new Date(),
+	},
+	"@reactive-resume/schema/career-offer": offerDomain,
 	"./offer-compare": load("features/career/offer-compare.ts"),
 	"./offer-entry": { OfferEntry: "OfferEntry" },
 	"./shared": shared,
@@ -195,10 +213,64 @@ assert.equal(
 	"persisted",
 	"cached metadata keeps the user's form mounted during a background error",
 );
+
+const retainedTerms = {
+	kind: "offer",
+	version: "written",
+	currency: "EUR",
+	period: "year",
+	base: 100000,
+	variable: null,
+	variableConditions: "",
+	equity: "",
+	location: "",
+	officeDays: null,
+	leave: "",
+	learning: null,
+	other: "",
+	respondBy: null,
+};
+saved.data = [
+	{
+		id: "retained",
+		applicationId: "saved-job",
+		application: { company: "Retained Co", role: "Engineer", status: "offer" },
+		data: retainedTerms,
+		createdAt: new Date(),
+	},
+];
+profile.data = {
+	minBase: { amount: null, currency: "EUR", period: "year" },
+	locations: [],
+	maxOfficeDays: null,
+	noticeWeeks: null,
+};
+for (const mode of ["pending", "error"]) {
+	reset();
+	applications = state({ data: undefined, isPending: mode === "pending", isError: mode === "error" });
+	const retained = expand(render(OffersScreen));
+	assert.ok(
+		nodes(retained).some((node) => node.type === "Text" && node.props.children.includes("Retained Co")),
+		"saved offer survives missing application metadata",
+	);
+	assert.ok(
+		nodes(retained).some(
+			(node) =>
+				node.type === "Text" &&
+				node.props.children.some((child) => typeof child === "string" && child.includes("€100,000")),
+		),
+		"comparison terms remain available",
+	);
+	if (mode === "error") assert.ok(nodes(retained).some((node) => node.type === "Banner"));
+}
+saved.data = [];
+
 console.log("PASS native Offers loading/error/retry/persisted row and genuine-empty controls");
 
 let count = 9;
 let failed = false;
+let resumesPending = false;
+let resumeCount = 0;
 const inputs = [];
 const letters = Array.from({ length: 209 }, (_, i) => ({
 	id: `letter-${i + 1}`,
@@ -210,6 +282,7 @@ const letters = Array.from({ length: 209 }, (_, i) => ({
 }));
 const { SearchScreen } = load("features/search/search-screen.tsx", {
 	"./rank": load("features/search/rank.ts"),
+	"@/features/ai/providers": { useHasAIProvider: () => ({ isUnavailable: false, hasAIProvider: true }) },
 	"@/auth/session": {
 		getAccountScope: () => "fixture-account",
 		useSession: () => ({ status: "signed-in", server: "fixture-server" }),
@@ -235,6 +308,16 @@ const { SearchScreen } = load("features/search/search-screen.tsx", {
 			if (queryKey[0] === "threads") return state();
 			const input = queryKey[1];
 			inputs.push(input);
+			if (input.type === "resume")
+				return state({
+					isPending: resumesPending,
+					data: Array.from({ length: resumeCount }, (_, i) => ({
+						id: `resume-${i}`,
+						type: "resume",
+						name: `Archive resume ${i}`,
+						tags: [],
+					})),
+				});
 			if (!enabled) return state({ data: undefined, isPending: true });
 			return input.type === "letter"
 				? state({ data: failed ? undefined : letters.slice(0, Math.min(input.limit, count)), isError: failed })
@@ -274,4 +357,34 @@ nodes(tree)
 assert.equal(calls.at(-1), "retry");
 console.log("PASS native 8/9/multipage letter preview, server query, preserved continuation and transport retry");
 
+reset();
+
+// Enter cannot run a local action or Ask before the current document lookup settles.
+failed = false;
+reset();
+tree = render(SearchScreen);
+nodes(tree)
+	.find((node) => node.type === "TextInput")
+	.props.onChangeText("resume");
+render(SearchScreen);
+await new Promise((resolve) => setTimeout(resolve, 220));
+resumesPending = true;
+tree = render(SearchScreen);
+const beforePendingEnter = calls.length;
+nodes(tree)
+	.find((node) => node.type === "TextInput")
+	.props.onSubmitEditing();
+assert.equal(calls.length, beforePendingEnter, "pending Enter cannot open a local shortcut or assistant");
+resumesPending = false;
+resumeCount = 100;
+tree = render(SearchScreen);
+const moreResumes = nodes(tree).find((node) => node.type === "ListRow" && node.props.title === "Show all");
+assert.ok(moreResumes);
+moreResumes.props.onPress();
+tree = render(SearchScreen);
+const libraryContinuation = nodes(tree).find((node) => node.type === "ListRow" && node.props.title === "Show all");
+assert.ok(libraryContinuation);
+libraryContinuation.props.onPress();
+assert.deepEqual(calls.at(-1), { pathname: "/documents", params: { q: "resume", type: "resume" } });
+console.log("PASS native pending Enter and 100-resume filtered library continuation");
 reset();

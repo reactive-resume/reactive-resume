@@ -553,6 +553,10 @@ msgstr "{days, plural, one {{company}: няма отговор от # ден. К
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done} от {count} готови"
@@ -674,6 +678,10 @@ msgstr "Тип {pairing}"
 #: src/features/assistant/page-marks.tsx
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# предложена редакция на тази страница · нищо не се променя, докато не приемете} other {# предложени редакции на тази страница · нищо не се променя, докато не приемете}}"
+
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
@@ -919,6 +927,11 @@ msgstr "Приеми"
 msgid "Accept all"
 msgstr "Приеми всички"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Приета"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Прие друга оферта"
@@ -976,6 +989,11 @@ msgstr "Добавяне на държава"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "Добавете факт"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1156,8 +1174,8 @@ msgid "Add offer"
 msgstr "Добавяне на оферта"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Добавете условията на офертата за работа ръчно или използвайте извличането с ИИ по желание в „Съобщения“."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1811,6 +1829,10 @@ msgstr "Възходящо"
 msgid "Ask"
 msgstr "Попитайте"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Попитайте за тази кандидатура…"
@@ -1875,10 +1897,6 @@ msgstr "Помощник"
 #: src/features/search/search-screen.tsx
 msgid "Assistant conversations"
 msgstr "Разговори с асистент"
-
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "В 09:00 часа този ден ({timeZone})."
 
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
@@ -2216,6 +2234,7 @@ msgstr "Отмяна на заявка"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Кариера"
 
@@ -2273,6 +2292,10 @@ msgstr "Промяна на темата на…"
 msgid "Change timezone"
 msgstr "Смяна на часовата зона"
 
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Промени директно резюмето (предишен разговор)"
@@ -2284,6 +2307,11 @@ msgstr "Промените не можаха да бъдат запазени. �
 #: src/features/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Променя само заглавията на секциите и думите за дата, но не и вашето съдържание."
+
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
@@ -2625,6 +2653,8 @@ msgstr "затвори..."
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Затворено"
 
@@ -2634,6 +2664,7 @@ msgstr "Приключени: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Коуч"
@@ -2773,6 +2804,10 @@ msgstr "Свържете доставчик на AI"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Свържете доставчик на AI в Настройки, за да се обновява автоматично."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Свържете AI доставчик, за да прочетете подробности от поставения текст. Ръчното въвеждане работи без AI."
@@ -2796,6 +2831,10 @@ msgstr "Свържете инструментите, които използва
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Свързан · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Свързани приложения"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3180,6 +3219,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Кандидатурата не можа да бъде отбелязана като подадена. Опитайте отново."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3430,6 +3470,10 @@ msgid "Couldn't upload the photo."
 msgstr "Неуспешно качване на снимката."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Снимката не можа да бъде качена. Опитайте отново."
 
@@ -3460,6 +3504,7 @@ msgstr "Запълване"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3476,6 +3521,7 @@ msgid "Cover letter — {0}"
 msgstr "Мотивационно писмо — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Файл с мотивационно писмо"
@@ -4064,6 +4110,7 @@ msgstr "Изтеглянето отваря системното меню за �
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Изтегляне отваря системния лист за споделяне. Изберете доставчик на хранилище, за да запазите файла. Свързано мотивационно писмо се отваря като втори файл."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Изтегляне на PDF"
@@ -4718,6 +4765,7 @@ msgid "Follow-up date"
 msgstr "Дата на последващи действия"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Допълнителна бележка"
 
@@ -4984,6 +5032,7 @@ msgstr "Заглавие 3"
 msgid "Heading changed"
 msgstr "Заглавието е променено"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Подзаглавие"
@@ -5264,6 +5313,10 @@ msgid "Import it"
 msgstr "Импортирайте го"
 
 #: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
 msgstr "Импортирайте текущата си автобиография или започнете отначало с вашето име."
 
@@ -5291,6 +5344,11 @@ msgstr "Подобрете избраната линия"
 #: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Подобряване..."
+
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "In the Offer stage, terms not added"
@@ -5581,6 +5639,10 @@ msgstr "Ограничете се до две или три фамилии. Вс
 msgid "Keep together"
 msgstr "Дръжте се заедно"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Запазва най-специфичните части"
@@ -5621,6 +5683,7 @@ msgstr "с уважение,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Знания"
 
@@ -5702,6 +5765,7 @@ msgid "Later"
 msgstr "По-късно"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Най-новото"
 
@@ -5973,6 +6037,10 @@ msgstr "Свързан. Актуализация на име, имейл, тел
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Връзки"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6372,6 +6440,7 @@ msgstr "Повече"
 msgid "More details"
 msgstr "Повече подробности"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "Още опции"
@@ -6751,6 +6820,9 @@ msgid "No application"
 msgstr "Няма кандидатура"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Все още няма кандидатури за работа. Първо добавете такъв в кандидатурите за работа."
@@ -6779,6 +6851,10 @@ msgstr "Не бяха открити обичайни заглавия на ра
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Все още няма разговори за този документ."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6930,6 +7006,10 @@ msgstr "Няма резултати"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Без резюме"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7185,6 +7265,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Изкл. Само вие можете да видите това резюме."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Оферта"
@@ -7198,6 +7280,7 @@ msgid "Offer type"
 msgstr "Вид оферта"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Оферти"
 
@@ -7756,10 +7839,12 @@ msgstr "Снимка"
 msgid "Photo hidden"
 msgstr "Снимката е скрита"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "Снимката е скрита от страницата."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Снимка на страницата."
@@ -8392,6 +8477,12 @@ msgstr "Време на записа"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Вербовчик"
@@ -8801,6 +8892,7 @@ msgstr "Резултат"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8825,6 +8917,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Обратна връзка за автобиографии, помощ за продукта и идеи от общността."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Файл с автобиография"
@@ -9010,6 +9103,10 @@ msgstr "Преглед на отговора ми"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "„Преглед на отговора ми“ изпраща въпроса, казаното от вас, тази обява и вашите Знания до {providerName}."
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr "Прегледайте разрешенията и прекъснете връзката с приложенията в браузъра си. Може да се наложи да влезете там."
 
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
@@ -9915,6 +10012,7 @@ msgstr "Покажи повече"
 msgid "Show on page"
 msgstr "Показване на страницата"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Показване на снимката"
@@ -10938,6 +11036,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "Сървърът върна невалиден резултат от импортиране. Опреснете документите, преди да опитате отново."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Версията на сървъра не може да бъде заредена. Вашият текст се запазва; опитайте отново."
@@ -11077,6 +11176,8 @@ msgstr "Този файл с мотивационно писмо не е вал�
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Тази дата или час не съществуват във вашата часова зона. Изберете друго време."
@@ -11366,6 +11467,7 @@ msgstr "Стегнете до една страница"
 msgid "Tightening"
 msgstr "Стягане на текста"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Час"
@@ -11413,6 +11515,11 @@ msgstr "Заглавие"
 msgid "To"
 msgstr "до"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "За проверка"
@@ -11423,6 +11530,7 @@ msgstr "За да получите напомняне, разрешете изв
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Днес"
@@ -11662,6 +11770,7 @@ msgstr "Подчертайте връзките"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -11908,6 +12017,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 
@@ -12180,6 +12291,7 @@ msgstr "Неуспешно търсене в мрежата: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "Уеб търсенията търсят работа в тези страни. Изберете до три държави."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Уебсайт"
@@ -12433,6 +12545,10 @@ msgstr "Пишете числата с цифри"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Опишете в пет части нещо, което сте направили. Оставете „Резултат“ и „Размисъл“ празни до момента, в който можете да ги подкрепите с факти."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12704,6 +12820,10 @@ msgstr "вашия доставчик"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Вашите публични връзки започват с {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

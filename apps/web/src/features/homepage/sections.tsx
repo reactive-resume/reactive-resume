@@ -5,16 +5,15 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { AppleLogoIcon, GooglePlayLogoIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Label } from "@reactive-resume/ui/components/label";
-import { supportedLocales } from "@reactive-resume/utils/locale";
+import { isRTL, supportedLocales } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE, useLanding } from "./scroll";
 import { CtaLink, Doodle, labelClass } from "./ui";
 import { RollingNumber } from "@/components/ui/rolling-number";
-import { LocaleCombobox } from "@/features/locale/combobox";
+import { localeMap } from "@/libs/locale";
 import { orpc } from "@/libs/orpc/client";
 
 const crowdinUrl = "https://crowdin.com/project/reactive-resume";
@@ -103,7 +102,6 @@ const words = [
 /** 09 Languages. The word turns over every 1.9s while the section is near; it can be paused. */
 export function Languages() {
 	const { i18n } = useLingui();
-	const languageId = useId();
 	const languageCount = i18n.number(supportedLocales.length);
 	const near = useLanding((state) => state.activeScene >= SCENE.numbers && state.activeScene <= SCENE.support);
 	const reducedMotion = useLanding((state) => state.reducedMotion);
@@ -120,6 +118,7 @@ export function Languages() {
 
 	return (
 		<section
+			id="languages"
 			data-scene={SCENE.languages}
 			aria-labelledby="languages-title"
 			className="relative flex flex-col items-center gap-[22px] overflow-hidden px-(--gutter) py-[14vh] text-center"
@@ -176,11 +175,101 @@ export function Languages() {
 					{t`Help translate it into yours.`}
 				</a>
 			</p>
-			<div className="grid w-full max-w-80 gap-1.5 text-start">
-				<Label htmlFor={languageId}>{t`Change language`}</Label>
-				<LocaleCombobox id={languageId} />
-			</div>
+			<LanguageIndex />
 		</section>
+	);
+}
+
+// Languages more than one locale shares are told apart by region or script; the rest go by the language alone.
+const nameVariants: Record<string, string> = { "zh-CN": "zh-Hans", "zh-TW": "zh-Hant" };
+const sharedLanguages = new Set(["en", "pt", "zh"]);
+// Chromium ships no locale data for these, so it would name them in English; the names are the platform's own (CLDR).
+const unlistedNames: Record<string, string> = { km: "ខ្មែរ", ne: "नेपाली", or: "ଓଡ଼ିଆ", sq: "shqip" };
+
+/**
+ * A locale's name in its own language ("Deutsch", "日本語"), from the platform's locale data. `exact` tells locales of
+ * one language apart ("British English"); without it, it's the language alone ("English").
+ */
+function ownLanguageName(locale: string, exact = true) {
+	const language = locale.split("-")[0] ?? locale;
+	const code = exact && sharedLanguages.has(language) ? (nameVariants[locale] ?? locale) : language;
+	const name =
+		(Intl.DisplayNames.supportedLocalesOf([locale]).length === 0 ? unlistedNames[language] : undefined) ??
+		new Intl.DisplayNames([locale], { type: "language" }).of(code) ??
+		locale;
+	return name.charAt(0).toLocaleUpperCase(locale) + name.slice(1);
+}
+
+/**
+ * The homepage in `locale`, back at the Languages scene, keeping the rest of the address. English is named too, so
+ * it overrides a saved choice; the server points its canonical address at the plain one.
+ */
+function languageHref(locale: string) {
+	const url = new URL(typeof window === "undefined" ? "/" : window.location.href, "https://localhost");
+	url.searchParams.set("locale", locale);
+	return `/?${url.searchParams}#languages`;
+}
+
+type LanguageDoorwayProps = { className?: string; nameClassName?: string };
+
+/** The current language, in its own name, leading to the Languages scene: the header's and the footer's way there. */
+export function LanguageDoorway({ className, nameClassName }: LanguageDoorwayProps) {
+	const { i18n } = useLingui();
+	const name = ownLanguageName(i18n.locale, false);
+	return (
+		<a href="#languages" title={t`Change language`} className={cn("flex items-center", className)}>
+			<Icon name="translate" size={16} />
+			<span lang={i18n.locale} className={nameClassName}>
+				{name}
+			</span>
+		</a>
+	);
+}
+
+/**
+ * Every language the app speaks, each in its own name and script, as plain links to the page in that language. They
+ * work before the app's script runs, and the server stores the choice (`?locale=`) for sign-up and the app.
+ */
+function LanguageIndex() {
+	const { i18n } = useLingui();
+
+	return (
+		<nav aria-labelledby="languages-title" className="max-w-[46em]">
+			<ul className="font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-balance text-ink-2">
+				{supportedLocales.map((locale, index) => {
+					const name = ownLanguageName(locale);
+					const dir = isRTL(locale) ? "rtl" : undefined;
+					return (
+						<li key={locale} className="inline">
+							{/* Each name keeps its separator, so a line never starts with one; lines break between names. */}
+							<span className="whitespace-nowrap">
+								{locale === i18n.locale ? (
+									<span lang={locale} dir={dir} aria-current="page" className="text-accent-text italic">
+										{name}
+									</span>
+								) : (
+									<a
+										href={languageHref(locale)}
+										hrefLang={locale}
+										lang={locale}
+										dir={dir}
+										title={i18n._(localeMap[locale])}
+										className="touch-target relative inline-block py-1.5 underline-offset-[3px] transition-colors duration-quick hover:text-ink hover:underline focus-visible:text-ink focus-visible:underline"
+									>
+										{name}
+									</a>
+								)}
+								{index < supportedLocales.length - 1 && (
+									<span aria-hidden="true" className="px-1.5 text-ink-3">
+										·
+									</span>
+								)}
+							</span>{" "}
+						</li>
+					);
+				})}
+			</ul>
+		</nav>
 	);
 }
 
@@ -397,17 +486,16 @@ export function Closing() {
 							<span className="text-lg leading-tight font-semibold">Google Play</span>
 						</span>
 					</a>
-					<button
-						type="button"
-						disabled
-						className="inline-flex min-h-14 cursor-not-allowed items-center gap-3 rounded-xl border border-line px-5 py-2.5 text-start font-ui text-ink-3"
+					<a
+						href="https://testflight.apple.com/join/desWgpRk"
+						className="inline-flex min-h-14 items-center gap-3 rounded-xl border border-line-2 bg-raised px-5 py-2.5 text-start font-ui text-ink transition-[background-color,transform] duration-[160ms] ease-out-strong hover:bg-hover motion-safe:active:scale-[.97]"
 					>
 						<AppleLogoIcon aria-hidden="true" size={28} weight="fill" className="shrink-0" />
 						<span className="flex flex-col gap-0.5">
-							<span className="text-xs leading-tight">{t`Coming soon`}</span>
-							<span className="text-lg leading-tight font-semibold">App Store</span>
+							<span className="text-xs leading-tight text-ink-2">{t`Get the beta on`}</span>
+							<span className="text-lg leading-tight font-semibold">TestFlight</span>
 						</span>
-					</button>
+					</a>
 				</div>
 			</div>
 		</section>

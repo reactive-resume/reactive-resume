@@ -1,4 +1,5 @@
 import type { ApplicationStatus, ApplicationTimelineEntry, InterviewTimelineEntry } from "./data";
+import { followUpInstant } from "./follow-up";
 
 const DAY_MS = 86_400_000;
 const FOLLOW_UP_AFTER_DAYS = 10;
@@ -8,7 +9,11 @@ export type ApplicationStageSource = {
 	activity: readonly ApplicationTimelineEntry[];
 	appliedAt: Date | string;
 };
-type NextStepSource = ApplicationStageSource & { followUpAt: Date | string | null; followUpNote: string | null };
+type NextStepSource = ApplicationStageSource & {
+	followUpAt: Date | string | null;
+	followUpNote: string | null;
+	followUpDateOnly?: boolean | undefined;
+};
 
 /**
  * What an application needs next, derived rather than stored: the earliest interview still to come, else the
@@ -44,7 +49,7 @@ const daysBetween = (from: Date, to: Date) => Math.max(0, Math.floor((to.getTime
 const daysInStage = (application: ApplicationStageSource, now: Date) =>
 	daysBetween(applicationStageSince(application), now);
 
-export function getNextStep(application: NextStepSource, now = new Date()): NextStep {
+export function getNextStep(application: NextStepSource, now = new Date(), timeZone = "UTC"): NextStep {
 	if (application.status === "closed") return { kind: "closed" };
 
 	const upcoming = application.activity
@@ -55,7 +60,7 @@ export function getNextStep(application: NextStepSource, now = new Date()): Next
 	if (upcoming) return { kind: "interview", ...upcoming };
 
 	if (application.followUpAt) {
-		const at = new Date(application.followUpAt);
+		const at = followUpInstant(application, timeZone) ?? new Date(application.followUpAt);
 		return { kind: "follow-up", at, note: application.followUpNote ?? "", overdue: at.getTime() < now.getTime() };
 	}
 
@@ -64,10 +69,13 @@ export function getNextStep(application: NextStepSource, now = new Date()): Next
 	const days = daysInStage(application, now);
 	if (application.status === "applied" && days >= FOLLOW_UP_AFTER_DAYS) return { kind: "no-reply", days };
 	if (application.status === "offer") return { kind: "offer", days };
-	if (application.status === "interview")
-		return application.activity.some((entry) => entry.type === "interview")
-			? { kind: "interview-feedback", days }
-			: { kind: "no-interview", days };
+	if (application.status === "interview") {
+		const since = applicationStageSince(application).getTime();
+		const feedbackDue = application.activity.some(
+			(entry) => entry.type === "interview" && new Date(entry.at).getTime() >= since,
+		);
+		return feedbackDue ? { kind: "interview-feedback", days } : { kind: "no-interview", days };
+	}
 	return { kind: "waiting", days };
 }
 
@@ -100,8 +108,12 @@ export const needsFollowUp = (step: NextStep, now = new Date()) =>
  * Sort key for "Next step": dated steps first, soonest first; then the rest by when they entered their stage, so the
  * longest wait comes first. Compare the rank, then the time; callers break ties by ID so the order is stable.
  */
-export function nextStepSortKey(application: NextStepSource, now = new Date()): [rank: number, time: number] {
-	const step = getNextStep(application, now);
+export function nextStepSortKey(
+	application: NextStepSource,
+	now = new Date(),
+	timeZone = "UTC",
+): [rank: number, time: number] {
+	const step = getNextStep(application, now, timeZone);
 	if (step.kind === "interview" || step.kind === "follow-up") return [0, step.at.getTime()];
 	return [1, applicationStageSince(application).getTime()];
 }

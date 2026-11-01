@@ -103,6 +103,7 @@ export const application = pg.pgTable(
 		coverLetterUrl: pg.text("cover_letter_url"),
 		coverLetterName: pg.text("cover_letter_name"),
 		followUpAt: pg.timestamp("follow_up_at", { withTimezone: true }),
+		followUpDateOnly: pg.boolean("follow_up_date_only").notNull().default(false),
 		followUpNote: pg.text("follow_up_note"),
 		contacts: pg.jsonb("contacts").notNull().$type<Contact[]>().default([]),
 		activity: pg.jsonb("activity").notNull().$type<ApplicationTimelineEntry[]>().default([]),

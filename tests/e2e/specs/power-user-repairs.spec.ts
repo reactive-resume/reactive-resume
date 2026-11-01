@@ -14,13 +14,13 @@ async function seedLetters(page: Page, pool: Pool, count: number) {
 	await pool.query("update cover_letter set tags = array['studioletters'] where id = $1", [id]);
 	if (count > 1)
 		await pool.query(
-			`insert into cover_letter (id,user_id,name,style,tags,updated_at)
+			`insert into cover_letter (id,user_id,name,style,tags,updated_at,edited_at)
  select $1||'-'||n,user_id,'Studio letter '||lpad(n::text,3,'0'),style,array['studioletters'],
- now()-make_interval(mins=>n) from cover_letter cross join generate_series(2,$2::int) n where id=$1`,
+ now()-make_interval(mins=>n),now()-make_interval(mins=>n) from cover_letter cross join generate_series(2,$2::int) n where id=$1`,
 			[id, count],
 		);
 	const { rows } = await pool.query(
-		"select id,name,tags from cover_letter where user_id=(select user_id from cover_letter where id=$1) and 'studioletters'=any(tags) order by updated_at desc,id",
+		"select id,name,tags from cover_letter where user_id=(select user_id from cover_letter where id=$1) and 'studioletters'=any(tags) order by edited_at desc,id",
 		[id],
 	);
 	expect(rows).toHaveLength(count);

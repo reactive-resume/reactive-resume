@@ -106,16 +106,16 @@ function ApplicationsList() {
 	const [dismissed, setDismissed] = useState(readDismissed);
 	// Same rule as web and Career → Today: a due follow-up, or ten days without a reply.
 	const owesFollowUp = (application: (typeof applications)[number]) =>
-		needsFollowUp(getNextStep(application, now), now);
+		needsFollowUp(getNextStep(application, now, laneList, timeZone), now);
 	const owed = applications
 		.filter((application) => !dismissed.includes(application.id) && owesFollowUp(application))
-		.map((application) => ({ application, step: getNextStep(application, now) }))
+		.map((application) => ({ application, step: getNextStep(application, now, laneList, timeZone) }))
 		.sort((a, b) => (b.step.kind === "no-reply" ? b.step.days : -1) - (a.step.kind === "no-reply" ? a.step.days : -1));
 	const company = owed[0]?.application.company ?? "";
 	const count = owed.length;
 	const days = owed[0]?.step.kind === "no-reply" ? owed[0].step.days : 0;
 	const dismissOwed = () => {
-		const next = [...dismissed, ...owed.map(({ application }) => application.id)].slice(-1000);
+		const next = [...new Set([...dismissed, ...owed.map(({ application }) => application.id)])];
 		setDismissed(next);
 		try {
 			Storage.setItemSync(NUDGE_STORAGE_KEY, JSON.stringify(next));
@@ -127,7 +127,7 @@ function ApplicationsList() {
 		(application) => !followUpOnly || owesFollowUp(application),
 	);
 	const filtersActive = Boolean(search.trim() || tag || showClosed || followUpOnly);
-	const groups = groupApplications(filtered, sort, direction, now, laneList);
+	const groups = groupApplications(filtered, sort, direction, now, laneList, timeZone);
 	const selectedIds = visibleSelection(groups, collapsed, selected);
 	const onViewableItemsChanged = useApplicationDetailPrefetch();
 	const tags = [...new Set(applications.flatMap((item) => item.tags))].sort();
@@ -254,7 +254,7 @@ function ApplicationsList() {
 											setFollowUpOnly(true);
 										}),
 								}
-							: { label: t`Open`, onPress: () => router.push(routes.application(owed[0]?.application.id ?? "")) }
+							: { label: t`Open`, onPress: () => router.push(routes.applicationDetails(owed[0]?.application.id ?? "")) }
 					}
 					onDismiss={dismissOwed}
 				/>
@@ -391,6 +391,7 @@ function ApplicationsList() {
 														setSearch("");
 														setTag("");
 														setShowClosed(false);
+														setFollowUpOnly(false);
 													})
 											: router.setParams({ create: "1" }),
 								}}
@@ -443,7 +444,15 @@ function ApplicationsList() {
 						</Pressable>
 					)}
 					renderItem={({ item, index }) => {
-						const next = describeNextStep(getNextStep(item, now), item, i18n.locale, timeZone);
+						const next = describeNextStep(getNextStep(item, now, lanes.lanes, timeZone), item, i18n.locale, timeZone);
+						const sentDocuments = [
+							item.resumeId ? t`Resume` : null,
+							item.coverLetterId ? t`Cover letter` : null,
+							item.resumeFileUrl ? t`Resume file` : null,
+							item.coverLetterUrl ? t`Cover letter file` : null,
+						]
+							.filter(Boolean)
+							.join(" · ");
 						return (
 							<Animated.View
 								{...listItemMotion(index, firstAppearance)}
@@ -457,7 +466,7 @@ function ApplicationsList() {
 								<View style={{ flex: 1 }}>
 									<ListRow
 										title={item.role}
-										subtitle={`${item.company}${item.location ? ` · ${item.location}` : ""}\n${next.title}${next.sub ? ` · ${next.sub}` : ""}`}
+										subtitle={`${item.company}${item.location ? ` · ${item.location}` : ""}\n${next.title}${next.sub ? ` · ${next.sub}` : ""}${sentDocuments ? `\n${sentDocuments}` : ""}`}
 										selected={selectedIds.includes(item.id)}
 										leading={selecting ? (selectedIds.includes(item.id) ? "check-square" : "square") : undefined}
 										accessibilityHint={selecting ? t`Toggle selection` : t`Open application`}

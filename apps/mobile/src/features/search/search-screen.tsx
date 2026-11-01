@@ -10,6 +10,7 @@ import { ActivityIndicator, BackHandler, Platform, Pressable, ScrollView, TextIn
 import { rank } from "./rank";
 import { client, orpc } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
+import { useHasAIProvider } from "@/features/ai/providers";
 import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
 import { useIsTablet } from "@/shell/use-is-tablet";
@@ -52,10 +53,11 @@ function useThreads(enabled: boolean) {
 	});
 }
 
-function useDocumentSearch(search: string, type: "resume" | "letter", limit: number, enabled: boolean) {
+function useDocumentSearch(search: string, type: "resume" | "letter" | "all", limit: number, enabled: boolean) {
 	const session = useSession();
 	const scope = getAccountScope();
 	const text = search.trim().slice(0, 500);
+	const tooLong = search.trim().length > 500;
 	const [q, setQ] = useState(text);
 	useEffect(() => {
 		const timer = setTimeout(() => setQ(text), 200);
@@ -67,9 +69,14 @@ function useDocumentSearch(search: string, type: "resume" | "letter", limit: num
 	const query = useQuery({
 		...options,
 		queryKey: [...options.queryKey, scope],
-		enabled: enabled && session.status === "signed-in" && q === text,
+		enabled: enabled && !tooLong && session.status === "signed-in" && q === text,
 	});
-	return { ...query, data: q === text ? query.data : undefined, isPending: q !== text || query.isPending };
+	return {
+		...query,
+		data: !tooLong && q === text ? query.data : undefined,
+		isPending: enabled && session.status === "signed-in" && !tooLong && (q !== text || query.isPending),
+		isError: !tooLong && q === text && query.isError,
+	};
 }
 
 /**
@@ -95,6 +102,10 @@ export function SearchScreen() {
 	);
 	const letterQuery = useDocumentSearch(query, "letter", 9, typing && page === "root");
 	const applications = useApplications();
+	const ai = useHasAIProvider();
+	const latestDocument = useDocumentSearch("", "all", 1, signedIn);
+	const name = latestDocument.data?.[0]?.name;
+	const needsProvider = !ai.isUnavailable && !ai.hasAIProvider;
 	const threads = useThreads(typing || page === "threads");
 
 	// Search is a modal: leave it for the destination, back to an open tab when the destination is one.
@@ -195,6 +206,15 @@ export function SearchScreen() {
 			onPress: () => go(routes.atsChecker()),
 		},
 		{
+			key: "career",
+			icon: "compass",
+			title: t`Career`,
+			keywords: [t`Coach`, t`Knowledge`, t`Offers`, t`Today`],
+			account: true,
+			root: true,
+			onPress: () => go(routes.career()),
+		},
+		{
 			key: "new-application",
 			icon: "briefcase",
 			title: t`Save job`,
@@ -273,11 +293,15 @@ export function SearchScreen() {
 	const available = actions.filter((action) => signedIn || !action.account);
 
 	const ask = async (question: string) => {
+		if (needsProvider) {
+			go(routes.settings("ai"));
+			return;
+		}
 		const scope = getAccountScope();
 		let latest: DocumentSummary | undefined;
 		try {
 			[latest] = await client.documents.list({
-				type: "resume",
+				type: "all",
 				sort: "edited",
 				limit: 1,
 				offset: 0,
@@ -293,8 +317,11 @@ export function SearchScreen() {
 			showToast({ message: t`Create a resume first, then ask about it.` });
 			return;
 		}
-		// M6-T3's assistant route: `?ask=` sends the question in a new conversation.
-		go({ pathname: routes.assistant(latest.id), params: { ask: question } });
+		// The assistant routes' `?ask=` sends the question in a new conversation.
+		go({
+			pathname: latest.type === "letter" ? routes.letterAssistant(latest.id) : routes.assistant(latest.id),
+			params: { ask: question },
+		});
 	};
 
 	const setTheme = (value: ThemePreference) => {
@@ -323,6 +350,17 @@ export function SearchScreen() {
 			rows: [
 				{ key: "create", icon: "plus", title: t`Create a new resume`, onPress: () => go(routes.new()) },
 				...resumes.map(documentRow),
+				...(resumes.length === 100
+					? [
+							{
+								key: "more.resumes",
+								icon: "arrow-right" as const,
+								title: t`Show all`,
+								onPress: () =>
+									go({ pathname: routes.documents(), params: { q: query.trim().slice(0, 500), type: "resume" } }),
+							},
+						]
+					: []),
 			],
 			loading: loading(resumeQuery.isPending, t`Loading resumes…`),
 		});
@@ -435,7 +473,16 @@ export function SearchScreen() {
 						value={query}
 						onChangeText={setQuery}
 						onKeyPress={(event) => onKey(event.nativeEvent.key)}
-						onSubmitEditing={() => (first ? first.onPress() : showAsk ? ask(question) : undefined)}
+						onSubmitEditing={() => {
+							if (
+								(page === "root" || page === "resumes") &&
+								typing &&
+								(resumeQuery.isPending || (page === "root" && letterQuery.isPending))
+							)
+								return;
+							if (first) first.onPress();
+							else if (showAsk) void ask(question);
+						}}
 						placeholder={page === "root" ? t`Type a command or search…` : t`Search…`}
 						placeholderTextColor={colors.ink3}
 						accessibilityLabel={t`Search commands`}
@@ -523,7 +570,17 @@ export function SearchScreen() {
 						<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s4, paddingBottom: space.s1 }}>
 							{t`Ask`}
 						</Text>
-						<ListRow leading="sparkle" title={t`Ask the assistant “${question}”`} onPress={() => ask(question)} />
+						<ListRow
+							leading="sparkle"
+							title={
+								needsProvider
+									? t`Connect an AI provider to ask “${question}”`
+									: name
+										? t`Ask about “${name}”: ${question}`
+										: t`Ask the assistant “${question}”`
+							}
+							onPress={() => ask(question)}
+						/>
 					</View>
 				) : null}
 			</ScrollView>

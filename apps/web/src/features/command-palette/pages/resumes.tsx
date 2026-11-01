@@ -4,7 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { CommandLoading } from "cmdk";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
 import { CommandGroup, CommandItem, CommandShortcut } from "@reactive-resume/ui/components/command";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -46,21 +46,22 @@ const applicationValues = (application: Application) => [
  * The server searches names, tags and linked applications (never public addresses), and returns only a bounded page:
  * a library of thousands of documents isn't loaded to find a few.
  */
-function useDocumentSearch(search: string, type: "resume" | "letter", limit: number, enabled = true) {
+function useDocumentSearch(search: string, type: "resume" | "letter", limit: number, enabled = true, offset = 0) {
 	const [q] = useDebounceValue(search.trim().slice(0, 500), 200);
+	const tooLong = search.trim().length > 500;
 	const query = useQuery({
 		...orpc.documents.list.queryOptions({
-			input: { type, q, limit, offset: 0, sort: "edited", tags: [], trashed: false },
+			input: { type, q, limit, offset, sort: "edited", tags: [], trashed: false },
 		}),
 		// Typed text waits for its own search; it never fetches the unfiltered list first.
-		enabled: enabled && (q !== "" || search.trim() === ""),
+		enabled: enabled && !tooLong && (q !== "" || search.trim() === ""),
 		placeholderData: (previous) => previous,
 	});
 	// Rows for an older query stay hidden: cmdk would still match them on their tags or company.
-	const current = q === search.trim().slice(0, 500) && !query.isPlaceholderData;
+	const current = !tooLong && q === search.trim() && !query.isPlaceholderData;
 	return {
 		documents: current ? (query.data ?? []) : [],
-		loading: !current || query.isLoading,
+		loading: !tooLong && (!current || query.isLoading),
 		error: current && query.isError,
 		refetch: query.refetch,
 	};
@@ -126,6 +127,7 @@ function RootMatches() {
 	const { data: applications } = useQuery({ ...applicationsListQueryOptions(), enabled: typing });
 	const { data: threads } = useQuery({ ...orpc.agent.threads.list.queryOptions(), enabled: typing });
 	const setSelected = useCommandPaletteStore((state) => state.setSelected);
+	const selectionMoved = useCommandPaletteStore((state) => state.selectionMoved);
 	const matchingApplications = (applications ?? []).filter((application) =>
 		matchesSearch(search, applicationValues(application)),
 	);
@@ -146,8 +148,8 @@ function RootMatches() {
 						: undefined
 		: undefined;
 	useEffect(() => {
-		if (topMatch) setSelected(topMatch);
-	}, [topMatch, setSelected]);
+		if (topMatch && !selectionMoved) setSelected(topMatch);
+	}, [topMatch, setSelected, selectionMoved, search]);
 	if (!typing) return null;
 
 	const openDocument = async (document: Document) => {
@@ -161,7 +163,15 @@ function RootMatches() {
 	};
 	// Show all stays visible whatever was typed: it is how the rest of the matches are reached.
 	const more = (page: SearchPage, label: string) => (
-		<CommandItem forceMount value={`more.${page}`} onSelect={() => pushPage(page)} className="text-ink-2">
+		<CommandItem
+			forceMount
+			value={`more.${page}`}
+			onSelect={() => {
+				pushPage(page);
+				useCommandPaletteStore.getState().setSearch(search);
+			}}
+			className="text-ink-2"
+		>
 			<Icon name="arrow-right" size={16} className="rtl:-scale-x-100" />
 			{label}
 		</CommandItem>
@@ -268,7 +278,11 @@ function ResumesPage({ page }: SearchPageProps) {
 	const { openDialog } = useDialogStore();
 	const reset = useCommandPaletteStore((state) => state.reset);
 	const search = useCommandPaletteStore((state) => state.search);
-	const { documents: resumes, loading: isLoading } = useDocumentSearch(search, "resume", 100);
+	const [paging, setPaging] = useState({ search, offset: 0 });
+	if (paging.search !== search) setPaging({ search, offset: 0 });
+	const offset = paging.search === search ? paging.offset : 0;
+	const query = useDocumentSearch(search, "resume", 100, true, offset);
+	const { documents: resumes, loading: isLoading } = query;
 
 	const onCreate = () => {
 		reset();
@@ -309,6 +323,28 @@ function ResumesPage({ page }: SearchPageProps) {
 						</CommandShortcut>
 					</CommandItem>
 				))
+			)}
+			{offset > 0 && (
+				<CommandItem
+					forceMount
+					value="resumes.previous"
+					disabled={query.loading}
+					onSelect={() => setPaging({ search, offset: Math.max(0, offset - 100) })}
+				>
+					<Icon name="arrow-left" size={16} />
+					<Trans>Previous</Trans>
+				</CommandItem>
+			)}
+			{query.documents.length === 100 && (
+				<CommandItem
+					forceMount
+					value="resumes.next"
+					disabled={query.loading}
+					onSelect={() => setPaging({ search, offset: offset + 100 })}
+				>
+					<Icon name="arrow-right" size={16} />
+					<Trans>Next</Trans>
+				</CommandItem>
 			)}
 		</BaseCommandGroup>
 	);

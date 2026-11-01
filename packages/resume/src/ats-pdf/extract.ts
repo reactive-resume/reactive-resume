@@ -51,6 +51,17 @@ function fontSizeOf(item: RawPage["items"][number]): number {
 
 function buildSpans(page: RawPage): TextSpan[] {
 	const spans: TextSpan[] = [];
+	const spaces = new Map<string, { x: number; baseline: number }[]>();
+	const spaceKey = (x: number, baseline: number) => `${Math.round(x * 10)}:${Math.round(baseline * 10)}`;
+	for (const item of page.items) {
+		if (!item.str || item.str.trim()) continue;
+		const x = item.transform[4] + item.width;
+		const baseline = item.transform[5];
+		const key = spaceKey(x, baseline);
+		const bucket = spaces.get(key) ?? [];
+		bucket.push({ x, baseline });
+		spaces.set(key, bucket);
+	}
 
 	page.items.forEach((item, streamIndex) => {
 		if (item.str.trim().length === 0) return;
@@ -71,6 +82,15 @@ function buildSpans(page: RawPage): TextSpan[] {
 			fontRef: item.fontRef,
 			fontSize,
 			streamIndex,
+			...([-0.1, 0, 0.1].some((dx) =>
+				[-0.1, 0, 0.1].some((dy) =>
+					spaces
+						.get(spaceKey(e + dx, f + dy))
+						?.some((space) => Math.abs(space.x - e) <= 0.11 && Math.abs(space.baseline - f) <= 0.11),
+				),
+			)
+				? { spaceBefore: true }
+				: {}),
 		});
 	});
 
@@ -108,22 +128,24 @@ function modalOf(values: readonly number[]): number | null {
  * stream happened to be written. Stream order is measured separately, as inversion.
  */
 function clusterLines(spans: readonly TextSpan[], pageNumber: number, tolerance: number): TextLine[] {
-	const sorted = [...spans].sort((a, b) => a.y - b.y || a.x - b.x || (a.text < b.text ? -1 : a.text > b.text ? 1 : 0));
+	const sorted = [...spans].sort(
+		(a, b) => a.y + a.height - b.y - b.height || a.x - b.x || (a.text < b.text ? -1 : a.text > b.text ? 1 : 0),
+	);
 
 	const groups: TextSpan[][] = [];
 	let current: TextSpan[] = [];
 	let anchor = Number.NaN;
 
 	for (const span of sorted) {
-		if (current.length === 0 || Math.abs(span.y - anchor) <= tolerance) {
-			if (current.length === 0) anchor = span.y;
+		if (current.length === 0 || Math.abs(span.y + span.height - anchor) <= tolerance) {
+			if (current.length === 0) anchor = span.y + span.height;
 			current.push(span);
 			continue;
 		}
 
 		groups.push(current);
 		current = [span];
-		anchor = span.y;
+		anchor = span.y + span.height;
 	}
 
 	if (current.length > 0) groups.push(current);
@@ -142,7 +164,7 @@ function toLine(group: readonly TextSpan[], pageNumber: number): TextLine {
 		if (previous) {
 			const gap = span.x - (previous.x + previous.width);
 			const threshold = SPACE_GAP_RATIO * Math.max(previous.fontSize, span.fontSize, 1);
-			const needsSpace = gap > threshold && !/\s$/.test(text) && !/^\s/.test(span.text);
+			const needsSpace = (span.spaceBefore || gap > threshold) && !/\s$/.test(text) && !/^\s/.test(span.text);
 			if (needsSpace) text += " ";
 		}
 
@@ -314,7 +336,7 @@ function findGutter(spans: readonly TextSpan[], page: RawPage): ColumnGutter | n
  * content line ("Profiles GitHub"). The pieces are still analysed as one line everywhere else;
  * this view exists for consumers that need the column-separated parts.
  */
-export function columnSegments(line: TextLine): TextLine[] {
+export function columnSegments(line: TextLine, gapRatio = COLUMN_GAP_RATIO): TextLine[] {
 	const [first, ...rest] = line.spans;
 	if (!first || rest.length === 0) return [line];
 
@@ -322,7 +344,7 @@ export function columnSegments(line: TextLine): TextLine[] {
 	let previous = first;
 	for (const span of rest) {
 		const gap = span.x - (previous.x + previous.width);
-		const threshold = Math.max(MIN_COLUMN_GAP_PT, COLUMN_GAP_RATIO * Math.max(previous.fontSize, span.fontSize, 1));
+		const threshold = Math.max(MIN_COLUMN_GAP_PT, gapRatio * Math.max(previous.fontSize, span.fontSize, 1));
 
 		if (gap > threshold) groups.push([span]);
 		else groups[groups.length - 1]?.push(span);
@@ -438,6 +460,7 @@ export function buildExtractedDocument(raw: RawExtraction): ExtractedDocument {
 		[...fontWeights.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] ?? null;
 
 	return {
+		links: raw.links,
 		pages,
 		lines,
 		fullText,

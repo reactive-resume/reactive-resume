@@ -80,6 +80,12 @@ const applicationSchema = createSelectSchema(schema.application, {
 	coverLetterName: z.string().nullable(),
 	followUpAt: z.date().nullable(),
 	followUpNote: z.string().trim().nullable(),
+	followUpDateOnly: z
+		.boolean()
+		.optional()
+		.describe(
+			"True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight.",
+		),
 	tags: z.array(z.string()),
 	contacts: z.array(contactSchema),
 	activity: z.array(applicationTimelineEntrySchema),
@@ -99,12 +105,15 @@ const applicationSummarySchema = applicationSchema.pick({
 	closedReason: true,
 	resumeId: true,
 	coverLetterId: true,
+	resumeFileUrl: true,
+	coverLetterUrl: true,
 	source: true,
 	tags: true,
 	sourceUrl: true,
 	matchScore: true,
 	followUpAt: true,
 	followUpNote: true,
+	followUpDateOnly: true,
 	contacts: true,
 	activity: true,
 	appliedAt: true,
@@ -136,6 +145,7 @@ const editableSchema = applicationSchema.pick({
 	coverLetterName: true,
 	followUpAt: true,
 	followUpNote: true,
+	followUpDateOnly: true,
 	contacts: true,
 	resumeId: true,
 	coverLetterId: true,

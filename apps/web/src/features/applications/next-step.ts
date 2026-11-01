@@ -40,8 +40,8 @@ const formatWhen = (date: Date, locale: string, timeZone: string, withTime: bool
 		weekday: "short",
 		day: "numeric",
 		month: "short",
-		// Follow-ups retain the browser-local calendar date used by their date-only editor.
-		...(withTime ? { timeZone, hour: "2-digit", minute: "2-digit" } : {}),
+		timeZone,
+		...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
 	});
 
 /** How a next step reads in the list, on cards and in the detail sheet. */

@@ -106,8 +106,8 @@ export function TodayScreen() {
 	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
 	const attention = (applications.data ?? [])
 		.flatMap((row) => {
-			const step = getNextStep(row, now);
-			return needsAttention(step, now) ? [{ row, step, key: nextStepSortKey(row, now) }] : [];
+			const step = getNextStep(row, now, lanes.lanes, time.timeZone);
+			return needsAttention(step, now) ? [{ row, step, key: nextStepSortKey(row, now, time.timeZone) }] : [];
 		})
 		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.row.id, b.row.id));
 	const openSchedule = (schedule: Schedule) =>
@@ -450,8 +450,15 @@ export function TodayScreen() {
 								<Card key={row.id} style={{ gap: space.s3 }}>
 									<Text variant="title">{scheduleTitle(row.kind)}</Text>
 									<Text>
-										{row.query ||
-											applications.data?.find((application) => application.id === row.applicationId)?.company}
+										{row.kind === "follow-up"
+											? [
+													applications.data?.find((application) => application.id === row.applicationId)?.company,
+													row.query,
+												]
+													.filter(Boolean)
+													.join(" · ")
+											: row.query ||
+												applications.data?.find((application) => application.id === row.applicationId)?.company}
 									</Text>
 									<Text color="ink3">
 										{!row.intervalDays && row.lastQueuedAt ? t`Done` : row.enabled ? t`On` : t`Paused`} ·{" "}

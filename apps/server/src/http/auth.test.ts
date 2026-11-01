@@ -120,25 +120,6 @@ describe("handleAuth", () => {
 		expect(mocks.handler).not.toHaveBeenCalled();
 	});
 
-	it.each(["localhost", "127.0.0.1", "[::1]"])(
-		"infers native application type for exact %s loopback callbacks",
-		async (host) => {
-			const { handleAuth } = await import("./auth");
-			await handleAuth(
-				new Request("http://localhost:3000/api/auth/oauth2/register", {
-					method: "POST",
-					headers: { "content-type": "application/json" },
-					body: JSON.stringify({ redirect_uris: [`http://${host}:3210/callback`] }),
-				}),
-			);
-			const forwarded = mocks.handler.mock.calls[0]?.[0] as Request;
-			await expect(forwarded.json()).resolves.toMatchObject({
-				application_type: "native",
-				token_endpoint_auth_method: "none",
-			});
-		},
-	);
-
 	it.each(["client_secret_basic", "client_secret_post"])(
 		"keeps an explicitly registered %s so the client receives a client secret",
 		async (method) => {
@@ -157,25 +138,6 @@ describe("handleAuth", () => {
 			await expect(forwarded.json()).resolves.toMatchObject({ token_endpoint_auth_method: method });
 		},
 	);
-
-	it.each([
-		{ redirect_uris: ["https://example.com/callback"] },
-		{ redirect_uris: ["http://localhost.evil.example/callback"] },
-		{ redirect_uris: ["http://localhost:3210/callback"], application_type: "web" },
-		{ redirect_uris: ["http://localhost:3210/callback", "https://example.com/callback"] },
-	])("does not infer native for explicit web or non-loopback clients: %j", async (body) => {
-		const { handleAuth } = await import("./auth");
-		mocks.env.FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI = true;
-		await handleAuth(
-			new Request("http://localhost:3000/api/auth/oauth2/register", {
-				method: "POST",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify(body),
-			}),
-		);
-		const forwarded = mocks.handler.mock.calls[0]?.[0] as Request;
-		expect((await forwarded.json()).application_type).not.toBe("native");
-	});
 });
 
 describe("handleOAuth", () => {
@@ -252,6 +214,67 @@ describe("OAuth provider response validation", () => {
 			expect(mocks.consent).not.toHaveBeenCalled();
 		},
 	);
+});
+
+describe("account-bound settings writes", () => {
+	const request = (path: string, headers: Record<string, string> = {}, method = "POST") =>
+		new Request(`http://localhost:3000${path}`, {
+			method,
+			headers: { "content-type": "application/json", ...headers },
+			...(method === "GET"
+				? {}
+				: {
+						body: JSON.stringify(
+							path.endsWith("/oauth2/update-client")
+								? { client_id: "fixture", update: { client_name: "Fixture" } }
+								: {},
+						),
+					}),
+		});
+
+	it.each(["/api/auth/update-user", "/api/auth/oauth2/update-client", "/api/auth/oauth2/delete-client"])(
+		"refuses stale account write %s before Better Auth runs",
+		async (path) => {
+			const { handleAuth } = await import("./auth");
+			mocks.getSession.mockResolvedValueOnce({ user: { id: "bob" } });
+			const response = await handleAuth(request(path, { "x-account-id": "alice" }));
+			expect(response.status).toBe(409);
+			await expect(response.json()).resolves.toMatchObject({
+				message: "This page belongs to a different account now. Reload and try again.",
+			});
+			expect(mocks.handler).not.toHaveBeenCalled();
+		},
+	);
+
+	it("allows the same account's settings write", async () => {
+		const { handleAuth } = await import("./auth");
+		mocks.getSession.mockResolvedValueOnce({ user: { id: "bob" } });
+		const response = await handleAuth(request("/api/auth/update-user", { "x-account-id": "bob" }));
+		expect(await response.text()).toBe("ok");
+		expect(mocks.handler).toHaveBeenCalledOnce();
+	});
+
+	it("leaves clients without the optional header unchanged", async () => {
+		const { handleAuth } = await import("./auth");
+		await handleAuth(request("/api/auth/update-user"));
+		expect(mocks.getSession).not.toHaveBeenCalled();
+		expect(mocks.handler).toHaveBeenCalledOnce();
+	});
+
+	it("does not block explicit sign-out or sign-in intents", async () => {
+		const { handleAuth } = await import("./auth");
+		mocks.getSession.mockResolvedValue({ user: { id: "bob" } });
+		await handleAuth(request("/api/auth/sign-out", { "x-account-id": "alice" }));
+		await handleAuth(request("/api/auth/sign-in/email", { "x-account-id": "alice" }));
+		expect(mocks.handler).toHaveBeenCalledTimes(2);
+	});
+
+	it("does not treat reads as writes", async () => {
+		const { handleAuth } = await import("./auth");
+		await handleAuth(request("/api/auth/get-session", { "x-account-id": "alice" }, "GET"));
+		expect(mocks.getSession).not.toHaveBeenCalled();
+		expect(mocks.handler).toHaveBeenCalledOnce();
+	});
 });
 
 describe("account link storage migration", () => {

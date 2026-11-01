@@ -21,6 +21,7 @@ import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { useOverlayHistory, useSavedItems } from "../hooks";
+import { CareerLoadError } from "../load-state";
 import { CountdownChip, Eyebrow, minutesUntil, tabLabel, useCareerTime, useNow } from "../shared";
 import { ApplyTab } from "./apply";
 import { CoachSheet } from "./coach-sheet";
@@ -380,6 +381,7 @@ function TabBadge({ tone, children }: { tone: "accent" | "warn" | "info" | "plai
 type WorkspaceHeaderProps = { application: Application; onAskCoach: () => void };
 
 function WorkspaceHeader({ application, onAskCoach }: WorkspaceHeaderProps) {
+	const saved = useSavedItems(application.id);
 	const { date } = useCareerTime();
 	const { lanes, active } = useApplicationLanes();
 	const lane = getDisplayLane(lanes, application);
@@ -431,12 +433,25 @@ function WorkspaceHeader({ application, onAskCoach }: WorkspaceHeaderProps) {
 							))}
 						</div>
 					)}
-					{application.status === "offer" && (
-						<Link to="/dashboard/career/offers" className={cn(buttonVariants({ variant: "secondary" }))}>
-							<Icon name="scales" size={18} />
-							<Trans>Compare offers</Trans>
-						</Link>
-					)}
+					{application.status === "offer" &&
+						(saved.isPending || saved.isError || !saved.data ? (
+							<div className="grid gap-2">
+								<Button variant="secondary" loading={saved.isPending} disabled>
+									<Icon name="scales" size={18} />
+									<Trans>Compare offers</Trans>
+								</Button>
+								{saved.isError && <CareerLoadError onRetry={() => void saved.refetch()} />}
+							</div>
+						) : (
+							<Link
+								to="/dashboard/career/offers"
+								search={{ a: saved.data?.find((item) => item.data.kind === "offer")?.id }}
+								className={cn(buttonVariants({ variant: "secondary" }))}
+							>
+								<Icon name="scales" size={18} />
+								<Trans>Compare offers</Trans>
+							</Link>
+						))}
 					<Button
 						className="bg-accent-soft text-accent-text hover:bg-accent-soft hover:brightness-95"
 						onClick={onAskCoach}
@@ -467,7 +482,7 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 		...orpc.documents.list.queryOptions({ input: { trashed: true } }),
 		enabled: hasSentVersion,
 	});
-	const step = getNextStep(application, now);
+	const step = getNextStep(application, now, timeZone);
 	const text = describeNextStep(step, application, i18n.locale, timeZone);
 	const upcoming = step.kind === "interview" ? step.interview : interview;
 	const soon = upcoming ? minutesUntil(new Date(upcoming.at), now) <= 60 : false;

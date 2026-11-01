@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useHotkeys } from "@tanstack/react-hotkeys";
+import { useRouteContext } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { Command, CommandEmpty, CommandInput, CommandList } from "@reactive-resume/ui/components/command";
 import {
@@ -17,6 +18,7 @@ import { ResumesCommandGroup } from "./pages/resumes";
 import { useCommandPaletteStore } from "./store";
 
 export default function CommandPaletteContent() {
+	const { session } = useRouteContext({ strict: false });
 	const inputRef = useRef<HTMLInputElement>(null);
 	const commandRef = useRef<HTMLDivElement>(null);
 	const {
@@ -111,6 +113,14 @@ export default function CommandPaletteContent() {
 					loop
 					value={selectedValue}
 					onValueChange={setSelectedValue}
+					onKeyDownCapture={(event) => {
+						if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key))
+							useCommandPaletteStore.getState().markSelectionMoved();
+					}}
+					onPointerMoveCapture={(event) => {
+						if (event.target instanceof Element && event.target.closest("[cmdk-item]"))
+							useCommandPaletteStore.getState().markSelectionMoved();
+					}}
 					aria-label={t({
 						comment: "Accessible label for command list region inside command palette",
 						message: "Command palette",
@@ -139,11 +149,14 @@ export default function CommandPaletteContent() {
 					/>
 
 					<CommandList key={commandListPage} data-command-page={commandListPage}>
-						<CommandEmpty>
-							<Trans comment="Empty-state message when no command palette results match the search query">
-								No commands match that search.
-							</Trans>
-						</CommandEmpty>
+						{/* The Ask row is always offered on the first screen once something is typed, so nothing is empty there. */}
+						{!(isFirstPage && session && search.trim()) && (
+							<CommandEmpty>
+								<Trans comment="Empty-state message when no command palette results match the search query">
+									No commands match that search.
+								</Trans>
+							</CommandEmpty>
+						)}
 
 						<ResumesCommandGroup />
 						<PreferencesCommandGroup />

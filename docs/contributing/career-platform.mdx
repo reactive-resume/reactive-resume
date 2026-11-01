@@ -102,7 +102,11 @@ In **Career → Today**, **Schedules → Add** (or a schedule's row) opens the s
 
 - **Find roles:** a public search (it starts from Preferences) run every day, every 3 days or every week. Results wait in Today for review; tracking one creates an application at Saved only when the user chooses **Track in Applications**.
 - **Interview prep:** an interview, when the briefing runs (24 hours before, 2 hours before, or Morning of: 08:00 on the day, moving earlier to two hours before interviews starting before 10:00) and a tested AI connection. If the interview starts sooner than that, saving runs it now.
-- **Remind me:** an application and a time; it fires once into Today.
+- **Remind me:** the application's single follow-up date and note; it fires once into Today. Application edits and Today edits share the application-owned state, with a schedule as delivery metadata. Delete clears both after Undo; pause retains the date but stops delivery.
+
+Application follow-up edits preserve the reminder's existing wall-clock time, including note-only edits. Exact-time reminders retain their instant when the account timezone changes. Legacy date-only follow-ups retain their selected day at 09:00 in the current account timezone; changing that timezone updates pending delivery in the same database transaction. Queued or running work for the previous clock is canceled and replaced at the new instant. Completed occurrence receipts follow the logical day without re-delivery; completed jobs retain their original actual due times and notification/email identities. Note-only edits update pending publication under the existing locks and never rearm a completed occurrence.
+
+The migration marks legacy UTC-midnight date-only values without rewriting their raw timestamps; explicit Today times, including midnight UTC, stay exact. Duplicate legacy reminder rows and their job history remain in account exports; only the newest delivery row is shown and enabled. The account clock trigger reconciles pre-existing logical-day delivery indices and runs for both auth update paths. A timezone containing no such local day is rejected atomically.
 
 Dates and times are entered in the account's timezone. Recurring discovery preserves its local time across daylight-saving changes; a local time that doesn't exist during a clock change moves forward to a valid time. Missed intervals are coalesced rather than replaying every missed scan.
 

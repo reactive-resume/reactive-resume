@@ -553,6 +553,10 @@ msgstr "{days, plural, one {{company}: sem resposta há # dia. Um breve contacto
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{done} of {count} done"
 msgstr "{done} de {count} concluídos"
@@ -674,6 +678,10 @@ msgstr "Tipo {pairing}"
 #: src/features/assistant/page-marks.tsx
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# alteração proposta nesta página · nada muda até a aceitar} other {# alterações propostas nesta página · nada muda até as aceitar}}"
+
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
@@ -919,6 +927,11 @@ msgstr "Aceitar"
 msgid "Accept all"
 msgstr "Aceitar tudo"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Aceito"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Aceitei outra oferta"
@@ -976,6 +989,11 @@ msgstr "Adicione um país"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "Adicionar facto"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1156,8 +1174,8 @@ msgid "Add offer"
 msgstr "Adicionar oferta de emprego"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Adiciona manualmente as condições de uma oferta de emprego ou utiliza a extração opcional com IA em Mensagens."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1811,6 +1829,10 @@ msgstr "Ascendente"
 msgid "Ask"
 msgstr "Perguntar"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Pergunte sobre esta candidatura…"
@@ -1875,10 +1897,6 @@ msgstr "Assistente"
 #: src/features/search/search-screen.tsx
 msgid "Assistant conversations"
 msgstr "Conversas do assistente"
-
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "Às 09h00 desse dia ({timeZone})."
 
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
@@ -2216,6 +2234,7 @@ msgstr "Cancelar pedido"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Carreira"
 
@@ -2273,6 +2292,10 @@ msgstr "Alterar tema para…"
 msgid "Change timezone"
 msgstr "Alterar fuso horário"
 
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Mudou o currículo diretamente (uma conversa anterior)"
@@ -2284,6 +2307,11 @@ msgstr "Não foi possível guardar as alterações. Tentar novamente antes de co
 #: src/features/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Altera apenas os títulos das secções e as palavras de data, não o seu conteúdo."
+
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
@@ -2625,6 +2653,8 @@ msgstr "Perto…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Fechado"
 
@@ -2634,6 +2664,7 @@ msgstr "Fechado: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Coach"
@@ -2773,6 +2804,10 @@ msgstr "Ligue um provedor de IA"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Ligue um fornecedor de IA nas Configurações para o atualizar automaticamente."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Ligue um fornecedor de IA para ler detalhes do texto colado. A introdução manual funciona sem IA."
@@ -2796,6 +2831,10 @@ msgstr "Ligue as ferramentas que utiliza para escrever, procurar emprego e traba
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Ligado · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Aplicações ligadas"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3180,6 +3219,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Não foi possível marcar como candidatura enviada. Tente novamente."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3430,6 +3470,10 @@ msgid "Couldn't upload the photo."
 msgstr "Não foi possível enviar a foto."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr "Não foi possível carregar a fotografia. Escolha uma fotografia legível em PNG, JPEG, WebP ou GIF com até 10 MB e tente novamente."
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Não foi possível carregar a foto. Tente novamente."
 
@@ -3460,6 +3504,7 @@ msgstr "Cobrir"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3476,6 +3521,7 @@ msgid "Cover letter — {0}"
 msgstr "Carta de apresentação — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Arquivo de carta de apresentação"
@@ -4064,6 +4110,7 @@ msgstr "A transferência abre o painel de partilha do sistema. Escolha um fornec
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Descarregar abre o menu de partilha do sistema. Escolha um fornecedor de armazenamento para guardar o ficheiro. A carta associada abre como um segundo ficheiro."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Descarregar PDF"
@@ -4718,6 +4765,7 @@ msgid "Follow-up date"
 msgstr "Data de acompanhamento"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Nota de acompanhamento"
 
@@ -4984,6 +5032,7 @@ msgstr "Título 3"
 msgid "Heading changed"
 msgstr "Título alterado"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Título"
@@ -5264,6 +5313,10 @@ msgid "Import it"
 msgstr "Importe-o"
 
 #: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
 msgstr "Importe o seu currículo atual ou comece do zero com o seu nome."
 
@@ -5291,6 +5344,11 @@ msgstr "Melhorar a linha selecionada"
 #: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Melhorando…"
+
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "In the Offer stage, terms not added"
@@ -5581,6 +5639,10 @@ msgstr "Limite-se a duas ou três famílias. Cada fonte extra é mais uma hipót
 msgid "Keep together"
 msgstr "Mantenham-se unidos"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Mantém as partes mais específicas"
@@ -5621,6 +5683,7 @@ msgstr "Atenciosamente,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Conhecimento"
 
@@ -5702,6 +5765,7 @@ msgid "Later"
 msgstr "Mais tarde"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Mais recente"
 
@@ -5973,6 +6037,10 @@ msgstr "Vinculado. Nome, e-mail, telefone e cidade atualizados quando o currícu
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Ligações"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6372,6 +6440,7 @@ msgstr "Mais"
 msgid "More details"
 msgstr "Mais detalhes"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "Mais opções"
@@ -6751,6 +6820,9 @@ msgid "No application"
 msgstr "Sem pedido de emprego"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Ainda não há candidaturas. Adicione primeiro uma em Candidaturas."
@@ -6779,6 +6851,10 @@ msgstr "Não foi encontrado nenhum título de secção convencional."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Ainda não há conversas sobre este documento."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6930,6 +7006,10 @@ msgstr "Nenhum resultado"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Sem currículo"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7185,6 +7265,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Desligado. Só você pode ver este currículo."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Oferta"
@@ -7198,6 +7280,7 @@ msgid "Offer type"
 msgstr "Tipo de oferta de emprego"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Ofertas"
 
@@ -7756,10 +7839,12 @@ msgstr "Foto"
 msgid "Photo hidden"
 msgstr "Foto oculta"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "Foto ocultada da página."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Foto na página."
@@ -8392,6 +8477,12 @@ msgstr "Tempo de gravação"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Recrutador"
@@ -8801,6 +8892,7 @@ msgstr "Resultado"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8825,6 +8917,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Feedback sobre currículos, ajuda com o produto e ideias da comunidade."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Ficheiro de currículo"
@@ -9010,6 +9103,10 @@ msgstr "Rever a minha resposta"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "“Rever a minha resposta” envia a pergunta, o que disse, este anúncio e o seu Conhecimento para {providerName}."
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr "Reveja as permissões e desligue aplicações no navegador. Poderá ter de iniciar sessão aí."
 
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
@@ -9831,7 +9928,7 @@ msgstr "Mais curto"
 
 #: src/features/applications/list-screen.tsx
 msgid "Show"
-msgstr "Espetáculo"
+msgstr "Mostrar"
 
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
@@ -9915,6 +10012,7 @@ msgstr "Mostrar mais"
 msgid "Show on page"
 msgstr "Mostrar na página"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Mostrar foto"
@@ -10938,6 +11036,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "O servidor retornou um resultado de importação inválido. Atualize Documentos antes de tentar novamente."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "A versão do servidor não pôde ser carregada. O seu texto é mantido; tente novamente."
@@ -11077,6 +11176,8 @@ msgstr "Este ficheiro de carta de apresentação não é válido."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Esta data ou hora não existe no seu fuso horário. Escolha outro horário."
@@ -11366,6 +11467,7 @@ msgstr "Aperte numa página"
 msgid "Tightening"
 msgstr "A condensar"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Hora"
@@ -11413,6 +11515,11 @@ msgstr "Título"
 msgid "To"
 msgstr "Para"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Para verificar"
@@ -11423,6 +11530,7 @@ msgstr "Para receber um lembrete, permita notificações nas definições do seu
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Hoje"
@@ -11662,6 +11770,7 @@ msgstr "Sublinhar ligações"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -11908,6 +12017,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 
@@ -12180,6 +12291,7 @@ msgstr "Falha na pesquisa na Web: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "As pesquisas na Web procuram emprego nesses países. Escolha até três países."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Site"
@@ -12433,6 +12545,10 @@ msgstr "Escrever números como algarismos"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Escreve uma história em cinco partes sobre algo que fizeste. Deixa Resultado e Reflexão em branco até os poderes fundamentar."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12704,6 +12820,10 @@ msgstr "O seu provedor"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Os seus links públicos começam por {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

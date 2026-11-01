@@ -27,7 +27,7 @@ import { LIST_ORDER } from "../stages";
 import { useInvalidateApplications } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { ClosedLaneItems } from "./application-actions-menu";
-import { useCareerTime } from "@/features/career/shared";
+import { useCareerTime, useNow } from "@/features/career/shared";
 import { useConfirm } from "@/hooks/use-confirm";
 import { formatRelativeTime } from "@/libs/locale";
 import { D2, EASE, EXIT } from "@/libs/motion";
@@ -38,9 +38,9 @@ type Sort = { key: SortKey; direction: "asc" | "desc" };
 type SortValue = string | number | readonly [number, number];
 
 // Sort keys are computed once per row, not once per comparison.
-const sortValue: Record<SortKey, (application: ApplicationSummary) => SortValue> = {
+const sortValue: Record<SortKey, (application: ApplicationSummary, now: Date, timeZone: string) => SortValue> = {
 	role: (application) => application.role,
-	next: (application) => nextStepSortKey(application),
+	next: (application, now, timeZone) => nextStepSortKey(application, now, timeZone),
 	updated: (application) => new Date(application.updatedAt).getTime(),
 };
 
@@ -66,8 +66,10 @@ type ListViewProps = {
  */
 export function ApplicationList({ applications, showClosed, selectedId, onOpen }: ListViewProps) {
 	const breakpoint = useBreakpoint();
+	const { timeZone } = useCareerTime();
 	const phone = breakpoint === "mobile";
 	const { lanes, active } = useApplicationLanes();
+	const now = useNow();
 	const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
 	// Next step first: what's dated soonest, then whatever has waited longest in its stage.
 	const [sort, setSort] = useState<Sort>({ key: "next", direction: "asc" });
@@ -87,7 +89,9 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 
 	const groups = useMemo(() => {
 		const sign = sort.direction === "asc" ? 1 : -1;
-		const keys = new Map(applications.map((application) => [application.id, sortValue[sort.key](application)]));
+		const keys = new Map(
+			applications.map((application) => [application.id, sortValue[sort.key](application, now, timeZone)]),
+		);
 		const key = (application: ApplicationSummary) => keys.get(application.id) ?? 0;
 		const rowsByLane = new Map<string, ApplicationSummary[]>();
 		for (const application of applications) {
@@ -108,7 +112,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 				),
 			}))
 			.filter((group) => group.rows.length > 0);
-	}, [applications, showClosed, sort, lanes, active]);
+	}, [applications, showClosed, sort, lanes, active, timeZone, now]);
 
 	const toggleGroup = (status: string) =>
 		setCollapsed((current) => {
@@ -266,7 +270,7 @@ const ApplicationRow = memo(function ApplicationRow({
 }: ApplicationRowProps) {
 	const { i18n } = useLingui();
 	const { timeZone } = useCareerTime();
-	const next = describeNextStep(getNextStep(application), application, i18n.locale, timeZone);
+	const next = describeNextStep(getNextStep(application, undefined, timeZone), application, i18n.locale, timeZone);
 	const sent = application.status !== "saved";
 	const tone = next.tone === "warn" ? "text-warn-text" : next.tone === "muted" ? "text-ink-3" : "text-ink-2";
 
@@ -343,10 +347,35 @@ const ApplicationRow = memo(function ApplicationRow({
 				</span>
 			</td>
 			<td className="px-2">
-				{application.resumeId || application.coverLetterId ? (
+				{application.resumeId ||
+				application.coverLetterId ||
+				application.resumeFileUrl ||
+				application.coverLetterUrl ? (
 					<span className="flex items-center gap-1 text-ink-2">
-						{application.resumeId && <Icon name="file-text" size={18} aria-label={t`Resume`} />}
-						{application.coverLetterId && <Icon name="envelope-simple" size={18} aria-label={t`Cover letter`} />}
+						{application.resumeFileUrl && (
+							<>
+								<Icon name="file-pdf" size={18} />
+								<span className="sr-only">{t`Resume file`}</span>
+							</>
+						)}
+						{application.coverLetterUrl && (
+							<>
+								<Icon name="file-pdf" size={18} />
+								<span className="sr-only">{t`Cover letter file`}</span>
+							</>
+						)}
+						{application.resumeId && (
+							<>
+								<Icon name="file-text" size={18} />
+								<span className="sr-only">{t`Resume`}</span>
+							</>
+						)}
+						{application.coverLetterId && (
+							<>
+								<Icon name="envelope-simple" size={18} />
+								<span className="sr-only">{t`Cover letter`}</span>
+							</>
+						)}
 					</span>
 				) : (
 					<span className={cn("text-xs", sent ? "text-warn-text" : "text-ink-3")}>

@@ -105,13 +105,67 @@ const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 
 export const prefersReducedMotion = () => window.matchMedia(reducedMotionQuery).matches;
 
-/** Scrolls to a point within a scene, e.g. `at = 0.93` for the end of Write's accepted suggestion. */
+let sceneNavigation = 0;
+let stopSceneNavigation: (() => void) | undefined;
+const scrollKeys = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
+
+const supportsTransitionTypes = () => globalThis.CSS?.supports?.("selector(:active-view-transition-type(a))") === true;
+
+/**
+ * Scrolls to a point within a scene, e.g. `at = 0.93` for the end of Write's accepted suggestion. Within a scene or to
+ * the next one it scrolls smoothly, since scrubbing through is the story. A longer jump cuts straight there instead of
+ * fast-forwarding through every scene between, fading through like a page change (index.css) where the browser can.
+ * Reduced motion always cuts.
+ */
 export function goToScene(index: number, at: number) {
 	const section = document.querySelector<HTMLElement>(`[data-scene="${index}"]`);
 	if (!section) return;
+	stopSceneNavigation?.();
 	const rect = section.getBoundingClientRect();
 	const top = rect.top + window.scrollY + at * Math.max(0, rect.height - window.innerHeight);
-	window.scrollTo({ top, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+	const navigation = ++sceneNavigation;
+	const cut = () => {
+		if (navigation === sceneNavigation) window.scrollTo({ top, behavior: "instant" });
+	};
+
+	if (prefersReducedMotion()) return cut();
+	if (Math.abs(index - useLanding.getState().activeScene) <= 1) return window.scrollTo({ top, behavior: "smooth" });
+	if (!document.startViewTransition || !supportsTransitionTypes()) return cut();
+	const controller = new AbortController();
+	const cleanup = () => {
+		controller.abort();
+		if (stopSceneNavigation === cleanup) stopSceneNavigation = undefined;
+	};
+	const interrupt = (event: Event) => {
+		if (event.type === "keydown" && !scrollKeys.has((event as KeyboardEvent).key)) return;
+		sceneNavigation++;
+		cleanup();
+	};
+	stopSceneNavigation = cleanup;
+	for (const type of ["wheel", "touchmove", "keydown"])
+		window.addEventListener(type, interrupt, { passive: true, signal: controller.signal });
+	const transition = document.startViewTransition({ update: cut, types: ["page"] });
+	void transition.updateCallbackDone.then(cleanup, cleanup);
+}
+
+/**
+ * Renders a pinned scene and decodes its images while it's still a screen or two away, so its first frame on screen
+ * isn't the one that pays for them. Scenes further off go back to skipping their rendering (landing.css).
+ */
+function warmScenes(sections: HTMLElement[], nearby: Set<number>, decoded: WeakSet<HTMLElement>) {
+	for (const section of sections) {
+		const near = nearby.has(Number(section.dataset.scene));
+		if (section.dataset.pin !== undefined && near !== (section.dataset.warm !== undefined))
+			section.toggleAttribute("data-warm", near);
+		if (!near || decoded.has(section)) continue;
+		decoded.add(section);
+		for (const image of section.querySelectorAll("img")) {
+			// Only the drawing for the current theme: the other one is display: none.
+			if (typeof image.checkVisibility === "function" && !image.checkVisibility()) continue;
+			image.loading = "eager";
+			void image.decode().catch(() => undefined);
+		}
+	}
 }
 
 /**
@@ -163,6 +217,8 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 
 		// Where Check's lens comes to rest, as a share of its page: over the date line it flags.
 		let lensPark = { x: 60, y: 50 };
+
+		const decodedScenes = new WeakSet<HTMLElement>();
 
 		// Values that only change with the viewport, not with scrolling.
 		const measuredScenes = new Set<number>();
@@ -227,6 +283,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 				progress[index] = reduced ? 1 : sectionProgress(rect.top, rect.height, viewportHeight, pinned);
 				if (rect.top <= viewportHeight / 2 && rect.bottom > viewportHeight / 2) activeScene = index;
 			}
+			warmScenes(sections, nearby, decodedScenes);
 			// Descendant geometry would force content-visibility to render an offscreen scene.
 			layout(nearby);
 			// The footer's desk paints itself in as it scrolls up, finishing exactly when the page ends.

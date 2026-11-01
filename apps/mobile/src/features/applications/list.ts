@@ -31,10 +31,13 @@ export function groupApplications(
 		...lane,
 		position: LIST_ORDER.indexOf(lane.category),
 	})),
+	timeZone = "UTC",
 ) {
 	// Next step reads the same keys as web: dated steps soonest first, then the longest wait in the stage.
 	const keys = new Map(
-		sort === "next" ? applications.map((application) => [application.id, nextStepSortKey(application, now)]) : [],
+		sort === "next"
+			? applications.map((application) => [application.id, nextStepSortKey(application, now, timeZone)])
+			: [],
 	);
 	const compare = (a: Application, b: Application) => {
 		let order: number;

@@ -17,6 +17,7 @@ const api = vi.hoisted(() => ({
 	documents: vi.fn(),
 	save: vi.fn(),
 	navigate: vi.fn(),
+	timeZone: "UTC",
 }));
 vi.mock("@/libs/orpc/client", () => {
 	const endpoint = (name: string, queryFn = async (): Promise<unknown> => [], mutationFn = vi.fn()) => ({
@@ -54,7 +55,7 @@ vi.mock("@/libs/orpc/client", () => {
 });
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => api.navigate,
-	useRouteContext: () => ({ session: { user: { id: "shell-user", timezone: "UTC" } } }),
+	useRouteContext: () => ({ session: { user: { id: "shell-user", timezone: api.timeZone } } }),
 	useRouter: () => ({ state: { location: { state: { __TSR_index: 0 } } } }),
 	Link: ({ children }: { children: ReactNode }) => <a href="#test-link">{children}</a>,
 }));
@@ -131,10 +132,13 @@ const archive = (data: SavedItem["data"]): SavedItem =>
 	}) as SavedItem;
 const answers = () => archive({ kind: "answers", answers: [{ question: "Why this role?", answer: "Sent answer" }] });
 const clients: QueryClient[] = [];
-function mount(version?: string, options: { workspace?: boolean; resumeId?: string } = {}) {
+function mount(
+	version?: string,
+	options: { workspace?: boolean; resumeId?: string; application?: Partial<Application> } = {},
+) {
 	const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
 	clients.push(client);
-	client.setQueryData(["application"], { ...application, resumeId: options.resumeId ?? null });
+	client.setQueryData(["application"], { ...application, resumeId: options.resumeId ?? null, ...options.application });
 	if (options.workspace !== false) client.setQueryData(["workspace"], structuredClone(current));
 	const view = render(
 		<QueryClientProvider client={client}>
@@ -147,6 +151,7 @@ function mount(version?: string, options: { workspace?: boolean; resumeId?: stri
 }
 beforeEach(() => {
 	vi.resetAllMocks();
+	api.timeZone = "UTC";
 	api.saved.mockResolvedValue([]);
 	api.workspace.mockResolvedValue(current);
 	api.documents.mockResolvedValue([]);
@@ -283,4 +288,35 @@ it("keeps unavailable document edits out of the preparation panel and retries it
 	fireEvent.click(preparation.getByRole("button", { name: "Try again" }));
 	await preparation.findByText("Linked document unavailable. Choose another document or restore it from Trash.");
 	expect(preparation.queryByRole("link", { name: "Edit resume" })).toBeNull();
+});
+
+it("gates contextual Compare offers during cold or failed saved-item reads and retries the same application", async () => {
+	let fail = (_error: Error) => {};
+	api.saved.mockReturnValueOnce(
+		new Promise((_resolve, reject) => {
+			fail = reject;
+		}),
+	);
+	mount(undefined, { application: { status: "offer" } });
+	expect(screen.queryByRole("link", { name: "Compare offers" })).toBeNull();
+	expect((screen.getByRole("button", { name: "Compare offers" }) as HTMLButtonElement).disabled).toBe(true);
+	await act(async () => fail(new Error("Synthetic saved-items failure")));
+	expect(((await screen.findByRole("button", { name: "Compare offers" })) as HTMLButtonElement).disabled).toBe(true);
+	expect(screen.queryByRole("link", { name: "Compare offers" })).toBeNull();
+	const alert = screen
+		.getAllByRole("alert")
+		.find((node) => node.textContent?.includes("Your saved data hasn't changed"));
+	expect(alert).toBeDefined();
+	if (!alert) throw new Error("Missing saved-items error");
+	api.saved.mockResolvedValue([]);
+	fireEvent.click(within(alert).getByRole("button", { name: "Try again" }));
+	expect(await screen.findByRole("link", { name: "Compare offers" })).toBeTruthy();
+});
+it("workspace projects the logical follow-up day on the account clock", async () => {
+	api.timeZone = "Pacific/Honolulu";
+	mount(undefined, {
+		application: { followUpAt: new Date("2030-01-03T00:00:00Z"), followUpDateOnly: true, followUpNote: "Logical date" },
+	});
+	const section = screen.getByRole("heading", { name: "Next step" }).closest("section");
+	expect(section?.textContent).toContain("Jan 3");
 });

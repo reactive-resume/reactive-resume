@@ -16,6 +16,7 @@ import { documentError, useDocumentRefresh, useDocuments } from "./queries";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
+import { AddApplicationSheet } from "@/features/applications/add-sheet";
 import { routes } from "@/routes";
 import { Banner, Button, Card, ListRow, Screen, SelectSheet, Switch, Text, TextField, useTheme } from "@/ui";
 
@@ -50,6 +51,7 @@ export function NewDocument() {
 	const [created, setCreated] = useState<ImportedDocument | null>(null);
 	const [applicationLinked, setApplicationLinked] = useState(false);
 	const [summary, setSummary] = useState<string | null>(null);
+	const [addingJob, setAddingJob] = useState(false);
 	const running = useRef(false);
 	const mounted = useRef(true);
 	const abort = useRef<AbortController | null>(null);
@@ -64,6 +66,7 @@ export function NewDocument() {
 	const source = resumes.find((document) => document.id === sourceId) ?? resumes[0];
 	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
 	const job = jobs.find((application) => application.id === jobId);
+	const waitingForJob = !!jobId && !job && applications.isFetching;
 	const suggested = (
 		job ? `${source?.name.split(" — ")[0] ?? ""} — ${job.company}` : t`${source?.name ?? ""} (copy)`
 	).slice(0, 100);
@@ -129,10 +132,19 @@ export function NewDocument() {
 		run(async (signal) => {
 			let document: ImportedDocument;
 			if (kind === "letter") {
-				const latest = resumes.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())[0];
+				const latest = resumes.toSorted((a, b) => b.editedAt.getTime() - a.editedAt.getTime())[0];
+				// A number when an untitled letter already exists, so the library can tell them apart until they're named.
+				const base = t`Untitled letter`;
+				const taken = new Set(
+					(await client.documents.list({ type: "letter", q: base }, { signal })).map((letter) =>
+						letter.name.toLowerCase(),
+					),
+				);
+				let name = base;
+				for (let number = 2; taken.has(name.toLowerCase()); number++) name = `${base} ${number}`;
 				const letter = await client.coverLetters.create(
 					{
-						name: t`Untitled letter`,
+						name,
 						recipient: "",
 						content: "",
 						...(latest ? { resumeId: latest.id } : {}),
@@ -161,16 +173,16 @@ export function NewDocument() {
 		});
 	const copy = () =>
 		run(async (signal) => {
-			if (!source || !(name ?? suggested).trim()) return;
+			if (!source || waitingForJob || !(name ?? suggested).trim()) return;
 			const id = await client.documents.copyForJob(
-				{ resumeId: source.id, name: (name ?? suggested).trim(), ...(job ? { applicationId: job.id } : {}) },
+				{ resumeId: source.id, name: (name ?? suggested).trim(), ...(jobId ? { applicationId: jobId } : {}) },
 				{ signal },
 			);
 			if (current(signal)) {
 				const document = { id, type: "resume" as const };
 				setCreated(document);
 				setApplicationLinked(true);
-				if (job && ai.hasAIProvider) onCopiedForJob(id);
+				if (jobId && ai.hasAIProvider) onCopiedForJob(id);
 				else open(document);
 			}
 		});
@@ -402,6 +414,23 @@ export function NewDocument() {
 											setName(null);
 										}}
 									/>
+									<Button
+										label={t`Add a job…`}
+										icon="plus"
+										variant="secondary"
+										disabled={busy}
+										onPress={() => setAddingJob(true)}
+									/>
+									{addingJob && (
+										<AddApplicationSheet
+											onClose={() => setAddingJob(false)}
+											onAdded={(id) => {
+												setJobId(id);
+												setName(null);
+												void applications.refetch();
+											}}
+										/>
+									)}
 									<TextField
 										label={t`Name`}
 										value={name ?? suggested}
@@ -417,7 +446,8 @@ export function NewDocument() {
 											!(name ?? suggested).trim() ||
 											(name ?? suggested).length > 100 ||
 											documents.isError ||
-											applications.isError
+											applications.isError ||
+											waitingForJob
 										}
 										onPress={() => void copy()}
 									/>

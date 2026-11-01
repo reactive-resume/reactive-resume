@@ -1,6 +1,6 @@
 import type { Application } from "../types";
 // @vitest-environment happy-dom
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
@@ -8,8 +8,10 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ApplicationList } from "./list-view";
 
-const mocks = vi.hoisted(() => ({ breakpoint: "desktop", invalidate: vi.fn() }));
-vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
+const mocks = vi.hoisted(() => ({ breakpoint: "desktop", timeZone: "UTC", invalidate: vi.fn() }));
+vi.mock("@tanstack/react-router", () => ({
+	useRouteContext: () => ({ session: { user: { timezone: mocks.timeZone } } }),
+}));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		applications: {
@@ -68,6 +70,44 @@ function renderList(applications: Application[], breakpoint = "desktop", onOpen 
 const headers = (container: HTMLElement) => Array.from(container.querySelectorAll("thead th"));
 const header = (container: HTMLElement, label: string) =>
 	headers(container).find((th) => th.textContent === label) as HTMLElement;
+
+it("reorders Next step when an interview ends without any application update", () => {
+	vi.useFakeTimers();
+	const now = new Date("2030-01-03T12:00:00Z");
+	vi.setSystemTime(now);
+	try {
+		const { container, unmount } = renderList([
+			application({
+				id: "interview",
+				company: "Interview",
+				location: null,
+				activity: [
+					{
+						id: "interview",
+						type: "interview",
+						at: new Date(now.getTime() - 270_000),
+						durationMinutes: 5,
+					} as Application["activity"][number],
+				],
+			}),
+			application({
+				id: "followup",
+				company: "Follow-up",
+				location: null,
+				followUpAt: new Date(now.getTime() + 300_000),
+				followUpDateOnly: false,
+			}),
+		]);
+		const order = () =>
+			Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
+		expect(order()).toEqual(["Interview", "Follow-up"]);
+		act(() => vi.advanceTimersByTime(60_000));
+		expect(order()).toEqual(["Follow-up", "Interview"]);
+		unmount();
+	} finally {
+		vi.useRealTimers();
+	}
+});
 
 it("fixes the table layout so a long follow-up note cannot starve Role", () => {
 	const { container } = renderList([
@@ -208,4 +248,32 @@ it("orders a stage by its own stage dates, longest wait first, when every row wa
 
 	expect(order).toEqual(["Bethesda", "Sucker Punch", "Niantic"]);
 	expect(header(container, "Next step").getAttribute("aria-sort")).toBe("ascending");
+});
+
+it("sorts legacy date-only follow-ups by their account-clock delivery time", () => {
+	mocks.timeZone = "Pacific/Honolulu";
+	try {
+		const { container } = renderList([
+			application({
+				id: "legacy",
+				location: null,
+				company: "Legacy",
+				followUpAt: new Date("2030-01-03T00:00:00Z"),
+				followUpDateOnly: true,
+			}),
+			application({
+				id: "exact",
+				location: null,
+				company: "Exact",
+				followUpAt: new Date("2030-01-03T12:00:00Z"),
+				followUpDateOnly: false,
+			}),
+		]);
+		expect(header(container, "Next step").getAttribute("aria-sort")).toBe("ascending");
+		expect(
+			Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent),
+		).toEqual(["Exact", "Legacy"]);
+	} finally {
+		mocks.timeZone = "UTC";
+	}
 });

@@ -12,6 +12,7 @@ import { RoleSuggestions } from "./role-suggestions";
 import { SearchRegionsField } from "./search-regions-field";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
+import { useDraft } from "@/features/workspace/hooks";
 import { routes } from "@/routes";
 import { Banner, Button, ChipInput, SelectSheet, Text, TextArea, TextField, useTheme } from "@/ui";
 
@@ -23,13 +24,25 @@ export function Preferences({ initial }: PreferencesProps) {
 	const router = useRouter();
 	const session = useSession();
 	const queryClient = useQueryClient();
-	const [draft, setDraft] = useState(initial);
-	const [amount, setAmount] = useState(
-		initial.minBase.amount === null
-			? ""
-			: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(initial.minBase.amount),
+	const kept = useDraft(
+		"preferences",
+		{
+			draft: initial,
+			amount:
+				initial.minBase.amount === null
+					? ""
+					: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(initial.minBase.amount),
+			notice: initial.noticeWeeks === null ? "" : String(initial.noticeWeeks),
+		},
+		true,
 	);
-	const [notice, setNotice] = useState(initial.noticeWeeks === null ? "" : String(initial.noticeWeeks));
+	const draft = kept.value.draft;
+	const setDraft = (update: CareerProfileData | ((value: CareerProfileData) => CareerProfileData)) =>
+		kept.setValue((current) => ({ ...current, draft: typeof update === "function" ? update(current.draft) : update }));
+	const amount = kept.value.amount;
+	const setAmount = (amount: string) => kept.setValue((current) => ({ ...current, amount }));
+	const notice = kept.value.notice;
+	const setNotice = (notice: string) => kept.setValue((current) => ({ ...current, notice }));
 	const parsedAmount = parseAmount(amount, locale);
 	const noticeValue =
 		notice.trim() === "" ? null : /^\d+$/.test(notice) && Number(notice) <= 52 ? Number(notice) : undefined;
@@ -40,16 +53,38 @@ export function Preferences({ initial }: PreferencesProps) {
 	const [saved, setSaved] = useState(JSON.stringify(initial));
 	const [error, setError] = useState(false);
 	const [saving, setSaving] = useState(false);
-	const latest = useRef({ json, server: session.server, accountId: account.data?.id });
+	const latest = useRef({
+		blocked: !!kept.blocked,
+		clear: kept.clear,
+		unblock: () => kept.setBlocked(null),
+		raw: kept.value,
+		json,
+		server: session.server,
+		accountId: account.data?.id,
+	});
 	const queue = useRef<Promise<unknown>>(Promise.resolve());
 	const attempted = useRef<string | null>(saved);
 	useLayoutEffect(() => {
-		latest.current = { json, server: session.server, accountId: account.data?.id };
+		latest.current = {
+			blocked: !!kept.blocked,
+			clear: kept.clear,
+			unblock: () => kept.setBlocked(null),
+			raw: kept.value,
+			json,
+			server: session.server,
+			accountId: account.data?.id,
+		};
 	});
 	const flush = useCallback(
 		(retry = false) => {
 			const current = latest.current;
-			if (!current.accountId || !current.json || (!retry && attempted.current === current.json)) return;
+			if (
+				(!retry && current.blocked) ||
+				!current.accountId ||
+				!current.json ||
+				(!retry && attempted.current === current.json)
+			)
+				return;
 			attempted.current = current.json;
 			const queuedJson = current.json;
 			const value = careerProfileDataSchema.parse(JSON.parse(queuedJson));
@@ -63,6 +98,8 @@ export function Preferences({ initial }: PreferencesProps) {
 				if (getServer() !== current.server || identity?.id !== current.accountId) return;
 				await client.career.saveProfile(value);
 				setSaved(queuedJson);
+				current.clear(current.raw);
+				current.unblock();
 				void queryClient.invalidateQueries({ queryKey: orpc.career.profile.key() });
 			});
 			queue.current = write
@@ -95,10 +132,33 @@ export function Preferences({ initial }: PreferencesProps) {
 			<Text accessibilityLiveRegion="polite" color={error ? "dangerText" : "ink3"}>
 				{!valid?.success ? t`Not saved` : error ? t`Not saved` : saving || json !== saved ? t`Saving…` : t`Saved`}
 			</Text>
-			{error ? (
+			{error || kept.blocked ? (
 				<>
-					<Banner tone="danger" message={t`Couldn't save your preferences. Your draft is still here.`} />
+					<Banner
+						tone="danger"
+						message={
+							kept.blocked
+								? t`Recovered an unsaved draft. Review it before saving over the current version.`
+								: t`Couldn't save your preferences. Your draft is still here.`
+						}
+					/>
 					<Button variant="secondary" label={t`Retry`} onPress={() => flush(true)} />
+					{kept.blocked && (
+						<Button
+							variant="ghost"
+							label={t`Use saved version`}
+							onPress={() =>
+								kept.reset({
+									draft: initial,
+									amount:
+										initial.minBase.amount === null
+											? ""
+											: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(initial.minBase.amount),
+									notice: initial.noticeWeeks === null ? "" : String(initial.noticeWeeks),
+								})
+							}
+						/>
+					)}
 				</>
 			) : null}
 			<SelectSheet

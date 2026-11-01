@@ -58,7 +58,8 @@
 
 /*
  * Page transitions: the router starts a view transition of type `page` when the pathname changes. The page fades
- * out quickly and the new one fades up 6px; named navigation (app-nav, settings-nav, auth-brand) stays in place.
+ * out quickly, then the new one fades up 6px (a fade through the background, so the two pages never show at once);
+ * named navigation (app-nav, settings-nav, auth-brand) stays in place.
  */
 @keyframes vt-page-out {
 	to {
@@ -89,7 +90,7 @@ html:active-view-transition-type(page)::view-transition-old(*):only-child {
 }
 
 html:active-view-transition-type(page)::view-transition-new(root) {
-	animation: var(--d2) var(--ease) both vt-page-in;
+	animation: var(--d2) var(--ease) calc(var(--d2) * 0.7) both vt-page-in;
 }
 
 /*
@@ -121,10 +122,10 @@ html[dir="rtl"] {
 
 @media (width < 640px) {
 	html:active-view-transition-type(forward)::view-transition-new(root) {
-		animation: var(--d2) var(--ease) both vt-push-in;
+		animation: var(--d2) var(--ease) calc(var(--d2) * 0.7) both vt-push-in;
 	}
 
 	html:active-view-transition-type(back)::view-transition-new(root) {
-		animation: var(--d2) var(--ease) both vt-pop-in;
+		animation: var(--d2) var(--ease) calc(var(--d2) * 0.7) both vt-pop-in;
 	}
 }

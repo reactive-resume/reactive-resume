@@ -247,6 +247,37 @@ export function parseUrl(input: string) {
 	}
 }
 
+// Schemes a browser, OS or network stack owns. Mirrors Better Auth's native-client rule
+// (`isNativePrivateUseRedirectUri` in @better-auth/core), which the provider applies again at registration.
+const NON_PRIVATE_USE_SCHEMES = new Set([
+	"http:",
+	"https:",
+	"ws:",
+	"wss:",
+	"file:",
+	"ftp:",
+	"mailto:",
+	"javascript:",
+	"data:",
+	"vbscript:",
+	"blob:",
+	"about:",
+	"view-source:",
+]);
+const REVERSE_DOMAIN_SCHEME = /^[a-z](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i;
+
+/**
+ * Desktop and mobile apps receive OAuth callbacks on their own scheme (RFC 8252 §7.1): either the
+ * authority-free reverse-domain form (`com.example.app:/callback`) or a host and path
+ * (`cursor://anysphere.cursor-mcp/oauth/callback`, which Cursor registers).
+ */
+function isPrivateUseRedirectUri(url: URL) {
+	if (NON_PRIVATE_USE_SCHEMES.has(url.protocol)) return false;
+	if (url.host) return url.pathname.startsWith("/");
+	const rest = url.href.slice(url.protocol.length);
+	return rest.startsWith("/") && !rest.startsWith("//") && REVERSE_DOMAIN_SCHEME.test(url.protocol.slice(0, -1));
+}
+
 type OAuthRedirectUriOptions = {
 	allowUnsafe?: boolean;
 };
@@ -268,7 +299,7 @@ export function isAllowedOAuthRedirectUri(input: string, trustedOrigins: string[
 	if (trustedOrigins.includes(origin)) return true;
 
 	if (parsed.protocol === "http:") return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
-	if (parsed.protocol !== "https:") return false;
+	if (parsed.protocol !== "https:") return isPrivateUseRedirectUri(parsed);
 
 	// Dynamic client registration must accept callbacks from clients we have never seen (Claude,
 	// other MCP hosts). Consent plus exact-match redirect comparison at authorization time is the

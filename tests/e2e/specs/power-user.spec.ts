@@ -13,9 +13,9 @@ async function seedLibrary(page: Page, pool: Pool) {
 	await expect(response).toBeOK();
 	const riotId = (await response.json()).id as string;
 	await pool.query(
-		`insert into cover_letter (id, user_id, name, style, tags, updated_at)
+		`insert into cover_letter (id, user_id, name, style, tags, updated_at, edited_at)
 		 select $1 || '-' || n, user_id, 'Fictional letter ' || lpad(n::text, 5, '0'), style, array['archive'],
-		   now() - make_interval(mins => n)
+		   now() - make_interval(mins => n), now() - make_interval(mins => n)
 		 from cover_letter cross join generate_series(1, $2::int) n where id = $1`,
 		[riotId, LIBRARY_SIZE],
 	);

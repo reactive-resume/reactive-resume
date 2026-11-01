@@ -18,6 +18,10 @@ export function createNotesQueue(storage: NotesStorage) {
 		kept: (key: string) => storage.getItemSync(key),
 		/** Keeps typed text on the device before it is sent. */
 		keep: (key: string, value: string) => storage.setItemSync(key, value),
+		discard(key: string) {
+			queued.delete(key);
+			storage.removeItemSync(key);
+		},
 		/**
 		 * Saves `value`, or a newer text queued before its turn. Resolves when the queue for `key` is empty and rejects
 		 * on the first failure; the failed text stays queued and kept unless newer text replaced it.

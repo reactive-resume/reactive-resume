@@ -3,11 +3,12 @@ import type { ApplicationSummary } from "@/features/applications/types";
 import type { CareerProfileData, OfferTerms } from "@reactive-resume/schema/career";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
+import { selectOfferPair } from "@reactive-resume/schema/career-offer";
 import { useCareerQueries, useCareerTime, useNow, useOffers } from "./hooks";
-import { defaultPair, formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
+import { formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry } from "./offer-entry";
 import { Actions, LoadState } from "./shared";
 import { useApplications } from "@/features/applications/queries";
@@ -27,40 +28,39 @@ export function OffersScreen() {
 	const { profile } = useCareerQueries();
 	const applications = useApplications();
 	const offers = (query.data ?? []).filter((item): item is Offer => item.data.kind === "offer");
-	const [selected, setSelected] = useState<(string | undefined)[]>([]);
-	const defaults = defaultPair(offers);
-	const a = offers.find((row) => row.id === selected[0]) ?? offers.find((row) => row.id === defaults[0]);
-	const b =
-		offers.find((row) => row.id === selected[1] && row.id !== a?.id) ??
-		offers.find((row) => row.id === defaults[1] && row.id !== a?.id);
-	if (
-		query.isPending ||
-		(query.isError && !query.data) ||
-		profile.isPending ||
-		(profile.isError && !profile.data) ||
-		applications.isPending ||
-		(applications.isError && !applications.data)
-	)
-		return (
-			<Screen onRefresh={() => Promise.allSettled([query.refetch(), profile.refetch(), applications.refetch()])}>
-				<LoadState query={query} />
-				<LoadState query={profile} />
-				<LoadState query={applications} />
-			</Screen>
-		);
+	const params = useLocalSearchParams<{ a?: string; b?: string }>();
+	const routeKey = JSON.stringify([params.a, params.b]);
+	const [selection, setSelection] = useState<{ route: string; ids: (string | undefined)[] }>({
+		route: routeKey,
+		ids: [],
+	});
+	if (selection.route !== routeKey) setSelection({ route: routeKey, ids: [] });
+	const selected = selection.route === routeKey ? selection.ids : [];
+	const setSelected = (ids: (string | undefined)[]) => setSelection({ route: routeKey, ids });
+	const pair = selectOfferPair(offers, { a: selected[0] ?? params.a, b: selected[1] ?? params.b });
+	const a = offers.find((row) => row.id === pair.a);
+	const b = offers.find((row) => row.id === pair.b);
+	const sameApplication = !!a?.applicationId && a.applicationId === b?.applicationId;
+	const earlier = sameApplication
+		? offers.filter((offer) => offer.id === a?.id || offer.id === b?.id).at(-1)
+		: undefined;
+	const time = useCareerTime();
 	return (
 		<Screen onRefresh={() => Promise.allSettled([query.refetch(), profile.refetch(), applications.refetch()])}>
 			<Text color="ink3">{t`Compared in their original currency and pay period. Comparing doesn't share anything with the coach.`}</Text>
-			<OfferEntry primary={!query.isPending && !query.isError && !offers.length} />
+			{earlier && (
+				<Text variant="title">{t`Changes since ${earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`}`}</Text>
+			)}
+			{applications.data && <OfferEntry primary={!query.isPending && !query.isError && !offers.length} />}
 			<LoadState query={query} />
 			<LoadState query={profile} />
 			<LoadState query={applications} />
-			<OfferStageApplications offers={offers} applications={applications.data} />
-			{!query.isError && !query.isPending && !applications.isError && !offers.length ? (
+			{applications.data && <OfferStageApplications offers={offers} applications={applications.data} />}
+			{!query.isError && !query.isPending && !applications.isPending && !applications.isError && !offers.length ? (
 				<EmptyState
 					variant="card"
 					title={t`No offers to compare yet`}
-					message={t`Add offer terms manually, or use optional AI extraction in Messages.`}
+					message={t`Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms.`}
 				/>
 			) : null}
 			{offers.length ? (
@@ -95,7 +95,7 @@ export function OffersScreen() {
 										.filter((row) => row.id !== (side === 0 ? b?.id : a?.id))
 										.map((row) => ({
 											value: row.id,
-											label: `${row.application?.company ?? t`Deleted application`} · ${row.application?.role ?? ""} · ${row.data.version === "verbal" ? t`Verbal offer` : t`Written offer`}`,
+											label: `${row.application?.company ?? t`Deleted application`} · ${row.application?.role ?? ""} · ${row.data.version === "verbal" ? t`Verbal offer` : t`Written offer`} · ${time.when(row.createdAt)} · #${offers.filter((item) => item.applicationId === row.applicationId).findIndex((item) => item.id === row.id) + 1} · ${offers.find((item) => item.applicationId === row.applicationId)?.id === row.id ? t`Latest` : ""} · ${row.application?.closedReason === "accepted" ? t`Accepted` : row.application?.status === "closed" ? t`Closed` : row.application?.status === "offer" ? t`Offer` : t`In progress`}`,
 										}))}
 									onChange={(id) => setSelected(side === 0 ? [id, b?.id] : [a?.id, id])}
 								/>
@@ -105,7 +105,7 @@ export function OffersScreen() {
 									<EmptyState
 										variant="card"
 										title={t`Save another offer to compare`}
-										message={t`Add offer terms manually, or use optional AI extraction in Messages.`}
+										message={t`Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms.`}
 									/>
 								)}
 							</View>
@@ -157,17 +157,26 @@ function OfferCard({ offer, other, profile }: OfferCardProps) {
 	const time = useCareerTime();
 	const now = useNow();
 	const data = offer.data;
-	const unknown = t`Unknown · ask`;
+	const deciding = offer.application?.status !== "closed";
+	const sameApplication = !!offer.applicationId && offer.applicationId === other?.applicationId;
+	const unknown = deciding ? t`Unknown · ask` : t`Not recorded`;
 	const money = (key: "base" | "variable" | "learning") => {
 		const amount = data[key];
 		if (amount === null) return unknown;
 		const difference = other ? moneyDifference(data, other.data, key) : null;
+		const delta =
+			difference === null
+				? ""
+				: `${difference > 0 ? "+" : "−"}${formatMoney(time.locale, data.currency, Math.abs(difference))}`;
+		const version = other?.data.version === "verbal" ? t`Verbal offer` : t`Written offer`;
 		const note =
 			difference === null || difference === 0
 				? ""
-				: difference > 0
-					? t`${formatMoney(time.locale, data.currency, difference)} more`
-					: t`${formatMoney(time.locale, data.currency, -difference)} less`;
+				: sameApplication
+					? t`${delta} vs ${version}`
+					: difference > 0
+						? t`${formatMoney(time.locale, data.currency, difference)} more`
+						: t`${formatMoney(time.locale, data.currency, -difference)} less`;
 		return [formatMoney(time.locale, data.currency, amount), periodLabel(data.period), note]
 			.filter(Boolean)
 			.join(" · ");
@@ -205,6 +214,15 @@ function OfferCard({ offer, other, profile }: OfferCardProps) {
 		<Card style={{ gap: space.s3 }}>
 			<Text variant="heading">{offer.application?.company ?? t`Deleted application`}</Text>
 			<Text>{offer.application?.role}</Text>
+			<Text>
+				{offer.application?.closedReason === "accepted"
+					? t`Accepted`
+					: offer.application?.status === "closed"
+						? t`Closed`
+						: offer.application?.status === "offer"
+							? t`Offer`
+							: t`In progress`}
+			</Text>
 			<Text color="ink3">
 				{data.version === "verbal" ? t`Verbal offer` : t`Written offer`} · {data.currency} · {periodLabel(data.period)}
 			</Text>
@@ -217,7 +235,7 @@ function OfferCard({ offer, other, profile }: OfferCardProps) {
 					<Text color="ink2">{term.value}</Text>
 				</View>
 			))}
-			{deadline !== null && deadline < 48 * 3_600_000 ? (
+			{deciding && deadline !== null && deadline < 48 * 3_600_000 ? (
 				<Banner tone="warn" message={deadline < 0 ? t`Response deadline has passed.` : t`Less than 48 hours left.`} />
 			) : null}
 			{profile ? (
@@ -258,7 +276,9 @@ function OfferCard({ offer, other, profile }: OfferCardProps) {
 					) : null}
 				</View>
 			) : null}
-			{questions.length ? (
+			{deciding &&
+			questions.length &&
+			(!sameApplication || (other && new Date(offer.createdAt) >= new Date(other.createdAt))) ? (
 				<View style={{ gap: space.s2 }}>
 					<Text variant="title">{t`Open questions`}</Text>
 					{questions.map((question) => (

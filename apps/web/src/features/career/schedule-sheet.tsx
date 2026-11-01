@@ -162,7 +162,8 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 			: fromZoned(toZoned(new Date(now.getTime() + 86_400_000), timeZone).date, "08:00", timeZone);
 		const initial: Draft = {
 			kind: existing ? (existing.kind as Kind) : (KINDS.find((item) => item === kind) ?? "discovery"),
-			query: existing?.query || [...profile.targetRoles, ...profile.locations].join(" · "),
+			query:
+				existing?.query ?? (kind === "follow-up" ? "" : [...profile.targetRoles, ...profile.locations].join(" · ")),
 			every: String(existing?.intervalDays ?? 1),
 			...toZoned(at, timeZone),
 			interviewId: existing?.interviewId ?? upcoming[0]?.interview.id ?? "",
@@ -187,11 +188,21 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	const choices = interviews.filter((item) => item.end >= now || item === interview);
 	const runAt =
 		draft?.kind === "prepare" ? (interview ? prepareRunAt(interview.start, draft.lead, timeZone) : null) : null;
-	const enteredAt = draft ? fromZoned(draft.date, draft.time, timeZone) : null;
+	const unchangedFollowUp =
+		form?.existing?.kind === "follow-up" &&
+		draft?.kind === "follow-up" &&
+		draft.date === form.initial.date &&
+		draft.time === form.initial.time;
+	const enteredAt =
+		unchangedFollowUp && form?.existing
+			? new Date(form.existing.nextRunAt)
+			: draft
+				? fromZoned(draft.date, draft.time, timeZone)
+				: null;
 	const errors = {
 		query: draft?.kind === "discovery" && draft.query.trim().length < 3 ? t`Add a role or company to look for.` : null,
 		when:
-			draft && draft.kind !== "prepare" && enteredAt && !(enteredAt > now)
+			draft && draft.kind !== "prepare" && !unchangedFollowUp && enteredAt && !(enteredAt > now)
 				? Number.isNaN(enteredAt.getTime())
 					? t`This time does not exist in your timezone. Choose another time.`
 					: t`Pick a time after now.`
@@ -209,7 +220,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 	const needsWebSearch = draft?.kind === "discovery" && draft.enabled && webAccess?.search === false;
 
 	const onSave = () => {
-		if (!form || !draft) return;
+		if (!form || !draft || !enteredAt) return;
 		setForm({ ...form, submitted: true });
 		if (errors.query || errors.when || blocked || needsWebSearch) return;
 		save.mutate(
@@ -222,12 +233,12 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 						: draft.kind === "follow-up"
 							? draft.applicationId || null
 							: null,
-				query: draft.kind === "discovery" ? draft.query.trim() : "",
+				query: draft.kind !== "prepare" ? draft.query.trim() : "",
 				interviewId: draft.kind === "prepare" ? draft.interviewId || null : null,
 				lead: draft.kind === "prepare" ? draft.lead : null,
 				enabled: draft.enabled,
 				email: smtp && verified && draft.email,
-				nextRunAt: runAt ?? fromZoned(draft.date, draft.time, timeZone),
+				nextRunAt: runAt ?? enteredAt,
 				timezone: timeZone,
 				locale,
 				intervalDays: draft.kind === "discovery" ? Number(draft.every) : null,
@@ -317,7 +328,6 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 											<Input
 												{...props}
 												value={draft.query}
-												maxLength={500}
 												onChange={(event) => set({ query: event.target.value })}
 												onBlur={() => touch("query")}
 												className="pointer-coarse:text-base"
@@ -454,23 +464,30 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 							)}
 
 							{draft.kind === "follow-up" && (
-								<Field label={t`Application`} hint={open.length === 0 ? t`Add an application first` : undefined}>
-									{(props) => (
-										<NativeSelect
-											{...props}
-											disabled={open.length === 0}
-											value={draft.applicationId}
-											onChange={(event) => set({ applicationId: event.target.value })}
-											className="pointer-coarse:text-base"
-										>
-											{open.map((application) => (
-												<option key={application.id} value={application.id}>
-													{`${application.company} · ${application.role}`}
-												</option>
-											))}
-										</NativeSelect>
-									)}
-								</Field>
+								<>
+									<Field label={t`Follow-up note`}>
+										{(props) => (
+											<Input {...props} value={draft.query} onChange={(event) => set({ query: event.target.value })} />
+										)}
+									</Field>
+									<Field label={t`Application`} hint={open.length === 0 ? t`Add an application first` : undefined}>
+										{(props) => (
+											<NativeSelect
+												{...props}
+												disabled={!!form?.existing || open.length === 0}
+												value={draft.applicationId}
+												onChange={(event) => set({ applicationId: event.target.value })}
+												className="pointer-coarse:text-base"
+											>
+												{open.map((application) => (
+													<option key={application.id} value={application.id}>
+														{`${application.company} · ${application.role}`}
+													</option>
+												))}
+											</NativeSelect>
+										)}
+									</Field>
+								</>
 							)}
 
 							{draft.kind !== "prepare" && (

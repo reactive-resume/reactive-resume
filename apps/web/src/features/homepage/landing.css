@@ -179,21 +179,25 @@
 	--p: 0;
 }
 
-/* Pinned scenes have explicit heights, so offscreen demos can skip rendering without moving the scroll positions. */
-.landing [data-pin]:not(#top) {
+/*
+ * Pinned scenes have explicit heights, so offscreen demos can skip rendering without moving the scroll positions. The
+ * scroll engine marks the scenes within a screen or two `data-warm`, so they render before they arrive.
+ */
+.landing [data-pin]:not(#top, [data-warm]) {
 	content-visibility: auto;
 }
 
-/* Reduced motion renders every scene at its end state; the pinned scenes also collapse to one screen. */
+/*
+ * Reduced motion renders every scene at its end state; the pinned scenes also collapse to one screen. Unlayered, so it
+ * beats each scene's `h-[…]` utilities at every width.
+ */
 @media (prefers-reduced-motion: reduce) {
 	.landing [data-scene] {
 		--p: 1;
 	}
-}
 
-@media (prefers-reduced-motion: no-preference) {
-	html:has(.landing) {
-		scroll-behavior: smooth;
+	.landing [data-pin] {
+		height: 100svh;
 	}
 }
 

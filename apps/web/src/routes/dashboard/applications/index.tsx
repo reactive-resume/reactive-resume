@@ -39,6 +39,7 @@ import {
 	hydrateApplicationDetail,
 } from "@/features/applications/queries";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
+import { useCareerTime, useNow } from "@/features/career/shared";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 
@@ -183,8 +184,11 @@ function RouteComponent() {
 
 	// The input updates at once; the list filters in a deferred render that typing can interrupt.
 	const text = useDeferredValue(query).trim().toLowerCase();
+	const now = useNow();
+	const { timeZone } = useCareerTime();
 	const filtered = (applications ?? []).filter(
-		(application) => matches(application, text) && (!followUp || needsFollowUp(getNextStep(application))),
+		(application) =>
+			matches(application, text) && (!followUp || needsFollowUp(getNextStep(application, now, timeZone), now)),
 	);
 	const selected = applications?.find((application) => application.id === selectedId) ?? null;
 	// The board needs room to drag: phones get the list instead.
@@ -490,14 +494,16 @@ type FollowUpNudgeProps = {
  * Dismissing is remembered on this device; dismissed applications don't come back here.
  */
 function FollowUpNudge({ applications, onOpen, onShowAll }: FollowUpNudgeProps) {
+	const { timeZone } = useCareerTime();
+	const now = useNow();
 	const [dismissed, setDismissed] = useState(readDismissed);
 
 	const dismissedIds = new Set(dismissed);
 	const owed = applications
 		.filter((application) => !dismissedIds.has(application.id))
 		.flatMap((application) => {
-			const step = getNextStep(application);
-			return needsFollowUp(step) ? [{ application, step }] : [];
+			const step = getNextStep(application, now, timeZone);
+			return needsFollowUp(step, now) ? [{ application, step }] : [];
 		})
 		// The longest silence first; dated follow-ups after it.
 		.sort((a, b) => (b.step.kind === "no-reply" ? b.step.days : -1) - (a.step.kind === "no-reply" ? a.step.days : -1));

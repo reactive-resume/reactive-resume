@@ -166,8 +166,8 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
 	const attention = (applications ?? [])
 		.flatMap((application) => {
-			const step = getNextStep(application, now);
-			return needsAttention(step, now) ? [{ application, step, key: nextStepSortKey(application, now) }] : [];
+			const step = getNextStep(application, now, timeZone);
+			return needsAttention(step, now) ? [{ application, step, key: nextStepSortKey(application, now, timeZone) }] : [];
 		})
 		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.application.id, b.application.id));
 
@@ -875,7 +875,8 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 	const describe = (row: Schedule) => {
 		const application = applications?.find((item) => item.id === row.applicationId);
 		if (row.kind === "discovery") return row.query;
-		if (row.kind === "follow-up") return application ? `${application.company} · ${application.role}` : "";
+		if (row.kind === "follow-up")
+			return [application ? `${application.company} · ${application.role}` : "", row.query].filter(Boolean).join(" · ");
 		const interview = application?.activity.find((entry) => entry.type === "interview" && entry.id === row.interviewId);
 		const kind = interview?.type === "interview" ? (interviewKindOf(interview.kind)?.label ?? interview.kind) : null;
 		return [application?.company, kind ? t`${kind} interview` : null].filter(Boolean).join(" · ");

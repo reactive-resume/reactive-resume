@@ -37,6 +37,7 @@ function row(id: string) {
 		status: "closed",
 		jobDescription: "full description",
 		notes: "private note",
+		followUpDateOnly: false,
 		tags: ["engineering"],
 		requirements: [],
 		contacts: [],
@@ -62,6 +63,8 @@ function summaryRow(id: string) {
 		"closed",
 		"not-selected",
 		null,
+		null, // resume file URL
+		null, // cover letter file URL
 		null,
 		"referral",
 		["engineering"],
@@ -69,6 +72,7 @@ function summaryRow(id: string) {
 		88,
 		null,
 		null,
+		false, // exact-time/date-only discriminator
 		[],
 		[
 			{ id: "stage", type: "stage", stage: "applied", at: "2026-07-01T12:00:00.000Z" },
@@ -96,7 +100,7 @@ function candidateSummary(id: string, status: string, updatedAt: string) {
 	const value = summaryRow(id);
 	value[6] = status;
 	value[7] = null;
-	value[20] = updatedAt;
+	value[23] = updatedAt;
 	return value;
 }
 

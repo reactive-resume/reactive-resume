@@ -45,6 +45,8 @@ type AddApplicationDialogProps = {
 	onOpenChange: (open: boolean) => void;
 	onAdded: (id: string) => void;
 	initialCapture?: PostingCapture | null | undefined;
+	/** Opened to pick a job inside another flow (Copy for a job, Link to application): saving returns to it. */
+	forPicker?: boolean | undefined;
 };
 
 /**
@@ -52,7 +54,13 @@ type AddApplicationDialogProps = {
  * provider when one is set up) into role and company, which stay editable; the posting itself is saved with the
  * application for Check, the assistant and letters. Add, or Add and tailor a resume.
  */
-export function AddApplicationDialog({ open, onOpenChange, onAdded, initialCapture }: AddApplicationDialogProps) {
+export function AddApplicationDialog({
+	open,
+	onOpenChange,
+	onAdded,
+	initialCapture,
+	forPicker = false,
+}: AddApplicationDialogProps) {
 	// A fresh form for every open, kept in place while the dialog animates closed.
 	const [instance, setInstance] = useState(0);
 	const [wasOpen, setWasOpen] = useState(open);
@@ -69,6 +77,7 @@ export function AddApplicationDialog({ open, onOpenChange, onAdded, initialCaptu
 					key={instance}
 					onClose={() => onOpenChange(false)}
 					onAdded={onAdded}
+					forPicker={forPicker}
 				/>
 			</DialogContent>
 		</Dialog>
@@ -79,9 +88,10 @@ type AddApplicationFormProps = {
 	onClose: () => void;
 	onAdded: (id: string) => void;
 	initialCapture?: PostingCapture | null | undefined;
+	forPicker: boolean;
 };
 
-function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplicationFormProps) {
+function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: AddApplicationFormProps) {
 	const id = useId();
 	const { data: webAccess } = useQuery(orpc.webAccess.status.queryOptions());
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
@@ -703,12 +713,19 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 				</div>
 			)}
 			<DialogFooter>
-				<Button type="button" variant="secondary" disabled={!ready || !!duplicate.data} onClick={() => void add(false)}>
+				<Button
+					type="button"
+					variant={forPicker ? "primary" : "secondary"}
+					disabled={!ready || !!duplicate.data}
+					onClick={() => void add(false)}
+				>
 					{stage === "saved" ? <Trans>Save job</Trans> : <Trans>Record application</Trans>}
 				</Button>
-				<Button type="button" disabled={!ready || !!duplicate.data} onClick={() => void add(true)}>
-					<Trans>Save and prepare resume</Trans>
-				</Button>
+				{!forPicker && (
+					<Button type="button" disabled={!ready || !!duplicate.data} onClick={() => void add(true)}>
+						<Trans>Save and prepare resume</Trans>
+					</Button>
+				)}
 			</DialogFooter>
 		</form>
 	);

@@ -1,7 +1,8 @@
 import { ORPCError } from "@orpc/server";
 import z from "zod";
 import { env } from "@reactive-resume/env/server";
-import { generateFilename } from "@reactive-resume/utils/file";
+import { getDefaultFileName } from "@reactive-resume/utils/file";
+import { contentDisposition } from "@reactive-resume/utils/http";
 import { protectedProcedure } from "../../context";
 import { consumePdfExportLimit } from "../../middleware/rate-limit";
 import { parseStoredResumeData } from "./resume-data-validation";
@@ -19,7 +20,7 @@ export async function createResumePdfDownload(input: CreateResumePdfDownloadInpu
 	const resume = await resumeService.getById({ id: input.id, userId: input.userId });
 	await consumePdfExportLimit(input);
 	const data = parseStoredResumeData(resume.data);
-	const filename = generateFilename(resume.name, "pdf");
+	const filename = `${getDefaultFileName({ name: resume.name, slug: resume.slug, data })}.pdf`;
 
 	try {
 		// Lazy-load the PDF renderer (@reactive-resume/pdf → the Forme WASM engine and
@@ -30,7 +31,7 @@ export async function createResumePdfDownload(input: CreateResumePdfDownloadInpu
 
 		return {
 			headers: {
-				"content-disposition": `attachment; filename="${filename}"`,
+				"content-disposition": contentDisposition(filename),
 			},
 			body,
 		};

@@ -291,7 +291,7 @@ export type GenerateTask = z.infer<typeof generateTaskSchema>;
 export const careerNoticeSchema = z.discriminatedUnion("type", [
 	z.object({ type: z.literal("opportunities"), count: z.number().int().min(1), query: z.string() }),
 	z.object({ type: z.literal("briefing"), company: z.string(), role: z.string() }),
-	z.object({ type: z.literal("followup"), company: z.string(), role: z.string() }),
+	z.object({ type: z.literal("followup"), company: z.string(), role: z.string(), note: z.string().optional() }),
 	z.object({ type: z.literal("schedule-failed"), reason: z.enum(["stopped", "failed"]) }),
 	z.object({ type: z.literal("email-failed") }),
 	z.object({ type: z.literal("briefing-paused") }),
@@ -300,7 +300,11 @@ export type CareerNotice = z.infer<typeof careerNoticeSchema>;
 
 export const careerScheduleInputSchema = careerScopeSchema.extend({
 	kind: z.enum(["discovery", "prepare", "follow-up"]),
-	query: z.string().trim().max(500).default(""),
+	query: z
+		.string()
+		.trim()
+		.default("")
+		.describe("Discovery search query (up to 500 characters), or the application follow-up note."),
 	interviewId: z.string().nullable().default(null),
 	/** Prepare only: when the briefing runs relative to the interview. */
 	lead: z.enum(["24h", "2h", "morning"]).nullable().default(null),

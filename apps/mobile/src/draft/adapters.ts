@@ -129,6 +129,7 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 		style: {
 			...saved.style,
 			basics: { ...saved.style.basics, ...changedFields(current.style.basics, submitted.style.basics) },
+			picture: { ...saved.style.picture, ...changedFields(current.style.picture, submitted.style.picture) },
 			metadata: { ...saved.style.metadata, ...changedFields(current.style.metadata, submitted.style.metadata) },
 		},
 	}),
@@ -157,12 +158,9 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 			...("designLinked" in changes ? { designLinked: document.designLinked } : {}),
 		};
 		if (!document.senderLinked) {
-			const { name, email, phone, location } = document.style.basics;
-			const previous = baseline.style.basics;
-			const sender = changedFields(
-				{ name, email, phone, location },
-				{ name: previous.name, email: previous.email, phone: previous.phone, location: previous.location },
-			);
+			const sender: NonNullable<typeof input.sender> = changedFields(document.style.basics, baseline.style.basics);
+			if (document.style.picture.hidden !== baseline.style.picture.hidden)
+				sender.picture = { hidden: document.style.picture.hidden };
 			if (Object.keys(sender).length) input.sender = sender;
 		}
 		const metadata = changedFields(document.style.metadata, baseline.style.metadata);

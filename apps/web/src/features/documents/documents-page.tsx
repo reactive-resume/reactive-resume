@@ -2,10 +2,10 @@ import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter
 import type { QueryClient } from "@tanstack/react-query";
 import type { KeyboardEvent } from "react";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -32,7 +32,7 @@ import { DocumentCard, DocumentRow } from "./document-card";
 import { LibraryError } from "./library-error";
 import { useNewDocumentsStore } from "./new-documents";
 import { PageNavigation } from "./page-navigation";
-import { useStartDocument } from "./use-start-document";
+import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { PageHeader } from "@/components/layout/page-header";
 import { useDialogStore } from "@/dialogs/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
@@ -166,6 +166,16 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		letter: displayed?.counts.letter ?? 0,
 	};
 	const hasPublic = displayed?.hasPublic ?? false;
+	// A type tab with nothing of its kind is empty, not filtered: it offers to make one.
+	const emptyType =
+		search.type !== "all" &&
+		search.q.trim() === "" &&
+		search.tags.length === 0 &&
+		search.public !== true &&
+		offset === 0 &&
+		counts[search.type] === 0
+			? search.type
+			: null;
 	// Actions apply to the selected documents the filters show.
 	const selection = rowsCurrent ? shown.filter((document) => selected.has(documentKey(document))) : [];
 	const selecting = selection.length > 0;
@@ -336,7 +346,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			)}
 
 			{failed ? null : firstRun ? (
-				<FirstRun onChooseFile={() => openDialog("document.new", undefined)} />
+				<FirstRun onFile={(file) => openDialog("document.new", { file })} />
 			) : (
 				<>
 					{(tags.length > 0 || hasPublic) && (
@@ -353,7 +363,9 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 					{isPending || (!rowsCurrent && !isError && shown.length === 0) ? (
 						<LibrarySkeleton view={view} />
 					) : shown.length === 0 ? (
-						isError ? null : (
+						isError ? null : emptyType ? (
+							<TypeEmpty type={emptyType} />
+						) : (
 							<div className="grid justify-items-center gap-2 py-16 text-center">
 								<Icon name="magnifying-glass" size={28} className="text-ink-3" />
 								<p className="font-semibold">
@@ -444,6 +456,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				</>
 			)}
 
+			<TrashLink />
 			<PageNavigation
 				offset={displayedOffset}
 				total={displayed?.total ?? page.total}
@@ -496,22 +509,46 @@ function storeView(view: "grid" | "list") {
 	}
 }
 
-/** The first visit: import is the filled button here, and only here. */
-function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
+/** The first visit: import is the filled button here, and only here. Choose a file opens the picker straight away. */
+function FirstRun({ onFile }: { onFile: (file: File) => void }) {
 	const { startBlank, trySample, creating } = useStartDocument();
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	return (
 		<section className="max-w-xl pt-4 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
+			<input
+				ref={inputRef}
+				type="file"
+				accept={IMPORT_ACCEPT}
+				className="hidden"
+				aria-label={t`Choose a file to import`}
+				onChange={(event) => {
+					const file = event.target.files?.[0];
+					event.target.value = "";
+					if (file) onFile(file);
+				}}
+			/>
 			<EmptyState
 				title={<Trans>Let's start with what you have</Trans>}
 				description={
-					<Trans>
-						Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF,
-						Word or JSON file anywhere here.
-					</Trans>
+					// Touch can't drop files, so it reads "Choose" there.
+					<>
+						<span className="pointer-coarse:hidden">
+							<Trans>
+								Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a
+								PDF, Word or JSON file anywhere here.
+							</Trans>
+						</span>
+						<span className="hidden pointer-coarse:inline">
+							<Trans>
+								Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a
+								PDF, Word or JSON file.
+							</Trans>
+						</span>
+					</>
 				}
 				action={
-					<Button onClick={onChooseFile}>
+					<Button onClick={() => inputRef.current?.click()}>
 						<Icon name="file-arrow-up" size={18} />
 						<Trans>Choose a file</Trans>
 					</Button>
@@ -538,6 +575,63 @@ function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
 				}
 			/>
 		</section>
+	);
+}
+
+/** Phones have no sidebar, so Trash is a row at the end of the library while it holds anything, as in the app. */
+function TrashLink() {
+	const { data: counts } = useQuery(orpc.documents.counts.queryOptions());
+	const trashCount = counts?.trash ?? 0;
+	if (!trashCount) return null;
+
+	return (
+		<Link
+			to="/dashboard/trash"
+			className="flex h-14 items-center gap-3 rounded-lg border border-line bg-surface px-3.5 transition-colors duration-quick ease-enter active:bg-press sm:hidden"
+		>
+			<Icon name="trash" size={22} className="text-ink-2" />
+			<span className="grid flex-1">
+				<span className="font-medium">
+					<Trans>Trash</Trans>
+				</span>
+				<span className="text-xs text-ink-3">
+					<Plural value={trashCount} one="# document" other="# documents" />
+				</span>
+			</span>
+			<Icon name="caret-right" size={22} className="text-ink-3" />
+		</Link>
+	);
+}
+
+/** Resumes or Letters with none of that kind yet: the way to make the first one. */
+function TypeEmpty({ type }: { type: "resume" | "letter" }) {
+	const openDialog = useDialogStore((state) => state.openDialog);
+	const { newLetter, creating } = useStartDocument();
+
+	return type === "letter" ? (
+		<EmptyState
+			className="mt-4"
+			title={<Trans>No cover letters yet</Trans>}
+			description={<Trans>Write one for a job, or start from your latest resume.</Trans>}
+			action={
+				<Button disabled={creating} onClick={() => void newLetter()}>
+					<Icon name="envelope-simple" size={18} />
+					<Trans>New cover letter</Trans>
+				</Button>
+			}
+		/>
+	) : (
+		<EmptyState
+			className="mt-4"
+			title={<Trans>No resumes yet</Trans>}
+			description={<Trans>Import the one you have, or start blank.</Trans>}
+			action={
+				<Button onClick={() => openDialog("document.new", undefined)}>
+					<Icon name="plus" size={18} />
+					<Trans>New resume</Trans>
+				</Button>
+			}
+		/>
 	);
 }
 
@@ -600,7 +694,10 @@ type SelectionBarProps = {
 	onTags: () => void;
 };
 
-/** Floats over the library while documents are selected: tags, visibility, locking and Trash for all of them. */
+/**
+ * Floats over the library while documents are selected: tags, visibility, locking and Trash for all of them. On phones
+ * it sits above the tab bar, as the Applications list's bar does.
+ */
 function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: SelectionBarProps) {
 	const batch = useBatchActions();
 	const [busy, setBusy] = useState(false);
@@ -623,7 +720,7 @@ function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: 
 			aria-hidden={count === 0}
 			inert={count === 0}
 			className={cn(
-				"fixed inset-x-0 bottom-6 z-30 mx-auto flex w-fit max-w-[calc(100vw-32px)] items-center gap-1 rounded-xl border border-line bg-raised p-1.5 shadow-e3 transition-[opacity,translate] duration-standard ease-enter max-sm:bottom-4",
+				"fixed inset-x-0 bottom-6 z-30 mx-auto flex w-fit max-w-[calc(100vw-32px)] items-center gap-1 rounded-xl border border-line bg-raised p-1.5 shadow-e3 transition-[opacity,translate] duration-standard ease-enter max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]",
 				count === 0 && "pointer-events-none translate-y-2 opacity-0",
 			)}
 		>

@@ -8,7 +8,9 @@ const { QueryClient, QueryObserver } = createRequire(new URL("../package.json", 
 	"@tanstack/react-query",
 );
 
+let followUpDomain;
 function load(path, mocks = {}) {
+	const dependencies = { "@reactive-resume/schema/applications/follow-up": followUpDomain, ...mocks };
 	const module = { exports: {} };
 	const code = transformSync(readFileSync(new URL("../src/" + path, import.meta.url), "utf8"), {
 		loader: path.endsWith(".tsx") ? "tsx" : "ts",
@@ -16,8 +18,8 @@ function load(path, mocks = {}) {
 	}).code;
 	new Function("require", "module", "exports", code)(
 		(name) => {
-			assert.ok(name in mocks, "Missing boundary: " + name);
-			return mocks[name];
+			assert.ok(name in dependencies, "Missing boundary: " + name);
+			return dependencies[name];
 		},
 		module,
 		module.exports,
@@ -25,6 +27,11 @@ function load(path, mocks = {}) {
 	return module.exports;
 }
 
+const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
+const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
+followUpDomain = load("../../../packages/schema/src/applications/follow-up.ts", {
+	"@reactive-resume/utils/timezone": timeParser,
+});
 const stages = load("features/applications/stages.ts", {
 	"@lingui/core/macro": { t: String },
 });
@@ -44,7 +51,9 @@ const lanes = load("features/applications/lanes.ts", {
 	"@reactive-resume/schema/applications/lanes": schemaLanes,
 	"./stages": stages,
 });
-const domainNextStep = load("../../../packages/schema/src/applications/next-step.ts");
+const domainNextStep = load("../../../packages/schema/src/applications/next-step.ts", {
+	"./follow-up": followUpDomain,
+});
 const history = load("features/applications/history.ts", {
 	"@reactive-resume/schema/applications/next-step": domainNextStep,
 });
@@ -791,4 +800,34 @@ accountScope = "account-a";
 queryClient.clear();
 console.log(
 	"PASS native application summaries, lanes/history, old-server write guards, cache rollback and authoritative reminder cancellation",
+);
+
+const timezoneOrder = list.groupApplications(
+	[
+		{
+			...full[0],
+			id: "legacy",
+			status: "applied",
+			activity: [],
+			followUpAt: new Date("2030-01-03T00:00:00Z"),
+			followUpDateOnly: true,
+		},
+		{
+			...full[0],
+			id: "exact",
+			status: "applied",
+			activity: [],
+			followUpAt: new Date("2030-01-03T12:00:00Z"),
+			followUpDateOnly: false,
+		},
+	],
+	"next",
+	"asc",
+	new Date("2030-01-01T00:00:00Z"),
+	undefined,
+	"Pacific/Honolulu",
+);
+assert.deepEqual(
+	timezoneOrder.flatMap((group) => group.data.map((row) => row.id)),
+	["exact", "legacy"],
 );

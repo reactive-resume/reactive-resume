@@ -4,11 +4,11 @@ import type { NextStep } from "@reactive-resume/schema/applications/next-step";
 export type { NextStep } from "@reactive-resume/schema/applications/next-step";
 import type { ApplicationLane } from "@reactive-resume/schema/applications/lanes";
 import { plural, t } from "@lingui/core/macro";
+import { getNextStep as sharedGetNextStep } from "@reactive-resume/schema/applications/next-step";
 import { laneSince } from "./history";
 import { getClosedReasonLabel } from "./stages";
 
 export {
-	getNextStep,
 	needsAttention,
 	needsFollowUp,
 	nextStepSortKey,
@@ -21,6 +21,16 @@ export const daysInStage = (
 	now = new Date(),
 	lanes: readonly ApplicationLane[] = [],
 ) => Math.max(0, Math.floor((now.getTime() - laneSince(application, lanes).getTime()) / 86_400_000));
+
+/** Preserve native lane-aware callers while deriving canonical next steps through the shared contract. */
+export function getNextStep(
+	application: Parameters<typeof sharedGetNextStep>[0],
+	now = new Date(),
+	_lanes: readonly ApplicationLane[] = [],
+	timeZone = "UTC",
+): NextStep {
+	return sharedGetNextStep(application, now, timeZone);
+}
 
 export type NextStepText = { icon: IconName; title: string; sub: string; tone: "normal" | "warn" | "muted" };
 

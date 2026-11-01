@@ -68,6 +68,8 @@ When you open an imported resume from the dialog, the **Write** panel starts wit
 
 Dates that couldn't be read exactly, such as "Summer 2019", are kept as written. Those entries open with **Custom date text** turned on and print the original wording. If some of that text can't be read as a date at all, the note says how many fields need a look, and each of those date fields shows a **Saved as written** warning because date checks and sorting don't work for that text. Keep the text, or enter a readable month and year and turn off **Custom date text**. See [Entering dates](/guides/entering-dates#custom-date-text). Close the note with **×** when you're done.
 
+The imported resume is named after the person in it. If you already have a resume with that name, the headline is added ("Morgan Chen — Engineering lead"), then a number, so two imports stay apart in Documents and in pickers.
+
 Go through every section before you send the resume. PDF and Word files don't store which text belongs where, so parts can land in the wrong section, lose formatting or come out slightly reworded. Structured files (Reactive Resume JSON, JSON Resume, LinkedIn) come in far more reliably.
 
 ## Notes on each format
@@ -109,6 +111,8 @@ Go through every section before you send the resume. PDF and Word files don't st
   />
 </Frame>
 
+**"Couldn't read the whole PDF."** Text-layer import supports up to 30 pages. Split a longer PDF into smaller files and import each separately. A partial file is never imported as a complete resume.
+
 **"This PDF is a scanned image."** Try the Word version of the resume, set up an AI provider, or start blank and paste your sections in.
 
 **"This ZIP doesn't look like a LinkedIn data export."** Make sure you're importing the archive LinkedIn sent you, not a ZIP you made yourself.
@@ -116,6 +120,8 @@ Go through every section before you send the resume. PDF and Word files don't st
 **"This PDF is password protected."** Save a copy without a password and import that instead.
 
 **"The file couldn't be read as a resume"** (or **"The file could not be read as a valid resume"**, followed by the fields it couldn't read). The JSON file is damaged or isn't a resume. Check that it came from Reactive Resume or follows the JSON Resume standard.
+
+**"The end date for your role at … isn't a date."** A JSON Resume date must be a year, a year and month, or a full date (`2024`, `2024-03` or `2024-03-15`). Fix that entry in the file, or import a PDF instead. An empty date (`""`), which many exporters write for a current role, is fine: the role imports as current.
 
 **"Couldn't reach the AI provider."** Your provider didn't answer. Try again in a moment, or test the connection in **Settings → AI & developer**.
 

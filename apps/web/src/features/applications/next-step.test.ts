@@ -93,12 +93,15 @@ it.each([
 	expect(source.activity[0]?.at).toEqual(new Date("2026-10-30T09:00:00Z"));
 });
 
-it("keeps a follow-up on the calendar date selected in its browser-local editor", () => {
-	const at = new Date(2026, 9, 30, 9);
-	const step = getNextStep(application({ followUpAt: at }), NOW);
-	const expected = at.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short" });
-	for (const timeZone of ["Pacific/Honolulu", "Pacific/Kiritimati"]) {
-		expect(describeNextStep(step, { status: "applied", closedReason: null }, "en-GB", timeZone).sub).toBe(expected);
+it("shows a follow-up on the same account date as its Today reminder", () => {
+	const step = getNextStep(application({ followUpAt: new Date("2026-10-30T09:00:00Z") }), NOW);
+	for (const [timeZone, expected] of [
+		["Pacific/Honolulu", "Thu 29 Oct"],
+		["Pacific/Kiritimati", "Fri 30 Oct"],
+	] as const) {
+		expect(describeNextStep(step, { status: "applied", closedReason: null }, "en-GB", timeZone)).toMatchObject({
+			sub: expected,
+		});
 	}
 });
 
@@ -119,4 +122,16 @@ it.each([
 	["a closed application", { status: "closed" }, false],
 ] as const)("decides whether %s needs the user", (_, patch, expected) => {
 	expect(needsAttention(getNextStep(application(patch as Partial<Source>), NOW), NOW)).toBe(expected);
+});
+
+it("resolves a legacy selected day at 09:00 while an explicit midnight remains exact", () => {
+	const source = application({ followUpAt: new Date("2030-01-03T00:00:00Z"), followUpDateOnly: true });
+	const legacy = getNextStep(source, new Date("2030-01-03T12:00:00Z"), "Pacific/Honolulu");
+	expect(legacy).toMatchObject({ kind: "follow-up", at: new Date("2030-01-03T19:00:00Z"), overdue: false });
+	expect(describeNextStep(legacy, { status: "applied", closedReason: null }, "en-GB", "Pacific/Honolulu").sub).toBe(
+		"Thu 3 Jan",
+	);
+	expect(
+		getNextStep({ ...source, followUpDateOnly: false }, new Date("2030-01-03T12:00:00Z"), "Pacific/Honolulu"),
+	).toMatchObject({ kind: "follow-up", at: source.followUpAt, overdue: true });
 });

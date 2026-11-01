@@ -9,6 +9,8 @@ import { useNewDocuments } from "./new-documents";
 import { useDocumentOperations } from "./queries";
 import { client, orpc } from "@/api/client";
 import { useSession } from "@/auth/session";
+import { AddApplicationSheet } from "@/features/applications/add-sheet";
+import { shareDocumentPdf } from "@/features/share/files";
 import { routes } from "@/routes";
 import { Banner, Button, ChipInput, ListRow, Sheet, Skeleton, Text, TextField, useTheme } from "@/ui";
 
@@ -33,6 +35,7 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 	const [name, setName] = useState(first?.name ?? "");
 	const shared = sharedTags(value.documents);
 	const [tags, setTags] = useState(shared);
+	const [addingJob, setAddingJob] = useState(false);
 	const options = orpc.applications.listSummary.queryOptions({ input: {} });
 	const applications = useQuery({
 		...options,
@@ -80,6 +83,12 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 								useNewDocuments.getState().markOpened(first);
 								router.push(first.type === "resume" ? routes.builder(first.id) : routes.letter(first.id));
 							}}
+						/>
+						<ListRow
+							title={t`Download PDF`}
+							leading="file-pdf"
+							disabled={operations.busy}
+							onPress={() => void execute(() => shareDocumentPdf(first.type, first.id, first.name))}
 						/>
 						<ListRow
 							title={t`Select`}
@@ -239,8 +248,16 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 								/>
 							))}
 						{applications.isSuccess && !applications.data.some((application) => application.status !== "closed") && (
-							<Text color="ink2">{t`No applications yet. Add one in Applications first.`}</Text>
+							<Text color="ink2">{t`No applications yet.`}</Text>
 						)}
+						<Button
+							label={t`Add a job…`}
+							icon="plus"
+							variant="secondary"
+							disabled={operations.busy || first?.isLocked}
+							onPress={() => setAddingJob(true)}
+						/>
+						{addingJob && <AddApplicationSheet onClose={() => setAddingJob(false)} onAdded={(id) => link(id)} />}
 						{first?.application && (
 							<Button
 								label={t`Unlink`}
