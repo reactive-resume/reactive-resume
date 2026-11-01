@@ -256,21 +256,67 @@ test("application coach history survives provider-list failure", async ({ authPa
 	await composer.press("Enter");
 	await consent(page);
 	await expect(page.getByText("You left the document out.", { exact: true })).toBeVisible();
+	await expect
+		.poll(async () => {
+			const response = await page.request.post("/api/rpc/agent/threads/list", {
+				data: { json: {} },
+			});
+			expect(response.ok()).toBe(true);
+			const { json: allThreads } = await response.json();
+			const threads = allThreads.filter((thread: { applicationId: string | null }) => thread.applicationId === id);
+			if (threads.length !== 1 || threads[0].activeRunId) return false;
+			const history = await page.request.post("/api/rpc/agent/threads/get", { data: { json: { id: threads[0].id } } });
+			expect(history.ok()).toBe(true);
+			const { json: thread } = await history.json();
+			const messages = JSON.stringify(thread.messages);
+			return (
+				!thread.thread.activeRunId &&
+				messages.includes("Remember this fictional history") &&
+				messages.includes("You left the document out.")
+			);
+		})
+		.toBe(true);
+	const count = stub.requests.length;
 	let blocked = 0;
 	await page.route("**/api/rpc/**", async (route) => {
 		const req = route.request();
-		const body = req.postData() ?? "";
-		if (req.url().includes("aiProviders/list") || body.includes("aiProviders")) {
-			blocked++;
-			await route.abort("failed");
-		} else await route.continue();
+		const batched = new URL(req.url()).pathname.endsWith("/__batch__");
+		const entries: { url: string }[] = batched ? JSON.parse(req.postData() ?? "[]") : [{ url: req.url() }];
+		const providers = entries.flatMap((entry, index) =>
+			new URL(entry.url).pathname === "/api/rpc/aiProviders/list" ? [index] : [],
+		);
+		if (!providers.length) return route.continue();
+		blocked++;
+		const response = await route.fetch();
+		const error = {
+			json: { defined: false, code: "INTERNAL_SERVER_ERROR", status: 500, message: "Provider lookup unavailable" },
+		};
+		// A physical batch can also carry thread discovery: preserve every sibling's real response.
+		const body = batched
+			? (await response.text())
+					.split("\n")
+					.map((line) => {
+						if (!line.startsWith("data: ")) return line;
+						const event = JSON.parse(line.slice(6));
+						return providers.includes(event.index)
+							? `data: ${JSON.stringify({ ...event, status: 500, body: error })}`
+							: line;
+					})
+					.join("\n")
+			: JSON.stringify(error);
+		await route.fulfill({
+			response,
+			status: batched ? 207 : 500,
+			body,
+			headers: { ...response.headers(), "content-length": String(Buffer.byteLength(body)) },
+		});
 	});
 	await page.reload();
 	await expect.poll(() => blocked).toBeGreaterThan(0);
 	await expect(page.getByText("You left the document out.", { exact: true })).toBeVisible({ timeout: 12000 });
 	await expect(composer).toBeDisabled();
 	await page.screenshot({ path: info.outputPath("coach-history-provider-error.png") });
-	const count = stub.requests.length;
+	expect(stub.requests.length).toBe(count);
 	await page.getByRole("button", { name: "Try again", exact: true }).first().click({ timeout: 10000 });
 	await page.unroute("**/api/rpc/**");
 	await expect(composer).toBeEnabled();
