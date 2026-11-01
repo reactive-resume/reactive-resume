@@ -29,7 +29,10 @@ vi.mock("@/libs/orpc/client", () => ({
 			list: { queryOptions: () => ({ queryKey: ["providers"], queryFn: api.providers, retry: false }) },
 		},
 		documents: { key: () => ["documents"], list: { queryKey: () => ["documents", "list"] } },
-		resume: { create: { mutationOptions: () => ({ mutationFn: vi.fn() }) } },
+		resume: {
+			create: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			list: { queryOptions: () => ({ queryKey: ["resume", "list"], queryFn: async () => [] }) },
+		},
 		coverLetters: { create: { mutationOptions: () => ({ mutationFn: api.createLetter }) } },
 	},
 }));

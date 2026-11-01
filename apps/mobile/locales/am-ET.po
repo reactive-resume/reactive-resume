@@ -1065,7 +1065,6 @@ msgstr "እርምጃዎች ለ{0} በ{1}"
 msgid "Active"
 msgstr "ንቁ"
 
-#: src/features/application-detail/sections.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Add"
 msgstr "ያክሉ"
@@ -1101,14 +1100,6 @@ msgstr "ቦታ ያክሉ"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note"
-msgstr "ማስታወሻ ጨምር"
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note…"
-msgstr "ማስታወሻ ያክሉ…"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Add a person"
@@ -2102,6 +2093,10 @@ msgstr "አዘርባይጃንኛ"
 #: src/features/write/entry-sheet.tsx
 msgid "Back"
 msgstr "ተመለስ"
+
+#: src/shell/builder-chrome.tsx
+msgid "Back to application"
+msgstr ""
 
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
@@ -3744,6 +3739,10 @@ msgstr "ማመልከቻ ደብዳቤ"
 msgid "Cover letter — {0}"
 msgstr "የሽፋን ደብዳቤ - {0}"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
@@ -3908,6 +3907,10 @@ msgstr "የተፈጠረበት ቀን"
 #: src/features/design/advanced.tsx
 msgid "Date format"
 msgstr "የቀን ቅርጸት"
+
+#: src/features/application-detail/sections.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -6165,6 +6168,11 @@ msgctxt "US Letter paper size (8.5 × 11 in), shown beside A4"
 msgid "Letter"
 msgstr "US Letter"
 
+#: src/features/documents/document-sheets.tsx
+#: src/features/letters/write.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Letter body"
 msgstr "የደብዳቤ አካል"
@@ -6481,6 +6489,18 @@ msgstr "የተቆለፉ ሰነዶች ተዘለዋል. መጀመሪያ ክፈት�
 #: src/features/write/outline.tsx
 msgid "Locked. Unlock to edit."
 msgstr "ተቆልፏል። ለማርትዕ ይክፈቱ።"
+
+#: src/features/application-detail/sections.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Long press to select"
@@ -7348,6 +7368,7 @@ msgstr "ምላሽ የለም።"
 msgid "No results"
 msgstr "ምንም ውጤት የለም።"
 
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "የትምህርት ማስረጃ የለም።"
@@ -8200,8 +8221,8 @@ msgid "PDF check canceled. Retry when ready."
 msgstr "የPDF ፍተሻ ተሰርዟል። ዝግጁ ሲሆኑ እንደገና ይሞክሩ።"
 
 #: src/features/application-detail/sections.tsx
-msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
-msgstr "PDF ብቻ · እያንዳንዳቸው እስከ 10 ሜባ። Reactive Resumeን ማገናኘት AI የግጥሚያ ነጥብ እና ማበጀትን ያስችላል።"
+msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
@@ -9381,6 +9402,10 @@ msgstr "የስራ ልምድ ማስረጃ ግብረ መልስ፣ የምርት እ
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "የሪዙሜ ፋይል"
+
+#: src/features/documents/new-document.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -10903,6 +10928,10 @@ msgstr "በተደራራቢ ረድፎች"
 msgid "Stage stays {stage}"
 msgstr "ደረጃው {stage} ሆኖ ይቆያል"
 
+#: src/features/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Start"
 msgstr "ጀምር"
@@ -11717,6 +11746,11 @@ msgid "This application has no posting yet. Add one in Applications."
 msgstr "ይህ የሥራ ማመልከቻ እስካሁን ምንም የሥራ ማስታወቂያ የለውም። በስራ ማመልከቻዎች ውስጥ አንድ ያክሉ።"
 
 #: src/features/applications/error.ts
+#: src/features/documents/queries.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
+#: src/features/applications/error.ts
 msgid "This changed elsewhere. Reload and try again."
 msgstr "ይህ በሌላ ቦታ ተቀይሯል። እንደገና ይጫኑና ይሞክሩ።"
 
@@ -11879,6 +11913,10 @@ msgstr "ይህ የሽፋን ደብዳቤ ሌላ ቦታ ተቀይሯል።"
 #: src/features/letters/write.tsx
 msgid "This letter is locked. Unlock it in Documents to edit."
 msgstr "ይህ ደብዳቤ ተቆልፏል። ለማርትዕ በሰነዶች ውስጥ ይክፈቱት።"
+
+#: src/features/documents/document-sheets.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "This letter keeps its recipient as written."
@@ -12521,6 +12559,10 @@ msgstr "እቅዱ እንደገና ሲታይ እንዲቆይ A4 ወይም US Lett
 msgid "Use AI for PDF imports"
 msgstr "ለPDF ማስመጣቶች AIን ይጠቀሙ"
 
+#: src/features/application-detail/sections.tsx
+msgid "Use an existing letter"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Use an http or https job posting link before saving."
 msgstr "ከማስቀመጥዎ በፊት http ወይም https የስራ መለጠፍ አገናኝ ይጠቀሙ።"
@@ -13115,6 +13157,10 @@ msgstr ""
 #: src/features/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "ደብዳቤ ጻፍ"
+
+#: src/features/documents/document-sheets.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"

@@ -33,7 +33,11 @@ vi.mock("@/libs/orpc/client", () => {
 				getById: endpoint("application"),
 				lanes: { get: endpoint("lanes", () => new Promise(() => {})) },
 			},
-			documents: { list: endpoint("documents", api.documents) },
+			documents: {
+				...endpoint("documents", api.documents),
+				list: endpoint("documents", api.documents),
+				linkApplication: endpoint("linkApplication"),
+			},
 			coverLetters: { create: endpoint("createLetter") },
 			career: {
 				answers: {

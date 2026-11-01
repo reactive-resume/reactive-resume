@@ -121,16 +121,19 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 				}}
 			>
 				<Input
-					aria-label={t`Add a note`}
-					placeholder={t`Add a note…`}
+					aria-label={t`Log an update`}
+					placeholder={t`Log an update…`}
 					value={note}
 					disabled={addNote.isPending}
 					onChange={(event) => setNote(event.target.value)}
 				/>
 				<Button type="submit" variant="secondary" disabled={!note.trim() || addNote.isPending}>
-					<Trans>Add</Trans>
+					<Trans>Log</Trans>
 				</Button>
 			</form>
+			<p className="text-xs text-ink-3">
+				<Trans>Dated updates. For things to remember and share with the coach, use Notes.</Trans>
+			</p>
 
 			<ol className="grid">
 				{sorted.map((entry) => {

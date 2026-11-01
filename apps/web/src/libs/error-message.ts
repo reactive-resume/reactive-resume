@@ -2,6 +2,7 @@ import type { AgentReplyError } from "@reactive-resume/ai/tools/agent-tool-contr
 import { plural, t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
 import { agentReplyError } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { isNetworkError } from "@reactive-resume/utils/http";
 
@@ -62,6 +63,8 @@ export function getOrpcErrorMessage(
 	},
 ): string {
 	if (!(error instanceof ORPCError)) return getReadableErrorMessage(error, options.fallback);
+	if (error.data?.reason === SUBMITTED_DOCUMENT_LOCKED)
+		return t`This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job.`;
 	if (error.code === "AI_CREDENTIAL_DECRYPTION_FAILED")
 		return t`The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer.`;
 

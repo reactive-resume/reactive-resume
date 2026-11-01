@@ -207,6 +207,148 @@ describe.skipIf(!databaseUrl)("Trash batch operations", () => {
 		await seed();
 	});
 
+	it("lists submission hints without private job notes and keeps prepared links reversible", async () => {
+		const { applicationService } = await import("../applications/service");
+		const { coverLetterService } = await import("../cover-letters/service");
+		const letter = await coverLetterService.create({ userId: "alice", name: "Prepared" });
+		const id = await applicationService.create({
+			userId: "alice",
+			role: "Engineer",
+			company: "Fictional",
+			notes: "private memo",
+			jobDescription: "private posting",
+		});
+		await service.linkApplication({ userId: "alice", type: "letter", id: letter.id, applicationId: id });
+		expect(await applicationService.getById({ userId: "alice", id })).toMatchObject({
+			coverLetterId: letter.id,
+			sentCoverLetterVersionId: null,
+		});
+		expect(await coverLetterService.getById({ userId: "alice", id: letter.id })).toMatchObject({
+			sourceApplicationId: id,
+		});
+		const summary = (await applicationService.listSummary({ userId: "alice" })).items.find((item) => item.id === id);
+		expect(summary).toMatchObject({
+			coverLetterId: letter.id,
+			sentCoverLetterVersionId: null,
+			sentResumeVersionId: null,
+		});
+		expect(summary).not.toHaveProperty("notes");
+		expect(summary).not.toHaveProperty("jobDescription");
+		await service.linkApplication({ userId: "alice", type: "letter", id: letter.id, applicationId: null });
+		expect(await applicationService.getById({ userId: "alice", id })).toMatchObject({ coverLetterId: null });
+		await service.linkApplication({ userId: "alice", type: "letter", id: letter.id, applicationId: id });
+		await applicationService.update({ userId: "alice", id, status: "applied" });
+		const sent = (await applicationService.listSummary({ userId: "alice" })).items.find((item) => item.id === id);
+		expect(sent?.sentCoverLetterVersionId).toEqual(expect.any(String));
+		const rows = await pool.query("SELECT cover_letter_id, sent_cover_letter_version_id FROM application WHERE id=$1", [
+			id,
+		]);
+		expect(rows.rows[0]).toEqual({
+			cover_letter_id: letter.id,
+			sent_cover_letter_version_id: sent?.sentCoverLetterVersionId,
+		});
+		expect((await applicationService.listSummary({ userId: "bob" })).items).toEqual([]);
+	});
+
+	it("keeps application-side create/edit/relink/clear two-way, locked and concurrency-safe", async () => {
+		const { applicationService } = await import("../applications/service");
+		const { coverLetterService } = await import("../cover-letters/service");
+		const letter = await coverLetterService.create({ userId: "alice", name: "Prepared" });
+		const first = await applicationService.create({
+			userId: "alice",
+			role: "First",
+			company: "One",
+			coverLetterId: letter.id,
+		});
+		expect(await applicationService.getById({ userId: "alice", id: first })).toMatchObject({
+			coverLetterId: letter.id,
+		});
+		expect(await coverLetterService.getById({ userId: "alice", id: letter.id })).toMatchObject({
+			sourceApplicationId: first,
+		});
+
+		// A second application with the same letter moves it and detaches the old job.
+		const second = await applicationService.create({
+			userId: "alice",
+			role: "Second",
+			company: "Two",
+			coverLetterId: letter.id,
+		});
+		expect(await applicationService.getById({ userId: "alice", id: second })).toMatchObject({
+			coverLetterId: letter.id,
+		});
+		expect(await applicationService.getById({ userId: "alice", id: first })).toMatchObject({ coverLetterId: null });
+		expect(await coverLetterService.getById({ userId: "alice", id: letter.id })).toMatchObject({
+			sourceApplicationId: second,
+		});
+
+		// Editing to another letter points the new letter here and leaves the old letter with its own job.
+		const other = await coverLetterService.create({ userId: "alice", name: "Other" });
+		await applicationService.update({ userId: "alice", id: first, coverLetterId: other.id });
+		expect(await applicationService.getById({ userId: "alice", id: first })).toMatchObject({
+			coverLetterId: other.id,
+		});
+		expect(await coverLetterService.getById({ userId: "alice", id: other.id })).toMatchObject({
+			sourceApplicationId: first,
+		});
+		expect(await coverLetterService.getById({ userId: "alice", id: letter.id })).toMatchObject({
+			sourceApplicationId: second,
+		});
+
+		// Clearing the application detaches the letter too.
+		await applicationService.update({ userId: "alice", id: first, coverLetterId: null });
+		expect(await applicationService.getById({ userId: "alice", id: first })).toMatchObject({ coverLetterId: null });
+		expect(await coverLetterService.getById({ userId: "alice", id: other.id })).toMatchObject({
+			sourceApplicationId: null,
+		});
+
+		// A locked letter cannot be attached.
+		await service.setLocked({ userId: "alice", type: "letter", id: letter.id, isLocked: true });
+		await expect(
+			applicationService.create({
+				userId: "alice",
+				role: "Locked",
+				company: "Three",
+				coverLetterId: letter.id,
+			}),
+		).rejects.toMatchObject({ code: "DOCUMENT_LOCKED" });
+		await service.setLocked({ userId: "alice", type: "letter", id: letter.id, isLocked: false });
+
+		// Another account cannot attach this letter.
+		await expect(
+			applicationService.create({
+				userId: "bob",
+				role: "Foreign",
+				company: "Four",
+				coverLetterId: letter.id,
+			}),
+		).rejects.toMatchObject({ code: "NOT_FOUND" });
+
+		// Concurrent creates leave exactly one owner and a letter side that agrees with it.
+		const results = await Promise.allSettled([
+			applicationService.create({
+				userId: "alice",
+				role: "Race one",
+				company: "Five",
+				coverLetterId: letter.id,
+			}),
+			applicationService.create({
+				userId: "alice",
+				role: "Race two",
+				company: "Six",
+				coverLetterId: letter.id,
+			}),
+		]);
+		const ids = results.map((result) => (result.status === "fulfilled" ? result.value : null));
+		expect(ids.every((id) => id !== null)).toBe(true);
+		const racers = await Promise.all(ids.map((id) => applicationService.getById({ userId: "alice", id: id ?? "" })));
+		const owners = racers.filter((application) => application.coverLetterId === letter.id);
+		expect(owners).toHaveLength(1);
+		expect(await coverLetterService.getById({ userId: "alice", id: letter.id })).toMatchObject({
+			sourceApplicationId: owners[0]?.id,
+		});
+	});
+
 	it("restores only the selected loaded documents that are still in this account's Trash", async () => {
 		const result = await service.restoreMany({
 			userId: "alice",

@@ -66,6 +66,8 @@ function summaryRow(id: string) {
 		null, // resume file URL
 		null, // cover letter file URL
 		null,
+		null,
+		null,
 		"referral",
 		["engineering"],
 		"https://example.com/job",

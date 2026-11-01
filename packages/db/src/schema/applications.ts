@@ -108,6 +108,9 @@ export const application = pg.pgTable(
 		contacts: pg.jsonb("contacts").notNull().$type<Contact[]>().default([]),
 		activity: pg.jsonb("activity").notNull().$type<ApplicationTimelineEntry[]>().default([]),
 		appliedAt: pg.timestamp("applied_at", { withTimezone: true }).notNull().defaultNow(),
+		// Durable lifetime submission marker: set on the first sent stage or explicit submit, never cleared by timeline
+		// edits. It distinguishes a genuine first submission from reopening a job that was applied earlier.
+		submittedAt: pg.timestamp("submitted_at", { withTimezone: true }),
 		createdAt: pg.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 		updatedAt: pg
 			.timestamp("updated_at", { withTimezone: true })

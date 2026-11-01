@@ -31,7 +31,10 @@ vi.mock("@/libs/orpc/client", () => ({
 			create: { mutationOptions: () => ({ mutationFn: api.create }) },
 		},
 		aiProviders: { list: api.endpoint("providers", () => []) },
-		resume: { create: { mutationOptions: () => ({ mutationFn: vi.fn() }) } },
+		resume: {
+			list: api.endpoint("resumes", () => api.documents.filter((item) => (item as { type: string }).type === "resume")),
+			create: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+		},
 		coverLetters: { create: { mutationOptions: () => ({ mutationFn: vi.fn() }) } },
 	},
 }));

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { ORPCError } from "@orpc/client";
 import { AGENT_REPLY_ERRORS } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 import {
 	getOrpcErrorMessage,
 	getReadableErrorMessage,
@@ -93,4 +94,17 @@ describe("getResumeErrorMessage", () => {
 		const error = new ORPCError("UNKNOWN_ERROR");
 		expect(getResumeErrorMessage(error)).toBe("Something went wrong. Please try again.");
 	});
+});
+
+it("explains submitted-document recovery while keeping unrelated server errors private", () => {
+	const error = new ORPCError("BAD_REQUEST", {
+		message: "Internal details",
+		data: { reason: SUBMITTED_DOCUMENT_LOCKED },
+	});
+	expect(getOrpcErrorMessage(error, { fallback: "Retry" })).toBe(
+		"This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job.",
+	);
+	expect(
+		getOrpcErrorMessage(new ORPCError("BAD_REQUEST", { message: "Internal details" }), { fallback: "Retry" }),
+	).toBe("Retry");
 });

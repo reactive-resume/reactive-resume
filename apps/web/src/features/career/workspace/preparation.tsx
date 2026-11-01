@@ -80,7 +80,11 @@ export function Preparation({ application, disabled }: PreparationProps) {
 				...(application.resumeId ? { resumeId: application.resumeId } : {}),
 			});
 			invalidate(application.id);
-			void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: letter.id } });
+			void navigate({
+				to: "/builder/letter/$coverLetterId",
+				params: { coverLetterId: letter.id },
+				search: { applicationId: application.id },
+			});
 		} catch (error) {
 			toastError(error, t`Couldn't create the letter. Try again.`);
 		}
@@ -300,6 +304,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 											<Link
 												to="/builder/letter/$coverLetterId"
 												params={{ coverLetterId: selected }}
+												search={{ applicationId: application.id }}
 												aria-label={t`Edit cover letter`}
 												className={buttonVariants({ variant: "ghost" })}
 											>

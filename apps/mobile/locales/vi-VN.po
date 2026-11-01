@@ -1065,7 +1065,6 @@ msgstr "Hành động dành cho {0} tại {1}"
 msgid "Active"
 msgstr "Tích cực"
 
-#: src/features/application-detail/sections.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Add"
 msgstr "Thêm"
@@ -1101,14 +1100,6 @@ msgstr "Thêm vị trí"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note"
-msgstr "Thêm ghi chú"
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note…"
-msgstr "Thêm ghi chú…"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Add a person"
@@ -2102,6 +2093,10 @@ msgstr "Tiếng Azerbaijan"
 #: src/features/write/entry-sheet.tsx
 msgid "Back"
 msgstr "Mặt sau"
+
+#: src/shell/builder-chrome.tsx
+msgid "Back to application"
+msgstr ""
 
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
@@ -3744,6 +3739,10 @@ msgstr "Thư xin việc"
 msgid "Cover letter — {0}"
 msgstr "Thư xin việc — {0}"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
@@ -3908,6 +3907,10 @@ msgstr "Ngày tạo"
 #: src/features/design/advanced.tsx
 msgid "Date format"
 msgstr "Định dạng ngày"
+
+#: src/features/application-detail/sections.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -6165,6 +6168,11 @@ msgctxt "US Letter paper size (8.5 × 11 in), shown beside A4"
 msgid "Letter"
 msgstr "Letter"
 
+#: src/features/documents/document-sheets.tsx
+#: src/features/letters/write.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Letter body"
 msgstr "Nội dung thư"
@@ -6481,6 +6489,18 @@ msgstr "Tài liệu bị khóa bị bỏ qua. Mở khóa chúng trước."
 #: src/features/write/outline.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Đã khóa. Mở khóa để chỉnh sửa."
+
+#: src/features/application-detail/sections.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Long press to select"
@@ -7348,6 +7368,7 @@ msgstr "Không có phản hồi"
 msgid "No results"
 msgstr "Không có kết quả"
 
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Không có sơ yếu lý lịch"
@@ -8200,8 +8221,8 @@ msgid "PDF check canceled. Retry when ready."
 msgstr "Đã hủy kiểm tra PDF. Hãy thử lại khi sẵn sàng."
 
 #: src/features/application-detail/sections.tsx
-msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
-msgstr "Chỉ PDF · tối đa 10 MB mỗi tệp. Liên kết sơ yếu lý lịch Reactive Resume để AI chấm độ phù hợp và điều chỉnh theo công việc."
+msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
@@ -9381,6 +9402,10 @@ msgstr "Góp ý sơ yếu lý lịch, trợ giúp sản phẩm và ý tưởng t
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Tệp CV"
+
+#: src/features/documents/new-document.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -10903,6 +10928,10 @@ msgstr "Xếp dọc"
 msgid "Stage stays {stage}"
 msgstr "Giai đoạn giữ nguyên {stage}"
 
+#: src/features/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Start"
 msgstr "Bắt đầu"
@@ -11717,6 +11746,11 @@ msgid "This application has no posting yet. Add one in Applications."
 msgstr "Hồ sơ ứng tuyển này chưa có tin tuyển dụng nào. Thêm một trong Hồ sơ ứng tuyển."
 
 #: src/features/applications/error.ts
+#: src/features/documents/queries.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
+#: src/features/applications/error.ts
 msgid "This changed elsewhere. Reload and try again."
 msgstr "Nội dung này đã thay đổi ở nơi khác. Hãy tải lại rồi thử lại."
 
@@ -11879,6 +11913,10 @@ msgstr "Thư xin việc này đã thay đổi ở nơi khác"
 #: src/features/letters/write.tsx
 msgid "This letter is locked. Unlock it in Documents to edit."
 msgstr "Thư này bị khóa. Mở khóa trong Tài liệu để chỉnh sửa."
+
+#: src/features/documents/document-sheets.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "This letter keeps its recipient as written."
@@ -12521,6 +12559,10 @@ msgstr "Sử dụng khổ A4 hoặc US Letter để bố cục không bị lỗi
 msgid "Use AI for PDF imports"
 msgstr "Sử dụng AI để nhập PDF"
 
+#: src/features/application-detail/sections.tsx
+msgid "Use an existing letter"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Use an http or https job posting link before saving."
 msgstr "Sử dụng liên kết đăng việc làm http hoặc https trước khi lưu."
@@ -13115,6 +13157,10 @@ msgstr ""
 #: src/features/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "Viết một lá thư"
+
+#: src/features/documents/document-sheets.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"

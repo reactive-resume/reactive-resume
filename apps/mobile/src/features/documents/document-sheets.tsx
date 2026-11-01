@@ -54,6 +54,9 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 		sharing: t`Sharing`,
 		lock: t`Lock editing`,
 	};
+	const submitted =
+		first?.type === "letter" &&
+		applications.data?.some((item) => item.coverLetterId === first.id && item.sentCoverLetterVersionId);
 	const link = (applicationId: string | null) =>
 		first && void execute(() => client.documents.linkApplication({ ...documentRef(first), applicationId }));
 	const move = (kind: "rename" | "tags" | "link") => first && onChange({ kind, documents: [first] });
@@ -123,6 +126,17 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 								})
 							}
 						/>
+						{first.type === "resume" && (
+							<ListRow
+								title={t`Write a letter…`}
+								leading="envelope-simple"
+								disabled={operations.busy}
+								onPress={() => {
+									onClose();
+									router.push({ pathname: "/new", params: { sourceResumeId: first.id } });
+								}}
+							/>
+						)}
 						{first.type === "resume" && (
 							<ListRow
 								title={t`Copy for a job…`}
@@ -227,6 +241,9 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 				)}
 				{value.kind === "link" && (
 					<>
+						{submitted && (
+							<Text color="ink2">{t`This letter is recorded as sent. Its application link stays with that submission.`}</Text>
+						)}
 						{applications.isPending && <Skeleton height={space.s12} />}
 						{applications.isError && (
 							<Banner
@@ -241,9 +258,24 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 								<ListRow
 									key={application.id}
 									title={application.role}
-									subtitle={application.company}
+									subtitle={
+										first?.type === "letter" &&
+										application.sentCoverLetterVersionId &&
+										application.coverLetterId !== first.id
+											? `${application.company} · ${t`Letter already sent`}`
+											: application.company
+									}
 									selected={first?.application?.id === application.id}
-									disabled={operations.busy || first?.isLocked}
+									disabled={
+										operations.busy ||
+										Boolean(submitted) ||
+										first?.isLocked ||
+										Boolean(
+											first?.type === "letter" &&
+											application.sentCoverLetterVersionId &&
+											application.coverLetterId !== first.id,
+										)
+									}
 									onPress={() => link(application.id)}
 								/>
 							))}

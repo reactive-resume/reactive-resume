@@ -76,15 +76,10 @@ export function useStartDocument(applicationId?: string) {
 				toast.add({ description: t`Sample resume added. Delete it anytime.` });
 				void navigate({ to: "/builder/$resumeId", params: { resumeId } });
 			}),
-		newLetter: () =>
+		newLetter: (resumeId: string | null = null) =>
 			start(async () => {
-				// A new letter takes its sender details and design from the resume edited most recently, and a number when an
-				// untitled one already exists, so the library can tell them apart until they're named.
 				const base = t`Untitled letter`;
-				const [[resume], letters] = await Promise.all([
-					client.documents.list({ type: "resume", limit: 1 }),
-					client.documents.list({ type: "letter", q: base }),
-				]);
+				const letters = await client.documents.list({ type: "letter", q: base });
 				const input = {
 					name: freeName(
 						base,
@@ -92,7 +87,7 @@ export function useStartDocument(applicationId?: string) {
 					),
 					recipient: "",
 					content: "",
-					...(resume ? { resumeId: resume.id } : {}),
+					...(resumeId ? { resumeId } : {}),
 				};
 				const letter = await createLetter(input);
 				await created(letter.id, "letter");
