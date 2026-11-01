@@ -1,13 +1,9 @@
 // When local reminders fire, and wall-clock time in a named timezone. Pure: Node runs it in the M5-T2 scenarios.
-import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 
 /** Minutes before an interview that a reminder can fire. */
 export const REMINDER_LEADS = [10, 30, 60, 1440] as const;
 export type ReminderLead = (typeof REMINDER_LEADS)[number];
 export const DEFAULT_LEAD: ReminderLead = 30;
-
-/** Follow-ups are whole days; their reminder fires at this wall-clock time in the user's timezone. */
-export const FOLLOW_UP_TIME = "09:00";
 
 export type ReminderKind = "interview" | "follow-up";
 
@@ -20,9 +16,6 @@ export function reminderTime(start: Date, leadMinutes: number, now = new Date())
 	const at = new Date(start.getTime() - leadMinutes * 60_000);
 	return at.getTime() > now.getTime() ? at : null;
 }
-
-/** A follow-up day ("2026-10-21") as the instant 09:00 on that day in `timeZone`. */
-export const followUpStart = (date: string, timeZone: string) => fromZonedDateTime(date, FOLLOW_UP_TIME, timeZone);
 
 export const isTimeZone = (value: string) => {
 	try {

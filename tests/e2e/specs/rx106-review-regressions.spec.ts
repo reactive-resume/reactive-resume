@@ -2,7 +2,12 @@ import type { Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { Pool } from "pg";
 import { expect, test } from "../fixtures/test";
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Playwright can reuse this worker for separate fixture groups from the same file.
+// Recreate the pool whenever that group starts, matching its afterAll cleanup.
+let pool: Pool;
+test.beforeAll(() => {
+	pool = new Pool({ connectionString: process.env.DATABASE_URL });
+});
 test.afterAll(async () => {
 	await pool.end();
 });
@@ -473,7 +478,7 @@ async function alicePreferences(page: Page) {
 const profileRows = async (userId: string) =>
 	(await pool.query("SELECT user_id, data FROM career_profile WHERE user_id=$1", [userId])).rows;
 
-test("a sign-out in another tab closes the old account's open Preferences tab", async ({ authPage: page }, info) => {
+test("a sign-out in another tab clears the old account's open Preferences tab", async ({ authPage: page }, info) => {
 	const session = await (await page.request.get("/api/auth/get-session")).json();
 	const alice = session.user.id as string;
 	await alicePreferences(page);
@@ -487,8 +492,19 @@ test("a sign-out in another tab closes the old account's open Preferences tab", 
 		await other.getByRole("button", { name: "Sign out", exact: true }).last().click();
 		await expect(other).toHaveURL(/\/$/);
 		second = await signUpSecondAccount(other);
-		// This tab received the account change, fenced its queued saves and reloaded into the new session.
-		await expect(page.getByLabel("What matters to you")).toHaveCount(0);
+		// The reload may finish before or after signup: either auth or fresh Preferences is valid.
+		// In both cases, the old account's private text must be gone.
+		await expect(async () => {
+			const field = page.getByLabel("What matters to you");
+			if (await field.count()) {
+				await expect(field).toHaveValue("", { timeout: 500 });
+				await expect(page.getByRole("complementary", { name: "App navigation" })).toContainText("RX106 Second", {
+					timeout: 500,
+				});
+			} else {
+				await expect(page).toHaveURL(/\/auth\/login/, { timeout: 500 });
+			}
+		}).toPass({ timeout: 10_000 });
 		const rows = await profileRows(second.id);
 		const [aliceRow] = await pool
 			.query("SELECT data FROM career_profile WHERE user_id=$1", [alice])

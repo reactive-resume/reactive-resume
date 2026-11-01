@@ -209,8 +209,12 @@ test.describe("homepage", () => {
 		page.on("pageerror", (error) => errors.push(error.message));
 		await page.goto("/");
 		await page.waitForLoadState("networkidle");
-		await page.evaluate(() => window.scrollTo({ top: 600, behavior: "instant" }));
-		await expect(page.locator("#write")).toHaveAttribute("data-warm", "");
+		// Initial router scroll restoration can finish after network idle. Repeat the scroll until
+		// its scene update is visible rather than letting that restoration undo the test input.
+		await expect(async () => {
+			await page.evaluate(() => window.scrollTo({ top: 600, behavior: "instant" }));
+			await expect(page.locator("#write")).toHaveAttribute("data-warm", "", { timeout: 1000 });
+		}).toPass({ timeout: 10_000 });
 		await expect(page.locator("#prepare")).not.toHaveAttribute("data-warm", "");
 		await page
 			.locator("#design")
