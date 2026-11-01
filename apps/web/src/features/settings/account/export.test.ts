@@ -6,8 +6,9 @@ import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { buildAccountZip } from "./export";
 import { detectImportKind, detectJsonImportKind, parseResumeJson } from "@/features/resume/import/read-file";
+import { getLocaleMessages } from "@/libs/locale";
 
-beforeAll(() => i18n.loadAndActivate({ locale: "en-US", messages: {} }));
+beforeAll(async () => i18n.loadAndActivate(await getLocaleMessages("en-US")));
 
 const emptyCareer = {
 	profile: { targetRoles: [], locations: [], priorities: "", constraints: "", automaticMemory: true },
@@ -41,6 +42,24 @@ describe("buildAccountZip", () => {
 		const files = unzipSync(buildAccountZip({ ...base, applicationPipeline: pipeline } as never));
 		expect(JSON.parse(strFromU8(files["application-stages.json"] ?? new Uint8Array()))).toEqual(pipeline);
 		expect(unzipSync(buildAccountZip(base as never))).not.toHaveProperty("application-stages.json");
+	});
+	it("retains approved document versions in the account archive with older-server compatibility", () => {
+		const base = {
+			user: {},
+			resumes: [],
+			coverLetters: [],
+			applications: [],
+			career: emptyCareer,
+			aiContentReports: [],
+		};
+		const versions = {
+			resumes: [{ id: "resume-v3", resumeId: "r1", data: { basics: { name: "Reviewed Maya" } } }],
+			letters: [{ id: "letter-v2", coverLetterId: "l1", data: { content: "Reviewed letter" } }],
+		};
+		const files = unzipSync(buildAccountZip({ ...base, documentVersions: versions } as never));
+		expect(files).toHaveProperty("document-versions.json");
+		expect(JSON.parse(strFromU8(files["document-versions.json"] ?? new Uint8Array()))).toEqual(versions);
+		expect(unzipSync(buildAccountZip(base as never))).not.toHaveProperty("document-versions.json");
 	});
 
 	it("explains how to restore documents instead of treating an account zip as LinkedIn", async () => {

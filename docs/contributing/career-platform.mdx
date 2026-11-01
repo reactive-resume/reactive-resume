@@ -17,6 +17,35 @@ The assistant uses the existing saved AI connections. Configure `ENCRYPTION_SECR
 
 Browser capture and native share/import feed the existing application review and save service. Update `adding-an-application`, `editing-on-mobile` and `self-hosting/job-search-and-ai` with capture changes. Fictional screenshots belong under `docs/images/guides/career/` (`posting-capture.png` and native share review when available). Validate the actual receive target on each platform; a web preview or paste form alone is not native share evidence.
 
+## Employer-form packet prototype
+
+`applications/packet.ts` extends existing private-profile, selected-document/export/version and reviewed-answer owners. Review projects only opted-in contact fields, visible work history, letter text and explicitly selected eligible answers. Approval is bound to the exact URL and keyed source fingerprint. Existing owner locking revalidates application, linked letter source, profile, documents and evidence before and after rendering; changed or unavailable sources fail without saving packet versions. The existing version owners retain named snapshots. Packet creation never records submission or changes stage, and makes no AI call.
+
+Both authenticated routes require read and write permissions. The private packet routes are absent from the MCP allowlist. No server fetch of the employer URL occurs. Combined PDFs are limited to 2 MiB. The JSON packet contains personal data and exact PDF bytes; downloaded copies cannot be revoked. Account export includes document histories (`document-versions.json` in the web ZIP, `documentVersions` on native); existing account/document cascades remove stored versions. No new table or migration is needed.
+
+The desktop posting-capture helper uses existing `activeTab` scripting permission to fill an imported, explicitly reviewed packet. Packet data stays in popup memory, never extension storage. Capture behavior and permissions remain unchanged. Native uses `react-native-webview` 14.0.1, matching Expo 58’s bundled version, with a separate incognito browser and per-page approval. External browser sessions remain separate. Navigation invalidates approval; only an exact reviewed URL can run the shared `packages/utils/src/form-fill.ts` script. Page messages are untrusted, bounded and request-correlated. Android reports message origins while iOS reports frame URLs; neither is treated as proof of employer acceptance.
+
+| Candidate  | Verified host subset                                                     | Desktop helper                          | Native runtime / live ATS |
+| ---------- | ------------------------------------------------------------------------ | --------------------------------------- | ------------------------- |
+| Greenhouse | Fictional native text/email/tel/textarea and file controls               | Actual MV3 popup/import/active-tab fill | Unverified                |
+| Lever      | Fictional name/email/phone, exact-label answers and file controls        | Shared engine host proof                | Unverified                |
+| Ashby      | Fictional system-name/email/phone, exact-label answers and file controls | Shared engine host proof                | Unverified                |
+
+Every fill preserves existing values, emits no input/change/click/submit events, checks file hashes and names exact version IDs. Framework controls, custom controls, ambiguity, field limits, account/captcha and additional pages have manual handoffs. Reports distinguish filled, skipped, manual and error; DOM file presence does not establish ATS upload acceptance. Do not extend this support matrix without controlled proof. Current real ATS compatibility and native iOS/Android equivalence remain release gates.
+
+Use disposable PostgreSQL and synthetic users for account-backed proof. Follow the browser-test environment recipe; run:
+
+```sh
+pnpm --filter @reactive-resume/api test src/features/career/service.integration.test.ts src/features/applications/packet-router.test.ts
+pnpm exec playwright test tests/e2e/specs/application-packet.spec.ts tests/e2e/specs/form-fill-engine.spec.ts
+```
+
+Set `RUN_CAPTURE_EXTENSION=1` for the actual Chromium helper case; otherwise that case is intentionally omitted. The shared-engine spec launches Chromium and host WebKit. These are host browser checks, not native-device proof. The earlier loopback lab under `tooling/autofill/` remains historical experiment evidence and does not verify the new product integration.
+
+The WebView dependency changes the native fingerprint and requires new iOS/Android store builds. Deploy the additive backend first; old mobile APIs stay compatible. Hermes exports, CocoaPods/autolinking and unsigned compilation are separate from device UI/upload and signed/store gates. Device verification must use a free managed device session; never take over another session. See `.agents/docs/research/rx-75-autofill-v2.md` for the candidate’s exact acceptance matrix and evidence limits.
+
+Refresh `writing-application-answers`, `career-workspace-reference` and `exporting-your-data` with packet changes. `employer-form-packet-v2.png` is an actual fictional-account product screenshot; it makes no native-device claim. Keep the original `employer-form-prototype.png` as historical lab evidence.
+
 ## Where things live
 
 The career platform has two places:
@@ -203,6 +232,7 @@ Update user-facing guides in the same change as the behavior they describe. Star
 | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Career navigation, Today, coach or workspace shell      | `career-overview`, `first-career-application`, `career-workspace-reference`; existing tracker and assistant guides                       | `today.png`, `coach.png`, `application-detail.png`                                                           |
 | Facts, stories, memory, corrections or context assembly | `building-career-knowledge`, `checking-job-fit`, `career-workspace-reference`                                                            | `facts.png`, `story.png`, `fit.png`                                                                          |
+| Employer-form packet                                    | `writing-application-answers`, `career-workspace-reference`, `exporting-your-data`; this page                                            | `employer-form-packet-v2.png` (native image requires device proof)                                           |
 | Form answers, counts, submission or snapshots           | `writing-application-answers`, `first-career-application`, `managing-an-application`                                                     | `apply.jpg`, `saved.png`                                                                                     |
 | Interview form, briefing, practice, voice or debrief    | `preparing-for-interview-day`, `scheduling-interviews`, `career-workspace-reference`                                                     | `interview.jpg`, `prepare.png`, `briefing.jpg`, `practise-speak.jpg`, `practice-feedback.jpg`, `debrief.png` |
 | Discovery, schedules, timing or delivery                | `finding-roles-automatically`, `preparing-for-interview-day`, `career-workspace-reference`; this page and self-hosting guides            | `discovery-schedule.jpg`, `prepare-schedule.jpg`, `today.png`                                                |

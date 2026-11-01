@@ -21,6 +21,7 @@ export function buildAccountZip(data: AccountExport): Uint8Array {
 		...(data.applicationPipeline ? { "application-stages.json": json(data.applicationPipeline) } : {}),
 		"career.json": json(data.career),
 		...(data.applicationProfile ? { "application-profile.json": json(data.applicationProfile) } : {}),
+		...(data.documentVersions ? { "document-versions.json": json(data.documentVersions) } : {}),
 		"ai-content-reports.json": json(data.aiContentReports),
 	};
 	for (const resume of data.resumes) files[`resumes/${fileName(resume.name, resume.id)}`] = json(resume);

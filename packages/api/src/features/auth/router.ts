@@ -239,6 +239,21 @@ export const authRouter = {
 				}),
 				resumes: z.array(resumeDto.getById.output.omit({ hasPassword: true, applicationId: true })),
 				coverLetters: z.array(coverLetterSchema),
+				documentVersions: z
+					.object({
+						// Preserve historical JSON verbatim; current document parsing can normalize old snapshots.
+						resumes: z.array(
+							createSelectSchema(schema.resumeVersion, { data: z.record(z.string(), z.unknown()) }).omit({
+								userId: true,
+							}),
+						),
+						letters: z.array(
+							createSelectSchema(schema.coverLetterVersion, { data: z.record(z.string(), z.unknown()) }).omit({
+								userId: true,
+							}),
+						),
+					})
+					.optional(),
 				applications: z.array(applicationDto.getById.output),
 				applicationPipeline: applicationPipelineSchema,
 				aiContentReports: z.array(createSelectSchema(schema.aiContentReport)),

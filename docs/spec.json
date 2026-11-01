@@ -15903,6 +15903,927 @@
 				]
 			}
 		},
+		"/applications/{applicationId}/packet-review": {
+			"post": {
+				"operationId": "reviewApplicationPacket",
+				"summary": "Review an owned application packet without AI or submission",
+				"tags": [
+					"Applications"
+				],
+				"parameters": [
+					{
+						"name": "applicationId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"targetUrl": {
+										"type": "string",
+										"maxLength": 2048,
+										"format": "uri"
+									},
+									"includeContact": {
+										"type": "boolean"
+									},
+									"answerIds": {
+										"type": "array",
+										"maxItems": 20,
+										"items": {
+											"type": "string",
+											"minLength": 1
+										}
+									},
+									"letterWords": {
+										"anyOf": [
+											{
+												"type": "object",
+												"properties": {
+													"locale": {
+														"type": "string",
+														"maxLength": 50
+													},
+													"greeting": {
+														"type": "string",
+														"maxLength": 500
+													},
+													"teamGreeting": {
+														"type": "string",
+														"maxLength": 500
+													},
+													"hiringTeam": {
+														"type": "string",
+														"maxLength": 500
+													},
+													"signOff": {
+														"type": "string",
+														"maxLength": 500
+													}
+												},
+												"required": [
+													"locale",
+													"greeting",
+													"teamGreeting",
+													"hiringTeam",
+													"signOff"
+												],
+												"additionalProperties": false
+											},
+											{
+												"type": "null"
+											}
+										],
+										"default": null
+									}
+								},
+								"required": [
+									"targetUrl",
+									"includeContact",
+									"answerIds"
+								],
+								"additionalProperties": false
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"selection": {
+											"type": "object",
+											"properties": {
+												"applicationId": {
+													"type": "string",
+													"minLength": 1
+												},
+												"targetUrl": {
+													"type": "string",
+													"maxLength": 2048,
+													"format": "uri"
+												},
+												"includeContact": {
+													"type": "boolean"
+												},
+												"answerIds": {
+													"type": "array",
+													"maxItems": 20,
+													"items": {
+														"type": "string",
+														"minLength": 1
+													}
+												},
+												"letterWords": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"locale": {
+																	"type": "string",
+																	"maxLength": 50
+																},
+																"greeting": {
+																	"type": "string",
+																	"maxLength": 500
+																},
+																"teamGreeting": {
+																	"type": "string",
+																	"maxLength": 500
+																},
+																"hiringTeam": {
+																	"type": "string",
+																	"maxLength": 500
+																},
+																"signOff": {
+																	"type": "string",
+																	"maxLength": 500
+																}
+															},
+															"required": [
+																"locale",
+																"greeting",
+																"teamGreeting",
+																"hiringTeam",
+																"signOff"
+															],
+															"additionalProperties": false
+														},
+														{
+															"type": "null"
+														}
+													],
+													"default": null
+												}
+											},
+											"required": [
+												"applicationId",
+												"targetUrl",
+												"includeContact",
+												"answerIds"
+											],
+											"additionalProperties": false
+										},
+										"fingerprint": {
+											"type": "string",
+											"pattern": "^[a-f0-9]{64}$"
+										},
+										"application": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string"
+												},
+												"company": {
+													"type": "string"
+												},
+												"role": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"id",
+												"company",
+												"role"
+											],
+											"additionalProperties": false
+										},
+										"contact": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"givenName": {
+															"type": "string",
+															"maxLength": 200
+														},
+														"familyName": {
+															"type": "string",
+															"maxLength": 200
+														},
+														"email": {
+															"type": "string",
+															"maxLength": 320
+														},
+														"phone": {
+															"type": "string",
+															"maxLength": 200
+														}
+													},
+													"required": [
+														"givenName",
+														"familyName",
+														"email",
+														"phone"
+													],
+													"additionalProperties": false
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"profileRevision": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"profileReviewedAt": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"experience": {
+											"type": "string",
+											"maxLength": 30000
+										},
+										"letterText": {
+											"type": "string",
+											"maxLength": 130000
+										},
+										"answers": {
+											"type": "array",
+											"maxItems": 20,
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"revision": {
+														"type": "integer",
+														"minimum": -9007199254740991,
+														"maximum": 9007199254740991,
+														"exclusiveMinimum": 0
+													},
+													"question": {
+														"type": "string",
+														"maxLength": 2000
+													},
+													"answer": {
+														"type": "string",
+														"maxLength": 6000
+													},
+													"source": {
+														"enum": [
+															"manual",
+															"application",
+															"ai-assisted"
+														],
+														"type": "string"
+													},
+													"scope": {
+														"enum": [
+															"application",
+															"employer",
+															"reusable"
+														],
+														"type": "string"
+													},
+													"reviewedAt": {
+														"type": "string",
+														"format": "date-time"
+													}
+												},
+												"required": [
+													"id",
+													"revision",
+													"question",
+													"answer",
+													"source",
+													"scope",
+													"reviewedAt"
+												],
+												"additionalProperties": false
+											}
+										},
+										"documents": {
+											"type": "array",
+											"maxItems": 2,
+											"items": {
+												"type": "object",
+												"properties": {
+													"kind": {
+														"enum": [
+															"resume",
+															"letter"
+														],
+														"type": "string"
+													},
+													"id": {
+														"type": "string"
+													},
+													"name": {
+														"type": "string"
+													},
+													"revision": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"kind",
+													"id",
+													"name",
+													"revision"
+												],
+												"additionalProperties": false
+											}
+										}
+									},
+									"required": [
+										"selection",
+										"fingerprint",
+										"application",
+										"contact",
+										"profileRevision",
+										"profileReviewedAt",
+										"experience",
+										"letterText",
+										"answers",
+										"documents"
+									],
+									"additionalProperties": false
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/<applicationId>/packet-review\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"targetUrl\": \"<string>\",\n  \"includeContact\": true,\n  \"answerIds\": [\n    \"<string>\"\n  ]\n}'"
+					}
+				]
+			}
+		},
+		"/applications/packets": {
+			"post": {
+				"operationId": "exportApplicationPacket",
+				"summary": "Export explicitly reviewed PDF versions and scoped answers; never submit",
+				"tags": [
+					"Applications"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"selection": {
+										"type": "object",
+										"properties": {
+											"applicationId": {
+												"type": "string",
+												"minLength": 1
+											},
+											"targetUrl": {
+												"type": "string",
+												"maxLength": 2048,
+												"format": "uri"
+											},
+											"includeContact": {
+												"type": "boolean"
+											},
+											"answerIds": {
+												"type": "array",
+												"maxItems": 20,
+												"items": {
+													"type": "string",
+													"minLength": 1
+												}
+											},
+											"letterWords": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"locale": {
+																"type": "string",
+																"maxLength": 50
+															},
+															"greeting": {
+																"type": "string",
+																"maxLength": 500
+															},
+															"teamGreeting": {
+																"type": "string",
+																"maxLength": 500
+															},
+															"hiringTeam": {
+																"type": "string",
+																"maxLength": 500
+															},
+															"signOff": {
+																"type": "string",
+																"maxLength": 500
+															}
+														},
+														"required": [
+															"locale",
+															"greeting",
+															"teamGreeting",
+															"hiringTeam",
+															"signOff"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "null"
+													}
+												],
+												"default": null
+											}
+										},
+										"required": [
+											"applicationId",
+											"targetUrl",
+											"includeContact",
+											"answerIds"
+										],
+										"additionalProperties": false
+									},
+									"fingerprint": {
+										"type": "string",
+										"pattern": "^[a-f0-9]{64}$"
+									},
+									"reviewed": {
+										"const": true
+									}
+								},
+								"required": [
+									"selection",
+									"fingerprint",
+									"reviewed"
+								],
+								"additionalProperties": false
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"format": {
+											"const": "reactive-resume-application-packet"
+										},
+										"version": {
+											"const": 1
+										},
+										"approvedAt": {
+											"type": "string",
+											"format": "date-time"
+										},
+										"review": {
+											"type": "object",
+											"properties": {
+												"selection": {
+													"type": "object",
+													"properties": {
+														"applicationId": {
+															"type": "string",
+															"minLength": 1
+														},
+														"targetUrl": {
+															"type": "string",
+															"maxLength": 2048,
+															"format": "uri"
+														},
+														"includeContact": {
+															"type": "boolean"
+														},
+														"answerIds": {
+															"type": "array",
+															"maxItems": 20,
+															"items": {
+																"type": "string",
+																"minLength": 1
+															}
+														},
+														"letterWords": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"locale": {
+																			"type": "string",
+																			"maxLength": 50
+																		},
+																		"greeting": {
+																			"type": "string",
+																			"maxLength": 500
+																		},
+																		"teamGreeting": {
+																			"type": "string",
+																			"maxLength": 500
+																		},
+																		"hiringTeam": {
+																			"type": "string",
+																			"maxLength": 500
+																		},
+																		"signOff": {
+																			"type": "string",
+																			"maxLength": 500
+																		}
+																	},
+																	"required": [
+																		"locale",
+																		"greeting",
+																		"teamGreeting",
+																		"hiringTeam",
+																		"signOff"
+																	],
+																	"additionalProperties": false
+																},
+																{
+																	"type": "null"
+																}
+															],
+															"default": null
+														}
+													},
+													"required": [
+														"applicationId",
+														"targetUrl",
+														"includeContact",
+														"answerIds"
+													],
+													"additionalProperties": false
+												},
+												"fingerprint": {
+													"type": "string",
+													"pattern": "^[a-f0-9]{64}$"
+												},
+												"application": {
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": "string"
+														},
+														"company": {
+															"type": "string"
+														},
+														"role": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"id",
+														"company",
+														"role"
+													],
+													"additionalProperties": false
+												},
+												"contact": {
+													"anyOf": [
+														{
+															"type": "object",
+															"properties": {
+																"givenName": {
+																	"type": "string",
+																	"maxLength": 200
+																},
+																"familyName": {
+																	"type": "string",
+																	"maxLength": 200
+																},
+																"email": {
+																	"type": "string",
+																	"maxLength": 320
+																},
+																"phone": {
+																	"type": "string",
+																	"maxLength": 200
+																}
+															},
+															"required": [
+																"givenName",
+																"familyName",
+																"email",
+																"phone"
+															],
+															"additionalProperties": false
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"profileRevision": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"profileReviewedAt": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"experience": {
+													"type": "string",
+													"maxLength": 30000
+												},
+												"letterText": {
+													"type": "string",
+													"maxLength": 130000
+												},
+												"answers": {
+													"type": "array",
+													"maxItems": 20,
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"revision": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
+															},
+															"question": {
+																"type": "string",
+																"maxLength": 2000
+															},
+															"answer": {
+																"type": "string",
+																"maxLength": 6000
+															},
+															"source": {
+																"enum": [
+																	"manual",
+																	"application",
+																	"ai-assisted"
+																],
+																"type": "string"
+															},
+															"scope": {
+																"enum": [
+																	"application",
+																	"employer",
+																	"reusable"
+																],
+																"type": "string"
+															},
+															"reviewedAt": {
+																"type": "string",
+																"format": "date-time"
+															}
+														},
+														"required": [
+															"id",
+															"revision",
+															"question",
+															"answer",
+															"source",
+															"scope",
+															"reviewedAt"
+														],
+														"additionalProperties": false
+													}
+												},
+												"documents": {
+													"type": "array",
+													"maxItems": 2,
+													"items": {
+														"type": "object",
+														"properties": {
+															"kind": {
+																"enum": [
+																	"resume",
+																	"letter"
+																],
+																"type": "string"
+															},
+															"id": {
+																"type": "string"
+															},
+															"name": {
+																"type": "string"
+															},
+															"revision": {
+																"type": "string"
+															}
+														},
+														"required": [
+															"kind",
+															"id",
+															"name",
+															"revision"
+														],
+														"additionalProperties": false
+													}
+												}
+											},
+											"required": [
+												"selection",
+												"fingerprint",
+												"application",
+												"contact",
+												"profileRevision",
+												"profileReviewedAt",
+												"experience",
+												"letterText",
+												"answers",
+												"documents"
+											],
+											"additionalProperties": false
+										},
+										"documents": {
+											"type": "array",
+											"maxItems": 2,
+											"items": {
+												"type": "object",
+												"properties": {
+													"kind": {
+														"enum": [
+															"resume",
+															"letter"
+														],
+														"type": "string"
+													},
+													"id": {
+														"type": "string"
+													},
+													"versionId": {
+														"type": "string"
+													},
+													"name": {
+														"type": "string"
+													},
+													"filename": {
+														"type": "string",
+														"maxLength": 200
+													},
+													"sha256": {
+														"type": "string",
+														"pattern": "^[a-f0-9]{64}$"
+													},
+													"base64": {
+														"type": "string",
+														"maxLength": 3000000,
+														"pattern": "^[A-Za-z0-9+/]*={0,2}$"
+													}
+												},
+												"required": [
+													"kind",
+													"id",
+													"versionId",
+													"name",
+													"filename",
+													"sha256",
+													"base64"
+												],
+												"additionalProperties": false
+											}
+										}
+									},
+									"required": [
+										"format",
+										"version",
+										"approvedAt",
+										"review",
+										"documents"
+									],
+									"additionalProperties": false
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/applications/packets\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"selection\": {\n    \"applicationId\": \"<string>\",\n    \"targetUrl\": \"<string>\",\n    \"includeContact\": true,\n    \"answerIds\": [\n      \"<string>\"\n    ]\n  },\n  \"fingerprint\": \"<string>\",\n  \"reviewed\": true\n}'"
+					}
+				]
+			}
+		},
 		"/applications/lanes": {
 			"get": {
 				"operationId": "getApplicationLanes",
@@ -39646,6 +40567,149 @@
 													"updatedAt"
 												]
 											}
+										},
+										"documentVersions": {
+											"type": "object",
+											"properties": {
+												"resumes": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"resumeId": {
+																"type": "string"
+															},
+															"data": {
+																"type": "object",
+																"propertyNames": {
+																	"type": "string"
+																},
+																"additionalProperties": {}
+															},
+															"kind": {
+																"enum": [
+																	"created",
+																	"import",
+																	"auto",
+																	"named",
+																	"before-restore",
+																	"restored",
+																	"ai",
+																	"sent"
+																],
+																"type": "string"
+															},
+															"name": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"sessionId": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"createdAt": {
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															}
+														},
+														"required": [
+															"id",
+															"resumeId",
+															"data",
+															"kind",
+															"name",
+															"sessionId",
+															"createdAt"
+														]
+													}
+												},
+												"letters": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"coverLetterId": {
+																"type": "string"
+															},
+															"data": {
+																"type": "object",
+																"propertyNames": {
+																	"type": "string"
+																},
+																"additionalProperties": {}
+															},
+															"kind": {
+																"enum": [
+																	"created",
+																	"auto",
+																	"named",
+																	"before-restore",
+																	"restored",
+																	"sent"
+																],
+																"type": "string"
+															},
+															"name": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"sessionId": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															},
+															"createdAt": {
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															}
+														},
+														"required": [
+															"id",
+															"coverLetterId",
+															"data",
+															"kind",
+															"name",
+															"sessionId",
+															"createdAt"
+														]
+													}
+												}
+											},
+											"required": [
+												"resumes",
+												"letters"
+											]
 										},
 										"applications": {
 											"type": "array",

@@ -52,14 +52,14 @@ function evidenceState(row: typeof tables.careerAnswer.$inferSelect, current: Aw
 }
 
 export const reviewedAnswers = {
-	list: async (userId: string, applicationId: string) => {
-		const target = await application(db, userId, applicationId);
-		const rows = await db
+	list: async (userId: string, applicationId: string, reader: DbOrTx = db) => {
+		const target = await application(reader, userId, applicationId);
+		const rows = await reader
 			.select()
 			.from(tables.careerAnswer)
 			.where(eq(tables.careerAnswer.userId, userId))
 			.orderBy(desc(tables.careerAnswer.reviewedAt));
-		const current = await knowledge(db, userId);
+		const current = await knowledge(reader, userId);
 		return rows.map((row) => {
 			const evidence = evidenceState(row, current);
 			const stale = evidence.some((ref) => ref.status !== "current");
