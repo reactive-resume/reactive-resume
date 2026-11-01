@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { fitResume } from "./fit";
 import { usePageZoom, ZoomViewport } from "./use-page-zoom";
 import { usePreview } from "./usePreview";
@@ -95,7 +96,9 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 		}
 	};
 	const authored = Math.max(1, data?.metadata.layout.pages.length ?? 1);
-	const overflow = result && result.pageCount > authored;
+	const overflow = data && result ? measureOverflow(data, result) : null;
+	const firstSpill = overflow?.spills[0];
+	const page = firstSpill?.authoredPage;
 	const currentPage = Math.min(
 		result?.pageCount ?? 1,
 		Number(Object.entries(rows).find(([, row]) => (row.y + row.height) * (zoom ?? 1) > offset)?.[0] ?? 0) + 1,
@@ -165,10 +168,10 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 			) : null}
 			<ZoomViewport controller={zoomController} width={viewport.width} pageWidth={fitWidth} onScroll={setOffset}>
 				<View style={{ gap: space.s8, alignItems: "center" }}>
-					{pageSizes.map((page, index) => {
+					{pageSizes.map((pageSize, index) => {
 						const image = result?.pages.find((entry) => entry.index === index);
-						const width = page.width * displayScale;
-						const height = page.height * displayScale;
+						const width = pageSize.width * displayScale;
+						const height = pageSize.height * displayScale;
 						return (
 							<View
 								key={index}
@@ -184,9 +187,19 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 								}}
 							>
 								<Text variant="caption" color="ink3" align="center">{t`Page ${index + 1}`}</Text>
+								{overflow?.spills.some((spill) => spill.pages.includes(index + 1)) ? (
+									<View style={{ borderTopWidth: 1.5, borderStyle: "dashed", borderColor: colors.warnText }} />
+								) : null}
 								{index === 0 && overflow ? (
 									<View style={{ maxWidth: width, gap: space.s1 }}>
-										<Text variant="callout" color="warnText">{t`Runs onto page ${authored + 1}`}</Text>
+										<Text variant="callout" color="warnText">
+											{firstSpill && firstSpill.pages.length === 1 && firstSpill.lines
+												? plural(firstSpill.lines, {
+														one: `Page ${page} runs over by about # line`,
+														other: `Page ${page} runs over by about # lines`,
+													})
+												: plural(overflow.pageCount, { one: "Runs to # page", other: "Runs to # pages" })}
+										</Text>
 										<Button
 											variant="secondary"
 											label={plural(authored, { 1: "Fit to one page", other: "Fit to # pages" })}
