@@ -784,6 +784,9 @@ const getAuthConfig = () => {
 			}),
 			after: createAuthMiddleware(async (ctx) => {
 				const payload = ctx.context.returned as JWTPayload | undefined;
+				if (ctx.path === "/oauth2/public-client-prelogin" && payload && typeof payload.client_id === "string") {
+					return ctx.json({ client_id: payload.client_id, client_name: payload.client_name });
+				}
 				// Run after the provider authenticates the introspecting client and verifies the token.
 				if (ctx.path !== "/oauth2/introspect" || !payload || payload.active !== true || typeof payload.azp !== "string")
 					return;

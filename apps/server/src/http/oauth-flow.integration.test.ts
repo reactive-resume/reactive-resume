@@ -676,8 +676,21 @@ describe.skipIf(!databaseURL)("MCP OAuth flow with PostgreSQL", () => {
 					body: JSON.stringify(body),
 				}),
 			);
-		const register = async (name: string) =>
-			(await post("oauth2/register", { client_name: name, redirect_uris: ["http://127.0.0.1:33921/callback"] })).json();
+		const register = async (name: string) => {
+			const response = await post("oauth2/register", {
+				client_name: name,
+				redirect_uris: ["http://127.0.0.1:33921/callback"],
+				contacts: ["private-registration-contact@example.test"],
+				client_uri: "https://client.example.test",
+				logo_uri: "https://client.example.test/icon.png",
+				tos_uri: "https://client.example.test/terms",
+				policy_uri: "https://client.example.test/privacy",
+			});
+			expect(response.status, await response.clone().text()).toBe(201);
+			const registered = await response.json();
+			expect(registered.contacts).toEqual(["private-registration-contact@example.test"]);
+			return registered;
+		};
 		const client = await register("Signed client");
 		const other = await register("Other client");
 		const query = new URLSearchParams({
@@ -698,7 +711,7 @@ describe.skipIf(!databaseURL)("MCP OAuth flow with PostgreSQL", () => {
 
 		const valid = await prelogin(client.client_id, signed);
 		expect(valid.status, await valid.clone().text()).toBe(200);
-		await expect(valid.json()).resolves.toMatchObject({ client_id: client.client_id, client_name: "Signed client" });
+		await expect(valid.json()).resolves.toEqual({ client_id: client.client_id, client_name: "Signed client" });
 		const tampered = new URLSearchParams(signed);
 		tampered.set("scope", "openid api:read api:write api:delete");
 		const refusedSignature = async (response: Response) => {
