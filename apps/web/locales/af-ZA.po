@@ -319,6 +319,11 @@ msgstr "{0, plural, one {Lees tans # gedeelte van jou CV...} other {Lees tans # 
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {Onthou # feit?} other {Onthou # feite?}}"
 
+#. placeholder {0}: filtered.length
+#: src/routes/dashboard/applications/index.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -547,6 +552,10 @@ msgstr "{column, plural, one {# kolom} other {# kolomme}}"
 msgid "{company} only"
 msgstr "Net {company}"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} het nie geantwoord nie."
@@ -558,6 +567,10 @@ msgstr "{cost} per jaar"
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "{cost} the first year"
 msgstr "{cost} die eerste jaar"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
@@ -1474,6 +1487,10 @@ msgstr "Voeg dekbrief by"
 msgid "Add dates"
 msgstr "Voeg datums by"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add education"
 msgstr "Voeg onderwys by"
@@ -1611,6 +1628,10 @@ msgstr "Voeg etiket by"
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "Voeg teks by"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1976,10 +1997,6 @@ msgstr "'n Inskrywing het geen datums nie"
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "'n fout"
-
-#: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
-msgstr "'n Onverwagte fout het verhoed dat hierdie bladsy laai. Probeer weer, of gaan na die dashboard."
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -3947,6 +3964,10 @@ msgstr ""
 msgid "Couldn't load interviews. Retry"
 msgstr "Kon nie onderhoude laai nie. Probeer weer"
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Couldn't load letters. Try again."
+msgstr "Kon nie dekbriewe laai nie. Probeer weer."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "Kon nie webtoegang-instellings laai of stoor nie. Probeer weer."
@@ -4659,6 +4680,10 @@ msgstr "Geagte huurspan,"
 msgid "Debrief"
 msgstr "Nabespreking"
 
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
+
 #: src/features/homepage/prepare.tsx
 msgid "Deep breath."
 msgstr "Haal diep asem."
@@ -5007,7 +5032,6 @@ msgid "Documentation"
 msgstr "Dokumentasie"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5601,6 +5625,10 @@ msgstr "Voer 'n webadres in, soos voorbeeld.com"
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Voer een van jou gestoorde rugsteunkodes in om toegang tot jou rekening te kry."
+
+#: src/features/documents/documents-page.tsx
+msgid "Enter opens the first result. Down arrow moves to the results. Escape clears."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -6843,6 +6871,10 @@ msgstr "In goeie geselskap"
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Vergroot reëlspasiëring sodat twee reëls nie in een saamsmelt nie."
@@ -7530,7 +7562,6 @@ msgstr "brief"
 
 #: src/features/assistant/document.ts
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7568,6 +7599,7 @@ msgstr "Brief gedupliseer"
 msgid "Letter page"
 msgstr "Brief bladsy"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
 msgstr "Briewe"
@@ -8569,6 +8601,7 @@ msgstr "Nuwe fase se kleur"
 msgid "New teams at Northwind were stalling in setup; most never got through."
 msgstr "Nuwe spanne by Northwind het in die opstelling vasgeval; die meeste het nooit deurgekom nie."
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Next"
 msgstr ""
@@ -8731,6 +8764,10 @@ msgstr "Nog geen feite om te koppel nie. Voeg hulle by in Feite."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -10148,6 +10185,7 @@ msgstr "Voorskougrootte"
 msgid "Previewing {0} · click to apply"
 msgstr "Voorbeskou {0} · klik om toe te pas"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Previous"
 msgstr ""
@@ -10795,6 +10833,7 @@ msgstr "Verwerp"
 msgid "Relationship"
 msgstr ""
 
+#: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
@@ -10808,6 +10847,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
 msgstr ""
+
+#: src/components/layout/error-screen.tsx
+msgid "Reload to try again."
+msgstr "Herlaai om weer te probeer."
 
 #: src/features/settings/profile.tsx
 msgid "Relocation"
@@ -11169,7 +11212,6 @@ msgstr "CV"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -12309,6 +12351,7 @@ msgid "Shorter"
 msgstr "Korter"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Show"
 msgstr "Wys"
 
@@ -12335,6 +12378,26 @@ msgstr "Wys {title} op die bladsy"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Show again"
 msgstr "Wys weer"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all applications"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all conversations"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all letters"
+msgstr "Wys alle dekbriewe"
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all resumes"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Show all types"
@@ -14282,7 +14345,6 @@ msgstr "Probeer {0}"
 msgid "Try a sample"
 msgstr "Probeer 'n voorbeeld"
 
-#: src/components/layout/error-screen.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -15016,6 +15078,10 @@ msgstr "Steminstellings"
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "Vrywilliger"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Waiting for you"

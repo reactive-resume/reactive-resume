@@ -295,6 +295,11 @@ msgstr "{0, plural, one {ரெஸ்யூம் (#)} other {ரெஸ்யூ
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {புறக்கணித்த # சிக்கலை மீண்டும் காட்டு} other {புறக்கணித்த # சிக்கல்களை மீண்டும் காட்டு}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "மூடப்பட்டவை: {closed}"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# ஆவணம் புதுப்பிக்கப்பட்டது} other {# ஆவணங்கள் புதுப்பிக்கப்பட்டன}}"
@@ -515,6 +524,10 @@ msgstr "ஆண்டுக்கு {cost}"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "முதல் ஆண்டுக்கு {cost}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length} நிமி"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· இன்று முதல்} one {· # நாளாக} other {· # நாட்களாக}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: # நாளாக பதில் இல்லை. இப்போது ஒரு சுருக்கமான பின்தொடர்தல் பொதுவாகப் பரவாயில்லை.} other {{company}: # நாட்களாக பதில் இல்லை. இப்போது ஒரு சுருக்கமான பின்தொடர்தல் பொதுவாகப் பரவாயில்லை.}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1099,6 +1116,10 @@ msgstr "கவர் கடிதம் சேர்க்கவும்"
 msgid "Add dates"
 msgstr "தேதிகளைச் சேர்க்கவும்"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "கல்வியைச் சேர்க்கவும்"
@@ -1224,6 +1245,10 @@ msgstr "குறிச்சொல்லைச் சேர்க்கவு�
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "உரையைச் சேர்க்கவும்"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3160,6 +3185,7 @@ msgstr "இந்தப் பதிப்பின் பக்கத்தை 
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "இதை ஏற்ற முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயலவும்."
 
@@ -3694,6 +3720,10 @@ msgstr "மீளாய்வு"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "விளக்க பேட்டி"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5320,6 +5350,10 @@ msgstr "மேம்படுத்துகிறது…"
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "மூடப்பட்டவையும் உட்பட"
@@ -6104,6 +6138,7 @@ msgstr "உங்கள் பொது முகவரியை ஏற்று
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6873,6 +6908,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "ஐகான்கள் பொருந்தவில்லை."
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "இன்னும் வேலை இல்லை"
@@ -6955,10 +6994,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "இன்னும் பதில் இல்லை"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7379,6 +7414,7 @@ msgstr "நேரடி"
 msgid "Onsite interview"
 msgstr "நேரடி நேர்காணல்"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "திற"
@@ -8959,6 +8995,7 @@ msgstr "{1} ஐப் பயன்படுத்தி {0} மீட்டெ�
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -9046,10 +9083,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "வரைவை மதிப்பாய்வு செய்"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9893,6 +9926,10 @@ msgstr "இதை விண்ணப்பித்ததாகக் குற�
 msgid "Shorter"
 msgstr "குட்டையானது"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "காட்டு"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume மூலம் உருவாக்கப்பட்டது” என்பதைக் காட்டு"
@@ -9906,9 +9943,14 @@ msgstr "மேலும் {0} காட்டு"
 msgid "Show {title} on the page"
 msgstr "பக்கத்தில் {title} ஐக் காட்டு"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "அனைத்தையும் காட்டு"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "அனைத்து அறிமுகக் கடிதங்களையும் காட்டு"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12205,6 +12247,10 @@ msgstr "தன்னார்வம்"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "உங்கள் கணக்கின் நேர மண்டலம் ஏற்றப்படும் வரை காத்திருங்கள், ஏற்றப்படாவிட்டால் மீண்டும் முயலுங்கள் அல்லது காலக்கெடுவை அகற்றுங்கள்."
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

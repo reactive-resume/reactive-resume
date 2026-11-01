@@ -613,3 +613,69 @@ it("waits for application metadata and retries a failed read before offering an 
 	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
 	expect(await screen.findByRole("button", { name: "Add offer" })).toBeDefined();
 });
+
+it.each(["pending", "error"])("keeps saved offers visible while application metadata is %s", async (mode) => {
+	let release: (() => void) | undefined;
+	api.read.mockImplementation((name) =>
+		name === "applications" && mode === "pending"
+			? new Promise<void>((resolve) => {
+					release = resolve;
+				})
+			: undefined,
+	);
+	if (mode === "error") api.fail.add("applications");
+	api.data.savedItems = [
+		{
+			id: "retained",
+			applicationId: "saved-job",
+			application: { company: "Retained Co", role: "Engineer", status: "offer" },
+			createdAt: new Date("2026-10-08"),
+			data: {
+				kind: "offer",
+				version: "written",
+				currency: "EUR",
+				period: "year",
+				base: 100000,
+				variable: null,
+				variableConditions: "",
+				equity: "",
+				location: "Berlin",
+				officeDays: 2,
+				leave: "30 days",
+				learning: null,
+				other: "",
+				respondBy: null,
+			},
+		},
+	];
+	mount(<OffersPage a="retained" b={undefined} />);
+	await screen.findAllByText("Retained Co");
+	expect(screen.getByRole("button", { name: "Swap" })).toBeDefined();
+	expect(screen.queryByText("No offers to compare yet")).toBeNull();
+	if (mode === "error") await screen.findByRole("alert");
+	api.data.applications = [{ id: "new-job", company: "New Terms Co", role: "Engineer", status: "offer" }];
+	api.read.mockImplementation(() => undefined);
+	api.fail.delete("applications");
+	if (mode === "error") fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+	else await act(async () => release?.());
+	await screen.findByText("New Terms Co");
+	expect(screen.getAllByText("Retained Co").length).toBeGreaterThan(0);
+	expect(api.read.mock.calls.filter(([name]) => name === "savedItems")).toHaveLength(1);
+});
+
+it("keeps an open global offer draft mounted when application metadata refresh fails", async () => {
+	api.data.applications = [{ id: "job-a", company: "Acme", role: "Engineer", status: "saved" }];
+	mount(<OffersPage a={undefined} b={undefined} />);
+	fireEvent.click(await screen.findByRole("button", { name: "Add offer" }));
+	fireEvent.change(screen.getByLabelText("Base salary"), { target: { value: "123456" } });
+	api.fail.add("applications");
+	await act(async () => clients.at(-1)?.invalidateQueries({ queryKey: ["applications"] }));
+	await screen.findAllByRole("alert");
+	expect(screen.getByLabelText("Base salary")).toHaveValue("123456");
+	expect(screen.queryByText("No offers to compare yet")).toBeNull();
+	expect(api.createOffer).not.toHaveBeenCalled();
+	api.fail.delete("applications");
+	fireEvent.click(screen.getAllByRole("button", { name: "Try again" })[0] as HTMLElement);
+	await waitFor(() => expect(screen.queryAllByRole("alert")).toHaveLength(0));
+	expect(screen.getByLabelText("Base salary")).toHaveValue("123456");
+});

@@ -21,6 +21,8 @@ vi.mock("@/libs/orpc/client", () => ({
 }));
 vi.mock("@tanstack/react-router", () => ({
 	Link: ({ children }: { children: ReactNode }) => <a href="/dashboard">{children}</a>,
+	useNavigate: () => vi.fn(),
+	useRouter: () => ({ subscribe: () => () => {} }),
 }));
 vi.mock("@/features/resume/builder/draft", () => ({ isEditableElementFocused: () => false }));
 vi.mock("./document-actions", () => ({

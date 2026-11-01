@@ -295,6 +295,11 @@ msgstr "{0, plural, one {CV (#)} other {CV-er (#)}}"
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {Vis # ignorert problem igjen} other {Vis # ignorerte problemer igjen}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "{closed} avsluttet"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# dokument oppdatert} other {# dokumenter oppdatert}}"
@@ -515,6 +524,10 @@ msgstr "{cost} per år"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "{cost} det første året"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length} min"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· siden i dag} one {· i # dag} other {· i # dager}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: ikke noe svar på # dag. En kort oppfølging er vanligvis greit nå.} other {{company}: ikke noe svar på # dager. En kort oppfølging er vanligvis greit nå.}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1099,6 +1116,10 @@ msgstr "Legg til følgebrev"
 msgid "Add dates"
 msgstr "Legg til datoer"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "Legg til utdanning"
@@ -1224,6 +1245,10 @@ msgstr "Legg til tag"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "Legg til tekst"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3160,6 +3185,7 @@ msgstr "Kunne ikke laste denne versjonens side."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Kunne ikke laste denne. Sjekk tilkoblingen og prøv igjen."
 
@@ -3694,6 +3720,10 @@ msgstr "Oppsummering"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "Debrief intervju"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5320,6 +5350,10 @@ msgstr "Forbedrer …"
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Inkludert avsluttede"
@@ -6104,6 +6138,7 @@ msgstr "Laster den offentlige adressen din …"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6873,6 +6908,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "Ingen ikoner samsvarer."
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "Ingen jobb ennå"
@@ -6955,10 +6994,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "Ingen svar ennå"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7379,6 +7414,7 @@ msgstr "På stedet"
 msgid "Onsite interview"
 msgstr "Intervju på stedet"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Åpne"
@@ -8959,6 +8995,7 @@ msgstr "Hentet {0} ved hjelp av {1}. Hentetiden fastslår ikke opprinnelsesfrisk
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -9046,10 +9083,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "Se over utkast"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9893,6 +9926,10 @@ msgstr "Kort ned spørsmål til 2 000 tegn og svar til 6 000 tegn før du merker
 msgid "Shorter"
 msgstr "Kortere"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "Vise"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Vis “Laget med Reactive Resume”"
@@ -9906,9 +9943,14 @@ msgstr "Vis {0} mer"
 msgid "Show {title} on the page"
 msgstr "Vis {title} på siden"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Vis alle"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "Vis alle søknadsbrev"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12205,6 +12247,10 @@ msgstr "Frivillig"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "Vent til kontoens tidssone er lastet inn, prøv igjen hvis innlastingen mislyktes, eller fjern fristen."
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

@@ -1,6 +1,6 @@
 import type { Application } from "../types";
 // @vitest-environment happy-dom
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
@@ -70,6 +70,44 @@ function renderList(applications: Application[], breakpoint = "desktop", onOpen 
 const headers = (container: HTMLElement) => Array.from(container.querySelectorAll("thead th"));
 const header = (container: HTMLElement, label: string) =>
 	headers(container).find((th) => th.textContent === label) as HTMLElement;
+
+it("reorders Next step when an interview ends without any application update", () => {
+	vi.useFakeTimers();
+	const now = new Date("2030-01-03T12:00:00Z");
+	vi.setSystemTime(now);
+	try {
+		const { container, unmount } = renderList([
+			application({
+				id: "interview",
+				company: "Interview",
+				location: null,
+				activity: [
+					{
+						id: "interview",
+						type: "interview",
+						at: new Date(now.getTime() - 270_000),
+						durationMinutes: 5,
+					} as Application["activity"][number],
+				],
+			}),
+			application({
+				id: "followup",
+				company: "Follow-up",
+				location: null,
+				followUpAt: new Date(now.getTime() + 300_000),
+				followUpDateOnly: false,
+			}),
+		]);
+		const order = () =>
+			Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
+		expect(order()).toEqual(["Interview", "Follow-up"]);
+		act(() => vi.advanceTimersByTime(60_000));
+		expect(order()).toEqual(["Follow-up", "Interview"]);
+		unmount();
+	} finally {
+		vi.useRealTimers();
+	}
+});
 
 it("fixes the table layout so a long follow-up note cannot starve Role", () => {
 	const { container } = renderList([
@@ -190,6 +228,28 @@ it("sorts by role with company as the tiebreak, and by soonest next step with no
 	expect(order()).toEqual(["Zeta", "Acme", "Mid"]);
 });
 
+it("orders a stage by its own stage dates, longest wait first, when every row was imported at once", () => {
+	const importedAt = new Date("2026-10-19T00:00:00.000Z");
+	const appliedDaysAgo = (id: string, company: string, days: number) =>
+		application({
+			id,
+			company,
+			location: null,
+			updatedAt: importedAt,
+			appliedAt: new Date(Date.now() - days * 86_400_000),
+			activity: [{ id: `${id}-stage`, type: "stage", stage: "applied", at: new Date(Date.now() - days * 86_400_000) }],
+		});
+	const { container } = renderList([
+		appliedDaysAgo("a", "Niantic", 9),
+		appliedDaysAgo("b", "Bethesda", 35),
+		appliedDaysAgo("c", "Sucker Punch", 21),
+	]);
+	const order = Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
+
+	expect(order).toEqual(["Bethesda", "Sucker Punch", "Niantic"]);
+	expect(header(container, "Next step").getAttribute("aria-sort")).toBe("ascending");
+});
+
 it("sorts legacy date-only follow-ups by their account-clock delivery time", () => {
 	mocks.timeZone = "Pacific/Honolulu";
 	try {
@@ -209,7 +269,7 @@ it("sorts legacy date-only follow-ups by their account-clock delivery time", () 
 				followUpDateOnly: false,
 			}),
 		]);
-		fireEvent.click(screen.getByRole("button", { name: "Next step" }));
+		expect(header(container, "Next step").getAttribute("aria-sort")).toBe("ascending");
 		expect(
 			Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent),
 		).toEqual(["Exact", "Legacy"]);

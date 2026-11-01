@@ -319,6 +319,11 @@ msgstr "{0, plural, one {Duke lexuar fragmentin # të CV-së tuaj…} other {Duk
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {Të mbahet mend # fakt?} other {Të mbahen mend # fakte?}}"
 
+#. placeholder {0}: filtered.length
+#: src/routes/dashboard/applications/index.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -547,6 +552,10 @@ msgstr "{column, plural, one {Kolona #} other {Kolonat #}}"
 msgid "{company} only"
 msgstr "Vetëm {company}"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} nuk u përgjigj."
@@ -558,6 +567,10 @@ msgstr "{cost} në vit"
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "{cost} the first year"
 msgstr "{cost} për vitin e parë"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
@@ -1474,6 +1487,10 @@ msgstr "Shto letrën e motivimit"
 msgid "Add dates"
 msgstr "Shtoni datat"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add education"
 msgstr "Shtoni arsimin"
@@ -1611,6 +1628,10 @@ msgstr "Shto etiketë"
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "Shto tekst"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1976,10 +1997,6 @@ msgstr "Një hyrje nuk ka data"
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "një gabim"
-
-#: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
-msgstr "Një gabim i papritur e ndaloi ngarkimin e kësaj faqeje. Provoni përsëri ose shkoni te paneli."
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -3947,6 +3964,10 @@ msgstr ""
 msgid "Couldn't load interviews. Retry"
 msgstr "Intervistat nuk mund të ngarkoheshin. Riprovo"
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Couldn't load letters. Try again."
+msgstr "Letrat e motivimit nuk mund të ngarkoheshin. Provo përsëri."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "Cilësimet e qasjes në ueb nuk mund të ngarkoheshin ose ruheshin. Provoni përsëri."
@@ -4659,6 +4680,10 @@ msgstr "I nderuar ekip i punësimit,"
 msgid "Debrief"
 msgstr "Analiza"
 
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
+
 #: src/features/homepage/prepare.tsx
 msgid "Deep breath."
 msgstr "Merrni frymë thellë."
@@ -5007,7 +5032,6 @@ msgid "Documentation"
 msgstr "Dokumentacioni"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5601,6 +5625,10 @@ msgstr "Fut një adresë ueb, si shembull.com"
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Vendosni një nga kodet rezervë të ruajtura për të hyrë në llogarinë tuaj."
+
+#: src/features/documents/documents-page.tsx
+msgid "Enter opens the first result. Down arrow moves to the results. Escape clears."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -6843,6 +6871,10 @@ msgstr "Në shoqëri të mirë"
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "Rrisni hapësirën mes rreshtave që dy rreshta të mos bashkohen në një."
@@ -7530,7 +7562,6 @@ msgstr "letër"
 
 #: src/features/assistant/document.ts
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7568,6 +7599,7 @@ msgstr "Letra u dyfishua"
 msgid "Letter page"
 msgstr "Faqja e letrës"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
 msgstr "Letrat"
@@ -8569,6 +8601,7 @@ msgstr "Ngjyra e fazës së re"
 msgid "New teams at Northwind were stalling in setup; most never got through."
 msgstr "Ekipet e reja në Northwind ngecnin në konfigurim; shumica nuk e përfundonin kurrë."
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Next"
 msgstr ""
@@ -8731,6 +8764,10 @@ msgstr "Ende nuk ka fakte për t’u lidhur. Shtojini te Faktet."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -10148,6 +10185,7 @@ msgstr "Madhësia e pamjes paraprake"
 msgid "Previewing {0} · click to apply"
 msgstr "Duke parë paraprakisht {0} · kliko për të aplikuar"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Previous"
 msgstr ""
@@ -10795,6 +10833,7 @@ msgstr "Refuzuar"
 msgid "Relationship"
 msgstr ""
 
+#: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
@@ -10807,6 +10846,10 @@ msgstr ""
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/components/layout/error-screen.tsx
+msgid "Reload to try again."
 msgstr ""
 
 #: src/features/settings/profile.tsx
@@ -11169,7 +11212,6 @@ msgstr "rezyme"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -12309,6 +12351,7 @@ msgid "Shorter"
 msgstr "Më e shkurtër"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Show"
 msgstr "Shfaq"
 
@@ -12335,6 +12378,26 @@ msgstr "Shfaq {title} në faqe"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Show again"
 msgstr "Shfaq përsëri"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all applications"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all conversations"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all letters"
+msgstr "Shfaq të gjitha letrat e motivimit"
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all resumes"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Show all types"
@@ -14282,7 +14345,6 @@ msgstr "Provoni {0}"
 msgid "Try a sample"
 msgstr "Provoni një mostër"
 
-#: src/components/layout/error-screen.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -15016,6 +15078,10 @@ msgstr "Parametrat e zërit"
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "Punë vullnetare"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Waiting for you"

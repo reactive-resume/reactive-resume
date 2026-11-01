@@ -319,6 +319,11 @@ msgstr "{0, plural, one {קורא את הקטע # בקורות החיים שלך
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {לזכור עובדה אחת?} two {לזכור שתי עובדות?} other {לזכור # עובדות?}}"
 
+#. placeholder {0}: filtered.length
+#: src/routes/dashboard/applications/index.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -547,6 +552,10 @@ msgstr "{column, plural, one {עמודה #} other {# עמודות}}"
 msgid "{company} only"
 msgstr "רק {company}"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} לא הגיב."
@@ -558,6 +567,10 @@ msgstr "{cost} לשנה"
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "{cost} the first year"
 msgstr "{cost} לשנה הראשונה"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
@@ -1474,6 +1487,10 @@ msgstr "הוסף מכתב מקדים"
 msgid "Add dates"
 msgstr "הוסף תאריכים"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add education"
 msgstr "הוסף חינוך"
@@ -1611,6 +1628,10 @@ msgstr "הוסף תגית"
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "הוסף טקסט"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1976,10 +1997,6 @@ msgstr "לערך אין תאריכים"
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "שגיאה"
-
-#: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
-msgstr "שגיאה בלתי צפויה מנעה את טעינת הדף. נסה שוב, או עבור ללוח הבקרה."
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -3947,6 +3964,10 @@ msgstr ""
 msgid "Couldn't load interviews. Retry"
 msgstr "לא ניתן היה לטעון את הראיונות. נסה שוב"
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Couldn't load letters. Try again."
+msgstr "לא ניתן לטעון את מכתבי הפנייה. יש לנסות שוב."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "לא ניתן היה לטעון או לשמור את הגדרות הגישה לאינטרנט. נסה שוב."
@@ -4659,6 +4680,10 @@ msgstr "צוות גיוס יקר,"
 msgid "Debrief"
 msgstr "תחקיר"
 
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
+
 #: src/features/homepage/prepare.tsx
 msgid "Deep breath."
 msgstr "נשימה עמוקה."
@@ -5007,7 +5032,6 @@ msgid "Documentation"
 msgstr "תיעוד"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5601,6 +5625,10 @@ msgstr "הזן כתובת אינטרנט, כמו example.com"
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "הזן אחד מקודי הגיבוי השמורים שלך כדי לגשת לחשבון."
+
+#: src/features/documents/documents-page.tsx
+msgid "Enter opens the first result. Down arrow moves to the results. Escape clears."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -6843,6 +6871,10 @@ msgstr "בחברה טובה"
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "הגדל את מרווח השורות כדי ששתי שורות לא יתמזגו לאחת."
@@ -7530,7 +7562,6 @@ msgstr "מִכְתָב"
 
 #: src/features/assistant/document.ts
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7568,6 +7599,7 @@ msgstr "המכתב שוכפל"
 msgid "Letter page"
 msgstr "דף מכתבים"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
 msgstr "מכתבים"
@@ -8569,6 +8601,7 @@ msgstr "צבע השלב החדש"
 msgid "New teams at Northwind were stalling in setup; most never got through."
 msgstr "צוותים חדשים ב-Northwind נתקעו בהגדרה; רובם לא סיימו אותה."
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Next"
 msgstr ""
@@ -8731,6 +8764,10 @@ msgstr "אין עדיין עובדות לקישור. הוסף אותן ב\"עו�
 
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -10148,6 +10185,7 @@ msgstr "גודל התצוגה המקדימה"
 msgid "Previewing {0} · click to apply"
 msgstr "תצוגה מקדימה של {0} · לחץ כדי להחיל"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Previous"
 msgstr ""
@@ -10795,6 +10833,7 @@ msgstr "נִדחֶה"
 msgid "Relationship"
 msgstr ""
 
+#: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
@@ -10807,6 +10846,10 @@ msgstr ""
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/components/layout/error-screen.tsx
+msgid "Reload to try again."
 msgstr ""
 
 #: src/features/settings/profile.tsx
@@ -11169,7 +11212,6 @@ msgstr "קוֹרוֹת חַיִים"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -12309,6 +12351,7 @@ msgid "Shorter"
 msgstr "קצר יותר"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Show"
 msgstr "לְהַצִיג"
 
@@ -12335,6 +12378,26 @@ msgstr "הצג את {title} בעמוד"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Show again"
 msgstr "הצג שוב"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all applications"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all conversations"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all letters"
+msgstr "הצגת כל מכתבי הפנייה"
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all resumes"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Show all types"
@@ -14282,7 +14345,6 @@ msgstr "נסה את {0}"
 msgid "Try a sample"
 msgstr "נסה דוגמה"
 
-#: src/components/layout/error-screen.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -15016,6 +15078,10 @@ msgstr "הגדרות קול"
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "התנדבות"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Waiting for you"

@@ -319,6 +319,11 @@ msgstr "{0, plural, one {మీ రెజ్యూమే యొక్క # ప�
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {# వాస్తవాన్ని గుర్తుంచుకోవాలా?} other {# వాస్తవాలను గుర్తుంచుకోవాలా?}}"
 
+#. placeholder {0}: filtered.length
+#: src/routes/dashboard/applications/index.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -547,6 +552,10 @@ msgstr "{column, plural, one {# కాలమ్} other {# నిలువు వ
 msgid "{company} only"
 msgstr "{company} మాత్రమే"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} స్పందించలేదు."
@@ -558,6 +567,10 @@ msgstr "సంవత్సరానికి {cost}"
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "{cost} the first year"
 msgstr "మొదటి సంవత్సరానికి {cost}"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
@@ -1474,6 +1487,10 @@ msgstr "కవర్ లేఖను జోడించండి"
 msgid "Add dates"
 msgstr "తేదీలను జోడించండి"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add education"
 msgstr "విద్యను జోడించండి"
@@ -1611,6 +1628,10 @@ msgstr "ట్యాగ్ జోడించు"
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add text"
 msgstr "వచనాన్ని జోడించండి"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1976,10 +1997,6 @@ msgstr "ఎంట్రీకి తేదీలు లేవు"
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "ఒక లోపం"
-
-#: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
-msgstr "ఊహించని లోపం కారణంగా ఈ పేజీ లోడ్ అవ్వలేదు. మళ్ళీ ప్రయత్నించండి లేదా డాష్‌బోర్డ్‌కు వెళ్ళండి."
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -3947,6 +3964,10 @@ msgstr ""
 msgid "Couldn't load interviews. Retry"
 msgstr "ఇంటర్వ్యూలను లోడ్ చేయడం సాధ్యపడలేదు. మళ్లీ ప్రయత్నించండి"
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Couldn't load letters. Try again."
+msgstr "కవర్ లెటర్‌లను లోడ్ చేయలేకపోయాము. మళ్లీ ప్రయత్నించండి."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "వెబ్ యాక్సెస్ సెట్టింగ్‌లను లోడ్ చేయడం లేదా సేవ్ చేయడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -4659,6 +4680,10 @@ msgstr "ప్రియమైన నియామక బృందం,"
 msgid "Debrief"
 msgstr "సమీక్ష"
 
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
+
 #: src/features/homepage/prepare.tsx
 msgid "Deep breath."
 msgstr "దీర్ఘ శ్వాస తీసుకోండి."
@@ -5007,7 +5032,6 @@ msgid "Documentation"
 msgstr "డాక్యుమెంటేషన్"
 
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5601,6 +5625,10 @@ msgstr "ఉదాహరణకు.com వంటి వెబ్ చిరున�
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "మీ ఖాతాలోకి ప్రవేశించడానికి మీరు సేవ్ చేసిన బ్యాకప్ కోడ్‌లలో ఒకదాన్ని నమోదు చేయండి."
+
+#: src/features/documents/documents-page.tsx
+msgid "Enter opens the first result. Down arrow moves to the results. Escape clears."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -6843,6 +6871,10 @@ msgstr "మంచి కంపెనీలో"
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
 msgstr "రెండు లైన్లు ఒకటిగా విలీనం కాకుండా లైన్ స్పేసింగ్‌ను పెంచండి."
@@ -7530,7 +7562,6 @@ msgstr "లేఖ"
 
 #: src/features/assistant/document.ts
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7568,6 +7599,7 @@ msgstr "లేఖ నకిలీ చేయబడింది"
 msgid "Letter page"
 msgstr "లేఖ పేజీ"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
 msgstr "ఉత్తరాలు"
@@ -8569,6 +8601,7 @@ msgstr "కొత్త దశ రంగు"
 msgid "New teams at Northwind were stalling in setup; most never got through."
 msgstr "Northwindలో కొత్త బృందాలు సెటప్‌లో ఆగిపోతున్నాయి; చాలావరకు పూర్తిచేయలేదు."
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Next"
 msgstr ""
@@ -8731,6 +8764,10 @@ msgstr "లింక్ చేయడానికి ఇంకా వాస్త
 
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -10148,6 +10185,7 @@ msgstr "ప్రివ్యూ పరిమాణం"
 msgid "Previewing {0} · click to apply"
 msgstr "{0} ప్రివ్యూ చేస్తోంది · వర్తింపజేయడానికి క్లిక్ చేయండి"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Previous"
 msgstr ""
@@ -10795,6 +10833,7 @@ msgstr "తిరస్కరించబడింది"
 msgid "Relationship"
 msgstr ""
 
+#: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
@@ -10807,6 +10846,10 @@ msgstr ""
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/components/layout/error-screen.tsx
+msgid "Reload to try again."
 msgstr ""
 
 #: src/features/settings/profile.tsx
@@ -11169,7 +11212,6 @@ msgstr "పునఃప్రారంభం"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
-#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -12309,6 +12351,7 @@ msgid "Shorter"
 msgstr "పొట్టి"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Show"
 msgstr "చూపించు"
 
@@ -12335,6 +12378,26 @@ msgstr "పేజీలో {title}ని చూపండి"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Show again"
 msgstr "మళ్లీ చూపించు"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all applications"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all conversations"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all letters"
+msgstr "అన్ని కవర్ లెటర్‌లను చూపించు"
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all resumes"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Show all types"
@@ -14282,7 +14345,6 @@ msgstr "{0}ని ప్రయత్నించండి"
 msgid "Try a sample"
 msgstr "నమూనా ప్రయత్నించండి"
 
-#: src/components/layout/error-screen.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -15016,6 +15078,10 @@ msgstr "వాయిస్ సెట్టింగులు"
 #: src/libs/resume/section.tsx
 msgid "Volunteer"
 msgstr "వాలంటియర్"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Waiting for you"

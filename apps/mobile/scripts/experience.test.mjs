@@ -307,13 +307,19 @@ assert.equal(
 );
 
 const stages = load("features/applications/stages.ts");
-const history = load("features/applications/history.ts");
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
 const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
 const followUpDomain = load("../../../packages/schema/src/applications/follow-up.ts", {
 	"@reactive-resume/utils/timezone": timeParser,
 });
 mocks["@reactive-resume/schema/applications/follow-up"] = followUpDomain;
+const domainNextStep = load("../../../packages/schema/src/applications/next-step.ts", {
+	"./follow-up": followUpDomain,
+});
+const history = load("features/applications/history.ts", {
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
+});
+
 const applicationData = load("../../../packages/schema/src/applications/data.ts", {
 	zod,
 	"@reactive-resume/utils/timezone": { timezoneSchema: zod.z.string() },
@@ -327,7 +333,11 @@ const defaultLanes = schemaLanes.createDefaultApplicationLanes();
 const laneQuery = {
 	useApplicationLanes: () => ({ lanes: defaultLanes, active: defaultLanes, supported: false, ready: true }),
 };
-const nextSteps = load("features/applications/next-step.ts", { "./stages": stages, "./history": history });
+const nextSteps = load("features/applications/next-step.ts", {
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
+	"./stages": stages,
+	"./history": history,
+});
 const time = { locale: "en-US", timeZone: "UTC", when: String, time: String, day: String, utcDay: String };
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
 	"@tanstack/react-query": {},
@@ -443,8 +453,9 @@ console.log(
 // Applications empty states must offer an action that changes the visible collection.
 let applications = [];
 let applicationSearch = "";
+let needsFollowUpFixture = false;
 const listLogic = load("features/applications/list.ts", {
-	"./next-step": { getNextStep: () => ({ kind: "none" }) },
+	"./next-step": { nextStepSortKey: () => [1, 0], compareNextStepSortKeys: domainNextStep.compareNextStepSortKeys },
 	"./stages": { LIST_ORDER: ["saved", "applied", "closed"] },
 	"./lanes": lanes,
 });
@@ -455,7 +466,12 @@ const { ApplicationsListScreen } = load("features/applications/list-screen.tsx",
 	"./lane-queries": laneQuery,
 	"./lanes": lanes,
 	"./list": listLogic,
-	"./next-step": { getNextStep: () => ({}), describeNextStep: () => ({ title: "Saved" }) },
+	"./next-step": {
+		getNextStep: () => (needsFollowUpFixture ? { kind: "no-reply", days: 20 } : {}),
+		describeNextStep: () => ({ title: "Saved" }),
+		needsFollowUp: () => needsFollowUpFixture,
+	},
+	"expo-sqlite/kv-store": { getItemSync: () => null, setItemSync: () => {} },
 	"./queries": {
 		useApplications: () => ({ data: applications }),
 		useApplicationMutations: () => ({}),
@@ -1888,3 +1904,46 @@ for (const locale of ["de-DE", "fr-FR"]) {
 	assert.equal(preferenceDraft.amount, new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(1234.56));
 }
 console.log("PASS native saved Preferences amounts round-trip in comma-decimal locales");
+
+// Follow-up controls must work for every owed row, including accounts larger than the old dismissal cap.
+reset();
+applicationSearch = "";
+needsFollowUpFixture = true;
+applications = Array.from({ length: 1001 }, (_, i) => ({ ...job, id: `owed-${i}`, status: "applied" }));
+listTree = listView();
+const nudgeNodes = (tree) => nodes(nodes(tree).find((node) => node.type === "SectionList").props.ListHeaderComponent);
+let nudge = nudgeNodes(listTree).find((node) => node.type === "Banner" && node.props.onDismiss);
+assert.ok(nudge);
+nudge.props.onDismiss();
+listTree = listView();
+assert.equal(
+	nudgeNodes(listTree).filter((node) => node.type === "Banner" && node.props.onDismiss).length,
+	0,
+	"one dismissal hides all 1001 owed rows",
+);
+reset();
+applications = applications.slice(0, 2);
+listTree = listView();
+nudge = nudgeNodes(listTree).find((node) => node.type === "Banner" && node.props.action?.label === "Show");
+nudge.props.action.onPress();
+needsFollowUpFixture = false;
+listTree = listView();
+sectionList = nodes(listTree).find((node) => node.type === "SectionList");
+assert.equal(sectionList.props.sections.length, 0);
+sectionList.props.ListEmptyComponent.props.action.onPress();
+listTree = listView();
+sectionList = nodes(listTree).find((node) => node.type === "SectionList");
+assert.equal(
+	sectionList.props.sections.flatMap((section) => section.data).length,
+	2,
+	"Clear filters resets follow-up-only too",
+);
+reset();
+needsFollowUpFixture = true;
+applications = applications.slice(0, 1);
+listTree = listView();
+nudge = nudgeNodes(listTree).find((node) => node.type === "Banner" && node.props.action?.label === "Open");
+nudge.props.action.onPress();
+assert.equal(calls.at(-1), "/applications/owed-0", "single nudge opens Details rather than the Apply tab");
+console.log("PASS native full dismissal, follow-up filter clearing and Details navigation");
+reset();

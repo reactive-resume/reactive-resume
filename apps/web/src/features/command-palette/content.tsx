@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useHotkeys } from "@tanstack/react-hotkeys";
 import { useRouteContext } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Command, CommandEmpty, CommandInput, CommandList } from "@reactive-resume/ui/components/command";
 import {
 	Dialog,
@@ -14,15 +14,23 @@ import {
 import { AskCommandGroup } from "./pages/ask";
 import { NavigationCommandGroup } from "./pages/navigation";
 import { PreferencesCommandGroup } from "./pages/preferences";
-import { DocumentsCommandGroup, ResumesCommandGroup } from "./pages/resumes";
+import { ResumesCommandGroup } from "./pages/resumes";
 import { useCommandPaletteStore } from "./store";
 
 export default function CommandPaletteContent() {
+	const { session } = useRouteContext({ strict: false });
 	const inputRef = useRef<HTMLInputElement>(null);
 	const commandRef = useRef<HTMLDivElement>(null);
-	const [selectedValue, setSelectedValue] = useState("");
-	const { open, search, pages, setOpen, setSearch, goBack } = useCommandPaletteStore();
-	const { session } = useRouteContext({ strict: false });
+	const {
+		open,
+		search,
+		pages,
+		selected: selectedValue,
+		setOpen,
+		setSearch,
+		setSelected: setSelectedValue,
+		goBack,
+	} = useCommandPaletteStore();
 
 	const isFirstPage = pages.length === 0;
 	const currentPage = pages[pages.length - 1];
@@ -70,7 +78,7 @@ export default function CommandPaletteContent() {
 
 		if (value) setSelectedValue(value);
 		inputRef.current?.focus();
-	}, [open, commandListPage]);
+	}, [open, commandListPage, setSelectedValue]);
 
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
@@ -105,6 +113,14 @@ export default function CommandPaletteContent() {
 					loop
 					value={selectedValue}
 					onValueChange={setSelectedValue}
+					onKeyDownCapture={(event) => {
+						if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key))
+							useCommandPaletteStore.getState().markSelectionMoved();
+					}}
+					onPointerMoveCapture={(event) => {
+						if (event.target instanceof Element && event.target.closest("[cmdk-item]"))
+							useCommandPaletteStore.getState().markSelectionMoved();
+					}}
 					aria-label={t({
 						comment: "Accessible label for command list region inside command palette",
 						message: "Command palette",
@@ -142,7 +158,6 @@ export default function CommandPaletteContent() {
 							</CommandEmpty>
 						)}
 
-						<DocumentsCommandGroup />
 						<ResumesCommandGroup />
 						<PreferencesCommandGroup />
 						<NavigationCommandGroup />

@@ -295,6 +295,11 @@ msgstr "{0, plural, one {ରେଜ୍ୟୁମେ (#)} other {ରେଜ୍ୟୁ
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {ଅଣଦେଖା # ସମସ୍ୟା ପୁଣି ଦେଖାନ୍ତୁ} other {ଅଣଦେଖା # ସମସ୍ୟା ପୁଣି ଦେଖାନ୍ତୁ}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "{closed} ବନ୍ଦ"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# ଡକ୍ୟୁମେଣ୍ଟ୍ ଅପଡେଟ୍ ହେଲା} other {# ଡକ୍ୟୁମେଣ୍ଟ୍ ଅପଡେଟ୍ ହେଲା}}"
@@ -515,6 +524,10 @@ msgstr "ବର୍ଷକୁ {cost}"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "ପ୍ରଥମ ବର୍ଷ ପାଇଁ {cost}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length} ମିନିଟ୍"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· ଆଜିଠାରୁ} one {· # ଦିନ ହେଲା} other {· # ଦିନ ହେଲା}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: # ଦିନ ହେଲା କୌଣସି ଉତ୍ତର ନାହିଁ। ଏବେ ଏକ ଛୋଟ ଫଲୋ-ଅପ୍ ସାଧାରଣତଃ ଠିକ୍।} other {{company}: # ଦିନ ହେଲା କୌଣସି ଉତ୍ତର ନାହିଁ। ଏବେ ଏକ ଛୋଟ ଫଲୋ-ଅପ୍ ସାଧାରଣତଃ ଠିକ୍।}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1099,6 +1116,10 @@ msgstr "କଭର୍ ଲେଟର୍ ଯୋଡନ୍ତୁ |"
 msgid "Add dates"
 msgstr "ତାରିଖ ଯୋଡନ୍ତୁ |"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "ଶିକ୍ଷା ଯୋଗକର |"
@@ -1224,6 +1245,10 @@ msgstr "ଟ୍ୟାଗ୍ ଯୋଡନ୍ତୁ |"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "ପାଠ ଯୋଡନ୍ତୁ |"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3167,6 +3192,7 @@ msgstr "ଏହି ସଂସ୍କରଣର ପେଜ୍ ଲୋଡ୍ ହୋଇ�
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "ଏହାକୁ ଲୋଡ୍ କରିପାରିଲା ନାହିଁ। ଆପଣଙ୍କର ସଂଯୋଗ ଯାଞ୍ଚ କରନ୍ତୁ ଏବଂ ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ।"
 
@@ -3705,6 +3731,10 @@ msgstr "ସମୀକ୍ଷା"
 msgid "Debrief interview"
 msgstr "|\n"
 "ଡିବ୍ରିଫ୍ ସାକ୍ଷାତକାର |"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5337,6 +5367,10 @@ msgstr "ଉନ୍ନତି…"
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "ବନ୍ଦ ହୋଇଥିବା ସହିତ"
@@ -6121,6 +6155,7 @@ msgstr "ଆପଣଙ୍କର ସର୍ବସାଧାରଣ ଠିକଣା ଲ
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6892,6 +6927,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "କୌଣସି ଆଇକନ୍ ମେଳ ଖାଉନାହିଁ।"
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "ଏପର୍ଯ୍ୟନ୍ତ କ job ଣସି କାମ ନାହିଁ |"
@@ -6974,10 +7013,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "ଏପର୍ଯ୍ୟନ୍ତ ଉତ୍ତର ନାହିଁ"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7399,6 +7434,7 @@ msgstr "ଅନସାଇଟ୍"
 msgid "Onsite interview"
 msgstr "ସ୍ଥାନରେ ସାକ୍ଷାତକାର"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "ଖୋଲନ୍ତୁ"
@@ -8987,6 +9023,7 @@ msgstr "{1} ବ୍ୟବହାର କରି {0} ଉଦ୍ଧାର କରାଯ�
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -9075,10 +9112,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "ଡ୍ରାଫ୍ଟ ସମୀକ୍ଷା କରନ୍ତୁ"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9929,6 +9962,10 @@ msgstr "ଏହାକୁ ଆବେଦନ କରାଯାଇଛି ବୋଲି �
 msgid "Shorter"
 msgstr "ଛୋଟ"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "ଦେଖାନ୍ତୁ |"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ସହିତ ନିର୍ମିତ” ଦେଖାନ୍ତୁ"
@@ -9942,9 +9979,14 @@ msgstr "{0} ଅଧିକ ଦେଖାନ୍ତୁ |"
 msgid "Show {title} on the page"
 msgstr "ପୃଷ୍ଠାରେ {title} ଦେଖାନ୍ତୁ |"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "ସବୁ ଦେଖାନ୍ତୁ"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "ସମସ୍ତ କଭର ଲେଟର ଦେଖାନ୍ତୁ"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12249,6 +12291,10 @@ msgstr "ସ୍ୱେଚ୍ଛାସେବକ"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "ଆପଣଙ୍କ ଆକାଉଣ୍ଟର ସମୟ ଅଞ୍ଚଳ ଲୋଡ୍ ହେବା ପର୍ଯ୍ୟନ୍ତ ଅପେକ୍ଷା କରନ୍ତୁ, ଲୋଡ୍ ହେବାରେ ବିଫଳ ହୋଇଥିଲେ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ, କିମ୍ବା ଶେଷ ତାରିଖର ଫିଲ୍ଡ ଖାଲି କରନ୍ତୁ।"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

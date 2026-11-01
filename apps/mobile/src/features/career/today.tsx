@@ -12,7 +12,13 @@ import { collectInterviews, rollForward } from "./scheduling";
 import { Actions, LoadState, Section, SwitchRow } from "./shared";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
-import { getNextStep } from "@/features/applications/next-step";
+import {
+	compareNextStepSortKeys,
+	describeNextStep,
+	getNextStep,
+	needsAttention,
+	nextStepSortKey,
+} from "@/features/applications/next-step";
 import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
 import {
@@ -97,6 +103,13 @@ export function TodayScreen() {
 		(row) => showRead || (!row.readAt && !undo.hidden.includes(row.id)),
 	);
 	const firstAppearance = useFirstAppearance(!queries.notifications.isPending);
+	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
+	const attention = (applications.data ?? [])
+		.flatMap((row) => {
+			const step = getNextStep(row, now, lanes.lanes, time.timeZone);
+			return needsAttention(step, now) ? [{ row, step, key: nextStepSortKey(row, now, time.timeZone) }] : [];
+		})
+		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.row.id, b.row.id));
 	const openSchedule = (schedule: Schedule) =>
 		setSheet({ schedule, kind: schedule.kind as "discovery" | "prepare" | "follow-up" });
 	const toggle = (row: Schedule, enabled: boolean) => {
@@ -187,7 +200,11 @@ export function TodayScreen() {
 						</Section>
 						<Section title={t`Needs you`}>
 							<LoadState query={queries.notifications} />
-							{!queries.notifications.isPending && !queries.notifications.isError && notes.length === 0 ? (
+							{!queries.notifications.isPending &&
+							!queries.notifications.isError &&
+							!applications.isPending &&
+							notes.length === 0 &&
+							attention.length === 0 ? (
 								<EmptyState
 									variant="card"
 									title={t`You're up to date`}
@@ -265,20 +282,25 @@ export function TodayScreen() {
 								label={showRead ? t`Hide read` : t`Show read`}
 								onPress={() => setShowRead(!showRead)}
 							/>
-							{(applications.data ?? [])
-								.filter((row) => getNextStep(row, now, lanes.lanes, time.timeZone).kind === "no-reply")
-								.map((row) => (
+							{attention.map(({ row, step }) => {
+								const text = describeNextStep(step, row, time.locale, time.timeZone);
+								return (
 									<Card key={row.id} style={{ gap: space.s3 }}>
-										<Text>
-											{row.company} · {t`No reply yet`}
+										<Text variant="title">{text.title}</Text>
+										{text.sub ? <Text>{text.sub}</Text> : null}
+										<Text variant="caption" color="ink3">
+											{row.company} · {row.role}
 										</Text>
 										<Button
 											variant="secondary"
-											label={t`Review draft`}
-											onPress={() => router.push(routes.application(row.id, "messages"))}
+											label={t`Open workspace`}
+											onPress={() =>
+												router.push(routes.application(row.id, step.kind === "interview" ? "prepare" : "messages"))
+											}
 										/>
 									</Card>
-								))}
+								);
+							})}
 						</Section>
 						<View
 							onLayout={(event) => {

@@ -6,7 +6,7 @@ import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useObserve } from "expo-observe";
-import { useRouter, Stack, useFocusEffect } from "expo-router";
+import { useRouter, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { RefreshControl, I18nManager, Platform, Pressable, ScrollView, View, useWindowDimensions } from "react-native";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
@@ -177,16 +177,35 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		queryKey: [...countsOptions.queryKey, scope],
 		enabled: session.status === "signed-in",
 	});
-	const [q, setQ] = useState("");
+	const params = useLocalSearchParams<{ q?: string; type?: string }>();
+	const initialQ = typeof params.q === "string" ? params.q.slice(0, 500) : "";
+	const initialType = params.type === "letter" || params.type === "resume" ? params.type : "all";
+	const [q, setQ] = useState(initialQ);
 	const [query, setQuery] = useState(q);
 	useEffect(() => {
 		const timer = setTimeout(() => setQuery(q), 300);
 		return () => clearTimeout(timer);
 	}, [q]);
-	const [type, setType] = useState<DocumentTypeFilter>("all");
+	const [type, setType] = useState<DocumentTypeFilter>(initialType);
 	const [sort, setSort] = useState<DocumentSort>("edited");
 	const [tags, setTags] = useState<string[]>([]);
 	const [publicOnly, setPublicOnly] = useState(false);
+	const request = JSON.stringify([params.q, params.type]);
+	const [lastRequest, setLastRequest] = useState(request);
+	if (lastRequest !== request) {
+		setLastRequest(request);
+		if (params.q !== undefined || params.type !== undefined) {
+			setQ(initialQ);
+			setQuery(initialQ);
+			setType(initialType);
+			setTags([]);
+			setPublicOnly(false);
+			setSort("edited");
+		}
+	}
+	useEffect(() => {
+		if (params.q !== undefined || params.type !== undefined) router.setParams({ q: undefined, type: undefined });
+	}, [params.q, params.type, router]);
 	const filterKey = JSON.stringify([trashed, q, type, tags, publicOnly, sort, scope]);
 	const [page, setPage] = useState({ filterKey, offset: 0, total: 0 });
 	const offset = page.filterKey === filterKey ? page.offset : 0;

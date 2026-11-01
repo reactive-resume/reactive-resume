@@ -295,6 +295,11 @@ msgstr "{0, plural, one {റെസ്യൂമെ (#)} other {റെസ്യൂ
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {# അവഗണിച്ച പ്രശ്നം വീണ്ടും കാണിക്കുക} other {# അവഗണിച്ച പ്രശ്നങ്ങൾ വീണ്ടും കാണിക്കുക}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "{closed} അടച്ചു"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# പ്രമാണം അപ്‌ഡേറ്റ് ചെയ്‌തു} other {# പ്രമാണങ്ങൾ അപ്‌ഡേറ്റ് ചെയ്‌തു}}"
@@ -515,6 +524,10 @@ msgstr "വർഷം {cost}"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "ആദ്യ വർഷം {cost}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length}മി"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· ഇന്ന് മുതൽ} one {· # ദിവസമായി} other {· # ദിവസമായി}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: # ദിവസമായി മറുപടിയില്ല. ഇപ്പോൾ ഒരു ചെറിയ ഫോളോ-അപ്പ് സാധാരണയായി നല്ലതാണ്.} other {{company}: # ദിവസമായി മറുപടിയില്ല. ഇപ്പോൾ ഒരു ചെറിയ ഫോളോ-അപ്പ് സാധാരണയായി നല്ലതാണ്.}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1099,6 +1116,10 @@ msgstr "കവർ ലെറ്റർ ചേർക്കുക"
 msgid "Add dates"
 msgstr "തീയതികൾ ചേർക്കുക"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "വിദ്യാഭ്യാസം ചേർക്കുക"
@@ -1224,6 +1245,10 @@ msgstr "ടാഗ് ചേർക്കുക"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "ടെക്സ്റ്റ് ചേർക്കുക"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3160,6 +3185,7 @@ msgstr "ഈ പതിപ്പിൻ്റെ പേജ് ലോഡ് ചെ�
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "ഇത് ലോഡ് ചെയ്യാനായില്ല. നിങ്ങളുടെ കണക്ഷൻ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
 
@@ -3694,6 +3720,10 @@ msgstr "അവലോകനം"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "വിശദീകരണ അഭിമുഖം"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5320,6 +5350,10 @@ msgstr "മെച്ചപ്പെടുത്തുന്നു..."
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "അടച്ചവ ഉൾപ്പെടെ"
@@ -6104,6 +6138,7 @@ msgstr "നിങ്ങളുടെ പൊതു വിലാസം ലോഡ്
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6873,6 +6908,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "ഐക്കണുകളൊന്നും പൊരുത്തപ്പെടുന്നില്ല."
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "ഇതുവരെ ജോലിയില്ല"
@@ -6955,10 +6994,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "ഇതുവരെ മറുപടിയില്ല"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7379,6 +7414,7 @@ msgstr "ഓൺസൈറ്റ്"
 msgid "Onsite interview"
 msgstr "ഓൺസൈറ്റ് അഭിമുഖം"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "ഓപ്പൺ ചെയ്യുക"
@@ -8959,6 +8995,7 @@ msgstr "{1} ഉപയോഗിച്ച് {0} വീണ്ടെടുത്ത
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -9046,10 +9083,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "ഡ്രാഫ്റ്റ് പരിശോധിക്കുക"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9893,6 +9926,10 @@ msgstr "ഇത് അപേക്ഷിച്ചതായി അടയാളപ�
 msgid "Shorter"
 msgstr "ചെറുത്"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "കാണിക്കുക"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ഉപയോഗിച്ച് നിർമ്മിച്ചത്” കാണിക്കുക"
@@ -9906,9 +9943,14 @@ msgstr "{0} കൂടുതൽ കാണിക്കുക"
 msgid "Show {title} on the page"
 msgstr "പേജിൽ {title} കാണിക്കുക"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "എല്ലാം കാണിക്കുക"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "എല്ലാ കവർ ലെറ്ററുകളും കാണിക്കുക"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12205,6 +12247,10 @@ msgstr "വളന്റിയർ"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "നിങ്ങളുടെ അക്കൗണ്ടിന്റെ സമയമേഖല ലോഡ് ആകുന്നതുവരെ കാത്തിരിക്കുക, ലോഡ് ചെയ്യുന്നത് പരാജയപ്പെട്ടെങ്കിൽ വീണ്ടും ശ്രമിക്കുക, അല്ലെങ്കിൽ അവസാന തീയതിയുടെ ഫീൽഡ് ശൂന്യമാക്കുക."
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

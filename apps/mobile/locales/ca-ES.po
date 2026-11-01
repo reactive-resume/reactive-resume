@@ -295,6 +295,11 @@ msgstr "{0, plural, one {Currículum vitae (#)} other {Currículums vitae (#)}}"
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {Torna a mostrar # problema ignorat} other {Torna a mostrar # problemes ignorats}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "{closed} tancades"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# document actualitzat} other {# documents actualitzats}}"
@@ -515,6 +524,10 @@ msgstr "{cost} l'any"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "{cost} el primer any"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length} m"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· des d’avui} one {· des de fa # dia} other {· des de fa # dies}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: sense resposta des de fa # dia. Ara normalment ja es pot fer un seguiment breu.} other {{company}: sense resposta des de fa # dies. Ara normalment ja es pot fer un seguiment breu.}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1099,6 +1116,10 @@ msgstr "Afegeix una carta de presentació"
 msgid "Add dates"
 msgstr "Afegeix dates"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "Afegeix educació"
@@ -1224,6 +1245,10 @@ msgstr "Afegeix una etiqueta"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "Afegeix text"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3160,6 +3185,7 @@ msgstr "No s'ha pogut carregar la pàgina d'aquesta versió."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "No s'ha pogut carregar això. Comprova la teva connexió i torna-ho a provar."
 
@@ -3694,6 +3720,10 @@ msgstr "Balanç"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "Entrevista breu"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5320,6 +5350,10 @@ msgstr "S'està millorant…"
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "Incloses les tancades"
@@ -6104,6 +6138,7 @@ msgstr "S'està carregant la teva adreça pública…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6873,6 +6908,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "No coincideix cap icona."
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "Encara no hi ha feina"
@@ -6955,10 +6994,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "Encara no hi ha resposta"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7379,6 +7414,7 @@ msgstr "Presencial"
 msgid "Onsite interview"
 msgstr "Entrevista presencial"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Obre"
@@ -8959,6 +8995,7 @@ msgstr "S'ha recuperat {0} mitjançant {1}. El temps de recuperació no establei
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -9046,10 +9083,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "Revisa l'esborrany"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9893,6 +9926,10 @@ msgstr "Escurceu les preguntes a 2.000 caràcters i les respostes a 6.000 caràc
 msgid "Shorter"
 msgstr "Més curt"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "Mostra"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Mostra «Fet amb Reactive Resume»"
@@ -9906,9 +9943,14 @@ msgstr "Mostra {0} més"
 msgid "Show {title} on the page"
 msgstr "Mostra {title} a la pàgina"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Mostra-ho tot"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "Mostra totes les cartes de presentació"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12205,6 +12247,10 @@ msgstr "Voluntariat"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "Espereu que es carregui el fus horari del vostre compte, torneu-ho a provar si la càrrega ha fallat o buideu el camp de la data límit."
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

@@ -295,6 +295,11 @@ msgstr "{0, plural, one {ប្រវត្តិរូបសង្ខេប (#)
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {បង្ហាញបញ្ហា # ដែលបានមិនអើពើឡើងវិញ} other {បង្ហាញបញ្ហា # ដែលបានមិនអើពើឡើងវិញ}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -504,6 +509,10 @@ msgstr "{closed} បានបិទ"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {ឯកសារ # បានធ្វើបច្ចុប្បន្នភាព} other {ឯកសារ # បានធ្វើបច្ចុប្បន្នភាព}}"
@@ -515,6 +524,10 @@ msgstr "{cost} ក្នុងមួយឆ្នាំ"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "{cost} សម្រាប់ឆ្នាំដំបូង"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -531,6 +544,10 @@ msgstr "{day} · {length} នាទី"
 #: src/features/application-detail/sections.tsx
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· ចាប់ពីថ្ងៃនេះ} one {· រយៈពេល # ថ្ងៃ} other {· រយៈពេល # ថ្ងៃ}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}៖ គ្មានការឆ្លើយតបរយៈពេល # ថ្ងៃ។ ការតាមដានខ្លីមួយជាធម្មតាសមរម្យនៅពេលនេះ។} other {{company}៖ គ្មានការឆ្លើយតបរយៈពេល # ថ្ងៃ។ ការតាមដានខ្លីមួយជាធម្មតាសមរម្យនៅពេលនេះ។}}"
 
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -1099,6 +1116,10 @@ msgstr "បន្ថែមលិខិតគម្រប"
 msgid "Add dates"
 msgstr "បន្ថែមកាលបរិច្ឆេទ"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "បន្ថែមការអប់រំ"
@@ -1224,6 +1245,10 @@ msgstr "បន្ថែមស្លាក"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "បន្ថែមអត្ថបទ"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -3160,6 +3185,7 @@ msgstr "មិនអាចផ្ទុកទំព័រកំណែនេះប
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "មិនអាចផ្ទុកវាបានទេ។ ពិនិត្យការតភ្ជាប់របស់អ្នក ហើយព្យាយាមម្តងទៀត។"
 
@@ -3694,6 +3720,10 @@ msgstr "សង្ខេបក្រោយសម្ភាសន៍"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "បទសម្ភាសន៍សង្ខេប"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -5320,6 +5350,10 @@ msgstr "កំពុងកែលម្អ…"
 msgid "In progress"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
+
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
 msgstr "រួមទាំងពាក្យសុំដែលបានបិទ"
@@ -6104,6 +6138,7 @@ msgstr "កំពុងផ្ទុកអាសយដ្ឋានសាធារ
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6873,6 +6908,10 @@ msgstr ""
 msgid "No icons match."
 msgstr "គ្មានរូបតំណាងត្រូវគ្នាទេ។"
 
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
 msgstr "មិនទាន់មានការងារធ្វើទេ។"
@@ -6955,10 +6994,6 @@ msgstr ""
 #: src/features/applications-board/insights-screen.tsx
 msgid "No replies to chart yet"
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "មិនទាន់មានការឆ្លើយតបទេ។"
 
 #: src/features/applications/stages.ts
 msgid "No response"
@@ -7379,6 +7414,7 @@ msgstr "នៅទីតាំង"
 msgid "Onsite interview"
 msgstr "ការសម្ភាសន៍នៅនឹងកន្លែង"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "បើក"
@@ -8959,6 +8995,7 @@ msgstr "បានទាញយក {0} ដោយប្រើ {1} ។ ពេលវ�
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -9046,10 +9083,6 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
-
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "ពិនិត្យសេចក្តីព្រាង"
 
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
@@ -9893,6 +9926,10 @@ msgstr "បង្រួមសំណួរឱ្យនៅ 2,000 តួអក្�
 msgid "Shorter"
 msgstr "ខ្លីជាង"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "បង្ហាញ"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "បង្ហាញ “បង្កើតដោយ Reactive Resume”"
@@ -9906,9 +9943,14 @@ msgstr "បង្ហាញ {0} ទៀត"
 msgid "Show {title} on the page"
 msgstr "បង្ហាញ {title} នៅលើទំព័រ"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "បង្ហាញទាំងអស់។"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "បង្ហាញលិខិតអមទាំងអស់"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -12205,6 +12247,10 @@ msgstr "ស្ម័គ្រចិត្ត"
 #: src/features/career/offer-entry.tsx
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "រង់ចាំឱ្យតំបន់ពេលវេលានៃគណនីរបស់អ្នកផ្ទុករួច សាកល្បងម្តងទៀតប្រសិនបើការផ្ទុកបរាជ័យ ឬសម្អាតកាលកំណត់។"
+
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"

@@ -1,10 +1,12 @@
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
+import type { QueryClient } from "@tanstack/react-query";
+import type { KeyboardEvent } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { useEffect, useId, useRef, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -28,11 +30,13 @@ import { cn } from "@reactive-resume/utils/style";
 import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
 import { LibraryError } from "./library-error";
+import { useNewDocumentsStore } from "./new-documents";
 import { PageNavigation } from "./page-navigation";
 import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { PageHeader } from "@/components/layout/page-header";
 import { useDialogStore } from "@/dialogs/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
+import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
 
 export type DocumentsSearch = {
@@ -57,20 +61,46 @@ type DocumentsPageProps = {
 export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const searchRef = useRef<HTMLInputElement>(null);
+	const resultsRef = useRef<HTMLTableElement & HTMLDivElement>(null);
+	const queryClient = useQueryClient();
+	const openOnResults = useRef<{ request: string; client: QueryClient } | null>(null);
+	const router = useRouter();
+	useEffect(
+		() =>
+			router.subscribe("onBeforeNavigate", ({ pathChanged }) => {
+				if (pathChanged) openOnResults.current = null;
+			}),
+		[router],
+	);
+	const searchHintId = useId();
+	const navigate = useNavigate();
+	const markOpened = useNewDocumentsStore((state) => state.markOpened);
 	const [tagsFor, setTagsFor] = useState<DocumentSummary[] | null>(null);
 	const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
 	const [linkFor, setLinkFor] = useState<DocumentSummary | null>(null);
 	// Grid and list animate in only after a switch, never on the page's first render.
 	const [viewSwitched, setViewSwitched] = useState(false);
 	const searchText = search.q.slice(0, 500);
-	const [query] = useDebounceValue(searchText, 300);
-	const filterKey = JSON.stringify([search.type, searchText, search.tags, search.public, search.sort]);
+	const [query, setQuery] = useDebounceValue(searchText, 300);
+	const filterKey = JSON.stringify([search.type, searchText, search.tags, search.public ?? false, search.sort]);
 	const [page, setPage] = useState({ filterKey, offset: 0, total: 0 });
 	const offset = page.filterKey === filterKey ? page.offset : 0;
 	const changePage = (next: number) => {
 		setSelected(new Set());
 		setPage({ filterKey, offset: next, total: pageData?.total ?? page.total });
 	};
+	const input = {
+		type: search.type,
+		q: searchText,
+		tags: search.tags,
+		sort: search.sort,
+		public: search.public ?? false,
+		trashed: false,
+		limit: 100,
+		offset,
+	};
+	// Bind Enter to its intended request, including text not yet released by the debounce.
+	const request = JSON.stringify(input);
 	const {
 		data: pageData,
 		isPending,
@@ -82,16 +112,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		gcTime: 0,
 		placeholderData: (previous) => previous,
 		...orpc.documents.page.queryOptions({
-			input: {
-				type: search.type,
-				q: query,
-				tags: search.tags,
-				sort: search.sort,
-				public: search.public ?? false,
-				trashed: false,
-				limit: 100,
-				offset,
-			},
+			input: { ...input, q: query },
 		}),
 	});
 	const [lastPage, setLastPage] = useState({ data: pageData, offset });
@@ -190,6 +211,55 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		selectAll(false);
 	});
 
+	const openDocument = (document: DocumentSummary) => {
+		markOpened(document.id);
+		if (document.type === "resume") void navigate({ to: "/builder/$resumeId", params: { resumeId: document.id } });
+		else void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: document.id } });
+	};
+
+	// Replacement requests cannot inherit an earlier Enter, even when their search text is identical.
+	useEffect(() => {
+		const pending = openOnResults.current;
+		if (pending === null) return;
+		if (pending.request !== request || pending.client !== queryClient || isError) {
+			openOnResults.current = null;
+			return;
+		}
+		if (!rowsCurrent) return;
+		openOnResults.current = null;
+		const first = shown[0];
+		if (first) openDocument(first);
+	});
+
+	// The search field is keyboard-complete: Enter opens the top result, ↓ moves into the results, Esc clears, then leaves.
+	const onSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+		if (isImeComposing(event) || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+		if (event.key === "Enter") {
+			event.preventDefault();
+			openOnResults.current = null;
+			if (!searchText.trim() || (isError && query === searchText)) return;
+			const first = shown[0];
+			if (rowsCurrent) {
+				if (first) openDocument(first);
+				return;
+			}
+			openOnResults.current = { request, client: queryClient };
+			// Skip the typing delay: search for what's in the field now.
+			setQuery.flush();
+		} else if (event.key === "ArrowDown") {
+			openOnResults.current = null;
+			const first = resultsRef.current?.querySelector<HTMLElement>("a[href]");
+			if (!first) return;
+			event.preventDefault();
+			first.focus();
+		} else if (event.key === "Escape") {
+			event.preventDefault();
+			openOnResults.current = null;
+			if (searchText) onSearchChange({ q: "" });
+			else event.currentTarget.blur();
+		}
+	};
+
 	return (
 		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5">
 			<PageHeader title={<Trans>Documents</Trans>}>
@@ -223,9 +293,15 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 									value={searchText}
 									maxLength={500}
 									aria-label={t`Search documents`}
+									aria-describedby={searchHintId}
+									enterKeyHint="go"
 									placeholder={t`Search`}
 									onChange={(event) => onSearchChange({ q: event.target.value.slice(0, 500) })}
+									onKeyDown={onSearchKeyDown}
 								/>
+								<span id={searchHintId} className="sr-only">
+									<Trans>Enter opens the first result. Down arrow moves to the results. Escape clears.</Trans>
+								</span>
 								<InputGroupAddon align="inline-end" className="max-sm:hidden pointer-coarse:hidden">
 									<Kbd>/</Kbd>
 								</InputGroupAddon>
@@ -314,7 +390,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							</div>
 						)
 					) : view === "list" ? (
-						<table className={cn("w-full table-fixed border-collapse", viewEnter)}>
+						<table ref={resultsRef} className={cn("w-full table-fixed border-collapse", viewEnter)}>
 							<caption className="sr-only">
 								<Trans>Documents</Trans>
 							</caption>
@@ -361,6 +437,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 						</table>
 					) : (
 						<div
+							ref={resultsRef}
 							className={cn(
 								"grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4",
 								viewEnter,

@@ -22,12 +22,12 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { getCategoryLane, getDisplayLane, getLaneLabel, laneMoveInput } from "../lanes";
-import { describeNextStep, getNextStep } from "../next-step";
+import { compareNextStepSortKeys, describeNextStep, getNextStep, nextStepSortKey } from "../next-step";
 import { LIST_ORDER } from "../stages";
 import { useInvalidateApplications } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { ClosedLaneItems } from "./application-actions-menu";
-import { useCareerTime } from "@/features/career/shared";
+import { useCareerTime, useNow } from "@/features/career/shared";
 import { useConfirm } from "@/hooks/use-confirm";
 import { formatRelativeTime } from "@/libs/locale";
 import { D2, EASE, EXIT } from "@/libs/motion";
@@ -35,21 +35,21 @@ import { orpc } from "@/libs/orpc/client";
 
 type SortKey = "role" | "next" | "updated";
 type Sort = { key: SortKey; direction: "asc" | "desc" };
-
-const nextStepTime = (application: ApplicationSummary, timeZone: string) => {
-	const step = getNextStep(application, undefined, timeZone);
-	return step.kind === "interview" || step.kind === "follow-up" ? step.at.getTime() : Number.POSITIVE_INFINITY;
-};
+type SortValue = string | number | readonly [number, number];
 
 // Sort keys are computed once per row, not once per comparison.
-const sortValue: Record<SortKey, (application: ApplicationSummary, timeZone: string) => string | number> = {
+const sortValue: Record<SortKey, (application: ApplicationSummary, now: Date, timeZone: string) => SortValue> = {
 	role: (application) => application.role,
-	next: nextStepTime,
+	next: (application, now, timeZone) => nextStepSortKey(application, now, timeZone),
 	updated: (application) => new Date(application.updatedAt).getTime(),
 };
 
-const compareValues = (a: string | number, b: string | number) =>
-	typeof a === "string" && typeof b === "string" ? a.localeCompare(b) : Number(a) - Number(b);
+const compareValues = (a: SortValue, b: SortValue, aId: string, bId: string, direction: Sort["direction"]) => {
+	const sign = direction === "asc" ? 1 : -1;
+	if (typeof a === "string" && typeof b === "string") return sign * a.localeCompare(b);
+	if (typeof a === "object" && typeof b === "object") return compareNextStepSortKeys(a, b, aId, bId, direction);
+	return sign * (Number(a) - Number(b));
+};
 
 type ListViewProps = {
 	applications: ApplicationSummary[];
@@ -60,7 +60,8 @@ type ListViewProps = {
 
 /**
  * The default view: applications grouped by lane, by the stage that needs you first (Interview, Offer, Screening,
- * Applied, Saved, then Closed when shown) and in the owner's lane order within a stage. Groups collapse, headers sort within groups, and row checkboxes select
+ * Applied, Saved, then Closed when shown) and in the owner's lane order within a stage. Within a group rows follow
+ * Next step: dated steps soonest first, then the longest wait. Groups collapse, headers sort within groups, and row checkboxes select
  * for bulk moves, tags, closing and deleting. Phones get two-line rows.
  */
 export function ApplicationList({ applications, showClosed, selectedId, onOpen }: ListViewProps) {
@@ -68,8 +69,10 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 	const { timeZone } = useCareerTime();
 	const phone = breakpoint === "mobile";
 	const { lanes, active } = useApplicationLanes();
+	const now = useNow();
 	const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
-	const [sort, setSort] = useState<Sort>({ key: "updated", direction: "desc" });
+	// Next step first: what's dated soonest, then whatever has waited longest in its stage.
+	const [sort, setSort] = useState<Sort>({ key: "next", direction: "asc" });
 	const [checked, setChecked] = useState<ReadonlySet<string>>(new Set());
 
 	const laneOf = (application: ApplicationSummary) => getDisplayLane(lanes, application);
@@ -87,7 +90,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 	const groups = useMemo(() => {
 		const sign = sort.direction === "asc" ? 1 : -1;
 		const keys = new Map(
-			applications.map((application) => [application.id, sortValue[sort.key](application, timeZone)]),
+			applications.map((application) => [application.id, sortValue[sort.key](application, now, timeZone)]),
 		);
 		const key = (application: ApplicationSummary) => keys.get(application.id) ?? 0;
 		const rowsByLane = new Map<string, ApplicationSummary[]>();
@@ -103,12 +106,13 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 				lane,
 				rows: (rowsByLane.get(lane.id) ?? []).sort(
 					(a, b) =>
-						sign * compareValues(key(a), key(b)) ||
-						(sort.key === "role" ? sign * a.company.localeCompare(b.company) : 0),
+						compareValues(key(a), key(b), a.id, b.id, sort.direction) ||
+						(sort.key === "role" ? sign * a.company.localeCompare(b.company) : 0) ||
+						a.id.localeCompare(b.id),
 				),
 			}))
 			.filter((group) => group.rows.length > 0);
-	}, [applications, showClosed, sort, lanes, active, timeZone]);
+	}, [applications, showClosed, sort, lanes, active, timeZone, now]);
 
 	const toggleGroup = (status: string) =>
 		setCollapsed((current) => {
