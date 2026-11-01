@@ -41,6 +41,23 @@ describe("getPdfFallbackFontFamilies", () => {
 		expect(getPdfFallbackFontFamilies("Helvetica", { locale: "th-TH" })).toEqual(["Noto Sans Thai", "Noto Sans"]);
 		expect(getPdfFallbackFontFamilies("Times-Roman", { locale: "th-TH" })).toEqual(["Noto Sans Thai", "Noto Serif"]);
 	});
+
+	it.each([
+		["hi-IN", "Noto Sans Devanagari", "Noto Sans Devanagari"],
+		["mr-IN", "Noto Sans Devanagari", "Noto Sans Devanagari"],
+		["ne-NP", "Noto Sans Devanagari", "Noto Sans Devanagari"],
+		["bn-BD", "Noto Sans Bengali", "Noto Serif Bengali"],
+		["or-IN", "Noto Sans Oriya", "Noto Sans Oriya"],
+		["ta-IN", "Noto Sans Tamil", "Noto Sans Tamil"],
+		["te-IN", "Noto Sans Telugu", "Noto Sans Telugu"],
+		["kn-IN", "Noto Sans Kannada", "Noto Sans Kannada"],
+		["ml-IN", "Noto Sans Malayalam", "Noto Sans Malayalam"],
+		["am-ET", "Noto Sans Ethiopic", "Noto Sans Ethiopic"],
+		["km-KH", "Noto Sans Khmer", "Noto Sans Khmer"],
+	] as const)("uses the native script's Noto font for %s", (locale, sans, serif) => {
+		expect(getPdfFallbackFontFamilies("Helvetica", { locale })).toEqual([sans, "Noto Sans"]);
+		expect(getPdfFallbackFontFamilies("Times-Roman", { locale })).toEqual([serif, "Noto Serif"]);
+	});
 });
 
 describe("legacy font compatibility (#2989)", () => {
