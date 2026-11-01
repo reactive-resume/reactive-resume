@@ -2695,6 +2695,10 @@ msgstr "ব্যাকআপ কোড"
 msgid "Backup codes copied"
 msgstr "ব্যাকআপ কোড কপি করা হয়েছে"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "সুষম"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2880,6 +2884,10 @@ msgstr "তালিকা এন্ট্রি {n}"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "বুলেটেড তালিকা"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "বারগান্ডি"
 
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
@@ -3354,12 +3362,17 @@ msgid "Clarify"
 msgstr "স্পষ্ট করা দরকার"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "ক্লাসিক"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "পরিচ্ছন্ন"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -4485,6 +4498,10 @@ msgstr "দ্বি-পদক্ষেপ যাচাইকরণ সেট �
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "PDF প্রিভিউ দেখানো যায়নি। ফাইলটি আবার আপলোড করুন।"
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -6754,6 +6771,10 @@ msgstr "গুগল"
 msgid "Grade"
 msgstr "গ্রেড"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "গ্রাফাইট"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "ধূসর"
@@ -7249,6 +7270,10 @@ msgstr "ইন্দোনেশিয়ান"
 msgid "Inferred"
 msgstr "অনুমিত"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "কালি নীল"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "ইনলাইন"
@@ -7600,6 +7625,14 @@ msgstr "আপনি যখন অ্যাপ্লিকেশন ব্যব
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "হিসাব রাখুন"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "সংযোগ রাখুন"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "ডোমেইন রাখুন"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8281,6 +8314,11 @@ msgstr "লিংক করা নথি লোড হচ্ছে…"
 msgid "Loading providers…"
 msgstr "প্রোভাইডার লোড হচ্ছে…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "জীবনবৃত্তান্তের পৃষ্ঠা {pageNumber} লোড হচ্ছে, মোট {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "জীবনবৃত্তান্ত লোড হচ্ছে…"
@@ -8720,6 +8758,10 @@ msgstr "একাধিক ইমেইল ঠিকানা দেখা য�
 #: src/features/career/today.tsx
 msgid "Morning of"
 msgstr "সেদিন সকালে"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "মস"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -9674,6 +9716,10 @@ msgstr "সংখ্যাযুক্ত তালিকা"
 msgid "Observation"
 msgstr "পর্যবেক্ষণ"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "ওচার"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "ওড়িয়া"
@@ -10125,11 +10171,13 @@ msgid "Page"
 msgstr "পৃষ্ঠা"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "পৃষ্ঠা {0}"
@@ -10148,6 +10196,16 @@ msgstr "পৃষ্ঠা {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "পৃষ্ঠা {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "{pageCount} এর পৃষ্ঠা {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "{totalPages} এর পৃষ্ঠা {pageNumber}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10493,6 +10551,10 @@ msgstr "আপনার সপ্তাহের পরিকল্পনা ক
 msgid "Play the list of languages"
 msgstr "ভাষার তালিকা চালান"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "বরই"
+
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "পোলিশ"
@@ -10775,6 +10837,10 @@ msgstr "পণ্য ডিজাইনার"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "B2B দলগুলোর জন্য <0>ডিজাইন সিস্টেম</0> ও গবেষণাভিত্তিক পণ্য তৈরির নয় বছরের অভিজ্ঞতাসম্পন্ন পণ্য ডিজাইনার।"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "প্রফেশনাল"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11503,6 +11569,10 @@ msgstr "{value} সরান"
 msgid "Remove connection"
 msgstr "সংযোগ সরান"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "ডোমেইন সরান"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "ক্ষেত্র সরান"
@@ -11555,9 +11625,17 @@ msgstr "পর্যায় সরান"
 msgid "Remove tag"
 msgstr "ট্যাগ সরান"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "নিজস্ব ডোমেইন সরাবেন?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "পাসওয়ার্ড সরান?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "ওয়েব সংযোগ সরাবেন?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11848,6 +11926,11 @@ msgstr ""
 msgid "Resume page"
 msgstr "জীবনবৃত্তান্ত পাতা"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "জীবনবৃত্তান্তের পৃষ্ঠা {pageNumber}, মোট {totalPages}"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume submitted (optional)"
@@ -12135,6 +12218,10 @@ msgstr "{next} পৃষ্ঠায় চলে"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "রুশ"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "মরিচা"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -13955,6 +14042,10 @@ msgstr "লক্ষ্য পদ"
 msgid "Task"
 msgstr "কাজ"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "টিল"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "টেকনিক্যাল"
@@ -15027,6 +15118,10 @@ msgstr "আপনার প্রথম কাজ ট্র্যাক"
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "ট্র্যাকিং"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "প্রথাগত"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -16479,6 +16574,10 @@ msgstr "আপনি একটি ছাড়া সাইন ইন করু�
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "আপনি এটি সবসময় আজ বিভাগে দেখতে পাবেন। ইমেইল আপনার সার্ভারের মেইল সেটআপের ওপর নির্ভর করে।"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "আবার সংযোগ করতে আপনাকে কীটি আবার লিখতে হবে। অন্তর্নির্মিত রিডার সক্রিয় থাকবে।"
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "আপনি আমাদের <0>ডিজাইন সিস্টেমের</0> দায়িত্ব নেবেন, গ্রাহকদের সঙ্গে <1>ব্যবহারকারী গবেষণা</1> করবেন এবং <3>বিভিন্ন বিভাগের সমন্বিত</3> দলে কাজ করে <2>সবার ব্যবহারযোগ্যতার</2> উচ্চ মান বজায় রাখবেন।"
@@ -16606,6 +16705,10 @@ msgstr "জীবনবৃত্তান্তে আপনার বিবর�
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "আপনার ডোমেইন"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "আপনার ডোমেইন আর আপনার প্রধান জীবনবৃত্তান্ত খুলবে না। পরে আবার সংযোগ করতে পারবেন।"
 
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."

@@ -3,6 +3,7 @@ import type { LetterDraft } from "@/features/letters/store";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery } from "@tanstack/react-query";
@@ -796,11 +797,15 @@ function LengthSection({ content }: { content: string }) {
 
 /** DESIGN: what the letter looks like, and where to change it. */
 function DesignNote({ letter }: { letter: CoverLetter }) {
+	const { i18n } = useLingui();
 	const [, setMode] = useLetterMode();
 	const { metadata } = letter.style;
-	const pairing = FONT_PAIRINGS.find((option) => option.id === matchFontPairing(metadata))?.label;
+	const pairingLabel = FONT_PAIRINGS.find((option) => option.id === matchFontPairing(metadata))?.label;
 	const accent = ACCENTS.find((option) => option.hex === rgbaToHex(metadata.design.colors.primary))?.label;
-	const summary = [templates[metadata.template].name, pairing && t`${pairing} type`, accent].filter(Boolean).join(", ");
+	const pairing = pairingLabel && i18n._(pairingLabel);
+	const summary = [templates[metadata.template].name, pairing && t`${pairing} type`, accent && i18n._(accent)]
+		.filter(Boolean)
+		.join(", ");
 
 	return (
 		<Section id="letter-design" title={<Trans>Design</Trans>}>

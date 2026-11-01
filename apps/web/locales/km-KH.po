@@ -2695,6 +2695,10 @@ msgstr "លេខកូដបម្រុងទុក"
 msgid "Backup codes copied"
 msgstr "បានចម្លងកូដបម្រុងទុក"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "តុល្យភាព"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2880,6 +2884,10 @@ msgstr "បញ្ជីឈ្មោះ {n}"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "បញ្ជីចំណុច"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "ប៊ឺហ្គូឌី"
 
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
@@ -3354,12 +3362,17 @@ msgid "Clarify"
 msgstr "បំភ្លឺ"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "បុរាណ"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "ស្អាត"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -4485,6 +4498,10 @@ msgstr "មិនអាចរៀបចំការផ្ទៀងផ្ទាត
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "មិនអាចបង្ហាញការមើល PDF ជាមុនបានទេ។ សូមផ្ទុកឯកសារឡើងវិញ។"
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -6754,6 +6771,10 @@ msgstr "Google"
 msgid "Grade"
 msgstr "ចំណាត់ថ្នាក់"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "ក្រាហ្វិច"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "ប្រផេះ"
@@ -7249,6 +7270,10 @@ msgstr "Indonesian"
 msgid "Inferred"
 msgstr "សន្និដ្ឋាន"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "ទឹកថ្នាំពណ៌ខៀវ"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "ក្នុងជួរ"
@@ -7600,6 +7625,14 @@ msgstr "រក្សាការចូលប្រើនៅពេលដែលអ
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "រក្សាគណនី"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "រក្សាការតភ្ជាប់"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "រក្សាដែន"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8281,6 +8314,11 @@ msgstr "កំពុងផ្ទុកឯកសារដែលបានភ្ជ
 msgid "Loading providers…"
 msgstr "កំពុងផ្ទុកអ្នកផ្តល់សេវា…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "កំពុងផ្ទុកទំព័រប្រវត្តិរូបសង្ខេប {pageNumber} នៃ {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "កំពុងផ្ទុកប្រវត្តិរូបសង្ខេប…"
@@ -8720,6 +8758,10 @@ msgstr "អាសយដ្ឋានអ៊ីមែលច្រើនជាងម
 #: src/features/career/today.tsx
 msgid "Morning of"
 msgstr "ព្រឹកថ្ងៃនោះ"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "ពណ៌ស្លែ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -9674,6 +9716,10 @@ msgstr "បញ្ជីលេខ"
 msgid "Observation"
 msgstr "ការសង្កេត"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "អូច"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "Odia"
@@ -10125,11 +10171,13 @@ msgid "Page"
 msgstr "ទំព័រ"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "ទំព័រ {0}"
@@ -10148,6 +10196,16 @@ msgstr "ទំព័រ {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "ទំព័រ {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "ទំព័រ {pageNumber} នៃ {pageCount}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "ទំព័រ {pageNumber} នៃ {totalPages}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10493,6 +10551,10 @@ msgstr "កំពុងរៀបចំផែនការសប្តាហ៍រ
 msgid "Play the list of languages"
 msgstr "លេងបញ្ជីភាសា"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "ពណ៌ផ្លែព្រូន"
+
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Polish"
@@ -10775,6 +10837,10 @@ msgstr "អ្នករចនាផលិតផល"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "អ្នករចនាផលិតផលដែលមានបទពិសោធន៍ប្រាំបួនឆ្នាំក្នុងការបង្កើត<0>ប្រព័ន្ធរចនា</0> និងផលិតផលផ្អែកលើការស្រាវជ្រាវសម្រាប់ក្រុម B2B។"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "វិជ្ជាជីវៈ"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11503,6 +11569,10 @@ msgstr "លុប {value}"
 msgid "Remove connection"
 msgstr "ដកការតភ្ជាប់ចេញ"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "លុបដែន"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "លុប​វាល"
@@ -11555,9 +11625,17 @@ msgstr "លុបដំណាក់កាលចេញ"
 msgid "Remove tag"
 msgstr "យកស្លាកចេញ"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "លុបដែនផ្ទាល់ខ្លួន?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "ដក​ពាក្យ​សម្ងាត់​ចេញ?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "លុបការតភ្ជាប់វេប?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11848,6 +11926,11 @@ msgstr ""
 msgid "Resume page"
 msgstr "ទំព័រប្រវត្តិរូបសង្ខេប"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "ទំព័រប្រវត្តិរូបសង្ខេប {pageNumber} នៃ {totalPages}"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume submitted (optional)"
@@ -12135,6 +12218,10 @@ msgstr "ដំណើរការលើទំព័រ {next}"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "Russian"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "ច្រែះ"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -13955,6 +14042,10 @@ msgstr "តួនាទីគោលដៅ"
 msgid "Task"
 msgstr "ភារកិច្ច"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "ពណ៌ខៀវបៃតង"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "បច្ចេកទេស"
@@ -15027,6 +15118,10 @@ msgstr "តាមដានការងារដំបូងរបស់អ្ន
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "ការតាមដាន"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "ប្រពៃណី"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -16479,6 +16574,10 @@ msgstr "អ្នកចូលដោយគ្មានមួយ។"
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "អ្នកនឹងតែងតែឃើញវានៅក្នុង “ថ្ងៃនេះ”។ អ៊ីមែលអាស្រ័យលើការរៀបចំសំបុត្ររបស់ម៉ាស៊ីនមេរបស់អ្នក។"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "អ្នកនឹងត្រូវបញ្ចូលសោម្តងទៀតដើម្បីភ្ជាប់ឡើងវិញ។ កម្មវិធីអានដែលភ្ជាប់មកស្រាប់នៅតែដំណើរការ។"
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "អ្នកនឹងទទួលខុសត្រូវលើ<0>ប្រព័ន្ធរចនា</0>របស់យើង ធ្វើ<1>ការស្រាវជ្រាវអ្នកប្រើប្រាស់</1>ជាមួយអតិថិជន និងរក្សាស្តង់ដារខ្ពស់សម្រាប់<2>ភាពងាយស្រួលក្នុងការប្រើប្រាស់</2> ដោយធ្វើការក្នុងក្រុម<3>ដែលមានជំនាញចម្រុះ</3>។"
@@ -16606,6 +16705,10 @@ msgstr "ព័ត៌មានលម្អិតរបស់អ្នកបាន
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "ដែនរបស់អ្នក"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "ដែនរបស់អ្នកនឹងឈប់បើកប្រវត្តិរូបសង្ខេបចម្បងរបស់អ្នក។ អ្នកអាចភ្ជាប់វាឡើងវិញនៅពេលក្រោយ។"
 
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."

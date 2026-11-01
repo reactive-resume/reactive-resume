@@ -2695,6 +2695,10 @@ msgstr "ബാക്കപ്പ് കോഡ്"
 msgid "Backup codes copied"
 msgstr "ബാക്കപ്പ് കോഡുകൾ പകർത്തി"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "സമതുലിതമായ"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2880,6 +2884,10 @@ msgstr "ലിസ്റ്റ് എൻട്രി {n}"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "ബുള്ളറ്റ് ലിസ്റ്റ്"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "ബർഗണ്ടി"
 
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
@@ -3354,12 +3362,17 @@ msgid "Clarify"
 msgstr "വ്യക്തമാക്കുക"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "ക്ലാസിക്"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "ലളിതം"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -4485,6 +4498,10 @@ msgstr "രണ്ട്-ഘട്ട സ്ഥിരീകരണം സജ്ജ
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "PDF പ്രിവ്യൂ കാണിക്കാനായില്ല. ഫയൽ വീണ്ടും അപ്‌ലോഡ് ചെയ്യുക."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -6754,6 +6771,10 @@ msgstr "ഗൂഗിൾ"
 msgid "Grade"
 msgstr "ഗ്രേഡ്"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "ഗ്രാഫൈറ്റ്"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "ചാരനിറം"
@@ -7249,6 +7270,10 @@ msgstr "ഇന്തോനേഷ്യൻ"
 msgid "Inferred"
 msgstr "അനുമാനിച്ചത്"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "മഷി നീല"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "ഇൻലൈൻ"
@@ -7600,6 +7625,14 @@ msgstr "നിങ്ങൾ ആപ്ലിക്കേഷൻ ഉപയോഗി�
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "അക്കൗണ്ട് സൂക്ഷിക്കുക"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "കണക്ഷൻ നിലനിർത്തുക"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "ഡൊമെയ്ൻ നിലനിർത്തുക"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8281,6 +8314,11 @@ msgstr "ലിങ്ക് ചെയ്ത പ്രമാണങ്ങൾ ലോ
 msgid "Loading providers…"
 msgstr "ദാതാക്കളെ ലോഡ് ചെയ്യുന്നു…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "റെസ്യൂമെ പേജ് {pageNumber} ലോഡ് ചെയ്യുന്നു, ആകെ {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "റെസ്യൂമെകൾ ലോഡ് ചെയ്യുന്നു…"
@@ -8720,6 +8758,10 @@ msgstr "ഒന്നിലധികം ഇമെയിൽ വിലാസങ്�
 #: src/features/career/today.tsx
 msgid "Morning of"
 msgstr "അന്ന് രാവിലെ"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "മോസ് പച്ച"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -9674,6 +9716,10 @@ msgstr "അക്കമിട്ട ലിസ്റ്റ്"
 msgid "Observation"
 msgstr "നിരീക്ഷണം"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "ഒച്ചർ"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "ഒഡിയ"
@@ -10125,11 +10171,13 @@ msgid "Page"
 msgstr "പേജ്"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "പേജ് {0}"
@@ -10148,6 +10196,16 @@ msgstr "പേജ് {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "പേജ് {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "പേജ് {pageNumber} / {pageCount}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "പേജ് {pageNumber} / {totalPages}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10493,6 +10551,10 @@ msgstr "നിങ്ങളുടെ ആഴ്ച പ്ലാൻ ചെയ്യ
 msgid "Play the list of languages"
 msgstr "ഭാഷകളുടെ ലിസ്റ്റ് പ്ലേ ചെയ്യുക"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "പ്ലം പർപ്പിൾ"
+
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "പോളിഷ്"
@@ -10775,6 +10837,10 @@ msgstr "ഉൽപ്പന്ന ഡിസൈനർ"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "B2B ടീമുകൾക്കായി <0>ഡിസൈൻ സിസ്റ്റങ്ങളും</0> ഗവേഷണാധിഷ്ഠിത ഉൽപ്പന്നങ്ങളും നിർമ്മിക്കുന്നതിൽ ഒമ്പത് വർഷത്തെ പരിചയമുള്ള ഉൽപ്പന്ന ഡിസൈനർ."
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "പ്രൊഫഷണൽ"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11503,6 +11569,10 @@ msgstr "{value} നീക്കം ചെയ്യുക"
 msgid "Remove connection"
 msgstr "കണക്ഷൻ നീക്കം ചെയ്യുക"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "ഡൊമെയ്ൻ നീക്കം ചെയ്യുക"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "ഫീൽഡ് നീക്കം ചെയ്യുക"
@@ -11555,9 +11625,17 @@ msgstr "ഘട്ടം നീക്കം ചെയ്യുക"
 msgid "Remove tag"
 msgstr "ടാഗ് നീക്കംചെയ്യുക"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "ഇഷ്‌ടാനുസൃത ഡൊമെയ്ൻ നീക്കം ചെയ്യണോ?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "പാസ്‌വേഡ് നീക്കം ചെയ്യണോ?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "വെബ് കണക്ഷൻ നീക്കം ചെയ്യണോ?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11848,6 +11926,11 @@ msgstr ""
 msgid "Resume page"
 msgstr "റെസ്യൂമെ പേജ്"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "റെസ്യൂമെ പേജ് {pageNumber}, ആകെ {totalPages}"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume submitted (optional)"
@@ -12135,6 +12218,10 @@ msgstr "{next} പേജിലേക്ക് റൺ ചെയ്യുന്ന
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "റഷ്യൻ"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "തുരുമ്പ് തവിട്ട്"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -13955,6 +14042,10 @@ msgstr "ലക്ഷ്യമിടുന്ന റോളുകൾ"
 msgid "Task"
 msgstr "ചുമതല"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "നീലപ്പച്ച"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "സാങ്കേതികം"
@@ -15027,6 +15118,10 @@ msgstr "നിങ്ങളുടെ ആദ്യ ജോലി ട്രാക്
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "ട്രാക്കിംഗ്"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "പരമ്പരാഗതം"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -16479,6 +16574,10 @@ msgstr "ഒന്നുമില്ലാതെ നിങ്ങൾ സൈൻ ഇ
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "ഇത് എല്ലായ്പ്പോഴും “ഇന്ന്” എന്നതിൽ കാണാം. ഇമെയിൽ നിങ്ങളുടെ സെർവറിന്റെ മെയിൽ സജ്ജീകരണത്തെ ആശ്രയിച്ചിരിക്കുന്നു."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "വീണ്ടും കണക്റ്റ് ചെയ്യാൻ കീ വീണ്ടും നൽകേണ്ടിവരും. ബിൽറ്റ്-ഇൻ റീഡർ സജീവമായി തുടരും."
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "നിങ്ങൾ ഞങ്ങളുടെ <0>ഡിസൈൻ സിസ്റ്റങ്ങളുടെ</0> ചുമതല വഹിക്കുകയും ഉപഭോക്താക്കളുമായി <1>ഉപയോക്തൃ ഗവേഷണം</1> നടത്തുകയും <3>വിവിധ വിഭാഗങ്ങൾ ചേർന്ന</3> ടീമിൽ പ്രവർത്തിച്ച് <2>പ്രവേശനക്ഷമതയുടെ</2> ഉയർന്ന നിലവാരം ഉറപ്പാക്കുകയും ചെയ്യും."
@@ -16606,6 +16705,10 @@ msgstr "റെസ്യൂമെയിൽ നിങ്ങളുടെ വിശ�
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "നിങ്ങളുടെ ഡൊമെയ്ൻ"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "നിങ്ങളുടെ ഡൊമെയ്ൻ ഇനി നിങ്ങളുടെ പ്രധാന റെസ്യൂമെ തുറക്കില്ല. പിന്നീട് അത് വീണ്ടും കണക്റ്റ് ചെയ്യാം."
 
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."

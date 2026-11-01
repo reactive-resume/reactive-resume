@@ -2695,6 +2695,10 @@ msgstr "బ్యాకప్ కోడ్"
 msgid "Backup codes copied"
 msgstr "బ్యాకప్ కోడ్‌లు కాపీ చేయబడ్డాయి"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "సమతుల్యం"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2880,6 +2884,10 @@ msgstr "జాబితా ప్రవేశం {n}"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "బుల్లెట్ జాబితా"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "బుర్గుండి"
 
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
@@ -3354,12 +3362,17 @@ msgid "Clarify"
 msgstr "స్పష్టం చేయి"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "క్లాసిక్"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "సరళం"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -4485,6 +4498,10 @@ msgstr "రెండు-దశల ధృవీకరణను సెటప్ �
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "PDF ప్రివ్యూను చూపించలేకపోయాము. ఫైల్‌ను మళ్లీ అప్‌లోడ్ చేయండి."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -6754,6 +6771,10 @@ msgstr "గూగుల్"
 msgid "Grade"
 msgstr "గ్రేడ్"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "గ్రాఫైట్"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "బూడిద రంగు"
@@ -7249,6 +7270,10 @@ msgstr "ఇండోనేషియన్"
 msgid "Inferred"
 msgstr "ఊహించబడింది"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "సిరా నీలం"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "ఇన్లైన్"
@@ -7600,6 +7625,14 @@ msgstr "మీరు అప్లికేషన్‌ను ఉపయోగి�
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "ఖాతా ఉంచండి"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "కనెక్షన్‌ను ఉంచండి"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "డొమైన్‌ను ఉంచండి"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8281,6 +8314,11 @@ msgstr "లింక్ చేసిన పత్రాలను లోడ్ �
 msgid "Loading providers…"
 msgstr "ప్రొవైడర్లను లోడ్ చేస్తోంది…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "రెజ్యూమే పేజీ {pageNumber} లోడ్ అవుతోంది, మొత్తం {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "రెజ్యూమ్‌లను లోడ్ చేస్తోంది…"
@@ -8720,6 +8758,10 @@ msgstr "ఒకటి కంటే ఎక్కువ ఇమెయిల్ చ�
 #: src/features/career/today.tsx
 msgid "Morning of"
 msgstr "ఆ రోజు ఉదయం"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "నాచు ఆకుపచ్చ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -9674,6 +9716,10 @@ msgstr "సంఖ్యా జాబితా"
 msgid "Observation"
 msgstr "పరిశీలన"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "ఓచర్"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "ఒడియా"
@@ -10125,11 +10171,13 @@ msgid "Page"
 msgstr "పేజ్"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "పేజ్ {0}"
@@ -10148,6 +10196,16 @@ msgstr "పేజ్ {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "పేజీ {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "{pageCount}లో {pageNumber} పేజీ"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "{totalPages}లో {pageNumber} పేజీ"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10493,6 +10551,10 @@ msgstr "మీ వారాన్ని ప్లాన్ చేస్తోం
 msgid "Play the list of languages"
 msgstr "భాషల జాబితాను ప్లే చేయండి"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "ప్లం పర్పుల్"
+
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "పోలిష్"
@@ -10775,6 +10837,10 @@ msgstr "ఉత్పత్తి డిజైనర్"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "B2B బృందాల కోసం <0>డిజైన్ వ్యవస్థలు</0> మరియు పరిశోధన ఆధారిత ఉత్పత్తులను రూపొందించడంలో తొమ్మిదేళ్ల అనుభవం ఉన్న ఉత్పత్తి డిజైనర్."
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "వృత్తిపరం"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11503,6 +11569,10 @@ msgstr "{value}ని తీసివేయండి"
 msgid "Remove connection"
 msgstr "కనెక్షన్‌ని తీసివేయండి"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "డొమైన్‌ను తీసివేయండి"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "ఫీల్డ్‌ను తీసివేయండి"
@@ -11555,9 +11625,17 @@ msgstr "దశను తీసివేయండి"
 msgid "Remove tag"
 msgstr "ట్యాగ్‌ను తీసివేయండి"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "అనుకూల డొమైన్‌ను తీసివేయాలా?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "పాస్‌వర్డ్‌ని తీసివేయాలా?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "వెబ్ కనెక్షన్‌ను తీసివేయాలా?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11848,6 +11926,11 @@ msgstr ""
 msgid "Resume page"
 msgstr "రెజ్యూమ్ పేజీ"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "రెజ్యూమే పేజీ {pageNumber}, మొత్తం {totalPages}"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume submitted (optional)"
@@ -12135,6 +12218,10 @@ msgstr "{next} పేజీలో నడుస్తుంది"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "రష్యన్"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "రస్ట్ బ్రౌన్"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -13955,6 +14042,10 @@ msgstr "లక్ష్య పదవులు"
 msgid "Task"
 msgstr "పని"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "టీల్"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "టెక్నికల్"
@@ -15027,6 +15118,10 @@ msgstr "మీ మొదటి ఉద్యోగాన్ని ట్రాక
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "ట్రాకింగ్"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "సాంప్రదాయం"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -16479,6 +16574,10 @@ msgstr "మీరు ఒకటి లేకుండా సైన్ ఇన్ �
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "మీరు దీన్ని ఎల్లప్పుడూ ‘ఈరోజు’లో చూస్తారు. ఇమెయిల్ మీ సర్వర్ మెయిల్ సెటప్‌పై ఆధారపడి ఉంటుంది."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "మళ్లీ కనెక్ట్ చేయడానికి మీరు కీని తిరిగి నమోదు చేయాలి. అంతర్నిర్మిత రీడర్ యాక్టివ్‌గా ఉంటుంది."
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "మీరు మా <0>డిజైన్ వ్యవస్థల</0> బాధ్యత తీసుకుని, కస్టమర్లతో <1>వినియోగదారు పరిశోధన</1> చేస్తారు మరియు <3>వివిధ విభాగాలు కలిసి పనిచేసే</3> బృందంలో పనిచేస్తూ <2>అందరికీ అందుబాటులో ఉండేలా చేయడంలో</2> ఉన్నత ప్రమాణాలను పాటిస్తారు."
@@ -16606,6 +16705,10 @@ msgstr "రెజ్యూమేలో మీ వివరాలు మార్
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "మీ డొమైన్"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "మీ డొమైన్ ఇకపై మీ ప్రధాన రెజ్యూమేను తెరవదు. తర్వాత దాన్ని మళ్లీ కనెక్ట్ చేయవచ్చు."
 
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."
