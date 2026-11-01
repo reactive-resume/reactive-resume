@@ -6,13 +6,22 @@ import type { ReactNode } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { memo, useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 import z from "zod";
-import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { agentWebSources, type AgentUIMessage } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { careerSourceSchema, factCategorySchema } from "@reactive-resume/schema/career";
 import { Button } from "@reactive-resume/ui/components/button";
+import { Checkbox } from "@reactive-resume/ui/components/checkbox";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuTrigger,
+} from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import {
 	MessageScroller,
@@ -22,18 +31,24 @@ import {
 	MessageScrollerProvider,
 	MessageScrollerViewport,
 } from "@reactive-resume/ui/components/message-scroller";
-import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
+import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
+import { Textarea } from "@reactive-resume/ui/components/textarea";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { TraceIcon, TraceLine, TraceTitle } from "@reactive-resume/ui/components/trace";
 import { cn } from "@reactive-resume/utils/style";
 import { Composer, contentClass, copyToClipboard, usedFor, usedSchema } from "./coach-thread";
-import { Eyebrow, MemoryProposal, Working, workingSteps } from "./shared";
+import { CATEGORIES, categoryLabel } from "./knowledge/facts";
+import { StoryEditor } from "./knowledge/stories";
+import { MemoryProposal, useCareerTime, Working, workingSteps } from "./shared";
 import { attachmentPart } from "@/features/assistant/chat";
+import { handToAssistant } from "@/features/assistant/handoff";
 import { AssistantMarkdown } from "@/features/assistant/markdown";
 import { QuestionCard } from "@/features/assistant/question-card";
-import { ToolApprovals } from "@/features/assistant/tool-approvals";
+import { ToolApprovals, type StoryEditorRender } from "@/features/assistant/tool-approvals";
 import { useAssistantChat } from "@/features/assistant/use-assistant-chat";
-import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
+import { UsedChip } from "@/features/assistant/used-chip";
+import { getOrpcErrorMessage, isProviderFailure, toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -86,6 +101,7 @@ export function ChatView(props: ChatViewProps) {
 		error,
 		clearError,
 		regenerate,
+		setMessages,
 		stop,
 		resuming,
 		addToolOutput,
@@ -101,6 +117,22 @@ export function ChatView(props: ChatViewProps) {
 	// A pending resume keeps the SDK at "ready"; lock the conversation until the replayed run starts or ends.
 	const busy = streaming || resuming;
 	const last = messages.at(-1);
+	// What the server no longer sends (Knowledge changed) and which replies ended early, read again whenever Knowledge
+	// changes; the transcript itself is the chat's own.
+	const historyOptions = orpc.agent.threads.get.queryOptions({ input: { id: threadId } });
+	const history = useQuery({
+		...historyOptions,
+		queryKey: [...historyOptions.queryKey, "history", knowledge.updatedAt],
+		select: (data) => ({
+			cutoffAt: data.history?.cutoffAt ?? null,
+			withheld: new Set(data.history?.withheld ?? []),
+			interrupted: data.interrupted ?? [],
+		}),
+		placeholderData: (previous) => previous,
+	});
+	const withheld = history.data?.withheld ?? new Set<string>();
+	const lastWithheld = messages.findLast((message) => withheld.has(message.id));
+	const earlier = messages.filter((message) => !withheld.has(message.id)).length;
 	const answering = status === "streaming" && last?.role === "assistant" && textOf(last) !== "";
 	const readOnly = props.readOnly || props.disabled === true;
 	// Stable so a streaming reply doesn't re-render every message above it.
@@ -152,11 +184,118 @@ export function ChatView(props: ChatViewProps) {
 		else void regenerate();
 	};
 
-	const stopReply = () => {
+	const stopReply = async () => {
 		setStopped(true);
-		void client.agent.messages.stop({ threadId }).catch(() => undefined);
-		void stop();
+		await Promise.all([client.agent.messages.stop({ threadId }).catch(() => undefined), stop()]);
+		// The server keeps what it wrote before the stop reached it, which can be more (or less) than arrived here. Show
+		// its copy once the run is settled, so Continue and Try again act on what was actually saved.
+		for (let attempt = 0; attempt < 10; attempt++) {
+			const saved = await client.agent.threads.get({ id: threadId }).catch(() => null);
+			if (!saved) return;
+			if (!saved.thread.activeRunId) {
+				setMessages(saved.messages as AgentUIMessage[]);
+				void history.refetch();
+				return;
+			}
+			await new Promise((resolve) => window.setTimeout(resolve, 300));
+		}
 	};
+
+	// "Edit first": the proposal opens in the story editor in place, in this conversation's scope. Saving the edited
+	// story declines the proposal as it stood; Cancel goes back to the review card and keeps the edits.
+	const storyEditor = ({ approvalId, story, onSaved, onCancel }: Parameters<StoryEditorRender>[0]) => (
+		<StoryEditor
+			story={undefined}
+			facts={knowledge.all}
+			proposal={{ key: `${threadId}:${approvalId}`, story, applicationId: props.applicationId }}
+			onSaved={() => {
+				onSaved();
+				refresh();
+				toast.add({ description: t`Your edited story is saved to Knowledge.` });
+			}}
+			onCancel={onCancel}
+			onDelete={undefined}
+		/>
+	);
+
+	// A reply that ended early, here or before a reload: continue what it said, or ask again if it said nothing.
+	const lastReply = last?.role === "assistant" ? last : undefined;
+	const endedEarly =
+		!busy &&
+		!error &&
+		(stopped || (lastReply !== undefined && (history.data?.interrupted ?? []).includes(lastReply.id)));
+	const saidSomething = lastReply !== undefined && textOf(lastReply) !== "";
+
+	// Status rows live inside the last message's row, never as rows of their own: swapping a row (working → stopped →
+	// error) makes the scroller re-anchor to the first turn it hasn't settled, which is the top of a reopened thread.
+	const footer = (
+		<>
+			{busy && (
+				<TraceLine status="running" className={cn("mt-6 text-[13px]", ENTER_CLASS)}>
+					<TraceIcon>
+						<Spinner decorative className="size-3" />
+					</TraceIcon>
+					<TraceTitle>
+						{/* Until the first words arrive, say what's happening; then the answer itself shows progress. */}
+						{answering ? (
+							<Trans>Writing an answer…</Trans>
+						) : (
+							<Working steps={[...workingSteps("chat"), ...(props.context.web ? [t`Searching the web`] : [])]} />
+						)}
+					</TraceTitle>
+				</TraceLine>
+			)}
+
+			{endedEarly && (
+				<p className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-2 transition-opacity duration-standard ease-enter starting:opacity-0">
+					<Icon name="stop-circle" size={18} className="text-ink-3" />
+					{saidSomething ? (
+						<Trans>Stopped before the answer finished.</Trans>
+					) : (
+						<Trans>Stopped before answering.</Trans>
+					)}
+					{!readOnly && (
+						<button
+							type="button"
+							className="font-medium text-ink underline underline-offset-2"
+							onClick={() => (saidSomething ? send(t`Continue`) : retry())}
+						>
+							{saidSomething ? <Trans>Continue</Trans> : <Trans>Try again</Trans>}
+						</button>
+					)}
+				</p>
+			)}
+
+			{error && !busy && (
+				<div
+					role="alert"
+					className="mt-6 grid gap-2.5 rounded-xl bg-danger-soft p-3.5 text-[13px] text-danger-text transition-opacity duration-standard ease-enter starting:opacity-0"
+				>
+					<span className="flex gap-2">
+						<Icon name="warning-circle" size={18} className="shrink-0" />
+						{/* Say why when the server knows (a switched-off connection, a limit); otherwise that it didn't answer. */}
+						<span>
+							{getOrpcErrorMessage(error, {
+								fallback: t`${connection} didn't respond.`,
+								allowServerMessage: true,
+							})}
+						</span>
+					</span>
+					<span className="flex flex-wrap gap-1.5">
+						<Button size="sm" variant="secondary" onClick={retry}>
+							<Trans>Try again</Trans>
+						</Button>
+						{/* Another connection can't fix a lost network or this server's own refusal. */}
+						{isProviderFailure(error) && (
+							<Button size="sm" variant="ghost" onClick={props.onChangeConnection}>
+								<Trans>Change connection</Trans>
+							</Button>
+						)}
+					</span>
+				</div>
+			)}
+		</>
+	);
 
 	return (
 		<div className="flex min-h-0 flex-1 flex-col">
@@ -168,7 +307,12 @@ export function ChatView(props: ChatViewProps) {
 						<MessageScrollerViewport aria-label={t`Conversation`}>
 							{/* Announced when the answer is complete, not token by token. */}
 							<MessageScrollerContent aria-busy={busy} className={cn(contentClass[variant], "flex")}>
-								{messages.length === 0 && !busy && <MessageScrollerItem>{props.empty(send)}</MessageScrollerItem>}
+								{messages.length === 0 && (
+									<MessageScrollerItem>
+										{!busy && props.empty(send)}
+										{footer}
+									</MessageScrollerItem>
+								)}
 								{messages.map((message, index) => (
 									<MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={message.role === "user"}>
 										<MessageView
@@ -178,80 +322,23 @@ export function ChatView(props: ChatViewProps) {
 											enter={!initialIds.has(message.id)}
 											knowledge={knowledge}
 											company={props.company}
-											scoped={props.applicationId !== null}
+											applicationId={props.applicationId}
 											readOnly={readOnly || index !== messages.length - 1}
 											onAnswer={answer}
 										/>
 										<ToolApprovals
 											message={message}
 											disabled={readOnly || busy || index !== messages.length - 1}
+											facts={knowledge.all}
+											storyEditor={storyEditor}
 											onDecision={(decision) => {
 												void addToolApprovalResponse(decision);
 											}}
 										/>
+										{message === lastWithheld && <HistoryCutoff cutoffAt={history.data?.cutoffAt ?? null} />}
+										{index === messages.length - 1 && footer}
 									</MessageScrollerItem>
 								))}
-
-								{busy && (
-									<MessageScrollerItem>
-										<TraceLine status="running" className={cn("text-[13px]", ENTER_CLASS)}>
-											<TraceIcon>
-												<Spinner decorative className="size-3" />
-											</TraceIcon>
-											<TraceTitle>
-												{/* Until the first words arrive, say what's happening; then the answer itself shows progress. */}
-												{answering ? (
-													<Trans>Writing an answer…</Trans>
-												) : (
-													<Working
-														steps={[...workingSteps("chat"), ...(props.context.web ? [t`Searching the web`] : [])]}
-													/>
-												)}
-											</TraceTitle>
-										</TraceLine>
-									</MessageScrollerItem>
-								)}
-
-								{stopped && !busy && (
-									<MessageScrollerItem>
-										<TraceLine>
-											<TraceIcon>
-												<Icon name="stop-circle" size={14} />
-											</TraceIcon>
-											<TraceTitle>
-												<Trans>Stopped</Trans>
-											</TraceTitle>
-										</TraceLine>
-									</MessageScrollerItem>
-								)}
-
-								{error && !busy && (
-									<MessageScrollerItem>
-										<div
-											role="alert"
-											className="grid gap-2.5 rounded-xl bg-danger-soft p-3.5 text-[13px] text-danger-text transition-opacity duration-standard ease-enter starting:opacity-0"
-										>
-											<span className="flex gap-2">
-												<Icon name="warning-circle" size={18} className="shrink-0" />
-												{/* Say why when the server knows (a switched-off connection, a limit); otherwise that it didn't answer. */}
-												<span>
-													{getOrpcErrorMessage(error, {
-														fallback: t`${connection} didn't respond.`,
-														allowServerMessage: true,
-													})}
-												</span>
-											</span>
-											<span className="flex flex-wrap gap-1.5">
-												<Button size="sm" variant="secondary" onClick={retry}>
-													<Trans>Try again</Trans>
-												</Button>
-												<Button size="sm" variant="ghost" onClick={props.onChangeConnection}>
-													<Trans>Change connection</Trans>
-												</Button>
-											</span>
-										</div>
-									</MessageScrollerItem>
-								)}
 							</MessageScrollerContent>
 						</MessageScrollerViewport>
 						<MessageScrollerButton>
@@ -264,11 +351,12 @@ export function ChatView(props: ChatViewProps) {
 
 			<Composer
 				{...props}
+				privacy={props.privacy({ earlier, withheld: messages.length - earlier })}
 				streaming={busy}
 				disabled={readOnly}
 				ensureThread={() => Promise.resolve(threadId)}
 				onSend={send}
-				onStop={stopReply}
+				onStop={() => void stopReply()}
 			/>
 		</div>
 	);
@@ -289,7 +377,7 @@ type MessageViewProps = {
 	knowledge: Knowledge;
 	company: string | undefined;
 	/** About one application: its facts are private to it, and the application itself is implied. */
-	scoped: boolean;
+	applicationId: string | null;
 	readOnly: boolean;
 	onAnswer: (toolCallId: string, answer: string) => void;
 };
@@ -302,16 +390,17 @@ const MessageView = memo(function MessageView({
 	enter,
 	knowledge,
 	company,
-	scoped,
+	applicationId,
 	readOnly,
 	onAnswer,
 }: MessageViewProps) {
 	const text = textOf(message);
+	const scoped = applicationId !== null;
 
 	if (message.role === "user") {
 		const files = partsOf(message).filter((part) => part.type === "file") as Array<Part & { filename?: string }>;
 		return (
-			<div className={cn("grid justify-items-end gap-1", enter && ENTER_CLASS)}>
+			<div className={cn("group/message grid justify-items-end gap-1", enter && ENTER_CLASS)}>
 				{text && (
 					<p className="max-w-[80%] rounded-lg bg-sunken px-3.5 py-2.5 text-sm leading-[21px] whitespace-pre-wrap">
 						{text}
@@ -323,6 +412,7 @@ const MessageView = memo(function MessageView({
 						{file.filename ?? t`Attachment`}
 					</span>
 				))}
+				{text && !streaming && <RememberMessage message={message} applicationId={applicationId} company={company} />}
 			</div>
 		);
 	}
@@ -378,7 +468,10 @@ const MessageView = memo(function MessageView({
 				</div>
 			)}
 
-			{!streaming && used && <UsedChips used={used} applications={scoped ? [] : applications} knowledge={knowledge} />}
+			{/* An answer that never came used nothing; a stopped one still shows what it was given. */}
+			{!streaming && used && (text || stories.length > 0) && (
+				<UsedChips used={used} applications={scoped ? [] : applications} knowledge={knowledge} />
+			)}
 
 			{stories.map((story) => (
 				<p key={story.id} className="flex flex-wrap items-center gap-1.5 text-sm text-accent-text">
@@ -407,6 +500,7 @@ const MessageView = memo(function MessageView({
 						<Icon name="copy" size={16} />
 						<Trans>Copy</Trans>
 					</Button>
+					<AddToResume text={text} applicationId={applicationId} company={company} />
 				</div>
 			)}
 		</div>
@@ -533,29 +627,6 @@ function UsedChips({ used, applications, knowledge }: UsedChipsProps) {
 	);
 }
 
-type UsedChipProps = { label: string; title: string; children: ReactNode };
-
-function UsedChip({ label, title, children }: UsedChipProps) {
-	return (
-		<Popover>
-			<PopoverTrigger
-				render={
-					<button
-						type="button"
-						className="inline-flex h-6 items-center rounded-sm border border-line-2 px-2 text-xs font-medium text-ink-2 transition-colors duration-quick hover:bg-hover hover:text-ink aria-expanded:bg-hover"
-					/>
-				}
-			>
-				{label}
-			</PopoverTrigger>
-			<PopoverContent align="start" className="w-80 max-w-[calc(100vw-2rem)]">
-				<Eyebrow>{title}</Eyebrow>
-				<ul className="grid max-h-72 gap-2 overflow-y-auto">{children}</ul>
-			</PopoverContent>
-		</Popover>
-	);
-}
-
 function PreferencesList() {
 	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
 	if (!profile)
@@ -639,7 +710,13 @@ function MemoryNotes({ message, knowledge, company }: MemoryNotesProps) {
 		<>
 			{proposed.length > 0 && <Proposal items={proposed} knowledge={knowledge} company={company} />}
 			{saved.map((item) => (
-				<AutoRemembered key={item.toolCallId} id={item.id ?? ""} text={item.fact.text} knowledge={knowledge} />
+				<AutoRemembered
+					key={item.toolCallId}
+					id={item.id ?? ""}
+					text={item.fact.text}
+					knowledge={knowledge}
+					company={company}
+				/>
 			))}
 		</>
 	);
@@ -684,7 +761,8 @@ function Proposal({ items, knowledge, company }: ProposalProps) {
 			else setSaved({ ids, category: chosen[0]?.fact.category ?? "preference" });
 			void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
 		} catch (error) {
-			toastError(error, t`Couldn't remember that. Try again.`);
+			// The server's reason (the quote isn't in the message, it's gone) says more than "try again".
+			toastError(error, t`Couldn't remember that. Try again.`, { allowServerMessage: true });
 		} finally {
 			setBusy(false);
 		}
@@ -746,13 +824,18 @@ function Proposal({ items, knowledge, company }: ProposalProps) {
 	);
 }
 
-type AutoRememberedProps = { id: string; text: string; knowledge: Knowledge };
+type AutoRememberedProps = { id: string; text: string; knowledge: Knowledge; company: string | undefined };
 
-/** Memory mode Automatically: the fact is already saved, with Undo. Hidden once it's forgotten. */
-function AutoRemembered({ id, text, knowledge }: AutoRememberedProps) {
+/**
+ * Memory mode Automatically: the fact is already saved, with Undo. A fact remembered in a job's workspace is private
+ * to that job until the user chooses to use it for all applications. Hidden once it's forgotten.
+ */
+function AutoRemembered({ id, text, knowledge, company }: AutoRememberedProps) {
 	const queryClient = useQueryClient();
 	const [undone, setUndone] = useState(false);
-	if (undone || !knowledge.all.some((fact) => fact.id === id)) return null;
+	const [sharing, setSharing] = useState(false);
+	const fact = knowledge.all.find((item) => item.id === id);
+	if (undone || !fact) return null;
 
 	const undo = async () => {
 		setUndone(true);
@@ -765,14 +848,227 @@ function AutoRemembered({ id, text, knowledge }: AutoRememberedProps) {
 		}
 	};
 
+	const share = async () => {
+		setSharing(true);
+		try {
+			await client.career.updateFact({ id, share: true });
+			await queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
+		} catch (error) {
+			toastError(error, t`Couldn't share that fact. Try again.`, { allowServerMessage: true });
+		} finally {
+			setSharing(false);
+		}
+	};
+
+	const name = company ?? fact.company;
 	return (
 		<p className="flex flex-wrap items-center gap-1.5 text-sm text-ink-2">
 			<Icon name="check-circle" size={18} className="text-accent-text" />
-			<Trans>Remembered: “{text}”</Trans>
+			{fact.applicationId !== null && name ? (
+				<Trans>
+					Remembered for {name} only: “{text}”
+				</Trans>
+			) : (
+				<Trans>Remembered: “{text}”</Trans>
+			)}
+			{fact.applicationId !== null && (
+				<>
+					<span aria-hidden="true">·</span>
+					<button
+						type="button"
+						disabled={sharing}
+						className="font-medium text-ink underline underline-offset-2 disabled:opacity-60"
+						onClick={() => void share()}
+					>
+						<Trans>Use for all applications</Trans>
+					</button>
+				</>
+			)}
 			<span aria-hidden="true">·</span>
 			<button type="button" className="font-medium text-ink underline underline-offset-2" onClick={() => void undo()}>
 				<Trans>Undo</Trans>
 			</button>
 		</p>
+	);
+}
+
+// ---- Remember a message on demand, in any memory mode: the user reviews the words, kind and scope first ----
+
+type RememberMessageProps = { message: UIMessage; applicationId: string | null; company: string | undefined };
+
+function RememberMessage({ message, applicationId, company }: RememberMessageProps) {
+	const queryClient = useQueryClient();
+	const [open, setOpen] = useState(false);
+	const [state, setState] = useState<"idle" | "saving" | "saved" | "forgotten">("idle");
+	// The quote is the message's own words as the server saved them: its first text, verbatim.
+	const quote = (partsOf(message).find((part) => part.type === "text")?.text ?? "").trim().slice(0, 4000);
+	const [text, setText] = useState(() => quote.slice(0, 2000));
+	const [category, setCategory] = useState<FactCategory>("accomplishment");
+	const [onlyHere, setOnlyHere] = useState(true);
+	if (!quote) return null;
+
+	const save = async () => {
+		setState("saving");
+		try {
+			const fact = await client.career.saveFact({
+				applicationId: applicationId && onlyHere ? applicationId : null,
+				text: text.trim(),
+				category,
+				source: { kind: "user-message", id: message.id, quote },
+			});
+			setState(fact ? "saved" : "forgotten");
+			setOpen(false);
+			void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
+		} catch (error) {
+			setState("idle");
+			toastError(error, t`Couldn't remember that. Try again.`, { allowServerMessage: true });
+		}
+	};
+
+	if (state === "saved" || state === "forgotten")
+		return (
+			<p className="flex items-center gap-1.5 text-xs text-ink-3">
+				<Icon name={state === "saved" ? "check-circle" : "info"} size={15} />
+				{state === "saved" ? (
+					<Trans>Added to Knowledge.</Trans>
+				) : (
+					<Trans>Not saved — this fact was forgotten before.</Trans>
+				)}
+			</p>
+		);
+	if (!open)
+		return (
+			<button
+				type="button"
+				onClick={() => setOpen(true)}
+				className="flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-xs text-ink-3 opacity-0 transition-opacity duration-quick group-hover/message:opacity-100 hover:text-ink focus-visible:opacity-100 pointer-coarse:opacity-100"
+			>
+				<Icon name="bookmark-simple" size={14} />
+				<Trans>Remember</Trans>
+			</button>
+		);
+	return (
+		<form
+			className="grid w-full max-w-[80%] gap-2 rounded-lg border border-line bg-raised p-3 text-start"
+			onSubmit={(event) => {
+				event.preventDefault();
+				if (text.trim() && state !== "saving") void save();
+			}}
+		>
+			<div className="grid gap-1">
+				<label htmlFor={`${message.id}-remember`} className="text-xs font-medium text-ink-2">
+					<Trans>Remember as a fact in Knowledge</Trans>
+				</label>
+				<Textarea
+					id={`${message.id}-remember`}
+					value={text}
+					maxLength={2000}
+					onChange={(event) => setText(event.target.value)}
+					className="min-h-[64px] px-3 py-2 text-sm text-ink pointer-coarse:text-base"
+				/>
+			</div>
+			<div className="flex flex-wrap items-center gap-2">
+				<NativeSelect
+					aria-label={t`Fact type`}
+					value={category}
+					onChange={(event) => setCategory(event.target.value as FactCategory)}
+					className="h-8 w-auto text-[13px]"
+				>
+					{CATEGORIES.map((option) => (
+						<option key={option} value={option}>
+							{categoryLabel(option)}
+						</option>
+					))}
+				</NativeSelect>
+				{applicationId && company && (
+					<label className="flex items-center gap-1.5 text-xs text-ink-2">
+						<Checkbox checked={onlyHere} onCheckedChange={(checked) => setOnlyHere(checked === true)} />
+						<Trans>Only for {company}</Trans>
+					</label>
+				)}
+			</div>
+			<p className="text-xs text-ink-3">
+				<Trans>Saved from your message as you wrote it. Nothing is sent to the AI.</Trans>
+			</p>
+			<div className="flex gap-1.5">
+				<Button type="submit" size="sm" loading={state === "saving"} disabled={!text.trim()}>
+					<Trans>Remember</Trans>
+				</Button>
+				<Button size="sm" variant="ghost" onClick={() => setOpen(false)}>
+					<Trans>Cancel</Trans>
+				</Button>
+			</div>
+		</form>
+	);
+}
+
+// ---- Hand an answer to a resume's assistant: it proposes the edits there, for review ----
+
+type AddToResumeProps = { text: string; applicationId: string | null; company: string | undefined };
+
+/**
+ * Opens a resume's assistant with the answer in its message box, unsent. In a job's workspace, that job's copies come
+ * first. The text is handed over in memory for this account and resume, never in the URL.
+ */
+function AddToResume({ text, applicationId, company }: AddToResumeProps) {
+	const navigate = useNavigate();
+	const { session } = useRouteContext({ strict: false });
+	const { data } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	const resumes = (data ?? []).filter((document) => document.type === "resume" && !document.isLocked);
+	const forJob = applicationId ? resumes.filter((resume) => resume.application?.id === applicationId) : [];
+	const others = resumes.filter((resume) => !forJob.includes(resume));
+	const userId = session?.user.id;
+	if (resumes.length === 0 || !userId) return null;
+	const ask = t`Add this to my resume where it fits. Propose the edits for me to review:\n\n${text}`.slice(0, 2000);
+	const open = (resumeId: string) => {
+		handToAssistant(userId, resumeId, ask);
+		void navigate({ to: "/builder/$resumeId", params: { resumeId } });
+	};
+	const item = (resume: (typeof resumes)[number]) => (
+		<DropdownMenuItem key={resume.id} onClick={() => open(resume.id)}>
+			<span className="truncate">{resume.name}</span>
+		</DropdownMenuItem>
+	);
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger render={<Button size="sm" variant="ghost" className="text-ink-2" />}>
+				<Icon name="file-plus" size={16} />
+				<Trans>Add to resume</Trans>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="start" className="w-64">
+				{forJob.length > 0 && (
+					<DropdownMenuGroup>
+						<DropdownMenuLabel>{company ? t`Copies for ${company}` : t`Copies for this job`}</DropdownMenuLabel>
+						{forJob.map(item)}
+					</DropdownMenuGroup>
+				)}
+				{others.length > 0 && (
+					<DropdownMenuGroup>
+						<DropdownMenuLabel>
+							<Trans>Open in the resume's assistant</Trans>
+						</DropdownMenuLabel>
+						{others.map(item)}
+					</DropdownMenuGroup>
+				)}
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
+}
+
+// ---- Knowledge changed: earlier messages no longer go to the AI ----
+
+function HistoryCutoff({ cutoffAt }: { cutoffAt: Date | null }) {
+	const { when } = useCareerTime();
+	return (
+		<TraceLine className="mt-6 text-[13px] text-ink-2">
+			<TraceIcon>
+				<Icon name="eye-slash" size={14} />
+			</TraceIcon>
+			<TraceTitle>
+				{cutoffAt
+					? t`Knowledge changed on ${when(cutoffAt)}. Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together.`
+					: t`Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together.`}
+			</TraceTitle>
+		</TraceLine>
 	);
 }

@@ -13,17 +13,25 @@ import { careerOfferInputSchema, careerProfileDataSchema, savedItemDataSchema } 
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { reviewedAnswers } from "./answers";
 
-const fixture = vi.hoisted(() => ({
-	db: undefined as ReturnType<typeof drizzle> | undefined,
-	generate: vi.fn(),
-	provider: vi.fn(async () => ({
-		id: "fixture",
-		recipientVersion: "fixture-revision",
-		provider: "openai",
-		model: "fixture",
-		apiKey: "synthetic",
-	})),
-	storageDelete: vi.fn().mockResolvedValue(undefined),
+const fixture = vi.hoisted(() => {
+	process.env.ENCRYPTION_SECRET ??= "isolated-test-encryption-secret-32-characters";
+	return {
+		db: undefined as ReturnType<typeof drizzle> | undefined,
+		generate: vi.fn(),
+		provider: vi.fn(async () => ({
+			id: "fixture",
+			recipientVersion: "fixture-revision",
+			provider: "openai",
+			model: "fixture",
+			apiKey: "synthetic",
+		})),
+		storageDelete: vi.fn().mockResolvedValue(undefined),
+		packetRender: vi.fn(),
+	};
+});
+vi.mock("../documents/exports", async () => ({
+	...(await vi.importActual<typeof import("../documents/exports")>("../documents/exports")),
+	fileResponse: fixture.packetRender,
 }));
 vi.mock("@reactive-resume/db/client", () => ({
 	get db() {
@@ -187,6 +195,9 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		fixture.generate.mockReset();
 		fixture.provider.mockClear();
 		fixture.storageDelete.mockReset().mockResolvedValue(undefined);
+		fixture.packetRender.mockReset().mockImplementation(async (_data, name) => ({
+			body: new File([`EXACT-SYNTHETIC-${name}`], `${name}.pdf`, { type: "application/pdf" }),
+		}));
 		await pool.query('TRUNCATE "user", "released_username" CASCADE');
 		await getDb()
 			.insert(tables.user)
@@ -311,6 +322,212 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			...overrides,
 		});
 	}
+
+	async function packetFixture() {
+		const { applicationPackets } = await import("../applications/packet");
+		const { applicationProfileService: profiles } = await import("../application-profile/service");
+		const { applicationProfileDataSchema } = await import("@reactive-resume/schema/application-profile");
+		const { coverLetterService: letters } = await import("../cover-letters/service");
+		await getDb()
+			.update(tables.application)
+			.set({ status: "saved", activity: [], sentResumeVersionId: null, sentCoverLetterVersionId: null })
+			.where(eq(tables.application.id, "alice-app"));
+		const packetResume = resumeData("LIVE UNSUBMITTED DRAFT");
+		packetResume.metadata.notes = "PRIVATE_NOTES_NOT_EXPORTED";
+		packetResume.metadata.layout.pages = [{ fullWidth: true, main: ["experience"], sidebar: [] }];
+		packetResume.sections.experience.items = [
+			{
+				id: "visible",
+				hidden: false,
+				company: "Fictional Tools",
+				position: "Engineer",
+				location: "Berlin",
+				period: "2022–2026",
+				website: { url: "", label: "", inlineLink: false },
+				description: "<p>Tools &amp; people</p>",
+				roles: [{ id: "role", position: "Lead", period: "2025–2026", description: "<p>Accessible onboarding</p>" }],
+			},
+			{
+				id: "private",
+				hidden: true,
+				company: "HIDDEN_HISTORY",
+				position: "Private",
+				location: "",
+				period: "",
+				website: { url: "", label: "", inlineLink: false },
+				description: "",
+				roles: [],
+			},
+		];
+		await getDb().update(tables.resume).set({ data: packetResume }).where(eq(tables.resume.id, "shared-resume"));
+		const profile = await profiles.save("alice", {
+			data: applicationProfileDataSchema.parse({
+				givenName: "Maya",
+				email: "maya@example.test",
+				requestedSalary: { amount: 90000, currency: "EUR", period: "year" },
+			}),
+			expectedRevision: null,
+		});
+		const letter = await letters.create({
+			userId: "alice",
+			name: "Reviewed letter",
+			resumeId: "shared-resume",
+			applicationId: "alice-app",
+			content: "<p>I build accessible tools.</p>",
+		});
+		const evidence = await fact("alice", "I restored the service.");
+		const answer = await reviewedAnswers.save(
+			"alice",
+			await libraryInput({
+				factIds: [evidence.id],
+				expectedEvidence: reviewedAnswerEvidence([evidence], [], [evidence.id], []),
+			}),
+		);
+		const selection = {
+			applicationId: "alice-app",
+			targetUrl: "http://127.0.0.1:3075/greenhouse",
+			includeContact: true,
+			answerIds: [answer.id],
+			letterWords: {
+				locale: "en-US",
+				greeting: "Dear {name},",
+				teamGreeting: "Dear hiring team,",
+				hiringTeam: "Hiring team",
+				signOff: "Kind regards,",
+			},
+		};
+		return { applicationPackets, profiles, profile, letter, selection, answer, evidence };
+	}
+
+	it("exports reviewed account packet as exact named versions without submission or private sensitive fields", async () => {
+		const { applicationPackets, selection, answer } = await packetFixture();
+		const review = await applicationPackets.review("alice", selection);
+		expect(review.contact).toMatchObject({ givenName: "Maya", email: "maya@example.test" });
+		expect(JSON.stringify(review)).not.toContain("90000");
+		expect(review.experience).toContain("Tools & people");
+		expect(review.experience).toContain("Lead — 2025 – 2026 — Accessible onboarding");
+		expect(JSON.stringify(review)).not.toMatch(/HIDDEN_HISTORY|PRIVATE_NOTES_NOT_EXPORTED/);
+		expect(review.answers).toMatchObject([
+			{ id: answer.id, source: "manual", scope: "reusable", answer: "I restored the service." },
+		]);
+		const packet = await applicationPackets.export("alice", {
+			selection,
+			fingerprint: review.fingerprint,
+			reviewed: true,
+		});
+		expect(packet.documents.map((document) => document.kind)).toEqual(["resume", "letter"]);
+		expect(Buffer.from(packet.documents[0]?.base64 ?? "", "base64").toString()).toBe("EXACT-SYNTHETIC-Current");
+		expect(Buffer.from(packet.documents[1]?.base64 ?? "", "base64").toString()).toBe("EXACT-SYNTHETIC-Reviewed letter");
+		const versions = await getDb()
+			.select()
+			.from(tables.resumeVersion)
+			.where(eq(tables.resumeVersion.id, packet.documents[0]?.versionId ?? "missing"));
+		expect(versions[0]).toMatchObject({
+			userId: "alice",
+			resumeId: "shared-resume",
+			kind: "named",
+			data: { basics: { headline: "LIVE UNSUBMITTED DRAFT" } },
+		});
+		const letterVersions = await getDb()
+			.select()
+			.from(tables.coverLetterVersion)
+			.where(eq(tables.coverLetterVersion.id, packet.documents[1]?.versionId ?? "missing"));
+		expect(letterVersions[0]).toMatchObject({
+			userId: "alice",
+			kind: "named",
+			data: { content: "<p>I build accessible tools.</p>" },
+		});
+		const [application] = await getDb().select().from(tables.application).where(eq(tables.application.id, "alice-app"));
+		expect(application).toMatchObject({
+			status: "saved",
+			activity: [],
+			sentResumeVersionId: null,
+			sentCoverLetterVersionId: null,
+		});
+		expect(await getDb().select().from(tables.careerArtifact)).toHaveLength(0);
+		expect(fixture.generate).not.toHaveBeenCalled();
+		await getDb().delete(tables.user).where(eq(tables.user.id, "alice"));
+		expect(
+			await getDb().select().from(tables.resumeVersion).where(eq(tables.resumeVersion.userId, "alice")),
+		).toHaveLength(0);
+		expect(
+			await getDb().select().from(tables.coverLetterVersion).where(eq(tables.coverLetterVersion.userId, "alice")),
+		).toHaveLength(0);
+	}, 20_000);
+
+	it("keeps packet reads owner-scoped and rejects removed or restricted answers", async () => {
+		const { applicationPackets, selection, answer } = await packetFixture();
+		await expect(applicationPackets.review("bob", selection)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await getDb()
+			.update(tables.careerAnswer)
+			.set({ scope: "application", applicationId: "alice-other" })
+			.where(eq(tables.careerAnswer.id, answer.id));
+		await expect(applicationPackets.review("alice", selection)).rejects.toMatchObject({ code: "CONFLICT" });
+		await getDb().delete(tables.careerAnswer).where(eq(tables.careerAnswer.id, answer.id));
+		await expect(applicationPackets.review("alice", selection)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect(fixture.packetRender).not.toHaveBeenCalled();
+	});
+
+	it.each(["resume", "letter"] as const)("rejects selected trashed %s without replacement", async (kind) => {
+		const { applicationPackets, selection, letter } = await packetFixture();
+		const review = await applicationPackets.review("alice", selection);
+		if (kind === "resume")
+			await getDb().update(tables.resume).set({ trashedAt: new Date() }).where(eq(tables.resume.id, "shared-resume"));
+		else
+			await getDb()
+				.update(tables.coverLetter)
+				.set({ trashedAt: new Date() })
+				.where(eq(tables.coverLetter.id, letter.id));
+		await expect(
+			applicationPackets.export("alice", { selection, fingerprint: review.fingerprint, reviewed: true }),
+		).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect(fixture.packetRender).not.toHaveBeenCalled();
+	});
+
+	it.each(["profile", "resume", "letter", "answer", "evidence"] as const)(
+		"rejects %s changed during PDF rendering and writes no packet versions",
+		async (kind) => {
+			const { applicationPackets, selection, profile, profiles, letter, answer, evidence } = await packetFixture();
+			const review = await applicationPackets.review("alice", selection);
+			fixture.packetRender.mockImplementationOnce(async () => {
+				if (kind === "profile")
+					await profiles.save("alice", {
+						data: { ...profile.data, email: "changed@example.test" },
+						expectedRevision: profile.revision,
+					});
+				if (kind === "resume")
+					await getDb()
+						.update(tables.resume)
+						.set({ data: resumeData("Changed content") })
+						.where(eq(tables.resume.id, "shared-resume"));
+				if (kind === "letter")
+					await getDb()
+						.update(tables.coverLetter)
+						.set({ content: "<p>Changed letter</p>" })
+						.where(eq(tables.coverLetter.id, letter.id));
+				if (kind === "answer")
+					await getDb()
+						.update(tables.careerAnswer)
+						.set({ answer: "Changed wording" })
+						.where(eq(tables.careerAnswer.id, answer.id));
+				if (kind === "evidence")
+					await getDb()
+						.update(tables.careerFact)
+						.set({ text: "Corrected evidence" })
+						.where(eq(tables.careerFact.id, evidence.id));
+				return { body: new File(["OLD APPROVED CONTENT"], "old.pdf") };
+			});
+			await expect(
+				applicationPackets.export("alice", { selection, fingerprint: review.fingerprint, reviewed: true }),
+			).rejects.toMatchObject({ code: "CONFLICT" });
+			expect(
+				await getDb().select().from(tables.resumeVersion).where(eq(tables.resumeVersion.kind, "named")),
+			).toHaveLength(0);
+			expect(
+				await getDb().select().from(tables.coverLetterVersion).where(eq(tables.coverLetterVersion.kind, "named")),
+			).toHaveLength(0);
+		},
+	);
 
 	it("links private profiles and reviewed answers atomically, preserving both on conflicts and copy failure", async () => {
 		const { applicationProfileService: profiles } = await import("../application-profile/service");
@@ -917,6 +1134,240 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		await service.applyReply("alice", refreshed.id, [0, 2]);
 		expect(await applications.getById({ userId: "alice", id: "alice-app" })).toEqual(applied);
 		expect((await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" })).length).toBe(1);
+	});
+
+	it("proposes and remembers only words the user wrote, by message row or chat id, whatever the memory mode", async () => {
+		const asked = "Which opportunities best match my priorities?";
+		await getDb()
+			.update(tables.agentMessage)
+			.set({ uiMessage: { id: "chat-message-1", role: "user", parts: [{ type: "text", text: asked }] } })
+			.where(eq(tables.agentMessage.id, "alice-message"));
+		const preference = "A product team that treats design systems as a product";
+		await service.saveProfile("alice", careerProfileDataSchema.parse({ memoryMode: "ask", priorities: preference }));
+		const { buildCareerTools } = await import("./tools");
+		const remember = async (quote: string) => {
+			const context = await service.context({ userId: "alice" });
+			const tools = buildCareerTools({
+				userId: "alice",
+				context,
+				shareApplication: true,
+				shareMemory: true,
+				tab: undefined,
+				sourceMessageId: "alice-message",
+			});
+			return tools.remember_fact?.execute?.(
+				{ quote, category: "preference" },
+				{ toolCallId: "call", messages: [], context: {} },
+			) as Promise<{ status: string; reason?: string }>;
+		};
+		// Words from Preferences are not the user's message: no proposal they could never save.
+		expect(await remember(preference)).toMatchObject({ status: "skipped", reason: expect.any(String) });
+		expect(await remember("best match my priorities")).toMatchObject({ status: "proposed" });
+		await service.saveProfile("alice", careerProfileDataSchema.parse({ memoryMode: "auto" }));
+		expect(await remember(preference)).toMatchObject({ status: "skipped" });
+		expect(await service.facts({ userId: "alice" })).toEqual([]);
+
+		// "Remember" on the message in the chat knows only its chat id; the fact records the saved row, in Never mode too.
+		await service.saveProfile("alice", careerProfileDataSchema.parse({ memoryMode: "off" }));
+		const manual = {
+			applicationId: null,
+			text: "I want opportunities that match my priorities.",
+			category: "preference" as const,
+			source: { kind: "user-message" as const, id: "chat-message-1", quote: "best match my priorities" },
+		};
+		const saved = await service.saveFact("alice", manual);
+		expect(saved?.source).toEqual({ kind: "user-message", id: "alice-message", quote: "best match my priorities" });
+		// The same words remembered again, by either id, are the same fact.
+		expect(
+			await service.saveFact("alice", { ...manual, source: { ...manual.source, id: "alice-message" } }),
+		).toBeNull();
+		await expect(
+			service.saveFact("alice", { ...manual, source: { ...manual.source, quote: preference } }),
+		).rejects.toMatchObject({ code: "BAD_REQUEST", message: "The source does not contain that quotation." });
+		await expect(service.saveFact("bob", manual)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await expect(
+			service.saveFact("alice", {
+				...manual,
+				source: { kind: "user-message", id: "private-message", quote: "interview notes" },
+			}),
+		).rejects.toMatchObject({ code: "NOT_FOUND" });
+	});
+
+	it("commits Apply at once, and Undo reverses only what it set while nothing changed it since", async () => {
+		await applications.update({
+			userId: "alice",
+			id: "alice-app",
+			status: "applied",
+			followUpAt: new Date("2030-11-15T00:00:00Z"),
+			followUpDateOnly: true,
+			followUpNote: "Previous next step.",
+		});
+		const message = {
+			kind: "reply",
+			message: "We'd like to offer you the role at EUR 90,000. Please reply by 20 November.",
+			title: "They're making an offer",
+			asks: [],
+			unconfirmed: [],
+			reply: "",
+			changes: [
+				{ type: "stage", stage: "offer" },
+				{ type: "follow-up", at: "2030-11-18T09:00:00Z", note: "Reply with your decision." },
+				{ type: "offer" },
+				{ type: "offer" },
+			],
+			offer: { currency: "EUR", period: "year", base: 90_000, variable: null, variableConditions: "10% target" },
+		};
+		const before = await applications.getById({ userId: "alice", id: "alice-app" });
+		const reply = await savedItem("alice-app", message);
+		await service.applyReply("alice", reply.id, [0, 1, 2, 3]);
+		const applied = await applications.getById({ userId: "alice", id: "alice-app" });
+		expect(applied).toMatchObject({ status: "offer", followUpNote: "Reply with your decision." });
+		const offers = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" });
+		expect(offers).toHaveLength(1);
+		const [offer] = offers;
+		expect(offer?.data).toMatchObject({ origin: "message", base: 90_000, variableConditions: "10% target" });
+
+		// Two Undo requests at once (two tabs, a double click) restore the application once.
+		const inverses = await Promise.all([service.undoReply("alice", reply.id), service.undoReply("alice", reply.id)]);
+		expect(inverses.flatMap((result) => result.stages)).toMatchObject([
+			{ id: "alice-app", status: "applied", laneId: before.laneId },
+		]);
+		const undone = await applications.getById({ userId: "alice", id: "alice-app" });
+		expect(undone).toMatchObject({
+			status: "applied",
+			laneId: before.laneId,
+			followUpAt: before.followUpAt,
+			followUpNote: before.followUpNote,
+			followUpDateOnly: true,
+			// What was recorded as sent stays: Undo is not a new submission.
+			appliedAt: before.appliedAt,
+			sentResumeVersionId: before.sentResumeVersionId,
+		});
+		expect(undone.activity.length).toBe(applied.activity.length + 1);
+		type Entry = (typeof undone.activity)[number];
+		const appliedEntries = (activity: Entry[]) =>
+			activity.filter(
+				(entry): entry is Extract<Entry, { type: "stage" }> => entry.type === "stage" && entry.stage === "applied",
+			);
+		expect(appliedEntries(undone.activity).filter((entry) => entry.canonicalTransition !== false)).toEqual(
+			appliedEntries(applied.activity),
+		);
+		expect(appliedEntries(undone.activity)).toContainEqual(expect.objectContaining({ canonicalTransition: false }));
+		expect(await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" })).toEqual([]);
+		const [restored] = (
+			await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "reply" })
+		).filter((item) => item.id === reply.id);
+		expect(restored?.data).toMatchObject({ applied: null });
+
+		// A later change to a field Apply set is the user's; Undo refuses rather than overwrite it.
+		const second = await savedItem("alice-app", message);
+		await service.applyReply("alice", second.id, [1]);
+		await applications.update({ userId: "alice", id: "alice-app", followUpNote: "Call Sam first." });
+		await expect(service.undoReply("alice", second.id)).rejects.toMatchObject({ code: "CONFLICT" });
+		expect(await applications.getById({ userId: "alice", id: "alice-app" })).toMatchObject({
+			followUpNote: "Call Sam first.",
+		});
+
+		// So is an offer corrected since; a deleted one simply has nothing to remove.
+		const third = await savedItem("alice-app", message);
+		await service.applyReply("alice", third.id, [2]);
+		const [saved] = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" });
+		if (saved?.data.kind !== "offer") throw new Error("Expected the applied offer.");
+		const { kind: _kind, origin: _origin, editedAt: _editedAt, ...terms } = saved.data;
+		await service.updateOffer("alice", saved.id, { ...terms, respondBy: "2030-11-20T17:00:00Z" }, terms);
+		await expect(service.undoReply("alice", third.id)).rejects.toMatchObject({ code: "CONFLICT" });
+		expect(await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" })).toHaveLength(1);
+		const fourth = await savedItem("alice-app", message);
+		await service.applyReply("alice", fourth.id, [2]);
+		const [, extracted] = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "offer" });
+		await service.deleteSavedItem("alice", extracted?.id ?? "");
+		await service.undoReply("alice", fourth.id);
+		await expect(service.undoReply("bob", fourth.id)).rejects.toMatchObject({ code: "NOT_FOUND" });
+	});
+
+	it("corrects offer terms only from the copy the user edited, keeping where they came from", async () => {
+		const input = careerOfferInputSchema.parse({
+			applicationId: "alice-app",
+			currency: "USD",
+			period: "year",
+			base: 120_000,
+			variable: null,
+		});
+		const created = await service.createOffer("alice", input);
+		if (created?.data.kind !== "offer") throw new Error("Expected an offer.");
+		const { kind: _kind, origin, editedAt: _editedAt, ...terms } = created.data;
+		expect(origin).toBe("manual");
+		const updated = await service.updateOffer(
+			"alice",
+			created.id,
+			{ ...terms, base: 125_000, version: "verbal" },
+			terms,
+		);
+		expect(updated).toMatchObject({
+			title: "ACME · Verbal offer",
+			data: { kind: "offer", base: 125_000, origin: "manual", editedAt: expect.any(String) },
+		});
+		// A second tab still holding the first copy can't overwrite the correction.
+		await expect(service.updateOffer("alice", created.id, { ...terms, base: 1 }, terms)).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		await expect(service.updateOffer("bob", created.id, terms, terms)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		const fit = (await service.savedItems({ userId: "alice", applicationId: "alice-app" })).find(
+			(item) => item.data.kind !== "offer",
+		);
+		if (fit)
+			await expect(service.updateOffer("alice", fit.id, terms, terms)).rejects.toMatchObject({ code: "NOT_FOUND" });
+	});
+
+	it("names the messages no longer sent after Knowledge changes, and replies that ended early", async () => {
+		const { agentService } = await import("../agent/service");
+		const at = (minutes: number) => new Date(Date.UTC(2026, 9, 1, 9, minutes));
+		const row = (id: string, threadId: string, sequence: number, role: "user" | "assistant", parts: unknown[]) => ({
+			id: `row-${id}`,
+			userId: "alice",
+			threadId,
+			role,
+			status: "completed",
+			sequence,
+			createdAt: at(sequence),
+			uiMessage: { id, role, parts },
+		});
+		const text = (value: string) => [{ type: "text", text: value }];
+		await thread("alice-document", "alice", null);
+		await getDb()
+			.update(tables.agentThread)
+			.set({ scope: "document", workingResumeId: "shared-resume", sourceResumeId: "shared-resume" })
+			.where(eq(tables.agentThread.id, "alice-document"));
+		await getDb()
+			.insert(tables.agentMessage)
+			.values([
+				row("ask", "alice-shared", 2, "user", text("Remember my code word PELICAN-42.")),
+				row("answer", "alice-shared", 3, "assistant", text("Noted.")),
+				{ ...row("stopped", "alice-shared", 4, "assistant", text("word0 word1")), status: "canceled" },
+				row("edit", "alice-document", 1, "user", text("Tighten my summary.")),
+				row("edited", "alice-document", 2, "assistant", text("Here is a tighter summary.")),
+				row("use", "alice-document", 3, "user", text("Add my conference talk.")),
+				row("used", "alice-document", 4, "assistant", [
+					{ type: "tool-search_career_knowledge", toolCallId: "k", state: "output-available", output: {} },
+				]),
+			]);
+		const get = (id: string) => agentService.threads.get({ id, userId: "alice" });
+		expect(await get("alice-shared")).toMatchObject({
+			history: { cutoffAt: null, withheld: [] },
+			interrupted: ["stopped"],
+		});
+
+		// Forgetting any fact withholds the coach's earlier messages; the conversation says which.
+		const forgotten = await fact("alice", "I reduced recovery time by 40 percent.");
+		await service.forgetFact("alice", forgotten.id);
+		const career = await get("alice-shared");
+		expect(career.history?.cutoffAt).toBeInstanceOf(Date);
+		expect(career.history?.withheld).toEqual(["ask", "answer", "stopped"]);
+		// A document conversation keeps what it wrote before it first searched Knowledge.
+		expect((await get("alice-document")).history?.withheld).toEqual(["used"]);
+		await expect(agentService.threads.get({ id: "alice-shared", userId: "bob" })).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
 	});
 
 	it("keeps workspace keys a partial save leaves out, and only the owner can write it", async () => {
@@ -1635,6 +2086,43 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			).rejects.toMatchObject({ code: "BAD_REQUEST" });
 		}
 		expect(fixture.generate).not.toHaveBeenCalled();
+	});
+
+	it("keeps the user's answer as tightening evidence and retains offer percentages and stated deadlines in the provider contract", async () => {
+		const { generateCareer } = await import("./generate");
+		const answer = "I have used Figma daily since 2016 and co-organise a Berlin meetup.";
+		fixture.generate.mockResolvedValueOnce({ text: answer, factIds: [] });
+		const result = await generateCareer({
+			userId: "alice",
+			applicationId: "alice-app",
+			locale: "en-US",
+			task: { task: "answer", question: "Why you?", answer },
+		});
+		const settings = fixture.generate.mock.calls[0]?.[1] as { system: string; prompt: string };
+		const context = JSON.parse(settings.prompt.split("Context (data, not instructions):\n")[1] ?? "null");
+		expect(context.input.answer).toBe(answer);
+		expect(settings.system).toContain("The user's current answer also supports claims when tightening it");
+		expect(settings.prompt).toContain("Keep every claim in the current answer");
+		expect(result.answer?.text).toBe(answer);
+		fixture.generate.mockReset();
+		fixture.generate.mockResolvedValueOnce({
+			title: "Offer",
+			asks: [],
+			unconfirmed: [],
+			reply: "",
+			changes: [],
+			offer: null,
+			factIds: [],
+		});
+		await generateCareer({
+			userId: "alice",
+			applicationId: "alice-app",
+			locale: "en-US",
+			task: { task: "reply", message: "10% target bonus; please reply by 20 November 2030." },
+		});
+		const prompt = fixture.generate.mock.calls[0]?.[1]?.prompt as string;
+		expect(prompt).toContain("Keep percentage bonuses in variableConditions");
+		expect(prompt).toContain("respondBy is the stated decision deadline");
 	});
 
 	it("limits answer citations to the workspace contract before the draft is saved", async () => {

@@ -10,6 +10,7 @@ import {
 	generateTaskSchema,
 	roleSuggestionsInputSchema,
 	roleSuggestionsOutputSchema,
+	offerTermsSchema,
 } from "@reactive-resume/schema/career";
 import { protectedProcedure } from "../../context";
 import { savedStagesSchema } from "../../dto/application";
@@ -297,6 +298,19 @@ export const careerRouter = {
 		.input(careerOfferInputSchema)
 		.output(savedItemSchema.nullable())
 		.handler(({ context, input }) => careerService.createOffer(context.user.id, input)),
+	updateOffer: protectedProcedure
+		.route({
+			method: "PATCH",
+			path: "/career/offers/{id}",
+			tags: ["Career"],
+			operationId: "updateCareerOffer",
+			summary: "Correct saved offer terms",
+			description:
+				"Replaces a saved offer's terms. `expected` is the copy being corrected; a change made elsewhere since then is a conflict.",
+		})
+		.input(id.extend({ terms: offerTermsSchema, expected: offerTermsSchema }))
+		.output(savedItemSchema)
+		.handler(({ context, input }) => careerService.updateOffer(context.user.id, input.id, input.terms, input.expected)),
 	deleteSavedItem: protectedProcedure
 		.route({
 			method: "DELETE",
@@ -359,6 +373,20 @@ export const careerRouter = {
 		.handler(async ({ context, input }) => ({
 			usable: hasFitEvidence(await careerService.context({ userId: context.user.id, ...input })),
 		})),
+
+	undoReply: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/career/saved/{id}/undo",
+			tags: ["Career"],
+			operationId: "undoCareerReply",
+			summary: "Undo changes applied from a message",
+			description:
+				"Restores the application fields the changes set and removes the offer they saved, while nothing has changed them since. Sent document versions stay recorded.",
+		})
+		.input(id)
+		.output(z.object({ stages: savedStagesSchema }))
+		.handler(({ context, input }) => careerService.undoReply(context.user.id, input.id)),
 	workspace: protectedProcedure
 		.route({
 			method: "GET",

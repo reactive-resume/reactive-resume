@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { isJobCopy, nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
+import { ApplicationPacketPanel } from "./application-packet";
 import { useWorkspace, workspaceError } from "./hooks";
 import { Actions, Block } from "./parts";
 import { orpc } from "@/api/client";
@@ -353,6 +354,16 @@ export function Preparation({ application, disabled }: PreparationProps) {
 					})
 				)}
 			</View>
+			<ApplicationPacketPanel
+				key={JSON.stringify([
+					application.id,
+					application.resumeId,
+					application.coverLetterId,
+					application.company,
+					application.sourceUrl,
+				])}
+				application={application}
+			/>
 		</Block>
 	);
 }

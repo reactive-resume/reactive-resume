@@ -1,6 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { test, expect, chromium } from "@playwright/test";
+import { openExtensionAction } from "../fixtures/extension";
 
 test("actual MV3 action through real extension popup and isolated Chrome injection", async ({
 	browserName,
@@ -53,57 +54,7 @@ test("actual MV3 action through real extension popup and isolated Chrome injecti
 		});
 		const job = await context.newPage();
 		await job.goto("https://jobs.example.test/job/independent?jk=74&token=QUERY_PRIVATE#FRAGMENT_PRIVATE");
-		let serial = 0;
-		async function action() {
-			await job.bringToFront();
-			const { targetInfos: tabs } = await cdp.send("Target.getTargets", { filter: [{ type: "tab", exclude: false }] });
-			const tab = tabs.find((x) => x.url === job.url());
-			if (!tab) throw new Error("Missing posting tab");
-			await cdp.send("Extensions.triggerAction", { id, targetId: tab.targetId });
-			let target: { targetId: string } | undefined;
-			await expect
-				.poll(async () => {
-					const { targetInfos } = await cdp.send("Target.getTargets", { filter: [{ exclude: false }] });
-					target = targetInfos.find((x) => x.url.startsWith("chrome-extension://" + id + "/popup.html"));
-					return !!target;
-				})
-				.toBe(true);
-			if (!target) throw new Error("Missing extension popup");
-			const targetId = target.targetId;
-			const { sessionId } = await cdp.send("Target.attachToTarget", { targetId, flatten: false });
-			async function evaluate(expression: string) {
-				const requestId = ++serial;
-				return await new Promise<unknown>((res, rej) => {
-					const handler = (event: { sessionId: string; message: string }) => {
-						if (event.sessionId !== sessionId) return;
-						const msg = JSON.parse(event.message) as {
-							id?: number;
-							error?: unknown;
-							result?: { exceptionDetails?: unknown; result?: { value?: unknown } };
-						};
-						if (msg.id !== requestId) return;
-						cdp.off("Target.receivedMessageFromTarget", handler);
-						if (msg.error) rej(new Error(JSON.stringify(msg.error)));
-						else if (msg.result?.exceptionDetails) rej(new Error(JSON.stringify(msg.result?.exceptionDetails)));
-						else res(msg.result?.result?.value);
-					};
-					cdp.on("Target.receivedMessageFromTarget", handler);
-					void cdp
-						.send("Target.sendMessageToTarget", {
-							sessionId,
-							message: JSON.stringify({
-								id: requestId,
-								method: "Runtime.evaluate",
-								params: { expression, returnByValue: true, awaitPromise: true, userGesture: true },
-							}),
-						})
-						.catch(rej);
-				});
-			}
-			await expect.poll(() => evaluate('document.querySelector("#connection")?.textContent ?? ""')).not.toBe("");
-			evaluate.close = () => cdp.send("Target.closeTarget", { targetId });
-			return evaluate;
-		}
+		const action = () => openExtensionAction(cdp, id, job);
 		let popup = await action();
 		await popup(
 			`document.querySelector('#server').value=${JSON.stringify(server)};document.querySelector('#connect').dispatchEvent(new Event("submit",{cancelable:true,bubbles:true}))`,

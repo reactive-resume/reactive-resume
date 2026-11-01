@@ -38,7 +38,7 @@ export const messagesRouter = {
 							.boolean()
 							.optional()
 							.describe(
-								"Career coach: share switched-on facts, stories and preferences (on by default). Document assistant: let it look up switched-on Knowledge facts as evidence (off unless true).",
+								"Career coach: share switched-on facts, stories and preferences (on by default). Document conversations: let the assistant search shared facts and stories, read-only (off by default).",
 							),
 						web: z
 							.boolean()

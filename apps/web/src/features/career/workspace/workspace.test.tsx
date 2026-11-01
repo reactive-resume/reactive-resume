@@ -197,7 +197,13 @@ function mount(children: ReactNode) {
 }
 beforeEach(() => {
 	vi.clearAllMocks();
-	api.data = { workspace: structuredClone(EMPTY_WORKSPACE), savedItems: [], facts: [], documents: [] };
+	api.data = {
+		workspace: structuredClone(EMPTY_WORKSPACE),
+		savedItems: [],
+		facts: [],
+		documents: [],
+		reviewedAnswers: [],
+	};
 	api.userId = "workspace-user";
 	api.stories = [];
 	api.knowledgeError = false;
@@ -497,4 +503,65 @@ it("keeps an unacknowledged message across pagehide and requires review after re
 	expect(screen.getByRole("textbox", { name: `Paste a message from ${props.application.company}` })).toHaveValue(
 		"Newer server text",
 	);
+});
+
+it.each(["answer", "factIds"] as const)(
+	"Tighten Undo refuses an authoritative %s correction after refetch",
+	async (field) => {
+		const { toast } = await import("@reactive-resume/ui/components/toast");
+		const original = { id: "answer", question: "Why this role?", answer: "Original authored answer.", factIds: [] };
+		api.data.workspace = { ...EMPTY_WORKSPACE, answers: [original] };
+		api.data.reviewedAnswers = [];
+		api.generate.mockResolvedValueOnce({ answer: { text: "Accepted answer.", factIds: ["accepted-proof"] } });
+		const view = mount(<ApplyTab {...props} />);
+		fireEvent.click(screen.getByRole("button", { name: "Tighten" }));
+		await waitFor(() => expect(screen.getByRole("button", { name: "Accept" })).toBeVisible());
+		fireEvent.click(screen.getByRole("button", { name: "Accept" }));
+		await waitFor(() => expect(api.save).toHaveBeenCalled());
+		const later = { ...original, answer: "Accepted answer.", factIds: ["accepted-proof"] };
+		if (field === "answer") later.answer = "Later device correction. Keep this.";
+		else later.factIds = ["later-proof"];
+		await act(async () => view.queryClient.setQueryData(["workspace"], { ...EMPTY_WORKSPACE, answers: [later] }));
+		const undo = vi.mocked(toast.add).mock.calls.findLast(([value]) => value.description === "Answer replaced")?.[0]
+			.actionProps?.onClick;
+		expect(undo).toBeTypeOf("function");
+		api.save.mockClear();
+		await act(async () => undo?.({} as never));
+		expect(api.save).not.toHaveBeenCalled();
+		expect(view.queryClient.getQueryData<CareerWorkspace>(["workspace"])?.answers).toEqual([later]);
+	},
+);
+
+it("Tighten Undo keeps local typing and pins an unchanged inverse to accepted text and fact IDs", async () => {
+	const { toast } = await import("@reactive-resume/ui/components/toast");
+	const original = {
+		id: "answer",
+		question: "Why this role?",
+		answer: "Original authored answer.",
+		factIds: ["old-proof"],
+	};
+	api.data.workspace = { ...EMPTY_WORKSPACE, answers: [original] };
+	api.data.reviewedAnswers = [];
+	api.generate.mockResolvedValueOnce({ answer: { text: "Accepted answer.", factIds: ["accepted-proof"] } });
+	mount(<ApplyTab {...props} />);
+	fireEvent.click(screen.getByRole("button", { name: "Tighten" }));
+	await waitFor(() => expect(screen.getByRole("button", { name: "Accept" })).toBeVisible());
+	fireEvent.click(screen.getByRole("button", { name: "Accept" }));
+	await waitFor(() => expect(api.save).toHaveBeenCalled());
+	const undo = vi.mocked(toast.add).mock.calls.findLast(([value]) => value.description === "Answer replaced")?.[0]
+		.actionProps?.onClick;
+	expect(undo).toBeTypeOf("function");
+	api.save.mockClear();
+	fireEvent.change(screen.getByRole("textbox", { name: "Why this role?" }), {
+		target: { value: "Later local typing." },
+	});
+	await act(async () => undo?.({} as never));
+	expect(api.save).not.toHaveBeenCalled();
+	expect(screen.getByRole("textbox", { name: "Why this role?" })).toHaveValue("Later local typing.");
+	fireEvent.change(screen.getByRole("textbox", { name: "Why this role?" }), { target: { value: "Accepted answer." } });
+	await act(async () => undo?.({} as never));
+	expect(api.save.mock.calls[0]?.[0]).toMatchObject({
+		answers: [original],
+		expected: { answers: [{ ...original, answer: "Accepted answer.", factIds: ["accepted-proof"] }] },
+	});
 });

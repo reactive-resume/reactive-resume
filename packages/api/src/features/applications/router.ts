@@ -1,8 +1,10 @@
 import { aiRouter } from "./ai";
 import { crudRouter } from "./crud";
 import { applicationLanesRouter } from "./lane-router";
+import { packetRouter } from "./packet-router";
 
 export const applicationsRouter = {
+	packet: packetRouter,
 	lanes: applicationLanesRouter,
 	findPosting: crudRouter.findPosting,
 	priorNoResponse: crudRouter.priorNoResponse,

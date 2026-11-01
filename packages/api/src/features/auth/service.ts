@@ -91,6 +91,14 @@ export const authService = {
 
 		const coverLetters = await db.select().from(schema.coverLetter).where(eq(schema.coverLetter.userId, input.userId));
 		const applications = await db.select().from(schema.application).where(eq(schema.application.userId, input.userId));
+		const resumeVersions = await db
+			.select()
+			.from(schema.resumeVersion)
+			.where(eq(schema.resumeVersion.userId, input.userId));
+		const letterVersions = await db
+			.select()
+			.from(schema.coverLetterVersion)
+			.where(eq(schema.coverLetterVersion.userId, input.userId));
 		return {
 			exportedAt: new Date().toISOString(),
 			user: userRecord,
@@ -100,6 +108,10 @@ export const authService = {
 			),
 			applicationPipeline: await applicationLaneService.get(input.userId),
 			applications: applications.map(({ userId: _userId, ...application }) => application),
+			documentVersions: {
+				resumes: resumeVersions.map(({ userId: _owner, ...version }) => version),
+				letters: letterVersions.map(({ userId: _owner, ...version }) => version),
+			},
 			aiContentReports: await db
 				.select()
 				.from(schema.aiContentReport)

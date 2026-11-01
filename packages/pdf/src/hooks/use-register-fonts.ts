@@ -141,6 +141,8 @@ const hanRegex = /[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=K
 const arabicRegex = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-ﻼ]/;
 const hebrewRegex = /[֐-׿יִ-ﭏ]/;
 const thaiRegex = /[฀-๿]/;
+// Each Indic script, Ethiopic and Khmer needs its own Noto face; Latin and CJK fonts have none of them.
+const scriptRegex = (script: string) => new RegExp(`\\p{Script=${script}}`, "u");
 
 // Emoji: regional indicators (flags) are NOT Extended_Pictographic, so union
 // them explicitly with the pictographic property (#3321). Keycap sequences
@@ -162,6 +164,18 @@ const scriptDetectors: { script: Script; regex: RegExp }[] = [
 	{ script: "arabic", regex: arabicRegex },
 	{ script: "hebrew", regex: hebrewRegex },
 	{ script: "thai", regex: thaiRegex },
+	{ script: "devanagari", regex: scriptRegex("Devanagari") },
+	{ script: "bengali", regex: scriptRegex("Bengali") },
+	{ script: "gurmukhi", regex: scriptRegex("Gurmukhi") },
+	{ script: "gujarati", regex: scriptRegex("Gujarati") },
+	{ script: "oriya", regex: scriptRegex("Oriya") },
+	{ script: "tamil", regex: scriptRegex("Tamil") },
+	{ script: "telugu", regex: scriptRegex("Telugu") },
+	{ script: "kannada", regex: scriptRegex("Kannada") },
+	{ script: "malayalam", regex: scriptRegex("Malayalam") },
+	{ script: "sinhala", regex: scriptRegex("Sinhala") },
+	{ script: "ethiopic", regex: scriptRegex("Ethiopic") },
+	{ script: "khmer", regex: scriptRegex("Khmer") },
 	{ script: "emoji", regex: emojiRegex },
 	{ script: "arrows", regex: arrowsRegex },
 	{ script: "symbols", regex: symbolsRegex },

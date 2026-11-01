@@ -886,6 +886,10 @@ console.log("PASS native calendar follows account month/day and preserves explic
 const amountParser = load("../../../packages/utils/src/amount.ts");
 const careerSchema = load("../../../packages/schema/src/career.ts", {
 	zod,
+	"./applications/data": load("../../../packages/schema/src/applications/data.ts", {
+		zod,
+		"@reactive-resume/utils/timezone": timeParser,
+	}),
 	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
 	"@reactive-resume/utils/timezone": timeParser,
 });

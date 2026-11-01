@@ -208,7 +208,9 @@ msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# inskrywing} other {# inskrywings}}"
 
 #. placeholder {0}: knowledge.facts
+#. placeholder {0}: knowledge.facts.length
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# feit} other {# feite}}"
 
@@ -221,6 +223,11 @@ msgstr ""
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# match} other {# matches}}"
 msgstr "{0, plural, one {# treffer} other {# treffers}}"
+
+#. placeholder {0}: change.added
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
+msgstr ""
 
 #. placeholder {0}: data.officeDays
 #: src/features/career/offers.tsx
@@ -238,6 +245,11 @@ msgstr "{0, plural, one {# bladsy} other {# bladsye}}"
 #: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# voorgestelde wysiging} other {# voorgestelde wysigings}}"
+
+#. placeholder {0}: unavailable.length
+#: src/features/career/stories.tsx
+msgid "{0, plural, one {# proposed fact isn't available here and won't back the story.} other {# proposed facts aren't available here and won't back the story.}}"
+msgstr ""
 
 #. placeholder {0}: done.length
 #: src/features/career/today.tsx
@@ -259,6 +271,11 @@ msgstr "{0, plural, one {# afdeling} other {# afdelings}} en {entries, plural, o
 msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# gekies} other {# gekies}}"
 
+#. placeholder {0}: knowledge.stories.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {# story} other {# stories}}"
+msgstr "{0, plural, one {# storie} other {# stories}}"
+
 #. placeholder {0}: report.findings.length
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
@@ -273,6 +290,11 @@ msgstr "{0, plural, one {# dag gelede aansoek gedoen} other {# dae gelede aansoe
 #: src/features/career/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {Staaf # storie} other {Staaf # stories}}"
+
+#. placeholder {0}: change.removed
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0, plural, one {changes or removes # of your sentences} other {changes or removes # of your sentences}}"
+msgstr ""
 
 #. placeholder {0}: others.length
 #: src/features/applications/stage-actions.ts
@@ -314,6 +336,11 @@ msgstr "{0, plural, one {Kennis · # feit} other {Kennis · # feite}}"
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {Brief (#)} other {Briewe (#)}}"
 
+#. placeholder {0}: change.words
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0, plural, one {Longer by # word} other {Longer by # words}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
@@ -323,6 +350,11 @@ msgstr "{0, plural, one {Geen antwoord in # dag nie} other {Geen antwoord in # d
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {CV (#)} other {CV’s (#)}}"
+
+#. placeholder {0}: -change.words
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0, plural, one {Shorter by # word} other {Shorter by # words}}"
+msgstr ""
 
 #. placeholder {0}: check.report.ignored.length
 #: src/features/check/screen.tsx
@@ -364,6 +396,11 @@ msgstr "{0, plural, one {Jou kennistydperk: # week.} other {Jou kennistydperk: #
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {Jou gekose lettertipe kan nie {list} wys nie. Dit verskyn as “?”. Kies in Ontwerp ’n lettertipe wat dit het.} other {Jou gekose lettertipe kan nie {list} wys nie. Hulle verskyn as “?”. Kies in Ontwerp ’n lettertipe wat hulle het.}}"
 
+#. placeholder {0}: data.variableConditions
+#: src/features/career/offers.tsx
+msgid "{0} · No amount stated · value uncertain"
+msgstr ""
+
 #. placeholder {0}: row.count
 #: src/features/ats-checker/checker.tsx
 msgid "{0} · Not scored"
@@ -396,6 +433,11 @@ msgstr "{0} (myn)"
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
+
+#. placeholder {0}: props.connection
+#: src/features/assistant/chat-view.tsx
+msgid "{0} didn't respond."
+msgstr ""
 
 #. placeholder {0}: draft.time
 #. placeholder {1}: draft.timezone
@@ -459,12 +501,6 @@ msgstr "Slegs {0}"
 #: src/features/assistant/assistant-screen.tsx
 msgid "{0} posting"
 msgstr "{0} posplasing"
-
-#. placeholder {0}: props.connection
-#. placeholder {1}: errorText(error, t`an error`)
-#: src/features/assistant/chat-view.tsx
-msgid "{0} returned “{1}”. Your message is kept."
-msgstr "{0} het \"{1}\" teruggestuur. Jou boodskap word bewaar."
 
 #. placeholder {0}: selectedIds.length
 #. placeholder {0}: selection.length
@@ -658,6 +694,10 @@ msgstr "{kind} onderhoud"
 #: src/features/assistant/coach-screen.tsx
 msgid "{label} connection"
 msgstr "{label}-verbinding"
+
+#: src/features/assistant/provider.tsx
+msgid "{label} is off or was removed. Choose the connection this conversation uses next."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{minutes, plural, one {# minute in total} other {# minutes in total}}"
@@ -875,6 +915,10 @@ msgstr "'n Datum sal nie gelees word nie"
 msgid "A fact changed. Review this story."
 msgstr "'n Feit het verander. Hersien hierdie storie."
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "A fact that isn't available here. Saving will fail."
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
@@ -1013,6 +1057,7 @@ msgstr "Rekening"
 msgid "Account details"
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Action"
 msgstr "Aksie"
@@ -1337,6 +1382,12 @@ msgstr ""
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Voeg hierdie rekords by waar jy die domein bestuur, en kontroleer dan. Veranderinge kan 'n paar uur neem om almal te bereik."
 
+#: src/features/assistant/messages.tsx
+msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
+"\n"
+"{text}"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Add to calendar"
@@ -1345,6 +1396,10 @@ msgstr "Voeg by kalender"
 #: src/features/workspace/tabs/fit.tsx
 msgid "Add to questions"
 msgstr "Voeg by vrae"
+
+#: src/features/assistant/messages.tsx
+msgid "Add to resume"
+msgstr ""
 
 #: src/features/check/job-match.tsx
 msgid "Add to Skills"
@@ -1395,10 +1450,6 @@ msgstr ""
 #: src/features/settings/application-profile.tsx
 msgid "Address line 2"
 msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Adds a reminder to Today if you haven't heard back by then."
-msgstr "Voeg 'n herinnering by Vandag as jy teen dan nog niks gehoor het nie."
 
 #. placeholder {0}: additionParts(proposal)?.anchor
 #: src/features/assistant/messages.tsx
@@ -1647,10 +1698,6 @@ msgstr "'n Ingebedde lettertipe kon nie gelees word nie."
 msgid "An entry has no dates"
 msgstr "'n Inskrywing het geen datums nie"
 
-#: src/features/assistant/chat-view.tsx
-msgid "an error"
-msgstr "'n fout"
-
 #: src/features/career/offer-entry.tsx
 msgid "an hour"
 msgstr ""
@@ -1692,6 +1739,10 @@ msgstr "Antwoord gekopieer"
 #: src/features/assistant/messages.tsx
 msgid "Answer in your own words"
 msgstr "Antwoord in jou eie woorde"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Answer replaced"
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "Answer source"
@@ -1886,6 +1937,10 @@ msgstr "Doen aansoek"
 #: src/features/applications/list-screen.tsx
 msgid "Applying changes. Closing this sheet does not cancel the request."
 msgstr "Pas veranderinge toe. Die sluiting van hierdie blad kanselleer nie die versoek nie."
+
+#: src/features/workspace/application-packet.tsx
+msgid "Approve and create packet"
+msgstr ""
 
 #. placeholder {0}: selected?.name ?? ""
 #: src/features/settings/api-keys.tsx
@@ -2104,6 +2159,7 @@ msgstr "Terug na posadvertensie"
 msgid "Back to sign in"
 msgstr "Terug na aanmelding"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Backed by"
@@ -2130,6 +2186,7 @@ msgstr "Systaaf"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Base salary"
 msgstr "Basiese salaris"
 
@@ -2194,11 +2251,13 @@ msgstr "Vet"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Bonus"
 msgstr "Bonus"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Bonus conditions"
 msgstr "Bonus voorwaardes"
 
@@ -2460,6 +2519,14 @@ msgstr "Kontroleer geskiktheid"
 msgid "Check it's accurate."
 msgstr "Kyk of dit akkuraat is."
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Check that nothing you wrote yourself is lost."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Check that these facts support what the story claims before saving."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "Kontroleer die besonderhede"
@@ -2512,6 +2579,10 @@ msgstr "Kontroleer teen Kennis"
 #: src/features/ats-checker/checker.tsx
 msgid "Checking layout and content"
 msgstr "Kontroleer uitleg en inhoud"
+
+#: src/features/assistant/provider.tsx
+msgid "Checking web search…"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Checking which resume opens your short link…"
@@ -2646,6 +2717,10 @@ msgstr "Kies uitkoms"
 msgid "Choose outcome when closing"
 msgstr "Kies uitkoms wanneer gesluit word"
 
+#: src/features/workspace/application-packet.tsx
+msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Choose time"
 msgstr "Kies tyd"
@@ -2653,6 +2728,10 @@ msgstr "Kies tyd"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "Kies tot 200 aansoeke per grootmaataksie."
+
+#: src/features/assistant/provider.tsx
+msgid "Choose…"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Circle"
@@ -2859,6 +2938,10 @@ msgstr "Voltooi {0} voordat jy stoor."
 msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
 msgstr "Voltooi data rugsteun. Voer terug in Reactive Resume of JSON Resume gereedskap."
 
+#: src/features/workspace/application-packet.tsx
+msgid "Complete the employer form manually in your browser using reviewed answers and approved PDFs."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
 msgstr "Kompakteer of verwyder groot beelde om oplaaie vinnig te hou."
@@ -2896,6 +2979,10 @@ msgstr "Koppel {0}"
 #: src/features/share/custom-domain.tsx
 msgid "Connect {domain}"
 msgstr "Koppel {domain}"
+
+#: src/features/assistant/provider.tsx
+msgid "Connect a search service in Settings to research the web. The coach can still read public links you paste."
+msgstr ""
 
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
@@ -2979,6 +3066,11 @@ msgstr "Pas in"
 #: src/features/ats-checker/messages.ts
 msgid "Content is laid out in a grid."
 msgstr "Inhoud is in 'n rooster uitgelê."
+
+#. placeholder {0}: document.revision
+#: src/features/workspace/application-packet.tsx
+msgid "Content revision: {0}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "Content still runs over. Hide a section or shorten entries."
@@ -3085,6 +3177,7 @@ msgid "Copy for a job…"
 msgstr "Kopieer vir 'n werk..."
 
 #: src/features/assistant/assistant-screen.tsx
+#: src/features/assistant/messages.tsx
 msgid "Copy for this job"
 msgstr ""
 
@@ -3119,6 +3212,10 @@ msgstr "Korrigeer"
 #: src/features/career/facts.tsx
 msgid "Correct fact"
 msgstr "Stel feit reg"
+
+#: src/features/career/offer-entry.tsx
+msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Correct the year, or write \"Present\" for ongoing work."
@@ -3200,6 +3297,10 @@ msgstr "Kon nie die brief skep nie. Probeer weer."
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Couldn't delete it. It's back in Library."
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Couldn't delete that offer. Try again."
 msgstr ""
 
 #: src/features/assistant/threads.tsx
@@ -3362,6 +3463,10 @@ msgstr "Kon nie die posplasing oopmaak nie. Probeer weer."
 msgid "Couldn't open this resume"
 msgstr "Kon nie hierdie CV oopmaak nie"
 
+#: src/features/workspace/application-packet.tsx
+msgid "Couldn't prepare the packet. Reload and review again."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Couldn't print. Try again."
 msgstr "Kon nie druk nie. Probeer weer."
@@ -3516,6 +3621,10 @@ msgstr "Kon nie stoor nie. Jou teks is nog hier; probeer weer."
 msgid "Couldn't send the report. Your text is kept; try again."
 msgstr "Kon nie die verslag stuur nie. Jou teks word behou; probeer weer."
 
+#: src/features/assistant/messages.tsx
+msgid "Couldn't share that fact. Try again."
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Couldn't share the answers. Try again."
 msgstr "Kon nie die antwoorde deel nie. Probeer weer."
@@ -3572,6 +3681,10 @@ msgstr "Kon nie transkribeer nie. Jou opname is steeds hier."
 #: src/features/assistant/messages.tsx
 msgid "Couldn't undo that. Try again."
 msgstr "Kon dit nie ongedaan maak nie. Probeer weer."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't undo the update. The application is unchanged."
+msgstr ""
 
 #: src/features/design/design-pane.tsx
 msgid "Couldn't unlock the resume. Try again."
@@ -3740,6 +3853,7 @@ msgstr ""
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/application-profile.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Currency"
 msgstr "Geldeenheid"
 
@@ -3953,6 +4067,10 @@ msgstr "Vee onderhoud uit"
 #: src/features/ats-checker/messages.ts
 msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game the search."
 msgstr "Verwyder dit. Verskuilde sleutelwoorde word beskou as 'n doelbewuste poging om die soektog te manipuleer."
+
+#: src/features/career/offers.tsx
+msgid "Delete offer"
+msgstr ""
 
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
@@ -4242,6 +4360,11 @@ msgstr "Laai {0} af"
 msgid "Download & history"
 msgstr "Aflaai en geskiedenis"
 
+#. placeholder {0}: document.name
+#: src/features/workspace/application-packet.tsx
+msgid "Download approved PDF: {0}"
+msgstr ""
+
 #: src/features/letters/share.tsx
 msgid "Download both PDFs"
 msgstr "Laai albei PDF's af"
@@ -4270,6 +4393,10 @@ msgstr "Laai PDF af"
 #: src/features/letters/share.tsx
 msgid "Download PDF instead"
 msgstr "Laai eerder PDF af"
+
+#: src/features/workspace/application-packet.tsx
+msgid "Download reviewed packet"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "Download totals can include repeat clicks."
@@ -4440,6 +4567,10 @@ msgstr "Wysig datum"
 msgid "Edit entry"
 msgstr "Wysig inskrywing"
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Edit first"
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -4453,6 +4584,10 @@ msgstr "Wysig skakel"
 #: src/features/application-detail/sheets.tsx
 msgid "Edit note"
 msgstr "Wysig nota"
+
+#: src/features/career/offer-entry.tsx
+msgid "Edit offer terms"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit posting"
@@ -4482,6 +4617,10 @@ msgstr "Wysig skedule"
 msgid "Edit STARR story"
 msgstr "Wysig STARR storie"
 
+#: src/features/career/offers.tsx
+msgid "Edit terms"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "Edit the email"
 msgstr "Wysig die e-pos"
@@ -4489,6 +4628,10 @@ msgstr "Wysig die e-pos"
 #: src/features/check/issues.ts
 msgid "Edit the link"
 msgstr "Wysig die skakel"
+
+#: src/features/career/stories.tsx
+msgid "Edit the proposed story"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Edited by you"
@@ -4536,6 +4679,10 @@ msgstr "Bed alle lettertipes in wanneer jy uitvoer, sodat karakters die manier k
 
 #: src/features/assistant/messages.tsx
 msgid "Employer"
+msgstr ""
+
+#: src/features/workspace/application-packet.tsx
+msgid "Employer-form packet"
 msgstr ""
 
 #: src/features/documents/thumbnail.tsx
@@ -4636,6 +4783,10 @@ msgstr ""
 msgid "Enter your details below. Choosing a resume replaces them and links its design."
 msgstr "Voer jou besonderhede hieronder in. As jy 'n CV kies, vervang dit hierdie besonderhede en koppel die brief aan die CV se ontwerp."
 
+#: src/features/career/offers.tsx
+msgid "Entered by you"
+msgstr ""
+
 #: src/features/design/design-pane.tsx
 msgid "Entries"
 msgstr "Inskrywings"
@@ -4656,6 +4807,7 @@ msgstr "Toegangsopsies"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Equity"
 msgstr "Aandele"
 
@@ -4693,6 +4845,10 @@ msgstr "Elke week"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Evidence changed or was removed. Edit and review before reuse."
+msgstr ""
+
+#: src/features/workspace/application-packet.tsx
+msgid "Exact form URL"
 msgstr ""
 
 #: src/features/career/facts.tsx
@@ -4748,6 +4904,10 @@ msgstr "Feit vergeet"
 #: src/features/career/stories.tsx
 msgid "Fact no longer available"
 msgstr "Feit nie meer beskikbaar nie"
+
+#: src/features/assistant/messages.tsx
+msgid "Fact type"
+msgstr "Feitsoort"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/career/knowledge.tsx
@@ -5379,6 +5539,10 @@ msgstr ""
 msgid "I removed employer-specific wording and reviewed reuse across employers."
 msgstr ""
 
+#: src/features/workspace/application-packet.tsx
+msgid "I reviewed these fields, answers, destination and document content."
+msgstr ""
+
 #: src/features/workspace/answer-library.tsx
 msgid "I reviewed this answer, its evidence and the application context."
 msgstr ""
@@ -5504,6 +5668,10 @@ msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "In the Offer stage, terms not added"
+msgstr ""
+
+#: src/features/workspace/application-packet.tsx
+msgid "Include reviewed profile name, email and phone"
 msgstr ""
 
 #: src/features/applications/list-screen.tsx
@@ -5837,9 +6005,11 @@ msgid "Kind regards,"
 msgstr "Vriendelike groete,"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
 #: src/features/search/search-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
 msgid "Knowledge"
 msgstr "Kennis"
 
@@ -5946,11 +6116,13 @@ msgstr "Lei met hoekom jy pas"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Learning budget"
 msgstr "Leerbegroting"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Leave"
 msgstr "Verlaat"
 
@@ -5978,6 +6150,14 @@ msgstr "Laat dit leeg om die skakel te verwyder."
 #: src/features/design/template-group.tsx
 msgid "Left"
 msgstr "Links"
+
+#: src/features/career/offers.tsx
+msgid "Left blank · ask"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Left blank. Add it later only if you can support it."
+msgstr ""
 
 #: app/(tabs)/settings/index.tsx
 msgid "Legal"
@@ -6277,6 +6457,7 @@ msgid "Loading resumes…"
 msgstr "Laai CV's…"
 
 #: src/features/workspace/answer-library.tsx
+#: src/features/workspace/application-packet.tsx
 msgid "Loading saved answers…"
 msgstr ""
 
@@ -6559,6 +6740,18 @@ msgstr "mediaan tot eerste antwoord"
 msgid "Meets your minimum base salary."
 msgstr "Voldoen aan jou minimum basissalaris."
 
+#: src/features/assistant/provider.tsx
+msgid "Memory: Ask first"
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Memory: Automatically"
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Memory: Never"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "Merge into previous entry"
 msgstr ""
@@ -6578,6 +6771,15 @@ msgstr "Stuur 'n boodskap aan die assistent"
 #: src/shell/workspace-tab-label.ts
 msgid "Messages"
 msgstr "Boodskappe"
+
+#: src/features/assistant/chat-view.tsx
+msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
+msgid "Messages from before Knowledge changed aren't sent."
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -6857,6 +7059,10 @@ msgstr "Inheemse kode en lettertipes"
 msgid "Needs attention"
 msgstr "Benodig aandag"
 
+#: src/features/workspace/application-packet.tsx
+msgid "Needs evidence or scope review"
+msgstr ""
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/application-profile.tsx
 msgid "Needs sponsorship in {0}"
@@ -6975,8 +7181,8 @@ msgid "Next step: {note}"
 msgstr "Volgende stap: {note}"
 
 #: src/features/workspace/tabs/messages.tsx
-msgid "Next step: {note}. Adds a reminder to Today."
-msgstr "Volgende stap: {note}. Voeg 'n herinnering by Vandag."
+msgid "Next step: {note}. Sets the application's follow-up date."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Next unsynced drafts"
@@ -7311,6 +7517,10 @@ msgstr "Nog nie gekoppel nie. Voeg sy DNS-rekords by waar jy die domein bestuur,
 msgid "Not for me"
 msgstr "Nie vir my nie"
 
+#: src/features/career/offers.tsx
+msgid "Not found in the message · ask"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Not found:"
 msgstr "Nie gevind nie:"
@@ -7336,6 +7546,10 @@ msgstr "Nie nou nie"
 msgid "Not recorded"
 msgstr "Nie aangeteken nie"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded · ask"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Not recorded yet. Leave blank until you can support it."
 msgstr "Nog nie opgeneem nie. Laat leeg totdat jy dit kan ondersteun."
@@ -7345,6 +7559,10 @@ msgstr "Nog nie opgeneem nie. Laat leeg totdat jy dit kan ondersteun."
 msgid "Not saved"
 msgstr "Nie gestoor nie"
 
+#: src/features/assistant/messages.tsx
+msgid "Not saved — this fact was forgotten before."
+msgstr "Nie bewaar nie — hierdie feit is voorheen vergeet."
+
 #: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
@@ -7353,6 +7571,10 @@ msgstr ""
 #: src/features/applications/stages.ts
 msgid "Not selected"
 msgstr "Nie gekies nie"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Not stated"
+msgstr ""
 
 #: src/features/check/job-match.tsx
 msgid "Not true for me, hide it"
@@ -7391,6 +7613,11 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "Daar word nie aansoek gedoen of iets geskep voordat jy kies nie."
+
+#: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
+msgid "Nothing is sent until you choose a connection for this conversation."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
@@ -7474,6 +7701,10 @@ msgstr "Af. Net jy kan hierdie CV sien."
 msgid "Offer"
 msgstr "Aanbod"
 
+#: src/features/career/offers.tsx
+msgid "Offer deleted"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "Werksaanbod gestoor"
@@ -7483,7 +7714,16 @@ msgstr "Werksaanbod gestoor"
 msgid "Offer saved. {0} moved to Offer."
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Offer terms"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
+msgid "Offer terms updated"
+msgstr ""
+
+#: src/features/career/offer-entry.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Offer type"
 msgstr "Soort werksaanbod"
 
@@ -7491,6 +7731,10 @@ msgstr "Soort werksaanbod"
 #: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Aanbiedinge"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Office days a week"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Office days a week, at most"
@@ -7554,6 +7798,10 @@ msgstr "Geld slegs wanneer die afdeling op 'n enkele bladsy pas."
 #: src/features/career/stories.tsx
 msgid "Only enabled facts can back a story. Leave unsupported outcomes blank."
 msgstr "Slegs geaktiveerde feite kan 'n storie ondersteun. Laat nie-ondersteunde uitkomste leeg."
+
+#: src/features/assistant/messages.tsx
+msgid "Only for this application"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Only one recognizable section heading was found."
@@ -7646,6 +7894,10 @@ msgstr "Maak oorsig oop"
 msgid "Open device settings"
 msgstr "Maak toestelinstellings oop"
 
+#: src/features/workspace/application-packet.tsx
+msgid "Open employer form in browser"
+msgstr ""
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "Open in {tabName}"
 msgstr "Maak oop in {tabName}"
@@ -7657,6 +7909,10 @@ msgstr "Maak die in-redigeerder oop"
 #: src/features/workspace/tabs/saved.tsx
 msgid "Open in Offers"
 msgstr "Maak oop in Aanbiedinge"
+
+#: src/features/assistant/messages.tsx
+msgid "Open in the resume's assistant"
+msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Open letter"
@@ -7731,6 +7987,10 @@ msgstr "Maak tans die CV oop…"
 msgid "Opens in Career → Offers."
 msgstr "Maak oop in Loopbaan → Aanbiedinge."
 
+#: src/features/assistant/provider.tsx
+msgid "Opens Knowledge → Preferences, where you choose what the coach remembers."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Opens the version you sent, read-only"
 msgstr ""
@@ -7800,6 +8060,7 @@ msgstr "Ander"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Other benefits"
 msgstr "Ander voordele"
 
@@ -7819,6 +8080,10 @@ msgstr "Verouderd: die teks het sedertdien verander."
 #: src/features/application-detail/detail-screen.tsx
 msgid "Outcome"
 msgstr "Uitkoms"
+
+#: src/features/workspace/application-packet.tsx
+msgid "Packet ready. Nothing submitted or marked as sent. Downloaded copies remain yours and do not refresh when source data changes."
+msgstr ""
 
 #: app/builder/[id]/_layout.tsx
 #: app/builder/[id]/page.tsx
@@ -7970,6 +8235,7 @@ msgstr "Onderbreek"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/application-profile.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Pay period"
 msgstr "Betaalperiode"
 
@@ -8009,18 +8275,21 @@ msgstr "PDF, Word, Reactive Resume, JSON Resume of LinkedIn-uitvoer."
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Per hour"
 msgstr "Per uur"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Per month"
 msgstr "Per maand"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Per year"
 msgstr "Per jaar"
 
@@ -8380,6 +8649,11 @@ msgstr "Profielskakels moet openbare HTTPS-adresse wees."
 msgid "Profile photo"
 msgstr "Profielfoto"
 
+#. placeholder {0}: review.profileReviewedAt ?? ""
+#: src/features/workspace/application-packet.tsx
+msgid "Profile review: {0}"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Profile saved."
 msgstr ""
@@ -8530,6 +8804,14 @@ msgstr "Reactive Resume"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Read briefing"
 msgstr "Lees oorsig"
+
+#: src/features/career/offers.tsx
+msgid "Read from a message"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Read from a message, edited by you"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Read it for me"
@@ -8734,6 +9016,7 @@ msgstr "Verwysings"
 msgid "Referral"
 msgstr "Verwysing"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Reflection"
 msgstr "Refleksie"
@@ -8789,6 +9072,10 @@ msgstr ""
 msgid "Remember"
 msgstr "Onthou"
 
+#: src/features/assistant/messages.tsx
+msgid "Remember as a fact in Knowledge"
+msgstr ""
+
 #: src/features/career/preferences.tsx
 msgid "Remember facts from my messages"
 msgstr "Onthou feite uit my boodskappe"
@@ -8798,8 +9085,16 @@ msgid "Remember for {company} only?"
 msgstr "Onthou net vir {company}?"
 
 #: src/features/assistant/messages.tsx
+msgid "Remember for this application only?"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "Remember this for future coaching?"
 msgstr "Onthou dit vir toekomstige afrigting?"
+
+#: src/features/assistant/messages.tsx
+msgid "Remembered for this application only: “{text}”"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Remembered: “{text}”"
@@ -9057,6 +9352,7 @@ msgstr "Stel ontwerp verstek terug"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Respond by"
 msgstr "Antwoord teen"
 
@@ -9109,6 +9405,7 @@ msgstr "Het 'n weergawe herstel"
 msgid "Restricted to its employer or application."
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Result"
 msgstr "Resultaat"
@@ -9271,6 +9568,10 @@ msgstr "Probeer weer-verskafferopsoek"
 msgid "Retry save"
 msgstr "Probeer weer stoor"
 
+#: src/features/workspace/application-packet.tsx
+msgid "Retry saved answers"
+msgstr ""
+
 #: src/shell/builder-chrome.tsx
 msgid "Retry saving"
 msgstr "Probeer weer stoor"
@@ -9287,6 +9588,10 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Review"
 msgstr "Hersien"
+
+#: src/features/workspace/application-packet.tsx
+msgid "Review a private snapshot for one form. No AI, submission or stage change. Named document versions are saved only when you approve."
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "Review and use"
@@ -9327,6 +9632,10 @@ msgstr "Hersien my antwoord"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "Hersien my antwoord stuur die vraag, wat jy gesê het, hierdie plasing en jou Kennis na {providerName}."
+
+#: src/features/workspace/application-packet.tsx
+msgid "Review packet"
+msgstr ""
 
 #: app/(tabs)/settings/ai.tsx
 msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
@@ -9493,6 +9802,10 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 msgid "Salary range"
 msgstr "Salarisreeks"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Same length"
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Sample resume"
@@ -9682,6 +9995,10 @@ msgstr ""
 msgid "Saved description"
 msgstr "Gestoorde beskrywing"
 
+#: src/features/assistant/messages.tsx
+msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
 msgstr ""
@@ -9828,6 +10145,7 @@ msgid "Search saved answers"
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
 msgid "Search terms go to your web search service."
 msgstr "Soekterme gaan na jou websoekdiens."
 
@@ -9861,8 +10179,16 @@ msgid "Searched the web"
 msgstr "Op die web gesoek"
 
 #: src/features/assistant/messages.tsx
+msgid "Searched your Knowledge"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "Searching the web…"
 msgstr "Soek tans op die web …"
+
+#: src/features/assistant/messages.tsx
+msgid "Searching your Knowledge…"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Second offer"
@@ -9987,8 +10313,20 @@ msgid "Sends this PDF to your configured AI provider instead of reading its text
 msgstr "Stuur hierdie PDF na jou gekonfigureerde KI-verskaffer in plaas daarvan om sy tekslaag te lees."
 
 #: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message and this application (posting, notes, documents sent) to {label}."
+msgstr ""
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages and this application (posting, notes, documents sent) to {label}."
+msgstr ""
+
+#: src/features/workspace/coach-sheet.tsx
 msgid "Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
 msgstr "Stuur jou boodskap, vorige boodskappe, hierdie werksaansoek (posadvertensie, notas en gestuurde dokumente) en geaktiveerde Kennis na {label}."
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
+msgstr ""
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -10066,6 +10404,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
 msgstr "Stel websoektog in Instellings op om rolle te vind."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/settings/index.tsx
@@ -10412,6 +10754,7 @@ msgstr "Het afgemeld, maar sommige data op hierdie toestel kon nie verwyder word
 msgid "since last view"
 msgstr "sedert laaste aansig"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Situation"
 msgstr "Situasie"
@@ -10563,6 +10906,13 @@ msgstr ""
 msgid "Source: {0}"
 msgstr ""
 
+#. placeholder {0}: answer.source
+#. placeholder {1}: answer.scope
+#. placeholder {2}: answer.revision
+#: src/features/workspace/application-packet.tsx
+msgid "Source: {0} · scope: {1} · revision {2}"
+msgstr ""
+
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Sources"
@@ -10712,8 +11062,12 @@ msgid "Stop when you're done. Nothing is sent until then."
 msgstr "Stop wanneer jy klaar is. Niks word tot dan gestuur nie."
 
 #: src/features/assistant/chat-view.tsx
-msgid "Stopped"
-msgstr "Gestop"
+msgid "Stopped before answering."
+msgstr ""
+
+#: src/features/assistant/chat-view.tsx
+msgid "Stopped before the answer finished."
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Stopped. No edits were proposed."
@@ -10919,6 +11273,7 @@ msgstr "Tamil"
 msgid "Target roles"
 msgstr "Teikenposte"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Task"
 msgstr "Taak"
@@ -11086,6 +11441,10 @@ msgstr "Die rekening het verander. Probeer weer."
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "Die adres moet slegs kleinletters en syfers bevat, geskei deur enkelstrepies."
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "The answer changed since, so it wasn't restored."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "The application keeps its other details."
 msgstr "Die aansoek behou sy ander besonderhede."
@@ -11118,9 +11477,17 @@ msgstr "Die ingeboude leser bly aktief."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "Die tjeks is meganies. Dit vra 'n taalmodel hoe 'n leser op jou lysinskrywings kan reageer en stel herskrywings voor. Dit is nie deel van die telling nie."
 
+#: src/features/assistant/provider.tsx
+msgid "The coach asks before remembering facts you state."
+msgstr ""
+
 #: src/features/career/preferences.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "Die afrigter onthou niks uit jou boodskappe nie."
+
+#: src/features/assistant/provider.tsx
+msgid "The coach doesn't remember anything you write."
+msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -11133,6 +11500,10 @@ msgstr "Die afrigter is nie op hierdie bediener opgestel nie. Wie dit bestuur, m
 #: src/features/career/preferences.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "Die afrigter stel elke feit in die klets voor. Niks word bewaar totdat jy instem nie."
+
+#: src/features/assistant/provider.tsx
+msgid "The coach remembers facts you state, and tells you."
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -11158,6 +11529,10 @@ msgstr ""
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
 msgstr "Die huidige toestand word eers as “Voor herstel” gestoor."
+
+#: src/features/assistant/messages.tsx
+msgid "the document"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
@@ -11426,6 +11801,10 @@ msgstr "Hierdie verbinding word deur jou bediener bestuur."
 #: src/features/assistant/chat-view.tsx
 msgid "This conversation couldn't be opened."
 msgstr "Hierdie gesprek kon nie oopgemaak word nie."
+
+#: src/features/assistant/provider.tsx
+msgid "This conversation's connection is off or was removed. Choose the one it uses next."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "This cover letter file isn't valid."
@@ -11891,6 +12270,7 @@ msgstr "Probeer {suggestion}"
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
@@ -12028,7 +12408,9 @@ msgstr "Onderstreep skakels"
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
@@ -12041,10 +12423,6 @@ msgstr "Ongedaan maak"
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
 msgstr "Onbekend"
-
-#: src/features/career/offers.tsx
-msgid "Unknown · ask"
-msgstr "Onbekend · vra"
 
 #: src/features/documents/document-sheets.tsx
 msgid "Unlink"
@@ -12151,6 +12529,11 @@ msgstr "Laai tans foto op …"
 msgid "URL"
 msgstr "URL"
 
+#. placeholder {0}: fallback.label
+#: src/features/assistant/provider.tsx
+msgid "Use {0}"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "Use {minimum}"
 msgstr "Gebruik {minimum}"
@@ -12238,6 +12621,7 @@ msgstr "Gebruik besonderhede uit “{resumeName}”"
 msgid "Use details from the resume"
 msgstr "Gebruik besonderhede uit die CV"
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Gebruik vir alle aansoeke"
@@ -12355,6 +12739,10 @@ msgstr "Word gebruik om poste en aanbiedinge te kontroleer. Elkeen is 'n getal, 
 msgid "Used when {connected} can't read a page. No account needed."
 msgstr "Word gebruik wanneer {connected} nie 'n bladsy kan lees nie. Geen rekening nodig nie."
 
+#: src/features/assistant/messages.tsx
+msgid "Used: {summary}"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
 msgid "Username"
@@ -12380,6 +12768,11 @@ msgstr ""
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
 msgstr "Gebruik jou CV se sjabloon en Ontwerp, en pas op enige skerm. Verander dit in Ontwerp."
 
+#. placeholder {0}: proposal.factIds .map((id) => facts?.find((fact) => fact.id === id)?.text) .filter((value): value is string => !!value) .map(shortLabel) .join(" · ")
+#: src/features/workspace/tabs/apply.tsx
+msgid "Uses: {0}"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Uzbek"
 msgstr "Oezbeeks"
@@ -12394,6 +12787,7 @@ msgstr "Wissel die openinge sodat die afdeling nie soos standaardteks lees nie."
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Verbal offer"
 msgstr "Mondelinge aanbod"
 
@@ -12424,6 +12818,11 @@ msgstr "Weergawe gestuur {date}"
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
 msgstr "Weergawe gestuur {date} · Gaan {0} na"
+
+#. placeholder {0}: document.versionId
+#: src/features/workspace/application-packet.tsx
+msgid "Version: {0}"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Vertical margin"
@@ -12533,9 +12932,17 @@ msgstr "Webtoeganginstellings kon nie gestoor of gelaai word nie."
 msgid "Web page"
 msgstr "Webblad"
 
-#: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "Webnavorsing"
+
+#: src/features/assistant/provider.tsx
+msgid "Web research · Retry"
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Web research · Set up"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -12673,6 +13080,7 @@ msgstr "Waar jy wil werk"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Where you work"
 msgstr "Waar jy werk"
 
@@ -12707,6 +13115,10 @@ msgstr "Breedte"
 
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "With Knowledge off, nothing you write is remembered."
 msgstr ""
 
 #: src/features/career/offers.tsx
@@ -12837,6 +13249,7 @@ msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Written offer"
 msgstr "Skriftelike aanbod"
 
@@ -12960,6 +13373,10 @@ msgstr "Jou antwoord"
 msgid "Your answer · {mode}"
 msgstr "Jou antwoord · {mode}"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Your answer changed while the draft was written. Draft again to use it."
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your attempts"
 msgstr "Jou pogings"
@@ -12995,6 +13412,11 @@ msgstr "Jou dokument is gestoor. Hersien dit in die redigeerder."
 #: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "Jou domein"
+
+#: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
+msgid "Your edited story is saved to Knowledge."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
@@ -13035,6 +13457,10 @@ msgstr "Jou kantlyne is baie nou."
 #: src/features/assistant/coach-screen.tsx
 msgid "your message"
 msgstr "jou boodskap"
+
+#: src/features/assistant/chat-view.tsx
+msgid "Your message is kept."
+msgstr ""
 
 #: src/features/write/outline.tsx
 msgid "Your name"

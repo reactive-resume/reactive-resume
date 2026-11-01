@@ -10,6 +10,7 @@ const serverRequire = createRequire(MOBILE + "/../server/package.json");
 const { transformSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const schemaRequire = createRequire(MOBILE + "/../../packages/schema/package.json");
 const { QueryClient } = mobileRequire("@tanstack/react-query");
+const { ORPCError } = await import("@orpc/client");
 const zod = schemaRequire("zod");
 
 const source = (file) => readFileSync(file, "utf8");
@@ -46,7 +47,13 @@ const tag = (strings, ...values) =>
 
 function harness({ lifetime = 30 } = {}) {
 	const toasts = [];
-	const env = { account: "acct-A", applyReply: async () => undefined, applyCalls: 0 };
+	const env = {
+		account: "acct-A",
+		applyReply: async () => undefined,
+		applyCalls: 0,
+		undoReply: async () => undefined,
+		undoCalls: 0,
+	};
 	const undo = load(MOBILE + "/src/features/career/undo.ts", {
 		"@lingui/core/macro": { t: tag },
 		"react-native": { AppState: { addEventListener: () => ({ remove() {} }) } },
@@ -71,6 +78,7 @@ function harness({ lifetime = 30 } = {}) {
 			"@lingui/core/macro": { plural: (n, forms) => forms.other.replace("#", String(n)) },
 			"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
 			"@tanstack/react-query": { useQueryClient: () => queryClient },
+			"@orpc/client": { ORPCError },
 			"expo-clipboard": {},
 			"expo-router": { useLocalSearchParams: () => ({}), useRouter: () => ({}) },
 			react: {
@@ -88,6 +96,10 @@ function harness({ lifetime = 30 } = {}) {
 			"@/api/client": {
 				client: {
 					career: {
+						undoReply: (input) => {
+							env.undoCalls += 1;
+							return env.undoReply(input);
+						},
 						applyReply: (input) => {
 							env.applyCalls += 1;
 							return env.applyReply(input);
@@ -166,7 +178,7 @@ const pendingFor = (promise, ms = 200) =>
 const before = { status: "applied", laneId: "lane-applied", closedReason: null, stageEntryId: "e1" };
 const savedStage = { status: "interview", laneId: "lane-interview", closedReason: null, stageEntryId: "e2" };
 
-test("Apply, then a bulk move in the Undo window: the move waits and starts from the stage the server saved", async () => {
+test("Immediate Apply, then a bulk move: the move waits and starts from the stage the server saved", async () => {
 	const h = harness({ lifetime: 60 });
 	let answer;
 	h.env.applyReply = () => new Promise((resolve) => (answer = resolve));
@@ -180,14 +192,31 @@ test("Apply, then a bulk move in the Undo window: the move waits and starts from
 	assert.deepEqual(await pendingFor(start), savedStage);
 });
 
-test("Undo in the window: the waiting bulk move starts from the stage before, nothing sent", async () => {
-	const h = harness({ lifetime: 100_000 });
+test("Undo after immediate Apply: a bulk move waits for the inverse and starts from its saved stage", async () => {
+	const h = harness();
+	h.env.applyReply = async () => ({ stages: [{ id: "app-1", ...savedStage }] });
 	h.press();
+	await new Promise(setImmediate);
+	assert.equal(h.env.applyCalls, 1);
+	let answer;
+	h.env.undoReply = () => new Promise((resolve) => (answer = resolve));
+	h.undoToast().action.onPress();
 	const start = h.bulkStart();
 	assert.equal(await pendingFor(start, 20), "still waiting");
+	assert.equal(h.env.undoCalls, 1);
+	answer({ stages: [{ id: "app-1", ...before, stageEntryId: "e3" }] });
+	assert.deepEqual(await pendingFor(start), { ...before, stageEntryId: "e3" });
+});
+
+test("Undo refuses dispatch after switching accounts", async () => {
+	const h = harness();
+	h.env.applyReply = async () => ({ stages: [{ id: "app-1", ...savedStage }] });
+	h.press();
+	await new Promise(setImmediate);
+	h.env.account = "acct-B";
 	h.undoToast().action.onPress();
-	assert.deepEqual(await pendingFor(start), before);
-	assert.equal(h.env.applyCalls, 0);
+	await new Promise(setImmediate);
+	assert.equal(h.env.undoCalls, 0);
 });
 
 test("Failed apply: the bulk move starts from the stage before", async () => {
@@ -201,7 +230,7 @@ test("Failed apply: the bulk move starts from the stage before", async () => {
 	assert.equal(h.env.applyCalls, 1);
 });
 
-test("Account switched before the commit: nothing sent, the old account's bulk start settles", async () => {
+test("Account switched before dispatch: nothing sent, the old account's bulk start settles", async () => {
 	const h = harness({ lifetime: 30 });
 	h.press();
 	const start = h.bulkStart();

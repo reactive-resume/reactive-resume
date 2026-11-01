@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 import { streamToEventIterator } from "@orpc/server";
 import { MockLanguageModelV4 } from "ai/test";
 import { z } from "zod";
+import { AGENT_REPLY_ERRORS } from "@reactive-resume/ai/tools/agent-tool-contracts";
 
 const dbMock = {
 	select: vi.fn(),
@@ -1073,18 +1074,34 @@ describe("agentService.messages.send", () => {
 		vi.mocked(ai.convertToModelMessages).mockResolvedValue([{ role: "user", content: "Which office?" }]);
 		const model = new MockLanguageModelV4({
 			doStream: async () => {
-				throw new Error("provider unavailable");
+				// A provider's own refusal: English text and a body that can echo request data.
+				throw new real.APICallError({
+					message: "You exceeded your current quota, please check your plan.",
+					url: "https://provider.example/v1/responses",
+					requestBodyValues: {},
+					statusCode: 429,
+					responseBody: '{"error":{"message":"quota exceeded for key secret"}}',
+					isRetryable: false,
+				});
 			},
 		});
+		let settings: { onError?: unknown } = {};
 		const stream = vi.fn(async (options: Record<string, unknown>) => {
 			if (failure === "setup") throw new Error("provider unavailable");
-			return new real.ToolLoopAgent({ model, tools: {}, maxRetries: 0 }).stream(options as never);
+			// The agent's own error handler, against a real stream: what it logs is what production logs.
+			return new real.ToolLoopAgent({ model, tools: {}, maxRetries: 0, onError: settings.onError as never }).stream(
+				options as never,
+			);
 		});
 		vi.mocked(ai.ToolLoopAgent).mockImplementation(
 			class {
+				constructor(value: { onError?: unknown }) {
+					settings = value;
+				}
 				stream = stream;
 			} as never,
 		);
+		const logged = vi.spyOn(console, "error").mockImplementation(() => undefined);
 		const chunks: UIMessageChunk[] = [];
 		const { agentStreamLifecycle } = await import("./streams");
 		vi.mocked(agentStreamLifecycle.create).mockImplementation(async (_id, factory) => {
@@ -1117,7 +1134,19 @@ describe("agentService.messages.send", () => {
 
 		await attempt();
 		expect(stream).toHaveBeenCalledTimes(2);
-		if (failure === "stream") expect(chunks.filter((chunk) => chunk.type === "error")).toHaveLength(2);
+		if (failure === "stream") {
+			const errors = chunks.filter((chunk) => chunk.type === "error");
+			expect(errors).toHaveLength(2);
+			// The reply names the kind of failure in the app's words, never the provider's text, body or key.
+			for (const error of errors) expect(error).toEqual({ type: "error", errorText: AGENT_REPLY_ERRORS.providerLimit });
+			// The log names the failure without its text or body.
+			const lines = logged.mock.calls.map((call) =>
+				call.map((value) => (typeof value === "string" ? value : String(value))).join(" "),
+			);
+			expect(lines).toContainEqual(expect.stringContaining('"statusCode":429'));
+			for (const line of lines) expect(line).not.toMatch(/quota|secret/);
+		}
+		logged.mockRestore();
 
 		await expect(send(incoming("London"))).rejects.toThrow("This response was already handled.");
 		expect(stream).toHaveBeenCalledTimes(2);

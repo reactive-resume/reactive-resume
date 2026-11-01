@@ -59,7 +59,7 @@ const fontDisplayNames: Partial<Record<string, string>> = {
 // actual writing system: Hangul lives only in the KR fonts, Kana only in JP,
 // Arabic glyphs only in the Arabic fonts, etc. — so a Latin or Simplified-
 // Chinese font cannot render them and produces tofu. Where Noto ships no serif
-// variant for a script (Hebrew, Thai), the serif slot reuses the sans font so
+// variant for a script (Hebrew, Thai, most Indic scripts), the serif slot reuses the sans font so
 // serif resumes still render real glyphs instead of nothing. All entries are
 // present in webfontlist.json.
 const scriptFonts: Record<Script, { serif: string; sansSerif: string }> = {
@@ -70,6 +70,19 @@ const scriptFonts: Record<Script, { serif: string; sansSerif: string }> = {
 	arabic: { serif: "Noto Naskh Arabic", sansSerif: "Noto Sans Arabic" },
 	hebrew: { serif: "Noto Sans Hebrew", sansSerif: "Noto Sans Hebrew" },
 	thai: { serif: "Noto Sans Thai", sansSerif: "Noto Sans Thai" },
+	// Indic, Ethiopic and Khmer text: Bengali is the only one shipped with a serif face.
+	devanagari: { serif: "Noto Sans Devanagari", sansSerif: "Noto Sans Devanagari" },
+	bengali: { serif: "Noto Serif Bengali", sansSerif: "Noto Sans Bengali" },
+	gurmukhi: { serif: "Noto Sans Gurmukhi", sansSerif: "Noto Sans Gurmukhi" },
+	gujarati: { serif: "Noto Sans Gujarati", sansSerif: "Noto Sans Gujarati" },
+	oriya: { serif: "Noto Sans Oriya", sansSerif: "Noto Sans Oriya" },
+	tamil: { serif: "Noto Sans Tamil", sansSerif: "Noto Sans Tamil" },
+	telugu: { serif: "Noto Sans Telugu", sansSerif: "Noto Sans Telugu" },
+	kannada: { serif: "Noto Sans Kannada", sansSerif: "Noto Sans Kannada" },
+	malayalam: { serif: "Noto Sans Malayalam", sansSerif: "Noto Sans Malayalam" },
+	sinhala: { serif: "Noto Sans Sinhala", sansSerif: "Noto Sans Sinhala" },
+	ethiopic: { serif: "Noto Sans Ethiopic", sansSerif: "Noto Sans Ethiopic" },
+	khmer: { serif: "Noto Sans Khmer", sansSerif: "Noto Sans Khmer" },
 	// Monochrome outlines (TrueType glyf, not CBDT bitmaps) so react-pdf can
 	// embed them; the serif/sans distinction is meaningless for emoji (#3321).
 	emoji: { serif: "Noto Emoji", sansSerif: "Noto Emoji" },

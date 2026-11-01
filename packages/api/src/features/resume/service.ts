@@ -596,8 +596,8 @@ export const resumeService = {
 					.exhaustive(),
 			),
 
-	getById: async (input: { id: string; userId: string }) => {
-		const [resume] = await db
+	getById: async (input: { id: string; userId: string }, reader: DbOrTx = db) => {
+		const [resume] = await reader
 			.select({ ...resumeColumns, applicationId: schema.resume.applicationId })
 			.from(schema.resume)
 			// Read-only and owner-scoped, so resumes in Trash stay readable for their thumbnails; writes reject them.

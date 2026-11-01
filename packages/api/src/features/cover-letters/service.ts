@@ -55,8 +55,8 @@ function toLetter(row: typeof schema.coverLetter.$inferSelect): CoverLetter {
 }
 
 /** The stored letter, with the copies in `style` as they are. */
-async function getRow(input: OwnedId): Promise<CoverLetter> {
-	const [row] = await db
+async function getRow(input: OwnedId, reader: DbOrTx = db): Promise<CoverLetter> {
+	const [row] = await reader
 		.select()
 		.from(schema.coverLetter)
 		.where(and(eq(schema.coverLetter.id, input.id), eq(schema.coverLetter.userId, input.userId)));
@@ -68,12 +68,12 @@ async function getRow(input: OwnedId): Promise<CoverLetter> {
  * A letter as it reads now: linked sender details and design come from its source resume as the resume is today.
  * If the resume is gone, the copies the letter keeps stand in.
  */
-async function resolveLinks(letter: CoverLetter, userId: string): Promise<CoverLetter> {
+async function resolveLinks(letter: CoverLetter, userId: string, reader: DbOrTx = db): Promise<CoverLetter> {
 	if (!(letter.senderLinked || letter.designLinked) || !letter.sourceResumeId) return letter;
 
 	let linked: CoverLetterStyle;
 	try {
-		linked = await getResumeStyle(userId, letter.sourceResumeId, letter.style.sectionId, letter.style.itemId);
+		linked = await getResumeStyle(userId, letter.sourceResumeId, letter.style.sectionId, letter.style.itemId, reader);
 	} catch {
 		return letter;
 	}
@@ -88,16 +88,22 @@ async function resolveLinks(letter: CoverLetter, userId: string): Promise<CoverL
 	};
 }
 
-async function getById(input: OwnedId): Promise<CoverLetter> {
-	return resolveLinks(await getRow(input), input.userId);
+async function getById(input: OwnedId, reader: DbOrTx = db): Promise<CoverLetter> {
+	return resolveLinks(await getRow(input, reader), input.userId, reader);
 }
 
 /** Today as YYYY-MM-DD, the date a new letter starts with. */
 const today = () => new Date().toISOString().slice(0, 10);
 
-async function getResumeStyle(userId: string, resumeId?: string, sectionId?: string, itemId?: string) {
+async function getResumeStyle(
+	userId: string,
+	resumeId?: string,
+	sectionId?: string,
+	itemId?: string,
+	reader: DbOrTx = db,
+) {
 	const data = resumeId
-		? resumeDataSchema.parse((await resumeService.getById({ userId, id: resumeId })).data)
+		? resumeDataSchema.parse((await resumeService.getById({ userId, id: resumeId }, reader)).data)
 		: defaultResumeData;
 	return copyCoverLetterStyle(data, sectionId, itemId);
 }

@@ -37,6 +37,8 @@ it.each([
 	["مَرْحَبًا بِالْعَالَمِ", "Noto Sans Arabic", "ar-SA"],
 	["नमस्ते दुनिया अनुभव कौशल", "Noto Sans Devanagari", "hi-IN"],
 	["प्रशिक्षण क्षेत्र दृष्टि क्षत्रिय", "Noto Sans Devanagari", "hi-IN"],
+	// The page language alone picks the Devanagari fallback for the default font.
+	["अमित शर्मा", "IBM Plex Serif", "hi-IN"],
 	["日本語の履歴書 職務経験", "Noto Sans JP", "ja-JP"],
 	["Hello 💻 engineer 🚀 coding 😀", "Noto Sans", "en-US"],
 	["Family 👨‍👩‍👧‍👦 love 👩‍❤️‍💋‍👩 ❤️", "Noto Sans", "en-US"],
@@ -60,3 +62,28 @@ it('exports characters no font can draw as "?" and names them', { timeout: 60_00
 	const result = await act(() => renderResume(forme, { data: summaryResume("<p>Unsupported \u{10FFFF}</p>") }));
 	expect(lostCharacters(result.warnings)).toEqual([expect.stringContaining("U+10FFFF")]);
 });
+
+it.each([
+	["अमित शर्मा", "hi-IN"],
+	["अमित शर्मा हिन्दी", "en-US"],
+	["অমিত শর্মা", "bn-BD"],
+	["அமித் சர்மா", "en-US"],
+	["అమిత్ శర్మ", "te-IN"],
+	["അമിത് ശർമ്മ", "ml-IN"],
+	["ಅಮಿತ್ ಶರ್ಮಾ", "kn-IN"],
+	["ଅମିତ ଶର୍ମା", "or-IN"],
+	["ਅਮਿਤ ਸ਼ਰਮਾ", "en-US"],
+	["અમિત શર્મા", "en-US"],
+	["අමිත් ශර්මා", "en-US"],
+	["አሚት ሻርማ", "am-ET"],
+	["អមិត ស្រម៉ា", "km-KH"],
+	["Designer 👩🏽‍💻 coder", "en-US"],
+] as const)(
+	"draws %s through a script fallback for the default font (%s)",
+	{ timeout: 60_000 },
+	async (text, locale) => {
+		const data = summaryResume(`<p>${text}</p>`, "IBM Plex Serif", locale);
+		const result = await act(() => renderResume(forme, { data }));
+		expect(lostCharacters(result.warnings)).toBeNull();
+	},
+);

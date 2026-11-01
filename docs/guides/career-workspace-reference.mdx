@@ -41,6 +41,10 @@ The native iPhone app opens the relevant tab through a task-named action in appl
 
 ## Library versions
 
+**Employer-form packet** in **Apply** reviews contact details, visible selected-resume work history, letter text and chosen scoped answers for one exact URL. Explicit approval saves named document versions and their exact PDFs without AI, submission or a stage change. Download the private packet for the desktop helper. On iPhone and Android, **Open employer form in browser** supports manual completion with copyable answers and approved PDF downloads; mobile autofill is not offered. Missing/stale sources fail visibly. See [Review a packet](/guides/writing-application-answers#review-a-packet-for-one-employer-form).
+
+The conservative desktop Greenhouse, Lever and Ashby adapters are verified only against fictional standard-control shapes in host browsers. Current ATS upload behavior remains unverified. Existing values, sensitive questions, framework/custom controls, additional pages, account steps and captcha need explicit answers or manual completion.
+
 Generated fit checks, briefings, practice feedback, debriefs and message reviews are saved. Drafted or tightened form answers first need **Accept**; answers are copied into Library when recorded through **Apply → Mark as applied**.
 
 **Add offer** is available in **Career → Offers** and the current application's **Messages** tab on web and mobile. It saves structured terms linked to an application without an AI connection or provider request. Currency and pay period are explicit; the currency starts as the last saved offer's, and the less common terms sit under **More options**. Blank amounts remain unknown, and zero is a known amount. Without any application, the action reads **Add an application first**. Optional response deadlines use the account timezone. Saving an offer for an application before **Offer** moves it to **Offer** with **Undo**. Undo keeps the terms and restores the prior stage. Applications already at **Offer** or closed keep their stage. The newest terms stay in view above **Add a newer offer**. **Next step** leads with a reply deadline, a follow-up if set, or an offer decision. Saving sends no reply. Offer-stage applications without terms appear separately, each with **Add offer**. Loading or failed application metadata does not count as an empty list; use **Try again** on web or **Retry** in the native app after a failure. Saved offers remain available during this lookup.
@@ -64,22 +68,30 @@ Sent resume and letter versions are document snapshots shown under **What you se
 
 In Career → Coach, context controls include:
 
-| Control          | What it includes when on                                                                                     |
-| ---------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Applications** | Summaries of your applications.                                                                              |
-| **Knowledge**    | Active facts, eligible stories and career preferences.                                                       |
-| **Web research** | Access to public research through the selected web service; off by default. Search terms go to that service. |
+| Control          | What it includes when on                                                                                                                                                                                                                      |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Applications** | Summaries of your applications.                                                                                                                                                                                                               |
+| **Knowledge**    | Active facts, eligible stories and career preferences. With Knowledge off, the coach also remembers nothing.                                                                                                                                  |
+| **Web research** | Access to public research through the selected web service; off by default. Search terms go to that service. Without a search service it reads **Web research · Set up** and opens Settings; the coach can still read public links you paste. |
 
-<Frame caption="Start a career conversation with the context you choose">
+<Frame caption="The line below the message explains what the next send includes, which AI connection receives it and what the coach may remember. Under the answer, Used shows what it relied on, and Add to resume hands it to a resume's assistant. The people and companies are fictional.">
   <img
     src="/images/guides/career/coach.png"
-    alt="Current Career Coach with starting questions, Applications and Knowledge context chips and a message field"
+    alt="Career coach answering which fictional applications to follow up on, with Used Preferences, Copy and Add to resume under the answer; Applications and Knowledge on, Web research · Set up, the connection chip and a privacy line ending with what the coach remembers and Change"
   />
 </Frame>
 
 Before each coach web search, review the exact query and select **Search the web** or **Skip**. A proposed story also needs **Save story** approval before it becomes part of Knowledge. These choices work on web and mobile.
 
 Choices persist for that conversation. Earlier messages in the same chat can already contain information shared before a control was turned off.
+
+The privacy line also says what the coach may keep: whether it asks before remembering facts you state, remembers them automatically, or never does. **Change** opens the memory setting. To keep a message yourself in any mode, choose **Remember** under it, review the wording, type and (in a job's workspace) whether it is for that application only, then **Remember**. This saves your own words and sends nothing to an AI connection. A fact remembered automatically in a job's workspace says it is for that application only; **Use for all applications** shares it, and **Undo** forgets it.
+
+When you correct, switch off or forget a fact, the coach stops sending messages written before that change, because they may repeat what you withdrew. The conversation marks where that happened, and the privacy line says those messages aren't sent. Start a new conversation to keep context together.
+
+A reply you stop, or one cut short, stays marked after you reopen the conversation. **Continue** asks the coach to carry on from what it said; **Try again** asks again when it had said nothing. An empty reply shows no **Used** chips.
+
+If the AI connection a conversation used is switched off or removed, the conversation says so and sends nothing until you choose the connection it uses next. This applies to the career coach, a job's coach and the editor assistant. A job's coach has the same **Knowledge** and **Web research** controls and connection menu as Career → Coach. **Change connection** appears only when the provider caused a failure, such as a rejected key or a rate limit; a lost internet connection says so instead.
 
 Workspace buttons such as **Check fit** and **Read it for me** are separate AI actions. Their privacy lines describe their own inputs; chat context choices do not turn those inputs off. They use the default usable AI connection. Scheduled preparation requires a selected connection and never falls back to the default. If you delete or switch off its connection, or change its key, model or address, review the paused schedule, choose a tested connection and approve it before enabling work again. [Provider selection](/guides/using-ai#which-provider-is-used) explains this further.
 

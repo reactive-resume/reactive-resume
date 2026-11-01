@@ -257,6 +257,26 @@ describe("resumeContentScripts", () => {
 		expect(scripts.has("thai")).toBe(true);
 	});
 
+	it("detects Indic, Ethiopic and Khmer text", () => {
+		const text = "हिन्दी বাংলা ਪੰਜਾਬੀ ગુજરાતી ଓଡ଼ିଆ தமிழ் తెలుగు ಕನ್ನಡ മലയാളം සිංහල አማርኛ ខ្មែរ";
+		expect(resumeContentScripts(withSummary(text))).toEqual(
+			new Set([
+				"devanagari",
+				"bengali",
+				"gurmukhi",
+				"gujarati",
+				"oriya",
+				"tamil",
+				"telugu",
+				"kannada",
+				"malayalam",
+				"sinhala",
+				"ethiopic",
+				"khmer",
+			]),
+		);
+	});
+
 	it("returns an empty set for Latin-only content", () => {
 		expect(resumeContentScripts(withSummary("Reactive Resume")).size).toBe(0);
 	});

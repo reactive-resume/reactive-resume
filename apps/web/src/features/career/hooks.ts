@@ -21,6 +21,8 @@ export type SavedData<K extends SavedItem["data"]["kind"]> = Extract<SavedItem["
 
 const workspaceWrites = new WeakMap<QueryClient, Map<string, Set<Promise<unknown>>>>();
 
+const draftKey = (userId: string | undefined, key: string) => `career-draft:${userId ?? "anonymous"}:${key}`;
+
 /** Text drafts survive navigation and reloads in this tab, without crossing signed-in accounts. */
 export function useSessionDraft<T>(
 	key: string | null,
@@ -31,7 +33,7 @@ export function useSessionDraft<T>(
 	const { session } = useRouteContext({ strict: false });
 	const generation = useRef(getAccountGeneration());
 	const [storageFailed, setStorageFailed] = useState(false);
-	const storageKey = key === null ? null : `career-draft:${session?.user.id ?? "anonymous"}:${key}`;
+	const storageKey = key === null ? null : draftKey(session?.user.id, key);
 	const storage = () => (reviewOnRestore ? localStorage : sessionStorage);
 	const read = () => {
 		if (storageKey === null) return initial;
@@ -135,13 +137,13 @@ export function useWorkspace(applicationId: string) {
 			});
 		},
 	});
-	const save = (patch: Partial<CareerWorkspace>) => {
-		if (generation.current !== getAccountGeneration()) return;
+	const save = (patch: Partial<CareerWorkspace>, expectedSnapshot?: Partial<CareerWorkspace>) => {
+		if (generation.current !== getAccountGeneration()) return Promise.resolve(false);
 		const previous = queryClient.getQueryData<CareerWorkspace>(queryKey) ?? EMPTY_WORKSPACE;
 		const defined = Object.fromEntries(Object.entries(patch).filter(([, value]) => value !== undefined));
-		const expected = Object.fromEntries(
-			Object.keys(defined).map((key) => [key, previous[key as keyof CareerWorkspace]]),
-		);
+		const expected =
+			expectedSnapshot ??
+			Object.fromEntries(Object.keys(defined).map((key) => [key, previous[key as keyof CareerWorkspace]]));
 		// Capture and publish synchronously, so another control's immediate write builds on this one.
 		void queryClient.cancelQueries({ queryKey });
 		queryClient.setQueryData(queryKey, { ...previous, ...defined });
@@ -169,6 +171,10 @@ export function useWorkspace(applicationId: string) {
 				void Promise.allSettled(pending).then(() => queryClient.invalidateQueries({ queryKey }));
 			})
 			.finally(() => pending.delete(write));
+		return write.then(
+			() => true,
+			() => false,
+		);
 	};
 	return {
 		data: query.data ?? EMPTY_WORKSPACE,

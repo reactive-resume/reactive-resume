@@ -126,16 +126,29 @@ for (const outcome of ["continue", "fail", "undo"] as const)
 		await page.getByRole("tab", { name: /Messages/ }).click();
 		await page.getByLabel("Paste a message from Hazel Co").fill("We'd like to invite you to an interview next week.");
 		await page.getByRole("button", { name: "Read it for me" }).click();
-		const reply = await hold(page, "career/applyReply");
+		const path = outcome === "undo" ? "career/undoReply" : "career/applyReply";
+		const reply = await hold(page, path);
+		const applied =
+			outcome === "undo" ? page.waitForResponse((response) => response.url().includes("/career/applyReply")) : null;
 		await page.getByRole("button", { name: "Apply 1 change" }).click({ timeout: 30_000 });
-		if (outcome === "undo") await page.getByRole("button", { name: "Undo" }).click();
+		if (applied) {
+			expect((await applied).ok()).toBe(true);
+			await page.getByRole("button", { name: "Undo", exact: true }).click();
+		}
+		await expect.poll(() => reply.held()).toBe(1);
 		await bulkMove(page, "Hazel Co", "Offer");
 		reply.release(outcome === "fail" ? "fail" : "continue");
+		// Keep the pointer outside notifications so a connection-error toast cannot pause the Undo countdown.
+		await page.mouse.move(0, 0);
 
 		await expect.poll(async () => (await read(page, id)).status, { timeout: 15_000 }).toBe("offer");
 		expect(await stages(page, id)).toEqual(
-			outcome === "continue" ? ["applied", "interview", "offer"] : ["applied", "offer"],
+			outcome === "continue"
+				? ["applied", "interview", "offer"]
+				: outcome === "undo"
+					? ["applied", "interview", "applied", "offer"]
+					: ["applied", "offer"],
 		);
-		expect(reply.held()).toBe(outcome === "undo" ? 0 : 1);
+		expect(reply.held()).toBe(1);
 		await expect(changedToast(page)).toHaveCount(0);
 	});

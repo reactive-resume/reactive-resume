@@ -94,3 +94,25 @@ export function fnv1a(text: string): number {
 	for (let index = 0; index < text.length; index++) hash = Math.imul(hash ^ text.charCodeAt(index), 0x01000193);
 	return hash >>> 0;
 }
+
+/** Sentences as written, split after `.`, `!` or `?` and at line breaks. */
+const sentencesOf = (text: string) =>
+	text
+		.split(/(?<=[.!?])\s+|\n+/)
+		.map((sentence) => sentence.trim())
+		.filter(Boolean);
+
+/**
+ * How a rewrite changes a text: words gained (negative when shorter), the original's sentences it changes or drops, and
+ * the sentences it brings in. Whole sentences, so the reader can check none of their own is lost.
+ */
+export function rewriteSummary(before: string, after: string) {
+	const words = (text: string) => text.split(/\s+/).filter(Boolean).length;
+	const was = sentencesOf(before);
+	const now = sentencesOf(after);
+	return {
+		words: words(after) - words(before),
+		removed: was.filter((sentence) => !now.includes(sentence)).length,
+		added: now.filter((sentence) => !was.includes(sentence)).length,
+	};
+}

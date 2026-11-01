@@ -25,6 +25,7 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { downloadWithAnchor, generateFilename } from "@reactive-resume/utils/file";
+import { rewriteSummary } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { DraftRecovery } from "../draft-recovery";
 import {
@@ -46,6 +47,7 @@ import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
 type Answer = CareerWorkspace["answers"][number];
+type AnswerSnapshot = Pick<Answer, "answer" | "factIds">;
 type CountUnit = "words" | "characters";
 
 const countWords = (text: string) => text.split(/\s+/).filter(Boolean).length;
@@ -108,10 +110,25 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 		? stored.answers.map((answer, index) => ({ ...answer, id: `stored-${index}`, factIds: [] }))
 		: live.filter((answer) => !removed.includes(answer.id));
 
-	const saveAnswer = (id: string, patch: Partial<Answer>) =>
-		workspace.save({
-			answers: workspace.current().answers.map((answer) => (answer.id === id ? { ...answer, ...patch } : answer)),
-		});
+	const saveAnswer = (id: string, patch: Partial<Answer>, accepted?: AnswerSnapshot) => {
+		const answers = workspace.current().answers;
+		const current = answers.find((answer) => answer.id === id);
+		if (
+			accepted &&
+			(!current ||
+				current.answer !== accepted.answer ||
+				JSON.stringify(current.factIds) !== JSON.stringify(accepted.factIds))
+		) {
+			toast.add({ description: t`The answer changed since, so it wasn't restored.` });
+			return Promise.resolve(false);
+		}
+		return workspace.save(
+			{ answers: answers.map((answer) => (answer.id === id ? { ...answer, ...patch } : answer)) },
+			accepted
+				? { answers: answers.map((answer) => (answer.id === id ? { ...answer, ...accepted } : answer)) }
+				: undefined,
+		);
+	};
 	const currentAnswers = () => shown.map((answer) => drafts.current.get(answer.id)?.() ?? answer);
 	const removeAnswer = (id: string) => {
 		setRemoved((ids) => [...ids, id]);
@@ -223,7 +240,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 										readOnly={stored !== undefined}
 										disabled={submitting}
 										registerDraft={registerDraft}
-										onSave={(patch) => saveAnswer(answer.id, patch)}
+										onSave={(patch, accepted) => saveAnswer(answer.id, patch, accepted)}
 										onRemove={() => removeAnswer(answer.id)}
 										unit={unit}
 										onToggleUnit={() => setUnit(unit === "words" ? "characters" : "words")}
@@ -273,7 +290,7 @@ type AnswerCardProps = {
 	readOnly: boolean;
 	disabled: boolean;
 	registerDraft: (id: string, read: () => Answer) => () => void;
-	onSave: (patch: Partial<Answer>) => void;
+	onSave: (patch: Partial<Answer>, accepted?: AnswerSnapshot) => Promise<boolean>;
 	onRemove: () => void;
 	unit: CountUnit;
 	onToggleUnit: () => void;
@@ -317,7 +334,24 @@ function AnswerCard({
 	const [editingQuestion, setEditingQuestion] = useState(answer.question === "");
 	// Edit question focuses the field as its menu closes; the menu would otherwise take focus back and end the edit.
 	const questionField = useRef<HTMLTextAreaElement>(null);
-	const [proposal, setProposal] = useState<{ text: string; factIds: string[] } | null>(null);
+	// A draft or tightening, with the answer it was written from: Accept saves it, and Undo restores that answer.
+	const [proposal, setProposal] = useState<{
+		text: string;
+		factIds: string[];
+		before: { text: string; factIds: string[] };
+	} | null>(null);
+	// The answer as it reads now, for a toast's Undo that runs after later renders.
+	const current = useRef({ text, factIds: answer.factIds });
+	useLayoutEffect(() => {
+		current.current = { text, factIds: answer.factIds };
+	});
+	const previousSaved = useRef(answer.answer);
+	useLayoutEffect(() => {
+		// A refetch is not a local edit to autosave. Keep only text the user changed since the last saved copy.
+		if (previousSaved.current !== answer.answer && current.current.text === previousSaved.current)
+			setText(answer.answer);
+		previousSaved.current = answer.answer;
+	}, [answer.answer, setText]);
 	const generate = useGenerate(applicationId);
 	const { provider } = useDefaultProvider();
 	const flushAnswer = useDebouncedSave(
@@ -337,8 +371,45 @@ function AnswerCard({
 	const empty = !text.trim();
 
 	const ask = async () => {
+		const before = { text, factIds: answer.factIds };
 		const result = await generate.run({ task: "answer", question: question.trim(), answer: text }).catch(() => null);
-		if (result?.answer) setProposal(result.answer);
+		if (!result?.answer) return;
+		// Written from an older copy: offering it would replace what the user typed since.
+		if (current.current.text !== before.text) {
+			toast.add({ description: t`Your answer changed while the draft was written. Draft again to use it.` });
+			return;
+		}
+		setProposal({ ...result.answer, before });
+	};
+
+	const accept = (chosen: NonNullable<typeof proposal>) => {
+		setText(chosen.text);
+		textDraft.accept();
+		const saved = onSave({ answer: chosen.text, factIds: chosen.factIds });
+		setProposal(null);
+		void saved.then(
+			(ok) =>
+				ok &&
+				toast.add({
+					description: t`Answer replaced`,
+					actionProps: {
+						children: t`Undo`,
+						onClick: async () => {
+							// Only while the answer is still the accepted one: later typing (here or on another device) stays.
+							const now = current.current;
+							if (now.text !== chosen.text) {
+								toast.add({ description: t`The answer changed since, so it wasn't restored.` });
+								return;
+							}
+							const restored = await onSave(
+								{ answer: chosen.before.text, factIds: chosen.before.factIds },
+								{ answer: chosen.text, factIds: chosen.factIds },
+							);
+							if (restored && current.current.text === chosen.text) setText(chosen.before.text);
+						},
+					},
+				}),
+		);
 	};
 
 	return (
@@ -422,6 +493,7 @@ function AnswerCard({
 			<Swap id={proposal ? "diff" : "text"}>
 				{proposal ? (
 					<div className="grid gap-2.5">
+						<ChangeSummary before={proposal.before.text} after={proposal.text} />
 						<p className="rounded-md border border-line-2 bg-raised px-3.5 py-3 text-sm leading-[22px]">
 							{diffWords(text, proposal.text).map((part, index) => (
 								<span
@@ -436,17 +508,7 @@ function AnswerCard({
 							))}
 						</p>
 						<div className="flex gap-1.5">
-							<Button
-								size="sm"
-								variant="secondary"
-								disabled={disabled}
-								onClick={() => {
-									setText(proposal.text);
-									textDraft.accept();
-									onSave({ answer: proposal.text, factIds: proposal.factIds });
-									setProposal(null);
-								}}
-							>
+							<Button size="sm" variant="secondary" disabled={disabled} onClick={() => accept(proposal)}>
 								<Icon name="check" size={16} />
 								<Trans>Accept</Trans>
 							</Button>
@@ -454,6 +516,15 @@ function AnswerCard({
 								<Trans>Skip</Trans>
 							</Button>
 						</div>
+						{proposal.factIds.length > 0 && (
+							<p className="text-xs text-ink-3">
+								{t`Uses: ${proposal.factIds
+									.map((id) => facts?.find((fact) => fact.id === id)?.text)
+									.filter(Boolean)
+									.map((value) => shortLabel(value ?? ""))
+									.join(" · ")}`}
+							</p>
+						)}
 					</div>
 				) : readOnly ? (
 					<p className="rounded-md border border-line bg-raised px-3.5 py-3 text-sm leading-[22px] whitespace-pre-wrap text-ink-2">
@@ -530,6 +601,37 @@ function AnswerCard({
 				)}
 			</div>
 		</section>
+	);
+}
+
+type ChangeSummaryProps = { before: string; after: string };
+
+/** One line above the diff: how much shorter, and which of the user's sentences go or new ones come in. */
+function ChangeSummary({ before, after }: ChangeSummaryProps) {
+	if (!before.trim()) return null;
+	const { words, removed, added } = rewriteSummary(before, after);
+	const difference = -words;
+	const parts = [
+		difference > 0
+			? plural(difference, { one: "Shorter by # word", other: "Shorter by # words" })
+			: difference < 0
+				? plural(-difference, { one: "Longer by # word", other: "Longer by # words" })
+				: t`Same length`,
+		...(removed > 0
+			? [
+					plural(removed, {
+						one: "changes or removes # of your sentences",
+						other: "changes or removes # of your sentences",
+					}),
+				]
+			: []),
+		...(added > 0 ? [plural(added, { one: "# new or reworded sentence", other: "# new or reworded sentences" })] : []),
+	];
+	return (
+		<p className={cn("text-xs", removed > 0 ? "text-warn-text" : "text-ink-3")}>
+			{parts.join(" · ")}
+			{removed > 0 && ` ${t`Check that nothing you wrote yourself is lost.`}`}
+		</p>
 	);
 }
 

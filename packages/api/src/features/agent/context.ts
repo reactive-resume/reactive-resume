@@ -298,7 +298,8 @@ export function pruneAgentModelContext(
 }
 
 /** A reply that looked up Knowledge: anything it said after the lookup may repeat those facts. */
-export const readsKnowledge = (message: UIMessage) => message.parts.some((part) => part.type === "tool-read_knowledge");
+export const readsKnowledge = (message: UIMessage) =>
+	message.parts.some((part) => ["tool-read_knowledge", "tool-search_career_knowledge"].includes(part.type));
 
 /**
  * The replies to withdraw. Once a reply looks up Knowledge, any later reply may repeat those facts from history,

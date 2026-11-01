@@ -3,23 +3,26 @@ import type { useHasAIProvider } from "@/features/ai/providers";
 import type { ReactNode } from "react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { refreshThreads } from "./chat";
-import { client } from "@/api/client";
-import { getAccountScope } from "@/auth/session";
+import { ContextChip } from "./chat-view";
+import { client, orpc } from "@/api/client";
+import { getAccountScope, useSession } from "@/auth/session";
 import { AIProviderSetupSheet } from "@/features/ai/providers";
 import { WebAccessAttention } from "@/features/ai/web-access";
+import { routes } from "@/routes";
 import { Banner, Button, Icon, ListRow, Sheet, Text, showToast, useTheme } from "@/ui";
 
 type Providers = ReturnType<typeof useHasAIProvider>;
 export type UsableProvider = Providers["usableProviders"][number];
 
 /**
- * The connection a conversation runs on: its own, or (new conversation) the one picked, else the default. A
- * conversation whose connection was switched off or removed moves to the default.
+ * The connection a conversation runs on: its own, or (new conversation) the one picked, else the account default. A
+ * conversation whose connection was switched off or removed is never swapped silently: it's `stranded` until the user
+ * picks another.
  */
 export function useConversationProvider(
 	providers: Providers,
@@ -30,9 +33,9 @@ export function useConversationProvider(
 	const queryClient = useQueryClient();
 	const [picked, setPicked] = useState<string | null>(null);
 	const usable = providers.usableProviders;
-	const provider =
-		usable.find((item) => item.id === (threadId ? summary?.aiProviderId : picked)) ??
-		(threadId ? undefined : usable[0]);
+	const own = threadId ? usable.find((item) => item.id === summary?.aiProviderId) : undefined;
+	const stranded = threadId !== null && summary !== undefined && own === undefined && !providers.isLoading;
+	const provider = threadId ? own : (usable.find((item) => item.id === picked) ?? usable[0]);
 
 	const scope = getAccountScope();
 	const choose = async (id: string) => {
@@ -46,7 +49,7 @@ export function useConversationProvider(
 		}
 	};
 
-	return { provider, label: provider?.label ?? summary?.providerLabel ?? t`your provider`, choose };
+	return { provider, stranded, label: provider?.label ?? summary?.providerLabel ?? t`your provider`, choose };
 }
 
 type ModelSheetProps = {
@@ -206,6 +209,116 @@ export function ProviderGate({
 			</Text>
 			<Button variant="link" label={t`Open AI settings`} onPress={() => router.push("/settings/ai-providers")} />
 			<AIProviderSetupSheet open={setupOpen} onClose={() => setSetupOpen(false)} />
+		</View>
+	);
+}
+
+// ---- Coach composer parts (web: coach-thread.tsx) ----
+
+/** Whether web research can run: through the web connection, or the server's own search. */
+export function useWebSearch() {
+	const session = useSession();
+	const query = useQuery({
+		...orpc.webAccess.status.queryOptions(),
+		enabled: session.status === "signed-in",
+		queryKey: [...orpc.webAccess.status.key(), session.server],
+	});
+	return {
+		canSearch: query.data?.search === true,
+		isPending: query.isPending,
+		isError: query.isError,
+		refetch: () => void query.refetch(),
+	};
+}
+
+type WebResearchChipProps = { web: ReturnType<typeof useWebSearch>; pressed: boolean; onPress: () => void };
+
+/** Without a search service the chip is a way to set one up, never a switch that claims searches go somewhere. */
+export function WebResearchChip({ web, pressed, onPress }: WebResearchChipProps) {
+	const { t } = useLingui();
+	const router = useRouter();
+	if (web.canSearch)
+		return <ContextChip icon="globe-hemisphere-west" label={t`Web research`} pressed={pressed} onPress={onPress} />;
+	if (web.isPending) return <ContextChip icon="globe-hemisphere-west" label={t`Checking web search…`} />;
+	if (web.isError)
+		return (
+			<Button variant="link" size="sm" icon="arrow-clockwise" label={t`Web research · Retry`} onPress={web.refetch} />
+		);
+	return (
+		<Button
+			variant="link"
+			size="sm"
+			icon="globe-hemisphere-west"
+			label={t`Web research · Set up`}
+			accessibilityHint={t`Connect a search service in Settings to research the web. The coach can still read public links you paste.`}
+			onPress={() => router.push(routes.settings("ai"))}
+		/>
+	);
+}
+
+/** What the coach may keep from a message, said where the user types, with the setting one tap away. */
+export function useMemoryNote(knowledge: boolean) {
+	const { t } = useLingui();
+	const router = useRouter();
+	const session = useSession();
+	const profile = useQuery({
+		...orpc.career.profile.queryOptions(),
+		enabled: session.status === "signed-in",
+		queryKey: [...orpc.career.profile.key(), session.server],
+	});
+	const mode = profile.data?.memoryMode;
+	const note = !knowledge
+		? t`With Knowledge off, nothing you write is remembered.`
+		: mode === "auto"
+			? t`The coach remembers facts you state, and tells you.`
+			: mode === "off"
+				? t`The coach doesn't remember anything you write.`
+				: mode === "ask"
+					? t`The coach asks before remembering facts you state.`
+					: "";
+	const label = mode === "auto" ? t`Memory: Automatically` : mode === "off" ? t`Memory: Never` : t`Memory: Ask first`;
+	return {
+		note,
+		chip: mode ? (
+			<Button
+				variant="link"
+				size="sm"
+				icon="brain"
+				label={label}
+				accessibilityHint={t`Opens Knowledge → Preferences, where you choose what the coach remembers.`}
+				onPress={() => router.push({ pathname: routes.career("knowledge"), params: { tab: "preferences" } })}
+			/>
+		) : null,
+	};
+}
+
+type ConnectionNoticeProps = {
+	label: string | null;
+	fallback: { id: string; label: string } | undefined;
+	onUse: (id: string) => void;
+	onChoose: () => void;
+};
+
+/** The conversation's connection was switched off or removed: say so, and let the user pick its replacement. */
+export function ConnectionNotice({ label, fallback, onUse, onChoose }: ConnectionNoticeProps) {
+	const { t } = useLingui();
+	const { colors, radius, space } = useTheme();
+	return (
+		<View
+			accessibilityRole="alert"
+			style={{ gap: space.s2, padding: space.s3, borderRadius: radius.rLg, backgroundColor: colors.warnSoft }}
+		>
+			<Text variant="callout" color="warnText">
+				{label
+					? t`${label} is off or was removed. Choose the connection this conversation uses next.`
+					: t`This conversation's connection is off or was removed. Choose the one it uses next.`}
+			</Text>
+			<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
+				{fallback ? (
+					<Button size="sm" variant="secondary" label={t`Use ${fallback.label}`} onPress={() => onUse(fallback.id)} />
+				) : null}
+				<Button size="sm" variant="ghost" label={t`Choose…`} onPress={onChoose} />
+			</View>
 		</View>
 	);
 }
