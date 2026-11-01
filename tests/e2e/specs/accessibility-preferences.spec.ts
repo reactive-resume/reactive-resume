@@ -192,8 +192,10 @@ test("control boundary contrast clears 3:1 in both themes", async ({ authPage: p
 		await expect(locate()).toBeVisible();
 		for (const dark of [false, true]) {
 			await page.evaluate((enabled) => document.documentElement.classList.toggle("dark", enabled), dark);
-			// Measure the settled theme; checkbox background/border colors transition independently.
-			await expect.poll(async () => (await ratio(locate(), track)).old).toBeLessThan(3);
+			// Border and background transition independently; measure only after both finish.
+			await locate().evaluate(async (element) => {
+				await Promise.all(element.getAnimations().map((animation) => animation.finished));
+			});
 			const contrast = await ratio(locate(), track);
 			expect(contrast.actual, `${path} dark=${dark}`).toBeGreaterThanOrEqual(3);
 			expect(contrast.old, "old decorative boundary fails this same oracle").toBeLessThan(3);
