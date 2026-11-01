@@ -14,6 +14,7 @@ const MAX_PASSAGES = 120;
 
 export const atsReviewInputSchema = z.object({
 	aiProviderId: z.string().optional(),
+	resumeId: z.string().optional(),
 	extractedText: z.string().trim().min(1).max(MAX_EXTRACTED_TEXT_CHARS),
 	findings: z
 		.array(
@@ -89,6 +90,7 @@ export const atsReviewOutputSchema = z.object({
 export type AtsReviewOutput = z.infer<typeof atsReviewOutputSchema>;
 
 type AtsReviewServiceInput = AtsReviewInput & {
+	signal?: AbortSignal | undefined;
 	provider: Parameters<typeof getModel>[0]["provider"];
 	model: string;
 	apiKey: string;
@@ -141,5 +143,11 @@ function buildUserPrompt(input: AtsReviewServiceInput): string {
 export function reviewResumeText(input: AtsReviewServiceInput): Promise<AtsReviewOutput> {
 	const model = getModel(input);
 
-	return generateJson(model, { system: atsReviewSystemPrompt, prompt: buildUserPrompt(input) }, atsReviewOutputSchema);
+	return generateJson(
+		model,
+		{ system: atsReviewSystemPrompt, prompt: buildUserPrompt(input) },
+		atsReviewOutputSchema,
+		input.signal,
+		0,
+	);
 }

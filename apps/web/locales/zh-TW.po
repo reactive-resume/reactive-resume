@@ -1139,6 +1139,10 @@ msgstr "您後來刪除的故事"
 msgid "A strong match, with one question to resolve"
 msgstr "高度契合，還有一個問題待釐清"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "A test prompt and saved API key."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "依時間分配的計畫、您的開場白、要準備的故事和要提出的問題。通話前 10 分鐘，它會變成您的檢查清單。"
@@ -1444,6 +1448,10 @@ msgstr "新增證據"
 msgid "Add experience"
 msgstr "添加經驗"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Add facts"
+msgstr ""
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Add field"
 msgstr "新增字段"
@@ -1708,6 +1716,10 @@ msgid "Against your requirements"
 msgstr "對照您的條件"
 
 #: src/features/command-palette/pages/navigation.tsx
+msgid "AI"
+msgstr ""
+
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -1742,10 +1754,15 @@ msgstr "AI 無法填寫詳細資料。職位發布被保留；手動填寫欄位
 msgid "AI edit"
 msgstr "人工智慧編輯"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
 msgstr ""
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers"
@@ -1762,6 +1779,12 @@ msgstr "在設定 ENCRYPTION_SECRET 之前，AI 提供者在此伺服器上不�
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "無法載入 AI 提供者。重新加載再試一次。"
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/documents/new-document-dialog.tsx
+msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
@@ -1826,6 +1849,14 @@ msgstr "您的所有文件、應徵紀錄、API 金鑰和公共連結都將永�
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
 msgstr "允許存取"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow scheduled sharing"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow this operation"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Almost none of your bullets carry a number."
@@ -2617,9 +2648,17 @@ msgstr "建立了六個產品團隊共用的設計系統。"
 msgid "Built from the posting, Sam’s message and your two strongest stories."
 msgstr "根據職缺公告、Sam 的訊息和您最有力的兩個故事產生。"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "內建閱讀器"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Bulgarian"
@@ -2795,6 +2834,10 @@ msgstr "僅更改部分標題和日期單詞，而不更改您的內容。"
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
 msgstr "更改它會向新地址發送確認訊息。您的用戶名是每個公共連結的一部分。"
 
+#: src/features/settings/ai/providers.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Changing your password…"
 msgstr "正在變更您的密碼…"
@@ -2950,6 +2993,14 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
+msgstr ""
+
+#: src/features/command-palette/pages/ask.tsx
+msgid "Choose a document; review your question before sending"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "選擇一個文件"
@@ -2966,6 +3017,10 @@ msgstr "請選擇與目前密碼不同的密碼。"
 msgid "Choose a PDF file."
 msgstr "請選擇 PDF 檔案。"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Choose a resume"
+msgstr ""
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "在 Write 中選擇一份與其設計相符的履歷。到那時，這封信就有了它自己的。"
@@ -2975,9 +3030,17 @@ msgstr "在 Write 中選擇一份與其設計相符的履歷。到那時，這�
 msgid "Choose a stage"
 msgstr "選擇階段"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a tested AI provider before sharing data."
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
 msgstr "請選擇 {timeZone} 時區內有效的日期和時間，或清除截止期限。"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -3006,6 +3069,10 @@ msgstr "選擇另一個文件"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "選擇顏色"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Choose how to read this file"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3305,12 +3372,6 @@ msgstr "連接人工智慧提供者"
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect an AI provider above to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "連接上面的 AI 提供者即可使用助理。保存和準備工作不需要一個。"
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/career/workspace/fit.tsx
-#: src/features/career/workspace/prepare.tsx
-msgid "Connect an AI provider in Settings"
-msgstr "在設定中連接 AI 提供者"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
@@ -3620,6 +3681,10 @@ msgstr "無法變更此排程。請再試一次。"
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "無法變更您的密碼。請檢查目前密碼後再試一次。"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -3778,6 +3843,10 @@ msgstr "無法連結該提供者帳戶。請再試一次。"
 msgid "Couldn't link the application. Try again."
 msgstr "無法連結應徵紀錄。請再試一次。"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't load AI connections. Try again before importing this file."
 msgstr "無法載入 AI 連線。請重試後再匯入此檔案。"
@@ -3798,6 +3867,10 @@ msgstr "無法載入已連結的應用程式。請重新整理頁面再試一次
 msgid "Couldn't load documents"
 msgstr "無法載入文件"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Couldn't load documents. Try again."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't load interviews. Retry"
 msgstr "無法載入面試。重試"
@@ -3809,6 +3882,10 @@ msgstr "無法載入或儲存網路存取設定。請再試一次。"
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "無法載入範例檔案。再試一次。"
+
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
@@ -4096,6 +4173,7 @@ msgid "Couldn't switch connections. Try again."
 msgstr "無法切換連線。請再試一次。"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "無法切換模型。請再試一次。"
 
@@ -4285,8 +4363,8 @@ msgid "Create a new resume"
 msgstr "建立新履歷"
 
 #: src/features/command-palette/pages/ask.tsx
-msgid "Create a resume first, then ask about it."
-msgstr "首先創建一份簡歷，然後詢問。"
+msgid "Create a resume or letter first."
+msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Create account"
@@ -4427,6 +4505,10 @@ msgstr "暗色"
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "深色主題"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -4849,6 +4931,10 @@ msgstr "沒有帳戶？<0/>"
 msgid "Don't send {0}"
 msgstr "不要發送 {0}"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Don't share"
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -5041,8 +5127,8 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "拖曳即可重新定位，上傳前可使用滑桿進行縮放。"
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
-msgstr "将文件拖放到此处或浏览。 PDF、Word、Reactive Resume 或 JSON Resume。我們填寫每個部分並標記任何我們不確定的內容。"
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Drop a PDF here or choose a file"
@@ -5103,6 +5189,10 @@ msgstr "每次發送都會以該訊息和選定的文件重新開始。之前的
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -5391,10 +5481,6 @@ msgstr "請輸入有效的電子郵件地址。"
 msgid "Enter a web address, like example.com"
 msgstr "輸入網址，例如範例.com"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "輸入您的終端支援的任何型號 ID。"
-
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "請輸入其中一組已儲存的備份代碼以存取您的帳戶。"
@@ -5407,6 +5493,10 @@ msgstr "自行輸入條件。系統不會向 AI 發出請求。未知的金額�
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter the 6-digit code."
 msgstr "請輸入 6 位數驗證碼。"
+
+#: src/features/settings/ai/test-error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
@@ -5645,8 +5735,8 @@ msgid "Feedback"
 msgstr "回饋"
 
 #: src/features/career/workspace/practise.tsx
-msgid "Feedback needs an AI connection. <0>Add one in Settings</0>. Nothing is sent until you ask."
-msgstr "回饋需要 AI 連線。<0>在設定中新增</0>。在您提出要求之前，不會傳送任何內容。"
+msgid "Feedback needs an AI connection. <0/>. Nothing is sent until you ask."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -5695,8 +5785,8 @@ msgid "Fill fields"
 msgstr "填入欄位"
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Fill in the role and company. Connect an AI provider in Settings to read them from the posting."
-msgstr "填寫職位和公司。在「設定」中連接 AI 提供者，即可從職缺公告中讀取這些資訊。"
+msgid "Fill in the role and company, or use Set up AI to read them from the posting."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Fill in the role and company. The posting is saved with the application."
@@ -5730,6 +5820,10 @@ msgstr "尋找職缺"
 msgid "Find weak bullets"
 msgstr "尋找弱清單條目"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "查找部分"
@@ -5761,6 +5855,10 @@ msgstr "契合度"
 #: src/features/career/workspace/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "職位契合度檢查、準備簡報、面試練習回饋、面試後回顧、表單回答、訊息回覆和錄取通知，都會在您儲存後顯示在這裡。"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Fit page to width"
@@ -5944,12 +6042,17 @@ msgid "Found for “{0}”. Posting checked {1}."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/libs/orpc/ai-consent.ts
 msgid "Found posting links are read by Reactive Resume and the sites being read."
 msgstr ""
 
 #. placeholder {0}: webAccess.provider
 #: src/features/career/schedule-sheet.tsx
 msgid "Found posting links are read by Reactive Resume and, when needed, {0} and the sites being read. The reader may charge."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -6817,10 +6920,14 @@ msgstr "斜體"
 msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
 msgstr "此階段中的應徵紀錄將移至您選擇的階段。歷史紀錄會保留「{label}」這個名稱。"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Its connection is unavailable. Choose and approve a connection before enabling this schedule."
+msgstr ""
+
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
-msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
-msgstr "它的連線已關閉或移除，因此在您選擇其他連線之前，它將使用 {0} 執行。"
+#~ msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
+#~ msgstr "它的連線已關閉或移除，因此在您選擇其他連線之前，它將使用 {0} 執行。"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
@@ -7555,6 +7662,10 @@ msgstr "正在載入連結..."
 msgid "Loading conversations…"
 msgstr "正在加載對話..."
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Loading documents…"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Loading interviews…"
 msgstr "正在載入面試…"
@@ -7567,10 +7678,6 @@ msgstr "傳送前正在載入知識庫…"
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "正在載入連結的文件…"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "正在載入模型建議...您也可以輸入任何模型 ID。"
 
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
@@ -7874,6 +7981,10 @@ msgstr "中等的"
 msgid "Mentor other designers"
 msgstr "指導其他設計師"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Message saved with this application"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Message the assistant"
 msgstr "給助理留言"
@@ -7928,10 +8039,6 @@ msgstr "模型"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "{label} 的模型"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "模型建議不可用。您仍然可以輸入任何型號 ID。"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Model: {label}"
@@ -8193,6 +8300,7 @@ msgid "narrow margins"
 msgstr "利潤微薄"
 
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "需要注意"
 
@@ -8340,6 +8448,10 @@ msgstr "沒有有效的工作申請。"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -8560,10 +8672,6 @@ msgstr "無法從該職缺描述中擷取出具體的關鍵詞，它可能大多
 #: src/features/career/knowledge/stories.tsx
 msgid "No stories yet"
 msgstr "尚無故事"
-
-#: src/features/settings/ai/providers.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "沒有對此提供者的建議。輸入任意型號 ID。"
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -9004,6 +9112,18 @@ msgstr "一次只會匯入前 {MAX_IMPORT} 列，其餘 {overflow} 列不會匯�
 msgid "Only the first pages were checked."
 msgstr "只檢查了前幾頁。"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "這些只有你能看到"
@@ -9011,6 +9131,10 @@ msgstr "這些只有你能看到"
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "只有你，直到你分享為止。簡歷可以保持私密、透過公共連結發布或使用密碼保護，並且您可以隨時更改。刪除您的帳戶會同時刪除您的履歷。"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Onsite"
@@ -9026,11 +9150,6 @@ msgstr "開啟"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Open {title}"
 msgstr "開啟{title}"
-
-#: src/features/resume/editor/check/writing-tab.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Open AI settings"
-msgstr "開啟AI設定"
 
 #: src/features/career/today.tsx
 msgid "Open briefing"
@@ -9196,6 +9315,10 @@ msgstr "橘色"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
 msgstr "組織"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -9408,6 +9531,10 @@ msgstr "貼上電子郵件或訊息，不含簽名。"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "請在此貼上完整的職缺描述…"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
@@ -9937,6 +10064,10 @@ msgstr "由您的伺服器提供：{connectedProvider}。"
 msgid "Provider"
 msgstr "服務提供者"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Provider retention follows its own policy. Your provider may charge for this request."
+msgstr ""
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -10117,6 +10248,10 @@ msgstr "閱讀簡報"
 msgid "Read it for me"
 msgstr "幫我讀一下"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Read on this device (free)"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
 msgstr "唯讀"
@@ -10159,6 +10294,7 @@ msgid "Read the self-hosting guide"
 msgstr "閱讀自架指南"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Read with AI"
 msgstr ""
 
@@ -10236,6 +10372,12 @@ msgstr "閱讀文字"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "正在閱讀您分享的內容"
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading with AI sends this posting to {0} · {1}. Public links also go to the reader and the site being read. You can fill details manually."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
@@ -10825,6 +10967,10 @@ msgstr "履歷製作"
 msgid "Resume builder"
 msgstr "履歷製作者"
 
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "履歷內容"
@@ -10854,6 +11000,10 @@ msgstr "提交簡歷（可選）"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/career/workspace/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -10887,6 +11037,7 @@ msgstr "檢索到 {0}。除非報告，否則原產地新鮮度未知。"
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/workspace/answer-library.tsx
+#: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -10994,13 +11145,18 @@ msgstr ""
 msgid "Review writing"
 msgstr "評論寫作"
 
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Reviewed {0}"
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
-msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
-msgstr "評論需要 AI 連線。<0>在設定中新增</0>。在此之前，您在這裡寫的內容會保留在此瀏覽器中。"
+msgid "Reviewing needs an AI connection. <0/>. What you write here stays in this browser until then."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke"
@@ -11222,6 +11378,10 @@ msgstr "儲存面試"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "保存工作"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Save message without AI"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Save name"
@@ -11689,18 +11849,29 @@ msgstr "正在傳送重設密碼電子郵件…"
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
 msgstr "將這筆應徵（職缺公告、備註、面試詳細資料）和已開啟的知識庫內容傳送給 {label}。"
 
 #. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
 #: src/features/career/workspace/fit.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0}."
-msgstr "將這筆應徵的職缺公告、備註和文件，以及已開啟的知識庫內容傳送給 {0}。"
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0} · {1}."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it."
-msgstr "將這筆應徵的職缺公告、備註和文件，以及已開啟的知識庫內容傳送到此連線。您的提供者可能會收費。"
+#~ msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it."
+#~ msgstr "將這筆應徵的職缺公告、備註和文件，以及已開啟的知識庫內容傳送到此連線。您的提供者可能會收費。"
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
@@ -11709,6 +11880,12 @@ msgstr "只有當您按下傳送鍵時，才會使用您的金鑰將這封信和
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter to {provider} with your key, only when you press send."
 msgstr "只有當您按下傳送鍵時，才用您的金鑰將此信傳送至 {provider}。"
+
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
@@ -11780,13 +11957,25 @@ msgstr "設定密碼"
 msgid "Set the document language when exporting."
 msgstr "匯出時設定文件語言。"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "設定職缺探索"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings"
 msgstr "在設定中設定網路搜尋"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
@@ -11824,6 +12013,11 @@ msgstr "分享"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "分享公開連結、設定密碼或保持私密。從 3 種可見性選項中選擇。匯出為 PDF 或 Word，或以 JSON 格式帶走全部資料。"
+
+#. placeholder {0}: provider.label
+#: src/libs/orpc/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -12609,10 +12803,6 @@ msgstr "從來源和工作中建議。隨時更改。"
 msgid "Suggested reply · edit before sending"
 msgstr "建議回覆 · 傳送前請編輯"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Suggestions from <0>models.dev</0>. You can also enter any model ID."
-msgstr "來自 <0>models.dev</0> 的建議。你也可以輸入任何模型 ID。"
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "建議剪切，切勿自行刪除"
@@ -13001,6 +13191,10 @@ msgstr "無法產生 {label} 檔案。再試一次，或下載 PDF。"
 msgid "The 13-point activation lift. Knowledge has the before and after."
 msgstr "啟用率提升了 13 個百分點。知識庫裡有前後數據。"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The account changed. Try again."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "網址只能包含小寫字母和數字，並以單連字號分隔。"
@@ -13020,10 +13214,6 @@ msgstr "這封信所針對的工作申請。"
 #: src/features/assistant/assistant-panel.tsx
 msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
 msgstr "此伺服器上未設定助手。誰運行它就需要設定ENCRYPTION_SECRET。沒有它，其他一切都可以工作。"
-
-#: src/features/assistant/provider-setup.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "助手使用您自己的密鑰。在您連接之前，不會向任何地方發送任何內容。"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The built-in reader remains active."
@@ -13053,6 +13243,18 @@ msgstr "教練只會在這筆應徵中閱讀這些內容。"
 msgid "The coach saves facts you state, and tells you. You can undo."
 msgstr "教練會儲存您陳述的事實，並告訴您。您可以撤銷。"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The complete PDF file."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "該副本連結到職位申請，因此 Check 和助理可以使用其職位發布。"
@@ -13081,6 +13283,10 @@ msgstr "問候語跟在名字之後。"
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "密鑰在伺服器上加密並且不會再次顯示。儲存測試連線。"
 
+#: src/features/settings/ai/test-error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "這封信原樣"
@@ -13104,6 +13310,10 @@ msgstr "自您提出要求以來，線路發生了變化，因此沒有被替換
 #: src/features/career/workspace/saved.tsx
 msgid "the message"
 msgstr "該訊息"
+
+#: src/features/settings/ai/test-error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The morning of the interview has passed, so the briefing runs now."
@@ -13153,9 +13363,9 @@ msgstr "無法閱讀招募資訊。填寫角色和公司。"
 msgid "The posting saved with this application."
 msgstr "職位發布與此職位申請一起保存。"
 
-#: src/features/assistant/provider-setup.tsx
-msgid "The provider didn't answer. Check the key and the model."
-msgstr "提供者沒有回答。檢查鑰匙和型號。"
+#: src/libs/orpc/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
@@ -13165,9 +13375,17 @@ msgstr "提供者沒有回答。檢查鑰匙、型號和底座URL。"
 msgid "The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method."
 msgstr "提供者未提供必要的電子郵件地址。請在提供者詢問時允許存取電子郵件，或使用其他登入方式。"
 
+#: src/features/settings/ai/test-error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "The provider rejected this sign-in attempt. Try again."
 msgstr "提供者拒絕了這次登入嘗試。請再試一次。"
+
+#: src/features/settings/ai/test-error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The provider returned a review that couldn't be read. Try again."
@@ -13235,6 +13453,18 @@ msgstr ""
 msgid "The selected documents will be deleted for good and can't be restored."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected line, surrounding field text, and your rewrite instructions."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected resume and this letter's recipient and posting information."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
 msgstr "服務沒有及時回應。請再試一次。"
@@ -13262,6 +13492,10 @@ msgstr "擷取出的文字無法閱讀。"
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "第一頁頂部的內容看起來不像是姓名。"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The Word document's text."
+msgstr ""
 
 #. Menu item that opens appearance theme selection submenu
 #: src/features/command-palette/pages/navigation.tsx
@@ -13323,6 +13557,10 @@ msgstr "正在思考"
 msgid "Thinking…"
 msgstr "思維…"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This allows recurring processing until you turn the schedule off."
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "This application"
 msgstr ""
@@ -13340,8 +13578,8 @@ msgid "This browser can't record here. Choose an audio file, or type your answer
 msgstr "此瀏覽器無法在這裡錄音。請選擇音訊檔案，或輸入您的回答。"
 
 #: src/features/career/workspace/practise.tsx
-msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
-msgstr "此瀏覽器不支援聽寫，且您的 AI 連線都無法轉錄語音（OpenAI、Google Gemini、Mistral、xAI、Groq 或 Vercel AI Gateway 可以）。<0>在設定中新增一個</0>，或輸入您的回答。"
+msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
@@ -13355,6 +13593,11 @@ msgstr "該對話無法開啟。"
 #: src/features/career/coach-thread.tsx
 msgid "This conversation couldn't be opened. Refresh the page to try again."
 msgstr "無法開啟該對話。請重新整理頁面再試一次。"
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/career/coach.tsx
+msgid "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
@@ -13551,6 +13794,10 @@ msgstr "無法載入此已儲存版本。"
 #: src/features/career/workspace/shell.tsx
 msgid "This saved version is no longer available."
 msgstr "此已儲存版本已無法使用。"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
@@ -14068,6 +14315,10 @@ msgstr "更新履歷"
 msgid "Update this application's details."
 msgstr "更新此應徵紀錄的詳細資料。"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/components/list-view.tsx
 msgid "Updated"
 msgstr "已更新"
@@ -14245,6 +14496,10 @@ msgstr "使用標準標題"
 msgid "Use these answers"
 msgstr "使用這些回答"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Use this destination"
+msgstr ""
+
 #: src/features/settings/preferences.tsx
 msgid "Use this device's timezone ({device})"
 msgstr "使用此裝置的時區（{device}）"
@@ -14252,6 +14507,14 @@ msgstr "使用此裝置的時區（{device}）"
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "使用該提供者"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
@@ -14504,9 +14767,15 @@ msgstr "我們已向 {currentEmail} 傳送連結以核准此變更。然後請�
 msgid "We sent a new verification link to {0}."
 msgstr "我們向 {0} 發送了新的驗證連結。"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "網路存取"
+
+#. placeholder {0}: access?.searxng ? t`your server's search service` : (access?.provider ?? t`built-in reader`)
+#: src/libs/orpc/ai-consent.ts
+msgid "Web destination: {0}."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Web page"
@@ -14799,6 +15068,10 @@ msgstr "一季內，啟用率從 31% 提升到 44%。"
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "如果沒有，您需要自己填寫收件人，並且在起草時僅使用您的履歷。"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
 msgstr "文字擷取出來後，單字會連在一起。"
@@ -15079,6 +15352,10 @@ msgstr "您的 AI 連線"
 msgid "Your AI connection"
 msgstr "您的 AI 連線"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your AI settings changed. Nothing was sent; try again."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Your answer"
 msgstr "您的回答"
@@ -15287,6 +15564,10 @@ msgstr "您的提供者"
 msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
 msgstr "您的錄音會傳送給 {0} 進行轉錄，可能會使用該帳戶的 token。"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "Your requirements"
 msgstr "您的條件"
@@ -15311,6 +15592,10 @@ msgstr "已複製您的履歷。"
 msgid "Your resume has been updated."
 msgstr "已更新您的履歷。"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your resume text, selected passages, and check findings."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "您的履歷使用了「我」和「我的」這類詞。"
@@ -15319,6 +15604,14 @@ msgstr "您的履歷使用了「我」和「我的」這類詞。"
 msgid "Your resume, live at"
 msgstr "您的履歷，居住地址"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Your saved AI connections need attention. Test or edit them below. History and saved proposals remain available."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your search terms. These also go to the configured search service."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
 msgstr "您選擇的字體無法顯示部分字元，它們會顯示為“?”。請在「設計」中選擇包含這些字元的字體。"
@@ -15326,6 +15619,10 @@ msgstr "您選擇的字體無法顯示部分字元，它們會顯示為“?”�
 #: src/features/settings/ai/web-access.tsx
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "您的伺服器在 應徵紀錄 部分和助手中提供網路搜尋。連接服務以讀取內建閱讀器無法讀取的網頁。"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "your server's search service"
+msgstr ""
 
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
@@ -15363,6 +15660,10 @@ msgstr "兩分鐘自我介紹"
 #: src/features/resume/share/share-panel.tsx
 msgid "Your web page is live"
 msgstr "您的網頁已上線"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your web settings changed. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Your wording"

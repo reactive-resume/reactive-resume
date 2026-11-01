@@ -17,7 +17,7 @@ export function useHasAIProvider() {
 	return {
 		providers,
 		usableProviders,
-		// The server orders explicit default first, then most recently used runnable fallback.
+		// The server orders explicit default first, then stable oldest runnable fallback.
 		defaultProvider: usableProviders[0] ?? null,
 		hasAIProvider: usableProviders.length > 0,
 		isLoading: session.status === "signed-in" && query.isPending,

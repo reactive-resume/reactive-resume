@@ -11,6 +11,7 @@ import { abortable } from "@reactive-resume/utils/url-security.node";
 import { createRateLimiter } from "../../redis";
 import { assertPublicTarget, htmlToText, readBuiltinPage } from "./builtin";
 import { MAX_SEARCH_QUERY_CHARS, MAX_SEARCH_RESULTS, WEB_ACCESS_DEADLINE_MS, WebAccessError } from "./contracts";
+import { webAccessService } from "./credentials";
 import { readExa, searchExa } from "./exa";
 import { readFirecrawl, searchFirecrawl } from "./firecrawl";
 import { searchSearxng } from "./searxng";
@@ -143,6 +144,17 @@ export async function searchWeb(query: string, context: WebAccessContext, queryF
 		log("search", provider, started, "success", partial);
 		return results;
 	} catch (error) {
+		if (
+			!signal.aborted &&
+			provider !== "searxng" &&
+			error instanceof WebAccessError &&
+			(error.reason === "auth" || error.reason === "quota")
+		) {
+			const result = { success: false, error: error.reason };
+			await webAccessService
+				.recordTest(context.userId, context.connection, { search: result, read: result })
+				.catch(() => undefined);
+		}
 		log(
 			"search",
 			provider,
@@ -188,6 +200,12 @@ export async function readPage(input: string, context: WebAccessContext): Promis
 				const failure = safeFailure(error, externalSignal);
 				if (failure.reason === "unsafe-url") throw failure;
 				fallback = failure.reason;
+				if (failure.reason === "auth" || failure.reason === "quota") {
+					const result = { success: false, error: failure.reason };
+					await webAccessService
+						.recordTest(context.userId, context.connection, { search: result, read: result })
+						.catch(() => undefined);
+				}
 			}
 		}
 		const page = await readBuiltinPage(url.toString(), signal);

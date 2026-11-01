@@ -133,15 +133,15 @@ function fileToBase64(file: File): Promise<string> {
 }
 
 /**
- * Reads a resume from a file. PDFs go to the AI provider when one is set up and are read in the browser
- * otherwise; Word needs a provider; LinkedIn exports and JSON never leave the browser. `onRead` reports the
+ * Reads a resume from a file. PDFs use the explicitly chosen AI or browser reader; Word needs a provider; LinkedIn exports and JSON never leave the browser. `onRead` reports the
  * end of the first step (the file's text is in hand) with a short note.
  */
 export async function readResumeFile(
 	file: File,
 	kind: Exclude<ImportKind, "cover-letter-json">,
-	options: { aiAvailable: boolean; onRead?: (note: string) => void },
+	options: { aiAvailable: boolean; signal?: AbortSignal; onRead?: (note: string) => void },
 ): Promise<ResumeData> {
+	options.signal?.throwIfAborted();
 	if (kind === "reactive-resume-json" || kind === "reactive-resume-v4-json" || kind === "json-resume-json") {
 		const text = await file.text();
 		options.onRead?.(t`JSON read`);
@@ -167,13 +167,19 @@ export async function readResumeFile(
 			file.type === "application/msword"
 				? ("application/msword" as const)
 				: ("application/vnd.openxmlformats-officedocument.wordprocessingml.document" as const);
-		return client.ai.parseDocx({ mediaType, file: { name: file.name, data: base64 } });
+		return client.ai.parseDocx(
+			{ mediaType, file: { name: file.name, data: base64 } },
+			options.signal ? { signal: options.signal } : {},
+		);
 	}
 
 	if (options.aiAvailable) {
 		const base64 = await fileToBase64(file);
 		options.onRead?.(t`file read`);
-		return client.ai.parsePdf({ file: { name: file.name, data: base64 } });
+		return client.ai.parsePdf(
+			{ file: { name: file.name, data: base64 } },
+			options.signal ? { signal: options.signal } : {},
+		);
 	}
 
 	const { readPdfResume } = await import("./pdf-text");

@@ -1139,6 +1139,10 @@ msgstr "이후에 삭제한 스토리"
 msgid "A strong match, with one question to resolve"
 msgstr "높은 적합도, 확인할 질문 하나"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "A test prompt and saved API key."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "시간별 계획, 오프닝, 가져갈 스토리와 물어볼 질문. 통화 10분 전에는 체크리스트가 됩니다."
@@ -1444,6 +1448,10 @@ msgstr "근거 추가"
 msgid "Add experience"
 msgstr "경험 추가"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Add facts"
+msgstr ""
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Add field"
 msgstr "필드 추가"
@@ -1708,6 +1716,10 @@ msgid "Against your requirements"
 msgstr "내 요건과 비교"
 
 #: src/features/command-palette/pages/navigation.tsx
+msgid "AI"
+msgstr ""
+
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -1742,10 +1754,15 @@ msgstr "AI는 세부 사항을 채울 수 없습니다. 채용 공고는 유지�
 msgid "AI edit"
 msgstr "AI 편집"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
 msgstr ""
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers"
@@ -1762,6 +1779,12 @@ msgstr "ENCRYPTION_SECRET가 설정될 때까지 이 서버에서 AI 공급자�
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI 제공자를 로드할 수 없습니다. 다시 시도하려면 새로고침하세요."
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/documents/new-document-dialog.tsx
+msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
@@ -1826,6 +1849,14 @@ msgstr "모든 서류, 입사 지원 내역, API 키 및 공개 링크가 영구
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
 msgstr "액세스 허용"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow scheduled sharing"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow this operation"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Almost none of your bullets carry a number."
@@ -2617,9 +2648,17 @@ msgstr "6개 제품 팀이 사용하는 공용 디자인 시스템을 구축했�
 msgid "Built from the posting, Sam’s message and your two strongest stories."
 msgstr "채용 공고, Sam의 메시지, 가장 강력한 스토리 두 개를 바탕으로 만들었습니다."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "내장 리더"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Bulgarian"
@@ -2795,6 +2834,10 @@ msgstr "콘텐츠가 아닌 섹션 제목과 날짜 단어만 변경합니다."
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
 msgstr "이를 변경하면 새 주소로 확인 메시지가 전송됩니다. 귀하의 사용자 이름은 모든 공개 링크의 일부입니다."
 
+#: src/features/settings/ai/providers.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Changing your password…"
 msgstr "비밀번호를 변경하는 중…"
@@ -2950,6 +2993,14 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
+msgstr ""
+
+#: src/features/command-palette/pages/ask.tsx
+msgid "Choose a document; review your question before sending"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "파일을 선택하세요"
@@ -2966,6 +3017,10 @@ msgstr "현재 비밀번호와 다른 비밀번호를 선택하세요."
 msgid "Choose a PDF file."
 msgstr "PDF 파일을 선택하세요."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Choose a resume"
+msgstr ""
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "디자인에 어울리는 이력서를 Write에서 선택하세요. 그때까지는 편지 자체가 있습니다."
@@ -2975,9 +3030,17 @@ msgstr "디자인에 어울리는 이력서를 Write에서 선택하세요. 그�
 msgid "Choose a stage"
 msgstr "단계 선택"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a tested AI provider before sharing data."
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
 msgstr "{timeZone} 시간대에서 유효한 날짜와 시간을 선택하거나 마감일 필드를 비우세요."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -3006,6 +3069,10 @@ msgstr "다른 파일을 선택하세요"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "색상을 선택하세요"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Choose how to read this file"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3305,12 +3372,6 @@ msgstr "AI 공급자 연결"
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect an AI provider above to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "어시스턴트를 사용하려면 위의 AI 공급자를 연결하세요. 작업을 저장하고 준비하는 데는 필요하지 않습니다."
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/career/workspace/fit.tsx
-#: src/features/career/workspace/prepare.tsx
-msgid "Connect an AI provider in Settings"
-msgstr "설정에서 AI 제공업체 연결"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
@@ -3620,6 +3681,10 @@ msgstr "이 일정을 변경할 수 없습니다. 다시 시도해 보세요."
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "비밀번호를 변경할 수 없습니다. 현재 비밀번호를 확인하고 다시 시도해 보세요."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -3778,6 +3843,10 @@ msgstr "해당 제공자 계정을 연결할 수 없습니다. 다시 시도해 
 msgid "Couldn't link the application. Try again."
 msgstr "지원을 연결할 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't load AI connections. Try again before importing this file."
 msgstr "AI 연결을 불러올 수 없습니다. 이 파일을 가져오기 전에 다시 시도하세요."
@@ -3798,6 +3867,10 @@ msgstr "연결된 애플리케이션을 불러올 수 없습니다. 페이지를
 msgid "Couldn't load documents"
 msgstr "문서를 로드할 수 없습니다."
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Couldn't load documents. Try again."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't load interviews. Retry"
 msgstr "면접을 불러올 수 없습니다. 다시 시도"
@@ -3809,6 +3882,10 @@ msgstr "웹 접속 설정을 불러오거나 저장할 수 없습니다. 다시 
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "샘플 파일을 로드할 수 없습니다. 다시 시도해 보세요."
+
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
@@ -4096,6 +4173,7 @@ msgid "Couldn't switch connections. Try again."
 msgstr "연결을 전환할 수 없습니다. 다시 시도해 보세요."
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "모델을 전환할 수 없습니다. 다시 시도해 보세요."
 
@@ -4285,8 +4363,8 @@ msgid "Create a new resume"
 msgstr "새 이력서 만들기"
 
 #: src/features/command-palette/pages/ask.tsx
-msgid "Create a resume first, then ask about it."
-msgstr "먼저 이력서를 작성한 다음 그것에 대해 물어보십시오."
+msgid "Create a resume or letter first."
+msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Create account"
@@ -4427,6 +4505,10 @@ msgstr "다크"
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "다크 테마"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -4849,6 +4931,10 @@ msgstr "계정이 없으신가요? <0/>"
 msgid "Don't send {0}"
 msgstr "{0}를 보내지 마세요"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Don't share"
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -5041,8 +5127,8 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "업로드하기 전에 드래그하여 위치를 조정하고 슬라이더를 사용하여 확대/축소하세요."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
-msgstr "여기에 파일을 놓거나 찾아보세요. PDF, Word, Reactive Resume 또는 JSON Resume. 우리는 모든 섹션을 작성하고 확실하지 않은 부분에 플래그를 지정합니다."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Drop a PDF here or choose a file"
@@ -5103,6 +5189,10 @@ msgstr "각 전송은 이 메시지와 선택한 파일로 새로 시작됩니�
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -5391,10 +5481,6 @@ msgstr "유효한 이메일 주소를 입력하세요."
 msgid "Enter a web address, like example.com"
 msgstr "example.com와 같은 웹 주소를 입력하세요."
 
-#: src/features/settings/ai/providers.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "엔드포인트에서 지원하는 모델 ID를 입력하세요."
-
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "저장해 둔 백업 코드 중 하나를 입력하여 계정에 접근하세요."
@@ -5407,6 +5493,10 @@ msgstr "조건을 직접 입력하세요. AI 요청은 전송되지 않습니다
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter the 6-digit code."
 msgstr "6자리 코드를 입력하세요."
+
+#: src/features/settings/ai/test-error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
@@ -5645,8 +5735,8 @@ msgid "Feedback"
 msgstr "피드백"
 
 #: src/features/career/workspace/practise.tsx
-msgid "Feedback needs an AI connection. <0>Add one in Settings</0>. Nothing is sent until you ask."
-msgstr "피드백에는 AI 연결이 필요합니다. <0>설정에서 추가하세요</0>. 요청하기 전에는 아무것도 전송되지 않습니다."
+msgid "Feedback needs an AI connection. <0/>. Nothing is sent until you ask."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -5695,8 +5785,8 @@ msgid "Fill fields"
 msgstr "항목 채우기"
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Fill in the role and company. Connect an AI provider in Settings to read them from the posting."
-msgstr "직무와 회사를 입력하세요. 설정에서 AI 제공자를 연결하면 채용 공고에서 읽어 올 수 있습니다."
+msgid "Fill in the role and company, or use Set up AI to read them from the posting."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Fill in the role and company. The posting is saved with the application."
@@ -5730,6 +5820,10 @@ msgstr "직무 찾기"
 msgid "Find weak bullets"
 msgstr "약한 목록 항목 찾기"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "섹션 찾기"
@@ -5761,6 +5855,10 @@ msgstr "적합도"
 #: src/features/career/workspace/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "직무 적합도 확인, 브리핑, 연습 피드백, 면접 회고, 지원서 답변, 답장 초안, 채용 오퍼를 저장하면 여기에 모입니다."
+
+#: src/features/career/workspace/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Fit page to width"
@@ -5944,12 +6042,17 @@ msgid "Found for “{0}”. Posting checked {1}."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/libs/orpc/ai-consent.ts
 msgid "Found posting links are read by Reactive Resume and the sites being read."
 msgstr ""
 
 #. placeholder {0}: webAccess.provider
 #: src/features/career/schedule-sheet.tsx
 msgid "Found posting links are read by Reactive Resume and, when needed, {0} and the sites being read. The reader may charge."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -6817,10 +6920,14 @@ msgstr "기울임"
 msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
 msgstr "해당 지원서는 선택한 단계로 이동합니다. 기록에는 “{label}” 이름이 유지됩니다."
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Its connection is unavailable. Choose and approve a connection before enabling this schedule."
+msgstr ""
+
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
-msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
-msgstr "연결이 꺼졌거나 제거되어, 다른 연결을 선택할 때까지 {0}에서 실행됩니다."
+#~ msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
+#~ msgstr "연결이 꺼졌거나 제거되어, 다른 연결을 선택할 때까지 {0}에서 실행됩니다."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
@@ -7555,6 +7662,10 @@ msgstr "연결 로드 중..."
 msgid "Loading conversations…"
 msgstr "대화 로드 중…"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Loading documents…"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Loading interviews…"
 msgstr "면접 불러오는 중…"
@@ -7567,10 +7678,6 @@ msgstr "보내기 전에 지식 불러오는 중…"
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "연결된 문서 불러오는 중…"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "모델 제안 로드 중... 어떤 모델 ID든 입력할 수도 있습니다."
 
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
@@ -7874,6 +7981,10 @@ msgstr "중간"
 msgid "Mentor other designers"
 msgstr "다른 디자이너 멘토링"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Message saved with this application"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Message the assistant"
 msgstr "어시스턴트에게 메시지 보내기"
@@ -7928,10 +8039,6 @@ msgstr "모델"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "{label} 모델"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "모델 제안을 사용할 수 없습니다. 어떤 모델 ID든 입력할 수 있습니다."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Model: {label}"
@@ -8193,6 +8300,7 @@ msgid "narrow margins"
 msgstr "좁은 여백"
 
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "주의가 필요함"
 
@@ -8340,6 +8448,10 @@ msgstr "활성 입사 지원서가 없습니다."
 
 #: src/features/career/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -8560,10 +8672,6 @@ msgstr "해당 채용 공고에서 구체적인 용어를 추출할 수 없어 �
 #: src/features/career/knowledge/stories.tsx
 msgid "No stories yet"
 msgstr "아직 스토리가 없습니다"
-
-#: src/features/settings/ai/providers.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "이 제공업체에 대한 제안이 없습니다. 모델 ID를 입력하세요."
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -9004,6 +9112,18 @@ msgstr "한 번에 처음 {MAX_IMPORT}개 행만 가져오며 {overflow}개는 �
 msgid "Only the first pages were checked."
 msgstr "처음 몇 페이지만 점검했습니다."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "이 내용은 나만 볼 수 있습니다."
@@ -9011,6 +9131,10 @@ msgstr "이 내용은 나만 볼 수 있습니다."
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "공유하기 전까지는 오직 당신뿐입니다. 이력서는 비공개로 유지되거나 공개 링크에 게시되거나 비밀번호로 보호될 수 있으며 언제든지 변경할 수 있습니다. 계정을 삭제하면 해당 계정에 포함된 이력서도 삭제됩니다."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Onsite"
@@ -9026,11 +9150,6 @@ msgstr "열기"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Open {title}"
 msgstr "{title} 열기"
-
-#: src/features/resume/editor/check/writing-tab.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Open AI settings"
-msgstr "AI 설정 열기"
 
 #: src/features/career/today.tsx
 msgid "Open briefing"
@@ -9196,6 +9315,10 @@ msgstr "주황색"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
 msgstr "기관"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -9408,6 +9531,10 @@ msgstr "서명을 제외하고 이메일이나 메시지를 붙여넣으세요."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "전체 직무 설명을 여기에 붙여넣으세요…"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
@@ -9937,6 +10064,10 @@ msgstr "서버에서 제공: {connectedProvider}."
 msgid "Provider"
 msgstr "제공자"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Provider retention follows its own policy. Your provider may charge for this request."
+msgstr ""
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -10117,6 +10248,10 @@ msgstr "브리핑 읽기"
 msgid "Read it for me"
 msgstr "대신 읽어 주세요"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Read on this device (free)"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
 msgstr "읽기 전용 액세스"
@@ -10159,6 +10294,7 @@ msgid "Read the self-hosting guide"
 msgstr "셀프 호스팅 가이드 읽기"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Read with AI"
 msgstr ""
 
@@ -10236,6 +10372,12 @@ msgstr "텍스트 읽기"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "공유한 내용 읽는 중"
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading with AI sends this posting to {0} · {1}. Public links also go to the reader and the site being read. You can fill details manually."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
@@ -10825,6 +10967,10 @@ msgstr "이력서 작성"
 msgid "Resume builder"
 msgstr "이력서 작성기"
 
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "이력서 내용"
@@ -10854,6 +11000,10 @@ msgstr "이력서 제출(선택)"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/career/workspace/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -10887,6 +11037,7 @@ msgstr "{0}를 검색했습니다. 보고되지 않는 한 원산지 신선도�
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/workspace/answer-library.tsx
+#: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -10994,13 +11145,18 @@ msgstr ""
 msgid "Review writing"
 msgstr "리뷰 작성"
 
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Reviewed {0}"
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
-msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
-msgstr "검토에는 AI 연결이 필요합니다. <0>설정에서 추가하세요</0>. 그때까지 여기에 쓴 내용은 이 브라우저에만 남습니다."
+msgid "Reviewing needs an AI connection. <0/>. What you write here stays in this browser until then."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke"
@@ -11222,6 +11378,10 @@ msgstr "면접 저장"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "직업 저장"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Save message without AI"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Save name"
@@ -11689,18 +11849,29 @@ msgstr "비밀번호 재설정 이메일을 보내는 중입니다..."
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
 msgstr "이 지원 내역(채용 공고, 노트, 면접 세부 정보)과 켜 둔 지식을 {label}에 전송합니다."
 
 #. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
 #: src/features/career/workspace/fit.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0}."
-msgstr "이 지원 건의 채용 공고, 노트, 문서와 켜 둔 지식을 {0}에 전송합니다."
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0} · {1}."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it."
-msgstr "이 지원 건의 채용 공고, 노트, 문서와 켜 둔 지식을 이 연결로 전송합니다. 제공업체가 요금을 청구할 수 있습니다."
+#~ msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it."
+#~ msgstr "이 지원 건의 채용 공고, 노트, 문서와 켜 둔 지식을 이 연결로 전송합니다. 제공업체가 요금을 청구할 수 있습니다."
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
@@ -11709,6 +11880,12 @@ msgstr "보내기를 누를 때만 키를 사용하여 이 편지와 채용 공�
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter to {provider} with your key, only when you press send."
 msgstr "보내기를 누를 때만 키를 사용하여 이 편지를 {provider}로 보냅니다."
+
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
@@ -11780,13 +11957,25 @@ msgstr "비밀번호 설정"
 msgid "Set the document language when exporting."
 msgstr "내보낼 때 문서 언어를 설정하세요."
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "탐색 설정"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings"
 msgstr "설정에서 웹 검색 설정"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
@@ -11824,6 +12013,11 @@ msgstr "공유하다"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "공개 링크를 공유하고 비밀번호를 추가하거나 비공개로 유지하세요. 3가지 공개 옵션 중에서 선택하세요. PDF 또는 Word로 내보내거나 모든 데이터를 JSON로 가져가세요."
+
+#. placeholder {0}: provider.label
+#: src/libs/orpc/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -12609,10 +12803,6 @@ msgstr "소스와 작업에서 제안됩니다. 언제든지 변경하세요."
 msgid "Suggested reply · edit before sending"
 msgstr "제안된 답장 · 보내기 전에 편집하세요"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Suggestions from <0>models.dev</0>. You can also enter any model ID."
-msgstr "<0>models.dev</0>의 제안. 모델 ID를 입력할 수도 있습니다."
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "잘라내기를 제안하고 자체적으로 삭제하지 않습니다."
@@ -13001,6 +13191,10 @@ msgstr "{label} 파일을 생성할 수 없습니다. 다시 시도하거나 대
 msgid "The 13-point activation lift. Knowledge has the before and after."
 msgstr "활성화율 13포인트 상승. 지식에 전후 수치가 있습니다."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The account changed. Try again."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "주소에는 소문자와 숫자만 포함되어야 하며 단일 대시로 구분되어야 합니다."
@@ -13020,10 +13214,6 @@ msgstr "이 편지의 용도는 입사 지원서입니다."
 #: src/features/assistant/assistant-panel.tsx
 msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
 msgstr "이 서버에는 도우미가 설정되어 있지 않습니다. 누가 실행하든 ENCRYPTION_SECRET를 설정해야 합니다. 다른 모든 것은 그것 없이도 작동합니다."
-
-#: src/features/assistant/provider-setup.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "어시스턴트는 사용자의 키를 사용합니다. 연결하기 전까지는 아무데도 전송되지 않습니다."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The built-in reader remains active."
@@ -13053,6 +13243,18 @@ msgstr "코치는 이 지원 건에 한해서만 이 내용을 읽습니다."
 msgid "The coach saves facts you state, and tells you. You can undo."
 msgstr "코치가 말씀하신 사실을 저장하고 알려 드립니다. 실행 취소할 수 있습니다."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The complete PDF file."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "사본은 채용 지원서에 연결되므로 Check와 보조자는 해당 채용 공고를 사용합니다."
@@ -13081,6 +13283,10 @@ msgstr "인사말은 이름을 따릅니다."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "키는 서버에서 암호화되어 다시 표시되지 않습니다. 저장하면 연결이 테스트됩니다."
 
+#: src/features/settings/ai/test-error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "편지는 그대로"
@@ -13104,6 +13310,10 @@ msgstr "요청한 이후 줄이 변경되었으므로 교체되지 않았습니�
 #: src/features/career/workspace/saved.tsx
 msgid "the message"
 msgstr "메시지"
+
+#: src/features/settings/ai/test-error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The morning of the interview has passed, so the briefing runs now."
@@ -13153,9 +13363,9 @@ msgstr "채용 공고를 읽을 수 없습니다. 역할과 회사를 입력하�
 msgid "The posting saved with this application."
 msgstr "이 채용 지원서와 함께 저장된 채용 공고입니다."
 
-#: src/features/assistant/provider-setup.tsx
-msgid "The provider didn't answer. Check the key and the model."
-msgstr "제공자는 응답하지 않았습니다. 키와 모델을 확인하세요."
+#: src/libs/orpc/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
@@ -13165,9 +13375,17 @@ msgstr "제공자는 응답하지 않았습니다. 키, 모델, 베이스 URL를
 msgid "The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method."
 msgstr "제공자가 필수인 이메일 주소를 공유하지 않았습니다. 제공자가 요청할 때 이메일 접근을 허용하거나 다른 로그인 방법을 사용하세요."
 
+#: src/features/settings/ai/test-error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "The provider rejected this sign-in attempt. Try again."
 msgstr "제공자가 이 로그인 시도를 거부했습니다. 다시 시도해 보세요."
+
+#: src/features/settings/ai/test-error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The provider returned a review that couldn't be read. Try again."
@@ -13235,6 +13453,18 @@ msgstr ""
 msgid "The selected documents will be deleted for good and can't be restored."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected line, surrounding field text, and your rewrite instructions."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected resume and this letter's recipient and posting information."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
 msgstr "서비스가 제시간에 응답하지 않았습니다. 다시 시도해 보세요."
@@ -13262,6 +13492,10 @@ msgstr "텍스트가 읽을 수 없는 형태로 추출됩니다."
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "첫 페이지 상단이 이름처럼 보이지 않습니다."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The Word document's text."
+msgstr ""
 
 #. Menu item that opens appearance theme selection submenu
 #: src/features/command-palette/pages/navigation.tsx
@@ -13323,6 +13557,10 @@ msgstr "생각하는 중"
 msgid "Thinking…"
 msgstr "생각…"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This allows recurring processing until you turn the schedule off."
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "This application"
 msgstr ""
@@ -13340,8 +13578,8 @@ msgid "This browser can't record here. Choose an audio file, or type your answer
 msgstr "이 브라우저에서는 녹음할 수 없습니다. 오디오 파일을 선택하거나 답변을 입력하세요."
 
 #: src/features/career/workspace/practise.tsx
-msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
-msgstr "이 브라우저는 받아쓰기를 지원하지 않으며, 연결된 AI 중 음성을 텍스트로 변환할 수 있는 것이 없습니다(OpenAI, Google Gemini, Mistral, xAI, Groq, Vercel AI Gateway는 가능). <0>설정에서 연결을 추가</0>하거나 답변을 입력하세요."
+msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
@@ -13355,6 +13593,11 @@ msgstr "이 대화를 열 수 없습니다."
 #: src/features/career/coach-thread.tsx
 msgid "This conversation couldn't be opened. Refresh the page to try again."
 msgstr "이 대화를 열 수 없습니다. 페이지를 새로고침하여 다시 시도해 보세요."
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/career/coach.tsx
+msgid "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
@@ -13551,6 +13794,10 @@ msgstr "이 저장된 버전을 불러올 수 없습니다."
 #: src/features/career/workspace/shell.tsx
 msgid "This saved version is no longer available."
 msgstr "이 저장된 버전은 더 이상 사용할 수 없습니다."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
@@ -14068,6 +14315,10 @@ msgstr "이력서 업데이트"
 msgid "Update this application's details."
 msgstr "이 지원의 세부 정보를 업데이트하세요."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/components/list-view.tsx
 msgid "Updated"
 msgstr "업데이트됨"
@@ -14245,6 +14496,10 @@ msgstr "표준 제목을 사용하세요"
 msgid "Use these answers"
 msgstr "이 답변 사용"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Use this destination"
+msgstr ""
+
 #: src/features/settings/preferences.tsx
 msgid "Use this device's timezone ({device})"
 msgstr "이 기기의 시간대 사용({device})"
@@ -14252,6 +14507,14 @@ msgstr "이 기기의 시간대 사용({device})"
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "이 제공업체를 이용하세요"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
@@ -14504,9 +14767,15 @@ msgstr "변경을 승인할 수 있도록 {currentEmail}(으)로 링크를 보�
 msgid "We sent a new verification link to {0}."
 msgstr "{0}로 새로운 확인 링크를 보냈습니다."
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "웹 접속"
+
+#. placeholder {0}: access?.searxng ? t`your server's search service` : (access?.provider ?? t`built-in reader`)
+#: src/libs/orpc/ai-consent.ts
+msgid "Web destination: {0}."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Web page"
@@ -14799,6 +15068,10 @@ msgstr "한 분기 만에 활성화율이 31%에서 44%가 되었습니다."
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "하나도 없으면 수신자를 직접 입력하고 초안 작성 시 이력서만 사용됩니다."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
 msgstr "텍스트를 추출하면 단어들이 서로 붙어버립니다."
@@ -15079,6 +15352,10 @@ msgstr "내 AI 연결"
 msgid "Your AI connection"
 msgstr "내 AI 연결"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your AI settings changed. Nothing was sent; try again."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Your answer"
 msgstr "내 답변"
@@ -15287,6 +15564,10 @@ msgstr "귀하의 제공자"
 msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
 msgstr "녹음은 텍스트 변환을 위해 {0}에 전송되며, 해당 계정의 토큰을 사용할 수 있습니다."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "Your requirements"
 msgstr "내 요건"
@@ -15311,6 +15592,10 @@ msgstr "이력서가 복제되었습니다."
 msgid "Your resume has been updated."
 msgstr "이력서가 업데이트되었습니다."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your resume text, selected passages, and check findings."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "이력서에서 \"I\"와 \"my\"를 사용하고 있습니다."
@@ -15319,6 +15604,14 @@ msgstr "이력서에서 \"I\"와 \"my\"를 사용하고 있습니다."
 msgid "Your resume, live at"
 msgstr "이력서, 라이브"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Your saved AI connections need attention. Test or edit them below. History and saved proposals remain available."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your search terms. These also go to the configured search service."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
 msgstr "선택한 글꼴로는 일부 문자를 표시할 수 없어 “?”로 표시됩니다. 디자인에서 이 문자들이 포함된 글꼴을 선택하세요."
@@ -15326,6 +15619,10 @@ msgstr "선택한 글꼴로는 일부 문자를 표시할 수 없어 “?”로 
 #: src/features/settings/ai/web-access.tsx
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "서버는 지원 목록 섹션과 보조자에 대한 웹 검색을 제공합니다. 내장 리더가 읽을 수 없는 웹페이지를 읽으려면 서비스를 연결하세요."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "your server's search service"
+msgstr ""
 
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
@@ -15363,6 +15660,10 @@ msgstr "2분 자기소개"
 #: src/features/resume/share/share-panel.tsx
 msgid "Your web page is live"
 msgstr "웹 페이지가 게시되었습니다"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your web settings changed. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Your wording"

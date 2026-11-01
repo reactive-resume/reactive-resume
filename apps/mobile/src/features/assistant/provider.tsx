@@ -7,10 +7,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
-import { refreshThreads, useConversationConnection } from "./chat";
+import { refreshThreads } from "./chat";
 import { client } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
 import { AIProviderSetupSheet } from "@/features/ai/providers";
+import { WebAccessAttention } from "@/features/ai/web-access";
 import { Banner, Button, Icon, ListRow, Sheet, Text, showToast, useTheme } from "@/ui";
 
 type Providers = ReturnType<typeof useHasAIProvider>;
@@ -29,8 +30,9 @@ export function useConversationProvider(
 	const queryClient = useQueryClient();
 	const [picked, setPicked] = useState<string | null>(null);
 	const usable = providers.usableProviders;
-	const provider = usable.find((item) => item.id === (threadId ? summary?.aiProviderId : picked)) ?? usable[0];
-	useConversationConnection(threadId ? summary : undefined, provider);
+	const provider =
+		usable.find((item) => item.id === (threadId ? summary?.aiProviderId : picked)) ??
+		(threadId ? undefined : usable[0]);
 
 	const scope = getAccountScope();
 	const choose = async (id: string) => {
@@ -162,15 +164,39 @@ export function ProviderGate({
 				<ActivityIndicator />
 			</View>
 		);
-	if (providers.hasAIProvider || readOnly) return children;
+	if (providers.hasAIProvider)
+		return (
+			<>
+				<WebAccessAttention />
+				{children}
+			</>
+		);
+	if (readOnly)
+		return (
+			<>
+				<Banner
+					tone="warn"
+					message={t`Saved AI connections need attention. History and saved proposals remain available.`}
+				/>
+				<Button label={t`Set up AI`} onPress={() => setSetupOpen(true)} />
+				{children}
+				<AIProviderSetupSheet open={setupOpen} onClose={() => setSetupOpen(false)} />
+			</>
+		);
 
 	return (
 		<View style={{ gap: space.s3, padding: space.s4 }}>
 			<Text variant="title" accessibilityRole="header">
-				<Trans>Connect an AI provider</Trans>
+				{providers.providers.length ? (
+					<Trans>Saved AI connections need attention</Trans>
+				) : (
+					<Trans>Connect an AI provider</Trans>
+				)}
 			</Text>
 			<Text color="ink2">
-				<Trans>The assistant uses your own key. Nothing is sent anywhere until you connect one.</Trans>
+				<Trans>
+					AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data.
+				</Trans>
 			</Text>
 			<Button label={t`Connect`} icon="plus-circle" onPress={() => setSetupOpen(true)} />
 			<Text variant="callout" color="ink3">

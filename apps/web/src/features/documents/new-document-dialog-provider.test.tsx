@@ -69,6 +69,9 @@ function mount(file?: File) {
 it("imports a PDF through the local text reader when AI connection lookup fails", async () => {
 	const file = new File(["%PDF-test"], "resume.pdf", { type: "application/pdf" });
 	mount(file);
+	await screen.findByRole("heading", { name: "Choose how to read this file" });
+	expect(api.parsePdf).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Read on this device (free)" }));
 	await screen.findByRole("heading", { name: "Imported" });
 	expect(api.providers).toHaveBeenCalled();
 	expect(api.readPdfResume).toHaveBeenCalledWith(file);
@@ -80,11 +83,13 @@ it("imports a PDF through the local text reader when AI connection lookup fails"
 	expect(screen.getByRole("button", { name: "Open in editor" })).toBeEnabled();
 });
 
-it("keeps a recoverable connection error for Word files that require AI", async () => {
+it("explains Word prerequisites before any upload and retains the file for in-place setup", async () => {
 	mount(new File([new Uint8Array([0x50, 0x4b, 0x03, 0x04])], "resume.docx"));
-	await screen.findByRole("heading", { name: "Couldn't import" });
-	expect(screen.getByText("Couldn't load AI connections. Try again before importing this file.")).toBeVisible();
-	expect(screen.getByRole("button", { name: "Try again" })).toBeEnabled();
+	await screen.findByRole("heading", { name: "Choose how to read this file" });
+	expect(
+		screen.getByText("Word import needs AI. For a local import, export a PDF or JSON file instead."),
+	).toBeVisible();
+	expect(screen.getByRole("button", { name: "Set up AI" })).toBeEnabled();
 	expect(api.importResume).not.toHaveBeenCalled();
 	expect(api.parseDocx).not.toHaveBeenCalled();
 	expect(api.readPdfResume).not.toHaveBeenCalled();

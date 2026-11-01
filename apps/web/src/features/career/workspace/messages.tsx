@@ -101,6 +101,18 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 			{!readOnly && (
 				<div className="grid justify-items-start gap-2">
 					<AiNotice />
+					<Button
+						type="button"
+						size="sm"
+						variant="secondary"
+						disabled={!message.trim()}
+						onClick={() => {
+							onSave(message);
+							toast.add({ description: t`Message saved with this application` });
+						}}
+					>
+						<Trans>Save message without AI</Trans>
+					</Button>
 					{provider && (
 						<Button
 							variant="secondary"

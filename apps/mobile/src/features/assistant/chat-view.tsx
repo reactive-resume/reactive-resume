@@ -370,11 +370,12 @@ function Conversation(props: ConversationProps) {
 	// does. Only with no run left is the message sent again: a failed continuation (after an answer) as it was,
 	// since regenerating would drop the answer.
 	const retry = () => {
-		if (busy || readOnly || continuationBlocked) return;
+		if (busy) return;
 		if (receipts.error) {
 			void receipts.refetch();
 			return;
 		}
+		if (readOnly || continuationBlocked) return;
 		clearError();
 		void lane.run(async (isCurrent) => {
 			const latest = await reloadThread();
@@ -689,7 +690,7 @@ function Conversation(props: ConversationProps) {
 											variant="secondary"
 											icon="arrow-clockwise"
 											label={t`Retry`}
-											disabled={busy || readOnly || continuationBlocked}
+											disabled={busy || (!receipts.error && (readOnly || continuationBlocked))}
 											onPress={retry}
 										/>
 										{props.onSwitchModel ? (

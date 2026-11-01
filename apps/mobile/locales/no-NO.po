@@ -960,6 +960,10 @@ msgstr "Legg til et land"
 msgid "Add a fact"
 msgstr "Legg til et faktum"
 
+#: src/features/career/facts.tsx
+#~ msgid "Add a fact or try another word or type."
+#~ msgstr "Legg til et faktum, eller prøv et annet ord eller en annen type."
+
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "Legg til en lenke"
@@ -1016,6 +1020,7 @@ msgstr "Legg til et sammendrag eller beskriv en rolle først; det er ingenting �
 msgid "Add a tag"
 msgstr "Legg til en tag"
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 msgid "Add AI provider"
 msgstr "Legg til AI-leverandør"
@@ -1096,6 +1101,10 @@ msgstr "Legg til belegg"
 #: src/features/write/fields.ts
 msgid "Add experience"
 msgstr "Legg til erfaring"
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Add facts"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add field"
@@ -1252,6 +1261,10 @@ msgstr ""
 msgid "Added to Knowledge."
 msgstr "Lagt til Kunnskap."
 
+#: src/features/workspace/tabs/fit.tsx
+#~ msgid "Added to Prepare"
+#~ msgstr "Lagt til i Forbered"
+
 #: src/features/ai/report-content.tsx
 msgid "Additional details (optional)"
 msgstr "Ytterligere detaljer (valgfritt)"
@@ -1354,6 +1367,10 @@ msgstr "AI-redigering"
 #: src/features/applications/add-sheet.tsx
 msgid "AI enrichment was unavailable. Review the page details or fill them manually."
 msgstr "AI-anriking var utilgjengelig. Se gjennom sidedetaljene eller fyll dem manuelt."
+
+#: src/features/assistant/provider.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
@@ -1565,6 +1582,10 @@ msgstr ""
 msgid "Answers"
 msgstr "Svar"
 
+#: src/features/settings/application-profile.tsx
+#~ msgid "Answers apply only to the country shown. A missing country has unknown answers."
+#~ msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Answers copied"
 msgstr "Svarene er kopiert"
@@ -1674,6 +1695,10 @@ msgstr ""
 msgid "Application phone"
 msgstr ""
 
+#: src/features/settings/application-profile.tsx
+#~ msgid "Application profile deleted."
+#~ msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "application summaries"
 msgstr "søknadssammendrag"
@@ -1685,6 +1710,10 @@ msgstr "Søknaden er oppdatert"
 #: src/features/applications-board/views.tsx
 msgid "Application views"
 msgstr "Søknadsvisninger"
+
+#: src/features/settings/application-profile.tsx
+#~ msgid "Application-only details. Never added to public links, document exports or AI context automatically."
+#~ msgstr ""
 
 #: app/(tabs)/_layout.tsx
 #: src/features/applications-board/views.tsx
@@ -2034,6 +2063,10 @@ msgstr "Mindre enn minimum grunnlønn."
 msgid "Bengali"
 msgstr "Bengali"
 
+#: src/features/settings/application-profile.tsx
+#~ msgid "Blank fields mean unknown. Nothing is inferred from your resume. Self-identification is not collected here. Enter references yourself and review their details before sharing."
+#~ msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "Board"
 msgstr "Tavle"
@@ -2103,9 +2136,17 @@ msgstr "Automatisk orienteringsoppdatering er aktivert · {next}"
 msgid "Briefing refresh paused"
 msgstr "Oppdatering av brifing er satt på pause"
 
+#: src/api/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "Innebygd leser"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Bulgarian"
@@ -2177,6 +2218,10 @@ msgstr "Avbryt forespørsel"
 msgid "Career"
 msgstr "Karriere"
 
+#: src/features/settings/application-profile.tsx
+#~ msgid "Career preferences"
+#~ msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Catalan"
 msgstr "Katalansk"
@@ -2246,6 +2291,10 @@ msgstr "Endrer kun seksjonstitler og datoord, ikke innholdet ditt."
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
 msgstr "Endringer til «{name}» ble lagret på en annen enhet. Endringene dine er fortsatt på denne enheten. Velg hvilken versjon du vil beholde."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
 
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
@@ -2430,6 +2479,10 @@ msgstr "Velg en gyldig oppfølgingsdato før du lagrer."
 msgid "Choose a version to continue. Back will not close this sheet."
 msgstr "Velg en versjon for å fortsette. Hvis du trykker på Tilbake, lukkes ikke dette panelet."
 
+#: src/api/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
 msgstr "Velg en WebM-, MP4-, MP3-, WAV- eller Ogg-fil på opptil 2 MB."
@@ -2548,6 +2601,14 @@ msgstr "Tømmer oppføringene, men beholder delen. Du kan angre dette."
 msgid "Close"
 msgstr "Lukk"
 
+#: src/features/application-detail/sheets.tsx
+#~ msgid "Close application"
+#~ msgstr "Lukk jobbsøknaden"
+
+#: src/features/application-detail/detail-screen.tsx
+#~ msgid "Close application…"
+#~ msgstr "Lukk jobbsøknaden..."
+
 #: src/features/applications/list-screen.tsx
 msgid "Close applications"
 msgstr "Lukk jobbsøknader"
@@ -2563,6 +2624,10 @@ msgstr "Lukk valgte jobbsøknader"
 #: src/features/assistant/assistant-screen.tsx
 msgid "Close the assistant"
 msgstr "Lukk assistenten"
+
+#: src/features/application-detail/sheets.tsx
+#~ msgid "Close this application"
+#~ msgstr "Lukk denne jobbsøknaden"
 
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
@@ -2755,6 +2820,10 @@ msgstr "Ser sammenhengene"
 msgid "Connection saved"
 msgstr "Tilkoblingen er lagret"
 
+#: src/features/settings/application-profile.tsx
+#~ msgid "Contact and address"
+#~ msgstr ""
+
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
 #: src/features/settings/application-profile.tsx
@@ -2936,6 +3005,10 @@ msgstr "Kunne ikke sjekke tidligere søknader. Du kan fortsatt lagre denne søkn
 msgid "Couldn't check your AI providers."
 msgstr "Kunne ikke sjekke AI-leverandørene dine."
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "Couldn't complete the request. Check your connection and try again."
 msgstr "Kunne ikke fullføre forespørselen. Sjekk tilkoblingen og prøv igjen."
@@ -2974,6 +3047,10 @@ msgstr "Kunne ikke opprette brevet. Prøv igjen."
 msgid "Couldn't delete it. It's back in Library."
 msgstr ""
 
+#: src/features/workspace/tabs/saved.tsx
+#~ msgid "Couldn't delete it. It's back in Saved."
+#~ msgstr "Kunne ikke slette den. Den er tilbake i Lagret."
+
 #: src/features/assistant/threads.tsx
 msgid "Couldn't delete the conversation. Try again."
 msgstr "Kunne ikke slette samtalen. Prøv igjen."
@@ -3011,6 +3088,10 @@ msgstr "Kunne ikke importere denne filen. Sjekk det valgte formatet. PDF-filer t
 #: src/features/check/job-match.tsx
 msgid "Couldn't link the application. Check Applications before retrying."
 msgstr "Kunne ikke koble jobbsøknaden. Sjekk Søknader før du prøver på nytt."
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load AI connections. PDF text and JSON imports still work."
@@ -3068,6 +3149,10 @@ msgstr "Kunne ikke laste inn CV-en."
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "Kunne ikke laste inn eksempelfilen. Prøv igjen."
+
+#: src/features/check/writing.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3541,8 +3626,12 @@ msgid "Dark theme"
 msgstr "Mørkt tema"
 
 #: src/api/ai-consent.ts
-msgid "Data sharing canceled. Nothing was sent to the provider."
-msgstr ""
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr "Datadeling avbrutt. Ingenting ble sendt til AI-leverandøren."
+
+#: src/api/ai-consent.ts
+#~ msgid "Data sharing canceled. Nothing was sent to the provider."
+#~ msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sheets.tsx
@@ -3690,6 +3779,10 @@ msgid "Delete permanently…"
 msgstr ""
 
 #: src/features/settings/application-profile.tsx
+#~ msgid "Delete private application profile?"
+#~ msgstr ""
+
+#: src/features/settings/application-profile.tsx
 msgid "Delete profile"
 msgstr ""
 
@@ -3767,6 +3860,10 @@ msgstr "Slettet søknad"
 #: src/features/workspace/tabs/saved.tsx
 msgid "Deleted from Library"
 msgstr ""
+
+#: src/features/workspace/tabs/saved.tsx
+#~ msgid "Deleted from Saved"
+#~ msgstr "Slettet fra Lagret"
 
 #: src/features/write/section-sheet.tsx
 msgid "Deletes the section and its entries. You can undo."
@@ -4126,6 +4223,10 @@ msgstr "Hvert krav i stillingsannonsen sjekkes mot fakta og historier i Kunnskap
 msgid "Earlier discovery result. Search query and posting check time unknown."
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "earlier messages in this chat"
 msgstr "tidligere meldinger i denne chatten"
@@ -4343,8 +4444,8 @@ msgid "Enter an address like resume.example.org."
 msgstr "Skriv inn en adresse som resume.example.org."
 
 #: src/features/ai/provider-editor.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "Skriv inn en modell-ID som støttes av endepunktet ditt."
+#~ msgid "Enter any model ID supported by your endpoint."
+#~ msgstr "Skriv inn en modell-ID som støttes av endepunktet ditt."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -4353,6 +4454,10 @@ msgstr "Skriv inn vilkårene selv. Ingen KI-forespørsel sendes. La ukjente bel�
 #: app/(auth)/server.tsx
 msgid "Enter the address you open Reactive Resume at in a browser. The app checks it's a Reactive Resume server that allows app sign-in before you continue."
 msgstr "Skriv inn adressen du bruker til å åpne Reactive Resume i en nettleser. Før du fortsetter, bekrefter mobilappen at dette er en Reactive Resume-server med mobilpålogging aktivert."
+
+#: src/features/ai/error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Enter your details below. Choosing a resume replaces them and links its design."
@@ -4551,6 +4656,10 @@ msgstr "Finn roller"
 msgid "Find weak bullets"
 msgstr "Finn svake listeoppføringer"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/workspace/parts.tsx
 msgid "Finding what works"
 msgstr "Finner det som fungerer"
@@ -4586,6 +4695,10 @@ msgstr "Match"
 #: src/features/workspace/tabs/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "Match-sjekker, brifinger, tilbakemeldinger på øving, oppsummeringer, skjemasvar, meldingssvar og jobbtilbud havner her etter hvert som du lagrer dem."
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "Fix the date"
@@ -5123,7 +5236,7 @@ msgstr "Ikoner i kontaktlinjen"
 msgid "If it came from a scan, that is expected. Otherwise remove it; recruiters read it as keyword stuffing."
 msgstr "Hvis det kommer fra en skanning, er det forventet. Fjern det ellers; rekrutterere tolker det som nøkkelordspamming."
 
-#. placeholder {0}: reader ?? provider?.provider ?? ""
+#. placeholder {0}: reader ?? provider?.provider ?? t`built-in reader`
 #: src/api/ai-consent.ts
 msgid "If web access is used, links and search terms also go to {0} and the sites being read."
 msgstr "Hvis nettilgang brukes, går lenker og søkeord også til {0} og nettstedene som leses."
@@ -5592,6 +5705,11 @@ msgstr "Sist redigert"
 msgid "Last reviewed"
 msgstr ""
 
+#. placeholder {0}: i18n.date(new Date(record.reviewedAt), { dateStyle: "medium", timeStyle: "short" })
+#: src/features/settings/application-profile.tsx
+#~ msgid "Last reviewed: {0}"
+#~ msgstr ""
+
 #. placeholder {0}: time.when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -5941,8 +6059,8 @@ msgid "Loading linked documents…"
 msgstr "Laster inn koblede dokumenter…"
 
 #: src/features/ai/provider-editor.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "Laster modellforslag... Du kan også angi hvilken som helst modell-ID."
+#~ msgid "Loading model suggestions… You can also enter any model ID."
+#~ msgstr "Laster modellforslag... Du kan også angi hvilken som helst modell-ID."
 
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
@@ -6265,8 +6383,8 @@ msgid "Model"
 msgstr "Modell"
 
 #: src/features/ai/provider-editor.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "Modellforslag er utilgjengelige. Du kan fortsatt angi hvilken som helst modell-ID."
+#~ msgid "Model suggestions are unavailable. You can still enter any model ID."
+#~ msgstr "Modellforslag er utilgjengelige. Du kan fortsatt angi hvilken som helst modell-ID."
 
 #: src/features/assistant/provider.tsx
 msgid "Model: {label}"
@@ -6513,6 +6631,7 @@ msgid "Native & fonts"
 msgstr "Native komponenter og skrifter"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "Trenger oppmerksomhet"
 
@@ -6647,6 +6766,10 @@ msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/features/ai/provider-list.tsx
@@ -6859,8 +6982,8 @@ msgid "No stories yet"
 msgstr "Ingen historier ennå"
 
 #: src/features/ai/provider-editor.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "Ingen forslag til denne leverandøren. Skriv inn en modell-ID."
+#~ msgid "No suggestions for this provider. Enter any model ID."
+#~ msgstr "Ingen forslag til denne leverandøren. Skriv inn en modell-ID."
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -6968,6 +7091,10 @@ msgstr "Ikke registrert"
 msgid "Not recorded yet. Leave blank until you can support it."
 msgstr "Ikke registrert ennå. La stå tomt til du har grunnlag for det."
 
+#: src/features/settings/application-profile.tsx
+#~ msgid "Not reviewed yet"
+#~ msgstr ""
+
 #: src/features/career/preferences.tsx
 #: src/shell/builder-chrome.tsx
 msgid "Not saved"
@@ -7027,6 +7154,10 @@ msgstr "Ingenting markerer en rolle som pågående."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "Ingenting denne dagen."
+
+#: src/features/workspace/tabs/saved.tsx
+#~ msgid "Nothing saved yet"
+#~ msgstr "Ingenting lagret ennå"
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -7153,6 +7284,10 @@ msgstr "På. Besøkende trenger lenken og passordet for å se nettsiden din."
 msgid "Once a round is scheduled, Interview prep builds a timed plan, your opening and the questions to ask."
 msgstr ""
 
+#: src/features/workspace/tabs/prepare.tsx
+#~ msgid "Once a round is scheduled, Prepare builds a timed plan, your opening and the questions to ask."
+#~ msgstr "Når en runde er planlagt, lager Forbered en plan med tider, åpningen din og spørsmålene du kan stille."
+
 #: src/features/applications-board/insights-screen.tsx
 msgid "Once you've sent a few applications, this shows how far they get and how quickly people reply."
 msgstr "Når du har sendt noen få jobbsøknader, viser dette hvor langt de kommer og hvor raskt folk svarer."
@@ -7213,6 +7348,10 @@ msgstr ""
 msgid "Only the text below and your reason are sent privately to the operator of {0} for safety review. Remove personal information you don't want to share. Reports are deleted with your account."
 msgstr "Bare teksten nedenfor og din årsak sendes privat til operatøren av {0} for sikkerhetsgjennomgang. Fjern personlig informasjon du ikke vil dele. Rapporter slettes med kontoen din."
 
+#: src/api/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Only this device schedules the notification."
 msgstr "Bare denne enheten planlegger varslingen."
@@ -7224,6 +7363,10 @@ msgstr "Bare denne enheten planlegger varslingen. Tillat varsler når systemet s
 #: src/features/share/link.tsx
 msgid "Only you see these"
 msgstr "Bare du ser disse"
+
+#: src/api/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -7239,7 +7382,6 @@ msgid "Open"
 msgstr "Åpne"
 
 #: src/features/assistant/provider.tsx
-#: src/features/letters/write.tsx
 msgid "Open AI settings"
 msgstr "Åpne AI-innstillingene"
 
@@ -7297,6 +7439,10 @@ msgstr "Åpne den eksporterte filen og bekreft at du kan merke og kopiere hver d
 #: src/features/documents/import-file.ts
 msgid "Open the file in Word and save it as .docx first."
 msgstr "Åpne filen i Word og lagre den som .docx først."
+
+#: src/features/applications-board/board-screen.tsx
+#~ msgid "Open the list"
+#~ msgstr "Åpne listen"
 
 #: src/features/career/today.tsx
 msgid "Open the schedule"
@@ -7392,6 +7538,10 @@ msgstr "Eller med dine egne ord..."
 #: src/features/write/fields.ts
 msgid "Organization"
 msgstr "Organisasjon"
+
+#: src/features/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -7549,6 +7699,10 @@ msgstr "Lim inn en melding fra {company}"
 msgid "Paste the email or message, without the signature."
 msgstr "Lim inn e-posten eller meldingen, uten signaturen."
 
+#: src/features/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
 msgstr "Lim inn stillingsannonsen for å se hvilke av vilkårene din CV allerede har."
@@ -7594,13 +7748,17 @@ msgstr "PDF-sjekk avbrutt. Prøv igjen når du er klar."
 msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
 msgstr "Kun PDF · opptil 10 MB per fil. Koble til en CV fra Reactive Resume for AI-basert vurdering av samsvar og tilpasning."
 
+#: src/features/documents/new-document.tsx
+msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
+msgstr ""
+
 #: src/features/design/advanced.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "PDF-stiler støtter et undersett av CSS. Rotasjon, stiplede og prikkede kanter og noen layoutegenskaper ignoreres."
 
 #: src/features/documents/new-document.tsx
-msgid "PDF uses your AI provider when one is ready. Turn off the AI switch to read its text layer on your server. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
-msgstr "Når en AI-leverandør er tilgjengelig, leser den importerte PDF-er. Deaktiver AI for å trekke ut PDF-teksten på serveren din i stedet. Word (.docx) krever en AI-leverandør. Støtter gjeldende og v4 Reactive Resume JSON, følgebrev, JSON Resume og LinkedIn eksport (.zip). Filstørrelsesgrense: 10 MB."
+#~ msgid "PDF uses your AI provider when one is ready. Turn off the AI switch to read its text layer on your server. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
+#~ msgstr "Når en AI-leverandør er tilgjengelig, leser den importerte PDF-er. Deaktiver AI for å trekke ut PDF-teksten på serveren din i stedet. Word (.docx) krever en AI-leverandør. Støtter gjeldende og v4 Reactive Resume JSON, følgebrev, JSON Resume og LinkedIn eksport (.zip). Filstørrelsesgrense: 10 MB."
 
 #: src/features/documents/new-document.tsx
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
@@ -7824,6 +7982,12 @@ msgid "Preferences"
 msgstr "Preferanser"
 
 #: src/features/career/schedule-sheet.tsx
+#: src/features/workspace/parts.tsx
+#: src/shell/workspace-chrome.tsx
+#~ msgid "Prepare"
+#~ msgstr "Forbered"
+
+#: src/features/career/schedule-sheet.tsx
 msgid "Prepare a briefing"
 msgstr "Forbered en brifing"
 
@@ -7942,6 +8106,11 @@ msgstr "Personvern"
 #: src/auth/auth-header.tsx
 msgid "Privacy policy"
 msgstr "Personvernerklæring"
+
+#: src/features/settings/application-profile.tsx
+#: src/features/workspace/tabs/apply.tsx
+#~ msgid "Private application profile"
+#~ msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Private. Only you can see it."
@@ -8316,6 +8485,23 @@ msgstr "Gjør om"
 #: src/features/settings/application-profile.tsx
 msgid "Reference {0}"
 msgstr ""
+
+#. placeholder {0}: index + 1
+#: src/features/settings/application-profile.tsx
+#~ msgid "Reference {0}: {label}"
+#~ msgstr ""
+
+#: src/features/settings/application-profile.tsx
+#~ msgid "Reference email"
+#~ msgstr ""
+
+#: src/features/settings/application-profile.tsx
+#~ msgid "Reference name"
+#~ msgstr ""
+
+#: src/features/settings/application-profile.tsx
+#~ msgid "Reference phone"
+#~ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 #: src/features/write/fields.ts
@@ -8707,6 +8893,10 @@ msgstr "CV"
 msgid "Resume + letter"
 msgstr "CV + bokstav"
 
+#: src/features/check/writing.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 msgid "Resume details"
 msgstr "CV detaljer"
@@ -8740,6 +8930,10 @@ msgstr "CV sendt inn (valgfritt)"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/workspace/tabs/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/search/search-screen.tsx
@@ -8796,6 +8990,7 @@ msgstr "Hentet {0} ved hjelp av {1}. Hentetiden fastslår ikke opprinnelsesfrisk
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
 #: src/features/workspace/parts.tsx
+#: src/features/workspace/tabs/fit.tsx
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
 #: src/shell/builder-chrome.tsx
@@ -8931,6 +9126,11 @@ msgstr ""
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "Skriv en anmeldelse"
+
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/check/writing.tsx
+msgid "Reviewed {0}"
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
@@ -9082,9 +9282,18 @@ msgstr "Lagre en jobb"
 msgid "Save a job instead"
 msgstr ""
 
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+#~ msgid "Save a job link, paste a posting, or fill in the details manually."
+#~ msgstr "Lagre en jobblenke, lim inn en stillingsannonse eller fyll ut detaljene manuelt."
+
 #: src/features/ats-checker/messages.ts
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "Lagre en ubeskyttet kopi, uten passord og uten tillatelsesbegrensninger."
+
+#: src/features/settings/application-profile.tsx
+#~ msgid "Save and mark reviewed"
+#~ msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
@@ -9127,6 +9336,10 @@ msgstr "Lagre jobben"
 #: src/features/applications/lane-settings.tsx
 msgid "Save lane"
 msgstr "Lagre trinn"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Save message without AI"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Save offer"
@@ -9199,9 +9412,31 @@ msgstr "Lagre endringene dine som et nytt dokument. Behold den andre enhetens ve
 msgid "Saved"
 msgstr "Lagret"
 
+#: src/features/workspace/parts.tsx
+#: src/shell/workspace-chrome.tsx
+#~ msgctxt "Application workspace tab: earlier results kept for this job"
+#~ msgid "Saved"
+#~ msgstr "Lagret"
+
 #: src/features/assistant/messages.tsx
 msgid "Saved a story: {title}"
 msgstr "Lagret en historie: {title}"
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention"
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "Saved AI connections need attention. Choose one to fix, or add another."
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Saved AI connections need attention. History and saved proposals remain available."
+msgstr ""
+
+#: src/features/settings/application-profile.tsx
+#~ msgid "Saved and marked reviewed."
+#~ msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -9210,6 +9445,10 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 msgid "Saved description"
 msgstr "Lagret beskrivelse"
+
+#: src/features/workspace/tabs/saved.tsx
+#~ msgid "Saved items for {company}, newest first."
+#~ msgstr "Lagrede elementer for {company}, nyeste først."
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
@@ -9230,6 +9469,10 @@ msgstr "Lagret i Kunnskap, privat for denne søknaden."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#: src/features/workspace/tabs/practise.tsx
+#~ msgid "Saved to Saved · Practice"
+#~ msgstr "Lagret i Lagret · Øving"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -9483,17 +9726,33 @@ msgstr "Sender …"
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
 msgstr "Sender denne søknaden (annonse, notater og intervjudetaljer) og aktivert Kunnskap til {name}."
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. If it becomes unavailable, scheduled work can use your default usable connection."
-msgstr "Sender denne søknaden og aktivert Kunnskap til denne tilkoblingen. Leverandøren kan ta betalt. Hvis den blir utilgjengelig, kan planlagte oppgaver bruke standardtilkoblingen som fungerer."
+#~ msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. If it becomes unavailable, scheduled work can use your default usable connection."
+#~ msgstr "Sender denne søknaden og aktivert Kunnskap til denne tilkoblingen. Leverandøren kan ta betalt. Hvis den blir utilgjengelig, kan planlagte oppgaver bruke standardtilkoblingen som fungerer."
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/workspace/parts.tsx
 msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
 msgstr "Sender søknadens annonse, notater og dokumenter samt aktivert Kunnskap til {label}."
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Sends this PDF to your configured AI provider instead of reading its text layer."
@@ -9535,8 +9794,8 @@ msgid "Server address"
 msgstr "Serveradresse"
 
 #: src/api/ai-consent.ts
-msgid "Server web search"
-msgstr ""
+#~ msgid "Server web search"
+#~ msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Set a follow-up"
@@ -9555,6 +9814,11 @@ msgstr "Angi dokumentspråket ved eksport."
 msgid "Set up a provider"
 msgstr "Sett opp en leverandør"
 
+#: src/features/assistant/provider.tsx
+#: src/features/letters/write.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
 msgstr "Konfigurer AI-leverandør"
@@ -9562,6 +9826,10 @@ msgstr "Konfigurer AI-leverandør"
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "Sett opp stillingssøk"
+
+#: src/features/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Set up web search"
@@ -9608,9 +9876,14 @@ msgstr "Dele"
 msgid "Share calendar event (.ics)"
 msgstr "Del kalenderhendelse (.ics)"
 
+#. placeholder {0}: provider.label
 #: src/api/ai-consent.ts
-msgid "Share data with {label}?"
-msgstr ""
+msgid "Share data with {0}?"
+msgstr "Vil du dele data med {0}?"
+
+#: src/api/ai-consent.ts
+#~ msgid "Share data with {label}?"
+#~ msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -10288,8 +10561,8 @@ msgid "Suggested reply · edit before sending"
 msgstr "Foreslått svar · rediger før du sender"
 
 #: src/features/ai/provider-editor.tsx
-msgid "Suggestions from models.dev. You can also enter any model ID."
-msgstr "Forslag fra models.dev. Du kan også angi hvilken som helst modell-ID."
+#~ msgid "Suggestions from models.dev. You can also enter any model ID."
+#~ msgstr "Forslag fra models.dev. Du kan også angi hvilken som helst modell-ID."
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Suggests cuts, never deletes on its own"
@@ -10607,8 +10880,8 @@ msgid "The assistant uses your AI provider's own web search where supported, and
 msgstr "Assistenten bruker din AI-leverandørs eget nettsøk der det støttes, og leser lenker med den innebygde leseren."
 
 #: src/features/assistant/provider.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "Assistenten bruker din egen nøkkel. Ingenting sendes noe sted før du kobler til en."
+#~ msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
+#~ msgstr "Assistenten bruker din egen nøkkel. Ingenting sendes noe sted før du kobler til en."
 
 #: src/features/ai/web-access.tsx
 msgid "The built-in reader remains active."
@@ -10642,6 +10915,14 @@ msgstr "Coachen lagrer fakta du oppgir, og sier fra. Du kan angre."
 msgid "The connection couldn't be loaded or saved. Try again."
 msgstr "Forbindelsen kunne ikke lastes eller lagres. Prøv igjen."
 
+#: src/features/ai/error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/ai/provider-editor.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -10671,6 +10952,10 @@ msgstr "Intervjuet er lagret. For å få en påminnelse, tillat varsler i enhets
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "Nøkkelen er kryptert på serveren og vises aldri igjen. Lagring tester tilkoblingen."
 
+#: src/features/ai/error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
 msgstr "Planlagt forberedelsestid har passert. Lagring starter orienteringen umiddelbart."
@@ -10699,6 +10984,10 @@ msgstr "Linjen endret seg siden du spurte, så den ble ikke erstattet."
 msgid "the message"
 msgstr "meldingen"
 
+#: src/features/ai/error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The order the text is stored in disagrees badly with the order it reads in."
 msgstr "Rekkefølgen teksten er lagret i, stemmer dårlig overens med rekkefølgen den leses i."
@@ -10715,10 +11004,22 @@ msgstr "Sidene er bilder, uten tekst bak seg."
 msgid "The PDF is checked on the server and not stored. Send this preview to see what software reads."
 msgstr "PDF er sjekket på serveren og ikke lagret. Send denne forhåndsvisningen for å se hva programvaren leser."
 
+#: src/api/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
-msgid "The provider didn't answer. Check the key, the model and the base URL."
-msgstr "Leverandøren svarte ikke. Sjekk nøkkelen, modellen og basen URL."
+#~ msgid "The provider didn't answer. Check the key, the model and the base URL."
+#~ msgstr "Leverandøren svarte ikke. Sjekk nøkkelen, modellen og basen URL."
+
+#: src/features/ai/error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
+#: src/features/ai/error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
@@ -10768,6 +11069,10 @@ msgstr "Serveren returnerte et ugyldig importresultat. Oppdater Dokumenter før 
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Kunne ikke laste inn versjonen fra serveren. Teksten er beholdt; prøv igjen."
 
+#: src/features/ai/error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/applications/error.ts
 msgid "The service couldn't be reached. Try again or fill the details manually."
 msgstr "Tjenesten kunne ikke nås. Prøv igjen eller fyll ut detaljene manuelt."
@@ -10797,12 +11102,20 @@ msgid "The text comes out unreadable."
 msgstr "Teksten kommer ut uleselig."
 
 #: src/api/ai-consent.ts
-msgid "The text to read aloud is sent through your server to this speech provider. It can contain personal information."
-msgstr "Teksten som skal leses opp sendes via serveren din til denne taleleverandøren. Den kan inneholde personlig informasjon."
+#~ msgid "The text to read aloud is sent through your server to this speech provider. It can contain personal information."
+#~ msgstr "Teksten som skal leses opp sendes via serveren din til denne taleleverandøren. Den kan inneholde personlig informasjon."
 
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "Toppen av den første siden ser ikke ut som et navn."
+
+#: src/features/applications/error.ts
+msgid "The web service quota is used up. Fix web access or paste a posting."
+msgstr ""
+
+#: src/features/applications/error.ts
+msgid "The web service rejected its key. Fix web access or paste a posting."
+msgstr ""
 
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/search/search-screen.tsx
@@ -11117,6 +11430,10 @@ msgid "This saved version belongs to a different tab. Open it from Library."
 msgstr ""
 
 #: src/features/workspace/shell.tsx
+#~ msgid "This saved version belongs to a different tab. Open it from Saved."
+#~ msgstr "Denne lagrede versjonen hører til en annen fane. Åpne den fra Lagret."
+
+#: src/features/workspace/shell.tsx
 msgid "This saved version couldn't be loaded."
 msgstr "Denne lagrede versjonen kunne ikke lastes inn."
 
@@ -11127,6 +11444,10 @@ msgstr "Denne lagrede versjonen er ikke lenger tilgjengelig."
 #: app/_layout.tsx
 msgid "This screen stopped working"
 msgstr "Denne skjermen sluttet å virke"
+
+#: src/api/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/auth/messages.ts
 msgid "This server is too old for the app. Ask your administrator to update it."
@@ -11551,6 +11872,10 @@ msgstr ""
 msgid "Update posting details"
 msgstr ""
 
+#: src/api/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
 msgstr "Oppdater serveren før du flytter søknader til et egendefinert trinn."
@@ -11664,6 +11989,10 @@ msgstr "Bruk minst 9pt."
 msgid "Use at most 64 characters."
 msgstr "Bruk maksimalt 64 tegn."
 
+#: src/features/settings/application-profile.tsx
+#~ msgid "Use Career preferences for work locations, office days, notice period and minimum base salary. Requested salary below is separate. Editing answers for one application does not update these global settings."
+#~ msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Use default"
 msgstr "Bruk standard"
@@ -11759,9 +12088,17 @@ msgstr "Bruk dette faktum"
 msgid "Use this provider"
 msgstr "Bruk denne leverandøren"
 
+#: src/features/workspace/tabs/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
 #: src/features/application-detail/date-field.tsx
 msgid "Use this time"
 msgstr "Bruk denne tiden"
+
+#: src/api/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Use your browser’s Share action to send one posting URL or selected text to Reactive Resume. Receiving shares requires the latest store build; URL and paste import remain available."
@@ -11945,6 +12282,7 @@ msgstr "Venter på å høre tilbake"
 
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/ai/web-access.tsx
 msgid "Web access"
 msgstr "Netttilgang"
 
@@ -11961,8 +12299,8 @@ msgid "Web research"
 msgstr "Nettsøk"
 
 #: src/api/ai-consent.ts
-msgid "Web search"
-msgstr ""
+#~ msgid "Web search"
+#~ msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -12228,6 +12566,10 @@ msgid "Write numbers as digits"
 msgstr "Skriv tall med sifre"
 
 #: src/features/career/stories.tsx
+#~ msgid "Write one about something you did, in five parts."
+#~ msgstr "Skriv en femdelt historie om noe du har gjort."
+
+#: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Skriv en historie om noe du har gjort, i fem deler. La Resultat og Refleksjon stå tomme til du kan underbygge dem."
 
@@ -12438,6 +12780,11 @@ msgstr "Fokuset ditt"
 msgid "Your headings look the same as your body text."
 msgstr "Overskriftene dine ser like ut som brødteksten."
 
+#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/list-screen.tsx
+#~ msgid "Your job search starts here"
+#~ msgstr "Jobbsøket ditt starter her"
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"
 msgstr "din Kunnskap"
@@ -12507,8 +12854,8 @@ msgid "Your recording goes to {transcriberName} after you stop, to be transcribe
 msgstr "Opptaket ditt går til {transcriberName} etter at du stopper, for å bli transkribert. Din leverandør kan ta betalt. Serveren beholder transkripsjoner, aldri opptak."
 
 #: src/api/ai-consent.ts
-msgid "Your recording is uploaded through your server to this transcription provider. It can contain personal information."
-msgstr "Opptaket ditt lastes opp via serveren din til denne transkripsjonsleverandøren. Den kan inneholde personlig informasjon."
+#~ msgid "Your recording is uploaded through your server to this transcription provider. It can contain personal information."
+#~ msgstr "Opptaket ditt lastes opp via serveren din til denne transkripsjonsleverandøren. Den kan inneholde personlig informasjon."
 
 #: src/api/ai-consent.ts
 msgid "Your request and relevant resume, letter, job posting, application, career information, conversation history, and attachments are sent through your server to this AI provider, according to the feature and context you selected. They can contain personal information."
@@ -12529,6 +12876,10 @@ msgstr "CV-en din bruker \"I\" og \"my\"."
 #: app/(auth)/sign-in.tsx
 msgid "Your resumes, letters and applications, on {host}."
 msgstr "Dine CVer, følgebrev og jobbsøknader, på {host}."
+
+#: src/api/ai-consent.ts
+msgid "Your search terms and public links go through your server to the selected web services and sites. No AI provider is used."
+msgstr ""
 
 #: src/features/share/messages.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
@@ -12588,7 +12939,11 @@ msgid "Your unsaved job details will be discarded before opening web search sett
 msgstr "De ulagrede jobbdetaljene dine vil bli forkastet før du åpner innstillinger for nettsøk."
 
 #: src/api/ai-consent.ts
-msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+#~ msgid "Your web search settings changed while you were deciding. Nothing was sent; try again."
+#~ msgstr ""
+
+#: src/api/ai-consent.ts
+msgid "Your web settings changed. Nothing was sent; try again."
 msgstr ""
 
 #: src/features/assistant/messages.tsx

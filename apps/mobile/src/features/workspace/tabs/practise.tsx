@@ -218,6 +218,8 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 	const keepRef = useRef(voice.settings.keep);
 	// Bumped by each new transcription and by switching mode, so a slower, older result can't land over newer input.
 	const generation = useRef(0);
+	const transcription = useRef<AbortController | null>(null);
+	useEffect(() => () => transcription.current?.abort(), [applicationId, transcriber?.providerId, transcriber?.model]);
 	useEffect(() => {
 		keepRef.current = voice.settings.keep;
 	});
@@ -237,16 +239,20 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 
 	const send = async (recording: Recording) => {
 		if (!transcriber) return;
+		transcription.current?.abort();
+		const request = new AbortController();
+		transcription.current = request;
 		const run = ++generation.current;
 		setStep({ name: "transcribing" });
 		try {
 			const result = await transcribe({
+				signal: request.signal,
 				recording,
 				providerId: transcriber.providerId,
 				model: transcriber.model,
 				applicationId,
 			});
-			if (!alive.current || run !== generation.current) return;
+			if (!alive.current || run !== generation.current || request.signal.aborted) return;
 			setAnswer(result.text);
 			setSpoken({ id: result.id, text: result.text, seconds: recording.seconds });
 			setStep({ name: "idle" });
@@ -260,7 +266,8 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 			audioRef.current = next;
 			setAudio(next);
 		} catch {
-			if (alive.current && run === generation.current) setStep({ name: "error" });
+			if (alive.current && run === generation.current)
+				setStep(request.signal.aborted ? { name: "idle" } : { name: "error" });
 		}
 	};
 
@@ -305,6 +312,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 	const chooseMode = (next: Mode) => {
 		if (next === "typed" && step.name === "recording") void recorder.cancel();
 		generation.current++;
+		transcription.current?.abort();
 		if (next === "typed" || step.name === "transcribing") setStep({ name: "idle" });
 		setMode(next);
 	};
@@ -616,28 +624,37 @@ function HearIt({ text, voice, player }: HearItProps) {
 	const { t } = useLingui();
 	const [busy, setBusy] = useState(false);
 	const [requests] = useState(createRequests);
+	const speech = useRef<AbortController | null>(null);
 	// A reply that lands after leaving (or after a newer question) is deleted instead of played.
 	useEffect(() => requests.invalidate, [requests]);
 	const reader = voice.settings.speak;
+	useEffect(() => () => speech.current?.abort(), [text, reader?.providerId, reader?.model]);
 	if (!reader) return null;
 	const stop = () => {
 		requests.invalidate();
+		speech.current?.abort();
 		player.stop();
 		setBusy(false);
 	};
 	const play = async () => {
 		if (player.playing || busy) return stop();
 		setBusy(true);
+		const request = new AbortController();
+		speech.current = request;
 		let played = false;
 		try {
 			played = await playLatest(
 				requests,
-				() => speak(reader, text),
+				() => speak(reader, text, request.signal),
 				(file) => player.play(file.uri, () => deleteQuietly(file)),
 				deleteQuietly,
 			);
 			if (played) setBusy(false);
 		} catch (error) {
+			if (request.signal.aborted) {
+				if (speech.current === request) setBusy(false);
+				return;
+			}
 			stop();
 			showToast({ message: workspaceError(error, t`Spoken audio is unavailable. Continue with the text question.`) });
 		}

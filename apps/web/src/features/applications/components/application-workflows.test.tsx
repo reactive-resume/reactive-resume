@@ -59,7 +59,7 @@ vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () =
 vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () => ({
 	useHasUsableAiProvider: () => ({
 		hasUsableProvider: true,
-		usableProviders: [{ label: "Fictional provider", provider: "openai" }],
+		usableProviders: [{ id: "local", label: "Fictional provider", provider: "openai", model: "stub" }],
 	}),
 }));
 vi.mock("@/dialogs/store", () => ({ useDialogStore: () => vi.fn() }));
@@ -248,4 +248,38 @@ it("never dispatches a no-AI parse to a server that cannot confirm support, whil
 			expect.anything(),
 		),
 	);
+});
+
+it("replaces prior posting autofill while preserving authored fields, including edits made during the read", async () => {
+	const posting = (role: string, company: string, location: string, salary: string) => ({
+		role,
+		company,
+		location,
+		salary,
+		requirements: [],
+		jobDescription: "Fictional posting",
+		filledBy: "ai",
+		postingSource: { method: "paste", format: "text", truncated: false, completeness: "unknown" },
+	});
+	api.parsePosting.mockResolvedValueOnce(posting("First role", "First Co", "Berlin", "100"));
+	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	const input = await screen.findByRole("textbox", { name: "Job link or posting text" });
+	fireEvent.change(input, { target: { value: "First fictional posting text" } });
+	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	await waitFor(() => expect(screen.getByRole("textbox", { name: "Role" })).toHaveValue("First role"));
+	let finish = (_result: ReturnType<typeof posting>) => {};
+	api.parsePosting.mockReturnValueOnce(
+		new Promise((resolve) => {
+			finish = resolve;
+		}),
+	);
+	fireEvent.change(input, { target: { value: "Second fictional posting text" } });
+	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	fireEvent.change(screen.getByRole("textbox", { name: "Company" }), { target: { value: "My authored company" } });
+	fireEvent.change(screen.getByRole("textbox", { name: "Salary" }), { target: { value: "" } });
+	finish(posting("Second role", "Second Co", "Paris", "200"));
+	await waitFor(() => expect(screen.getByRole("textbox", { name: "Role" })).toHaveValue("Second role"));
+	expect(screen.getByRole("textbox", { name: "Company" })).toHaveValue("My authored company");
+	expect(screen.getByRole("textbox", { name: "Location" })).toHaveValue("Paris");
+	expect(screen.getByRole("textbox", { name: "Salary" })).toHaveValue("");
 });

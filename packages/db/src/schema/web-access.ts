@@ -9,4 +9,8 @@ export const webAccessCredential = pg.pgTable("web_access_credentials", {
 		.references(() => user.id, { onDelete: "cascade" }),
 	provider: pg.text("provider", { enum: ["firecrawl", "tavily", "exa"] }).notNull(),
 	encryptedApiKey: pg.text("encrypted_api_key").notNull(),
+	testResult: pg
+		.jsonb("test_result")
+		.$type<{ search: { success: boolean; error?: string }; read: { success: boolean; error?: string } }>(),
+	lastTestedAt: pg.timestamp("last_tested_at", { withTimezone: true }),
 });

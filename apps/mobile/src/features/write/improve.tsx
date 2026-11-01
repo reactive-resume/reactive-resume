@@ -69,10 +69,17 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 			<Text variant="micro" color="ink3">
 				{t`Improve selected line`}
 			</Text>
-			<Text variant="callout" color="ink2" numberOfLines={2}>
+			<Text variant="caption" color="ink3">{t`Original`}</Text>
+			<Text variant="callout" color="ink2" selectable>
 				{line.text}
 			</Text>
 
+			{ai.defaultProvider && (
+				<Text
+					variant="caption"
+					color="ink3"
+				>{t`Sends this line, surrounding field text and your instructions to ${ai.defaultProvider.label} · ${ai.defaultProvider.model}.`}</Text>
+			)}
 			{ai.isLoading ? (
 				<Text color="ink2">{t`Loading…`}</Text>
 			) : !ai.hasAIProvider ? (

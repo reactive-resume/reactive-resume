@@ -2,15 +2,16 @@
 import type { MessageContext } from "./transport";
 import type { AgentMessagesApi } from "./transport";
 import type { RouterOutput } from "@/api/client";
+import type { useQueryClient } from "@tanstack/react-query";
 import type { FileUIPart, UIMessage } from "ai";
 import { Chat, useChat } from "@ai-sdk/react";
 import { t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { lastAssistantMessageIsCompleteWithApprovalResponses, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import { resumeAgentStream, sendAgentMessage } from "./transport";
-import { client, orpc, streamClient } from "@/api/client";
+import { orpc, streamClient } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 
 export type { MessageContext } from "./transport";
@@ -175,25 +176,4 @@ export function useAssistantChat({
 	}, [threadId, scope]);
 
 	return { ...useChat<UIMessage>({ chat: instance, throttle: 50 }), instance };
-}
-
-/**
- * A conversation whose connection was switched off or removed continues on `provider` (the default, which its privacy
- * line names), rather than failing on send.
- */
-export function useConversationConnection(
-	summary: { id: string; aiProviderId: string | null } | undefined,
-	provider: { id: string } | undefined,
-) {
-	const queryClient = useQueryClient();
-	const staleId = summary && provider && summary.aiProviderId !== provider.id ? summary.id : null;
-	const providerId = provider?.id;
-	const scope = getAccountScope();
-	useEffect(() => {
-		if (!staleId || !providerId || !scope) return;
-		void client.agent.threads
-			.update({ id: staleId, aiProviderId: providerId }, { context: { scope } })
-			.then(() => refreshThreads(queryClient))
-			.catch(() => undefined);
-	}, [staleId, providerId, queryClient, scope]);
 }

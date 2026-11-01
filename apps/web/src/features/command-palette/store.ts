@@ -3,6 +3,7 @@ import { create } from "zustand/react";
 type CommandPaletteState = {
 	open: boolean;
 	search: string;
+	askDraft: string | null;
 	pages: string[];
 };
 
@@ -20,6 +21,7 @@ type CommandPaletteStore = CommandPaletteState & CommandPaletteActions;
 const initialState: CommandPaletteState = {
 	open: false,
 	search: "",
+	askDraft: null,
 	pages: [],
 };
 

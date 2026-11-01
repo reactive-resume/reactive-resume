@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { View } from "react-native";
 import { keyEnding, providerLabel } from "./catalog";
-import { aiSettingsError } from "./error";
+import { aiSettingsError, providerTestError } from "./error";
 import { ProviderEditorSheet } from "./provider-editor";
 import { AIProviderSetupSheet, useHasAIProvider } from "./providers";
 import { client, orpc } from "@/api/client";
@@ -54,7 +54,7 @@ export function ProviderList() {
 				<ProviderRow
 					key={provider.id}
 					provider={provider}
-					isDefault={state.defaultProvider?.id === provider.id}
+					isDefault={provider.isDefault}
 					onEdit={() => setEditingId(provider.id)}
 				/>
 			))}
@@ -79,7 +79,8 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 	const [pending, setPending] = useState(false);
 	const [result, setResult] = useState<string | null>(null);
 	const [failure, setFailure] = useState<string | null>(null);
-	const testError = failure ?? (result ? null : provider.testStatus === "failure" ? provider.testError : null);
+	const testError =
+		failure ?? (result ? null : provider.testStatus === "failure" ? providerTestError(provider.testErrorKind) : null);
 	const run = async (action: "test" | "default") => {
 		if (busy.current) return;
 		busy.current = true;
@@ -93,7 +94,7 @@ function ProviderRow({ provider, isDefault, onEdit }: ProviderRowProps) {
 				const tested = await client.aiProviders.test({ id: provider.id });
 				const milliseconds = Math.round(performance.now() - start);
 				if (tested.testStatus === "success") setResult(t`Connected · ${milliseconds} ms`);
-				else setFailure(tested.testError || t`The provider didn't answer. Check the key, the model and the base URL.`);
+				else setFailure(providerTestError(tested.testErrorKind));
 			}
 		} catch (error) {
 			setFailure(aiSettingsError(error, action === "test"));

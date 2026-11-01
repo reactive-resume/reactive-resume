@@ -36,7 +36,7 @@ without entering your own key. The steps below apply when personal providers are
   </Step>
 </Steps>
 
-If the test fails, the dialog shows the provider's own error message, such as an invalid key or an unknown model. The provider is still saved, so you can fix it later with **Edit** instead of starting again.
+If the test fails, the dialog explains the cause and recovery in your language. Retrying **Save and test** updates the same saved connection. You can also close it and use **Edit** later.
 
 ### The fields
 
@@ -88,7 +88,7 @@ Each saved provider appears as a row under **AI providers**, showing its name, m
   />
 </Frame>
 
-Select **Test** on a row to check it again. The button changes to **Connected** with the round-trip time (for example, **Connected · 420 ms**), or to **Failed** with the provider's error message underneath. A passed test turns the provider on; a failed test turns it off, so the app never uses a provider that isn't answering.
+Select **Test** on a row to check it again. The button changes to **Connected** with the round-trip time (for example, **Connected · 420 ms**), or to **Failed** with the provider's error message underneath. A failed test makes the connection unavailable. A passed test makes it ready unless you deliberately switched it off; **Test** preserves that choice. Turn it on in **Edit** when you want to use it again.
 
 ## Edit, turn off or delete a provider
 
@@ -106,8 +106,8 @@ Select **Edit** on a provider's row.
 - **Delete it** with **Delete provider**, then confirm. The provider and its stored key are removed.
 
 <Warning>
-  Deleting a provider can't be undone. Conversations that used it continue on your default provider. Documents and edits
-  you already accepted aren't affected.
+  Deleting a provider can't be undone. Conversations keep their history and pending edits, but sending pauses until you
+  explicitly choose another destination. Documents and edits you already accepted aren't affected.
 </Warning>
 
 ## Which provider is used
@@ -115,15 +115,20 @@ Select **Edit** on a provider's row.
 You can save several providers, for example one per account or one per model.
 
 - One provider is your **default**, marked **Default** in **Settings → AI & developer**. To change it, choose **Make default** on another provider that's on and tested. Every AI feature where you don't pick a provider uses the default, and the line under each AI action names it.
-- If you haven't chosen a default, or it's turned off, features use the enabled provider you used most recently, and if you haven't used one yet, the oldest enabled provider you added.
-- Conversations keep the provider they started with. When that provider is turned off or deleted, they continue on the default. A scheduled interview briefing does the same.
+- The first working connection becomes the explicit default. Using another connection in one conversation does not change it. If the default is unavailable, other actions offer the oldest working connection and ask you to approve that destination before sending.
+- Conversations keep the provider they started with. When it stops working, history and pending proposals remain readable. Choose another model and approve sending earlier messages there before continuing. Scheduled preparation uses only its selected connection. Deleting or switching off that connection, or changing its key, model or address, pauses associated schedules and cancels queued work. Choose a tested connection and approve it when you enable the schedule again; it never switches to the default automatically. A request already sent cannot be recalled.
+- Upgrading to recipient-bound scheduling pauses existing interview-preparation schedules once. Review and enable them again to approve their connection. If an administrator changes a server-managed connection's details, scheduled work refuses that changed destination until you approve it again.
 - Voice practice uses the default when its provider offers speech models, otherwise another provider that does, otherwise your browser.
 - The **assistant** lets you switch models from the model menu in its header at any time. See [Using the assistant](/guides/using-the-assistant).
 - **Check → Writing** lets you pick the provider for each review.
 
 ## Connect from the assistant instead
 
-If no provider is connected yet, opening the assistant in the editor shows **Connect an AI provider** with OpenAI, Anthropic and **Other · OpenAI-compatible**. Enter your key and model there and select **Connect**. It saves and tests the provider the same way as settings. For the other providers, use **AI & developer**.
+If no provider is connected yet, opening the assistant in the editor shows **Connect an AI provider** with OpenAI, Anthropic and **Other · OpenAI-compatible**. Enter your key and model there and select **Connect**. It saves and tests the provider the same way as settings. Every gated task also has **Set up AI**, which opens the same setup without leaving your work. Existing saved connections show repair controls instead of first-run copy. For the other providers, use **AI & developer**.
+
+If connection lookup fails, retry it before setting up another provider. Your saved connections have not changed. Interview preparation schedules show a retry action while connections are unavailable; setup returns after a successful lookup.
+
+![Interview preparation keeps its form and offers Try again when AI connections cannot be loaded](/images/guides/career/rx98-schedule-lookup-error.png)
 
 <Frame caption="Connecting a provider from the assistant panel">
   <img
@@ -131,6 +136,8 @@ If no provider is connected yet, opening the assistant in the editor shows **Con
     alt="Assistant panel showing Connect an AI provider, with OpenAI, Anthropic and Other · OpenAI-compatible options and a link to Settings for more providers"
   />
 </Frame>
+
+Provider and model suggestions ship with the app. Opening settings does not request logos or a catalog from models.dev. You can still enter a custom model ID.
 
 ## How your key is stored
 
@@ -140,14 +147,14 @@ Self-hosted instances encrypt keys with the `ENCRYPTION_SECRET` environment vari
 
 ## What is sent to your provider
 
-Requests go from the Reactive Resume server to the provider you chose, using your key. Requests run when you use an AI action or when an AI schedule you enabled becomes due. Each action explains its inputs and connection:
+Requests go from the Reactive Resume server to the provider you chose, using your key. Each interactive action asks you to approve its provider, model and data before sending. Canceling keeps the task available. Changes to the destination while approval is open require another approval. Scheduled requests run only after you enable the schedule. Each action explains its inputs and connection:
 
 | Feature                      | What is sent                                                                                                                                                                                                                                  |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Assistant                    | Your message, the open resume or letter (unless you remove it from the message), the job posting and your notes on the linked application (unless you remove the posting), attachments you add, and the earlier messages in the conversation. |
 | **Improve selected line**    | The line you're improving and the rest of that field.                                                                                                                                                                                         |
 | **Check → Writing**          | The text of your resume.                                                                                                                                                                                                                      |
-| Importing a PDF or Word file | The file you import.                                                                                                                                                                                                                          |
+| Importing a PDF or Word file | PDF: the complete file only after choosing AI reading; local reading sends nothing. Word: extracted document text after approval.                                                                                                             |
 | Drafting a letter            | The linked resume and the application's job posting.                                                                                                                                                                                          |
 | Adding an application        | Job posting text you paste or import from a URL.                                                                                                                                                                                              |
 
@@ -181,3 +188,32 @@ Your provider handles that data under its own terms and privacy policy. Reactive
     Turn an existing PDF or Word resume into an editable one.
   </Card>
 </CardGroup>
+
+<Frame caption="A passed test preserves a deliberate Off choice.">
+  <img
+    src="/images/guides/using-ai/rx98-provider-off.png"
+    alt="Fictional compatible provider connected successfully while Off and Default remain visible, with instructions to turn it on in Edit."
+  />
+</Frame>
+
+<Frame caption="Connection controls at phone width, in light and dark appearance.">
+  <img
+    src="/images/guides/using-ai/rx98-provider-off-390-light.png"
+    alt="Phone-width AI connection controls with an Off provider after a successful test."
+  />
+  <img
+    src="/images/guides/using-ai/rx98-provider-off-390-dark.png"
+    alt="The same connection controls in dark appearance."
+  />
+</Frame>
+
+<Frame caption="A rejected key gives translated recovery, shown here in German.">
+  <img
+    src="/images/guides/using-ai/rx98-provider-error-390-german.png"
+    alt="Fictional rejected connection at phone width, with German instructions to check its key and test again."
+  />
+</Frame>
+
+Before each generation, the server checks the selected documents and shared Knowledge again, then checks that the captured AI connection is still available. A provider turned off or deleted, or Knowledge excluded, before that authorization prevents the request. Authorization releases database locks before contacting the provider. A change committed after authorization may race an already authorized request; it cannot recall data already sent. Changing the default does not redirect an approved request to another connection.
+
+On upgrade, accounts without an explicit default use their oldest working provider. This can change the destination used by legacy API and MCP clients that previously followed the most recently used provider. Choose an explicit default in AI settings to keep a specific destination.

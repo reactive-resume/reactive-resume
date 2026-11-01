@@ -219,7 +219,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 				privacy={disclosure(t, document, context, label)}
 				placeholder={t`Ask, or describe a change…`}
 				assistantName={t`Assistant`}
-				disabled={document.locked || !providers.hasAIProvider}
+				disabled={document.locked || !provider}
 				prompt={ask}
 				onPromptSent={() => setAsk(null)}
 				onSwitchModel={() => setModelOpen(true)}

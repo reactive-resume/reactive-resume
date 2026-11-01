@@ -1,10 +1,15 @@
 import type { Page } from "@playwright/test";
+import { approveLocalStubOperations } from "../fixtures/ai-consent";
 import { startAiStub } from "../fixtures/ai-stub";
 import { createSampleResumeFromDashboard } from "../fixtures/resume";
 import { expect, test } from "../fixtures/test";
 
 // The stub is a local provider, so the server must allow a loopback base URL.
 test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs FLAG_ALLOW_UNSAFE_AI_BASE_URL=true");
+
+test.beforeEach(async ({ authPage }) => {
+	await approveLocalStubOperations(authPage);
+});
 
 let stub: Awaited<ReturnType<typeof startAiStub>>;
 test.beforeAll(async () => {

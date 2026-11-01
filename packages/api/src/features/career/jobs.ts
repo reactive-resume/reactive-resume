@@ -77,7 +77,7 @@ export const careerJobs = {
 		if (input.kind === "prepare" && input.enabled) {
 			if (!input.aiProviderId)
 				throw new ORPCError("BAD_REQUEST", { message: "Choose a tested AI provider for scheduled preparation." });
-			await aiProvidersService.getRunnableById({ userId, id: input.aiProviderId });
+			// Rechecked under the user lock before persistence below.
 		} else if (input.aiProviderId) {
 			// Any other schedule may name a connection too; it still has to be one of the account's own.
 			const [provider] = await db
@@ -101,6 +101,11 @@ export const careerJobs = {
 		const { id, ...values } = input;
 		let keepQueuedAt: Date | null = null;
 		return db.transaction(async (tx) => {
+			await lockUser(tx, userId);
+			let aiProviderVersion: string | null = null;
+			if (input.kind === "prepare" && input.enabled && input.aiProviderId)
+				aiProviderVersion = (await aiProvidersService.getRunnableById({ userId, id: input.aiProviderId }, tx))
+					.recipientVersion;
 			if (id) {
 				const [owned] = await tx
 					.select()
@@ -122,8 +127,7 @@ export const careerJobs = {
 					.where(and(eq(tables.careerJob.scheduleId, id), sql`${tables.careerJob.status} in ('queued', 'running')`));
 			}
 			if (!id) {
-				// Serialize this user's creates so the cap holds under concurrent requests.
-				await lockUser(tx, userId);
+				// The user lock also keeps the cap valid under concurrent creates.
 				const [count] = await tx
 					.select({ total: sql<number>`count(*)::int` })
 					.from(tables.careerSchedule)
@@ -136,12 +140,12 @@ export const careerJobs = {
 			const [row] = id
 				? await tx
 						.update(tables.careerSchedule)
-						.set({ ...values, lastQueuedAt: keepQueuedAt })
+						.set({ ...values, aiProviderVersion, lastQueuedAt: keepQueuedAt })
 						.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)))
 						.returning()
 				: await tx
 						.insert(tables.careerSchedule)
-						.values({ userId, ...values })
+						.values({ userId, ...values, aiProviderVersion })
 						.returning();
 			if (!row) throw new ORPCError("NOT_FOUND");
 			return row;
@@ -378,6 +382,45 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 			.where(and(eq(tables.careerJob.id, job.id), eq(tables.careerJob.status, "running")));
 		return;
 	}
+	if (schedule.kind === "prepare" && (!schedule.aiProviderId || !schedule.aiProviderVersion)) {
+		await db.transaction(async (tx) => {
+			await lockUser(tx, job.userId);
+			const [paused] = await tx
+				.update(tables.careerSchedule)
+				.set({ enabled: false, aiProviderVersion: null })
+				.where(
+					and(
+						eq(tables.careerSchedule.id, schedule.id),
+						eq(tables.careerSchedule.userId, job.userId),
+						or(isNull(tables.careerSchedule.aiProviderId), isNull(tables.careerSchedule.aiProviderVersion)),
+					),
+				)
+				.returning({ id: tables.careerSchedule.id });
+			if (!paused) return;
+			const [canceled] = await tx
+				.update(tables.careerJob)
+				.set({ status: "canceled", lease: null, leaseUntil: null })
+				.where(
+					and(
+						eq(tables.careerJob.id, job.id),
+						eq(tables.careerJob.lease, job.lease ?? ""),
+						eq(tables.careerJob.status, "running"),
+					),
+				)
+				.returning({ id: tables.careerJob.id });
+			if (canceled)
+				await tx
+					.insert(tables.careerNotification)
+					.values({
+						userId: job.userId,
+						key: `failed:${job.id}`,
+						notice: { type: "schedule-failed", reason: "failed" },
+						url: `${CAREER_URL}?schedule=${encodeURIComponent(schedule.id)}`,
+					})
+					.onConflictDoNothing();
+		});
+		return;
+	}
 	const application = await requireCareerApplication({
 		userId: job.userId,
 		applicationId: schedule.applicationId,
@@ -409,7 +452,8 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 				applicationId: application.id,
 				locale: schedule.locale,
 				task: { task: "briefing", interviewId: schedule.interviewId },
-				...(schedule.aiProviderId ? { providerId: schedule.aiProviderId } : {}),
+				providerId: schedule.aiProviderId,
+				providerVersion: schedule.aiProviderVersion,
 				jobId: job.id,
 				jobLease: job.lease,
 				signal: AbortSignal.timeout(120_000),

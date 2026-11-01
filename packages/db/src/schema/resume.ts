@@ -191,3 +191,21 @@ export const resumeStatisticsDaily = pg.pgTable(
 	},
 	(t) => [pg.unique().on(t.resumeId, t.date), pg.index().on(t.resumeId, t.date.desc())],
 );
+
+/** One paid writing review per resume, kept independently of the editable document revision. */
+export const resumeWritingReview = pg.pgTable("resume_writing_review", {
+	resumeId: pg
+		.text("resume_id")
+		.primaryKey()
+		.references(() => resume.id, { onDelete: "cascade" }),
+	userId: pg
+		.text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	requestGeneration: pg.integer("request_generation").notNull().default(1),
+	inputText: pg.text("input_text"),
+	passages: pg.jsonb("passages").$type<{ id: string; where: string; text: string }[]>(),
+	review: pg.jsonb("review").$type<Record<string, unknown>>(),
+	requestedAt: pg.timestamp("requested_at", { withTimezone: true }),
+	reviewedAt: pg.timestamp("reviewed_at", { withTimezone: true }),
+});

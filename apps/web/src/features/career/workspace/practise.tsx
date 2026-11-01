@@ -5,7 +5,6 @@ import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { Link } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
 import { z } from "zod";
@@ -37,6 +36,7 @@ import {
 	speakAloud,
 	writeNumbersAsDigits,
 } from "./recorder";
+import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { toastError } from "@/libs/error-message";
@@ -251,6 +251,11 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 	const { i18n } = useLingui();
 	const fileInput = useRef<HTMLInputElement>(null);
 	const alive = useRef(true);
+	const transcription = useRef<AbortController | null>(null);
+	useEffect(
+		() => () => transcription.current?.abort(),
+		[applicationId, voice.settings.transcribe.providerId, voice.settings.transcribe.model],
+	);
 
 	const browserDictation = voice.settings.transcribe.providerId === BROWSER;
 	const canHear = !connection.isUnavailable && (voice.settings.speak.providerId !== BROWSER || canSpeakAloud());
@@ -274,21 +279,28 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 
 	const transcribe = async (next: Audio) => {
 		if (connection.isUnavailable) return;
+		transcription.current?.abort();
+		const request = new AbortController();
+		transcription.current = request;
 		setStep({ name: "transcribing" });
 		try {
-			const result = await client.career.voice.transcribe({
-				providerId: voice.settings.transcribe.providerId,
-				model: voice.settings.transcribe.model,
-				applicationId,
-				audio: next.file,
-			});
-			if (!alive.current) return;
+			const result = await client.career.voice.transcribe(
+				{
+					providerId: voice.settings.transcribe.providerId,
+					model: voice.settings.transcribe.model,
+					applicationId,
+					audio: next.file,
+				},
+				{ signal: request.signal },
+			);
+			if (!alive.current || request.signal.aborted) return;
 			setAnswer(result.text);
 			setSpoken({ id: result.id, text: result.text, seconds: next.seconds });
 			setStep({ name: "idle" });
 			if (!voice.settings.keep) setAudio(null);
 		} catch {
-			if (alive.current) setStep({ name: "error" });
+			if (alive.current && transcription.current === request)
+				setStep(request.signal.aborted ? { name: "idle" } : { name: "error" });
 		}
 	};
 	const takeAudio = (file: File, seconds: number | null) => {
@@ -367,6 +379,8 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 		else if (step.name !== "starting" && step.name !== "transcribing") void startRecording();
 	};
 	const chooseMode = (next: Mode) => {
+		transcription.current?.abort();
+		if (step.name === "transcribing") setStep({ name: "idle" });
 		if (next === "typed" && recording.current) {
 			recording.current.cancel();
 			recording.current = null;
@@ -464,11 +478,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 					<p className="rounded-lg bg-sunken px-3.5 py-3 text-[13px] leading-[19px] text-ink-2">
 						<Trans>
 							This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google
-							Gemini, Mistral, xAI, Groq or Vercel AI Gateway can).{" "}
-							<Link to="/dashboard/settings/ai" className="text-accent-text underline underline-offset-3">
-								Add one in Settings
-							</Link>
-							, or type your answer.
+							Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <SetUpAi />, or type your answer.
 						</Trans>
 					</p>
 				) : spoken ? (
@@ -651,11 +661,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 					) : (
 						<PrivacyLine>
 							<Trans>
-								Feedback needs an AI connection.{" "}
-								<Link to="/dashboard/settings/ai" className="text-accent-text underline underline-offset-3">
-									Add one in Settings
-								</Link>
-								. Nothing is sent until you ask.
+								Feedback needs an AI connection. <SetUpAi />. Nothing is sent until you ask.
 							</Trans>
 						</PrivacyLine>
 					)}
@@ -738,10 +744,12 @@ function HearIt({ text, voice }: { text: string; voice: VoiceSettings }) {
 	const [playing, setPlaying] = useState(false);
 	const playback = useRef<(() => void) | null>(null);
 	const request = useRef(0);
+	const speech = useRef<AbortController | null>(null);
 	const reader = voice.settings.speak;
 	useEffect(
 		() => () => {
 			request.current += 1;
+			speech.current?.abort();
 			playback.current?.();
 			playback.current = null;
 		},
@@ -749,6 +757,7 @@ function HearIt({ text, voice }: { text: string; voice: VoiceSettings }) {
 	);
 	const stop = () => {
 		request.current += 1;
+		speech.current?.abort();
 		playback.current?.();
 		playback.current = null;
 		setPlaying(false);
@@ -757,6 +766,8 @@ function HearIt({ text, voice }: { text: string; voice: VoiceSettings }) {
 	const play = async () => {
 		if (playing || busy) return stop();
 		const generation = ++request.current;
+		const controller = new AbortController();
+		speech.current = controller;
 		if (reader.providerId === BROWSER) {
 			setPlaying(true);
 			playback.current = speakAloud(text, i18n.locale, () => setPlaying(false));
@@ -764,7 +775,10 @@ function HearIt({ text, voice }: { text: string; voice: VoiceSettings }) {
 		}
 		setBusy(true);
 		try {
-			const result = await client.career.voice.speak({ providerId: reader.providerId, model: reader.model, text });
+			const result = await client.career.voice.speak(
+				{ providerId: reader.providerId, model: reader.model, text },
+				{ signal: controller.signal },
+			);
 			if (generation !== request.current) return;
 			const bytes = Uint8Array.from(atob(result.audio), (character) => character.charCodeAt(0));
 			const url = URL.createObjectURL(new Blob([bytes], { type: result.mediaType }));
@@ -780,6 +794,10 @@ function HearIt({ text, voice }: { text: string; voice: VoiceSettings }) {
 			await player.play();
 			if (generation === request.current) setPlaying(true);
 		} catch (error) {
+			if (controller.signal.aborted) {
+				if (speech.current === controller) setBusy(false);
+				return;
+			}
 			if (generation !== request.current) return;
 			stop();
 			toastError(error, t`Spoken audio is unavailable. Continue with the text question.`, { allowServerMessage: true });

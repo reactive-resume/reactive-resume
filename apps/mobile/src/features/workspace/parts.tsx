@@ -202,7 +202,7 @@ export function AiNotice({ sends, centered = false }: AiNoticeProps) {
 				<AIProviderSetupSheet open={setup} onClose={() => setSetup(false)} />
 			</>
 		);
-	const label = provider.label;
+	const label = `${provider.label} · ${provider.model}`;
 	return (
 		<>
 			<PrivacyLine centered={centered}>
