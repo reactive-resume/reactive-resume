@@ -48,7 +48,7 @@ test("writes and exports standalone sender details, then edits a linked copy wit
 		from.getByText("Enter your details below. Choosing a resume replaces them and links its design."),
 	).toBeVisible();
 	await from.getByLabel("Resume", { exact: true }).selectOption(resumeId);
-	const linked = from.getByRole("switch");
+	const linked = from.getByRole("switch", { name: "Use details from “Source resume”", exact: true });
 	await expect(linked).toBeChecked();
 	await expect(from.getByRole("textbox", { name: "Full name", exact: true })).toHaveCount(0);
 	await linked.click();

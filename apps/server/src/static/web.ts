@@ -393,7 +393,8 @@ const prerenderedPages: Record<
 export type ReadWebFile = (path: string) => Promise<string>;
 
 export async function handleWebApp(request: Request, readFile: ReadWebFile = (path) => fs.readFile(path, "utf-8")) {
-	const requestedPath = new URL(request.url).pathname;
+	const requestUrl = new URL(request.url);
+	const requestedPath = requestUrl.pathname;
 	const pathname = requestedPath === "/index.html" ? "/" : requestedPath;
 
 	if (!isAppSectionPath(pathname) && isAssetPath(pathname)) {
@@ -428,10 +429,18 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 			imageUrl: `${origin}${prerendered.image}`,
 			structuredData: prerendered.structuredData(origin),
 		});
+		const body =
+			pathname === "/"
+				? page.replace(/href="\/\?locale=([^"#&]+)#languages"/g, (_match, language: string) => {
+						const search = new URLSearchParams(requestUrl.search);
+						search.set("locale", language);
+						return `href="/?${escapeHtml(search.toString())}#languages"`;
+					})
+				: page;
 
 		// The saved locale changes what this address shows, so caches have to key on the cookie.
 		return htmlResponse(
-			page.replace("</head>", () => `${markup}</head>`),
+			body.replace("</head>", () => `${markup}</head>`),
 			{ ...headers, Vary: "Cookie" },
 			page,
 		);

@@ -119,6 +119,25 @@ describe("saving", () => {
 		expect(mocks.update).toHaveBeenLastCalledWith(expect.objectContaining({ sender: { phone: "5550100" } }));
 		expect(store().letter?.style.basics).toEqual(letter.style.basics);
 	});
+
+	it("shows and saves the header details an unlinked letter edits, including leaving its photo off", async () => {
+		const style = structuredClone(letter.style);
+		style.picture.url = "https://example.test/photo.png";
+		store().load({ ...letter, senderLinked: false, style });
+		mocks.update.mockImplementation(async () => ({ ...store().letter, revision: 2 }));
+		const sender = {
+			headline: "",
+			website: { url: "https://jordan.example", label: "" },
+			customFields: [{ id: "gh", icon: "github-logo", text: "github.com/jordan", link: "" }],
+			picture: { hidden: true },
+		};
+		store().edit({ sender });
+
+		expect(store().letter?.style.basics).toMatchObject({ headline: "", website: sender.website });
+		expect(store().letter?.style.picture).toEqual({ ...style.picture, hidden: true });
+		await store().flush();
+		expect(mocks.update).toHaveBeenCalledWith(expect.objectContaining({ sender }));
+	});
 	it.each(["success", "failure"])("ignores an old session's %s while another letter is edited", async (result) => {
 		const request = deferred<CoverLetter>();
 		mocks.update.mockReturnValueOnce(request.promise).mockImplementation(async (input) => ({

@@ -9,6 +9,7 @@ import { compress } from "hono/compress";
 import { prepareStagedBody, withStagedBody } from "@reactive-resume/api/features/storage/transport";
 import { env } from "@reactive-resume/env/server";
 import { prepareMcpDiscovery } from "@reactive-resume/mcp";
+import { AUTH_PATH_ALIASES } from "@reactive-resume/utils/app-paths";
 import { handleMcp } from "../mcp/handler";
 import { handleOpenApi, handleOpenApiDocument } from "../openapi/handler";
 import {
@@ -188,11 +189,18 @@ export function createApp(options: AppOptions = {}) {
 			? serveResumePage(c.req.raw, { username: c.req.param("username"), slug: c.req.param("slug") }, client(c))
 			: next(),
 	);
-	app.on(["GET", "POST"], "/:username", limitBody(16 * 1024), (c, next) =>
-		isProfilePath(c.req.path)
-			? serveResumePage(c.req.raw, { username: c.req.param("username"), primary: true }, client(c))
-			: next(),
-	);
+	app.on(["GET", "POST"], "/:username", limitBody(16 * 1024), async (c, next) => {
+		if (!isProfilePath(c.req.path)) return next();
+		const page = await serveResumePage(c.req.raw, { username: c.req.param("username"), primary: true }, client(c));
+		// `/login` and the like go to sign-in, unless an account of that name shares a page there. Every unavailable page
+		// reads the same, so this tells nobody whether such an account exists.
+		const username = c.req.param("username").toLowerCase();
+		const alias = Object.hasOwn(AUTH_PATH_ALIASES, username) ? AUTH_PATH_ALIASES[username] : undefined;
+		if (alias && page.status === 404 && c.req.method !== "POST") {
+			return new Response(null, { status: 302, headers: { Location: `${alias}${new URL(c.req.url).search}` } });
+		}
+		return page;
+	});
 	app.get("/*", (c) => handleWebApp(c.req.raw, options.readWebFile));
 
 	return app;

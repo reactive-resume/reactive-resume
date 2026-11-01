@@ -799,6 +799,11 @@ const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 	"@reactive-resume/utils/timezone": timeParser,
 });
 let offerProfile = { isSuccess: false, isPending: true, isError: false };
+let savedOffers = [
+	{ createdAt: "2026-09-01T00:00:00Z", data: { kind: "offer", currency: "USD" } },
+	{ createdAt: "2026-10-01T00:00:00Z", data: { kind: "offer", currency: "GBP" } },
+];
+let offerApplications = { data: [] };
 const { OfferEntry } = load("features/career/offer-entry.tsx", {
 	"@reactive-resume/schema/career": careerSchema,
 	"@reactive-resume/schema/career-offer": offerParser,
@@ -812,11 +817,24 @@ const { OfferEntry } = load("features/career/offer-entry.tsx", {
 			},
 		}),
 		client: { career: { createOffer: async (input) => calls.push(input) } },
+		useOffers: () => ({ data: savedOffers }),
 	},
 	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
 	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
-	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+	"@/features/applications/queries": { useApplications: () => offerApplications },
 });
+reset();
+offerApplications = { isPending: true };
+assert.equal(render(OfferEntry, {}).type, "LoadState", "unknown metadata offers no ready action");
+offerApplications = { isError: true };
+assert.equal(render(OfferEntry, {}).type, "LoadState", "failed metadata stays retryable, not empty");
+offerApplications = { isError: true, data: [] };
+assert.equal(render(OfferEntry, {}).type, "LoadState", "failed refresh with cached empty metadata stays retryable");
+offerApplications = { data: [] };
+// With no application to attach it to, Add offer leads to saving a job first.
+control(render(OfferEntry, {}), "Add an application first").onPress();
+assert.deepEqual(calls, ["/applications?create=1"]);
+assert.ok(!nodes(render(OfferEntry, {})).some((node) => node.props.label === "Add offer"));
 reset();
 const entryView = () => render(OfferEntry, { application: { id: "job", company: "Fictional Labs", role: "Engineer" } });
 control(entryView(), "Add offer").onPress();
@@ -824,12 +842,28 @@ const formElement = nodes(entryView()).find((node) => typeof node.type === "func
 assert.ok(formElement);
 reset();
 const offerView = () => render(formElement.type, { ...formElement.props, onClose() {} });
+const initialOffers = savedOffers;
+savedOffers = [];
+offerView();
+assert.equal(control(offerView(), "Currency").value, "", "empty results do not invent a currency");
+savedOffers = initialOffers;
+offerView();
+assert.equal(control(offerView(), "Currency").value, "GBP", "starts in the last offer's currency");
+savedOffers = [{ createdAt: "2026-11-01T00:00:00Z", data: { kind: "offer", currency: "EUR" } }];
+assert.equal(control(offerView(), "Currency").value, "GBP", "late refetch cannot replace the draft currency");
+assert.equal(control(offerView(), "Currency").placeholder, undefined, "no placeholder posing as a value");
+assert.match(control(offerView(), "Currency").helper, /three-letter/);
+assert.ok(!nodes(offerView()).some((node) => node.props.label === "Learning budget"), "rarer terms start folded");
+assert.ok(!nodes(offerView()).some((node) => /Times are shown/.test(String(node.props.children))));
 control(offerView(), "Currency").onChangeText("EUR");
+control(offerView(), "More options").onPress();
 control(offerView(), "Learning budget").onChangeText("95k");
 assert.equal(control(offerView(), "Learning budget").error, undefined, "typing shows no premature error");
 control(offerView(), "Learning budget").onBlur();
 assert.match(control(offerView(), "Learning budget").error, /full amount/);
+control(offerView(), "More options").onPress();
 control(offerView(), "Save offer").onPress();
+assert.equal(control(offerView(), "More options").expanded, true, "Save reveals invalid terms for correction");
 assert.deepEqual(calls, [], "invalid optional learning cannot save");
 assert.equal(control(offerView(), "Learning budget").value, "95k", "invalid draft remains editable");
 control(offerView(), "Learning budget").onChangeText("");
@@ -842,6 +876,7 @@ for (const state of ["loading", "failure"]) {
 	assert.equal(control(offerView(), "Respond by").value, "2027-03-28");
 }
 offerProfile = { isSuccess: true, isPending: false, isError: false };
+assert.ok(nodes(offerView()).some((node) => /Times are shown in Europe\/Berlin/.test(String(node.props.children))));
 control(offerView(), "Time").onChange("02:30");
 control(offerView(), "Save offer").onPress();
 assert.deepEqual(calls, [], "nonexistent local time cannot save");
@@ -1501,3 +1536,43 @@ for (const state of ["loading", "error", "empty", "configured"]) {
 }
 assert.equal(scheduleRetries, 1);
 console.log("PASS native preparation distinguishes loading/error from empty/configured AI lookup");
+
+const { CustomFields } = load("features/write/basics-screen.tsx", {
+	"expo-image": { Image: "Image" },
+	"@reactive-resume/utils/string": { generateId: () => "new-field" },
+	"./entry-fields": { BoundText: "BoundText", LinkField: "LinkField", useValidators: () => ({}) },
+	"./entry-screen": { EditorScreen: "EditorScreen" },
+	"./hooks": { useWriteData: () => null },
+	"./pickers": { IconPickerSheet: "IconPickerSheet", PromptSheet: "PromptSheet" },
+	"./picture-screen": { resolvePictureUrl: () => "" },
+	"@/auth/session": { useSession: () => ({}) },
+	"@/draft": { useIsResumeLocked: () => false, useResumeStore: {} },
+});
+reset();
+const removedField = { id: "field-one", icon: "acorn", text: "Portfolio", link: "https://portfolio.example/" };
+let fieldDocument = { headline: "Before", fields: [removedField] };
+const fieldHistory = [];
+const updateFields = (mutate) => {
+	fieldHistory.push(structuredClone(fieldDocument));
+	fieldDocument = structuredClone(fieldDocument);
+	mutate(fieldDocument.fields);
+};
+const fieldView = () =>
+	render(CustomFields, {
+		fields: fieldDocument.fields,
+		locked: false,
+		update: updateFields,
+		undo: () => (fieldDocument = fieldHistory.pop()),
+	});
+control(fieldView(), "Remove field").onPress();
+assert.equal(fieldDocument.fields.length, 0);
+const removalToast = calls.find((value) => value.message === "Field removed");
+assert.ok(removalToast);
+fieldHistory.push(structuredClone(fieldDocument));
+fieldDocument = { ...fieldDocument, headline: "Later edit" };
+removalToast.action.onPress();
+assert.equal(fieldDocument.headline, "Later edit", "field Undo preserves a later edit");
+assert.deepEqual(fieldDocument.fields, [removedField], "field Undo restores only the removed field");
+removalToast.action.onPress();
+assert.deepEqual(fieldDocument.fields, [removedField], "a restored field is never duplicated");
+console.log("PASS native custom-field Undo restores its field without reverting later edits or duplicating it");

@@ -369,9 +369,13 @@ export const coverLetterService = {
 			if (senderLinked)
 				throw new ORPCError("BAD_REQUEST", { message: "Turn off the sender link before editing sender details." });
 			const style = changes.style ?? stored.style;
-			const sender = coverLetterDto.update.input.shape.sender.unwrap().parse(input.sender);
+			const { picture, ...sender } = coverLetterDto.update.input.shape.sender.unwrap().parse(input.sender);
 			const fields = Object.fromEntries(Object.entries(sender).filter(([, value]) => value !== undefined));
-			changes.style = { ...style, basics: { ...style.basics, ...fields } };
+			changes.style = {
+				...style,
+				basics: { ...style.basics, ...fields },
+				picture: picture ? { ...style.picture, ...picture } : style.picture,
+			};
 		}
 
 		if (input.template) {

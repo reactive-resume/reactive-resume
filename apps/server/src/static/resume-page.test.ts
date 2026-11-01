@@ -40,3 +40,20 @@ it("authorizes only the fixed application script, even if rendered content conta
 	expect(csp).not.toContain(hash("untrusted()"));
 	expect(csp?.match(/script-src ([^;]*)/)?.[1]).not.toContain("'unsafe-inline'");
 });
+
+it("gives a visitor at an address with no shared resume a way to the app's home, in their language", async () => {
+	const { loadPublicWebPage } = await import("@reactive-resume/api/features/resume/web-page");
+	vi.mocked(loadPublicWebPage).mockResolvedValue({ status: "unavailable" } as never);
+	const { serveResumePage } = await import("./resume-page");
+
+	const response = await serveResumePage(
+		new Request("https://resume.example/login", { headers: { "accept-language": "de-DE" } }),
+		{ username: "login", primary: true },
+		"test",
+	);
+
+	const html = await response.text();
+	expect(response.status).toBe(404);
+	expect(html).toMatch(/<a class="home" href="https:\/\/resume\.example\/">.*<\/a><\/main>/);
+	expect(html).toContain('lang="de-DE"');
+});
