@@ -5,7 +5,8 @@
 	"private": true,
 	"exports": {
 		"./transport": "./src/transport.ts",
-		"./templates/auth": "./src/templates/auth.tsx"
+		"./templates/auth": "./src/templates/auth.tsx",
+		"./templates/auth-messages": "./src/templates/auth-messages.ts"
 	},
 	"scripts": {
 		"dev": "email dev --dir src/templates --port 3002",
@@ -16,6 +17,7 @@
 	},
 	"dependencies": {
 		"@reactive-resume/env": "workspace:*",
+		"@reactive-resume/utils": "workspace:*",
 		"nodemailer": "^10.3.1",
 		"react": "catalog:",
 		"react-email": "^6.11.6"

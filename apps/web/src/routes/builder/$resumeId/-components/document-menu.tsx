@@ -1,4 +1,4 @@
-import { t } from "@lingui/core/macro";
+import { ph, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -13,6 +13,7 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { isolate } from "@reactive-resume/utils/string";
 import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
 import { DocumentDetails } from "./document-details";
 import { useDialogStore } from "@/dialogs/store";
@@ -112,7 +113,7 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 				onSuccess: () => {
 					void navigate({ to: "/dashboard" });
 					toast.add({
-						description: t`“${name}” moved to Trash`,
+						description: t`“${ph({ name: isolate(name) })}” moved to Trash`,
 						actionProps: {
 							children: t`Undo`,
 							// By now the editor has gone, and a mutation's own callbacks go with it: catch the promise.

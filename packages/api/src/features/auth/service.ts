@@ -6,6 +6,7 @@ import { auth, isCustomOAuthProviderEnabled } from "@reactive-resume/auth/config
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
+import { isLocale } from "@reactive-resume/utils/locale";
 import { applicationProfileService } from "../application-profile/service";
 import { applicationLaneService } from "../applications/lanes";
 import { careerService } from "../career/service";
@@ -42,11 +43,13 @@ export const authService = {
 				email: schema.user.email,
 				emailVerified: schema.user.emailVerified,
 				timezone: schema.user.timezone,
+				locale: schema.user.locale,
 			})
 			.from(schema.user)
 			.where(eq(schema.user.id, userId));
 		if (!user) throw new ORPCError("NOT_FOUND");
-		return user;
+		// A value outside the supported list (none is written, but the column is free text) reads as unknown.
+		return { ...user, locale: isLocale(user.locale) ? user.locale : null };
 	},
 
 	// GDPR-style export of everything the user owns. Selects explicit columns so
@@ -61,6 +64,7 @@ export const authService = {
 				displayUsername: schema.user.displayUsername,
 				image: schema.user.image,
 				timezone: schema.user.timezone,
+				locale: schema.user.locale,
 				emailVerified: schema.user.emailVerified,
 				createdAt: schema.user.createdAt,
 				updatedAt: schema.user.updatedAt,

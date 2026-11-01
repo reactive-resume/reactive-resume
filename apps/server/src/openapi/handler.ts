@@ -22,7 +22,8 @@ const openAPIHandler = new OpenAPIHandler(openAPIRouter, {
 		onError((error) => {
 			// Signed-out or expired callers are routine; their 401 still reaches the client.
 			if (error instanceof ORPCError && error.code === "UNAUTHORIZED") return;
-			console.error("[OpenAPI]", error);
+			// Validation errors can contain submitted profile values; keep payloads out of server logs.
+			console.error("[OpenAPI]", error instanceof ORPCError ? error.code : "INTERNAL_SERVER_ERROR");
 		}),
 	],
 });

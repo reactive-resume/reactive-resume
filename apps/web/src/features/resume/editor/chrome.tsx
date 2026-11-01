@@ -89,7 +89,9 @@ export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTr
 			className="-mx-1.5 flex max-w-[calc(100%+0.75rem)] min-w-0 flex-col items-start rounded-md px-1.5 py-0.5 text-start transition-colors duration-quick hover:bg-hover"
 		>
 			<span className="flex max-w-full min-w-0 items-center gap-1.5">
-				<span className="truncate text-sm leading-[18px] font-semibold text-ink">{name}</span>
+				<span dir="auto" className="truncate text-sm leading-[18px] font-semibold text-ink">
+					{name}
+				</span>
 				{isLocked && <Icon name="lock" size={16} className="text-ink-3" />}
 				<Icon name="caret-down" size={16} className="text-ink-3" />
 			</span>

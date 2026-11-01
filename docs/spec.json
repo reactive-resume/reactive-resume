@@ -34563,7 +34563,7 @@
 			"get": {
 				"operationId": "getProfile",
 				"summary": "Get your profile",
-				"description": "Returns only the authenticated user's profile and timezone. No secrets are included.",
+				"description": "Returns only the authenticated user's profile, timezone and interface language (null until an app reports one). No secrets are included.",
 				"tags": [
 					"Authentication"
 				],
@@ -34606,6 +34606,73 @@
 										},
 										"timezone": {
 											"type": "string"
+										},
+										"locale": {
+											"anyOf": [
+												{
+													"enum": [
+														"af-ZA",
+														"am-ET",
+														"ar-SA",
+														"az-AZ",
+														"bg-BG",
+														"bn-BD",
+														"ca-ES",
+														"cs-CZ",
+														"da-DK",
+														"de-DE",
+														"el-GR",
+														"en-US",
+														"en-GB",
+														"es-ES",
+														"fa-IR",
+														"fi-FI",
+														"fr-FR",
+														"he-IL",
+														"hi-IN",
+														"hu-HU",
+														"id-ID",
+														"it-IT",
+														"ja-JP",
+														"km-KH",
+														"kn-IN",
+														"ko-KR",
+														"lt-LT",
+														"lv-LV",
+														"ml-IN",
+														"mr-IN",
+														"ms-MY",
+														"ne-NP",
+														"nl-NL",
+														"no-NO",
+														"or-IN",
+														"pl-PL",
+														"pt-BR",
+														"pt-PT",
+														"ro-RO",
+														"ru-RU",
+														"sk-SK",
+														"sl-SI",
+														"sq-AL",
+														"sr-SP",
+														"sv-SE",
+														"ta-IN",
+														"te-IN",
+														"th-TH",
+														"tr-TR",
+														"uk-UA",
+														"uz-UZ",
+														"vi-VN",
+														"zh-CN",
+														"zh-TW",
+														"zu-ZA"
+													],
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
 										}
 									},
 									"required": [
@@ -34616,7 +34683,8 @@
 										"image",
 										"email",
 										"emailVerified",
-										"timezone"
+										"timezone",
+										"locale"
 									]
 								}
 							}
@@ -34676,7 +34744,7 @@
 			"patch": {
 				"operationId": "updateProfile",
 				"summary": "Update your profile",
-				"description": "Updates only the authenticated user's name, username, image, or timezone. Usernames must be unique.",
+				"description": "Updates only the authenticated user's name, username, image, timezone, or interface language. The language picks the language of account emails. Usernames must be unique.",
 				"tags": [
 					"Authentication"
 				],
@@ -34712,6 +34780,66 @@
 									"timezone": {
 										"type": "string",
 										"maxLength": 100
+									},
+									"locale": {
+										"enum": [
+											"af-ZA",
+											"am-ET",
+											"ar-SA",
+											"az-AZ",
+											"bg-BG",
+											"bn-BD",
+											"ca-ES",
+											"cs-CZ",
+											"da-DK",
+											"de-DE",
+											"el-GR",
+											"en-US",
+											"en-GB",
+											"es-ES",
+											"fa-IR",
+											"fi-FI",
+											"fr-FR",
+											"he-IL",
+											"hi-IN",
+											"hu-HU",
+											"id-ID",
+											"it-IT",
+											"ja-JP",
+											"km-KH",
+											"kn-IN",
+											"ko-KR",
+											"lt-LT",
+											"lv-LV",
+											"ml-IN",
+											"mr-IN",
+											"ms-MY",
+											"ne-NP",
+											"nl-NL",
+											"no-NO",
+											"or-IN",
+											"pl-PL",
+											"pt-BR",
+											"pt-PT",
+											"ro-RO",
+											"ru-RU",
+											"sk-SK",
+											"sl-SI",
+											"sq-AL",
+											"sr-SP",
+											"sv-SE",
+											"ta-IN",
+											"te-IN",
+											"th-TH",
+											"tr-TR",
+											"uk-UA",
+											"uz-UZ",
+											"vi-VN",
+											"zh-CN",
+											"zh-TW",
+											"zu-ZA"
+										],
+										"type": "string"
 									}
 								}
 							}
@@ -35599,6 +35727,19 @@
 														}
 													]
 												},
+												"timezone": {
+													"type": "string"
+												},
+												"locale": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
 												"emailVerified": {
 													"type": "boolean"
 												},
@@ -35620,6 +35761,8 @@
 												"username",
 												"displayUsername",
 												"image",
+												"timezone",
+												"locale",
 												"emailVerified",
 												"createdAt",
 												"updatedAt"

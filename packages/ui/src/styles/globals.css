@@ -214,6 +214,13 @@
 		@apply bg-bg text-sm text-ink proportional-nums antialiased selection:bg-accent-soft selection:text-ink;
 	}
 
+	/* What people type keeps its own direction, from its first letter, so German stays left to right in the Arabic
+	   interface and Arabic right to left in an English one. The field keeps the interface's direction for its padding,
+	   icons and empty caret, which dir="auto" would flip. */
+	:where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"]), textarea) {
+		unicode-bidi: plaintext;
+	}
+
 	h1 {
 		@apply font-display;
 	}
