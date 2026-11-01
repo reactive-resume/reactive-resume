@@ -35,6 +35,9 @@ export const resume = pg.pgTable(
 		trashedAt: pg.timestamp("trashed_at", { withTimezone: true }),
 		// A blank resume's name follows its headline until the user renames it.
 		autoName: pg.boolean("auto_name").notNull().default(false),
+		// The address was made by the app and nobody has been sent it: it follows the name until the resume is
+		// published or someone chooses an address.
+		autoSlug: pg.boolean("auto_slug").notNull().default(false),
 		data: pg
 			.jsonb("data")
 			.notNull()

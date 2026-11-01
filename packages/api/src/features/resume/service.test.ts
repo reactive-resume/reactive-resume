@@ -106,9 +106,12 @@ vi.mock("./version-history", () => versionHistoryMock);
 const recordSlugChangeMock = vi.hoisted(() => vi.fn());
 // The lookup by username and slug; its query is tested against real SQL in public-pdf.test.ts.
 const findResumeMock = vi.hoisted(() => vi.fn());
+const followNameWithSlugMock = vi.hoisted(() => vi.fn(async () => undefined));
 vi.mock("./slugs", () => ({
 	checkSlug: vi.fn(),
+	DEFAULT_SLUG_STEM: "resume",
 	findFreeSlug: vi.fn(async () => "generated-slug"),
+	followNameWithSlug: followNameWithSlugMock,
 	findResume: findResumeMock,
 	recordSlugChange: recordSlugChangeMock,
 }));
@@ -267,6 +270,11 @@ describe("update", () => {
 			} else {
 				await expect(resumeService.update(input)).resolves.toMatchObject({ id: "r1" });
 				expect(update.set).toHaveBeenCalledWith({ name: "Saved", autoName: false });
+				expect(followNameWithSlugMock).toHaveBeenCalledWith(expect.anything(), {
+					userId: "u1",
+					resumeId: "r1",
+					name: "Saved",
+				});
 				expect(update.where).toHaveBeenCalledWith(expect.arrayContaining([["trashed_at"], ["is_locked", false]]));
 			}
 		},
@@ -301,7 +309,8 @@ describe("update", () => {
 			from: "old-address",
 			to: "new-address",
 		});
-		expect(update.set).toHaveBeenCalledWith({ slug: "new-address" });
+		// An address chosen by hand stops following the name.
+		expect(update.set).toHaveBeenCalledWith({ slug: "new-address", autoSlug: false });
 	});
 
 	it.each(["Legacy_Slug", "a".repeat(70)])(
@@ -322,7 +331,9 @@ describe("update", () => {
 			const { update } = updateHarness({ slug: legacySlug });
 			await resumeService.update({ id: "r1", userId: "u1", name: "Renamed", slug: legacySlug });
 			// A name typed by hand also ends automatic naming.
-			expect(update.set).toHaveBeenCalledWith({ name: "Renamed", autoName: false, slug: legacySlug });
+			expect(update.set).toHaveBeenCalledWith({ name: "Renamed", autoName: false, slug: legacySlug, autoSlug: false });
+			// The given address wins over following the new name.
+			expect(followNameWithSlugMock).not.toHaveBeenCalled();
 			expect(recordSlugChangeMock).not.toHaveBeenCalled();
 		},
 	);
