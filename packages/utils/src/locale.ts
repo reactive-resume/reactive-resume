@@ -110,6 +110,18 @@ export type Script =
 	| "arabic"
 	| "hebrew"
 	| "thai"
+	| "devanagari"
+	| "bengali"
+	| "gurmukhi"
+	| "gujarati"
+	| "oriya"
+	| "tamil"
+	| "telugu"
+	| "kannada"
+	| "malayalam"
+	| "sinhala"
+	| "ethiopic"
+	| "khmer"
 	| "emoji"
 	| "arrows"
 	| "symbols";
@@ -125,7 +137,7 @@ export function isCjkScript(script: Script): boolean {
 
 // The script a locale primarily uses, used to order the fallback stack so the
 // dominant language renders with its native font. Persian (fa-IR) uses the
-// Arabic script.
+// Arabic script; Marathi and Nepali use Devanagari, like Hindi.
 export function getLocaleScript(locale?: Locale): Script | null {
 	switch (locale) {
 		case "ko-KR":
@@ -143,6 +155,26 @@ export function getLocaleScript(locale?: Locale): Script | null {
 			return "hebrew";
 		case "th-TH":
 			return "thai";
+		case "hi-IN":
+		case "mr-IN":
+		case "ne-NP":
+			return "devanagari";
+		case "bn-BD":
+			return "bengali";
+		case "or-IN":
+			return "oriya";
+		case "ta-IN":
+			return "tamil";
+		case "te-IN":
+			return "telugu";
+		case "kn-IN":
+			return "kannada";
+		case "ml-IN":
+			return "malayalam";
+		case "am-ET":
+			return "ethiopic";
+		case "km-KH":
+			return "khmer";
 		default:
 			return null;
 	}
