@@ -133,3 +133,50 @@ test("a failed primary lookup stops Copy for a cached primary that is no longer 
 	await expect(addresses.getByText(/Couldn't check which resume opens your short link/)).toBeHidden();
 	await expect(addresses.getByRole("button", { name: "Copy", exact: true })).toBeDisabled();
 });
+
+test("a primary in Trash keeps the short link closed until Primary is switched on", async ({
+	authPage: page,
+	account,
+}, testInfo) => {
+	const primaryName = await createSampleResumeFromDashboard(page, testInfo);
+	await openSidebarSection(page, "Sharing");
+	await page.getByRole("button", { name: "Publish", exact: true }).click();
+	await expect(page.getByRole("switch", { name: "Primary resume", exact: true })).toBeChecked();
+	const list = (await (await page.request.get("/api/openapi/resumes")).json()) as
+		| { id: string; name: string }[]
+		| { items: { id: string; name: string }[] };
+	const primaryId = (Array.isArray(list) ? list : list.items).find((resume) => resume.name === primaryName)?.id;
+	if (!primaryId) throw new Error("The published resume is missing from the list.");
+
+	const secondName = "Second private resume";
+	const created = await page.request.post("/api/openapi/resumes", { data: { name: secondName, tags: [] } });
+	expect(created.ok()).toBe(true);
+	const secondId = (await created.json()) as string;
+	await page.goto(`/builder/${secondId}`);
+	await openSidebarSection(page, "Sharing");
+	const addresses = page.getByRole("region", { name: "Short link and domain" });
+	const copy = addresses.getByRole("button", { name: "Copy", exact: true });
+	await expect(copy).toBeEnabled();
+
+	// Trash the published primary; it keeps the role but disappears from the list.
+	expect(
+		(await page.request.post("/api/openapi/documents/trash", { data: { type: "resume", id: primaryId } })).ok(),
+	).toBe(true);
+	await page.reload();
+	await openSidebarSection(page, "Sharing");
+
+	await expect(addresses).toContainText("Publish this resume to open it at your short link and custom domain.");
+	await expect(addresses).toContainText("If another resume holds Primary, turn it on for this one instead.");
+	await expect(copy).toBeDisabled();
+	expect((await page.request.get(`/${account.username}`)).status()).toBe(404);
+
+	// Publishing alone does not claim the role while the trashed primary keeps it.
+	await page.getByRole("button", { name: "Publish", exact: true }).click();
+	await expect(copy).toBeDisabled();
+	expect((await page.request.get(`/${account.username}`)).status()).toBe(404);
+
+	// Explicit Primary takes the role and opens the link.
+	await page.getByRole("switch", { name: "Primary resume", exact: true }).click();
+	await expect(copy).toBeEnabled();
+	await expect.poll(async () => (await page.request.get(`/${account.username}`)).status()).toBe(200);
+});
