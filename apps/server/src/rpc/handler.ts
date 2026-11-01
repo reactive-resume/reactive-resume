@@ -3,6 +3,7 @@ import { RPCHandler } from "@orpc/server/fetch";
 import { BatchHandlerPlugin, RequestHeadersPlugin, StrictGetMethodPlugin } from "@orpc/server/plugins";
 import router from "@reactive-resume/api/routers";
 import { mergeResponseHeaders } from "../http/headers";
+import { readAccountBinding } from "./account-header";
 import { getRequestLocale } from "./locale";
 
 const rpcHandler = new RPCHandler(router, {
@@ -11,8 +12,7 @@ const rpcHandler = new RPCHandler(router, {
 	// carry its own account expectation; authentication keeps using the envelope, so an item cannot swap the cookie.
 	rootInterceptors: [
 		(interceptorOptions) => {
-			const header = interceptorOptions.request.headers["x-account-id"];
-			const accountId = Array.isArray(header) ? header[0] : header;
+			const accountId = readAccountBinding(interceptorOptions.request.headers);
 			return interceptorOptions.next({
 				...interceptorOptions,
 				context: {

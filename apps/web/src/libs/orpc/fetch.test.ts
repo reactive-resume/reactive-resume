@@ -32,6 +32,8 @@ describe("RPC fetch", () => {
 
 	it("uploads large wire bytes to Blob, then sends a tiny reference to the original RPC", async () => {
 		queueStaging();
+		const { setAccountScope } = await import("@/libs/auth/account-scope");
+		setAccountScope("alice");
 		const { rpcFetch } = await import("./fetch");
 		const result = await rpcFetch(
 			new Request(rpcUrl, {
@@ -62,6 +64,7 @@ describe("RPC fetch", () => {
 		expect(headers.get("content-type")).toBe(contentType);
 		expect(headers.get("x-example")).toBe("preserved");
 		expect(headers.get("x-client-timezone")).toBe(Intl.DateTimeFormat().resolvedOptions().timeZone);
+		expect(headers.get("x-account-id")).toBe("alice");
 	});
 
 	it("sends large requests directly once staging is unavailable on Docker", async () => {

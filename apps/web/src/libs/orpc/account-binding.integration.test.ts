@@ -1,9 +1,9 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from "vite-plus/test";
 // @vitest-environment node
+import { afterAll, beforeAll, describe, expect, it, vi } from "vite-plus/test";
 
 /**
  * Real transport + real HTTP regression for account-bound writes. Runs only when RX106_BINDING_APP_URL points at a
- * disposable server whose database is DATABASE_URL; every account is synthetic and deleted afterwards.
+ * disposable server; every account is synthetic and deleted afterwards.
  */
 const appUrl = process.env.RX106_BINDING_APP_URL;
 
@@ -233,6 +233,168 @@ describe.skipIf(!appUrl)("account binding over the real transport", () => {
 			expect((await profile(bob.cookie)).priorities, entry.name).toBe(entry.stored);
 			expect((await profile(alice.cookie)).targetRoles, entry.name).toEqual(["Alice private role"]);
 		}
+	}, 60_000);
+
+	it("reads item bindings case-insensitively in streaming and buffered batches", async () => {
+		type Mode = "streaming" | "buffered";
+		const item = (
+			accountId: string | null,
+			payload: Record<string, unknown>,
+			headerName = "x-account-id",
+			extraHeaders: Record<string, string> = {},
+		) => ({
+			url: `${appUrl}/api/rpc/career/saveProfile`,
+			headers: {
+				"content-type": "application/json",
+				...(accountId ? { [headerName]: accountId } : {}),
+				...extraHeaders,
+			},
+			body: { json: payload },
+		});
+		const runBatch = async (mode: Mode, envelope: string | null, items: ReturnType<typeof item>[]) => {
+			const response = await realFetch(`${appUrl}/api/rpc/__batch__`, {
+				method: "POST",
+				headers: {
+					origin: appUrl ?? "",
+					"content-type": "application/json",
+					"x-orpc-batch": mode,
+					cookie: bob.cookie,
+					...(envelope ? { "x-account-id": envelope } : {}),
+				},
+				body: JSON.stringify(items),
+			});
+			if (mode === "buffered") {
+				const body = (await response.json()) as Array<{ index: number; status?: number }>;
+				const statuses = body.sort((left, right) => left.index - right.index).map((entry) => entry.status ?? 207);
+				return { status: response.status, statuses };
+			}
+			const text = await response.text();
+			const statuses = [...text.matchAll(/data: (\{.*\})/g)]
+				.map((match) => JSON.parse(match[1] as string) as { index: number; status: number })
+				.sort((left, right) => left.index - right.index)
+				.map((entry) => entry.status);
+			return { status: response.status, statuses };
+		};
+		const baseline = async () => {
+			const response = await realFetch(`${appUrl}/api/openapi/career/profile`, {
+				method: "PUT",
+				headers: { cookie: bob.cookie, "content-type": "application/json" },
+				body: JSON.stringify({ ...bobPayload, priorities: "baseline" }),
+			});
+			expect(response.ok).toBe(true);
+		};
+
+		const bobWrite = { ...bobPayload, priorities: "case-bob" };
+		const aliceWrite = { ...alicePayload, priorities: "case-alice" };
+		const cases: Array<{
+			name: string;
+			mode: Mode;
+			envelope: string | null;
+			items: ReturnType<typeof item>[];
+			statuses: number[];
+			stored: string;
+		}> = [];
+		for (const mode of ["streaming", "buffered"] as const) {
+			cases.push(
+				{
+					name: `${mode}: uppercase stale item`,
+					mode,
+					envelope: bob.id,
+					items: [item(alice.id, aliceWrite, "X-Account-Id")],
+					statuses: [409],
+					stored: "baseline",
+				},
+				{
+					name: `${mode}: mixed-case stale item`,
+					mode,
+					envelope: bob.id,
+					items: [item(alice.id, aliceWrite, "X-Account-ID")],
+					statuses: [409],
+					stored: "baseline",
+				},
+				{
+					name: `${mode}: uppercase matching item`,
+					mode,
+					envelope: bob.id,
+					items: [item(bob.id, bobWrite, "X-Account-Id")],
+					statuses: [200],
+					stored: "case-bob",
+				},
+				{
+					name: `${mode}: conflicting envelope and mixed-case item`,
+					mode,
+					envelope: alice.id,
+					items: [item(bob.id, bobWrite, "X-Account-ID")],
+					statuses: [409],
+					stored: "baseline",
+				},
+				{
+					name: `${mode}: headerless legacy item`,
+					mode,
+					envelope: null,
+					items: [item(null, bobWrite)],
+					statuses: [200],
+					stored: "case-bob",
+				},
+			);
+		}
+		for (const entry of cases) {
+			await baseline();
+			const result = await runBatch(entry.mode, entry.envelope, entry.items);
+			expect(result.status, entry.name).toBe(207);
+			expect(result.statuses, entry.name).toEqual(entry.statuses);
+			expect((await profile(bob.cookie)).priorities, entry.name).toBe(entry.stored);
+			expect((await profile(alice.cookie)).priorities, entry.name).toBe("Alice private priorities");
+		}
+	}, 60_000);
+
+	it("keeps authentication envelope-bound when an item carries its own cookie or bearer", async () => {
+		const item = (payload: Record<string, unknown>, extraHeaders: Record<string, string>) => ({
+			url: `${appUrl}/api/rpc/career/saveProfile`,
+			headers: { "content-type": "application/json", "x-account-id": bob.id, ...extraHeaders },
+			body: { json: payload },
+		});
+		const runBatch = async (items: ReturnType<typeof item>[]) => {
+			const response = await realFetch(`${appUrl}/api/rpc/__batch__`, {
+				method: "POST",
+				headers: {
+					origin: appUrl ?? "",
+					"content-type": "application/json",
+					"x-orpc-batch": "streaming",
+					cookie: bob.cookie,
+					"x-account-id": bob.id,
+				},
+				body: JSON.stringify(items),
+			});
+			const text = await response.text();
+			const statuses = [...text.matchAll(/data: (\{.*\})/g)]
+				.map((match) => JSON.parse(match[1] as string) as { index: number; status: number })
+				.sort((left, right) => left.index - right.index)
+				.map((entry) => entry.status);
+			return { status: response.status, statuses };
+		};
+		const baseline = async () => {
+			const response = await realFetch(`${appUrl}/api/openapi/career/profile`, {
+				method: "PUT",
+				headers: { cookie: bob.cookie, "content-type": "application/json" },
+				body: JSON.stringify({ ...bobPayload, priorities: "baseline" }),
+			});
+			expect(response.ok).toBe(true);
+		};
+
+		await baseline();
+		const withCookie = await runBatch([item({ ...bobPayload, priorities: "item-cookie" }, { cookie: alice.cookie })]);
+		expect(withCookie.statuses).toEqual([200]);
+		expect((await profile(bob.cookie)).priorities).toBe("item-cookie");
+		expect((await profile(alice.cookie)).priorities).toBe("Alice private priorities");
+
+		await baseline();
+		const withBearer = await runBatch([
+			item({ ...bobPayload, priorities: "item-bearer" }, { authorization: "Bearer garbage" }),
+		]);
+		expect(withBearer.statuses).toEqual([200]);
+		expect((await profile(bob.cookie)).priorities).toBe("item-bearer");
+		expect((await profile(alice.cookie)).priorities).toBe("Alice private priorities");
 	}, 60_000);
 
 	it("allows a call bound to the signed-in account", async () => {
