@@ -1,9 +1,12 @@
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { androidCallbackIntent } from "@/features/auth/native-callback";
+import { getPageTitle } from "@/libs/seo";
 
 export const Route = createFileRoute("/auth/native-callback")({
+	head: () => ({ meta: [{ title: getPageTitle(t`Return to the app`) }] }),
 	component: NativeCallbackPage,
 });
 

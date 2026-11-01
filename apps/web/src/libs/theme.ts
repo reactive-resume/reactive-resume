@@ -37,5 +37,5 @@ export const getTheme = () => {
 };
 
 export const setThemeCookie = (theme: Theme) => {
-	Cookies.set(storageKey, theme);
+	Cookies.set(storageKey, theme, { expires: 365, path: "/", sameSite: "lax" });
 };

@@ -142,7 +142,7 @@ function ThemeTiles() {
 					<label
 						key={option.value}
 						className={cn(
-							"flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-line-2 bg-surface text-sm font-medium transition-[background-color,border-color,box-shadow,scale] duration-quick ease-enter hover:bg-hover active:scale-[0.97] has-focus-visible:outline-2 has-focus-visible:outline-accent",
+							"flex h-16 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-control-border bg-surface text-sm font-medium transition-[background-color,border-color,box-shadow,scale] duration-quick ease-enter hover:bg-hover active:scale-[0.97] has-focus-visible:outline-2 has-focus-visible:outline-accent",
 							checked && "border-accent shadow-[0_0_0_3px_var(--accent-soft)]",
 						)}
 					>

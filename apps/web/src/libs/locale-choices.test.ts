@@ -24,7 +24,11 @@ describe.each([false, true])("locale choices with development=%s", (development)
 
 		changeLocale("zu-ZA");
 
-		expect(cookies.set).toHaveBeenCalledWith("locale", development ? "zu-ZA" : "en-US");
+		expect(cookies.set).toHaveBeenCalledWith("locale", development ? "zu-ZA" : "en-US", {
+			expires: 365,
+			path: "/",
+			sameSite: "lax",
+		});
 		expect(replaceState).toHaveBeenCalledWith(
 			state,
 			"",
@@ -51,7 +55,7 @@ describe.each([false, true])("locale choices with development=%s", (development)
 
 		window.location.search = "?locale=zu-ZA";
 		expect(getLocale()).toBe(expected);
-		expect(cookies.set).toHaveBeenLastCalledWith("locale", expected);
+		expect(cookies.set).toHaveBeenLastCalledWith("locale", expected, { expires: 365, path: "/", sameSite: "lax" });
 
 		window.location.search = "?locale=de-DE";
 		expect(getLocale()).toBe("de-DE");

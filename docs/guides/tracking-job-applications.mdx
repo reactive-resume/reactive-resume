@@ -31,7 +31,7 @@ Every application sits in one stage. The first five stages form a pipeline you m
 
 You can rename, recolor and reorder stages, and add your own, such as **Take-home assignment** or **Ghosted**. Each one you add counts as one of these stages. See [Customizing application stages](/guides/customizing-application-stages).
 
-You can close an application from any stage. Closing asks for a reason (**Accepted offer**, **Not selected**, **I withdrew**, **Accepted another offer** or **No response**), which Insights uses later. Closing from **Offer** starts on **Accepted offer**. Closed applications are hidden until you turn on **Show closed**. See [Managing an application](/guides/managing-an-application#closing-an-application).
+You can close an application from any stage. Closing asks for a reason (**Accepted offer**, **Not selected**, **I withdrew**, **Accepted another offer** or **No response**), which Insights uses later. Closing from **Offer** starts on **Accepted offer**. Closed applications are hidden until you turn on **Show closed applications**. See [Managing an application](/guides/managing-an-application#closing-an-application).
 
 <Note>
   When an application with a linked resume or letter reaches **Applied** or a later stage, Reactive Resume saves a copy
@@ -48,15 +48,15 @@ In the web app, use the tabs above the list to switch views. Your choice is kept
     The default view. Categories that usually need you first appear first: **Interview**, **Offer**, **Screening**, **Applied**, **Saved**, then **Closed** when shown. Custom stages within a category follow your configured stage order.
 
     - Select a group heading to collapse or expand it.
-    - Within each group, rows follow **Next step**: dated interviews and follow-ups first, soonest first, then the application that has waited longest in its stage. The wait counts from the stage's own date, such as the stage date in an imported CSV, not from when the row was added or last changed. Moving between custom lanes in the same stage does not restart that clock. Web and native use the same ordering; equal dates keep a stable order.
+    - Within each group, rows follow **Next step**: dated interviews, offer deadlines and follow-ups first, soonest first, then the application that has waited longest in its stage. The wait counts from the stage's own date, such as the stage date in an imported CSV, not from when the row was added or last changed. Moving between custom lanes in the same stage does not restart that clock. Web and native use the same ordering; equal dates keep a stable order.
     - Select the **Role**, **Next step** or **Updated** column heading to sort within each group. Select it again to reverse the order.
-    - The **Next step** column shows the next interview, the follow-up you set, or what the stage is waiting on: how long ago you applied, **Waiting to hear back** after screening, **Waiting for interview feedback** once your interviews are done, **No interview scheduled** in Interview without an interview date, or **Decide on the offer** in Offer. It turns amber when something is overdue, when you've had no reply for 10 days or more, and for an offer to decide.
-    - The **Sent** column shows an icon for a linked resume and a linked letter. It says **None** in amber when an application was sent without a linked document.
+    - The **Next step** column shows the next interview, the follow-up you set, or what the stage is waiting on: how long ago you applied, **Waiting to hear back** after screening, **Waiting for interview feedback** once your interviews are done, **No interview scheduled** in Interview without an interview date, or **Reply to the offer**, **Add the offer's terms** or **Decide on the offer** in Offer, depending on the saved terms and deadline. It turns amber when something is overdue, when you've had no reply for 10 days or more, and for an offer to decide.
+    - The **Sent** column shows an icon for a linked resume and a linked letter. It says **No documents attached** in amber when an application was sent without a linked document.
     - Select a row to open its details.
 
   </Tab>
   <Tab title="Board">
-    One column per stage, with a card for each application. Drag a card to another column to move it to that stage. Each card also has a **⋯** menu with **Move to…**, **Mark as closed…** and **Delete…**, which is handy if you prefer the keyboard. When **Show closed** is on, a **Closed** column appears too. Dragging a card there asks why it ended before closing it, so Insights can use the outcome. In the mobile app, the **Closed** column is always the last column on the board.
+    One column per stage, with a card for each application. Drag a card to another column to move it to that stage. Each card also has a **⋯** menu with **Move to…**, **Mark as closed…** and **Delete…**, which is handy if you prefer the keyboard. When **Show closed applications** is on, a **Closed** column appears too. Dragging a card there asks why it ended before closing it, so Insights can use the outcome. In the mobile app, the **Closed** column is always the last column on the board.
 
     <Frame caption="Board view groups applications by stage">
       <img src="/images/guides/tracking-job-applications/applications-board-view.webp" alt="Applications board showing Saved, Applied, Screening and Interview columns with fictional job cards" />
@@ -81,7 +81,7 @@ In a narrow phone browser, the web page shows **List**, **Insights** and **Calen
 
 Type in **Search applications** to filter the list as you type. Search looks at the role, company, location, contact names and tags. If nothing matches, select **Clear search**.
 
-In the web app, **Show closed** adds closed applications to the List, Board and Calendar views. The native mobile calendar shows only open applications. Insights always counts every application.
+In the web app, **Show closed applications** adds closed applications to the List, Board and Calendar views. The native mobile calendar shows only open applications. Insights always counts every application.
 
 ## Acting on several applications at once
 
@@ -136,4 +136,11 @@ Press <kbd>⌘</kbd> <kbd>K</kbd> (<kbd>Ctrl</kbd> <kbd>K</kbd> on Windows and L
 
 You can also manage applications from an AI client over MCP. See [Managing applications with MCP](/guides/managing-applications-with-mcp).
 
-The dates you choose for stage history do not change which move happened last. After retrying a submission or message change whose response was lost, reload the list before moving it again.
+<Frame caption="German application labels describe closed applications, commands, and attached documents. This example is fictional.">
+  <img
+    src="/images/guides/tracking-job-applications/german-contextual-labels.png"
+    alt="German Applications page for Maya Chen, showing Accessibility Engineer at fictional Lumen Workshop, Geschlossene Bewerbungen anzeigen, and Keine Dokumente angehängt"
+  />
+</Frame>
+The dates you choose for stage history do not change which move happened last. After retrying a submission or message
+change whose response was lost, reload the list before moving it again.

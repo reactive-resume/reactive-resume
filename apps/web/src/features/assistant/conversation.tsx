@@ -913,7 +913,7 @@ export function Composer(props: ComposerProps) {
 				))}
 			</div>
 
-			<div className="flex items-end gap-1.5 rounded-xl border border-line-2 bg-raised p-1.5 transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft">
+			<div className="flex items-end gap-1.5 rounded-xl border border-control-border bg-raised p-1.5 transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft">
 				<label htmlFor={id} className="sr-only">
 					<Trans>Message the assistant</Trans>
 				</label>

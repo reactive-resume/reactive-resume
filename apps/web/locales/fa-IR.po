@@ -1311,6 +1311,7 @@ msgstr "دستاورد"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "حساب کاربری"
@@ -1840,6 +1841,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "هوش مصنوعی و توسعه دهنده"
@@ -2511,6 +2513,14 @@ msgstr ""
 msgid "Attachment"
 msgstr "پیوست"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "خطای احراز هویت"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "اجازهٔ دسترسی"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2602,6 +2612,7 @@ msgid "Background color"
 msgstr "رنگ پس‌زمینه"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "کد پشتیبان"
 
@@ -3343,6 +3354,7 @@ msgstr ""
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "مربی"
@@ -4562,6 +4574,7 @@ msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/consent.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "ایجاد حساب کاربری"
 
@@ -5126,6 +5139,7 @@ msgstr "مستندات"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "اسناد"
 
@@ -5947,6 +5961,7 @@ msgid "Fact type"
 msgstr "نوع واقعیت"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "واقعیت‌ها"
@@ -6236,6 +6251,10 @@ msgstr "برای کدام شغل؟"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "فراموش کردن"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "فراموشی گذرواژه"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -7216,6 +7235,10 @@ msgstr "ژاپنی"
 msgid "Job"
 msgstr "شغل"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "فضای کاری درخواست شغل"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -7254,6 +7277,10 @@ msgstr "جستجوی کار ناموفق بود. دوباره امتحان کن�
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "فرایند جستجوی شغل"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "ترجیحات جستجوی کار"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8824,6 +8851,11 @@ msgstr "بدون اصلاح"
 msgid "No country matches."
 msgstr "هیچ کشوری پیدا نشد"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "نامهٔ معرفی انتخاب نشده است"
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr ""
@@ -8839,6 +8871,10 @@ msgstr "هیچ تاریخی پیدا نشد."
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "هیچ سندی پیوست نشده است"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8972,6 +9008,11 @@ msgstr "موردی یافت نشد."
 msgid "No resume"
 msgstr "بدون رزومه"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "رزومه‌ای انتخاب نشده است"
+
 #: src/features/documents/documents-page.tsx
 msgid "No resumes yet"
 msgstr ""
@@ -9046,9 +9087,6 @@ msgstr "شماره {number} · {name}"
 msgid "none"
 msgstr "هیچ کدام"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "هیچ کدام"
@@ -9350,6 +9388,7 @@ msgid "Offer type"
 msgstr "نوع پیشنهاد شغلی"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "پیشنهادها"
@@ -10231,6 +10270,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "ترجیحات"
@@ -10382,6 +10422,7 @@ msgstr "مهارت"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "پروفایل"
@@ -11261,6 +11302,7 @@ msgstr "بازنشانی پیش فرض های طراحی"
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "تنظیم مجدد گذرواژه"
 
@@ -11480,6 +11522,10 @@ msgstr "دوباره سعی کنید ذخیره کنید"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "در حال تلاش مجدد…"
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "بازگشت به برنامه"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -12090,8 +12136,8 @@ msgid "Search job postings"
 msgstr "جستجوی آگهی های شغلی"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "جستجو یا اجرا…"
+msgid "Search or run a command…"
+msgstr "جستجو یا اجرای فرمان…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -12409,6 +12455,7 @@ msgstr "اپلیکیشن احراز هویت خود را راه‌اندازی �
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "تنظیمات"
@@ -12555,8 +12602,8 @@ msgid "Show all types"
 msgstr "نمایش همهٔ انواع"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "نمایش بسته شده"
+msgid "Show closed applications"
+msgstr "نمایش درخواست‌های شغلی بسته‌شده"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12647,6 +12694,7 @@ msgstr "نوارهای کناری اغلب آخرین خوانده می شوند
 #: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "ورود"
 
@@ -13165,6 +13213,7 @@ msgstr "این کدهای پشتیبان را در جای امنی نگه دار
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "داستان‌ها"
 
@@ -14393,6 +14442,7 @@ msgstr "برای برداشتن، کلید فاصله یا Enter را فشار �
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "امروز"
@@ -14477,6 +14527,7 @@ msgstr "ترجمه‌ها"
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "سطل زباله"
 
@@ -14631,6 +14682,10 @@ msgstr "دوستونه با رنگ‌های تأکیدی و تایپوگرافی
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "دوستونه، مینیمال با نوار کناری خاکستری روشن و آیکون‌های ظریف؛ حرفه‌ای و کم‌ادعا برای نقش‌های حقوقی، مالی یا اجرایی."
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "احراز هویت دومرحله‌ای"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

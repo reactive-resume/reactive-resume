@@ -315,7 +315,7 @@ export function ChipInput({
 				<div
 					role="none"
 					onClick={() => inputRef.current?.focus()}
-					className="overflow-hidden rounded-lg border border-line-2 bg-bg/40 transition-colors focus-within:border-accent focus-within:ring-3 focus-within:ring-accent/50 dark:bg-line-2/20"
+					className="overflow-hidden rounded-lg border border-control-border bg-bg/40 transition-colors focus-within:border-accent focus-within:ring-3 focus-within:ring-accent/50 dark:bg-line-2/20"
 				>
 					<div className="flex flex-col">
 						<div

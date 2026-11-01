@@ -1,11 +1,14 @@
 import type { DocumentsSearch } from "@/features/documents/documents-page";
+import { t } from "@lingui/core/macro";
 import { createFileRoute, redirect, stripSearchParams } from "@tanstack/react-router";
 import z from "zod";
 import { DocumentsPage } from "@/features/documents/documents-page";
+import { getPageTitle } from "@/libs/seo";
 
 const defaults = { type: "all", q: "", tags: [], public: false, sort: "edited" } satisfies DocumentsSearch;
 
 export const Route = createFileRoute("/dashboard/")({
+	head: () => ({ meta: [{ title: getPageTitle(t`Documents`) }] }),
 	validateSearch: z.object({
 		type: z.enum(["all", "resume", "letter"]).default("all").catch("all"),
 		q: z

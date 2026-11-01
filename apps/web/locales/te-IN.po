@@ -1311,6 +1311,7 @@ msgstr "విజయం"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "ఖాతా"
@@ -1840,6 +1841,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "AI & డెవలపర్"
@@ -2511,6 +2513,14 @@ msgstr ""
 msgid "Attachment"
 msgstr "జతచేయడం"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "ప్రామాణీకరణ లోపం"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "ప్రవేశాన్ని అనుమతించు"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2602,6 +2612,7 @@ msgid "Background color"
 msgstr "నేపథ్య రంగు"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "బ్యాకప్ కోడ్"
 
@@ -3343,6 +3354,7 @@ msgstr ""
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "కోచ్"
@@ -4562,6 +4574,7 @@ msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/consent.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "ఖాతాను సృష్టించండి"
 
@@ -5126,6 +5139,7 @@ msgstr "డాక్యుమెంటేషన్"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "పత్రాలు"
 
@@ -5947,6 +5961,7 @@ msgid "Fact type"
 msgstr "వాస్తవం రకం"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "వాస్తవాలు"
@@ -6236,6 +6251,10 @@ msgstr "ఏ ఉద్యోగం కోసం?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "మరచిపో"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "పాస్‌వర్డ్ మర్చిపోయారా"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -7216,6 +7235,10 @@ msgstr "జపానీస్"
 msgid "Job"
 msgstr "ఉద్యోగం"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "ఉద్యోగ దరఖాస్తు కార్యస్థలం"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -7254,6 +7277,10 @@ msgstr "ఉద్యోగ శోధన విఫలమైంది. మళ్�
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "ఉద్యోగ శోధన పైప్‌లైన్"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "ఉద్యోగ శోధన ప్రాధాన్యతలు"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8824,6 +8851,11 @@ msgstr "సవరణలు లేవు"
 msgid "No country matches."
 msgstr "దేశాలు ఏవీ కనుగొనబడలేదు."
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "పరిచయ లేఖ ఎంచుకోలేదు"
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr ""
@@ -8839,6 +8871,10 @@ msgstr "తేదీలు కనుగొనబడలేదు."
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "పత్రాలు ఏవీ జత చేయలేదు"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8972,6 +9008,11 @@ msgstr "ఏ ఫలితాలు లభించలేదు."
 msgid "No resume"
 msgstr "రెజ్యూమే లేదు"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "రెజ్యూమ్ ఎంచుకోలేదు"
+
 #: src/features/documents/documents-page.tsx
 msgid "No resumes yet"
 msgstr ""
@@ -9046,9 +9087,6 @@ msgstr "సంఖ్య {number} · {name}"
 msgid "none"
 msgstr "ఏదీ లేదు"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "ఏదీ లేదు"
@@ -9350,6 +9388,7 @@ msgid "Offer type"
 msgstr "ఉద్యోగ ఆఫర్ రకం"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "ఆఫర్‌లు"
@@ -10231,6 +10270,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "ప్రాధాన్యతలు"
@@ -10382,6 +10422,7 @@ msgstr "నైపుణ్యం స్థాయి"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "ప్రొఫైల్"
@@ -11261,6 +11302,7 @@ msgstr "డిజైన్ డిఫాల్ట్‌లను రీసెట�
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "పాస్‌వర్డ్ రీసెట్ చేయండి"
 
@@ -11480,6 +11522,10 @@ msgstr "సేవ్ చేయడానికి మళ్లీ ప్రయత
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "మళ్లీ ప్రయత్నిస్తోంది..."
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "యాప్‌కు తిరిగి వెళ్ళు"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -12090,8 +12136,8 @@ msgid "Search job postings"
 msgstr "ఉద్యోగ పోస్టింగ్‌లను శోధించండి"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "శోధించండి లేదా అమలు చేయండి..."
+msgid "Search or run a command…"
+msgstr "వెతకండి లేదా ఆదేశాన్ని అమలు చేయండి…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -12409,6 +12455,7 @@ msgstr "మీ ఆథెంటికేటర్ యాప్‌ను సెట
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "సెట్టింగులు"
@@ -12555,8 +12602,8 @@ msgid "Show all types"
 msgstr "అన్ని రకాలను చూపు"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "షో మూసివేయబడింది"
+msgid "Show closed applications"
+msgstr "మూసిన ఉద్యోగ దరఖాస్తులను చూపించు"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12647,6 +12694,7 @@ msgstr "సైడ్‌బార్లు తరచుగా చివరిగ�
 #: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "సైన్ ఇన్ చేయండి"
 
@@ -13165,6 +13213,7 @@ msgstr "ఈ బ్యాకప్ కోడ్‌లను సురక్షి
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "కథలు"
 
@@ -14393,6 +14442,7 @@ msgstr "దాన్ని ఎత్తడానికి Space లేదా Ent
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "ఈరోజు"
@@ -14477,6 +14527,7 @@ msgstr "ทรాన్స్‌లేషన్స్"
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "ట్రాష్"
 
@@ -14631,6 +14682,10 @@ msgstr "రెండు-కాలమ్, అక్సెంట్ రంగు�
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "రెండు-కాలమ్, మినిమల్, లైట్ గ్రే సైడ్‌బార్ మరియు సూటిగా ఉండే చిహ్నాలతో; లీగల్, ఫైనాన్స్, లేదా ఎగ్జిక్యూటివ్ పాత్రలకు ప్రొఫెషనల్ మరియు అండర్‌స్టేట్ చేయబడినది."
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "రెండు దశల ప్రామాణీకరణ"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

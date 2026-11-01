@@ -149,9 +149,8 @@ function MarkAppliedForm({ application, lane: initialLane, onClose }: Omit<Appli
 	const [letterId, setLetterId] = useState(application.coverLetterId ?? "");
 	const [resumeFileSent, setResumeFileSent] = useState(true);
 	const [letterFileSent, setLetterFileSent] = useState(true);
-	const none = { value: "", label: t`None` };
 	const options = (type: "resume" | "letter") => [
-		none,
+		{ value: "", label: type === "resume" ? t`No resume selected` : t`No cover letter selected` },
 		...(documents.data ?? [])
 			.filter((document) => document.type === type)
 			.map((document) => ({ value: document.id, label: document.name })),

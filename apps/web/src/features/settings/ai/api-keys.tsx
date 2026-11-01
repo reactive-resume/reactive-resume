@@ -306,7 +306,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 								id={`${id}-access`}
 								value={access}
 								onChange={(event) => setAccess(event.target.value === "read" ? "read" : "full")}
-								className="h-9 rounded-lg border border-line-2 bg-bg px-3 text-sm"
+								className="h-9 rounded-lg border border-control-border bg-bg px-3 text-sm"
 							>
 								<option value="read">{t`Read only`}</option>
 								<option value="full">{t`Read, write and delete`}</option>
@@ -321,7 +321,7 @@ function NewKeyDialog({ open, onOpenChange, onCreated }: NewKeyDialogProps) {
 									<label
 										key={option.label()}
 										className={cn(
-											"flex h-9 cursor-pointer items-center justify-center rounded-lg border border-line-2 text-sm font-medium transition-colors duration-quick hover:bg-hover has-focus-visible:outline-2 has-focus-visible:outline-accent",
+											"flex h-9 cursor-pointer items-center justify-center rounded-lg border border-control-border text-sm font-medium transition-colors duration-quick hover:bg-hover has-focus-visible:outline-2 has-focus-visible:outline-accent",
 											expiry === index && "border-accent bg-accent-soft text-accent-text",
 										)}
 									>

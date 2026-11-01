@@ -7,7 +7,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { LetterShell } from "./-components/letter-shell";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { orpc } from "@/libs/orpc/client";
-import { createNoindexFollowMeta } from "@/libs/seo";
+import { getPageTitle, createNoindexFollowMeta } from "@/libs/seo";
 
 const searchSchema = z.object({
 	// Write is the default and stays out of the URL. Letters have no Check.
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/builder/letter/$coverLetterId")({
 	},
 	head: ({ loaderData }) => ({
 		meta: loaderData
-			? [{ title: `${loaderData.name} - Reactive Resume` }, createNoindexFollowMeta()]
+			? [{ title: getPageTitle(loaderData.name) }, createNoindexFollowMeta()]
 			: [createNoindexFollowMeta()],
 	}),
 });
@@ -60,7 +60,7 @@ function RouteComponent() {
 		state.letter?.id === coverLetterId ? (state.savedName ?? letter.name) : letter.name,
 	);
 	useEffect(() => {
-		document.title = `${name} - Reactive Resume`;
+		document.title = getPageTitle(name);
 	}, [name]);
 
 	useBlocker({

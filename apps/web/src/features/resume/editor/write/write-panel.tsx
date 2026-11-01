@@ -47,7 +47,9 @@ export function WritePanel() {
 					<Trans>Sections · print order</Trans>
 					{!locked && (
 						<span className="font-normal tracking-normal normal-case">
-							<Trans>drag · ⌥↑↓</Trans>
+							<bdi dir="ltr">
+								<Trans>drag · ⌥↑↓</Trans>
+							</bdi>
 						</span>
 					)}
 				</p>

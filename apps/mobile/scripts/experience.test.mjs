@@ -561,7 +561,7 @@ applications = [job];
 listTree = listView();
 sectionList = nodes(listTree).find((node) => node.type === "SectionList");
 assert.equal(sectionList.props.ListEmptyComponent.props.title, "All your applications are closed");
-assert.equal(sectionList.props.ListEmptyComponent.props.action.label, "Show closed");
+assert.equal(sectionList.props.ListEmptyComponent.props.action.label, "Show closed applications");
 sectionList.props.ListEmptyComponent.props.action.onPress();
 listTree = listView();
 sectionList = nodes(listTree).find((node) => node.type === "SectionList");

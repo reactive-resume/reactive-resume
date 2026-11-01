@@ -42,6 +42,7 @@ import { useApplicationLanes } from "@/features/applications/use-application-lan
 import { useCareerTime, useNow } from "@/features/career/shared";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
+import { getPageTitle } from "@/libs/seo";
 
 const VIEWS = ["list", "board", "insights", "calendar"] as const;
 type View = (typeof VIEWS)[number];
@@ -60,6 +61,7 @@ type Search = z.output<typeof searchSchema>;
 const defaultSearch: Search = { q: "", view: "list", closed: false, followUp: false, create: false };
 
 export const Route = createFileRoute("/dashboard/applications/")({
+	head: () => ({ meta: [{ title: getPageTitle(t`Applications`) }] }),
 	component: RouteComponent,
 	validateSearch: searchSchema,
 	search: { middlewares: [stripSearchParams(defaultSearch)] },
@@ -309,7 +311,7 @@ function RouteComponent() {
 								className={cn(closed && "bg-sunken")}
 							>
 								<Icon name={closed ? "check-square" : "square"} size={18} />
-								<Trans>Show closed</Trans>
+								<Trans>Show closed applications</Trans>
 							</Button>
 						)}
 					</>

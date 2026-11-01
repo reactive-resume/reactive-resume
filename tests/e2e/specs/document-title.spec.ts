@@ -25,17 +25,17 @@ for (const kind of ["resume", "letter"] as const) {
 		const result = await created.json();
 		const id: string = kind === "resume" ? result : result.id;
 		await page.goto(kind === "resume" ? `/builder/${id}` : `/builder/letter/${id}`);
-		await expect(page).toHaveTitle("Original document - Reactive Resume");
+		await expect(page).toHaveTitle("Original document | Reactive Resume");
 
 		if (kind === "resume") {
 			await page.getByRole("textbox", { name: "Headline", exact: true }).fill("Automatic headline");
-			await expect(page).toHaveTitle("Automatic headline - Reactive Resume");
+			await expect(page).toHaveTitle("Automatic headline | Reactive Resume");
 		}
 
 		await rename(page, kind, "Renamed document");
-		await expect(page).toHaveTitle("Renamed document - Reactive Resume");
+		await expect(page).toHaveTitle("Renamed document | Reactive Resume");
 		await page.getByRole("tab", { name: "Design", exact: true }).click();
-		await expect(page).toHaveTitle("Renamed document - Reactive Resume");
+		await expect(page).toHaveTitle("Renamed document | Reactive Resume");
 		await page.getByRole("tab", { name: "Write", exact: true }).click();
 
 		const updateUrl = `**/api/rpc/${kind === "resume" ? "resume" : "coverLetters"}/update`;
@@ -44,7 +44,7 @@ for (const kind of ["resume", "letter"] as const) {
 		await rename(page, kind, "Rejected document");
 		await failed;
 		if (kind === "letter") await expect(page.getByRole("status").filter({ hasText: "Not saved" })).toBeVisible();
-		expect(await page.title()).toBe("Renamed document - Reactive Resume");
+		expect(await page.title()).toBe("Renamed document | Reactive Resume");
 		await page.unroute(updateUrl);
 		if (kind === "resume") {
 			const dialog = page.getByRole("dialog", { name: "Update resume", exact: true });
@@ -54,13 +54,13 @@ for (const kind of ["resume", "letter"] as const) {
 			await page.getByRole("button", { name: "Retry saving", exact: true }).click();
 		}
 		const savedName = kind === "resume" ? "Renamed again" : "Rejected document";
-		await expect(page).toHaveTitle(`${savedName} - Reactive Resume`);
+		await expect(page).toHaveTitle(`${savedName} | Reactive Resume`);
 
 		if (kind === "resume") {
 			const saved = page.waitForResponse((response) => response.url().endsWith("/resume/update") && response.ok());
 			await page.getByRole("textbox", { name: "Headline", exact: true }).fill("Later headline");
 			await saved;
-			await expect(page).toHaveTitle(`${savedName} - Reactive Resume`);
+			await expect(page).toHaveTitle(`${savedName} | Reactive Resume`);
 		}
 
 		const second = await page.request.post(`/api/openapi/${endpoint}`, {
@@ -69,12 +69,12 @@ for (const kind of ["resume", "letter"] as const) {
 		await expect(second).toBeOK();
 		await page.getByRole("link", { name: "Back to documents", exact: true }).click();
 		await page.getByRole("link", { name: "Second document", exact: true }).click();
-		await expect(page).toHaveTitle("Second document - Reactive Resume");
+		await expect(page).toHaveTitle("Second document | Reactive Resume");
 		await page.getByRole("link", { name: "Back to documents", exact: true }).click();
 		await page.getByRole("link", { name: savedName, exact: true }).click();
-		await expect(page).toHaveTitle(`${savedName} - Reactive Resume`);
+		await expect(page).toHaveTitle(`${savedName} | Reactive Resume`);
 		await page.reload();
-		await expect(page).toHaveTitle(`${savedName} - Reactive Resume`);
+		await expect(page).toHaveTitle(`${savedName} | Reactive Resume`);
 	});
 }
 
@@ -86,7 +86,7 @@ test("resume metadata timeout cancels the request and releases stream updates an
 	await expect(created).toBeOK();
 	const id: string = await created.json();
 	await page.goto(`/builder/${id}`);
-	await expect(page).toHaveTitle("Before rename - Reactive Resume");
+	await expect(page).toHaveTitle("Before rename | Reactive Resume");
 
 	let committed!: () => void;
 	let release!: () => void;
@@ -113,12 +113,12 @@ test("resume metadata timeout cancels the request and releases stream updates an
 		await cancelled;
 		const dialog = page.getByRole("dialog", { name: "Update resume", exact: true });
 		await expect(dialog.getByRole("button", { name: "Save changes", exact: true })).toBeEnabled();
-		await expect(page).toHaveTitle("Server accepted rename - Reactive Resume");
+		await expect(page).toHaveTitle("Server accepted rename | Reactive Resume");
 		await page.unroute(updateUrl);
 		await dialog.getByRole("textbox", { name: "Name", exact: true }).fill("Renamed after timeout");
 		await dialog.getByRole("button", { name: "Save changes", exact: true }).click();
 		await expect(dialog).not.toBeVisible();
-		await expect(page).toHaveTitle("Renamed after timeout - Reactive Resume");
+		await expect(page).toHaveTitle("Renamed after timeout | Reactive Resume");
 		const saved = page.waitForResponse((response) => response.url().endsWith("/resume/update") && response.ok());
 		await page.getByRole("textbox", { name: "Headline", exact: true }).fill("Saved after timeout");
 		await saved;
@@ -130,7 +130,7 @@ test("resume metadata timeout cancels the request and releases stream updates an
 			data: { basics: { headline: "Saved after timeout" } },
 		});
 		await page.reload();
-		await expect(page).toHaveTitle("Renamed after timeout - Reactive Resume");
+		await expect(page).toHaveTitle("Renamed after timeout | Reactive Resume");
 		await expect(page.getByRole("textbox", { name: "Headline", exact: true })).toHaveValue("Saved after timeout");
 	} finally {
 		release();

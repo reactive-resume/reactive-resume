@@ -1311,6 +1311,7 @@ msgstr "നേട്ടം"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "അക്കൗണ്ട്"
@@ -1840,6 +1841,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "AI & ഡെവലപ്പർ"
@@ -2511,6 +2513,14 @@ msgstr ""
 msgid "Attachment"
 msgstr "അറ്റാച്ച്മെന്റ്"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "പ്രാമാണീകരണ പിശക്"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "പ്രവേശനം അനുവദിക്കുക"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2602,6 +2612,7 @@ msgid "Background color"
 msgstr "ബാക്ക്ഗ്രൗണ്ട് നിറം"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "ബാക്കപ്പ് കോഡ്"
 
@@ -3343,6 +3354,7 @@ msgstr ""
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "കോച്ച്"
@@ -4562,6 +4574,7 @@ msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/consent.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "അക്കൗണ്ട് സൃഷ്ടിക്കുക"
 
@@ -5126,6 +5139,7 @@ msgstr "ഡോക്യുമെന്റേഷൻ"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "പ്രമാണങ്ങൾ"
 
@@ -5947,6 +5961,7 @@ msgid "Fact type"
 msgstr "വസ്തുതയുടെ തരം"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "വസ്തുതകൾ"
@@ -6236,6 +6251,10 @@ msgstr "ഏത് ജോലിക്ക്?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "മറക്കുക"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "പാസ്‌വേഡ് മറന്നോ"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -7216,6 +7235,10 @@ msgstr "ജാപ്പനീസ്"
 msgid "Job"
 msgstr "ഇയ്യോബ്"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "ജോലി അപേക്ഷയുടെ പ്രവർത്തനമേഖല"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -7254,6 +7277,10 @@ msgstr "ജോലി തിരയൽ പരാജയപ്പെട്ടു. �
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "ജോലി തിരച്ചിൽ പൈപ്പ്‌ലൈൻ"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "ജോലി തിരയൽ മുൻഗണനകൾ"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8824,6 +8851,11 @@ msgstr "തിരുത്തലുകളില്ല"
 msgid "No country matches."
 msgstr "രാജ്യങ്ങളൊന്നും കണ്ടെത്തിയില്ല."
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "ആമുഖക്കത്ത് തിരഞ്ഞെടുത്തിട്ടില്ല"
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr ""
@@ -8839,6 +8871,10 @@ msgstr "തീയതികളൊന്നും കണ്ടെത്തിയ�
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "രേഖകളൊന്നും അറ്റാച്ച് ചെയ്തിട്ടില്ല"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8972,6 +9008,11 @@ msgstr "ഒരൊന്നുമാത്രം ഫലങ്ങളൊന്ന�
 msgid "No resume"
 msgstr "റെസ്യൂമെ ഇല്ല"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "ബയോഡാറ്റ തിരഞ്ഞെടുത്തിട്ടില്ല"
+
 #: src/features/documents/documents-page.tsx
 msgid "No resumes yet"
 msgstr ""
@@ -9046,9 +9087,6 @@ msgstr "നമ്പർ {number} · {name}"
 msgid "none"
 msgstr "ഒന്നുമില്ല"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "ഒന്നുമില്ല"
@@ -9350,6 +9388,7 @@ msgid "Offer type"
 msgstr "ജോലി ഓഫറിന്റെ തരം"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "ഓഫറുകൾ"
@@ -10231,6 +10270,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "പ്രിഫറൻസുകൾ"
@@ -10382,6 +10422,7 @@ msgstr "പ്രാവീണ്യം"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "പ്രൊഫൈൽ"
@@ -11261,6 +11302,7 @@ msgstr "ഡിസൈൻ ഡിഫോൾട്ടുകൾ പുനഃസജ്�
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യുക"
 
@@ -11480,6 +11522,10 @@ msgstr "സംരക്ഷിക്കാൻ വീണ്ടും ശ്രമ�
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "വീണ്ടും ശ്രമിക്കുന്നു..."
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "ആപ്പിലേക്ക് മടങ്ങുക"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -12090,8 +12136,8 @@ msgid "Search job postings"
 msgstr "ജോലി പോസ്റ്റിംഗുകൾ തിരയുക"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "തിരയുക അല്ലെങ്കിൽ പ്രവർത്തിപ്പിക്കുക..."
+msgid "Search or run a command…"
+msgstr "തിരയുക അല്ലെങ്കിൽ കമാൻഡ് പ്രവർത്തിപ്പിക്കുക…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -12409,6 +12455,7 @@ msgstr "നിങ്ങളുടെ ഓതന്റിക്കേറ്റർ �
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "സെറ്റിംഗ്സ്"
@@ -12555,8 +12602,8 @@ msgid "Show all types"
 msgstr "എല്ലാ തരങ്ങളും കാണിക്കുക"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "ഷോ അടച്ചു"
+msgid "Show closed applications"
+msgstr "അടച്ച ജോലി അപേക്ഷകൾ കാണിക്കുക"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12647,6 +12694,7 @@ msgstr "സൈഡ്‌ബാറുകൾ പലപ്പോഴും അവസ�
 #: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "സൈൻ ഇൻ"
 
@@ -13165,6 +13213,7 @@ msgstr "ഈ ബാക്കപ്പ് കോഡുകൾ സുരക്ഷി
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "കഥകൾ"
 
@@ -14393,6 +14442,7 @@ msgstr "എടുക്കാൻ Space അല്ലെങ്കിൽ Enter അ�
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "ഇന്ന്"
@@ -14477,6 +14527,7 @@ msgstr "തർജ്ജമകൾ"
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "ട്രാഷ്"
 
@@ -14631,6 +14682,10 @@ msgstr "രണ്ടു കോളമാണ്, ആക്സന്റ് നി�
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "രണ്ടു കോളമാണ്, ഇളം ചാരനിറത്തിലുള്ള സൈഡ്ബാറും സൂക്ഷ്മമായ ഐക്കണുകളും ഉള്ള മിനിമൽ ഡിസൈൻ; ലീഗൽ, ഫിനാൻസ്, എക്സിക്യൂട്ടീവ് റോളുകൾക്കു പ്രൊഫഷണലും understatement ഉള്ള തിരഞ്ഞെടുപ്പ്."
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "രണ്ടുഘട്ട പ്രാമാണീകരണം"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

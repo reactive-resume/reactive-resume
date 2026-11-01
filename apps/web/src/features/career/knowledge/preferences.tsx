@@ -277,7 +277,7 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 
 /** An input-like box holding a prefix/suffix and a bare input; focus rings the whole box. */
 const fieldShell =
-	"flex h-9 items-center gap-1.5 rounded-md border border-line-2 bg-raised px-2.5 transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)] pointer-coarse:h-11";
+	"flex h-9 items-center gap-1.5 rounded-md border border-control-border bg-raised px-2.5 transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)] pointer-coarse:h-11";
 
 const bareSelect =
 	"field-sizing-content cursor-pointer appearance-none bg-transparent text-ink-3 outline-none hover:text-ink focus-visible:text-ink";
@@ -310,7 +310,7 @@ function ChipField({ label, placeholder, value, onChange }: ChipFieldProps) {
 			<label htmlFor={id} className="text-xs font-medium text-ink-2">
 				{label}
 			</label>
-			<div className="flex min-h-10 flex-wrap items-center gap-[5px] rounded-md border border-line-2 bg-raised p-[5px] transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)]">
+			<div className="flex min-h-10 flex-wrap items-center gap-[5px] rounded-md border border-control-border bg-raised p-[5px] transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)]">
 				{value.map((chip) => (
 					<span
 						key={chip}

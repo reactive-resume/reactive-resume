@@ -1311,6 +1311,7 @@ msgstr "成就"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "账户"
@@ -1840,6 +1841,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "人工智能与开发人员"
@@ -2511,6 +2513,14 @@ msgstr ""
 msgid "Attachment"
 msgstr "依恋"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "身份验证错误"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "授权访问"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2602,6 +2612,7 @@ msgid "Background color"
 msgstr "背景色"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "备份代码"
 
@@ -3343,6 +3354,7 @@ msgstr ""
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "教练"
@@ -4562,6 +4574,7 @@ msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/consent.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "创建账户"
 
@@ -5126,6 +5139,7 @@ msgstr "文档"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "文档"
 
@@ -5947,6 +5961,7 @@ msgid "Fact type"
 msgstr "事实类型"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "事实"
@@ -6236,6 +6251,10 @@ msgstr "适合什么工作？"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "忘记"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "忘记密码"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -7216,6 +7235,10 @@ msgstr "日语"
 msgid "Job"
 msgstr "工作"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "求职申请工作区"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -7254,6 +7277,10 @@ msgstr "职位搜索失败。请重试或粘贴职位发布链接。"
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "求职流程"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "求职搜索偏好"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8824,6 +8851,11 @@ msgstr "无更正"
 msgid "No country matches."
 msgstr "没有匹配的国家。"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "未选择求职信"
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr ""
@@ -8839,6 +8871,10 @@ msgstr "未找到任何日期。"
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "未附加文档"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8972,6 +9008,11 @@ msgstr "没找到结果。"
 msgid "No resume"
 msgstr "没有简历"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "未选择简历"
+
 #: src/features/documents/documents-page.tsx
 msgid "No resumes yet"
 msgstr ""
@@ -9046,9 +9087,6 @@ msgstr "编号：{number}·{name}"
 msgid "none"
 msgstr "没有任何"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "没有任何"
@@ -9350,6 +9388,7 @@ msgid "Offer type"
 msgstr "录用通知类型"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "录用通知"
@@ -10231,6 +10270,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "偏好设置"
@@ -10382,6 +10422,7 @@ msgstr "熟练度"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "个人资料"
@@ -11261,6 +11302,7 @@ msgstr "重置设计默认值"
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "重置密码"
 
@@ -11480,6 +11522,10 @@ msgstr "重试保存"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "正在重试…"
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "返回应用"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -12090,8 +12136,8 @@ msgid "Search job postings"
 msgstr "搜索职位信息"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "搜索或运行..."
+msgid "Search or run a command…"
+msgstr "搜索或运行命令…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -12409,6 +12455,7 @@ msgstr "设置你的验证器应用"
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "设置"
@@ -12555,8 +12602,8 @@ msgid "Show all types"
 msgstr "显示所有类型"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "显示已关闭"
+msgid "Show closed applications"
+msgstr "显示已关闭的求职申请"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12647,6 +12694,7 @@ msgstr "侧边栏通常是最后阅读的，或者混合到主栏中。"
 #: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "登录"
 
@@ -13165,6 +13213,7 @@ msgstr "请将这些备份码保存在安全的地方。如果你丢失了设备
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "故事"
 
@@ -14393,6 +14442,7 @@ msgstr "按空格键或 Enter 键拿起。使用方向键移动，按空格键�
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "今天"
@@ -14477,6 +14527,7 @@ msgstr "翻译"
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "垃圾箱"
 
@@ -14631,6 +14682,10 @@ msgstr "双栏布局，点缀色和干净的排版；是商务分析或运营岗
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "双栏布局，极简风格，浅灰侧边栏和低调图标；专业而内敛，适合法律、金融或高管岗位。"
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "双重身份验证"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

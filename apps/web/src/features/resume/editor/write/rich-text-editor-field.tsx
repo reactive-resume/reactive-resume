@@ -348,7 +348,7 @@ export function RichTextEditor({
 				if (!event.currentTarget.contains(next) && !toolbar.current?.contains(next) && !inMenu) setFocused(false);
 			}}
 			className={cn(
-				"rounded-lg border border-line-2 bg-raised transition-[border-color,box-shadow] duration-quick",
+				"rounded-lg border border-control-border bg-raised transition-[border-color,box-shadow] duration-quick",
 				editing && "border-accent shadow-[0_0_0_3px_var(--accent-soft)]",
 				disabled && "bg-sunken",
 				className,

@@ -42,7 +42,7 @@ function RichTextPreview({
 	const editable = !disabled && !readOnlyTable;
 
 	return (
-		<div className={cn("rounded-lg border border-line-2 bg-raised", disabled && "bg-sunken", className)}>
+		<div className={cn("rounded-lg border border-control-border bg-raised", disabled && "bg-sunken", className)}>
 			{readOnlyTable && (
 				<p role="status" className="border-b border-line px-3 py-2 text-xs text-ink-2">
 					<Trans>

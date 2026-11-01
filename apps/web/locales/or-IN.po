@@ -1311,6 +1311,7 @@ msgstr "ସଫଳତା"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "ଆକାଉଣ୍ଟ"
@@ -1840,6 +1841,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "AI ଏବଂ ବିକାଶକାରୀ |"
@@ -2511,6 +2513,14 @@ msgstr ""
 msgid "Attachment"
 msgstr "ଆଟାଚମେଣ୍ଟ୍"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "ପ୍ରମାଣୀକରଣ ତ୍ରୁଟି"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "ପ୍ରବେଶ ଅନୁମତି ଦିଅନ୍ତୁ"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2602,6 +2612,7 @@ msgid "Background color"
 msgstr "ପୃଷ୍ଠଭୂମି ରଙ୍ଗ"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "ବ୍ୟାକଅପ୍ କୋଡ୍"
 
@@ -3343,6 +3354,7 @@ msgstr ""
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "କୋଚ୍"
@@ -4562,6 +4574,7 @@ msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/consent.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "ଆକାଉଣ୍ଟ ତିଆରି କରନ୍ତୁ"
 
@@ -5126,6 +5139,7 @@ msgstr "ଦଳିଲପତ୍ର"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "ଡକ୍ୟୁମେଣ୍ଟ୍"
 
@@ -5947,6 +5961,7 @@ msgid "Fact type"
 msgstr "ତଥ୍ୟର ପ୍ରକାର"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "ତଥ୍ୟ"
@@ -6236,6 +6251,10 @@ msgstr "କେଉଁ କାମ ପାଇଁ?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "ଭୁଲିଯାଆନ୍ତୁ"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "ପାସୱାର୍ଡ ଭୁଲିଗଲେ"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -7217,6 +7236,10 @@ msgstr "ଜାପାନୀ"
 msgid "Job"
 msgstr "ଚାକିରି"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "ଚାକିରି ଆବେଦନ କାର୍ଯ୍ୟକ୍ଷେତ୍ର"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -7255,6 +7278,10 @@ msgstr "ଚାକିରି ଖୋଜ ବିଫଳ ହେଲା | ପୁନର୍
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "ଚାକିରି ଖୋଜ ପାଇପଲାଇନ୍"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "ଚାକିରି ଖୋଜ ପସନ୍ଦ"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8825,6 +8852,11 @@ msgstr "କୌଣସି ସଂଶୋଧନ ନାହିଁ"
 msgid "No country matches."
 msgstr "କୌଣସି ମେଳ ଖାଉଥିବା ଦେଶ ମିଳିଲା ନାହିଁ।"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "କୌଣସି ପରିଚୟ ପତ୍ର ବଛାଯାଇନାହିଁ"
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr ""
@@ -8840,6 +8872,10 @@ msgstr "କୌଣସି ତାରିଖ ମିଳିଲା ନାହିଁ।"
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "କୌଣସି ଦଲିଲ ସଂଲଗ୍ନ ନାହିଁ"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8973,6 +9009,11 @@ msgstr "କୌଣସି ଫଳାଫଳ ମିଳିଲା ନାହିଁ।"
 msgid "No resume"
 msgstr "କ No ଣସି ରେଜୁମ୍ ନାହିଁ |"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "କୌଣସି ଜୀବନବୃତ୍ତାନ୍ତ ବଛାଯାଇନାହିଁ"
+
 #: src/features/documents/documents-page.tsx
 msgid "No resumes yet"
 msgstr ""
@@ -9047,9 +9088,6 @@ msgstr "ନା। {number} · {name} |"
 msgid "none"
 msgstr "କିଛି ନୁହେଁ |"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "କିଛି ନୁହେଁ |"
@@ -9351,6 +9389,7 @@ msgid "Offer type"
 msgstr "ଚାକିରି ଅଫର୍‌ର ପ୍ରକାର"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "ଅଫର୍"
@@ -10233,6 +10272,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "ପସନ୍ଦ"
@@ -10384,6 +10424,7 @@ msgstr "ପ୍ରବୀଣତା"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "ପ୍ରୋଫାଇଲ୍"
@@ -11263,6 +11304,7 @@ msgstr "ଡିଜାଇନ୍ ଡିଫଲ୍ଟଗୁଡିକ ପୁନ Res �
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "ପାସୱାର୍ଡ ରିସେଟ୍ କରନ୍ତୁ"
 
@@ -11482,6 +11524,10 @@ msgstr "ପୁନର୍ବାର ସଞ୍ଚୟ କରନ୍ତୁ |"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "ପୁଣି ଚେଷ୍ଟା ହେଉଛି…"
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "ଆପ୍‌କୁ ଫେରନ୍ତୁ"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -12092,8 +12138,8 @@ msgid "Search job postings"
 msgstr "ଚାକିରି ପୋଷ୍ଟିଂ ଖୋଜ |"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "ସନ୍ଧାନ କିମ୍ବା ଚଲାନ୍ତୁ…"
+msgid "Search or run a command…"
+msgstr "ଖୋଜନ୍ତୁ କିମ୍ବା ନିର୍ଦ୍ଦେଶ ଚଲାନ୍ତୁ…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -12411,6 +12457,7 @@ msgstr "ଆପଣଙ୍କ ଅଥେଣ୍ଟିକେଟର ଆପ୍ ସେଟ
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "ସେଟିଂସ୍"
@@ -12557,8 +12604,8 @@ msgid "Show all types"
 msgstr "ସମସ୍ତ ପ୍ରକାର ଦେଖାନ୍ତୁ"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "ବନ୍ଦ ବନ୍ଦ ଦେଖାନ୍ତୁ |"
+msgid "Show closed applications"
+msgstr "ବନ୍ଦ ହୋଇଥିବା ଚାକିରି ଆବେଦନ ଦେଖାନ୍ତୁ"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12649,6 +12696,7 @@ msgstr "ସାଇଡ୍ ବାର୍ ଗୁଡିକ ପ୍ରାୟତ last ଶ
 #: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "ସାଇନ୍ ଇନ୍ କରନ୍ତୁ"
 
@@ -13167,6 +13215,7 @@ msgstr "ଏହି ବ୍ୟାକଅପ୍ କୋଡ୍‌ଗୁଡ଼ିକୁ 
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "କାହାଣୀ"
 
@@ -14395,6 +14444,7 @@ msgstr "ଉଠାଇବାକୁ Space କିମ୍ବା Enter ଦବାନ୍�
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "ଆଜି |"
@@ -14479,6 +14529,7 @@ msgstr "ଅନୁବାଦଗୁଡିକ"
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "ଆବର୍ଜନା"
 
@@ -14634,6 +14685,10 @@ msgstr "ଆକ୍ସେଣ୍ଟ ରଙ୍ଗ ଏବଂ ସଫା ଟାଇପ�
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "ହାଲୁକା ଧୂସର ସାଇଡବାର୍ ଏବଂ ସୂକ୍ଷ୍ମ ଆଇକନ୍ ସହ ଲଘୁ, ଦ୍ୱି‑କଲମ୍; ଆଇନ, ଅର୍ଥ କିମ୍ବା କର୍ମକାରୀ ପଦବୀଗୁଡିକ ପାଇଁ ପେଶାଦାର ଏବଂ ସଂୟତ।"
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "ଦୁଇ-ପର୍ଯ୍ୟାୟ ପ୍ରମାଣୀକରଣ"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

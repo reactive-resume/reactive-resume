@@ -1,8 +1,11 @@
+import { t } from "@lingui/core/macro";
 import { createFileRoute } from "@tanstack/react-router";
 import z from "zod";
 import { CoachPage } from "@/features/career/coach";
+import { getPageTitle } from "@/libs/seo";
 
 export const Route = createFileRoute("/dashboard/career/coach/{-$conversationId}")({
+	head: () => ({ meta: [{ title: getPageTitle(t`Coach`) }] }),
 	// `offers`: saved offer ids to add as context ("Plan what to ask" from Offers).
 	validateSearch: z.object({ offers: z.array(z.string()).max(2).optional().catch(undefined) }),
 	component: RouteComponent,

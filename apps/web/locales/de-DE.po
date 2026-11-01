@@ -1311,6 +1311,7 @@ msgstr "Erfolg"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "Konto"
@@ -1840,6 +1841,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "KI & Entwickler"
@@ -2511,6 +2513,14 @@ msgstr "Lebenslaufdatei anhängen (PDF, bis zu 10 MB)"
 msgid "Attachment"
 msgstr "Anhang"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "Authentifizierungsfehler"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "Zugriff erlauben"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2602,6 +2612,7 @@ msgid "Background color"
 msgstr "Hintergrundfarbe"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "Backup-Code"
 
@@ -3343,6 +3354,7 @@ msgstr ""
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "Coach"
@@ -4562,6 +4574,7 @@ msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/consent.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "Konto erstellen"
 
@@ -5126,6 +5139,7 @@ msgstr "Dokumentation"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "Unterlagen"
 
@@ -5947,6 +5961,7 @@ msgid "Fact type"
 msgstr "Faktentyp"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "Fakten"
@@ -6236,6 +6251,10 @@ msgstr "Für welchen Job?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "Vergessen"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "Passwort vergessen"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -7216,6 +7235,10 @@ msgstr "Japanisch"
 msgid "Job"
 msgstr "Arbeit"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "Arbeitsbereich zur Bewerbung"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -7254,6 +7277,10 @@ msgstr "Die Jobsuche ist fehlgeschlagen. Versuchen Sie es erneut oder fügen Sie
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "Bewerbungspipeline"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "Einstellungen zur Jobsuche"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8824,6 +8851,11 @@ msgstr "Keine Korrekturen"
 msgid "No country matches."
 msgstr "Keine Länder gefunden."
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "Kein Anschreiben ausgewählt"
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr ""
@@ -8839,6 +8871,10 @@ msgstr "Es wurden keine Datumsangaben gefunden."
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "Keine Dokumente angehängt"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8972,6 +9008,11 @@ msgstr "Keine Ergebnisse gefunden."
 msgid "No resume"
 msgstr "Kein Lebenslauf"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "Kein Lebenslauf ausgewählt"
+
 #: src/features/documents/documents-page.tsx
 msgid "No resumes yet"
 msgstr ""
@@ -9046,9 +9087,6 @@ msgstr "Nr. {number} · {name}"
 msgid "none"
 msgstr "keiner"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "Keiner"
@@ -9350,6 +9388,7 @@ msgid "Offer type"
 msgstr "Art des Jobangebots"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "Angebote"
@@ -10231,6 +10270,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "Präferenzen"
@@ -10382,6 +10422,7 @@ msgstr "Kompetenz"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "Profil"
@@ -11261,6 +11302,7 @@ msgstr "Design-Standards zurücksetzen"
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
@@ -11480,6 +11522,10 @@ msgstr "Speichern Sie erneut"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Erneuter Versuch…"
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "Zurück zur App"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -12090,8 +12136,8 @@ msgid "Search job postings"
 msgstr "Stellenangebote durchsuchen"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "Suchen oder ausführen…"
+msgid "Search or run a command…"
+msgstr "Suchen oder einen Befehl ausführen…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -12409,6 +12455,7 @@ msgstr "Authenticator-App einrichten"
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "Einstellungen"
@@ -12555,8 +12602,8 @@ msgid "Show all types"
 msgstr "Alle Typen anzeigen"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "Show geschlossen"
+msgid "Show closed applications"
+msgstr "Geschlossene Bewerbungen anzeigen"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12647,6 +12694,7 @@ msgstr "Seitenleisten werden oft zuletzt gelesen oder in die Hauptspalte eingef�
 #: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "Anmelden"
 
@@ -13165,6 +13213,7 @@ msgstr "Bewahren Sie diese Backup-Codes an einem sicheren Ort auf. Mit jedem kö
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "Geschichten"
 
@@ -14393,6 +14442,7 @@ msgstr "Zum Aufnehmen Leertaste oder Eingabetaste drücken. Mit den Pfeiltasten 
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "Heute"
@@ -14477,6 +14527,7 @@ msgstr "Übersetzungen"
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "Papierkorb"
 
@@ -14631,6 +14682,10 @@ msgstr "Zweispaltig mit Akzentfarben und klarer Typografie; ausgewogene Wahl fü
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "Zweispaltig, minimalistisch mit hellgrauer Seitenleiste und dezenten Icons; professionell und zurückhaltend für Rechtswesen, Finanz- oder Führungspositionen."
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "Zwei-Faktor-Authentifizierung"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

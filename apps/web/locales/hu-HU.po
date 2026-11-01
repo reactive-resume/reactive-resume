@@ -1311,6 +1311,7 @@ msgstr "Teljesítmény"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "Fiók"
@@ -1840,6 +1841,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "AI és fejlesztő"
@@ -2511,6 +2513,14 @@ msgstr ""
 msgid "Attachment"
 msgstr "Melléklet"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "Hitelesítési hiba"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "Hozzáférés engedélyezése"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2602,6 +2612,7 @@ msgid "Background color"
 msgstr "Háttérszín"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "Biztonsági kód"
 
@@ -3343,6 +3354,7 @@ msgstr ""
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "Coach"
@@ -4562,6 +4574,7 @@ msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/consent.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "Fiók létrehozása"
 
@@ -5126,6 +5139,7 @@ msgstr "Dokumentáció"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "Dokumentumok"
 
@@ -5947,6 +5961,7 @@ msgid "Fact type"
 msgstr "Tény típusa"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "Tények"
@@ -6236,6 +6251,10 @@ msgstr "Melyik munkára?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "Elfelejtés"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "Elfelejtett jelszó"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -7216,6 +7235,10 @@ msgstr "japán"
 msgid "Job"
 msgstr "Munka"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "Álláspályázat munkaterülete"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -7254,6 +7277,10 @@ msgstr "Az álláskeresés nem sikerült. Próbálja újra, vagy illesszen be eg
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "Álláskeresési folyamat"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "Álláskeresési beállítások"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8824,6 +8851,11 @@ msgstr "Nincs javítás"
 msgid "No country matches."
 msgstr "Nem található ország."
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "Nincs kiválasztva motivációs levél"
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr ""
@@ -8839,6 +8871,10 @@ msgstr "Nem található dátum."
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "Nincsenek csatolt dokumentumok"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8972,6 +9008,11 @@ msgstr "Nincs találat."
 msgid "No resume"
 msgstr "Nincs önéletrajz"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "Nincs kiválasztva önéletrajz"
+
 #: src/features/documents/documents-page.tsx
 msgid "No resumes yet"
 msgstr ""
@@ -9046,9 +9087,6 @@ msgstr "sz. {number} · {name}"
 msgid "none"
 msgstr "egyik sem"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "Egyik sem"
@@ -9350,6 +9388,7 @@ msgid "Offer type"
 msgstr "Állásajánlat típusa"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "Ajánlatok"
@@ -10231,6 +10270,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "Preferenciák"
@@ -10382,6 +10422,7 @@ msgstr "Jártasság"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "Profil"
@@ -11261,6 +11302,7 @@ msgstr "Állítsa vissza a tervezési alapértékeket"
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "Jelszó visszaállítása"
 
@@ -11480,6 +11522,10 @@ msgstr "Próbálja újra a mentést"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Újrapróbálkozás…"
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "Vissza az alkalmazáshoz"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -12090,8 +12136,8 @@ msgid "Search job postings"
 msgstr "Álláshirdetések keresése"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "Keress vagy fuss…"
+msgid "Search or run a command…"
+msgstr "Keresés vagy parancs futtatása…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -12409,6 +12455,7 @@ msgstr "Állítsd be a hitelesítő alkalmazásodat"
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "Beállítások"
@@ -12555,8 +12602,8 @@ msgid "Show all types"
 msgstr "Minden típus megjelenítése"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "A műsor lezárva"
+msgid "Show closed applications"
+msgstr "Lezárt álláspályázatok megjelenítése"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12647,6 +12694,7 @@ msgstr "Az oldalsávokat gyakran utoljára olvassák be, vagy keverik a fő oszl
 #: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "Bejelentkezés"
 
@@ -13165,6 +13213,7 @@ msgstr "Tárold ezeket a biztonsági kódokat biztonságos helyen. Ha elveszíte
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "Történetek"
 
@@ -14393,6 +14442,7 @@ msgstr "A felvételhez nyomja meg a Szóköz vagy az Enter billentyűt. A nyílb
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "Ma"
@@ -14477,6 +14527,7 @@ msgstr "Fordítások"
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "Kuka"
 
@@ -14631,6 +14682,10 @@ msgstr "Kétoszlopos elrendezés kiemelő színekkel és letisztult tipográfiá
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "Kétoszlopos, minimalista elrendezés világosszürke oldalsávval és visszafogott ikonokkal; professzionális, diszkrét dizájn jogi, pénzügyi vagy vezetői szerepkörökhöz."
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "Kétfaktoros hitelesítés"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

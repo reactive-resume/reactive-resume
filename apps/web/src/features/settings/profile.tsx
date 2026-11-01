@@ -458,7 +458,7 @@ function ProfileSelect({ label, value, options, onChange }: ProfileSelectProps) 
 			</label>
 			<select
 				id={id}
-				className="h-9 w-full rounded-md border border-line-2 bg-raised px-3 text-sm pointer-coarse:h-11 pointer-coarse:text-base"
+				className="h-9 w-full rounded-md border border-control-border bg-raised px-3 text-sm pointer-coarse:h-11 pointer-coarse:text-base"
 				value={value}
 				onChange={(event) => onChange(event.target.value)}
 			>

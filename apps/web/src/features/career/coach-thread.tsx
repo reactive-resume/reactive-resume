@@ -383,7 +383,7 @@ export function Composer(props: ComposerProps) {
 	return (
 		<div className={page ? "border-t border-line px-6 py-3" : "px-3.5 pt-2 pb-3.5"}>
 			<div className={cn("grid gap-2", page && "mx-auto w-full max-w-[720px]")}>
-				<div className="grid rounded-xl border border-line-2 bg-raised transition-colors duration-quick focus-within:border-accent">
+				<div className="grid rounded-xl border border-control-border bg-raised transition-colors duration-quick focus-within:border-accent">
 					<label htmlFor={id} className="sr-only">
 						<Trans>Message the coach</Trans>
 					</label>

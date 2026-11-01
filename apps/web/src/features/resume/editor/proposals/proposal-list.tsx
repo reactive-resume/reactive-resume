@@ -279,7 +279,7 @@ function ProposalItem(props: ProposalItemProps) {
 							rows={3}
 							maxLength={2000}
 							onChange={(event) => setDraft(event.target.value)}
-							className="field-sizing-content rounded-md border border-line-2 bg-raised px-2 py-1 outline-none focus:border-accent"
+							className="field-sizing-content rounded-md border border-control-border bg-raised px-2 py-1 outline-none focus:border-accent"
 						/>
 					</span>
 				)}

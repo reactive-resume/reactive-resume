@@ -1311,6 +1311,7 @@ msgstr "សមិទ្ធផល"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "គណនី"
@@ -1840,6 +1841,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "AI និងអ្នកអភិវឌ្ឍន៍"
@@ -2511,6 +2513,14 @@ msgstr ""
 msgid "Attachment"
 msgstr "ឯកសារភ្ជាប់"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "កំហុសក្នុងការផ្ទៀងផ្ទាត់"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "អនុញ្ញាតការចូលប្រើ"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2602,6 +2612,7 @@ msgid "Background color"
 msgstr "ពណ៌ផ្ទៃខាងក្រោយ"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "លេខកូដបម្រុងទុក"
 
@@ -3343,6 +3354,7 @@ msgstr ""
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "គ្រូបង្វឹក"
@@ -4562,6 +4574,7 @@ msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/consent.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "បង្កើតគណនី"
 
@@ -5126,6 +5139,7 @@ msgstr "ឯកសារ"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "ឯកសារ"
 
@@ -5947,6 +5961,7 @@ msgid "Fact type"
 msgstr "ប្រភេទការពិត"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "ការពិត"
@@ -6236,6 +6251,10 @@ msgstr "សម្រាប់ការងារមួយណា?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "បំភ្លេច"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "ភ្លេចពាក្យសម្ងាត់"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -7216,6 +7235,10 @@ msgstr "Japanese"
 msgid "Job"
 msgstr "ការងារ"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "កន្លែងធ្វើការសម្រាប់ពាក្យសុំការងារ"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -7254,6 +7277,10 @@ msgstr "ការស្វែងរកការងារបានបរាជ័
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "ដំណើរការស្វែងរកការងារ"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "ចំណូលចិត្តស្វែងរកការងារ"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8824,6 +8851,11 @@ msgstr "គ្មានការកែតម្រូវ"
 msgid "No country matches."
 msgstr "រកមិនឃើញប្រទេសទេ។"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "មិនបានជ្រើសរើសលិខិតអម"
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr ""
@@ -8839,6 +8871,10 @@ msgstr "រកមិនឃើញកាលបរិច្ឆេទទេ។"
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "មិនមានឯកសារភ្ជាប់"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8972,6 +9008,11 @@ msgstr "រក​មិន​ឃើញ​លទ្ធផល។"
 msgid "No resume"
 msgstr "មិនមានប្រវត្តិរូបសង្ខេបទេ។"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "មិនបានជ្រើសរើសប្រវត្តិរូបសង្ខេប"
+
 #: src/features/documents/documents-page.tsx
 msgid "No resumes yet"
 msgstr ""
@@ -9046,9 +9087,6 @@ msgstr "លេខ {number} · {name}"
 msgid "none"
 msgstr "គ្មាន"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "គ្មាន"
@@ -9350,6 +9388,7 @@ msgid "Offer type"
 msgstr "ប្រភេទសំណើការងារ"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "ការផ្តល់ការងារ"
@@ -10231,6 +10270,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "ចំណង់ចំណូលចិត្ត"
@@ -10382,6 +10422,7 @@ msgstr "កម្រិត​ជំនាញ"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "ព័ត៌មាន​ផ្ទាល់ខ្លួន"
@@ -11261,6 +11302,7 @@ msgstr "កំណត់លំនាំដើមនៃការរចនាឡើ
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "កំណត់ពាក្យសម្ងាត់ឡើងវិញ"
 
@@ -11480,6 +11522,10 @@ msgstr "ព្យាយាមរក្សាទុកម្តងទៀត"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "កំពុងព្យាយាមម្តងទៀត..."
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "ត្រឡប់ទៅកម្មវិធី"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -12090,8 +12136,8 @@ msgid "Search job postings"
 msgstr "ស្វែងរកការប្រកាសការងារ"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "ស្វែងរក ឬដំណើរការ..."
+msgid "Search or run a command…"
+msgstr "ស្វែងរក ឬដំណើរការពាក្យបញ្ជា…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -12409,6 +12455,7 @@ msgstr "រៀបចំកម្មវិធីផ្ទៀងផ្ទាត់
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "ការកំណត់"
@@ -12555,8 +12602,8 @@ msgid "Show all types"
 msgstr "បង្ហាញប្រភេទទាំងអស់"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "ការបង្ហាញបិទ"
+msgid "Show closed applications"
+msgstr "បង្ហាញពាក្យសុំការងារដែលបានបិទ"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12647,6 +12694,7 @@ msgstr "របារចំហៀងត្រូវបានអានជាញឹ
 #: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "ចូល"
 
@@ -13165,6 +13213,7 @@ msgstr "រក្សាទុកកូដបម្រុងទុកទាំង
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "រឿង"
 
@@ -14393,6 +14442,7 @@ msgstr "ដើម្បីលើកវា ចុច Space ឬ Enter។ ប្រ
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "ថ្ងៃនេះ"
@@ -14477,6 +14527,7 @@ msgstr "ការបកប្រែ"
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "ធុងសំរាម"
 
@@ -14631,6 +14682,10 @@ msgstr "ពីរ​ជួរឈរ មាន​ពណ៌រំលេច និ�
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "ពីរ​ជួរឈរ អប្បបរមា មាន​របារ​បាត​ពណ៌ប្រផេះ​ស្រាល និង​រូបតំណាង​ស្រាលៗ មាន​រូបរាង​វិជ្ជាជីវៈ និង​សុភាពរាបសា​សម្រាប់​តួនាទី​ច្បាប់ ហិរញ្ញវត្ថុ ឬ​តំណែង​អនុប្រធាន។"
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "ការផ្ទៀងផ្ទាត់ពីរជំហាន"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

@@ -1311,6 +1311,7 @@ msgstr "Úspěch"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "Účet"
@@ -1840,6 +1841,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "AI a vývojář"
@@ -2511,6 +2513,14 @@ msgstr ""
 msgid "Attachment"
 msgstr "Příloha"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "Chyba ověření"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "Povolit přístup"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2602,6 +2612,7 @@ msgid "Background color"
 msgstr "Barva pozadí"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "Záložní kód"
 
@@ -3343,6 +3354,7 @@ msgstr ""
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "Kouč"
@@ -4562,6 +4574,7 @@ msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/consent.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "Vytvořit účet"
 
@@ -5126,6 +5139,7 @@ msgstr "Dokumentace"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "Dokumenty"
 
@@ -5947,6 +5961,7 @@ msgid "Fact type"
 msgstr "Typ faktu"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "Fakta"
@@ -6236,6 +6251,10 @@ msgstr "Na jakou práci?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "Zapomenout"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "Zapomenuté heslo"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -7216,6 +7235,10 @@ msgstr "Japonština"
 msgid "Job"
 msgstr "Práce"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "Pracovní prostor žádosti o zaměstnání"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -7254,6 +7277,10 @@ msgstr "Hledání práce se nezdařilo. Zkuste to znovu nebo vložte odkaz na na
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "Proces hledání práce"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "Předvolby hledání práce"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8824,6 +8851,11 @@ msgstr "Bez oprav"
 msgid "No country matches."
 msgstr "Nebyly nalezeny žádné země."
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "Nebyl vybrán průvodní dopis"
+
 #: src/features/documents/documents-page.tsx
 msgid "No cover letters yet"
 msgstr ""
@@ -8839,6 +8871,10 @@ msgstr "Nebyla nalezena žádná data."
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "Nejsou připojeny žádné dokumenty"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8972,6 +9008,11 @@ msgstr "Nebyly nalezeny žádné výsledky."
 msgid "No resume"
 msgstr "Žádné resumé"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "Nebyl vybrán životopis"
+
 #: src/features/documents/documents-page.tsx
 msgid "No resumes yet"
 msgstr ""
@@ -9046,9 +9087,6 @@ msgstr "č. {number} · {name}"
 msgid "none"
 msgstr "žádný"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "Žádný"
@@ -9350,6 +9388,7 @@ msgid "Offer type"
 msgstr "Typ nabídky"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "Nabídky"
@@ -10231,6 +10270,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "Předvolby"
@@ -10382,6 +10422,7 @@ msgstr "Znalost"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "Profil"
@@ -11261,6 +11302,7 @@ msgstr "Obnovit výchozí nastavení návrhu"
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "Obnovit heslo"
 
@@ -11480,6 +11522,10 @@ msgstr "Zkuste uložit znovu"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Opakování…"
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "Zpět do aplikace"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -12090,8 +12136,8 @@ msgid "Search job postings"
 msgstr "Hledejte nabídky práce"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "Hledat nebo spustit…"
+msgid "Search or run a command…"
+msgstr "Hledat nebo spustit příkaz…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -12409,6 +12455,7 @@ msgstr "Nastavte ověřovací aplikaci"
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "Nastavení"
@@ -12555,8 +12602,8 @@ msgid "Show all types"
 msgstr "Zobrazit všechny typy"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "Show uzavřena"
+msgid "Show closed applications"
+msgstr "Zobrazit uzavřené žádosti"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12647,6 +12694,7 @@ msgstr "Postranní pruhy se často čtou jako poslední nebo se přimíchají do
 #: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "Přihlásit se"
 
@@ -13165,6 +13213,7 @@ msgstr "Uložte tyto záložní kódy na bezpečné místo. Každý vás jednou 
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "Příběhy"
 
@@ -14393,6 +14442,7 @@ msgstr "Zvednete ho mezerníkem nebo klávesou Enter. Šipkami ho přesunete, me
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "Dnes"
@@ -14477,6 +14527,7 @@ msgstr "Překlady"
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "Koš na odpad"
 
@@ -14631,6 +14682,10 @@ msgstr "Dvousloupcové s akcentovými barvami a čistou typografií; vyvážená
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "Dvousloupcové, minimalistické se světle šedým postranním panelem a jemnými ikonami; profesionální a střídmé pro právní, finanční nebo manažerské role."
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "Dvoufaktorové ověřování"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx
