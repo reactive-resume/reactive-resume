@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
 import z from "zod";
+import { AGENT_ATTACHMENT_TYPES } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -463,6 +464,7 @@ export function Composer(props: ComposerProps) {
 							ref={fileInput}
 							type="file"
 							multiple
+							accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
 							className="hidden"
 							onChange={(event) => void upload(event.target.files)}
 						/>

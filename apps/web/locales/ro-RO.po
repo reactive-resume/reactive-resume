@@ -94,6 +94,11 @@ msgstr "(obligatoriu)"
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
 msgstr "{0, plural, =1 {Modificare aplicată} few {# modificări aplicate} other {# de modificări aplicate}}"
 
+#. placeholder {0}: overflow.authored
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr ""
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
@@ -203,6 +208,7 @@ msgstr "{0, plural, one {# document mutat în Coșul de gunoi} few {# documente 
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {Editarea # nu a putut fi plasată: textul său s-a schimbat. Solicitați din nou să o refaceți.} other {Editările # nu au putut fi plasate: textul acestora s-a schimbat. Solicitați din nou să le refaceți.}}"
 
+#. placeholder {0}: section.entries
 #. placeholder {0}: step.entries
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
@@ -226,6 +232,11 @@ msgstr "{0, plural, one {# câmp este marcat pentru o verificare rapidă în edi
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
 msgstr "{0, plural, one {Problema # este ignorată.} other {Problemele # sunt ignorate.}}"
+
+#. placeholder {0}: review.notImported.length
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: proposals.length
 #: src/features/assistant/conversation.tsx
@@ -367,6 +378,11 @@ msgstr ""
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {A început acum # minut} few {A început acum # minute} other {A început acum # de minute}}"
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
+msgstr ""
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -963,6 +979,10 @@ msgstr "{toCheck, plural, one {Câmpul # are nevoie de o privire.} other {Câmpu
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# de verificat} other {# de verificat}}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "{total, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -1128,6 +1148,10 @@ msgstr "Un cod de la o aplicație de autentificare la conectare"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "A comfortable length, and it fits on one page."
 msgstr "O lungime confortabilă și se potrivește pe o singură pagină."
+
+#: src/features/assistant/conversation.tsx
+msgid "A conversation's files can total up to 100 MB. Start a new conversation."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "A date is in the future."
@@ -1308,6 +1332,10 @@ msgstr "Accepta"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept all"
 msgstr "Acceptați totul"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1734,6 +1762,10 @@ msgstr "Adăugați sfârșitul domeniului, cum ar fi {domain}.com"
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Adaugă aceste înregistrări acolo unde gestionezi domeniul, apoi verifică. Modificările pot avea nevoie de câteva ore ca să ajungă la toată lumea."
@@ -1828,6 +1860,11 @@ msgstr ""
 
 #: src/features/settings/profile.tsx
 msgid "Address line 2"
+msgstr ""
+
+#. placeholder {0}: addition.anchor
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Adds after: {0}"
 msgstr ""
 
 #: src/features/templates/gallery.tsx
@@ -2582,6 +2619,10 @@ msgid "Attach a resume file (PDF, up to 10 MB)"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
+msgid "Attach up to 10 files per message."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Attachment"
 msgstr "Atașament"
@@ -3177,6 +3218,10 @@ msgstr "Comparați acest post cu dovezile dvs."
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Check views"
 msgstr "Verificați vizualizările"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/libs/seo.ts
 msgid "Check whether software can read your resume PDF. Runs entirely in your browser, so your file is never uploaded."
@@ -4321,6 +4366,11 @@ msgstr "Nu s-a putut citi fișierul. Alege un fișier .csv și încearcă din no
 msgid "Couldn't read that file. Try again."
 msgstr "Nu s-a putut citi fișierul. Încearcă din nou."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "Nu s-au putut citi datele pentru {entries}, așa că rămân la final. Corectează datele și sortează din nou."
@@ -4806,6 +4856,10 @@ msgstr ""
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
 msgstr "Creați unul acum"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Create resume"
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
@@ -5596,7 +5650,7 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Trageți pentru a repoziționa și folosiți glisorul pentru a mări înainte de încărcare."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -6277,6 +6331,10 @@ msgstr "Nume de fișier"
 #: src/features/resume/import/read-file.ts
 msgid "file read"
 msgstr "fișier citit"
+
+#: src/features/assistant/conversation.tsx
+msgid "Files can be up to 25 MB."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
@@ -8757,6 +8815,10 @@ msgstr "Mai multe opțiuni pentru {title}"
 msgid "More formatting"
 msgstr "Mai multe opțiuni de formatare"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "More from your file"
+msgstr ""
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
 msgstr "Mai multe opțiuni"
@@ -8938,6 +9000,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Nume"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Name of {label}"
 msgstr "Numele pentru {label}"
@@ -9060,6 +9126,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter instead"
 msgstr "În schimb, scrisoare de intenție nouă"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New document"
@@ -9406,6 +9476,10 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "Încă nu există CV-uri."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "No sections were found in this file."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "No selected documents were deleted. Refresh to see what remains."
@@ -11736,6 +11810,10 @@ msgstr "Înlocuiți fonturile de pictograme cu text simplu, apoi exportați din 
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Înlocuiți tabelele cu paragrafe și liste simple. Celulele sunt extrase în ordinea de stocare, nu în ordinea de citire."
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "Înlocuiește „{current}” în candidatură."
@@ -12779,6 +12857,10 @@ msgstr "Secțiuni"
 msgid "Sections · print order"
 msgstr "Secțiuni · comanda tipărire"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Sections found"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Sections use headings systems recognize, and work experience shows."
 msgstr "Secțiunile folosesc titluri pe care sistemele le recunosc, iar experiența profesională este afișată."
@@ -13773,6 +13855,10 @@ msgid "Step {0} of {1}"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
+msgid "Still runs onto page {next}."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -14192,6 +14278,10 @@ msgstr "Se testează serviciul de căutare pe serverul dvs...."
 msgid "Testing…"
 msgstr "Testarea…"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Text"
 msgstr "Text"
@@ -14535,6 +14625,10 @@ msgstr "Anunțul de angajare a fost salvat cu această cerere de angajare."
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
 msgstr ""
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The posting:"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "Furnizorul nu a răspuns. Verificați cheia, modelul și baza URL."
@@ -14848,6 +14942,10 @@ msgstr "Acest fișier este mare pentru un CV."
 msgid "This file is larger than many application forms accept."
 msgstr "Acest fișier este mai mare decât acceptă multe formulare de candidatură."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
 msgstr ""
@@ -14863,6 +14961,10 @@ msgstr "Acest fișier folosește foarte multe fonturi diferite."
 #: src/features/ats-checker/messages.ts
 msgid "This file uses Type 3 fonts, which carry drawings instead of characters."
 msgstr "Acest fișier folosește fonturi Type 3, care conțin desene în loc de caractere."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -15072,6 +15174,19 @@ msgstr "Condensați"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Tighten to one page"
 msgstr "Strângeți la o pagină"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It already fits on one page, so only cut what's weak."
+msgstr ""
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next} by about {0} lines."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next}."
+msgstr ""
 
 #: src/features/career/shared.tsx
 msgid "Tightening"
@@ -16704,6 +16819,10 @@ msgstr "Răspunsul dvs."
 
 #: src/features/career/workspace/apply.tsx
 msgid "Your answer changed while the draft was written. Draft again to use it."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Your assistant files can total up to 1 GB. Delete conversations you no longer need."
 msgstr ""
 
 #: src/features/career/workspace/practise.tsx

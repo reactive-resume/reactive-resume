@@ -4,6 +4,8 @@ import { experienceItemSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import {
 	additionAfter,
+	additionParts,
+	passageLines,
 	acknowledgeProposalApplications,
 	applyProposal,
 	applyProposals,
@@ -473,5 +475,26 @@ describe("review checks", () => {
 			"Mine",
 		);
 		expect(added.after).toBe("<p>Ran sessions</p></li><li><p>Mine</p></li>");
+	});
+});
+
+describe("additionParts and passageLines", () => {
+	it("reads an addition as its anchor and the new blocks, one line each", () => {
+		const before = "<p>Improved checkout-flow accessibility.</p></li>";
+		expect(
+			additionParts({ before, after: `${before}<li><p>Led an audit.</p></li><li><p>Fixed 60 issues.</p></li>` }),
+		).toEqual({ anchor: "Improved checkout-flow accessibility.", added: "Led an audit.\nFixed 60 issues." });
+	});
+
+	it("is undefined for rewrites, new text in an empty field and structural changes", () => {
+		expect(additionParts({ before: "<p>Old</p>", after: "<p>New</p>" })).toBeUndefined();
+		expect(additionParts({ before: "", after: "<p>New</p>" })).toBeUndefined();
+		expect(
+			additionParts({ before: "<p>A</p>", after: "<p>A</p><p>B</p>", snapshot: { before: "", after: "" } }),
+		).toBeUndefined();
+	});
+
+	it("keeps one passage on one line", () => {
+		expect(passageLines("<p>One &amp; only</p>")).toBe("One & only");
 	});
 });

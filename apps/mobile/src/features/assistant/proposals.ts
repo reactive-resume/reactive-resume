@@ -17,14 +17,18 @@ import { useResumeStore } from "@/draft";
 import { dismissToast, showToast } from "@/ui";
 
 type ProposeEditsOutput = {
+	title?: string;
 	edits?: Array<Omit<Proposal, "source" | "target"> & { target: Record<string, string | undefined> }>;
 	skipped?: unknown[];
 	requirements?: RequirementCoverage[];
+	supersedes?: string[];
 };
 
 /** What the user did with an edit in this session: its status, and their wording when they rewrote it. */
 /** What the server's receipts say about an edit: its decision, and the user's saved wording when they changed it. */
-export type Receipt = { status: Proposal["status"] } & Partial<Pick<Proposal, "after" | "unsupported" | "edited">>;
+export type Receipt = { status: Proposal["status"] } & Partial<
+	Pick<Proposal, "after" | "unsupported" | "edited" | "superseded">
+>;
 
 export type ToolPart = {
 	type: string;
@@ -39,6 +43,19 @@ export const isProposeEdits = (part: { type: string }): part is ToolPart =>
 	part.type === "tool-propose_edits" && (part as ToolPart).state === "output-available";
 
 export const skippedCount = (part: ToolPart) => (part.output as ProposeEditsOutput | undefined)?.skipped?.length ?? 0;
+
+/** What the set does, as the assistant titled it ("Tailor to the Lumen posting"). */
+export const titleOf = (part: ToolPart) => (part.output as ProposeEditsOutput | undefined)?.title?.trim() ?? "";
+
+/** Earlier undecided edits that later suggestions replaced; they read as rejected before the receipts catch up. */
+export const supersededIn = (messages: readonly { parts: readonly { type: string }[] }[]) =>
+	new Set(
+		messages.flatMap((message) =>
+			message.parts.flatMap((part) =>
+				isProposeEdits(part) ? ((part.output as ProposeEditsOutput | undefined)?.supersedes ?? []) : [],
+			),
+		),
+	);
 
 /** The posting's requirements as the assistant read them for this set, gaps included. */
 export const requirementsOf = (part: ToolPart) => (part.output as ProposeEditsOutput | undefined)?.requirements ?? [];
@@ -58,6 +75,7 @@ export function toProposals(part: ToolPart, receipts: ReadonlyMap<string, Receip
 				...(edit.target.roleId === undefined ? {} : { roleId: edit.target.roleId }),
 			},
 			status: receipt?.status ?? edit.status,
+			...(receipt?.superseded ? { superseded: true } : {}),
 			source: "assistant",
 		};
 	});

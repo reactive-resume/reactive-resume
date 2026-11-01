@@ -27,11 +27,11 @@ import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts"
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { env } from "@reactive-resume/env/server";
-import { withEditedText } from "@reactive-resume/resume/proposals";
+import { canApplyTo, withEditedText } from "@reactive-resume/resume/proposals";
 import { generateId } from "@reactive-resume/utils/string";
 import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
-import { getAgentModel } from "../ai/service";
+import { extractDocxTextFromBytes, getAgentModel } from "../ai/service";
 import { assertApplicationVersion } from "../applications/service";
 import { careerService, requireCareerApplication } from "../career/service";
 import { buildCareerTools, buildCareerInstructions } from "../career/tools";
@@ -66,6 +66,7 @@ import {
 	upsertAssistantUiMessage,
 	withAccumulatedUsageMetadata,
 	withEditStatuses,
+	supersededEdits,
 } from "./messages-persistence";
 import { acceptedEditAllowed, documentReader } from "./proposal-applications";
 import { repairAgentToolCall } from "./repair";
@@ -85,6 +86,27 @@ const MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024;
 const MAX_THREAD_ATTACHMENT_BYTES = 100 * 1024 * 1024;
 const MAX_ACCOUNT_ATTACHMENT_BYTES = 1024 * 1024 * 1024;
 const READABLE_ATTACHMENT_TYPES = new Set(["text/plain", "text/markdown", "application/json"]);
+const DOCX_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+/** Word files read as text, as resume import reads them; a browser may send one without its type. */
+const isDocxAttachment = (attachment: Pick<AgentAttachmentRecord, "mediaType" | "filename">) =>
+	attachment.mediaType === DOCX_MEDIA_TYPE ||
+	(attachment.mediaType === "application/octet-stream" && /\.docx$/i.test(attachment.filename));
+
+/** An attachment's text when the server can read it: text files as they are, Word files through their XML. */
+function attachmentText(
+	attachment: AgentAttachmentRecord,
+	data: Uint8Array,
+): { text: string } | { unreadable: true } | null {
+	if (READABLE_ATTACHMENT_TYPES.has(attachment.mediaType))
+		return { text: new TextDecoder().decode(data).slice(0, MAX_ATTACHMENT_TEXT_CHARS) };
+	if (!isDocxAttachment(attachment)) return null;
+	try {
+		return { text: extractDocxTextFromBytes(data).slice(0, MAX_ATTACHMENT_TEXT_CHARS) };
+	} catch {
+		return { unreadable: true };
+	}
+}
 const DIRECT_MODEL_FILE_ATTACHMENT_TYPES = new Set([
 	"application/pdf",
 	"audio/mpeg",
@@ -354,13 +376,17 @@ function attachmentLabel(attachment: AgentAttachmentRecord) {
 
 function buildAttachmentModelParts(input: AttachmentModelInput[]): Array<TextPart | ImagePart | FilePart> {
 	return input.map(({ attachment, data }) => {
-		if (READABLE_ATTACHMENT_TYPES.has(attachment.mediaType)) {
-			const text = new TextDecoder().decode(data).slice(0, MAX_ATTACHMENT_TEXT_CHARS);
+		const read = attachmentText(attachment, data);
+		if (read && "text" in read)
 			return {
 				type: "text",
-				text: `Attachment ${attachmentLabel(attachment)}:\n\n${text}`,
+				text: `Attachment ${attachmentLabel(attachment)}:\n\n${read.text}`,
 			};
-		}
+		if (read)
+			return {
+				type: "text",
+				text: `Attachment ${attachmentLabel(attachment)} couldn't be read: the Word file is damaged or has no text. Tell the user and ask them to paste its text.`,
+			};
 
 		if (attachment.mediaType.startsWith("image/")) {
 			return {
@@ -741,7 +767,10 @@ async function readAttachment(input: { id: string; threadId: string; userId: str
 	const stored = await getStorageService().read(attachment.storageKey);
 	if (!stored) throw new Error("ATTACHMENT_NOT_FOUND");
 
-	if (!READABLE_ATTACHMENT_TYPES.has(attachment.mediaType)) {
+	const read = attachmentText(attachment, stored.data);
+	// A failed read shows as failed, not as "Read the attachment" followed by "I can't read it".
+	if (read && !("text" in read)) throw new Error("This Word file is damaged or has no text.");
+	if (!read) {
 		return {
 			id: attachment.id,
 			filename: attachment.filename,
@@ -757,7 +786,7 @@ async function readAttachment(input: { id: string; threadId: string; userId: str
 		filename: attachment.filename,
 		mediaType: attachment.mediaType,
 		size: attachment.size,
-		content: new TextDecoder().decode(stored.data).slice(0, MAX_ATTACHMENT_TEXT_CHARS),
+		content: read.text,
 	};
 }
 
@@ -800,8 +829,28 @@ async function proposeEdits(input: {
 				editsProposed: sql`${schema.agentThread.editsProposed} + ${output.edits.length}`,
 			})
 			.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
+		const supersedes = await supersedeEarlierEdits(input, output.edits, loaded);
+		if (supersedes.length > 0) return { ...output, supersedes };
 	}
 	return output;
+}
+
+/**
+ * A refinement replaces the conversation's earlier undecided suggestion for the same passage. The new result names
+ * them and the apps show them as replaced, so the user isn't asked to clean up after the reply. Nothing is written
+ * here: an earlier edit counts as replaced only once the result that replaces it is saved with its reply.
+ */
+async function supersedeEarlierEdits(
+	input: { userId: string; threadId: string },
+	edits: ProposeEditsOutput["edits"],
+	document: Awaited<ReturnType<typeof loadDocument>>,
+) {
+	const held = (edit: ProposeEditsOutput["edits"][number]) => {
+		const value = document.read(edit.target);
+		return value !== undefined && canApplyTo(value, { before: edit.after });
+	};
+	const rows = await listThreadMessages(input);
+	return rows.flatMap((row) => supersededEdits(toMessage(row), edits, held));
 }
 
 function createAgent(input: {
@@ -1946,7 +1995,8 @@ export const agentService = {
 	attachments: {
 		create: async (input: CreateAttachmentInput) => {
 			assertAgentEnvironment();
-			if (input.data.byteLength > MAX_ATTACHMENT_BYTES) throw new ORPCError("BAD_REQUEST");
+			if (input.data.byteLength > MAX_ATTACHMENT_BYTES)
+				throw new ORPCError("AGENT_ATTACHMENT_TOO_LARGE", { status: 400, message: "Files can be up to 25 MB." });
 
 			const mediaType = input.mediaType || inferContentType(input.filename);
 			const id = generateId();
@@ -1981,7 +2031,11 @@ export const agentService = {
 								isNull(schema.agentAttachment.messageId),
 							),
 						);
-					if ((unsent?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE) throw new ORPCError("BAD_REQUEST");
+					if ((unsent?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE)
+						throw new ORPCError("AGENT_ATTACHMENT_LIMIT", {
+							status: 400,
+							message: "Attach up to 10 files per message.",
+						});
 
 					const [stats] = await tx
 						.select({
@@ -1992,7 +2046,10 @@ export const agentService = {
 							and(eq(schema.agentAttachment.threadId, input.threadId), eq(schema.agentAttachment.userId, input.userId)),
 						);
 					if (Number(stats?.totalBytes ?? 0) + input.data.byteLength > MAX_THREAD_ATTACHMENT_BYTES) {
-						throw new ORPCError("BAD_REQUEST");
+						throw new ORPCError("AGENT_THREAD_ATTACHMENTS_FULL", {
+							status: 400,
+							message: "A conversation's files can total up to 100 MB. Start a new conversation.",
+						});
 					}
 					// New threads would otherwise each bring a fresh 100 MiB.
 					// ponytail: uploads to two threads at once can pass this together; lock the user row if that matters.
@@ -2001,7 +2058,8 @@ export const agentService = {
 						.from(schema.agentAttachment)
 						.where(eq(schema.agentAttachment.userId, input.userId));
 					if (Number(account?.totalBytes ?? 0) + input.data.byteLength > MAX_ACCOUNT_ATTACHMENT_BYTES)
-						throw new ORPCError("BAD_REQUEST", {
+						throw new ORPCError("AGENT_ACCOUNT_ATTACHMENTS_FULL", {
+							status: 400,
 							message: "Your assistant attachments use all their storage. Delete conversations you no longer need.",
 						});
 

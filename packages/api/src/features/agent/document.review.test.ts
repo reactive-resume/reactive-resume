@@ -27,6 +27,26 @@ it.each([
 	}
 });
 
+it("flags a new figure or a declared new detail for the user's check, but not merely new wording", () => {
+	const { data, resolve } = fixture();
+	data.basics.headline = "Senior designer with 5+ years";
+	const target = { sectionId: "basics", field: "headline" };
+	const edit = (value: string, addsClaims?: boolean) =>
+		resolve([
+			{
+				kind: "field",
+				target,
+				before: data.basics.headline,
+				value,
+				why: "Shorter title.",
+				...(addsClaims ? { addsClaims } : {}),
+			},
+		]).edits[0]?.addsClaims;
+	expect(edit("Designer with 8+ years")).toBe(true);
+	expect(edit("Thoughtful senior designer")).toBeUndefined();
+	expect(edit("Designer with 5+ years in fintech", true)).toBe(true);
+});
+
 function fixture() {
 	const data = structuredClone(defaultResumeData);
 	data.sections.experience.items = resumeDataSchema.parse({

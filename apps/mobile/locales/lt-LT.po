@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {# redagavimo nepavyko įdėti: jo tekstas pasikeitė. Paprašykite dar kartą tai padaryti.} other {Nepavyko įdėti # redagavimo: jų tekstas pasikeitė. Dar kartą paprašykite juos perdaryti.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# įrašas} few {# įrašai} many {# įrašo} other {# įrašų}}"
@@ -211,6 +213,11 @@ msgstr "{0, plural, one {# įrašas} few {# įrašai} many {# įrašo} other {# 
 #: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# faktas} few {# faktai} many {# fakto} other {# faktų}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -823,6 +830,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# patikrinti} other {# patikrinti}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
@@ -1013,6 +1024,10 @@ msgstr "Priimti"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "Priimti visus"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1354,6 +1369,10 @@ msgstr "Pridėkite domeno pabaigą, pvz., {domain}.com"
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Pridėkite šiuos įrašus ten, kur valdote domeną, tada patikrinkite. Kol pakeitimai pasieks visus, gali praeiti kelios valandos."
@@ -1425,6 +1444,11 @@ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Address line 2"
+msgstr ""
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
 msgstr ""
 
 #: src/features/design/advanced.tsx
@@ -2473,6 +2497,10 @@ msgstr "Patikrinkite kitą failą"
 msgid "Check DNS"
 msgstr "Tikrinti DNS"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -2525,6 +2553,10 @@ msgstr "Patikrinkite šią poziciją pagal savo įrodymus"
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "Patikrinkite vaizdus"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3452,6 +3484,11 @@ msgstr "Nepavyko susisiekti su jūsų AI teikėju. Bandykite dar kartą arba pat
 msgid "Couldn't read that file. Try again."
 msgstr "Nepavyko nuskaityti to failo. Bandykite dar kartą."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Nepavyko nuskaityti eksportuoto PDF."
@@ -3791,6 +3828,10 @@ msgstr "Sukurti kopiją"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Pirmiausia sukurkite arba importuokite gyvenimo aprašymą, tada grįžkite ir nukopijuokite jį šiam darbui."
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3807,6 +3848,10 @@ msgstr "Sukurta {0} · Paskutinį kartą naudota {1} · Baigiasi {2}"
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "Kuriamas dokumentas…"
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -6805,6 +6850,10 @@ msgstr "Daugiau"
 msgid "More details"
 msgstr "Daugiau informacijos"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6992,6 +7041,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Pavadinimas"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -7094,6 +7147,10 @@ msgstr "Naujas pokalbis"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "Vietoj to naujas motyvacinis laiškas"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7388,6 +7445,10 @@ msgstr "Nepasirinktas gyvenimo aprašymas"
 
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9122,10 +9183,6 @@ msgstr "Pašalinti {name}"
 msgid "Remove connection"
 msgstr "Pašalinkite ryšį"
 
-#: src/features/ai/web-access.tsx
-#~ msgid "Remove connection?"
-#~ msgstr "Pašalinti ryšį?"
-
 #: src/features/share/custom-domain.tsx
 msgid "Remove domain"
 msgstr "Pašalinti domeną"
@@ -9259,6 +9316,10 @@ msgstr "Pakeiskite nuotrauką"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Pakeiskite lenteles paprastomis pastraipomis ir sąrašais. Langelių turinys ištraukiamas saugojimo, o ne skaitymo tvarka."
+
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
@@ -11347,6 +11408,10 @@ msgstr "Bandomas ryšys…"
 msgid "Testing…"
 msgstr "Testavimas…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11596,6 +11661,10 @@ msgstr "PDF yra patikrintas serveryje ir nesaugomas. Išsiųskite šią peržiū
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/ai/error.ts

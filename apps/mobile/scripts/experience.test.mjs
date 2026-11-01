@@ -1840,6 +1840,7 @@ const { NewDocument } = load("features/documents/new-document.tsx", {
 	},
 	"@reactive-resume/schema/resume/dates": {},
 	"./import-file": { ImportError: class extends Error {} },
+	"@/features/write/fields": { SECTION_TITLES: {} },
 	"./new-documents": { useNewDocuments: { getState: () => ({ markOpened() {} }) } },
 	"./queries": {
 		useDocuments: () => ({ data: [{ id: "source", type: "resume", name: "Resume" }] }),
