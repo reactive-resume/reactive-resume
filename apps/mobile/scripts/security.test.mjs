@@ -120,6 +120,7 @@ function previewSession(values = [], development = true, clearAccountExportCache
 	const session = load(
 		"auth/session.ts",
 		{
+			"@lingui/core": { i18n: { locale: "en-US" } },
 			"expo-auth-session": {},
 			"expo-network": {},
 			"expo-web-browser": {},

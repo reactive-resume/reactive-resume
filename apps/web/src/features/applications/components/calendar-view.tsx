@@ -314,9 +314,11 @@ function UpcomingCard({ item, timeRange, locale, onEdit, onOpenApplication }: Up
 					<span className="font-medium">{timeRange}</span>
 					<span className="text-ink-3">{formatDuration(item.interview.durationMinutes, locale)}</span>
 				</span>
-				<span className="mt-1 block truncate font-semibold">{item.application.company}</span>
+				<span dir="auto" className="mt-1 block truncate font-semibold">
+					{item.application.company}
+				</span>
 				<span className="block truncate text-xs text-ink-3">
-					{kind?.label ?? item.interview.kind} · {item.application.role}
+					{kind?.label ?? item.interview.kind} · <bdi>{item.application.role}</bdi>
 				</span>
 				{item.interview.location && (
 					<span className="mt-1.5 flex items-center gap-1 text-xs text-ink-3">
@@ -356,7 +358,9 @@ function InterviewChip({ item, time, onOpen }: InterviewChipProps) {
 			<span className="size-2 shrink-0 rounded-sm sm:hidden" style={{ background: kind?.color }} />
 			<span className="flex min-w-0 items-baseline gap-1.5 max-sm:hidden">
 				<span className="shrink-0 text-ink-3 tabular-nums">{time}</span>
-				<span className="truncate font-medium">{item.application.company}</span>
+				<span dir="auto" className="truncate font-medium">
+					{item.application.company}
+				</span>
 			</span>
 		</button>
 	);

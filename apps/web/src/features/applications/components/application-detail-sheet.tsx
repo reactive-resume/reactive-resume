@@ -88,7 +88,7 @@ export function ApplicationDetailSheet({ application, onOpenChange, onEditDetail
 					/>
 				) : (
 					<div className="grid gap-2 p-5">
-						<SheetTitle>{shown?.role}</SheetTitle>
+						<SheetTitle dir="auto">{shown?.role}</SheetTitle>
 						<SheetDescription aria-live="polite">
 							{isError ? t`Couldn't load this. Your saved data hasn't changed.` : t`Loading…`}
 						</SheetDescription>
@@ -161,9 +161,11 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 							{application.company.slice(0, 1).toUpperCase()}
 						</span>
 						<div className="grid min-w-0 flex-1 gap-0.5">
-							<SheetTitle className="font-display text-[22px] leading-7 font-medium">{application.role}</SheetTitle>
+							<SheetTitle dir="auto" className="font-display text-[22px] leading-7 font-medium">
+								{application.role}
+							</SheetTitle>
 							<SheetDescription className="flex flex-wrap items-center gap-x-1.5 text-sm text-ink-2">
-								<span>{[application.company, application.location].filter(Boolean).join(" · ")}</span>
+								<bdi>{[application.company, application.location].filter(Boolean).join(" · ")}</bdi>
 								{(application.sourceUrl || application.jobDescription) && (
 									<>
 										<span aria-hidden="true">·</span>
@@ -407,6 +409,7 @@ function InlineFact({ label, value, onSave }: InlineFactProps) {
 						id={id}
 						type="button"
 						onClick={() => setDraft(value ?? "")}
+						dir="auto"
 						className="w-full truncate rounded-md text-start text-sm font-medium hover:bg-hover"
 					>
 						{value || "—"}

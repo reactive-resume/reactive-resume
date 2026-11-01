@@ -30,7 +30,7 @@ msgstr "\"{0} · {1}\" וציר הזמן שלו נמחקים לצמיתות. ז�
 msgid "“{0}” hidden"
 msgstr "\"{0}\" מוסתר"
 
-#. placeholder {0}: document.name
+#. placeholder {0}: isolate(document.name)
 #: src/features/documents/document-actions.tsx
 msgid "“{0}” moved to Trash"
 msgstr "\"{0}\" הועבר לאשפה"
@@ -1246,6 +1246,11 @@ msgstr "תאריך מספרי נקרא באופן שונה במדינות שונ
 msgid "A page is rotated."
 msgstr "עמוד מסובב."
 
+#. Email footer. author: Amruth Pillai, linked
+#: src/features/auth/email-text.ts
+msgid "A passion project by {author}."
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "A pasted posting can be saved as an application afterwards."
 msgstr "ניתן לשמור מודעה מודבקת כבקשת עבודה לאחר מכן."
@@ -1379,6 +1384,10 @@ msgstr "חשבון"
 
 #: src/features/settings/account/profile.tsx
 msgid "Account details"
+msgstr ""
+
+#: src/features/settings/preferences.tsx
+msgid "Account emails use it too."
 msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
@@ -1806,8 +1815,8 @@ msgstr "הוסף התנדבות"
 msgid "Add your name"
 msgstr "הוסף את שמך"
 
-#. placeholder {0}: role.trim()
-#. placeholder {1}: company.trim()
+#. placeholder {0}: isolate(role.trim())
+#. placeholder {1}: isolate(company.trim())
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Added {0} at {1}"
 msgstr "נוסף {0} ב-{1}"
@@ -2432,6 +2441,23 @@ msgstr "החל שינוי אחד"
 msgid "Approve and create packet"
 msgstr ""
 
+#: src/features/auth/email-text.ts
+msgid "Approve change"
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Approve changing your {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Approve email change"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Approve your email change"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Arabic"
 msgstr "ערבית"
@@ -2905,6 +2931,7 @@ msgstr "רשימת תבליטים"
 msgid "By {0}"
 msgstr ""
 
+#: src/features/auth/email-text.ts
 #: src/features/homepage/footer.tsx
 msgid "By the community, for the community."
 msgstr "מהקהילה, למען הקהילה."
@@ -4781,6 +4808,10 @@ msgstr "צור ופתח"
 msgid "Create key"
 msgstr "צור מפתח"
 
+#: src/features/auth/email-text.ts
+msgid "Create new password"
+msgstr ""
+
 #. Call-to-action link from login page to account registration page
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
@@ -6469,6 +6500,10 @@ msgstr "עבור פורטלים או מגייסים המבקשים Word. הפר�
 msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
 msgstr "עבור סקריפטים, הרחבות ולקוחות MCP. המקשים פועלים כמוך ויכולים לקרוא ולערוך את המסמכים שלך."
 
+#: src/features/auth/email-text.ts
+msgid "For security, only use links from emails sent by Reactive Resume."
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "For the next round:"
 msgstr "לסבב הבא:"
@@ -7108,9 +7143,30 @@ msgstr "אם מישהו שלח לך קישור זה, בקש ממנו קישור 
 msgid "If the app did not open, try again on a device where it is installed."
 msgstr "אם האפליקציה לא נפתחה, נסה שוב במכשיר שבו היא מותקנת."
 
+#: src/features/auth/email-text.ts
+msgid "If the button does not work, copy and paste this link into your browser:"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If this was not you, you can ignore this message and your password will remain unchanged."
+msgstr ""
+
+#. Email change approval. newEmail is an email address
+#: src/features/auth/email-text.ts
+msgid "If you approve, we'll send a link to {newEmail} to finish the change."
+msgstr ""
+
 #: src/hooks/use-form-blocker.tsx
 msgid "If you close this dialog, your changes are lost."
 msgstr "אם תסגור את תיבת הדו-שיח, השינויים שלך יאבדו."
+
+#: src/features/auth/email-text.ts
+msgid "If you did not create this account, you can safely ignore this email."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Ignore"
@@ -11685,6 +11741,12 @@ msgstr "אפס את ברירת המחדל של העיצוב"
 msgid "Reset password"
 msgstr "איפוס סיסמה"
 
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Reset your {appName} password"
+msgstr ""
+
+#: src/features/auth/email-text.ts
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "איפוס הסיסמה שלך"
@@ -13348,6 +13410,11 @@ msgstr "חלק מהטקסט נופל מחוץ לעמוד."
 msgid "Some text is rotated."
 msgstr "חלק מהטקסט מסובב."
 
+#. Email change approval. appName: Reactive Resume; previousEmail and newEmail are email addresses
+#: src/features/auth/email-text.ts
+msgid "Someone asked to change your {appName} email from {previousEmail} to {newEmail}."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "Something went wrong. Please try again."
 msgstr "משהו השתבש. אנא נסה שוב."
@@ -14100,6 +14167,11 @@ msgstr "תאית"
 msgid "Thank you for keeping it free."
 msgstr "תודה ששמרת את זה בחינם."
 
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Thanks for signing up for {appName}. Verify your email address to continue."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "תודה, Sam. הנה דוגמה: ב-Northwind Labs הובלתי את העיצוב מחדש של תהליך הקליטה, מ-14 ראיונות לקוחות ועד הגדרה קצרה יותר."
@@ -14588,6 +14660,10 @@ msgstr ""
 
 #: src/features/career/draft-recovery.tsx
 msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "This confirms the address belongs to you, which keeps your account secure."
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
@@ -15714,9 +15790,22 @@ msgstr "קוד אימות"
 msgid "Verify"
 msgstr "אימות"
 
+#: src/features/auth/email-text.ts
+msgid "Verify email"
+msgstr ""
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verify with a backup code"
 msgstr "אימות עם קוד גיבוי"
+
+#: src/features/auth/email-text.ts
+msgid "Verify your email"
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Verify your email for {appName}"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
@@ -15861,6 +15950,11 @@ msgstr "WCAG 2.1 AA"
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "We read the page and save the posting for Check, the assistant and your letter."
 msgstr "אנו קוראים את העמוד ושומרים את מודעת הדרושים עבור צ'ק, הסייעת והמכתב שלך."
+
+#. Password reset email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "We received a request to reset your {appName} password."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "We sent a confirmation link to {email}. Open it to finish the change."

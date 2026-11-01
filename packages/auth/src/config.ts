@@ -21,20 +21,20 @@ import {
 	getSessionFromCtx,
 	isAPIError,
 } from "better-auth/api";
-import { deleteSessionCookie, parseSetCookieHeader, setSessionCookie } from "better-auth/cookies";
+import { deleteSessionCookie, parseCookies, parseSetCookieHeader, setSessionCookie } from "better-auth/cookies";
 import { admin, anonymous, jwt, openAPI } from "better-auth/plugins";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { username } from "better-auth/plugins/username";
 import { and, eq, gt, inArray, ne, sql } from "drizzle-orm";
 import { createLocalJWKSet, jwtVerify } from "jose";
-import { createElement } from "react";
 import { createDefaultOwnedApplicationLanes, MAX_APPLICATION_LANES } from "@reactive-resume/db/application-lanes";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { ResetPasswordEmail, VerifyEmail, VerifyEmailChange } from "@reactive-resume/email/templates/auth";
+import { resetPasswordEmail, verifyEmail, verifyEmailChange } from "@reactive-resume/email/templates/auth";
 import { sendEmail } from "@reactive-resume/email/transport";
 import { env } from "@reactive-resume/env/server";
+import { defaultLocale, isLocale, localeSchema } from "@reactive-resume/utils/locale";
 import { rateLimitConfig } from "@reactive-resume/utils/rate-limit";
 import { generateId, toUsername } from "@reactive-resume/utils/string";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
@@ -44,6 +44,21 @@ import { authRateLimitStorage } from "./rate-limit";
 import { getTrustedOrigins } from "./trusted-origins";
 
 const authBaseUrl = env.APP_URL;
+
+/** The interface language a request was made in: the app keeps it in the `locale` cookie. */
+function requestLocale(headers: Headers | undefined) {
+	const locale = parseCookies(headers?.get("cookie") ?? "").get("locale");
+	return isLocale(locale) ? locale : undefined;
+}
+
+/**
+ * Account emails use the account's language, then the language of the request that sent them (an account from before
+ * the app stored one), then English. Only the text changes: the link, its expiry and who receives it don't.
+ */
+function accountEmailLocale(user: User, request: Request | undefined) {
+	const saved = (user as User & { locale?: unknown }).locale;
+	return isLocale(saved) ? saved : (requestLocale(request?.headers) ?? defaultLocale);
+}
 const isRateLimitEnabled = process.env.NODE_ENV === "production" && !env.FLAG_DISABLE_API_RATE_LIMIT;
 
 const oauthAudienceBase = authBaseUrl.replace(/\/$/, "");
@@ -590,8 +605,12 @@ const getAuthConfig = () => {
 						const oauthState = context ? await getOAuthState().catch(() => null) : null;
 						const fromOAuth = timezoneSchema.safeParse(oauthState?.serverContext?.timezone);
 						const timezone = fromHeader.success ? fromHeader.data : fromOAuth.success ? fromOAuth.data : undefined;
-						const data = timezone ? { ...user, timezone } : user;
-						if (!user.isAnonymous) return timezone ? { data } : undefined;
+						// The interface language the account was made in, for its first emails. Like the timezone, a social
+						// sign-up reads it from the OAuth state, because a cross-site callback may arrive without cookies.
+						const fromOAuthLocale = oauthState?.serverContext?.locale;
+						const locale = requestLocale(context?.headers) ?? (isLocale(fromOAuthLocale) ? fromOAuthLocale : undefined);
+						const data = { ...user, ...(timezone ? { timezone } : {}), ...(locale ? { locale } : {}) };
+						if (!user.isAnonymous) return timezone || locale ? { data } : undefined;
 
 						// Guests sign in without a username. The tail of a UUIDv7 is random; its head is a timestamp.
 						const username = `guest-${generateId().slice(-12)}`;
@@ -644,7 +663,12 @@ const getAuthConfig = () => {
 					const timezone = timezoneSchema.safeParse(ctx.headers?.get("x-client-timezone"));
 					// Keep the device timezone across the provider redirect in server-only state, so the
 					// callback can start a new account there without trusting redirect parameters.
-					if (timezone.success) await addOAuthServerContext({ timezone: timezone.data });
+					const locale = requestLocale(ctx.headers);
+					if (timezone.success || locale)
+						await addOAuthServerContext({
+							...(timezone.success ? { timezone: timezone.data } : {}),
+							...(locale ? { locale } : {}),
+						});
 				}
 
 				const user = accountUser.getStore();
@@ -818,12 +842,8 @@ const getAuthConfig = () => {
 			maxPasswordLength: 64,
 			requireEmailVerification: false,
 			disableSignUp: env.FLAG_DISABLE_SIGNUPS || env.FLAG_DISABLE_EMAIL_AUTH,
-			sendResetPassword: async ({ user, url }) => {
-				await sendEmail({
-					to: user.email,
-					subject: "Reset your password",
-					react: createElement(ResetPasswordEmail, { url }),
-				});
+			sendResetPassword: async ({ user, url }, request) => {
+				await sendEmail({ to: user.email, ...resetPasswordEmail({ url, locale: accountEmailLocale(user, request) }) });
 			},
 			revokeSessionsOnPasswordReset: true,
 			// The reset link proved control of the inbox. Drop credentials someone else may hold, such as on an
@@ -858,12 +878,8 @@ const getAuthConfig = () => {
 		emailVerification: {
 			sendOnSignUp: true,
 			autoSignInAfterVerification: true,
-			sendVerificationEmail: async ({ user, url }) => {
-				await sendEmail({
-					to: user.email,
-					subject: "Verify your email",
-					react: createElement(VerifyEmail, { url }),
-				});
+			sendVerificationEmail: async ({ user, url }, request) => {
+				await sendEmail({ to: user.email, ...verifyEmail({ url, locale: accountEmailLocale(user, request) }) });
 			},
 		},
 
@@ -873,11 +889,11 @@ const getAuthConfig = () => {
 				// Better Auth's two-step change: the current address approves first, then the new address gets its own
 				// verification link. Sending this step to the new address would let anyone holding a session move the
 				// account to an address they control without the owner's approval.
-				sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+				sendChangeEmailConfirmation: async ({ user, newEmail, url }, request) => {
+					const locale = accountEmailLocale(user, request);
 					await sendEmail({
 						to: user.email,
-						subject: "Approve your email change",
-						react: createElement(VerifyEmailChange, { url, previousEmail: user.email, newEmail }),
+						...verifyEmailChange({ url, previousEmail: user.email, newEmail, locale }),
 					});
 				},
 			},
@@ -891,6 +907,11 @@ const getAuthConfig = () => {
 					required: false,
 					defaultValue: "UTC",
 					validator: { input: timezoneSchema },
+				},
+				locale: {
+					type: "string",
+					required: false,
+					validator: { input: localeSchema },
 				},
 			},
 		},
@@ -1069,7 +1090,7 @@ export const auth: Auth = new Proxy({} as Auth, {
 	},
 });
 
-type ProfileUpdate = { name?: string; username?: string; image?: string | null; timezone?: string };
+type ProfileUpdate = { name?: string; username?: string; image?: string | null; timezone?: string; locale?: string };
 
 // Only these server calls can install the identity; their cookie headers never leave this module.
 export const accountAuth = {

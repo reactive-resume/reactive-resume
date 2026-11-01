@@ -48,8 +48,12 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 					onClick={onClick}
 					className="grid min-w-0 flex-1 text-start after:absolute after:inset-0 after:rounded-lg"
 				>
-					<span className="truncate text-sm font-semibold">{application.role}</span>
-					<span className="truncate text-xs text-ink-3">{application.company}</span>
+					<span dir="auto" className="truncate text-sm font-semibold">
+						{application.role}
+					</span>
+					<span dir="auto" className="truncate text-xs text-ink-3">
+						{application.company}
+					</span>
 				</button>
 				{withMenu && <ApplicationActionsMenu application={application} className="relative z-10 -me-1.5 -mt-1.5" />}
 			</div>

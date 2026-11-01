@@ -118,7 +118,10 @@ export default function PreferencesScreen() {
 					trailing={<Switch label={t`Haptic feedback`} value={hapticsOn} onValueChange={toggleHaptics} />}
 				/>
 			</SettingsGroup>
-			<SettingsGroup title={t`Language`} note={t`Interface only. Each resume sets its own language in Design.`}>
+			<SettingsGroup
+				title={t`Language`}
+				note={`${t`Interface only. Each resume sets its own language in Design.`} ${t`Account emails use it too.`}`}
+			>
 				<ListRow
 					title={t`Language`}
 					subtitle={locale ? languageName(locale) : t`System`}

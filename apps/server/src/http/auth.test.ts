@@ -166,6 +166,24 @@ describe("handleOAuth", () => {
 		expect(callbackUrl.searchParams.get("exp")).toBe("123");
 		expect(callbackUrl.searchParams.get("sig")).toBe("456");
 	});
+
+	it.each([
+		["ar-SA", "ar-SA"],
+		["xx-XX ar-SA", "ar-SA"],
+		["zu-ZA", null],
+		["<script>", null],
+	])("opens the login page in the client's ui_locales %s", async (uiLocales, expected) => {
+		const { handleOAuth } = await import("./auth");
+		mocks.getSession.mockResolvedValueOnce(null);
+		const query = new URLSearchParams({ client_id: "test-client", ui_locales: uiLocales, sig: "456" });
+
+		const response = await handleOAuth(new Request(`http://localhost:3001/api/auth/oauth?${query}`));
+
+		const loginUrl = new URL(response.headers.get("Location") ?? "", "http://localhost:3000");
+		expect(loginUrl.searchParams.get("locale")).toBe(expected);
+		// The signed query is passed on untouched.
+		expect(new URL(loginUrl.searchParams.get("callbackURL") ?? "", "http://localhost:3000").search).toBe(`?${query}`);
+	});
 	it("continues signed authorization without approving consent on GET", async () => {
 		const { handleOAuth } = await import("./auth");
 		mocks.getSession.mockResolvedValueOnce({ user: { id: "owner" } });

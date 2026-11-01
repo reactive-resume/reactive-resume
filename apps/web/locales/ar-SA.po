@@ -30,7 +30,7 @@ msgstr "تم حذف \"{0} · {1}\" والمخطط الزمني الخاص به �
 msgid "“{0}” hidden"
 msgstr "\"{0}\" مخفي"
 
-#. placeholder {0}: document.name
+#. placeholder {0}: isolate(document.name)
 #: src/features/documents/document-actions.tsx
 msgid "“{0}” moved to Trash"
 msgstr "تم نقل \"{0}\" إلى سلة المهملات"
@@ -493,7 +493,7 @@ msgstr "اجتاز {0} من أصل {1} من الفحوصات القابلة لل
 #. placeholder {1}: thread.editsProposed
 #: src/features/assistant/assistant-panel.tsx
 msgid "{0} of {1} edits accepted"
-msgstr "تم قبول تعديلات {0} لـ {1}"
+msgstr "تم قبول {0} من {1} تعديلات"
 
 #. placeholder {0}: result.found.length
 #. placeholder {1}: result.total
@@ -505,7 +505,7 @@ msgstr "يظهر {0} من أصل {1} من مصطلحات إعلان الوظيف
 #. placeholder {1}: TEMPLATE_IDS.length
 #: src/features/resume/editor/design/template-group.tsx
 msgid "{0} of {1} shown"
-msgstr "تم عرض {0} لـ {1}"
+msgstr "عرض {0} من {1}"
 
 #. placeholder {0}: outcomes.tailored.replied
 #. placeholder {1}: outcomes.tailored.sent
@@ -565,7 +565,7 @@ msgstr ""
 #. placeholder {1}: index + 1
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "{0}, entry {1} of {count}"
-msgstr "{0}، الإدخال {1} لـ {count}"
+msgstr "{0}، الإدخال {1} من {count}"
 
 #. placeholder {0}: terms.location
 #: src/features/career/offers.tsx
@@ -742,11 +742,11 @@ msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
-msgstr "{issues, plural, one {قد تكلفك مشكلة # مباراة.} other {قد تكلفك مشكلات # مباراة.}}"
+msgstr "{issues, plural, one {قد تُفقدك # مشكلة فرصة المطابقة.} other {قد تُفقدك # مشكلات فرصة المطابقة.}}"
 
 #: src/features/resume/share/download-tab.tsx
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
-msgstr "{issues, plural, one {يحتوي الشيك على شيء # للمراجعة. لا يزال بإمكانك التنزيل.} other {يحتوي الشيك على أشياء # للمراجعة. لا يزال بإمكانك التنزيل.}}"
+msgstr "{issues, plural, one {في الفحص # أمر للمراجعة. لا يزال بإمكانك التنزيل.} other {في الفحص # أمور للمراجعة. لا يزال بإمكانك التنزيل.}}"
 
 #: src/libs/dnd.ts
 msgid "{item} is back where it started."
@@ -884,7 +884,7 @@ msgstr "{passed} من {total}"
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{passedRules} of {totalRules} checks pass."
-msgstr "تم اجتياز عمليات فحص {passedRules} لـ {totalRules}."
+msgstr "نجح {passedRules} من {totalRules} فحوص."
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{pendingOnPage, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
@@ -1246,6 +1246,11 @@ msgstr "التاريخ الرقمي يُقرأ بشكل مختلف في بلدا
 msgid "A page is rotated."
 msgstr "صفحة مُدوَّرة."
 
+#. Email footer. author: Amruth Pillai, linked
+#: src/features/auth/email-text.ts
+msgid "A passion project by {author}."
+msgstr "مشروع شغف من إعداد {author}."
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "A pasted posting can be saved as an application afterwards."
 msgstr "يمكن حفظ إعلان الوظيفة الملصق كطلب وظيفة بعد ذلك."
@@ -1322,7 +1327,7 @@ msgstr "يُستخدم اللون المميز للعناوين والأيقون
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept"
-msgstr "يقبل"
+msgstr "قبول"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept all"
@@ -1381,6 +1386,10 @@ msgstr "الحساب"
 msgid "Account details"
 msgstr ""
 
+#: src/features/settings/preferences.tsx
+msgid "Account emails use it too."
+msgstr "وتُستخدم أيضًا في رسائل البريد الخاصة بحسابك."
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
@@ -1418,7 +1427,7 @@ msgstr "نشاط"
 #: src/features/career/today.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Add"
-msgstr "يضيف"
+msgstr "إضافة"
 
 #. placeholder {0}: open.label
 #: src/features/resume/editor/check/job-match.tsx
@@ -1806,8 +1815,8 @@ msgstr "أضف العمل التطوعي"
 msgid "Add your name"
 msgstr "أضف اسمك"
 
-#. placeholder {0}: role.trim()
-#. placeholder {1}: company.trim()
+#. placeholder {0}: isolate(role.trim())
+#. placeholder {1}: isolate(company.trim())
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Added {0} at {1}"
 msgstr "تمت إضافة {0} إلى {1}"
@@ -2281,7 +2290,7 @@ msgstr "Apple"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Applicant tracking systems turn your PDF into plain text before anyone reads it. The checker does the same, with the PDF.js library in your browser, then scores how much of your resume survives: 0 to 100, from how reliably the text comes out, not from your chances of getting the job."
-msgstr "تقوم أنظمة تتبع مقدم الطلب بتحويل PDF الخاص بك إلى نص عادي قبل أن يقرأه أي شخص. يفعل المدقق نفس الشيء، مع مكتبة PDF.js في متصفحك، ثم يسجل مقدار بقاء سيرتك الذاتية: من 0 إلى 100، من مدى موثوقية النص، وليس من فرصك في الحصول على الوظيفة."
+msgstr "تحوّل أنظمة تتبّع المتقدمين (ATS) ملف PDF الخاص بك إلى نص عادي قبل أن يقرأه أحد. ويفعل المدقق الشيء نفسه بمكتبة PDF.js في متصفحك، ثم يقيس مقدار ما يبقى سليمًا من سيرتك الذاتية: من 0 إلى 100، بحسب مدى موثوقية استخراج النص، لا بحسب فرصك في الحصول على الوظيفة."
 
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/offer-entry.tsx
@@ -2431,6 +2440,23 @@ msgstr "طبّق تغييرًا واحدًا"
 #: src/features/career/workspace/application-packet.tsx
 msgid "Approve and create packet"
 msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Approve change"
+msgstr "الموافقة على التغيير"
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Approve changing your {appName} email address"
+msgstr "الموافقة على تغيير عنوان بريدك الإلكتروني في {appName}"
+
+#: src/features/auth/email-text.ts
+msgid "Approve email change"
+msgstr "الموافقة على تغيير البريد الإلكتروني"
+
+#: src/features/auth/email-text.ts
+msgid "Approve your email change"
+msgstr "الموافقة على تغيير بريدك الإلكتروني"
 
 #: src/libs/locale.ts
 msgid "Arabic"
@@ -2856,7 +2882,7 @@ msgstr ""
 
 #: src/features/homepage/hero.tsx
 msgid "Build a professional resume, download it as PDF or Word, and manage your job search in one place. Free templates, no ads, no paywall."
-msgstr "أنشئ سيرة ذاتية احترافية، وقم بتنزيلها بصيغة PDF أو Microsoft Word، وقم بإدارة بحثك عن وظيفة في مكان واحد. قوالب مجانية، لا إعلانات، لا يوجد حظر الاشتراك غير المدفوع."
+msgstr "أنشئ سيرة ذاتية احترافية، ونزّلها بصيغة PDF أو Microsoft Word، وأدِر بحثك عن وظيفة في مكان واحد. قوالب مجانية، بلا إعلانات، بلا جدار دفع."
 
 #: src/features/homepage/ui.tsx
 msgid "Build your resume"
@@ -2905,6 +2931,7 @@ msgstr "قائمة نقطية"
 msgid "By {0}"
 msgstr "بحلول {0}"
 
+#: src/features/auth/email-text.ts
 #: src/features/homepage/footer.tsx
 msgid "By the community, for the community."
 msgstr "من المجتمع وللمجتمع."
@@ -2999,7 +3026,7 @@ msgstr "الشهادات"
 #: src/features/settings/account/security.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Change"
-msgstr "يتغير"
+msgstr "تغيير"
 
 #: src/features/career/coach-thread.tsx
 msgctxt "Change what the coach remembers"
@@ -3239,7 +3266,7 @@ msgstr "جارٍ التحقق... النسخة متاحة بعد الحفظ."
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Checks by category"
-msgstr "الشيكات حسب الفئة"
+msgstr "الفحوص حسب الفئة"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Checks every bullet for action and result"
@@ -3464,7 +3491,7 @@ msgstr "أغلق المساعد"
 
 #: src/features/applications/components/list-view.tsx
 msgid "Close…"
-msgstr "يغلق…"
+msgstr "إغلاق…"
 
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
@@ -3911,7 +3938,7 @@ msgstr "انسخه الآن. حرصًا على أمانك، لن يتم عرضه
 
 #: src/features/homepage/share.tsx
 msgid "Copy link"
-msgstr "نسخ الوصلة"
+msgstr "نسخ الرابط"
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Copy made for {company}. This resume is unchanged."
@@ -4781,6 +4808,10 @@ msgstr "إنشاء وفتح"
 msgid "Create key"
 msgstr "إنشاء مفتاح"
 
+#: src/features/auth/email-text.ts
+msgid "Create new password"
+msgstr "إنشاء كلمة مرور جديدة"
+
 #. Call-to-action link from login page to account registration page
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
@@ -5130,7 +5161,7 @@ msgstr "احذف مستنداتك وبيانات حسابك."
 #: src/features/applications/components/list-view.tsx
 #: src/features/settings/account/data.tsx
 msgid "Delete…"
-msgstr "يمسح…"
+msgstr "حذف…"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Deleted"
@@ -5373,12 +5404,12 @@ msgstr ""
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Donate"
-msgstr "يتبرع"
+msgstr "تبرّع"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
-msgstr "منتهي"
+msgstr "تم"
 
 #. placeholder {0}: day(row.nextRunAt)
 #: src/features/career/today.tsx
@@ -5656,7 +5687,7 @@ msgstr "الرسائل السابقة في هذه المحادثة"
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Edit"
-msgstr "يحرر"
+msgstr "تعديل"
 
 #. Screen reader label for button that edits a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
@@ -5766,7 +5797,7 @@ msgstr "تحرير هذه المقابلة..."
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit…"
-msgstr "يحرر…"
+msgstr "تعديل…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Edited"
@@ -5795,7 +5826,7 @@ msgstr "وضع المحرر"
 
 #: src/features/resume/editor/chrome/shell.tsx
 msgid "Editor views"
-msgstr "وجهات نظر المحرر"
+msgstr "طرق عرض المحرر"
 
 #: src/features/homepage/sheet.tsx
 msgid "Editorial"
@@ -6022,7 +6053,7 @@ msgstr "تم حذف الإدخال"
 
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Entry options"
-msgstr "خيارات الدخول"
+msgstr "خيارات الإدخال"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -6469,6 +6500,10 @@ msgstr "للبوابات أو مسؤولي التوظيف الذين يطلبو�
 msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
 msgstr "بالنسبة للبرامج النصية والملحقات وعملاء MCP. تعمل المفاتيح مثلك ويمكنها قراءة مستنداتك وتحريرها."
 
+#: src/features/auth/email-text.ts
+msgid "For security, only use links from emails sent by Reactive Resume."
+msgstr "حفاظًا على أمانك، لا تستخدم إلا الروابط الواردة في رسائل البريد المرسلة من Reactive Resume."
+
 #: src/features/career/workspace/debrief.tsx
 msgid "For the next round:"
 msgstr "للجولة التالية:"
@@ -6578,11 +6613,11 @@ msgstr "حر الشكل"
 #. Reassurance under the registration title, repeating the homepage's promise
 #: src/features/auth/pages/register.tsx
 msgid "Free, no ads, no paywall."
-msgstr ""
+msgstr "مجاني، بلا إعلانات، بلا جدار دفع."
 
 #: src/libs/seo.ts
 msgid "Free, open-source resume builder. Create, update, and share your resume, with PDF and Word downloads, no ads and no paywall."
-msgstr "منشئ السيرة الذاتية مجاني ومفتوح المصدر. قم بإنشاء سيرتك الذاتية وتحديثها ومشاركتها، من خلال تنزيلات PDF وWord، بدون إعلانات وبدون نظام حظر الاشتراك غير المدفوع."
+msgstr "منشئ سير ذاتية مجاني ومفتوح المصدر. أنشئ سيرتك الذاتية وحدّثها وشاركها، مع تنزيلات PDF وWord، بلا إعلانات وبلا جدار دفع."
 
 #: src/libs/locale.ts
 msgid "French"
@@ -6838,7 +6873,7 @@ msgstr "تم تغيير العنوان"
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Headline"
-msgstr "العنوان"
+msgstr "المسمّى الوظيفي"
 
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
@@ -7108,13 +7143,34 @@ msgstr "إذا أرسل لك شخص ما هذا الرابط، فاطلب منه
 msgid "If the app did not open, try again on a device where it is installed."
 msgstr "إذا لم يتم فتح التطبيق، حاول مرة أخرى على الجهاز المثبت عليه."
 
+#: src/features/auth/email-text.ts
+msgid "If the button does not work, copy and paste this link into your browser:"
+msgstr "إذا لم يعمل الزر، فانسخ هذا الرابط والصقه في متصفحك:"
+
+#: src/features/auth/email-text.ts
+msgid "If this was not you, you can ignore this message and your password will remain unchanged."
+msgstr "إن لم تكن أنت من طلب ذلك، فتجاهل هذه الرسالة وستبقى كلمة مرورك كما هي."
+
+#. Email change approval. newEmail is an email address
+#: src/features/auth/email-text.ts
+msgid "If you approve, we'll send a link to {newEmail} to finish the change."
+msgstr "إذا وافقت، فسنرسل رابطًا إلى {newEmail} لإكمال التغيير."
+
 #: src/hooks/use-form-blocker.tsx
 msgid "If you close this dialog, your changes are lost."
 msgstr "إذا أغلقت هذه النافذة، فستفقد تغييراتك."
 
+#: src/features/auth/email-text.ts
+msgid "If you did not create this account, you can safely ignore this email."
+msgstr "إن لم تُنشئ هذا الحساب، يمكنك تجاهل هذه الرسالة بأمان."
+
+#: src/features/auth/email-text.ts
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr "إن لم تطلب هذا التغيير، فتجاهل هذه الرسالة وغيّر كلمة مرورك. لن يتغيّر عنوان الحساب دون موافقتك."
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Ignore"
-msgstr "يتجاهل"
+msgstr "تجاهل"
 
 #: src/features/resume/editor/check/actions.ts
 msgid "Ignored issues are back"
@@ -7204,7 +7260,7 @@ msgstr "استيرادها إلى سيرتك الذاتية الجديدة ..."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Improve"
-msgstr "يحسن"
+msgstr "تحسين"
 
 #: src/features/resume/editor/write/improve.tsx
 msgid "Improve selected line"
@@ -7376,29 +7432,29 @@ msgstr "هل هناك ميزانية للتعلّم؟"
 #. placeholder {0}: issue.number
 #: src/features/resume/editor/check/parser-view.tsx
 msgid "issue {0}"
-msgstr "إصدار {0}"
+msgstr "مشكلة {0}"
 
 #. placeholder {0}: issue.number
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0}"
-msgstr "إصدار {0}"
+msgstr "مشكلة {0}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issues.length
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0} of {1}"
-msgstr "إصدار {0} من {1}"
+msgstr "المشكلة {0} من {1}"
 
 #. placeholder {0}: issue.number
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Issue {0}:"
-msgstr "إصدار {0}:"
+msgstr "مشكلة {0}:"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Issue {0}: {1}"
-msgstr "الإصدار {0}: {1}"
+msgstr "المشكلة {0}: {1}"
 
 #: src/features/resume/editor/check/actions.ts
 msgid "Issue ignored"
@@ -7505,7 +7561,7 @@ msgstr "رابط الوظيفة أو نص إعلان الوظيفة"
 #: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
-msgstr "مباراة الوظيفة"
+msgstr "المطابقة مع الوظيفة"
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Job posting"
@@ -7580,7 +7636,7 @@ msgstr "الكانادا"
 #: src/features/resume/editor/check/check-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Keep"
-msgstr "يحفظ"
+msgstr "إبقاء"
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -8064,7 +8120,7 @@ msgstr "يمكن للأسطر القريبة من هذا أن تعمل معًا 
 #: src/features/resume/editor/write/fields.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Link"
-msgstr "وصلة"
+msgstr "الرابط"
 
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
@@ -8210,7 +8266,7 @@ msgstr "مباشر · التحديثات أثناء التحرير"
 #. placeholder {0}: url.replace(/^https?:\/\//, "")
 #: src/features/resume/share/address-field.tsx
 msgid "Live at {0}"
-msgstr "العيش في {0}"
+msgstr "منشورة على {0}"
 
 #: src/features/homepage/sections.tsx
 msgid "Live totals, refreshed every 6 hours."
@@ -8527,7 +8583,7 @@ msgstr "تطابق \"{0}\""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Match against a job"
-msgstr "مباراة ضد وظيفة"
+msgstr "المطابقة مع وظيفة"
 
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Match system theme"
@@ -9583,7 +9639,7 @@ msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Nothing here should cost you a match."
-msgstr "لا شيء هنا يجب أن يكلفك مباراة."
+msgstr "لا شيء هنا يُفترض أن يُفقدك فرصة المطابقة."
 
 #: src/features/career/workspace/saved.tsx
 msgid "Nothing in your library yet"
@@ -11355,7 +11411,7 @@ msgstr "تمرّن بصوت عالٍ على خلاف واحد مع فريق ال
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
-msgstr "يرفض"
+msgstr "رفض"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Rejected"
@@ -11449,7 +11505,7 @@ msgstr "عن بُعد، هجين، مدينة…"
 #: src/features/resume/share/custom-domain-field.tsx
 #: src/features/settings/account/security.tsx
 msgid "Remove"
-msgstr "يزيل"
+msgstr "إزالة"
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Remove “{label}”?"
@@ -11605,7 +11661,7 @@ msgstr ""
 
 #: src/features/resume/editor/write/improve.tsx
 msgid "Replace"
-msgstr "يستبدل"
+msgstr "استبدال"
 
 #: src/features/ats-checker/messages.ts
 msgid "Replace icon fonts with plain text, then re-export."
@@ -11685,6 +11741,12 @@ msgstr "إعادة تعيين الإعدادات الافتراضية للتصم
 msgid "Reset password"
 msgstr "إعادة تعيين كلمة المرور"
 
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Reset your {appName} password"
+msgstr "إعادة تعيين كلمة مرور {appName}"
+
+#: src/features/auth/email-text.ts
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "إعادة تعيين كلمة المرور"
@@ -11719,7 +11781,7 @@ msgstr "مسؤول عن نظام التصميم ومساعدة الفرق الأ
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/trash-page.tsx
 msgid "Restore"
-msgstr "يعيد"
+msgstr "استعادة"
 
 #: src/features/resume/share/history-tab.tsx
 msgid "Restore this version"
@@ -12475,7 +12537,7 @@ msgstr "الفحص"
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Search"
-msgstr "يبحث"
+msgstr "بحث"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Search and enhanced reading"
@@ -12710,7 +12772,7 @@ msgstr "ورقة أنماط CSS الدلالية"
 #: src/features/assistant/question-card.tsx
 #: src/features/career/coach-thread.tsx
 msgid "Send"
-msgstr "يرسل"
+msgstr "إرسال"
 
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
@@ -12909,7 +12971,7 @@ msgstr "عرض الظل"
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Share"
-msgstr "يشارك"
+msgstr "مشاركة"
 
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
@@ -12981,7 +13043,7 @@ msgstr "أقصر"
 #: src/features/resume/editor/check/check-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show"
-msgstr "يعرض"
+msgstr "عرض"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Show “Made with Reactive Resume”"
@@ -13126,7 +13188,7 @@ msgstr "غالبًا ما تتم قراءة الأشرطة الجانبية أخ
 #: src/features/homepage/footer.tsx
 #: src/routes/auth/login.tsx
 msgid "Sign in"
-msgstr "تسجّل الدخول"
+msgstr "تسجيل الدخول"
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -13348,6 +13410,11 @@ msgstr "يقع بعض النص خارج الصفحة."
 msgid "Some text is rotated."
 msgstr "بعض النص مُدوَّر."
 
+#. Email change approval. appName: Reactive Resume; previousEmail and newEmail are email addresses
+#: src/features/auth/email-text.ts
+msgid "Someone asked to change your {appName} email from {previousEmail} to {newEmail}."
+msgstr "طلب أحدهم تغيير بريدك الإلكتروني في {appName} من {previousEmail} إلى {newEmail}."
+
 #: src/libs/error-message.ts
 msgid "Something went wrong. Please try again."
 msgstr "حدث خطأ ما. يرجى المحاولة مرة أخرى."
@@ -13500,7 +13567,7 @@ msgstr "نجوم على GitHub"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Start"
-msgstr "يبدأ"
+msgstr "البداية"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Start a debrief"
@@ -13765,7 +13832,7 @@ msgstr "الملخّص"
 
 #: src/features/homepage/sections.tsx
 msgid "Support"
-msgstr "يدعم"
+msgstr "ادعمنا"
 
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
@@ -13843,7 +13910,7 @@ msgstr "تمت مزامنة التغييرات التي تم إجراؤها في
 #: src/features/user/dropdown-menu.tsx
 #: src/libs/theme.ts
 msgid "System"
-msgstr "نظام التشغيل"
+msgstr "النظام"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Systems file you under the name at the top of the page."
@@ -14050,7 +14117,7 @@ msgstr "لون النص"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Text comes out in the order a person reads it, at a size and spacing that survive."
-msgstr "يخرج النص بالترتيب الذي يقرأه به الشخص، بحجم ومسافة تبقى على قيد الحياة."
+msgstr "يخرج النص بالترتيب الذي يقرؤه به الشخص، بحجم وتباعد يبقيان سليمين."
 
 #: src/features/homepage/check.tsx
 msgid "Text is selectable"
@@ -14099,6 +14166,11 @@ msgstr "التايلاندية"
 #: src/features/homepage/sections.tsx
 msgid "Thank you for keeping it free."
 msgstr "شكرا لك على إبقائها مجانية."
+
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Thanks for signing up for {appName}. Verify your email address to continue."
+msgstr "شكرًا لتسجيلك في {appName}. أكّد عنوان بريدك الإلكتروني للمتابعة."
 
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
@@ -14206,7 +14278,7 @@ msgstr "يظل القارئ المدمج نشطًا."
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
-msgstr "الشيكات ميكانيكية. يسأل هذا نموذج اللغة عن كيفية تفاعل القارئ مع إدخالات القائمة ويقترح إعادة الكتابة. انها ليست جزءا من النتيجة."
+msgstr "الفحوص آلية. أما هذا فيسأل نموذجًا لغويًا عن ردّ فعل القارئ المحتمل تجاه نقاطك ويقترح إعادة صياغتها. وهو ليس جزءًا من النتيجة."
 
 #: src/features/career/coach-thread.tsx
 msgid "The coach asks before remembering facts you state."
@@ -14589,6 +14661,10 @@ msgstr ""
 #: src/features/career/draft-recovery.tsx
 msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
 msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "This confirms the address belongs to you, which keeps your account secure."
+msgstr "يؤكّد هذا أن العنوان يخصّك، مما يحافظ على أمان حسابك."
 
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
@@ -15034,7 +15110,7 @@ msgstr "تم نسخ النص"
 
 #: src/routes/dashboard/settings/route.tsx
 msgid "Translate"
-msgstr "يترجم"
+msgstr "ترجمة"
 
 #: src/features/homepage/sections.tsx
 msgid "Translate the app"
@@ -15714,9 +15790,22 @@ msgstr "رمز التحقق"
 msgid "Verify"
 msgstr "تحقّق"
 
+#: src/features/auth/email-text.ts
+msgid "Verify email"
+msgstr "تأكيد البريد الإلكتروني"
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verify with a backup code"
 msgstr "التحقق باستخدام رمز نسخ احتياطي"
+
+#: src/features/auth/email-text.ts
+msgid "Verify your email"
+msgstr "تأكيد بريدك الإلكتروني"
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Verify your email for {appName}"
+msgstr "تأكيد بريدك الإلكتروني في {appName}"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
@@ -15861,6 +15950,11 @@ msgstr "WCAG 2.1 AA"
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "We read the page and save the posting for Check, the assistant and your letter."
 msgstr "نقرأ الصفحة ونحفظ إعلان الوظيفة للفحص والمساعد وخطابك."
+
+#. Password reset email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "We received a request to reset your {appName} password."
+msgstr "تلقّينا طلبًا لإعادة تعيين كلمة مرور حسابك في {appName}."
 
 #: src/features/settings/account/profile.tsx
 msgid "We sent a confirmation link to {email}. Open it to finish the change."
@@ -16628,7 +16722,7 @@ msgstr "عناوينك تبدو مثل نص المتن تمامًا."
 
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your headline changed on the resume. The letter updated too."
-msgstr "لقد تغير عنوانك في السيرة الذاتية. تم تحديث الرسالة أيضًا."
+msgstr "تغيّر المسمّى الوظيفي في السيرة الذاتية. وتم تحديث الرسالة أيضًا."
 
 #: src/features/career/workspace/debrief.tsx
 msgid "your Knowledge"

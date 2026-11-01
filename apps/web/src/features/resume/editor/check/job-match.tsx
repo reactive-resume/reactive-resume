@@ -2,7 +2,7 @@ import type { RouterInput } from "@/libs/orpc/client";
 import type { JdTermMatch } from "@reactive-resume/resume/ats-pdf";
 import type { ResumeData, SkillItem } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
-import { t } from "@lingui/core/macro";
+import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,7 +17,7 @@ import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { formatList } from "@reactive-resume/utils/locale";
-import { generateId, pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
+import { generateId, isolate, pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { checkStateOf, editWithUndo } from "./actions";
@@ -145,7 +145,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 			(draft) => {
 				draft.sections.skills.items.push(newSkill(written));
 			},
-			t`“${written}” added to Skills`,
+			t`“${ph({ written: isolate(written) })}” added to Skills`,
 		);
 		setOpenTerm(null);
 		useEditorStore.setState({ highlightTerm: term.term });

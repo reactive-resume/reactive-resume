@@ -11,19 +11,24 @@ import { loadRootContext, sessionQueryKey } from "./root-context";
 
 const getSessionMock = vi.hoisted(() => vi.fn());
 const flagsGetMock = vi.hoisted(() => vi.fn().mockResolvedValue({ disableSignups: false, disableEmailAuth: false }));
+
+const localeMock = vi.hoisted(() => vi.fn().mockReturnValue("en-US"));
 const loadLocaleMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+
+const updateProfileMock = vi.hoisted(() => vi.fn().mockResolvedValue({ status: true }));
 
 vi.mock("./auth/session", () => ({
 	getSession: getSessionMock,
 }));
 
 vi.mock("./locale", () => ({
-	getLocale: () => "en-US",
+	getLocale: localeMock,
 	loadLocale: loadLocaleMock,
 }));
 
 vi.mock("./orpc/client", () => ({
 	client: {
+		auth: { updateProfile: updateProfileMock },
 		flags: {
 			get: flagsGetMock,
 		},
@@ -34,11 +39,21 @@ vi.mock("./theme", () => ({
 	getTheme: () => "system",
 }));
 
+const deferred = <T>() => {
+	let resolve!: (value: T) => void;
+	const promise = new Promise<T>((done) => {
+		resolve = done;
+	});
+	return { promise, resolve };
+};
+
 describe("loadRootContext", () => {
 	beforeEach(() => {
 		invalidateAccountScope();
 		registerAccountReset(() => undefined);
 		loadLocaleMock.mockResolvedValue(undefined);
+		localeMock.mockReturnValue("en-US");
+		updateProfileMock.mockClear();
 	});
 
 	it("loads root context with freshly fetched session", async () => {
@@ -92,6 +107,7 @@ describe("loadRootContext", () => {
 
 		expect(getAccountId()).toBe("alice");
 		expect(getAccountGeneration()).toBe(generation);
+		expect(updateProfileMock).not.toHaveBeenCalled();
 	});
 
 	it("drops the previous account's cached data before certifying a committed account change", async () => {
@@ -154,5 +170,92 @@ describe("loadRootContext", () => {
 		await stale;
 
 		expect({ id: getAccountId(), generation: getAccountGeneration() }).toEqual(afterNew);
+	});
+
+	it("saves the interface language once for the current account session", async () => {
+		// Reset once for this scenario; navigations and account replacements share the same module.
+		vi.resetModules();
+		const fresh = await import("./root-context");
+		updateProfileMock.mockClear();
+		const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+		getSessionMock.mockResolvedValue({ user: { id: "user-1", locale: "ar-SA" }, session: { id: "sess-1" } });
+
+		await fresh.loadRootContext(queryClient);
+		void queryClient.invalidateQueries({ queryKey: fresh.sessionQueryKey });
+		await fresh.loadRootContext(queryClient);
+
+		expect(updateProfileMock).toHaveBeenCalledTimes(1);
+		expect(updateProfileMock).toHaveBeenCalledWith({ locale: "en-US" }, { context: { accountId: "user-1" } });
+	});
+	it("synchronizes an account replacement without a page reload", async () => {
+		vi.resetModules();
+		const fresh = await import("./root-context");
+		updateProfileMock.mockClear();
+		const cache = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+		getSessionMock.mockResolvedValue({ user: { id: "first", locale: "en-US" }, session: { id: "first-session" } });
+		await fresh.loadRootContext(cache);
+		cache.removeQueries({ queryKey: fresh.sessionQueryKey });
+		getSessionMock.mockResolvedValue({ user: { id: "second", locale: "ar-SA" }, session: { id: "second-session" } });
+		await fresh.loadRootContext(cache);
+		expect(updateProfileMock).toHaveBeenCalledExactlyOnceWith(
+			{ locale: "en-US" },
+			{ context: { accountId: "second" } },
+		);
+	});
+
+	it.each(["rejected", "returned"])("retries a %s locale update on a later navigation", async (failure) => {
+		vi.resetModules();
+		const fresh = await import("./root-context");
+		updateProfileMock.mockClear();
+		if (failure === "rejected") updateProfileMock.mockRejectedValueOnce(new Error("Offline"));
+		else updateProfileMock.mockResolvedValueOnce({ status: false });
+		getSessionMock.mockResolvedValue({ user: { id: "retry", locale: "ar-SA" }, session: { id: "retry-session" } });
+		const cache = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+		await fresh.loadRootContext(cache);
+		await Promise.resolve();
+		await fresh.loadRootContext(cache);
+		expect(updateProfileMock).toHaveBeenCalledTimes(2);
+	});
+
+	it("does not send an old account's locale update after the session changes during root loading", async () => {
+		vi.resetModules();
+		const fresh = await import("./root-context");
+		updateProfileMock.mockClear();
+		const waiting = deferred<void>();
+		loadLocaleMock.mockReturnValueOnce(waiting.promise);
+		const cache = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+		const first = { user: { id: "first", locale: "ar-SA" }, session: { id: "first-session" } };
+		cache.setQueryData(fresh.sessionQueryKey, first);
+		const loading = fresh.loadRootContext(cache);
+		cache.setQueryData(fresh.sessionQueryKey, {
+			user: { id: "second", locale: "ar-SA" },
+			session: { id: "second-session" },
+		});
+		waiting.resolve();
+		await loading;
+		expect(updateProfileMock).not.toHaveBeenCalled();
+	});
+
+	it("ignores an old completion after A to B to A while deduplicating the current check", async () => {
+		vi.resetModules();
+		const fresh = await import("./root-context");
+		const old = deferred<{ status: boolean }>();
+		const current = deferred<{ status: boolean }>();
+		updateProfileMock.mockClear();
+		updateProfileMock.mockReturnValueOnce(old.promise);
+		updateProfileMock.mockResolvedValueOnce({ status: true });
+		updateProfileMock.mockReturnValueOnce(current.promise);
+		const cache = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+		for (const id of ["A", "B", "A"]) {
+			cache.removeQueries({ queryKey: fresh.sessionQueryKey });
+			getSessionMock.mockResolvedValue({ user: { id, locale: "ar-SA" }, session: { id: `${id}-session` } });
+			await fresh.loadRootContext(cache);
+		}
+		expect(updateProfileMock).toHaveBeenCalledTimes(3);
+		old.resolve({ status: false });
+		await Promise.resolve();
+		await fresh.loadRootContext(cache);
+		expect(updateProfileMock).toHaveBeenCalledTimes(3);
+		current.resolve({ status: true });
 	});
 });
