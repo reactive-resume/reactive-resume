@@ -154,6 +154,9 @@ jobs:
 
       - name: Run browser tests
         if: matrix.suite == 'Browser'
+        env:
+          CUSTOM_DOMAIN_TARGET: domains.example.test
+          CUSTOM_DOMAIN_PROVIDER_SECRET: isolated-ci-custom-domain-secret
         run: pnpm exec playwright test --workers=${{ vars.USE_BLACKSMITH == 'true' && 4 || 1 }}
 
       - name: Upload browser test reports and traces

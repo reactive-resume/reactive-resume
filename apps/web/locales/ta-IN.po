@@ -2695,6 +2695,10 @@ msgstr "காப்பு குறியீடு"
 msgid "Backup codes copied"
 msgstr "காப்பு குறியீடுகள் நகலெடுக்கப்பட்டன"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "சமநிலை"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2880,6 +2884,10 @@ msgstr "பட்டியல் நுழைவு {n}"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "பொட்டுக்குறியிடப்பட்ட பட்டியல்"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "பர்கண்டி"
 
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
@@ -3354,12 +3362,17 @@ msgid "Clarify"
 msgstr "தெளிவுபடுத்து"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "கிளாசிக்"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "எளிமை"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -4485,6 +4498,10 @@ msgstr "இரண்டு-படி சரிபார்ப்பை அமை
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "PDF முன்னோட்டத்தைக் காட்ட முடியவில்லை. கோப்பை மீண்டும் பதிவேற்றவும்."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -6754,6 +6771,10 @@ msgstr "கூகிள்"
 msgid "Grade"
 msgstr "மதிப்பெண்"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "கிராஃபைட்"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "சாம்பல்"
@@ -7249,6 +7270,10 @@ msgstr "இந்தோனேஷியன்"
 msgid "Inferred"
 msgstr "ஊகிக்கப்பட்டது"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "மை நீலம்"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "வரிசைப்பூர்வமான"
@@ -7600,6 +7625,14 @@ msgstr "நீங்கள் பயன்பாட்டைப் பயன்�
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "கணக்கு வைத்துக் கொள்ளுங்கள்"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "இணைப்பை வைத்திரு"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "டொமைனை வைத்திரு"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8281,6 +8314,11 @@ msgstr "இணைக்கப்பட்ட ஆவணங்களை ஏற்�
 msgid "Loading providers…"
 msgstr "வழங்குநர்களை ஏற்றுகிறது…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "சுயவிவரப் பக்கம் {pageNumber} ஏற்றப்படுகிறது, மொத்தம் {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "ஏற்றுதல் மீண்டும் தொடங்குகிறது…"
@@ -8720,6 +8758,10 @@ msgstr "ஒன்றுக்கும் மேற்பட்ட மின்�
 #: src/features/career/today.tsx
 msgid "Morning of"
 msgstr "அன்று காலை"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "பாசிப் பச்சை"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -9674,6 +9716,10 @@ msgstr "எண்ணிடப்பட்ட பட்டியல்"
 msgid "Observation"
 msgstr "கவனிப்பு"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "காவி"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "ஒடியா"
@@ -10125,11 +10171,13 @@ msgid "Page"
 msgstr "பக்கம்"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "பக்கம் {0}"
@@ -10148,6 +10196,16 @@ msgstr "பக்கம் {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "பக்கம் {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "{pageCount} இன் பக்கம் {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "{totalPages} இன் பக்கம் {pageNumber}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10493,6 +10551,10 @@ msgstr "உங்கள் வாரத்தைத் திட்டமிட�
 msgid "Play the list of languages"
 msgstr "மொழிகளின் பட்டியலை இயக்கவும்"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "பிளம்"
+
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "போலிஷ்"
@@ -10775,6 +10837,10 @@ msgstr "தயாரிப்பு வடிவமைப்பாளர்"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "B2B குழுக்களுக்காக <0>வடிவமைப்பு அமைப்புகளையும்</0> ஆராய்ச்சி சார்ந்த தயாரிப்புகளையும் உருவாக்குவதில் ஒன்பது ஆண்டுகள் அனுபவமுள்ள தயாரிப்பு வடிவமைப்பாளர்."
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "தொழில்முறை"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11503,6 +11569,10 @@ msgstr "{value} ஐ அகற்று"
 msgid "Remove connection"
 msgstr "இணைப்பை அகற்று"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "டொமைனை அகற்று"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "புலத்தை அகற்று"
@@ -11555,9 +11625,17 @@ msgstr "நிலையை அகற்றவும்"
 msgid "Remove tag"
 msgstr "குறிச்சொல்லை அகற்று"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "தனிப்பயன் டொமைனை அகற்றவா?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "கடவுச்சொல்லை அகற்றவா?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "வலை இணைப்பை அகற்றவா?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11848,6 +11926,11 @@ msgstr ""
 msgid "Resume page"
 msgstr "ரெஸ்யூம் பக்கம்"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "சுயவிவரப் பக்கம் {pageNumber}, மொத்தம் {totalPages}"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume submitted (optional)"
@@ -12135,6 +12218,10 @@ msgstr "{next} பக்கத்தில் இயங்கும்"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "ரஷ்யன்"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "துருச் சிவப்பு"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -13955,6 +14042,10 @@ msgstr "இலக்குப் பதவிகள்"
 msgid "Task"
 msgstr "பணி"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "டீல்"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "தொழில்நுட்பம்"
@@ -15027,6 +15118,10 @@ msgstr "உங்கள் முதல் வேலையைக் கண்க
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "கண்காணிப்பு"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "பாரம்பரியம்"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -16479,6 +16574,10 @@ msgstr "நீங்கள் ஒன்று இல்லாமல் உள்
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "இதை எப்போதும் ‘இன்று’ பக்கத்தில் பார்ப்பீர்கள். மின்னஞ்சல் உங்கள் சேவையகத்தின் அஞ்சல் அமைப்பைப் பொறுத்தது."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "மீண்டும் இணைக்க சாவியை மறுபடியும் உள்ளிட வேண்டும். உள்ளமைந்த ரீடர் தொடர்ந்து செயல்படும்."
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "எங்கள் <0>வடிவமைப்பு அமைப்புகளின்</0> பொறுப்பை ஏற்று, வாடிக்கையாளர்களுடன் <1>பயனர் ஆராய்ச்சி</1> செய்து, <3>பல்வேறு துறைகள் இணைந்த</3> குழுவில் பணியாற்றி <2>அணுகல்தன்மைக்கான</2> உயர்ந்த தரத்தை நீங்கள் பேணுவீர்கள்."
@@ -16606,6 +16705,10 @@ msgstr "ரெஸ்யூமில் உங்கள் விவரங்க�
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "உங்கள் டொமைன்"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "உங்கள் டொமைன் இனி உங்கள் முதன்மை சுயவிவரத்தைத் திறக்காது. பின்னர் மீண்டும் இணைக்கலாம்."
 
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."

@@ -2695,6 +2695,10 @@ msgstr "बॅकअप कोड"
 msgid "Backup codes copied"
 msgstr "बॅकअप कोड कॉपी केले"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "समतोल"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2880,6 +2884,10 @@ msgstr "यादी प्रविष्टी {n}"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "बुलेट केलेली यादी"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "बरगंडी"
 
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
@@ -3354,12 +3362,17 @@ msgid "Clarify"
 msgstr "स्पष्ट करा"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "क्लासिक"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "स्वच्छ"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -4485,6 +4498,10 @@ msgstr "द्वि-चरण पडताळणी सेट करता आ�
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "PDF पूर्वावलोकन दाखवता आले नाही. फाइल पुन्हा अपलोड करा."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -6754,6 +6771,10 @@ msgstr "गूगल"
 msgid "Grade"
 msgstr "ग्रेड"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "ग्रेफाइट"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "राखाडी"
@@ -7249,6 +7270,10 @@ msgstr "इंडोनेशियन"
 msgid "Inferred"
 msgstr "अनुमानित"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "शाई निळा"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "इनलाइन"
@@ -7600,6 +7625,14 @@ msgstr "अॅप्लिकेशन वापरत नसतानाही 
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "खाते ठेवा"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "कनेक्शन ठेवा"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "डोमेन ठेवा"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8281,6 +8314,11 @@ msgstr "लिंक केलेले दस्तऐवज लोड कर�
 msgid "Loading providers…"
 msgstr "प्रदाते लोड होत आहेत…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "रेझ्युमेचे पान {pageNumber} लोड होत आहे, एकूण {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "रेझ्युमे लोड होत आहेत…"
@@ -8720,6 +8758,10 @@ msgstr "एकापेक्षा जास्त ईमेल पत्ते
 #: src/features/career/today.tsx
 msgid "Morning of"
 msgstr "त्याच दिवशी सकाळी"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "शेवाळी हिरवा"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -9674,6 +9716,10 @@ msgstr "क्रमांकित यादी"
 msgid "Observation"
 msgstr "निरीक्षण"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "गेरू"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "ओडिया"
@@ -10125,11 +10171,13 @@ msgid "Page"
 msgstr "पान"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "पान {0}"
@@ -10148,6 +10196,16 @@ msgstr "पान {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "पृष्ठ {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "{pageCount} पैकी पान {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "{totalPages} पैकी पान {pageNumber}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10493,6 +10551,10 @@ msgstr "तुमच्या आठवड्याची योजना कर
 msgid "Play the list of languages"
 msgstr "भाषांची यादी प्ले करा"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "जांभळा"
+
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "पोलिश"
@@ -10775,6 +10837,10 @@ msgstr "उत्पादन डिझायनर"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "B2B संघांसाठी <0>डिझाइन प्रणाली</0> आणि संशोधनावर आधारित उत्पादने तयार करण्याचा नऊ वर्षांचा अनुभव असलेला उत्पादन डिझायनर."
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "व्यावसायिक"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11503,6 +11569,10 @@ msgstr "{value} काढा"
 msgid "Remove connection"
 msgstr "कनेक्शन काढा"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "डोमेन काढा"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "फील्ड काढा"
@@ -11555,9 +11625,17 @@ msgstr "टप्पा काढा"
 msgid "Remove tag"
 msgstr "टॅग काढा"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "सानुकूल डोमेन काढायचे?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "पासवर्ड काढायचा?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "वेब कनेक्शन काढायचे?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11848,6 +11926,11 @@ msgstr ""
 msgid "Resume page"
 msgstr "रेझ्युमे पृष्ठ"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "रेझ्युमेचे पान {pageNumber}, एकूण {totalPages}"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume submitted (optional)"
@@ -12135,6 +12218,10 @@ msgstr "{next} पृष्ठावर चालते"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "रशियन"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "तांबूस तपकिरी"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -13955,6 +14042,10 @@ msgstr "लक्ष्य भूमिका"
 msgid "Task"
 msgstr "कार्य"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "निळसर हिरवा"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "तांत्रिक"
@@ -15027,6 +15118,10 @@ msgstr "तुमच्या पहिल्या कामाचा माग
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "ट्रॅकिंग"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "पारंपरिक"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -16479,6 +16574,10 @@ msgstr "तुम्ही एक न करता साइन इन करा
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "तुम्हाला ते “आज” मध्ये नेहमी दिसेल. ईमेल तुमच्या सर्व्हरच्या मेल सेटअपवर अवलंबून आहे."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "पुन्हा कनेक्ट करण्यासाठी तुम्हाला की पुन्हा टाकावी लागेल. अंगभूत रीडर सक्रिय राहील."
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "तुम्ही आमच्या <0>डिझाइन प्रणालींची</0> जबाबदारी घ्याल, ग्राहकांसोबत <1>वापरकर्ता संशोधन</1> कराल आणि <3>विविध विभागांच्या संयुक्त</3> संघात काम करताना <2>सुलभतेची</2> उच्च मानके राखाल."
@@ -16606,6 +16705,10 @@ msgstr "तुमचा तपशील रेझ्युमेवर बदल
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "तुमचे डोमेन"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "तुमचे डोमेन यापुढे तुमचा मुख्य रेझ्युमे उघडणार नाही. तुम्ही ते नंतर पुन्हा कनेक्ट करू शकता."
 
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."

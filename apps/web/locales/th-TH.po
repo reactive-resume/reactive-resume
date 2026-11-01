@@ -2695,6 +2695,10 @@ msgstr "รหัสสำรอง"
 msgid "Backup codes copied"
 msgstr "คัดลอกรหัสสำรองแล้ว"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "สมดุล"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2880,6 +2884,10 @@ msgstr "รายการ {n}"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "รายการหัวข้อย่อย"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "เบอร์กันดี"
 
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
@@ -3354,12 +3362,17 @@ msgid "Clarify"
 msgstr "ชี้แจงเพิ่มเติม"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "คลาสสิค"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "สะอาด"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -4485,6 +4498,10 @@ msgstr "ตั้งค่าการยืนยันแบบสองขั
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "แสดงตัวอย่าง PDF ไม่สำเร็จ โปรดอัปโหลดไฟล์อีกครั้ง"
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -6754,6 +6771,10 @@ msgstr "Google"
 msgid "Grade"
 msgstr "เกรด"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "กราไฟท์"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "เทา"
@@ -7249,6 +7270,10 @@ msgstr "อินโดนีเซีย"
 msgid "Inferred"
 msgstr "อนุมาน"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "หมึกสีน้ำเงิน"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "แบบอินไลน์"
@@ -7600,6 +7625,14 @@ msgstr "ให้การเข้าถึงเมื่อคุณไม่
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "เก็บบัญชี"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "เก็บการเชื่อมต่อไว้"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "เก็บโดเมนไว้"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8281,6 +8314,11 @@ msgstr "กำลังโหลดเอกสารที่ลิงก์ไ
 msgid "Loading providers…"
 msgstr "กำลังโหลดผู้ให้บริการ…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "กำลังโหลดหน้าเรซูเม่ {pageNumber} จาก {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "กำลังโหลดต่อ…"
@@ -8720,6 +8758,10 @@ msgstr "มีที่อยู่อีเมลปรากฏมากกว
 #: src/features/career/today.tsx
 msgid "Morning of"
 msgstr "เช้าวันนั้น"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "สีเขียวมอส"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -9674,6 +9716,10 @@ msgstr "รายการลำดับเลข"
 msgid "Observation"
 msgstr "ข้อสังเกต"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "ดินเหลืองใช้ทำสี"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "โอเดีย"
@@ -10125,11 +10171,13 @@ msgid "Page"
 msgstr "หน้า"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "หน้า {0}"
@@ -10148,6 +10196,16 @@ msgstr "หน้า {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "หน้า {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "หน้า {pageNumber} ของ {pageCount}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "หน้า {pageNumber} ของ {totalPages}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10493,6 +10551,10 @@ msgstr "กำลังวางแผนสัปดาห์ของคุณ
 msgid "Play the list of languages"
 msgstr "เล่นรายการภาษา"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "สีม่วงพลัม"
+
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "โปแลนด์"
@@ -10775,6 +10837,10 @@ msgstr "นักออกแบบผลิตภัณฑ์"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "นักออกแบบผลิตภัณฑ์ที่มีประสบการณ์เก้าปีในการสร้าง<0>ระบบการออกแบบ</0>และผลิตภัณฑ์ที่อิงการวิจัยสำหรับทีม B2B"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "มืออาชีพ"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11503,6 +11569,10 @@ msgstr "ลบ {value}"
 msgid "Remove connection"
 msgstr "ถอดการเชื่อมต่อ"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "ลบโดเมน"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "ลบฟิลด์"
@@ -11555,9 +11625,17 @@ msgstr "นำขั้นตอนออก"
 msgid "Remove tag"
 msgstr "ลบแท็ก"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "ลบโดเมนที่กำหนดเองหรือไม่?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "ลบรหัสผ่าน?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "ลบการเชื่อมต่อเว็บหรือไม่?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11848,6 +11926,11 @@ msgstr ""
 msgid "Resume page"
 msgstr "หน้าประวัติย่อ"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "หน้าเรซูเม่ {pageNumber} จาก {totalPages}"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume submitted (optional)"
@@ -12135,6 +12218,10 @@ msgstr "วิ่งไปที่หน้า {next}"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "รัสเซีย"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "สนิม"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -13955,6 +14042,10 @@ msgstr "ตำแหน่งงานเป้าหมาย"
 msgid "Task"
 msgstr "หน้าที่"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "สีเขียวอมฟ้า"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "ด้านเทคนิค"
@@ -15027,6 +15118,10 @@ msgstr "ติดตามงานแรกของคุณ"
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "การติดตาม"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "แบบดั้งเดิม"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -16479,6 +16574,10 @@ msgstr "คุณลงชื่อเข้าใช้โดยไม่มี
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "คุณจะเห็นได้เสมอใน “วันนี้” ส่วนอีเมลขึ้นอยู่กับการตั้งค่าเมลของเซิร์ฟเวอร์คุณ"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "คุณจะต้องป้อนคีย์อีกครั้งเพื่อเชื่อมต่อใหม่ ตัวอ่านในตัวยังคงใช้งานได้"
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "คุณจะรับผิดชอบ<0>ระบบการออกแบบ</0>ของเรา ทำ<1>การวิจัยผู้ใช้</1>กับลูกค้า และรักษามาตรฐานสูงด้าน<2>การเข้าถึงสำหรับทุกคน</2> โดยทำงานในทีม<3>ข้ามสายงาน</3>"
@@ -16606,6 +16705,10 @@ msgstr "รายละเอียดของคุณมีการเปล
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "โดเมนของคุณ"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "โดเมนของคุณจะไม่เปิดเรซูเม่หลักของคุณอีกต่อไป คุณสามารถเชื่อมต่อใหม่ได้ภายหลัง"
 
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."

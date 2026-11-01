@@ -2695,6 +2695,10 @@ msgstr "የመጠባበቂያ ኮድ"
 msgid "Backup codes copied"
 msgstr "የመከላከያ ኮዶች ተገልብጠዋል"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "ሚዛናዊ"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2880,6 +2884,10 @@ msgstr "የዝርዝር ግቤት {n}"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Bulleted list"
 msgstr "ነጥበ ምልክት የተደረገበት ዝርዝር"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "ቡርጋንዲ"
 
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
@@ -3354,12 +3362,17 @@ msgid "Clarify"
 msgstr "አብራራ"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "ክላሲክ"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "ንፁህ ዘይቤ"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -4485,6 +4498,10 @@ msgstr "ባለ ሁለት ደረጃ ማረጋገጫን ማዋቀር አልተቻ�
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "የPDF ቅድመ እይታውን ማሳየት አልተቻለም። ፋይሉን እንደገና ይስቀሉ።"
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -6754,6 +6771,10 @@ msgstr "Google"
 msgid "Grade"
 msgstr "ውጤት"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "ግራፋይት"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "ግራጫ"
@@ -7249,6 +7270,10 @@ msgstr "ኢንዶኔዥኛ"
 msgid "Inferred"
 msgstr "የተገመተ"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "ሰማያዊ ቀለም"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
 msgstr "መስመር ውስጥ"
@@ -7600,6 +7625,14 @@ msgstr "መተግበሪያውን በማይጠቀሙበት ጊዜ መዳረሻዎ
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "መለያ አቆይ"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "ግንኙነቱን አቆይ"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "ጎራውን አቆይ"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8281,6 +8314,11 @@ msgstr "የተያያዙ ሰነዶችን በመጫን ላይ…"
 msgid "Loading providers…"
 msgstr "አቅራቢዎችን በመጫን ላይ…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "የሥራ ልምድ ማስረጃ ገጽ {pageNumber} ከ {pageCount} በመጫን ላይ"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "የስራ ልምድ ማስረጃዎችን በመጫን ላይ…"
@@ -8720,6 +8758,10 @@ msgstr "ከአንድ በላይ የኢሜል አድራሻ ይታያል።"
 #: src/features/career/today.tsx
 msgid "Morning of"
 msgstr "በዕለቱ ማለዳ"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "Moss አረንጓዴ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
@@ -9674,6 +9716,10 @@ msgstr "ቁጥር ያለው ዝርዝር"
 msgid "Observation"
 msgstr "ምልከታ"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "ኦቸር"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "ኦዲያ"
@@ -10125,11 +10171,13 @@ msgid "Page"
 msgstr "ገጽ"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "ገጽ {0}"
@@ -10148,6 +10196,16 @@ msgstr "ገጽ {page}፣ {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "ገጽ {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "ገጽ {pageNumber} ከ {pageCount}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "ገጽ {pageNumber} ከ {totalPages}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10493,6 +10551,10 @@ msgstr "ሳምንትዎን በማቀድ ላይ"
 msgid "Play the list of languages"
 msgstr "የቋንቋዎችን ዝርዝር አጫውት።"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "ፕለም ሐምራዊ"
+
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "ፖላንድኛ"
@@ -10775,6 +10837,10 @@ msgstr "የምርት ንድፍ አውጪ"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "ለB2B ቡድኖች <0>የንድፍ ስርዓቶችን</0> እና በጥናት የተመሩ ምርቶችን በመገንባት የዘጠኝ ዓመት ልምድ ያለው የምርት ንድፍ አውጪ።"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "ሙያዊ ቅጥ"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11503,6 +11569,10 @@ msgstr "{value} አስወግድ"
 msgid "Remove connection"
 msgstr "ግንኙነት አስወግድ"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "ጎራውን አስወግድ"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "መስክ አስወግድ"
@@ -11555,9 +11625,17 @@ msgstr "ደረጃ ያስወግዱ"
 msgid "Remove tag"
 msgstr "መለያ አስወግድ"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "ብጁ ጎራውን ማስወገድ ይፈልጋሉ?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "የይለፍ ቃሉ ይወገድ?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "የድር ግንኙነቱን ማስወገድ ይፈልጋሉ?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11848,6 +11926,11 @@ msgstr ""
 msgid "Resume page"
 msgstr "የመመዝገቢያ ገጽ"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "የሥራ ልምድ ማስረጃ ገጽ {pageNumber} ከ {totalPages}"
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Resume submitted (optional)"
@@ -12135,6 +12218,10 @@ msgstr "በ {next} ገጽ ላይ ይሰራል"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "ሩስኛ"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "የዝገት ቡናማ"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -13955,6 +14042,10 @@ msgstr "ዒላማ የሥራ መደቦች"
 msgid "Task"
 msgstr "ተግባር"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "ሰማያዊ አረንጓዴ"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "ቴክኒካል"
@@ -15027,6 +15118,10 @@ msgstr "የመጀመሪያ ስራዎን ይከታተሉ"
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "መከታተል"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "ባህላዊ ዘይቤ"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -16479,6 +16574,10 @@ msgstr "ያለ አንድ ገብተሃል"
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "ሁልጊዜ በዛሬ ውስጥ ያዩታል። ኢሜል በአገልጋይዎ የኢሜል ማዋቀር ላይ ይወሰናል።"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "እንደገና ለመገናኘት ቁልፉን እንደገና ማስገባት ያስፈልጋል። አብሮ የተሰራው አንባቢ ንቁ ሆኖ ይቀጥላል።"
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "የእኛን <0>የንድፍ ስርዓቶች</0> ይመራሉ፣ ከደንበኞች ጋር <1>የተጠቃሚ ጥናት</1> ያካሂዳሉ፣ ለ<2>ተደራሽነት</2> ከፍተኛ መስፈርቶችን ይጠብቃሉ፤ በ<3>ተለያዩ ሙያዎችን ያቀፈ</3> ቡድን ውስጥ ይሰራሉ።"
@@ -16606,6 +16705,10 @@ msgstr "ዝርዝሮችዎ በመመዝገቢያው ላይ ተቀይረዋል።
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "ጎራዎ"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "ጎራዎ ዋናውን የሥራ ልምድ ማስረጃዎን መክፈት ያቆማል። በኋላ እንደገና ማገናኘት ይችላሉ።"
 
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."

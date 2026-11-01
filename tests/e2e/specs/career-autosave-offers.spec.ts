@@ -182,8 +182,8 @@ test("unreadable and oversized photos keep the current photo and preserve the cr
 		.not.toBe("");
 	const savedPhoto = (await (await page.request.get(`/api/openapi/resumes/${resumeId}`)).json()).data.picture.url;
 	await page.goto(`/builder/${resumeId}?locale=de-DE`);
-	await expect(page.locator('canvas[aria-label^="Resume page"]').first()).toBeVisible({ timeout: 30000 });
-	await expect(page.getByLabel(/Loading resume page/)).toHaveCount(0);
+	await expect(page.locator('canvas[aria-label^="Lebenslaufseite"]').first()).toBeVisible({ timeout: 30000 });
+	await expect(page.getByRole("img", { name: /Lebenslaufseite .* wird geladen/ })).toHaveCount(0);
 	await page
 		.getByRole("button", { name: /Bearbeiten|Edit/ })
 		.first()
