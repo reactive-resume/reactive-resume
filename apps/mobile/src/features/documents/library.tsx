@@ -77,9 +77,10 @@ function DocumentItem({
 	const { colors, space, radius, size } = useTheme();
 	const ids = useNewDocuments((state) => state.ids);
 	const trashed = document.trashedAt;
+	const recipient = document.recipient;
 	const meta = trashed
 		? plural(daysLeftInTrash(trashed), { one: "# day left", other: "# days left" })
-		: document.updatedAt.toLocaleDateString(i18n.locale);
+		: document.editedAt.toLocaleDateString(i18n.locale);
 	const body = (
 		<View
 			style={{
@@ -120,10 +121,16 @@ function DocumentItem({
 						)}
 						{document.isPublic && <Text variant="caption" color="accentText">{t`Public`}</Text>}
 						{document.isLocked && <Text variant="caption" color="ink2">{t`Locked`}</Text>}
-						{document.application && (
+						{document.application ? (
 							<Text variant="caption" color="ink2">
 								{document.application.company}
 							</Text>
+						) : (
+							recipient && (
+								<Text variant="caption" color="ink2">
+									{t({ comment: "A letter's recipient under its name in the library", message: `To ${recipient}` })}
+								</Text>
+							)
 						)}
 						{document.tags.map((tag) => (
 							<Text key={tag} variant="caption" color="ink3">
@@ -257,6 +264,10 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	const recoveryStart = Math.min(recoveryOffset, Math.max(0, Math.floor((pending.length - 1) / 100) * 100));
 	const recoverable = trashed ? [] : pending.slice(recoveryStart, recoveryStart + 100);
 	const filtered = all;
+	const emptyType =
+		!trashed && type !== "all" && !q && !tags.length && !publicOnly && offset === 0 && displayed?.counts[type] === 0
+			? type
+			: null;
 	const firstAppearance = useFirstAppearance(filtered.length > 0);
 	const selected = rowsCurrent ? filtered.filter((document) => selection.includes(documentKey(document))) : [];
 	const { refetch: refetchDocuments } = documents;
@@ -592,7 +603,20 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 							<Skeleton height={size.row * 2} />
 							<Skeleton height={size.row * 2} />
 						</View>
-					) : documents.isError ? undefined : (
+					) : documents.isError ? undefined : emptyType ? (
+						// A type tab with nothing of its kind is empty, not filtered: it offers to make one.
+						<EmptyState
+							variant="card"
+							icon={emptyType === "letter" ? "envelope-simple" : "file-text"}
+							title={emptyType === "letter" ? t`No cover letters yet` : t`No resumes yet`}
+							message={
+								emptyType === "letter"
+									? t`Write one for a job, or start from your latest resume.`
+									: t`Import the one you have, or start blank.`
+							}
+							action={{ label: t`New document`, onPress: () => router.push(routes.new()) }}
+						/>
+					) : (
 						<EmptyState
 							variant="card"
 							icon={trashed ? "trash" : "file-text"}

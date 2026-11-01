@@ -8,6 +8,7 @@ import { documentsService } from "../documents/service";
 import { createResumeData } from "./initial-data";
 import { parseStoredResumeData } from "./resume-data-validation";
 import { resumeService } from "./service";
+import { findFreeResumeName } from "./slugs";
 
 const slugErrors = {
 	RESUME_SLUG_ALREADY_EXISTS: {
@@ -115,11 +116,13 @@ export const crudRouter = {
 		.handler(async ({ context, input }) => {
 			const id = generateId();
 
-			// Named from the file's content (the person, else the headline) so nothing needs filling in first.
-			const name = input.data.basics.name.trim() || input.data.basics.headline.trim() || generateRandomName();
+			// Named from the file's content (the person, else the headline) so nothing needs filling in first; a name
+			// already in the library gets the headline, then a number, so two imports of one person stay apart.
+			const { name: person, headline } = input.data.basics;
+			const name = person.trim() || headline.trim() || generateRandomName();
 			await resumeService.create({
 				id,
-				name: name.slice(0, 100),
+				name: await findFreeResumeName(context.user.id, name.slice(0, 100), person.trim() ? headline : undefined),
 				tags: [],
 				data: input.data,
 				locale: context.locale,

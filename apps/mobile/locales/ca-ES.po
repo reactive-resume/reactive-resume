@@ -658,6 +658,10 @@ msgstr "Tipus {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# canvi proposat en aquesta pàgina · res no canvia fins que l’acceptis} other {# canvis proposats en aquesta pàgina · res no canvia fins que els acceptis}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -959,6 +963,11 @@ msgstr "Afegeix un país"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "Afegeix un fet"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1786,6 +1795,10 @@ msgstr "Ascendent"
 msgid "Ask"
 msgstr "Pregunta"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Pregunteu sobre aquesta candidatura…"
@@ -2191,6 +2204,7 @@ msgstr "Cancel·la la sol·licitud"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Carrera"
 
@@ -2247,6 +2261,10 @@ msgstr "Canvia el tema a…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "Canvia el fus horari"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2609,6 +2627,7 @@ msgstr "Tancat: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Orientador"
@@ -2747,6 +2766,10 @@ msgstr "Connecteu un proveïdor d'IA"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Connecteu un proveïdor d'IA a Configuració per actualitzar-lo automàticament."
+
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
@@ -4039,6 +4062,7 @@ msgstr "La baixada obre el menú de compartició del sistema. Trieu un proveïdo
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "La baixada obre el full de compartició del sistema. Trieu un proveïdor d'emmagatzematge per desar el fitxer. S'obre una carta de presentació enllaçada com a segon fitxer."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Baixa el PDF"
@@ -5240,6 +5264,10 @@ msgid "Import it"
 msgstr "Importa'l"
 
 #: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
 msgstr "Importa el teu currículum vitae actual o comença amb el teu nom."
 
@@ -5553,6 +5581,10 @@ msgstr "Limita't a dues o tres famílies. Cada tipus de lletra addicional és un
 msgid "Keep together"
 msgstr "Mantingueu-vos junts"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Manté les parts més específiques"
@@ -5593,6 +5625,7 @@ msgstr "Salutacions cordials,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Coneixements"
 
@@ -5945,6 +5978,10 @@ msgstr "Enllaçat. Actualització de nom, correu electrònic, telèfon i ciutat 
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Enllaços"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6723,6 +6760,9 @@ msgid "No application"
 msgstr "Cap sol·licitud de feina"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Encara no hi ha cap sol·licitud de feina. Afegiu-ne un a les sol·licituds de feina primer."
@@ -6751,6 +6791,10 @@ msgstr "No s'ha trobat cap encapçalament de secció convencional."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Encara no hi ha converses sobre aquest document."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6902,6 +6946,10 @@ msgstr "Sense resultats"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Sense currículum"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7170,6 +7218,7 @@ msgid "Offer type"
 msgstr "Tipus d'oferta laboral"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Ofertes"
 
@@ -11385,6 +11434,11 @@ msgstr "Títol"
 msgid "To"
 msgstr "A"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Per comprovar"
@@ -11395,6 +11449,7 @@ msgstr "Per rebre un recordatori, permet les notificacions a la configuració de
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Avui"
@@ -12404,6 +12459,10 @@ msgstr "Escriu els números amb xifres"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Escriu una història en cinc parts sobre alguna cosa que hagis fet. Deixa Resultat i Reflexió en blanc fins que els puguis justificar."
 
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "Escriviu l'adreça completa perquè es reconegui com a enllaç."
@@ -12674,6 +12733,10 @@ msgstr "el vostre proveïdor"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Els vostres enllaços públics comencen per {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

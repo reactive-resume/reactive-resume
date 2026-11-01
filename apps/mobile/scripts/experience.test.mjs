@@ -618,10 +618,13 @@ console.log("PASS native New preserves Applications views, pushes from a workspa
 
 // Opening earlier applications must preserve an unsaved job until explicit discard.
 let finishSave;
+let matchedPosting = null;
 const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 	react: { ...react, useEffect: () => {} },
 	"@orpc/client": { ORPCError: class extends Error {} },
-	"@tanstack/react-query": { useQuery: (options) => ({ data: options.queryKey[0] === "posting-match" ? null : [] }) },
+	"@tanstack/react-query": {
+		useQuery: (options) => ({ data: options.queryKey[0] === "posting-match" ? matchedPosting : [] }),
+	},
 	"./date": { parseDateOnly: () => new Date() },
 	"./error": { applicationError: String },
 	"./lane-notice": { LaneNotice: "LaneNotice" },
@@ -630,6 +633,7 @@ const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 	"./prior-no-response": { PriorNoResponse: "PriorNoResponse" },
 	"./queries": {
 		useApplicationMutations: () => ({
+			update: { mutateAsync: async (input) => calls.push(input) },
 			create: {
 				mutateAsync: () =>
 					new Promise((resolve) => {
@@ -691,6 +695,31 @@ priorLink().onOpen("previous");
 discardPrior().onConfirm();
 assert.deepEqual(calls, ["close-draft", "/applications/previous"], "explicit discard opens the prior application");
 console.log("PASS native prior-application draft confirmation and save lock");
+
+reset();
+matchedPosting = { id: "existing-job", company: "Example", role: "Engineer" };
+const pickerView = () =>
+	render(AddApplicationSheet, {
+		initialCapture: {
+			url: "https://example.test/jobs/1",
+			company: "Example",
+			role: "Engineer",
+			description: "Posting",
+		},
+		onClose: () => calls.push("close-picker"),
+		onAdded: (id) => calls.push({ picked: id }),
+	});
+assert.equal(control(pickerView(), "Update posting details").disabled, false);
+control(pickerView(), "Update posting details").onPress();
+await settle();
+assert.equal(calls[0].id, "existing-job");
+assert.deepEqual(
+	calls.slice(1),
+	["close-picker", { picked: "existing-job" }],
+	"duplicate update returns to picker without navigation",
+);
+matchedPosting = null;
+console.log("PASS native duplicate posting update preserves picker flow");
 
 // Default calendar month/day follows the account clock; explicit navigation remains pinned.
 const calendarSchedule = load("features/reminders/schedule.ts", { "@reactive-resume/utils/timezone": {} });
@@ -1576,3 +1605,113 @@ assert.deepEqual(fieldDocument.fields, [removedField], "field Undo restores only
 removalToast.action.onPress();
 assert.deepEqual(fieldDocument.fields, [removedField], "a restored field is never duplicated");
 console.log("PASS native custom-field Undo restores its field without reverting later edits or duplicating it");
+
+// A job selected before its summary arrives must never become an unlinked copy.
+let copyApplications = { data: [], isFetching: true, refetch() {} };
+const { NewDocument } = load("features/documents/new-document.tsx", {
+	react: { ...react, useEffect() {} },
+	"@tanstack/react-query": { useQuery: () => copyApplications },
+	"expo-document-picker": {},
+	"expo-file-system": {},
+	"expo-network": { getNetworkStateAsync: async () => ({ isConnected: true }) },
+	"expo-router": {
+		useRouter: () => ({ replace: (href) => calls.push(href) }),
+		useLocalSearchParams: () => ({ step: "copy", applicationId: "new-job" }),
+		Stack: { Screen: "StackScreen" },
+	},
+	"@reactive-resume/schema/resume/dates": {},
+	"./import-file": { ImportError: class extends Error {} },
+	"./new-documents": { useNewDocuments: { getState: () => ({ markOpened() {} }) } },
+	"./queries": {
+		useDocuments: () => ({ data: [{ id: "source", type: "resume", name: "Resume" }] }),
+		useDocumentRefresh: () => () => {},
+		documentError: String,
+	},
+	"@/api/client": {
+		client: {
+			documents: {
+				copyForJob: async (input) => {
+					calls.push(input);
+					return "copy";
+				},
+			},
+		},
+		orpc: { applications: { listSummary: { queryOptions: () => ({ queryKey: ["jobs"] }) } } },
+	},
+	"@/auth/session": { getServer: () => "test", useSession: () => ({ server: "test", status: "signed-in" }) },
+	"@/features/ai/providers": { useHasAIProvider: () => ({ hasAIProvider: false }) },
+	"@/features/applications/add-sheet": {},
+});
+reset();
+assert.equal(control(render(NewDocument), "Create copy").disabled, true);
+control(render(NewDocument), "Create copy").onPress();
+await settle();
+assert.deepEqual(calls, [], "pending selected job cannot create an unlinked copy");
+copyApplications = {
+	data: [{ id: "new-job", company: "Example", role: "Engineer", status: "saved" }],
+	isFetching: false,
+	refetch() {},
+};
+assert.equal(control(render(NewDocument), "Create copy").disabled, false);
+control(render(NewDocument), "Create copy").onPress();
+await settle();
+assert.equal(calls[0].applicationId, "new-job");
+console.log("PASS native copy waits for selected job and preserves application ID");
+
+// React Query uses the latest mutation options after asynchronous public-link counting.
+let currentProfileMutation;
+let profileMutationResult;
+let finishLinkCount;
+const { ProfileEditor } = load("features/settings/profile.tsx", {
+	"@tanstack/react-query": {
+		useQueryClient: () => ({ invalidateQueries() {} }),
+		useMutation: (options) => {
+			currentProfileMutation = options;
+			return {
+				isPending: false,
+				reset() {},
+				mutate() {
+					profileMutationResult = currentProfileMutation.mutationFn();
+				},
+			};
+		},
+	},
+	"expo-file-system": {},
+	"expo-image-picker": {},
+	"@/api/client": {
+		client: {
+			documents: {
+				page: () =>
+					new Promise((resolve) => {
+						finishLinkCount = resolve;
+					}),
+			},
+			auth: {
+				updateProfile: async (input) => {
+					calls.push(input);
+					return { status: true };
+				},
+			},
+		},
+	},
+	"@/auth/session": { useSession: () => ({ server: "test" }) },
+});
+reset();
+const usernameField = nodes(render(ProfileEditor, { profile: { name: "Example", username: "old-name" } })).find(
+	(node) => node.props.field === "username",
+);
+reset();
+const profileView = () => render(usernameField.type, usernameField.props);
+control(profileView(), "Username").onChangeText("valid-name");
+control(profileView(), "Username").onBlur();
+control(profileView(), "Username").onChangeText("!");
+profileView();
+finishLinkCount({ total: 1 });
+await settle();
+nodes(profileView())
+	.find((node) => node.type === "ConfirmDialog")
+	.props.onConfirm();
+await assert.rejects(profileMutationResult, /Invalid profile field/);
+assert.deepEqual(calls, [], "invalid draft never reaches profile API after confirmation");
+assert.equal(control(profileView(), "Username").value, "!", "failed validation preserves draft");
+console.log("PASS native username revalidates after asynchronous public-link confirmation");

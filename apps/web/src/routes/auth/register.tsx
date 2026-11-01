@@ -9,12 +9,12 @@ export const Route = createFileRoute("/auth/register")({
 		if (context.session && !context.session.user.isAnonymous && !search.reauthenticate)
 			throw redirect(getAuthRedirectOptions(search.callbackURL));
 		if (context.flags.disableSignups) throw redirect({ to: "/auth/login", search, replace: true });
-		return { session: null };
+		return { session: null, isGuest: Boolean(context.session?.user.isAnonymous) };
 	},
 });
 
 function RouteComponent() {
-	const { flags } = Route.useRouteContext();
+	const { flags, isGuest } = Route.useRouteContext();
 
-	return <RegisterPage disableEmailAuth={flags.disableEmailAuth} />;
+	return <RegisterPage disableEmailAuth={flags.disableEmailAuth} isGuest={isGuest} />;
 }

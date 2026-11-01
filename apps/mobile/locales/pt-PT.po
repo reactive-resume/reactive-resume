@@ -658,6 +658,10 @@ msgstr "Tipo {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# alteração proposta nesta página · nada muda até a aceitar} other {# alterações propostas nesta página · nada muda até as aceitar}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -959,6 +963,11 @@ msgstr "Adicione um país"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "Adicionar facto"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1786,6 +1795,10 @@ msgstr "Ascendente"
 msgid "Ask"
 msgstr "Perguntar"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Pergunte sobre esta candidatura…"
@@ -2191,6 +2204,7 @@ msgstr "Cancelar pedido"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Carreira"
 
@@ -2247,6 +2261,10 @@ msgstr "Alterar tema para…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "Alterar fuso horário"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2609,6 +2627,7 @@ msgstr "Fechado: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Coach"
@@ -2747,6 +2766,10 @@ msgstr "Ligue um provedor de IA"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Ligue um fornecedor de IA nas Configurações para o atualizar automaticamente."
+
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
@@ -4039,6 +4062,7 @@ msgstr "A transferência abre o painel de partilha do sistema. Escolha um fornec
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Descarregar abre o menu de partilha do sistema. Escolha um fornecedor de armazenamento para guardar o ficheiro. A carta associada abre como um segundo ficheiro."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Descarregar PDF"
@@ -5240,6 +5264,10 @@ msgid "Import it"
 msgstr "Importe-o"
 
 #: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
 msgstr "Importe o seu currículo atual ou comece do zero com o seu nome."
 
@@ -5553,6 +5581,10 @@ msgstr "Limite-se a duas ou três famílias. Cada fonte extra é mais uma hipót
 msgid "Keep together"
 msgstr "Mantenham-se unidos"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Mantém as partes mais específicas"
@@ -5593,6 +5625,7 @@ msgstr "Atenciosamente,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Conhecimento"
 
@@ -5945,6 +5978,10 @@ msgstr "Vinculado. Nome, e-mail, telefone e cidade atualizados quando o currícu
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Ligações"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6723,6 +6760,9 @@ msgid "No application"
 msgstr "Sem pedido de emprego"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Ainda não há candidaturas. Adicione primeiro uma em Candidaturas."
@@ -6751,6 +6791,10 @@ msgstr "Não foi encontrado nenhum título de secção convencional."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Ainda não há conversas sobre este documento."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6902,6 +6946,10 @@ msgstr "Nenhum resultado"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Sem currículo"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7170,6 +7218,7 @@ msgid "Offer type"
 msgstr "Tipo de oferta de emprego"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Ofertas"
 
@@ -11385,6 +11434,11 @@ msgstr "Título"
 msgid "To"
 msgstr "Para"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Para verificar"
@@ -11395,6 +11449,7 @@ msgstr "Para receber um lembrete, permita notificações nas definições do seu
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Hoje"
@@ -12404,6 +12459,10 @@ msgstr "Escrever números como algarismos"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Escreve uma história em cinco partes sobre algo que fizeste. Deixa Resultado e Reflexão em branco até os poderes fundamentar."
 
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "Escreva o endereço completo para que seja reconhecido como uma ligação."
@@ -12674,6 +12733,10 @@ msgstr "O seu provedor"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Os seus links públicos começam por {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

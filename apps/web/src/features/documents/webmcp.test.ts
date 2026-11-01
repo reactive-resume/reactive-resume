@@ -21,7 +21,9 @@ const documents = [
 		isLocked: false,
 		trashedAt: null,
 		createdAt: new Date("2026-01-01T00:00:00.000Z"),
-		updatedAt: new Date("2026-02-01T00:00:00.000Z"),
+		// Tagged after the letter was written: details move updatedAt, not when it was last edited.
+		updatedAt: new Date("2026-05-01T00:00:00.000Z"),
+		editedAt: new Date("2026-02-01T00:00:00.000Z"),
 		application: null,
 	},
 	{
@@ -33,6 +35,7 @@ const documents = [
 		trashedAt: null,
 		createdAt: new Date("2026-03-01T00:00:00.000Z"),
 		updatedAt: new Date("2026-04-01T00:00:00.000Z"),
+		editedAt: new Date("2026-04-01T00:00:00.000Z"),
 		application: { id: "app", company: "Acme", role: "Engineer" },
 	},
 ];
@@ -76,6 +79,7 @@ describe("document WebMCP tools", () => {
 			tags: [],
 			isLocked: true,
 			updatedAt: "2026-04-01T00:00:00.000Z",
+			editedAt: "2026-04-01T00:00:00.000Z",
 			application: { id: "app", company: "Acme", role: "Engineer" },
 		});
 	});

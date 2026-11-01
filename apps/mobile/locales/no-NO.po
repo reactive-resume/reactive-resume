@@ -658,6 +658,10 @@ msgstr "{pairing} type"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# foreslått endring på denne siden · ingenting endres før du godtar} other {# foreslåtte endringer på denne siden · ingenting endres før du godtar}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -959,6 +963,11 @@ msgstr "Legg til et land"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "Legg til et faktum"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1786,6 +1795,10 @@ msgstr "Stigende"
 msgid "Ask"
 msgstr "Spørre"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Spør om denne søknaden…"
@@ -2191,6 +2204,7 @@ msgstr "Avbryt forespørsel"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Karriere"
 
@@ -2247,6 +2261,10 @@ msgstr "Endre tema til…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "Endre tidssone"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2609,6 +2627,7 @@ msgstr "Lukket: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Coach"
@@ -2747,6 +2766,10 @@ msgstr "Koble til en AI-leverandør"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Koble til en AI-leverandør i Innstillinger for å oppdatere den automatisk."
+
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
@@ -4039,6 +4062,7 @@ msgstr "Nedlasting åpner systemets delingsmeny. Velg en lagringstjeneste for å
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Last ned åpner systemdelingsmenyen. Velg en lagringstjeneste for å lagre filen. Et koblet følgebrev åpnes som en andre fil."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Last ned PDF"
@@ -5240,6 +5264,10 @@ msgid "Import it"
 msgstr "Importer"
 
 #: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
 msgstr "Importer din nåværende CV, eller start på nytt med navnet ditt."
 
@@ -5553,6 +5581,10 @@ msgstr "Hold deg til to eller tre skriftfamilier. Hver ekstra skrift er en ny sj
 msgid "Keep together"
 msgstr "Hold sammen"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Beholder de mest spesifikke delene"
@@ -5593,6 +5625,7 @@ msgstr "Vennlig hilsen,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Kunnskap"
 
@@ -5945,6 +5978,10 @@ msgstr "Koblet. Navn, e-post, telefon og by oppdateres når CV-en gjør det."
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Lenker"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6723,6 +6760,9 @@ msgid "No application"
 msgstr "Ingen jobbsøknad"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Ingen jobbsøknader ennå. Legg til en i jobbsøknadene først."
@@ -6751,6 +6791,10 @@ msgstr "Ingen vanlige seksjonsoverskrifter ble funnet."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Ingen samtaler om dette dokumentet ennå."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6902,6 +6946,10 @@ msgstr "Ingen resultater"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Ingen CV"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7170,6 +7218,7 @@ msgid "Offer type"
 msgstr "Type jobbtilbud"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Tilbud"
 
@@ -11385,6 +11434,11 @@ msgstr "Tittel"
 msgid "To"
 msgstr "Til"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Skal sjekkes"
@@ -11395,6 +11449,7 @@ msgstr "For å få en påminnelse, tillat varsler i enhetsinnstillingene."
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "I dag"
@@ -12404,6 +12459,10 @@ msgstr "Skriv tall med sifre"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Skriv en historie om noe du har gjort, i fem deler. La Resultat og Refleksjon stå tomme til du kan underbygge dem."
 
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "Skriv hele adressen slik at den gjenkjennes som en lenke."
@@ -12674,6 +12733,10 @@ msgstr "leverandøren din"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Dine offentlige lenker begynner med {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

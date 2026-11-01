@@ -34,7 +34,7 @@ export function AskCommandGroup() {
 	return (
 		<>
 			{question && (
-				<BaseCommandGroup heading={<Trans>Ask</Trans>}>
+				<BaseCommandGroup heading={<Trans>Ask</Trans>} forceMount>
 					<CommandItem
 						value={`ask ${question}`}
 						onSelect={() => {

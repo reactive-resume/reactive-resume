@@ -658,6 +658,10 @@ msgstr "نوع {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق} other {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق} zero {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق} two {تعديلان (#) مقترحان في هذه الصفحة · لا يتغير شيء حتى توافق} few {# تعديلات مقترحة في هذه الصفحة · لا يتغير شيء حتى توافق} many {# تعديل مقترح في هذه الصفحة · لا يتغير شيء حتى توافق}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -959,6 +963,11 @@ msgstr "أضف دولة"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "أضف حقيقة"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1786,6 +1795,10 @@ msgstr "تصاعدي"
 msgid "Ask"
 msgstr "بسأل"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "اسأل عن هذا الطلب…"
@@ -2191,6 +2204,7 @@ msgstr "إلغاء الطلب"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "المسار المهني"
 
@@ -2247,6 +2261,10 @@ msgstr "غيّر المظهر إلى…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "تغيير المنطقة الزمنية"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2609,6 +2627,7 @@ msgstr "مغلق: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "المدرّب"
@@ -2747,6 +2766,10 @@ msgstr "قم بتوصيل مزود AI"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "اربط مزوّد ذكاء اصطناعي في الإعدادات لتحديثها تلقائيًا."
+
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
@@ -4039,6 +4062,7 @@ msgstr "يفتح التنزيل قائمة المشاركة في النظام. �
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "يفتح التنزيل قائمة المشاركة في النظام. اختر خدمة تخزين لحفظ الملف. يُفتح خطاب التقديم المرتبط كملف ثانٍ."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "تنزيل PDF"
@@ -5240,6 +5264,10 @@ msgid "Import it"
 msgstr "استيراده"
 
 #: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
 msgstr "قم باستيراد سيرتك الذاتية الحالية، أو ابدأ من جديد باستخدام اسمك."
 
@@ -5553,6 +5581,10 @@ msgstr "التزم بعائلتين أو ثلاث عائلات خطوط. كل خ
 msgid "Keep together"
 msgstr "ابقوا معاً"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "يحافظ على الأجزاء الأكثر تحديدًا"
@@ -5593,6 +5625,7 @@ msgstr "أطيب التحيات،"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "المعرفة"
 
@@ -5945,6 +5978,10 @@ msgstr "مرتبط. يتم تحديث الاسم والبريد الإلكترو
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "روابط"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6723,6 +6760,9 @@ msgid "No application"
 msgstr "لا يوجد طلب وظيفة"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "لا توجد طلبات عمل حتى الآن. أضف واحدًا في طلبات العمل أولاً."
@@ -6751,6 +6791,10 @@ msgstr "لم يُعثر على عناوين أقسام تقليدية."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "لا توجد محادثات حول هذه الوثيقة حتى الآن."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6902,6 +6946,10 @@ msgstr "لا توجد نتائج"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "لا السيرة الذاتية"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7170,6 +7218,7 @@ msgid "Offer type"
 msgstr "نوع العرض الوظيفي"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "العروض"
 
@@ -11385,6 +11434,11 @@ msgstr "العنوان"
 msgid "To"
 msgstr "ل"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "للفحص"
@@ -11395,6 +11449,7 @@ msgstr "للحصول على تذكير، اسمح بالإشعارات في إع
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "اليوم"
@@ -12404,6 +12459,10 @@ msgstr "اكتب الأعداد بالأرقام"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "اكتب قصة عن شيء قمت به، في خمسة أجزاء. اترك النتيجة والتأمّل فارغين حتى تتمكن من دعمهما بأدلة."
 
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "اكتب العنوان كاملاً ليتم التعرف عليه كرابط."
@@ -12674,6 +12733,10 @@ msgstr "المزود الخاص بك"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "روابطك العامة تبدأ بـ {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

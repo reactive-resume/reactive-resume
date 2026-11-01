@@ -1,4 +1,29 @@
+import { Parser } from "htmlparser2";
 import sanitizeHtml from "sanitize-html";
+
+/** Legacy recipient markup becomes display text, never executable markup or encoded entity syntax. */
+export function coverLetterRecipientText(html: string): string {
+	let text = "";
+	let hidden = 0;
+	const blocks = new Set(["p", "div", "br", "li", "blockquote", "h1", "h2", "h3", "tr"]);
+	new Parser(
+		{
+			onopentag(name) {
+				if (name === "script" || name === "style") hidden++;
+				else if (!hidden && blocks.has(name)) text += " ";
+			},
+			ontext(value) {
+				if (!hidden) text += value;
+			},
+			onclosetag(name) {
+				if (name === "script" || name === "style") hidden = Math.max(0, hidden - 1);
+				else if (!hidden && blocks.has(name)) text += " ";
+			},
+		},
+		{ decodeEntities: true },
+	).end(html);
+	return text.replace(/\s+/g, " ").trim();
+}
 
 // Match RichInput's formatting surface, without executable markup or CSS URLs.
 export function sanitizeCoverLetterHtml(html: string): string {

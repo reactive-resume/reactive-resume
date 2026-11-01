@@ -884,7 +884,15 @@ msgstr "{toCheck, plural, one {វាល # ត្រូវការមើល។}
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# ដើម្បីពិនិត្យ} other {# ដើម្បីពិនិត្យ}}"
 
-#. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
+#: src/features/settings/account/profile.tsx
+msgid "{total, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {# document} other {# documents}}"
+msgstr ""
+
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr "{type} · បានកែសម្រួល {0}"
@@ -1306,6 +1314,11 @@ msgstr "បន្ថែមប្រទេសមួយ។"
 #: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "បន្ថែមការពិត ឧទាហរណ៍ “ខ្ញុំបានបង្វឹក PM រងពីរនាក់ក្នុងឆ្នាំ 2025”"
+
+#: src/features/documents/document-actions.tsx
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/components/input/chip-input.tsx
 msgid "Add a keyword..."
@@ -2762,6 +2775,7 @@ msgstr ""
 msgid "Capture does not use AI. Review every field before saving."
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
@@ -2784,6 +2798,7 @@ msgstr "Catalan"
 msgid "Certifications"
 msgstr "វិញ្ញាបនបត្រ"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/settings/account/security.tsx
@@ -2837,6 +2852,10 @@ msgstr "ផ្លាស់ប្តូរធាតុបន្ទាត់ពេ
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "ប្តូរតំបន់ពេលវេលា"
+
+#: src/features/settings/account/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Change your password"
@@ -3037,6 +3056,7 @@ msgstr ""
 msgid "Choose a file"
 msgstr "ជ្រើសរើសឯកសារ"
 
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose a file to import"
 msgstr "ជ្រើសរើសឯកសារដើម្បីនាំចូល"
@@ -3229,6 +3249,7 @@ msgstr "បានបិទជា {label}"
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "គ្រូបង្វឹក"
@@ -4351,6 +4372,7 @@ msgstr "បំពេញស៊ុម"
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/navigation.tsx
 msgid "Cover letter"
 msgstr "លិខិតអម"
 
@@ -4969,6 +4991,7 @@ msgid "Documentation"
 msgstr "ឯកសារ"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5075,6 +5098,7 @@ msgid "Download failed. Try again."
 msgstr "ការទាញយកបរាជ័យ។ ព្យាយាមម្តងទៀត។"
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -6748,9 +6772,17 @@ msgstr "ដំណើរការនាំចូល"
 msgid "Import steps"
 msgstr "ជំហាននាំចូល"
 
+#: src/features/documents/documents-page.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
 msgstr "នាំចូលឯកសារនេះទៅក្នុង Reactive Resume ឥតគិតថ្លៃ។ បញ្ហានីមួយៗកំពុងរង់ចាំអ្នកនៅក្នុង Check ។"
+
+#: src/features/documents/documents-page.tsx
+msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a PDF, Word or JSON file."
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
@@ -7206,6 +7238,10 @@ msgstr "រក្សាឱ្យបានពីរឬបីគ្រួសារ
 msgid "Keep together"
 msgstr "រក្សា​គ្នា​ឲ្យ​នៅ​ជាប់​គ្នា"
 
+#: src/features/settings/account/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Keeps the most specific parts"
 msgstr "រក្សាផ្នែកជាក់លាក់បំផុត។"
@@ -7256,6 +7292,7 @@ msgstr "Khmer"
 msgid "Kind regards,"
 msgstr "ដោយក្តីគោរព,"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -7469,6 +7506,8 @@ msgid "letter"
 msgstr "សំបុត្រ"
 
 #: src/features/assistant/document.ts
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7680,6 +7719,10 @@ msgstr "កំពុងភ្ជាប់..."
 #: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "តំណភ្ជាប់"
+
+#: src/features/settings/account/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/homepage/hero.tsx
 msgid "Lisbon"
@@ -8442,6 +8485,8 @@ msgstr "ពាក្យសុំថ្មី"
 msgid "New conversation"
 msgstr "ការសន្ទនាថ្មី។"
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter"
 msgstr ""
@@ -8472,6 +8517,10 @@ msgstr "ទំព័រថ្មី។"
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "ពាក្យសម្ងាត់ថ្មី"
+
+#: src/features/documents/documents-page.tsx
+msgid "New resume"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "New roles from your search"
@@ -8563,6 +8612,9 @@ msgid "No applications yet"
 msgstr "មិនទាន់មានពាក្យសុំការងារនៅឡើយទេ"
 
 #: src/features/documents/document-actions.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "មិនទាន់មានពាក្យសុំការងារនៅឡើយទេ។ បញ្ចូលពាក្យសុំការងារជាមុនសិន។"
@@ -8607,6 +8659,10 @@ msgstr "គ្មានការកែតម្រូវ"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "No country matches."
 msgstr "រកមិនឃើញប្រទេសទេ។"
+
+#: src/features/documents/documents-page.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -8743,6 +8799,10 @@ msgstr "រក​មិន​ឃើញ​លទ្ធផល។"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "មិនមានប្រវត្តិរូបសង្ខេបទេ។"
+
+#: src/features/documents/documents-page.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
@@ -9102,6 +9162,7 @@ msgstr "បានរក្សាទុកសំណើការងារ"
 msgid "Offer type"
 msgstr "ប្រភេទសំណើការងារ"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "ការផ្តល់ការងារ"
@@ -9546,6 +9607,10 @@ msgstr "Parcel & Co."
 #: src/features/homepage/write.tsx
 msgid "Parcel & Co. · Porto"
 msgstr "Parcel & Co. · Porto"
+
+#: src/features/settings/account/profile.tsx
+msgid "Part of every public link. Old links keep working for 30 days after a change."
+msgstr ""
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
@@ -11067,6 +11132,7 @@ msgstr "ប្រវត្តិរូបសង្ខេប"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -12161,6 +12227,10 @@ msgstr "ចែករំលែកផ្នែក"
 #: src/features/resume/share/address-field.tsx
 msgid "Share via…"
 msgstr "ចែករំលែកតាមរយៈ…"
+
+#: src/features/documents/document-actions.tsx
+msgid "Share…"
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
@@ -14031,11 +14101,17 @@ msgstr "ចំណងជើង"
 msgid "To"
 msgstr "ទៅ"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/document-card.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/libs/dnd.ts
 msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
 msgstr "ដើម្បីលើកវា ចុច Space ឬ Enter។ ប្រើគ្រាប់ចុចព្រួញដើម្បីផ្លាស់ទី Space ឬ Enter ដើម្បីដាក់ ឬ Escape ដើម្បីបោះបង់។"
 
 #: src/features/applications/components/calendar-view.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
@@ -14118,6 +14194,7 @@ msgid "Translations"
 msgstr "ការបកប្រែ"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Trash"
@@ -15310,6 +15387,10 @@ msgstr "សរសេរលេខជាតួលេខ"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "សរសេររឿងអំពីអ្វីមួយដែលអ្នកបានធ្វើ ដោយចែកជាប្រាំផ្នែក។ ទុកផ្នែក «លទ្ធផល» និង «ការឆ្លុះបញ្ចាំង» ឱ្យនៅទទេ រហូតដល់អ្នកអាចផ្តល់ភស្តុតាងគាំទ្របាន។"
 
+#: src/features/documents/documents-page.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "សរសេរអាសយដ្ឋានពេញលេញ ដើម្បីឱ្យវាត្រូវបានទទួលស្គាល់ជាតំណ។"
@@ -15625,6 +15706,14 @@ msgstr "ឯកសាររបស់អ្នក។"
 msgid "Your focus"
 msgstr "ការផ្តោតរបស់អ្នក"
 
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest documents and applications are in this account."
+msgstr ""
+
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "ចំណងជើងរបស់អ្នកមើលទៅដូចអត្ថបទតួខ្លួន។"
@@ -15704,6 +15793,10 @@ msgstr "ចំណង់ចំណូលចិត្តរបស់អ្នក"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "អ្នកផ្តល់សេវារបស់អ្នក។"
+
+#: src/features/settings/account/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #. placeholder {0}: voice.settings.transcribe.label
 #: src/features/career/workspace/practise.tsx
