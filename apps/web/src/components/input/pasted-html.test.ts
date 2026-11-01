@@ -32,6 +32,22 @@ describe("cleanPastedHtml", () => {
 		expect(cleanPastedHtml(html)).toBe("<ol><li>First</li><li>Second</li></ol>");
 	});
 
+	it("keeps a numbered list's start and an item's own leading dash", () => {
+		const html = [
+			'<p style="mso-list:l1 level1 lfo2"><span style="mso-list:Ignore">4.<span>&nbsp;&nbsp;</span></span>Fourth</p>',
+			'<p style="mso-list:l1 level1 lfo2"><span style="mso-list:Ignore">5.<span>&nbsp;&nbsp;</span></span>- configured monitoring</p>',
+		].join("");
+		expect(cleanPastedHtml(html)).toBe('<ol start="4"><li>Fourth</li><li>- configured monitoring</li></ol>');
+	});
+
+	it("keeps a bullet list and the numbered list after it apart", () => {
+		const html = [
+			'<p style="mso-list:l0 level1 lfo1"><span style="mso-list:Ignore">·<span>&nbsp;</span></span>Bullet</p>',
+			'<p style="mso-list:l1 level1 lfo2"><span style="mso-list:Ignore">1.<span>&nbsp;</span></span>Step</p>',
+		].join("");
+		expect(cleanPastedHtml(html)).toBe("<ul><li>Bullet</li></ul><ol><li>Step</li></ol>");
+	});
+
 	it("leaves plain markup alone", () => {
 		const html = '<p>One <a href="https://example.com">link</a></p><ul><li>Item</li></ul>';
 		expect(cleanPastedHtml(html)).toBe(html);

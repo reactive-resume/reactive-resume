@@ -284,13 +284,10 @@ export function SectionSheet({ resumeId, section, open, onClose, onMove }: Secti
 									edit((draft) => deleteCustomSection(draft, section.id));
 									// After later edits, Undo adds the section back where it was.
 									undoToast(t`${title} deleted`, (draft) => {
-										if (!custom || draft.customSections.some((item) => item.id === custom.id)) return;
+										if (!custom || draft.customSections.some((item) => item.id === custom.id)) return false;
 										draft.customSections.push(structuredClone(custom));
-										draft.metadata.layout.pages.forEach((page, index) => {
-											const place = places[index];
-											if (place && place.main !== -1) page.main.splice(place.main, 0, custom.id);
-											if (place && place.sidebar !== -1) page.sidebar.splice(place.sidebar, 0, custom.id);
-										});
+										restoreToLayout(draft.metadata.layout.pages, custom.id, places);
+										return true;
 									});
 								} else {
 									const before = "items" in settings ? { items: settings.items } : { content: settings.content };
@@ -301,11 +298,16 @@ export function SectionSheet({ resumeId, section, open, onClose, onMove }: Secti
 									// After later edits, Undo puts the entries back if the section is still empty.
 									undoToast(t`${title} cleared`, (draft) => {
 										const target = getSectionObject(draft, section);
-										if (!target) return;
-										if ("items" in target && "items" in before && target.items.length === 0)
+										if (!target) return false;
+										if ("items" in target && "items" in before && target.items.length === 0) {
 											target.items = structuredClone(before.items) as typeof target.items;
-										else if ("content" in target && "content" in before && !target.content)
+											return true;
+										}
+										if ("content" in target && "content" in before && !target.content) {
 											target.content = before.content;
+											return true;
+										}
+										return false;
 									});
 								}
 							}}
@@ -353,4 +355,23 @@ export function SectionSheet({ resumeId, section, open, onClose, onMove }: Secti
 			/>
 		</>
 	);
+}
+
+type LayoutPage = { fullWidth: boolean; main: string[]; sidebar: string[] };
+
+/**
+ * Puts a restored section back where it was: its page and column, at its place. A page made full width since takes it
+ * in its main column; a page deleted since leaves it at the end of the last page (web section-row).
+ */
+function restoreToLayout(pages: LayoutPage[], id: string, places: { main: number; sidebar: number }[]) {
+	let placed = false;
+	places.forEach((place, index) => {
+		const page = pages[index];
+		if (!page || (place.main === -1 && place.sidebar === -1)) return;
+		if (place.sidebar !== -1 && !page.fullWidth)
+			page.sidebar.splice(Math.min(place.sidebar, page.sidebar.length), 0, id);
+		else page.main.splice(Math.min(place.main === -1 ? page.main.length : place.main, page.main.length), 0, id);
+		placed = true;
+	});
+	if (!placed) pages.at(-1)?.main.push(id);
 }

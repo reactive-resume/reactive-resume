@@ -209,8 +209,8 @@ function formatMonth(year: number, month: number, locale: string, style: "short"
 const yearFormatters = new Map<string, Intl.NumberFormat>();
 
 // A year in the digits the locale's month dates use, so "2019" sits beside "أبريل ٢٠١٩" as "٢٠١٩". Only the digits
-// change: the year stays the one the user entered, in any calendar.
-function formatYear(year: number, locale: string) {
+// change, one by one: the year stays the one the user entered, leading zeros and all, in any calendar.
+function formatYear(yearText: string, locale: string) {
 	let formatter = yearFormatters.get(locale);
 	if (!formatter) {
 		let numberingSystem = "latn";
@@ -222,7 +222,8 @@ function formatYear(year: number, locale: string) {
 		formatter = new Intl.NumberFormat("en-US", { numberingSystem, useGrouping: false });
 		yearFormatters.set(locale, formatter);
 	}
-	return formatter.format(year);
+	const digits = formatter;
+	return yearText.replace(/\d/g, (digit) => digits.format(Number(digit)));
 }
 
 /**
@@ -234,7 +235,7 @@ export function formatYearMonth(value: YearMonth, { locale, format = DEFAULT_DAT
 	if (!monthText) {
 		const year = Number(yearText);
 		if (!yearText || !Number.isInteger(year) || format === "iso" || format === "numeric") return yearText ?? value;
-		return formatYear(year, locale);
+		return formatYear(yearText, locale);
 	}
 
 	const year = Number(yearText);

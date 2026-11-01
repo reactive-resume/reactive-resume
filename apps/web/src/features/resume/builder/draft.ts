@@ -821,8 +821,32 @@ useResumeStore.subscribe((state, previous) => {
 	const resume = state.resume;
 	if (!resume || previous.resume?.id !== resume.id || !previous.resume.isLocked || resume.isLocked) return;
 	if (state.saveStatus === "locked" || (state.saveStatus === "error" && runtimes.get(resume.id)?.saveFailed))
-		state.retrySave();
+		void resendAfterUnlock(resume.id);
 });
+
+/**
+ * Locking and unlocking each move the server's revision without touching the content. When the saved content is still
+ * what these edits build on, adopt that revision before sending them; otherwise the save meets the change as a
+ * conflict, as it should.
+ */
+async function resendAfterUnlock(id: string) {
+	const runtime = runtimes.get(id);
+	if (!runtime) return;
+	try {
+		const remote = (await orpc.resume.getById.call({ id }, { signal: runtime.abortController.signal })) as Resume;
+		if (
+			runtimes.get(id) === runtime &&
+			runtime.baseData &&
+			runtime.baseUpdatedAt &&
+			remote.updatedAt > runtime.baseUpdatedAt &&
+			isEqual(parseResumeData(structuredClone(remote.data)), parseResumeData(structuredClone(runtime.baseData)))
+		)
+			runtime.baseUpdatedAt = remote.updatedAt;
+	} catch {
+		// Offline or gone: the resend below fails the usual way and keeps Retry.
+	}
+	if (runtimes.get(id) === runtime) useResumeStore.getState().retrySave();
+}
 
 type ImmerSet = (fn: (state: WritableDraft<ResumeStore>) => void) => void;
 type StoreGet = () => ResumeStore;
@@ -1197,33 +1221,53 @@ export function useResumeCleanup() {
 	const { status: blockerStatus, proceed, reset: stay } = blocker;
 
 	// Leaving waited for a save that didn't happen: say why, and let the user leave with the changes kept on this device.
+	// The note follows the save as it goes on: a save that lands late lets the navigation through.
 	useEffect(() => {
 		if (blockerStatus !== "blocked") return;
-		const status = useResumeStore.getState().saveStatus;
-		// A conflict has its own Reload; the editor stays open until it's settled.
-		if (status === "conflict") return stay?.();
+		const id = "resume-leave-unsaved";
 		let leaving = false;
-		toast.add({
-			id: "resume-leave-unsaved",
-			type: status === "offline" ? "info" : "error",
-			timeout: 0,
-			description:
-				status === "offline"
-					? t`You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back.`
-					: status === "locked"
-						? t`This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them.`
-						: t`Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again.`,
-			actionProps: {
-				children: t`Leave anyway`,
-				onClick: () => {
-					leaving = true;
-					proceed?.();
+		let settled = false;
+		const show = (status: SaveStatus) =>
+			toast.add({
+				id,
+				type: status === "offline" ? "info" : "error",
+				timeout: 0,
+				description:
+					status === "offline"
+						? t`You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back.`
+						: status === "locked"
+							? t`This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them.`
+							: status === "saving"
+								? t`Still saving your latest changes. They're kept on this device if you leave now.`
+								: t`Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again.`,
+				actionProps: {
+					children: t`Leave anyway`,
+					onClick: () => {
+						leaving = true;
+						proceed?.();
+					},
 				},
-			},
-			onClose: () => {
-				if (!leaving) stay?.();
-			},
+				onClose: () => {
+					if (!leaving && !settled) stay?.();
+				},
+			});
+		const initial = useResumeStore.getState().saveStatus;
+		// A conflict has its own Reload; the editor stays open until it's settled.
+		if (initial === "conflict") return stay?.();
+		show(initial);
+		const unsubscribe = useResumeStore.subscribe((state, previous) => {
+			if (state.saveStatus === previous.saveStatus || leaving || settled) return;
+			if (state.saveStatus === "saved") {
+				settled = true;
+				toast.close(id);
+				proceed?.();
+			} else if (state.saveStatus === "conflict") {
+				settled = true;
+				toast.close(id);
+				stay?.();
+			} else show(state.saveStatus);
 		});
+		return unsubscribe;
 	}, [blockerStatus, proceed, stay]);
 
 	useEffect(() => {

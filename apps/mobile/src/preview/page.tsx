@@ -38,6 +38,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 	const selection = selected?.data === draft.data ? selected.node : null;
 	const [fitting, setFitting] = useState(false);
 	const [fitFailed, setFitFailed] = useState(false);
+	const [fitError, setFitError] = useState(false);
 	const [fitApplied, setFitApplied] = useState(false);
 	const latestData = useRef(draft.data);
 	useLayoutEffect(() => {
@@ -72,6 +73,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 		if (!data || fitting || draft.locked) return;
 		setFitting(true);
 		setFitFailed(false);
+		setFitError(false);
 		try {
 			const fitted = await fitResume(data, () => mounted.current && latestData.current === data);
 			if (!mounted.current || latestData.current !== data) return;
@@ -92,7 +94,8 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 			);
 			if (applied) setFitApplied(true);
 		} catch {
-			if (mounted.current) setFitFailed(true);
+			// A render that failed says nothing about whether the content fits.
+			if (mounted.current) setFitError(true);
 		} finally {
 			if (mounted.current) setFitting(false);
 		}
@@ -100,7 +103,9 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 	const authored = Math.max(1, data?.metadata.layout.pages.length ?? 1);
 	const overflow = result && result.pageCount > authored;
 	// The sections that spill go onto a new page: the other way out besides Fit.
-	const spilling = overflow && data ? spillingSections(data.metadata.layout.pages, result.pageMap.nodes) : null;
+	// Only for the draft itself: with the Assistant's edits marked, the page shown isn't the one a new page would split.
+	const spilling =
+		overflow && data && !previewData ? spillingSections(data.metadata.layout.pages, result.pageMap.nodes) : null;
 	const addPage = () => {
 		if (!spilling || draft.locked) return;
 		draft.update((value) => addPageWith(value.metadata.layout.pages, spilling), { newStep: true });
@@ -154,6 +159,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 					}
 				/>
 			) : null}
+			{fitError ? <Banner tone="danger" message={t`Couldn't run Fit. Try again.`} /> : null}
 			{fitFailed ? (
 				<Banner
 					tone="warn"

@@ -15,14 +15,29 @@ function isWordListItem(element: Element) {
 	);
 }
 
-/** Drops the marker Word typed in front of a list paragraph; says whether it was a number or letter. */
-function stripWordMarker(item: Element) {
-	let ordered = false;
-	// Word wraps the marker in `mso-list:Ignore`; the text after it is the item.
+// A numbered marker's value: "4." → 4. Letters and roman numerals don't carry a start a list can use.
+const markerNumber = (marker: string) => {
+	const digits = /^\s*\(?(\d{1,3})[.)]/.exec(marker)?.[1];
+	return digits ? Number(digits) : undefined;
+};
+
+type WordMarker = { ordered: boolean; number: number | undefined };
+
+/**
+ * Drops the marker Word typed in front of a list paragraph and says what it was. Word wraps the marker in an
+ * `mso-list:Ignore` span; only without one is a marker read off the text, so an item that begins "- " or "Inc. " keeps
+ * its words when Word marked the list itself.
+ */
+function stripWordMarker(item: Element): WordMarker {
+	const result: WordMarker = { ordered: false, number: undefined };
+	let spanned = false;
 	for (const marker of item.querySelectorAll('[style*="mso-list"]')) {
 		if (!/ignore/i.test(marker.getAttribute("style") ?? "")) continue;
-		ordered ||= ORDERED_MARKER.test(marker.textContent ?? "");
+		const text = marker.textContent ?? "";
+		result.ordered ||= ORDERED_MARKER.test(text);
+		result.number ??= markerNumber(text);
 		marker.remove();
+		spanned = true;
 	}
 	const walker = item.ownerDocument.createTreeWalker(item, 4 /* NodeFilter.SHOW_TEXT */);
 	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
@@ -31,26 +46,38 @@ function stripWordMarker(item: Element) {
 			node.textContent = "";
 			continue;
 		}
-		const match = WORD_MARKER.exec(text);
+		const match = spanned ? null : WORD_MARKER.exec(text);
 		if (match) {
-			ordered ||= ORDERED_MARKER.test(match[0]);
+			result.ordered ||= ORDERED_MARKER.test(match[0]);
+			result.number ??= markerNumber(match[0]);
 			node.textContent = text.slice(match[0].length);
 		}
 		break;
 	}
-	return ordered;
+	return result;
 }
 
-/** Word's list paragraphs as lists: each run of them becomes one `<ul>` (or `<ol>` when numbered). */
+/** Which Word list a paragraph belongs to (its `lfo` number): a bullet list and a numbered one next to it stay apart. */
+const listInstance = (element: Element) => /\blfo(\d+)/i.exec(element.getAttribute("style") ?? "")?.[1];
+
+/** Word's list paragraphs as lists: each run of one list becomes one `<ul>` (or `<ol>`, from its first number). */
 function convertWordLists(body: HTMLElement) {
 	const document = body.ownerDocument;
 	for (const paragraph of body.querySelectorAll("p")) {
 		if (!paragraph.isConnected || !isWordListItem(paragraph)) continue;
+		const instance = listInstance(paragraph);
 		const run: Element[] = [];
-		for (let item: Element | null = paragraph; item && isWordListItem(item); item = item.nextElementSibling)
+		for (
+			let item: Element | null = paragraph;
+			item && isWordListItem(item) && listInstance(item) === instance;
+			item = item.nextElementSibling
+		)
 			run.push(item);
-		const ordered = run.map(stripWordMarker).some(Boolean);
+		const markers = run.map(stripWordMarker);
+		const ordered = markers.some((marker) => marker.ordered);
 		const list = document.createElement(ordered ? "ol" : "ul");
+		const start = markers[0]?.number;
+		if (ordered && start !== undefined && start !== 1) list.setAttribute("start", String(start));
 		paragraph.before(list);
 		for (const item of run) {
 			const li = document.createElement("li");

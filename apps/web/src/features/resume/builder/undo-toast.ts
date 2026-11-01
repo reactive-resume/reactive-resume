@@ -3,8 +3,11 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { useResumeStore } from "./draft";
 
 type UndoToastOptions = Omit<NonNullable<Parameters<typeof toast.add>[0]>, "description" | "actionProps"> & {
-	/** Puts the change back another way once later edits sit on top of it, such as re-adding a deleted entry. */
-	restore?: () => void;
+	/**
+	 * Puts the change back another way once later edits sit on top of it, such as re-adding a deleted entry. Returns
+	 * whether it could; when it can't, the toast says to use Undo instead.
+	 */
+	restore?: () => boolean;
 };
 
 /**
@@ -13,7 +16,9 @@ type UndoToastOptions = Omit<NonNullable<Parameters<typeof toast.add>[0]>, "desc
  * change another way when it can, or says to use Undo in the editor.
  */
 export function undoToast(description: string, { restore, ...options }: UndoToastOptions = {}) {
-	const changed = useResumeStore.getState().resume?.data;
+	const { resume } = useResumeStore.getState();
+	const changed = resume?.data;
+	const resumeId = resume?.id;
 	return toast.add({
 		...options,
 		description,
@@ -21,8 +26,10 @@ export function undoToast(description: string, { restore, ...options }: UndoToas
 			children: t`Undo`,
 			onClick: () => {
 				const current = useResumeStore.getState();
-				if (changed && current.resume?.data === changed) return current.undo();
-				if (restore && current.resume && !current.resume.isLocked) return restore();
+				// The toast can outlive the resume it was about: another one open here is left alone.
+				if (!current.resume || current.resume.id !== resumeId) return;
+				if (changed && current.resume.data === changed) return current.undo();
+				if (restore && !current.resume.isLocked && restore()) return;
 				toast.add({ description: t`You've made changes since. Use Undo to step back through them.` });
 			},
 		},

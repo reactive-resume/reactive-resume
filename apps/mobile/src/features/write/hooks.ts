@@ -58,16 +58,26 @@ export function useSectionTitle(section: WriteSection | null) {
  */
 export function useUndoToast() {
 	const { t } = useLingui();
-	return (message: string, restore?: (draft: WritableDraft<ResumeData>) => void) => {
-		const changed = useResumeStore.getState().data;
+	/** `restore` returns whether it put the change back; when it can't, the toast says to use Undo instead. */
+	return (message: string, restore?: (draft: WritableDraft<ResumeData>) => boolean) => {
+		const { data: changed, document } = useResumeStore.getState();
+		const resumeId = document?.id;
 		showToast({
 			message,
 			action: {
 				label: t`Undo`,
 				onPress: () => {
 					const current = useResumeStore.getState();
+					// The toast can outlive the resume it was about: another one open here is left alone.
+					if (!current.document || current.document.id !== resumeId) return;
 					if (changed && current.data === changed) return current.undo();
-					if (restore && !current.locked) return edit(restore);
+					if (restore && !current.locked) {
+						let restored = false;
+						edit((draft) => {
+							restored = restore(draft);
+						});
+						if (restored) return;
+					}
 					showToast({ message: t`You've made changes since. Use Undo to step back through them.` });
 				},
 			},
@@ -101,8 +111,9 @@ export function useDeleteEntry() {
 		// After later edits, Undo puts the entry back where it was.
 		undoToast(t`Entry deleted`, (draft) => {
 			const items = getEntries(draft, section);
-			if (!items.some((entry) => entry.id === entryId))
-				items.splice(Math.min(index, items.length), 0, structuredClone(deleted));
+			if (items.some((entry) => entry.id === entryId)) return false;
+			items.splice(Math.min(index, items.length), 0, structuredClone(deleted));
+			return true;
 		});
 	};
 }

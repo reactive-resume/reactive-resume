@@ -729,7 +729,13 @@ describe("builder resume autosave", () => {
 		await flushMicrotasks();
 		expect(useResumeStore.getState().saveStatus).toBe("locked");
 
-		orpcMocks.updateResume.mockResolvedValueOnce(withBasicsName(initial, "Typed before the lock"));
+		// Locking and unlocking moved the server's revision; the content is still what the edit builds on.
+		const unlockedAt = new Date(initial.updatedAt.getTime() + 2000);
+		orpcMocks.getResumeById.mockResolvedValueOnce({ ...initial, updatedAt: unlockedAt });
+		orpcMocks.updateResume.mockResolvedValueOnce({
+			...withBasicsName(initial, "Typed before the lock"),
+			updatedAt: new Date(unlockedAt.getTime() + 1000),
+		});
 		useResumeStore.setState((state) => {
 			if (state.resume) state.resume.isLocked = true;
 		});
@@ -738,8 +744,10 @@ describe("builder resume autosave", () => {
 			if (state.resume) state.resume.isLocked = false;
 		});
 		await flushMicrotasks();
+		await flushMicrotasks();
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(2);
 		expect(orpcMocks.updateResume.mock.lastCall?.[0].data.basics.name).toBe("Typed before the lock");
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].expectedUpdatedAt).toEqual(unlockedAt);
 	});
 
 	it("explains a blocked leave and lets the user leave with the draft kept (L3-05)", () => {

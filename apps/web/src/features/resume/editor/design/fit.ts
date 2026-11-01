@@ -62,9 +62,15 @@ export function measureOverflow(data: ResumeData, rendered: { pageCount: number;
 /** Adds a page after the last one and moves the sections that spill onto it, as one undo step. */
 export function addSpillPage() {
 	const { resume, updateResumeData } = useResumeStore.getState();
-	if (!resume) return false;
+	if (!resume || resume.isLocked) return false;
 	const moving = spillingSections(resume.data.metadata.layout.pages, useEditorStore.getState().rendered.pageMap?.nodes);
-	if (!moving) return false;
+	if (!moving) {
+		toast.add({
+			type: "info",
+			description: t`One section fills the last page, so there's nothing to move onto a new one. Shorten it, or split it in Design → Page → Pages and sections.`,
+		});
+		return false;
+	}
 	const page = resume.data.metadata.layout.pages.length + 1;
 	updateResumeData((draft) => addPageWith(draft.metadata.layout.pages, moving), { newStep: true });
 	const count = moving.main.length + moving.sidebar.length;
@@ -91,14 +97,19 @@ export async function runFit() {
 	let version = useEditorStore.getState().rendered.version;
 	let applied = false;
 	let fitted: ResumeData | undefined;
+	// An edit between two steps starts its own undo step, so one Undo could no longer take the whole run back.
+	let expected: ResumeData | undefined = resume.data;
+	let interrupted = false;
 
 	const result = await fitToPages(
 		{ density: matchDensity(metadata), margins: matchMargins(metadata), size: metadata.typography.body.fontSize },
 		(step) => {
 			version = useEditorStore.getState().rendered.version;
 			applied = true;
+			if (useResumeStore.getState().resume?.data !== expected) interrupted = true;
 			updateResumeData((draft) => applyStep(draft.metadata, step), { coalesceKey: key, sameStep: true });
 			fitted = useResumeStore.getState().resume?.data;
+			expected = fitted;
 		},
 		async () => {
 			if (applied) await waitForRender(version);
@@ -109,7 +120,7 @@ export async function runFit() {
 	if (!result.fits) {
 		// Nothing gained: put the design back, unless something else was edited meanwhile.
 		const current = useResumeStore.getState();
-		const reverted = !!fitted && current.resume?.data === fitted;
+		const reverted = !interrupted && !!fitted && current.resume?.data === fitted;
 		if (reverted) current.undo();
 		const addPage = { children: t`Add page ${authored + 1}`, onClick: () => void addSpillPage() };
 		toast.add({

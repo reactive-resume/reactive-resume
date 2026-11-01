@@ -269,15 +269,18 @@ function deleteEntry(section: WriteSection, entryId: string) {
 	useEditorStore.setState({ selection: null });
 	undoToast(t`Entry deleted`, {
 		// Later edits came after the delete: put the entry back where it was.
-		restore: () =>
+		restore: () => {
+			const current = useResumeStore.getState().resume;
+			if (!current || getEntries(current.data, section).some((entry) => entry.id === entryId)) return false;
 			useResumeStore.getState().updateResumeData(
 				(draft) => {
 					const items = getEntries(draft, section);
-					if (!items.some((entry) => entry.id === entryId))
-						items.splice(Math.min(index, items.length), 0, structuredClone(deleted));
+					items.splice(Math.min(index, items.length), 0, structuredClone(deleted));
 				},
 				{ newStep: true },
-			),
+			);
+			return true;
+		},
 	});
 }
 

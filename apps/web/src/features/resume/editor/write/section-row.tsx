@@ -250,12 +250,17 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 		});
 		undoToast(t`${title} cleared`, {
 			// Later edits came after the clear: put the entries back if the section is still empty.
-			restore: () =>
-				edit((target) => {
-					if ("items" in target && "items" in before && target.items.length === 0)
-						target.items = structuredClone(before.items) as typeof target.items;
-					else if ("content" in target && "content" in before && !target.content) target.content = before.content;
-				}),
+			restore: () => {
+				const data = useResumeStore.getState().resume?.data;
+				const target = data ? getSectionObject(data, section) : undefined;
+				const empty = target ? ("items" in target ? target.items.length === 0 : !target.content) : false;
+				if (!empty) return false;
+				edit((draft) => {
+					if ("items" in draft && "items" in before) draft.items = structuredClone(before.items) as typeof draft.items;
+					else if ("content" in draft && "content" in before) draft.content = before.content;
+				});
+				return true;
+			},
 		});
 	};
 
@@ -278,20 +283,18 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 		);
 		undoToast(t`${title} deleted`, {
 			// Later edits came after the delete: add the section back where it was.
-			restore: () =>
-				custom &&
+			restore: () => {
+				const data = useResumeStore.getState().resume?.data;
+				if (!custom || !data || data.customSections.some((item) => item.id === custom.id)) return false;
 				updateResumeData(
 					(draft) => {
-						if (draft.customSections.some((item) => item.id === custom.id)) return;
 						draft.customSections.push(structuredClone(custom));
-						draft.metadata.layout.pages.forEach((page, index) => {
-							const place = places[index];
-							if (place && place.main !== -1) page.main.splice(place.main, 0, custom.id);
-							if (place && place.sidebar !== -1) page.sidebar.splice(place.sidebar, 0, custom.id);
-						});
+						restoreToLayout(draft.metadata.layout.pages, custom.id, places);
 					},
 					{ newStep: true },
-				),
+				);
+				return true;
+			},
 		});
 	};
 
@@ -455,4 +458,23 @@ function useProposedCount(sectionId: string) {
 	const data = useCurrentBuilderResumeSelector((resume) => resume.data);
 	const applications = useResumeStore((state) => state.proposalApplications);
 	return pendingProposals(data, proposals, sectionId, applications).length;
+}
+
+type LayoutPage = { fullWidth: boolean; main: string[]; sidebar: string[] };
+
+/**
+ * Puts a restored section back where it was: its page and column, at its place. A page made full width since takes it
+ * in its main column; a page deleted since leaves it at the end of the last page.
+ */
+function restoreToLayout(pages: LayoutPage[], id: string, places: { main: number; sidebar: number }[]) {
+	let placed = false;
+	places.forEach((place, index) => {
+		const page = pages[index];
+		if (!page || (place.main === -1 && place.sidebar === -1)) return;
+		if (place.sidebar !== -1 && !page.fullWidth)
+			page.sidebar.splice(Math.min(place.sidebar, page.sidebar.length), 0, id);
+		else page.main.splice(Math.min(place.main === -1 ? page.main.length : place.main, page.main.length), 0, id);
+		placed = true;
+	});
+	if (!placed) pages.at(-1)?.main.push(id);
 }
