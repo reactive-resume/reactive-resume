@@ -141,8 +141,13 @@ const saved = state();
 const profile = state({ data: {} });
 const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
 const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
+const applicationData = load("../../../packages/schema/src/applications/data.ts", {
+	zod,
+	"@reactive-resume/utils/timezone": timeParser,
+});
 const careerSchema = load("../../../packages/schema/src/career.ts", {
 	zod,
+	"./applications/data": applicationData,
 	"@reactive-resume/utils/region": { searchRegionsSchema: zod.z.array(zod.z.string()).nullable().optional() },
 	"@reactive-resume/utils/timezone": timeParser,
 });
@@ -161,7 +166,12 @@ const { OffersScreen } = load("features/career/offers.tsx", {
 	},
 	"@reactive-resume/schema/career-offer": offerDomain,
 	"./offer-compare": load("features/career/offer-compare.ts"),
-	"./offer-entry": { OfferEntry: "OfferEntry" },
+	"./offer-entry": { OfferEntry: "OfferEntry", OfferForm: "OfferForm" },
+	"./undo": {
+		withUndo: () => {
+			throw new Error("Unexpected delete in loading test");
+		},
+	},
 	"./shared": shared,
 	"@/features/applications/queries": { useApplications: () => applications },
 });

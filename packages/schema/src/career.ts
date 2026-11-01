@@ -1,6 +1,7 @@
 import z from "zod";
 import { searchRegionsSchema } from "@reactive-resume/utils/region";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
+import { applicationClosedReasonSchema, applicationStatusSchema } from "./applications/data";
 
 /** The workspace tabs of one application, in the order a search happens. */
 export const WORKSPACE_TABS = ["fit", "apply", "prepare", "practise", "debrief", "messages", "saved"] as const;
@@ -96,6 +97,16 @@ export type OfferTerms = z.infer<typeof offerTermsSchema>;
 export const careerOfferInputSchema = offerTermsSchema.extend({ applicationId: z.string().min(1) });
 
 const text = (max = 2000) => z.string().trim().max(max);
+
+/** The application fields applying an employer's message can change. */
+const appliedFieldsSchema = z.object({
+	status: applicationStatusSchema,
+	laneId: z.string().nullable(),
+	closedReason: applicationClosedReasonSchema.nullable(),
+	followUpAt: z.iso.datetime({ offset: true }).nullable(),
+	followUpNote: z.string().nullable(),
+	followUpDateOnly: z.boolean().default(false),
+});
 
 /**
  * What the coach wrote for an application, by kind. Each one is produced by `career.generate` from a fixed shape,
@@ -209,11 +220,29 @@ export const savedItemDataSchema = z.discriminatedUnion("kind", [
 		offer: offerTermsSchema.nullable().default(null),
 		/** Set when the user applied the proposal: which changes, and when. */
 		applied: z
-			.object({ at: z.iso.datetime({ offset: true }), changes: z.array(z.number().int()) })
+			.object({
+				at: z.iso.datetime({ offset: true }),
+				changes: z.array(z.number().int()),
+				/** The application fields Apply set, before and after, and the offer it saved: what Undo reverses. */
+				undo: z
+					.object({
+						before: appliedFieldsSchema,
+						after: appliedFieldsSchema,
+						offerId: z.string().nullable(),
+					})
+					.optional(),
+			})
 			.nullable()
 			.default(null),
 	}),
-	z.object({ kind: z.literal("offer"), ...offerTermsSchema.shape }),
+	z.object({
+		kind: z.literal("offer"),
+		...offerTermsSchema.shape,
+		/** Typed in by the user, or read from an employer's message. Absent on offers saved before it was recorded. */
+		origin: z.enum(["manual", "message"]).optional(),
+		/** When the user last corrected the terms by hand. */
+		editedAt: z.iso.datetime({ offset: true }).optional(),
+	}),
 ]);
 export type SavedItemData = z.infer<typeof savedItemDataSchema>;
 export type SavedItemKind = SavedItemData["kind"];

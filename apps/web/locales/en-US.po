@@ -204,7 +204,9 @@ msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# entry} other {# entries}}"
 
 #. placeholder {0}: knowledge.active.length
+#. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: used.facts.length
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -225,6 +227,11 @@ msgstr "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# proposed edit} other {# proposed edits}}"
+
+#. placeholder {0}: unavailable.length
+#: src/features/career/knowledge/stories.tsx
+msgid "{0, plural, one {# proposed fact isn't available here and won't back the story.} other {# proposed facts aren't available here and won't back the story.}}"
+msgstr "{0, plural, one {# proposed fact isn't available here and won't back the story.} other {# proposed facts aren't available here and won't back the story.}}"
 
 #. placeholder {0}: done.length
 #: src/features/career/today.tsx
@@ -254,7 +261,9 @@ msgstr "{0, plural, one {# section} other {# sections}}"
 msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# selected} other {# selected}}"
 
+#. placeholder {0}: knowledge.stories.length
 #. placeholder {0}: used.stories.length
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {# story} other {# stories}}"
@@ -323,6 +332,11 @@ msgstr "{0, plural, one {Imported # application.} other {Imported # applications
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
+
+#. placeholder {0}: -difference
+#: src/features/career/workspace/apply.tsx
+msgid "{0, plural, one {Longer by # word} other {Longer by # words}}"
+msgstr "{0, plural, one {Longer by # word} other {Longer by # words}}"
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -395,6 +409,11 @@ msgstr "{0} (mine)"
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} closed"
+
+#. placeholder {0}: props.providerLabel
+#: src/features/assistant/conversation.tsx
+msgid "{0} didn't respond."
+msgstr "{0} didn't respond."
 
 #. placeholder {0}: semantics.dates.length
 #: src/features/resume/editor/check/parser-view.tsx
@@ -486,12 +505,6 @@ msgstr "{0} of {1} terms found"
 msgid "{0} posting"
 msgstr "{0} posting"
 
-#. placeholder {0}: props.providerLabel
-#. placeholder {1}: getOrpcErrorMessage(error, { fallback: t`an error`, allowServerMessage: true, })
-#: src/features/assistant/conversation.tsx
-msgid "{0} returned “{1}”. Your message is kept."
-msgstr "{0} returned “{1}”. Your message is kept."
-
 #. placeholder {0}: selection.length
 #: src/features/career/today.tsx
 msgid "{0} selected"
@@ -547,6 +560,10 @@ msgstr "{0}. Issue resolved."
 #: src/features/assistant/conversation.tsx
 msgid "{accepted} of {0} applied"
 msgstr "{accepted} of {0} applied"
+
+#: src/features/career/workspace/apply.tsx
+msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
+msgstr "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -640,6 +657,10 @@ msgstr "{deleted, plural, one {# document deleted forever} other {# documents de
 #: src/features/career/offers.tsx
 msgid "{delta} vs {version}"
 msgstr "{delta} vs {version}"
+
+#: src/features/career/workspace/apply.tsx
+msgid "{difference, plural, one {Shorter by # word} other {Shorter by # words}}"
+msgstr "{difference, plural, one {Shorter by # word} other {Shorter by # words}}"
 
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
@@ -742,6 +763,10 @@ msgstr "{kind} interview"
 #: src/features/career/coach-thread.tsx
 msgid "{label} connection"
 msgstr "{label} connection"
+
+#: src/features/assistant/connection-notice.tsx
+msgid "{label} is off or was removed. Choose the connection this conversation uses next."
+msgstr "{label} is off or was removed. Choose the connection this conversation uses next."
 
 #: src/features/career/workspace/debrief.tsx
 msgid "{length}m"
@@ -851,6 +876,10 @@ msgstr "{proposed, plural, one {# proposed} other {# proposed}}"
 #: src/features/career/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
 msgstr "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+
+#: src/features/career/workspace/apply.tsx
+msgid "{removed, plural, one {changes or removes # of your sentences} other {changes or removes # of your sentences}}"
+msgstr "{removed, plural, one {changes or removes # of your sentences} other {changes or removes # of your sentences}}"
 
 #: src/features/documents/document-actions.tsx
 msgid "{restored, plural, one {# document restored} other {# documents restored}}"
@@ -1115,6 +1144,10 @@ msgstr "A date won't be read"
 msgid "A fact changed. Review this story."
 msgstr "A fact changed. Review this story."
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "A fact that isn't available here. Saving will fail; edit the story first."
+msgstr "A fact that isn't available here. Saving will fail; edit the story first."
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A fact that's no longer in Knowledge"
 msgstr "A fact that's no longer in Knowledge"
@@ -1315,6 +1348,7 @@ msgstr "Account"
 msgid "Account details"
 msgstr "Account details"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1695,6 +1729,14 @@ msgstr "Add the offer's terms"
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 
+#: src/features/career/coach-chat.tsx
+msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
+"\n"
+"{text}"
+msgstr "Add this to my resume where it fits. Propose the edits for me to review:\n"
+"\n"
+"{text}"
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1708,6 +1750,10 @@ msgstr "Add to pipeline"
 #: src/features/career/workspace/fit.tsx
 msgid "Add to questions"
 msgstr "Add to questions"
+
+#: src/features/career/coach-chat.tsx
+msgid "Add to resume"
+msgstr "Add to resume"
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Add to Skills"
@@ -1756,6 +1802,10 @@ msgstr "Added to Knowledge as an accomplishment."
 msgid "Added to Knowledge as an experience."
 msgstr "Added to Knowledge as an experience."
 
+#: src/features/career/coach-chat.tsx
+msgid "Added to Knowledge."
+msgstr "Added to Knowledge."
+
 #: src/features/resume/share/address-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Address"
@@ -1772,10 +1822,6 @@ msgstr "Address line 1"
 #: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr "Address line 2"
-
-#: src/features/career/workspace/messages.tsx
-msgid "Adds a reminder to Today if you haven't heard back by then."
-msgstr "Adds a reminder to Today if you haven't heard back by then."
 
 #: src/features/templates/gallery.tsx
 msgid "Adjust fonts, colors, spacing and sections in the resume builder. Export your finished resume to PDF or Word, or share a link. The PDFs above are examples to help you compare designs."
@@ -2045,10 +2091,6 @@ msgstr "An embedded font could not be read."
 msgid "An entry has no dates"
 msgstr "An entry has no dates"
 
-#: src/features/assistant/conversation.tsx
-msgid "an error"
-msgstr "an error"
-
 #: src/features/career/offer-entry.tsx
 msgid "an hour"
 msgstr "an hour"
@@ -2094,6 +2136,10 @@ msgstr "Answer copied"
 #: src/features/assistant/question-card.tsx
 msgid "Answer in your own words"
 msgstr "Answer in your own words"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Answer replaced"
+msgstr "Answer replaced"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Answer source"
@@ -2372,6 +2418,10 @@ msgstr "Ask"
 msgid "Ask {0}"
 msgstr "Ask {0}"
 
+#: src/features/career/offers.tsx
+msgid "Ask {company}"
+msgstr "Ask {company}"
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Ask about this application…"
@@ -2600,6 +2650,7 @@ msgstr "Back to sign in"
 msgid "Back to stories"
 msgstr "Back to stories"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
@@ -2639,6 +2690,7 @@ msgstr "Barista, 2012"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Base salary"
 msgstr "Base salary"
 
@@ -2699,10 +2751,12 @@ msgstr "Bold"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Bonus"
 msgstr "Bonus"
 
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Bonus conditions"
 msgstr "Bonus conditions"
 
@@ -2841,6 +2895,7 @@ msgstr "Can software read your resume?"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/offer-entry.tsx
@@ -2899,6 +2954,11 @@ msgstr "Certifications"
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/settings/account/security.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Change"
+msgstr "Change"
+
+#: src/features/career/coach-thread.tsx
+msgctxt "Change what the coach remembers"
 msgid "Change"
 msgstr "Change"
 
@@ -3046,6 +3106,14 @@ msgstr "check numbers and names before using it"
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
 msgstr "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
 
+#: src/features/career/workspace/apply.tsx
+msgid "Check that nothing you wrote yourself is lost."
+msgstr "Check that nothing you wrote yourself is lost."
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Check that these facts support what the story claims before saving."
+msgstr "Check that these facts support what the story claims before saving."
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Check the details"
 msgstr "Check the details"
@@ -3096,6 +3164,10 @@ msgstr "Checking {0}"
 #: src/features/career/shared.tsx
 msgid "Checking against Knowledge"
 msgstr "Checking against Knowledge"
+
+#: src/features/career/coach-thread.tsx
+msgid "Checking for a web search service…"
+msgstr "Checking for a web search service…"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Checking layout and content"
@@ -3234,6 +3306,10 @@ msgstr "Choose saved answers to review. Unavailable evidence or another employer
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
 msgstr "Choose where each stage named in the file goes, or add it as a new stage."
+
+#: src/features/assistant/connection-notice.tsx
+msgid "Choose…"
+msgstr "Choose…"
 
 #: src/components/level/combobox.tsx
 msgid "Circle"
@@ -3532,6 +3608,10 @@ msgstr "Connect {0}"
 msgid "Connect {domain}"
 msgstr "Connect {domain}"
 
+#: src/features/career/coach-thread.tsx
+msgid "Connect a search service in Settings to research the web. The coach can still read public links you paste."
+msgstr "Connect a search service in Settings to research the web. The coach can still read public links you paste."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "Connect a service"
@@ -3557,7 +3637,7 @@ msgid "Connect and test an AI provider in Settings, or keep entering roles manua
 msgstr "Connect and test an AI provider in Settings, or keep entering roles manually."
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Connect another…"
 msgstr "Connect another…"
 
@@ -3595,7 +3675,7 @@ msgstr "Connecting your {providerName} account…"
 msgid "Connection saved"
 msgstr "Connection saved"
 
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Connection: {text}"
 msgstr "Connection: {text}"
 
@@ -3667,6 +3747,7 @@ msgstr "Content revision: {0}"
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Continue"
 msgstr "Continue"
 
@@ -3720,6 +3801,14 @@ msgstr "Conversations about one job live in its workspace."
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
 msgstr "Copied"
+
+#: src/features/career/coach-chat.tsx
+msgid "Copies for {company}"
+msgstr "Copies for {company}"
+
+#: src/features/career/coach-chat.tsx
+msgid "Copies for this job"
+msgstr "Copies for this job"
 
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
@@ -3821,6 +3910,10 @@ msgstr "Copy transcript"
 msgid "Correct"
 msgstr "Correct"
 
+#: src/features/career/offer-entry.tsx
+msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
+msgstr "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
+
 #: src/features/ats-checker/messages.ts
 msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "Correct the year, or write \"Present\" for ongoing work."
@@ -3871,6 +3964,10 @@ msgstr "Couldn't change this schedule. Try again."
 #: src/dialogs/auth/change-password.tsx
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "Couldn't change your password. Check your current password and try again."
+
+#: src/features/career/coach-thread.tsx
+msgid "Couldn't check for a web search service. Retry."
+msgstr "Couldn't check for a web search service. Retry."
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't check which resume opens your short link. Reload the page and try again."
@@ -3941,6 +4038,10 @@ msgstr "Couldn't create your account. Try again."
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Couldn't crop the photo. Try a different photo."
 msgstr "Couldn't crop the photo. Try a different photo."
+
+#: src/features/career/offers.tsx
+msgid "Couldn't delete that offer. Try again."
+msgstr "Couldn't delete that offer. Try again."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
@@ -4141,6 +4242,10 @@ msgstr "Couldn't prepare the resume for printing. Try again."
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "Couldn't propose these edits: {0}"
+
+#: src/libs/error-message.ts
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr "Couldn't reach Reactive Resume. Check your internet connection, then try again."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't reach the AI provider. Try again in a moment."
@@ -4351,6 +4456,10 @@ msgstr "Couldn't set the password. Try again."
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "Couldn't set up two-step verification. Try again."
 
+#: src/features/career/coach-chat.tsx
+msgid "Couldn't share that fact. Try again."
+msgstr "Couldn't share that fact. Try again."
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
 msgstr "Couldn't show the preview."
@@ -4386,6 +4495,7 @@ msgid "Couldn't suggest roles. Try again or enter roles manually."
 msgstr "Couldn't suggest roles. Try again or enter roles manually."
 
 #: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Couldn't switch connections. Try again."
 msgstr "Couldn't switch connections. Try again."
 
@@ -4415,6 +4525,10 @@ msgstr "Couldn't turn the provider on or off. Try again."
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't undo that. Try again."
 msgstr "Couldn't undo that. Try again."
+
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't undo the update. The application is unchanged."
+msgstr "Couldn't undo the update. The application is unchanged."
 
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't unlink the application. Try again."
@@ -4652,6 +4766,7 @@ msgstr "CSV data"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "Currency"
@@ -4882,6 +4997,10 @@ msgstr "Delete it. Hidden keywords are treated as a deliberate attempt to game t
 #: src/features/documents/document-actions.tsx
 msgid "Delete now…"
 msgstr "Delete now…"
+
+#: src/features/career/offers.tsx
+msgid "Delete offer"
+msgstr "Delete offer"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete page"
@@ -5520,6 +5639,10 @@ msgstr "Edit details…"
 msgid "Edit entry"
 msgstr "Edit entry"
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Edit first"
+msgstr "Edit first"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Edit interview"
 msgstr "Edit interview"
@@ -5539,6 +5662,10 @@ msgstr "Edit link"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit note"
 msgstr "Edit note"
+
+#: src/features/career/offer-entry.tsx
+msgid "Edit offer terms"
+msgstr "Edit offer terms"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Edit posting"
@@ -5563,6 +5690,10 @@ msgstr "Edit saved answer"
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "Edit schedule"
+
+#: src/features/career/offers.tsx
+msgid "Edit terms"
+msgstr "Edit terms"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Edit the email"
@@ -5820,6 +5951,10 @@ msgstr "Enter your password to turn off two-step verification. Without it, your 
 msgid "Enter your password."
 msgstr "Enter your password."
 
+#: src/features/career/offers.tsx
+msgid "Entered by you"
+msgstr "Entered by you"
+
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Entries"
 msgstr "Entries"
@@ -5834,6 +5969,7 @@ msgstr "Entry options"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Equity"
 msgstr "Equity"
 
@@ -5989,10 +6125,12 @@ msgstr "Fact · Accomplishment"
 msgid "Fact forgotten"
 msgstr "Fact forgotten"
 
+#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 msgid "Fact type"
 msgstr "Fact type"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -6000,6 +6138,7 @@ msgid "Facts"
 msgstr "Facts"
 
 #: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Facts, stories and preferences that are switched on in Knowledge"
 msgstr "Facts, stories and preferences that are switched on in Knowledge"
 
@@ -7216,6 +7355,14 @@ msgstr "Issues"
 msgid "Issues and Job match still work without AI."
 msgstr "Issues and Job match still work without AI."
 
+#: src/features/assistant/conversation.tsx
+msgid "It can also search Knowledge available to this application (facts and stories) and send what it finds."
+msgstr "It can also search Knowledge available to this application (facts and stories) and send what it finds."
+
+#: src/features/assistant/conversation.tsx
+msgid "It can also search your shared Knowledge (facts and stories) and send what it finds."
+msgstr "It can also search your shared Knowledge (facts and stories) and send what it finds."
+
 #: src/features/resume/editor/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "It has entries but isn't placed on a page."
@@ -7514,6 +7661,8 @@ msgstr "Khmer"
 msgid "Kind regards,"
 msgstr "Kind regards,"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
@@ -7521,6 +7670,11 @@ msgstr "Kind regards,"
 #: src/routes/dashboard/career/route.tsx
 msgid "Knowledge"
 msgstr "Knowledge"
+
+#. placeholder {0}: when(cutoffAt)
+#: src/features/career/coach-chat.tsx
+msgid "Knowledge changed on {0}. Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
+msgstr "Knowledge changed on {0}. Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
 
 #: src/features/career/coach.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
@@ -7530,9 +7684,10 @@ msgstr "Knowledge couldn't load. Try again or switch Knowledge off before sendin
 msgid "Knowledge doesn’t mention mentoring."
 msgstr "Knowledge doesn’t mention mentoring."
 
-#: src/features/assistant/conversation.tsx
-msgid "Knowledge facts the assistant looks up are sent too."
-msgstr "Knowledge facts the assistant looks up are sent too."
+#: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Knowledge is off for this message: the coach doesn't read it or remember anything you say"
+msgstr "Knowledge is off for this message: the coach doesn't read it or remember anything you say"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
@@ -7647,11 +7802,13 @@ msgstr "Leads with why you fit"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Learning budget"
 msgstr "Learning budget"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Leave"
 msgstr "Leave"
 
@@ -7687,6 +7844,14 @@ msgstr "Led research for the onboarding redesign; activation rose from 31% to 44
 msgid "Left"
 msgstr "Left"
 
+#: src/features/career/offers.tsx
+msgid "Left blank"
+msgstr "Left blank"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Left blank. Add it later only if you can support it."
+msgstr "Left blank. Add it later only if you can support it."
+
 #: src/features/resume/import/read-file.ts
 msgid "Legacy Word files aren't supported. Open the file in Word and save it as .docx first."
 msgstr "Legacy Word files aren't supported. Open the file in Word and save it as .docx first."
@@ -7716,11 +7881,15 @@ msgstr "Length is not a defect, and there is no universal one-page rule. Keep th
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 
+#: src/features/assistant/conversation.tsx
+msgid "Let the assistant search facts and stories you share with all applications, read-only"
+msgstr "Let the assistant search facts and stories you share with all applications, read-only"
+
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "Let's start with what you have"
 
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Lets the coach search public pages through your web search service"
 msgstr "Lets the coach search public pages through your web search service"
 
@@ -8380,6 +8549,15 @@ msgstr "Messages · Pasted from your email"
 msgid "Messages · Reply to Sam at Fieldnote"
 msgstr "Messages · Reply to Sam at Fieldnote"
 
+#: src/features/career/coach-chat.tsx
+msgid "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
+msgstr "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
+
+#: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Messages from before Knowledge changed aren't sent."
+msgstr "Messages from before Knowledge changed aren't sent."
+
 #: src/features/career/workspace/practise.tsx
 msgid "Microphone blocked. Allow it in your browser settings, or type your answer."
 msgstr "Microphone blocked. Allow it in your browser settings, or type your answer."
@@ -8820,8 +8998,8 @@ msgstr "Next step: {0}"
 
 #. placeholder {0}: change.note
 #: src/features/career/workspace/messages.tsx
-msgid "Next step: {0}. Adds a reminder to Today."
-msgstr "Next step: {0}. Adds a reminder to Today."
+msgid "Next step: {0}. Sets the application's follow-up date."
+msgstr "Next step: {0}. Sets the application's follow-up date."
 
 #: src/features/homepage/remember.tsx
 msgid "Next time, I’d agree how to measure success before the first prototype."
@@ -8842,6 +9020,10 @@ msgstr "No AI needed. Edit documents and write answers yourself; nothing here is
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
 msgstr "No AI provider is used for this operation."
+
+#: src/features/career/offers.tsx
+msgid "No amount stated · value uncertain"
+msgstr "No amount stated · value uncertain"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No application"
@@ -9204,6 +9386,10 @@ msgstr "Not for me"
 msgid "not found"
 msgstr "not found"
 
+#: src/features/career/offers.tsx
+msgid "Not found in the message"
+msgstr "Not found in the message"
+
 #. placeholder {0}: report.jd.missingTerms.join(", ")
 #: src/features/ats-checker/checker.tsx
 msgid "Not found: {0}"
@@ -9212,10 +9398,6 @@ msgstr "Not found: {0}"
 #: src/features/career/offers.tsx
 msgid "Not in either offer yet"
 msgstr "Not in either offer yet"
-
-#: src/features/career/offers.tsx
-msgid "Not in the offer · ask {company}"
-msgstr "Not in the offer · ask {company}"
 
 #: src/features/ats-checker/report/jd-coverage.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
@@ -9273,6 +9455,10 @@ msgstr "Not selected"
 msgid "Not set up"
 msgstr "Not set up"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Not stated"
+msgstr "Not stated"
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Not sure what to write?"
 msgstr "Not sure what to write?"
@@ -9329,6 +9515,11 @@ msgstr "Nothing in your library yet"
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "Nothing is applied for or created until you choose."
+
+#: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Nothing is sent until you choose a connection for this conversation."
+msgstr "Nothing is sent until you choose a connection for this conversation."
 
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
@@ -9424,6 +9615,10 @@ msgstr "Off. Let recruiters find you on Google by turning this on."
 msgid "Offer"
 msgstr "Offer"
 
+#: src/features/career/offers.tsx
+msgid "Offer deleted"
+msgstr "Offer deleted"
+
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "Offer saved"
@@ -9433,7 +9628,16 @@ msgstr "Offer saved"
 msgid "Offer saved. {0} moved to Offer."
 msgstr "Offer saved. {0} moved to Offer."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Offer terms"
+msgstr "Offer terms"
+
 #: src/features/career/offer-entry.tsx
+msgid "Offer terms updated"
+msgstr "Offer terms updated"
+
+#: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Offer type"
 msgstr "Offer type"
 
@@ -9442,6 +9646,10 @@ msgstr "Offer type"
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "Offers"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Office days a week"
+msgstr "Office days a week"
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Office days a week, at most"
@@ -9513,6 +9721,10 @@ msgstr "Only allow applications you trust. This application will be able to:"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Only applies when the section fits on a single page."
 msgstr "Only applies when the section fits on a single page."
+
+#: src/features/career/coach-chat.tsx
+msgid "Only for {company}"
+msgstr "Only for {company}"
 
 #: src/features/homepage/faq.tsx
 msgid "Only if you want it to. Add your own key from OpenAI, Anthropic, Google Gemini, OpenRouter, Ollama or another provider for sharper lines, tailoring to a job posting, coaching for applications and interviews, and reading Word files. Without a key, nothing is sent to an AI service."
@@ -9612,6 +9824,10 @@ msgstr "Open in editor"
 #: src/features/career/workspace/saved.tsx
 msgid "Open in Offers"
 msgstr "Open in Offers"
+
+#: src/features/career/coach-chat.tsx
+msgid "Open in the resume's assistant"
+msgstr "Open in the resume's assistant"
 
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
@@ -9779,6 +9995,7 @@ msgstr "Other · OpenAI-compatible"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Other benefits"
 msgstr "Other benefits"
 
@@ -10033,6 +10250,7 @@ msgstr "Paused schedules keep their settings."
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "Pay period"
@@ -10058,14 +10276,17 @@ msgid "People using it"
 msgstr "People using it"
 
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Per hour"
 msgstr "Per hour"
 
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Per month"
 msgstr "Per month"
 
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Per year"
 msgstr "Per year"
 
@@ -10729,6 +10950,14 @@ msgstr "Read aloud by your browser's voice."
 msgid "Read briefing"
 msgstr "Read briefing"
 
+#: src/features/career/offers.tsx
+msgid "Read from a message"
+msgstr "Read from a message"
+
+#: src/features/career/offers.tsx
+msgid "Read from a message, edited by you"
+msgstr "Read from a message, edited by you"
+
 #: src/features/career/workspace/messages.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Read it for me"
@@ -11013,6 +11242,7 @@ msgstr "Referral"
 msgid "Referred by…, things to emphasize, etc."
 msgstr "Referred by…, things to emphasize, etc."
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reflection"
@@ -11081,12 +11311,17 @@ msgstr "Reload to try again."
 msgid "Relocation"
 msgstr "Relocation"
 
+#: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/remember.tsx
 msgid "Remember"
 msgstr "Remember"
+
+#: src/features/career/coach-chat.tsx
+msgid "Remember as a fact in Knowledge"
+msgstr "Remember as a fact in Knowledge"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Remember facts from my messages"
@@ -11104,6 +11339,10 @@ msgstr "Remember this for future coaching?"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Remember your password? <0/>"
 msgstr "Remember your password? <0/>"
+
+#: src/features/career/coach-chat.tsx
+msgid "Remembered for {name} only: “{text}”"
+msgstr "Remembered for {name} only: “{text}”"
 
 #: src/features/career/coach-chat.tsx
 msgid "Remembered: “{text}”"
@@ -11379,6 +11618,7 @@ msgstr "Resources"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Respond by"
 msgstr "Respond by"
 
@@ -11431,6 +11671,7 @@ msgstr "Restored the version from {0}. Your previous state is saved as “Before
 msgid "Restricted to its employer or application."
 msgstr "Restricted to its employer or application."
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Result"
@@ -11823,6 +12064,10 @@ msgstr "Sam"
 msgid "Sam, Fieldnote"
 msgstr "Sam, Fieldnote"
 
+#: src/features/career/workspace/apply.tsx
+msgid "Same length"
+msgstr "Same length"
+
 #: src/features/homepage/remember.tsx
 msgid "Same you. Less starting over."
 msgstr "Same you. Less starting over."
@@ -12034,6 +12279,10 @@ msgstr "Saved as written. Automated date checks and sorting are unavailable for 
 msgid "Saved description"
 msgstr "Saved description"
 
+#: src/features/career/coach-chat.tsx
+msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
+msgstr "Saved from your message as you wrote it. Nothing is sent to the AI."
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Saved just now"
 msgstr "Saved just now"
@@ -12219,6 +12468,7 @@ msgid "Search saved answers"
 msgstr "Search saved answers"
 
 #: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Search terms go to your web search service."
 msgstr "Search terms go to your web search service."
 
@@ -12255,6 +12505,10 @@ msgstr "Search…"
 msgid "Searched the web"
 msgstr "Searched the web"
 
+#: src/features/assistant/conversation.tsx
+msgid "Searched your Knowledge"
+msgstr "Searched your Knowledge"
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Searches and reads pages with {connectedProvider}, whichever AI provider you use."
 msgstr "Searches and reads pages with {connectedProvider}, whichever AI provider you use."
@@ -12278,6 +12532,10 @@ msgstr "Searching the web"
 #: src/features/assistant/conversation.tsx
 msgid "Searching the web…"
 msgstr "Searching the web…"
+
+#: src/features/assistant/conversation.tsx
+msgid "Searching your Knowledge…"
+msgstr "Searching your Knowledge…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Secret copied"
@@ -12444,9 +12702,21 @@ msgstr "Sends this story and the facts switched on to your AI connection. Withou
 msgid "Sends your message and the posting to {provider} with your key, only when you press send."
 msgstr "Sends your message and the posting to {provider} with your key, only when you press send."
 
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message and this application (posting, notes, documents sent) to {connection}."
+msgstr "Sends your message and this application (posting, notes, documents sent) to {connection}."
+
 #: src/features/assistant/conversation.tsx
 msgid "Sends your message to {provider} with your key, only when you press send."
 msgstr "Sends your message to {provider} with your key, only when you press send."
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here and this application (posting, notes, documents sent) to {connection}."
+msgstr "Sends your message, earlier messages here and this application (posting, notes, documents sent) to {connection}."
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents sent) and Knowledge that's switched on to {connection}."
+msgstr "Sends your message, earlier messages here, this application (posting, notes, documents sent) and Knowledge that's switched on to {connection}."
 
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to {connection}."
@@ -12521,6 +12791,10 @@ msgstr "Set up web search in Settings before enabling discovery. AI is not requi
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
 msgstr "Set up your authenticator app"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr "Sets the application's follow-up date, in case you haven't heard back by then."
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/root.tsx
@@ -12866,6 +13140,7 @@ msgstr "Single-column with uppercase section headings over a rule and the photo 
 msgid "Single-column; polished and serious for senior or enterprise-level positions."
 msgstr "Single-column; polished and serious for senior or enterprise-level positions."
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Situation"
@@ -13271,14 +13546,18 @@ msgstr "Stop recording"
 msgid "Stop when you're done. Nothing is sent until then."
 msgstr "Stop when you're done. Nothing is sent until then."
 
-#: src/features/career/coach-chat.tsx
-msgid "Stopped"
-msgstr "Stopped"
-
 #. placeholder {0}: clock(seconds)
 #: src/features/career/workspace/practise.tsx
 msgid "Stopped at {0}"
 msgstr "Stopped at {0}"
+
+#: src/features/career/coach-chat.tsx
+msgid "Stopped before answering."
+msgstr "Stopped before answering."
+
+#: src/features/career/coach-chat.tsx
+msgid "Stopped before the answer finished."
+msgstr "Stopped before the answer finished."
 
 #: src/features/assistant/conversation.tsx
 msgid "Stopped. No edits were proposed."
@@ -13288,6 +13567,7 @@ msgstr "Stopped. No edits were proposed."
 msgid "Store these backup codes somewhere safe. Each one signs you in once if you lose your device."
 msgstr "Store these backup codes somewhere safe. Each one signs you in once if you lose your device."
 
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -13561,6 +13841,7 @@ msgstr "Tamil"
 msgid "Target roles"
 msgstr "Target roles"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Task"
@@ -13782,6 +14063,30 @@ msgstr "The account changed. Try again."
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "The address must contain only lowercase letters and numbers, separated by single dashes."
 
+#: src/libs/error-message.ts
+msgid "The AI provider couldn't finish this reply. Try again, or change the connection."
+msgstr "The AI provider couldn't finish this reply. Try again, or change the connection."
+
+#: src/libs/error-message.ts
+msgid "The AI provider doesn't offer this model. Choose another model, or change the connection."
+msgstr "The AI provider doesn't offer this model. Choose another model, or change the connection."
+
+#: src/libs/error-message.ts
+msgid "The AI provider is limiting requests (rate limit or quota). Wait a minute and try again, or change the connection."
+msgstr "The AI provider is limiting requests (rate limit or quota). Wait a minute and try again, or change the connection."
+
+#: src/libs/error-message.ts
+msgid "The AI provider is unavailable right now. Try again in a moment, or change the connection."
+msgstr "The AI provider is unavailable right now. Try again in a moment, or change the connection."
+
+#: src/libs/error-message.ts
+msgid "The AI provider rejected the saved key. Check the key in Settings, or change the connection."
+msgstr "The AI provider rejected the saved key. Check the key in Settings, or change the connection."
+
+#: src/features/career/workspace/apply.tsx
+msgid "The answer changed since, so it wasn't restored."
+msgstr "The answer changed since, so it wasn't restored."
+
 #: src/features/homepage/faq.tsx
 msgid "The app is translated into {languages} languages by volunteers, and a resume can be written in any language, including right-to-left scripts like Arabic and Hebrew."
 msgstr "The app is translated into {languages} languages by volunteers, and a resume can be written in any language, including right-to-left scripts like Arabic and Hebrew."
@@ -13793,6 +14098,10 @@ msgstr "The application that sent you here made an invalid authorization request
 #: src/features/documents/document-actions.tsx
 msgid "The application this letter is for."
 msgstr "The application this letter is for."
+
+#: src/features/assistant/conversation.tsx
+msgid "The assistant can search facts and stories you share with all applications. It can't change them."
+msgstr "The assistant can search facts and stories you share with all applications. It can't change them."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
@@ -13806,9 +14115,17 @@ msgstr "The built-in reader remains active."
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 
+#: src/features/career/coach-thread.tsx
+msgid "The coach asks before remembering facts you state."
+msgstr "The coach asks before remembering facts you state."
+
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "The coach doesn't remember anything from your messages."
+
+#: src/features/career/coach-thread.tsx
+msgid "The coach doesn't remember anything you write."
+msgstr "The coach doesn't remember anything you write."
 
 #: src/features/career/coach.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers and your applications work without it."
@@ -13821,6 +14138,10 @@ msgstr "The coach proposes each fact in the chat. Nothing is saved until you agr
 #: src/features/career/workspace/shell.tsx
 msgid "The coach reads these for this application only."
 msgstr "The coach reads these for this application only."
+
+#: src/features/career/coach-thread.tsx
+msgid "The coach remembers facts you state, and tells you."
+msgstr "The coach remembers facts you state, and tells you."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -14190,6 +14511,10 @@ msgstr "This conversation couldn't be opened. Refresh the page to try again."
 msgid "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
 msgstr "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
 
+#: src/features/assistant/connection-notice.tsx
+msgid "This conversation's connection is off or was removed. Choose the one it uses next."
+msgstr "This conversation's connection is off or was removed. Choose the one it uses next."
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
@@ -14350,6 +14675,10 @@ msgstr "This question didn't finish."
 #: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
 msgstr "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
+
+#: src/libs/error-message.ts
+msgid "This reply couldn't finish. Try again."
+msgstr "This reply couldn't finish. Try again."
 
 #: src/features/assistant/conversation.tsx
 msgid "This reply used Knowledge that has since changed, so it's hidden."
@@ -14833,7 +15162,9 @@ msgstr "Underline links"
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/today.tsx
+#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/check/actions.ts
@@ -14862,7 +15193,6 @@ msgid "University of Porto"
 msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
-#: src/features/career/offers.tsx
 #: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "Unknown"
@@ -14985,6 +15315,11 @@ msgstr "Uploading photo…"
 msgid "URL"
 msgstr "URL"
 
+#. placeholder {0}: fallback.label
+#: src/features/assistant/connection-notice.tsx
+msgid "Use {0}"
+msgstr "Use {0}"
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum}"
 msgstr "Use {minimum}"
@@ -15074,6 +15409,7 @@ msgstr "Use default"
 msgid "Use details from “{0}”"
 msgstr "Use details from “{0}”"
 
+#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 msgid "Use for all applications"
 msgstr "Use for all applications"
@@ -15081,10 +15417,6 @@ msgstr "Use for all applications"
 #: src/features/career/knowledge/facts.tsx
 msgid "Use in coaching: {excerpt}"
 msgstr "Use in coaching: {excerpt}"
-
-#: src/features/assistant/conversation.tsx
-msgid "Use Knowledge"
-msgstr "Use Knowledge"
 
 #: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
@@ -15162,6 +15494,7 @@ msgstr "Use web access?"
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 msgstr "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Used"
 msgstr "Used"
@@ -15221,6 +15554,11 @@ msgstr "Uses your AI provider's own web search where supported, and reads links 
 msgid "Uses your browser’s voice"
 msgstr "Uses your browser’s voice"
 
+#. placeholder {0}: proposal.factIds .map((id) => facts?.find((fact) => fact.id === id)?.text) .filter(Boolean) .map((value) => shortLabel(value ?? "")) .join(" · ")
+#: src/features/career/workspace/apply.tsx
+msgid "Uses: {0}"
+msgstr "Uses: {0}"
+
 #: src/libs/locale.ts
 msgid "Uzbek"
 msgstr "Uzbek"
@@ -15243,6 +15581,7 @@ msgstr "Vary the openings so the section does not read as boilerplate."
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Verbal offer"
 msgstr "Verbal offer"
 
@@ -15436,9 +15775,17 @@ msgstr "Web page"
 msgid "Web page preview"
 msgstr "Web page preview"
 
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "Web research"
+
+#: src/features/career/coach-thread.tsx
+msgid "Web research · Retry"
+msgstr "Web research · Retry"
+
+#: src/features/career/coach-thread.tsx
+msgid "Web research · Set up"
+msgstr "Web research · Set up"
 
 #: src/features/assistant/conversation.tsx
 msgid "Web search didn't finish."
@@ -15632,6 +15979,7 @@ msgstr "Where you want to work"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Where you work"
 msgstr "Where you work"
 
@@ -15711,6 +16059,10 @@ msgstr "Will my resume get past applicant tracking systems?"
 #: src/features/settings/profile.tsx
 msgid "Willing to relocate"
 msgstr "Willing to relocate"
+
+#: src/features/career/coach-thread.tsx
+msgid "With Knowledge off, nothing you write is remembered."
+msgstr "With Knowledge off, nothing you write is remembered."
 
 #: src/features/homepage/remember.tsx
 msgid "Within a quarter, activation went from 31% to 44%."
@@ -15860,6 +16212,7 @@ msgstr "Written manually"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Written offer"
 msgstr "Written offer"
 
@@ -16016,6 +16369,10 @@ msgstr "Your AI settings changed. Nothing was sent; try again."
 msgid "Your answer"
 msgstr "Your answer"
 
+#: src/features/career/workspace/apply.tsx
+msgid "Your answer changed while the draft was written. Draft again to use it."
+msgstr "Your answer changed while the draft was written. Draft again to use it."
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Your attempts"
@@ -16089,6 +16446,10 @@ msgstr "Your details changed on the resume. The letter updated too."
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "Your domain"
+
+#: src/features/career/coach-chat.tsx
+msgid "Your edited story is saved to Knowledge."
+msgstr "Your edited story is saved to Knowledge."
 
 #. placeholder {0}: copy.name
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16174,6 +16535,10 @@ msgstr "Your margins are very narrow."
 #: src/features/career/coach.tsx
 msgid "your message"
 msgstr "your message"
+
+#: src/features/assistant/conversation.tsx
+msgid "Your message is kept."
+msgstr "Your message is kept."
 
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"

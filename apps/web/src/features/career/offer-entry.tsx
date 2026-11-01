@@ -2,9 +2,12 @@ import type { SavedData, SavedItem } from "./hooks";
 import type { ApplicationSummary } from "@/features/applications/types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { OfferTerms } from "@reactive-resume/schema/career";
+import type { careerOfferInputSchema } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
+import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useId, useState } from "react";
@@ -166,37 +169,68 @@ function FirstApplication({ variant, children }: FirstApplicationProps) {
 	);
 }
 
-type OfferFormProps = {
-	application?: Application | undefined;
+/** A saved offer being corrected: its terms as stored, which the save sends back as the copy it changed. */
+type EditedOffer = { id: string; applicationId: string | null; data: OfferTerms };
+
+type OfferFormProps = OfferEntryProps & {
+	offer?: EditedOffer;
 	onClose: () => void;
-	onSaved: (offer: OfferLike | null) => void;
+	onSaved?: (offer: OfferLike | null) => void;
 };
-function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
+
+/** The stored terms alone: what a correction replaces and what it expects to find. */
+const offerTerms = (data: OfferTerms) => offerTermsSchema.parse(data);
+
+/** "2026-11-20" and "17:00" in the account's timezone, for the date and time fields. */
+const zonedFields = (value: string, timeZone: string) => {
+	const at = new Date(value);
+	const date = new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(
+		at,
+	);
+	const time = new Intl.DateTimeFormat("en-GB", {
+		timeZone,
+		hour: "2-digit",
+		minute: "2-digit",
+		hourCycle: "h23",
+	}).format(at);
+	return { date, time };
+};
+
+export function OfferForm({ application, offer: initialOffer, onClose, onSaved }: OfferFormProps) {
+	// Draft and expected terms belong to the same edit session, even when the comparison refetches.
+	const [offer] = useState(initialOffer);
 	const id = useId();
 	const navigate = useNavigate();
 	const { locale, timeZone } = useCareerTime();
 	const queryClient = useQueryClient();
 	const moveWithUndo = useMoveWithUndo();
 	const { lanes } = useApplicationLanes();
-	const applications = useQuery({ ...applicationsListQueryOptions(), enabled: !application });
-	const [applicationId, setApplicationId] = useState(application?.id ?? "");
-	const savedOffers = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "offer" } }));
-	const [draft, setTerms] = useState(() => ({
-		...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }),
-		currency: "",
+	const applications = useQuery({ ...applicationsListQueryOptions(), enabled: !application && !offer });
+	const [applicationId, setApplicationId] = useState(application?.id ?? offer?.applicationId ?? "");
+	const [draft, setTerms] = useState(() =>
+		offer
+			? offerTerms(offer.data)
+			: { ...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }), currency: "" },
+	);
+	const amount = (value: number | null | undefined) => (value === null || value === undefined ? "" : String(value));
+	const [amounts, setAmounts] = useState(() => ({
+		base: amount(offer?.data.base),
+		variable: amount(offer?.data.variable),
+		learning: amount(offer?.data.learning),
 	}));
-	// Until the currency is typed, it's the one the last offer was in, so the two compare.
+	const deadline = offer?.data.respondBy ? zonedFields(offer.data.respondBy, timeZone) : null;
+	const [date, setDate] = useState(deadline?.date ?? "");
+	const [time, setTime] = useState(deadline?.time ?? "17:00");
+
+	const savedOffers = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "offer" } }));
 	const [currencyTyped, setCurrencyTyped] = useState(false);
 	const [previousCurrency, setPreviousCurrency] = useState<string>();
 	if (previousCurrency === undefined && savedOffers.data) {
 		const currency = previousOfferCurrency(savedOffers.data);
 		if (currency) setPreviousCurrency(currency);
 	}
-	const terms = currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
-	const [more, setMore] = useState(false);
-	const [amounts, setAmounts] = useState({ base: "", variable: "", learning: "" });
-	const [date, setDate] = useState("");
-	const [time, setTime] = useState("17:00");
+	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
+	const [more, setMore] = useState(Boolean(offer));
 	const [submitted, setSubmitted] = useState(false);
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
 	const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -212,7 +246,7 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 	});
 	const deadlineMessage = deadlineError ? t`Choose a valid date and time in ${timeZone}, or clear the deadline.` : null;
 	const showDeadlineError = !!deadlineMessage && (submitted || touched.deadline);
-	const save = useMutation({
+	const create = useMutation({
 		...orpc.career.createOffer.mutationOptions(),
 		onSuccess: (offer, input) => {
 			if (!application && offer) void navigate({ to: "/dashboard/career/offers", search: { a: offer.id } });
@@ -232,13 +266,29 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 			} else {
 				toast.add({ description: t`Offer saved` });
 			}
-			onSaved(
+			onSaved?.(
 				offer?.data.kind === "offer"
 					? { id: offer.id, data: offer.data, ...(target ? { application: { company: target.company } } : {}) }
 					: null,
 			);
+			if (!onSaved) onClose();
 		},
 	});
+	const update = useMutation({
+		...orpc.career.updateOffer.mutationOptions(),
+		onSettled: () => void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() }),
+		onSuccess: () => {
+			toast.add({ description: t`Offer terms updated` });
+			onClose();
+		},
+	});
+	const save = offer ? update : create;
+	const submitPayload = (data: z.infer<typeof careerOfferInputSchema>) => {
+		if (!offer) return create.mutate(data);
+		const { applicationId: _applicationId, ...changed } = data;
+		// The copy this form started from: a change made elsewhere since is a conflict, not overwritten.
+		update.mutate({ id: offer.id, terms: changed, expected: offerTerms(offer.data) });
+	};
 	const textFields = [
 		{ key: "variableConditions", label: t`Bonus conditions`, max: 1000 },
 		{ key: "equity", label: t`Equity`, max: 1000 },
@@ -278,14 +328,16 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 				event.preventDefault();
 				setSubmitted(true);
 				if (amountErrors.variable || amountErrors.learning) setMore(true);
-				if (payload.success && !save.isPending) save.mutate(payload.data);
+				if (payload.success && !save.isPending) submitPayload(payload.data);
 			}}
 		>
-			<h2 className="text-base font-semibold">
-				<Trans>Add offer</Trans>
-			</h2>
+			<h2 className="text-base font-semibold">{offer ? <Trans>Edit offer terms</Trans> : <Trans>Add offer</Trans>}</h2>
 			<p className="text-sm text-ink-2">
-				<Trans>Enter terms yourself. No AI request is made. Leave unknown amounts blank.</Trans>
+				{offer ? (
+					<Trans>Correct the terms yourself. No AI request is made. Leave unknown amounts blank.</Trans>
+				) : (
+					<Trans>Enter terms yourself. No AI request is made. Leave unknown amounts blank.</Trans>
+				)}
 			</p>
 			<fieldset disabled={save.isPending} className="grid items-start gap-3 sm:grid-cols-2">
 				<div className="grid gap-1.5 sm:col-span-2 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
@@ -295,7 +347,7 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 					<NativeSelect
 						id={`${id}-application`}
 						value={applicationId}
-						disabled={!!application}
+						disabled={!!application || !!offer}
 						onBlur={() => touch("application")}
 						aria-invalid={submitted && !applicationId}
 						onChange={(event) => setApplicationId(event.target.value)}
@@ -466,7 +518,11 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 			)}
 			{save.isError && (
 				<p role="alert" className="text-sm text-danger-text">
-					<Icon name="warning-circle" /> <Trans>Couldn't save the offer. Your draft is still here. Try again.</Trans>
+					<Icon name="warning-circle" />{" "}
+					{/* A conflict says the offer changed elsewhere; anything else keeps the draft and asks to retry. */}
+					{save.error instanceof ORPCError && save.error.code === "CONFLICT"
+						? save.error.message
+						: t`Couldn't save the offer. Your draft is still here. Try again.`}
 				</p>
 			)}
 			<div className="flex gap-2">

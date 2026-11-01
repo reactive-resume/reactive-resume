@@ -22,6 +22,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
+import { ConnectionNotice } from "./connection-notice";
 import { Composer, Conversation } from "./conversation";
 import { ProviderSetup, SetUpAi } from "./provider-setup";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -75,10 +76,11 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const summary = threads.data?.find((item) => item.id === threadId);
 
 	const usable = providers.usableProviders;
-	// Existing conversations keep their destination until the user explicitly chooses another.
-	const provider =
-		usable.find((item) => item.id === (threadId ? summary?.aiProviderId : providerId)) ??
-		(threadId ? undefined : usable[0]);
+	// A conversation runs on its own connection. One switched off or removed is never swapped silently: the user picks
+	// another before the next message goes anywhere. A new conversation starts on the account default (listed first).
+	const saved = threadId ? usable.find((item) => item.id === summary?.aiProviderId) : undefined;
+	const stranded = threadId !== null && summary !== undefined && saved === undefined && !providers.isLoading;
+	const provider = threadId ? saved : (usable.find((item) => item.id === providerId) ?? usable[0]);
 	const providerLabel = provider?.label ?? summary?.providerLabel ?? t`your provider`;
 
 	const ensureThread = async (): Promise<string> => {
@@ -269,6 +271,19 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 					}}
 					onSwitchModel={() => setModelMenuOpen(true)}
 					destinationUnavailable={!provider}
+
+					{...(stranded
+						? {
+								notice: (
+									<ConnectionNotice
+										label={summary?.providerLabel ?? null}
+										fallback={usable[0]}
+										onUse={(id) => void chooseProvider(id)}
+										onChoose={() => setModelMenuOpen(true)}
+									/>
+								),
+							}
+						: {})}
 				/>
 			) : (
 				<>
@@ -304,6 +319,8 @@ type ConversationLoaderProps = {
 	onPromptSent: () => void;
 	onSwitchModel: () => void;
 	destinationUnavailable: boolean;
+
+	notice?: ReactNode;
 };
 
 /** Reads the conversation fresh each time it opens: the chat takes its messages once, when it mounts. */

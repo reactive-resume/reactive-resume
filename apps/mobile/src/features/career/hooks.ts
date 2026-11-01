@@ -1,5 +1,6 @@
 import type { RouterOutput } from "@/api/client";
 import { useLingui } from "@lingui/react/macro";
+import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
@@ -124,8 +125,14 @@ export function useCareerAction() {
 		try {
 			const result = await operation();
 			if (getServer() === server) success?.(result);
-		} catch {
-			if (getServer() === server) setError(t`Couldn't save that change. Check your connection and try again.`);
+		} catch (error) {
+			// This server's own reason (a change made elsewhere, a limit) says more than a generic retry.
+			if (getServer() === server)
+				setError(
+					error instanceof ORPCError && error.message
+						? error.message
+						: t`Couldn't save that change. Check your connection and try again.`,
+				);
 		} finally {
 			busy.current = false;
 			setPending(false);

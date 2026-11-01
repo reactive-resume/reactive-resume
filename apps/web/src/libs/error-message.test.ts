@@ -1,7 +1,13 @@
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { ORPCError } from "@orpc/client";
-import { getReadableErrorMessage, getResumeErrorMessage } from "./error-message";
+import { AGENT_REPLY_ERRORS } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import {
+	getOrpcErrorMessage,
+	getReadableErrorMessage,
+	getResumeErrorMessage,
+	isProviderFailure,
+} from "./error-message";
 
 beforeEach(() => {
 	i18n.load("en", {});
@@ -37,6 +43,31 @@ describe("getReadableErrorMessage", () => {
 		expect(getReadableErrorMessage({ code: "SESSION_NOT_FRESH", message: "Session is not fresh" }, "fallback")).toBe(
 			"Session is not fresh",
 		);
+	});
+});
+
+describe("connection and reply failures", () => {
+	const offline = "Couldn't reach Reactive Resume. Check your internet connection, then try again.";
+
+	it("names a lost connection in every browser's words, but not other type errors", () => {
+		for (const message of ["Failed to fetch", "Load failed", "NetworkError when attempting to fetch resource."])
+			expect(getOrpcErrorMessage(new TypeError(message), { fallback: "x", allowServerMessage: true })).toBe(offline);
+		expect(getReadableErrorMessage(new TypeError("undefined is not a function"), "fallback")).toBe(
+			"undefined is not a function",
+		);
+		expect(isProviderFailure(new TypeError("Failed to fetch"))).toBe(false);
+	});
+
+	it("translates the server's reply failures and offers another connection only for provider ones", () => {
+		expect(getReadableErrorMessage(new Error(AGENT_REPLY_ERRORS.providerLimit), "fallback")).toContain("rate limit");
+		expect(isProviderFailure(new Error(AGENT_REPLY_ERRORS.providerKey))).toBe(true);
+		expect(isProviderFailure(new Error(AGENT_REPLY_ERRORS.failed))).toBe(false);
+		// The server's own safe reasons pass through unchanged.
+		const conflict = new ORPCError("CONFLICT", { message: "This conversation is still replying." });
+		expect(getOrpcErrorMessage(conflict, { fallback: "x", allowServerMessage: true })).toBe(
+			"This conversation is still replying.",
+		);
+		expect(isProviderFailure(conflict)).toBe(false);
 	});
 });
 

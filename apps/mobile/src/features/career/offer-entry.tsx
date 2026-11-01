@@ -115,12 +115,29 @@ function OfferSummary({ offer, id }: OfferSummaryProps) {
 	);
 }
 
-type OfferFormProps = {
-	application?: Application | undefined;
+/** A saved offer being corrected: its terms as stored, which the save sends back as the copy it changed. */
+type EditedOffer = { id: string; data: OfferTerms };
+
+type OfferFormProps = OfferEntryProps & {
+	offer?: EditedOffer;
 	onClose: () => void;
-	onSaved: (offer: OfferSaved) => void;
+	onSaved?: (offer: OfferSaved) => void;
 };
-function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
+
+/** "2026-11-20" and "17:00" in the account's timezone, for the date and time fields. */
+const zonedFields = (value: string, timeZone: string) => {
+	const at = new Date(value);
+	return {
+		date: new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(at),
+		time: new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(
+			at,
+		),
+	};
+};
+
+export function OfferForm({ application, offer: initialOffer, onClose, onSaved }: OfferFormProps) {
+	// Draft and expected terms belong to the same edit session, even when saved offers refetch.
+	const [offer] = useState(initialOffer);
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { locale, timeZone, profile } = useCareerTime();
@@ -130,23 +147,30 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 	const lanes = useApplicationLanes();
 	const moveWithUndo = useMoveWithUndo();
 	const [applicationId, setApplicationId] = useState(application?.id ?? "");
-	const savedOffers = useOffers();
-	const [draft, setTerms] = useState(() => ({
-		...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }),
-		currency: "",
+	const [draft, setTerms] = useState(() =>
+		offer
+			? offerTermsSchema.parse(offer.data)
+			: { ...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }), currency: "" },
+	);
+	const amount = (value: number | null | undefined) => (value === null || value === undefined ? "" : String(value));
+	const [amounts, setAmounts] = useState(() => ({
+		base: amount(offer?.data.base),
+		variable: amount(offer?.data.variable),
+		learning: amount(offer?.data.learning),
 	}));
-	// Until the currency is typed, it's the one the last offer was in, so the two compare.
+	const deadline = offer?.data.respondBy ? zonedFields(offer.data.respondBy, timeZone) : null;
+	const [date, setDate] = useState(deadline?.date ?? "");
+	const [time, setTime] = useState(deadline?.time ?? "17:00");
+
+	const savedOffers = useOffers();
 	const [currencyTyped, setCurrencyTyped] = useState(false);
 	const [previousCurrency, setPreviousCurrency] = useState<string>();
 	if (previousCurrency === undefined && savedOffers.data) {
 		const currency = previousOfferCurrency(savedOffers.data);
 		if (currency) setPreviousCurrency(currency);
 	}
-	const terms = currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
-	const [more, setMore] = useState(false);
-	const [amounts, setAmounts] = useState({ base: "", variable: "", learning: "" });
-	const [date, setDate] = useState("");
-	const [time, setTime] = useState("17:00");
+	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
+	const [more, setMore] = useState(Boolean(offer));
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
 	const [submitted, setSubmitted] = useState(false);
 	const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -198,9 +222,18 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 		/>
 	);
 	return (
-		<EditorSheet title={t`Add offer`} dirty={dirty} pending={action.pending} onClose={onClose}>
+		<EditorSheet
+			title={offer ? t`Edit offer terms` : t`Add offer`}
+			dirty={dirty}
+			pending={action.pending}
+			onClose={onClose}
+		>
 			<View style={{ padding: space.s4, gap: space.s4 }}>
-				<Text color="ink2">{t`Enter terms yourself. No AI request is made. Leave unknown amounts blank.`}</Text>
+				<Text color="ink2">
+					{offer
+						? t`Correct the terms yourself. No AI request is made. Leave unknown amounts blank.`
+						: t`Enter terms yourself. No AI request is made. Leave unknown amounts blank.`}
+				</Text>
 				{application ? (
 					<Text>
 						{application.company} · {application.role}
@@ -324,10 +357,22 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 						if (amountErrors.variable || amountErrors.learning) setMore(true);
 						if (payload.success)
 							void action.run(
-								() => client.career.createOffer(payload.data),
+								() =>
+									offer
+										? client.career.updateOffer({
+												id: offer.id,
+												terms: (({ applicationId: _, ...terms }) => terms)(payload.data),
+												expected: offerTermsSchema.parse(offer.data),
+											})
+										: client.career.createOffer(payload.data),
 								(result) => {
+									if (offer) {
+										showToast({ message: t`Offer terms updated` });
+										onClose();
+										return;
+									}
 									if (!application && result) router.setParams({ a: result.id });
-									if (result?.data.kind === "offer") onSaved({ id: result.id, data: result.data });
+									if (result?.data.kind === "offer") onSaved?.({ id: result.id, data: result.data });
 									const row = applications.data?.find((item) => item.id === payload.data.applicationId);
 									const target = application ?? row;
 									const status = application?.status ?? row?.status;
