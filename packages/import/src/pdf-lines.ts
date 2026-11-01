@@ -3,7 +3,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { columnSegments } from "@reactive-resume/resume/ats-pdf";
 import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { readLegacyDates } from "@reactive-resume/schema/resume/dates";
-import { generateId } from "@reactive-resume/utils/string";
+import { escapeHtml, generateId } from "@reactive-resume/utils/string";
 import { BULLET_PATTERN, toHtmlBlocks } from "./html";
 import { allowsPdfGeometry, GeometryIndex, GeometryLimit } from "./pdf-geometry";
 import {
@@ -113,11 +113,15 @@ function annotationTarget(doc: ExtractedDocument, span: TextSpan): string | unde
 		}
 		for (const page of doc.pages)
 			for (const cell of page.lines.flatMap((line) => line.spans)) {
-				const x = cell.x + cell.width / 2;
-				const y = page.height - cell.y - cell.height / 2;
 				const link = links
 					.get(page.pageNumber)
-					?.find((link) => x >= link.rect[0] && x <= link.rect[2] && y >= link.rect[1] && y <= link.rect[3]);
+					?.find(
+						(link) =>
+							cell.x < Math.max(link.rect[0], link.rect[2]) &&
+							cell.x + cell.width > Math.min(link.rect[0], link.rect[2]) &&
+							cell.y < page.height - Math.min(link.rect[1], link.rect[3]) &&
+							cell.y + cell.height > page.height - Math.max(link.rect[1], link.rect[3]),
+					);
 				if (link?.url) targets.set(cell, link.url);
 			}
 		annotationCache.set(doc, targets);
@@ -205,6 +209,7 @@ function headingTest(doc: ExtractedDocument) {
 	};
 	const fields = doc.lines.flatMap(fieldsOf);
 	const index = new GeometryIndex(fields);
+	const rowIndex = new GeometryIndex(doc.lines, index.budget);
 	const spanIndex = new GeometryIndex(
 		doc.lines.flatMap((line) => line.spans.map((span) => lineWithSpans(line, [span]))),
 		index.budget,
@@ -310,7 +315,10 @@ function headingTest(doc: ExtractedDocument) {
 				Math.abs(line.fontSize - name.fontSize) < 1,
 		);
 
+	const contactAnnotation = (row: TextLine) =>
+		row.spans.some((span) => /^(?:mailto:|tel:)/.test(annotationTarget(doc, span) ?? ""));
 	const owned = new Set<TextSpan>();
+	const confirmedContacts = new Set<TextSpan>();
 	let identityColumns: { x: number; top: number } | null = null;
 	const page = doc.pages[0];
 	if (page) {
@@ -333,16 +341,24 @@ function headingTest(doc: ExtractedDocument) {
 		}
 		for (const group of groups.values()) {
 			const blocks: TextLine[][] = [];
+			// The first block under a section heading is that section's content, even when it carries a phone.
+			const headed = new Set<TextLine[]>();
 			let block: TextLine[] = [];
 			let bottom = -Infinity;
+			let afterHeading = false;
 			const flush = () => {
-				if (block.length) blocks.push(block);
+				if (block.length) {
+					blocks.push(block);
+					if (afterHeading) headed.add(block);
+					afterHeading = false;
+				}
 				block = [];
 				bottom = -Infinity;
 			};
 			for (const line of group.sort((a, b) => a.y - b.y || a.x - b.x)) {
 				if (known(line)) {
 					flush();
+					afterHeading = true;
 					continue;
 				}
 				const height = Math.max(line.height, block.at(-1)?.height ?? 0);
@@ -362,19 +378,12 @@ function headingTest(doc: ExtractedDocument) {
 				.reduce((y, line) => Math.min(y, line.y), Infinity);
 			const contact = blocks.find(
 				(rows) =>
+					!headed.has(rows) &&
 					rows.every((row) => row.y < limit) &&
-					rows.some(
-						(row) =>
-							isContactLine(row.text) ||
-							row.spans.some((span) => /^(?:mailto:|tel:)/.test(annotationTarget(doc, span) ?? "")),
-					),
+					rows.some((row) => isContactLine(row.text) || contactAnnotation(row)),
 			);
 			if (contact) {
-				const seed = contact.find(
-					(row) =>
-						isContactLine(row.text) ||
-						row.spans.some((span) => /^(?:mailto:|tel:)/.test(annotationTarget(doc, span) ?? "")),
-				);
+				const seed = contact.find((row) => isContactLine(row.text) || contactAnnotation(row));
 				const last = contact.at(-1);
 				if (seed && last) {
 					let bottom = last.y;
@@ -391,6 +400,15 @@ function headingTest(doc: ExtractedDocument) {
 					}
 				}
 			}
+			if (contact) {
+				const text = contact.map((line) => line.text).join("\n");
+				index.charge(text.length);
+				const annotated = contact.some(contactAnnotation);
+				const basics = annotated ? undefined : parseResumeText(text).basics;
+				// Contacts may follow Summary; email/phone evidence separates that block from body URLs.
+				if (annotated || basics?.email || basics?.phone)
+					for (const row of contact) for (const span of row.spans) confirmedContacts.add(span);
+			}
 			for (const rows of blocks)
 				if (
 					rows === contact ||
@@ -400,22 +418,23 @@ function headingTest(doc: ExtractedDocument) {
 					for (const row of rows) for (const span of row.spans) owned.add(span);
 		}
 	}
-	const sectionBefore = (line: TextLine) =>
+	const sectionBefore = (line: TextLine): boolean =>
 		index
 			.page(line.page)
 			.some(
 				(label) =>
 					headingKey(label.text) &&
-					(label.fontSize > (doc.modalFontSize ?? label.fontSize) * 1.08 || isolated(label)) &&
+					cachedTest(label) &&
 					label.y < line.y - 2 &&
-					overlaps(label, line),
+					(!identityColumns || label.x < identityColumns.x === line.x < identityColumns.x),
 			);
-	const identityRaw = (line: TextLine) =>
-		!headingKey(line.text) &&
-		!standaloneDate(line.text) &&
-		(line.spans.every((span) => owned.has(span)) ||
-			(!sectionBefore(line) &&
-				legacyIdentity(line) &&
+	const identityRaw = (line: TextLine) => {
+		if (headingKey(line.text) || standaloneDate(line.text)) return false;
+		if (line.spans.every((span) => confirmedContacts.has(span))) return true;
+		if (sectionBefore(line)) return false;
+		return (
+			line.spans.every((span) => owned.has(span)) ||
+			(legacyIdentity(line) &&
 				(!identityColumns ||
 					contacts.some(
 						(contact) =>
@@ -423,7 +442,9 @@ function headingTest(doc: ExtractedDocument) {
 							line.y < contact.y &&
 							overlaps(line, contact) &&
 							line.fontSize > contact.fontSize + 0.1,
-					))));
+					)))
+		);
+	};
 	const identityCache = new Map<string, boolean>();
 	const identity = (line: TextLine) => {
 		const key = cacheKey(line);
@@ -515,7 +536,33 @@ function headingTest(doc: ExtractedDocument) {
 			});
 	};
 	const styles = new Map<string, Set<string>>();
-	const styleOf = (line: PageGeometry["lines"][number]) => `${line.fontRef}:${Math.round(line.fontSize)}`;
+	// One heading style can render a tenth of a point apart (8.9 and 9.0), so sizes within 3% of a neighbour in the
+	// same font form one style; fixed rounding would split such a style at an arbitrary boundary.
+	const sizesByFont = new Map<string, number[]>();
+	for (const line of [
+		...fields.filter((field) => headingKey(field.text)),
+		{ fontRef: doc.modalFontRef, fontSize: doc.modalFontSize ?? 0 },
+	]) {
+		const sizes = sizesByFont.get(String(line.fontRef)) ?? [];
+		sizes.push(line.fontSize);
+		sizesByFont.set(String(line.fontRef), sizes);
+	}
+	const clusters = new Map<string, { from: number; to: number }[]>();
+	for (const [font, sizes] of sizesByFont) {
+		const runs: { from: number; to: number }[] = [];
+		for (const size of sizes.sort((a, b) => a - b)) {
+			const run = runs.at(-1);
+			if (run && size - run.to <= run.to * 0.03) run.to = size;
+			else runs.push({ from: size, to: size });
+		}
+		clusters.set(font, runs);
+	}
+	const sizeKey = (font: string | null, size: number) => {
+		const run = clusters.get(String(font))?.find((run) => size >= run.from * 0.97 && size <= run.to * 1.03);
+		return run ? run.from : Math.round(size * 10) / 10;
+	};
+	const styleOf = (line: { fontRef: string | null; fontSize: number }) =>
+		`${line.fontRef}:${sizeKey(line.fontRef, line.fontSize)}`;
 	for (const line of fields) {
 		const key = headingKey(line.text);
 		if (!key) continue;
@@ -551,46 +598,77 @@ function headingTest(doc: ExtractedDocument) {
 		const cut = streamColumns.get(a.page);
 		return !cut || a.y < cut.top || b.y < cut.top || a.x < cut.x === b.x < cut.x;
 	};
-	const mostKeys = Array.from(styles.values()).reduce((most, keys) => Math.max(most, keys.size), 0);
+	// Isolation is evidence a body paragraph can also produce (a blank line, a page top), so an anchored style can be a
+	// run of labels inside sections' content. Such a style is nested: every label of it lies inside a section opened by
+	// another anchored style with several labels. Nested labels stay content and do not set the alias bar, however many
+	// keys they carry.
+	const labelsByStyle = new Map<string, TextLine[]>();
+	for (const line of fields) {
+		if (!headingKey(line.text) || !anchored.has(styleOf(line))) continue;
+		const labels = labelsByStyle.get(styleOf(line)) ?? [];
+		labels.push(line);
+		labelsByStyle.set(styleOf(line), labels);
+	}
+	// A section runs on across pages and down its column.
+	const below = (label: TextLine, line: TextLine) =>
+		label.page < line.page || (label.page === line.page && label.y < line.y - 2 && sameStream(line, label));
+	const within = (inner: TextLine[], outer: TextLine[]) => {
+		index.charge(inner.length * outer.length);
+		return inner.every((line) => outer.some((label) => below(label, line)));
+	};
+	const nested = new Set(
+		[...labelsByStyle].flatMap(([style, labels]) =>
+			[...labelsByStyle].some(([other, sections]) => other !== style && sections.length > 1 && within(labels, sections))
+				? [style]
+				: [],
+		),
+	);
+	const established = new Set([...anchored].filter((style) => !nested.has(style)));
+	const mostKeys = Array.from(
+		established.size ? established : styles.keys(),
+		(style) => styles.get(style)?.size ?? 0,
+	).reduce((most, keys) => Math.max(most, keys), 0);
 	const test = (line: PageGeometry["lines"][number]) => {
 		if (isContactLine(line.text) || identity(line) || BULLET_PATTERN.test(line.text)) return false;
 		const consistent = (styles.get(styleOf(line))?.size ?? 0) >= Math.max(1, mostKeys);
 		const larger =
 			line.fontSize > (doc.modalFontSize ?? line.fontSize) * 1.08 ||
-			doc.lines.some(
-				(row) =>
-					row.page === line.page &&
-					row.y > line.y &&
-					row.y - line.y < line.fontSize * 6 &&
-					row.x <= line.x &&
-					row.x + row.width >= line.x + line.width &&
-					dateSpans(row).length &&
-					line.fontSize > row.fontSize * 1.08,
-			);
+			rowIndex
+				.near(line, 0, line.fontSize * 6)
+				.some(
+					(row) =>
+						row.y > line.y &&
+						row.y - line.y < line.fontSize * 6 &&
+						row.x <= line.x &&
+						row.x + row.width >= line.x + line.width &&
+						dateSpans(row).length &&
+						line.fontSize > row.fontSize * 1.08,
+				);
 		if (
 			headingKey(line.text) &&
-			index
-				.all()
-				.some(
-					(other) =>
-						headingKey(other.text) === headingKey(line.text) &&
-						other.fontSize > line.fontSize * 1.08 &&
-						isolated(other),
-				)
+			index.all().some(
+				(other) =>
+					headingKey(other.text) === headingKey(line.text) &&
+					other.fontSize > line.fontSize * 1.08 &&
+					isolated(other) &&
+					// A larger label nested in a section's content is not a competing heading.
+					!nested.has(styleOf(other)),
+			)
 		)
 			return false;
 		const distinct =
 			line.fontRef !== doc.modalFontRef || Math.abs(line.fontSize - (doc.modalFontSize ?? line.fontSize)) > 1;
+		if (headingKey(line.text) && nested.has(styleOf(line))) return larger;
 		if (headingKey(line.text))
 			return (
 				larger ||
-				(consistent && anchored.has(styleOf(line)) && (distinct || isolated(line))) ||
-				(/^[A-Z][A-Z\s]+$/.test(line.text) && isolated(line))
+				(consistent && established.has(styleOf(line)) && (distinct || isolated(line))) ||
+				(/^[A-Z][A-Z\s]+$/.test(line.text) && (isolated(line) || (consistent && !anchored.size)))
 			);
 
-		if (line.spans.some((span) => annotationTarget(doc, span)) && !anchored.has(styleOf(line))) return false;
+		if (line.spans.some((span) => annotationTarget(doc, span)) && !established.has(styleOf(line))) return false;
 		if (
-			!anchored.has(styleOf(line)) &&
+			!established.has(styleOf(line)) &&
 			!larger &&
 			index
 				.all()
@@ -672,13 +750,13 @@ function headingTest(doc: ExtractedDocument) {
 						),
 			);
 		const independent =
-			(capitalized || startsBody || (consistent && anchored.has(styleOf(line)) && isolated(line, true))) &&
+			(capitalized || startsBody || (consistent && established.has(styleOf(line)) && isolated(line, true))) &&
 			followingBody &&
 			(startsBody || isolated(line, true)) &&
 			!labelledRow;
 		if (/[.!?;,]$/.test(line.text.trim()) && !independent) return false;
 		return (
-			((consistent && anchored.has(styleOf(line))) || independent) &&
+			((consistent && established.has(styleOf(line))) || independent) &&
 			(independent || distinct || (capitalized && isolated(line))) &&
 			(capitalized ? line.text.replace(/\s/g, "").length : line.text.length) <= 48 &&
 			(line.text.split(/\s+/).length <= 6 || capitalized) &&
@@ -1278,6 +1356,7 @@ function importLines(source: ExtractedDocument): ImportLine[] {
 		stream: ImportLine["stream"];
 		leading?: number;
 		line: ImportLine;
+		right: number;
 	} | null = null;
 	const prefix: ImportLine[] = [];
 	const sidebar: ImportLine[] = [];
@@ -1301,8 +1380,9 @@ function importLines(source: ExtractedDocument): ImportLine[] {
 		),
 	);
 	const baseline = (span: TextSpan) => span.y + span.height;
-	const wrapsInto = (previous: ImportLine, next: TextSpan) => {
-		const right = previous.right ?? doc.pages.find((page) => page.pageNumber === previous.page)?.width ?? 0;
+	const wrapsInto = (previous: ImportLine, next: TextSpan, observedRight?: number) => {
+		const right =
+			observedRight ?? previous.right ?? doc.pages.find((page) => page.pageNumber === previous.page)?.width ?? 0;
 		const edge = previous.spans.reduce((x, span) => Math.max(x, span.x + span.width), previous.x);
 		const word = next.text.trim().split(/\s+/)[0] ?? "";
 		const wordWidth = (next.width * word.length) / Math.max(1, next.text.length);
@@ -1345,11 +1425,14 @@ function importLines(source: ExtractedDocument): ImportLine[] {
 				font: content?.fontRef ?? first.fontRef,
 				last: content ?? first,
 				line,
+				right: Math.max(...line.spans.map((span) => span.x + span.width)),
 				page: line.page,
 				stream: line.stream,
 			};
 		} else if (
 			bullet &&
+			!line.record &&
+			!line.recordDate &&
 			line.stream === bullet.stream &&
 			(!line.heading || (first.fontRef === bullet.font && Math.abs(first.x - bullet.x) < bullet.size * 0.2)) &&
 			Math.abs(first.fontSize - bullet.size) < 1 &&
@@ -1361,6 +1444,7 @@ function importLines(source: ExtractedDocument): ImportLine[] {
 				Math.abs(first.x - bullet.x) <= bullet.size * 0.9 &&
 				credible) ||
 				(line.page > bullet.page &&
+					wrapsInto(bullet.line, first, bullet.leading === undefined ? undefined : bullet.right) &&
 					first.x > bullet.markerX &&
 					Math.abs(first.x - bullet.x) <= bullet.size * 0.9 &&
 					fieldsOf(line).length === 1))
@@ -1371,6 +1455,8 @@ function importLines(source: ExtractedDocument): ImportLine[] {
 			bullet.x = first.x;
 			if (line.page === bullet.page) bullet.leading ??= gap;
 			bullet.last = first;
+			const edge = Math.max(...line.spans.map((span) => span.x + span.width));
+			bullet.right = line.page === bullet.page ? Math.max(bullet.right, edge) : edge;
 			bullet.line = line;
 			bullet.page = line.page;
 			continue;
@@ -1494,7 +1580,6 @@ function readIdentity(lines: ImportLine[], doc: ExtractedDocument) {
 	let email = contact.email;
 	let phone = contact.phone;
 	let website = contact.website;
-	let seenWebsite = false;
 	const customFields: { id: string; icon: string; text: string; link: string }[] = [];
 	for (const [url, spans] of linked) {
 		if (url.startsWith("mailto:")) email = url.slice(7).split("?")[0] ?? email;
@@ -1502,9 +1587,10 @@ function readIdentity(lines: ImportLine[], doc: ExtractedDocument) {
 		else if (/^https?:\/\//i.test(url)) {
 			const label = joinSpans(spans);
 			const displayed = /^https?:\/\//i.test(label) && URL.canParse(label) && new URL(label).href === url;
-			if (!seenWebsite) {
+			const sameWebsite =
+				URL.canParse(website.url) && URL.canParse(url) && new URL(website.url).href === new URL(url).href;
+			if (!website.url || sameWebsite) {
 				website = { url: displayed ? label : url, label: displayed ? "" : label };
-				seenWebsite = true;
 			} else customFields.push({ id: generateId(), icon: "", text: label, link: url });
 		}
 	}
@@ -1653,6 +1739,8 @@ function educationRecords(
 /** Match records within their section stream, so links and split header cells cannot escape into prose. */
 function projectSectionFields(data: ResumeData, lines: ImportLine[], doc: ExtractedDocument): ResumeData {
 	const work = new GeometryIndex(lines);
+	const education: ResumeData["sections"]["education"]["items"] = [];
+	let hasEducation = false;
 	for (let start = 0; start < lines.length; start++) {
 		const heading = lines[start];
 		if (!heading?.heading) continue;
@@ -1661,10 +1749,20 @@ function projectSectionFields(data: ResumeData, lines: ImportLine[], doc: Extrac
 		let end = start + 1;
 		while (end < lines.length && !lines[end]?.heading) end++;
 		const run = lines.slice(start + 1, end);
-		const section = data.sections[key];
+		const section =
+			key === "education"
+				? {
+						...data.sections.education,
+						items:
+							educationRecords(run, work, data.metadata.page.locale) ??
+							parseResumeText([heading.text, ...run.map((line) => line.text)].join("\n"), new Set([0])).sections
+								.education.items,
+					}
+				: data.sections[key];
 		if (key === "education") {
-			const records = educationRecords(run, work, data.metadata.page.locale);
-			if (records) data.sections.education.items = records;
+			// Parse and project this run before merging: repeated or mentioned schools cannot claim another run's items.
+			hasEducation = true;
+			education.push(...(section.items as ResumeData["sections"]["education"]["items"]));
 		}
 		let cursor = 0;
 		const items = section.items as unknown as Record<string, unknown>[];
@@ -1696,13 +1794,53 @@ function projectSectionFields(data: ResumeData, lines: ImportLine[], doc: Extrac
 			const finish = offset >= 0 ? begin + 1 + offset : run.length;
 			cursor = finish;
 			const chunk = run.slice(begin, finish);
-			const linked = chunk.filter(
-				(line) =>
-					line.spans.length &&
-					line.spans.every((span) => /^https?:\/\//i.test(annotationTarget(doc, span) ?? "")) &&
-					new Set(line.spans.map((span) => annotationTarget(doc, span))).size === 1,
+			const headerFields = Object.entries(item)
+				.flatMap(([field, value]) =>
+					field !== "id" && field !== "description" && typeof value === "string" && value ? [value] : [],
+				)
+				.sort((a, b) => b.length - a.length);
+			const bodyStart = chunk.findIndex((line) => {
+				work.charge(line.text.length * headerFields.length);
+				const rest = headerFields.reduce((text, field) => text.replaceAll(field, ""), line.text);
+				return Boolean(rest.replace(/[\s•·|,;:()–—-]/g, ""));
+			});
+			const header = chunk.slice(0, bodyStart < 0 ? chunk.length : bodyStart);
+			const linked = chunk
+				.flatMap(fieldsOf)
+				.filter(
+					(line) =>
+						line.spans.length &&
+						line.spans.every((span) => /^https?:\/\//i.test(annotationTarget(doc, span) ?? "")) &&
+						new Set(line.spans.map((span) => annotationTarget(doc, span))).size === 1,
+				)
+				.map((line) => {
+					work.charge(line.spans.length);
+					return lineWithSpans(line, line.spans);
+				});
+			const headerLinks = linked.filter((field) =>
+				header.some((line) => field.spans.some((span) => line.spans.includes(span))),
 			);
-			const slot = linked.at(-1);
+			const right = Math.max(...chunk.flatMap((line) => line.spans.map((span) => span.x + span.width)));
+			// A block link box spans its column; ordinary prose links only cover their printed text.
+			const footer = linked.find((line) => {
+				const span = line.spans[0];
+				if (!span) return false;
+				const links = doc.links ?? [];
+				const height = doc.pages.find((page) => page.pageNumber === line.page)?.height ?? 0;
+				work.charge(links.length + doc.pages.length);
+				return links.some(
+					(link) =>
+						link.page === line.page &&
+						link.url === annotationTarget(doc, span) &&
+						line.y < height - Math.min(link.rect[1], link.rect[3]) &&
+						line.y + line.height > height - Math.max(link.rect[1], link.rect[3]) &&
+						Math.max(link.rect[0], link.rect[2]) >= right - line.fontSize &&
+						Math.abs(link.rect[2] - link.rect[0]) > line.width + line.fontSize * 2,
+				);
+			});
+			// shortcut: an untagged full-column prose link can resemble a footer field; tagged PDFs would remove this ambiguity.
+			// Other body links, including a leading linked paragraph, stay description prose.
+			const slot = headerLinks.find((line) => line.text === title) ?? footer ?? headerLinks.at(-1);
 			const linkedSpan = slot?.spans[0];
 			if (slot && linkedSpan && "website" in item) {
 				const url = annotationTarget(doc, linkedSpan) ?? "";
@@ -1710,13 +1848,25 @@ function projectSectionFields(data: ResumeData, lines: ImportLine[], doc: Extrac
 				const displayed = URL.canParse(label) && new URL(label).href === url;
 				item.website = { url: displayed ? label : url, label: displayed ? "" : label, inlineLink: false };
 				if (typeof item.description === "string") {
-					const suffix = toHtmlBlocks([slot.text]);
-					if (item.description.endsWith(suffix)) item.description = item.description.slice(0, -suffix.length);
+					const block = toHtmlBlocks([slot.text]);
+					if (slot === footer) {
+						// A reordered website block can precede the description.
+						if (chunk[bodyStart]?.spans.some((span) => slot.spans.includes(span)) && item.description.startsWith(block))
+							item.description = item.description.slice(block.length);
+						else if (item.description.endsWith(block)) item.description = item.description.slice(0, -block.length);
+						else {
+							// A wrapped last paragraph can share its logical line with the footer link.
+							const suffix = ` ${escapeHtml(label)}</p>`;
+							if (item.description.endsWith(suffix))
+								item.description = item.description.slice(0, -suffix.length) + "</p>";
+						}
+					}
 				}
 			}
 		}
 		start = end - 1;
 	}
+	if (hasEducation) data.sections.education.items = education;
 	return data;
 }
 
@@ -1739,6 +1889,29 @@ export function parsePdfResume(doc: ExtractedDocument) {
 function parseGeometryResume(doc: ExtractedDocument) {
 	const lines = boundedLines(doc);
 	if (!lines) return flatPdfResume(doc);
+	// Without any geometry heading every line would be filed as header, keeping only contacts. Keep the prose instead:
+	// lines outside the identity block with a field that is neither a contact item nor a link.
+	const prose = lines.filter(
+		(line) =>
+			!line.identity &&
+			fieldsOf(line).some(
+				(field) => !isContactLine(field.text) && !field.spans.every((span) => annotationTarget(doc, span)),
+			),
+	);
+	if (!lines.some((line) => line.heading) && prose.length) {
+		const flat = flatPdfResume(doc);
+		flat.summary.content = toHtmlBlocks(prose.map((line) => line.text));
+		// Geometry identity is the owner; the text parse only fills fields it left empty.
+		const basics: Record<string, unknown> = { ...flat.basics };
+		for (const [key, value] of Object.entries(readIdentity(lines, doc) ?? {})) {
+			const empty =
+				!value ||
+				(Array.isArray(value) && !value.length) ||
+				(typeof value === "object" && "url" in value && !value.url);
+			if (!empty) basics[key] = value;
+		}
+		return parseResumeData({ ...flat, basics });
+	}
 
 	const parsed = parseResumeText(
 		lines.map((line) => line.text).join("\n"),
@@ -1749,12 +1922,7 @@ function parseGeometryResume(doc: ExtractedDocument) {
 		(line) => line.identity && !isContactLine(line.text) && line.fontSize > (doc.modalFontSize ?? line.fontSize),
 	);
 	if (name && firstSection > 0) {
-		const introduction = lines
-			.slice(0, firstSection)
-			.filter(
-				(line) =>
-					!line.identity && !isContactLine(line.text) && line.y > name.y + name.height && line.page === name.page,
-			);
+		const introduction = lines.slice(0, firstSection).filter((line) => !line.identity && !isContactLine(line.text));
 		if (introduction.length)
 			parsed.summary.content = toHtmlBlocks(introduction.map((line) => line.text)) + parsed.summary.content;
 	}

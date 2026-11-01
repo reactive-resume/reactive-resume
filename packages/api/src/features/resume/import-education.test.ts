@@ -1,4 +1,4 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { EducationItem, ResumeData } from "@reactive-resume/schema/resume/data";
 import { expect, it, vi } from "vite-plus/test";
 import { call } from "@orpc/server";
 import { createResumePdfFile } from "@reactive-resume/pdf/server";
@@ -13,7 +13,14 @@ vi.mock("@reactive-resume/db/client", () => ({
 }));
 const { importResumeFile } = await import("./imports");
 
-import { educationCases, educationSource, educationFields, educationWords } from "./fixtures/pdf-education";
+import {
+	educationCases,
+	educationSource,
+	educationFields,
+	educationWords,
+	educationOwnershipCases,
+	educationOwnershipSource,
+} from "./fixtures/pdf-education";
 const save = async (file: File) => {
 	create.mockClear();
 	await call(importResumeFile, { file, format: "PDF" }, { context: { locale: "en-US", reqHeaders: new Headers() } });
@@ -33,6 +40,26 @@ it.each(educationCases)(
 		const actual = new Set(educationWords(data.sections.education.items));
 		expect(educationWords(source.sections.education.items).filter((word) => !actual.has(word))).toEqual([]);
 		expect(data.customSections).toEqual([]);
+	},
+	60000,
+);
+
+it.each(educationOwnershipCases)(
+	"preserves ordered fields across Education runs / $template / $layout / $kind",
+	async (c) => {
+		const source = educationOwnershipSource(c);
+		const expected = source.metadata.layout.pages
+			.flatMap((page) => [...page.main, ...page.sidebar])
+			.flatMap((id) =>
+				id === "education"
+					? source.sections.education.items
+					: source.customSections.flatMap((section) =>
+							section.id === id && section.type === "education" ? (section.items as EducationItem[]) : [],
+						),
+			);
+		const file = await createResumePdfFile({ data: source, template: c.template, filename: "education-runs.pdf" });
+		const data = await save(file);
+		expect(educationFields(data.sections.education.items)).toEqual(educationFields(expected));
 	},
 	60000,
 );

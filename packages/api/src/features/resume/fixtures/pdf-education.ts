@@ -1,7 +1,9 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { readLegacyDates } from "@reactive-resume/schema/resume/dates";
+import { sectionDefaults } from "@reactive-resume/schema/resume/default";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { templateSchema } from "@reactive-resume/schema/templates";
+import { ownershipSource } from "./pdf-ownership";
 
 export const educationCases = templateSchema.options.flatMap((template) =>
 	[
@@ -159,4 +161,67 @@ export function educationWords(items: ResumeData["sections"]["education"]["items
 			.join(" ")
 			.match(/[\p{L}\p{N}]+/gu) ?? []
 	);
+}
+
+export const educationOwnershipCases = templateSchema.options.flatMap((template) =>
+	["full-before", "two-before"].flatMap((layout) =>
+		["distinct", "identical", "substring-short", "substring-long", "mentioned", "three-runs"].map((kind) => ({
+			template,
+			layout,
+			kind,
+		})),
+	),
+);
+
+export function educationOwnershipSource({ template, layout, kind }: (typeof educationOwnershipCases)[number]) {
+	const source = ownershipSource({ template, kind: layout });
+	const first = source.sections.education.items[0];
+	const page = source.metadata.layout.pages[0];
+	if (!first || !page) throw new Error("Missing Education fixture");
+	if (kind === "substring-short") first.school = "Leeds College";
+	if (kind === "substring-long") first.school = "Leeds College of Art";
+	const second = {
+		...structuredClone(first),
+		id: "qualification-1",
+		school:
+			kind === "identical" || kind === "three-runs"
+				? first.school
+				: kind === "substring-short"
+					? "Leeds College of Art"
+					: kind === "substring-long"
+						? "Leeds College"
+						: "Northfield Institute",
+		degree: "PGCert",
+		area: "Teaching",
+		location: "York, UK",
+		period: "2018 – 2019",
+		dates: readLegacyDates("2018 – 2019", { locale: "en-US", single: false }),
+		website: { url: "https://example.invalid/quals", label: "Details", inlineLink: false },
+		description:
+			kind === "mentioned"
+				? `<p>Evening programme accredited by ${first.school}.</p>`
+				: "<p>Evening programme in adult education.</p>",
+	};
+	const add = (id: string, title: string, item: typeof second) => {
+		source.customSections.push({ ...sectionDefaults(id), id, type: "education", title, items: [item] });
+		page.main.splice(page.main.indexOf("education") + 1, 0, id);
+	};
+	add("quals", "Qualifications", second);
+	if (kind === "three-runs") {
+		source.sections.education.items.push({
+			...structuredClone(second),
+			id: "masters",
+			degree: "MSc",
+			area: "Data Science",
+			website: { ...second.website, url: "https://example.invalid/masters" },
+		});
+		add("training", "Education and Training", {
+			...structuredClone(second),
+			id: "training-cert",
+			degree: "Certificate",
+			area: "Accessible Computing",
+			website: { ...second.website, url: "https://example.invalid/training" },
+		});
+	}
+	return source;
 }

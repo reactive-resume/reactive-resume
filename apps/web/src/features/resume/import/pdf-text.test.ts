@@ -1,12 +1,15 @@
 import type { RawExtraction } from "@reactive-resume/resume/ats-pdf";
-import { describe, expect, it, vi } from "vite-plus/test";
+import { beforeAll, describe, expect, it, vi } from "vite-plus/test";
+import { i18n } from "@lingui/core";
 import { parseResumeText } from "@reactive-resume/import/plain-text";
 import { buildExtractedDocument } from "@reactive-resume/resume/ats-pdf";
 import { documentToLines } from "./pdf-text";
-import { readResumeFile } from "./read-file";
+import { ImportError, readResumeFile } from "./read-file";
 
 const extract = vi.hoisted(() => vi.fn());
 vi.mock("@/features/ats-checker/extract-client", () => ({ extractPdf: extract }));
+
+beforeAll(() => i18n.loadAndActivate({ locale: "en-US", messages: {} }));
 
 const PAGE = { width: 595, height: 842 };
 const FONT_SIZE = 10;
@@ -56,6 +59,14 @@ function rawExtraction(pages: FixtureItem[][]): RawExtraction {
 }
 
 const linesOf = (...pages: FixtureItem[][]) => documentToLines(buildExtractedDocument(rawExtraction(pages)));
+
+it("refuses a partial PDF harvest before it can report a successful no-AI import", async () => {
+	const raw = rawExtraction([[{ text: "Only the first harvested page", x: 40, y: 60 }]]);
+	extract.mockResolvedValue({ ...raw, pageCount: 31, truncated: true });
+	const result = readResumeFile(new File(["%PDF-fixture"], "resume.pdf"), "pdf", { aiAvailable: false });
+	await expect(result).rejects.toThrow(ImportError);
+	await expect(result).rejects.toThrow("Split it into smaller files and try again.");
+});
 
 describe("documentToLines", () => {
 	it("groups items on the same baseline into one line", () => {

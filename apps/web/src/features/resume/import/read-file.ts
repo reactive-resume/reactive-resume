@@ -6,7 +6,10 @@ import { parseReactiveResumeV4JSON } from "@reactive-resume/import/reactive-resu
 import { convertLegacyStylesheet, needsLegacyStyleConversion } from "@reactive-resume/pdf/semantic-legacy";
 import { forEachDatedEntry, hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
 import { stripHtml } from "@reactive-resume/utils/string";
+import { ImportError } from "./error";
 import { client } from "@/libs/orpc/client";
+
+export { ImportError } from "./error";
 
 /** What a file holds, read from its bytes and shape rather than its extension or type. */
 export type ImportKind =
@@ -19,9 +22,6 @@ export type ImportKind =
 	| "cover-letter-json";
 
 type ResumeJsonKind = "reactive-resume-json" | "reactive-resume-v4-json" | "json-resume-json";
-
-/** An import failure worded for the person importing. */
-export class ImportError extends Error {}
 
 // Exports from before Semantic CSS carry legacy style rules, which nothing renders any more: they come in converted.
 const withLegacyStylesConverted = (data: ResumeData): ResumeData =>
