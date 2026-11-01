@@ -27,8 +27,19 @@ Confirmation was chosen for domains as allowed by the finding: it preserves live
 - Screenshot opening animations disabled for capture. Both guide PNGs inspected after final capture: complete visible dialogs with matching copy and actions.
 - Final root lint and formatting passed; boundaries checked 1,805 files across 23 packages with no issues. Knip passed with two existing redundant Lingui-entry hints. Actionlint and Git whitespace checks passed.
 
+## CI follow-up
+
+At head `3710c1f65d224e0b27e5f32d4424ac5ac0237aec`, CI unit checks completed successfully (20 test tasks, including 762 web tests with nine opt-in skips and 4,219 API tests). Both compatibility jobs, autofix, CodeQL and documentation checks passed; deployment smoke was skipped and spellcheck neutral. Hosted guide pages returned HTTP 200 with expected copy, and both hosted PNGs exactly matched the committed images.
+
+Browser CI reported 251 passed, one skipped and two failed. Both failures reproduced locally on the unchanged head:
+
+- The German photo regression selected the formerly English canvas label. Its selectors now assert the translated German canvas and loader names while preserving photo/crop/persistence checks.
+- The primary-lookup fixture intercepted only a physical URL. With custom domains enabled, the trace showed `resume/list` inside `customDomain/get/__batch__`, returning HTTP 207 successfully instead of the intended outage. The fixture now reuses logical-RPC failure handling extracted from the existing provider-history test, preserving sibling responses. It verifies an actual failed lookup occurred, retains the real HTTP 404 precondition and disabled-Copy/error/recovery assertions, and advances the browser clock instead of sleeping 62 seconds.
+
+After repair, both failed cases and the provider-history mixed-batch control passed (three tests, zero skips). All five affected browser specs then passed with four workers: 20 tests, zero skips, 27.1 seconds. Only test fixtures/selectors and this evidence record changed; the production build remains the one tested above. Current-head hosted CI must pass before merge.
+
 ## Provenance and limits
 
 Frozen candidate base `40e4d3563af0d3a35435425087f991f25c1ea019`, tree `18d8595974935aa5d255348dcb2b3792595e2ddd`, patch SHA256 `8e84cbbc887c123e009da0c7db51969564ffdc3a58f307a4b85cf2edf2fa0b24`. Composed onto current main, preserving its Letter-size loader and LTR anchoring. Historical review was partial with no verdict; it is not an approval.
 
-API suite was not rerun because API code is unchanged. ATS PDF error text is source-covered but its error branch was not forced in production-browser QA. Native device interaction, human translation review, hosted CI, deployment and store delivery are separate gates; local host tests and exports do not prove them. Only merge after current-head CI and review refresh.
+The local API suite was not rerun because API code is unchanged; the initial PR CI ran 4,219 API tests successfully. ATS PDF error text is source-covered but its error branch was not forced in production-browser QA. Native device interaction, human translation review, hosted CI, deployment and store delivery are separate gates; local host tests and exports do not prove them. Only merge after current-head CI and review refresh.
