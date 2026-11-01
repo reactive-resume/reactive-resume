@@ -65,6 +65,22 @@ export function ConnectedAppsSection() {
 							<div className="min-w-0 text-sm">
 								<p className="font-medium break-all">{connection.clientName}</p>
 								<ul className="space-y-1 text-ink-3">
+									{connection.scopes
+										.filter(
+											(scope) =>
+												![
+													"openid",
+													"profile",
+													"email",
+													"offline_access",
+													"api:read",
+													"api:write",
+													"api:delete",
+												].includes(scope),
+										)
+										.map((scope) => (
+											<li key={scope}>{scope}</li>
+										))}
 									{connection.scopes.includes("api:read") && (
 										<li>
 											<Trans>Read your whole account, including exports and coaching conversations.</Trans>
@@ -80,6 +96,7 @@ export function ConnectedAppsSection() {
 											<Trans>Delete documents and account data.</Trans>
 										</li>
 									)}
+									{/* Identity-only grants retain account-wide permissions in the API bearer resolver. */}
 									{!connection.scopes.some((scope) => scope.startsWith("api:")) && (
 										<li>
 											<Trans>Read, change and delete documents and applications (legacy connection).</Trans>

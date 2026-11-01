@@ -21,7 +21,7 @@ it("shows registered application names, keeps unnamed or unavailable clients rev
 		{
 			id: "consent-1",
 			clientId: "codex-client-id",
-			scopes: ["api:read"],
+			scopes: ["api:read", "api:custom"],
 			createdAt: new Date("2026-10-01T12:00:00Z"),
 		},
 		{
@@ -34,6 +34,12 @@ it("shows registered application names, keeps unnamed or unavailable clients rev
 			id: "consent-3",
 			clientId: "unavailable-client-id",
 			scopes: ["api:read"],
+			createdAt: new Date("2026-10-01T12:00:00Z"),
+		},
+		{
+			id: "consent-4",
+			clientId: "legacy-client-id",
+			scopes: ["profile", "email"],
 			createdAt: new Date("2026-10-01T12:00:00Z"),
 		},
 	];
@@ -61,6 +67,7 @@ it("shows registered application names, keeps unnamed or unavailable clients rev
 	expect(screen.queryByText("codex-client-id")).toBeNull();
 	expect(screen.getByText("unnamed-client-id")).toBeTruthy();
 	expect(screen.getByText("unavailable-client-id")).toBeTruthy();
+	expect(screen.getByText("Read, change and delete documents and applications (legacy connection).")).toBeTruthy();
 	const connection = screen.getByText("Codex").closest("li");
 	if (!connection) throw new Error("Application name is missing its connection row");
 	fireEvent.click(within(connection).getByRole("button", { name: "Disconnect Codex" }));
@@ -70,6 +77,7 @@ it("shows registered application names, keeps unnamed or unavailable clients rev
 	fireEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
 	expect(oauth2.deleteConsent).not.toHaveBeenCalled();
 	expect(within(connection).queryByText("api:read")).toBeNull();
+	expect(within(connection).getByText("api:custom")).toBeTruthy();
 	expect(within(connection).getByText(/Connected/)).toBeTruthy();
 	// The server no longer lists the revoked consent, so the refetch removes its row.
 	oauth2.getConsents.mockResolvedValue({ data: consents.slice(1), error: null });
