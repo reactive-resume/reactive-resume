@@ -81,6 +81,31 @@ The counter shows your answer's length; it does not block submission or guarante
 
 **Copy answers** copies the nonempty questions and answers together. **Download** offers **Markdown (.md)** and **Plain text (.txt)**. You can also copy one answer's text directly for a single field.
 
+## Review a packet for one employer form
+
+**Employer-form packet** in **Apply** prepares an account-backed snapshot without AI. Select the application’s resume and optional letter first, then:
+
+1. Enter the **Exact form URL**. Use the actual page you intend to fill.
+2. Optionally select **Include reviewed profile name, email and phone**. Other private profile fields are excluded.
+3. Choose saved answers. Answers outside their application/employer scope or with changed evidence need fresh review in the answer library.
+4. Choose **Review packet**. Check the destination, contact details, work history, letter text, answer sources and document revisions. Review the selected resume in its editor too.
+5. Check **I reviewed these fields, answers, destination and document content.**, then **Approve and create packet**.
+
+Approval saves named resume/letter versions and renders their exact PDFs. Changes during preparation reject the packet; missing or trashed documents produce an error instead of a substitute. **Download approved PDF** retains the approved bytes even if the draft later changes. **Download reviewed packet** includes those PDFs, copied answers and provenance in a private JSON file. Keep it private; downloaded copies do not expire or refresh. Packets are limited to 2 MiB of combined PDFs; larger documents require manual downloads.
+
+On desktop Chromium, import that JSON into the installed posting-capture helper, review its destination and versions, and explicitly approve **Fill this page** while that exact page is active. On iPhone and Android, use **Open employer form in browser**, copy your reviewed answers and attach the approved PDFs manually. Mobile autofill is not offered. Temporary packet/PDF share files use workspace cache cleanup on the next share and account/session transitions; copies saved elsewhere remain yours.
+
+Desktop autofill is an experimental standard-control subset, tested only with fictional Greenhouse-, Lever- and Ashby-shaped forms. Current employer compatibility is not verified. Custom/framework controls, additional pages, login and captcha require manual completion. A filled report means a DOM value or file is present; it does not prove employer upload acceptance. Review every result and file yourself. Existing values remain unchanged; errors require the exact approved download, never another resume.
+
+Unknown authorization and sensitive questions remain unanswered unless you explicitly select a reviewed answer for that exact question. Copy answers and use approved PDFs for unsupported forms. Optional **Draft** and **Tighten** remain separate AI actions with their existing consent controls; packet preparation itself makes no provider request.
+
+<Frame caption="A fictional account packet keeps approved document versions and manual downloads together.">
+  <img
+    src="/images/guides/career/employer-form-packet-v2.png"
+    alt="Maya Chen’s fictional employer-form packet with reviewed contact, selected answer, approved resume and letter versions and download controls"
+  />
+</Frame>
+
 ## Submit and record what you sent
 
 Use **Review checks** to review the linked resume and letter, check claims, and complete required answers. Make sure the application links to the actual document versions you intend to send. See [Managing an application](/guides/managing-an-application#seeing-what-you-sent).

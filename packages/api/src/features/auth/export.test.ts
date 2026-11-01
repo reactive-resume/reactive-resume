@@ -17,6 +17,8 @@ vi.mock("@reactive-resume/db/schema", () => ({
 	coverLetter: { userId: "coverLetter.userId" },
 	application: { userId: "application.userId" },
 	aiContentReport: { userId: "aiContentReport.userId" },
+	resumeVersion: { userId: "resumeVersion.userId" },
+	coverLetterVersion: { userId: "coverLetterVersion.userId" },
 }));
 vi.mock("drizzle-orm", () => ({ eq: (column: unknown, value: unknown) => ({ column, value }) }));
 vi.mock("@reactive-resume/env/server", () => ({ env: {} }));
@@ -92,6 +94,16 @@ describe("account backup", () => {
 				[{ id: "resume", data: defaultResumeData }],
 				[letter],
 				[application],
+				[
+					{
+						id: "approved-resume-version",
+						userId: "owner",
+						resumeId: "resume",
+						kind: "named",
+						data: defaultResumeData,
+					},
+				],
+				[{ id: "approved-letter-version", userId: "owner", coverLetterId: "letter", kind: "named", data: letter }],
 				[{ id: "report", userId: "owner", content: "Reported output" }],
 			]) {
 				mocks.select.mockReturnValueOnce({
@@ -116,6 +128,13 @@ describe("account backup", () => {
 				revision: "profile-revision",
 			});
 			expect(exported.applicationPipeline).toEqual({ revision: 0, lanes: [] });
+			expect(exported.documentVersions).toMatchObject({
+				resumes: [{ id: "approved-resume-version", resumeId: "resume" }],
+				letters: [{ id: "approved-letter-version", coverLetterId: "letter" }],
+			});
+			expect(exported.documentVersions.resumes[0]).not.toHaveProperty("userId");
+			expect(mocks.predicates).toContainEqual({ column: "resumeVersion.userId", value: "owner" });
+			expect(mocks.predicates).toContainEqual({ column: "coverLetterVersion.userId", value: "owner" });
 			expect(mocks.getPipeline).toHaveBeenCalledExactlyOnceWith("owner");
 			expect(exported.aiContentReports).toEqual([{ id: "report", userId: "owner", content: "Reported output" }]);
 			expect(mocks.predicates).toContainEqual({ column: "aiContentReport.userId", value: "owner" });

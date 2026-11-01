@@ -197,7 +197,13 @@ function mount(children: ReactNode) {
 }
 beforeEach(() => {
 	vi.clearAllMocks();
-	api.data = { workspace: structuredClone(EMPTY_WORKSPACE), savedItems: [], facts: [], documents: [] };
+	api.data = {
+		workspace: structuredClone(EMPTY_WORKSPACE),
+		savedItems: [],
+		facts: [],
+		documents: [],
+		reviewedAnswers: [],
+	};
 	api.userId = "workspace-user";
 	api.stories = [];
 	api.knowledgeError = false;

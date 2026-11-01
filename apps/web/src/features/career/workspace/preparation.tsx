@@ -19,6 +19,7 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { cn } from "@reactive-resume/utils/style";
 import { useDefaultProvider, useWorkspace } from "../hooks";
+import { ApplicationPacketPanel } from "./application-packet";
 import { Combobox } from "@/components/ui/combobox";
 import { useDialogStore } from "@/dialogs/store";
 import { useInvalidateApplications } from "@/features/applications/use-application-actions";
@@ -371,6 +372,16 @@ export function Preparation({ application, disabled }: PreparationProps) {
 					})
 				)}
 			</div>
+			<ApplicationPacketPanel
+				key={JSON.stringify([
+					application.id,
+					application.resumeId,
+					application.coverLetterId,
+					application.company,
+					application.sourceUrl,
+				])}
+				application={application}
+			/>
 		</section>
 	);
 }

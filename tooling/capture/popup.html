@@ -44,5 +44,21 @@
 		Unsupported page? Select the posting text, or paste its URL/text in Applications.
 	</p>
 	<p id="status" role="status"></p>
+	<section id="packet-section" hidden>
+		<h2>Fill a reviewed packet (prototype)</h2>
+		<p>
+			Greenhouse, Lever and Ashby native-control candidates only; verified on synthetic forms. Framework/custom
+			controls, account/captcha and next pages are manual. No AI or submission. Imported copies can be stale.
+		</p>
+		<label for="packet-file">Reviewed application packet JSON</label
+		><input id="packet-file" type="file" accept="application/json,.json" />
+		<pre id="packet-summary" style="white-space: pre-wrap; overflow-wrap: anywhere"></pre>
+		<label
+			><input id="packet-reviewed" type="checkbox" />I reviewed this file's fields, answers, documents and exact
+			destination. Fill this page only.</label
+		>
+		<button id="fill-packet" disabled>Fill this page</button>
+		<pre id="fill-report" role="status" style="white-space: pre-wrap; overflow-wrap: anywhere"></pre>
+	</section>
 	<script type="module" src="popup.js"></script>
 </html>

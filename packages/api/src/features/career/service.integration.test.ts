@@ -24,6 +24,11 @@ const fixture = vi.hoisted(() => ({
 		apiKey: "synthetic",
 	})),
 	storageDelete: vi.fn().mockResolvedValue(undefined),
+	packetRender: vi.fn(),
+}));
+vi.mock("../documents/exports", async () => ({
+	...(await vi.importActual<typeof import("../documents/exports")>("../documents/exports")),
+	fileResponse: fixture.packetRender,
 }));
 vi.mock("@reactive-resume/db/client", () => ({
 	get db() {
@@ -187,6 +192,9 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		fixture.generate.mockReset();
 		fixture.provider.mockClear();
 		fixture.storageDelete.mockReset().mockResolvedValue(undefined);
+		fixture.packetRender.mockReset().mockImplementation(async (_data, name) => ({
+			body: new File([`EXACT-SYNTHETIC-${name}`], `${name}.pdf`, { type: "application/pdf" }),
+		}));
 		await pool.query('TRUNCATE "user", "released_username" CASCADE');
 		await getDb()
 			.insert(tables.user)
@@ -311,6 +319,212 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 			...overrides,
 		});
 	}
+
+	async function packetFixture() {
+		const { applicationPackets } = await import("../applications/packet");
+		const { applicationProfileService: profiles } = await import("../application-profile/service");
+		const { applicationProfileDataSchema } = await import("@reactive-resume/schema/application-profile");
+		const { coverLetterService: letters } = await import("../cover-letters/service");
+		await getDb()
+			.update(tables.application)
+			.set({ status: "saved", activity: [], sentResumeVersionId: null, sentCoverLetterVersionId: null })
+			.where(eq(tables.application.id, "alice-app"));
+		const packetResume = resumeData("LIVE UNSUBMITTED DRAFT");
+		packetResume.metadata.notes = "PRIVATE_NOTES_NOT_EXPORTED";
+		packetResume.metadata.layout.pages = [{ fullWidth: true, main: ["experience"], sidebar: [] }];
+		packetResume.sections.experience.items = [
+			{
+				id: "visible",
+				hidden: false,
+				company: "Fictional Tools",
+				position: "Engineer",
+				location: "Berlin",
+				period: "2022–2026",
+				website: { url: "", label: "", inlineLink: false },
+				description: "<p>Tools &amp; people</p>",
+				roles: [{ id: "role", position: "Lead", period: "2025–2026", description: "<p>Accessible onboarding</p>" }],
+			},
+			{
+				id: "private",
+				hidden: true,
+				company: "HIDDEN_HISTORY",
+				position: "Private",
+				location: "",
+				period: "",
+				website: { url: "", label: "", inlineLink: false },
+				description: "",
+				roles: [],
+			},
+		];
+		await getDb().update(tables.resume).set({ data: packetResume }).where(eq(tables.resume.id, "shared-resume"));
+		const profile = await profiles.save("alice", {
+			data: applicationProfileDataSchema.parse({
+				givenName: "Maya",
+				email: "maya@example.test",
+				requestedSalary: { amount: 90000, currency: "EUR", period: "year" },
+			}),
+			expectedRevision: null,
+		});
+		const letter = await letters.create({
+			userId: "alice",
+			name: "Reviewed letter",
+			resumeId: "shared-resume",
+			applicationId: "alice-app",
+			content: "<p>I build accessible tools.</p>",
+		});
+		const evidence = await fact("alice", "I restored the service.");
+		const answer = await reviewedAnswers.save(
+			"alice",
+			await libraryInput({
+				factIds: [evidence.id],
+				expectedEvidence: reviewedAnswerEvidence([evidence], [], [evidence.id], []),
+			}),
+		);
+		const selection = {
+			applicationId: "alice-app",
+			targetUrl: "http://127.0.0.1:3075/greenhouse",
+			includeContact: true,
+			answerIds: [answer.id],
+			letterWords: {
+				locale: "en-US",
+				greeting: "Dear {name},",
+				teamGreeting: "Dear hiring team,",
+				hiringTeam: "Hiring team",
+				signOff: "Kind regards,",
+			},
+		};
+		return { applicationPackets, profiles, profile, letter, selection, answer, evidence };
+	}
+
+	it("exports reviewed account packet as exact named versions without submission or private sensitive fields", async () => {
+		const { applicationPackets, selection, answer } = await packetFixture();
+		const review = await applicationPackets.review("alice", selection);
+		expect(review.contact).toMatchObject({ givenName: "Maya", email: "maya@example.test" });
+		expect(JSON.stringify(review)).not.toContain("90000");
+		expect(review.experience).toContain("Tools & people");
+		expect(review.experience).toContain("Lead — 2025 – 2026 — Accessible onboarding");
+		expect(JSON.stringify(review)).not.toMatch(/HIDDEN_HISTORY|PRIVATE_NOTES_NOT_EXPORTED/);
+		expect(review.answers).toMatchObject([
+			{ id: answer.id, source: "manual", scope: "reusable", answer: "I restored the service." },
+		]);
+		const packet = await applicationPackets.export("alice", {
+			selection,
+			fingerprint: review.fingerprint,
+			reviewed: true,
+		});
+		expect(packet.documents.map((document) => document.kind)).toEqual(["resume", "letter"]);
+		expect(Buffer.from(packet.documents[0]?.base64 ?? "", "base64").toString()).toBe("EXACT-SYNTHETIC-Current");
+		expect(Buffer.from(packet.documents[1]?.base64 ?? "", "base64").toString()).toBe("EXACT-SYNTHETIC-Reviewed letter");
+		const versions = await getDb()
+			.select()
+			.from(tables.resumeVersion)
+			.where(eq(tables.resumeVersion.id, packet.documents[0]?.versionId ?? "missing"));
+		expect(versions[0]).toMatchObject({
+			userId: "alice",
+			resumeId: "shared-resume",
+			kind: "named",
+			data: { basics: { headline: "LIVE UNSUBMITTED DRAFT" } },
+		});
+		const letterVersions = await getDb()
+			.select()
+			.from(tables.coverLetterVersion)
+			.where(eq(tables.coverLetterVersion.id, packet.documents[1]?.versionId ?? "missing"));
+		expect(letterVersions[0]).toMatchObject({
+			userId: "alice",
+			kind: "named",
+			data: { content: "<p>I build accessible tools.</p>" },
+		});
+		const [application] = await getDb().select().from(tables.application).where(eq(tables.application.id, "alice-app"));
+		expect(application).toMatchObject({
+			status: "saved",
+			activity: [],
+			sentResumeVersionId: null,
+			sentCoverLetterVersionId: null,
+		});
+		expect(await getDb().select().from(tables.careerArtifact)).toHaveLength(0);
+		expect(fixture.generate).not.toHaveBeenCalled();
+		await getDb().delete(tables.user).where(eq(tables.user.id, "alice"));
+		expect(
+			await getDb().select().from(tables.resumeVersion).where(eq(tables.resumeVersion.userId, "alice")),
+		).toHaveLength(0);
+		expect(
+			await getDb().select().from(tables.coverLetterVersion).where(eq(tables.coverLetterVersion.userId, "alice")),
+		).toHaveLength(0);
+	}, 20_000);
+
+	it("keeps packet reads owner-scoped and rejects removed or restricted answers", async () => {
+		const { applicationPackets, selection, answer } = await packetFixture();
+		await expect(applicationPackets.review("bob", selection)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		await getDb()
+			.update(tables.careerAnswer)
+			.set({ scope: "application", applicationId: "alice-other" })
+			.where(eq(tables.careerAnswer.id, answer.id));
+		await expect(applicationPackets.review("alice", selection)).rejects.toMatchObject({ code: "CONFLICT" });
+		await getDb().delete(tables.careerAnswer).where(eq(tables.careerAnswer.id, answer.id));
+		await expect(applicationPackets.review("alice", selection)).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect(fixture.packetRender).not.toHaveBeenCalled();
+	});
+
+	it.each(["resume", "letter"] as const)("rejects selected trashed %s without replacement", async (kind) => {
+		const { applicationPackets, selection, letter } = await packetFixture();
+		const review = await applicationPackets.review("alice", selection);
+		if (kind === "resume")
+			await getDb().update(tables.resume).set({ trashedAt: new Date() }).where(eq(tables.resume.id, "shared-resume"));
+		else
+			await getDb()
+				.update(tables.coverLetter)
+				.set({ trashedAt: new Date() })
+				.where(eq(tables.coverLetter.id, letter.id));
+		await expect(
+			applicationPackets.export("alice", { selection, fingerprint: review.fingerprint, reviewed: true }),
+		).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect(fixture.packetRender).not.toHaveBeenCalled();
+	});
+
+	it.each(["profile", "resume", "letter", "answer", "evidence"] as const)(
+		"rejects %s changed during PDF rendering and writes no packet versions",
+		async (kind) => {
+			const { applicationPackets, selection, profile, profiles, letter, answer, evidence } = await packetFixture();
+			const review = await applicationPackets.review("alice", selection);
+			fixture.packetRender.mockImplementationOnce(async () => {
+				if (kind === "profile")
+					await profiles.save("alice", {
+						data: { ...profile.data, email: "changed@example.test" },
+						expectedRevision: profile.revision,
+					});
+				if (kind === "resume")
+					await getDb()
+						.update(tables.resume)
+						.set({ data: resumeData("Changed content") })
+						.where(eq(tables.resume.id, "shared-resume"));
+				if (kind === "letter")
+					await getDb()
+						.update(tables.coverLetter)
+						.set({ content: "<p>Changed letter</p>" })
+						.where(eq(tables.coverLetter.id, letter.id));
+				if (kind === "answer")
+					await getDb()
+						.update(tables.careerAnswer)
+						.set({ answer: "Changed wording" })
+						.where(eq(tables.careerAnswer.id, answer.id));
+				if (kind === "evidence")
+					await getDb()
+						.update(tables.careerFact)
+						.set({ text: "Corrected evidence" })
+						.where(eq(tables.careerFact.id, evidence.id));
+				return { body: new File(["OLD APPROVED CONTENT"], "old.pdf") };
+			});
+			await expect(
+				applicationPackets.export("alice", { selection, fingerprint: review.fingerprint, reviewed: true }),
+			).rejects.toMatchObject({ code: "CONFLICT" });
+			expect(
+				await getDb().select().from(tables.resumeVersion).where(eq(tables.resumeVersion.kind, "named")),
+			).toHaveLength(0);
+			expect(
+				await getDb().select().from(tables.coverLetterVersion).where(eq(tables.coverLetterVersion.kind, "named")),
+			).toHaveLength(0);
+		},
+	);
 
 	it("links private profiles and reviewed answers atomically, preserving both on conflicts and copy failure", async () => {
 		const { applicationProfileService: profiles } = await import("../application-profile/service");

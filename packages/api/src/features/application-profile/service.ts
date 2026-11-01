@@ -1,3 +1,4 @@
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { ApplicationProfileData } from "@reactive-resume/schema/application-profile";
 import { ORPCError } from "@orpc/client";
 import { eq } from "drizzle-orm";
@@ -8,8 +9,8 @@ import { generateId } from "@reactive-resume/utils/string";
 import { lockUser } from "../documents/ownership";
 
 export const applicationProfileService = {
-	get: async (userId: string) => {
-		const [row] = await db.select().from(applicationProfile).where(eq(applicationProfile.userId, userId));
+	get: async (userId: string, reader: DbOrTx = db) => {
+		const [row] = await reader.select().from(applicationProfile).where(eq(applicationProfile.userId, userId));
 		return row
 			? {
 					data: applicationProfileDataSchema.parse(row.data),

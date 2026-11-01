@@ -1,3 +1,4 @@
+import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { ORPCError } from "@orpc/server";
 import z from "zod";
@@ -18,8 +19,32 @@ const exportInput = z.object({
 });
 const exportOutput = z.object({ headers: z.object({ "content-disposition": z.string() }), body: z.file() });
 
+/** Same composition for current-document downloads and approved version packets. */
+export function letterExportData(
+	letter: CoverLetter,
+	words = {
+		greeting: "Dear {name},",
+		teamGreeting: "Dear hiring team,",
+		hiringTeam: "Hiring team",
+		signOff: "Kind regards,",
+	},
+) {
+	const composed = composeCoverLetter(letter, {
+		...words,
+		greeting: (name) => words.greeting.replace("{name}", () => name),
+		formatDate: (date) =>
+			new Date(`${date}T12:00:00Z`).toLocaleDateString(letter.style.metadata.page.locale, {
+				day: "numeric",
+				month: "long",
+				year: "numeric",
+				timeZone: "UTC",
+			}),
+	});
+	return createCoverLetterResumeData({ ...letter, ...composed });
+}
+
 /** Builds the download response (headers + body) for a resume or cover letter in the requested format. */
-async function fileResponse(
+export async function fileResponse(
 	data: ResumeData,
 	name: string,
 	format: z.infer<typeof exportInput>["format"],
@@ -109,26 +134,8 @@ export const documentExports = {
 				hiringTeam: "Hiring team",
 				signOff: "Kind regards,",
 			};
-			const composed = composeCoverLetter(letter, {
-				...words,
-				greeting: (name) => words.greeting.replace("{name}", () => name),
-				formatDate: (date) =>
-					new Date(`${date}T12:00:00Z`).toLocaleDateString(letter.style.metadata.page.locale, {
-						day: "numeric",
-						month: "long",
-						year: "numeric",
-						timeZone: "UTC",
-					}),
-			});
 			const json =
 				input.format === "json" ? await coverLetterService.export({ id: input.id, userId: context.user.id }) : null;
-			return fileResponse(
-				createCoverLetterResumeData({ ...letter, ...composed }),
-				letter.name,
-				input.format,
-				json,
-				true,
-				"cover-letter",
-			);
+			return fileResponse(letterExportData(letter, words), letter.name, input.format, json, true, "cover-letter");
 		}),
 };

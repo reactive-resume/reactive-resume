@@ -1,3 +1,4 @@
+import { applicationPacketSchema, packetFillPlan } from "@reactive-resume/schema/applications/autofill";
 import {
 	captureInstallation,
 	capturePostingUrl,
@@ -6,6 +7,17 @@ import {
 const $ = (id) => document.getElementById(id);
 const status = $("status");
 let installation = null;
+let packet = null;
+let approvedPacket = null;
+let packetGeneration = 0;
+function setPacket(value) {
+	packet = value;
+	approvedPacket = null;
+	$("packet-reviewed").checked = false;
+	$("fill-packet").disabled = true;
+	$("packet-summary").textContent = "";
+	$("fill-report").textContent = "";
+}
 function show(origin) {
 	installation = origin;
 	$("connection").textContent = origin
@@ -15,6 +27,7 @@ function show(origin) {
 	$("capture").hidden = !origin;
 	$("disconnect").hidden = !origin;
 	$("fallback").hidden = !origin;
+	$("packet-section").hidden = !origin;
 }
 await chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" });
 const saved = await chrome.storage.local.get("installation");
@@ -36,9 +49,85 @@ $("connect").addEventListener("submit", async (event) => {
 	}
 });
 $("disconnect").addEventListener("click", async () => {
-	await chrome.storage.local.remove("installation");
+	++packetGeneration;
+	setPacket(null);
+	$("packet-file").value = "";
 	show(null);
+	await chrome.storage.local.remove("installation");
 	status.textContent = "Disconnected. No capture data is kept by the helper.";
+});
+
+$("packet-file").addEventListener("change", async () => {
+	const generation = ++packetGeneration;
+	setPacket(null);
+	if (!installation) return;
+	try {
+		const file = $("packet-file").files[0];
+		if (!file || file.size > 4_000_000) throw new Error("Packet missing or too large.");
+		const contents = await file.text();
+		if (generation !== packetGeneration || !installation) return;
+		setPacket(applicationPacketSchema.parse(JSON.parse(contents)));
+		$("packet-summary").textContent = JSON.stringify(
+			{
+				destination: packet.review.selection.targetUrl,
+				approvedAt: packet.approvedAt,
+				application: packet.review.application,
+				contact: packet.review.contact,
+				experience: packet.review.experience,
+				answers: packet.review.answers,
+				documents: packet.documents.map(({ base64: _bytes, ...document }) => document),
+			},
+			null,
+			2,
+		);
+		$("fill-report").textContent = packetFillPlan(packet)
+			? "Review every field and PDF version, then explicitly approve filling the exact page. No credentials or packet data are stored by this helper."
+			: "Unsupported form. Use the packet's exact PDFs and copyable answers in Apply; complete this form manually.";
+	} catch {
+		if (generation !== packetGeneration || !installation) return;
+		setPacket(null);
+		$("fill-report").textContent =
+			"Invalid packet. Download a freshly reviewed application packet from Apply. Nothing filled.";
+	}
+});
+$("packet-reviewed").addEventListener("change", () => {
+	approvedPacket = $("packet-reviewed").checked ? packet : null;
+	$("fill-packet").disabled = !installation || !approvedPacket || !packetFillPlan(approvedPacket);
+});
+$("fill-packet").addEventListener("click", async () => {
+	const selectedPacket = approvedPacket;
+	const generation = packetGeneration;
+	const current = () => installation && generation === packetGeneration && packet === selectedPacket;
+	if (!selectedPacket || !current() || !$("packet-reviewed").checked) return;
+	approvedPacket = null;
+	$("packet-reviewed").checked = false;
+	$("fill-packet").disabled = true;
+	try {
+		const plan = packetFillPlan(selectedPacket);
+		if (!plan) throw new Error("Unsupported form. Complete it manually.");
+		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+		if (!current()) return;
+		if (!tab?.id || tab.url !== plan.targetUrl)
+			throw new Error("Destination changed. Open the exact reviewed form URL; nothing filled.");
+		await chrome.scripting.executeScript({ target: { tabId: tab.id }, world: "ISOLATED", files: ["form-fill.js"] });
+		if (!current()) return;
+		const [result] = await chrome.scripting.executeScript({
+			target: { tabId: tab.id },
+			world: "ISOLATED",
+			func: (plan) => globalThis.RRFormFill(plan),
+			args: [plan],
+		});
+		if (!current()) return;
+		$("fill-report").textContent = JSON.stringify(
+			result?.result ?? { error: "No fill report. Complete the form manually." },
+			null,
+			2,
+		);
+	} catch (error) {
+		if (!current()) return;
+		$("fill-report").textContent =
+			error instanceof Error ? error.message : "Filling failed. Attach exact downloads and copy answers manually.";
+	}
 });
 $("capture").addEventListener("click", async () => {
 	$("capture").disabled = true;
