@@ -146,6 +146,8 @@ describe("withLinkTargets", () => {
 		data.sections.profiles.items = [{ ...(profile("priya") as object), network: "GitHub" } as never];
 		expect(withLinkTargets(data, links).sections.profiles.items[0]?.website.url).toBe(links[1]);
 		expect(withLinkTargets(data, [links[0] as string]).sections.profiles.items[0]?.website.url).toBe("");
+		// Someone else's repository named like the user isn't the user's profile.
+		expect(withLinkTargets(data, ["https://github.com/dana/priya"]).sections.profiles.items[0]?.website.url).toBe("");
 	});
 });
 
@@ -163,6 +165,20 @@ describe("extractDocxText", () => {
 	const encode = (text: string) => new TextEncoder().encode(text);
 	const paragraph = (runs: string) => `<w:p>${runs}</w:p>`;
 	const run = (text: string, properties = "") => `<w:r>${properties}<w:t>${text}</w:t></w:r>`;
+
+	it("reads a header whose target is absolute from the package root", () => {
+		const body = `<w:document><w:body>${paragraph(run("Body"))}<w:sectPr><w:headerReference r:id="rId1"/></w:sectPr></w:body></w:document>`;
+		const rels = '<Relationships><Relationship Id="rId1" Target="/word/header3.xml"/></Relationships>';
+		expect(
+			extractDocxText(
+				zipSync({
+					"word/document.xml": encode(body),
+					"word/_rels/document.xml.rels": encode(rels),
+					"word/header3.xml": encode(`<w:hdr>${paragraph(run("Priya Raman"))}</w:hdr>`),
+				}),
+			),
+		).toBe("Priya Raman\n\nBody");
+	});
 
 	it("reads only the headers a section uses", () => {
 		const body = `<w:document><w:body>${paragraph(run("Body"))}<w:sectPr><w:headerReference w:type="default" r:id="rId8"/></w:sectPr></w:body></w:document>`;

@@ -435,7 +435,8 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 							<span className="text-[13px] leading-[19px] text-ink-2">
 								<Trans>
 									Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in
-									ready to edit. Anything that couldn't be placed is listed before you create the resume.
+									ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create
+									the resume.
 								</Trans>
 							</span>
 						</span>

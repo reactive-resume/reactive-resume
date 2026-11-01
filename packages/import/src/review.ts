@@ -140,14 +140,20 @@ const NETWORK_HOSTS: Record<string, RegExp> = {
 	bluesky: /(^|\.)bsky\.app$/,
 };
 
-const pathSegments = (url: string) => {
+// Path prefixes that come before the account name ("/in/priya-raman", "/user/priya", "/c/priya").
+const ACCOUNT_PREFIXES = new Set(["in", "pub", "u", "user", "users", "c", "channel", "profile", "people"]);
+
+/** The part of a profile address that names the account: the first path segment, after a prefix such as `/in/`. */
+const accountSegment = (url: string) => {
 	try {
-		return new URL(url).pathname
+		const segments = new URL(url).pathname
 			.split("/")
 			.filter(Boolean)
 			.map((segment) => decodeURIComponent(segment).replace(/^@/, "").toLowerCase());
+		const [first, second] = segments;
+		return first && ACCOUNT_PREFIXES.has(first) ? second : first;
 	} catch {
-		return [];
+		return undefined;
 	}
 };
 
@@ -178,8 +184,8 @@ export function withLinkTargets(data: ResumeData, links: readonly string[]): Res
 			return !!host && (pattern ? pattern.test(host) : !!key && host.replace(/\./g, "").includes(key));
 		});
 		const username = item.username.trim().replace(/^@/, "").toLowerCase();
-		// The username is the account's own path segment ("/in/priya-raman", "/@priya"), not any part of the address.
-		const named = username ? candidates.filter((link) => pathSegments(link).includes(username)) : [];
+		// The username is the account's own segment ("/in/priya-raman", "/@priya"), not a repository or any other part.
+		const named = username ? candidates.filter((link) => accountSegment(link) === username) : [];
 		const url = named.length === 1 ? named[0] : !username && candidates.length === 1 ? candidates[0] : undefined;
 		if (!url) return item;
 		used.add(url);

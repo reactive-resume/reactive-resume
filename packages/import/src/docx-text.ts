@@ -32,7 +32,9 @@ function referencedParts(body: string, rels: string | undefined) {
 	for (const [relationship] of rels.matchAll(/<Relationship\b[^<>]*>/g)) {
 		const id = /\bId="([^"]+)"/.exec(relationship)?.[1];
 		const target = /\bTarget="([^"]+)"/.exec(relationship)?.[1];
-		if (id && target && ids.has(id)) targets.add(`word/${target.replace(/^\.?\//, "")}`);
+		// A target is relative to `word/`, or absolute from the package root ("/word/header1.xml").
+		if (id && target && ids.has(id))
+			targets.add(target.startsWith("/") ? target.slice(1) : `word/${target.replace(/^\.\//, "")}`);
 	}
 	return targets;
 }
