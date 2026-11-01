@@ -86,3 +86,5 @@ Anything a tool returns, including your resume's private notes, goes to the agen
 - [Using the patch API](/guides/using-the-patch-api): how resume edits are expressed.
 - [Checking your resume](/guides/checking-your-resume): what Check looks at.
 - [Undoing changes and version history](/guides/undoing-changes-and-version-history): taking back an edit, or going back to an earlier version.
+
+Tool validation and execution failures return a text result starting with `Error:` and an explanation the agent can use to correct its next call. Cancellation still aborts the invocation. Invalid patches leave the document and its undo history unchanged.
