@@ -60,7 +60,14 @@ type Step =
 	| { name: "choose" }
 	| { name: "import-choice"; file: File; kind: "pdf" | "docx" }
 	| { name: "importing"; file: File; stage: number; notes: string[] }
-	| { name: "review"; file: File; data: ResumeData; review: ImportReview }
+	| {
+			name: "review";
+			file: File;
+			data: ResumeData;
+			review: ImportReview;
+			/** How much of the file's own text the import was compared with. */
+			comparison: "full" | "partial" | "none";
+	  }
 	| { name: "imported"; file: File; resumeId: string; sections: number; entries: number; flagged: number }
 	| { name: "failed"; file: File; message: string }
 	| { name: "copy" };
@@ -157,7 +164,13 @@ function useResumeImport(
 				const source = await readImportSource(file, kind);
 				if (!current()) return;
 				const data = source ? withLinkTargets(resume, source.links) : resume;
-				setStep({ name: "review", file, data, review: reviewImport(data, source?.lines) });
+				setStep({
+					name: "review",
+					file,
+					data,
+					review: reviewImport(data, source?.lines),
+					comparison: !source ? "none" : source.partial ? "partial" : "full",
+				});
 				return;
 			}
 			await create(file, resume, attempt);
@@ -497,6 +510,21 @@ function ReviewStep({ step, onCreate, onChooseFile }: ReviewStepProps) {
 			) : (
 				<p className="text-[13px] text-ink-2">
 					<Trans>No sections were found in this file.</Trans>
+				</p>
+			)}
+
+			{step.comparison !== "full" && (
+				<p className="text-[13px] leading-[19px] text-ink-2">
+					{step.comparison === "partial" ? (
+						<Trans>
+							This file is long, so only its first pages were compared with what came in. Check the rest in the editor.
+						</Trans>
+					) : (
+						<Trans>
+							This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each
+							section against your file in the editor.
+						</Trans>
+					)}
 				</p>
 			)}
 

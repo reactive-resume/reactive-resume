@@ -13,6 +13,8 @@ export async function readPdfSource(file: File) {
 	return {
 		lines: documentToLines(doc),
 		links: (doc.links ?? []).flatMap((link) => (link.url ? [link.url] : [])),
+		// Very long files are read only in part; the review then says so.
+		partial: raw.truncated,
 	};
 }
 

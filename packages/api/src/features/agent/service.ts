@@ -64,7 +64,7 @@ import {
 	upsertAssistantUiMessage,
 	withAccumulatedUsageMetadata,
 	withEditStatuses,
-	withSupersededEdits,
+	supersededEdits,
 } from "./messages-persistence";
 import { acceptedEditAllowed, documentReader } from "./proposal-applications";
 import { repairAgentToolCall } from "./repair";
@@ -817,10 +817,11 @@ async function proposeEdits(input: {
 }
 
 /**
- * A refinement replaces the conversation's earlier undecided suggestion for the same passage: it's recorded as
- * rejected (older apps show that), and the new result names it, so the user isn't asked to clean up after the reply.
+ * A refinement replaces the conversation's earlier undecided suggestion for the same passage. The new result names
+ * them and the apps show them as replaced, so the user isn't asked to clean up after the reply. Nothing is written
+ * here: an earlier edit counts as replaced only once the result that replaces it is saved with its reply.
  */
-function supersedeEarlierEdits(
+async function supersedeEarlierEdits(
 	input: { userId: string; threadId: string },
 	edits: ProposeEditsOutput["edits"],
 	document: Awaited<ReturnType<typeof loadDocument>>,
@@ -829,20 +830,8 @@ function supersedeEarlierEdits(
 		const value = document.read(edit.target);
 		return value !== undefined && canApplyTo(value, { before: edit.after });
 	};
-	return db.transaction(async (tx) => {
-		const rows = await lockThreadMessages(tx, input);
-		const superseded: string[] = [];
-		for (const row of rows) {
-			const result = withSupersededEdits(toMessage(row), edits, held);
-			if (result.superseded.length === 0) continue;
-			superseded.push(...result.superseded);
-			await tx
-				.update(schema.agentMessage)
-				.set({ uiMessage: result.message as never })
-				.where(and(eq(schema.agentMessage.id, row.id), eq(schema.agentMessage.userId, input.userId)));
-		}
-		return superseded;
-	});
+	const rows = await listThreadMessages(input);
+	return rows.flatMap((row) => supersededEdits(toMessage(row), edits, held));
 }
 
 function createAgent(input: {

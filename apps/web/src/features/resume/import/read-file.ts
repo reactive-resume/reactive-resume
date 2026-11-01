@@ -200,7 +200,7 @@ export async function readResumeFile(
 export async function readImportSource(
 	file: File,
 	kind: ImportKind,
-): Promise<{ lines: string[]; links: string[] } | null> {
+): Promise<{ lines: string[]; links: string[]; partial: boolean } | null> {
 	try {
 		if (kind === "pdf") {
 			const { readPdfSource } = await import("./pdf-text");
@@ -208,7 +208,11 @@ export async function readImportSource(
 		}
 		if (kind === "docx") {
 			const { extractDocxText } = await import("@reactive-resume/import/docx-text");
-			return { lines: extractDocxText(new Uint8Array(await file.arrayBuffer())).split("\n"), links: [] };
+			return {
+				lines: extractDocxText(new Uint8Array(await file.arrayBuffer())).split("\n"),
+				links: [],
+				partial: false,
+			};
 		}
 	} catch {
 		// A file the reader parsed but this check can't open still imports; it just isn't compared.

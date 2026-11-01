@@ -4,6 +4,8 @@ const DOCUMENT_XML_PATH = "word/document.xml";
 // Word templates often put the name and contact details in the page header; the footer can hold them too.
 const HEADER_FOOTER_PATH = /^word\/(header|footer)\d*\.xml$/;
 const MAX_PART_BYTES = 20 * 1024 * 1024;
+// Headers and footers match a pattern, so a small file could hold many large ones: cap what they inflate to together.
+const MAX_TOTAL_BYTES = 40 * 1024 * 1024;
 
 const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };
 
@@ -18,7 +20,12 @@ function decodeEntities(text: string) {
 function readParts(data: Uint8Array) {
 	let entries: Record<string, Uint8Array>;
 	try {
-		entries = unzipEntries(data, (name) => name === DOCUMENT_XML_PATH || HEADER_FOOTER_PATH.test(name), MAX_PART_BYTES);
+		entries = unzipEntries(
+			data,
+			(name) => name === DOCUMENT_XML_PATH || HEADER_FOOTER_PATH.test(name),
+			MAX_PART_BYTES,
+			MAX_TOTAL_BYTES,
+		);
 	} catch (error) {
 		if (error instanceof ZipEntryTooLargeError) throw new Error("DOCX document content is too large.");
 		throw new Error("Invalid DOCX archive.");

@@ -67,7 +67,7 @@ export type Proposal = {
 	snapshot?: { before: string; after: string } | undefined;
 	/** The new text says something nothing checked says: the user confirms it, so Accept all leaves it out. */
 	addsClaims?: boolean | undefined;
-	/** A later suggestion in the conversation replaced this undecided one (it's recorded as rejected). */
+	/** A later suggestion in the conversation replaced this undecided one; it reads as rejected. */
 	superseded?: boolean | undefined;
 };
 

@@ -286,7 +286,7 @@ export const proposeEditsOutputSchema = z.looseObject({
 	tailoredFor: z.string().nullable().optional(),
 	/** Set when the server withheld these edits from acceptance here (see tailoringAllows). */
 	revoked: z.boolean().optional(),
-	/** Earlier undecided edits in the conversation that these replace (same passage); they are recorded as rejected. */
+	/** Earlier undecided edits in the conversation that these replace (same passage); apps show them as replaced. */
 	supersedes: z.array(z.string()).optional(),
 });
 

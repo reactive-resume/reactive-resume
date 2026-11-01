@@ -73,21 +73,20 @@ const sameTarget = (a: ProposedEdit["target"], b: ProposedEdit["target"]) =>
 
 /**
  * Undecided passage edits in `message` that `newer` replaces: the same field and the same passage, as text (an
- * addition's anchor carries its list item's end tag). The ones the document already holds stay: their acceptance can
- * be recorded after the save that applied them.
+ * addition's anchor carries its list item's end tag). Ones the document already holds are left out: their acceptance
+ * can be recorded after the save that applied them.
  */
-export function withSupersededEdits(
+export function supersededEdits(
 	message: UIMessage,
 	newer: readonly ProposedEdit[],
 	held: (edit: ProposedEdit) => boolean,
-): { message: UIMessage; superseded: string[] } {
-	const superseded: string[] = [];
-	const updated = mapEdits(message, null, (edit) => {
+): string[] {
+	return proposedEditsOf(message).flatMap((edit) => {
 		const passage = blockText(edit.before);
 		const replaced =
 			edit.status === "pending" &&
 			!edit.snapshot &&
-			passage &&
+			!!passage &&
 			newer.some(
 				(next) =>
 					next.id !== edit.id &&
@@ -96,11 +95,8 @@ export function withSupersededEdits(
 					blockText(next.before) === passage,
 			) &&
 			!held(edit);
-		if (!replaced) return edit;
-		superseded.push(edit.id);
-		return { ...edit, status: "rejected" };
+		return replaced ? [edit.id] : [];
 	});
-	return { message: superseded.length > 0 ? updated : message, superseded };
 }
 
 /**

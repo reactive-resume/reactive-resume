@@ -33,12 +33,10 @@ function resumeText(data: ResumeData) {
 	return normalize(strings.join("\n"));
 }
 
-const MAX_LEFTOVERS = 40;
-
 /**
  * Lines of the source that the imported resume doesn't hold. A line counts as imported when its text is there, or
- * when most of its words are (the reader may join, split or tidy lines). Headings and other short lines are skipped:
- * what matters is the content under them.
+ * when every number in it and most of its words are (the reader may join, split or tidy lines, but a lost "18%" is a
+ * loss). Headings and other short lines are skipped: what matters is the content under them.
  */
 export function notImportedLines(data: ResumeData, lines: readonly string[]) {
 	const text = resumeText(data);
@@ -47,13 +45,14 @@ export function notImportedLines(data: ResumeData, lines: readonly string[]) {
 	const seen = new Set<string>();
 	for (const line of lines) {
 		const normalized = normalize(line);
-		const content = normalized.split(" ").filter((word) => word.length >= 3 && /\p{L}/u.test(word));
+		const tokens = normalized.split(" ");
+		const content = tokens.filter((word) => word.length >= 3 && /\p{L}/u.test(word));
+		const numbers = tokens.filter((word) => /\p{N}/u.test(word));
 		if (content.length < 2 || seen.has(normalized) || text.includes(normalized)) continue;
 		const found = content.filter((word) => words.has(word)).length;
-		if (found / content.length >= 0.6) continue;
+		if (numbers.every((number) => words.has(number)) && found / content.length >= 0.6) continue;
 		seen.add(normalized);
 		leftovers.push(line.trim());
-		if (leftovers.length === MAX_LEFTOVERS) break;
 	}
 	return leftovers;
 }
@@ -135,41 +134,30 @@ const hostOf = (url: string) => {
 	}
 };
 
-function mailAddress(link: string | undefined) {
-	const address = link?.replace(/^mailto:/i, "").split("?")[0];
-	if (!address) return null;
-	try {
-		return decodeURIComponent(address);
-	} catch {
-		return address;
-	}
-}
-
 /**
- * Link targets a PDF carries behind words like "LinkedIn": a profile with no address gets the link to its network,
- * and an empty email gets the first mail link. Nothing the reader already filled in changes.
+ * Link targets a PDF carries behind words like "LinkedIn": a profile with no address gets the link to its network.
+ * Only a link that is clearly that profile's is used: the one link to the network, or the one naming its username.
+ * Nothing the reader filled in changes, and mail links aren't used: a referee's address could be the one there.
  */
 export function withLinkTargets(data: ResumeData, links: readonly string[]): ResumeData {
-	if (links.length === 0) return data;
-	const web = links.filter((link) => /^https?:\/\//i.test(link));
+	const web = [...new Set(links.filter((link) => /^https?:\/\//i.test(link)))];
+	if (web.length === 0) return data;
 	const used = new Set(data.sections.profiles.items.map((item) => item.website.url).filter(Boolean));
 	const items = data.sections.profiles.items.map((item) => {
 		if (item.website.url) return item;
 		const key = normalize(item.network).replace(/\s+/g, "");
 		const pattern = NETWORK_HOSTS[key];
-		const url = web.find((link) => {
+		const candidates = web.filter((link) => {
 			if (used.has(link)) return false;
 			const host = hostOf(link);
 			return !!host && (pattern ? pattern.test(host) : !!key && host.replace(/\./g, "").includes(key));
 		});
+		const username = item.username.trim().toLowerCase();
+		const named = username ? candidates.filter((link) => link.toLowerCase().includes(username)) : [];
+		const url = named.length === 1 ? named[0] : !username && candidates.length === 1 ? candidates[0] : undefined;
 		if (!url) return item;
 		used.add(url);
 		return { ...item, website: { ...item.website, url } };
 	});
-	const mail = mailAddress(links.find((link) => /^mailto:/i.test(link)));
-	return {
-		...data,
-		basics: data.basics.email || !mail ? data.basics : { ...data.basics, email: mail },
-		sections: { ...data.sections, profiles: { ...data.sections.profiles, items } },
-	};
+	return { ...data, sections: { ...data.sections, profiles: { ...data.sections.profiles, items } } };
 }

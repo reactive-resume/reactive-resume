@@ -25,6 +25,12 @@ const resume = () => {
 };
 
 describe("notImportedLines", () => {
+	it("lists a line whose number didn't come through, even when its words did", () => {
+		expect(notImportedLines(resume(), ["Improved checkout-flow accessibility by 18%."])).toEqual([
+			"Improved checkout-flow accessibility by 18%.",
+		]);
+	});
+
 	it("lists source lines the resume doesn't hold, skipping headings and tidied lines", () => {
 		const lines = [
 			"PRIYA RAMAN",
@@ -66,24 +72,35 @@ describe("withLeftoverSection", () => {
 });
 
 describe("withLinkTargets", () => {
-	it("fills an empty profile address from the link behind it, and an empty email from a mail link", () => {
+	const profile = (username = "") =>
+		({
+			id: "p",
+			hidden: false,
+			icon: "",
+			network: "LinkedIn",
+			username,
+			website: { url: "", label: "", inlineLink: false },
+		}) as never;
+
+	it("fills an empty profile address from the one link behind it, and never the email", () => {
 		const data = resume();
-		data.sections.profiles.items = [
-			{
-				id: "p",
-				hidden: false,
-				icon: "",
-				network: "LinkedIn",
-				username: "",
-				website: { url: "", label: "", inlineLink: false },
-			} as never,
-		];
+		data.basics.email = "";
+		data.sections.profiles.items = [profile()];
 		const linked = withLinkTargets(data, [
 			"https://www.linkedin.com/in/priya-raman-example",
-			"mailto:priya@example.com",
+			"mailto:dana@example.com",
 		]);
 		expect(linked.sections.profiles.items[0]?.website.url).toBe("https://www.linkedin.com/in/priya-raman-example");
-		expect(linked.basics.email).toBe("priya@example.com");
+		expect(linked.basics.email).toBe("");
+	});
+
+	it("leaves a profile alone when several links could be it, unless one names its username", () => {
+		const data = resume();
+		const links = ["https://linkedin.com/in/dana-lee", "https://linkedin.com/in/priya-raman"];
+		data.sections.profiles.items = [profile()];
+		expect(withLinkTargets(data, links).sections.profiles.items[0]?.website.url).toBe("");
+		data.sections.profiles.items = [profile("priya-raman")];
+		expect(withLinkTargets(data, links).sections.profiles.items[0]?.website.url).toBe(links[1]);
 	});
 });
 

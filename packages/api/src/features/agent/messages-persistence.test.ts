@@ -5,7 +5,7 @@ import {
 	proposedEditsOf,
 	upsertAssistantUiMessage,
 	withEditWording,
-	withSupersededEdits,
+	supersededEdits,
 } from "./messages-persistence";
 
 function emptyMessage(): UIMessage {
@@ -197,7 +197,7 @@ describe("proposed edit statuses", () => {
 	});
 });
 
-describe("withSupersededEdits", () => {
+describe("supersededEdits", () => {
 	const target = { sectionId: "experience", itemId: "northwind", field: "description" };
 	const edit = (id: string, before: string, after: string, extra: Record<string, unknown> = {}) => ({
 		id,
@@ -227,10 +227,8 @@ describe("withSupersededEdits", () => {
 	const addition = edit("add", `${bullet}</li>`, `${bullet}</li><li><p>Led an accessibility audit last year.</p></li>`);
 	const refinement = edit("refine", bullet, "<p>Led a WCAG 2.2 AA audit in 2025; the team fixed 60 issues.</p>");
 
-	it("rejects an earlier undecided edit of the same passage and names it", () => {
-		const result = withSupersededEdits(message([addition]), [refinement], () => false);
-		expect(result.superseded).toEqual(["add"]);
-		expect(proposedEditsOf(result.message)[0]?.status).toBe("rejected");
+	it("names an earlier undecided edit of the same passage", () => {
+		expect(supersededEdits(message([addition]), [refinement], () => false)).toEqual(["add"]);
 	});
 
 	it("keeps decided edits, edits the document already holds, other passages and structural changes", () => {
@@ -238,9 +236,6 @@ describe("withSupersededEdits", () => {
 		const accepted = { ...addition, id: "accepted", status: "accepted" as const };
 		const structural = edit("structural", bullet, bullet, { snapshot: { before: "{}", after: "{}" } });
 		const earlier = message([other, accepted, structural, addition]);
-		expect(withSupersededEdits(earlier, [refinement], (candidate) => candidate.id === "add")).toEqual({
-			message: earlier,
-			superseded: [],
-		});
+		expect(supersededEdits(earlier, [refinement], (candidate) => candidate.id === "add")).toEqual([]);
 	});
 });
