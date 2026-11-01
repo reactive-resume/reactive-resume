@@ -95,7 +95,7 @@ for (const entry of ["library", "builder"] as const)
 				} else {
 					expect(new Date(request.expectedUpdatedAt).getTime()).toBe(new Date(metadataBefore.updatedAt).getTime());
 					expect(JSON.parse(wire).json).toMatchObject({ name, slug: expectedSlug, updatedAt: metadataAfter.updatedAt });
-					await expect(page).toHaveTitle(`${name} - Reactive Resume`);
+					await expect(page).toHaveTitle(`${name} | Reactive Resume`);
 					const stale = await page.request.put(`/api/openapi/resumes/${id}`, {
 						data: { name: "Stale rename must fail", expectedUpdatedAt: metadataBefore.updatedAt },
 					});
