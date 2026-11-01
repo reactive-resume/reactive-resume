@@ -56,8 +56,8 @@ const loadBaseline = (
 type RichTextFieldProps = {
 	label: string;
 	value: string;
-	/** Receives resume HTML, only after the user edits this field. */
-	onChange: (html: string) => void;
+	/** Receives resume HTML, only after the user edits this field. `newStep` marks an accepted AI replacement. */
+	onChange: (html: string, options?: { newStep?: boolean }) => void;
 	/** Guidance while editing, e.g. "2–3 sentences reads best". */
 	hint?: string | undefined;
 	disabled?: boolean | undefined;
@@ -216,7 +216,7 @@ export function RichTextField({ label, value, onChange, hint, disabled = false, 
 						const html = fromEnrichedHtml((await ref.current?.getHTML()) ?? "");
 						const next = replaceLine(html, improving.index, improving.text, replacement);
 						if (next === null) return false;
-						onChange(next);
+						onChange(next, { newStep: true });
 						ref.current?.setValue(session.wrote(next));
 						setImproving(null);
 						return true;

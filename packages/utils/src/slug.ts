@@ -2,13 +2,18 @@
 import _slugify from "@sindresorhus/slugify";
 import { adjectives, animals, colors, uniqueNamesGenerator } from "unique-names-generator";
 
+/** Slugifies a string without a random fallback, for address stems that must stay neutral. */
+export function slugifyStem(value: string) {
+	return _slugify(value, { decamelize: false });
+}
+
 /** Slugifies a string, with some pre-defined options.
  *
  * @param value - The value to slugify.
- * @returns The slugified value.
+ * @returns The slugified value, or a random name when non-blank text has no writable characters.
  */
 export function slugify(value: string) {
-	const slug = _slugify(value, { decamelize: false });
+	const slug = slugifyStem(value);
 	if (slug || !value.trim()) return slug;
 	return slugify(generateRandomName());
 }
