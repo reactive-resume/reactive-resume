@@ -1447,6 +1447,10 @@ msgstr "స్థానాన్ని జోడించండి"
 msgid "Add a newer offer"
 msgstr ""
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
 msgstr "ఒక వ్యక్తిని జోడించు"
@@ -2941,6 +2945,7 @@ msgstr "సాఫ్ట్‌వేర్ మీ రెజ్యూమెను 
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -3042,6 +3047,15 @@ msgstr "ఈ టైమ్‌లైన్ ఎంట్రీని మార్చ
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "టైమ్ జోన్ మార్చు"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3268,6 +3282,10 @@ msgstr "ఫైల్‌ను ఎంచుకోండి"
 msgid "Choose a file to import"
 msgstr "దిగుమతి చేయడానికి ఫైల్‌ను ఎంచుకోండి"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "మీ ప్రస్తుత పాస్‌వర్డ్‌కు భిన్నమైన పాస్‌వర్డ్‌ను ఎంచుకోండి."
@@ -3425,6 +3443,7 @@ msgstr "క్లయింట్ ID"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -4494,6 +4513,10 @@ msgstr "పాస్‌వర్డ్‌ను సెట్ చేయడం స
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "రెండు-దశల ధృవీకరణను సెటప్ చేయడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
@@ -5920,10 +5943,6 @@ msgstr "95000 వంటి పూర్తి మొత్తాన్ని న
 msgid "Enter a name, up to 64 characters."
 msgstr "64 అక్షరాల వరకు పేరును నమోదు చేయండి."
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "మీ ఖాతాకు కొత్త పాస్‌వర్డ్‌ను నమోదు చేయండి."
-
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
@@ -7114,10 +7133,6 @@ msgstr "యాప్ తెరవబడకపోతే, అది ఇన్‌�
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
-#: src/features/auth/email-text.ts
-msgid "If this was not you, you can ignore this message and your password will remain unchanged."
-msgstr ""
-
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -7133,6 +7148,10 @@ msgstr ""
 
 #: src/features/auth/email-text.ts
 msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr ""
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -9061,6 +9080,7 @@ msgstr "కొత్త పేజీ"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "న్యూ పాస్‌వర్డ్"
@@ -9170,6 +9190,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "ఇంకా ఉద్యోగ దరఖాస్తులు లేవు. ముందుగా జాబ్ అప్లికేషన్‌లలో ఒకదాన్ని జోడించండి."
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -10276,6 +10300,10 @@ msgstr "పాస్‌కీ"
 msgid "Passkeys"
 msgstr "పాస్‌కీలు"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -10296,17 +10324,21 @@ msgstr "పాస్‌వర్డ్"
 msgid "Password changed"
 msgstr "పాస్‌వర్డ్ మార్చబడింది"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "పాస్‌వర్డ్ తీసివేయబడింది"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "పాస్‌వర్డ్ రీసెట్ చేయబడింది. మీ కొత్త పాస్‌వర్డ్‌తో సైన్ ఇన్ చేయండి."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "పాస్వర్డ్ సెట్"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -11756,6 +11788,10 @@ msgstr "అవసరాలు"
 msgid "Requirements and your evidence"
 msgstr "అవసరాలు, మీ ఆధారాలు"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "పెద్ద అక్షరాలను చిన్న శీర్షికలకే రిజర్వ్ చేయండి. అవి చదవడాన్ని నెమ్మది చేస్తాయి మరియు కేస్-సెన్సిటివ్ శోధనను దెబ్బతీయగలవు."
@@ -11779,6 +11815,10 @@ msgstr ""
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "మీ పాస్‌వర్డ్‌ను రీసెట్ చేయండి"
+
+#: src/features/auth/email-text.ts
+msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
+msgstr ""
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
@@ -12817,6 +12857,10 @@ msgstr "పంపండి"
 msgid "Send reset link"
 msgstr "రీసెట్ లింక్ పంపండి"
 
+#: src/features/settings/account/profile.tsx
+msgid "Send the approval link again"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "పోర్ట్‌ఫోలియో రేపర్ కాకుండా రెజ్యూమ్‌నే పంపండి."
@@ -12941,10 +12985,13 @@ msgstr "సెర్బియన్"
 msgid "Set a follow-up…"
 msgstr "ఫాలో-అప్‌ని సెట్ చేయండి..."
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "పాస్వర్డ్ను సెట్ చేయండి"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "పాస్‌వర్డ్ సెట్ చేయండి"
@@ -12979,6 +13026,10 @@ msgstr "మీ ఆథెంటికేటర్ యాప్‌ను సెట
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -14215,6 +14266,11 @@ msgstr ""
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "ధన్యవాదాలు, Sam. ఇదిగో ఒకటి: Northwind Labsలో 14 కస్టమర్ ఇంటర్వ్యూల నుండి చిన్న సెటప్ వరకు ఆన్‌బోర్డింగ్ రీడిజైన్‌కు నేను నాయకత్వం వహించాను."
 
+#. placeholder {0}: still.user.email
+#: src/features/auth/pages/reset-password.tsx
+msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
 msgstr "ఆ ఫైల్‌ని PDFగా చదవడం సాధ్యపడలేదు. PDF ఫైల్‌ను ఎంచుకుని మళ్ళీ ప్రయత్నించండి."
@@ -14953,6 +15009,14 @@ msgstr "ఈ సేవ్ చేసిన వెర్షన్‌ను లో�
 msgid "This saved version is no longer available."
 msgstr "ఈ సేవ్ చేసిన వెర్షన్ ఇక అందుబాటులో లేదు."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
@@ -15568,6 +15632,7 @@ msgstr "3 నుండి 64 చిన్న అక్షరాలు, సంఖ
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15611,6 +15676,7 @@ msgid "Use at least 3 characters."
 msgstr "కనీసం 3 అక్షరాలను ఉపయోగించండి."
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15849,6 +15915,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "ముందుగా సెట్టింగులలో మీ ఇమెయిల్‌ను ధృవీకరించండి"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -16602,6 +16672,10 @@ msgstr "మీరు అతిథి ఖాతాను ఉపయోగిస్
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "మీరు {MAX_APPLICATION_LANES} దశల పరిమితిని చేరుకున్నారు. మరో దశను జోడించడానికి ఒకదాన్ని తీసివేయండి."
 
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
 msgstr "మీ ఖాతా తొలగించబడింది."
@@ -16764,7 +16838,7 @@ msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has and the guest's Career profile if it has its own. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
