@@ -35481,12 +35481,6 @@
 				},
 				"security": [
 					{
-						"apiKey": []
-					},
-					{
-						"bearerAuth": []
-					},
-					{
 						"cookieAuth": []
 					}
 				],
@@ -35494,7 +35488,7 @@
 					{
 						"lang": "bash",
 						"label": "cURL",
-						"source": "curl --request POST \"https://rxresu.me/api/openapi/auth/password\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"newPassword\": \"<string>\"\n}'"
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/auth/password\" --cookie \"<session-cookie>\" --header \"Content-Type: application/json\" --data '{\n  \"newPassword\": \"<string>\"\n}'"
 					}
 				]
 			}

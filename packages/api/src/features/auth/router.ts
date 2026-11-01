@@ -4,6 +4,7 @@ import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
 import { accountAuth, auth } from "@reactive-resume/auth/config";
 import * as schema from "@reactive-resume/db/schema";
+import { env } from "@reactive-resume/env/server";
 import { applicationProfileRecordSchema } from "@reactive-resume/schema/application-profile";
 import { applicationPipelineSchema } from "@reactive-resume/schema/applications/lanes";
 import { careerProfileDataSchema, careerWorkspaceSchema, discoverySourceSchema } from "@reactive-resume/schema/career";
@@ -217,6 +218,8 @@ export const authRouter = {
 
 	setPassword: accountProcedure
 		.route({
+			// Session only: keys and OAuth tokens can't add a password.
+			spec: (operation) => ({ ...operation, security: [{ cookieAuth: [] }] }),
 			method: "POST",
 			path: "/auth/password",
 			tags: ["Authentication"],
@@ -230,6 +233,8 @@ export const authRouter = {
 		.handler(async ({ context, input }) => {
 			if (context.authentication?.method !== "session")
 				throw new ORPCError("FORBIDDEN", { message: "Set a password from Settings in a web browser." });
+			if (env.FLAG_DISABLE_EMAIL_AUTH)
+				throw new ORPCError("FORBIDDEN", { message: "Password sign-in is turned off on this server." });
 			await assertRecentSignIn(context.reqHeaders);
 			await auth.api.setPassword({
 				body: { newPassword: input.newPassword },

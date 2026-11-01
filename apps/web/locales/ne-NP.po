@@ -1227,10 +1227,6 @@ msgstr "एउटा पृष्ठ घुमाइएको छ।"
 msgid "A passion project by {author}."
 msgstr ""
 
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "A password reset keeps two-step verification on, so it won't get you in. Ask the person who runs this Reactive Resume server to turn off two-step verification for your account. Then sign in with your password and turn it on again with a new authenticator."
-msgstr ""
-
 #: src/features/resume/editor/check/job-match.tsx
 msgid "A pasted posting can be saved as an application afterwards."
 msgstr "टाँसिएको जागिर पोस्टिङ पछि जागिर आवेदनको रूपमा बचत गर्न सकिन्छ।"
@@ -7133,6 +7129,10 @@ msgstr ""
 msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 msgstr ""
 
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
+msgstr ""
+
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Ignore"
 msgstr "बेवास्ता गर्नुहोस्"
@@ -12770,6 +12770,10 @@ msgstr "पठाउनुहोस्"
 msgid "Send reset link"
 msgstr "रिसेट लिङ्क पठाउनुहोस्"
 
+#: src/features/settings/account/profile.tsx
+msgid "Send the approval link again"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "पोर्टफोलियो र्‍यापरको सट्टा बायोडाटा नै पठाउनुहोस्।"
@@ -14170,6 +14174,11 @@ msgstr ""
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "धन्यवाद, Sam। यस्तो एउटा छ: Northwind Labs मा मैले अनबोर्डिङ पुनःडिजाइनको नेतृत्व गरेँ, 14 ग्राहक अन्तर्वार्तादेखि छोटो सेटअपसम्म।"
+
+#. placeholder {0}: still.user.email
+#: src/features/auth/pages/reset-password.tsx
+msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -16726,7 +16735,7 @@ msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account. Assistant conversations don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has and the guest's Career profile if it has its own. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

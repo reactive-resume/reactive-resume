@@ -50,6 +50,20 @@ export function ResetPasswordPage({ token }: Props) {
 				return;
 			}
 
+			// The reset signs the reset account out everywhere. A session that's still here belongs to another account
+			// (the link was opened in its browser): keep that one and its data, and say whose password changed.
+			const { data: still } = await authClient.getSession({ query: { disableCookieCache: true } });
+			if (still?.user) {
+				toast.add({
+					type: "success",
+					description: t`That account's password changed and it's signed out everywhere. This browser is still signed in as ${still.user.email}.`,
+					id: toastId,
+				});
+				await router.invalidate();
+				void navigate({ to: "/dashboard", replace: true });
+				return;
+			}
+
 			toast.add({
 				type: "success",
 				description: t`Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again.`,

@@ -44,11 +44,11 @@ export function SecuritySection() {
 					<Button size="sm" variant="secondary" onClick={() => openDialog("auth.change-password", undefined)}>
 						<Trans>Change</Trans>
 					</Button>
-				) : (
+				) : "credential" in enabledProviders ? (
 					<Button size="sm" variant="secondary" onClick={() => openDialog("auth.set-password", undefined)}>
 						<Trans>Set a password</Trans>
 					</Button>
-				)}
+				) : null}
 			</SettingsRow>
 
 			{password && (

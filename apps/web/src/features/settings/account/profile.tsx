@@ -3,7 +3,7 @@ import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext, useRouter } from "@tanstack/react-router";
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import z from "zod";
 import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -270,7 +270,8 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 										className="underline underline-offset-2"
 										onClick={() => void resendEmailChange(pendingEmail)}
 									>
-										<Trans>Resend</Trans>
+										{/* With a verified address, asking again starts over from the approval link to it. */}
+										{user.emailVerified ? <Trans>Send the approval link again</Trans> : <Trans>Resend</Trans>}
 									</button>
 									{" · "}
 									<button type="button" className="underline underline-offset-2" onClick={() => setPendingEmail(null)}>
@@ -324,6 +325,28 @@ function usePendingEmailChange(userId: string, currentEmail: string) {
 		}
 	});
 	const current = pending && pending.email !== currentEmail ? pending.email : null;
+	const router = useRouter();
+	const queryClient = useQueryClient();
+	// The note goes when its link expires, even with the page left open.
+	useEffect(() => {
+		if (!pending) return;
+		const timer = window.setTimeout(() => setPending(null), Math.max(0, pending.at + EMAIL_CHANGE_TTL_MS - Date.now()));
+		return () => window.clearTimeout(timer);
+	}, [pending]);
+	// Finishing the change in another tab or the mail app: coming back reads the account again, so the note clears.
+	useEffect(() => {
+		if (!current) return;
+		const refresh = () => {
+			if (document.visibilityState !== "visible") return;
+			void queryClient.invalidateQueries({ queryKey: sessionQueryKey }).then(() => router.invalidate());
+		};
+		window.addEventListener("focus", refresh);
+		document.addEventListener("visibilitychange", refresh);
+		return () => {
+			window.removeEventListener("focus", refresh);
+			document.removeEventListener("visibilitychange", refresh);
+		};
+	}, [current, queryClient, router]);
 	const set = (email: string | null) => {
 		const next = email ? { email, at: Date.now() } : null;
 		setPending(next);

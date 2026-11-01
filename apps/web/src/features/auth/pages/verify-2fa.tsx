@@ -192,9 +192,9 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 					</summary>
 					<p className="mt-2 max-w-sm">
 						<Trans>
-							A password reset keeps two-step verification on, so it won't get you in. Ask the person who runs this
-							Reactive Resume server to turn off two-step verification for your account. Then sign in with your password
-							and turn it on again with a new authenticator.
+							If you never verified your email address, a password reset turns two-step verification off. Otherwise a
+							reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account.
+							Then sign in with your password and turn it on again with a new authenticator.
 						</Trans>
 					</p>
 				</details>

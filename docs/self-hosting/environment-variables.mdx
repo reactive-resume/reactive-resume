@@ -185,6 +185,8 @@ up again:
 ```sql
 UPDATE "user" SET two_factor_enabled = false WHERE email = 'person@example.com';
 DELETE FROM two_factor WHERE user_id = (SELECT id FROM "user" WHERE email = 'person@example.com');
+-- Devices trusted for 30 days would otherwise skip the new second factor.
+DELETE FROM verification WHERE identifier LIKE 'trust-device-%' AND value = (SELECT id FROM "user" WHERE email = 'person@example.com');
 ```
 
 A forgotten password needs the reset email, so configure SMTP, even temporarily, to send it. People who sign in with
