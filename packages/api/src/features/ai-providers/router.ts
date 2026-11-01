@@ -154,9 +154,9 @@ export const aiProvidersRouter = {
 		.output(aiProviderResponseSchema)
 		.use(aiRequestRateLimit)
 		.errors({ BAD_REQUEST, FORBIDDEN, BAD_GATEWAY, NOT_FOUND, PRECONDITION_FAILED })
-		.handler(async ({ context, input }) => {
+		.handler(async ({ context, input, signal }) => {
 			try {
-				return await aiProvidersService.test({ id: input.id, userId: context.user.id });
+				return await aiProvidersService.test({ id: input.id, userId: context.user.id, signal });
 			} catch (error) {
 				if (isInvalidAiBaseUrl(error)) throwInvalidProviderConfig();
 				if (error instanceof ORPCError) throw error;

@@ -95,13 +95,13 @@ test("Fit and Interview prep keep notices in a vertical body above the action", 
 	await expect(await page.request.delete(`/api/openapi/ai-providers/${providerId}`)).toBeOK();
 	await page.goto(`/dashboard/applications/${id}/fit`);
 	await page.reload();
-	await expect(page.getByText("Connect an AI provider in Settings", { exact: true }).first()).toBeVisible();
+	await expect(page.getByRole("button", { name: "Set up AI", exact: true }).first()).toBeVisible();
 	await expect(page.getByRole("button", { name: "Check fit", exact: true })).toHaveCount(0);
 	await page.screenshot({ path: testInfo.outputPath("fit-no-provider.png"), fullPage: true, animations: "disabled" });
 
 	await page.goto(`/dashboard/applications/${id}/prepare`);
 	await page.reload();
-	await expect(page.getByText("Connect an AI provider in Settings", { exact: true }).first()).toBeVisible();
+	await expect(page.getByRole("button", { name: "Set up AI", exact: true }).first()).toBeVisible();
 	await expect(page.getByRole("button", { name: "Plan my preparation", exact: true })).toHaveCount(0);
 	await page.screenshot({
 		path: testInfo.outputPath("prepare-no-provider.png"),

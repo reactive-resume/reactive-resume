@@ -94,6 +94,7 @@ type LoadedDocument = {
 	name: string;
 	updatedAt: Date;
 	locked: boolean;
+	sourceResume?: { id: string; updatedAt: Date } | undefined;
 	applicationId: string | null;
 	passages: Passage[];
 	/** The field a proposal targets, as it reads now. */
@@ -141,6 +142,7 @@ export async function loadDocument(userId: string, document: AssistantDocument):
 
 	return {
 		kind: "letter",
+		sourceResume: resume ? { id: resume.id, updatedAt: resume.updatedAt } : undefined,
 		name: letter.name,
 		updatedAt: letter.updatedAt,
 		locked: letter.isLocked,
@@ -192,6 +194,7 @@ export async function findPosting(
 	const [application] = await db
 		.select({
 			id: table.id,
+			updatedAt: table.updatedAt,
 			role: table.role,
 			company: table.company,
 			jobDescription: table.jobDescription,
@@ -209,6 +212,7 @@ export async function findPosting(
 		(application.requirements.length > 0 ? application.requirements.map((item) => `- ${item}`).join("\n") : "");
 	return {
 		applicationId: application.id,
+		updatedAt: application.updatedAt,
 		role: application.role,
 		company: application.company,
 		text,

@@ -21,7 +21,11 @@ const toPageTarget = (target: Proposal["target"]): PageMapTarget =>
  * Sorts a writing review's suggestions: a rewrite of a passage that was sent becomes a proposal to accept or
  * reject; anything else (advice, or a rewrite of text it wasn't given) stays a note.
  */
-export function mapWritingReview(suggestions: readonly ReviewSuggestion[], passages: readonly Passage[]) {
+export function mapWritingReview(
+	suggestions: readonly ReviewSuggestion[],
+	passages: readonly Passage[],
+	savedPassages: readonly { id: string; where: string; text: string }[] = [],
+) {
 	const byId = new Map(passages.map((passage) => [passage.id, passage]));
 	const proposals: Proposal[] = [];
 	const notes: WritingNote[] = [];
@@ -29,6 +33,7 @@ export function mapWritingReview(suggestions: readonly ReviewSuggestion[], passa
 	for (const suggestion of suggestions) {
 		const passage = suggestion.passageId ? byId.get(suggestion.passageId) : undefined;
 		const rewrite = suggestion.rewrite?.trim();
+		const saved = savedPassages.find((entry) => entry.id === suggestion.passageId);
 
 		if (passage && rewrite && rewrite !== passage.text) {
 			proposals.push({
@@ -45,9 +50,10 @@ export function mapWritingReview(suggestions: readonly ReviewSuggestion[], passa
 		}
 
 		notes.push({
-			location: passage?.location ?? suggestion.section ?? "",
+			location: passage?.location ?? saved?.where ?? suggestion.section ?? "",
 			impact: suggestion.impact,
-			quote: passage?.text ?? "",
+			quote: passage?.text ?? saved?.text ?? "",
+			...(rewrite ? { rewrite } : {}),
 			note: suggestion.issue,
 			target: passage ? toPageTarget(passage.target) : null,
 		});

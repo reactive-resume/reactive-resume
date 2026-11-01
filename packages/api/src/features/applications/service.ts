@@ -117,6 +117,21 @@ async function requireOwned(id: string, userId: string) {
 	return row;
 }
 
+export async function assertApplicationVersion(
+	reader: DbOrTx,
+	userId: string,
+	expected: { id: string; updatedAt: Date },
+) {
+	const [current] = await reader
+		.select({ updatedAt: schema.application.updatedAt })
+		.from(schema.application)
+		.where(and(eq(schema.application.id, expected.id), eq(schema.application.userId, userId)))
+		.for("share");
+	if (!current) throw new ORPCError("NOT_FOUND");
+	if (current.updatedAt.getTime() !== expected.updatedAt.getTime())
+		throw new ORPCError("CONFLICT", { message: "The application changed. Review it and try again." });
+}
+
 async function assertOwnedResume(userId: string, resumeId: string | null | undefined) {
 	if (!resumeId) return;
 	await resumeService.getById({ id: resumeId, userId });

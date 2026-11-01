@@ -66,6 +66,7 @@ type ConversationProps = {
 	activeRun: boolean;
 	document: AssistantDocument;
 	readOnly: boolean;
+	localEditsLocked?: boolean;
 	providerLabel: string;
 	/** A message to send as soon as the conversation opens (the first message, ⌘K Ask). */
 	prompt: string | null;
@@ -129,7 +130,7 @@ export function Conversation(props: ConversationProps) {
 	const { prompt, promptAttachments, onPromptSent } = props;
 	const sentPrompt = useRef(false);
 	useEffect(() => {
-		if (!prompt || sentPrompt.current) return;
+		if (!prompt || sentPrompt.current || readOnly) return;
 		sentPrompt.current = true;
 		onPromptSent();
 		const files = promptAttachments.map(attachmentPart);
@@ -138,15 +139,16 @@ export function Conversation(props: ConversationProps) {
 				attachmentIds: promptAttachments.map((attachment) => attachment.id),
 			},
 		});
-	}, [prompt, promptAttachments, onPromptSent, sendMessage]);
+	}, [prompt, promptAttachments, onPromptSent, sendMessage, readOnly]);
 
 	// A failed continuation (after an answer) is sent again as it was; regenerating would drop the answer.
 	const retry = () => {
-		if (busy || readOnly || continuationBlocked) return;
+		if (busy) return;
 		if (receipts.error) {
 			void receipts.refetch();
 			return;
 		}
+		if (readOnly || continuationBlocked) return;
 		clearError();
 		if (
 			lastAssistantMessageIsCompleteWithToolCalls({ messages }) ||
@@ -282,6 +284,7 @@ export function Conversation(props: ConversationProps) {
 											answerable={index === messages.length - 1}
 											enter={!initialIds.has(message.id)}
 											readOnly={readOnly || continuationBlocked || !receiptsReady}
+											localEditsLocked={(props.localEditsLocked ?? document.locked) || !receiptsReady}
 											statuses={statuses}
 											document={document}
 											factText={factText}
@@ -433,6 +436,7 @@ type MessageViewProps = {
 	answerable: boolean;
 	enter: boolean;
 	readOnly: boolean;
+	localEditsLocked: boolean;
 	statuses: ReadonlyMap<string, Receipt>;
 	document: AssistantDocument;
 	factText: FactText;
@@ -449,6 +453,7 @@ const MessageView = memo(function MessageView({
 	answerable,
 	enter,
 	readOnly,
+	localEditsLocked,
 	statuses,
 	document,
 	factText,
@@ -497,6 +502,7 @@ const MessageView = memo(function MessageView({
 						answerable={answerable}
 						message={message}
 						readOnly={readOnly}
+						localEditsLocked={localEditsLocked}
 						statuses={statuses}
 						document={document}
 						factText={factText}
@@ -537,6 +543,7 @@ function ToolPartView({
 	answerable,
 	message,
 	readOnly,
+	localEditsLocked,
 	statuses,
 	document,
 	factText,
@@ -669,7 +676,7 @@ function ToolPartView({
 						<ChangeSet
 							proposals={proposals}
 							states={states}
-							locked={readOnly || forJobCopy}
+							locked={localEditsLocked || forJobCopy}
 							title={
 								pending > 0 ? (
 									<Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />

@@ -1,28 +1,8 @@
 import type { RouterOutput } from "@/api/client";
-import { fetch } from "expo/fetch";
 import { AI_PROVIDER_DEFAULT_BASE_URLS, AI_PROVIDER_DEFAULT_MODELS } from "@reactive-resume/ai/defaults";
 
 export type SavedProvider = RouterOutput["aiProviders"]["list"][number];
 export type AIProvider = SavedProvider["provider"];
-
-export const modelsDevProviderIds: Record<AIProvider, string | null> = {
-	openai: "openai",
-	anthropic: "anthropic",
-	gemini: "google",
-	"vercel-ai-gateway": "vercel",
-	openrouter: "openrouter",
-	mistral: "mistral",
-	cohere: "cohere",
-	xai: "xai",
-	groq: "groq",
-	deepseek: "deepseek",
-	togetherai: "togetherai",
-	fireworks: "fireworks-ai",
-	cerebras: "cerebras",
-	perplexity: "perplexity",
-	ollama: "ollama-cloud",
-	"openai-compatible": null,
-};
 
 // Provider labels are brand names and stay untranslated on purpose, so every locale shows the
 // vendor's own spelling instead of a literal translation (e.g. "Google Gemini", not "谷歌双子座").
@@ -164,51 +144,4 @@ export function providerLabel(provider: AIProvider) {
 export function keyEnding(preview: string) {
 	const [, end] = preview.split("...");
 	return end ? `…${end}` : preview;
-}
-
-type SuggestedModel = { id: string; name: string; release_date: string };
-
-const record = (value: unknown): value is Record<string, unknown> =>
-	typeof value === "object" && value !== null && !Array.isArray(value);
-
-/** Optional public suggestions; failure never blocks a manually entered model ID. */
-export async function loadModelSuggestions(signal: AbortSignal): Promise<Record<string, SuggestedModel[]>> {
-	const response = await fetch("https://models.dev/api.json", {
-		signal: AbortSignal.any([signal, AbortSignal.timeout(10_000)]),
-		credentials: "omit",
-	});
-	if (!response.ok) throw new Error("Model catalog unavailable");
-	const catalog: unknown = await response.json();
-	if (!record(catalog)) throw new Error("Invalid model catalog");
-	return Object.fromEntries(
-		Object.values(modelsDevProviderIds).flatMap((id) => {
-			if (!id) return [];
-			const provider = catalog[id];
-			if (!record(provider) || !record(provider.models)) return [[id, []]];
-			const models = Object.values(provider.models).flatMap((model): SuggestedModel[] => {
-				if (
-					!record(model) ||
-					typeof model.id !== "string" ||
-					!model.id ||
-					typeof model.name !== "string" ||
-					model.status === "deprecated" ||
-					!record(model.modalities) ||
-					!Array.isArray(model.modalities.input) ||
-					!model.modalities.input.includes("text") ||
-					!Array.isArray(model.modalities.output) ||
-					!model.modalities.output.includes("text")
-				)
-					return [];
-				return [
-					{
-						id: model.id,
-						name: model.name,
-						release_date: typeof model.release_date === "string" ? model.release_date : "",
-					},
-				];
-			});
-			models.sort((a, b) => b.release_date.localeCompare(a.release_date) || a.name.localeCompare(b.name));
-			return [[id, models]];
-		}),
-	);
 }

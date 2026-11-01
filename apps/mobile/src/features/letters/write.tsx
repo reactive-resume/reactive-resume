@@ -607,6 +607,12 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 				) : null}
 				<Button size="sm" variant="secondary" label={t`Write it myself`} disabled={disabled} onPress={onWrite} />
 			</View>
+			{canDraft && ai.defaultProvider && (
+				<Text
+					variant="caption"
+					color="ink3"
+				>{t`Sends the linked resume, posting and letter details to ${ai.defaultProvider.label} · ${ai.defaultProvider.model}. Your provider may charge.`}</Text>
+			)}
 			{canDraft && ai.error ? (
 				<Banner
 					tone="warn"
@@ -617,7 +623,7 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 			{canDraft && !ai.isUnavailable && !ai.hasAIProvider ? (
 				<View style={{ gap: space.s1 }}>
 					<Text variant="caption" color="ink3">{t`Drafting needs an AI provider.`}</Text>
-					<Button size="sm" variant="link" label={t`Open AI settings`} onPress={() => setSetup(true)} />
+					<Button size="sm" variant="link" label={t`Set up AI`} onPress={() => setSetup(true)} />
 				</View>
 			) : null}
 			<AIProviderSetupSheet open={setup} onClose={() => setSetup(false)} />

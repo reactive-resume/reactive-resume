@@ -625,3 +625,117 @@ test("closed native chat never republishes old pending marks after an external r
 	proposals.publishProposals("resume", [addition]);
 	assert.equal(marked().pending, 1);
 });
+
+test("provider Off keeps saved local Accept and Undo actionable while questions stay inert", async () => {
+	const element = (type, props, ...children) => ({ type, props: { ...props, children } });
+	const react = {
+		createElement: element,
+		memo: (fn) => fn,
+		useState: (x) => [x, () => {}],
+		useRef: (x) => ({ current: x }),
+	};
+	const theme = { colors: {}, radius: {}, space: {}, size: {}, type: {} };
+	const { MessageView } = evaluate(
+		"const React = require('react');\n" +
+			transformSync(readFileSync(new URL("../src/features/assistant/messages.tsx", import.meta.url), "utf8"), {
+				loader: "tsx",
+				format: "cjs",
+				jsx: "transform",
+			}).code,
+		{
+			...dependencies,
+			react,
+			"react-native": {
+				View: "View",
+				ActivityIndicator: "ActivityIndicator",
+				Pressable: "Pressable",
+				TextInput: "TextInput",
+			},
+			"@lingui/react/macro": {
+				Trans: "Trans",
+				useLingui: () => ({
+					t: (parts, ...values) => parts.reduce((text, part, i) => text + part + (values[i] ?? ""), ""),
+				}),
+			},
+			"@tanstack/react-query": { useQueryClient: () => ({}) },
+			"./chat": { webSources: () => [] },
+			"./markdown": { AssistantMarkdown: "Markdown" },
+			"./proposals": proposals,
+			"@/api/client": {},
+			"@/features/ai/report-content": { ReportAiContent: "Report" },
+			"@/ui": { ...dependencies["@/ui"], Button: "Button", Text: "Text", Icon: "Icon", useTheme: () => theme },
+		},
+	);
+	const proposal = edit("off-edit", "<p>Saved rewrite</p>");
+	const doc = documents.useResumeAssistantDocument("resume");
+	const part = {
+		type: "tool-propose_edits",
+		toolCallId: "off-call",
+		state: "output-available",
+		output: { edits: [proposal], skipped: [], tailoredFor: null },
+	};
+	let currentProposal;
+	const render = () => {
+		const buttons = [];
+		const walk = (node) => {
+			if (!node || typeof node !== "object") return;
+			if (Array.isArray(node)) {
+				node.forEach(walk);
+				return;
+			}
+			if (typeof node.type === "function") {
+				walk(node.type(node.props));
+				return;
+			}
+			if (node.type === "Button") buttons.push(node.props);
+			walk(node.props?.children);
+		};
+		walk(
+			element(MessageView, {
+				message: {
+					id: "off-message",
+					role: "assistant",
+					parts: [
+						part,
+						{
+							type: "tool-ask_user_question",
+							toolCallId: "question",
+							state: "input-available",
+							input: { question: "Continue?", choices: ["Send more"] },
+						},
+					],
+				},
+				streaming: false,
+				readOnly: true,
+				answerable: true,
+				onAnswer: () => assert.fail("Off cannot continue"),
+				proposals: {
+					statuses: new Map(),
+					locked: false,
+					forJobCopy: () => false, // A saved general edit on its original document.
+					stateOf: (p) => {
+						currentProposal = p;
+						return doc.stateOf(p);
+					},
+					onAccept: (_m, _p, chosen) => doc.accept(chosen),
+					onReject: () => {},
+				},
+			}),
+		);
+		return buttons;
+	};
+	const accept = render().find((b) => b.label === "Accept");
+	assert.ok(accept);
+	assert.equal(accept.disabled, false);
+	assert.equal(
+		render().some((b) => b.label === "Send more"),
+		false,
+	);
+	accept.onPress();
+	await resumeStore.getState().flush();
+	assert.equal(documents.useResumeAssistantDocument("resume").stateOf(currentProposal), "accepted");
+	resumeStore.getState().undo();
+	await resumeStore.getState().flush();
+	assert.equal(render().find((b) => b.label === "Accept").disabled, false);
+	assert.equal(documents.useResumeAssistantDocument("resume").stateOf(currentProposal), "pending");
+});

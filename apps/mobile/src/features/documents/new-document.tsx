@@ -177,7 +177,7 @@ export function NewDocument() {
 	const read = (picked: DocumentPickerAsset) =>
 		run(async (signal) => {
 			setProgress(t`Reading the file and finding sections…`);
-			const document = await importDocument(picked, ai.hasAIProvider, aiPdf ?? ai.hasAIProvider, signal);
+			const document = await importDocument(picked, ai.hasAIProvider, aiPdf ?? false, signal);
 			if (!current(signal)) return;
 			setCreated(document);
 			useNewDocuments.getState().markNew(document);
@@ -426,12 +426,12 @@ export function NewDocument() {
 							{step === "import" && (
 								<>
 									<Text variant="heading">{t`Import a resume`}</Text>
-									<Text color="ink2">{t`PDF uses your AI provider when one is ready. Turn off the AI switch to read its text layer on your server. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB.`}</Text>
+									<Text color="ink2">{t`PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB.`}</Text>
 									<View style={{ flexDirection: "row", alignItems: "center", gap: space.s3 }}>
 										<Text style={{ flex: 1 }}>{t`Use AI for PDF imports`}</Text>
 										<Switch
 											label={t`Use AI for PDF imports`}
-											value={aiPdf ?? ai.hasAIProvider}
+											value={aiPdf ?? false}
 											onValueChange={setAiPdf}
 											disabled={busy}
 										/>

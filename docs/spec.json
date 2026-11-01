@@ -1457,6 +1457,247 @@
 				]
 			}
 		},
+		"/ai/capabilities": {
+			"get": {
+				"operationId": "getAiCapabilities",
+				"tags": [
+					"AI"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"recipientApproval": {
+											"const": 1
+										},
+										"explicitNoAi": {
+											"const": true
+										}
+									},
+									"required": [
+										"recipientApproval",
+										"explicitNoAi"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/ai/capabilities\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
+		"/ai/writing-review/{resumeId}": {
+			"get": {
+				"operationId": "getWritingReview",
+				"summary": "Get the saved writing review for a resume",
+				"tags": [
+					"AI"
+				],
+				"parameters": [
+					{
+						"name": "resumeId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"type": "object",
+											"properties": {
+												"inputText": {
+													"type": "string"
+												},
+												"passages": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "string"
+															},
+															"where": {
+																"type": "string"
+															},
+															"text": {
+																"type": "string"
+															}
+														},
+														"required": [
+															"id",
+															"where",
+															"text"
+														]
+													}
+												},
+												"review": {
+													"type": "object",
+													"properties": {
+														"summary": {
+															"type": "string"
+														},
+														"suggestions": {},
+														"strengths": {},
+														"jdAlignment": {
+															"anyOf": [
+																{
+																	"type": "object",
+																	"properties": {
+																		"verdict": {
+																			"type": "string"
+																		},
+																		"missingConcepts": {},
+																		"strengths": {}
+																	},
+																	"required": [
+																		"verdict"
+																	]
+																},
+																{
+																	"type": "null"
+																}
+															]
+														}
+													},
+													"required": [
+														"summary",
+														"jdAlignment"
+													]
+												},
+												"reviewedAt": {
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												}
+											},
+											"required": [
+												"inputText",
+												"passages",
+												"review",
+												"reviewedAt"
+											]
+										},
+										{
+											"type": "null"
+										}
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/ai/writing-review/<resumeId>\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
 		"/ai/parse-pdf": {
 			"post": {
 				"operationId": "parseResumePdf",
@@ -10489,6 +10730,9 @@
 									"aiProviderId": {
 										"type": "string"
 									},
+									"resumeId": {
+										"type": "string"
+									},
 									"extractedText": {
 										"type": "string",
 										"minLength": 1,
@@ -11139,6 +11383,16 @@
 													}
 												]
 											},
+											"testErrorKind": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
 											"apiKeyPreview": {
 												"type": "string"
 											},
@@ -11195,6 +11449,7 @@
 											"isDefault",
 											"testStatus",
 											"testError",
+											"testErrorKind",
 											"apiKeyPreview",
 											"apiKeyFingerprint",
 											"recipientVersion",
@@ -11469,6 +11724,16 @@
 												}
 											]
 										},
+										"testErrorKind": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"apiKeyPreview": {
 											"type": "string"
 										},
@@ -11525,6 +11790,7 @@
 										"isDefault",
 										"testStatus",
 										"testError",
+										"testErrorKind",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
 										"recipientVersion",
@@ -11907,6 +12173,16 @@
 												}
 											]
 										},
+										"testErrorKind": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"apiKeyPreview": {
 											"type": "string"
 										},
@@ -11963,6 +12239,7 @@
 										"isDefault",
 										"testStatus",
 										"testError",
+										"testErrorKind",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
 										"recipientVersion",
@@ -12547,6 +12824,16 @@
 												}
 											]
 										},
+										"testErrorKind": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"apiKeyPreview": {
 											"type": "string"
 										},
@@ -12603,6 +12890,7 @@
 										"isDefault",
 										"testStatus",
 										"testError",
+										"testErrorKind",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
 										"recipientVersion",
@@ -12995,6 +13283,16 @@
 												}
 											]
 										},
+										"testErrorKind": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"apiKeyPreview": {
 											"type": "string"
 										},
@@ -13051,6 +13349,7 @@
 										"isDefault",
 										"testStatus",
 										"testError",
+										"testErrorKind",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
 										"recipientVersion",
@@ -31253,6 +31552,56 @@
 							"application/json": {
 								"schema": {
 									"oneOf": [
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "SEARCH_AUTH"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The web service rejected its key. Fix web access or paste a posting."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "SEARCH_QUOTA"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The web service quota is used up. Fix web access or paste a posting."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
 										{
 											"type": "object",
 											"properties": {
@@ -50486,6 +50835,95 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/saved/<id>/apply\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"changes\": [\n    123\n  ]\n}'"
+					}
+				]
+			}
+		},
+		"/career/fit-evidence/{applicationId}": {
+			"get": {
+				"operationId": "getCareerFitEvidence",
+				"summary": "Check whether Fit has usable evidence",
+				"tags": [
+					"Career"
+				],
+				"parameters": [
+					{
+						"name": "applicationId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"usable": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"usable"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/career/fit-evidence/<applicationId>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -95882,11 +96320,70 @@
 								"schema": {
 									"type": "object",
 									"properties": {
+										"revision": {
+											"type": "string"
+										},
 										"builtInReader": {
 											"const": true
 										},
 										"configured": {
 											"type": "boolean"
+										},
+										"testResult": {
+											"anyOf": [
+												{
+													"type": "object",
+													"properties": {
+														"search": {
+															"type": "object",
+															"properties": {
+																"success": {
+																	"type": "boolean"
+																},
+																"error": {
+																	"type": "string"
+																}
+															},
+															"required": [
+																"success"
+															]
+														},
+														"read": {
+															"type": "object",
+															"properties": {
+																"success": {
+																	"type": "boolean"
+																},
+																"error": {
+																	"type": "string"
+																}
+															},
+															"required": [
+																"success"
+															]
+														}
+													},
+													"required": [
+														"search",
+														"read"
+													]
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
+										"lastTestedAt": {
+											"anyOf": [
+												{
+													"type": "string",
+													"format": "date-time",
+													"x-native-type": "date"
+												},
+												{
+													"type": "null"
+												}
+											]
 										},
 										"provider": {
 											"anyOf": [
@@ -95920,8 +96417,11 @@
 										}
 									},
 									"required": [
+										"revision",
 										"builtInReader",
 										"configured",
+										"testResult",
+										"lastTestedAt",
 										"provider",
 										"managed",
 										"canSave",
@@ -113388,6 +113888,56 @@
 													"const": true
 												},
 												"code": {
+													"const": "SEARCH_AUTH"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The web service rejected its key. Fix web access or paste a posting."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
+													"const": "SEARCH_QUOTA"
+												},
+												"status": {
+													"const": 502
+												},
+												"message": {
+													"type": "string",
+													"default": "The web service quota is used up. Fix web access or paste a posting."
+												},
+												"data": {}
+											},
+											"required": [
+												"defined",
+												"code",
+												"status",
+												"message"
+											]
+										},
+										{
+											"type": "object",
+											"properties": {
+												"defined": {
+													"const": true
+												},
+												"code": {
 													"const": "SEARCH_FAILED"
 												},
 												"status": {
@@ -115413,6 +115963,16 @@
 												}
 											]
 										},
+										"testErrorKind": {
+											"anyOf": [
+												{
+													"type": "string"
+												},
+												{
+													"type": "null"
+												}
+											]
+										},
 										"apiKeyPreview": {
 											"type": "string"
 										},
@@ -115469,6 +116029,7 @@
 										"isDefault",
 										"testStatus",
 										"testError",
+										"testErrorKind",
 										"apiKeyPreview",
 										"apiKeyFingerprint",
 										"recipientVersion",
@@ -125763,6 +126324,9 @@
 								"type": "object",
 								"properties": {
 									"aiProviderId": {
+										"type": "string"
+									},
+									"resumeId": {
 										"type": "string"
 									},
 									"extractedText": {

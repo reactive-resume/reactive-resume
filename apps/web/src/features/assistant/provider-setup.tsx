@@ -3,14 +3,19 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { AI_PROVIDER_DEFAULT_MODELS } from "@reactive-resume/ai/defaults";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { cn } from "@reactive-resume/utils/style";
+import { ProvidersSection } from "@/features/settings/ai/providers";
+import { providerTestError } from "@/features/settings/ai/test-error";
+import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
+import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -29,6 +34,24 @@ const CHOICES: Choice[] = [
  */
 export function ProviderSetup() {
 	const [open, setOpen] = useState<AIProvider | null>(null);
+	const state = useHasUsableAiProvider();
+	if (state.isUnavailable) return <AiProviderLoadState state={state} />;
+	if (state.providers.length > 0)
+		return (
+			<div className="grid gap-3 p-4">
+				<p role="status" className="text-sm text-warn-text">
+					{state.hasUsableProvider ? (
+						<Trans>AI providers</Trans>
+					) : (
+						<Trans>
+							Your saved AI connections need attention. Test or edit them below. History and saved proposals remain
+							available.
+						</Trans>
+					)}
+				</p>
+				<ProvidersSection />
+			</div>
+		);
 
 	return (
 		<div className="grid gap-4 p-4">
@@ -37,7 +60,9 @@ export function ProviderSetup() {
 					<Trans>Connect an AI provider</Trans>
 				</h3>
 				<p className="text-sm text-ink-2">
-					<Trans>The assistant uses your own key. Nothing is sent anywhere until you connect one.</Trans>
+					<Trans>
+						AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data.
+					</Trans>
 				</p>
 			</div>
 
@@ -85,9 +110,12 @@ export function ProviderSetup() {
 	);
 }
 
-function ConnectForm({ choice }: { choice: Choice }) {
+type ConnectFormProps = { choice: Choice };
+function ConnectForm({ choice }: ConnectFormProps) {
 	const id = useId();
 	const queryClient = useQueryClient();
+	const createdId = useRef<string | null>(null);
+	const submitting = useRef(false);
 	const [apiKey, setApiKey] = useState("");
 	const [model, setModel] = useState(choice.model);
 	const [baseURL, setBaseURL] = useState("");
@@ -95,22 +123,25 @@ function ConnectForm({ choice }: { choice: Choice }) {
 
 	const connect = useMutation({
 		mutationFn: async () => {
-			const created = await client.aiProviders.create({
+			const input = {
 				label: choice.label,
 				provider: choice.provider,
 				model: model.trim(),
 				apiKey: apiKey.trim(),
 				...(baseURL.trim() ? { baseURL: baseURL.trim() } : {}),
-			});
+			};
+			const created = createdId.current
+				? await client.aiProviders.update({ id: createdId.current, ...input })
+				: await client.aiProviders.create(input);
+			createdId.current = created.id;
 			return client.aiProviders.test({ id: created.id });
+		},
+		onSettled: () => {
+			submitting.current = false;
 		},
 		onSuccess: async (tested) => {
 			await queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
-			setFailure(
-				tested.testStatus === "success"
-					? null
-					: (tested.testError ?? t`The provider didn't answer. Check the key and the model.`),
-			);
+			setFailure(tested.testStatus === "success" ? null : providerTestError(tested.testErrorKind));
 		},
 		onError: (error) =>
 			setFailure(getOrpcErrorMessage(error, { fallback: t`Couldn't connect. Check the key and try again.` })),
@@ -123,7 +154,10 @@ function ConnectForm({ choice }: { choice: Choice }) {
 			className="grid gap-3 border-t border-line bg-bg p-3"
 			onSubmit={(event) => {
 				event.preventDefault();
-				if (ready) connect.mutate();
+				if (ready && !submitting.current) {
+					submitting.current = true;
+					connect.mutate();
+				}
 			}}
 		>
 			{choice.needsBaseURL && (
@@ -172,5 +206,27 @@ function ConnectForm({ choice }: { choice: Choice }) {
 				{connect.isPending ? <Trans>Testing the connection…</Trans> : <Trans>Connect</Trans>}
 			</Button>
 		</form>
+	);
+}
+
+/** Keeps the task mounted, including typed input and selected files, while fixing a connection. */
+export function SetUpAi() {
+	const [open, setOpen] = useState(false);
+	return (
+		<>
+			<Button type="button" size="sm" variant="secondary" className="w-fit" onClick={() => setOpen(true)}>
+				<Trans>Set up AI</Trans>
+			</Button>
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent className="max-h-[85svh] overflow-y-auto">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Set up AI</Trans>
+						</DialogTitle>
+					</DialogHeader>
+					<ProviderSetup />
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 }

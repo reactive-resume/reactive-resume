@@ -11,7 +11,11 @@ vi.mock("../../context", async () => {
 	return { protectedProcedure: os.$context<{ user: { id: string } }>() };
 });
 vi.mock("./credentials", () => ({
-	webAccessService: { resolve: vi.fn(), canSearch: vi.fn((hasConnection: boolean) => hasConnection) },
+	webAccessService: {
+		recordTest: vi.fn(),
+		resolve: vi.fn(),
+		canSearch: vi.fn((hasConnection: boolean) => hasConnection),
+	},
 }));
 vi.mock("./service", () => ({ probeWebAccess: vi.fn() }));
 vi.mock("./regions", () => ({ searchScope: vi.fn() }));

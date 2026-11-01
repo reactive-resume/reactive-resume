@@ -15,6 +15,7 @@ import { orpc } from "@/api/client";
 import { useFlags } from "@/api/flags";
 import { useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
+import { SetUpWebAccess } from "@/features/ai/web-access";
 import { useApplications } from "@/features/applications/queries";
 import { Banner, Button, SelectSheet, Sheet, Text, TextField, useTheme } from "@/ui";
 
@@ -196,6 +197,13 @@ function ScheduleForm({
 				<Text color="ink3">{t`Times are shown in ${timezone}. Change timezone in Settings → Preferences.`}</Text>
 				{draft.kind === "discovery" ? (
 					<>
+						{!search && (
+							<Banner
+								tone="warn"
+								message={t`Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications.`}
+							/>
+						)}
+						{!search && <SetUpWebAccess />}
 						<TextField
 							label={t`Look for`}
 							value={draft.query}
@@ -271,8 +279,10 @@ function ScheduleForm({
 							onChange={(aiProviderId) => set({ aiProviderId })}
 							options={ai.usableProviders.map((row) => ({ value: row.id, label: row.label }))}
 						/>
-						<Button variant="secondary" label={t`Connect AI provider`} onPress={() => setSetup(true)} />
-						<Text color="ink3">{t`Sends this application and enabled Knowledge to this connection. Your provider may charge. If it becomes unavailable, scheduled work can use your default usable connection.`}</Text>
+						{!ai.isUnavailable && (
+							<Button variant="secondary" label={t`Connect AI provider`} onPress={() => setSetup(true)} />
+						)}
+						<Text color="ink3">{t`Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically.`}</Text>
 					</>
 				) : (
 					<>

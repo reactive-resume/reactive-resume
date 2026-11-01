@@ -5,8 +5,9 @@ import type { EvidenceStatus } from "../parts";
 import type { WorkspaceTabProps } from "../shell";
 import type { CareerWorkspace } from "@reactive-resume/schema/career";
 import { useLingui } from "@lingui/react/macro";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { randomUUID } from "expo-crypto";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { latest, useFacts, useGenerate, useSavedItems, useWorkspace, workspaceError } from "../hooks";
@@ -14,7 +15,7 @@ import { Actions, AiNotice, Block, StatusPill, useWorking, workingSteps } from "
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
 import { useHasAIProvider } from "@/features/ai/providers";
-import { Button, EmptyState, Icon, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
+import { Banner, Button, EmptyState, Icon, SelectSheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type FitItem = SavedItem & { data: SavedData<"fit"> };
 type Requirement = SavedData<"fit">["requirements"][number];
@@ -32,6 +33,12 @@ function Fit({ application, version }: WorkspaceTabProps) {
 	const generate = useGenerate(application.id);
 	const provider = useHasAIProvider().defaultProvider;
 	const facts = useFacts(application.id);
+	const router = useRouter();
+	const evidenceState = useQuery(orpc.career.fitEvidence.queryOptions({ input: { applicationId: application.id } }));
+	const documents = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
+	const linkResume = useMutation(orpc.applications.update.mutationOptions());
+	const [resumeChoice, setResumeChoice] = useState<string | null>(null);
+	const hasEvidence = evidenceState.data?.usable === true;
 	const forget = useMutation(orpc.career.forgetFact.mutationOptions());
 	const readOnly = version?.data.kind === "fit";
 	const item = (readOnly ? version : latest(saved.data, "fit")) as FitItem | undefined;
@@ -40,7 +47,10 @@ function Fit({ application, version }: WorkspaceTabProps) {
 
 	if (saved.isPending) return <Skeleton height={space.s12 * 6} />;
 
-	const check = () => void generate.run({ task: "fit" }).catch(() => undefined);
+	const check = () => {
+		if (!hasEvidence || evidenceState.isPending) return;
+		void generate.run({ task: "fit" }).catch(() => undefined);
+	};
 
 	if (!item)
 		return (
@@ -50,8 +60,53 @@ function Fit({ application, version }: WorkspaceTabProps) {
 				message={t`Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability.`}
 			>
 				<AiNotice centered />
+				{evidenceState.isError && (
+					<Banner
+						tone="danger"
+						message={t`Couldn't check your evidence.`}
+						action={{ label: t`Retry`, onPress: () => void evidenceState.refetch() }}
+					/>
+				)}
+				{!hasEvidence && (
+					<View style={{ gap: space.s2 }}>
+						<Text>{t`Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request.`}</Text>
+						<Button label={t`Add facts`} variant="link" onPress={() => router.push("/career/knowledge")} />
+						<SelectSheet
+							label={t`Resume to use as evidence`}
+							value={resumeChoice}
+							options={(documents.data ?? [])
+								.filter((d) => d.type === "resume")
+								.map((d) => ({ value: d.id, label: d.name }))}
+							onChange={setResumeChoice}
+						/>
+						<Button
+							label={t`Use this resume as evidence`}
+							disabled={!resumeChoice}
+							loading={linkResume.isPending}
+							onPress={() => {
+								if (resumeChoice)
+									linkResume.mutate(
+										{ id: application.id, resumeId: resumeChoice },
+										{
+											onSuccess: () => {
+												void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
+												void queryClient.invalidateQueries({ queryKey: orpc.career.fitEvidence.key() });
+											},
+											onError: () => showToast({ message: t`Couldn't link the resume. Try again.` }),
+										},
+									);
+							}}
+						/>
+					</View>
+				)}
 				{provider ? (
-					<Button icon="list-checks" label={checkLabel} loading={generate.isPending} onPress={check} />
+					<Button
+						disabled={!hasEvidence || evidenceState.isPending}
+						icon="list-checks"
+						label={checkLabel}
+						loading={generate.isPending}
+						onPress={check}
+					/>
 				) : null}
 			</EmptyState>
 		);

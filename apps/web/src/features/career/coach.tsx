@@ -41,8 +41,9 @@ import {
 } from "./coach-thread";
 import { CareerLoadError } from "./load-state";
 import { ContextChip, Eyebrow, PrivacyLine } from "./shared";
-import { transcriptOf, useConversationConnection } from "@/features/assistant/chat";
-import { ProviderSetup } from "@/features/assistant/provider-setup";
+import { transcriptOf } from "@/features/assistant/chat";
+import { ProviderSetup, SetUpAi } from "@/features/assistant/provider-setup";
+import { WebAccessAttention } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { toastError } from "@/libs/error-message";
@@ -149,9 +150,10 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	const conversations = (threads.data ?? []).filter((thread) => thread.scope === "career" && !hidden.has(thread.id));
 	const summary = threads.data?.find((thread) => thread.id === threadId);
 	const usable = providers.usableProviders;
-	// A conversation runs on its own connection; one switched off or removed moves to the default.
-	const provider = usable.find((item) => item.id === (summary ? summary.aiProviderId : providerId)) ?? usable[0];
-	useConversationConnection(summary, provider);
+	// A conversation keeps its chosen destination until the user explicitly changes it.
+	const provider =
+		usable.find((item) => item.id === (summary ? summary.aiProviderId : providerId)) ??
+		(summary ? undefined : usable[0]);
 	const label = provider?.label ?? summary?.providerLabel ?? t`Your AI`;
 	const connection = connectionName(label);
 
@@ -344,7 +346,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 	);
 
 	const notSetUp = threads.error instanceof ORPCError && threads.error.code === "PRECONDITION_FAILED";
-	const noProvider = !providers.isUnavailable && !providers.hasUsableProvider;
+	const noProvider = !providers.isUnavailable && !providers.hasUsableProvider && !threadId;
 
 	const rail = (
 		<ConversationRail
@@ -380,6 +382,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 					{notSetUp ? (
 						<>
 							{header([])}
+							<WebAccessAttention />
 							<p className="m-6 rounded-xl bg-sunken p-4 text-sm text-ink-2">
 								<Trans>
 									The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge,
@@ -387,7 +390,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 								</Trans>
 							</p>
 						</>
-					) : providers.error ? (
+					) : providers.error && !threadId ? (
 						<AiProviderLoadState
 							state={{
 								...providers,
@@ -398,7 +401,7 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 								},
 							}}
 						/>
-					) : providers.isLoading || threads.isPending ? (
+					) : (providers.isLoading && !threadId) || threads.isPending ? (
 						<div className="grid flex-1 place-items-center">
 							<Spinner />
 						</div>
@@ -419,29 +422,41 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 							</div>
 						</>
 					) : (
-						<CoachThread
-							key={session.key}
-							draftKey={`career-coach:${threadId ?? "new"}`}
-							threadId={threadId}
-							createThread={createThread}
-							onThreadCreated={onThreadCreated}
-							applicationId={null}
-							context={context}
-							connection={connection}
-							onChangeConnection={() => setModelMenuOpen(true)}
-							header={header}
-							empty={(send) => (
-								<EmptyState
-									disabled={noProvider || (chips.memory && (knowledge.isPending || knowledge.isError))}
-									onPick={send}
-								/>
+						<>
+							<WebAccessAttention />
+							{!provider && (
+								<div role="status" className="grid justify-items-start gap-2 bg-warn-soft p-3 text-sm text-warn-text">
+									<Trans>
+										This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection
+										or choose a model before sending again.
+									</Trans>
+									<SetUpAi />
+								</div>
 							)}
-							chips={contextChips}
-							privacy={privacy}
-							placeholder={t`Ask about your next career step…`}
-							disabled={noProvider || (chips.memory && (knowledge.isPending || knowledge.isError))}
-							variant="page"
-						/>
+							<CoachThread
+								key={session.key}
+								draftKey={`career-coach:${threadId ?? "new"}`}
+								threadId={threadId}
+								createThread={createThread}
+								onThreadCreated={onThreadCreated}
+								applicationId={null}
+								context={context}
+								connection={connection}
+								onChangeConnection={() => setModelMenuOpen(true)}
+								header={header}
+								empty={(send) => (
+									<EmptyState
+										disabled={!provider || (chips.memory && (knowledge.isPending || knowledge.isError))}
+										onPick={send}
+									/>
+								)}
+								chips={contextChips}
+								privacy={privacy}
+								placeholder={t`Ask about your next career step…`}
+								disabled={!provider || (chips.memory && (knowledge.isPending || knowledge.isError))}
+								variant="page"
+							/>
+						</>
 					)}
 				</section>
 			</div>

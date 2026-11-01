@@ -1,6 +1,11 @@
 import type { Page } from "@playwright/test";
+import { approveLocalStubOperations } from "../fixtures/ai-consent";
 import { startAiStub } from "../fixtures/ai-stub";
 import { expect, test } from "../fixtures/test";
+
+test.beforeEach(async ({ authPage }) => {
+	await approveLocalStubOperations(authPage);
+});
 
 let stub: Awaited<ReturnType<typeof startAiStub>>;
 test.beforeAll(async () => {
@@ -152,7 +157,7 @@ test("knowledge corrections persist and the workspace opens without an AI provid
 	// Stage Interview opens on Interview prep; with no connection it says where to add one instead of failing.
 	await page.goto(`/dashboard/applications/${applicationId}`);
 	await expect(page.getByRole("tab", { name: /Interview prep/, selected: true })).toBeVisible();
-	await expect(page.getByRole("link", { name: "Connect an AI provider in Settings" })).toBeVisible();
+	await expect(page.getByRole("button", { name: "Set up AI" })).toBeVisible();
 });
 
 test("a fit check's missing evidence is saved to Knowledge from the table", async ({ authPage: page }) => {
@@ -164,6 +169,15 @@ test("a fit check's missing evidence is saved to Knowledge from the table", asyn
 	await expect(provider).toBeOK();
 	await expect(await page.request.post(`/api/openapi/ai-providers/${(await provider.json()).id}/test`)).toBeOK();
 
+	await expect(
+		await page.request.post("/api/openapi/career/facts", {
+			data: {
+				text: "I maintained internal tools.",
+				category: "experience",
+				source: { kind: "manual", id: "fit-prerequisite", quote: "I maintained internal tools." },
+			},
+		}),
+	).toBeOK();
 	await page.goto(`/dashboard/applications/${applicationId}/fit`);
 	await page.getByRole("button", { name: "Check fit" }).click();
 	await expect(page.getByText("A relevant role, with one question to resolve")).toBeVisible({ timeout: 30_000 });

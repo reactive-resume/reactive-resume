@@ -13,6 +13,7 @@ export const aiProviderResponseSchema = z.object({
 	isDefault: z.boolean(),
 	testStatus: z.string(),
 	testError: z.string().nullable(),
+	testErrorKind: z.string().nullable(),
 	apiKeyPreview: z.string(),
 	apiKeyFingerprint: z.string(),
 	recipientVersion: z.string().regex(/^[a-f0-9]{64}$/),

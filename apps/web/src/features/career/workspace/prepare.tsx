@@ -21,6 +21,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks, useWorkspace } from "../hooks";
 import { Eyebrow, flash, minutesUntil, PrivacyLine, useCareerTime, Working, workingSteps } from "../shared";
 import { interviewTypeLabel } from "@/features/applications/components/interview-dialog";
+import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -110,9 +111,7 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 						{generate.isPending ? <Working steps={workingSteps("briefing")} /> : <Trans>Plan my preparation</Trans>}
 					</Button>
 				) : (
-					<Link to="/dashboard/settings/ai" className={cn(buttonVariants({ variant: "secondary" }))}>
-						<Trans>Connect an AI provider in Settings</Trans>
-					</Link>
+					<SetUpAi />
 				)
 			}
 		>

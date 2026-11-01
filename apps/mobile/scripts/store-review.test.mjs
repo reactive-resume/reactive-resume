@@ -12,6 +12,8 @@ const { transformSync } = createRequire(requireServer.resolve("tsx"))("esbuild")
 let account = "fixture-account";
 let dialog;
 let calls = [];
+let available = true;
+let headers = [];
 const provider = {
 	id: "provider-a",
 	recipientVersion: "a".repeat(64),
@@ -21,6 +23,7 @@ const provider = {
 	baseURL: "https://ai.fixture.test/v1",
 	enabled: true,
 	testStatus: "success",
+	apiKeyFingerprint: "key-a",
 };
 const sessions = {
 	getAccountScope: () => account,
@@ -40,15 +43,20 @@ const modules = {
 		},
 	},
 	"expo/fetch": {
-		fetch: async (url) => {
+		fetch: async (url, init) => {
+			headers.push(new Headers(init?.headers));
 			calls.push(new URL(url).pathname);
 			const value = url.includes("aiProviders/list")
-				? [provider]
+				? available
+					? [provider]
+					: []
 				: url.includes("webAccess/status")
-					? { provider: "tavily", search: true }
+					? { provider: "tavily", search: true, revision: "web-a" }
 					: url.includes("agent/threads/get")
 						? { thread: { aiProviderId: provider.id } }
-						: { id: "result" };
+						: url.includes("ai/capabilities")
+							? { explicitNoAi: true, recipientApproval: 1 }
+							: { id: "result" };
 			return new Response(JSON.stringify({ json: value }), { headers: { "content-type": "application/json" } });
 		},
 	},
@@ -64,13 +72,17 @@ function load(path) {
 	);
 	return module.exports;
 }
+modules.zod = createRequire(new URL("../../packages/ai/package.json", mobile))("zod");
+modules["./defaults"] = load("../../packages/ai/src/defaults.ts");
+modules["@reactive-resume/ai/types"] = load("../../packages/ai/src/types.ts");
 modules["./ai-consent"] = load("src/api/ai-consent.ts");
 const { client, streamClient, rest } = load("src/api/client.ts");
 async function waitForDialog() {
 	for (let step = 0; step < 100 && !dialog; step++) await new Promise((resolve) => setImmediate(resolve));
 	assert.ok(dialog, "sharing must require a dialog before transmission");
 }
-const sent = () => calls.filter((path) => !/aiProviders\/list|webAccess\/status|agent\/threads\/get/.test(path));
+const sent = () =>
+	calls.filter((path) => !/aiProviders\/list|webAccess\/status|agent\/threads\/get|ai\/capabilities/.test(path));
 function reset() {
 	calls = [];
 	dialog = null;
@@ -103,6 +115,7 @@ for (const request of [
 	() => {
 		const body = new FormData();
 		body.set("providerId", provider.id);
+		body.set("model", "whisper-1");
 		return rest("/career/voice/transcribe", { method: "POST", body });
 	},
 ]) {
@@ -240,6 +253,90 @@ dialog.buttons[1].onPress();
 await result;
 assert.deepEqual(sent(), ["/api/rpc/career/suggestTargetRoles"]);
 console.log("PASS native same-ID recipient revision cutoff before and during consent, unchanged approval transmitted");
+for (const change of [
+	{ apiKeyFingerprint: "key-b" },
+	{ model: "changed-model" },
+	{ baseURL: "https://other.fixture.test/v1" },
+]) {
+	reset();
+	const previous = { ...provider };
+	const result = client.ai.parsePdf({}).then(
+		() => null,
+		(error) => error,
+	);
+	await waitForDialog();
+	Object.assign(provider, change, { recipientVersion: "c".repeat(64) });
+	dialog.buttons[1].onPress();
+	assert.match((await result).message, /settings changed/);
+	assert.deepEqual(sent(), [], "same-ID configuration changes must not transmit stale consent");
+	Object.assign(provider, previous);
+}
+console.log("PASS: changed native key/model/URL during consent prevents transmission.");
+
+reset();
+result = client.career.voice
+	.speak({ providerId: provider.id, model: "tts-1", text: "Fictional text" })
+	.catch((error) => error);
+await waitForDialog();
+assert.match(dialog.message, /tts-1/);
+assert.match(dialog.message, /Only the text to read aloud/);
+dialog.buttons[1].onPress();
+await result;
+assert.deepEqual(JSON.parse(headers.at(-1).get("x-ai-destination")).at(-1), { kind: "speech", model: "tts-1" });
+reset();
+available = false;
+result = client.applications.ai.parsePosting({ input: "fictional manual posting" }).catch((error) => error);
+await waitForDialog();
+dialog.buttons[1].onPress();
+await result;
+assert.equal(headers.at(-1).get("x-ai-destination"), "none");
+reset();
+result = client.applications.ai.parsePosting({ input: "fictional manual posting" }).catch((error) => error);
+await waitForDialog();
+available = true;
+dialog.buttons[1].onPress();
+assert.match((await result).message, /settings changed/);
+assert.deepEqual(sent(), []);
+reset();
+available = false;
+assert.match(
+	(await client.applications.ai.autofill({ jobDescription: "fictional" }).catch((error) => error)).message,
+	/Choose a tested/,
+);
+assert.deepEqual(sent(), []);
+assert.equal(dialog, null);
+available = true;
+console.log("PASS: native voice model/scope, explicit no-AI header, transition race and AI-only refusal.");
+
+reset();
+const form = new FormData();
+form.set("providerId", provider.id);
+form.set("model", "whisper-1");
+form.set("audio", new Blob(["fictional recording"], { type: "audio/webm" }), "fictional.webm");
+result = rest("/career/voice/transcribe", { method: "POST", body: form }).catch((error) => error);
+await waitForDialog();
+assert.match(dialog.message, /whisper-1/);
+assert.match(dialog.message, /Only your recording/);
+dialog.buttons[1].onPress();
+await result;
+assert.deepEqual(JSON.parse(headers.at(-1).get("x-ai-destination")).at(-1), {
+	kind: "transcription",
+	model: "whisper-1",
+});
+assert.deepEqual(sent(), ["/api/openapi/career/voice/transcribe"]);
+console.log("PASS native multipart REST binds actual transcription kind/model and recording-only disclosure");
+
+reset();
+const canceledVoice = new AbortController();
+result = rest("/career/voice/transcribe", { method: "POST", body: form, signal: canceledVoice.signal }).catch(
+	(error) => error,
+);
+await waitForDialog();
+canceledVoice.abort();
+dialog.buttons[1].onPress();
+await result;
+assert.deepEqual(sent(), [], "leaving voice context while approval is queued cannot upload recording");
+console.log("PASS canceled queued multipart approval makes zero REST uploads");
 
 // Exercise the shipped interceptor, including callers that do not use the posting form.
 let supportError = false;

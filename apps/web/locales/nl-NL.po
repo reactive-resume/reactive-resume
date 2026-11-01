@@ -1139,6 +1139,10 @@ msgstr "Een verhaal dat u inmiddels hebt verwijderd"
 msgid "A strong match, with one question to resolve"
 msgstr "Een sterke match, met één vraag om op te helderen"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "A test prompt and saved API key."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call."
 msgstr "Een getimed plan, uw opening, de verhalen om mee te nemen en vragen om te stellen. 10 minuten voor het gesprek wordt het uw checklist."
@@ -1444,6 +1448,10 @@ msgstr "Bewijs toevoegen"
 msgid "Add experience"
 msgstr "Ervaring toevoegen"
 
+#: src/features/career/workspace/fit.tsx
+msgid "Add facts"
+msgstr ""
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Add field"
 msgstr "Veld toevoegen"
@@ -1708,6 +1716,10 @@ msgid "Against your requirements"
 msgstr "Vergeleken met uw eisen"
 
 #: src/features/command-palette/pages/navigation.tsx
+msgid "AI"
+msgstr ""
+
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -1742,10 +1754,15 @@ msgstr "AI kon de details niet invullen. De vacature blijft behouden; vul de vel
 msgid "AI edit"
 msgstr "AI-bewerking"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "AI features use your own provider. Connecting sends a test prompt; each task asks before sharing its data."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
 msgstr ""
 
+#: src/features/assistant/provider-setup.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers"
@@ -1762,6 +1779,12 @@ msgstr "AI-providers zijn pas beschikbaar op deze server als ENCRYPTION_SECRET i
 #: src/features/settings/ai/providers.tsx
 msgid "AI providers couldn't be loaded. Reload to try again."
 msgstr "AI-providers kunnen niet worden geladen. Herlaad om het opnieuw te proberen."
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/documents/new-document-dialog.tsx
+msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
@@ -1826,6 +1849,14 @@ msgstr "Al uw documenten, sollicitaties, API-sleutels en openbare links worden d
 #: src/features/auth/pages/consent.tsx
 msgid "Allow access"
 msgstr "Toegang toestaan"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow scheduled sharing"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Allow this operation"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Almost none of your bullets carry a number."
@@ -2617,9 +2648,17 @@ msgstr "Een gedeeld designsysteem gebouwd dat door zes productteams wordt gebrui
 msgid "Built from the posting, Sam’s message and your two strongest stories."
 msgstr "Gemaakt op basis van de vacature, het bericht van Sam en uw twee sterkste verhalen."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "built-in reader"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Built-in reader"
 msgstr "Ingebouwde lezer"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
+msgstr ""
 
 #: src/libs/locale.ts
 msgid "Bulgarian"
@@ -2795,6 +2834,10 @@ msgstr "Wijzigt alleen sectietitels en datumwoorden, niet uw inhoud."
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
 msgstr "Als u dit wijzigt, wordt er een bevestiging naar het nieuwe adres verzonden. Uw gebruikersnaam maakt deel uit van elke openbare link."
 
+#: src/features/settings/ai/providers.tsx
+msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Changing your password…"
 msgstr "Uw wachtwoord wordt gewijzigd…"
@@ -2950,6 +2993,14 @@ msgstr ""
 msgid "Choose a country"
 msgstr ""
 
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Choose a destination before continuing. Earlier messages may be sent to the chosen provider."
+msgstr ""
+
+#: src/features/command-palette/pages/ask.tsx
+msgid "Choose a document; review your question before sending"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Choose a file"
 msgstr "Kies een bestand"
@@ -2966,6 +3017,10 @@ msgstr "Kies een wachtwoord dat verschilt van uw huidige wachtwoord."
 msgid "Choose a PDF file."
 msgstr "Kies een PDF-bestand."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Choose a resume"
+msgstr ""
+
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Kies een cv in Write dat bij het ontwerp past. Tot die tijd heeft de brief zijn eigen brief."
@@ -2975,9 +3030,17 @@ msgstr "Kies een cv in Write dat bij het ontwerp past. Tot die tijd heeft de bri
 msgid "Choose a stage"
 msgstr "Kies een fase"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a tested AI provider before sharing data."
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Choose a valid date and time in {timeZone}, or clear the deadline."
 msgstr "Kies een geldige datum en tijd in de tijdzone {timeZone}, of wis de deadline."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Choose a voice model before sharing data."
+msgstr ""
 
 #: src/features/career/workspace/practise.tsx
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
@@ -3006,6 +3069,10 @@ msgstr "Kies een ander bestand"
 #: src/components/input/color-picker.tsx
 msgid "Choose color"
 msgstr "Kies kleur"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Choose how to read this file"
+msgstr ""
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
@@ -3305,12 +3372,6 @@ msgstr "Sluit een AI-provider aan"
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect an AI provider above to use the assistant. Saving and preparing jobs doesn't need one."
 msgstr "Sluit hierboven een AI-provider aan om de assistent te gebruiken. Voor het opslaan en voorbereiden van banen is er geen nodig."
-
-#: src/features/career/schedule-sheet.tsx
-#: src/features/career/workspace/fit.tsx
-#: src/features/career/workspace/prepare.tsx
-msgid "Connect an AI provider in Settings"
-msgstr "Verbind een AI-aanbieder in Instellingen"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Connect an AI provider in Settings to refresh it automatically."
@@ -3620,6 +3681,10 @@ msgstr "Kan deze planning niet wijzigen. Probeer het opnieuw."
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "Kan uw wachtwoord niet wijzigen. Controleer uw huidige wachtwoord en probeer het opnieuw."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't check your evidence."
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Couldn't complete this action. Your draft is kept. If another device changed the profile, reload the saved profile before trying again."
 msgstr ""
@@ -3778,6 +3843,10 @@ msgstr "Kan dat provideraccount niet koppelen. Probeer het opnieuw."
 msgid "Couldn't link the application. Try again."
 msgstr "Kan de sollicitatie niet koppelen. Probeer het opnieuw."
 
+#: src/features/career/workspace/fit.tsx
+msgid "Couldn't link the resume. Try again."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't load AI connections. Try again before importing this file."
 msgstr "Kan AI-verbindingen niet laden. Probeer het opnieuw voordat u dit bestand importeert."
@@ -3798,6 +3867,10 @@ msgstr "Kan gekoppelde apps niet laden. Vernieuw de pagina om het opnieuw te pro
 msgid "Couldn't load documents"
 msgstr "Kan documenten niet laden"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Couldn't load documents. Try again."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't load interviews. Retry"
 msgstr "Kan gesprekken niet laden. Opnieuw proberen"
@@ -3809,6 +3882,10 @@ msgstr "Kan de instellingen voor webtoegang niet laden of opslaan. Probeer het o
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't load the sample file. Try again."
 msgstr "Kan het voorbeeldbestand niet laden. Probeer het opnieuw."
+
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Couldn't load the saved review."
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
@@ -4096,6 +4173,7 @@ msgid "Couldn't switch connections. Try again."
 msgstr "Kan niet van verbinding wisselen. Probeer het opnieuw."
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Couldn't switch models. Try again."
 msgstr "Kan niet van model wisselen. Probeer het opnieuw."
 
@@ -4285,8 +4363,8 @@ msgid "Create a new resume"
 msgstr "Maak een nieuwe cv aan"
 
 #: src/features/command-palette/pages/ask.tsx
-msgid "Create a resume first, then ask about it."
-msgstr "Maak eerst een CV en vraag ernaar."
+msgid "Create a resume or letter first."
+msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
 msgid "Create account"
@@ -4427,6 +4505,10 @@ msgstr "Donker"
 #: src/features/command-palette/pages/preferences/theme.tsx
 msgid "Dark theme"
 msgstr "Donker thema"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Data sharing canceled. Nothing was sent to the AI provider."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
@@ -4849,6 +4931,10 @@ msgstr "Heb je nog geen account? <0/>"
 msgid "Don't send {0}"
 msgstr "Verzend geen {0}"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Don't share"
+msgstr ""
+
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -5041,8 +5127,8 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Sleep de afbeelding om deze te verplaatsen en gebruik de schuifregelaar om in te zoomen voordat je de afbeelding uploadt."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
-msgstr "Zet hier een bestand neer of blader. PDF, Word, Reactive Resume of JSON Resume. We vullen elke sectie in en markeren alles waar we niet zeker van zijn."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Drop a PDF here or choose a file"
@@ -5103,6 +5189,10 @@ msgstr "Elke verzending begint opnieuw met dit bericht en geselecteerde bestande
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Earlier messages and attachments in this conversation will be sent to this destination when you send again."
 msgstr ""
 
 #: src/features/career/coach.tsx
@@ -5391,10 +5481,6 @@ msgstr "Voer een geldig e-mailadres in."
 msgid "Enter a web address, like example.com"
 msgstr "Voer een webadres in, zoals voorbeeld.com"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Enter any model ID supported by your endpoint."
-msgstr "Voer een model-ID in die door uw eindpunt wordt ondersteund."
-
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Voer een van uw opgeslagen back-upcodes in om toegang te krijgen tot uw account."
@@ -5407,6 +5493,10 @@ msgstr "Vul de voorwaarden zelf in. Er wordt geen AI-verzoek verstuurd. Laat onb
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter the 6-digit code."
 msgstr "Voer de 6-cijferige code in."
+
+#: src/features/settings/ai/test-error.ts
+msgid "Enter the API base URL of your service and test again."
+msgstr ""
 
 #: src/features/resume/share/web-page-text.ts
 msgid "Enter the password the resume owner shared with you."
@@ -5645,8 +5735,8 @@ msgid "Feedback"
 msgstr "Feedback"
 
 #: src/features/career/workspace/practise.tsx
-msgid "Feedback needs an AI connection. <0>Add one in Settings</0>. Nothing is sent until you ask."
-msgstr "Voor feedback is een AI-verbinding nodig. <0>Voeg er een toe in Instellingen</0>. Er wordt niets verstuurd totdat u erom vraagt."
+msgid "Feedback needs an AI connection. <0/>. Nothing is sent until you ask."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -5695,8 +5785,8 @@ msgid "Fill fields"
 msgstr "Velden invullen"
 
 #: src/features/applications/components/add-application-dialog.tsx
-msgid "Fill in the role and company. Connect an AI provider in Settings to read them from the posting."
-msgstr "Vul de rol en het bedrijf in. Verbind een AI-provider in de instellingen om deze uit de vacature te lezen."
+msgid "Fill in the role and company, or use Set up AI to read them from the posting."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Fill in the role and company. The posting is saved with the application."
@@ -5730,6 +5820,10 @@ msgstr "Functies zoeken"
 msgid "Find weak bullets"
 msgstr "Vind zwakke lijstvermeldingen"
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Finding roles needs a working web search service. Set it up first, or save jobs manually in Applications."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Finding sections"
 msgstr "Secties zoeken"
@@ -5761,6 +5855,10 @@ msgstr "Match"
 #: src/features/career/workspace/saved.tsx
 msgid "Fit checks, briefings, practice feedback, debriefs, answers, replies and offers land here as you save them."
 msgstr "Matchcontroles voor de functie, briefings, feedback op oefengesprekken, nabesprekingen van sollicitatiegesprekken, antwoorden op formuliervragen, reacties op berichten en werkaanbiedingen komen hier terecht zodra je ze opslaat."
+
+#: src/features/career/workspace/fit.tsx
+msgid "Fit needs evidence. Add facts to Knowledge or choose a resume to link before sending a request."
+msgstr ""
 
 #: src/features/resume/editor/chrome.tsx
 msgid "Fit page to width"
@@ -5944,12 +6042,17 @@ msgid "Found for “{0}”. Posting checked {1}."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
+#: src/libs/orpc/ai-consent.ts
 msgid "Found posting links are read by Reactive Resume and the sites being read."
 msgstr ""
 
 #. placeholder {0}: webAccess.provider
 #: src/features/career/schedule-sheet.tsx
 msgid "Found posting links are read by Reactive Resume and, when needed, {0} and the sites being read. The reader may charge."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Found posting links are read by Reactive Resume and, when needed, {reader} and the sites being read. The reader may charge."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -6817,10 +6920,14 @@ msgstr "Cursief"
 msgid "Its applications move to the stage you choose. Their history keeps the name “{label}”."
 msgstr "De bijbehorende sollicitaties gaan naar de fase die je kiest. In hun geschiedenis blijft de naam ‘{label}’ staan."
 
+#: src/features/career/schedule-sheet.tsx
+msgid "Its connection is unavailable. Choose and approve a connection before enabling this schedule."
+msgstr ""
+
 #. placeholder {0}: providers[0]?.label ?? ""
 #: src/features/career/schedule-sheet.tsx
-msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
-msgstr "De verbinding is uitgeschakeld of verwijderd, dus het draait op {0} totdat u een andere kiest."
+#~ msgid "Its connection was switched off or removed, so it runs on {0} until you choose another."
+#~ msgstr "De verbinding is uitgeschakeld of verwijderd, dus het draait op {0} totdat u een andere kiest."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Its messages and attachments are deleted. Edits you accepted stay in the document."
@@ -7555,6 +7662,10 @@ msgstr "Verbindingen laden..."
 msgid "Loading conversations…"
 msgstr "Gesprekken laden…"
 
+#: src/features/command-palette/pages/ask.tsx
+msgid "Loading documents…"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "Loading interviews…"
 msgstr "Gesprekken laden…"
@@ -7567,10 +7678,6 @@ msgstr "Kennis laden voordat u verstuurt…"
 #: src/features/career/workspace/shell.tsx
 msgid "Loading linked documents…"
 msgstr "Gekoppelde documenten laden…"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Loading model suggestions… You can also enter any model ID."
-msgstr "Modelsuggesties laden… U kunt ook elke model-ID invoeren."
 
 #: src/features/settings/ai/providers.tsx
 #: src/features/settings/integrations/components/ai-provider-picker.tsx
@@ -7874,6 +7981,10 @@ msgstr "Medium"
 msgid "Mentor other designers"
 msgstr "Andere ontwerpers begeleiden"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Message saved with this application"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Message the assistant"
 msgstr "Stuur een bericht naar de assistent"
@@ -7928,10 +8039,6 @@ msgstr "Model"
 #: src/features/career/workspace/practise.tsx
 msgid "Model for {label}"
 msgstr "Model voor {label}"
-
-#: src/features/settings/ai/providers.tsx
-msgid "Model suggestions are unavailable. You can still enter any model ID."
-msgstr "Modelsuggesties zijn niet beschikbaar. U kunt nog steeds elke model-ID invoeren."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Model: {label}"
@@ -8193,6 +8300,7 @@ msgid "narrow margins"
 msgstr "smalle marges"
 
 #: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/web-access.tsx
 msgid "Needs attention"
 msgstr "Heeft aandacht nodig"
 
@@ -8340,6 +8448,10 @@ msgstr "Geen actieve sollicitaties."
 
 #: src/features/career/workspace/preparation.tsx
 msgid "No AI needed. Edit documents and write answers yourself; nothing here is sent to the employer or marks the job applied."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "No AI provider is used for this operation."
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -8560,10 +8672,6 @@ msgstr "Er konden geen specifieke termen uit die functieomschrijving worden geha
 #: src/features/career/knowledge/stories.tsx
 msgid "No stories yet"
 msgstr "Nog geen verhalen"
-
-#: src/features/settings/ai/providers.tsx
-msgid "No suggestions for this provider. Enter any model ID."
-msgstr "Geen suggesties voor deze aanbieder. Voer een model-ID in."
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
@@ -9004,6 +9112,18 @@ msgstr "Alleen de eerste {MAX_IMPORT} rijen worden in één keer geïmporteerd, 
 msgid "Only the first pages were checked."
 msgstr "Alleen de eerste pagina's zijn gecontroleerd."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the resume you selected and enabled shared Knowledge you opted into are sent through your server to this AI connection for editable target-role drafts. Application profiles, saved answers and private application facts are excluded."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the search query and search countries go to your server's web search service. Resumes, Knowledge, application profiles and saved answers are not sent. The search service may charge. Results wait in Today; no applications are submitted."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only the text to read aloud is sent to this speech model."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Alleen jij ziet deze"
@@ -9011,6 +9131,10 @@ msgstr "Alleen jij ziet deze"
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "Alleen jij, totdat je het deelt. Een cv kan privé blijven, live gaan via een openbare link of worden beveiligd met een wachtwoord, en u kunt dit op elk gewenst moment wijzigen. Als u uw account verwijdert, worden ook uw cv's verwijderd."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Onsite"
@@ -9026,11 +9150,6 @@ msgstr "Openen"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Open {title}"
 msgstr "Open de {title}"
-
-#: src/features/resume/editor/check/writing-tab.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Open AI settings"
-msgstr "Open de AI-instellingen"
 
 #: src/features/career/today.tsx
 msgid "Open briefing"
@@ -9196,6 +9315,10 @@ msgstr "Oranje"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Organization"
 msgstr "Organisatie"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "Original"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Original page"
@@ -9408,6 +9531,10 @@ msgstr "Plak de e-mail of het bericht, zonder handtekening."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Paste the full job description here…"
 msgstr "Plak hier de volledige functieomschrijving…"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Paste the posting text or a public link to continue. The built-in reader remains available."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Paste the posting to see which of its terms your resume already has."
@@ -9937,6 +10064,10 @@ msgstr "Geleverd door uw server: {connectedProvider}."
 msgid "Provider"
 msgstr "Provider"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Provider retention follows its own policy. Your provider may charge for this request."
+msgstr ""
+
 #: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/homepage/share.tsx
@@ -10117,6 +10248,10 @@ msgstr "Briefing lezen"
 msgid "Read it for me"
 msgstr "Lees het voor me"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Read on this device (free)"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read only"
 msgstr "Alleen-lezen toegang"
@@ -10159,6 +10294,7 @@ msgid "Read the self-hosting guide"
 msgstr "Lees de handleiding voor zelfhosting"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Read with AI"
 msgstr ""
 
@@ -10236,6 +10372,12 @@ msgstr "Het lezen van de tekst"
 #: src/features/career/shared.tsx
 msgid "Reading what you shared"
 msgstr "Lezen wat u hebt gedeeld"
+
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Reading with AI sends this posting to {0} · {1}. Public links also go to the reader and the site being read. You can fill details manually."
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually."
@@ -10825,6 +10967,10 @@ msgstr "om cv's te maken"
 msgid "Resume builder"
 msgstr "CV-maker"
 
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Resume changed since this review. Review these suggestions as out of date or run again."
+msgstr ""
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "Inhoud van het cv"
@@ -10854,6 +11000,10 @@ msgstr "CV ingediend (optioneel)"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Resume to share for suggestions"
+msgstr ""
+
+#: src/features/career/workspace/fit.tsx
+msgid "Resume to use as evidence"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -10887,6 +11037,7 @@ msgstr "{0} opgehaald. De versheid van de herkomst is onbekend, tenzij vermeld."
 #: src/features/assistant/conversation.tsx
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/workspace/answer-library.tsx
+#: src/features/career/workspace/fit.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -10994,13 +11145,18 @@ msgstr ""
 msgid "Review writing"
 msgstr "Recensie schrijven"
 
+#. placeholder {0}: reviewedAt.toLocaleString()
+#: src/features/resume/editor/check/writing-tab.tsx
+msgid "Reviewed {0}"
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
-msgid "Reviewing needs an AI connection. <0>Add one in Settings</0>. What you write here stays in this browser until then."
-msgstr "Voor beoordelen is een AI-verbinding nodig. <0>Voeg er een toe in Instellingen</0>. Tot die tijd blijft wat u hier schrijft in deze browser."
+msgid "Reviewing needs an AI connection. <0/>. What you write here stays in this browser until then."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke"
@@ -11222,6 +11378,10 @@ msgstr "Gesprek opslaan"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "Baan opslaan"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Save message without AI"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Save name"
@@ -11689,18 +11849,29 @@ msgstr "E-mail voor wachtwoordreset wordt verzonden..."
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#. placeholder {1}: providerState.usableProviders[0]?.model
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
 msgstr "Stuurt deze sollicitatie (vacature, aantekeningen, gespreksgegevens) en ingeschakelde Kennis naar {label}."
 
 #. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
 #: src/features/career/workspace/fit.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0}."
-msgstr "Stuurt de vacature, aantekeningen en documenten van deze sollicitatie, plus ingeschakelde Kennis, naar {0}."
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0} · {1}."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it."
-msgstr "Stuurt de vacature, aantekeningen en documenten van deze sollicitatie, plus ingeschakelde Kennis, naar deze verbinding. Uw aanbieder kan hiervoor kosten rekenen."
+#~ msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it."
+#~ msgstr "Stuurt de vacature, aantekeningen en documenten van deze sollicitatie, plus ingeschakelde Kennis, naar deze verbinding. Uw aanbieder kan hiervoor kosten rekenen."
+
+#: src/features/career/schedule-sheet.tsx
+msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this connection. Your provider may charge for it. Scheduled work never switches to another connection automatically."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter and the posting to {provider} with your key, only when you press send."
@@ -11709,6 +11880,12 @@ msgstr "Stuurt deze brief en de vacature alleen met uw sleutel naar {provider} a
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter to {provider} with your key, only when you press send."
 msgstr "Stuurt deze brief met uw sleutel naar {provider}, alleen als u op verzenden drukt."
+
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
@@ -11780,13 +11957,25 @@ msgstr "Wachtwoord instellen"
 msgid "Set the document language when exporting."
 msgstr "Stel de documenttaal in bij het exporteren."
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Set up AI"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Set up discovery"
 msgstr "Ontdekken instellen"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "Set up web access"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings"
 msgstr "Webzoeken instellen in Instellingen"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Set up web search in Settings before enabling discovery. AI is not required."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
@@ -11824,6 +12013,11 @@ msgstr "Deel"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "Deel een openbare link, voeg een wachtwoord toe of houd deze privé. Kies uit 3 zichtbaarheidsopties. Exporteer naar PDF of Word, of neem al uw gegevens mee als JSON."
+
+#. placeholder {0}: provider.label
+#: src/libs/orpc/ai-consent.ts
+msgid "Share data with {0}?"
+msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
@@ -12609,10 +12803,6 @@ msgstr "Voorgesteld vanuit de bron en de taak. Verander het op elk gewenst momen
 msgid "Suggested reply · edit before sending"
 msgstr "Voorgestelde reactie · bewerk voordat u verstuurt"
 
-#: src/features/settings/ai/providers.tsx
-msgid "Suggestions from <0>models.dev</0>. You can also enter any model ID."
-msgstr "Suggesties van <0>models.dev</0>. U kunt ook elke model-ID invoeren."
-
 #: src/features/assistant/assistant-panel.tsx
 msgid "Suggests cuts, never deletes on its own"
 msgstr "Stelt bezuinigingen voor, verwijdert nooit vanzelf"
@@ -13001,6 +13191,10 @@ msgstr "Het {label}-bestand kan niet worden gegenereerd. Probeer het opnieuw of 
 msgid "The 13-point activation lift. Knowledge has the before and after."
 msgstr "De activatiestijging van 13 punten. Kennis heeft de cijfers van voor en na."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The account changed. Try again."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "Het adres mag alleen kleine letters en cijfers bevatten, met telkens één koppelteken tussen de delen."
@@ -13020,10 +13214,6 @@ msgstr "De sollicitatie waarvoor deze brief bedoeld is."
 #: src/features/assistant/assistant-panel.tsx
 msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
 msgstr "De assistent is niet ingesteld op deze server. Degene die het beheert, moet ENCRYPTION_SECRET instellen. Al het andere werkt zonder."
-
-#: src/features/assistant/provider-setup.tsx
-msgid "The assistant uses your own key. Nothing is sent anywhere until you connect one."
-msgstr "De assistent gebruikt uw eigen sleutel. Er wordt niets verzonden totdat u er een aansluit."
 
 #: src/features/settings/ai/web-access.tsx
 msgid "The built-in reader remains active."
@@ -13053,6 +13243,18 @@ msgstr "De coach leest deze alleen voor deze sollicitatie."
 msgid "The coach saves facts you state, and tells you. You can undo."
 msgstr "De coach slaat feiten op die u noemt, en laat het u weten. U kunt het ongedaan maken."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The complete PDF file."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The connection test failed. Check the key, model and address, then try again."
+msgstr ""
+
+#: src/features/settings/ai/providers.tsx
+msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "De kopie is gekoppeld aan de sollicitatie, dus Check en de assistent gebruiken de vacatureplaatsing."
@@ -13081,6 +13283,10 @@ msgstr "De begroeting volgt de naam."
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "De sleutel wordt gecodeerd op de server en nooit meer getoond. Opslaan test de verbinding."
 
+#: src/features/settings/ai/test-error.ts
+msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "The letter as it is"
 msgstr "De brief zoals hij is"
@@ -13104,6 +13310,10 @@ msgstr "De lijn is gewijzigd sinds je het vroeg, dus deze is niet vervangen."
 #: src/features/career/workspace/saved.tsx
 msgid "the message"
 msgstr "het bericht"
+
+#: src/features/settings/ai/test-error.ts
+msgid "The model wasn't available or couldn't complete the test. Check its name or try another model."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The morning of the interview has passed, so the briefing runs now."
@@ -13153,9 +13363,9 @@ msgstr "De vacatureplaatsing kon niet worden gelezen. Vul de rol en het bedrijf 
 msgid "The posting saved with this application."
 msgstr "De vacature die bij deze sollicitatie is opgeslagen."
 
-#: src/features/assistant/provider-setup.tsx
-msgid "The provider didn't answer. Check the key and the model."
-msgstr "De aanbieder antwoordde niet. Controleer de sleutel en het model."
+#: src/libs/orpc/ai-consent.ts
+msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
@@ -13165,9 +13375,17 @@ msgstr "De aanbieder antwoordde niet. Controleer de sleutel, het model en de bas
 msgid "The provider didn't share an email address, which is required. Allow email access when the provider asks, or use another sign-in method."
 msgstr "De provider heeft geen e-mailadres gedeeld, en dat is vereist. Sta e-mailtoegang toe wanneer de provider erom vraagt, of gebruik een andere inlogmethode."
 
+#: src/features/settings/ai/test-error.ts
+msgid "The provider limited this request. Wait and try again; check your account quota."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "The provider rejected this sign-in attempt. Try again."
 msgstr "De provider heeft deze inlogpoging geweigerd. Probeer het opnieuw."
+
+#: src/features/settings/ai/test-error.ts
+msgid "The provider reported a server error. Try again later."
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The provider returned a review that couldn't be read. Try again."
@@ -13235,6 +13453,18 @@ msgstr ""
 msgid "The selected documents will be deleted for good and can't be restored."
 msgstr ""
 
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected line, surrounding field text, and your rewrite instructions."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The selected resume and this letter's recipient and posting information."
+msgstr ""
+
+#: src/features/settings/ai/test-error.ts
+msgid "The service couldn't be reached. Check the address and connection, then try again."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "The service didn't respond in time. Try again."
 msgstr "De service reageerde niet op tijd. Probeer het opnieuw."
@@ -13262,6 +13492,10 @@ msgstr "De tekst komt onleesbaar over."
 #: src/features/ats-checker/messages.ts
 msgid "The top of the first page does not look like a name."
 msgstr "De bovenkant van de eerste pagina lijkt niet op een naam."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "The Word document's text."
+msgstr ""
 
 #. Menu item that opens appearance theme selection submenu
 #: src/features/command-palette/pages/navigation.tsx
@@ -13323,6 +13557,10 @@ msgstr "Nadenken"
 msgid "Thinking…"
 msgstr "Denken…"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "This allows recurring processing until you turn the schedule off."
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "This application"
 msgstr ""
@@ -13340,8 +13578,8 @@ msgid "This browser can't record here. Choose an audio file, or type your answer
 msgstr "Deze browser kan hier niet opnemen. Kies een audiobestand of typ uw antwoord."
 
 #: src/features/career/workspace/practise.tsx
-msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0>Add one in Settings</0>, or type your answer."
-msgstr "Deze browser kan niet dicteren, en geen van uw AI-verbindingen kan spraak transcriberen (OpenAI, Google Gemini, Mistral, xAI, Groq of Vercel AI Gateway kunnen dat wel). <0>Voeg er een toe in Instellingen</0>, of typ uw antwoord."
+msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
@@ -13355,6 +13593,11 @@ msgstr "Dit gesprek kan niet worden geopend."
 #: src/features/career/coach-thread.tsx
 msgid "This conversation couldn't be opened. Refresh the page to try again."
 msgstr "Dit gesprek kan niet worden geopend. Vernieuw de pagina om het opnieuw te proberen."
+
+#: src/features/assistant/assistant-panel.tsx
+#: src/features/career/coach.tsx
+msgid "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
@@ -13551,6 +13794,10 @@ msgstr "Deze opgeslagen versie kon niet worden geladen."
 #: src/features/career/workspace/shell.tsx
 msgid "This saved version is no longer available."
 msgstr "Deze opgeslagen versie is niet meer beschikbaar."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "This server doesn't support custom stages yet. Your applications use the standard ones."
@@ -14068,6 +14315,10 @@ msgstr "Cv bijwerken"
 msgid "Update this application's details."
 msgstr "Update de details van deze sollicitatie."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Update this server before approving an AI destination."
+msgstr ""
+
 #: src/features/applications/components/list-view.tsx
 msgid "Updated"
 msgstr "Bijgewerkt"
@@ -14245,6 +14496,10 @@ msgstr "Gebruik de standaardkop"
 msgid "Use these answers"
 msgstr "Deze antwoorden gebruiken"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Use this destination"
+msgstr ""
+
 #: src/features/settings/preferences.tsx
 msgid "Use this device's timezone ({device})"
 msgstr "Tijdzone van dit apparaat gebruiken ({device})"
@@ -14252,6 +14507,14 @@ msgstr "Tijdzone van dit apparaat gebruiken ({device})"
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "Maak gebruik van deze aanbieder"
+
+#: src/features/career/workspace/fit.tsx
+msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Use web access?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
@@ -14504,9 +14767,15 @@ msgstr "We hebben een link naar {currentEmail} gestuurd om de wijziging goed te 
 msgid "We sent a new verification link to {0}."
 msgstr "We hebben een nieuwe verificatielink naar {0} gestuurd."
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Web access"
 msgstr "Webtoegang"
+
+#. placeholder {0}: access?.searxng ? t`your server's search service` : (access?.provider ?? t`built-in reader`)
+#: src/libs/orpc/ai-consent.ts
+msgid "Web destination: {0}."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Web page"
@@ -14799,6 +15068,10 @@ msgstr "Binnen een kwartaal ging de activatie van 31% naar 44%."
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
 msgstr "Zonder een formulier vult u zelf de ontvanger in en wordt bij het opstellen alleen uw cv gebruikt."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Word import needs AI. For a local import, export a PDF or JSON file instead."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Words run together when the text is extracted."
 msgstr "Woorden lopen in elkaar over wanneer de tekst wordt geëxtraheerd."
@@ -15079,6 +15352,10 @@ msgstr "uw AI-verbinding"
 msgid "Your AI connection"
 msgstr "Uw AI-verbinding"
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your AI settings changed. Nothing was sent; try again."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Your answer"
 msgstr "Uw antwoord"
@@ -15287,6 +15564,10 @@ msgstr "uw aanbieder"
 msgid "Your recording goes to {0} to be transcribed, which may use tokens on that account."
 msgstr "Uw opname gaat naar {0} om te worden getranscribeerd, wat tokens van dat account kan gebruiken."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your request and the relevant document, posting, notes, selected Knowledge, conversation history and attachments enabled for this action."
+msgstr ""
+
 #: src/features/career/offers.tsx
 msgid "Your requirements"
 msgstr "Uw eisen"
@@ -15311,6 +15592,10 @@ msgstr "Je cv is gedupliceerd."
 msgid "Your resume has been updated."
 msgstr "Je cv is bijgewerkt."
 
+#: src/libs/orpc/ai-consent.ts
+msgid "Your resume text, selected passages, and check findings."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your resume uses \"I\" and \"my\"."
 msgstr "Je cv gebruikt „ik” en „mijn”."
@@ -15319,6 +15604,14 @@ msgstr "Je cv gebruikt „ik” en „mijn”."
 msgid "Your resume, live at"
 msgstr "Je CV, live op"
 
+#: src/features/assistant/provider-setup.tsx
+msgid "Your saved AI connections need attention. Test or edit them below. History and saved proposals remain available."
+msgstr ""
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your search terms. These also go to the configured search service."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "Your selected font can't display some characters. They show as “?”. In Design, choose a font that has them."
 msgstr "Je gekozen lettertype kan sommige tekens niet weergeven. Ze worden getoond als “?”. Kies in Ontwerp een lettertype dat ze bevat."
@@ -15326,6 +15619,10 @@ msgstr "Je gekozen lettertype kan sommige tekens niet weergeven. Ze worden getoo
 #: src/features/settings/ai/web-access.tsx
 msgid "Your server provides search for Applications and the assistant. Connect a service to read pages the built-in reader can't."
 msgstr "Uw server biedt internetzoekopdrachten in de sectie Sollicitaties en voor de assistent. Sluit een dienst aan om webpagina's te lezen die de ingebouwde lezer niet kan lezen."
+
+#: src/libs/orpc/ai-consent.ts
+msgid "your server's search service"
+msgstr ""
 
 #. placeholder {0}: current.name
 #: src/features/resume/share/share-panel.tsx
@@ -15363,6 +15660,10 @@ msgstr "Uw introductie van twee minuten"
 #: src/features/resume/share/share-panel.tsx
 msgid "Your web page is live"
 msgstr "Je webpagina staat online"
+
+#: src/libs/orpc/ai-consent.ts
+msgid "Your web settings changed. Nothing was sent; try again."
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Your wording"

@@ -229,6 +229,11 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 		}
 		const parsed = JSON.parse(body || "{}") as ChatRequest;
 		requests.push(parsed);
+		if (request.headers.authorization === "Bearer invalid-stub-key") {
+			response.writeHead(401, { "content-type": "application/json" });
+			response.end(JSON.stringify({ error: { message: "Synthetic invalid API key" } }));
+			return;
+		}
 		// The connection test asks for a single character, without streaming; a workspace tab asks for its JSON.
 		if (!parsed.stream) {
 			const asksForFit = parsed.messages.some((message) =>
@@ -252,6 +257,36 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 					},
 				],
 			};
+			const asksForWriting = parsed.messages.some((message) =>
+				text(message.content).includes("experienced resume reviewer"),
+			);
+			const asksForImprove = parsed.messages.some((message) => text(message.content).includes("You improve one line"));
+			const content = asksForRoles
+				? JSON.stringify(roles)
+				: asksForFit
+					? JSON.stringify(FIT)
+					: asksForWriting
+						? JSON.stringify({
+								summary: "Fictional writing review retained after reload.",
+								suggestions: [
+									{
+										section: "Summary",
+										passageId:
+											parsed.messages
+												.map((message) => text(message.content))
+												.join("\n")
+												.match(/\[([^\]\n]+)\] Summary[^\n]*:/)?.[1] ?? null,
+										issue: "Use a specific verb.",
+										rewrite: "Led fictional delivery work.",
+										impact: "medium",
+									},
+								],
+								strengths: ["Clear fictional experience."],
+								jdAlignment: null,
+							})
+						: asksForImprove
+							? JSON.stringify({ text: "Led fictional delivery work.", why: "Uses a direct verb.", addsFacts: false })
+							: "1";
 			response.writeHead(200, { "content-type": "application/json" });
 			response.end(
 				JSON.stringify({
@@ -262,10 +297,7 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 					choices: [
 						{
 							index: 0,
-							message: {
-								role: "assistant",
-								content: asksForRoles ? JSON.stringify(roles) : asksForFit ? JSON.stringify(FIT) : "1",
-							},
+							message: { role: "assistant", content },
 							finish_reason: "stop",
 						},
 					],

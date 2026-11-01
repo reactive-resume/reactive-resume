@@ -6,7 +6,8 @@ import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { aiProvidersService } from "../ai-providers/service";
 import { dataBlock } from "../ai/data-block";
 import { getModel } from "../ai/service";
-import { applicationService } from "../applications/service";
+import { applicationService, assertApplicationVersion } from "../applications/service";
+import { assertDocumentVersion } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { coverLetterService } from "./service";
 
@@ -44,9 +45,9 @@ function buildLetterDraftPrompt(input: PromptInput): string {
  * Streams a draft of the letter's body from its resume and its application's posting. Nothing is saved: the client
  * shows the draft until it's kept or discarded, so a failure leaves the letter as it was.
  */
-export async function* draftLetterBody(
+export async function draftLetterBody(
 	input: CoverLetterDraftInput & { userId: string; signal?: AbortSignal | undefined },
-): AsyncGenerator<string> {
+): Promise<AsyncGenerator<string>> {
 	const { userId } = input;
 	const letter = await coverLetterService.getById({ id: input.id, userId });
 	const [resume, application] = await Promise.all([
@@ -67,21 +68,30 @@ export async function* draftLetterBody(
 	const posting =
 		application?.jobDescription?.trim() ||
 		(application?.requirements.length ? application.requirements.map((item) => `- ${item}`).join("\n") : undefined);
+	const model = getModel({
+		provider: provider.provider,
+		model: provider.model,
+		apiKey: provider.apiKey,
+		...(provider.baseURL ? { baseURL: provider.baseURL } : {}),
+	});
+	const prompt = buildLetterDraftPrompt({
+		variant: input.variant,
+		job: application ? `${application.role} at ${application.company}` : undefined,
+		posting,
+		resume: resume ? buildMarkdown(resume.data) : undefined,
+		previous: input.previous,
+	});
+	await aiProvidersService.authorize({ userId, id: provider.id }, async (tx) => {
+		await assertDocumentVersion(tx, userId, { kind: "letter", ...letter });
+		if (resume) await assertDocumentVersion(tx, userId, { kind: "resume", ...resume });
+		if (application) await assertApplicationVersion(tx, userId, application);
+	});
+	input.signal?.throwIfAborted();
 	const result = streamText({
-		model: getModel({
-			provider: provider.provider,
-			model: provider.model,
-			apiKey: provider.apiKey,
-			...(provider.baseURL ? { baseURL: provider.baseURL } : {}),
-		}),
+		model,
+		prompt,
 		system: letterDraftSystemPrompt,
-		prompt: buildLetterDraftPrompt({
-			variant: input.variant,
-			job: application ? `${application.role} at ${application.company}` : undefined,
-			posting,
-			resume: resume ? buildMarkdown(resume.data) : undefined,
-			previous: input.previous,
-		}),
+		maxRetries: 0,
 		...(input.signal ? { abortSignal: input.signal } : {}),
 	});
 
@@ -93,13 +103,16 @@ export async function* draftLetterBody(
 			cause,
 		});
 
-	try {
-		for await (const part of result.stream) {
-			if (part.type === "text-delta") yield part.text;
-			else if (part.type === "error") throw unreachable(part.error);
+	// Resolve and authorize inside the request scope; oRPC iterates the result after that scope has ended.
+	return (async function* () {
+		try {
+			for await (const part of result.stream) {
+				if (part.type === "text-delta") yield part.text;
+				else if (part.type === "error") throw unreachable(part.error);
+			}
+		} catch (error) {
+			if (input.signal?.aborted) return;
+			throw error instanceof ORPCError ? error : unreachable(error);
 		}
-	} catch (error) {
-		if (input.signal?.aborted) return;
-		throw error instanceof ORPCError ? error : unreachable(error);
-	}
+	})();
 }

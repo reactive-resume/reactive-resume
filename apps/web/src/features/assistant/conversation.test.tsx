@@ -332,7 +332,7 @@ it("records only edits actually applied, with failed cards out of date and an ac
 	expect(screen.queryByRole("button", { name: "Accept" })).toBeNull();
 });
 
-it("persists only explicit history changes after acceptance, retaining refinements and restoring redo", async () => {
+it.each([false, true])("persists local decisions and Undo/Redo with sending blocked=%s", async (sendBlocked) => {
 	const edit: Proposal = {
 		id: "edit",
 		target: { sectionId: "summary", field: "content" },
@@ -383,10 +383,10 @@ it("persists only explicit history changes after acceptance, retaining refinemen
 					threadId="thread-1"
 					initialMessages={[]}
 					activeRun={false}
-					readOnly={false}
+					readOnly={sendBlocked}
 					providerLabel="Local"
 					initialContext={{ document: true, posting: true }}
-					prompt={null}
+					prompt={sendBlocked ? "Must not send" : null}
 					promptAttachments={[]}
 					onPromptSent={() => {}}
 					onSwitchModel={() => {}}

@@ -18,6 +18,7 @@ import { CLOSED_REASONS, getClosedReasonLabel } from "./stages";
 import { client, orpc } from "@/api/client";
 import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
+import { WebAccessAttention } from "@/features/ai/web-access";
 import { WallClockField } from "@/features/application-detail/date-field";
 import { routes } from "@/routes";
 import {
@@ -73,6 +74,7 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 	const [role, setRole] = useState(initialCapture?.role ?? "");
 	const [location, setLocation] = useState(initialCapture?.location ?? "");
 	const [salary, setSalary] = useState("");
+	const authored = useRef(new Set<"role" | "company" | "location" | "salary">());
 	const [source, setSource] = useState("");
 	const [sourceUrl, setSourceUrl] = useState(initialCapture?.url ?? "");
 	const [description, setDescription] = useState(initialCapture?.description ?? "");
@@ -148,10 +150,10 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 			);
 			if (!current(signal)) return;
 			setParsed(result);
-			setCompany((value) => value || result.company);
-			setRole((value) => value || result.role);
-			setLocation((value) => value || result.location);
-			setSalary((value) => value || result.salary);
+			setCompany((value) => (authored.current.has("company") ? value : result.company));
+			setRole((value) => (authored.current.has("role") ? value : result.role));
+			setLocation((value) => (authored.current.has("location") ? value : result.location));
+			setSalary((value) => (authored.current.has("salary") ? value : result.salary));
 			setSourceUrl(result.sourceUrl ?? (mode === "link" ? input.trim() : sourceUrl));
 			setDescription(result.jobDescription);
 			setReview(true);
@@ -160,10 +162,10 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 		void run("fill", async (signal) => {
 			const result = await client.applications.ai.autofill({ jobDescription: description.trim() }, { signal });
 			if (!current(signal)) return;
-			setCompany((value) => value || result.company);
-			setRole((value) => value || result.role);
-			setLocation((value) => value || result.location);
-			setSalary((value) => value || result.salary);
+			setCompany((value) => (authored.current.has("company") ? value : result.company));
+			setRole((value) => (authored.current.has("role") ? value : result.role));
+			setLocation((value) => (authored.current.has("location") ? value : result.location));
+			setSalary((value) => (authored.current.has("salary") ? value : result.salary));
 		});
 	const search = () =>
 		void run("search", async (signal) => {
@@ -285,6 +287,7 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 				}
 			>
 				<View style={{ gap: space.s4 }}>
+					<WebAccessAttention />
 					{error && <Banner tone="danger" message={error} />}
 					{initialCapture && (
 						<Banner
@@ -509,8 +512,24 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 									action={detailsOpen ? undefined : { label: t`Show details`, onPress: () => setDetailsOpen(true) }}
 								/>
 							)}
-							<TextField label={t`Company`} value={company} onChangeText={setCompany} editable={!busy} />
-							<TextField label={t`Role / title`} value={role} onChangeText={setRole} editable={!busy} />
+							<TextField
+								label={t`Company`}
+								value={company}
+								onChangeText={(value) => {
+									authored.current.add("company");
+									setCompany(value);
+								}}
+								editable={!busy}
+							/>
+							<TextField
+								label={t`Role / title`}
+								value={role}
+								onChangeText={(value) => {
+									authored.current.add("role");
+									setRole(value);
+								}}
+								editable={!busy}
+							/>
 							<LaneNotice unavailable={!laneAvailable} />
 							<PriorNoResponse
 								company={company}
@@ -554,8 +573,24 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 							/>
 							{detailsOpen ? (
 								<View style={{ gap: space.s4 }}>
-									<TextField label={t`Location`} value={location} onChangeText={setLocation} editable={!busy} />
-									<TextField label={t`Salary range`} value={salary} onChangeText={setSalary} editable={!busy} />
+									<TextField
+										label={t`Location`}
+										value={location}
+										onChangeText={(value) => {
+											authored.current.add("location");
+											setLocation(value);
+										}}
+										editable={!busy}
+									/>
+									<TextField
+										label={t`Salary range`}
+										value={salary}
+										onChangeText={(value) => {
+											authored.current.add("salary");
+											setSalary(value);
+										}}
+										editable={!busy}
+									/>
 									<TextField label={t`Source`} value={source} onChangeText={setSource} editable={!busy} />
 									<TextField
 										label={t`Job posting link`}

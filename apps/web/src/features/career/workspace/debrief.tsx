@@ -5,7 +5,6 @@ import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/sch
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -21,6 +20,7 @@ import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks } from
 import { FilterChip, MemoryProposal, PrivacyLine, useCareerTime, Working, workingSteps } from "../shared";
 import { buildIcs } from "@/features/applications/ics";
 import { isInterview } from "@/features/applications/interviews";
+import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
@@ -227,11 +227,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 					) : (
 						<PrivacyLine>
 							<Trans>
-								Reviewing needs an AI connection.{" "}
-								<Link to="/dashboard/settings/ai" className="text-accent-text underline underline-offset-3">
-									Add one in Settings
-								</Link>
-								. What you write here stays in this browser until then.
+								Reviewing needs an AI connection. <SetUpAi />. What you write here stays in this browser until then.
 							</Trans>
 						</PrivacyLine>
 					)}

@@ -23,6 +23,8 @@ import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { PrivacyLine, Swap, useCareerTime, useNow } from "./shared";
 import { collectInterviews, interviewKindOf } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { SetUpAi } from "@/features/assistant/provider-setup";
+import { SetUpWebAccess } from "@/features/settings/ai/web-access";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { useClosingValue } from "@/hooks/use-closing-value";
@@ -292,6 +294,17 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 								</Trans>
 							</p>
 						)}
+						{draft.kind === "discovery" && !webAccess?.search && (
+							<div role="status" className="grid gap-2 rounded-lg bg-warn-soft p-3 text-sm">
+								<p>
+									<Trans>
+										Finding roles needs a working web search service. Set it up first, or save jobs manually in
+										Applications.
+									</Trans>
+								</p>
+								<SetUpWebAccess />
+							</div>
+						)}
 						<Swap id={draft.kind} className="flex flex-col gap-[18px]">
 							{draft.kind === "discovery" && (
 								<>
@@ -404,14 +417,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 											providerState.isUnavailable ? (
 												<AiProviderLoadState state={providerState} />
 											) : providers.length === 0 ? (
-												<Button
-													variant="link"
-													nativeButton={false}
-													className="w-fit"
-													render={<Link to="/dashboard/settings/ai" />}
-												>
-													<Trans>Connect an AI provider in Settings</Trans>
-												</Button>
+												<SetUpAi />
 											) : (
 												<NativeSelect
 													{...props}
@@ -428,18 +434,20 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 											)
 										}
 									</Field>
-									{/* The run itself falls back to the default the same way, so this says what will happen. */}
 									{form?.existing?.kind === "prepare" &&
 										providers.length > 0 &&
 										!providers.some((provider) => provider.id === form.existing?.aiProviderId) && (
 											<p className="-mt-2 text-xs text-warn-text">
-												{t`Its connection was switched off or removed, so it runs on ${providers[0]?.label ?? ""} until you choose another.`}
+												<Trans>
+													Its connection is unavailable. Choose and approve a connection before enabling this schedule.
+												</Trans>
 											</p>
 										)}
 									<PrivacyLine cost>
 										<Trans>
 											Sends this application's posting, notes and documents, plus Knowledge that's switched on, to this
-											connection. Your provider may charge for it.
+											connection. Your provider may charge for it. Scheduled work never switches to another connection
+											automatically.
 										</Trans>
 									</PrivacyLine>
 								</>

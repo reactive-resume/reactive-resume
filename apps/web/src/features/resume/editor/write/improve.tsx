@@ -7,6 +7,8 @@ import { useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { SetUpAi } from "@/features/assistant/provider-setup";
+import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
@@ -36,6 +38,8 @@ type ImprovePanelProps = {
  * replaces it; if the line was edited meanwhile, the suggestion is not applied.
  */
 export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps) {
+	const providers = useHasUsableAiProvider();
+	const provider = providers.usableProviders[0];
 	const [asking, setAsking] = useState(false);
 	const [request, setRequest] = useState("");
 	const [changed, setChanged] = useState(false);
@@ -48,7 +52,9 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 	];
 
 	const run = (action: Action) =>
+		provider &&
 		improve.mutate({
+			aiProviderId: provider.id,
 			action,
 			line: line.text,
 			where,
@@ -82,7 +88,20 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 				<Trans>Improve selected line</Trans>
 			</span>
 
-			{improve.data ? (
+			<p className="px-2 text-xs text-ink-3">
+				<Trans>Original</Trans>
+			</p>
+			<blockquote className="rounded bg-sunken p-2 text-sm whitespace-pre-wrap">{line.text}</blockquote>
+			{!provider ? (
+				<SetUpAi />
+			) : (
+				<p className="px-2 text-xs text-ink-3">
+					<Trans>
+						Sends this line, surrounding field text and your instructions to {provider.label} · {provider.model}.
+					</Trans>
+				</p>
+			)}
+			{!provider ? null : improve.data ? (
 				<div className="grid gap-2 rounded-lg bg-bg p-2.5">
 					<p role="status" className="w-fit rounded-sm bg-accent-soft px-1 py-0.5 text-[13px] leading-[19px]">
 						{improve.data.text}

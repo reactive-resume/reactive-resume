@@ -36,6 +36,7 @@ export const improveOutputSchema = z.object({
 export type ImproveOutput = z.infer<typeof improveOutputSchema>;
 
 type ImproveServiceInput = ImproveInput & {
+	signal?: AbortSignal | undefined;
 	provider: Parameters<typeof getModel>[0]["provider"];
 	model: string;
 	apiKey: string;
@@ -65,5 +66,7 @@ export function improveLine(input: ImproveServiceInput): Promise<ImproveOutput> 
 		getModel(input),
 		{ system: improveSystemPrompt, prompt: buildUserPrompt(input) },
 		improveOutputSchema,
+		input.signal,
+		0,
 	);
 }

@@ -30,9 +30,11 @@ import { generateId } from "@reactive-resume/utils/string";
 import { aiProvidersService } from "../ai-providers/service";
 import { assertAgentEnvironment } from "../ai/credentials";
 import { getAgentModel } from "../ai/service";
+import { assertApplicationVersion } from "../applications/service";
 import { careerService, requireCareerApplication } from "../career/service";
 import { buildCareerTools, buildCareerInstructions } from "../career/tools";
 import { coverLetterService } from "../cover-letters/service";
+import { assertDocumentVersion } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { getStorageService, inferContentType } from "../storage/service";
 import { webAccessService } from "../web-access/credentials";
@@ -71,7 +73,6 @@ import { buildAgentInstructions, buildAgentTools } from "./tools";
 
 const MAX_AGENT_STEPS = 30;
 const MAX_AGENT_OUTPUT_TOKENS = 8_192;
-const MAX_AGENT_MODEL_RETRIES = 2;
 const AGENT_STEP_TIMEOUT_MS = 120_000;
 // Reserve the final minute of the five-minute request budget for persistence and cleanup.
 const AGENT_RUN_TIMEOUT_MS = 240_000;
@@ -785,6 +786,7 @@ async function proposeEdits(input: {
 }
 
 function createAgent(input: {
+	authorize: () => Promise<void>;
 	deviceTimeZone?: string | undefined;
 	career?: {
 		context: Awaited<ReturnType<typeof careerService.context>>;
@@ -956,11 +958,13 @@ function createAgent(input: {
 		repairToolCall: repairAgentToolCall,
 		stopWhen: isStepCount(MAX_AGENT_STEPS),
 		maxOutputTokens: MAX_AGENT_OUTPUT_TOKENS,
-		maxRetries: MAX_AGENT_MODEL_RETRIES,
+		maxRetries: 0,
 		timeout: { stepMs: AGENT_STEP_TIMEOUT_MS },
 		// Runs before every loop step, so an older document snapshot never outlives a newer read.
-		prepareStep: ({ messages }) => {
+		prepareStep: async ({ messages }) => {
 			const pruned = pruneAgentModelContext(messages);
+			await input.authorize();
+			input.signal.throwIfAborted();
 			return pruned === messages ? {} : { messages: pruned };
 		},
 		tools,
@@ -1229,6 +1233,10 @@ export const agentService = {
 			}
 			const document = documentOf(thread);
 			const isCareer = thread.scope === "career" || thread.scope === "application";
+			const documentMemoryVersion =
+				!isCareer && document && input.context?.memory === true
+					? await careerService.memoryVersion(input.userId)
+					: null;
 			if (isCareer) {
 				await requireCareerApplication({ userId: input.userId, applicationId: thread.applicationId });
 			}
@@ -1461,6 +1469,73 @@ export const agentService = {
 				if (careerContext && careerContext.memoryVersion !== (await careerService.memoryVersion(input.userId)))
 					throw new ORPCError("CONFLICT", { message: "Career memory changed. Try again." });
 				const agent = createAgent({
+					authorize: async () => {
+						controller.signal.throwIfAborted();
+						await aiProvidersService.authorize({ userId: input.userId, id: runnableProvider.id }, async (tx) => {
+							const [currentThread] = await tx
+								.select({ id: schema.agentThread.id, providerId: schema.agentThread.aiProviderId })
+								.from(schema.agentThread)
+								.where(
+									and(
+										eq(schema.agentThread.id, input.threadId),
+										eq(schema.agentThread.userId, input.userId),
+										isNull(schema.agentThread.deletedAt),
+									),
+								)
+								.for("share");
+							if (!currentThread || currentThread.providerId !== runnableProvider.id)
+								throw new ORPCError("CONFLICT", {
+									message: "This conversation changed. Open it again before sending.",
+								});
+							if (document && loaded && input.context?.document !== false)
+								await assertDocumentVersion(tx, input.userId, { ...document, updatedAt: loaded.updatedAt });
+							if (loaded?.sourceResume && input.context?.document !== false)
+								await assertDocumentVersion(tx, input.userId, { kind: "resume", ...loaded.sourceResume });
+							if (posting)
+								await assertApplicationVersion(tx, input.userId, {
+									id: posting.applicationId,
+									updatedAt: posting.updatedAt,
+								});
+							if (documentMemoryVersion !== null)
+								await careerService.assertMemoryVersion(
+									input.userId,
+									documentMemoryVersion,
+									undefined,
+									undefined,
+									undefined,
+									tx,
+								);
+							if (careerContext)
+								await careerService.assertMemoryVersion(
+									input.userId,
+									careerContext.memoryVersion,
+									{
+										applicationId: thread.applicationId,
+										...(input.context?.application !== false
+											? {
+													...(careerContext.application ? { application: careerContext.application } : {}),
+													documents: [careerContext.resume, careerContext.letter].filter(
+														(entry): entry is NonNullable<typeof entry> => entry !== null,
+													),
+												}
+											: {}),
+										...(input.context?.memory !== false
+											? {
+													sources: {
+														facts: careerContext.facts,
+														stories: careerContext.stories,
+														profile: careerContext.profile,
+													},
+												}
+											: {}),
+									},
+									undefined,
+									undefined,
+									tx,
+								);
+						});
+						controller.signal.throwIfAborted();
+					},
 					deviceTimeZone: input.deviceTimeZone,
 					userId: input.userId,
 					threadId: input.threadId,

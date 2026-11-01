@@ -18,7 +18,9 @@ vi.mock("../../middleware/rate-limit", () => ({
 	aiVoiceRateLimit: ({ next }: { next: () => unknown }) => next(),
 }));
 vi.mock("@reactive-resume/db/client", () => ({ db: { insert: mocks.insert } }));
-vi.mock("../ai-providers/service", () => ({ aiProvidersService: { getRunnableById: mocks.provider } }));
+vi.mock("../ai-providers/service", () => ({
+	aiProvidersService: { getRunnableById: mocks.provider, authorize: async () => {} },
+}));
 vi.mock("./service", () => ({ requireCareerApplication: mocks.requireApplication }));
 vi.mock("ai", async (importOriginal) => ({
 	...(await importOriginal<typeof import("ai")>()),
@@ -89,7 +91,12 @@ describe("career voice transcription", () => {
 				applicationId: "owned-application",
 			});
 			if (kind === "foreign application") expect(mocks.provider).not.toHaveBeenCalled();
-			else expect(mocks.provider).toHaveBeenCalledExactlyOnceWith({ userId: "owner", id: provider.id });
+			else
+				expect(mocks.provider).toHaveBeenCalledExactlyOnceWith({
+					userId: "owner",
+					id: provider.id,
+					voice: { kind: "transcription", model: "whisper-1" },
+				});
 			expect(transcribe).not.toHaveBeenCalled();
 			expect(mocks.insert).not.toHaveBeenCalled();
 		},

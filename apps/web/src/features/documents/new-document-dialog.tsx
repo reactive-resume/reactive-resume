@@ -19,6 +19,7 @@ import { useNewDocumentsStore } from "./new-documents";
 import { useStartDocument } from "./use-start-document";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { SetUpAi } from "@/features/assistant/provider-setup";
 import { detectImportKind, ImportError, readResumeFile, summarizeImport } from "@/features/resume/import/read-file";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -44,6 +45,7 @@ export type NewDocumentDialogData = {
 
 type Step =
 	| { name: "choose" }
+	| { name: "import-choice"; file: File; kind: "pdf" | "docx" }
 	| { name: "importing"; file: File; stage: number; notes: string[] }
 	| { name: "imported"; file: File; resumeId: string; sections: number; entries: number; flagged: number }
 	| { name: "failed"; file: File; message: string }
@@ -73,9 +75,20 @@ function useResumeImport(
 	const providerState = useHasUsableAiProvider();
 	const { hasUsableProvider } = providerState;
 	const run = useRef(0);
+	const controller = useRef<AbortController | null>(null);
+	useEffect(
+		() => () => {
+			run.current++;
+			controller.current?.abort();
+		},
+		[],
+	);
 	const refreshDocuments = () => queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 
-	const importFile = async (file: File) => {
+	const importFile = async (file: File, mode?: "local" | "ai") => {
+		controller.current?.abort();
+		controller.current = new AbortController();
+		const signal = controller.current.signal;
 		const attempt = ++run.current;
 		const current = () => run.current === attempt;
 		const advance = (stage: number, note: string) => {
@@ -90,6 +103,11 @@ function useResumeImport(
 		setStep({ name: "importing", file, stage: 0, notes: [] });
 		try {
 			const kind = requireImportKind(await detectImportKind(file));
+			if (!current()) return;
+			if ((kind === "pdf" || kind === "docx") && !mode) {
+				setStep({ name: "import-choice", file, kind });
+				return;
+			}
 
 			if (kind === "cover-letter-json") {
 				const letter = await client.coverLetters.import({ document: JSON.parse(await file.text()) });
@@ -101,8 +119,8 @@ function useResumeImport(
 				return;
 			}
 
-			let aiAvailable = hasUsableProvider;
-			if ((kind === "docx" || kind === "pdf") && providerState.isUnavailable) {
+			let aiAvailable = mode === "ai" && hasUsableProvider;
+			if (mode === "ai" && (kind === "docx" || kind === "pdf") && providerState.isUnavailable) {
 				try {
 					const providers = await queryClient.fetchQuery({ ...orpc.aiProviders.list.queryOptions(), staleTime: 0 });
 					aiAvailable = providers.some((provider) => provider.enabled && provider.testStatus === "success");
@@ -116,6 +134,7 @@ function useResumeImport(
 			if (!current()) return;
 			const resume = await readResumeFile(file, kind, {
 				aiAvailable,
+				signal,
 				onRead: (note) => advance(1, note),
 			});
 			if (!current()) return;
@@ -148,6 +167,7 @@ function useResumeImport(
 
 	const cancel = () => {
 		run.current++;
+		controller.current?.abort();
 		setStep({ name: "choose" });
 	};
 
@@ -234,6 +254,42 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						}}
 					/>
 				</div>
+			) : step.name === "import-choice" ? (
+				<div className="grid gap-4">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Choose how to read this file</Trans>
+						</DialogTitle>
+						<DialogDescription>{step.file.name}</DialogDescription>
+					</DialogHeader>
+					{step.kind === "pdf" ? (
+						<Button type="button" variant="secondary" onClick={() => void importFile(step.file, "local")}>
+							<Trans>Read on this device (free)</Trans>
+						</Button>
+					) : (
+						<p className="text-sm text-ink-2">
+							<Trans>Word import needs AI. For a local import, export a PDF or JSON file instead.</Trans>
+						</p>
+					)}
+					{hasUsableProvider ? (
+						<>
+							<p className="text-sm text-ink-2">
+								<Trans>
+									AI reading sends this file's content to {providerState.usableProviders[0]?.label} ·{" "}
+									{providerState.usableProviders[0]?.model}. Your provider may charge.
+								</Trans>
+							</p>
+							<Button type="button" onClick={() => void importFile(step.file, "ai")}>
+								<Trans>Read with AI</Trans>
+							</Button>
+						</>
+					) : (
+						<SetUpAi />
+					)}
+					<Button type="button" variant="ghost" onClick={cancel}>
+						<Trans>Back</Trans>
+					</Button>
+				</div>
 			) : step.name !== "choose" ? (
 				<ImportStep
 					key="progress"
@@ -294,8 +350,8 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 							</span>
 							<span className="text-[13px] leading-[19px] text-ink-2">
 								<Trans>
-									Drop a file here or browse. PDF, Word, Reactive Resume or JSON Resume. We fill in every section and
-									flag anything we're unsure of.
+									Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every
+									section and flag anything we're unsure of.
 								</Trans>
 							</span>
 						</span>

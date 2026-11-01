@@ -101,6 +101,8 @@ export const careerSchedule = pg.pgTable(
 		lastQueuedAt: pg.timestamp("last_queued_at", { withTimezone: true }),
 		intervalDays: pg.integer("interval_days"),
 		aiProviderId: pg.text("ai_provider_id").references(() => aiProvider.id, { onDelete: "set null" }),
+		/** Recipient revision approved when this schedule was enabled; never supplied by a client. */
+		aiProviderVersion: pg.text("ai_provider_version"),
 	},
 	(t) => [pg.index().on(t.enabled, t.nextRunAt)],
 );
