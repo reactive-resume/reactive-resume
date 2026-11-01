@@ -65,6 +65,10 @@ export type Proposal = {
 	edited?: boolean | undefined;
 	/** Atomic structured changes; before/after remain readable for older clients. */
 	snapshot?: { before: string; after: string } | undefined;
+	/** The new text says something nothing checked says: the user confirms it, so Accept all leaves it out. */
+	addsClaims?: boolean | undefined;
+	/** A later suggestion in the conversation replaced this undecided one (it's recorded as rejected). */
+	superseded?: boolean | undefined;
 };
 
 // A number with what makes it a claim: a currency before it, a unit symbol after it, or the word it counts. "40 people"
@@ -488,6 +492,9 @@ export function applyProposal(draft: ResumeData, proposal: Proposal): boolean {
 }
 
 export type ProposalApplicationResult = { applied: Proposal[]; stale: Proposal[] };
+
+/** Whether accepting this needs the user's own check first: it adds a detail (the server also sets this for claims nothing checked backs). */
+export const needsConfirmation = (proposal: Pick<Proposal, "addsClaims">) => proposal.addsClaims === true;
 const isAddition = ({ before, after, snapshot }: Proposal) =>
 	!snapshot && after.startsWith(before) && after.length > before.length;
 
@@ -541,7 +548,23 @@ function applyDecisions(
 }
 
 export const proposalText = (proposal: Pick<Proposal, "before" | "after" | "snapshot">, side: "before" | "after") =>
-	proposal.snapshot ? proposal[side] : blockText(proposal[side]);
+	proposal.snapshot ? proposal[side] : passageLines(proposal[side]);
+
+/** The visible text of a passage, one line per paragraph or list item, so added blocks don't run together. */
+export function passageLines(html: string) {
+	const blocks = splitBlocks(html);
+	return blocks.length > 1 ? blocks.map((block) => block.text).join("\n") : blockText(html);
+}
+
+/**
+ * An addition read as one: the passage it follows and the new text, instead of the passage struck through and
+ * replaced by itself plus the addition.
+ */
+export function additionParts(proposal: Pick<Proposal, "before" | "after" | "snapshot">) {
+	const { before, after, snapshot } = proposal;
+	if (snapshot || !before || !after.startsWith(before) || after.length === before.length) return undefined;
+	return { anchor: passageLines(before), added: passageLines(after.slice(before.length)) };
+}
 
 const BLOCK = /^(<(p|li)(?:\s[^>]*)?>)([\s\S]*)(<\/\2>)$/i;
 

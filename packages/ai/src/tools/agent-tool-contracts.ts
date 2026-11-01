@@ -124,6 +124,18 @@ export function agentWebSources(message: UIMessage): AgentWebSource[] {
 	return [...sources.values()];
 }
 
+/** File types the assistant can read from an attachment: text, Word, PDF, images and audio (the file pickers offer these). */
+export const AGENT_ATTACHMENT_TYPES = [
+	"text/plain",
+	"text/markdown",
+	"application/json",
+	"application/pdf",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	"image/*",
+	"audio/mpeg",
+	"audio/wav",
+] as const;
+
 /** Review fields any proposed change may carry when tailoring: what it addresses, what backs it, what nothing backs. */
 const reviewInput = {
 	requirement: z
@@ -149,6 +161,12 @@ const reviewInput = {
 		.optional()
 		.describe(
 			"Anything the new text claims that no cited passage or fact says: an employer, title, date, figure, skill or responsibility the user told you or must confirm. Leave none out.",
+		),
+	addsClaims: z
+		.boolean()
+		.optional()
+		.describe(
+			"true when the new text says something the document, cited facts or the user's messages don't: a new scope, outcome, audience or detail, however small. The user checks it before accepting.",
 		),
 };
 
@@ -246,6 +264,8 @@ export const proposedEditSchema = z.object({
 		.array(z.object({ kind: z.union([z.enum(UNSUPPORTED_CLAIM_KINDS), z.literal("term")]), text: z.string() }))
 		.optional(),
 	edited: z.boolean().optional(),
+	/** The new text says something nothing checked says; the user confirms it before accepting. */
+	addsClaims: z.boolean().optional(),
 });
 
 export const requirementCoverageSchema = z.object({
@@ -266,6 +286,8 @@ export const proposeEditsOutputSchema = z.looseObject({
 	tailoredFor: z.string().nullable().optional(),
 	/** Set when the server withheld these edits from acceptance here (see tailoringAllows). */
 	revoked: z.boolean().optional(),
+	/** Earlier undecided edits in the conversation that these replace (same passage); they are recorded as rejected. */
+	supersedes: z.array(z.string()).optional(),
 });
 
 /**

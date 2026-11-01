@@ -5,6 +5,7 @@ import {
 	proposedEditsOf,
 	upsertAssistantUiMessage,
 	withEditWording,
+	withSupersededEdits,
 } from "./messages-persistence";
 
 function emptyMessage(): UIMessage {
@@ -193,5 +194,53 @@ describe("proposed edit statuses", () => {
 		);
 		const written = database.updates[0] as { uiMessage: UIMessage };
 		expect(proposedEditsOf(written.uiMessage)[0]?.after).toBe("<p>Led &lt;i&gt;design&lt;/i&gt;</p>");
+	});
+});
+
+describe("withSupersededEdits", () => {
+	const target = { sectionId: "experience", itemId: "northwind", field: "description" };
+	const edit = (id: string, before: string, after: string, extra: Record<string, unknown> = {}) => ({
+		id,
+		target,
+		location: "Experience · Northwind Labs · bullet 1",
+		before,
+		after,
+		why: "Why",
+		status: "pending" as "pending" | "accepted" | "rejected",
+		...extra,
+	});
+	const message = (edits: ReturnType<typeof edit>[]): UIMessage => ({
+		id: "earlier",
+		role: "assistant",
+		parts: [
+			{
+				type: "tool-propose_edits",
+				toolCallId: "call-1",
+				state: "output-available",
+				input: {},
+				output: { title: "Add the audit", edits, skipped: [] },
+			} as UIMessage["parts"][number],
+		],
+	});
+	const bullet = "<p>Improved checkout-flow accessibility.</p>";
+	// The earlier addition anchors on the bullet with its list item's end; the refinement rewrites the same bullet.
+	const addition = edit("add", `${bullet}</li>`, `${bullet}</li><li><p>Led an accessibility audit last year.</p></li>`);
+	const refinement = edit("refine", bullet, "<p>Led a WCAG 2.2 AA audit in 2025; the team fixed 60 issues.</p>");
+
+	it("rejects an earlier undecided edit of the same passage and names it", () => {
+		const result = withSupersededEdits(message([addition]), [refinement], () => false);
+		expect(result.superseded).toEqual(["add"]);
+		expect(proposedEditsOf(result.message)[0]?.status).toBe("rejected");
+	});
+
+	it("keeps decided edits, edits the document already holds, other passages and structural changes", () => {
+		const other = edit("other", "<p>Shipped the onboarding flow.</p>", "<p>Shipped onboarding.</p>");
+		const accepted = { ...addition, id: "accepted", status: "accepted" as const };
+		const structural = edit("structural", bullet, bullet, { snapshot: { before: "{}", after: "{}" } });
+		const earlier = message([other, accepted, structural, addition]);
+		expect(withSupersededEdits(earlier, [refinement], (candidate) => candidate.id === "add")).toEqual({
+			message: earlier,
+			superseded: [],
+		});
 	});
 });

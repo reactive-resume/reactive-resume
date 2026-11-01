@@ -20,7 +20,14 @@ vi.mock("@tanstack/react-query", () => ({
 	useQuery: mocks.receipts,
 }));
 vi.mock("@/features/resume/editor/store", () => ({
-	useEditorStore: { setState: mocks.publish },
+	// Nothing drawn yet: no overflow line under applied sets.
+	useEditorStore: Object.assign(
+		(select: (state: { rendered: { pageCount: number } }) => unknown) => select({ rendered: { pageCount: 0 } }),
+		{ setState: mocks.publish },
+	),
+}));
+vi.mock("@/features/resume/builder/draft", () => ({
+	useResumeStore: (select: (state: { resume: null }) => unknown) => select({ resume: null }),
 }));
 vi.mock("@/libs/orpc/client", () => ({
 	client: { agent: { attachments: { create: mocks.attach }, messages: { setEditStatus: mocks.record } } },
@@ -85,7 +92,7 @@ it("uploads a file in the initial composer before sending its first message", as
 			/>
 		</I18nProvider>,
 	);
-	expect(screen.getByRole("button", { name: "Attach a file" })).toBeDefined();
+	expect(screen.getByRole("button", { name: "Attach a PDF, Word, text or image file" })).toBeDefined();
 	const input = container.querySelector('input[type="file"]');
 	if (!input) throw new Error("File picker missing");
 	fireEvent.change(input, { target: { files: [new File(["foo"], "posting.txt", { type: "text/plain" })] } });

@@ -150,3 +150,49 @@ it("offers no Edit for a structural change, which is reviewed and applied whole"
 	expect(screen.getByRole("button", { name: "Accept" })).toBeTruthy();
 	expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
 });
+
+it("shows an addition as added after its passage, one line per new bullet", () => {
+	i18n.loadAndActivate({ locale: "en", messages: {} });
+	const addition: Proposal = {
+		...proposal,
+		id: "add-1",
+		before: "<p>Improved checkout-flow accessibility.</p></li>",
+		after:
+			"<p>Improved checkout-flow accessibility.</p></li><li><p>Led an accessibility audit.</p></li><li><p>Fixed 60 issues.</p></li>",
+		unsupported: [],
+	};
+	render(
+		<I18nProvider i18n={i18n}>
+			<ChangeSet proposals={[addition]} states={["pending"]} locked={false} onAccept={() => {}} onReject={() => {}} />
+		</I18nProvider>,
+	);
+	expect(screen.getByText("Adds after: Improved checkout-flow accessibility.")).toBeTruthy();
+	expect(document.querySelector("del")).toBeNull();
+	expect(document.querySelector("ins")?.textContent).toBe("Led an accessibility audit.\nFixed 60 issues.");
+});
+
+it("leaves edits that add a detail out of Accept all and labels a replaced suggestion", () => {
+	i18n.loadAndActivate({ locale: "en", messages: {} });
+	const onAccept = vi.fn();
+	const plain = (id: string): Proposal => ({ ...proposal, id, unsupported: [] });
+	render(
+		<I18nProvider i18n={i18n}>
+			<ChangeSet
+				proposals={[
+					plain("a"),
+					plain("b"),
+					{ ...plain("c"), addsClaims: true },
+					{ ...plain("d"), status: "rejected", superseded: true },
+				]}
+				states={["pending", "pending", "pending", "rejected"]}
+				locked={false}
+				onAccept={onAccept}
+				onReject={() => {}}
+			/>
+		</I18nProvider>,
+	);
+	expect(screen.getByText("New detail: check it's true")).toBeTruthy();
+	expect(screen.getByText("Replaced by a newer suggestion")).toBeTruthy();
+	fireEvent.click(screen.getByRole("button", { name: "Accept the others" }));
+	expect(onAccept).toHaveBeenCalledWith([expect.objectContaining({ id: "a" }), expect.objectContaining({ id: "b" })]);
+});

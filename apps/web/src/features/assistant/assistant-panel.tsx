@@ -24,6 +24,8 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { Composer, Conversation } from "./conversation";
 import { ProviderSetup, SetUpAi } from "./provider-setup";
+import { useResumeStore } from "@/features/resume/builder/draft";
+import { measureOverflow } from "@/features/resume/editor/design/fit";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { formatVersionTime } from "@/features/resume/share/format";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -390,9 +392,23 @@ function Notice({ children }: { children: ReactNode }) {
 	return <div className="m-4 rounded-xl bg-sunken p-4 text-sm text-ink-2">{children}</div>;
 }
 
-type Suggestion = { icon: IconName; label: string; hint: string };
+/** `prompt` is what's sent when it differs from the label (the measured overflow goes with Tighten). */
+type Suggestion = { icon: IconName; label: string; hint: string; prompt?: string };
 
-function suggestionsFor(document: AssistantDocument, prepare: boolean): Suggestion[] {
+/** The page's overflow as last drawn; undefined before the page has been drawn. */
+type Overflow = ReturnType<typeof measureOverflow> | undefined;
+
+/** Tighten asks with the page's real overflow, so the reply can say honestly whether text edits close it. */
+function tightenPrompt(overflow: Overflow) {
+	if (overflow === undefined) return t`Tighten to one page`;
+	if (!overflow) return t`Tighten to one page. It already fits on one page, so only cut what's weak.`;
+	const next = overflow.authored + 1;
+	return overflow.lines
+		? t`Tighten to one page. It runs onto page ${next} by about ${overflow.lines} lines.`
+		: t`Tighten to one page. It runs onto page ${next}.`;
+}
+
+function suggestionsFor(document: AssistantDocument, prepare: boolean, overflow?: Overflow): Suggestion[] {
 	const tailor: Suggestion[] = document.posting
 		? [
 				{
@@ -431,6 +447,7 @@ function suggestionsFor(document: AssistantDocument, prepare: boolean): Suggesti
 			icon: "arrows-in-line-vertical",
 			label: t`Tighten to one page`,
 			hint: t`Suggests cuts, never deletes on its own`,
+			prompt: tightenPrompt(overflow),
 		},
 		{ icon: "text-align-left", label: t`Draft a summary`, hint: t`From your experience entries` },
 	];
@@ -441,6 +458,10 @@ type EmptyStateProps = { document: AssistantDocument; disabled: boolean; onPick:
 function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 	const kind = document.kind === "letter" ? t`letter` : t`resume`;
 	const prepare = useEditorStore((state) => state.assistantSuggestions === "prepare");
+	const rendered = useEditorStore((state) => state.rendered);
+	const data = useResumeStore((state) => state.resume?.data);
+	const overflow =
+		document.kind === "resume" && data && rendered.pageCount > 0 ? measureOverflow(data, rendered) : undefined;
 
 	return (
 		<div className="grid min-h-0 flex-1 content-start gap-4 overflow-y-auto p-4">
@@ -465,12 +486,12 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 				)}
 			</div>
 			<ul className="grid gap-1">
-				{suggestionsFor(document, prepare).map((suggestion, index) => (
+				{suggestionsFor(document, prepare, overflow).map((suggestion, index) => (
 					<li key={suggestion.label} style={stagger(index)} className={ENTER_CLASS}>
 						<button
 							type="button"
 							disabled={disabled}
-							onClick={() => onPick(suggestion.label)}
+							onClick={() => onPick(suggestion.prompt ?? suggestion.label)}
 							className="flex min-h-11 w-full items-center gap-3 rounded-lg border border-line px-3 py-2 text-start transition-[background-color,scale] duration-quick ease-enter hover:bg-hover enabled:active:scale-[0.98] disabled:opacity-60"
 						>
 							<Icon name={suggestion.icon} size={20} className="shrink-0 text-ink-2" />

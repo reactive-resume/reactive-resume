@@ -16,7 +16,7 @@ import { AtsCheckError, MAX_IMPORT_BYTES, runAtsCheck } from "./check";
 import { getPdfCategoryLabel, getPdfFindingMessage } from "./messages";
 import { OriginalPage } from "./original-page";
 import { getServer, useSession } from "@/auth/session";
-import { ImportError, importDocument } from "@/features/documents/import-file";
+import { createReviewedResume, ImportError, importDocument } from "@/features/documents/import-file";
 import { routes } from "@/routes";
 import { Banner, Button, Chip, Icon, Segmented, Text, TextArea, useTheme } from "@/ui";
 
@@ -103,7 +103,9 @@ export function AtsChecker() {
 		abort.current = controller;
 		try {
 			// Server text extraction, no AI: the same reading the check did, so every issue lines up in Check.
-			const imported = await importDocument(file, false, false, controller.signal);
+			const result = await importDocument(file, false, false, controller.signal);
+			// Without AI nothing waits for review; a reviewed import would be created as read.
+			const imported = result.type === "review" ? await createReviewedResume(result, false, controller.signal) : result;
 			router.replace(routes.builder(imported.id, "check"));
 		} catch (error) {
 			if (controller.signal.aborted) return;

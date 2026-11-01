@@ -53,12 +53,13 @@ const LEADING_GENERIC_WORDS =
 	"multi-year year-round day-to-day day days week weeks month months year yearly annual annually quarterly " +
 	"daily weekly onsite on-site full-time part-time senior junior " +
 	"mid-level large small modern complex world-class impactful successful " +
-	"great top early current future overall ideal ideally thing things stuff ways asap values-driven";
+	"great top early current future overall ideal ideally thing things stuff ways asap values-driven " +
+	"evolve evolving analyze analyzing analyse analysing hire hiring support supporting values aa aaa";
 
 const SOLO_GENERIC_WORDS =
 	"partner build head chief ceo cto cfo coo founder founders director directors manager managers " +
 	"changes background backgrounds hybrid big global impact frameworks domain domains area areas space spaces " +
-	"part parts level levels mission missions vision values record group groups report staff";
+	"part parts level levels mission missions vision values record group groups report staff product products";
 
 /** Never part of a term, wherever they appear. */
 export const JD_STOPWORDS: ReadonlySet<string> = new Set(

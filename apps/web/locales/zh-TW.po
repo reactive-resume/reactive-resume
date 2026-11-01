@@ -94,6 +94,11 @@ msgstr "（必填）"
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
 msgstr "{0, plural, =1 {已套用修改} other {已套用 # 處修改}}"
 
+#. placeholder {0}: overflow.authored
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr ""
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
@@ -203,6 +208,7 @@ msgstr "{0, plural, one {已將 # 份文件移至垃圾箱} other {已將 # 份�
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {無法放置 # 編輯：其文字已更改。再次要求重做。} other {無法放置 # 編輯：其文字已更改。再次要求重做。}}"
 
+#. placeholder {0}: section.entries
 #. placeholder {0}: step.entries
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
@@ -224,6 +230,11 @@ msgstr "{0, plural, other {已標記 # 個欄位，方便在編輯器中快速�
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
 msgstr "{0, plural, one {# 問題被忽略。} other {# 問題將被忽略。}}"
+
+#. placeholder {0}: review.notImported.length
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: proposals.length
 #: src/features/assistant/conversation.tsx
@@ -353,6 +364,11 @@ msgstr ""
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, other {# 分鐘前已開始}}"
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
+msgstr ""
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -934,6 +950,10 @@ msgstr "{toCheck, plural, one {# 欄位需要查看。} other {# 欄位需要查
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {#檢查} other {#檢查}}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "{total, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -1099,6 +1119,10 @@ msgstr "登入時來自身份驗證器應用程式的程式碼"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "A comfortable length, and it fits on one page."
 msgstr "長度舒適，適合一頁紙。"
+
+#: src/features/assistant/conversation.tsx
+msgid "A conversation's files can total up to 100 MB. Start a new conversation."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "A date is in the future."
@@ -1270,6 +1294,10 @@ msgstr "接受"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept all"
 msgstr "全部接受"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1696,6 +1724,10 @@ msgstr "新增網域結尾，例如 {domain}.com"
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "請在管理網域的地方新增這些記錄，然後進行檢查。變更可能需要幾個小時才會對所有人生效。"
@@ -1781,6 +1813,11 @@ msgstr ""
 #: src/features/career/workspace/messages.tsx
 msgid "Adds a reminder to Today if you haven't heard back by then."
 msgstr "如果屆時仍未收到回覆，會在「今天」中新增提醒。"
+
+#. placeholder {0}: addition.anchor
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Adds after: {0}"
+msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Adjust fonts, colors, spacing and sections in the resume builder. Export your finished resume to PDF or Word, or share a link. The PDFs above are examples to help you compare designs."
@@ -2495,17 +2532,21 @@ msgstr ""
 msgid "Attach a cover letter file (PDF, up to 10 MB)"
 msgstr ""
 
-#: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
-msgid "Attach a file"
-msgstr "附上文件"
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Attach a file instead"
 msgstr "改為附加文件"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Attach a PDF, Word, text or image file"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Attach up to 10 files per message."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -3058,6 +3099,10 @@ msgstr "用您的證據檢查這個職缺"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Check views"
 msgstr "檢查視圖"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/libs/seo.ts
 msgid "Check whether software can read your resume PDF. Runs entirely in your browser, so your file is never uploaded."
@@ -4142,6 +4187,11 @@ msgstr "無法讀取該檔案。請選擇 .csv 檔案後再試一次。"
 msgid "Couldn't read that file. Try again."
 msgstr "無法讀取該檔案。請再試一次。"
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "無法讀取 {entries} 的日期，因此它們保留在末尾。請修正日期後重新排序。"
@@ -4602,6 +4652,10 @@ msgstr "建立密鑰"
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
 msgstr "立即建立"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Create resume"
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
@@ -5374,7 +5428,7 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "拖曳即可重新定位，上傳前可使用滑桿進行縮放。"
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. Anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -6031,6 +6085,10 @@ msgstr "檔案名稱"
 #: src/features/resume/import/read-file.ts
 msgid "file read"
 msgstr "文件讀取"
+
+#: src/features/assistant/conversation.tsx
+msgid "Files can be up to 25 MB."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
@@ -8393,6 +8451,10 @@ msgstr "「{title}」的更多動作"
 msgid "More formatting"
 msgstr "更多格式"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "More from your file"
+msgstr ""
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
 msgstr "更多選擇"
@@ -8570,6 +8632,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "主機記錄"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Name of {label}"
 msgstr "{label}的名稱"
@@ -8688,6 +8754,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter instead"
 msgstr "新的求職信代替"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New document"
@@ -9020,6 +9090,10 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "尚無履歷。"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "No sections were found in this file."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "No selected documents were deleted. Refresh to see what remains."
@@ -11240,6 +11314,10 @@ msgstr "用純文字取代圖示字體，然後重新匯出。"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "用一般段落和清單取代表格。儲存格是按儲存順序擷取的，而不是按閱讀順序。"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "取代應徵紀錄中的「{current}」。"
@@ -12225,6 +12303,10 @@ msgstr "各部分"
 msgid "Sections · print order"
 msgstr "章節·列印順序"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Sections found"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Sections use headings systems recognize, and work experience shows."
 msgstr "各區塊使用系統能辨識的標題，且工作經歷已顯示。"
@@ -13175,6 +13257,10 @@ msgid "Step {0} of {1}"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
+msgid "Still runs onto page {next}."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -13583,6 +13669,10 @@ msgstr "在您的伺服器上測試搜尋服務..."
 msgid "Testing…"
 msgstr "測試…"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Text"
 msgstr "文字"
@@ -13874,6 +13964,10 @@ msgstr "職位發布與此職位申請一起保存。"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -14380,6 +14474,19 @@ msgstr "精簡"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Tighten to one page"
 msgstr "收緊至一頁"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It already fits on one page, so only cut what's weak."
+msgstr ""
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next} by about {0} lines."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next}."
+msgstr ""
 
 #: src/features/career/shared.tsx
 msgid "Tightening"

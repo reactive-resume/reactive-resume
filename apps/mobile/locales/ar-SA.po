@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {لا يمكن وضع تحرير #: تم تغيير النص الخاص به. اطلب مرة أخرى إعادته.} other {لا يمكن وضع تعديلات #: تم تغيير النص الخاص بها. اطلب مرة أخرى إعادتها.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# إدخال} other {# إدخال} zero {# إدخال} two {إدخالان (#)} few {# إدخالات} many {# إدخال}}"
@@ -209,6 +211,11 @@ msgstr "{0, plural, one {# إدخال} other {# إدخال} zero {# إدخال} 
 #: src/features/assistant/coach-screen.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, zero {لا حقائق} one {حقيقة واحدة} two {حقيقتان} few {# حقائق} many {# حقيقة} other {# حقيقة}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -783,6 +790,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# للتحقق} other {# للتحقق}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
@@ -969,6 +980,10 @@ msgstr "يقبل"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "قبول الكل"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1314,6 +1329,10 @@ msgstr "أضف نهاية النطاق، مثل {domain}.com"
 msgid "Add the offer's terms"
 msgstr "إضافة شروط العرض"
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "أضف هذه السجلات حيث تدير النطاق، ثم تحقّق. قد يستغرق وصول التغييرات إلى الجميع بضع ساعات."
@@ -1380,6 +1399,11 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Adds a reminder to Today if you haven't heard back by then."
 msgstr "يضيف تذكيرًا إلى اليوم إذا لم يصلك رد بحلول ذلك الوقت."
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Advanced"
@@ -1973,8 +1997,8 @@ msgid "Attach a cover letter (PDF)"
 msgstr "أرفق رسالة تعريفية (ملف PDF)"
 
 #: src/features/assistant/chat-view.tsx
-msgid "Attach a file"
-msgstr "إرفاق ملف"
+msgid "Attach a PDF, Word, text or image file"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Attach a resume file (PDF)"
@@ -2415,6 +2439,10 @@ msgstr "التحقق من ملف آخر"
 msgid "Check DNS"
 msgstr "التحقق من DNS"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -2459,6 +2487,10 @@ msgstr "تحقّق من هذه الوظيفة مقابل أدلتك"
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "التحقق من وجهات النظر"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3348,6 +3380,11 @@ msgstr "تعذر الوصول إلى مزود AI الخاص بك. حاول مر�
 msgid "Couldn't read that file. Try again."
 msgstr "تعذّرت قراءة هذا الملف. حاول مرة أخرى."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "تعذر قراءة PDF المصدر."
@@ -3675,6 +3712,10 @@ msgstr "إنشاء نسخة"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "قم بإنشاء سيرة ذاتية أو استيرادها أولاً، ثم قم بالعودة لنسخها لهذه الوظيفة."
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3691,6 +3732,10 @@ msgstr "تم إنشاء {0} · آخر استخدام {1} · انتهاء الص�
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "جارٍ إنشاء المستند…"
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -6571,6 +6616,10 @@ msgstr "المزيد"
 msgid "More details"
 msgstr "مزيد من التفاصيل"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6758,6 +6807,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "الاسم"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -6856,6 +6909,10 @@ msgstr "محادثة جديدة"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "خطاب تغطية جديد بدلا من ذلك"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7149,6 +7206,10 @@ msgstr "لم يتم اختيار سيرة ذاتية"
 
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -8919,6 +8980,10 @@ msgstr "استبدال الصورة"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "استبدل الجداول بفقرات وقوائم عادية. تُستخرج الخلايا بترتيب التخزين، وليس بترتيب القراءة."
+
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
@@ -10939,6 +11004,10 @@ msgstr "جارٍ اختبار الاتصال…"
 msgid "Testing…"
 msgstr "اختبار…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11168,6 +11237,10 @@ msgstr "يتم فحص PDF على الخادم ولا يتم تخزينه. أرس
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/ai/error.ts

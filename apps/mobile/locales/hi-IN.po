@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {# संपादन नहीं रखा जा सका: इसका पाठ बदल गया। इसे दोबारा करने के लिए दोबारा पूछें.} other {# संपादन नहीं रखे जा सके: उनका पाठ बदल गया। उन्हें दोबारा करने के लिए दोबारा पूछें.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# प्रविष्टि} other {# प्रविष्टियाँ}}"
@@ -209,6 +211,11 @@ msgstr "{0, plural, one {# प्रविष्टि} other {# प्रवि
 #: src/features/assistant/coach-screen.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# तथ्य} other {# तथ्य}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -783,6 +790,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {जाँच करने के लिए #} other {जाँच करने के लिए #}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
@@ -969,6 +980,10 @@ msgstr "स्वीकार करना"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "सभी स्वीकृत"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1314,6 +1329,10 @@ msgstr "डोमेन का अंत जोड़ें, जैसे {domai
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "ये रिकॉर्ड वहाँ जोड़ें जहाँ आप डोमेन प्रबंधित करते हैं, फिर जाँचें। बदलावों को सभी तक पहुँचने में कुछ घंटे लग सकते हैं।"
@@ -1380,6 +1399,11 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Adds a reminder to Today if you haven't heard back by then."
 msgstr "अगर तब तक जवाब नहीं आता, तो \"आज\" में एक रिमाइंडर जोड़ता है।"
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Advanced"
@@ -1973,8 +1997,8 @@ msgid "Attach a cover letter (PDF)"
 msgstr "कवर लेटर संलग्न करें (PDF)"
 
 #: src/features/assistant/chat-view.tsx
-msgid "Attach a file"
-msgstr "दस्तावेज संलग्न करें"
+msgid "Attach a PDF, Word, text or image file"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Attach a resume file (PDF)"
@@ -2415,6 +2439,10 @@ msgstr "किसी अन्य फ़ाइल की जाँच करे�
 msgid "Check DNS"
 msgstr "DNS जाँचें"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -2459,6 +2487,10 @@ msgstr "इस पद को अपने प्रमाणों से मि
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "दृश्य जांचें"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3348,6 +3380,11 @@ msgstr "आपके AI प्रदाता तक नहीं पहुं�
 msgid "Couldn't read that file. Try again."
 msgstr "वह फ़ाइल पढ़ी नहीं जा सकी। पुनः प्रयास करें।"
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "निर्यातित PDF को पढ़ा नहीं जा सका."
@@ -3675,6 +3712,10 @@ msgstr "प्रति बनाएँ"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "पहले एक रेज़्यूमे बनाएं या आयात करें, फिर इस कार्य के लिए इसे कॉपी करने के लिए वापस लौटें।"
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3691,6 +3732,10 @@ msgstr "बनाया गया {0} · अंतिम बार उपयो�
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "दस्तावेज़ बनाया जा रहा है..."
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -6571,6 +6616,10 @@ msgstr "अधिक"
 msgid "More details"
 msgstr "अधिक विवरण"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6758,6 +6807,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "नाम"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -6856,6 +6909,10 @@ msgstr "नई बातचीत"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "इसके स्थान पर नया कवर लेटर"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7149,6 +7206,10 @@ msgstr "कोई बायोडाटा नहीं चुना गया"
 
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -8919,6 +8980,10 @@ msgstr "फ़ोटो बदलें"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "टेबल को सादे पैराग्राफ और सूचियों से बदलें। सेल स्टोरेज क्रम में निकलती हैं, पढ़ने के क्रम में नहीं।"
+
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
@@ -10939,6 +11004,10 @@ msgstr "कनेक्शन का परीक्षण किया जा �
 msgid "Testing…"
 msgstr "परीक्षण…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11168,6 +11237,10 @@ msgstr "PDF को सर्वर पर चेक किया गया ह�
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/ai/error.ts

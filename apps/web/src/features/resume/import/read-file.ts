@@ -193,6 +193,29 @@ export async function readResumeFile(
 	return data;
 }
 
+/**
+ * The file's own text and link targets, to review an import against before it's created: what the reader left out,
+ * and profile addresses behind words like "LinkedIn". Null when the file can't be read this way (it never blocks).
+ */
+export async function readImportSource(
+	file: File,
+	kind: ImportKind,
+): Promise<{ lines: string[]; links: string[] } | null> {
+	try {
+		if (kind === "pdf") {
+			const { readPdfSource } = await import("./pdf-text");
+			return await readPdfSource(file);
+		}
+		if (kind === "docx") {
+			const { extractDocxText } = await import("@reactive-resume/import/docx-text");
+			return { lines: extractDocxText(new Uint8Array(await file.arrayBuffer())).split("\n"), links: [] };
+		}
+	} catch {
+		// A file the reader parsed but this check can't open still imports; it just isn't compared.
+	}
+	return null;
+}
+
 /** What an import found: sections with content, their entries, and dates flagged for a look. */
 export function summarizeImport(data: ResumeData) {
 	const sections = [...Object.values(data.sections), ...data.customSections].filter(

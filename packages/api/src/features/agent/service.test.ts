@@ -1390,8 +1390,8 @@ describe("agentService.attachments.create", () => {
 	};
 
 	it.each([
-		{ total: 4, totalBytes: 90 * 1024 * 1024, uploadBytes: 6 * 1024 * 1024 },
-		{ total: 9, totalBytes: 0, uploadBytes: 1 },
+		{ total: 4, totalBytes: 90 * 1024 * 1024, uploadBytes: 6 * 1024 * 1024, code: "AGENT_THREAD_ATTACHMENTS_FULL" },
+		{ total: 9, totalBytes: 0, uploadBytes: 1, code: "AGENT_ATTACHMENT_LIMIT" },
 	])("serializes competing uploads before checking quota %o", async (initial) => {
 		let total = initial.total;
 		let totalBytes = initial.totalBytes;
@@ -1454,9 +1454,10 @@ describe("agentService.attachments.create", () => {
 		storageWrite.resolve();
 		const settled = await results;
 		expect(settled[0]?.status).toBe("fulfilled");
+		// A named limit, so the composer can say which one was reached.
 		expect(settled[1]).toMatchObject({
 			status: "rejected",
-			reason: { code: "BAD_REQUEST" },
+			reason: { code: initial.code, status: 400 },
 		});
 		expect(lockModes).toEqual(["update", "update"]);
 		expect(storageServiceMock.write).toHaveBeenCalledTimes(1);
@@ -1508,6 +1509,13 @@ describe("agentService.attachments.create", () => {
 		const { agentService } = await import("./service");
 
 		await expect(agentService.attachments.create(input)).resolves.toMatchObject({ filename: input.filename });
+	});
+
+	it("names the size limit for a file over 25 MB", async () => {
+		const { agentService } = await import("./service");
+		await expect(
+			agentService.attachments.create({ ...input, data: new Uint8Array(25 * 1024 * 1024 + 1) }),
+		).rejects.toMatchObject({ code: "AGENT_ATTACHMENT_TOO_LARGE", status: 400, message: "Files can be up to 25 MB." });
 	});
 });
 

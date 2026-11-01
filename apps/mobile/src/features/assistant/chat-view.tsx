@@ -22,11 +22,15 @@ import { File } from "expo-file-system";
 import { useCallback, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ActivityIndicator, AppState, Pressable, ScrollView, TextInput, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-import { citesKnowledge, tailoringAllows } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import {
+	AGENT_ATTACHMENT_TYPES,
+	citesKnowledge,
+	tailoringAllows,
+} from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { withEditedText } from "@reactive-resume/resume/proposals";
 import { attachmentPart, refreshThreads, transcriptOf, useAssistantChat } from "./chat";
 import { FileChip, MessageView, Status } from "./messages";
-import { isProposeEdits, publishProposals, toProposals } from "./proposals";
+import { isProposeEdits, publishProposals, supersededIn, toProposals } from "./proposals";
 import { createRequestLane, recoverRun } from "./recovery";
 import { ToolApprovals } from "./tool-approvals";
 import { client, orpc, SessionChangedError } from "@/api/client";
@@ -309,6 +313,8 @@ function Conversation(props: ConversationProps) {
 		clearError();
 		setStopped(false);
 		deliver(text, attachments);
+		// The new question and its reply come into view even when the reader had scrolled up.
+		requestAnimationFrame(() => void list.current?.scrollToEnd({ animated: true }));
 		return true;
 	};
 
@@ -430,6 +436,8 @@ function Conversation(props: ConversationProps) {
 	});
 	const receiptsReady = !document?.proposalRevision || !!receipts.data;
 	const error = chatError ?? receipts.error;
+	// A new id, not every streamed chunk, changes the receipts.
+	const supersededIds = [...supersededIn(messages)].join(" ");
 	const statuses = useMemo(
 		() =>
 			new Map<string, Receipt>([
@@ -444,8 +452,12 @@ function Conversation(props: ConversationProps) {
 					),
 				),
 				...[...rejections].map(([id, status]) => [id, { status }] as const),
+				...supersededIds
+					.split(" ")
+					.filter(Boolean)
+					.map((id) => [id, { status: "rejected" as const, superseded: true }] as const),
 			]),
-		[receipts.data, rejections],
+		[receipts.data, rejections, supersededIds],
 	);
 
 	// ---- Proposed edits ----
@@ -758,6 +770,8 @@ function Composer(props: ComposerProps) {
 	const { colors, radius, size, space, type } = useTheme();
 	const [text, setText] = useState("");
 	const [attachments, setAttachments] = useState<Upload[]>([]);
+	// Chips removed while their upload was still running: the finished upload is deleted, not kept.
+	const removedUploads = useRef(new Set<string>());
 	const uploading = attachments.some((attachment) => attachment.busy);
 	const hasText = text.trim().length > 0;
 
@@ -774,7 +788,11 @@ function Composer(props: ComposerProps) {
 	};
 
 	const attach = async () => {
-		const picked = await DocumentPicker.getDocumentAsync({ multiple: true, copyToCacheDirectory: true });
+		const picked = await DocumentPicker.getDocumentAsync({
+			multiple: true,
+			copyToCacheDirectory: true,
+			type: [...AGENT_ATTACHMENT_TYPES],
+		});
 		if (picked.canceled) return;
 		// Sizes are checked before any file is read: 25 MB a file and 100 MB in all, the server's limits.
 		let budget = MAX_TOTAL_BYTES - attachments.reduce((total, item) => total + item.size, 0);
@@ -787,7 +805,7 @@ function Composer(props: ComposerProps) {
 			else if (size > MAX_FILE_BYTES) skipped.big = true;
 			else if (size > budget) skipped.total = true;
 			else {
-				files.push({ asset, key: `upload-${Date.now()}-${index}`, size });
+				files.push({ asset, key: `upload-${index}-${asset.uri}`, size });
 				budget -= size;
 				room--;
 			}
@@ -817,6 +835,7 @@ function Composer(props: ComposerProps) {
 		}
 		// One file at a time: only one base64 copy is in memory at once.
 		for (const { asset, key } of files) {
+			if (removedUploads.current.delete(key)) continue;
 			try {
 				const attachment = await client.agent.attachments.create(
 					{
@@ -827,6 +846,13 @@ function Composer(props: ComposerProps) {
 					},
 					{ context: { scope: props.scope } },
 				);
+				if (removedUploads.current.delete(key)) {
+					// Removed while uploading.
+					void client.agent.attachments
+						.delete({ id: attachment.id }, { context: { scope: props.scope } })
+						.catch(() => undefined);
+					continue;
+				}
 				setAttachments((current) =>
 					current.map((item) =>
 						item.id === key
@@ -863,7 +889,15 @@ function Composer(props: ComposerProps) {
 							key={attachment.id}
 							name={attachment.filename}
 							busy={attachment.busy}
-							onRemove={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
+							onRemove={() => {
+								setAttachments((current) => current.filter((item) => item.id !== attachment.id));
+								// An uploaded but unsent file counts toward the message's limit until it's deleted.
+								if (attachment.busy) removedUploads.current.add(attachment.id);
+								else
+									void client.agent.attachments
+										.delete({ id: attachment.id }, { context: { scope: props.scope } })
+										.catch(() => undefined);
+							}}
 						/>
 					))}
 				</View>
@@ -884,7 +918,7 @@ function Composer(props: ComposerProps) {
 			>
 				<Pressable
 					accessibilityRole="button"
-					accessibilityLabel={t`Attach a file`}
+					accessibilityLabel={t`Attach a PDF, Word, text or image file`}
 					accessibilityState={{ disabled: props.disabled || uploading }}
 					disabled={props.disabled || uploading}
 					onPress={() => void attach()}

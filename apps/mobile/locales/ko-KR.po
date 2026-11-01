@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {# 편집을 배치할 수 없습니다. 텍스트가 변경되었습니다. 다시 실행해 달라고 다시 요청하세요.} other {# 편집 내용을 배치할 수 없습니다. 텍스트가 변경되었습니다. 다시 실행하도록 요청하세요.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {항목 #개} other {항목 #개}}"
@@ -209,6 +211,11 @@ msgstr "{0, plural, one {항목 #개} other {항목 #개}}"
 #: src/features/assistant/coach-screen.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, other {사실 #개}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -783,6 +790,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {확인하려면 #} other {확인하려면 #}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
@@ -969,6 +980,10 @@ msgstr "수용하다"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "모두 수락"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1314,6 +1329,10 @@ msgstr "{domain}.com와 같은 도메인 끝자리를 추가하세요."
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "도메인을 관리하는 곳에 이 레코드를 추가한 다음 확인하세요. 변경 사항이 모두에게 반영되기까지 몇 시간이 걸릴 수 있습니다."
@@ -1380,6 +1399,11 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Adds a reminder to Today if you haven't heard back by then."
 msgstr "그때까지 답이 없으면 오늘에 알림을 추가합니다."
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Advanced"
@@ -1973,8 +1997,8 @@ msgid "Attach a cover letter (PDF)"
 msgstr "커버레터 첨부(PDF)"
 
 #: src/features/assistant/chat-view.tsx
-msgid "Attach a file"
-msgstr "파일 첨부"
+msgid "Attach a PDF, Word, text or image file"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Attach a resume file (PDF)"
@@ -2415,6 +2439,10 @@ msgstr "다른 파일 확인"
 msgid "Check DNS"
 msgstr "DNS 확인"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -2459,6 +2487,10 @@ msgstr "이 직무를 내 근거와 대조해 확인"
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "조회수 확인"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3348,6 +3380,11 @@ msgstr "AI 제공업체에 연결할 수 없습니다. 다시 시도하거나 AI
 msgid "Couldn't read that file. Try again."
 msgstr "해당 파일을 읽을 수 없습니다. 다시 시도해 보세요."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "내보낸 PDF을(를) 읽을 수 없습니다."
@@ -3675,6 +3712,10 @@ msgstr "사본 만들기"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "먼저 이력서를 작성하거나 가져온 다음 돌아와서 이 직무에 대한 사본을 작성하세요."
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3691,6 +3732,10 @@ msgstr "{0} 생성됨 · 마지막 사용 {1} · 만료 {2}"
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "문서 생성 중…"
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -6571,6 +6616,10 @@ msgstr "더보기"
 msgid "More details"
 msgstr "자세한 내용"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6758,6 +6807,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "이름"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -6856,6 +6909,10 @@ msgstr "새로운 대화"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "대신 새 자기 소개서"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7149,6 +7206,10 @@ msgstr "선택한 이력서 없음"
 
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -8919,6 +8980,10 @@ msgstr "사진 교체"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "표를 일반 문단과 목록으로 바꾸세요. 셀은 읽는 순서가 아닌 저장 순서로 추출됩니다."
+
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
@@ -10939,6 +11004,10 @@ msgstr "연결 테스트 중…"
 msgid "Testing…"
 msgstr "테스트…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11168,6 +11237,10 @@ msgstr "PDF는 서버에서 확인되고 저장되지 않습니다. 이 미리�
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/ai/error.ts

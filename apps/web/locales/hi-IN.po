@@ -94,6 +94,11 @@ msgstr "(आवश्यक)"
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
 msgstr "{0, plural, =1 {बदलाव लागू किया गया} other {# बदलाव लागू किए गए}}"
 
+#. placeholder {0}: overflow.authored
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr ""
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
@@ -203,6 +208,7 @@ msgstr "{0, plural, one {# दस्तावेज़ ट्रैश में
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {# संपादन नहीं रखा जा सका: इसका पाठ बदल गया। इसे दोबारा करने के लिए दोबारा पूछें.} other {# संपादन नहीं रखे जा सके: उनका पाठ बदल गया। उन्हें दोबारा करने के लिए दोबारा पूछें.}}"
 
+#. placeholder {0}: section.entries
 #. placeholder {0}: step.entries
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
@@ -224,6 +230,11 @@ msgstr "{0, plural, one {# फ़ील्ड को संपादक मे�
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
 msgstr "{0, plural, one {# मुद्दे को नजरअंदाज कर दिया गया है।} other {# मुद्दों को नजरअंदाज कर दिया गया है।}}"
+
+#. placeholder {0}: review.notImported.length
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: proposals.length
 #: src/features/assistant/conversation.tsx
@@ -353,6 +364,11 @@ msgstr ""
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {# मिनट पहले शुरू हुआ} other {# मिनट पहले शुरू हुआ}}"
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
+msgstr ""
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -934,6 +950,10 @@ msgstr "{toCheck, plural, one {# फ़ील्ड पर एक नज़र �
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {जाँच करने के लिए #} other {जाँच करने के लिए #}}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "{total, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -1099,6 +1119,10 @@ msgstr "साइन-इन पर प्रमाणक ऐप से एक �
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "A comfortable length, and it fits on one page."
 msgstr "आरामदायक लंबाई, और यह एक पृष्ठ पर फिट बैठता है।"
+
+#: src/features/assistant/conversation.tsx
+msgid "A conversation's files can total up to 100 MB. Start a new conversation."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "A date is in the future."
@@ -1270,6 +1294,10 @@ msgstr "स्वीकार करना"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept all"
 msgstr "सभी स्वीकृत"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1696,6 +1724,10 @@ msgstr "डोमेन का अंत जोड़ें, जैसे {domai
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "ये रिकॉर्ड वहाँ जोड़ें जहाँ आप डोमेन प्रबंधित करते हैं, फिर जाँचें। बदलावों को सभी तक पहुँचने में कुछ घंटे लग सकते हैं।"
@@ -1781,6 +1813,11 @@ msgstr ""
 #: src/features/career/workspace/messages.tsx
 msgid "Adds a reminder to Today if you haven't heard back by then."
 msgstr "अगर तब तक जवाब नहीं आता, तो \"आज\" में एक रिमाइंडर जोड़ता है।"
+
+#. placeholder {0}: addition.anchor
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Adds after: {0}"
+msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Adjust fonts, colors, spacing and sections in the resume builder. Export your finished resume to PDF or Word, or share a link. The PDFs above are examples to help you compare designs."
@@ -2495,17 +2532,21 @@ msgstr ""
 msgid "Attach a cover letter file (PDF, up to 10 MB)"
 msgstr ""
 
-#: src/features/assistant/conversation.tsx
-#: src/features/career/coach-thread.tsx
-msgid "Attach a file"
-msgstr "दस्तावेज संलग्न करें"
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Attach a file instead"
 msgstr "इसके बजाय एक फ़ाइल संलग्न करें"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/career/coach-thread.tsx
+msgid "Attach a PDF, Word, text or image file"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Attach up to 10 files per message."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -3058,6 +3099,10 @@ msgstr "इस पद को अपने प्रमाणों से मि
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Check views"
 msgstr "दृश्य जांचें"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/libs/seo.ts
 msgid "Check whether software can read your resume PDF. Runs entirely in your browser, so your file is never uploaded."
@@ -4142,6 +4187,11 @@ msgstr "वह फ़ाइल पढ़ी नहीं जा सकी। ए
 msgid "Couldn't read that file. Try again."
 msgstr "वह फ़ाइल पढ़ी नहीं जा सकी। पुनः प्रयास करें।"
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "{entries} की तारीखें पढ़ी नहीं जा सकीं, इसलिए वे अंत में रहेंगी। उनकी तारीखें ठीक करें और फिर से क्रमबद्ध करें।"
@@ -4602,6 +4652,10 @@ msgstr "कुंजी बनाएं"
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
 msgstr "अभी एक बनाएँ"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Create resume"
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
@@ -5374,7 +5428,7 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "अपलोड करने से पहले स्थिति बदलने के लिए ड्रैग करें और ज़ूम करने के लिए स्लाइडर का उपयोग करें।"
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. Anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -6031,6 +6085,10 @@ msgstr "फ़ाइल का नाम"
 #: src/features/resume/import/read-file.ts
 msgid "file read"
 msgstr "फ़ाइल पढ़ें"
+
+#: src/features/assistant/conversation.tsx
+msgid "Files can be up to 25 MB."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
@@ -8393,6 +8451,10 @@ msgstr "{title} के लिए और"
 msgid "More formatting"
 msgstr "और फ़ॉर्मैटिंग"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "More from your file"
+msgstr ""
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
 msgstr "अधिक विकल्प"
@@ -8570,6 +8632,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "नाम"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Name of {label}"
 msgstr "{label} का नाम"
@@ -8688,6 +8754,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter instead"
 msgstr "इसके स्थान पर नया कवर लेटर"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New document"
@@ -9020,6 +9090,10 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "अभी कोई रेज़्यूमे नहीं।"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "No sections were found in this file."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "No selected documents were deleted. Refresh to see what remains."
@@ -11240,6 +11314,10 @@ msgstr "आइकन फ़ॉन्ट को सादे टेक्स्�
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "टेबल को सादे पैराग्राफ और सूचियों से बदलें। सेल स्टोरेज क्रम में निकलती हैं, पढ़ने के क्रम में नहीं।"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "आवेदन पर \"{current}\" को बदलता है।"
@@ -12225,6 +12303,10 @@ msgstr "सेक्शन"
 msgid "Sections · print order"
 msgstr "अनुभाग · मुद्रण आदेश"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Sections found"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Sections use headings systems recognize, and work experience shows."
 msgstr "अनुभाग ऐसे शीर्षकों का उपयोग करते हैं जिन्हें सिस्टम पहचानते हैं, और कार्य अनुभव दिखाई देता है।"
@@ -13175,6 +13257,10 @@ msgid "Step {0} of {1}"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
+msgid "Still runs onto page {next}."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -13583,6 +13669,10 @@ msgstr "आपके सर्वर पर खोज सेवा का पर
 msgid "Testing…"
 msgstr "परीक्षण…"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Text"
 msgstr "मूलपाठ"
@@ -13874,6 +13964,10 @@ msgstr "इस नौकरी आवेदन के साथ नौकरी 
 
 #: src/libs/orpc/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -14380,6 +14474,19 @@ msgstr "संक्षिप्त करें"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Tighten to one page"
 msgstr "एक पेज तक कस लें"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It already fits on one page, so only cut what's weak."
+msgstr ""
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next} by about {0} lines."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next}."
+msgstr ""
 
 #: src/features/career/shared.tsx
 msgid "Tightening"

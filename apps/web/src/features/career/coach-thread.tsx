@@ -9,6 +9,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
 import z from "zod";
+import { AGENT_ATTACHMENT_TYPES } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
@@ -430,7 +431,7 @@ export function Composer(props: ComposerProps) {
 						</div>
 						<IconButton
 							icon="paperclip"
-							label={t`Attach a file`}
+							label={t`Attach a PDF, Word, text or image file`}
 							size="icon-sm"
 							disabled={props.disabled || uploading}
 							loading={uploading}
@@ -441,6 +442,7 @@ export function Composer(props: ComposerProps) {
 							ref={fileInput}
 							type="file"
 							multiple
+							accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
 							className="hidden"
 							onChange={(event) => void upload(event.target.files)}
 						/>

@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {Editarea # nu a putut fi plasată: textul său s-a schimbat. Solicitați din nou să o refaceți.} other {Editările # nu au putut fi plasate: textul acestora s-a schimbat. Solicitați din nou să le refaceți.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# intrare} few {# intrări} other {# de intrări}}"
@@ -209,6 +211,11 @@ msgstr "{0, plural, one {# intrare} few {# intrări} other {# de intrări}}"
 #: src/features/assistant/coach-screen.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# fapt} few {# fapte} other {# de fapte}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -783,6 +790,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# de verificat} other {# de verificat}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
@@ -969,6 +980,10 @@ msgstr "Accepta"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "Acceptați totul"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1314,6 +1329,10 @@ msgstr "Adăugați sfârșitul domeniului, cum ar fi {domain}.com"
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Adaugă aceste înregistrări acolo unde gestionezi domeniul, apoi verifică. Modificările pot avea nevoie de câteva ore ca să ajungă la toată lumea."
@@ -1380,6 +1399,11 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Adds a reminder to Today if you haven't heard back by then."
 msgstr "Adaugă un memento în Astăzi dacă nu primiți răspuns până atunci."
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Advanced"
@@ -1973,8 +1997,8 @@ msgid "Attach a cover letter (PDF)"
 msgstr "Atașați o scrisoare de intenție (PDF)"
 
 #: src/features/assistant/chat-view.tsx
-msgid "Attach a file"
-msgstr "Atașați un fișier"
+msgid "Attach a PDF, Word, text or image file"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Attach a resume file (PDF)"
@@ -2415,6 +2439,10 @@ msgstr "Verificați alt fișier"
 msgid "Check DNS"
 msgstr "Verifică DNS"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -2459,6 +2487,10 @@ msgstr "Comparați acest post cu dovezile dvs."
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "Verificați vizualizările"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3348,6 +3380,11 @@ msgstr "Nu s-a putut contacta furnizorul dvs. AI. Încercați din nou sau verifi
 msgid "Couldn't read that file. Try again."
 msgstr "Nu s-a putut citi fișierul. Încearcă din nou."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Nu s-a putut citi PDF exportat."
@@ -3675,6 +3712,10 @@ msgstr "Creați o copie"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Creați sau importați mai întâi un CV, apoi reveniți pentru a-l copia pentru acest job."
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3691,6 +3732,10 @@ msgstr "Creat {0} · Ultima utilizare {1} · Expiră {2}"
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "Se creează documentul..."
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -6571,6 +6616,10 @@ msgstr "Mai mult"
 msgid "More details"
 msgstr "Mai multe detalii"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6758,6 +6807,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Nume"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -6856,6 +6909,10 @@ msgstr "Conversație nouă"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "În schimb, scrisoare de intenție nouă"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7149,6 +7206,10 @@ msgstr "Niciun CV selectat"
 
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -8919,6 +8980,10 @@ msgstr "Înlocuiește fotografia"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Înlocuiți tabelele cu paragrafe și liste simple. Celulele sunt extrase în ordinea de stocare, nu în ordinea de citire."
+
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
@@ -10939,6 +11004,10 @@ msgstr "Se testează conexiunea..."
 msgid "Testing…"
 msgstr "Testarea…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11168,6 +11237,10 @@ msgstr "PDF este verificat pe server și nu este stocat. Trimiteți această pre
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/ai/error.ts
