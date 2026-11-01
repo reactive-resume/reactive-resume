@@ -1,10 +1,10 @@
 import { createHash } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 import { chromium, expect, test, webkit } from "@playwright/test";
-import { FORM_FILL_SCRIPT, formFillInvocation } from "@reactive-resume/utils/form-fill";
+import { FORM_FILL_SCRIPT } from "@reactive-resume/utils/form-fill";
+import { formFillInvocation } from "../fixtures/form-fill";
 
 type ReceiptWindow = Window & {
-	ReactNativeWebView: { postMessage: (value: string) => void };
 	receipt: { requestId: string; report: { results: { field: string; status: string }[] } };
 	events: string[];
 };
@@ -31,7 +31,7 @@ const shapes = [
 	["individual degenerate scale", "scale:0 1", ""],
 ] as const;
 
-// Same serialization used by native WebView; host engines do not establish native UI/runtime parity.
+// The desktop helper literal runs in both host engines; no live ATS support is inferred.
 for (const [engine, browserType] of [
 	["Chromium", chromium],
 	["host WebKit", webkit],
@@ -48,13 +48,6 @@ for (const [engine, browserType] of [
 <div style="overflow:hidden;height:60px"><div style="overflow:auto;height:50px"><div style="height:200px"></div><textarea id=nested></textarea></div></div>
 <div style="height:1200px"></div><textarea id=belowFold></textarea><button>Submit yourself</button></form>
 <script>window.events=[];for(const type of ['input','change','submit','scroll'])document.addEventListener(type,e=>{window.events.push(type);e.preventDefault()});</script>`);
-				await page.evaluate(() => {
-					(window as ReceiptWindow).ReactNativeWebView = {
-						postMessage: (value) => {
-							(window as ReceiptWindow).receipt = JSON.parse(value);
-						},
-					};
-				});
 				const invocation = formFillInvocation(
 					{
 						targetUrl: page.url(),

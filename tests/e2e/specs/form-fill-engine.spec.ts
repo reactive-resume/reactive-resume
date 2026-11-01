@@ -3,16 +3,15 @@ import { createHash } from "node:crypto";
 import { createServer } from "node:http";
 import { chromium, expect, test, webkit } from "@playwright/test";
 import { packetFillPlan } from "@reactive-resume/schema/applications/autofill";
-import { formFillInvocation } from "@reactive-resume/utils/form-fill";
+import { formFillInvocation } from "../fixtures/form-fill";
 
 type FixtureWindow = Window & {
-	ReactNativeWebView: { postMessage: (value: string) => void };
 	receipt: { requestId?: string; error?: string; report: { results: { field: string; status: string }[] } };
 	events: string[];
 	nextClicks: number;
 };
 
-// Host engines exercise the exact serialized native bridge script, not a device WebView or live ATS.
+// Both host engines exercise the exact desktop helper script against controlled forms.
 for (const [name, engine] of [
 	["Chromium", chromium],
 	["host WebKit", webkit],
@@ -92,13 +91,6 @@ ${kind === "greenhouse" ? "<input id=first_name><input id=last_name>" : `<input 
 				await page.goto(packet.review.selection.targetUrl);
 				const plan = packetFillPlan(packet);
 				if (!plan) throw new Error("Missing candidate plan");
-				await page.evaluate(() => {
-					(window as FixtureWindow).ReactNativeWebView = {
-						postMessage: (value: string) => {
-							(window as FixtureWindow).receipt = JSON.parse(value);
-						},
-					};
-				});
 				expect(await page.locator("#email").inputValue()).toBe("");
 				await page.evaluate(formFillInvocation(plan, "explicit-attempt"));
 				await expect
@@ -134,11 +126,6 @@ ${kind === "greenhouse" ? "<input id=first_name><input id=last_name>" : `<input 
 			if (!plan) throw new Error("Missing candidate plan");
 			await page.goto(targetUrl);
 			await page.evaluate(() => {
-				(window as FixtureWindow).ReactNativeWebView = {
-					postMessage: (value: string) => {
-						(window as FixtureWindow).receipt = JSON.parse(value);
-					},
-				};
 				(document.querySelector("#email") as HTMLInputElement).value = "existing@example.test";
 				(document.querySelector("#phone") as HTMLInputElement).maxLength = 3;
 				const history = document.querySelector("#experience");
@@ -175,11 +162,6 @@ ${kind === "greenhouse" ? "<input id=first_name><input id=last_name>" : `<input 
 			receipts.push({ kind: "manual-and-corrupt-file", receipt: negative });
 			await page.goto(targetUrl);
 			await page.evaluate(() => {
-				(window as FixtureWindow).ReactNativeWebView = {
-					postMessage: (value: string) => {
-						(window as FixtureWindow).receipt = JSON.parse(value);
-					},
-				};
 				const digest = crypto.subtle.digest.bind(crypto.subtle);
 				crypto.subtle.digest = (...args) => {
 					history.pushState({}, "", "/next-page");
@@ -234,13 +216,6 @@ for (const [name, engine] of [
 <div style="height:1200px"></div><textarea id=belowFold></textarea>
 <button>Submit yourself</button></form>
 <script>window.events=[];for(const type of ['input','change','submit'])document.addEventListener(type,e=>{window.events.push(type);e.preventDefault()});</script>`);
-			await page.evaluate(() => {
-				(window as FixtureWindow).ReactNativeWebView = {
-					postMessage: (value) => {
-						(window as FixtureWindow).receipt = JSON.parse(value);
-					},
-				};
-			});
 			const blocked = [
 				"clipped",
 				"outside",

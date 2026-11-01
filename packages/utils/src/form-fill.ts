@@ -1,11 +1,11 @@
-/** Generic explicit DOM writes, shared verbatim by the active-tab helper and native embedded browser. */
+/** Explicit DOM writes for the desktop active-tab helper. */
 export type FormFillPlan = {
 	targetUrl: string;
 	fields: { selector?: string; question?: string; value: string; source: string }[];
 	files: { selector: string; filename: string; base64: string; sha256: string; source: string }[];
 };
 
-// String source is deliberate: Hermes does not preserve function source for Function.prototype.toString().
+// The extension injects this exact source into the approved active tab.
 export const FORM_FILL_SCRIPT = String.raw`
 globalThis.RRFormFill = async function(plan) {
  const results = [];
@@ -105,7 +105,3 @@ globalThis.RRFormFill = async function(plan) {
  return {targetUrl:plan.targetUrl,results,handoffs:["Complete account, captcha and additional pages manually.","Review every field and attachment; submit yourself. Nothing marked as sent."]};
 };
 `;
-
-export function formFillInvocation(plan: FormFillPlan, requestId: string) {
-	return `${FORM_FILL_SCRIPT}\nRRFormFill(${JSON.stringify(plan)}).then(report=>window.ReactNativeWebView.postMessage(JSON.stringify({requestId:${JSON.stringify(requestId)},report}))).catch(error=>window.ReactNativeWebView.postMessage(JSON.stringify({requestId:${JSON.stringify(requestId)},error:String(error)}))); true;`;
-}

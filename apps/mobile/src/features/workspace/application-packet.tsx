@@ -2,10 +2,10 @@ import type { Application } from "@/features/applications/types";
 import type { ApplicationPacket, PacketReview, PacketSelection } from "@reactive-resume/schema/applications/autofill";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
+import { openBrowserAsync } from "expo-web-browser";
 import { useState } from "react";
 import { View } from "react-native";
 import { workspaceError } from "./hooks";
-import { PacketBrowser } from "./packet-browser";
 import { CheckRow } from "./parts";
 import { shareText } from "./share";
 import { client, orpc } from "@/api/client";
@@ -35,7 +35,6 @@ function ApplicationPacketForm({ application, scope }: ApplicationPacketFormProp
 	const [reviewed, setReviewed] = useState(false);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState("");
-	const [browser, setBrowser] = useState(false);
 	const change = (action: () => void) => {
 		action();
 		setReview(null);
@@ -90,7 +89,7 @@ function ApplicationPacketForm({ application, scope }: ApplicationPacketFormProp
 		<View style={{ gap: space.s3 }}>
 			<Text variant="heading" accessibilityRole="header">{t`Employer-form packet`}</Text>
 			<Text>{t`Review a private snapshot for one form. No AI, submission or stage change. Named document versions are saved only when you approve.`}</Text>
-			<Text>{t`Browser autofill is experimental: only verified native controls can be filled. Unknown authorization, sensitive questions, custom controls, account steps, captcha and additional pages need your explicit answers or manual completion.`}</Text>
+			<Text>{t`Complete the employer form manually in your browser using reviewed answers and approved PDFs.`}</Text>
 			<TextField
 				label={t`Exact form URL`}
 				value={targetUrl}
@@ -196,7 +195,15 @@ function ApplicationPacketForm({ application, scope }: ApplicationPacketFormProp
 							)
 						}
 					/>
-					<Button label={t`Open form in app (prototype)`} onPress={() => setBrowser(true)} />
+					<Button
+						label={t`Open employer form in browser`}
+						disabled={busy}
+						onPress={() =>
+							void run(async () => {
+								await openBrowserAsync(packet.review.selection.targetUrl);
+							})
+						}
+					/>
 					{packet.documents.map((document) => (
 						<View key={document.kind}>
 							<Text selectable>
@@ -220,7 +227,6 @@ function ApplicationPacketForm({ application, scope }: ApplicationPacketFormProp
 							<Text selectable>{answer.answer}</Text>
 						</View>
 					))}
-					{browser && <PacketBrowser packet={packet} onClose={() => setBrowser(false)} />}
 				</View>
 			)}
 		</View>

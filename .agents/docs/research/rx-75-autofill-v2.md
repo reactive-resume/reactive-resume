@@ -1,4 +1,6 @@
-# RX-75 account-backed packet and embedded-browser candidate
+# RX-75 historical account-backed packet and embedded-browser candidate
+
+Historical evidence only. Superseded by the owner's November 1 decision to remove Android/iOS autofill. The embedded browser and WebView dependency described below do not ship. Current mobile scope and release classification are in [the handoff](../rx-75-native-release-handoff.md).
 
 Candidate remains uncommitted on `feature/rx-75`, based on `39aa6c15c3f291a7ebe9f473e4cc9b52804aa582`. The exact result tree, complete source inventory and binary/full-index patch are recorded in `/tmp/rx75-delivery-v2/frozen/proof.json`. V1 evidence under `/tmp/rx75-delivery/` is unchanged. This report supersedes its product-integration limitations; it does not rewrite its historical measurements.
 

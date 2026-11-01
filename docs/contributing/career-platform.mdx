@@ -23,15 +23,15 @@ Browser capture and native share/import feed the existing application review and
 
 Both authenticated routes require read and write permissions. The private packet routes are absent from the MCP allowlist. No server fetch of the employer URL occurs. Combined PDFs are limited to 2 MiB. The JSON packet contains personal data and exact PDF bytes; downloaded copies cannot be revoked. Account export includes document histories (`document-versions.json` in the web ZIP, `documentVersions` on native); existing account/document cascades remove stored versions. No new table or migration is needed.
 
-The desktop posting-capture helper uses existing `activeTab` scripting permission to fill an imported, explicitly reviewed packet. Packet data stays in popup memory, never extension storage. Capture behavior and permissions remain unchanged. Native uses `react-native-webview` 14.0.1, matching Expo 58’s bundled version, with a separate incognito browser and per-page approval. External browser sessions remain separate. Navigation invalidates approval; only an exact reviewed URL can run the shared `packages/utils/src/form-fill.ts` script. Page messages are untrusted, bounded and request-correlated. Android reports message origins while iOS reports frame URLs; neither is treated as proof of employer acceptance.
+The desktop posting-capture helper uses existing `activeTab` scripting permission to fill an imported, explicitly reviewed packet. Packet data stays in popup memory, never extension storage. Capture behavior and permissions remain unchanged. Only the exact reviewed URL can run `packages/utils/src/form-fill.ts`. Native mobile retains packet review, copyable answers, approved PDF downloads and opening the form in the system browser for manual completion. Android/iOS autofill is excluded by the owner's explicit decision; no embedded browser or WebView dependency ships.
 
-| Candidate  | Verified host subset                                                     | Desktop helper                          | Native runtime / live ATS |
-| ---------- | ------------------------------------------------------------------------ | --------------------------------------- | ------------------------- |
-| Greenhouse | Fictional native text/email/tel/textarea and file controls               | Actual MV3 popup/import/active-tab fill | Unverified                |
-| Lever      | Fictional name/email/phone, exact-label answers and file controls        | Shared engine host proof                | Unverified                |
-| Ashby      | Fictional system-name/email/phone, exact-label answers and file controls | Shared engine host proof                | Unverified                |
+| Candidate  | Verified host subset                                                     | Desktop helper                          | Live ATS   |
+| ---------- | ------------------------------------------------------------------------ | --------------------------------------- | ---------- |
+| Greenhouse | Fictional native text/email/tel/textarea and file controls               | Actual MV3 popup/import/active-tab fill | Unverified |
+| Lever      | Fictional name/email/phone, exact-label answers and file controls        | Shared engine host proof                | Unverified |
+| Ashby      | Fictional system-name/email/phone, exact-label answers and file controls | Shared engine host proof                | Unverified |
 
-Every fill preserves existing values, emits no input/change/click/submit events, checks file hashes and names exact version IDs. Framework controls, custom controls, ambiguity, field limits, account/captcha and additional pages have manual handoffs. Reports distinguish filled, skipped, manual and error; DOM file presence does not establish ATS upload acceptance. Do not extend this support matrix without controlled proof. Current real ATS compatibility and native iOS/Android equivalence remain release gates.
+Every desktop fill preserves existing values, emits no input/change/click/submit events, checks file hashes and names exact version IDs. Framework controls, custom controls, ambiguity, field limits, account/captcha and additional pages have manual handoffs. Reports distinguish filled, skipped, manual and error; DOM file presence does not establish ATS upload acceptance. Do not extend this support matrix without controlled proof. Current real ATS compatibility remains unverified.
 
 Use disposable PostgreSQL and synthetic users for account-backed proof. Follow the browser-test environment recipe; run:
 
@@ -40,9 +40,9 @@ pnpm --filter @reactive-resume/api test src/features/career/service.integration.
 pnpm exec playwright test tests/e2e/specs/application-packet.spec.ts tests/e2e/specs/form-fill-engine.spec.ts
 ```
 
-Set `RUN_CAPTURE_EXTENSION=1` for the actual Chromium helper case; otherwise that case is intentionally omitted. The shared-engine spec launches Chromium and host WebKit. These are host browser checks, not native-device proof. The earlier loopback lab under `tooling/autofill/` remains historical experiment evidence and does not verify the new product integration.
+Set `RUN_CAPTURE_EXTENSION=1` for the actual Chromium helper case; otherwise that case is intentionally omitted. The shared-engine spec launches Chromium and host WebKit to check the desktop script. The earlier loopback lab under `tooling/autofill/` remains historical experiment evidence and does not verify the new product integration.
 
-The WebView dependency changes the native fingerprint and requires new iOS/Android store builds. Deploy the additive backend first; old mobile APIs stay compatible. Hermes exports, CocoaPods/autolinking and unsigned compilation are separate from device UI/upload and signed/store gates. Device verification must use a free managed device session; never take over another session. See `.agents/docs/research/rx-75-autofill-v2.md` for the candidate’s exact acceptance matrix and evidence limits.
+Mobile packet changes use JavaScript, copy and existing native dependencies, so they are OTA eligible by source inspection. Compare the installed native fingerprint during release verification. Deploy the additive backend first; old mobile APIs stay compatible. The owner-approved native-autofill exception is recorded in `.agents/docs/rx-75-native-release-handoff.md`.
 
 Refresh `writing-application-answers`, `career-workspace-reference` and `exporting-your-data` with packet changes. `employer-form-packet-v2.png` is an actual fictional-account product screenshot; it makes no native-device claim. Keep the original `employer-form-prototype.png` as historical lab evidence.
 

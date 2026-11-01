@@ -94,20 +94,6 @@ export const approvePacketSchema = z.strictObject({
 export type PacketSelection = z.infer<typeof packetSelectionSchema>;
 export type PacketReview = z.infer<typeof packetReviewSchema>;
 export type ApplicationPacket = z.infer<typeof applicationPacketSchema>;
-export const formFillReportSchema = z.object({
-	targetUrl: z.string().max(2048),
-	results: z
-		.array(
-			z.object({
-				field: z.string().max(2000),
-				status: z.enum(["filled", "skipped", "manual", "error"]),
-				source: z.string().max(3000),
-				detail: z.string().max(2000),
-			}),
-		)
-		.max(500),
-	handoffs: z.array(z.string().max(2000)).max(10),
-});
 
 /** Conservative candidate adapters. Only their synthetic native-control subset has been measured. */
 export function packetFillPlan(packet: ApplicationPacket): FormFillPlan | null {
