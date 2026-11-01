@@ -47,6 +47,26 @@ describe("handleResumePdfDownload", () => {
 		});
 	});
 
+	it("keeps the API's RFC 5987 name on the signed download response", async () => {
+		const pdf = new File([new Uint8Array([37, 80, 68, 70])], "李明-Resume.pdf", { type: "application/pdf" });
+		mocks.verifyResumePdfDownloadToken.mockReturnValueOnce({ ok: true, resumeId: "resume-1", userId: "user-1" });
+		mocks.createResumePdfDownload.mockResolvedValueOnce({
+			headers: {
+				"content-disposition": "attachment; filename=\"Resume.pdf\"; filename*=UTF-8''%E6%9D%8E%E6%98%8E-Resume.pdf",
+			},
+			body: pdf,
+		});
+
+		const response = await handleResumePdfDownload(
+			new Request("https://example.com/api/resumes/resume-1/pdf?token=signed"),
+			"resume-1",
+		);
+
+		expect(response.headers.get("Content-Disposition")).toBe(
+			"attachment; filename=\"Resume.pdf\"; filename*=UTF-8''%E6%9D%8E%E6%98%8E-Resume.pdf",
+		);
+	});
+
 	it("rejects missing, invalid, and expired tokens before rendering", async () => {
 		let response = await handleResumePdfDownload(
 			new Request("https://example.com/api/resumes/resume-1/pdf"),
