@@ -1,8 +1,9 @@
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
-import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { ORPCError } from "@orpc/client";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { setAccountScope } from "@/libs/auth/account-scope";
 
 const mocks = vi.hoisted(() => ({ update: vi.fn(), draft: vi.fn() }));
 vi.mock("@/libs/orpc/client", () => ({
@@ -52,7 +53,13 @@ function* chunks(...parts: string[]) {
 
 beforeEach(() => {
 	vi.resetAllMocks();
+	setAccountScope("account-a");
 	store().load(letter);
+});
+
+afterEach(() => {
+	store().reset();
+	vi.unstubAllGlobals();
 });
 
 describe("saving", () => {
@@ -246,5 +253,81 @@ describe("drafts", () => {
 		discardLetterDraft();
 		expect(store().draft).toEqual({ phase: "idle" });
 		expect(store().letter?.content).toBe("<p>Mine</p>");
+	});
+
+	it("shows a ready, unkept draft again after a reload without asking the provider twice", async () => {
+		const stored = new Map<string, string>();
+		vi.stubGlobal("sessionStorage", {
+			getItem: (key: string) => stored.get(key) ?? null,
+			setItem: (key: string, value: string) => void stored.set(key, value),
+			removeItem: (key: string) => void stored.delete(key),
+		});
+		mocks.draft.mockResolvedValue(chunks("A draft I paid for."));
+		await startLetterDraft();
+		expect(stored.get("letter-draft:account-a:letter")).toContain("A draft I paid for.");
+
+		// A reload: the store is empty, then the route loads the same letter.
+		useLetterEditorStore.setState({ letter: null, draft: { phase: "idle" } });
+		store().load(letter);
+		expect(store().draft).toEqual({ phase: "ready", text: "A draft I paid for." });
+		expect(mocks.draft).toHaveBeenCalledTimes(1);
+		// The body is still untouched until Keep.
+		expect(store().letter?.content).toBe("<p>Mine</p>");
+
+		// A draft written against an older revision is not offered after the letter changed elsewhere.
+		store().load({ ...letter, revision: letter.revision + 1 });
+		expect(store().draft).toEqual({ phase: "idle" });
+
+		discardLetterDraft();
+		expect(stored.has("letter-draft:account-a:letter")).toBe(false);
+		vi.unstubAllGlobals();
+	});
+	it("keeps unkept text in the account that paid for it, even when another account loads the same id", async () => {
+		const stored = new Map<string, string>();
+		vi.stubGlobal("sessionStorage", {
+			getItem: (key: string) => stored.get(key) ?? null,
+			setItem: (key: string, value: string) => void stored.set(key, value),
+			removeItem: (key: string) => void stored.delete(key),
+		});
+		mocks.draft.mockResolvedValue(chunks("Private account A draft"));
+		await startLetterDraft();
+		store().reset();
+		setAccountScope("account-b");
+		store().load(letter);
+		expect(store().draft).toEqual({ phase: "idle" });
+		discardLetterDraft();
+		setAccountScope("account-a");
+		store().load(letter);
+		expect(store().draft).toEqual({ phase: "ready", text: "Private account A draft" });
+		expect(mocks.draft).toHaveBeenCalledTimes(1);
+	});
+
+	it("flushes new links before drafting and stores against the saved revision", async () => {
+		mocks.update.mockResolvedValue({ ...letter, recipientName: "Dana", revision: 2 });
+		mocks.draft.mockImplementation(() => {
+			expect(store().pending).toEqual({});
+			expect(store().letter?.revision).toBe(2);
+			return chunks("Saved revision draft");
+		});
+		store().edit({ recipientName: "Dana" });
+		await startLetterDraft();
+		expect(store().draft).toEqual({ phase: "ready", text: "Saved revision draft" });
+	});
+
+	it("does not start a paid request when saving fails or the account changes during the save", async () => {
+		mocks.update.mockRejectedValueOnce(new Error("Offline"));
+		store().edit({ recipientName: "Dana" });
+		await startLetterDraft();
+		expect(store().draft.phase).toBe("failed");
+		expect(mocks.draft).not.toHaveBeenCalled();
+		const save = deferred<CoverLetter>();
+		mocks.update.mockReturnValueOnce(save.promise);
+		const pending = startLetterDraft();
+		setAccountScope("account-b");
+		store().load(letter);
+		save.resolve({ ...letter, revision: 2 });
+		await pending;
+		expect(mocks.draft).not.toHaveBeenCalled();
+		expect(store().draft).toEqual({ phase: "idle" });
 	});
 });

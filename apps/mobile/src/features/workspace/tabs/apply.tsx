@@ -12,6 +12,7 @@ import { randomUUID } from "expo-crypto";
 import { useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
+import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
 import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
@@ -198,7 +199,7 @@ function Apply({ application, version, go }: WorkspaceTabProps) {
 
 			{!stored ? (
 				<View style={{ gap: space.s2 }}>
-					{shown.length > 0 ? <AiNotice /> : null}
+					{shown.length > 0 ? <AiNotice task="answer" application={application} /> : null}
 					<Button
 						variant="secondary"
 						fullWidth
@@ -270,7 +271,13 @@ function AnswerCard({
 	);
 	const [editingQuestion, setEditingQuestion] = useState(answer.question === "");
 	const [menu, setMenu] = useState(false);
-	const [proposal, setProposal] = useState<{ text: string; factIds: string[] } | null>(null);
+	const [proposal, setProposal] = useState<{
+		text: string;
+		factIds: string[];
+		note: string | null;
+		/** The answer the proposal was written from; it may not replace a newer edit. */
+		basis: string;
+	} | null>(null);
 	const generate = useGenerate(applicationId);
 	const provider = useHasAIProvider().defaultProvider;
 	const answerSave = useAutosave(
@@ -299,9 +306,15 @@ function AnswerCard({
 	const backing = answer.factIds.flatMap((id) => facts?.find((fact) => fact.id === id) ?? []);
 
 	const ask = async () => {
-		const result = await generate.run({ task: "answer", question: question.trim(), answer: text }).catch(() => null);
-		if (result?.answer) setProposal(result.answer);
+		// Commit the question first: the tap may land before the field's blur.
+		questionSave.flush();
+		const basis = text;
+		const result = await generate.run({ task: "answer", question: question.trim(), answer: basis }).catch(() => null);
+		if (result?.answer) setProposal({ ...result.answer, basis });
 	};
+	const limit = answerLimit(question);
+	const measured = (value: string) => (limit?.kind === "characters" ? countCharacters(value) : countWords(value));
+	const stale = proposal !== null && text !== proposal.basis;
 
 	return (
 		<Block
@@ -375,13 +388,20 @@ function AnswerCard({
 							</Text>
 						))}
 					</Text>
+					{proposal.note ? <Banner tone="warn" message={t`Check before accepting: ${proposal.note}`} /> : null}
+					{stale ? (
+						<Banner
+							tone="danger"
+							message={t`Your answer changed while this was drafted. Draft again to review the newer version.`}
+						/>
+					) : null}
 					<Actions>
 						<Button
 							variant="secondary"
 							size="sm"
 							icon="check"
 							label={t`Accept`}
-							disabled={disabled}
+							disabled={disabled || stale}
 							onPress={() => {
 								const accepted = proposal.text;
 								setText(accepted);
@@ -392,6 +412,17 @@ function AnswerCard({
 							}}
 						/>
 						<Button variant="ghost" size="sm" label={t`Skip`} onPress={() => setProposal(null)} />
+						{limit ? (
+							<Text
+								variant="caption"
+								color={measured(proposal.text) > limit.max ? "warnText" : "ink3"}
+								style={{ marginLeft: "auto" }}
+							>
+								{limit.kind === "characters"
+									? t`${measured(proposal.text)} of ${limit.max} characters`
+									: t`${measured(proposal.text)} of ${limit.max} words`}
+							</Text>
+						) : null}
 					</Actions>
 				</View>
 			) : readOnly ? (

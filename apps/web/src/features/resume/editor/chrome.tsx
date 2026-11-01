@@ -3,7 +3,8 @@ import type { ComponentProps, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
-import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useParams, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -12,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
+import { orpc } from "@/libs/orpc/client";
 
 // The editor chrome resumes and letters share: the back link and drawer controls in the bar, the canvas width
 // and the zoom bar.
@@ -97,19 +99,43 @@ export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTr
 	);
 }
 
-/** Leaving the editor is navigation, so it's a link styled as an icon button. */
+/**
+ * Leaving the editor is navigation, so it's a link styled as an icon button. Opened from an application, it returns
+ * there — after checking that application owns this document — instead of stranding the user in Documents.
+ */
 export function BackLink() {
-	const label = t`Back to documents`;
+	const search = useSearch({ strict: false }) as { applicationId?: string | undefined };
+	const params = useParams({ strict: false }) as { resumeId?: string; coverLetterId?: string };
+	const applicationId = search.applicationId;
+	const detail = useQuery({
+		...orpc.applications.getById.queryOptions({ input: { id: applicationId ?? "" } }),
+		enabled: Boolean(applicationId),
+		retry: false,
+	});
+	const linked =
+		detail.data &&
+		((params.resumeId !== undefined && detail.data.resumeId === params.resumeId) ||
+			(params.coverLetterId !== undefined && detail.data.coverLetterId === params.coverLetterId));
+	const label = linked && detail.data ? t`Back to ${detail.data.company}` : t`Back to documents`;
 
 	return (
 		<Tooltip>
 			<TooltipTrigger
 				render={
-					<Link
-						to="/dashboard"
-						aria-label={label}
-						className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
-					/>
+					linked && detail.data ? (
+						<Link
+							to="/dashboard/applications/$applicationId/{-$tab}"
+							params={{ applicationId: detail.data.id }}
+							aria-label={label}
+							className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
+						/>
+					) : (
+						<Link
+							to="/dashboard"
+							aria-label={label}
+							className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
+						/>
+					)
 				}
 			>
 				<Icon name="arrow-left" />

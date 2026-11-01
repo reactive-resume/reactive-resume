@@ -193,6 +193,12 @@ export const careerJobs = {
 				// The user lock also keeps the cap valid under concurrent creates.
 				await assertScheduleCapacity(tx, userId);
 			}
+			// The run time is checked where it commits, not only where the editor computed it: a clock that crossed the
+			// lead meanwhile must not turn a "refresh before the interview" into an immediate paid run.
+			if (input.enabled && input.kind === "prepare" && input.nextRunAt.getTime() <= Date.now())
+				throw new ORPCError("BAD_REQUEST", {
+					message: "That briefing time has already passed. Choose a later lead, or turn refresh off.",
+				});
 			const [row] = id
 				? await tx
 						.update(tables.careerSchedule)

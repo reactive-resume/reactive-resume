@@ -87,6 +87,12 @@ export const coverLetterDto = {
 				.partial()
 				.optional()
 				.describe("Sets the letter's own type, colors and page settings, which unlinks its design."),
+			locale: z
+				.string()
+				.min(2)
+				.max(35)
+				.optional()
+				.describe("The letter's language for its greeting, sign-off and dates; keeps its design link."),
 			recipientName: recipientFieldsSchema.shape.recipientName.unwrap().optional(),
 			recipientCompany: recipientFieldsSchema.shape.recipientCompany.unwrap().optional(),
 			letterDate: recipientFieldsSchema.shape.letterDate.unwrap().optional(),

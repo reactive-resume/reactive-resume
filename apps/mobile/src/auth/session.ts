@@ -458,7 +458,10 @@ export function signOut(): Promise<void> {
 				clearDraftsFor(scope);
 			});
 			await attempt(() => {
-				const prefixes = scopedStoragePrefixes.map((prefix) => `${prefix}${scope}:`);
+				const prefixes = [
+					...scopedStoragePrefixes.map((prefix) => `${prefix}${scope}:`),
+					`letter-draft:${departing.server}:${scope}:`,
+				];
 				for (const key of Storage.getAllKeysSync())
 					if (prefixes.some((prefix) => key.startsWith(prefix))) Storage.removeItemSync(key);
 			});

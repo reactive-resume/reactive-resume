@@ -8,6 +8,7 @@ import { ResumeConflictSheet, useResumeDraftOwner, useResumeStore } from "@/draf
 import { DocumentMenu } from "@/features/document-menu";
 import { routes } from "@/routes";
 import { BuilderChrome, useBuilderChrome } from "@/shell/builder-chrome";
+import { useEditorApplicationOrigin } from "@/shell/editor-origin";
 import { useKeyCommands } from "@/shell/key-commands";
 
 /** Fills the chrome from the draft once for every pane: name and save status. ⌘Z / ⇧⌘Z undo and redo. */
@@ -35,6 +36,8 @@ export default function BuilderLayout() {
 	const router = useRouter();
 	const { t } = useLingui();
 	const { id } = useLocalSearchParams<{ id: string }>();
+	// Opened from an application, Back returns there after checking that it owns this resume.
+	const origin = useEditorApplicationOrigin("resume", id);
 	// The one owner of the draft for the whole builder: panes, the tablet page and pushed screens only subscribe, so
 	// switching panes or rotating never reopens the draft or resets undo.
 	useResumeDraftOwner(id);
@@ -53,6 +56,7 @@ export default function BuilderLayout() {
 			tabletPanes={["write", "design", "check", "share"]}
 			page={<PageScreen />}
 			title={t`Resume`}
+			back={origin}
 			onExport={() => router.push(routes.export(id))}
 			modals={["export", "assistant"]}
 		>

@@ -259,7 +259,7 @@ function CoachSheetBody({
 				)}
 				privacy={
 					<PrivacyLine>
-						{t`Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to ${connection}.`}
+						{t`Sends your message, earlier messages in this chat, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${connection}.`}
 					</PrivacyLine>
 				}
 				placeholder={t`Ask about this application…`}

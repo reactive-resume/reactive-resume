@@ -66,6 +66,14 @@ function RouteComponent() {
 	useBlocker({
 		shouldBlockFn: async ({ next }) => {
 			if ("coverLetterId" in next.params && next.params.coverLetterId === coverLetterId) return false;
+			const { draft } = useLetterEditorStore.getState();
+			if (draft.phase === "streaming" || draft.phase === "ready") {
+				toast.add({
+					type: "warning",
+					description: t`This letter has an unkept draft. Click Keep to save it, or Discard to leave without it.`,
+				});
+				return true;
+			}
 			let timeout: ReturnType<typeof setTimeout> | undefined;
 			const saved = await Promise.race([
 				useLetterEditorStore.getState().flush(),

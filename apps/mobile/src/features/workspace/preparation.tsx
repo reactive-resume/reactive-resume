@@ -13,7 +13,7 @@ import { useHasAIProvider } from "@/features/ai/providers";
 import { useInvalidateApplications } from "@/features/applications/queries";
 import { useDocuments } from "@/features/documents/queries";
 import { shareDocumentPdf } from "@/features/share/files";
-import { routes } from "@/routes";
+import { routes, withApplication } from "@/routes";
 import { Button, IconButton, ListRow, SelectSheet, Sheet, Text, TextArea, showToast, useTheme } from "@/ui";
 
 const STEPS = ["posting", "resume", "tailor", "letter", "answers", "review"] as const;
@@ -75,7 +75,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 				...(resumeId ? { resumeId } : {}),
 			});
 			void invalidate();
-			router.push(routes.letter(letter.id));
+			router.push(withApplication(routes.letter(letter.id), application.id));
 		} catch (error) {
 			showToast({ message: workspaceError(error, t`Couldn't create the letter. Try again.`) });
 		}
@@ -276,7 +276,12 @@ export function Preparation({ application, disabled }: PreparationProps) {
 											label={kind === "resume" ? t`Edit resume` : t`Edit cover letter`}
 											disabled={busy || !document}
 											onPress={() =>
-												router.push(kind === "resume" ? routes.builder(selected) : routes.letter(selected))
+												router.push(
+													withApplication(
+														kind === "resume" ? routes.builder(selected) : routes.letter(selected),
+														application.id,
+													),
+												)
 											}
 										/>
 									) : null}

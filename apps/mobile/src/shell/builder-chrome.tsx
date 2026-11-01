@@ -68,7 +68,10 @@ type BuilderChromeProps<T extends string> = {
 	title: string;
 	/** What the Download button does unless a screen sets `onExport`. No Download button when neither is set. */
 	onExport?: (() => void) | undefined;
-	/** Child routes presented as modals (Download & history, the assistant). Every other child route pushes. */
+	/** Back from an application: its validated label and the application it returns to. Defaults to Documents. */
+	back?: { label: string; onBack: () => void } | undefined /**
+	 * Child routes presented as modals (Download & history, the assistant). Every other child route pushes.
+	 */;
 	modals?: string[] | undefined /**
 	 * Rendered inside the chrome, outside the Stack, so a layout can fill slots once for every pane, for example a
 	 * component that reads the draft store and calls `useBuilderChrome({ title, save })`.
@@ -80,6 +83,7 @@ type FrameValue = {
 	title: string;
 	onExport: (() => void) | undefined;
 	leave: () => void;
+	backLabel: string;
 	/** The tablet Write / Design / Check switch. */
 	modes: ReactNode;
 };
@@ -107,7 +111,15 @@ export function BuilderChrome<T extends string>(props: BuilderChromeProps<T>) {
 	);
 }
 
-function Frame<T extends string>({ panes, tabletPanes, page, title, onExport, modals = [] }: BuilderChromeProps<T>) {
+function Frame<T extends string>({
+	panes,
+	tabletPanes,
+	page,
+	title,
+	onExport,
+	back,
+	modals = [],
+}: BuilderChromeProps<T>) {
 	const router = useRouter();
 	const { t } = useLingui();
 	const tablet = useIsTablet();
@@ -161,7 +173,8 @@ function Frame<T extends string>({ panes, tabletPanes, page, title, onExport, mo
 		title,
 		onExport,
 		// Back leaves the editor (the root stack), even with an entry open in the tablet panel.
-		leave: () => (navigation.canGoBack() ? navigation.goBack() : router.replace(routes.documents())),
+		leave: back?.onBack ?? (() => (navigation.canGoBack() ? navigation.goBack() : router.replace(routes.documents()))),
+		backLabel: back?.label ?? t`Back to Documents`,
 		modes: activePane ? (
 			<Segmented
 				compact
@@ -244,7 +257,7 @@ function ChromeTopBar() {
 	return (
 		<>
 			<TopBar
-				backLabel={t`Back to Documents`}
+				backLabel={frame.backLabel}
 				onBack={frame.leave}
 				title={slots.title ?? frame.title}
 				onTitlePress={slots.onMenu}

@@ -153,6 +153,7 @@ const offerDomain = load("../../../packages/schema/src/career-offer.ts", {
 });
 const shared = load("features/career/shared.tsx");
 const { OffersScreen } = load("features/career/offers.tsx", {
+	"@reactive-resume/utils/timezone": timeParser,
 	"./hooks": {
 		useOffers: () => saved,
 		useCareerQueries: () => ({ profile }),

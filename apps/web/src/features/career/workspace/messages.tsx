@@ -6,13 +6,23 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
+import { offerTermKeys } from "@reactive-resume/schema/career-offer";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { DraftRecovery } from "../draft-recovery";
 import {
 	latest,
@@ -36,9 +46,18 @@ import {
 	useInvalidateApplications,
 } from "@/features/applications/use-application-actions";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { orpc } from "@/libs/orpc/client";
 
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
+
+/** A pay period as words, so an amount is never shown without what it covers. */
+const periodLabel = (period: "year" | "month" | "hour") =>
+	({
+		year: t`per year`,
+		month: t`per month`,
+		hour: t`per hour`,
+	})[period];
 
 /** W15–W17: paste what the employer wrote, read it, reply, and apply the changes it implies only if you choose. */
 export function MessagesTab({ application, version, now, offerForm }: WorkspaceTabProps) {
@@ -71,7 +90,7 @@ export function MessagesTab({ application, version, now, offerForm }: WorkspaceT
 					readOnly={readOnly}
 					onSave={(message) => workspace.save({ message })}
 				/>
-				{reply && <ReplyCard key={reply.id} reply={reply} readOnly={readOnly} />}
+				{reply && <ReplyCard key={reply.id} reply={reply} application={application} readOnly={readOnly} />}
 			</div>
 			{reply && reply.data.changes.length > 0 && (
 				<ProposalCard key={reply.id} reply={reply} application={application} now={now} readOnly={readOnly} />
@@ -115,12 +134,12 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 					placeholder={t`Paste the email or message, without the signature.`}
 					onChange={(event) => setMessage(event.target.value)}
 					onBlur={flush}
-					className="min-h-[92px] px-3.5 py-3 text-sm leading-[22px] pointer-coarse:text-base"
+					className="max-h-72 min-h-[92px] overflow-y-auto px-3.5 py-3 text-sm leading-[22px] pointer-coarse:text-base"
 				/>
 			</div>
 			{!readOnly && (
 				<div className="grid justify-items-start gap-2">
-					<AiNotice />
+					<AiNotice task="reply" application={application} />
 					<Button
 						type="button"
 						size="sm"
@@ -150,14 +169,19 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 	);
 }
 
-type ReplyCardProps = { reply: ReplyItem; readOnly: boolean };
+type ReplyCardProps = { reply: ReplyItem; application: WorkspaceTabProps["application"]; readOnly: boolean };
 
 /** W16: what they're asking, what isn't confirmed, and a reply to edit and send yourself. */
-function ReplyCard({ reply, readOnly }: ReplyCardProps) {
+function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
+	const { i18n } = useLingui();
+	const generate = useGenerate(application.id);
+	const { provider } = useDefaultProvider();
 	const draft = useSessionDraft(`reply:${reply.id}`, reply.data.reply, (value) =>
 		typeof value === "string" && value.length <= 4000 ? value : undefined,
 	);
 	const text = readOnly ? reply.data.reply : draft.value;
+	// The employer's language is the default; this is the explicit way back to the words the user reads everything else in.
+	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
 
 	const copy = async () => {
 		await navigator.clipboard.writeText(text);
@@ -206,6 +230,21 @@ function ReplyCard({ reply, readOnly }: ReplyCardProps) {
 						<span className="text-xs text-ink-3">
 							<Trans>You send it from your own email.</Trans>
 						</span>
+						{!readOnly && provider && (
+							<Button
+								variant="ghost"
+								size="sm"
+								className="ms-auto"
+								loading={generate.isPending}
+								onClick={() =>
+									void generate
+										.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale })
+										.catch(() => undefined)
+								}
+							>
+								<Trans>Write a new reply in {languageName}</Trans>
+							</Button>
+						)}
 					</div>
 				</>
 			)}
@@ -226,18 +265,26 @@ type ProposalCardProps = {
  */
 function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) {
 	const { i18n } = useLingui();
+	const account = getAccountGeneration();
 	const { when, day, timeZone } = useCareerTime();
 	const queryClient = useQueryClient();
 	const invalidate = useInvalidateApplications();
 	const apply = useMutation(orpc.career.applyReply.mutationOptions());
+	const workspace = useWorkspace(application.id);
 	const { lanes } = useApplicationLanes();
 	const hints = useOfferHints(application.status === "offer");
 	const changes = reply.data.changes;
+	const [confirming, setConfirming] = useState<number[] | null>(null);
+	const [submitting, setSubmitting] = useState(false);
 
-	// A stage the application is already at (or can't reach from Saved) is shown fixed: nothing to apply.
+	// A stage the application is already at has nothing to apply. From Saved, the move is one change with its receipt.
 	const fixed = (index: number) => {
 		const change = changes[index];
-		return change?.type === "stage" && (change.stage === application.status || application.status === "saved");
+		return change?.type === "stage" && change.stage === application.status;
+	};
+	const needsSubmission = (index: number) => {
+		const change = changes[index];
+		return application.status === "saved" && change?.type === "stage";
 	};
 	const open = changes.flatMap((_, index) => (fixed(index) ? [] : [index]));
 	const [ticked, setTicked] = useState<number[]>(open);
@@ -265,7 +312,10 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				if (change.stage === application.status)
 					return { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
 				if (application.status === "saved")
-					return { title: t`Move to ${stage}`, detail: t`Mark it as applied in Apply first.` };
+					return {
+						title: t`Mark as applied and move to ${stage}`,
+						detail: t`Asks you to confirm the answers and documents, then records them as sent and moves it.`,
+					};
 				return {
 					title: t`Move to ${stage}`,
 					detail: t`Moves the application from ${getLaneLabel(getDisplayLane(lanes, application))}.`,
@@ -283,14 +333,28 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				};
 			case "offer": {
 				const offer = reply.data.offer;
-				const summary = offer
-					? [offer.base === null ? "" : formatMoney(i18n.locale, offer.currency, offer.base), offer.location]
-							.filter(Boolean)
-							.join(" · ")
-					: "";
+				// Every term the message stated, so a missing deadline or bonus is visible before applying.
+				const terms =
+					offer === null
+						? []
+						: offerTermKeys(offer).map((key) =>
+								key === "base"
+									? t`Base ${formatMoney(i18n.locale, offer.currency, offer.base ?? 0)} ${periodLabel(offer.period)}`
+									: key === "variable"
+										? t`Bonus ${formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)}${
+												offer.variableConditions ? ` (${offer.variableConditions})` : ""
+											}`
+										: key === "equity"
+											? t`Equity ${offer.equity}`
+											: key === "startDate"
+												? t`Starts ${formatDateOnly(offer.startDate ?? "", i18n.locale)}`
+												: t`Respond by ${day(offer.respondBy ?? "")}`,
+							);
 				return {
 					title: t`Save these offer terms to compare`,
-					detail: summary ? t`${summary}. Opens in Career → Offers.` : t`Opens in Career → Offers.`,
+					detail: terms.length
+						? t`${terms.join(" · ")}. Opens in Career → Offers.`
+						: t`No terms were extracted. Opens in Career → Offers.`,
 				};
 			}
 		}
@@ -301,6 +365,11 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 
 	const onApply = () => {
 		const chosen = ticked;
+		// A move from Saved needs the receipt the user confirmed. Nothing is written until that confirmation.
+		if (chosen.some(needsSubmission)) {
+			setConfirming(chosen);
+			return;
+		}
 		setAppliedNow({ changes: chosen, at: new Date() });
 		// A bulk move of this application chosen while the changes wait behind Undo, or are on their way, starts from
 		// the stage they save.
@@ -333,6 +402,59 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 					},
 				),
 		});
+	};
+
+	const confirmedAnswers = workspace.current().answers.filter((answer) => answer.answer.trim()).length;
+	const confirmedDocuments = [
+		...(application.resumeId ? [t`the linked resume`] : []),
+		...(application.coverLetterId ? [t`the linked cover letter`] : []),
+	];
+	const records =
+		confirmedAnswers || confirmedDocuments.length
+			? t`Records ${[
+					...(confirmedAnswers
+						? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })]
+						: []),
+					...confirmedDocuments,
+				].join(", ")} as sent, and moves this application. You submit on the employer's site yourself.`
+			: t`No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself.`;
+
+	const confirmSubmission = async () => {
+		if (!confirming || getAccountGeneration() !== account) return;
+		const saved = stageBaselinesFor(queryClient).write(
+			STAGE_SCOPE,
+			application.id,
+			listedApplication(queryClient, application.id),
+		);
+		setSubmitting(true);
+		try {
+			const current = await workspace.settled();
+			if (getAccountGeneration() !== account) return;
+			const result = await apply.mutateAsync({
+				id: reply.id,
+				changes: confirming,
+				submission: {
+					answers: current.answers,
+					expectedAnswers: current.answers,
+					expectedDocuments: { resumeId: application.resumeId, coverLetterId: application.coverLetterId },
+				},
+			});
+			saved(savedStageIn(result, application.id));
+			setAppliedNow({ changes: confirming, at: new Date() });
+			setConfirming(null);
+			invalidate(application.id);
+			void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
+			void queryClient.invalidateQueries({ queryKey: orpc.career.schedules.key() });
+		} catch {
+			// The single transaction rolled back: the application is still Saved and nothing was recorded.
+			toast.add({
+				type: "error",
+				description: t`Couldn't confirm the application move. Reload this application before retrying.`,
+			});
+		} finally {
+			saved(undefined);
+			setSubmitting(false);
+		}
 	};
 
 	return (
@@ -406,6 +528,25 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 					)}
 				</Swap>
 			)}
+
+			<Dialog open={confirming !== null} onOpenChange={(open) => !open && setConfirming(null)}>
+				<DialogContent className="sm:max-w-[440px]">
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Mark as applied and move it?</Trans>
+						</DialogTitle>
+						<DialogDescription>{records}</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button variant="secondary" disabled={submitting} onClick={() => setConfirming(null)}>
+							<Trans>Cancel</Trans>
+						</Button>
+						<Button loading={submitting} onClick={() => void confirmSubmission()}>
+							<Trans>Mark as applied and move</Trans>
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</aside>
 	);
 }

@@ -45,7 +45,7 @@ import { acceptedStage, offerHintFor, useOfferHints, useStageMovedToast } from "
 import { PIPELINE } from "@/features/applications/stages";
 import { followUpEvent, icsFileName, interviewEvent, shareIcs, zonedParts } from "@/features/reminders";
 import { shareDocumentPdf } from "@/features/share/files";
-import { routes } from "@/routes";
+import { routes, withApplication } from "@/routes";
 import {
 	Button,
 	Card,
@@ -352,7 +352,7 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 				...(resumeId ? { resumeId } : {}),
 			},
 			{
-				onSuccess: (created) => router.push(routes.letter(created.id)),
+				onSuccess: (created) => router.push(withApplication(routes.letter(created.id), application.id)),
 				onError: () => showToast({ message: t`Couldn't create the letter. Try again.` }),
 			},
 		);
@@ -378,7 +378,7 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 						title={t`Edit current draft`}
 						onPress={() => {
 							setMenu(null);
-							router.push(kind === "resume" ? routes.builder(id) : routes.letter(id));
+							router.push(withApplication(kind === "resume" ? routes.builder(id) : routes.letter(id), application.id));
 						}}
 					/>
 					<ListRow
@@ -421,7 +421,10 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 							accessibilityHint={sentResumeVersionId ? t`Opens the version you sent, read-only` : undefined}
 							onPress={() =>
 								router.push(
-									sentResumeVersionId ? routes.history(resumeId, sentResumeVersionId) : routes.builder(resumeId),
+									withApplication(
+										sentResumeVersionId ? routes.history(resumeId, sentResumeVersionId) : routes.builder(resumeId),
+										application.id,
+									),
 								)
 							}
 						/>
@@ -434,7 +437,14 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 							chevron={!drafts}
 							trailing={draftMenu("letter", coverLetterId, letter?.name ?? "letter")}
 							accessibilityHint={sentCoverLetterVersionId ? t`Opens the version you sent, read-only` : undefined}
-							onPress={() => router.push(routes.letter(coverLetterId, "write", sentCoverLetterVersionId ?? undefined))}
+							onPress={() =>
+								router.push(
+									withApplication(
+										routes.letter(coverLetterId, "write", sentCoverLetterVersionId ?? undefined),
+										application.id,
+									),
+								)
+							}
 						/>
 					) : null}
 				</Card>

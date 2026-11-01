@@ -1089,5 +1089,56 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)(
 			expect(requests[0]?.body).toContain("whisper-1");
 			expect(requests[0]?.body).toContain("fictional-recording");
 		});
+		it.each(["unchanged", "application off", "answer cleared"] as const)(
+			"re-projects coach answers at the final SDK dispatch: %s",
+			async (change) => {
+				const provider = await add("coach");
+				await getDb()
+					.insert(tables.application)
+					.values({ id: "app", userId: "alice", company: "Fictional", role: "Engineer" });
+				const privateText = "RX100_PRIVATE_FORM_ANSWER_CLEARED_BEFORE_FIRST_DISPATCH";
+				const answers = [{ id: "answer", question: "Why?", answer: privateText, factIds: [] as string[] }];
+				await career.saveWorkspace("alice", "app", { answers }, { answers: [] });
+				const { agentRouter } = await import("../agent/router");
+				const client = createRouterClient(agentRouter, { context: context(aiDestination(provider)) });
+				const thread = await client.threads.start({
+					scope: "application",
+					applicationId: "app",
+					aiProviderId: provider.id,
+				});
+				const gate = holdAuthorization();
+				requests.length = 0;
+				const pending = (async () => {
+					const stream = await client.messages.send({
+						threadId: thread.id,
+						message: { id: randomUUID(), role: "user", parts: [{ type: "text", text: "Help with this application" }] },
+						context: {
+							application: change !== "application off",
+							memory: false,
+							web: false,
+							tab: "apply",
+						},
+					});
+					for await (const _chunk of stream) {
+						// Drain the real stream through the real SDK/HTTP boundary.
+					}
+				})().catch((error) => error);
+				try {
+					await gate.entered;
+					expect(requests).toHaveLength(0);
+					if (change === "answer cleared") await career.saveWorkspace("alice", "app", { answers: [] }, { answers });
+					gate.release();
+					await pending;
+					const leaked = requests.some((request) => request.body.includes(privateText));
+					expect(leaked).toBe(change === "unchanged");
+					expect(await career.workspaceAnswers("alice", "app")).toHaveLength(change === "answer cleared" ? 0 : 1);
+				} finally {
+					gate.release();
+					gate.restore();
+					await pending;
+				}
+			},
+			30_000,
+		);
 	},
 );

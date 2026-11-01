@@ -1,6 +1,7 @@
+import type { DisclosureApplication } from "../disclosure";
 import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "./shell";
-import type { CareerWorkspace } from "@reactive-resume/schema/career";
+import type { CareerWorkspace, GenerateTask } from "@reactive-resume/schema/career";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -13,8 +14,9 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { DisclosureText } from "../disclosure";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
-import { PrivacyLine, StatusPill, Swap, Working, workingSteps } from "../shared";
+import { StatusPill, Swap, Working, workingSteps } from "../shared";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { toastError } from "@/libs/error-message";
@@ -23,21 +25,31 @@ import { orpc } from "@/libs/orpc/client";
 type FitItem = SavedItem & { data: SavedData<"fit"> };
 type Requirement = SavedData<"fit">["requirements"][number];
 
-type AiNoticeProps = { className?: string };
+type AiNoticeProps = {
+	task?: GenerateTask["task"];
+	application?: DisclosureApplication;
+	interview?: boolean;
+	className?: string;
+};
 
 /**
- * What an AI button in a workspace tab sends, and where; or, with no usable connection, where to add one. Tabs show
- * their AI buttons only when `useDefaultProvider().provider` is set.
+ * What an AI button in a workspace tab sends, and where; or, with no usable connection, where to add one. The list
+ * comes from the same schema the server builds its prompt from. Tabs show their AI buttons only when a provider is set.
  */
-export function AiNotice({ className }: AiNoticeProps) {
+export function AiNotice({ task, application, interview, className }: AiNoticeProps) {
 	const connection = useDefaultProvider();
-	const { provider } = connection;
 	if (connection.isUnavailable) return <AiProviderLoadState state={connection} />;
-	if (!provider) return <SetUpAi />;
+	if (!connection.provider) return <SetUpAi />;
+	// Without a task there is nothing to name; the provider states above still explain how to connect one.
+	if (!task || !application) return null;
 	return (
-		<PrivacyLine className={cn(className)}>
-			{t`Sends this application's posting, notes and documents, plus Knowledge that's switched on, to ${provider.label} · ${provider.model}.`}
-		</PrivacyLine>
+		<DisclosureText
+			task={task}
+			application={application}
+			interview={Boolean(interview)}
+			providerLabel={connection.provider.label}
+			{...(className ? { className } : {})}
+		/>
 	);
 }
 
@@ -91,7 +103,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 					) : undefined
 				}
 			>
-				<AiNotice className="max-w-[420px] text-start" />
+				<AiNotice task="fit" application={application} className="max-w-[420px] text-start" />
 				{evidenceState.isError && (
 					<div role="alert">
 						<p>
@@ -219,7 +231,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 					)}
 				</p>
 			</div>
-			{item.outdated && !readOnly && <AiNotice className="-mt-2" />}
+			{item.outdated && !readOnly && <AiNotice task="fit" application={application} className="-mt-2" />}
 
 			<div
 				role="table"

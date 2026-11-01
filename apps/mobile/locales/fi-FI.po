@@ -429,6 +429,12 @@ msgstr "{0} vähemmän"
 msgid "{0} more"
 msgstr "{0} enemmän"
 
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} characters"
+msgstr ""
+
 #. placeholder {0}: shown.length
 #. placeholder {1}: TEMPLATES.length
 #: src/features/design/template-group.tsx
@@ -442,6 +448,12 @@ msgstr "Kuvassa {0}/{1}"
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{0} ja {1} mukautetut työhakemukset saivat vastauksen; {2} / {3} lähetettiin toisen ansioluettelon kanssa."
+
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} words"
+msgstr ""
 
 #. placeholder {0}: fact.company
 #: src/features/career/facts.tsx
@@ -501,6 +513,11 @@ msgstr ""
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, tulo {1} / {2}"
 
+#. placeholder {0}: terms.join(" · ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "{0}. Opens in Career → Offers."
+msgstr ""
+
 #. placeholder {0}: Math.round(zoom * 100)
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
@@ -543,6 +560,10 @@ msgstr ""
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# asiakirja päivitetty} other {# asiakirjaa päivitetty}}"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "{cost} a year"
@@ -749,10 +770,6 @@ msgstr ""
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# tarina} other {# tarinaa}}"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "{summary}. Opens in Career → Offers."
-msgstr "{summary}. Avautuu kohdassa Ura → Tarjoukset."
 
 #: src/features/workspace/tabs/fit.tsx
 msgid "{supported} supported · {partial} partly · {missing} missing"
@@ -1949,6 +1966,10 @@ msgstr "Pyydä palvelimen järjestelmänvalvojaa ottamaan käyttöön tunnisteti
 msgid "Ask, or describe a change…"
 msgstr "Kysy tai kuvaile muutosta…"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
+msgstr ""
+
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
 msgstr "Kuvasuhde"
@@ -2048,6 +2069,11 @@ msgstr "azeri"
 msgid "Back"
 msgstr "Takaisin"
 
+#. placeholder {0}: application.company
+#: src/shell/editor-origin.ts
+msgid "Back to {0}"
+msgstr ""
+
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/workspace/shell.tsx
@@ -2107,6 +2133,12 @@ msgstr "Taustanauha"
 msgctxt "Entry header accent: a bar beside the header"
 msgid "Bar"
 msgstr "Sivupalkki"
+
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
+#. placeholder {1}: periodLabel(offer.period)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Base {0} {1}"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -2177,6 +2209,12 @@ msgstr "Lihavoitu"
 msgid "Bonus"
 msgstr "Bonus"
 
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
+#: src/features/workspace/tabs/messages.tsx
+msgid "Bonus {0}{1}"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Bonus conditions"
@@ -2212,8 +2250,8 @@ msgid "Briefing ready"
 msgstr "Muistio valmis"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Briefing refresh is on · {next}"
-msgstr "Automaattinen tiedotustilaisuuden päivitys on käytössä · {next}"
+msgid "Briefing refresh is on · {nextAt}"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Briefing refresh paused"
@@ -2283,6 +2321,7 @@ msgstr "Voiko ohjelmisto lukea ansioluettelosi?"
 #: src/features/search/search-screen.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/pickers.tsx
 #: src/linking/open.ts
@@ -2414,6 +2453,11 @@ msgstr "Tarkista uudelleen"
 #: src/features/ats-checker/checker.tsx
 msgid "Check another file"
 msgstr "Tarkista toinen tiedosto"
+
+#. placeholder {0}: proposal.note
+#: src/features/workspace/tabs/apply.tsx
+msgid "Check before accepting: {0}"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "Check DNS"
@@ -3161,6 +3205,10 @@ msgstr ""
 #: src/features/ai/web-access.tsx
 msgid "Couldn't confirm AI connections. Try again before using the assistant."
 msgstr "AI-yhteyksiä ei voitu vahvistaa. Yritä uudelleen ennen kuin käytät avustajaa."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't confirm the application move. Reload this application before retrying."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Couldn't confirm the save. Check Applications before retrying to avoid a duplicate."
@@ -4648,6 +4696,11 @@ msgstr "Sisääntulovaihtoehdot"
 msgid "Equity"
 msgstr "Osakkeet"
 
+#. placeholder {0}: offer.equity
+#: src/features/workspace/tabs/messages.tsx
+msgid "Equity {0}"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Every 3 days"
 msgstr "3 päivän välein"
@@ -4758,10 +4811,6 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
 msgstr "Palaute"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Feedback needs an AI connection. Nothing is sent until you ask."
-msgstr "Palaute vaatii AI-liitännän. Mitään ei lähetetä ennen kuin pyydät."
 
 #. placeholder {0}: index + 1
 #: src/features/write/basics-screen.tsx
@@ -5077,10 +5126,6 @@ msgstr "Hanki avain osoitteessa {0}. Se on tallennettu salattuna ja sitä käyte
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Pyydä palautetta"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Get feedback sends the question, your answer, this posting and your stories to {providerName}."
-msgstr "Pyydä palautetta -toiminto lähettää kysymyksen, vastauksesi, tämän ilmoituksen ja tarinasi palveluun {providerName}."
 
 #: src/features/career/today.tsx
 msgid "Get new roles here every morning"
@@ -5658,6 +5703,10 @@ msgstr "Sen viestit ja liitteet poistetaan. Hyväksytyt muokkaukset pysyvät asi
 msgid "Its own design ({summary})."
 msgstr "Sen oma muotoilu ({summary})."
 
+#: src/features/workspace/parts.tsx
+msgid "its requirements"
+msgstr ""
+
 #: src/features/ai/provider-editor.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "Sen tallennettu avain poistetaan. Sitä käyttävät keskustelut tarvitsevat toisen palveluntarjoajan."
@@ -5848,6 +5897,10 @@ msgstr "Tietopankki"
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "Tietopankkia ei voitu ladata. Yritä uudelleen tai poista tietopankki käytöstä ennen lähettämistä."
 
+#: src/features/workspace/parts.tsx
+msgid "Knowledge that's switched on"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
 msgstr ""
@@ -5881,6 +5934,7 @@ msgstr "Vaiheet järjestävät taulusi. Niiden luokka pitää hakemusten lähett
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/document-menu/index.tsx
+#: src/features/letters/design.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/write/fields.ts
 msgid "Language"
@@ -5950,6 +6004,7 @@ msgstr "Johtaa miksi sovit"
 msgid "Learning budget"
 msgstr "Koulutusbudjetti"
 
+#: app/letter/[id]/_layout.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Leave"
@@ -5975,6 +6030,10 @@ msgstr "Jätä tyhjäksi palauttaaksesi otsikon alkuperäiseksi."
 #: src/features/write/rich-text-field.tsx
 msgid "Leave it empty to remove the link."
 msgstr "Jätä se tyhjäksi poistaaksesi linkin."
+
+#: app/letter/[id]/_layout.tsx
+msgid "Leave without keeping the draft?"
+msgstr ""
 
 #: src/features/design/template-group.tsx
 msgid "Left"
@@ -6479,6 +6538,18 @@ msgstr "Marginaalit asetettu {minimum} pt"
 msgid "Mark as applied"
 msgstr "Merkitse haetuksi"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move it?"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move to {stage}"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Mark as closed"
 msgstr ""
@@ -6491,10 +6562,6 @@ msgstr ""
 msgid "Mark as read"
 msgstr "Merkitse luetuksi"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark it as applied in Apply first."
-msgstr "Merkitse se ensin haetuksi Hakeminen-välilehdellä."
-
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Markdown"
@@ -6503,6 +6570,10 @@ msgstr "Markdown"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Markdown (.md)"
 msgstr "Markdown (.md)"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Marked as applied and moved. You submit on the employer's site yourself."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Marked as applied. The versions you sent are kept."
@@ -7058,6 +7129,10 @@ msgstr "Päivämääriä ei löytynyt."
 msgid "no documents"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "ei muokkauksia"
@@ -7224,6 +7299,10 @@ msgstr "Ei vielä tarinoita"
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "No terms were extracted. Opens in Career → Offers."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -7721,10 +7800,6 @@ msgstr "Avataan kirjettä…"
 msgid "Opening the resume…"
 msgstr "Avataan ansioluetteloa…"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Opens in Career → Offers."
-msgstr "Avautuu kohdassa Ura → Tarjoukset."
-
 #: src/features/application-detail/sections.tsx
 msgid "Opens the version you sent, read-only"
 msgstr ""
@@ -8004,17 +8079,29 @@ msgstr "PDF-tyylit tukevat CSS:n osajoukkoa. Kierto, katkoviivat ja katkoviivat 
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
 msgstr "PDF, Word, Reactive Resume, JSON Resume tai LinkedIn vienti."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per hour"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 msgid "Per hour"
 msgstr "tunnissa"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per month"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 msgid "Per month"
 msgstr "Kuukaudessa"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "per year"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8688,6 +8775,11 @@ msgstr "Äänitys pysähtyi 2 minuutin rajaan. Litteroidaan sanomaasi."
 msgid "Recording time"
 msgstr "Äänitysaika"
 
+#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
@@ -8740,6 +8832,10 @@ msgstr "Viittaus"
 #: src/features/career/stories.tsx
 msgid "Reflection"
 msgstr "Pohdinta"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Refresh the briefing"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing 2 hours before"
@@ -9059,6 +9155,11 @@ msgstr "Palauta suunnittelun oletusasetukset"
 msgid "Respond by"
 msgstr "Vastattava viimeistään"
 
+#. placeholder {0}: day(offer.respondBy ?? "")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Respond by {0}"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "respond by {respondBy}"
 msgstr ""
@@ -9331,10 +9432,6 @@ msgstr "Tarkista työn tiedot"
 msgid "Review my answer"
 msgstr "Arvioi vastaukseni"
 
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
-msgstr "Arvioi vastaukseni -toiminto lähettää kysymyksen, sanomasi, tämän ilmoituksen ja tietopankkisi palveluun {providerName}."
-
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
@@ -9383,10 +9480,6 @@ msgstr ""
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Reviewing needs an AI connection. What you write here stays on this device until then."
-msgstr "Tarkastelu vaatii AI-yhteyden. Se, mitä kirjoitat tähän, pysyy tällä laitteella siihen asti."
 
 #: src/features/settings/api-keys.tsx
 msgid "Revoke"
@@ -9965,27 +10058,43 @@ msgstr "Lähettäjän tiedot kopioitu kirjeeseen"
 msgid "Sending…"
 msgstr "Lähetetään…"
 
+#. placeholder {0}: formatList(i18n.locale, labels)
+#: src/features/workspace/parts.tsx
+msgid "Sends {0} to {label}."
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
-#. placeholder {0}: ai.defaultProvider.label
-#. placeholder {1}: ai.defaultProvider.model
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
 #: src/features/letters/write.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
 msgstr ""
 
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
-msgstr "Lähettää tämän hakemuksen (ilmoituksen, muistiinpanot ja haastattelutiedot) sekä tietopankin käytössä olevat tiedot palvelulle {name}."
+#. placeholder {0}: providers.defaultProvider.label
+#: src/features/applications/add-sheet.tsx
+msgid "Sends the posting text to {0} to read it."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr ""
 
-#: src/features/workspace/parts.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
-msgstr "Lähettää hakemuksen ilmoituksen, muistiinpanot ja asiakirjat sekä tietopankin käytössä olevat tiedot palvelulle {label}."
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
+msgstr ""
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
+msgstr ""
 
 #. placeholder {0}: ai.defaultProvider.label
 #. placeholder {1}: ai.defaultProvider.model
@@ -9998,8 +10107,8 @@ msgid "Sends this PDF to your configured AI provider instead of reading its text
 msgstr "Lähettää tämän PDF:n määritetylle tekoälypalveluntarjoajalle sen tekstikerroksen lukemisen sijaan."
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
-msgstr "Lähettää viestisi, aiemmat viestit, tämän työhakemuksen (ilmoituksen, muistiinpanot ja lähetetyt asiakirjat) sekä käyttöön otetut tiedot Tietopankista palvelulle {label}."
+msgid "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgstr ""
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -10694,12 +10803,25 @@ msgstr "Aloita niistä osista, jotka useimmissa ansioluetteloissa on."
 msgid "Start with your name. Build from there."
 msgstr "Aloita nimelläsi. Jatka siitä."
 
+#: src/features/career/offers.tsx
+msgid "Starts"
+msgstr ""
+
+#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Starts {0}"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Starts now"
 msgstr "Alkaa nyt"
 
 #: src/features/settings/application-profile.tsx
 msgid "State or region"
+msgstr ""
+
+#: app/letter/[id]/_layout.tsx
+msgid "Stay"
 msgstr ""
 
 #: src/features/documents/new-document.tsx
@@ -11168,6 +11290,10 @@ msgstr ""
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "the cover letter for this job"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -11176,6 +11302,10 @@ msgstr "Nykyinen tila tallennetaan ensin nimellä ”Ennen palautusta”."
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Editori avaa Tarkistus-paneelin, joka tarkistaa tuodun ansioluettelon uudelleen."
+
+#: src/features/workspace/parts.tsx
+msgid "the employer's message"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "The end is before the start."
@@ -11189,6 +11319,10 @@ msgstr "Seurantamuistutus tallennettu. Salli ilmoitukset laitteen asetuksista sa
 msgid "The greeting follows the name."
 msgstr "Tervehdys seuraa nimeä."
 
+#: src/features/workspace/parts.tsx
+msgid "the interview details"
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "Haastattelu on tallennettu. Jos haluat saada muistutuksen, salli ilmoitukset laitteen asetuksista."
@@ -11199,6 +11333,10 @@ msgstr "Avain on salattu palvelimella, eikä sitä koskaan näytetä uudelleen. 
 
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "the last messages"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -11224,6 +11362,14 @@ msgstr "Kirje vastaa jälleen ansioluettelon ulkoasua"
 #: src/features/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "Linja muuttui kysymästäsi, joten sitä ei vaihdettu."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked cover letter"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked resume"
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "the message"
@@ -11261,6 +11407,14 @@ msgstr ""
 msgid "The provider reported a server error. Try again later."
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "the question and what you said"
+msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "the question and your answer"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Syy säilytetään Insightsissa. Linkitettyihin asiakirjoihin ei kosketa."
@@ -11277,6 +11431,10 @@ msgstr "Loput tiedostosta eivät ole tässä raportissa."
 msgid "The resume as it is"
 msgstr "Ansioluettelo sellaisena kuin se on"
 
+#: src/features/workspace/parts.tsx
+msgid "the resume for this job"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
 msgstr "Sama rivi toistuu jokaisella sivulla."
@@ -11288,6 +11446,10 @@ msgstr "Tallennettua avainta ei lähetetä uuteen perus-URL-osoitteeseen. Anna a
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Tallennettua avainta ei lähetetä uuteen perus-URL-osoitteeseen. Anna avain uudelleen."
+
+#: src/features/workspace/parts.tsx
+msgid "the saved offer"
+msgstr ""
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -11624,6 +11786,10 @@ msgstr "Tässä PDF:ssa ei ole tekstikerrosta, joten jäsentäjä ei lue siitä 
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Tämä PDF on salasanasuojattu. Tallenna suojaamaton kopio ja yritä uudelleen."
 
+#: src/features/workspace/parts.tsx
+msgid "this posting"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr ""
@@ -11815,6 +11981,10 @@ msgstr "Vaihda valinta"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Tomorrow"
 msgstr "Huomenna"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Too close to the interview to schedule a refresh."
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
@@ -12670,6 +12840,10 @@ msgstr "Mikä toimii"
 msgid "When do you need a decision?"
 msgstr "Milloin tarvitset päätöksen?"
 
+#: src/features/career/offers.tsx
+msgid "When would you start?"
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "When you tap send, {list} go to {connection}."
 msgstr "Kun napautat lähetä, {list} lähetetään yhteyteen {connection}."
@@ -12788,6 +12962,10 @@ msgstr ""
 msgid "Write a letter"
 msgstr "Kirjoita kirje"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Write a new reply in {languageName}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"
 msgstr ""
@@ -12835,6 +13013,10 @@ msgstr "Kirjoita, mitä teit."
 #: src/features/workspace/tabs/apply.tsx
 msgid "Write your answer, or draft one from your Knowledge."
 msgstr "Kirjoita vastauksesi tai luonnostele se tietopankistasi."
+
+#: src/features/letters/design.tsx
+msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -12954,11 +13136,6 @@ msgstr "Olet offline-tilassa. Yritä uudelleen, kun muodostat yhteyden uudelleen
 msgid "You're up to date"
 msgstr "Olet ajan tasalla"
 
-#: src/features/workspace/tabs/debrief.tsx
-#: src/features/workspace/tabs/practise.tsx
-msgid "your AI connection"
-msgstr "tekoälyyhteytesi"
-
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"
 msgstr "Tekoälyyhteytesi"
@@ -12974,6 +13151,10 @@ msgstr "Vastauksesi"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your answer · {mode}"
 msgstr "Vastauksesi · {mode}"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Your answer changed while this was drafted. Draft again to review the newer version."
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your attempts"
@@ -12994,6 +13175,10 @@ msgstr "Tässä laitteessa tekemäsi muutokset korvataan tallennetulla versiolla
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Yhteystietosi eivät ole ensimmäisellä sivulla."
+
+#: src/features/workspace/parts.tsx
+msgid "your contacts"
+msgstr ""
 
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
@@ -13026,6 +13211,10 @@ msgstr "Faktasi, tarinasi ja mieltymyksesi. Tietopankin muokkaaminen ei lähetä
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your focus"
 msgstr "Painopisteesi"
+
+#: src/features/workspace/parts.tsx
+msgid "your form answers"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
@@ -13063,6 +13252,7 @@ msgstr "Nimesi osoitteeksesi OlaCV:ltä, .cv-verkkotunnusten rekisterinpitäjäl
 msgid "Your name is missing"
 msgstr "Nimesi puuttuu"
 
+#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "muistiinpanosi"
@@ -13080,6 +13270,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "Puhelinnumerosi on kirjoitettu epätavallisessa muodossa."
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "toiveesi"
 
@@ -13180,6 +13371,10 @@ msgstr "Tarinaasi ei voitu ladata."
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "Kahden minuutin esittelysi"
+
+#: app/letter/[id]/_layout.tsx
+msgid "Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening this application."

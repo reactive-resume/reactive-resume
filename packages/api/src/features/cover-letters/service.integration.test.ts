@@ -50,7 +50,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			auto_slug boolean NOT NULL DEFAULT false,
 			trashed_at timestamptz, password text, application_id text, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), edited_at timestamptz DEFAULT now());
 			CREATE TABLE resume_version (id text PRIMARY KEY, resume_id text, user_id text, data jsonb, kind text, session_id text, name text, created_at timestamptz NOT NULL DEFAULT now());
-			CREATE UNIQUE INDEX resume_version_session_unique ON resume_version(resume_id,session_id) WHERE kind='auto'; CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz, resume_id text, status text DEFAULT 'saved', sent_resume_version_id text);`,
+			CREATE UNIQUE INDEX resume_version_session_unique ON resume_version(resume_id,session_id) WHERE kind='auto'; CREATE TABLE application (id text PRIMARY KEY, user_id text, company text NOT NULL DEFAULT '', contacts jsonb NOT NULL DEFAULT '[]', cover_letter_id text, updated_at timestamptz, resume_id text, status text DEFAULT 'saved', sent_resume_version_id text, posting_source jsonb);`,
 		);
 		// The migrations that shape the letter tables, in order.
 		for (const name of [
@@ -868,6 +868,35 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		]);
 	});
 
+	it("starts a letter in the posting's language and keeps its language independent of the design link", async () => {
+		await getPool().query(
+			`UPDATE application SET company='Lumen Health', posting_source='{"method":"builtin","format":"text","truncated":false,"completeness":"unknown","language":"de-DE"}' WHERE id='alice-app'`,
+		);
+		const created = await service.create({
+			userId: "alice",
+			name: "Auf Deutsch",
+			resumeId: "alice-resume",
+			applicationId: "alice-app",
+		});
+		expect(created.style.metadata.page.locale).toBe("de-DE");
+		expect(created.designLinked).toBe(true);
+
+		// Changing the letter's language is not changing its design: the link and the resume's own locale stay.
+		const updated = await service.update({
+			userId: "alice",
+			id: created.id,
+			expectedRevision: 1,
+			locale: "fr-FR",
+		});
+		expect(updated.style.metadata.page.locale).toBe("fr-FR");
+		expect(updated.designLinked).toBe(true);
+		expect((await service.getById({ userId: "alice", id: created.id })).style.metadata.page.locale).toBe("fr-FR");
+		const resume = await getPool().query(
+			"SELECT data->'metadata'->'page'->>'locale' AS locale FROM resume WHERE id='alice-resume'",
+		);
+		expect(resume.rows[0].locale).not.toBe("fr-FR");
+	});
+
 	it("reads linked details and design live, keeps them as they read when unlinked, and outlives the resume", async () => {
 		const created = await service.create({
 			userId: "alice",
@@ -882,7 +911,8 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [changed]);
 		expect((await service.getById({ userId: "alice", id: created.id })).style).toMatchObject({
 			basics: { name: "New sender" },
-			metadata: { template: "gengar", page: { locale: "de-DE" } },
+			// The resume's design arrives; the letter's own language stays its own.
+			metadata: { template: "gengar", page: { locale: "en-US" } },
 		});
 
 		const unlinked = await service.update({
@@ -908,11 +938,11 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		const own = await service.update({ userId: "alice", id: created.id, expectedRevision: 2, template: "ditto" });
 		expect(own).toMatchObject({
 			designLinked: false,
-			style: { metadata: { template: "ditto", page: { locale: "de-DE" } } },
+			style: { metadata: { template: "ditto", page: { locale: "en-US" } } },
 		});
 		changed.metadata.page.locale = "en-US";
 		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [changed]);
-		expect((await service.getById({ userId: "alice", id: created.id })).style.metadata.page.locale).toBe("de-DE");
+		expect((await service.getById({ userId: "alice", id: created.id })).style.metadata.page.locale).toBe("en-US");
 
 		await expect(
 			service.update({ userId: "alice", id: created.id, expectedRevision: 3, resumeId: null, senderLinked: true }),

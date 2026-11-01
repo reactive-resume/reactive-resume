@@ -1,6 +1,13 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import { readPage, searchWeb } from "../web-access/service";
-import { fetchJobPosting, htmlToText, readJobPosting, readOpenPosting, searchJobPostings } from "./posting";
+import {
+	decodeEscapedNewlines,
+	fetchJobPosting,
+	htmlToText,
+	readJobPosting,
+	readOpenPosting,
+	searchJobPostings,
+} from "./posting";
 
 vi.mock("../web-access/service", () => ({
 	readPage: vi.fn(),
@@ -15,6 +22,28 @@ describe("htmlToText", () => {
 		const html =
 			"<head><title>x</title></head><h1>Designer</h1><p>Figma &amp; research</p><script>alert(1)</script><ul><li>5+ years</li></ul>";
 		expect(htmlToText(html)).toBe("Designer\nFigma & research\n5+ years");
+	});
+	it("drops an application form, its controls and EEO boilerplate but keeps the role description", () => {
+		const html = `<main>
+			<h1>Senior Platform Engineer</h1>
+			<p>Own the reliability of payments services.</p>
+			<form action="/apply"><label>First name</label><select><option>Select…</option></select>
+				<button>Submit application</button></form>
+			<fieldset><legend>Veteran Status</legend><label>I am a protected veteran</label></fieldset>
+			<p>We are an equal opportunity employer.</p>
+		</main>`;
+		const text = htmlToText(html);
+		expect(text).toContain("Own the reliability of payments services.");
+		expect(text).not.toMatch(/First name|Select…|Submit application|Veteran Status|protected veteran/);
+	});
+});
+
+describe("escaped newlines", () => {
+	it("decodes literal \\n in prose without touching inline code", () => {
+		expect(decodeEscapedNewlines("any way we can. \\nSpotify is an equal opportunity employer.")).toBe(
+			"any way we can. \nSpotify is an equal opportunity employer.",
+		);
+		expect(decodeEscapedNewlines('use `printf("\\n")` to add a newline')).toBe('use `printf("\\n")` to add a newline');
 	});
 });
 
@@ -75,6 +104,7 @@ describe("readJobPosting", () => {
 			company: "Lumen Health",
 			location: "Berlin, DE",
 			description: "Design calm tools.\nFigma",
+			language: "",
 			closesAt: "",
 		});
 	});

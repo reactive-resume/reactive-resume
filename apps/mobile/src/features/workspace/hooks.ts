@@ -147,16 +147,16 @@ export function useSavedItems(applicationId: string) {
 	return useQuery({ ...options, queryKey: [...options.queryKey, server], enabled });
 }
 
-export function useFacts(applicationId: string) {
-	const { server, enabled } = useSignedIn();
+export function useFacts(applicationId: string, enabled = true) {
+	const { server, enabled: signedIn } = useSignedIn();
 	const options = orpc.career.facts.queryOptions({ input: { applicationId } });
-	return useQuery({ ...options, queryKey: [...options.queryKey, server], enabled });
+	return useQuery({ ...options, queryKey: [...options.queryKey, server], enabled: signedIn && enabled });
 }
 
-export function useStories(applicationId: string) {
-	const { server, enabled } = useSignedIn();
+export function useStories(applicationId: string, enabled = true) {
+	const { server, enabled: signedIn } = useSignedIn();
 	const options = orpc.career.stories.queryOptions({ input: { applicationId } });
-	return useQuery({ ...options, queryKey: [...options.queryKey, server], enabled });
+	return useQuery({ ...options, queryKey: [...options.queryKey, server], enabled: signedIn && enabled });
 }
 
 export function useSchedules() {

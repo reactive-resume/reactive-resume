@@ -6,7 +6,9 @@ export function applicationError(error: unknown) {
 		if (error.code === "POSTING_SUPPORT_UNAVAILABLE")
 			return t`Reading without AI couldn't be confirmed. Retry, update your server, or enter the details manually.`;
 		if (error.code === "CONFLICT") return t`This changed elsewhere. Reload and try again.`;
-		if (error.code === "POSTING_UNREADABLE") return t`That link couldn't be read. Paste the posting text instead.`;
+		if (error.code === "POSTING_UNREADABLE")
+			// The server names the cause (a board's list of jobs, or a page that would not open) and the next step.
+			return error.message || t`That link couldn't be read. Paste the posting text instead.`;
 		if (error.code === "SEARCH_AUTH") return t`The web service rejected its key. Fix web access or paste a posting.`;
 		if (error.code === "SEARCH_QUOTA") return t`The web service quota is used up. Fix web access or paste a posting.`;
 		if (error.code === "SEARCH_FAILED") return t`Job search couldn't be reached. Try again or paste a posting link.`;

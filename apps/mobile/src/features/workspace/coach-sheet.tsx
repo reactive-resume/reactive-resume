@@ -64,7 +64,7 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 	const context: MessageContext = { document: true, posting: true, application: true, memory: true, web: false, tab };
 	const company = application.company;
 	const tabName = tabLabel(tab);
-	const privacy = t`Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to ${label}.`;
+	const privacy = t`Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${label}.`;
 
 	return (
 		<View style={{ height: height * 0.7 }}>

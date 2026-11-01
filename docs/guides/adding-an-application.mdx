@@ -86,7 +86,9 @@ If search is available on your installation, the **Save a job** dialog also show
   </Step>
   <Step title="Read and review">
     Select **Read posting**, then review **Saved description** and the role, company, location and salary. Correct
-    missing or inaccurate details. If the page cannot be read, use **Paste description instead**.
+    missing or inaccurate details. If the page cannot be read, use **Paste description instead**. The reason stays above
+    the paste field: a board's list of jobs says to open one posting, and other failures name what to do next. Opening
+    the paste field never pretends the read succeeded.
   </Step>
   <Step title="Save the job">
     Choose the appropriate stage, then select **Save job**, **Record application** or **Save and prepare resume**, as
@@ -107,7 +109,19 @@ If search fails or finds nothing useful, change your keywords or paste a posting
 | A job link   | Saves the page text; may fill role, company and location from structured job details. | May also fill salary and a short list of what the job asks for. |
 | Posting text | Saves the text. Fill in the role and company yourself.                                | May fill role, company, location, salary and requirements.      |
 
-Pasted text is saved up to 20,000 characters. A link keeps its original address; its description stays empty until you read it or paste text. Review **Saved description** after reading. If the description is clipped or incomplete, use **Paste description instead** to replace it before preparing your resume; the original link is retained. Source details such as retrieval time appear when available, and do not guarantee the posting is current.
+Pasted text is saved up to 20,000 characters. A link keeps its original address; its description stays empty until you read it or paste text. A long **Saved description** scrolls inside its own box, so the role, company and save buttons stay reachable.
+
+<Frame caption="Long pasted text and the saved description each scroll inside their own box. Role, company and Save job stay reachable below them.">
+  <img
+    src="/images/guides/adding-an-application/long-description.png"
+    alt="Save a job dialog with a long posting text and Saved description both limited to about a dozen visible lines, with Role, Company, Stage and Save job visible below"
+  />
+</Frame>
+Review **Saved description** after reading. If the description is clipped or incomplete, use **Paste description
+instead** to replace it before preparing your resume; the original link is retained. Source details such as retrieval
+time appear when available, and do not guarantee the posting is current.
+
+When a page publishes structured job data, its own title and company are kept over anything a model suggests, and escaped line breaks in its description are decoded. The employer's exact title is what their application system and emails use. Application forms, their buttons and selectors, and equal-opportunity or veteran boilerplate are left out of the saved description; the role's own text is kept.
 
 AI enrichment is optional. If it fails, the retrieved description is retained so you can complete the fields manually. When you pasted the posting text yourself and AI couldn't read it, the text stays in **Job link or posting text** and is saved from there; no second **Saved description** box appears.
 

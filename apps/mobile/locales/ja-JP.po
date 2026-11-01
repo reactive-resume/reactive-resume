@@ -429,6 +429,12 @@ msgstr "{0}少ない"
 msgid "{0} more"
 msgstr "{0}多い"
 
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} characters"
+msgstr ""
+
 #. placeholder {0}: shown.length
 #. placeholder {1}: TEMPLATES.length
 #: src/features/design/template-group.tsx
@@ -442,6 +448,12 @@ msgstr "{1} の {0} を表示"
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{1} に適合した求人応募のうち {0} が返信を受け取りました。 {3} の {2} に別の履歴書を添付して送信しました。"
+
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} words"
+msgstr ""
 
 #. placeholder {0}: fact.company
 #: src/features/career/facts.tsx
@@ -501,6 +513,11 @@ msgstr ""
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}、エントリ {1}/{2}"
 
+#. placeholder {0}: terms.join(" · ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "{0}. Opens in Career → Offers."
+msgstr ""
+
 #. placeholder {0}: Math.round(zoom * 100)
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
@@ -543,6 +560,10 @@ msgstr ""
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {書類#件を更新しました} other {書類#件を更新しました}}"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "{cost} a year"
@@ -749,10 +770,6 @@ msgstr ""
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {#件のストーリー}}"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "{summary}. Opens in Career → Offers."
-msgstr "{summary}。キャリア → オファーで開きます。"
 
 #: src/features/workspace/tabs/fit.tsx
 msgid "{supported} supported · {partial} partly · {missing} missing"
@@ -1949,6 +1966,10 @@ msgstr "サーバー管理者に、資格情報の暗号化を有効にするか
 msgid "Ask, or describe a change…"
 msgstr "変更について尋ねたり、説明したりしてください…"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
+msgstr ""
+
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
 msgstr "アスペクト比"
@@ -2048,6 +2069,11 @@ msgstr "アゼルバイジャン語"
 msgid "Back"
 msgstr "戻る"
 
+#. placeholder {0}: application.company
+#: src/shell/editor-origin.ts
+msgid "Back to {0}"
+msgstr ""
+
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/workspace/shell.tsx
@@ -2107,6 +2133,12 @@ msgstr "帯"
 msgctxt "Entry header accent: a bar beside the header"
 msgid "Bar"
 msgstr "バー"
+
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
+#. placeholder {1}: periodLabel(offer.period)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Base {0} {1}"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -2177,6 +2209,12 @@ msgstr "太字"
 msgid "Bonus"
 msgstr "ボーナス"
 
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
+#: src/features/workspace/tabs/messages.tsx
+msgid "Bonus {0}{1}"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Bonus conditions"
@@ -2212,8 +2250,8 @@ msgid "Briefing ready"
 msgstr "ブリーフィングの準備ができました"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Briefing refresh is on · {next}"
-msgstr "ブリーフィングの更新がオンになっています · {next}"
+msgid "Briefing refresh is on · {nextAt}"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Briefing refresh paused"
@@ -2283,6 +2321,7 @@ msgstr "ソフトウェアはあなたの履歴書を読み取ることができ
 #: src/features/search/search-screen.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/pickers.tsx
 #: src/linking/open.ts
@@ -2414,6 +2453,11 @@ msgstr "もう一度確認"
 #: src/features/ats-checker/checker.tsx
 msgid "Check another file"
 msgstr "別のファイルを確認してください"
+
+#. placeholder {0}: proposal.note
+#: src/features/workspace/tabs/apply.tsx
+msgid "Check before accepting: {0}"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "Check DNS"
@@ -3161,6 +3205,10 @@ msgstr ""
 #: src/features/ai/web-access.tsx
 msgid "Couldn't confirm AI connections. Try again before using the assistant."
 msgstr "AI接続が確認できませんでした。アシスタントを使用する前にもう一度試してください。"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't confirm the application move. Reload this application before retrying."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Couldn't confirm the save. Check Applications before retrying to avoid a duplicate."
@@ -4648,6 +4696,11 @@ msgstr "エントリーオプション"
 msgid "Equity"
 msgstr "株式報酬"
 
+#. placeholder {0}: offer.equity
+#: src/features/workspace/tabs/messages.tsx
+msgid "Equity {0}"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Every 3 days"
 msgstr "3日ごと"
@@ -4758,10 +4811,6 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
 msgstr "フィードバック"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Feedback needs an AI connection. Nothing is sent until you ask."
-msgstr "フィードバックには AI 接続が必要です。問い合わせるまで何も送信されません。"
 
 #. placeholder {0}: index + 1
 #: src/features/write/basics-screen.tsx
@@ -5077,10 +5126,6 @@ msgstr "Get a key at {0}.暗号化されて保存され、リクエストにの�
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "フィードバックをもらう"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Get feedback sends the question, your answer, this posting and your stories to {providerName}."
-msgstr "「フィードバックをもらう」を押すと、質問、あなたの回答、この求人情報、あなたのストーリーが{providerName}に送信されます。"
 
 #: src/features/career/today.tsx
 msgid "Get new roles here every morning"
@@ -5658,6 +5703,10 @@ msgstr "メッセージと添付ファイルは削除されます。受け入れ
 msgid "Its own design ({summary})."
 msgstr "独自のデザイン（{summary}）。"
 
+#: src/features/workspace/parts.tsx
+msgid "its requirements"
+msgstr ""
+
 #: src/features/ai/provider-editor.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "保存されているキーは削除されます。これを使用した会話には別のプロバイダーが必要です。"
@@ -5848,6 +5897,10 @@ msgstr "ナレッジ"
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "ナレッジを読み込めませんでした。もう一度試すか、送信前にナレッジをオフにしてください。"
 
+#: src/features/workspace/parts.tsx
+msgid "Knowledge that's switched on"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
 msgstr ""
@@ -5881,6 +5934,7 @@ msgstr "ステージでボードを整理できます。カテゴリによって
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/document-menu/index.tsx
+#: src/features/letters/design.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/write/fields.ts
 msgid "Language"
@@ -5950,6 +6004,7 @@ msgstr "あなたが適合する理由を導きます"
 msgid "Learning budget"
 msgstr "学習予算"
 
+#: app/letter/[id]/_layout.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Leave"
@@ -5975,6 +6030,10 @@ msgstr "空欄のままにすると、タイトルは元の名前にリセット
 #: src/features/write/rich-text-field.tsx
 msgid "Leave it empty to remove the link."
 msgstr "リンクを削除するには、空のままにしておきます。"
+
+#: app/letter/[id]/_layout.tsx
+msgid "Leave without keeping the draft?"
+msgstr ""
 
 #: src/features/design/template-group.tsx
 msgid "Left"
@@ -6479,6 +6538,18 @@ msgstr "マージンを {minimum} ポイントに設定"
 msgid "Mark as applied"
 msgstr "応募済みにする"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move it?"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move to {stage}"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Mark as closed"
 msgstr ""
@@ -6491,10 +6562,6 @@ msgstr ""
 msgid "Mark as read"
 msgstr "既読にする"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark it as applied in Apply first."
-msgstr "先に「応募する」で応募済みにしてください。"
-
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Markdown"
@@ -6503,6 +6570,10 @@ msgstr "Markdown"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Markdown (.md)"
 msgstr "Markdown (.md)"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Marked as applied and moved. You submit on the employer's site yourself."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Marked as applied. The versions you sent are kept."
@@ -7058,6 +7129,10 @@ msgstr "日付が見つかりませんでした。"
 msgid "no documents"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "編集はありません"
@@ -7224,6 +7299,10 @@ msgstr "まだストーリーがありません"
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "No terms were extracted. Opens in Career → Offers."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -7721,10 +7800,6 @@ msgstr "カバーレターを開いています…"
 msgid "Opening the resume…"
 msgstr "レジュメを開いて…"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Opens in Career → Offers."
-msgstr "キャリア → オファーで開きます。"
-
 #: src/features/application-detail/sections.tsx
 msgid "Opens the version you sent, read-only"
 msgstr ""
@@ -8004,17 +8079,29 @@ msgstr "PDF スタイルは、CSS のサブセットをサポートします。�
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
 msgstr "PDF、Word、Reactive Resume、JSON Resume または LinkedIn エクスポート。"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per hour"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 msgid "Per hour"
 msgstr "1時間あたり"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per month"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 msgid "Per month"
 msgstr "月あたり"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "per year"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8688,6 +8775,11 @@ msgstr "2分の上限に達したため録音を停止しました。話した�
 msgid "Recording time"
 msgstr "録音時間"
 
+#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
@@ -8740,6 +8832,10 @@ msgstr "紹介"
 #: src/features/career/stories.tsx
 msgid "Reflection"
 msgstr "学び"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Refresh the briefing"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing 2 hours before"
@@ -9059,6 +9155,11 @@ msgstr "デザインのデフォルトをリセットする"
 msgid "Respond by"
 msgstr "回答期限"
 
+#. placeholder {0}: day(offer.respondBy ?? "")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Respond by {0}"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "respond by {respondBy}"
 msgstr ""
@@ -9331,10 +9432,6 @@ msgstr "ジョブの詳細を確認する"
 msgid "Review my answer"
 msgstr "回答をレビュー"
 
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
-msgstr "「回答をレビュー」を押すと、質問、あなたが話した内容、この求人情報、あなたのナレッジが{providerName}に送信されます。"
-
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
@@ -9383,10 +9480,6 @@ msgstr ""
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Reviewing needs an AI connection. What you write here stays on this device until then."
-msgstr "レビューには AI 接続が必要です。ここに書いた内容は、それまでこのデバイスに残ります。"
 
 #: src/features/settings/api-keys.tsx
 msgid "Revoke"
@@ -9965,27 +10058,43 @@ msgstr "送信者の詳細をレターにコピーしました"
 msgid "Sending…"
 msgstr "送信中…"
 
+#. placeholder {0}: formatList(i18n.locale, labels)
+#: src/features/workspace/parts.tsx
+msgid "Sends {0} to {label}."
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
-#. placeholder {0}: ai.defaultProvider.label
-#. placeholder {1}: ai.defaultProvider.model
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
 #: src/features/letters/write.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
 msgstr ""
 
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
-msgstr "この応募 (職務内容、メモ、面接の詳細) と ナレッジ の有効なコンテンツを {name} に送信します。"
+#. placeholder {0}: providers.defaultProvider.label
+#: src/features/applications/add-sheet.tsx
+msgid "Sends the posting text to {0} to read it."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr ""
 
-#: src/features/workspace/parts.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
-msgstr "この応募の求人説明、メモ、書類に加えて、ナレッジ の有効なコンテンツを {label} に送信します。"
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
+msgstr ""
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
+msgstr ""
 
 #. placeholder {0}: ai.defaultProvider.label
 #. placeholder {1}: ai.defaultProvider.model
@@ -9998,8 +10107,8 @@ msgid "Sends this PDF to your configured AI provider instead of reading its text
 msgstr "テキスト レイヤーを読み取る代わりに、この PDF を構成済みの AI プロバイダーに送信します。"
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
-msgstr "メッセージ、過去のメッセージ、この応募の情報（求人情報、メモ、送付済みの書類）、およびナレッジで有効にした情報を{label}に送信します。"
+msgid "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgstr ""
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -10694,12 +10803,25 @@ msgstr "ほとんどの履歴書にあるセクションから始めます。"
 msgid "Start with your name. Build from there."
 msgstr "まずはあなたの名前から始めましょう。そこから構築します。"
 
+#: src/features/career/offers.tsx
+msgid "Starts"
+msgstr ""
+
+#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Starts {0}"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Starts now"
 msgstr "今から開始"
 
 #: src/features/settings/application-profile.tsx
 msgid "State or region"
+msgstr ""
+
+#: app/letter/[id]/_layout.tsx
+msgid "Stay"
 msgstr ""
 
 #: src/features/documents/new-document.tsx
@@ -11168,6 +11290,10 @@ msgstr ""
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "the cover letter for this job"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -11176,6 +11302,10 @@ msgstr "最初に現在の状態が「復元前」として保存されます。
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "エディターは「チェック」で開き、取り込んだレジュメを再チェックします。"
+
+#: src/features/workspace/parts.tsx
+msgid "the employer's message"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "The end is before the start."
@@ -11189,6 +11319,10 @@ msgstr "フォローアップが保存されます。リマインダーを取得
 msgid "The greeting follows the name."
 msgstr "名前の後に挨拶が続きます。"
 
+#: src/features/workspace/parts.tsx
+msgid "the interview details"
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "面接は保存されます。リマインダーを取得するには、デバイスの設定で通知を許可します。"
@@ -11199,6 +11333,10 @@ msgstr "キーはサーバー上で暗号化され、再度表示されること
 
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "the last messages"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -11224,6 +11362,14 @@ msgstr "その手紙は再び履歴書のデザインと一致します"
 #: src/features/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "あなたが質問してから回線が変更されたため、置き換えられませんでした。"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked cover letter"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked resume"
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "the message"
@@ -11261,6 +11407,14 @@ msgstr ""
 msgid "The provider reported a server error. Try again later."
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "the question and what you said"
+msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "the question and your answer"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "理由はインサイトのために保持されます。リンクされたドキュメントは変更されません。"
@@ -11277,6 +11431,10 @@ msgstr "ファイルの残りの部分はこのレポートには含まれてい
 msgid "The resume as it is"
 msgstr "履歴書そのまま"
 
+#: src/features/workspace/parts.tsx
+msgid "the resume for this job"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
 msgstr "同じ行がすべてのページに繰り返し表示されています。"
@@ -11288,6 +11446,10 @@ msgstr "保存されたキーは新しいベース URL には送信されませ�
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "保存されたキーは新しいベース URL には送信されません。再度キーを入力してください。"
+
+#: src/features/workspace/parts.tsx
+msgid "the saved offer"
+msgstr ""
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -11624,6 +11786,10 @@ msgstr "この PDF にはテキスト レイヤーがないため、パーサー
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "このPDFはパスワードで保護されています。保護されていないコピーを保存してから、もう一度お試しください。"
 
+#: src/features/workspace/parts.tsx
+msgid "this posting"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr ""
@@ -11815,6 +11981,10 @@ msgstr "選択の切り替え"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Tomorrow"
 msgstr "明日"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Too close to the interview to schedule a refresh."
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
@@ -12670,6 +12840,10 @@ msgstr "何が機能しているのか"
 msgid "When do you need a decision?"
 msgstr "決断が必要になるのはいつですか?"
 
+#: src/features/career/offers.tsx
+msgid "When would you start?"
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "When you tap send, {list} go to {connection}."
 msgstr "送信をタップすると、{list} が {connection} に送られます。"
@@ -12788,6 +12962,10 @@ msgstr ""
 msgid "Write a letter"
 msgstr "手紙を書く"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Write a new reply in {languageName}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"
 msgstr ""
@@ -12835,6 +13013,10 @@ msgstr "行ったことを書いてください。"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Write your answer, or draft one from your Knowledge."
 msgstr "回答を書くか、ナレッジから下書きを作成してください。"
+
+#: src/features/letters/design.tsx
+msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -12954,11 +13136,6 @@ msgstr "オフラインです。再接続時にもう一度お試しください
 msgid "You're up to date"
 msgstr "すべて確認済みです"
 
-#: src/features/workspace/tabs/debrief.tsx
-#: src/features/workspace/tabs/practise.tsx
-msgid "your AI connection"
-msgstr "あなたのAI接続"
-
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"
 msgstr "あなたのAI接続"
@@ -12974,6 +13151,10 @@ msgstr "あなたの回答"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your answer · {mode}"
 msgstr "あなたの答え · {mode}"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Your answer changed while this was drafted. Draft again to review the newer version."
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your attempts"
@@ -12994,6 +13175,10 @@ msgstr "このデバイスで行った変更は、保存されたバージョン
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "連絡先情報が1ページ目にありません。"
+
+#: src/features/workspace/parts.tsx
+msgid "your contacts"
+msgstr ""
 
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
@@ -13026,6 +13211,10 @@ msgstr "あなたの事実、ストーリー、好み。 ナレッジ を編集�
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your focus"
 msgstr "あなたの注力分野"
+
+#: src/features/workspace/parts.tsx
+msgid "your form answers"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
@@ -13063,6 +13252,7 @@ msgstr "名前をそのままアドレスに。.cv のレジストリである O
 msgid "Your name is missing"
 msgstr "あなたの名前がありません"
 
+#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "あなたのメモ"
@@ -13080,6 +13270,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "電話番号が一般的でない形式で書かれています。"
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "あなたの希望条件"
 
@@ -13180,6 +13371,10 @@ msgstr "ストーリーを読み込めませんでした。"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "2分間の自己紹介"
+
+#: app/letter/[id]/_layout.tsx
+msgid "Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening this application."

@@ -429,6 +429,12 @@ msgstr "{0} меньше"
 msgid "{0} more"
 msgstr "на {0} больше"
 
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} characters"
+msgstr ""
+
 #. placeholder {0}: shown.length
 #. placeholder {1}: TEMPLATES.length
 #: src/features/design/template-group.tsx
@@ -442,6 +448,12 @@ msgstr "Показаны {0} из {1}"
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{0} из {1} адаптированных заявлений о приеме на работу получил ответ; {2} из {3} отправлен с другим резюме."
+
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} words"
+msgstr ""
 
 #. placeholder {0}: fact.company
 #: src/features/career/facts.tsx
@@ -501,6 +513,11 @@ msgstr ""
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, запись {1} из {2}"
 
+#. placeholder {0}: terms.join(" · ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "{0}. Opens in Career → Offers."
+msgstr ""
+
 #. placeholder {0}: Math.round(zoom * 100)
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
@@ -543,6 +560,10 @@ msgstr ""
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# документ обновлён} other {# документов обновлено} few {# документа обновлено} many {# документов обновлено}}"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "{cost} a year"
@@ -749,10 +770,6 @@ msgstr ""
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# история} few {# истории} many {# историй} other {# истории}}"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "{summary}. Opens in Career → Offers."
-msgstr "{summary}. Откроется в разделе «Карьера» → «Предложения»."
 
 #: src/features/workspace/tabs/fit.tsx
 msgid "{supported} supported · {partial} partly · {missing} missing"
@@ -1949,6 +1966,10 @@ msgstr "Попросите администратора сервера вклю�
 msgid "Ask, or describe a change…"
 msgstr "Спросите или опишите изменение…"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
+msgstr ""
+
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
 msgstr "Соотношение сторон"
@@ -2048,6 +2069,11 @@ msgstr "Азербайджанский"
 msgid "Back"
 msgstr "Назад"
 
+#. placeholder {0}: application.company
+#: src/shell/editor-origin.ts
+msgid "Back to {0}"
+msgstr ""
+
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/workspace/shell.tsx
@@ -2107,6 +2133,12 @@ msgstr "Плашка"
 msgctxt "Entry header accent: a bar beside the header"
 msgid "Bar"
 msgstr "Полоса"
+
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
+#. placeholder {1}: periodLabel(offer.period)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Base {0} {1}"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -2177,6 +2209,12 @@ msgstr "Полужирный"
 msgid "Bonus"
 msgstr "Бонус"
 
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
+#: src/features/workspace/tabs/messages.tsx
+msgid "Bonus {0}{1}"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Bonus conditions"
@@ -2212,8 +2250,8 @@ msgid "Briefing ready"
 msgstr "Брифинг готов"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Briefing refresh is on · {next}"
-msgstr "Автоматическое обновление брифинга включено · {next}"
+msgid "Briefing refresh is on · {nextAt}"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Briefing refresh paused"
@@ -2283,6 +2321,7 @@ msgstr "Может ли программное обеспечение прочи
 #: src/features/search/search-screen.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/pickers.tsx
 #: src/linking/open.ts
@@ -2414,6 +2453,11 @@ msgstr "Проверить снова"
 #: src/features/ats-checker/checker.tsx
 msgid "Check another file"
 msgstr "Проверьте другой файл"
+
+#. placeholder {0}: proposal.note
+#: src/features/workspace/tabs/apply.tsx
+msgid "Check before accepting: {0}"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "Check DNS"
@@ -3161,6 +3205,10 @@ msgstr ""
 #: src/features/ai/web-access.tsx
 msgid "Couldn't confirm AI connections. Try again before using the assistant."
 msgstr "Не удалось подтвердить соединения AI. Попробуйте еще раз, прежде чем использовать помощника."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't confirm the application move. Reload this application before retrying."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Couldn't confirm the save. Check Applications before retrying to avoid a duplicate."
@@ -4648,6 +4696,11 @@ msgstr "Варианты входа"
 msgid "Equity"
 msgstr "Акции"
 
+#. placeholder {0}: offer.equity
+#: src/features/workspace/tabs/messages.tsx
+msgid "Equity {0}"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Every 3 days"
 msgstr "Каждые 3 дня"
@@ -4758,10 +4811,6 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
 msgstr "Обратная связь"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Feedback needs an AI connection. Nothing is sent until you ask."
-msgstr "Для обратной связи требуется соединение AI. Ничего не отправляется, пока вы не спросите."
 
 #. placeholder {0}: index + 1
 #: src/features/write/basics-screen.tsx
@@ -5077,10 +5126,6 @@ msgstr "Получите ключ по адресу {0}. Он хранится �
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Получить обратную связь"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Get feedback sends the question, your answer, this posting and your stories to {providerName}."
-msgstr "«Получить обратную связь» отправляет вопрос, ваш ответ, эту вакансию и ваши истории в {providerName}."
 
 #: src/features/career/today.tsx
 msgid "Get new roles here every morning"
@@ -5658,6 +5703,10 @@ msgstr "Его сообщения и вложения удаляются. При
 msgid "Its own design ({summary})."
 msgstr "Собственный дизайн ({summary})."
 
+#: src/features/workspace/parts.tsx
+msgid "its requirements"
+msgstr ""
+
 #: src/features/ai/provider-editor.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "Сохраненный ключ удаляется. Для разговоров с его использованием нужен другой провайдер."
@@ -5848,6 +5897,10 @@ msgstr "Знания"
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "Не удалось загрузить Знания. Попробуйте еще раз или отключите Знания перед отправкой."
 
+#: src/features/workspace/parts.tsx
+msgid "Knowledge that's switched on"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
 msgstr ""
@@ -5881,6 +5934,7 @@ msgstr "Этапы упорядочивают вашу доску. Их кате
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/document-menu/index.tsx
+#: src/features/letters/design.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/write/fields.ts
 msgid "Language"
@@ -5950,6 +6004,7 @@ msgstr "Объясняет, почему вы подходите"
 msgid "Learning budget"
 msgstr "Бюджет на обучение"
 
+#: app/letter/[id]/_layout.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 msgid "Leave"
@@ -5975,6 +6030,10 @@ msgstr "Оставьте пустым, чтобы сбросить заголо�
 #: src/features/write/rich-text-field.tsx
 msgid "Leave it empty to remove the link."
 msgstr "Оставьте поле пустым, чтобы удалить ссылку."
+
+#: app/letter/[id]/_layout.tsx
+msgid "Leave without keeping the draft?"
+msgstr ""
 
 #: src/features/design/template-group.tsx
 msgid "Left"
@@ -6479,6 +6538,18 @@ msgstr "Поля установлены на {minimum} pt."
 msgid "Mark as applied"
 msgstr "Отметить отклик отправленным"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move it?"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move to {stage}"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Mark as closed"
 msgstr ""
@@ -6491,10 +6562,6 @@ msgstr ""
 msgid "Mark as read"
 msgstr "Отметить как прочитанное"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark it as applied in Apply first."
-msgstr "Сначала отметьте отклик отправленным на вкладке «Отклик»."
-
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Markdown"
@@ -6503,6 +6570,10 @@ msgstr "Markdown"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Markdown (.md)"
 msgstr "Markdown (.md)"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Marked as applied and moved. You submit on the employer's site yourself."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Marked as applied. The versions you sent are kept."
@@ -7058,6 +7129,10 @@ msgstr "Даты не найдены."
 msgid "no documents"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "нет правок"
@@ -7224,6 +7299,10 @@ msgstr "Историй пока нет"
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "No terms were extracted. Opens in Career → Offers."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -7721,10 +7800,6 @@ msgstr "Открываем письмо…"
 msgid "Opening the resume…"
 msgstr "Открываю резюме…"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Opens in Career → Offers."
-msgstr "Откроется в разделе «Карьера» → «Предложения»."
-
 #: src/features/application-detail/sections.tsx
 msgid "Opens the version you sent, read-only"
 msgstr ""
@@ -8004,17 +8079,29 @@ msgstr "Стили PDF поддерживают подмножество CSS. П
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
 msgstr "Экспорт PDF, Word, Reactive Resume, JSON Resume или LinkedIn."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per hour"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 msgid "Per hour"
 msgstr "В час"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per month"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 msgid "Per month"
 msgstr "В месяц"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "per year"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -8688,6 +8775,11 @@ msgstr "Запись остановлена: достигнут лимит в 2 
 msgid "Recording time"
 msgstr "Время записи"
 
+#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
@@ -8740,6 +8832,10 @@ msgstr "Направление"
 #: src/features/career/stories.tsx
 msgid "Reflection"
 msgstr "Рефлексия"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Refresh the briefing"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing 2 hours before"
@@ -9059,6 +9155,11 @@ msgstr "Сбросить настройки дизайна по умолчани
 msgid "Respond by"
 msgstr "Ответить до"
 
+#. placeholder {0}: day(offer.respondBy ?? "")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Respond by {0}"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "respond by {respondBy}"
 msgstr ""
@@ -9331,10 +9432,6 @@ msgstr "Просмотр сведений о задании"
 msgid "Review my answer"
 msgstr "Проверить мой ответ"
 
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
-msgstr "«Проверить мой ответ» отправляет вопрос, сказанное вами, эту вакансию и ваши Знания в {providerName}."
-
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
@@ -9383,10 +9480,6 @@ msgstr ""
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Reviewing needs an AI connection. What you write here stays on this device until then."
-msgstr "Для просмотра требуется соединение AI. То, что вы здесь пишете, до тех пор остается на этом устройстве."
 
 #: src/features/settings/api-keys.tsx
 msgid "Revoke"
@@ -9965,27 +10058,43 @@ msgstr "Данные отправителя скопированы в письм
 msgid "Sending…"
 msgstr "Отправка…"
 
+#. placeholder {0}: formatList(i18n.locale, labels)
+#: src/features/workspace/parts.tsx
+msgid "Sends {0} to {label}."
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
-#. placeholder {0}: ai.defaultProvider.label
-#. placeholder {1}: ai.defaultProvider.model
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
 #: src/features/letters/write.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
 msgstr ""
 
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
-msgstr "Отправляет эту заявку (вакансию, заметки и сведения о собеседовании) и включённые Знания провайдеру {name}."
+#. placeholder {0}: providers.defaultProvider.label
+#: src/features/applications/add-sheet.tsx
+msgid "Sends the posting text to {0} to read it."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr ""
 
-#: src/features/workspace/parts.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
-msgstr "Отправляет вакансию, заметки и документы этой заявки вместе с включёнными Знаниями провайдеру {label}."
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
+msgstr ""
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
+msgstr ""
 
 #. placeholder {0}: ai.defaultProvider.label
 #. placeholder {1}: ai.defaultProvider.model
@@ -9998,8 +10107,8 @@ msgid "Sends this PDF to your configured AI provider instead of reading its text
 msgstr "Отправляет этот PDF настроенному провайдеру AI вместо чтения его текстового слоя."
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
-msgstr "Отправляет ваше сообщение, предыдущие сообщения, этот отклик (вакансию, заметки и отправленные документы) и включённые данные из раздела «Знания» в {label}."
+msgid "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgstr ""
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -10694,12 +10803,25 @@ msgstr "Начните с разделов, которые есть в боль�
 msgid "Start with your name. Build from there."
 msgstr "Начните с имени. Остальное добавите позже."
 
+#: src/features/career/offers.tsx
+msgid "Starts"
+msgstr ""
+
+#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Starts {0}"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Starts now"
 msgstr "Начинается сейчас"
 
 #: src/features/settings/application-profile.tsx
 msgid "State or region"
+msgstr ""
+
+#: app/letter/[id]/_layout.tsx
+msgid "Stay"
 msgstr ""
 
 #: src/features/documents/new-document.tsx
@@ -11168,6 +11290,10 @@ msgstr ""
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "the cover letter for this job"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -11176,6 +11302,10 @@ msgstr "Текущее состояние сначала будет сохран
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Редактор открывает панель «Проверка» и еще раз проверяет импортированное резюме."
+
+#: src/features/workspace/parts.tsx
+msgid "the employer's message"
+msgstr ""
 
 #: src/features/write/date-field.tsx
 msgid "The end is before the start."
@@ -11189,6 +11319,10 @@ msgstr "Напоминание связаться сохранено. Разре
 msgid "The greeting follows the name."
 msgstr "Приветствие следует за именем."
 
+#: src/features/workspace/parts.tsx
+msgid "the interview details"
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "Собеседование сохранено. Чтобы получить напоминание, разрешите уведомления в настройках вашего устройства."
@@ -11199,6 +11333,10 @@ msgstr "Ключ зашифрован на сервере и больше ник
 
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "the last messages"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -11224,6 +11362,14 @@ msgstr "Письмо снова соответствует дизайну рез
 #: src/features/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "Строка изменилась с тех пор, как вы спросили, поэтому она не была заменена."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked cover letter"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked resume"
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "the message"
@@ -11261,6 +11407,14 @@ msgstr ""
 msgid "The provider reported a server error. Try again later."
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "the question and what you said"
+msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "the question and your answer"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Причина сохраняется в Insights. Связанные документы не трогаются."
@@ -11277,6 +11431,10 @@ msgstr "Остальной части файла нет в этом отчете
 msgid "The resume as it is"
 msgstr "Резюме как оно есть"
 
+#: src/features/workspace/parts.tsx
+msgid "the resume for this job"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
 msgstr "Одна и та же строка повторяется на каждой странице."
@@ -11288,6 +11446,10 @@ msgstr "Сохраненный ключ не отправляется на но�
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Сохраненный ключ не отправляется на новый базовый URL-адрес. Введите ключ еще раз."
+
+#: src/features/workspace/parts.tsx
+msgid "the saved offer"
+msgstr ""
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -11624,6 +11786,10 @@ msgstr "Этот PDF не имеет текстового слоя, поэтом
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Этот PDF защищён паролем. Сохраните незащищённую копию и попробуйте снова."
 
+#: src/features/workspace/parts.tsx
+msgid "this posting"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr ""
@@ -11815,6 +11981,10 @@ msgstr "Переключить выбор"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Tomorrow"
 msgstr "Завтра"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Too close to the interview to schedule a refresh."
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
@@ -12670,6 +12840,10 @@ msgstr "Что работает"
 msgid "When do you need a decision?"
 msgstr "Когда вам нужно решение?"
 
+#: src/features/career/offers.tsx
+msgid "When would you start?"
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "When you tap send, {list} go to {connection}."
 msgstr "Когда вы нажмете «Отправить», {list} будут отправлены в {connection}."
@@ -12788,6 +12962,10 @@ msgstr ""
 msgid "Write a letter"
 msgstr "Написать письмо"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Write a new reply in {languageName}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"
 msgstr ""
@@ -12835,6 +13013,10 @@ msgstr "Напишите, что вы сделали."
 #: src/features/workspace/tabs/apply.tsx
 msgid "Write your answer, or draft one from your Knowledge."
 msgstr "Напишите ответ или составьте черновик на основе ваших Знаний."
+
+#: src/features/letters/design.tsx
+msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -12954,11 +13136,6 @@ msgstr "Вы не в сети. Повторите попытку при повт
 msgid "You're up to date"
 msgstr "Все просмотрено"
 
-#: src/features/workspace/tabs/debrief.tsx
-#: src/features/workspace/tabs/practise.tsx
-msgid "your AI connection"
-msgstr "ваше подключение ИИ"
-
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"
 msgstr "Ваше подключение ИИ"
@@ -12974,6 +13151,10 @@ msgstr "Ваш ответ"
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your answer · {mode}"
 msgstr "Ваш ответ · {mode}"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Your answer changed while this was drafted. Draft again to review the newer version."
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your attempts"
@@ -12994,6 +13175,10 @@ msgstr "Ваши изменения на этом устройстве буду�
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Ваши контактные данные не на первой странице."
+
+#: src/features/workspace/parts.tsx
+msgid "your contacts"
+msgstr ""
 
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
@@ -13026,6 +13211,10 @@ msgstr "Ваши факты, истории и предпочтения. Изм�
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your focus"
 msgstr "Ваш фокус"
+
+#: src/features/workspace/parts.tsx
+msgid "your form answers"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
@@ -13063,6 +13252,7 @@ msgstr "Ваше имя в качестве адреса — от OlaCV, адм�
 msgid "Your name is missing"
 msgstr "Ваше имя отсутствует"
 
+#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "ваши заметки"
@@ -13080,6 +13270,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "Ваш номер телефона записан в необычном формате."
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "ваши предпочтения"
 
@@ -13180,6 +13371,10 @@ msgstr "Не удалось загрузить вашу историю."
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Your two-minute introduction"
 msgstr "Ваша самопрезентация на две минуты"
+
+#: app/letter/[id]/_layout.tsx
+msgid "Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place."
+msgstr ""
 
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening this application."

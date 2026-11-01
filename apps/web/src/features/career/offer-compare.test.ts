@@ -16,6 +16,7 @@ const offer = (patch: Partial<OfferTerms>): OfferTerms => ({
 	learning: null,
 	other: "",
 	respondBy: null,
+	startDate: null,
 	...patch,
 });
 

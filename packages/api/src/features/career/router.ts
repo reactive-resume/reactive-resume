@@ -323,7 +323,9 @@ export const careerRouter = {
 		.output(
 			z.object({
 				item: savedItemSchema.nullable(),
-				answer: z.object({ text: z.string(), factIds: z.array(z.string()) }).nullable(),
+				answer: z
+					.object({ text: z.string(), factIds: z.array(z.string()), note: z.string().nullable().default(null) })
+					.nullable(),
 			}),
 		)
 		.handler(({ context, input, signal }) =>
@@ -337,7 +339,22 @@ export const careerRouter = {
 			operationId: "applyCareerReply",
 			summary: "Apply suggested changes from a message",
 		})
-		.input(id.extend({ changes: z.array(z.number().int().min(0)).max(4) }))
+		.input(
+			id.extend({
+				changes: z.array(z.number().int().min(0)).max(4),
+				/** Present when the user confirmed "Mark as applied" inline, so the receipt and stage move commit together. */
+				submission: z
+					.object({
+						answers: careerWorkspaceSchema.shape.answers,
+						expectedAnswers: careerWorkspaceSchema.shape.answers,
+						expectedDocuments: z.object({
+							resumeId: z.string().nullable(),
+							coverLetterId: z.string().nullable(),
+						}),
+					})
+					.optional(),
+			}),
+		)
 		.output(
 			z.object({
 				stages: savedStagesSchema.describe(
@@ -345,7 +362,9 @@ export const careerRouter = {
 				),
 			}),
 		)
-		.handler(({ context, input }) => careerService.applyReply(context.user.id, input.id, input.changes)),
+		.handler(({ context, input }) =>
+			careerService.applyReply(context.user.id, input.id, input.changes, input.submission),
+		),
 	fitEvidence: protectedProcedure
 		.route({
 			method: "GET",

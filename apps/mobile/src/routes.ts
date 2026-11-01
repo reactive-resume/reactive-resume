@@ -1,6 +1,7 @@
+import type { WorkspaceTab } from "@reactive-resume/schema/career";
 // Typed hrefs for every screen under app/. Navigate with these instead of writing paths by hand, so a route move
 // is one change here. Ids and slugs are URL-encoded.
-import type { WorkspaceTab } from "@reactive-resume/schema/career";
+import type { Href } from "expo-router";
 
 export type BuilderPane = "write" | "page" | "design" | "check" | "share";
 export type LetterPane = "write" | "page" | "design";
@@ -61,3 +62,12 @@ export const routes = {
 };
 
 export type AppHref = ReturnType<(typeof routes)[keyof typeof routes]>;
+
+/**
+ * A document editor opened from an application carries that application's id, so Back can return there after checking
+ * ownership. Keeps any existing query (`?version=`, `?mode=`).
+ */
+export const withApplication = (href: string, applicationId?: string | null): Href =>
+	(applicationId
+		? `${href}${href.includes("?") ? "&" : "?"}applicationId=${encodeURIComponent(applicationId)}`
+		: href) as Href;

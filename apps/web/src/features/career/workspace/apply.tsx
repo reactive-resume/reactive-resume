@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { answerLimit } from "@reactive-resume/schema/application-answers";
 import { hasApplicationSubmission } from "@reactive-resume/schema/applications/data";
 import { nextPreparationStep } from "@reactive-resume/schema/applications/preparation";
 import { careerWorkspaceSchema } from "@reactive-resume/schema/career";
@@ -236,7 +237,7 @@ export function ApplyTab({ application, version, go }: WorkspaceTabProps) {
 
 				{!stored && (
 					<>
-						{shown.length > 0 && <AiNotice />}
+						{shown.length > 0 && <AiNotice task="answer" application={application} />}
 						<button
 							type="button"
 							disabled={submitting || live.length >= 30}
@@ -317,7 +318,13 @@ function AnswerCard({
 	const [editingQuestion, setEditingQuestion] = useState(answer.question === "");
 	// Edit question focuses the field as its menu closes; the menu would otherwise take focus back and end the edit.
 	const questionField = useRef<HTMLTextAreaElement>(null);
-	const [proposal, setProposal] = useState<{ text: string; factIds: string[] } | null>(null);
+	const [proposal, setProposal] = useState<{
+		text: string;
+		factIds: string[];
+		note: string | null;
+		/** The answer the proposal was written from; it may not replace a newer edit. */
+		basis: string;
+	} | null>(null);
 	const generate = useGenerate(applicationId);
 	const { provider } = useDefaultProvider();
 	const flushAnswer = useDebouncedSave(
@@ -337,9 +344,15 @@ function AnswerCard({
 	const empty = !text.trim();
 
 	const ask = async () => {
-		const result = await generate.run({ task: "answer", question: question.trim(), answer: text }).catch(() => null);
-		if (result?.answer) setProposal(result.answer);
+		// Commit the question first: the click may land before the field's blur does.
+		flushQuestion();
+		const basis = text;
+		const result = await generate.run({ task: "answer", question: question.trim(), answer: basis }).catch(() => null);
+		if (result?.answer) setProposal({ ...result.answer, basis });
 	};
+	const limit = answerLimit(question);
+	const measured = (value: string) => (limit?.kind === "characters" ? [...value].length : countWords(value));
+	const stale = proposal !== null && text !== proposal.basis;
 
 	return (
 		<section className="grid gap-3 rounded-xl border border-line bg-surface p-4">
@@ -373,7 +386,10 @@ function AnswerCard({
 						className="field-sizing-content min-h-0 w-full min-w-0 flex-1 resize-none px-2.5 py-1.5 text-[15px] leading-[22px] font-semibold"
 					/>
 				) : (
-					<h2 className="min-w-0 flex-1 text-[15px] leading-[22px] font-semibold">{question}</h2>
+					// Same box as the field it replaces: swapping must not move Draft out from under the pointer.
+					<h2 className="min-w-0 flex-1 rounded-md border border-transparent px-2.5 py-1.5 text-[15px] leading-[22px] font-semibold">
+						{question}
+					</h2>
 				)}
 				{/* Forms limit words or characters; the count switches between them, for every question at once. */}
 				<Tooltip>
@@ -435,11 +451,23 @@ function AnswerCard({
 								</span>
 							))}
 						</p>
-						<div className="flex gap-1.5">
+						{proposal.note && (
+							<p role="status" className="flex gap-1.5 rounded-md bg-warn-soft px-3 py-2 text-xs text-warn-text">
+								<Icon name="warning-circle" size={16} className="shrink-0" />
+								<Trans>Check before accepting: {proposal.note}</Trans>
+							</p>
+						)}
+						{stale && (
+							<p role="alert" className="flex gap-1.5 rounded-md bg-danger-soft px-3 py-2 text-xs text-danger-text">
+								<Icon name="warning-circle" size={16} className="shrink-0" />
+								<Trans>Your answer changed while this was drafted. Draft again to review the newer version.</Trans>
+							</p>
+						)}
+						<div className="flex flex-wrap items-center gap-1.5">
 							<Button
 								size="sm"
 								variant="secondary"
-								disabled={disabled}
+								disabled={disabled || stale}
 								onClick={() => {
 									setText(proposal.text);
 									textDraft.accept();
@@ -453,6 +481,18 @@ function AnswerCard({
 							<Button size="sm" variant="ghost" onClick={() => setProposal(null)}>
 								<Trans>Skip</Trans>
 							</Button>
+							{limit && (
+								<span
+									className={cn(
+										"ms-auto text-xs tabular-nums",
+										measured(proposal.text) > limit.max ? "text-warn-text" : "text-ink-3",
+									)}
+								>
+									{limit.kind === "characters"
+										? t`${measured(proposal.text)} of ${limit.max} characters`
+										: t`${measured(proposal.text)} of ${limit.max} words`}
+								</span>
+							)}
 						</div>
 					</div>
 				) : readOnly ? (

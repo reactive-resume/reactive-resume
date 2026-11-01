@@ -96,7 +96,11 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 		try {
 			const created = await createLetter.mutateAsync(letterInput);
 			invalidate(application.id);
-			void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: created.id } });
+			void navigate({
+				to: "/builder/letter/$coverLetterId",
+				params: { coverLetterId: created.id },
+				search: { applicationId: application.id },
+			});
 		} catch (error) {
 			toastError(error, t`Couldn't create the letter. Try again.`);
 		}
@@ -184,7 +188,10 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 					<Link
 						to="/builder/$resumeId"
 						params={{ resumeId: application.resumeId }}
-						search={application.sentResumeVersionId ? { version: application.sentResumeVersionId } : {}}
+						search={{
+							applicationId: application.id,
+							...(application.sentResumeVersionId ? { version: application.sentResumeVersionId } : {}),
+						}}
 						className={buttonVariants({ size: "sm", variant: "secondary" })}
 					>
 						{workspace && application.sentResumeVersionId ? <Trans>Open sent version</Trans> : <Trans>Open</Trans>}
@@ -208,7 +215,10 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 					<Link
 						to="/builder/letter/$coverLetterId"
 						params={{ coverLetterId: application.coverLetterId }}
-						search={application.sentCoverLetterVersionId ? { version: application.sentCoverLetterVersionId } : {}}
+						search={{
+							applicationId: application.id,
+							...(application.sentCoverLetterVersionId ? { version: application.sentCoverLetterVersionId } : {}),
+						}}
 						className={buttonVariants({ size: "sm", variant: "secondary" })}
 					>
 						{workspace && application.sentCoverLetterVersionId ? <Trans>Open sent version</Trans> : <Trans>Open</Trans>}

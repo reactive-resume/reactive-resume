@@ -424,7 +424,14 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 								<Text color="ink3">{t`Optional AI sends only this posting to ${providers.defaultProvider.label} (${providers.defaultProvider.provider}).`}</Text>
 							)}
 							{providers.hasAIProvider && (
-								<Button label={t`Read with AI`} disabled={!!busy || !input.trim()} onPress={() => read(true)} />
+								<>
+									<Button label={t`Read with AI`} disabled={!!busy || !input.trim()} onPress={() => read(true)} />
+									{providers.defaultProvider ? (
+										<Text variant="caption" color="ink3">
+											{t`Sends the posting text to ${providers.defaultProvider.label} to read it.`}
+										</Text>
+									) : null}
+								</>
 							)}
 							<Text
 								variant="callout"
@@ -672,6 +679,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 									<TextArea
 										label={t`Saved description`}
 										value={description}
+										maxLines={12}
 										onChangeText={setDescription}
 										editable={!busy}
 									/>

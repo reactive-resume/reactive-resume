@@ -3,7 +3,7 @@
 import type { SavedData, SavedItem } from "../hooks";
 import type { WorkspaceTabProps } from "../shell";
 import type { SaveResult } from "../state";
-import { plural } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
@@ -11,9 +11,11 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState, useSyncExternalStore } from "react";
 import { View } from "react-native";
 import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
+import { offerTermKeys } from "@reactive-resume/schema/career-offer";
+import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { latest, useAutosave, useDraft, useGenerate, useSavedItems, useWorkspace } from "../hooks";
-import { isFixedChange, openChanges } from "../logic";
-import { AiNotice, Block, CheckRow, Pill, SaveError, useWorking, workingSteps } from "../parts";
+import { isFixedChange, needsSubmission, openChanges } from "../logic";
+import { Actions, AiNotice, Block, CheckRow, Pill, SaveError, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { createPendingRegistry, dispatchForOrigin } from "../state";
 import { client, orpc } from "@/api/client";
@@ -29,9 +31,16 @@ import { listedApplication, offerHintFor, useOfferHints } from "@/features/appli
 import { formatMoney } from "@/features/career/offer-compare";
 import { OfferEntry } from "@/features/career/offer-entry";
 import { withUndo } from "@/features/career/undo";
-import { Banner, Button, Icon, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
+import { Banner, Button, Icon, Sheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
+
+const periodLabel = (period: "year" | "month" | "hour") =>
+	({
+		year: t`per year`,
+		month: t`per month`,
+		hour: t`per hour`,
+	})[period];
 
 /** Applies waiting on their Undo toast, by server and reply id; they outlive the Messages screen. */
 const replyApplies = createPendingRegistry<{ changes: number[]; at: Date }>();
@@ -69,7 +78,7 @@ function Messages({ application, version, now }: WorkspaceTabProps) {
 				onSave={(message) => workspace.save({ message })}
 				fetchServer={() => workspace.fetchConfirmed().then((data) => data.message)}
 			/>
-			{reply ? <ReplyCard key={reply.id} reply={reply} readOnly={readOnly} /> : null}
+			{reply ? <ReplyCard key={reply.id} reply={reply} application={application} readOnly={readOnly} /> : null}
 			{reply && reply.data.changes.length > 0 ? (
 				<ProposalCard
 					key={`changes-${reply.id}`}
@@ -111,6 +120,7 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 				label={t`Paste a message from ${company}`}
 				value={message}
 				maxLength={20_000}
+				maxLines={12}
 				editable={!readOnly}
 				helper={t`Paste the email or message, without the signature.`}
 				onChangeText={draft.setValue}
@@ -119,7 +129,7 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 			<SaveError autosave={autosave} />
 			{!readOnly ? (
 				<View style={{ gap: space.s2 }}>
-					<AiNotice />
+					<AiNotice task="reply" application={application} />
 					<Button
 						variant="secondary"
 						label={t`Save message without AI`}
@@ -142,14 +152,18 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 	);
 }
 
-type ReplyCardProps = { reply: ReplyItem; readOnly: boolean };
+type ReplyCardProps = { reply: ReplyItem; application: WorkspaceTabProps["application"]; readOnly: boolean };
 
 /** W16: what they're asking, what isn't confirmed, and a reply to edit and send yourself. */
-function ReplyCard({ reply, readOnly }: ReplyCardProps) {
-	const { t } = useLingui();
+function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
+	const { t, i18n } = useLingui();
 	const { colors, space } = useTheme();
+	const generate = useGenerate(application.id);
+	const provider = useHasAIProvider().defaultProvider;
 	const draft = useDraft(`reply:${reply.id}`, reply.data.reply);
 	const text = readOnly ? reply.data.reply : draft.value;
+	// The employer's language is the default; this is the explicit way back to the user's interface language.
+	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
 
 	const copy = async () => {
 		await Clipboard.setStringAsync(text);
@@ -179,7 +193,22 @@ function ReplyCard({ reply, readOnly }: ReplyCardProps) {
 						maxLength={4000}
 						onChangeText={draft.setValue}
 					/>
-					<Button variant="secondary" size="sm" icon="copy" label={t`Copy reply`} onPress={() => void copy()} />
+					<Actions>
+						<Button variant="secondary" size="sm" icon="copy" label={t`Copy reply`} onPress={() => void copy()} />
+						{!readOnly && provider ? (
+							<Button
+								variant="ghost"
+								size="sm"
+								label={t`Write a new reply in ${languageName}`}
+								loading={generate.isPending}
+								onPress={() =>
+									void generate
+										.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale })
+										.catch(() => undefined)
+								}
+							/>
+						) : null}
+					</Actions>
 					<Text variant="caption" color="ink3">
 						{t`You send it from your own email.`}
 					</Text>
@@ -206,8 +235,11 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	const queryClient = useQueryClient();
 	const invalidate = useInvalidateApplications();
 	const session = useSession();
+	const workspace = useWorkspace(application.id);
 	const changes = reply.data.changes;
 	const [ticked, setTicked] = useState<number[]>(() => openChanges(changes, application.status));
+	const [confirming, setConfirming] = useState<number[] | null>(null);
+	const [submitting, setSubmitting] = useState(false);
 	const pendingKey = `${session.server}:${reply.id}`;
 	const appliedNow = useSyncExternalStore(replyApplies.subscribe, () => replyApplies.get(pendingKey));
 	const applied =
@@ -235,7 +267,10 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				if (change.stage === application.status)
 					return { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
 				if (application.status === "saved")
-					return { title: t`Move to ${stage}`, detail: t`Mark it as applied in Apply first.` };
+					return {
+						title: t`Mark as applied and move to ${stage}`,
+						detail: t`Asks you to confirm the answers and documents, then records them as sent and moves it.`,
+					};
 				return { title: t`Move to ${stage}`, detail: t`Moves the application from ${from}.` };
 			}
 			// One change carries the next step and, when a reply is due, its reminder.
@@ -252,14 +287,27 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 			}
 			case "offer": {
 				const offer = reply.data.offer;
-				const summary = offer
-					? [offer.base === null ? "" : formatMoney(i18n.locale, offer.currency, offer.base), offer.location]
-							.filter(Boolean)
-							.join(" · ")
-					: "";
+				const terms =
+					offer === null
+						? []
+						: offerTermKeys(offer).map((key) =>
+								key === "base"
+									? t`Base ${formatMoney(i18n.locale, offer.currency, offer.base ?? 0)} ${periodLabel(offer.period)}`
+									: key === "variable"
+										? t`Bonus ${formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)}${
+												offer.variableConditions ? ` (${offer.variableConditions})` : ""
+											}`
+										: key === "equity"
+											? t`Equity ${offer.equity}`
+											: key === "startDate"
+												? t`Starts ${formatDateOnly(offer.startDate ?? "", i18n.locale)}`
+												: t`Respond by ${day(offer.respondBy ?? "")}`,
+							);
 				return {
 					title: t`Save these offer terms to compare`,
-					detail: summary ? t`${summary}. Opens in Career → Offers.` : t`Opens in Career → Offers.`,
+					detail: terms.length
+						? t`${terms.join(" · ")}. Opens in Career → Offers.`
+						: t`No terms were extracted. Opens in Career → Offers.`,
 				};
 			}
 		}
@@ -270,6 +318,11 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 
 	const onApply = () => {
 		const chosen = ticked;
+		// A move from Saved needs the receipt the user confirmed. Nothing is written until that confirmation.
+		if (chosen.some((index) => needsSubmission(changes[index], application.status))) {
+			setConfirming(chosen);
+			return;
+		}
 		// One pending apply per reply, even after leaving and reopening the tab: Undo always cancels that one.
 		if (!replyApplies.start(pendingKey, { changes: chosen, at: new Date() })) return;
 		// The account that pressed Apply; the commit is dropped if another one is signed in by then.
@@ -306,6 +359,60 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				}
 			},
 		});
+	};
+
+	const confirmedAnswers = workspace.current().answers.filter((answer) => answer.answer.trim()).length;
+	const confirmedDocuments = [
+		...(application.resumeId ? [t`the linked resume`] : []),
+		...(application.coverLetterId ? [t`the linked cover letter`] : []),
+	];
+	const records =
+		confirmedAnswers || confirmedDocuments.length
+			? t`Records ${[
+					...(confirmedAnswers
+						? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })]
+						: []),
+					...confirmedDocuments,
+				].join(", ")} as sent, and moves this application. You submit on the employer's site yourself.`
+			: t`No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself.`;
+
+	const confirmSubmission = async () => {
+		if (!confirming) return;
+		setSubmitting(true);
+		const saved = stageBaselinesFor(queryClient).write(
+			stageScope(),
+			application.id,
+			listedApplication(queryClient, application.id),
+		);
+		const origin = getDraftScope();
+		try {
+			const current = await workspace.settled();
+			await dispatchForOrigin(origin, getDraftScope, async () => {
+				const result = await client.career.applyReply({
+					id: reply.id,
+					changes: confirming,
+					submission: {
+						answers: current.answers,
+						expectedAnswers: current.answers,
+						expectedDocuments: { resumeId: application.resumeId, coverLetterId: application.coverLetterId },
+					},
+				});
+				saved(savedStageIn(result, application.id));
+			});
+			setConfirming(null);
+			await Promise.all([
+				invalidate(),
+				queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() }),
+				queryClient.invalidateQueries({ queryKey: orpc.career.schedules.key() }),
+			]);
+			showToast({ message: t`Marked as applied and moved. You submit on the employer's site yourself.` });
+		} catch {
+			// The single transaction rolled back: still Saved, nothing recorded.
+			showToast({ message: t`Couldn't confirm the application move. Reload this application before retrying.` });
+		} finally {
+			saved(undefined);
+			setSubmitting(false);
+		}
 	};
 
 	return (
@@ -370,6 +477,29 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 					/>
 				)
 			) : null}
+
+			<Sheet
+				open={confirming !== null}
+				onClose={() => (submitting ? undefined : setConfirming(null))}
+				title={t`Mark as applied and move it?`}
+			>
+				<View style={{ gap: 12, paddingHorizontal: 16 }}>
+					<Text color="ink2">{records}</Text>
+					<Button
+						fullWidth
+						label={t`Mark as applied and move`}
+						loading={submitting}
+						onPress={() => void confirmSubmission()}
+					/>
+					<Button
+						fullWidth
+						variant="secondary"
+						label={t`Cancel`}
+						disabled={submitting}
+						onPress={() => setConfirming(null)}
+					/>
+				</View>
+			</Sheet>
 		</Block>
 	);
 }

@@ -17,11 +17,10 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks } from "../hooks";
-import { FilterChip, MemoryProposal, PrivacyLine, useCareerTime, Working, workingSteps } from "../shared";
+import { FilterChip, MemoryProposal, useCareerTime, Working, workingSteps } from "../shared";
+import { AiNotice } from "./fit";
 import { buildIcs } from "@/features/applications/ics";
 import { isInterview } from "@/features/applications/interviews";
-import { SetUpAi } from "@/features/assistant/provider-setup";
-import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
@@ -152,7 +151,6 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 	};
 
 	const ready = draft.question.trim() !== "" && draft.answer.trim() !== "" && draft.landed !== null;
-	const providerName = provider?.label ?? t`your AI connection`;
 	const landed = [
 		{ value: "well", label: t`Went well` },
 		{ value: "mixed", label: t`Mixed` },
@@ -216,21 +214,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 					<Button disabled={!ready || !provider} loading={generate.isPending} onClick={submit}>
 						{generate.isPending ? <Working steps={workingSteps("debrief")} /> : <Trans>Review my answer</Trans>}
 					</Button>
-					{connection.isUnavailable ? (
-						<AiProviderLoadState state={connection} />
-					) : provider ? (
-						<PrivacyLine>
-							<Trans>
-								Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}.
-							</Trans>
-						</PrivacyLine>
-					) : (
-						<PrivacyLine>
-							<Trans>
-								Reviewing needs an AI connection. <SetUpAi />. What you write here stays in this browser until then.
-							</Trans>
-						</PrivacyLine>
-					)}
+					<AiNotice task="debrief" application={application} interview={Boolean(round)} />
 				</div>
 			)}
 		</section>
