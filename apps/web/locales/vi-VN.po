@@ -1447,6 +1447,10 @@ msgstr "Thêm vị trí"
 msgid "Add a newer offer"
 msgstr ""
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
 msgstr "Thêm người"
@@ -2695,6 +2699,10 @@ msgstr "Mã dự phòng"
 msgid "Backup codes copied"
 msgstr "Đã sao chép mã dự phòng"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "Cân đối"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2881,6 +2889,10 @@ msgstr "mục danh sách {n}"
 msgid "Bulleted list"
 msgstr "Danh sách có dấu đầu dòng"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "Đỏ rượu vang"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -2933,6 +2945,7 @@ msgstr "Phần mềm có đọc được sơ yếu lý lịch của bạn không
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -3034,6 +3047,15 @@ msgstr "Thay đổi mục nhập dòng thời gian này."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "Đổi múi giờ"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3260,6 +3282,10 @@ msgstr "Chọn một tập tin"
 msgid "Choose a file to import"
 msgstr "Chọn một tập tin để nhập"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "Hãy chọn mật khẩu khác với mật khẩu hiện tại."
@@ -3354,12 +3380,17 @@ msgid "Clarify"
 msgstr "Làm rõ"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "Cổ điển"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "Gọn gàng"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -3412,6 +3443,7 @@ msgstr "ID khách hàng"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -4482,9 +4514,17 @@ msgstr "Không thể đặt mật khẩu. Hãy thử lại."
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "Không thể thiết lập xác minh hai bước. Hãy thử lại."
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "Không thể hiển thị bản xem trước PDF. Hãy tải tệp lên lại."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -5903,10 +5943,6 @@ msgstr "Nhập số tiền đầy đủ, ví dụ 95000. Số tiền trước đ
 msgid "Enter a name, up to 64 characters."
 msgstr "Nhập tên, tối đa 64 ký tự."
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "Nhập mật khẩu mới cho tài khoản của bạn."
-
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
@@ -6754,6 +6790,10 @@ msgstr "Google"
 msgid "Grade"
 msgstr "Điểm số"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "Than chì"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "Xám"
@@ -7093,10 +7133,6 @@ msgstr "Nếu ứng dụng không mở được, hãy thử lại trên thiết 
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
-#: src/features/auth/email-text.ts
-msgid "If this was not you, you can ignore this message and your password will remain unchanged."
-msgstr ""
-
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -7112,6 +7148,10 @@ msgstr ""
 
 #: src/features/auth/email-text.ts
 msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr ""
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -7248,6 +7288,10 @@ msgstr "Tiếng Indonesia"
 #: src/features/career/workspace/fit.tsx
 msgid "Inferred"
 msgstr "Suy ra"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "Xanh mực"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
@@ -7600,6 +7644,14 @@ msgstr "Giữ quyền truy cập khi bạn không sử dụng ứng dụng."
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "Giữ tài khoản"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "Giữ kết nối"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "Giữ tên miền"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8281,6 +8333,11 @@ msgstr "Đang tải các tài liệu liên kết…"
 msgid "Loading providers…"
 msgstr "Đang tải nhà cung cấp…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "Đang tải trang CV {pageNumber} trên {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "Đang tải sơ yếu lý lịch…"
@@ -8721,6 +8778,10 @@ msgstr "Xuất hiện nhiều hơn một địa chỉ email."
 msgid "Morning of"
 msgstr "Sáng hôm đó"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "Xanh rêu"
+
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
 msgstr "Hầu hết gạch đầu dòng mở đầu bằng những từ thừa thãi thay vì điều bạn đã làm."
@@ -9019,6 +9080,7 @@ msgstr "Trang mới"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "Mật khẩu mới"
@@ -9128,6 +9190,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Chưa có đơn xin việc nào. Hãy thêm một cái vào đơn xin việc trước."
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -9674,6 +9740,10 @@ msgstr "Danh sách đánh số"
 msgid "Observation"
 msgstr "Quan sát"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "Vàng đất"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "Odia"
@@ -10125,11 +10195,13 @@ msgid "Page"
 msgstr "Trang"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "Trang {0}"
@@ -10148,6 +10220,16 @@ msgstr "Trang {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "Trang {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "Trang {pageNumber} của {pageCount}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "Trang {pageNumber} của {totalPages}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10218,6 +10300,10 @@ msgstr "Khóa truy cập"
 msgid "Passkeys"
 msgstr "Khóa truy cập"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -10238,17 +10324,21 @@ msgstr "Mật khẩu"
 msgid "Password changed"
 msgstr "Đã đổi mật khẩu"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Đã xóa mật khẩu"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "Đã đặt lại mật khẩu. Hãy đăng nhập bằng mật khẩu mới."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Đã đặt mật khẩu"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -10492,6 +10582,10 @@ msgstr "Đang lên kế hoạch cho tuần của bạn"
 #: src/features/homepage/sections.tsx
 msgid "Play the list of languages"
 msgstr "Chơi danh sách ngôn ngữ"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "mận"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -10775,6 +10869,10 @@ msgstr "Nhà thiết kế sản phẩm"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "Nhà thiết kế sản phẩm với chín năm kinh nghiệm xây dựng <0>hệ thống thiết kế</0> và sản phẩm dựa trên nghiên cứu cho các nhóm B2B."
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "Chuyên nghiệp"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11503,6 +11601,10 @@ msgstr "Xóa {value}"
 msgid "Remove connection"
 msgstr "Xóa kết nối"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "Xóa tên miền"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "Xóa trường"
@@ -11555,9 +11657,17 @@ msgstr "Xóa giai đoạn"
 msgid "Remove tag"
 msgstr "Xóa thẻ"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "Xóa tên miền tùy chỉnh?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "Xóa mật khẩu?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "Xóa kết nối web?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11678,6 +11788,10 @@ msgstr "Yêu cầu"
 msgid "Requirements and your evidence"
 msgstr "Yêu cầu và bằng chứng của bạn"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "Chỉ dùng chữ hoa cho các tiêu đề ngắn. Chữ hoa làm chậm việc đọc và có thể khiến tìm kiếm phân biệt hoa thường thất bại."
@@ -11701,6 +11815,10 @@ msgstr ""
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "Đặt lại mật khẩu"
+
+#: src/features/auth/email-text.ts
+msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
+msgstr ""
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
@@ -11847,6 +11965,11 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Resume page"
 msgstr "trang sơ yếu lý lịch"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "Trang CV {pageNumber} trên {totalPages}"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -12135,6 +12258,10 @@ msgstr "Chạy trên trang {next}"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "Nga"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "Đỏ gỉ"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -12730,6 +12857,10 @@ msgstr "Gửi"
 msgid "Send reset link"
 msgstr "Gửi liên kết đặt lại"
 
+#: src/features/settings/account/profile.tsx
+msgid "Send the approval link again"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "Gửi trực tiếp sơ yếu lý lịch thay vì bọc nó trong một portfolio."
@@ -12854,10 +12985,13 @@ msgstr "Serbia"
 msgid "Set a follow-up…"
 msgstr "Đặt thời gian theo dõi…"
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "Đặt mật khẩu"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "Đặt mật khẩu"
@@ -12892,6 +13026,10 @@ msgstr "Thiết lập ứng dụng xác thực của bạn"
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -13955,6 +14093,10 @@ msgstr "Vị trí mục tiêu"
 msgid "Task"
 msgstr "Nhiệm vụ"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "Màu xanh mòng két"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "Kỹ thuật"
@@ -14123,6 +14265,11 @@ msgstr ""
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "Cảm ơn Sam. Đây là một ví dụ: tại Northwind Labs, tôi dẫn dắt dự án thiết kế lại onboarding, từ 14 cuộc phỏng vấn khách hàng đến quy trình thiết lập ngắn hơn."
+
+#. placeholder {0}: still.user.email
+#: src/features/auth/pages/reset-password.tsx
+msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -14862,6 +15009,14 @@ msgstr "Không thể tải phiên bản đã lưu này."
 msgid "This saved version is no longer available."
 msgstr "Phiên bản đã lưu này không còn nữa."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
@@ -15027,6 +15182,10 @@ msgstr "Theo dõi công việc đầu tiên của bạn"
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "Theo dõi"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "Truyền thống"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -15473,6 +15632,7 @@ msgstr "Sử dụng từ 3 đến 64 chữ cái viết thường, số, dấu ch
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15516,6 +15676,7 @@ msgid "Use at least 3 characters."
 msgstr "Hãy dùng ít nhất 3 ký tự."
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15754,6 +15915,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "Hãy xác minh email trong Cài đặt trước"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -16479,6 +16644,10 @@ msgstr "Bạn đăng nhập mà không cần tài khoản"
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "Bạn sẽ luôn thấy nó trong Hôm nay. Email phụ thuộc vào cấu hình thư của máy chủ."
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "Bạn sẽ cần nhập lại khóa để kết nối lại. Trình đọc tích hợp vẫn hoạt động."
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "Bạn sẽ phụ trách <0>hệ thống thiết kế</0> của chúng tôi, thực hiện <1>nghiên cứu người dùng</1> với khách hàng và duy trì tiêu chuẩn cao về <2>khả năng tiếp cận</2>, làm việc trong một nhóm <3>đa chức năng</3>."
@@ -16502,6 +16671,10 @@ msgstr "Bạn đang dùng tài khoản khách"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "Bạn đã đạt giới hạn {MAX_APPLICATION_LANES} giai đoạn. Hãy xóa một giai đoạn để thêm giai đoạn khác."
+
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -16607,6 +16780,10 @@ msgstr "Thông tin chi tiết của bạn đã thay đổi trên sơ yếu lý l
 msgid "Your domain"
 msgstr "Tên miền của bạn"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "Tên miền của bạn sẽ không mở CV chính nữa. Bạn có thể kết nối lại sau."
+
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."
 msgstr ""
@@ -16661,7 +16838,7 @@ msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has and the guest's Career profile if it has its own. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

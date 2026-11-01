@@ -1,7 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -20,6 +20,8 @@ const formSchema = z.object({
 
 export function ForgotPasswordPage() {
 	const [submitted, setSubmitted] = useState(false);
+	// A server without email can't deliver the link: say so instead of promising one.
+	const smtpEnabled = useRouteContext({ strict: false }).flags?.smtpEnabled ?? false;
 
 	const form = useAppForm({
 		defaultValues: { email: "" },
@@ -80,42 +82,51 @@ export function ForgotPasswordPage() {
 				</div>
 			</div>
 
-			<form
-				className="space-y-6"
-				onSubmit={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					void form.handleSubmit();
-				}}
-			>
-				<form.Field name="email">
-					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-							<FormLabel>
-								<Trans comment="Label for email input on forgot-password form">Email address</Trans>
-							</FormLabel>
-							<FormControl
-								render={
-									<Input
-										type="email"
-										autoComplete="email"
-										placeholder="john.doe@example.com"
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(event) => field.handleChange(event.target.value)}
-									/>
-								}
-							/>
-							<FormMessage errors={field.state.meta.errors} />
-						</FormItem>
-					)}
-				</form.Field>
+			{!smtpEnabled ? (
+				<p role="status" className="rounded-lg bg-sunken p-3 text-center text-sm text-ink-2">
+					<Trans>
+						This server can't send email, so password reset isn't available. Ask the person who runs it to reset your
+						password.
+					</Trans>
+				</p>
+			) : (
+				<form
+					className="space-y-6"
+					onSubmit={(event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						void form.handleSubmit();
+					}}
+				>
+					<form.Field name="email">
+						{(field) => (
+							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+								<FormLabel>
+									<Trans comment="Label for email input on forgot-password form">Email address</Trans>
+								</FormLabel>
+								<FormControl
+									render={
+										<Input
+											type="email"
+											autoComplete="email"
+											placeholder="john.doe@example.com"
+											name={field.name}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(event) => field.handleChange(event.target.value)}
+										/>
+									}
+								/>
+								<FormMessage errors={field.state.meta.errors} />
+							</FormItem>
+						)}
+					</form.Field>
 
-				<Button type="submit" className="w-full" disabled={isSubmitting}>
-					<Trans comment="Primary action button label on forgot-password form">Send reset link</Trans>
-				</Button>
-			</form>
+					<Button type="submit" className="w-full" disabled={isSubmitting}>
+						<Trans comment="Primary action button label on forgot-password form">Send reset link</Trans>
+					</Button>
+				</form>
+			)}
 		</>
 	);
 }

@@ -3,6 +3,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { startAiStub } from "../fixtures/ai-stub";
 import { createSampleResumeFromDashboard, openSidebarSection } from "../fixtures/resume";
+import { failRpcProcedure } from "../fixtures/rpc-failure";
 import { expect, test } from "../fixtures/test";
 
 test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs local stub URL permission");
@@ -284,37 +285,8 @@ test("application coach history survives provider-list failure", async ({ authPa
 	let blocked = 0;
 	let failProviders = true;
 	await page.route("**/api/rpc/**", async (route) => {
-		const req = route.request();
-		const batched = new URL(req.url()).pathname.endsWith("/__batch__");
-		const entries: { url: string }[] = batched ? JSON.parse(req.postData() ?? "[]") : [{ url: req.url() }];
-		const providers = entries.flatMap((entry, index) =>
-			new URL(entry.url).pathname === "/api/rpc/aiProviders/list" ? [index] : [],
-		);
-		if (!failProviders || !providers.length) return route.continue();
-		blocked++;
-		const response = await route.fetch();
-		const error = {
-			json: { defined: false, code: "INTERNAL_SERVER_ERROR", status: 500, message: "Provider lookup unavailable" },
-		};
-		// A physical batch can also carry thread discovery: preserve every sibling's real response.
-		const body = batched
-			? (await response.text())
-					.split("\n")
-					.map((line) => {
-						if (!line.startsWith("data: ")) return line;
-						const event = JSON.parse(line.slice(6));
-						return providers.includes(event.index)
-							? `data: ${JSON.stringify({ ...event, status: 500, body: error })}`
-							: line;
-					})
-					.join("\n")
-			: JSON.stringify(error);
-		await route.fulfill({
-			response,
-			status: batched ? 207 : 500,
-			body,
-			headers: { ...response.headers(), "content-length": String(Buffer.byteLength(body)) },
-		});
+		if (!failProviders) return route.continue();
+		if (await failRpcProcedure(route, "/api/rpc/aiProviders/list", "Provider lookup unavailable")) blocked++;
 	});
 	const mixed = await page.evaluate(async () => {
 		const response = await fetch("/api/rpc/agent/threads/list/__batch__", {

@@ -2,8 +2,8 @@ import type { AuthProvider } from "@reactive-resume/auth/types";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
+import { useRouteContext } from "@tanstack/react-router";
+import { Button } from "@reactive-resume/ui/components/button";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { SettingsRow, SettingsSection } from "../section";
@@ -44,11 +44,11 @@ export function SecuritySection() {
 					<Button size="sm" variant="secondary" onClick={() => openDialog("auth.change-password", undefined)}>
 						<Trans>Change</Trans>
 					</Button>
-				) : (
-					<Link to="/auth/forgot-password" className={buttonVariants({ size: "sm", variant: "secondary" })}>
+				) : "credential" in enabledProviders ? (
+					<Button size="sm" variant="secondary" onClick={() => openDialog("auth.set-password", undefined)}>
 						<Trans>Set a password</Trans>
-					</Link>
-				)}
+					</Button>
+				) : null}
 			</SettingsRow>
 
 			{password && (
@@ -99,6 +99,10 @@ const PASSKEYS_KEY = ["auth", "passkeys"];
 
 function Passkeys() {
 	const queryClient = useQueryClient();
+	const { data: session } = authClient.useSession();
+	const smtpEnabled = useRouteContext({ strict: false }).flags?.smtpEnabled ?? false;
+	// The server adds passkeys only to verified addresses; say so instead of offering a button that always fails.
+	const verified = session?.user.emailVerified ?? true;
 	const prompt = usePrompt();
 	const confirm = useConfirm();
 	const { data: passkeys = [] } = useQuery({
@@ -157,9 +161,17 @@ function Passkeys() {
 		<div className="grid">
 			<SettingsRow
 				title={<Trans>Passkeys</Trans>}
-				description={<Trans>Sign in with your fingerprint, face or device PIN</Trans>}
+				description={
+					verified ? (
+						<Trans>Sign in with your fingerprint, face or device PIN</Trans>
+					) : smtpEnabled ? (
+						<Trans>Verify your email to add a passkey. The link is in Account details above.</Trans>
+					) : (
+						<Trans>Passkeys need a verified email, which this server can't send.</Trans>
+					)
+				}
 			>
-				<Button size="sm" variant="secondary" loading={add.isPending} onClick={() => add.mutate()}>
+				<Button size="sm" variant="secondary" loading={add.isPending} disabled={!verified} onClick={() => add.mutate()}>
 					<Trans>Add passkey</Trans>
 				</Button>
 			</SettingsRow>

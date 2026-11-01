@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link, useSearch } from "@tanstack/react-router";
+import { Link, useRouteContext, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import z from "zod";
 import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
@@ -267,26 +267,38 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 function PostSignupScreen() {
 	const { callbackURL } = useSearch({ from: "/auth" });
 	const redirectOptions = getAuthRedirectOptions(callbackURL);
+	// A server without email sends no verification link, so there's nothing to check for.
+	const smtpEnabled = useRouteContext({ strict: false }).flags?.smtpEnabled ?? false;
 	return (
 		// Replaces the form in place: fades up into the auth column, with the layout's 24px gap.
 		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
-			<div className="space-y-1 text-center">
-				<h1 className="text-[30px] leading-9">
-					<Trans>Check your email</Trans>
-				</h1>
-				<p className="text-ink-3">
-					<Trans>Check your email for a link to verify your account.</Trans>
-				</p>
-			</div>
+			{smtpEnabled ? (
+				<>
+					<div className="space-y-1 text-center">
+						<h1 className="text-[30px] leading-9">
+							<Trans>Check your email</Trans>
+						</h1>
+						<p className="text-ink-3">
+							<Trans>Check your email for a link to verify your account.</Trans>
+						</p>
+					</div>
 
-			<Alert>
-				<AlertTitle>
-					<Trans>This step is optional, but recommended.</Trans>
-				</AlertTitle>
-				<AlertDescription>
-					<Trans>Verifying your email confirms that you own this address.</Trans>
-				</AlertDescription>
-			</Alert>
+					<Alert>
+						<AlertTitle>
+							<Trans>This step is optional, but recommended.</Trans>
+						</AlertTitle>
+						<AlertDescription>
+							<Trans>Verifying your email confirms that you own this address.</Trans>
+						</AlertDescription>
+					</Alert>
+				</>
+			) : (
+				<div className="space-y-1 text-center">
+					<h1 className="text-[30px] leading-9">
+						<Trans>Your account is ready</Trans>
+					</h1>
+				</div>
+			)}
 
 			<Button
 				nativeButton={false}

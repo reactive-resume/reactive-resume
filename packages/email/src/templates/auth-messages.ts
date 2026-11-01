@@ -9,7 +9,8 @@ const ENGLISH = {
 	resetSubject: "Reset your password",
 	resetPreview: "Reset your {appName} password",
 	resetIntro: "We received a request to reset your {appName} password.",
-	resetDetails: "If this was not you, you can ignore this message and your password will remain unchanged.",
+	resetDetails:
+		"Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged.",
 	resetAction: "Create new password",
 	resetOutro: "For security, only use links from emails sent by Reactive Resume.",
 	verifySubject: "Verify your email",
