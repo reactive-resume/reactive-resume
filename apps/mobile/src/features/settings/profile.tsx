@@ -24,6 +24,7 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 	const mutation = useMutation({
 		mutationKey: ["settings", "profile", field],
 		mutationFn: async () => {
+			if (invalid) throw new Error("Invalid profile field");
 			const result = await client.auth.updateProfile({ [field]: trimmed });
 			if (!result.status) throw new Error("Profile update rejected");
 		},

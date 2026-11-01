@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# പ്രശ്നത്തിന് നിങ�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {പരിശോധിക്കാൻ # കാര്യമുണ്ട്. നിങ്ങൾക്ക് ഇപ്പോഴും ഡൗൺലോഡ് ചെയ്യാം.} other {പരിശോധിക്കാൻ # കാര്യങ്ങൾ ഉണ്ട്. നിങ്ങൾക്ക് ഇപ്പോഴും ഡൗൺലോഡ് ചെയ്യാം.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} തുടങ്ങിയ സ്ഥലത്ത് തിരിച്ചെത്തി."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} വയ്ക്കാൻ കഴിയുന്ന സ്ഥലത്തിന് മുകളിലല്ല."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} ഇതിന് മുകളിലാണ്: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} ഇവിടെ വച്ചു: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} പോകാൻ കഴിയാത്ത സ്ഥലത്ത് വച്ചു. ഒന്നും നീക്കിയില്ല."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} തുടങ്ങിയ സ്ഥലത്തുതന്നെ വച്ചു. ഒന്നും നീക്കിയില്ല."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -2739,6 +2763,10 @@ msgstr "സോഫ്റ്റ്‌വെയറിന് നിങ്ങളു�
 msgid "Cancel"
 msgstr "റദ്ദാക്കുക"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3424,6 +3452,11 @@ msgstr "നിങ്ങളുടെ ലിസ്റ്റ് എൻട്രി�
 msgid "Connected"
 msgstr "ബന്ധിപ്പിച്ചു"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "ബന്ധിപ്പിച്ച ആപ്ലിക്കേഷനുകൾ"
@@ -3492,6 +3525,7 @@ msgstr "ബന്ധങ്ങൾ"
 msgid "Contain"
 msgstr "മുഴുവൻ ചിത്രം"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "ഉള്ളടക്കം"
@@ -3979,6 +4013,10 @@ msgstr "ആ ഫയൽ വായിക്കാനായില്ല. വീണ�
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "{entries} എന്നതിലെ തീയതികൾ വായിക്കാനായില്ല, അതിനാൽ അവ അവസാനം തുടരും. അവയുടെ തീയതികൾ ശരിയാക്കി വീണ്ടും ക്രമീകരിക്കുക."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4393,8 +4431,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "അക്കൗണ്ട് സൃഷ്ടിക്കുക"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4657,6 +4704,10 @@ msgstr "അപേക്ഷ ഇല്ലാതാക്കുക"
 msgid "Delete conversation"
 msgstr "സംഭാഷണം ഇല്ലാതാക്കുക"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4884,8 +4935,26 @@ msgid "Discard unsaved changes?"
 msgstr "സേവ് ചെയ്യാത്ത മാറ്റങ്ങൾ ഉപേക്ഷിക്കണോ?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "ഡിസ്കണക്റ്റ് ചെയ്യുക"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -5149,6 +5218,10 @@ msgstr "വലിച്ചിടുക · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "സെക്ഷനുകൾ കോളങ്ങൾക്കിടയിൽ നീക്കാൻ ഇവിടെ ഡ്രാഗ് ചെയ്ത് ഡ്രോപ്പ് ചെയ്യുക"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "നീക്കാൻ പോയിന്റർ ഉപയോഗിച്ച് വലിക്കുക, അല്ലെങ്കിൽ അതിന്റെ മെനു ഉപയോഗിക്കുക."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -6288,6 +6361,10 @@ msgstr "ഡാഷ്ബോർഡിലേക്കു പോകുക"
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Go to Reactive Resume"
+msgstr "Reactive Resume-ലേക്ക് പോകുക"
+
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
 msgstr "… എന്നതിലേക്ക് പോകുക"
@@ -6370,6 +6447,7 @@ msgid "Heading changed"
 msgstr "തലക്കെട്ട് മാറി"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Headline"
 msgstr "ഹെഡ്ലൈൻ"
 
@@ -6932,6 +7010,10 @@ msgstr "പ്രശ്‌നങ്ങളും ജോബ് പൊരുത്�
 msgid "It has entries but isn't placed on a page."
 msgstr "ഇതിന് എൻട്രികളുണ്ടെങ്കിലും ഒരു പേജിൽ സ്ഥാപിച്ചിട്ടില്ല."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "ഇത് ഡിലീറ്റ് ചെയ്തിട്ടുണ്ടാകാം. മറ്റൊരു കഥ തിരഞ്ഞെടുക്കുക അല്ലെങ്കിൽ പുതിയത് ചേർക്കുക."
@@ -7080,6 +7162,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "ഒരൊറ്റ വിലാസം മാത്രം വയ്ക്കുക; അപ്പോൾ ഏതാണ് ഉപയോഗിക്കേണ്ടതെന്ന് സോഫ്റ്റ്‌വെയറിന് ഊഹിക്കേണ്ടിവരില്ല."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "നിങ്ങൾ ആപ്ലിക്കേഷൻ ഉപയോഗിക്കാത്തപ്പോൾ ആക്സസ് നിലനിർത്തുക."
 
@@ -7685,6 +7768,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "പേരുള്ള ഘട്ടങ്ങൾ ഇറക്കുമതി ചെയ്യുന്നതിന് മുമ്പ് നിങ്ങളുടെ ഘട്ടങ്ങൾ ലോഡ് ചെയ്യുക. നിങ്ങളുടെ CSV ഡാറ്റ സൂക്ഷിക്കും."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "ലോഡ് ചെയ്യുന്നു"
 
@@ -8259,6 +8343,10 @@ msgstr "{label} എന്നതിലേക്ക് നീക്കി"
 msgid "Moves the application from {0}."
 msgstr "അപേക്ഷ “{0}” ഘട്ടത്തിൽ നിന്ന് മാറ്റുന്നു."
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} നീക്കുന്നത് റദ്ദാക്കി. ഒന്നും നീക്കിയില്ല."
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "സപ്പോർട്ട് ജോലി കൂട്ടാതെ കാരണം കണ്ടെത്തുക എന്നതായിരുന്നു എന്റെ ചുമതല."
@@ -8545,7 +8633,11 @@ msgid "No commands match that search."
 msgstr "ആ തിരയലിന് ചേരുന്ന കമാൻഡുകളൊന്നുമില്ല."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "ഇതുവരെ ബന്ധിപ്പിച്ച ആപ്ലിക്കേഷനുകളൊന്നുമില്ല. നിങ്ങളുടെ അക്കൗണ്ട് ആക്സസ് ചെയ്യാൻ നിങ്ങൾ അനുവദിക്കുന്ന ആപ്പുകൾ ഇവിടെ ദൃശ്യമാകും."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "ഇതുവരെ ബന്ധിപ്പിച്ച ആപ്ലിക്കേഷനുകളൊന്നുമില്ല. നിങ്ങളുടെ അക്കൗണ്ട് ആക്സസ് ചെയ്യാൻ നിങ്ങൾ അനുവദിക്കുന്ന ആപ്പുകൾ ഇവിടെ ദൃശ്യമാകും."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -9453,6 +9545,16 @@ msgstr "പേജ്"
 msgid "Page {0}"
 msgstr "പേജ് {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "പേജ് {0}, സൈഡ്ബാർ"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "പേജ് {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9709,10 +9811,12 @@ msgid "Photo hidden"
 msgstr "ഫോട്ടോ മറച്ചിരിക്കുന്നു"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "പേജിൽ നിന്ന് ഫോട്ടോ മറച്ചിരിക്കുന്നു."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "പേജിലെ ഫോട്ടോ."
 
@@ -9743,6 +9847,10 @@ msgstr "ഒരു ഫോർമാറ്റ് തിരഞ്ഞെടുത്�
 #: src/features/career/workspace/prepare.tsx
 msgid "Pick two examples"
 msgstr "രണ്ട് ഉദാഹരണങ്ങൾ തിരഞ്ഞെടുക്കുക"
+
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} എടുത്തു."
 
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
@@ -9818,6 +9926,16 @@ msgstr "പോർച്ചുഗീസ് (പോർച്ചുഗൽ)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "പദവി"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total}-ൽ സ്ഥാനം {position}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total}-ൽ സ്ഥാനം {position}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -10371,16 +10489,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "നിങ്ങളുടെ ഇമെയിൽ വിലാസം വായിക്കുക."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "നിങ്ങളുടെ പ്രൊഫൈൽ വിവരങ്ങൾ വായിക്കുക."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "ഒരു സമ്പൂർണ്ണ ഡാറ്റ എക്‌സ്‌പോർട്ട് ഉൾപ്പെടെ നിങ്ങളുടെ അക്കൗണ്ടിലെ എല്ലാ ഡാറ്റയും വായിക്കുക: നിങ്ങളുടെ പ്രൊഫൈലും ഇമെയിൽ വിലാസവും ഡോക്യുമെൻ്റുകളും ജോലി അപേക്ഷകളും കരിയർ ഡാറ്റയും കോച്ചിംഗ് സംഭാഷണങ്ങളും."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11241,12 +11369,12 @@ msgid "Revoke {0}"
 msgstr "{0} അസാധുവാക്കുക"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "ആക്സസ് റദ്ദാക്കുക"
+#~ msgid "Revoke access"
+#~ msgstr "ആക്സസ് റദ്ദാക്കുക"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "നിങ്ങളുടെ അക്കൗണ്ടിലേക്കുള്ള ഒരു ആപ്ലിക്കേഷൻ്റെ ആക്‌സസ് റദ്ദാക്കുക."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "നിങ്ങളുടെ അക്കൗണ്ടിലേക്കുള്ള ഒരു ആപ്ലിക്കേഷൻ്റെ ആക്‌സസ് റദ്ദാക്കുക."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12218,6 +12346,7 @@ msgid "Show password"
 msgstr "പാസ്‌വേഡ് കാണിക്കുക"
 
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Show photo"
 msgstr "ഫോട്ടോ കാണിക്കുക"
 
@@ -12267,6 +12396,7 @@ msgstr "സൈഡ്‌ബാറുകൾ പലപ്പോഴും അവസ�
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13976,6 +14106,10 @@ msgstr "ലേക്ക്"
 msgid "To {recipient}"
 msgstr ""
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "എടുക്കാൻ Space അല്ലെങ്കിൽ Enter അമർത്തുക. നീക്കാൻ ആരോ കീകളും, വയ്ക്കാൻ Space അല്ലെങ്കിൽ Enter-ഉം, റദ്ദാക്കാൻ Escape-ഉം ഉപയോഗിക്കുക."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
@@ -14358,6 +14492,10 @@ msgstr "പേരില്ലാത്ത പാസ്‌കീ"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ശീർഷകമില്ലാത്തത്"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "ശീർഷകമില്ലാത്ത ഇനം"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
@@ -14887,6 +15025,7 @@ msgid "Web searches look for work here, up to three countries."
 msgstr "ഈ രാജ്യങ്ങളിലെ ജോലികൾക്കായി വെബ് തിരയലുകൾ തിരയുന്നു. മൂന്ന് രാജ്യങ്ങൾ വരെ തിരഞ്ഞെടുക്കുക."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Website"
 msgstr "വെബ്സൈറ്റ്"
 

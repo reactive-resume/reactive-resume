@@ -191,6 +191,8 @@ Icons inside resumes use Phosphor names stored in resume data, drawn by the Phos
 - Sliding indicators, reordering, and settling use `ease-in-out-strong` (`cubic-bezier(0.77, 0, 0.175, 1)`). Swipe-dismissed bottom sheets use `ease-drawer`.
 - Keep app motion brief and purposeful. Small entrance fades, status transitions, and the mobile tab indicator's spring are supported. Loading placeholders stay still; document reflow is never animated. Keyboard mode switches are instant.
 - Reduced motion sets duration tokens to 1ms and collapses CSS transitions and animations. Status spinners continue turning.
+- A pathname change fades through: the old page fades out over 140ms, then the new one fades up 6px over 200ms, so the two never show at once. The builder's own pending shell (its bar, panel placeholders and a blank page at the canvas's size) stands in while a resume loads; the logo loader covers only the app's first load.
+- Dragging auto-scrolls a list only from its outer 8%, gently (`DRAG_AUTO_SCROLL`).
 - `apps/web/src/libs/motion.ts` mirrors CSS timings. `MotionConfig reducedMotion="user"` and `followReducedMotion()` make Motion animations respect the preference.
 
 The homepage has separate motion rules below.
@@ -205,7 +207,7 @@ Generic primitives live in `packages/ui/src/components`, using Base UI and cmdk 
 - **Segments and tabs:** use `SegmentedControl` for 2–4 options in a radio group. Use `Tabs` to switch panels; set `TabsList variant="line"` for underline tabs.
 - **Menus:** 4px radius and 36px items. Size popups for their content and trigger; put destructive items last, after a separator.
 - **Layers:** menus and popovers provide lightweight choices; sheets hold tasks beside the document and use the bottom variant on mobile; dialogs hold decisions. Use `AlertDialog` for destructive confirmation and name what cancel keeps.
-- **Toasts:** one visible at a time, bottom center, with `bg-ink` and `text-bg`. The default timeout is six seconds; `timeout: 0` keeps a toast visible. Undo is an optional underlined action.
+- **Toasts:** one visible at a time, bottom center, with `bg-ink` and `text-bg`. The default timeout is six seconds; `timeout: 0` keeps a toast visible. Undo is an optional underlined action. Pressing an action closes its toast after the action's handler runs, and a second press while it leaves does nothing.
 - **Chats:** the assistant and career coach transcripts use `MessageScroller` (shadcn, behaviour from `@shadcn/react`): it follows a streaming reply only while the reader is at the latest message, settles each question near the top, reopens a saved thread on its last question, and shows a “Latest” button after scrolling away. Agent steps are `Trace` lines: spinner and shimmer while running, check when done, danger when failed, dimmed dash when unfinished. Mobile mirrors both.
 - **Alerts:** `info`, `success`, `warn`, and `error`; only the error variant adds `role="alert"` by default.
 - **Empty states:** a 22px Instrument Serif headline, concise 14px body text, and a primary action. Add a secondary action only when useful.
@@ -215,7 +217,7 @@ Generic primitives live in `packages/ui/src/components`, using Base UI and cmdk 
 Target WCAG 2.2 AA:
 
 - Show a 2px accent focus outline with a 2px gap on `:focus-visible`. Inputs use their border and soft ring instead.
-- Provide at least 24px pointer targets and 44px touch targets. Every drag operation needs keyboard and menu alternatives.
+- Provide at least 24px pointer targets and 44px touch targets. Every drag operation needs keyboard and menu alternatives. Each `DndContext` takes `dndContextProps()` (`apps/web/src/libs/dnd.ts`): drags are announced in the UI language by the item's visible name and its page or column, never by an id.
 - Pair color signals with text; add icons where they clarify status.
 - Trap focus in modal sheets and dialogs. Escape closes the top layer; closing returns focus to its trigger.
 - Announce save state and routine feedback politely. Reserve assertive announcements for errors that need immediate attention.
@@ -257,20 +259,23 @@ The public homepage in `apps/web/src/features/homepage` shares app colors and th
 
 Pinned scenes contain a sticky `100svh` stage. Scroll progress is `p = clamp(0, −top / max(1, height − viewportHeight), 1)`; `scroll.ts` writes it to `--p` through one animation-frame-throttled scroll listener. CSS derives continuous motion from progress; React receives only coarse scene and step changes.
 
-| Scene  | Below 900px | From 900px |
-| ------ | ----------- | ---------- |
-| Hero   | 190vh       | 260vh      |
-| Write  | 280vh       | 330vh      |
-| Design | 380vh       | 440vh      |
-| Check  | 260vh       | 320vh      |
-| Tailor | 280vh       | 330vh      |
-| Share  | 240vh       | 300vh      |
+| Scene   | Below 900px | From 900px |
+| ------- | ----------- | ---------- |
+| Hero    | 170vh       | 220vh      |
+| Write   | 280vh       | 330vh      |
+| Design  | 320vh       | 360vh      |
+| Check   | 245vh       | 295vh      |
+| Tailor  | 260vh       | 300vh      |
+| Share   | 240vh       | 300vh      |
+| Prepare | 310vh       | 330vh      |
 
 Light mode combines breathing window light (16 seconds), a drifting mullion shadow (90 seconds), and 18 dust motes. Dark mode adds a neutral 620px cursor glow at 6% opacity. These are decorative and must not obscure text.
 
 Scroll performance (Firefox and phones dropped frames here): the mullion shadow's softness is drawn into its gradients, never `filter: blur()`; backdrop blur uses the `blur-ok` variant (fine pointer, non-Gecko only) and falls back to the plain tinted backdrop; components that follow fast-changing scroll steps (Check's score, Prepare's clock and countdown) subscribe to `useLanding` on their own so the scene around them doesn't re-render.
 
-Reduced motion fixes scenes at their end state and collapses pinned sections to `100svh`. Disable scroll scrubbing, parallax, ambient movement, cord sway, and count animations. The Languages word rotation has a pause control and stays still with reduced motion.
+Scene navigation scrolls smoothly within a scene or to the next one, since scrubbing through is the story. A longer jump cuts to the scene, fading through like a page change, instead of fast-forwarding through every scene between; reduced motion always cuts. Pinned scenes skip rendering offscreen (`content-visibility: auto`); the scroll engine renders a scene and decodes its images while it is within about two screens (`data-warm`) and lets it skip again once it is further away.
+
+Reduced motion fixes scenes at their end state and collapses pinned sections to `100svh` at every width (one rule in `landing.css`). Disable scroll scrubbing, parallax, ambient movement, cord sway, and count animations. The Languages word rotation has a pause control and stays still with reduced motion.
 
 ### Illustration
 

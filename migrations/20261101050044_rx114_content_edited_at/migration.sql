@@ -11,7 +11,7 @@ UPDATE "resume" SET "edited_at" = "updated_at" WHERE "edited_at" IS NULL;--> sta
 -- MCP clients) changes these columns through an UPDATE, so the database keeps edited_at rather than each caller.
 CREATE FUNCTION "touch_edited_at"() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-	NEW."edited_at" := now();
+	NEW."edited_at" := clock_timestamp();
 	RETURN NEW;
 END;
 $$;--> statement-breakpoint

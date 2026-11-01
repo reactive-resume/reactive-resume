@@ -25,7 +25,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("database migration
 		await admin.query(`CREATE DATABASE "${databaseName}"`);
 		const url = new URL(databaseUrl);
 		url.pathname = `/${databaseName}`;
-		const pool = new Pool({ connectionString: url.toString(), max: 1 });
+		const pool = new Pool({ connectionString: url.toString(), max: 2 });
 		const db = drizzle({ client: pool });
 		try {
 			for (const name of await readdir(migrationsFolder)) {
@@ -109,9 +109,33 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("database migration
 				["recipient", "'Acme'"],
 				["style", '\'{"primaryColor":"#000"}\''],
 			] as const) {
-				const before = (await editedAt("cover_letter", "a-letter")).edited_at.getTime();
+				const before = Date.parse("2025-03-04T00:00:00Z");
+				await pool.query(`UPDATE cover_letter SET edited_at=$1 WHERE id='a-letter'`, [new Date(before)]);
 				await pool.query(`UPDATE cover_letter SET ${column}=${value} WHERE id='a-letter'`);
 				expect((await editedAt("cover_letter", "a-letter")).edited_at.getTime()).toBeGreaterThan(before);
+			}
+
+			// A transaction opened first can write last after waiting for another writer's row lock.
+			// Compare in PostgreSQL, retaining microseconds instead of depending on JS millisecond timing.
+			const earlierWriter = await pool.connect();
+			const delayedWriter = await pool.connect();
+			try {
+				await delayedWriter.query("BEGIN");
+				await earlierWriter.query("BEGIN");
+				const earlier = await earlierWriter.query(
+					`UPDATE resume SET data=jsonb_set(data,'{basics,name}','"Earlier writer"') WHERE id='a-resume' RETURNING edited_at::text AS at`,
+				);
+				const delayed = delayedWriter.query(
+					`UPDATE resume SET data=jsonb_set(data,'{basics,name}','"Later writer"') WHERE id='a-resume' RETURNING edited_at > $1::timestamptz AS newer`,
+					[earlier.rows[0].at],
+				);
+				await earlierWriter.query("COMMIT");
+				const result = await delayed;
+				await delayedWriter.query("COMMIT");
+				expect(result.rows[0].newer).toBe(true);
+			} finally {
+				earlierWriter.release();
+				delayedWriter.release();
 			}
 
 			// A document created after the migration starts its own clock, and the other account was never touched.

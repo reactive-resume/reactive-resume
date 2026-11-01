@@ -4,6 +4,7 @@ import { BetterAuthError } from "better-auth";
 import { and, eq, gt, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { isReservedUsername } from "@reactive-resume/utils/app-paths";
 import { generateId, toUsername } from "@reactive-resume/utils/string";
 
 interface ExistingOAuthUser {
@@ -96,8 +97,21 @@ function appendUsernameSuffix(base: string, suffix: string): string {
 // Old public links still point at a released username, so for 30 days only its previous owner can take it again.
 const USERNAME_RESERVED_MS = 30 * 24 * 60 * 60 * 1000;
 
-/** Whether someone other than `userId` released this username recently. */
+/**
+ * Whether `userId` may not take this username: someone else released it recently, or the app's addresses use it
+ * (`/api`, `/login`), which only an account that already has it keeps.
+ */
 export async function isUsernameReserved(username: string, userId?: string | null): Promise<boolean> {
+	if (isReservedUsername(username)) {
+		if (!userId) return true;
+		const [owner] = await db
+			.select({ id: schema.user.id })
+			.from(schema.user)
+			.where(and(eq(schema.user.id, userId), eq(schema.user.username, username.trim().toLowerCase())))
+			.limit(1);
+		return !owner;
+	}
+
 	const [released] = await db
 		.select({ userId: schema.releasedUsername.userId })
 		.from(schema.releasedUsername)

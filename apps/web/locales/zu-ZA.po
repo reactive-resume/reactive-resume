@@ -660,6 +660,30 @@ msgstr ""
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr ""
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr ""
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -2734,6 +2758,10 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3419,6 +3447,11 @@ msgstr ""
 msgid "Connected"
 msgstr ""
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr ""
@@ -3487,6 +3520,7 @@ msgstr ""
 msgid "Contain"
 msgstr ""
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr ""
@@ -3974,6 +4008,10 @@ msgstr ""
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr ""
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4388,7 +4426,16 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
+msgstr ""
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
@@ -4652,6 +4699,10 @@ msgstr ""
 msgid "Delete conversation"
 msgstr ""
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4879,7 +4930,25 @@ msgid "Discard unsaved changes?"
 msgstr ""
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
 msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
@@ -5143,6 +5212,10 @@ msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
 msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -6283,6 +6356,10 @@ msgstr ""
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Go to Reactive Resume"
+msgstr ""
+
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
 msgstr ""
@@ -6365,6 +6442,7 @@ msgid "Heading changed"
 msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Headline"
 msgstr ""
 
@@ -6927,6 +7005,10 @@ msgstr ""
 msgid "It has entries but isn't placed on a page."
 msgstr ""
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr ""
@@ -7075,6 +7157,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr ""
 
@@ -7680,6 +7763,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr ""
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr ""
 
@@ -8254,6 +8338,10 @@ msgstr ""
 msgid "Moves the application from {0}."
 msgstr ""
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr ""
@@ -8540,7 +8628,11 @@ msgid "No commands match that search."
 msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -9448,6 +9540,16 @@ msgstr ""
 msgid "Page {0}"
 msgstr ""
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr ""
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9704,10 +9806,12 @@ msgid "Photo hidden"
 msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr ""
 
@@ -9737,6 +9841,10 @@ msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Pick two examples"
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
 msgstr ""
 
 #: src/features/career/shared.tsx
@@ -9812,6 +9920,16 @@ msgstr ""
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
+msgstr ""
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr ""
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
 msgstr ""
 
 #: src/features/settings/profile.tsx
@@ -10366,15 +10484,25 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -11236,12 +11364,12 @@ msgid "Revoke {0}"
 msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr ""
+#~ msgid "Revoke access"
+#~ msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr ""
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12213,6 +12341,7 @@ msgid "Show password"
 msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Show photo"
 msgstr ""
 
@@ -12262,6 +12391,7 @@ msgstr ""
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13969,6 +14099,9 @@ msgstr ""
 #. A letter's recipient under its name in the library
 #: src/features/documents/document-card.tsx
 msgid "To {recipient}"
+
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
 msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
@@ -14352,6 +14485,10 @@ msgstr ""
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
 msgstr ""
 
 #: src/features/documents/use-start-document.ts
@@ -14882,6 +15019,7 @@ msgid "Web searches look for work here, up to three countries."
 msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Website"
 msgstr ""
 

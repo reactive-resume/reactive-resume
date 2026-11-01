@@ -3,7 +3,7 @@ import { parseResumeData } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { parsePeriod, parseSingleDate } from "@reactive-resume/schema/resume/period";
 import { generateId } from "@reactive-resume/utils/string";
-import { BULLET_PATTERN, toHtml } from "./html";
+import { BULLET_PATTERN, toHtmlBlocks as toHtml } from "./html";
 
 type SectionKey = SectionType | "summary";
 
@@ -109,11 +109,16 @@ const normalizeHeading = (line: string) =>
 		.trim()
 		.toLowerCase();
 
-function knownHeading(line: string): SectionKey | null {
-	const normalized = normalizeHeading(line);
-	if (!normalized || normalized.split(" ").length > MAX_HEADING_WORDS) return null;
+const COMPACT_SECTION_ALIASES: Readonly<Record<string, SectionKey>> = Object.fromEntries(
+	Object.entries(SECTION_ALIASES).map(([name, key]) => [name.replaceAll(" ", ""), key]),
+);
 
-	return SECTION_ALIASES[normalized] ?? null;
+export function knownHeading(line: string): SectionKey | null {
+	if (/[.!?;,]$/.test(line.trim())) return null;
+	const normalized = normalizeHeading(line);
+	if (!normalized) return null;
+	// Letter spacing can be emitted as partial words ("E D U CAT I O N").
+	return SECTION_ALIASES[normalized] ?? COMPACT_SECTION_ALIASES[normalized.replaceAll(" ", "")] ?? null;
 }
 
 function looksLikeHeading(line: string): boolean {
@@ -155,11 +160,14 @@ function looksLikeEntryHeader(line: string): boolean {
 	return trimmed.split(/\s+/).length <= MAX_ENTRY_HEADER_WORDS;
 }
 
-function findPeriod(line: string): string {
+export function findPeriod(line: string): string {
 	PERIOD_CANDIDATE.lastIndex = 0;
 
 	for (const match of line.match(PERIOD_CANDIDATE) ?? []) {
 		if (parsePeriod(match)) return match.trim();
+		// The optional month can consume a role title before a year-only range ("Engineer 2020 – Present").
+		const yearRange = match.replace(/^\p{L}{3,}\.?\s+/u, "");
+		if (parsePeriod(yearRange)) return yearRange.trim();
 	}
 
 	return "";
@@ -188,6 +196,27 @@ function extractPhone(text: string): string {
 	return "";
 }
 
+/** Contact rows belong to the identity block, not independent PDF body columns. */
+export function hasContactDetails(text: string): boolean {
+	return EMAIL_PATTERN.test(text) || URL_TEST.test(text) || extractPhone(text) !== "";
+}
+
+/** A contact row, rather than prose which happens to mention an address or URL. */
+export function isContactLine(text: string): boolean {
+	const email = text.match(EMAIL_PATTERN)?.[0];
+	const urls = text.match(URL_PATTERN) ?? [];
+	const phone = extractPhone(text);
+	const count = Number(Boolean(email)) + urls.length + Number(Boolean(phone));
+	const rest = text.replace(EMAIL_PATTERN, "").replace(URL_PATTERN, "").replace(phone, "");
+	return count > 0 && rest.replace(/[\s|•·,;()+-]/g, "") === "";
+}
+
+/** Exact record date evidence; a date mentioned inside prose is not a date cell. */
+export function standaloneDate(text: string): string {
+	const value = text.trim();
+	return value && (findPeriod(value) === value || parseSingleDate(value) !== null) ? value : "";
+}
+
 function isDateLine(line: string, allowSingleDate = true): boolean {
 	if (findPeriod(line)) return true;
 	// A section grouped without single dates reads a bare "2022" as text, so the lookahead has to
@@ -195,7 +224,7 @@ function isDateLine(line: string, allowSingleDate = true): boolean {
 	if (!allowSingleDate) return false;
 
 	const bare = line.replace(BULLET_PATTERN, "").trim();
-	return bare !== "" && parseSingleDate(bare) !== null;
+	return standaloneDate(bare) !== "";
 }
 
 function introducesEntry(lines: readonly string[], index: number, allowSingleDate = true): boolean {
@@ -464,9 +493,13 @@ function buildSectionItems(key: SectionKey, lines: string[]): unknown[] {
 	}));
 }
 
-function segment(lines: string[]): { header: string[]; segments: Segment[] } {
+function segment(lines: string[], headingLines?: ReadonlySet<number>): { header: string[]; segments: Segment[] } {
 	const records = lines
-		.map((line, index) => ({ line: line.trim(), precededByBlank: index > 0 && !lines[index - 1]?.trim() }))
+		.map((line, index) => ({
+			sourceIndex: index,
+			line: line.trim(),
+			precededByBlank: index > 0 && !lines[index - 1]?.trim(),
+		}))
 		.filter((record) => record.line);
 	const cleaned = records.map((record) => record.line);
 	const boundary = headerBoundary(cleaned);
@@ -474,16 +507,19 @@ function segment(lines: string[]): { header: string[]; segments: Segment[] } {
 	const segments: Segment[] = [];
 	let current: Segment | null = null;
 
-	for (const [index, { line, precededByBlank }] of records.entries()) {
-		const key = knownHeading(line);
+	for (const [index, { line, precededByBlank, sourceIndex }] of records.entries()) {
+		const mayBeHeading = headingLines === undefined || headingLines.has(sourceIndex);
+		const key = mayBeHeading ? knownHeading(line) : null;
 		const isolatedTitleCase = precededByBlank && looksLikeTitleCaseHeading(line);
 		// With no section open the entry-preamble guard has nothing to protect: skipping it there keeps
 		// a dated custom section that opens the body from being swallowed into the contact header.
 		const unknown =
 			key === null &&
-			index > boundary &&
-			(looksLikeHeading(line) || isolatedTitleCase) &&
-			(current === null || isolatedTitleCase || !introducesEntry(cleaned, index));
+			(headingLines !== undefined || index > boundary) &&
+			(headingLines !== undefined
+				? mayBeHeading
+				: (looksLikeHeading(line) || isolatedTitleCase) &&
+					(current === null || isolatedTitleCase || !introducesEntry(cleaned, index)));
 
 		if (key !== null || unknown) {
 			if (current) segments.push(current);
@@ -529,9 +565,9 @@ function parseHeader(lines: string[]) {
 	};
 }
 
-export function parseResumeText(text: string): ResumeData {
+export function parseResumeText(text: string, headingLines?: ReadonlySet<number>): ResumeData {
 	const lines = text.replace(/\r\n?/g, "\n").split("\n");
-	const { header, segments } = segment(lines);
+	const { header, segments } = segment(lines, headingLines);
 	const contact = parseHeader(header);
 
 	const data: ResumeData = structuredClone(defaultResumeData);

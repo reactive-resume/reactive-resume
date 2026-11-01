@@ -267,7 +267,7 @@ export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin, i
 
 			<SocialAuth />
 
-			{allowGuestLogin && (
+			{allowGuestLogin && !getOAuthSignInOptions(callbackURL).oauth_query && (
 				<Button
 					type="button"
 					variant="secondary"

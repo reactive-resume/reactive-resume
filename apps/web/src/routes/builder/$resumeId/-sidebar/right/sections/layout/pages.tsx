@@ -1,3 +1,4 @@
+import type { DndLabel } from "@/libs/dnd";
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties, HTMLAttributes, Ref } from "react";
@@ -36,6 +37,7 @@ import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 import { resolveLayoutSectionTitle } from "./title";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { dndContextProps } from "@/libs/dnd";
 import { DRAG_SETTLE } from "@/libs/motion";
 
 type ColumnId = "main" | "sidebar";
@@ -55,6 +57,16 @@ const getColumnLabel = (columnId: ColumnId): string => {
 			}),
 		)
 		.exhaustive();
+};
+
+/** "Page 2, Sidebar": where a section sits, read out while it's dragged. */
+const getPlaceLabel = (pageIndex: number, columnId: ColumnId) => {
+	const page = pageIndex + 1;
+	const column = getColumnLabel(columnId);
+	return t({
+		message: `Page ${page}, ${column}`,
+		comment: "Layout editor: a page and its column, read while dragging",
+	});
 };
 
 type PageLocation = {
@@ -236,6 +248,7 @@ export function LayoutPages() {
 
 	return (
 		<DndContext
+			{...dndContextProps(false)}
 			id="builder-layout"
 			sensors={sensors}
 			collisionDetection={closestCorners}
@@ -374,7 +387,11 @@ function LayoutColumn({
 	className,
 }: LayoutColumnProps) {
 	const droppableId = createDroppableId(pageIndex, columnId);
-	const { setNodeRef, isOver } = useDroppable({ id: droppableId, disabled });
+	const { setNodeRef, isOver } = useDroppable({
+		id: droppableId,
+		data: { label: getPlaceLabel(pageIndex, columnId) } satisfies DndLabel,
+		disabled,
+	});
 
 	return (
 		<SortableContext id={droppableId} items={items} strategy={verticalListSortingStrategy}>
@@ -410,8 +427,13 @@ type SortableLayoutItemProps = {
 };
 
 function SortableLayoutItem({ id, pageIndex, columnId }: SortableLayoutItemProps) {
+	const resume = useCurrentResume();
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id,
+		data: {
+			label: resolveLayoutSectionTitle(resume.data, id),
+			group: getPlaceLabel(pageIndex, columnId),
+		} satisfies DndLabel,
 		transition: DRAG_SETTLE,
 	});
 

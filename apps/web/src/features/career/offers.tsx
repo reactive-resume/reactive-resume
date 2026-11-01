@@ -102,10 +102,15 @@ export function OffersPage({ a, b }: OffersPageProps) {
 
 	if (!offers?.length)
 		return (
-			<EmptyState
-				title={<Trans>No offers to compare yet</Trans>}
-				description={<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>}
-				action={<OfferEntry primary />}
+			<OfferEntry
+				primary
+				frame={(action) => (
+					<EmptyState
+						title={<Trans>No offers to compare yet</Trans>}
+						description={<Trans>Add offer terms manually, or use optional AI extraction in Messages.</Trans>}
+						action={action}
+					/>
+				)}
 			/>
 		);
 

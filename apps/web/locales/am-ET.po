@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {የ# ችግር ግጥሚያ ሊያስወጣዎት 
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {ቼክ የሚገመገም # ነገር አለው። አሁንም ማውረድ ትችላለህ።} other {ቼክ የሚገመገሙ # ነገሮች አሉት። አሁንም ማውረድ ትችላለህ።}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} ወደ መነሻ ቦታው ተመልሷል።"
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} ሊቀመጥ የሚችልበት ቦታ ላይ አይደለም።"
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} በዚህ ላይ ነው፦ {place}።"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} እዚህ ተቀምጧል፦ {place}።"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} ሊሄድ በማይችልበት ቦታ ተቀምጧል። ምንም አልተንቀሳቀሰም።"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} በመነሻ ቦታው ተቀምጧል። ምንም አልተንቀሳቀሰም።"
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -2739,6 +2763,10 @@ msgstr "ሶፍትዌር የእርስዎን የስራ ልምድ ማንበብ ይ�
 msgid "Cancel"
 msgstr "ሰርዝ"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3424,6 +3452,11 @@ msgstr "የቋንቋ ሞዴል የዝርዝር ግቤቶችዎን እንዲያ�
 msgid "Connected"
 msgstr "ተገናኝቷል"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "የተገናኙ መተግበሪያዎች"
@@ -3492,6 +3525,7 @@ msgstr "እውቂያዎች"
 msgid "Contain"
 msgstr "ሙሉውን አሳይ"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "ይዘት"
@@ -3979,6 +4013,10 @@ msgstr "ያንን ፋይል ማንበብ አልተቻለም። እንደገና �
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "በ{entries} ላይ ያሉትን ቀኖች ማንበብ አልተቻለም፣ ስለዚህ መጨረሻ ላይ ይቆያሉ። ቀኖቻቸውን አስተካክለው እንደገና ይደርድሩ።"
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4393,8 +4431,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "መለያ ፍጠር"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4657,6 +4704,10 @@ msgstr "ማመልከቻ ሰርዝ"
 msgid "Delete conversation"
 msgstr "ውይይቱን ሰርዝ"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4884,8 +4935,26 @@ msgid "Discard unsaved changes?"
 msgstr "ያልተቀመጡ ለውጦች ይወገዱ?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "ግንኙነትን ቁርጥ"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -5149,6 +5218,10 @@ msgstr "ጎትት · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "ክፍሎችን ከአንዱ አምድ ወደ ሌላ ለማንቀሳቀስ እዚህ ጎትቱ እና ጥልቀቁ ያድርጉአቸው"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "ለማንቀሳቀስ በጠቋሚው ይጎትቱት ወይም ምናሌውን ይጠቀሙ።"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -6288,6 +6361,10 @@ msgstr "ወደ ዳሽቦርዱ ሂድ"
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Go to Reactive Resume"
+msgstr "ወደ Reactive Resume ይሂዱ"
+
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
 msgstr "ወደ… ይሂዱ"
@@ -6370,6 +6447,7 @@ msgid "Heading changed"
 msgstr "ርዕስ ተቀይሯል።"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Headline"
 msgstr "ርዕሰ ነጥብ"
 
@@ -6932,6 +7010,10 @@ msgstr "ጉዳዮች እና የስራ ግጥሚያ አሁንም ያለ AI ይሰ
 msgid "It has entries but isn't placed on a page."
 msgstr "ግቤቶች አሉት ግን በገጽ ላይ አልተቀመጠም።"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "ተሰርዞ ሊሆን ይችላል። ሌላ ታሪክ ይምረጡ ወይም አዲስ ያክሉ።"
@@ -7080,6 +7162,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "ሶፍትዌር የትኛውን እንደሚጠቀም መገመት እንዳይኖርበት አንድ አድራሻ ብቻ ያስቀምጡ።"
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "መተግበሪያውን በማይጠቀሙበት ጊዜ መዳረሻዎን ይቀጥሉ።"
 
@@ -7685,6 +7768,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "በስም የተሰየሙ ደረጃዎችን ከማስመጣትዎ በፊት ደረጃዎችዎን ይጫኑ። የCSV ውሂብዎ ይጠበቃል።"
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "በመጫን ላይ"
 
@@ -8259,6 +8343,10 @@ msgstr "ወደ {label} ተዛውሯል"
 msgid "Moves the application from {0}."
 msgstr "ማመልከቻውን ከ{0} ያዛውራል።"
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item}ን ማንቀሳቀስ ተሰርዟል። ምንም አልተንቀሳቀሰም።"
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "የእኔ ኃላፊነት የድጋፍ ሥራ ሳልጨምር ምክንያቱን ማወቅ ነበር።"
@@ -8545,7 +8633,11 @@ msgid "No commands match that search."
 msgstr "ከዚያ ፍለጋ ጋር የሚዛመድ ትእዛዝ የለም።"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "እስካሁን የተገናኙ መተግበሪያዎች የሉም። መለያዎን እንዲደርሱ የፈቀዱላቸው መተግበሪያዎች እዚህ ይታያሉ።"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "እስካሁን የተገናኙ መተግበሪያዎች የሉም። መለያዎን እንዲደርሱ የፈቀዱላቸው መተግበሪያዎች እዚህ ይታያሉ።"
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -9453,6 +9545,16 @@ msgstr "ገጽ"
 msgid "Page {0}"
 msgstr "ገጽ {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "ገጽ {0}፣ የጎን አሞሌ"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "ገጽ {page}፣ {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9709,10 +9811,12 @@ msgid "Photo hidden"
 msgstr "ፎቶ ተደብቋል"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "ፎቶ ከገጹ ተደብቋል።"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "በገጹ ላይ ፎቶ."
 
@@ -9743,6 +9847,10 @@ msgstr "አንድ ቅርጸት ይምረጡ እና በሁሉም ቦታ ይጠቀ
 #: src/features/career/workspace/prepare.tsx
 msgid "Pick two examples"
 msgstr "ሁለት ምሳሌዎችን ይምረጡ"
+
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} ተነስቷል።"
 
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
@@ -9818,6 +9926,16 @@ msgstr "ፖርቹጋልኛ (ፖርቱጋል)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "አቀማመጥ"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "ቦታ {position} ከ{total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "ቦታ {position} ከ{total}፣ {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -10371,16 +10489,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "የኢሜል አድራሻዎን ያንብቡ።"
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "የመገለጫ መረጃዎን ያንብቡ።"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "የተሟላ የውሂብ ወደ ውጭ መላክን ጨምሮ ሁሉንም መረጃዎች በመለያዎ ውስጥ ያንብቡ፡ የመገለጫዎ እና የኢሜል አድራሻዎ፣ ሰነዶችዎ፣ የስራ ማመልከቻዎችዎ፣ የስራ መረጃዎ እና የአሰልጣኞች ውይይቶች።"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11241,12 +11369,12 @@ msgid "Revoke {0}"
 msgstr "{0} ይሻሩ"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "መዳረሻን ሻር"
+#~ msgid "Revoke access"
+#~ msgstr "መዳረሻን ሻር"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "የመተግበሪያውን የመለያዎ መዳረሻ ይሰርዙ።"
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "የመተግበሪያውን የመለያዎ መዳረሻ ይሰርዙ።"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12218,6 +12346,7 @@ msgid "Show password"
 msgstr "የይለፍ ቃል አሳይ"
 
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Show photo"
 msgstr "ፎቶ አሳይ"
 
@@ -12267,6 +12396,7 @@ msgstr "የጎን አሞሌዎች ብዙውን ጊዜ በመጨረሻ ይነበ�
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13976,6 +14106,10 @@ msgstr "ለ"
 msgid "To {recipient}"
 msgstr ""
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "ለማንሳት Space ወይም Enter ይጫኑ። ለማንቀሳቀስ የቀስት ቁልፎችን፣ ለማስቀመጥ Space ወይም Enter፣ ለመሰረዝ ደግሞ Escape ይጠቀሙ።"
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
@@ -14358,6 +14492,10 @@ msgstr "ስም የሌለው ፓስኪ"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ርዕስ አልባ"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "ርዕስ አልባ ንጥል"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
@@ -14887,6 +15025,7 @@ msgid "Web searches look for work here, up to three countries."
 msgstr "የድር ፍለጋዎች በእነዚህ አገሮች ውስጥ ሥራዎችን ይፈልጋሉ። እስከ ሦስት አገሮችን ይምረጡ።"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Website"
 msgstr "ድር ገጽ"
 

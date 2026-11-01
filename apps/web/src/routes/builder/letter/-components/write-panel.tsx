@@ -21,7 +21,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
-import { SwitchRow } from "@reactive-resume/ui/components/switch";
+import { Switch, SwitchRow } from "@reactive-resume/ui/components/switch";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
@@ -35,7 +35,8 @@ import { countWords, LETTER_LENGTH, letterLength } from "@/features/letters/leng
 import { discardLetterDraft, startLetterDraft, useLetterEditorStore } from "@/features/letters/store";
 import { useLetterMode } from "@/features/letters/use-letter-mode";
 import { ACCENTS, FONT_PAIRINGS, matchFontPairing, rgbaToHex } from "@/features/resume/editor/design/presets";
-import { TextField, validateEmail } from "@/features/resume/editor/write/fields";
+import { CustomFields } from "@/features/resume/editor/write/basics-card";
+import { TextField, validateEmail, WebsiteField } from "@/features/resume/editor/write/fields";
 import { RichTextEditor } from "@/features/resume/editor/write/rich-text-editor";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
@@ -349,6 +350,7 @@ function FromSection({ letter, disabled: readOnly }: FromSectionProps) {
 			)}
 			{(!letter.sourceResumeId || !letter.senderLinked) && (
 				<fieldset disabled={disabled} className="grid min-w-0 grid-cols-2 gap-3">
+					<SenderPhoto picture={letter.style.picture} disabled={disabled} />
 					<TextField
 						label={<Trans>Full name</Trans>}
 						wide
@@ -357,7 +359,14 @@ function FromSection({ letter, disabled: readOnly }: FromSectionProps) {
 						onChange={(name) => edit({ sender: { name } })}
 					/>
 					<TextField
+						label={<Trans>Headline</Trans>}
+						wide
+						value={letter.style.basics.headline}
+						onChange={(headline) => edit({ sender: { headline } })}
+					/>
+					<TextField
 						label={<Trans>Email</Trans>}
+						wide
 						type="email"
 						autoComplete="email"
 						validate={validateEmail}
@@ -373,13 +382,52 @@ function FromSection({ letter, disabled: readOnly }: FromSectionProps) {
 					/>
 					<TextField
 						label={<Trans>Location</Trans>}
-						wide
 						value={letter.style.basics.location}
 						onChange={(location) => edit({ sender: { location } })}
+					/>
+					<WebsiteField
+						label={<Trans>Website</Trans>}
+						value={letter.style.basics.website}
+						allowInlineLink={false}
+						onChange={(website) => edit({ sender: { website: { url: website.url, label: website.label } } })}
+					/>
+					<CustomFields
+						fields={letter.style.basics.customFields}
+						locked={disabled}
+						edit={(_key, mutate) => {
+							// The latest list, so quick edits in a row build on each other.
+							const fields = useLetterEditorStore.getState().letter?.style.basics.customFields ?? [];
+							const customFields = structuredClone(fields);
+							mutate(customFields);
+							edit({ sender: { customFields } });
+						}}
 					/>
 				</fieldset>
 			)}
 		</Section>
+	);
+}
+
+type SenderPhotoProps = { picture: CoverLetter["style"]["picture"]; disabled: boolean };
+
+/** The photo the letter copied from its resume, which it can leave off. Uploading one is the resume's job. */
+function SenderPhoto({ picture, disabled }: SenderPhotoProps) {
+	const edit = useLetterEditorStore((state) => state.edit);
+	if (!picture.url) return null;
+
+	return (
+		<div className="col-span-full flex items-center gap-3 rounded-lg bg-bg p-2.5">
+			<img src={picture.url} alt="" className="size-10 shrink-0 rounded-md object-cover" />
+			<p className="min-w-0 flex-1 text-xs leading-4 text-ink-2">
+				{picture.hidden ? <Trans>Photo hidden from the page.</Trans> : <Trans>Photo on the page.</Trans>}
+			</p>
+			<Switch
+				aria-label={t`Show photo`}
+				checked={!picture.hidden}
+				disabled={disabled}
+				onCheckedChange={(shown) => edit({ sender: { picture: { hidden: !shown } } })}
+			/>
+		</div>
 	);
 }
 

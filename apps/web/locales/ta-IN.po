@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# சிக்கல் உங்களுக்�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {மதிப்பாய்வு செய்ய # விஷயம் உள்ளது. நீங்கள் இன்னும் பதிவிறக்கம் செய்யலாம்.} other {சரிபார்க்க # விஷயங்கள் உள்ளன. நீங்கள் இன்னும் பதிவிறக்கம் செய்யலாம்.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} தொடங்கிய இடத்திற்குத் திரும்பியது."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} வைக்கக்கூடிய இடத்தின் மேல் இல்லை."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} இதன் மேல் உள்ளது: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} இங்கே வைக்கப்பட்டது: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} செல்ல முடியாத இடத்தில் வைக்கப்பட்டது. எதுவும் நகர்த்தப்படவில்லை."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} தொடங்கிய இடத்திலேயே வைக்கப்பட்டது. எதுவும் நகர்த்தப்படவில்லை."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -2739,6 +2763,10 @@ msgstr "மென்பொருள் உங்கள் விண்ணப்�
 msgid "Cancel"
 msgstr "ரத்து செய்"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3424,6 +3452,11 @@ msgstr "ஒரு மொழி மாதிரி உங்கள் பட்�
 msgid "Connected"
 msgstr "இணைக்கப்பட்டது"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "இணைக்கப்பட்ட பயன்பாடுகள்"
@@ -3492,6 +3525,7 @@ msgstr "தொடர்புகள்"
 msgid "Contain"
 msgstr "முழுமையாகக் காட்டு"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "உள்ளடக்கம்"
@@ -3979,6 +4013,10 @@ msgstr "அந்தக் கோப்பைப் படிக்க முட
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "{entries} இல் உள்ள தேதிகளைப் படிக்க முடியவில்லை, எனவே அவை இறுதியில் இருக்கும். அவற்றின் தேதிகளைச் சரிசெய்து மீண்டும் வரிசைப்படுத்தவும்."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4393,8 +4431,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "கணக்கை உருவாக்கவும்"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4657,6 +4704,10 @@ msgstr "விண்ணப்பத்தை நீக்கு"
 msgid "Delete conversation"
 msgstr "உரையாடலை நீக்கு"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4884,8 +4935,26 @@ msgid "Discard unsaved changes?"
 msgstr "சேமிக்கப்படாத மாற்றங்களை நிராகரிக்கவா?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "துண்டிக்கவும்"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -5149,6 +5218,10 @@ msgstr "இழுக்கவும் · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "பகுதிகளை நெடுவரிசைகளுக்குள் நகர்த்த இதே இடத்திற்கு இழுத்து விடவும்"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "நகர்த்த, சுட்டியால் இழுக்கவும் அல்லது அதன் மெனுவைப் பயன்படுத்தவும்."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -6288,6 +6361,10 @@ msgstr "டாஷ்போர்டுக்கு செல்லவும்"
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Go to Reactive Resume"
+msgstr "Reactive Resume-க்குச் செல்லவும்"
+
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
 msgstr "… க்குச் செல்லவும்"
@@ -6370,6 +6447,7 @@ msgid "Heading changed"
 msgstr "தலைப்பு மாற்றப்பட்டது"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Headline"
 msgstr "தலைவரி"
 
@@ -6932,6 +7010,10 @@ msgstr "சிக்கல்கள் மற்றும் வேலை பொ
 msgid "It has entries but isn't placed on a page."
 msgstr "இதில் உள்ளீடுகள் உள்ளன ஆனால் ஒரு பக்கத்தில் வைக்கப்படவில்லை."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "அது நீக்கப்பட்டிருக்கலாம். வேறு கதையைத் தேர்ந்தெடுக்கவும் அல்லது புதியதைச் சேர்க்கவும்."
@@ -7080,6 +7162,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "ஒரே ஒரு முகவரியை மட்டும் வைத்திருங்கள்; அப்போது எதைப் பயன்படுத்துவது என்று மென்பொருள் யூகிக்க வேண்டியிருக்காது."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "நீங்கள் பயன்பாட்டைப் பயன்படுத்தாத போதும் அணுகலைத் தக்கவைத்துக் கொள்ளுங்கள்."
 
@@ -7685,6 +7768,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "பெயரிடப்பட்ட நிலைகளை இறக்குமதி செய்யும் முன் உங்கள் நிலைகளை ஏற்றவும். உங்கள் CSV தரவு பாதுகாக்கப்படும்."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "ஏற்றப்படுகிறது"
 
@@ -8259,6 +8343,10 @@ msgstr "{label} நிலைக்கு நகர்த்தப்பட்ட
 msgid "Moves the application from {0}."
 msgstr "விண்ணப்பத்தை {0} நிலையிலிருந்து நகர்த்தும்."
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} நகர்த்துதல் ரத்துசெய்யப்பட்டது. எதுவும் நகர்த்தப்படவில்லை."
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "ஆதரவுப் பணியைக் கூட்டாமல், அதற்கான காரணத்தைக் கண்டறிவதே என் பணி."
@@ -8545,7 +8633,11 @@ msgid "No commands match that search."
 msgstr "அந்தத் தேடலுக்குப் பொருந்தும் கட்டளைகள் எதுவும் இல்லை."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "இன்னும் இணைக்கப்பட்ட பயன்பாடுகள் இல்லை. உங்கள் கணக்கை அணுக நீங்கள் அனுமதிக்கும் பயன்பாடுகள் இங்கே தோன்றும்."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "இன்னும் இணைக்கப்பட்ட பயன்பாடுகள் இல்லை. உங்கள் கணக்கை அணுக நீங்கள் அனுமதிக்கும் பயன்பாடுகள் இங்கே தோன்றும்."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -9453,6 +9545,16 @@ msgstr "பக்கம்"
 msgid "Page {0}"
 msgstr "பக்கம் {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "பக்கம் {0}, சைட்பார்"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "பக்கம் {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9709,10 +9811,12 @@ msgid "Photo hidden"
 msgstr "புகைப்படம் மறைக்கப்பட்டது"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "பக்கத்தில் இருந்து புகைப்படம் மறைக்கப்பட்டுள்ளது."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "பக்கத்தில் புகைப்படம்."
 
@@ -9743,6 +9847,10 @@ msgstr "ஒரு வடிவமைப்பைத் தேர்ந்தெ�
 #: src/features/career/workspace/prepare.tsx
 msgid "Pick two examples"
 msgstr "இரண்டு எடுத்துக்காட்டுகளைத் தேர்ந்தெடுங்கள்"
+
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} எடுக்கப்பட்டது."
 
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
@@ -9818,6 +9926,16 @@ msgstr "போர்ச்சுகீஸ் (போர்ச்சுகல்)
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "பதவி"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total} இல் நிலை {position}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total} இல் நிலை {position}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -10371,16 +10489,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "உங்கள் மின்னஞ்சல் முகவரியைப் படியுங்கள்."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "உங்கள் சுயவிவரத் தகவலைப் படியுங்கள்."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "முழுமையான தரவு ஏற்றுமதி உட்பட உங்கள் கணக்கில் உள்ள எல்லா தரவையும் படிக்கவும்: உங்கள் சுயவிவரம் மற்றும் மின்னஞ்சல் முகவரி, ஆவணங்கள், வேலை விண்ணப்பங்கள், தொழில் தரவு மற்றும் பயிற்சி உரையாடல்கள்."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11241,12 +11369,12 @@ msgid "Revoke {0}"
 msgstr "{0} ஐ திரும்பப் பெறவும்"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "அணுகலை ரத்துசெய்"
+#~ msgid "Revoke access"
+#~ msgstr "அணுகலை ரத்துசெய்"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "உங்கள் கணக்கிற்கான பயன்பாட்டின் அணுகலைத் திரும்பப் பெறவும்."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "உங்கள் கணக்கிற்கான பயன்பாட்டின் அணுகலைத் திரும்பப் பெறவும்."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12218,6 +12346,7 @@ msgid "Show password"
 msgstr "கடவுச்சொல்லைக் காட்டு"
 
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Show photo"
 msgstr "புகைப்படத்தைக் காட்டு"
 
@@ -12267,6 +12396,7 @@ msgstr "பக்கப்பட்டிகள் பெரும்பால�
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13976,6 +14106,10 @@ msgstr "செய்ய"
 msgid "To {recipient}"
 msgstr ""
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "எடுக்க Space அல்லது Enter ஐ அழுத்தவும். நகர்த்த அம்புக்குறி விசைகளையும், வைக்க Space அல்லது Enter ஐயும், ரத்துசெய்ய Escape ஐயும் பயன்படுத்தவும்."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
@@ -14358,6 +14492,10 @@ msgstr "பெயரிடப்படாத பாஸ் கீ"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "பெயரிடப்படாதது"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "தலைப்பில்லாத உருப்படி"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
@@ -14887,6 +15025,7 @@ msgid "Web searches look for work here, up to three countries."
 msgstr "வலைத் தேடல்கள் இந்த நாடுகளில் வேலை தேடுகின்றன. மூன்று நாடுகள் வரை தேர்வு செய்யவும்."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Website"
 msgstr "இணையதளம்"
 

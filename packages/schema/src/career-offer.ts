@@ -34,3 +34,18 @@ export function parseOfferEntry({ applicationId, terms, amounts, date, time, loc
 		}),
 	};
 }
+
+type SavedOffer = { createdAt: Date | string; data: { kind: string; currency?: string } };
+
+/**
+ * The currency of the newest offer saved, so the next one starts in it and the two compare. Empty when there's none:
+ * a guessed currency would read as one the person chose.
+ */
+export function previousOfferCurrency(items: readonly SavedOffer[] | undefined): string {
+	let newest: SavedOffer | undefined;
+	for (const item of items ?? []) {
+		if (item.data.kind !== "offer" || !item.data.currency) continue;
+		if (!newest || new Date(item.createdAt).getTime() > new Date(newest.createdAt).getTime()) newest = item;
+	}
+	return newest?.data.currency ?? "";
+}

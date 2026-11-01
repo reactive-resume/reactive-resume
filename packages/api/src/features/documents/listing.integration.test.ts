@@ -42,7 +42,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
     updated_at timestamptz DEFAULT '2026-01-01', edited_at timestamptz, application_id text);
    CREATE TABLE cover_letter (LIKE resume INCLUDING DEFAULTS);
    ALTER TABLE cover_letter ADD COLUMN source_application_id text, ADD COLUMN recipient_name text DEFAULT '',
-    ADD COLUMN recipient_company text DEFAULT '';
+    ADD COLUMN recipient_company text DEFAULT '', ADD COLUMN layout text DEFAULT 'structured', ADD COLUMN recipient text DEFAULT '';
    INSERT INTO application VALUES ('job', 'owner', 'Orbital', 'Design lead'), ('foreign-job', 'stranger', 'Secret', 'Private');
    INSERT INTO resume (id, user_id, name, tags, is_public, application_id) VALUES
     ('same', 'owner', 'Alpha', ARRAY['design','shared'], true, 'job'),
@@ -85,6 +85,33 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 			company: "Orbital",
 			role: "Design lead",
 		});
+	});
+
+	it("projects legacy recipients only for freeform letters, with HTML entities decoded", async () => {
+		await pool.query(`INSERT INTO cover_letter (id,user_id,name,layout,recipient,recipient_company) VALUES
+			('recipient-free','owner','Recipient fixture 1','freeform','<p>R&amp;D &#39;Team&#39;</p><p>Example&nbsp;Ltd</p><script>hidden</script>',''),
+			('recipient-structured','owner','Recipient fixture 2','structured','<p>Stale recipient</p>',''),
+			('recipient-current','owner','Recipient fixture 3','freeform','<p>Old recipient</p>','Current company')`);
+		try {
+			const page = await api.page({ type: "letter", q: "Recipient fixture", sort: "name" });
+			expect(page.items.map((row) => row.recipient)).toEqual(["R&D 'Team' Example Ltd", null, "Current company"]);
+			expect(page.items.every((row) => !("legacyRecipient" in row))).toBe(true);
+		} finally {
+			await pool.query(
+				`DELETE FROM cover_letter WHERE id IN ('recipient-free','recipient-structured','recipient-current')`,
+			);
+		}
+	});
+
+	it("keeps long repeated resume names unique across numbered stem fallbacks", async () => {
+		const name = "Long imported name ".repeat(6).slice(0, 100);
+		const stem = name.slice(0, 94);
+		await pool.query(
+			`INSERT INTO resume (id,user_id,name) VALUES ('name-original','naming',$1),('name-two','naming',$2),('name-three','naming',$3),('name-foreign','stranger',$4)`,
+			[name, `${stem} (2)`, `${stem} (3)`, `${stem} (4)`],
+		);
+		const { findFreeResumeName } = await import("../resume/slugs");
+		expect(await findFreeResumeName("naming", name)).toBe(`${stem} (4)`);
 	});
 
 	it("filters before paging/counting, uses every tag, searches each field and treats wildcard characters literally", async () => {

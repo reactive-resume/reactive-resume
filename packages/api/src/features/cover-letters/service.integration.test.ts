@@ -4,6 +4,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-
 import { createRouterClient } from "@orpc/server";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
+import { createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const fixture = vi.hoisted(() => ({
@@ -1046,6 +1047,58 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		await expect(client.update({ id: created.id, expectedRevision: 7, sender })).rejects.toMatchObject({
 			code: "DOCUMENT_LOCKED",
 		});
+	});
+
+	it("lets an unlinked letter edit or hide every sender detail its header prints, without touching the resume", async () => {
+		const { coverLettersRouter } = await import("./router");
+		const client = createRouterClient(coverLettersRouter, { context: { user: { id: "alice" } } as never });
+		const source = structuredClone(defaultResumeData);
+		source.basics.name = "David Kowalski";
+		source.basics.headline = "Game Developer";
+		source.basics.website = { url: "https://davidkowalski.games", label: "" };
+		source.basics.customFields = [
+			{ id: "github", icon: "github-logo", text: "github.com/dk", link: "https://github.com/dk" },
+		];
+		source.picture.url = "https://example.test/photo.png";
+		await getPool().query("UPDATE resume SET data=$1 WHERE id='alice-resume'", [source]);
+		const created = await client.create({ name: "Sender", resumeId: "alice-resume" });
+
+		await expect(
+			client.update({ id: created.id, expectedRevision: 1, sender: { headline: "Producer" } }),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+
+		const unlinked = await client.update({ id: created.id, expectedRevision: 1, senderLinked: false });
+		expect(unlinked.style).toMatchObject({
+			basics: source.basics,
+			picture: { url: source.picture.url, hidden: false },
+		});
+		const own = await client.update({
+			id: created.id,
+			expectedRevision: 2,
+			sender: { headline: "", website: { url: "", label: "" }, customFields: [], picture: { hidden: true } },
+		});
+		expect(own.style.basics).toEqual({
+			...source.basics,
+			headline: "",
+			website: { url: "", label: "" },
+			customFields: [],
+		});
+		expect(own.style.picture).toEqual({ ...source.picture, hidden: true });
+		const page = createCoverLetterResumeData(await client.getById({ id: created.id }));
+		expect(page.basics).toMatchObject({ headline: "", customFields: [] });
+		expect(page.picture.hidden).toBe(true);
+		expect((await client.export({ id: created.id })).style.picture.hidden).toBe(true);
+		expect((await getPool().query("SELECT data FROM resume WHERE id='alice-resume'")).rows[0].data).toEqual(source);
+		// Only the photo's visibility is the letter's to change; its address stays the copy from the resume.
+		const shown = await client.update({
+			id: created.id,
+			expectedRevision: 3,
+			sender: { picture: { hidden: false, url: "https://elsewhere.test/photo.png" } },
+		} as never);
+		expect(shown.style.picture).toEqual(source.picture);
+
+		const relinked = await client.update({ id: created.id, expectedRevision: 4, senderLinked: true });
+		expect(relinked.style).toMatchObject({ basics: source.basics, picture: source.picture });
 	});
 
 	it("keeps History: one version per session, named and sent versions, and restores with a way back", async () => {

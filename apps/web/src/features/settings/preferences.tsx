@@ -70,7 +70,7 @@ export function PreferencesSettings() {
 // Browsers list canonical zones only: UTC, the default for older accounts, and aliases a device reports are missing.
 const timeZones = Intl.supportedValuesOf("timeZone");
 const timeZoneOptions = (current: string) =>
-	(timeZones.includes(current) ? timeZones : [...timeZones, current].toSorted()).map((zone) => ({
+	(timeZones.includes(current) ? timeZones : [...timeZones, current].sort()).map((zone) => ({
 		value: zone,
 		label: zone,
 	}));

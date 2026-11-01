@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# समस्या तुम्हाला स�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {चेकमध्ये पुनरावलोकनासाठी # गोष्ट आहे. तुम्ही अजूनही डाउनलोड करू शकता.} other {चेकमध्ये पुनरावलोकनासाठी # गोष्टी आहेत. तुम्ही अजूनही डाउनलोड करू शकता.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} पुन्हा मूळ जागी आले."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} ठेवता येईल अशा जागेवर नाही."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} याच्यावर आहे: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} येथे ठेवले: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} अशा जागी ठेवले जिथे ते जाऊ शकत नाही. काहीही हलवले नाही."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} मूळ जागीच ठेवले. काहीही हलवले नाही."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -2739,6 +2763,10 @@ msgstr "सॉफ्टवेअर तुमचा रेझ्युमे व
 msgid "Cancel"
 msgstr "रद्द करा"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3424,6 +3452,11 @@ msgstr "तुमच्या सूचीच्या एंट्री वा
 msgid "Connected"
 msgstr "जोडलेले"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "कनेक्ट केलेले अनुप्रयोग"
@@ -3492,6 +3525,7 @@ msgstr "संपर्क"
 msgid "Contain"
 msgstr "संपूर्ण चित्र"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "सामग्री"
@@ -3979,6 +4013,10 @@ msgstr "ती फाइल वाचता आली नाही. पुन्
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "{entries} वरील तारखा वाचता आल्या नाहीत, म्हणून त्या शेवटी राहतात. त्यांच्या तारखा दुरुस्त करा आणि पुन्हा क्रमवार लावा."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4393,8 +4431,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "खाते तयार करा"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4657,6 +4704,10 @@ msgstr "अर्ज हटवा"
 msgid "Delete conversation"
 msgstr "संभाषण हटवा"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4884,8 +4935,26 @@ msgid "Discard unsaved changes?"
 msgstr "जतन न केलेले बदल टाकून द्यायचे?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "डिस्कनेक्ट"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -5149,6 +5218,10 @@ msgstr "ड्रॅग करा · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "विभागांना एका स्तंभातून दुसऱ्या स्तंभात हलवण्यासाठी त्यांना येथे ड्रॅग आणि ड्रॉप करा"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "हलवण्यासाठी पॉइंटरने ओढा किंवा त्याचा मेनू वापरा."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -6288,6 +6361,10 @@ msgstr "डॅशबोर्डला जा"
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Go to Reactive Resume"
+msgstr "Reactive Resume वर जा"
+
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
 msgstr "… वर जा"
@@ -6370,6 +6447,7 @@ msgid "Heading changed"
 msgstr "शीर्षक बदलले"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Headline"
 msgstr "मथळा"
 
@@ -6932,6 +7010,10 @@ msgstr "समस्या आणि जॉब मॅच अजूनही AI �
 msgid "It has entries but isn't placed on a page."
 msgstr "त्यात नोंदी आहेत पण पानावर ठेवलेल्या नाहीत."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "ती कदाचित हटवली गेली असेल. दुसरी कथा निवडा किंवा नवीन जोडा."
@@ -7080,6 +7162,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "एकच पत्ता ठेवा, म्हणजे कोणता वापरायचा याचा अंदाज सॉफ्टवेअरला बांधावा लागणार नाही."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "अॅप्लिकेशन वापरत नसतानाही प्रवेश ठेवा."
 
@@ -7685,6 +7768,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "नावे असलेले टप्पे आयात करण्यापूर्वी तुमचे टप्पे लोड करा. तुमचा CSV डेटा जतन केला जातो."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "लोड करत आहे"
 
@@ -8259,6 +8343,10 @@ msgstr "{label} येथे हलवले"
 msgid "Moves the application from {0}."
 msgstr "अर्ज {0} मधून हलवतो."
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} हलवणे रद्द केले. काहीही हलवले नाही."
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "सपोर्टचे काम न वाढवता त्याचे कारण शोधणे हे माझे काम होते."
@@ -8545,7 +8633,11 @@ msgid "No commands match that search."
 msgstr "त्या शोधाशी जुळणारी कोणतीही कमांड नाही."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "अद्याप कोणतेही कनेक्ट केलेले अॅप्लिकेशन नाहीत. तुम्ही तुमच्या खात्यात प्रवेशाची परवानगी दिलेले अॅप्स येथे दिसतात."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "अद्याप कोणतेही कनेक्ट केलेले अॅप्लिकेशन नाहीत. तुम्ही तुमच्या खात्यात प्रवेशाची परवानगी दिलेले अॅप्स येथे दिसतात."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -9453,6 +9545,16 @@ msgstr "पान"
 msgid "Page {0}"
 msgstr "पान {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "पान {0}, बाजूची पट्टी"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "पान {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9709,10 +9811,12 @@ msgid "Photo hidden"
 msgstr "फोटो लपविला"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "पृष्ठावरून लपवलेला फोटो."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "पृष्ठावरील फोटो."
 
@@ -9743,6 +9847,10 @@ msgstr "एक स्वरूप निवडा आणि सर्वत्�
 #: src/features/career/workspace/prepare.tsx
 msgid "Pick two examples"
 msgstr "दोन उदाहरणे निवडा"
+
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} उचलले."
 
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
@@ -9818,6 +9926,16 @@ msgstr "पोर्तुगीज (पोर्तुगाल)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "पद"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total} पैकी स्थान {position}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total} पैकी स्थान {position}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -10371,16 +10489,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "तुमचा ईमेल पत्ता वाचा."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "तुमची प्रोफाइल माहिती वाचा."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "संपूर्ण डेटा एक्सपोर्टसह तुमच्या खात्यातील सर्व डेटा वाचा: तुमचे प्रोफाइल आणि ईमेल पत्ता, कागदपत्रे, नोकरीचे अर्ज, करिअर डेटा आणि कोचिंग संभाषणे."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11241,12 +11369,12 @@ msgid "Revoke {0}"
 msgstr "{0} मागे घ्या"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "प्रवेश रद्द करा"
+#~ msgid "Revoke access"
+#~ msgstr "प्रवेश रद्द करा"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "तुमच्या खात्यावरील अनुप्रयोगाचा प्रवेश रद्द करा."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "तुमच्या खात्यावरील अनुप्रयोगाचा प्रवेश रद्द करा."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12218,6 +12346,7 @@ msgid "Show password"
 msgstr "पासवर्ड दाखवा"
 
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Show photo"
 msgstr "फोटो दाखवा"
 
@@ -12267,6 +12396,7 @@ msgstr "साइडबार अनेकदा शेवटचे वाचल
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13976,6 +14106,10 @@ msgstr "ला"
 msgid "To {recipient}"
 msgstr ""
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "उचलण्यासाठी Space किंवा Enter दाबा. हलवण्यासाठी बाण कळा, ठेवण्यासाठी Space किंवा Enter, किंवा रद्द करण्यासाठी Escape वापरा."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
@@ -14358,6 +14492,10 @@ msgstr "अनामिक पासकी"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "शीर्षकहीन"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "शीर्षकहीन आयटम"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
@@ -14887,6 +15025,7 @@ msgid "Web searches look for work here, up to three countries."
 msgstr "वेब शोध या देशांमध्ये नोकऱ्या शोधतात. तीन पर्यंत देश निवडा."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Website"
 msgstr "संकेतस्थळ"
 

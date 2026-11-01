@@ -611,9 +611,9 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 	const [changingSource, setChangingSource] = useState(!initialSourceId);
 	const [addingJob, setAddingJob] = useState(false);
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
-	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const applications = useQuery(applicationsListQueryOptions());
 	const resumes = (documents ?? []).filter((document) => document.type === "resume");
-	const jobs = (applications ?? []).filter((application) => application.status !== "closed");
+	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
 	const [sourceId, setSourceId] = useState(initialSourceId);
 	const [jobId, setJobId] = useState<string | null>(initialJobId ?? null);
 	const [name, setName] = useState<string | null>(null);
@@ -621,22 +621,23 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 
 	const source = resumes.find((resume) => resume.id === sourceId) ?? resumes[0];
 	const job = jobs.find((application) => application.id === jobId);
+	const waitingForJob = !!jobId && !job && applications.isFetching;
 	const base = (source?.name ?? "").split(" — ")[0] ?? "";
-	const suggested = job ? `${base} — ${job.company}` : t`${base} (copy)`;
+	const suggested = (job ? `${base} — ${job.company}` : t`${base} (copy)`).slice(0, 100);
 	const finalName = (name ?? suggested).trim();
 
 	const create = async () => {
-		if (!source) return;
+		if (!source || waitingForJob) return;
 		const input = {
 			resumeId: source.id,
-			...(job ? { applicationId: job.id } : {}),
+			...(jobId ? { applicationId: jobId } : {}),
 			...(finalName ? { name: finalName } : {}),
 		};
 		const message = job ? t`Created and linked to ${job.company}` : t`Created “${finalName}”`;
 		try {
 			const resumeId = await copyForJob(input);
 			toast.add({ description: message });
-			onCreated(resumeId, Boolean(job));
+			onCreated(resumeId, Boolean(jobId));
 		} catch (error) {
 			toastError(error, t`Couldn't copy the resume. Try again.`);
 		}
@@ -751,6 +752,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 					onAdded={(applicationId) => {
 						setJobId(applicationId);
 						setName(null);
+						void applications.refetch();
 					}}
 				/>
 				{job && (
@@ -785,7 +787,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 						{onCancel ? <Trans>Cancel</Trans> : <Trans>Back</Trans>}
 					</Button>
 				)}
-				<Button disabled={!source || !finalName || isPending} onClick={() => void create()}>
+				<Button disabled={!source || !finalName || isPending || waitingForJob} onClick={() => void create()}>
 					<Trans>Create and open</Trans>
 				</Button>
 			</div>

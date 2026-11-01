@@ -66,6 +66,7 @@ export function NewDocument() {
 	const source = resumes.find((document) => document.id === sourceId) ?? resumes[0];
 	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
 	const job = jobs.find((application) => application.id === jobId);
+	const waitingForJob = !!jobId && !job && applications.isFetching;
 	const suggested = (
 		job ? `${source?.name.split(" — ")[0] ?? ""} — ${job.company}` : t`${source?.name ?? ""} (copy)`
 	).slice(0, 100);
@@ -172,16 +173,16 @@ export function NewDocument() {
 		});
 	const copy = () =>
 		run(async (signal) => {
-			if (!source || !(name ?? suggested).trim()) return;
+			if (!source || waitingForJob || !(name ?? suggested).trim()) return;
 			const id = await client.documents.copyForJob(
-				{ resumeId: source.id, name: (name ?? suggested).trim(), ...(job ? { applicationId: job.id } : {}) },
+				{ resumeId: source.id, name: (name ?? suggested).trim(), ...(jobId ? { applicationId: jobId } : {}) },
 				{ signal },
 			);
 			if (current(signal)) {
 				const document = { id, type: "resume" as const };
 				setCreated(document);
 				setApplicationLinked(true);
-				if (job && ai.hasAIProvider) onCopiedForJob(id);
+				if (jobId && ai.hasAIProvider) onCopiedForJob(id);
 				else open(document);
 			}
 		});
@@ -445,7 +446,8 @@ export function NewDocument() {
 											!(name ?? suggested).trim() ||
 											(name ?? suggested).length > 100 ||
 											documents.isError ||
-											applications.isError
+											applications.isError ||
+											waitingForJob
 										}
 										onPress={() => void copy()}
 									/>

@@ -114,6 +114,8 @@ type BoundingBox = { x: number; y: number; width: number; height: number };
 
 export type TextSpan = BoundingBox & {
 	text: string;
+	/** An explicit text-layer separator ending here; it does not occupy the column gutter. */
+	spaceBefore?: boolean;
 	fontRef: string;
 	fontSize: number;
 	/** Index of the source item in the page's stream order. */
@@ -163,6 +165,8 @@ export type PageGeometry = {
 };
 
 export type ExtractedDocument = {
+	/** Standard PDF link targets remain available when displayed contact text wraps. */
+	links?: readonly RawLinkAnnotation[];
 	pages: readonly PageGeometry[];
 	/** All lines across all pages, in geometric reading order. */
 	lines: readonly TextLine[];

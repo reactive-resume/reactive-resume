@@ -340,7 +340,8 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 											...(description.trim() ? { jobDescription: description.slice(0, 20_000), postingSource } : {}),
 										});
 										onClose();
-										router.push(routes.applicationDetails(duplicate.data.id));
+										if (onAdded) onAdded(duplicate.data.id);
+										else router.push(routes.applicationDetails(duplicate.data.id));
 									})
 								}
 							/>

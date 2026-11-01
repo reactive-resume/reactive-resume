@@ -164,7 +164,7 @@ export function Hero() {
 			data-scene={SCENE.hero}
 			data-pin
 			aria-labelledby="hero-title"
-			className="relative h-[170vh] motion-reduce:h-svh min-[900px]:h-[220vh]"
+			className="relative h-[170vh] min-[900px]:h-[220vh]"
 		>
 			{/* --pt is the page's centre. Below 900px it sits under the stacked headline (128px + three 10vw lines). */}
 			<div className="min-[900px]:short:[--pw:min(24vw,40vh)] sticky top-0 h-svh overflow-clip [--e2:clamp(0,(var(--p)-.16)/.6,1)] [--e:clamp(0,(var(--p)-.03)/.5,1)] [--pt:calc(144px+30vw+var(--pw)*.647)] [--pw:min(46vw,30vh)] motion-reduce:[--ld:1] min-[900px]:[--pt:50%] min-[900px]:[--pw:min(24vw,46vh)]">

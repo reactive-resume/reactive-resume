@@ -102,7 +102,7 @@ describe("document WebMCP tools", () => {
 	it("doesn't navigate to a document that isn't there", async () => {
 		const tools = mountTools(true);
 
-		await expect(tools.get("open_document")?.execute({ type: "letter", id: "older" })).rejects.toThrow(
+		await expect(tools.get("open_document")?.execute({ type: "letter", id: "older" })).resolves.toMatch(
 			"No letter with ID older.",
 		);
 		expect(mocks.navigate).not.toHaveBeenCalled();

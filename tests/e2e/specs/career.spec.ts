@@ -218,9 +218,14 @@ test("manual offers save and compare without an AI provider", async ({ authPage:
 	await page.getByRole("button", { name: "Add offer", exact: true }).click();
 	await page.getByLabel("Currency", { exact: true }).fill("EUR");
 	await page.getByLabel("Base salary", { exact: true }).fill("95000");
+	const moreOptions = page.getByRole("button", { name: "More options", exact: true });
+	await expect(moreOptions).toHaveAttribute("aria-expanded", "false");
+	await moreOptions.click();
 	await page.getByLabel("Learning budget", { exact: true }).fill("95k");
 	await expect(page.getByLabel("Learning budget")).not.toHaveAttribute("aria-invalid", "true");
+	await moreOptions.click();
 	await page.getByRole("button", { name: "Save offer", exact: true }).click();
+	await expect(moreOptions).toHaveAttribute("aria-expanded", "true");
 	await expect(page.getByLabel("Learning budget")).toHaveAttribute("aria-invalid", "true");
 	await expect(page.getByText("Enter a full amount, such as 95000, or leave blank.")).toBeVisible();
 	await page.getByLabel("Learning budget", { exact: true }).fill("");
@@ -241,6 +246,7 @@ test("manual offers save and compare without an AI provider", async ({ authPage:
 	await page.getByLabel("Currency", { exact: true }).fill("USD");
 	await page.getByLabel("Pay period", { exact: true }).selectOption("month");
 	await page.getByLabel("Base salary", { exact: true }).fill("8000");
+	await moreOptions.click();
 	await page.getByLabel("Bonus", { exact: true }).fill("0");
 	await page.getByLabel("Where you work", { exact: true }).fill("Remote");
 	await Promise.all([

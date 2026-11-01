@@ -1,12 +1,18 @@
 // @vitest-environment happy-dom
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeAll, expect, it, vi } from "vite-plus/test";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeAll, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { ChipInput } from "./chip-input";
+import { loadLocale } from "@/libs/locale";
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+});
+
+afterEach(() => {
+	cleanup();
+	vi.restoreAllMocks();
 });
 
 it("keeps commas in new and edited keywords and saves on Enter", () => {
@@ -42,4 +48,52 @@ it("retains comma-separated bulk entry for tags", () => {
 	const input = screen.getByRole("textbox", { name: "Add keyword" });
 	fireEvent.change(input, { target: { value: "first,second," } });
 	expect(onChange).toHaveBeenLastCalledWith(["first", "second"]);
+});
+
+const liveRegion = () => document.querySelector('[id^="DndLiveRegion"]');
+
+// Moving between keywords needs real layout, so the browser tests cover it; happy-dom covers what's read out.
+it("announces keyword drags by name, and explains the keyboard controls", async () => {
+	const onChange = vi.fn();
+	render(
+		<I18nProvider i18n={i18n}>
+			<ChipInput defaultValue={["Alpha", "Beta", "Gamma"]} onChange={onChange} />
+		</I18nProvider>,
+	);
+	const alpha = screen.getByText("Alpha").closest<HTMLElement>('[role="button"]');
+	if (!alpha) throw new Error("Alpha isn't draggable");
+	expect(document.getElementById(alpha.getAttribute("aria-describedby") ?? "")?.textContent).toBe(
+		"To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel.",
+	);
+
+	alpha.focus();
+	fireEvent.keyDown(alpha, { code: "Space" });
+	await waitFor(() => expect(liveRegion()?.textContent).toBe("Picked up Alpha."));
+	fireEvent.keyDown(alpha, { code: "Escape" });
+	await waitFor(() => expect(liveRegion()?.textContent).toBe("Moving Alpha was cancelled. Nothing moved."));
+
+	fireEvent.keyDown(alpha, { code: "Space" });
+	await waitFor(() => expect(liveRegion()?.textContent).toBe("Picked up Alpha."));
+	fireEvent.keyDown(alpha, { code: "Space" });
+	await waitFor(() => expect(liveRegion()?.textContent).toBe("Alpha was dropped where it started. Nothing moved."));
+	expect(onChange).not.toHaveBeenCalled();
+});
+
+it("announces keyword drags in German when German is the UI language", async () => {
+	await loadLocale("de-DE");
+	render(
+		<I18nProvider i18n={i18n}>
+			<ChipInput defaultValue={["Alpha", "Beta"]} />
+		</I18nProvider>,
+	);
+	const alpha = screen.getByText("Alpha").closest<HTMLElement>('[role="button"]');
+	if (!alpha) throw new Error("Alpha isn't draggable");
+	alpha.focus();
+	fireEvent.keyDown(alpha, { code: "Space" });
+	await waitFor(() => expect(liveRegion()?.textContent).toBe("Alpha aufgenommen."));
+	fireEvent.keyDown(alpha, { code: "Escape" });
+	await waitFor(() =>
+		expect(liveRegion()?.textContent).toBe("Verschieben von Alpha abgebrochen. Nichts wurde verschoben."),
+	);
+	await loadLocale("en-US");
 });

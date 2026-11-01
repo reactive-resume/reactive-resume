@@ -101,7 +101,7 @@ export async function findFreeResumeName(userId: string, name: string, detail?: 
 			and(
 				eq(schema.resume.userId, userId),
 				isNull(schema.resume.trashedAt),
-				sql`strpos(lower(${schema.resume.name}), lower(${name})) = 1`,
+				sql`strpos(lower(${schema.resume.name}), lower(${name.slice(0, 94)})) = 1`,
 			),
 		);
 	const taken = new Set(rows.map((row) => row.name.toLowerCase()));
