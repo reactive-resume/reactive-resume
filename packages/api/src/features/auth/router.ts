@@ -209,6 +209,28 @@ export const authRouter = {
 			return { key: result.key };
 		}),
 
+	setPassword: accountProcedure
+		.route({
+			method: "POST",
+			path: "/auth/password",
+			tags: ["Authentication"],
+			operationId: "setPassword",
+			summary: "Set a password",
+			description:
+				"Adds a password to an account that signs in another way (a social account or passkey). Unlike a password reset, it keeps other devices signed in and keeps API keys, passkeys and connected apps. Requires a recent browser session.",
+		})
+		.input(z.object({ newPassword: z.string().min(8).max(64) }))
+		.output(z.void())
+		.handler(async ({ context, input }) => {
+			if (context.authentication?.method !== "session")
+				throw new ORPCError("FORBIDDEN", { message: "Set a password from Settings in a web browser." });
+			await assertRecentSignIn(context.reqHeaders);
+			await auth.api.setPassword({
+				body: { newPassword: input.newPassword },
+				headers: context.reqHeaders ?? new Headers(),
+			});
+		}),
+
 	exportData: protectedProcedure
 		.use(accountRateLimit)
 		.route({

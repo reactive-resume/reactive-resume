@@ -24,6 +24,7 @@ const listAccountsMock = vi.hoisted(() =>
 
 vi.mock("@tanstack/react-router", () => ({
 	useRouter: () => ({ invalidate: vi.fn() }),
+	useRouteContext: () => ({ flags: { smtpEnabled: true } }),
 	Link: ({ to, children, ...props }: ComponentProps<"a"> & { to: string }) => (
 		<a href={to} {...props}>
 			{children}

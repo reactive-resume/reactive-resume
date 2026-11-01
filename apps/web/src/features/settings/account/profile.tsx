@@ -47,6 +47,8 @@ type FieldProps = {
 	type?: "text" | "email";
 	autoComplete?: string;
 	className?: string;
+	/** After a save the field shows `value` again: an email change waits for approval, so the address hasn't changed. */
+	resetOnSave?: boolean;
 };
 
 /** A text setting that saves when it loses focus. Invalid or failed values stay, with the reason under them. */
@@ -61,6 +63,7 @@ function SavedField({
 	type = "text",
 	autoComplete,
 	className,
+	resetOnSave = false,
 }: FieldProps) {
 	const id = useId();
 	const [draft, setDraft] = useState(value);
@@ -85,6 +88,7 @@ function SavedField({
 		}
 		setSaving(false);
 		setError(failure);
+		if (!failure && resetOnSave) setDraft(value);
 	};
 
 	const inputProps = {
@@ -178,11 +182,16 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 		return null;
 	};
 
+	const [pendingEmail, setPendingEmail] = usePendingEmailChange(user.id, user.email);
 	const changeEmail = async (email: string) => {
+		// Without email delivery the approval link never arrives, so the change could never finish.
+		if (!smtpEnabled)
+			return t`This server can't send email, so the address can't be changed here. Ask the person who runs it.`;
 		const { error } = await authClient.changeEmail({ newEmail: email, callbackURL: "/dashboard/settings/account" });
 		if (error) return getReadableErrorMessage(error, t`Couldn't change the email. Try again.`);
 		// A verified address approves the change first; Better Auth then sends the new address its own link.
 		const currentEmail = user.email;
+		setPendingEmail(email);
 		toast.add({
 			type: "success",
 			description: user.emailVerified
@@ -190,6 +199,10 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 				: t`We sent a confirmation link to ${email}. Open it to finish the change.`,
 		});
 		return null;
+	};
+	const resendEmailChange = async (email: string) => {
+		const failure = await changeEmail(email);
+		if (failure) toast.add({ type: "error", description: failure });
 	};
 
 	const resendVerification = async () => {
@@ -238,11 +251,37 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 					autoComplete="email"
 					validate={(value) => (emailSchema.safeParse(value).success ? null : t`Enter a valid email address.`)}
 					save={changeEmail}
+					resetOnSave
 					hint={
 						<>
-							<Trans>
-								Changing it sends a confirmation to the new address. Your username is part of every public link.
-							</Trans>{" "}
+							{pendingEmail ? (
+								<>
+									{user.emailVerified ? (
+										<Trans>
+											Change to {pendingEmail} is waiting for approval from {user.email}. The link works for an hour.
+										</Trans>
+									) : (
+										<Trans>
+											Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour.
+										</Trans>
+									)}{" "}
+									<button
+										type="button"
+										className="underline underline-offset-2"
+										onClick={() => void resendEmailChange(pendingEmail)}
+									>
+										<Trans>Resend</Trans>
+									</button>
+									{" · "}
+									<button type="button" className="underline underline-offset-2" onClick={() => setPendingEmail(null)}>
+										<Trans>Cancel</Trans>
+									</button>
+								</>
+							) : (
+								<Trans>
+									Changing it sends a confirmation to the new address. Your username is part of every public link.
+								</Trans>
+							)}{" "}
 							{user.emailVerified ? null : smtpEnabled ? (
 								<button
 									type="button"
@@ -260,6 +299,42 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 			</div>
 		</SettingsSection>
 	);
+}
+
+// Better Auth's change-email link expires after an hour (`emailVerification.expiresIn`).
+const EMAIL_CHANGE_TTL_MS = 60 * 60 * 1000;
+
+/**
+ * The address an email change is waiting on, kept on this device so it survives a reload. It clears once the account
+ * has the new address or the link has expired; Cancel only forgets it here, and the link expires on its own.
+ */
+function usePendingEmailChange(userId: string, currentEmail: string) {
+	const key = `reactive-resume:email-change:${userId}`;
+	const [pending, setPending] = useState<{ email: string; at: number } | null>(() => {
+		try {
+			const stored = JSON.parse(window.localStorage.getItem(key) ?? "null") as { email?: unknown; at?: unknown };
+			// An expired link can't finish the change, so its note isn't brought back.
+			return typeof stored?.email === "string" &&
+				typeof stored.at === "number" &&
+				Date.now() - stored.at < EMAIL_CHANGE_TTL_MS
+				? { email: stored.email, at: stored.at }
+				: null;
+		} catch {
+			return null;
+		}
+	});
+	const current = pending && pending.email !== currentEmail ? pending.email : null;
+	const set = (email: string | null) => {
+		const next = email ? { email, at: Date.now() } : null;
+		setPending(next);
+		try {
+			if (next) window.localStorage.setItem(key, JSON.stringify(next));
+			else window.localStorage.removeItem(key);
+		} catch {
+			// Blocked storage keeps the note for this visit only.
+		}
+	};
+	return [current, set] as const;
 }
 
 type ProfilePhotoProps = {

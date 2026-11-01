@@ -1189,6 +1189,10 @@ msgstr "Uma data numérica é lida de forma diferente em cada país."
 msgid "A page is rotated."
 msgstr "Uma página está rodada."
 
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "A password reset keeps two-step verification on, so it won't get you in. Ask the person who runs this Reactive Resume server to turn off two-step verification for your account. Then sign in with your password and turn it on again with a new authenticator."
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "A pasted posting can be saved as an application afterwards."
 msgstr "Um anúncio de emprego colado pode ser guardado posteriormente como um formulário de emprego."
@@ -1412,6 +1416,10 @@ msgstr "Adicione uma nota"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Add a note…"
 msgstr "Adicione uma nota…"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2857,6 +2865,7 @@ msgstr "O software pode ler o seu currículo?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -2953,6 +2962,15 @@ msgstr "Altere esta entrada na linha do tempo."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "Alterar fuso horário"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3167,6 +3185,10 @@ msgstr "Escolha um ficheiro"
 msgid "Choose a file to import"
 msgstr "Escolha um ficheiro para importar"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "Escolha uma senha diferente da atual."
@@ -3315,6 +3337,7 @@ msgstr "ID do cliente"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -4355,6 +4378,10 @@ msgstr "Não foi possível definir a senha. Tente novamente."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "Não foi possível configurar a verificação em duas etapas. Tente novamente."
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -5738,10 +5765,6 @@ msgstr "Introduza um valor completo, como 95000. O valor anterior não foi alter
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Introduza um nome com até 64 caracteres."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "Introduza uma nova senha para a sua conta."
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
@@ -8763,6 +8786,7 @@ msgstr "Nova página"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "Nova senha"
@@ -8868,6 +8892,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Ainda não há candidaturas. Adicione primeiro uma em Candidaturas."
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -9918,6 +9946,10 @@ msgstr "Chave de acesso"
 msgid "Passkeys"
 msgstr "Chaves de acesso"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -9938,17 +9970,21 @@ msgstr "Senha"
 msgid "Password changed"
 msgstr "Senha alterada"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Senha removida"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "Senha reposta. Inicie sessão com a nova senha."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Senha definida"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -11356,6 +11392,10 @@ msgstr "Requisitos"
 msgid "Requirements and your evidence"
 msgstr "Requisitos e as suas provas"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "Reserve as maiúsculas para títulos curtos. Estas dificultam a leitura e podem prejudicar pesquisas sensíveis a maiúsculas e minúsculas."
@@ -12491,10 +12531,13 @@ msgstr "Sérvio"
 msgid "Set a follow-up…"
 msgstr "Defina um acompanhamento…"
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "Definir uma palavra-passe"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "Definir senha"
@@ -12526,6 +12569,10 @@ msgstr ""
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
 msgstr "Configure a sua aplicação de autenticação"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/root.tsx
@@ -14408,6 +14455,14 @@ msgstr "Não foi possível carregar esta versão guardada."
 msgid "This saved version is no longer available."
 msgstr "Esta versão guardada já não está disponível."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
@@ -15013,6 +15068,7 @@ msgstr "Utilize 3 a 64 letras minúsculas, números, pontos, hífens e sublinhad
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15048,6 +15104,7 @@ msgid "Use at least 3 characters."
 msgstr "Utilize pelo menos 3 caracteres."
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15269,6 +15326,10 @@ msgstr "Verificar com um código de backup"
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "Verifique primeiro o seu email nas Configurações"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -15995,6 +16056,10 @@ msgstr "Está a usar uma conta de convidado"
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "Atingiu o limite de {MAX_APPLICATION_LANES} fases. Remova uma para adicionar outra."
 
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
 msgstr "A sua conta foi excluída."
@@ -16145,7 +16210,7 @@ msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

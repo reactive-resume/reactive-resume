@@ -185,6 +185,21 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 				</div>
 			</form>
 
+			{backupCode && (
+				<details className="justify-self-center text-center text-sm text-ink-2">
+					<summary className="cursor-pointer underline underline-offset-2">
+						<Trans>No backup codes either?</Trans>
+					</summary>
+					<p className="mt-2 max-w-sm">
+						<Trans>
+							A password reset keeps two-step verification on, so it won't get you in. Ask the person who runs this
+							Reactive Resume server to turn off two-step verification for your account. Then sign in with your password
+							and turn it on again with a new authenticator.
+						</Trans>
+					</p>
+				</details>
+			)}
+
 			{!backupCode && (
 				<Button
 					variant="link"

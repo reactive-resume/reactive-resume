@@ -1189,6 +1189,10 @@ msgstr "Numeerinen päivämäärä tulkitaan eri tavoin eri maissa."
 msgid "A page is rotated."
 msgstr "Sivu on käännetty."
 
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "A password reset keeps two-step verification on, so it won't get you in. Ask the person who runs this Reactive Resume server to turn off two-step verification for your account. Then sign in with your password and turn it on again with a new authenticator."
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "A pasted posting can be saved as an application afterwards."
 msgstr "Liimattu työpaikkailmoitus voidaan tallentaa myöhemmin työhakemukseksi."
@@ -1412,6 +1416,10 @@ msgstr "Lisää muistiinpano"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Add a note…"
 msgstr "Lisää muistiinpano…"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2857,6 +2865,7 @@ msgstr "Voiko ohjelmisto lukea ansioluettelosi?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -2953,6 +2962,15 @@ msgstr "Muuta tätä aikajanan merkintää."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "Vaihda aikavyöhyke"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3167,6 +3185,10 @@ msgstr "Valitse tiedosto"
 msgid "Choose a file to import"
 msgstr "Valitse tuotava tiedosto"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "Valitse salasana, joka eroaa nykyisestä."
@@ -3315,6 +3337,7 @@ msgstr "Asiakastunnus"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -4355,6 +4378,10 @@ msgstr "Salasanaa ei voitu asettaa. Yritä uudelleen."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "Kaksivaiheista vahvistusta ei voitu ottaa käyttöön. Yritä uudelleen."
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr ""
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -5738,10 +5765,6 @@ msgstr "Anna koko summa, esimerkiksi 95000. Aiempi summasi on ennallaan."
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Anna nimi, enintään 64 merkkiä."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "Syötä tilillesi uusi salasana."
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
@@ -8763,6 +8786,7 @@ msgstr "Uusi sivu"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "Uusi salasana"
@@ -8868,6 +8892,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Ei vielä työhakemuksia. Lisää yksi ensin työhakemuksiin."
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -9918,6 +9946,10 @@ msgstr "Passkey"
 msgid "Passkeys"
 msgstr "Passkeys"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -9938,17 +9970,21 @@ msgstr "Salasana"
 msgid "Password changed"
 msgstr "Salasana vaihdettu"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Salasana poistettu"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "Salasana palautettu. Kirjaudu sisään uudella salasanallasi."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Salasana asetettu"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -11356,6 +11392,10 @@ msgstr "Vaatimukset"
 msgid "Requirements and your evidence"
 msgstr "Vaatimukset ja näyttösi"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "Käytä suuraakkosia vain lyhyissä otsikoissa. Ne hidastavat lukemista ja voivat haitata kirjainkoon huomioivaa hakua."
@@ -12491,10 +12531,13 @@ msgstr "serbia"
 msgid "Set a follow-up…"
 msgstr "Määritä seuranta…"
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "Aseta salasana"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "Aseta salasana"
@@ -12526,6 +12569,10 @@ msgstr ""
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
 msgstr "Ota todennussovellus käyttöön"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/root.tsx
@@ -14408,6 +14455,14 @@ msgstr "Tätä tallennettua versiota ei voitu ladata."
 msgid "This saved version is no longer available."
 msgstr "Tämä tallennettu versio ei ole enää saatavilla."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
@@ -15013,6 +15068,7 @@ msgstr "Käytä 3–64 pientä kirjainta, numeroita, pisteitä, tavuviivoja ja a
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15048,6 +15104,7 @@ msgid "Use at least 3 characters."
 msgstr "Käytä vähintään 3 merkkiä."
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15269,6 +15326,10 @@ msgstr "Vahvista varmuuskoodilla"
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "Vahvista ensin sähköpostisi asetuksissa"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -15995,6 +16056,10 @@ msgstr "Käytät vierastiliä"
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "Olet saavuttanut {MAX_APPLICATION_LANES} vaiheen rajan. Poista yksi lisätäksesi uuden."
 
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
 msgstr "Tilisi poistettiin."
@@ -16145,7 +16210,7 @@ msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

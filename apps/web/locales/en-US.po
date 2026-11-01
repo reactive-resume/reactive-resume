@@ -1184,6 +1184,10 @@ msgstr "A numeric date reads differently in different countries."
 msgid "A page is rotated."
 msgstr "A page is rotated."
 
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "A password reset keeps two-step verification on, so it won't get you in. Ask the person who runs this Reactive Resume server to turn off two-step verification for your account. Then sign in with your password and turn it on again with a new authenticator."
+msgstr "A password reset keeps two-step verification on, so it won't get you in. Ask the person who runs this Reactive Resume server to turn off two-step verification for your account. Then sign in with your password and turn it on again with a new authenticator."
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "A pasted posting can be saved as an application afterwards."
 msgstr "A pasted posting can be saved as an application afterwards."
@@ -1407,6 +1411,10 @@ msgstr "Add a note"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Add a note…"
 msgstr "Add a note…"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2852,6 +2860,7 @@ msgstr "Can software read your resume?"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -2948,6 +2957,15 @@ msgstr "Change this timeline entry."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "Change timezone"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3162,6 +3180,10 @@ msgstr "Choose a file"
 msgid "Choose a file to import"
 msgstr "Choose a file to import"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "Choose a password that's different from your current one."
@@ -3310,6 +3332,7 @@ msgstr "Client ID"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -4350,6 +4373,10 @@ msgstr "Couldn't set the password. Try again."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "Couldn't set up two-step verification. Try again."
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr "Couldn't set your password. Try again."
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -5733,10 +5760,6 @@ msgstr "Enter a full amount, such as 95000. Your previous amount is unchanged."
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Enter a name, up to 64 characters."
-
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "Enter a new password for your account."
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
@@ -8758,6 +8781,7 @@ msgstr "New page"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "New password"
@@ -8863,6 +8887,10 @@ msgstr "No applications yet."
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "No applications yet. Add one in Applications first."
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr "No backup codes either?"
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -9913,6 +9941,10 @@ msgstr "Passkey"
 msgid "Passkeys"
 msgstr "Passkeys"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr "Passkeys need a verified email, which this server can't send."
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -9933,17 +9965,21 @@ msgstr "Password"
 msgid "Password changed"
 msgstr "Password changed"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "Password removed"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "Password reset. Sign in with your new password."
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "Password set"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr "Password set. You can now sign in with it too."
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -11351,6 +11387,10 @@ msgstr "Requirements"
 msgid "Requirements and your evidence"
 msgstr "Requirements and your evidence"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr "Resend"
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
@@ -12486,10 +12526,13 @@ msgstr "Serbian"
 msgid "Set a follow-up…"
 msgstr "Set a follow-up…"
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "Set a password"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "Set password"
@@ -12521,6 +12564,10 @@ msgstr "Set up web search in Settings before enabling discovery. AI is not requi
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
 msgstr "Set up your authenticator app"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
+msgstr "Setting your password…"
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/root.tsx
@@ -14403,6 +14450,14 @@ msgstr "This saved version couldn't be loaded."
 msgid "This saved version is no longer available."
 msgstr "This saved version is no longer available."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr "This server cannot confirm reading without AI. Save the posting manually or update the server."
@@ -15008,6 +15063,7 @@ msgstr "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15043,6 +15099,7 @@ msgid "Use at least 3 characters."
 msgstr "Use at least 3 characters."
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15264,6 +15321,10 @@ msgstr "Verify with a backup code"
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "Verify your email in Settings first"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr "Verify your email to add a passkey. The link is in Account details above."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -15990,6 +16051,10 @@ msgstr "You're using a guest account"
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr "Your account is ready"
+
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
 msgstr "Your account was deleted."
@@ -16140,8 +16205,8 @@ msgid "Your guest documents and applications are in this account."
 msgstr "Your guest documents and applications are in this account."
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
-msgstr "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account. Assistant conversations don't."
+msgstr "Your guest resumes, cover letters, applications and Career knowledge move to this account. Assistant conversations don't."
 
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
