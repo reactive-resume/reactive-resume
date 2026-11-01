@@ -46162,6 +46162,42 @@
 														"type": "null"
 													}
 												]
+											},
+											"lastRun": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"status": {
+																"enum": [
+																	"queued",
+																	"running",
+																	"completed",
+																	"failed",
+																	"canceled"
+																],
+																"type": "string"
+															},
+															"error": {
+																"anyOf": [
+																	{
+																		"type": "string"
+																	},
+																	{
+																		"type": "null"
+																	}
+																]
+															}
+														},
+														"required": [
+															"status",
+															"error"
+														]
+													},
+													{
+														"type": "null"
+													}
+												]
 											}
 										},
 										"required": [

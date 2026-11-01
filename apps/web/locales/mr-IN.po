@@ -1157,6 +1157,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "तुम्ही नंतर विसरायला सांगितलेले तथ्य"
@@ -4424,7 +4428,7 @@ msgstr "कथा जतन करता आली नाही. पुन्ह
 msgid "Couldn't save the tags. Try again."
 msgstr "टॅग जतन करता आले नाहीत. पुन्हा प्रयत्न करा."
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "टाइम झोन जतन करता आला नाही. पुन्हा प्रयत्न करा."
 
@@ -6180,6 +6184,11 @@ msgstr "ज्ञानसंग्रहात चालू असलेली 
 msgid "Failed"
 msgstr "अयशस्वी"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to try again"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
@@ -6834,9 +6843,18 @@ msgstr "हिब्रू"
 msgid "Help & docs"
 msgstr "मदत आणि दस्तऐवज"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "एखादी कामगिरी परिस्थिती, कार्य, कृती, परिणाम आणि चिंतन अशा कथेत बदलण्यासाठी मला मदत करा."
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7806,6 +7824,10 @@ msgstr "शेवटचे संपादन"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7819,6 +7841,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "शेवटचे वापरले"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8072,6 +8098,10 @@ msgstr ""
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -10561,6 +10591,16 @@ msgstr "सराव · तुमची सुरुवात, मोठ्य�
 msgid "Practice another question"
 msgstr "दुसऱ्या प्रश्नाचा सराव करा"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "तुमच्या {company} मुलाखतींसाठी सराव करा."
@@ -12094,6 +12134,11 @@ msgstr "पुन्हा चालवा"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "ग्राहकांसोबत संशोधन करा"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -14836,8 +14881,8 @@ msgid "This step is optional, but recommended."
 msgstr "हा टप्पा ऐच्छिक आहे, पण शिफारस केलेला आहे."
 
 #: src/features/career/workspace/practise.tsx
-msgid "This story is unavailable or uses facts that are switched off."
-msgstr "ही कथा उपलब्ध नाही किंवा ती बंद केलेली तथ्ये वापरते."
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -14894,6 +14939,10 @@ msgstr "वेळ, लिंक, कोण, तुम्ही काय पा�
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "वेळा {timeZone} मध्ये दाखवल्या जातात."
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15557,6 +15606,10 @@ msgstr ""
 msgid "Use this device's timezone ({device})"
 msgstr "या डिव्हाइसचा टाइमझोन वापरा ({device})"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "हे प्रदाता वापरा"
@@ -15979,6 +16032,10 @@ msgstr "ते काय तपासते"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "टप्प्याची श्रेणी स्मरणपत्रे, पाठवलेली कागदपत्रे आणि अंतर्दृष्टी ठरवते. ती नंतर बदलता येत नाही; त्याऐवजी नवीन टप्पा जोडा."
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"

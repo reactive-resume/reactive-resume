@@ -1157,6 +1157,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "您后来选择忘记的事实"
@@ -4424,7 +4428,7 @@ msgstr "无法保存故事。请重试。"
 msgid "Couldn't save the tags. Try again."
 msgstr "无法保存标签。请重试。"
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "无法保存时区。请重试。"
 
@@ -6180,6 +6184,11 @@ msgstr "知识库中已开启的事实、故事和偏好"
 msgid "Failed"
 msgstr "失败的"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to try again"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
@@ -6834,9 +6843,18 @@ msgstr "希伯来语"
 msgid "Help & docs"
 msgstr "帮助和文档"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "帮我把一项成就整理成包含情境、任务、行动、结果和反思的故事。"
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7806,6 +7824,10 @@ msgstr "最后编辑"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7819,6 +7841,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "上次使用"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8072,6 +8098,10 @@ msgstr ""
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -10561,6 +10591,16 @@ msgstr "练习 · 您的开场白，大声说约 40 秒"
 msgid "Practice another question"
 msgstr "练习另一个问题"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "为您在 {company} 的面试做练习。"
@@ -12094,6 +12134,11 @@ msgstr "重新运行"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "与客户开展研究"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -14836,8 +14881,8 @@ msgid "This step is optional, but recommended."
 msgstr "此步骤可选，但推荐完成。"
 
 #: src/features/career/workspace/practise.tsx
-msgid "This story is unavailable or uses facts that are switched off."
-msgstr "此故事不可用，或使用了已关闭的事实。"
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -14894,6 +14939,10 @@ msgstr "时间、链接、面试官、您发送的内容"
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "时间按 {timeZone} 显示。"
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15557,6 +15606,10 @@ msgstr ""
 msgid "Use this device's timezone ({device})"
 msgstr "使用此设备的时区（{device}）"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "使用该提供商"
@@ -15979,6 +16032,10 @@ msgstr "它检查什么"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "阶段分类决定提醒、已发送文档和洞察的行为。之后无法更改；如有需要，请添加新阶段。"
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"

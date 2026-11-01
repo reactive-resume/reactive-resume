@@ -1157,6 +1157,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "ข้อเท็จจริงที่คุณสั่งให้ลืมไปแล้ว"
@@ -4424,7 +4428,7 @@ msgstr "บันทึกเรื่องราวไม่ได้ ลอ�
 msgid "Couldn't save the tags. Try again."
 msgstr "บันทึกแท็กไม่ได้ ลองอีกครั้ง"
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "บันทึกเขตเวลาไม่ได้ ลองอีกครั้ง"
 
@@ -6180,6 +6184,11 @@ msgstr "ข้อเท็จจริง เรื่องราว และ�
 msgid "Failed"
 msgstr "ล้มเหลว"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to try again"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
@@ -6834,9 +6843,18 @@ msgstr "ฮิบรู"
 msgid "Help & docs"
 msgstr "ความช่วยเหลือ & เอกสาร"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "ช่วยฉันเปลี่ยนความสำเร็จให้เป็นเรื่องราวแบบสถานการณ์ หน้าที่ การกระทำ ผลลัพธ์ และการสะท้อนคิด"
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7806,6 +7824,10 @@ msgstr "แก้ไขครั้งล่าสุด"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7819,6 +7841,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "ใช้ครั้งสุดท้าย"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8072,6 +8098,10 @@ msgstr ""
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -10561,6 +10591,16 @@ msgstr "ฝึกซ้อม · การเปิดตัวของคุ�
 msgid "Practice another question"
 msgstr "ฝึกคำถามอื่น"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "ฝึกซ้อมสำหรับการสัมภาษณ์กับ {company}"
@@ -12094,6 +12134,11 @@ msgstr "รันอีกครั้ง"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "ทำวิจัยร่วมกับลูกค้า"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -14836,8 +14881,8 @@ msgid "This step is optional, but recommended."
 msgstr "ขั้นตอนนี้ไม่บังคับ แต่แนะนำให้ทำ"
 
 #: src/features/career/workspace/practise.tsx
-msgid "This story is unavailable or uses facts that are switched off."
-msgstr "เรื่องราวนี้ไม่พร้อมใช้งาน หรือใช้ข้อเท็จจริงที่ปิดอยู่"
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -14894,6 +14939,10 @@ msgstr "เวลา ลิงก์ ผู้ที่จะพบ สิ่ง
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "แสดงเวลาตาม {timeZone}"
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15557,6 +15606,10 @@ msgstr ""
 msgid "Use this device's timezone ({device})"
 msgstr "ใช้เขตเวลาของอุปกรณ์นี้ ({device})"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "ใช้ผู้ให้บริการรายนี้"
@@ -15979,6 +16032,10 @@ msgstr "มันตรวจสอบอะไร."
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "ประเภทที่นับเป็นจะกำหนดการแจ้งเตือน เอกสารที่ส่ง และข้อมูลเชิงลึก ไม่สามารถเปลี่ยนภายหลังได้ ให้เพิ่มขั้นตอนใหม่แทน"
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"

@@ -86,6 +86,10 @@ export function rollForward(at: Date, intervalDays: number, timeZone: string, no
 }
 
 /** When a briefing runs; mirrors the server, which recomputes it from the interview on save. */
+/** A new briefing's lead: 24 hours before, or 2 hours when that has passed (then it runs now either way). */
+const firstLeadAhead = (start: Date | undefined, timeZone: string, now: Date): Lead =>
+	start && prepareRunAt(start, "24h", timeZone) <= now && prepareRunAt(start, "2h", timeZone) > now ? "2h" : "24h";
+
 const prepareRunAt = (start: Date, lead: Lead, timeZone: string) =>
 	lead === "morning"
 		? fromZoned(toZoned(start, timeZone).date, "08:00", timeZone)
@@ -167,7 +171,7 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 			every: String(existing?.intervalDays ?? 1),
 			...toZoned(at, timeZone),
 			interviewId: existing?.interviewId ?? upcoming[0]?.interview.id ?? "",
-			lead: (existing?.lead as Lead | null) ?? "24h",
+			lead: (existing?.lead as Lead | null) ?? firstLeadAhead(upcoming[0]?.start, timeZone, now),
 			aiProviderId: providers.find((provider) => provider.id === existing?.aiProviderId)?.id ?? providers[0]?.id ?? "",
 			applicationId: existing?.applicationId ?? applicationId ?? open[0]?.id ?? "",
 			enabled: existing?.enabled ?? true,

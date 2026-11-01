@@ -698,6 +698,34 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 		);
 	}
 
+	it("lists each schedule with its latest run, so a failed run doesn't read as done (L6-11)", async () => {
+		const saved = await schedule();
+		expect(await jobs.list("alice")).toMatchObject([{ id: saved.id, lastRun: null }]);
+		await getDb()
+			.insert(tables.careerJob)
+			.values([
+				{
+					id: "earlier-completed",
+					userId: "alice",
+					scheduleId: saved.id,
+					dueAt: new Date("2026-10-29T08:00:00Z"),
+					status: "completed",
+				},
+				{
+					id: "latest-failed",
+					userId: "alice",
+					scheduleId: saved.id,
+					dueAt: new Date("2026-10-30T08:00:00Z"),
+					status: "failed",
+					error: "This schedule failed.",
+				},
+			]);
+		expect(await jobs.list("alice")).toMatchObject([
+			{ id: saved.id, lastRun: { status: "failed", error: "This schedule failed." } },
+		]);
+		expect(await jobs.list("bob")).toEqual([]);
+	});
+
 	it("uses the application's single follow-up for schedule creation, edits, pause, deletion and owner checks", async () => {
 		const { applicationService } = await import("../applications/service");
 		const id = await applicationService.create({ userId: "alice", company: "Fictional Acme", role: "Engineer" });

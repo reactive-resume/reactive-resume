@@ -4,9 +4,9 @@ import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import { type ComponentRef, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, View } from "react-native";
 import Animated from "react-native-reanimated";
-import { client, useCareerAction, useCareerTime, useNow, useTodayQueries, useUndoRows } from "./hooks";
+import { client, useCareerAction, useCareerTime, useNow, useSaveTimezone, useTodayQueries, useUndoRows } from "./hooks";
 import { ScheduleSheet, scheduleTitle } from "./schedule-sheet";
 import { collectInterviews, rollForward } from "./scheduling";
 import { Actions, LoadState, Section, SwitchRow } from "./shared";
@@ -47,6 +47,7 @@ export function TodayScreen() {
 	const router = useRouter();
 	const now = useNow();
 	const time = useCareerTime();
+	const saveTimezone = useSaveTimezone();
 	const queries = useTodayQueries();
 	const applications = useApplications();
 	const hints = useOfferHints();
@@ -151,6 +152,14 @@ export function TodayScreen() {
 				<Text variant="callout" color="ink3">
 					{time.when(now)} · {time.timeZone}
 				</Text>
+				{time.deviceTimeZone ? (
+					<Button
+						variant="link"
+						label={t`Use this device's timezone (${time.deviceTimeZone})`}
+						disabled={saveTimezone.isPending}
+						onPress={() => time.deviceTimeZone && saveTimezone.mutate(time.deviceTimeZone)}
+					/>
+				) : null}
 				{action.error ? <Banner tone="danger" message={action.error} /> : null}
 				<View
 					onLayout={(event) => {
@@ -197,6 +206,19 @@ export function TodayScreen() {
 										label={t`Open workspace`}
 										onPress={() => router.push(routes.application(next.application.id, "prepare"))}
 									/>
+									{/* The two after it, so tomorrow's screening isn't hidden behind today's. */}
+									{interviews.slice(1, 3).map((item) => (
+										<Pressable
+											key={item.interview.id}
+											accessibilityRole="link"
+											onPress={() => router.push(routes.application(item.application.id, "prepare"))}
+											style={{ minHeight: size.hit, justifyContent: "center" }}
+										>
+											<Text color="ink2">
+												{time.when(item.start)} · {item.application.company}
+											</Text>
+										</Pressable>
+									))}
 								</Card>
 							) : !applications.isPending && !applications.isError ? (
 								<Text color="ink3">{t`No upcoming interviews.`}</Text>
@@ -464,9 +486,20 @@ export function TodayScreen() {
 											: row.query ||
 												applications.data?.find((application) => application.id === row.applicationId)?.company}
 									</Text>
-									<Text color="ink3">
-										{!row.intervalDays && row.lastQueuedAt ? t`Done` : row.enabled ? t`On` : t`Paused`} ·{" "}
-										{time.when(row.nextRunAt)}
+									{/* A one-off's queued run goes by its outcome: running or retrying, failed after its last try, or done. */}
+									<Text color={row.lastRun?.status === "failed" ? "dangerText" : "ink3"}>
+										{row.lastRun?.status === "failed"
+											? row.intervalDays
+												? t`Last run failed`
+												: t`Failed · open to try again`
+											: !row.intervalDays && row.lastQueuedAt
+												? row.lastRun?.status === "queued" || row.lastRun?.status === "running"
+													? t`Running`
+													: t`Done`
+												: row.enabled
+													? t`On`
+													: t`Paused`}{" "}
+										· {time.when(row.nextRunAt)}
 									</Text>
 									{row.intervalDays ? (
 										<Text color="ink3">

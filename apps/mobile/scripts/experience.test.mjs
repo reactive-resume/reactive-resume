@@ -1400,6 +1400,7 @@ const { TodayScreen } = load("features/career/today.tsx", {
 		},
 		useCareerAction: () => ({ pending: false, run: async (operation) => operation(), refresh: async () => {} }),
 		useCareerTime: () => ({ timeZone: "UTC", locale: "en-US", when: () => "31 Oct", profile: { refetch() {} } }),
+		useSaveTimezone: () => ({ isPending: false, mutate() {} }),
 		useNow: () => new Date(),
 		useTodayQueries: () => ({
 			schedules: { data: [] },
@@ -1410,7 +1411,7 @@ const { TodayScreen } = load("features/career/today.tsx", {
 		useUndoRows: () => ({ hidden: [], remove() {} }),
 	},
 	"./schedule-sheet": { ScheduleSheet: "ScheduleSheet", scheduleTitle: (kind) => kind },
-	"./scheduling": { collectInterviews: () => [], rollForward: (at) => at },
+	"./scheduling": { collectInterviews: () => [], firstLeadAhead: () => "24h", rollForward: (at) => at },
 	"./shared": { Actions: "Actions", LoadState: "LoadState", Section: "Section", SwitchRow: "SwitchRow" },
 	"@/features/applications/lane-queries": { useApplicationLanes: () => ({ lanes: [] }) },
 	"@/features/applications/lanes": { getLaneLabel: () => "Saved", resolveLane: () => null },
@@ -1742,6 +1743,7 @@ console.log("PASS native Today past note edit preserves exact seconds and change
 		"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
 		"./scheduling": {
 			collectInterviews: () => [],
+			firstLeadAhead: () => "24h",
 			nextCareerRun: () => new Date("2026-11-02T12:00:00Z"),
 			toZoned: () => ({ date: "2026-11-02", time: "12:00" }),
 		},

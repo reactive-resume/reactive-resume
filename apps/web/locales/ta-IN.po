@@ -1157,6 +1157,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "பின்னர் நீங்கள் மறக்கச் செய்த ஓர் உண்மை"
@@ -4424,7 +4428,7 @@ msgstr "கதையைச் சேமிக்க முடியவில்�
 msgid "Couldn't save the tags. Try again."
 msgstr "குறிச்சொற்களைச் சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "நேர மண்டலத்தைச் சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
@@ -6180,6 +6184,11 @@ msgstr "அறிவுத் தளத்தில் இயக்கப்ப�
 msgid "Failed"
 msgstr "தோல்வியடைந்தது"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to try again"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
@@ -6834,9 +6843,18 @@ msgstr "ஹீப்ரூ"
 msgid "Help & docs"
 msgstr "உதவி & ஆவணங்கள்"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "ஒரு சாதனையை சூழ்நிலை, பணி, செயல், முடிவு, பிரதிபலிப்பு கொண்ட கதையாக மாற்ற எனக்கு உதவுங்கள்."
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7806,6 +7824,10 @@ msgstr "கடைசியாக திருத்தப்பட்டது"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7819,6 +7841,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "கடைசியாக பயன்படுத்தப்பட்டது"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8072,6 +8098,10 @@ msgstr ""
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -10561,6 +10591,16 @@ msgstr "பயிற்சி · உங்கள் தொடக்க உரை
 msgid "Practice another question"
 msgstr "வேறொரு கேள்வியைப் பயிற்சி செய்"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "உங்கள் {company} நேர்காணல்களுக்கான பயிற்சி."
@@ -12094,6 +12134,11 @@ msgstr "மீண்டும் இயக்கு"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "வாடிக்கையாளர்களுடன் ஆய்வு நடத்துதல்"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -14836,8 +14881,8 @@ msgid "This step is optional, but recommended."
 msgstr "இந்த படி கட்டாயமில்லை, ஆனால் பரிந்துரைக்கப்படுகிறது."
 
 #: src/features/career/workspace/practise.tsx
-msgid "This story is unavailable or uses facts that are switched off."
-msgstr "இந்தக் கதை கிடைக்கவில்லை, அல்லது அணைக்கப்பட்ட உண்மைகளைப் பயன்படுத்துகிறது."
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -14894,6 +14939,10 @@ msgstr "நேரம், இணைப்பு, யார், நீங்கள
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "நேரங்கள் {timeZone}-இல் காட்டப்படுகின்றன."
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15557,6 +15606,10 @@ msgstr ""
 msgid "Use this device's timezone ({device})"
 msgstr "இந்தச் சாதனத்தின் நேர மண்டலத்தைப் பயன்படுத்து ({device})"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "இந்த வழங்குநரைப் பயன்படுத்தவும்"
@@ -15979,6 +16032,10 @@ msgstr "அது என்ன சரிபார்க்கிறது"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "இது எவ்வாறு கணக்கிடப்படுகிறது என்பதே நினைவூட்டல்கள், அனுப்பிய ஆவணங்கள் மற்றும் நுண்ணறிவைத் தீர்மானிக்கிறது. பின்னர் மாற்ற முடியாது; அதற்குப் பதிலாகப் புதிய நிலையைச் சேர்க்கவும்."
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"

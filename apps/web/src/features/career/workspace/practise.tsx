@@ -97,7 +97,9 @@ export function PractiseTab({ application, version, interview, speak, story, now
 		return (
 			<Notice icon="warning-circle">
 				<span>
-					<Trans>This story is unavailable or uses facts that are switched off.</Trans>
+					<Trans>
+						This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it.
+					</Trans>
 				</span>
 				<Button variant="secondary" onClick={() => go("practise")}>
 					<Trans>Practice another question</Trans>

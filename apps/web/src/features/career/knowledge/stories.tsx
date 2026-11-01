@@ -9,15 +9,24 @@ import { memo, useId, useState } from "react";
 import * as z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuTrigger,
+} from "@reactive-resume/ui/components/dropdown-menu";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
+import { useCoachKnowledge } from "../coach-thread";
 import { useSessionDraft } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
-import { CollapseRow, Eyebrow, Swap, useNow, withUndo } from "../shared";
+import { CollapseRow, Eyebrow, Swap, useCareerTime, useNow, withUndo } from "../shared";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { toastError } from "@/libs/error-message";
@@ -316,33 +325,56 @@ function StoryReader({ story, facts, onEdit }: StoryReaderProps) {
 /** Practise this story aloud in the workspace of the next upcoming interview. */
 type PractiseButtonProps = { storyId: string };
 
+/**
+ * Practice a story out loud, in the workspace of an upcoming interview: the next one says which, several open a menu.
+ * Only a story the coach can use (every backing fact switched on and unchanged since) can be practised; otherwise
+ * the button says what to fix.
+ */
 function PractiseButton({ storyId }: PractiseButtonProps) {
 	const navigate = useNavigate();
 	const now = useNow();
+	const { when } = useCareerTime();
+	const knowledge = useCoachKnowledge(null);
 	const { data: applications, isPending, isError, refetch } = useQuery(applicationsListQueryOptions());
-	const next = upcomingInterviews(collectInterviews(applications ?? []), now)[0];
+	const upcoming = upcomingInterviews(collectInterviews(applications ?? []), now).slice(0, 5);
+	const story = knowledge.allStories.find((item) => item.id === storyId);
+	const usable = knowledge.stories.some((item) => item.id === storyId);
 	const label = (
 		<>
 			<Icon name="microphone" size={18} />
 			<Trans context="Button: rehearse interview answers">Practice</Trans>
 		</>
 	);
-	if (isError)
+	if (isError || knowledge.isError)
 		return (
 			<div role="alert">
-				<Button variant="secondary" size="sm" onClick={() => void refetch()}>
+				<Button
+					variant="secondary"
+					size="sm"
+					onClick={() => {
+						void refetch();
+						knowledge.retry();
+					}}
+				>
 					<Trans>Couldn't load interviews. Retry</Trans>
 				</Button>
 			</div>
 		);
-	if (isPending)
+	if (isPending || !knowledge.loaded)
 		return (
 			<Button variant="ghost" size="sm" disabled>
 				<Trans>Loading interviews…</Trans>
 			</Button>
 		);
 
-	if (!next)
+	const reason = !usable
+		? story?.data.factIds.length
+			? t`A fact this story uses is switched off or changed since. Edit the story to check it.`
+			: t`Link a fact to practice this story`
+		: upcoming.length === 0
+			? t`Add an interview first`
+			: null;
+	if (reason)
 		return (
 			<Tooltip>
 				{/* Focusable while disabled (aria-disabled), so hover and keyboard still reach the tooltip. */}
@@ -358,26 +390,51 @@ function PractiseButton({ storyId }: PractiseButtonProps) {
 				>
 					{label}
 				</TooltipTrigger>
-				<TooltipContent>
-					<Trans>Add an interview first</Trans>
-				</TooltipContent>
+				<TooltipContent>{reason}</TooltipContent>
 			</Tooltip>
 		);
 
+	const practise = (applicationId: string) =>
+		void navigate({
+			to: "/dashboard/applications/$applicationId/{-$tab}",
+			params: { applicationId, tab: "practise" },
+			search: { speak: true, story: storyId },
+		});
+	const [next] = upcoming;
+	if (upcoming.length === 1 && next)
+		return (
+			<Button
+				variant="ghost"
+				className="h-8 px-2.5 text-[13px] text-ink-2"
+				onClick={() => practise(next.application.id)}
+			>
+				<Icon name="microphone" size={18} />
+				<Trans context="Button: rehearse interview answers">Practice for {next.application.company}</Trans>
+			</Button>
+		);
+
 	return (
-		<Button
-			variant="ghost"
-			className="h-8 px-2.5 text-[13px] text-ink-2"
-			onClick={() =>
-				void navigate({
-					to: "/dashboard/applications/$applicationId/{-$tab}",
-					params: { applicationId: next.application.id, tab: "practise" },
-					search: { speak: true, story: storyId },
-				})
-			}
-		>
-			{label}
-		</Button>
+		<DropdownMenu>
+			<DropdownMenuTrigger render={<Button variant="ghost" className="h-8 px-2.5 text-[13px] text-ink-2" />}>
+				{label}
+				<Icon name="caret-down" size={16} />
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="w-72">
+				<DropdownMenuGroup>
+					<DropdownMenuLabel>
+						<Trans>Practice for which interview?</Trans>
+					</DropdownMenuLabel>
+					{upcoming.map((item) => (
+						<DropdownMenuItem key={item.interview.id} onClick={() => practise(item.application.id)}>
+							<span className="grid min-w-0">
+								<span className="truncate">{item.application.company}</span>
+								<span className="text-xs text-ink-3">{when(item.start)}</span>
+							</span>
+						</DropdownMenuItem>
+					))}
+				</DropdownMenuGroup>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 

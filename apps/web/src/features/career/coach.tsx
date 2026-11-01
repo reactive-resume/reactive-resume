@@ -9,6 +9,7 @@ import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { coachStarters, type CoachStarter } from "@reactive-resume/schema/career-starters";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import {
 	ContextMenu,
@@ -44,6 +45,8 @@ import {
 } from "./coach-thread";
 import { CareerLoadError } from "./load-state";
 import { ContextChip, Eyebrow, PrivacyLine } from "./shared";
+import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { transcriptOf } from "@/features/assistant/chat";
 import { ConnectionNotice } from "@/features/assistant/connection-notice";
 import { ProviderSetup, SetUpAi } from "@/features/assistant/provider-setup";
@@ -486,15 +489,41 @@ export function CoachPage({ conversationId, offerIds: routeOfferIds }: CoachPage
 
 type EmptyStateProps = { disabled: boolean; onPick: (text: string) => void };
 
+const starterText = (starter: CoachStarter): { icon: IconName; text: string } => {
+	switch (starter.kind) {
+		case "interview":
+			return { icon: "microphone", text: t`Help me prepare for my ${starter.company} interview.` };
+		case "offers":
+			return { icon: "scales", text: t`Help me weigh the offer I have against what I want.` };
+		case "opportunities":
+			return { icon: "list-magnifying-glass", text: t`Which opportunities best match my priorities?` };
+		case "story":
+			return {
+				icon: "list-numbers",
+				text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
+			};
+		case "practice":
+			return { icon: "user-sound", text: t`What interview answers should I practice?` };
+		default:
+			return { icon: "compass", text: t`What kinds of roles fit what I've done so far?` };
+	}
+};
+
+/** Starters that fit the account: an upcoming interview, an offer or found roles come first when there are some. */
+function useStarters() {
+	const applications = useQuery(applicationsListQueryOptions());
+	const opportunities = useQuery(orpc.career.opportunities.queryOptions({ input: {} }));
+	const open = (applications.data ?? []).filter((application) => application.status !== "closed");
+	const next = upcomingInterviews(collectInterviews(open))[0];
+	return coachStarters({
+		nextInterviewCompany: next?.application.company,
+		offers: open.filter((application) => application.status === "offer").length,
+		opportunities: (opportunities.data ?? []).filter((row) => !row.trackedApplicationId).length,
+	}).map(starterText);
+}
+
 function EmptyState({ disabled, onPick }: EmptyStateProps) {
-	const starters: Array<{ icon: IconName; text: string }> = [
-		{ icon: "list-magnifying-glass", text: t`Which opportunities best match my priorities?` },
-		{
-			icon: "list-numbers",
-			text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
-		},
-		{ icon: "user-sound", text: t`What interview answers should I practice?` },
-	];
+	const starters = useStarters();
 	return (
 		<div className="grid gap-6 pt-[clamp(0px,6vh,48px)]">
 			<div className="grid gap-3">
@@ -511,7 +540,7 @@ function EmptyState({ disabled, onPick }: EmptyStateProps) {
 			<div className="grid gap-2.5 sm:grid-cols-3">
 				{starters.map((starter) => (
 					<button
-						key={starter.icon}
+						key={starter.text}
 						type="button"
 						disabled={disabled}
 						onClick={() => onPick(starter.text)}

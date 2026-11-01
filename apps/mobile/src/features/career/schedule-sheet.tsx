@@ -9,7 +9,7 @@ import { Platform, View } from "react-native";
 import { careerScheduleInputSchema } from "@reactive-resume/schema/career";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { client, useCareerAction, useCareerQueries, useCareerTime, useNow } from "./hooks";
-import { collectInterviews, nextCareerRun, prepareRunAt, rollForward, toZoned } from "./scheduling";
+import { collectInterviews, firstLeadAhead, nextCareerRun, prepareRunAt, rollForward, toZoned } from "./scheduling";
 import { EditorSheet, LoadState, SwitchRow } from "./shared";
 import { orpc } from "@/api/client";
 import { useFlags } from "@/api/flags";
@@ -118,7 +118,7 @@ function ScheduleForm({
 			time: schedule ? toZoned(at, timezone).time : "08:00",
 			interviewId: schedule?.interviewId ?? upcoming[0]?.interview.id ?? "",
 			applicationId: schedule?.applicationId ?? open[0]?.id ?? "",
-			lead: (schedule?.lead as NonNullable<Input["lead"]>) ?? "24h",
+			lead: (schedule?.lead as NonNullable<Input["lead"]>) ?? firstLeadAhead(upcoming[0]?.start, timezone),
 			aiProviderId: schedule?.aiProviderId ?? ai.defaultProvider?.id ?? "",
 			enabled: schedule?.enabled ?? true,
 			email: schedule?.email ?? false,

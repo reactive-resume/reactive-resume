@@ -1157,6 +1157,10 @@ msgstr ""
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
 
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
 msgstr "Ένα γεγονός που έχετε πλέον ξεχάσει"
@@ -4424,7 +4428,7 @@ msgstr "Δεν ήταν δυνατή η αποθήκευση της ιστορί
 msgid "Couldn't save the tags. Try again."
 msgstr "Δεν ήταν δυνατή η αποθήκευση των ετικετών. Προσπαθήστε ξανά."
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "Δεν ήταν δυνατή η αποθήκευση της ζώνης ώρας. Προσπαθήστε ξανά."
 
@@ -6180,6 +6184,11 @@ msgstr "Γεγονότα, ιστορίες και προτιμήσεις που 
 msgid "Failed"
 msgstr "Αποτυχημένος"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to try again"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
@@ -6834,9 +6843,18 @@ msgstr "Εβραϊκά"
 msgid "Help & docs"
 msgstr "Βοήθεια και έγγραφα"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "Βοήθησέ με να μετατρέψω ένα επίτευγμα σε ιστορία με Κατάσταση, Εργασία, Δράση, Αποτέλεσμα και Αναστοχασμό."
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7806,6 +7824,10 @@ msgstr "Τελευταία επεξεργασία"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7819,6 +7841,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "Τελευταία χρήση"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8072,6 +8098,10 @@ msgstr ""
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -10561,6 +10591,16 @@ msgstr "Εξάσκηση · Η εισαγωγή σας, περίπου 40 δευ
 msgid "Practice another question"
 msgstr "Εξάσκηση σε άλλη ερώτηση"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "Εξασκηθείτε για τις συνεντεύξεις σας στην εταιρεία {company}."
@@ -12094,6 +12134,11 @@ msgstr "Εκτέλεση ξανά"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "Διεξαγωγή έρευνας με πελάτες"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -14836,8 +14881,8 @@ msgid "This step is optional, but recommended."
 msgstr "Αυτό το βήμα είναι προαιρετικό, αλλά συνιστάται."
 
 #: src/features/career/workspace/practise.tsx
-msgid "This story is unavailable or uses facts that are switched off."
-msgstr "Αυτή η ιστορία δεν είναι διαθέσιμη ή χρησιμοποιεί γεγονότα που είναι απενεργοποιημένα."
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -14894,6 +14939,10 @@ msgstr "Ώρα, σύνδεσμος, ποιοι, τι στείλατε"
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "Οι ώρες εμφανίζονται σε {timeZone}."
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15557,6 +15606,10 @@ msgstr ""
 msgid "Use this device's timezone ({device})"
 msgstr "Χρήση της ζώνης ώρας αυτής της συσκευής ({device})"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "Χρησιμοποιήστε αυτόν τον πάροχο"
@@ -15979,6 +16032,10 @@ msgstr "Τι ελέγχει"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "Η κατηγορία του καθορίζει τις υπενθυμίσεις, τα απεσταλμένα έγγραφα και τις Πληροφορίες. Δεν μπορεί να αλλάξει αργότερα· προσθέστε νέο στάδιο."
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
