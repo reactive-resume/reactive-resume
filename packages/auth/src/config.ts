@@ -621,6 +621,16 @@ const getAuthConfig = () => {
 						);
 					}
 				}
+				if (ctx.path === "/oauth2/public-client-prelogin") {
+					// The provider checks only that oauth_query is signed and unexpired. Tie the requested client to that
+					// signed request, so a request for one client can't read another client's public details.
+					const body = ctx.body as { client_id?: unknown; oauth_query?: unknown } | undefined;
+					const signedClientId =
+						typeof body?.oauth_query === "string" ? new URLSearchParams(body.oauth_query).get("client_id") : null;
+					if (!signedClientId || body?.client_id !== signedClientId) {
+						throw new APIError("BAD_REQUEST", { error: "invalid_request", error_description: "client_id mismatch" });
+					}
+				}
 				if (ctx.path === "/oauth2/consent") {
 					const current = await getSessionFromCtx(ctx, { disableCookieCache: true });
 					// Denying grants nothing and returns the guest to the client with access_denied.

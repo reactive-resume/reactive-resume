@@ -641,6 +641,66 @@ describe.skipIf(!databaseURL)("MCP OAuth flow with PostgreSQL", () => {
 		expect(tokens).toEqual([]);
 	}, 30_000);
 
+	it("serves pre-login client details only for an unexpired request signed for that client", async () => {
+		if (!databaseURL) return;
+		process.env.DATABASE_URL = databaseURL;
+		process.env.APP_URL = "http://localhost:33920";
+		process.env.AUTH_SECRET = "oauth-integration-test-secret-only";
+		const { handleAuth, handleOAuth } = await import("./auth");
+		const origin = process.env.APP_URL;
+		const post = (path: string, body: object) =>
+			handleAuth(
+				new Request(`${origin}/api/auth/${path}`, {
+					method: "POST",
+					headers: { "content-type": "application/json", origin },
+					body: JSON.stringify(body),
+				}),
+			);
+		const register = async (name: string) =>
+			(await post("oauth2/register", { client_name: name, redirect_uris: ["http://127.0.0.1:33921/callback"] })).json();
+		const client = await register("Signed client");
+		const other = await register("Other client");
+		const query = new URLSearchParams({
+			client_id: client.client_id,
+			redirect_uri: "http://127.0.0.1:33921/callback",
+			response_type: "code",
+			scope: "openid api:read",
+			code_challenge: createHash("sha256").update(randomBytes(32)).digest("base64url"),
+			code_challenge_method: "S256",
+			resource: origin,
+		});
+		const authorize = await handleAuth(new Request(`${origin}/api/auth/oauth2/authorize?${query}`));
+		const login = await handleOAuth(new Request(new URL(authorize.headers.get("location") ?? "", origin)));
+		const loginURL = new URL(login.headers.get("location") ?? "", origin);
+		const signed = new URL(loginURL.searchParams.get("callbackURL") ?? "", origin).search.slice(1);
+		const prelogin = (clientId: string, oauthQuery: string) =>
+			post("oauth2/public-client-prelogin", { client_id: clientId, oauth_query: oauthQuery });
+
+		const valid = await prelogin(client.client_id, signed);
+		expect(valid.status, await valid.clone().text()).toBe(200);
+		await expect(valid.json()).resolves.toMatchObject({ client_id: client.client_id, client_name: "Signed client" });
+		const tampered = new URLSearchParams(signed);
+		tampered.set("scope", "openid api:read api:write api:delete");
+		const refusedSignature = async (response: Response) => {
+			expect(response.status).toBe(400);
+			await expect(response.json()).resolves.toMatchObject({ error: "invalid_signature" });
+		};
+		await refusedSignature(await prelogin(client.client_id, tampered.toString()));
+		// A request signed for one client can't read another client's details.
+		const mismatched = await prelogin(other.client_id, signed);
+		expect(mismatched.status).toBe(400);
+		const mismatchedBody = await mismatched.text();
+		expect(mismatchedBody).toContain("invalid_request");
+		expect(mismatchedBody).not.toContain("Other client");
+		vi.useFakeTimers({ toFake: ["Date"] });
+		try {
+			vi.setSystemTime(Date.now() + 601_000);
+			await refusedSignature(await prelogin(client.client_id, signed));
+		} finally {
+			vi.useRealTimers();
+		}
+	});
+
 	it("refuses UserInfo for a token without offline_access once its session ends", async () => {
 		if (!databaseURL) return;
 		process.env.DATABASE_URL = databaseURL;
