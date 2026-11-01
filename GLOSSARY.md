@@ -85,6 +85,10 @@ language would label them:
 
 **Basics** — name, contact details, and headline. Not "fundamentals" or "basic settings".
 
+**Headline** — the one-line professional title under the name, such as "Frontend developer". A job title, not a
+street address and not a newspaper or document title; one catalog's word for it read as "address" and people typed
+their street into it.
+
 **Summary** — the short personal statement at the top of a resume. Not a summary of the app, and
 not an AI-generated abstract.
 
@@ -354,6 +358,10 @@ Translate them as two distinct names, the way the English does.
 **Archive / Unarchive**, **Mark**, **Tailor**, **Duplicate**, **Import**, **Export**, **Share**,
 **Star** — all verbs when they appear as a control label. Check the `#:` source reference if you
 are unsure whether a given string is a button or a heading.
+
+In languages whose interfaces label buttons with an imperative or a verbal noun, use that form, never the
+third-person present tense. Arabic `Add`, `Edit` or `Share` reads as "he adds", "he edits", "he shares" when
+translated as يضيف، يحرر، يشارك; use إضافة، تعديل، مشاركة instead.
 
 ## Message syntax
 

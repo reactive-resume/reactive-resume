@@ -561,6 +561,7 @@ describe.skipIf(!process.env.OAUTH_TEST_DATABASE_URL)("account wrapper ownership
 				email: owner.email,
 				emailVerified: false,
 				timezone: "Europe/Berlin",
+				locale: null,
 			});
 			const anonymous = createRouterClient(authRouter, {
 				context: {

@@ -6,6 +6,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import StarterKit from "@tiptap/starter-kit";
 import { isDarkColor } from "@reactive-resume/utils/color";
+import { ContentDirection } from "./content-direction";
 import { ParagraphIndent } from "./paragraph-indent";
 import { LiteralHeading, LiteralParagraph, LiteralWhitespaceInput } from "./rich-input-whitespace";
 import { cellStyles, keptStyle, MAX_TABLE_COLUMNS, MAX_TABLE_ROWS, rowStyles, tableStyles } from "./rich-text-markup";
@@ -92,6 +93,7 @@ export const richTextExtensions = [
 	}),
 	TextAlign.configure({ types: ["heading", "paragraph", "listItem"] }),
 	ParagraphIndent,
+	ContentDirection,
 	StyledTable,
 	styled(TableRow, rowStyles),
 	styled(TableHeader, cellStyles),

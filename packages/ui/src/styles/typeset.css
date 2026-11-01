@@ -383,4 +383,11 @@
 		--typeset-leading: 1.6;
 		--typeset-flow: 0.75em;
 	}
+
+	/* What people write keeps its own direction: each block reads from its first letter, whatever the interface's
+	   direction, so a German line stays left to right in Arabic and the other way round. The editor also sets
+	   dir="auto" on each block (content-direction.ts), which moves list markers to the matching side. */
+	:is(.typeset-field, .typeset-chat) :where(p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th) {
+		unicode-bidi: plaintext;
+	}
 }

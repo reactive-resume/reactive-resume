@@ -173,7 +173,8 @@ Reactive Resume sends email for account verification, password resets and email 
 server logs only each email's recipient and subject, never its link, because the link signs someone in. So without
 SMTP, password reset, email verification and email changes don't work, and passkeys (which need a verified email)
 can't be added. The app says so on those screens. In development (`NODE_ENV` not `production`) the full email,
-link included, is printed to the server console.
+link included, is printed to the server console. Each email goes out in the account's interface language, or English while that
+language has no translation for it.
 
 #### Recover an account without email
 

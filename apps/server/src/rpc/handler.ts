@@ -26,7 +26,8 @@ const rpcHandler = new RPCHandler(router, {
 		onError((error) => {
 			// Signed-out or expired callers are routine; their 401 still reaches the client.
 			if (error instanceof ORPCError && error.code === "UNAUTHORIZED") return;
-			console.error("[oRPC Server]", error);
+			// Validation errors can contain submitted profile values; keep payloads out of server logs.
+			console.error("[oRPC Server]", error instanceof ORPCError ? error.code : "INTERNAL_SERVER_ERROR");
 		}),
 	],
 });

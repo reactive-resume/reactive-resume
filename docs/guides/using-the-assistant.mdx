@@ -151,6 +151,12 @@ Above the message box, chips show what goes with your next message: the document
 
 Removing either context chip also leaves earlier conversation history out of the next reply. Pending questions or approvals from a different context cannot resume; send a new message with your current choices.
 
+The **Knowledge** chip is off by default. Turn it on for a message to let the assistant search your shared facts and stories, plus Knowledge private to the selected application when its posting is shared, read-only, for example "Add my conference talk from Knowledge". The line under the box then says what it finds is sent too. It can't change Knowledge; facts private to another application never appear. If you later correct, switch off or forget a fact, messages written after the assistant first searched Knowledge, up to that change, aren't sent again.
+
+From **Career → Coach** or a job's coach, **Add to resume** under an answer opens a resume's assistant with that answer in the message box; in a job's coach, that job's copies are listed first. The answer is handed over inside the app, not in the page address. Nothing is sent until you review it and press send, and the assistant proposes edits for you to accept as usual.
+
+Under each reply, **Used** names what it read: the document, and any facts and stories its Knowledge search found. Select a chip to see them.
+
 When you select **Interview prep** from an application's detail panel, the assistant uses that application's posting, even when several applications share the same resume.
 
 ## Attach files
@@ -191,7 +197,7 @@ The model chip in the assistant's header shows the model in use. Select it to ch
 ## Stop, retry or copy a conversation
 
 - **Stop a reply** with the stop button that replaces send while the assistant is working, or press <kbd>Esc</kbd> in the message box. If it stopped before proposing anything, you'll see **Stopped. No edits were proposed.** with **Continue**.
-- **When the provider returns an error**, your message is kept. Select **Retry**, or **Switch model** to try another provider.
+- **When a reply fails**, your message is kept. Select **Retry**. **Switch model** appears when the provider caused the failure, such as a rejected key, a missing model or a rate limit. A lost internet connection says **Couldn't reach Reactive Resume** instead.
 - **Copy transcript** at the end of the conversation copies the messages as plain text, speaker by speaker, without the tool steps, and includes the retrieved source links.
 
 A single reply can run for about four minutes. If it hits that limit, the assistant says "Time limit reached. Your progress is saved. Ask me to continue."

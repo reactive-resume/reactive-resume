@@ -25,6 +25,8 @@ export const user = pg.pgTable(
 		twoFactorEnabled: pg.boolean("two_factor_enabled").notNull().default(false),
 		/** Where the user's times are shown (Settings → Preferences); an IANA name. */
 		timezone: pg.text("timezone").notNull().default("UTC"),
+		/** The interface language the account last used, for account emails; null until the app reports one. */
+		locale: pg.text("locale"),
 		lastActiveAt: pg.timestamp("last_active_at", { withTimezone: true }),
 		role: pg.text("role").default("user"),
 		banned: pg.boolean("banned").default(false),

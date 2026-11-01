@@ -13,14 +13,16 @@ import { ORPCError } from "@orpc/client";
 import { streamToEventIterator } from "@orpc/server";
 import {
 	addToolInputExamplesMiddleware,
+	APICallError,
 	convertToModelMessages,
 	isStepCount,
+	RetryError,
 	safeValidateUIMessages,
 	smoothStream,
 	ToolLoopAgent,
 	wrapLanguageModel,
 } from "ai";
-import { and, asc, count, desc, eq, getColumns, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, getColumns, gt, inArray, isNull, sql } from "drizzle-orm";
 import { agentWebSources } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
@@ -67,6 +69,7 @@ import {
 } from "./messages-persistence";
 import { acceptedEditAllowed, documentReader } from "./proposal-applications";
 import { repairAgentToolCall } from "./repair";
+import { replyErrorMessage } from "./reply-errors";
 import { claimActiveAgentRun, clearActiveAgentRunIfCurrent, isStaleAgentRun, reapStaleAgentRun } from "./runs";
 import { agentStreamLifecycle } from "./streams";
 import { buildAgentInstructions, buildAgentTools } from "./tools";
@@ -696,6 +699,22 @@ function buildThreadTitle(message: UIMessage, fallback: string, max = 60) {
 	return text.length > max ? `${text.slice(0, max - 3)}...` : text;
 }
 
+/**
+ * Messages written before Knowledge last changed (a fact forgotten, corrected or switched off) are no longer sent:
+ * they may repeat what was withdrawn. The coach always reads Knowledge; a document conversation only from its first
+ * Knowledge search, so its earlier messages stay. `send` replays the rest; `get` names the withheld ones.
+ */
+async function withheldMessageRows(thread: { scope: string }, rows: AgentMessageRecord[], userId: string) {
+	const since =
+		thread.scope === "document" ? rows.find((row) => readsKnowledge(toMessage(row)))?.createdAt : new Date(0);
+	if (!since) return { cutoffAt: null, rows: [] as AgentMessageRecord[] };
+	const cutoffAt = await careerService.memoryCutoff(userId);
+	return {
+		cutoffAt,
+		rows: cutoffAt ? rows.filter((row) => row.createdAt >= since && row.createdAt <= cutoffAt) : [],
+	};
+}
+
 function listThreadMessages(input: { threadId: string; userId: string }) {
 	return db
 		.select()
@@ -914,11 +933,47 @@ function createAgent(input: {
 			}),
 			readKnowledge: input.knowledge
 				? timedToolHandler("read_knowledge", async (query: string) => {
-						const facts = await knowledgeFacts(input.userId, input.posting?.applicationId ?? null, query);
-						// Text and category only: sources and scopes stay private.
+						const scope = { userId: input.userId, applicationId: input.posting?.applicationId ?? null };
+						const facts = await knowledgeFacts(scope.userId, scope.applicationId, query);
+						const context = await careerService.context(scope);
+						const terms = query.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
+						const matches = context.stories.filter(
+							(story) =>
+								!terms.length || terms.some((term) => JSON.stringify(story.data).toLocaleLowerCase().includes(term)),
+						);
+						const projectFact = ({ id, text, category }: (typeof context.facts)[number]) => ({ id, text, category });
+						const available = new Map(context.facts.map((fact) => [fact.id, projectFact(fact)]));
+						const selected = new Map(
+							facts.slice(0, 30).flatMap((fact) => {
+								const active = available.get(fact.id);
+								return active ? [[active.id, active] as const] : [];
+							}),
+						);
+						const stories: Array<{ id: string; data: Omit<(typeof matches)[number]["data"], "applicationId"> }> = [];
+						// Story additions and newly needed proof share 16k; direct fact hits retain their existing 30-item cap.
+						let remaining = 16_000;
+						let truncated = facts.length > 30;
+						for (const {
+							id,
+							data: { applicationId: _applicationId, ...data },
+						} of matches) {
+							const story = { id, data };
+							const backing = data.factIds.flatMap((factId) => available.get(factId) ?? []);
+							const missing = backing.filter((fact) => !selected.has(fact.id));
+							const size = JSON.stringify(story).length + JSON.stringify(missing).length;
+							if (backing.length !== data.factIds.length || size > remaining) {
+								truncated = true;
+								continue;
+							}
+							remaining -= size;
+							stories.push(story);
+							for (const fact of missing) selected.set(fact.id, fact);
+						}
+						// Source and application/account metadata stay private.
 						return {
-							facts: facts.slice(0, 30).map(({ id, text, category }) => ({ id, text, category })),
-							truncated: facts.length > 30,
+							facts: [...selected.values()],
+							stories,
+							truncated,
 						};
 					})
 				: undefined,
@@ -937,6 +992,19 @@ function createAgent(input: {
 			});
 
 	return new ToolLoopAgent({
+		// The SDK's default logs the whole error, with the provider's response body (which can echo request data). One
+		// line names the failure instead: its class and HTTP status, never its text or body.
+		onError: ({ error }) => {
+			const cause = RetryError.isInstance(error) ? error.lastError : error;
+			console.error(
+				JSON.stringify({
+					evt: "agent.error",
+					threadId: input.threadId,
+					name: cause instanceof Error ? cause.name : typeof cause,
+					statusCode: APICallError.isInstance(cause) ? cause.statusCode : undefined,
+				}),
+			);
+		},
 		toolApproval: { search_web: "user-approval", save_story: "user-approval" },
 		experimental_toolApprovalSecret: env.AUTH_SECRET,
 		// Providers without native inputExamples support get them appended to the tool description.
@@ -1098,7 +1166,7 @@ export const agentService = {
 				thread.activeRunStartedAt = null;
 			}
 
-			const [messages, attachments, document] = await Promise.all([
+			const [rows, attachments, document] = await Promise.all([
 				listThreadMessages({ threadId: input.id, userId: input.userId }),
 				db
 					.select()
@@ -1108,13 +1176,14 @@ export const agentService = {
 				describeDocument(input.userId, documentOf(thread)),
 			]);
 
+			const withheld = await withheldMessageRows(thread, rows, input.userId);
+			// Rows saved before messages carried an id can't be named, only left out.
+			const ids = (list: AgentMessageRecord[]) =>
+				list.flatMap((row) => (typeof toMessage(row).id === "string" ? [toMessage(row).id] : []));
 			// A reply that read Knowledge is hidden once a fact it may repeat changed, was switched off or was forgotten.
-			const cutoff =
-				thread.scope === "document" && messages.some((row) => readsKnowledge(toMessage(row)))
-					? await careerService.memoryCutoff(input.userId)
-					: null;
+			const cutoff = thread.scope === "document" ? withheld.cutoffAt : null;
 			const withdrawn = knowledgeWithdrawals(
-				messages.map((row) => ({ message: toMessage(row), createdAt: row.createdAt })),
+				rows.map((row) => ({ message: toMessage(row), createdAt: row.createdAt })),
 				cutoff,
 			);
 			// Edits this resume can't accept reach no app as something to apply, older apps included.
@@ -1124,7 +1193,7 @@ export const agentService = {
 					: undefined;
 			return {
 				thread: toThreadSummary(thread),
-				messages: messages.map((row) => {
+				messages: rows.map((row) => {
 					const message = toMessage(row);
 					if (withdrawn.has(message.id)) return withdrawKnowledgeReply(message);
 					return madeFor === undefined ? message : withUsableTailoring(message, madeFor);
@@ -1132,6 +1201,9 @@ export const agentService = {
 				attachments: attachments.map(toAttachment),
 				document,
 				isReadOnly: !thread.aiProviderId || (thread.scope === "document" ? !document || document.locked : false),
+				history: { cutoffAt: withheld.cutoffAt, withheld: ids(withheld.rows) },
+				// Replies that ended early (stopped, timed out, failed or cut off by a restart), as their rows record it.
+				interrupted: ids(rows.filter((row) => row.role === "assistant" && row.status === "canceled")),
 			};
 		},
 
@@ -1370,6 +1442,27 @@ export const agentService = {
 							sequence: await nextMessageSequence(input.threadId, db),
 						}));
 					if (!persistedUserMessage) throw new Error("AGENT_MESSAGE_CREATE_FAILED");
+					// "Try again" after a reply stopped before it said anything: the empty attempt is replaced, not kept
+					// above the new one. A stopped reply with content stays; it is continued, not retried.
+					if (retried) {
+						const [asked] = await db
+							.select({ sequence: schema.agentMessage.sequence })
+							.from(schema.agentMessage)
+							.where(eq(schema.agentMessage.id, retried.id));
+						if (asked)
+							await db
+								.delete(schema.agentMessage)
+								.where(
+									and(
+										eq(schema.agentMessage.threadId, input.threadId),
+										eq(schema.agentMessage.userId, input.userId),
+										eq(schema.agentMessage.role, "assistant"),
+										eq(schema.agentMessage.status, "canceled"),
+										gt(schema.agentMessage.sequence, asked.sequence),
+										sql`jsonb_array_length(${schema.agentMessage.uiMessage}->'parts') = 0`,
+									),
+								);
+					}
 					sourceMessageId = persistedUserMessage.id;
 					await linkAttachmentsToMessage({
 						attachments,
@@ -1396,6 +1489,7 @@ export const agentService = {
 					userId: input.userId,
 				});
 
+				// Career conversations share the selected Knowledge context; document lookups remain opt-in below.
 				const careerContext = isCareer
 					? await careerService.context({ userId: input.userId, applicationId: thread.applicationId })
 					: null;
@@ -1407,7 +1501,9 @@ export const agentService = {
 					{ threadId: input.threadId, userId: input.userId },
 				);
 				const messages = messageRows.map(toMessage);
-				const memoryCutoff = isCareer ? await careerService.memoryCutoff(input.userId) : null;
+				const withheld = new Set(
+					(await withheldMessageRows(thread, messageRows, input.userId)).rows.map((row) => row.id),
+				);
 				const contextMessageId = (draftUiMessage.metadata as { contextMessageId?: string } | undefined)
 					?.contextMessageId;
 				const contextMessage = messages.find((message) => message.role === "user" && message.id === contextMessageId);
@@ -1417,11 +1513,9 @@ export const agentService = {
 					? input.message.role === "assistant" && contextMessage
 						? [contextMessage, draftUiMessage]
 						: [withAttachmentUiParts(input.message, attachmentsForModel)]
-					: memoryCutoff
-						? // History from before a fact changed is left out, but never the message being answered (a retry
-							// keeps its first createdAt).
-							messageRows.filter((row) => row.createdAt > memoryCutoff || row.id === sourceMessageId).map(toMessage)
-						: messages;
+					: // History from before a fact changed is left out, but never the message being answered (a retry
+						// keeps its first createdAt).
+						messageRows.filter((row) => !withheld.has(row.id) || row.id === sourceMessageId).map(toMessage);
 				// Opt-in for document conversations: older clients never send it, and their disclosure doesn't mention it.
 				const knowledge = !isCareer && Boolean(document) && input.context?.memory === true;
 				// Document conversations reuse the career memory cutoff. Every reply from the first Knowledge lookup on is never
@@ -1541,7 +1635,7 @@ export const agentService = {
 					threadId: input.threadId,
 					document:
 						input.context?.document === false || !document || !loaded ? null : { ...document, name: loaded.name },
-					...(careerContext
+					...(careerContext && isCareer
 						? {
 								career: {
 									context: careerContext,
@@ -1679,10 +1773,8 @@ export const agentService = {
 										});
 									}
 								},
-								onError: (error) => {
-									const message = error instanceof Error ? error.message : "Agent run failed.";
-									return runnableProvider.apiKey ? message.replaceAll(runnableProvider.apiKey, "***") : message;
-								},
+								// The agent's onError has logged it; the reply carries only the app's wording.
+								onError: (error) => replyErrorMessage(error),
 							})
 							.pipeThrough(
 								new TransformStream<UIMessageChunk, UIMessageChunk>({

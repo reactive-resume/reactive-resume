@@ -1,4 +1,5 @@
 import type { Fact, Story } from "../hooks";
+import type { CareerStoryData } from "@reactive-resume/schema/career";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -399,25 +400,32 @@ type StoryEditorProps = {
 	onSaved: (id: string) => void;
 	onCancel: () => void;
 	onDelete: (() => void) | undefined;
+	/**
+	 * A coach's proposal opened with Edit first: its parts start the draft, which lives under the proposal's key and is
+	 * kept on Cancel, so the review card can be reopened with the edits. Saved in the proposal's scope.
+	 */
+	proposal?: { key: string; story: Omit<CareerStoryData, "applicationId">; applicationId: string | null };
 };
 
-function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorProps) {
+export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposal }: StoryEditorProps) {
 	const queryClient = useQueryClient();
+	const start = proposal?.story ?? story?.data;
+	const applicationId = proposal ? proposal.applicationId : null;
 	const {
 		value: draft,
 		setValue: setDraft,
 		clear,
 	} = useSessionDraft(
-		`story:${story?.id ?? "new"}`,
+		proposal ? `story:proposal:${proposal.key}` : `story:${story?.id ?? "new"}`,
 		{
-			title: story?.data.title ?? "",
-			situation: story?.data.situation ?? "",
-			task: story?.data.task ?? "",
-			action: story?.data.action ?? "",
-			result: story?.data.result ?? "",
-			reflection: story?.data.reflection ?? "",
-			tags: story?.data.tags.join(", ") ?? "",
-			factIds: story?.data.factIds ?? [],
+			title: start?.title ?? "",
+			situation: start?.situation ?? "",
+			task: start?.task ?? "",
+			action: start?.action ?? "",
+			result: start?.result ?? "",
+			reflection: start?.reflection ?? "",
+			tags: start?.tags.join(", ") ?? "",
+			factIds: start?.factIds ?? [],
 		},
 		(value) => {
 			const result = storyDraftSchema.safeParse(value);
@@ -426,8 +434,10 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 	);
 	const [tried, setTried] = useState(false);
 	const errorId = useId();
-	// A shared story can only rest on shared facts; switched-off ones are listed but can't be ticked.
-	const shared = facts.filter((fact) => fact.applicationId === null);
+	// A story rests on facts in its own scope: shared ones, plus the application's own for a story kept with one
+	// application. Switched-off ones are listed but can't be ticked; the server checks all of this again on save.
+	const shared = facts.filter((fact) => fact.applicationId === null || fact.applicationId === applicationId);
+	const unavailable = draft.factIds.filter((id) => !shared.some((fact) => fact.id === id && fact.status === "active"));
 	const usable = new Set(shared.filter((fact) => fact.status === "active").map((fact) => fact.id));
 
 	const save = useMutation({
@@ -435,7 +445,7 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 		onSuccess: (row) => {
 			clear();
 			// Newest first, as the server orders them, so the reader opens on it before the refetch lands.
-			queryClient.setQueryData<Story[]>(orpc.career.stories.queryKey({ input: { applicationId: null } }), (list) => [
+			queryClient.setQueryData<Story[]>(orpc.career.stories.queryKey({ input: { applicationId } }), (list) => [
 				row,
 				...(list ?? []).filter((item) => item.id !== row.id),
 			]);
@@ -457,7 +467,7 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 		}
 		save.mutate({
 			...(story ? { id: story.id } : {}),
-			applicationId: null,
+			applicationId,
 			title: draft.title.trim(),
 			situation: draft.situation.trim(),
 			task: draft.task.trim(),
@@ -600,6 +610,15 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 						<Trans>No facts to link yet. Add them in Facts.</Trans>
 					</p>
 				)}
+				{unavailable.length > 0 && (
+					<p role="status" className="flex items-start gap-1.5 text-[13px] text-warn-text">
+						<Icon name="warning" size={16} className="mt-px shrink-0" />
+						{plural(unavailable.length, {
+							one: "# proposed fact isn't available here and won't back the story.",
+							other: "# proposed facts aren't available here and won't back the story.",
+						})}
+					</p>
+				)}
 			</fieldset>
 
 			<div className="grid gap-2 border-t border-line pt-3.5">
@@ -622,7 +641,7 @@ function StoryEditor({ story, facts, onSaved, onCancel, onDelete }: StoryEditorP
 							variant="ghost"
 							className="text-ink-2"
 							onClick={() => {
-								clear();
+								if (!proposal) clear();
 								onCancel();
 							}}
 						>

@@ -258,6 +258,123 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 		expect(fixture.prompts.join("\n")).not.toContain(FACT);
 	});
 
+	it("sends only scoped usable story fields through the canonical Knowledge tool and bounds oversized stories", async () => {
+		await knowledgeFact("rx101-story-proof", "I spoke about accessible design at a conference.");
+		const story = {
+			applicationId: null,
+			title: "Shared conference talk",
+			situation: "A conference needed a talk.",
+			task: "Explain accessible design.",
+			action: "I demonstrated accessible interfaces.",
+			result: "",
+			reflection: "",
+			factIds: ["rx101-story-proof"],
+			tags: [],
+		};
+		const saved = await career.saveStory(userId, story);
+		await career.saveStory(userId, {
+			...story,
+			title: "Oversized shared talk",
+			situation: "S".repeat(4000),
+			task: "T".repeat(4000),
+			action: "A".repeat(6000),
+			result: "R".repeat(4000),
+			reflection: "F".repeat(4000),
+		});
+		await fixture.db
+			?.insert(tables.application)
+			.values({ id: "rx101-other-job", userId, company: "Other Fiction", role: "Designer" });
+		await career.saveFact(userId, {
+			applicationId: "rx101-other-job",
+			text: "Private other-job evidence",
+			category: "experience",
+			source: { kind: "manual", id: "rx101-private", quote: "Private other-job evidence" },
+		});
+		await career.saveStory(userId, { ...story, applicationId: "rx101-other-job", title: "Private other-job story" });
+		const { id: threadId } = await agent.threads.start({ userId, resumeId: copyId });
+		fixture.prompts = [];
+		fixture.plan.push({ tool: "read_knowledge", input: { query: "" } }, { text: "Reviewed shared talk." });
+		const sent = await send(threadId, { memory: true });
+		const part = sent.messages
+			.flatMap((message) => message.parts)
+			.find((part) => part.type === "tool-read_knowledge") as
+			| { output: { stories: unknown[]; truncated: boolean } }
+			| undefined;
+		expect(part?.output.stories).toContainEqual({ id: saved.id, data: { ...story, applicationId: undefined } });
+		expect(part?.output.truncated).toBe(true);
+		const wire = fixture.prompts.join("\n");
+		expect(wire).toContain(story.action);
+		expect(wire).not.toContain("Private other-job");
+		expect(wire).not.toContain("Oversized shared talk");
+		expect(JSON.stringify(part?.output.stories).length).toBeLessThan(16_000);
+	});
+
+	it.each(["title", "tag"])(
+		"a story %s query includes scoped active backing facts without duplicates or metadata",
+		async (field) => {
+			const evidence = "I cut release lead time from twelve days to four.";
+			const factId = `orchid-proof-${field}`;
+			await knowledgeFact(factId, evidence);
+			const story = await career.saveStory(userId, {
+				applicationId: null,
+				title: field === "title" ? "ORCHID leadership" : "Release leadership",
+				situation: "Releases took twelve days.",
+				task: "Shorten releases.",
+				action: "I changed ownership.",
+				result: "Four days.",
+				reflection: "",
+				factIds: [factId],
+				tags: field === "tag" ? ["ORCHID"] : [],
+			});
+			const { id: threadId } = await agent.threads.start({ userId, resumeId: copyId });
+			for (const query of ["ORCHID", "release"]) {
+				fixture.plan.push({ tool: "read_knowledge", input: { query } }, { text: "Reviewed." });
+				const sent = await send(threadId, { memory: true });
+				const part = sent.messages
+					.flatMap((message) => message.parts)
+					.findLast((part) => part.type === "tool-read_knowledge") as unknown as {
+					output: {
+						facts: Array<{ id: string; text: string }>;
+						stories: Array<{ id: string; data: Record<string, unknown> }>;
+						truncated: boolean;
+					};
+				};
+				expect(part.output.stories).toContainEqual(expect.objectContaining({ id: story.id }));
+				expect(part.output.facts).toContainEqual({ id: factId, text: evidence, category: "accomplishment" });
+				expect(new Set(part.output.facts.map((fact) => fact.id)).size).toBe(part.output.facts.length);
+				for (const fact of part.output.facts) expect(Object.keys(fact).sort()).toEqual(["category", "id", "text"]);
+				for (const entry of part.output.stories) expect(entry.data).not.toHaveProperty("applicationId");
+			}
+		},
+	);
+
+	it("omits a story with truncation when its newly included supporting facts do not fit the story expansion budget", async () => {
+		const factIds = Array.from({ length: 6 }, (_, index) => `story-budget-proof-${index}`);
+		for (const id of factIds) await knowledgeFact(id, "Evidence " + "x".repeat(1950));
+		const story = await career.saveStory(userId, {
+			applicationId: null,
+			title: "BUDGETFLOW",
+			situation: "S".repeat(4000),
+			task: "T".repeat(3000),
+			action: "A".repeat(3000),
+			result: "",
+			reflection: "",
+			factIds,
+			tags: [],
+		});
+		const { id: threadId } = await agent.threads.start({ userId, resumeId: copyId });
+		fixture.plan.push({ tool: "read_knowledge", input: { query: "BUDGETFLOW" } }, { text: "Reviewed." });
+		const sent = await send(threadId, { memory: true });
+		const part = sent.messages
+			.flatMap((message) => message.parts)
+			.find((part) => part.type === "tool-read_knowledge") as unknown as {
+			output: { facts: unknown[]; stories: Array<{ id: string }>; truncated: boolean };
+		};
+		expect(part.output.stories.map((entry) => entry.id)).not.toContain(story.id);
+		expect(part.output.facts).toEqual([]);
+		expect(part.output.truncated).toBe(true);
+	});
+
 	it("refuses to continue a paused reply that read Knowledge after the fact was switched off", async () => {
 		const fact = await career.saveFact(userId, {
 			applicationId: null,

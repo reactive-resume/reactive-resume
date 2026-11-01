@@ -34,7 +34,7 @@ const categoryLabel = (category: string) =>
 	({ accomplishment: t`Accomplishment`, experience: t`Experience`, skill: t`Skill`, preference: t`Preference` })[
 		category
 	] ?? t`Experience`;
-const categories = (): { value: FactCategory; label: string }[] =>
+export const factCategories = (): { value: FactCategory; label: string }[] =>
 	["accomplishment", "experience", "skill", "preference"].map((value) => ({
 		value: value as FactCategory,
 		label: categoryLabel(value),
@@ -143,7 +143,7 @@ export function Facts({ children, onRefresh }: FactsProps) {
 				label={t`Type`}
 				value={category}
 				onChange={setCategory}
-				options={[{ value: "all", label: t`All` }, ...categories()]}
+				options={[{ value: "all", label: t`All` }, ...factCategories()]}
 			/>
 			<Button label={t`Add a fact`} onPress={() => setEditor({ fact: null })} />
 			<LoadState query={facts} />
@@ -282,7 +282,7 @@ function FactEditor({ fact, onClose }: FactEditorProps) {
 			<View style={{ padding: space.s4, gap: space.s4 }}>
 				<TextArea label={t`Fact`} value={text} maxLength={2000} onChangeText={setText} />
 				{!fact ? (
-					<SelectSheet label={t`Type`} value={category} onChange={setCategory} options={categories()} />
+					<SelectSheet label={t`Type`} value={category} onChange={setCategory} options={factCategories()} />
 				) : (
 					<Text color="ink3">{t`The original stays in correction history. Stories using it will need review.`}</Text>
 				)}

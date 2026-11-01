@@ -5,7 +5,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
-import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
+import { isolate, pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { editWithUndo } from "./actions";
 import { addSkill, checkStateOf, matchPosting } from "./model";
 import { client } from "@/api/client";
@@ -355,7 +355,7 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 							label={t`Add to Skills`}
 							disabled={locked}
 							onPress={() => {
-								editWithUndo(id, (draft) => addSkill(draft, open.label), t`“${open.label}” added to Skills`);
+								editWithUndo(id, (draft) => addSkill(draft, open.label), t`“${isolate(open.label)}” added to Skills`);
 								setTerm(null);
 							}}
 						/>

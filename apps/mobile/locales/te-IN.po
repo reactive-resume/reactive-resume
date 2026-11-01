@@ -13,7 +13,7 @@ msgstr ""
 msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
 msgstr "“{0} · {1}” మరియు దాని కాలక్రమం శాశ్వతంగా తొలగించబడతాయి. దీన్ని రద్దు చేయడం సాధ్యం కాదు."
 
-#. placeholder {0}: open.label
+#. placeholder {0}: isolate(open.label)
 #: src/features/check/job-match.tsx
 msgid "“{0}” added to Skills"
 msgstr "“{0}” స్కిల్స్కి జోడించబడింది"
@@ -23,7 +23,7 @@ msgstr "“{0}” స్కిల్స్కి జోడించబడిం�
 msgid "“{0}” hidden"
 msgstr "“{0}” దాచబడింది"
 
-#. placeholder {0}: resume.name
+#. placeholder {0}: isolate(resume.name)
 #: src/features/document-menu/index.tsx
 msgid "“{0}” moved to Trash"
 msgstr "“{0}” ట్రాష్‌కి తరలించబడింది"
@@ -206,7 +206,9 @@ msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# ఎంట్రీ} other {# ఎంట్రీలు}}"
 
 #. placeholder {0}: knowledge.facts
+#. placeholder {0}: knowledge.facts.length
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# వాస్తవం} other {# వాస్తవాలు}}"
 
@@ -214,6 +216,11 @@ msgstr "{0, plural, one {# వాస్తవం} other {# వాస్తవా
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# match} other {# matches}}"
 msgstr "{0, plural, one {# సరిపోలిక} other {# సరిపోలికలు}}"
+
+#. placeholder {0}: change.added
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
+msgstr ""
 
 #. placeholder {0}: data.officeDays
 #: src/features/career/offers.tsx
@@ -231,6 +238,11 @@ msgstr "{0, plural, one {# పేజ్} other {# పేజీలు}}"
 #: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# ప్రతిపాదిత సవరణ} other {# ప్రతిపాదిత సవరణలు}}"
+
+#. placeholder {0}: unavailable.length
+#: src/features/career/stories.tsx
+msgid "{0, plural, one {# proposed fact isn't available here and won't back the story.} other {# proposed facts aren't available here and won't back the story.}}"
+msgstr ""
 
 #. placeholder {0}: done.length
 #: src/features/career/today.tsx
@@ -252,6 +264,11 @@ msgstr "{0, plural, one {# విభాగం,} other {# విభాగాల�
 msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# ఎంచుకోబడింది} other {# ఎంచుకోబడింది}}"
 
+#. placeholder {0}: knowledge.stories.length
+#: src/features/assistant/messages.tsx
+msgid "{0, plural, one {# story} other {# stories}}"
+msgstr "{0, plural, one {# కథ} other {# కథలు}}"
+
 #. placeholder {0}: report.findings.length
 #: src/features/check/score.tsx
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
@@ -266,6 +283,11 @@ msgstr "{0, plural, one {# రోజు క్రితం దరఖాస్త
 #: src/features/career/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {# కథకు ఆధారం} other {# కథలకు ఆధారం}}"
+
+#. placeholder {0}: change.removed
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0, plural, one {changes or removes # of your sentences} other {changes or removes # of your sentences}}"
+msgstr ""
 
 #. placeholder {0}: others.length
 #: src/features/applications/stage-actions.ts
@@ -307,6 +329,11 @@ msgstr "{0, plural, one {నాలెడ్జ్ · # వాస్తవం} ot
 msgid "{0, plural, one {Letter (#)} other {Letters (#)}}"
 msgstr "{0, plural, one {కవర్ లెటర్ (#)} other {కవర్ లెటర్‌లు (#)}}"
 
+#. placeholder {0}: change.words
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0, plural, one {Longer by # word} other {Longer by # words}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
@@ -316,6 +343,11 @@ msgstr "{0, plural, one {# రోజులో ప్రత్యుత్తర�
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {రెజ్యూమ్ (#)} other {రెజ్యూమ్‌లు (#)}}"
+
+#. placeholder {0}: -change.words
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0, plural, one {Shorter by # word} other {Shorter by # words}}"
+msgstr ""
 
 #. placeholder {0}: check.report.ignored.length
 #: src/features/check/screen.tsx
@@ -357,6 +389,11 @@ msgstr "{0, plural, one {మీ నోటీసు వ్యవధి: # వా�
 msgid "{0, plural, one {Your selected font can't display {list}. It shows as “?”. In Design, choose a font that has it.} other {Your selected font can't display {list}. They show as “?”. In Design, choose a font that has them.}}"
 msgstr "{0, plural, one {మీరు ఎంచుకున్న ఫాంట్ {list}ని చూపించలేదు. ఇది “?”గా కనిపిస్తుంది. డిజైన్‌లో, దీన్ని కలిగి ఉన్న ఫాంట్‌ను ఎంచుకోండి.} other {మీరు ఎంచుకున్న ఫాంట్ {list}ని చూపించలేదు. అవి “?”గా కనిపిస్తాయి. డిజైన్‌లో, వాటిని కలిగి ఉన్న ఫాంట్‌ను ఎంచుకోండి.}}"
 
+#. placeholder {0}: data.variableConditions
+#: src/features/career/offers.tsx
+msgid "{0} · No amount stated · value uncertain"
+msgstr ""
+
 #. placeholder {0}: row.count
 #: src/features/ats-checker/checker.tsx
 msgid "{0} · Not scored"
@@ -389,6 +426,11 @@ msgstr "{0} (నాది)"
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} → {1}: {2}{3}"
 msgstr "{0} → {1}: {2}{3}"
+
+#. placeholder {0}: props.connection
+#: src/features/assistant/chat-view.tsx
+msgid "{0} didn't respond."
+msgstr ""
 
 #. placeholder {0}: draft.time
 #. placeholder {1}: draft.timezone
@@ -452,12 +494,6 @@ msgstr "{0} మాత్రమే"
 #: src/features/assistant/assistant-screen.tsx
 msgid "{0} posting"
 msgstr "{0} జాబ్ పోస్టింగ్"
-
-#. placeholder {0}: props.connection
-#. placeholder {1}: errorText(error, t`an error`)
-#: src/features/assistant/chat-view.tsx
-msgid "{0} returned “{1}”. Your message is kept."
-msgstr "{0} \"{1}\"ని తిరిగి ఇచ్చింది. మీ సందేశం ఉంచబడింది."
 
 #. placeholder {0}: selectedIds.length
 #. placeholder {0}: selection.length
@@ -651,6 +687,10 @@ msgstr "{kind} ఇంటర్వ్యూ"
 #: src/features/assistant/coach-screen.tsx
 msgid "{label} connection"
 msgstr "{label} కనెక్షన్"
+
+#: src/features/assistant/provider.tsx
+msgid "{label} is off or was removed. Choose the connection this conversation uses next."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "{minutes, plural, one {# minute in total} other {# minutes in total}}"
@@ -864,6 +904,10 @@ msgstr "తేదీ చదవబడదు"
 msgid "A fact changed. Review this story."
 msgstr "ఒక వాస్తవం మారింది. ఈ కథను సమీక్షించండి."
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "A fact that isn't available here. Saving will fail."
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
@@ -998,6 +1042,11 @@ msgstr "ఖాతా"
 msgid "Account details"
 msgstr ""
 
+#: app/(tabs)/settings/preferences.tsx
+msgid "Account emails use it too."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Action"
 msgstr "చర్య"
@@ -1318,6 +1367,12 @@ msgstr ""
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "మీరు డొమైన్‌ను నిర్వహించే చోట ఈ రికార్డ్‌లను జోడించి, ఆపై తనిఖీ చేయండి. మార్పులు అందరికీ చేరడానికి కొన్ని గంటలు పట్టవచ్చు."
 
+#: src/features/assistant/messages.tsx
+msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
+"\n"
+"{text}"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Add to calendar"
@@ -1326,6 +1381,10 @@ msgstr "క్యాలెండర్‌కు జోడించండి"
 #: src/features/workspace/tabs/fit.tsx
 msgid "Add to questions"
 msgstr "ప్రశ్నలకు జోడించు"
+
+#: src/features/assistant/messages.tsx
+msgid "Add to resume"
+msgstr ""
 
 #: src/features/check/job-match.tsx
 msgid "Add to Skills"
@@ -1376,10 +1435,6 @@ msgstr ""
 #: src/features/settings/application-profile.tsx
 msgid "Address line 2"
 msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Adds a reminder to Today if you haven't heard back by then."
-msgstr "అప్పటికి మీకు స్పందన రాకపోతే, ‘ఈరోజు’లో రిమైండర్‌ను జోడిస్తుంది."
 
 #: src/features/design/advanced.tsx
 msgid "Advanced"
@@ -1623,10 +1678,6 @@ msgstr "ఎంబెడ్ చేసిన ఫాంట్‌ను చదవల
 msgid "An entry has no dates"
 msgstr "ఎంట్రీకి తేదీలు లేవు"
 
-#: src/features/assistant/chat-view.tsx
-msgid "an error"
-msgstr "ఒక లోపం"
-
 #: src/features/career/offer-entry.tsx
 msgid "an hour"
 msgstr ""
@@ -1668,6 +1719,10 @@ msgstr "సమాధానం కాపీ చేయబడింది"
 #: src/features/assistant/messages.tsx
 msgid "Answer in your own words"
 msgstr "మీ సొంత మాటల్లో సమాధానం ఇవ్వండి"
+
+#: src/features/workspace/tabs/apply.tsx
+msgid "Answer replaced"
+msgstr ""
 
 #: src/features/workspace/answer-library.tsx
 msgid "Answer source"
@@ -2084,6 +2139,7 @@ msgstr "జాబ్ పోస్టింగ్‌కి తిరిగి వ
 msgid "Back to sign in"
 msgstr "సైన్ ఇన్‌కు తిరిగి వెళ్లండి"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Backed by"
@@ -2110,6 +2166,7 @@ msgstr "పక్క పట్టీ"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Base salary"
 msgstr "మూల వేతనం"
 
@@ -2174,11 +2231,13 @@ msgstr "బోల్డ్"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Bonus"
 msgstr "బోనస్"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Bonus conditions"
 msgstr "బోనస్ పరిస్థితులు"
 
@@ -2436,6 +2495,14 @@ msgstr "ఫిట్‌ను తనిఖీ చేయి"
 msgid "Check it's accurate."
 msgstr "ఇది ఖచ్చితంగా ఉందో లేదో తనిఖీ చేయండి."
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Check that nothing you wrote yourself is lost."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Check that these facts support what the story claims before saving."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Check the details"
 msgstr "వివరాలను తనిఖీ చేయి"
@@ -2484,6 +2551,10 @@ msgstr "నాలెడ్జ్‌తో సరిచూస్తోంది"
 #: src/features/ats-checker/checker.tsx
 msgid "Checking layout and content"
 msgstr "లేఅవుట్ మరియు కంటెంట్‌ని తనిఖీ చేస్తోంది"
+
+#: src/features/assistant/provider.tsx
+msgid "Checking web search…"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Checking which resume opens your short link…"
@@ -2629,6 +2700,10 @@ msgstr "సమయాన్ని ఎంచుకోండి"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "ఒక్కో బల్క్ యాక్షన్‌కి గరిష్టంగా 200 ఉద్యోగ దరఖాస్తు‌లను ఎంచుకోండి."
+
+#: src/features/assistant/provider.tsx
+msgid "Choose…"
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Circle"
@@ -2877,6 +2952,10 @@ msgstr "{0}ను కనెక్ట్ చేయండి"
 msgid "Connect {domain}"
 msgstr "{domain}ను కనెక్ట్ చేయండి"
 
+#: src/features/assistant/provider.tsx
+msgid "Connect a search service in Settings to research the web. The coach can still read public links you paste."
+msgstr ""
+
 #: src/features/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "సేవను కనెక్ట్ చేయండి"
@@ -3070,6 +3149,7 @@ msgid "Copy for a job…"
 msgstr "ఉద్యోగం కోసం కాపీ…"
 
 #: src/features/assistant/assistant-screen.tsx
+#: src/features/assistant/messages.tsx
 msgid "Copy for this job"
 msgstr ""
 
@@ -3104,6 +3184,10 @@ msgstr "సరిదిద్దు"
 #: src/features/career/facts.tsx
 msgid "Correct fact"
 msgstr "వాస్తవాన్ని సరిదిద్దండి"
+
+#: src/features/career/offer-entry.tsx
+msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Correct the year, or write \"Present\" for ongoing work."
@@ -3185,6 +3269,10 @@ msgstr "లేఖను సృష్టించడం సాధ్యపడల�
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Couldn't delete it. It's back in Library."
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Couldn't delete that offer. Try again."
 msgstr ""
 
 #: src/features/assistant/threads.tsx
@@ -3500,6 +3588,10 @@ msgstr "సేవ్ చేయడం సాధ్యపడలేదు. మీ �
 msgid "Couldn't send the report. Your text is kept; try again."
 msgstr "నివేదికను పంపడం సాధ్యపడలేదు. మీ వచనం ఉంచబడింది; మళ్ళీ ప్రయత్నించండి."
 
+#: src/features/assistant/messages.tsx
+msgid "Couldn't share that fact. Try again."
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Couldn't share the answers. Try again."
 msgstr "సమాధానాలను షేర్ చేయడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
@@ -3556,6 +3648,10 @@ msgstr "టెక్స్ట్‌గా మార్చడం సాధ్య�
 #: src/features/assistant/messages.tsx
 msgid "Couldn't undo that. Try again."
 msgstr "దాన్ని రద్దు చేయడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't undo the update. The application is unchanged."
+msgstr ""
 
 #: src/features/design/design-pane.tsx
 msgid "Couldn't unlock the resume. Try again."
@@ -3716,6 +3812,7 @@ msgstr "పత్రాన్ని సృష్టిస్తోంది..."
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/application-profile.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Currency"
 msgstr "కరెన్సీ"
 
@@ -3929,6 +4026,10 @@ msgstr "ఇంటర్వ్యూని తొలగించండి"
 #: src/features/ats-checker/messages.ts
 msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game the search."
 msgstr "దాన్ని తొలగించండి. దాచిన కీవర్డ్‌లు శోధనను మోసగించే ఉద్దేశపూర్వక ప్రయత్నంగా పరిగణించబడతాయి."
+
+#: src/features/career/offers.tsx
+msgid "Delete offer"
+msgstr ""
 
 #: src/features/design/layout-screen.tsx
 msgid "Delete page"
@@ -4425,6 +4526,10 @@ msgstr "తేదీని సవరించండి"
 msgid "Edit entry"
 msgstr "ఎంట్రీని సవరించండి"
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Edit first"
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -4438,6 +4543,10 @@ msgstr "లింక్‌ని సవరించండి"
 #: src/features/application-detail/sheets.tsx
 msgid "Edit note"
 msgstr "గమనికను సవరించండి"
+
+#: src/features/career/offer-entry.tsx
+msgid "Edit offer terms"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit posting"
@@ -4467,6 +4576,10 @@ msgstr "షెడ్యూల్‌ను సవరించు"
 msgid "Edit STARR story"
 msgstr "STARR కథనాన్ని సవరించండి"
 
+#: src/features/career/offers.tsx
+msgid "Edit terms"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "Edit the email"
 msgstr "ఇమెయిల్‌ను సవరించండి"
@@ -4474,6 +4587,10 @@ msgstr "ఇమెయిల్‌ను సవరించండి"
 #: src/features/check/issues.ts
 msgid "Edit the link"
 msgstr "లింక్‌ని సవరించండి"
+
+#: src/features/career/stories.tsx
+msgid "Edit the proposed story"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Edited by you"
@@ -4625,6 +4742,10 @@ msgstr ""
 msgid "Enter your details below. Choosing a resume replaces them and links its design."
 msgstr "మీ వివరాలను కింద నమోదు చేయండి. రెజ్యూమ్‌ను ఎంచుకుంటే ఈ వివరాలు మారిపోతాయి, దాని డిజైన్ లేఖకు లింక్ అవుతుంది."
 
+#: src/features/career/offers.tsx
+msgid "Entered by you"
+msgstr ""
+
 #: src/features/design/design-pane.tsx
 msgid "Entries"
 msgstr "నమోదులు"
@@ -4645,6 +4766,7 @@ msgstr "ప్రవేశ ఎంపికలు"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Equity"
 msgstr "ఈక్విటీ"
 
@@ -4741,6 +4863,10 @@ msgstr "వాస్తవం మరచిపోబడింది"
 #: src/features/career/stories.tsx
 msgid "Fact no longer available"
 msgstr "వాస్తవం అందుబాటులో లేదు"
+
+#: src/features/assistant/messages.tsx
+msgid "Fact type"
+msgstr "వాస్తవం రకం"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/career/knowledge.tsx
@@ -5838,9 +5964,11 @@ msgid "Kind regards,"
 msgstr "దయతో,"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
 #: src/features/search/search-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
 msgid "Knowledge"
 msgstr "నాలెడ్జ్"
 
@@ -5947,11 +6075,13 @@ msgstr "మీరు ఎందుకు సరిపోతారు అనే �
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Learning budget"
 msgstr "లెర్నింగ్ బడ్జెట్"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Leave"
 msgstr "వదలు"
 
@@ -5979,6 +6109,14 @@ msgstr "లింక్‌ను తీసివేయడానికి దా�
 #: src/features/design/template-group.tsx
 msgid "Left"
 msgstr "ఎడమ"
+
+#: src/features/career/offers.tsx
+msgid "Left blank · ask"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Left blank. Add it later only if you can support it."
+msgstr ""
 
 #: app/(tabs)/settings/index.tsx
 msgid "Legal"
@@ -6561,6 +6699,18 @@ msgstr "మొదటి ప్రత్యుత్తరానికి మధ�
 msgid "Meets your minimum base salary."
 msgstr "మీ కనీస మూల వేతనాన్ని కలుస్తుంది."
 
+#: src/features/assistant/provider.tsx
+msgid "Memory: Ask first"
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Memory: Automatically"
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Memory: Never"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "Merge into previous entry"
 msgstr ""
@@ -6580,6 +6730,15 @@ msgstr "అసిస్టెంట్‌కి మెసేజ్ చేయం�
 #: src/shell/workspace-tab-label.ts
 msgid "Messages"
 msgstr "సందేశాలు"
+
+#: src/features/assistant/chat-view.tsx
+msgid "Messages from before Knowledge changed aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
+msgid "Messages from before Knowledge changed aren't sent."
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Minimum base salary"
@@ -6969,8 +7128,8 @@ msgid "Next step: {note}"
 msgstr "తదుపరి దశ: {note}"
 
 #: src/features/workspace/tabs/messages.tsx
-msgid "Next step: {note}. Adds a reminder to Today."
-msgstr "తదుపరి దశ: {note}. ఈరోజుకి రిమైండర్‌ని జోడిస్తుంది."
+msgid "Next step: {note}. Sets the application's follow-up date."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Next unsynced drafts"
@@ -7301,6 +7460,10 @@ msgstr "ఇంకా కనెక్ట్ కాలేదు. మీరు డ�
 msgid "Not for me"
 msgstr "నాకు సరిపోదు"
 
+#: src/features/career/offers.tsx
+msgid "Not found in the message · ask"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Not found:"
 msgstr "కనుగొనబడలేదు:"
@@ -7326,6 +7489,10 @@ msgstr "ఇప్పుడు కాదు"
 msgid "Not recorded"
 msgstr "నమోదు కాలేదు"
 
+#: src/features/career/offers.tsx
+msgid "Not recorded · ask"
+msgstr ""
+
 #: src/features/career/stories.tsx
 msgid "Not recorded yet. Leave blank until you can support it."
 msgstr "ఇంకా నమోదు కాలేదు. మీరు మద్దతు ఇచ్చే వరకు ఖాళీగా ఉంచండి."
@@ -7335,6 +7502,10 @@ msgstr "ఇంకా నమోదు కాలేదు. మీరు మద్�
 msgid "Not saved"
 msgstr "సేవ్ కాలేదు"
 
+#: src/features/assistant/messages.tsx
+msgid "Not saved — this fact was forgotten before."
+msgstr "సేవ్ చేయలేదు — ఈ వాస్తవం ఇంతకుముందే మరచిపోబడింది."
+
 #: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
@@ -7343,6 +7514,10 @@ msgstr ""
 #: src/features/applications/stages.ts
 msgid "Not selected"
 msgstr "ఎంపిక కాలేదు"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Not stated"
+msgstr ""
 
 #: src/features/check/job-match.tsx
 msgid "Not true for me, hide it"
@@ -7381,6 +7556,11 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "మీరు ఎంచుకునే వరకు దేనికీ దరఖాస్తు చేయబడదు, ఏదీ సృష్టించబడదు."
+
+#: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
+msgid "Nothing is sent until you choose a connection for this conversation."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
@@ -7464,6 +7644,10 @@ msgstr "ఆఫ్. మీరు మాత్రమే ఈ రెజ్యూమ�
 msgid "Offer"
 msgstr "ఆఫర్"
 
+#: src/features/career/offers.tsx
+msgid "Offer deleted"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "ఉద్యోగ ఆఫర్ సేవ్ అయింది"
@@ -7473,7 +7657,16 @@ msgstr "ఉద్యోగ ఆఫర్ సేవ్ అయింది"
 msgid "Offer saved. {0} moved to Offer."
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Offer terms"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
+msgid "Offer terms updated"
+msgstr ""
+
+#: src/features/career/offer-entry.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Offer type"
 msgstr "ఉద్యోగ ఆఫర్ రకం"
 
@@ -7481,6 +7674,10 @@ msgstr "ఉద్యోగ ఆఫర్ రకం"
 #: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "ఆఫర్‌లు"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Office days a week"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Office days a week, at most"
@@ -7544,6 +7741,10 @@ msgstr "విభాగం ఒకే పేజీలో సరిపోయిన
 #: src/features/career/stories.tsx
 msgid "Only enabled facts can back a story. Leave unsupported outcomes blank."
 msgstr "ఎనేబుల్ చేయబడిన వాస్తవాలు మాత్రమే కథనానికి మద్దతు ఇవ్వగలవు. మద్దతు లేని ఫలితాలను ఖాళీగా ఉంచండి."
+
+#: src/features/assistant/messages.tsx
+msgid "Only for this application"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Only one recognizable section heading was found."
@@ -7652,6 +7853,10 @@ msgstr "ఇన్ ఎడిటర్‌ని తెరవండి"
 msgid "Open in Offers"
 msgstr "ఆఫర్‌లలో తెరువు"
 
+#: src/features/assistant/messages.tsx
+msgid "Open in the resume's assistant"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Open letter"
 msgstr "లేఖను తెరవండి"
@@ -7725,6 +7930,10 @@ msgstr "రెజ్యూమ్ను తెరుస్తోంది..."
 msgid "Opens in Career → Offers."
 msgstr "కెరీర్ → ఆఫర్‌లలో తెరుచుకుంటుంది."
 
+#: src/features/assistant/provider.tsx
+msgid "Opens Knowledge → Preferences, where you choose what the coach remembers."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Opens the version you sent, read-only"
 msgstr ""
@@ -7794,6 +8003,7 @@ msgstr "ఇతర"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Other benefits"
 msgstr "ఇతర ప్రయోజనాలు"
 
@@ -7968,6 +8178,7 @@ msgstr "పాజ్ చేయబడింది"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
 #: src/features/settings/application-profile.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Pay period"
 msgstr "చెల్లింపు వ్యవధి"
 
@@ -8007,18 +8218,21 @@ msgstr "PDF, Word, Reactive Resume, JSON Resume లేదా LinkedIn ఎగు�
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Per hour"
 msgstr "గంటకు"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Per month"
 msgstr "నెలకు"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Per year"
 msgstr "సంవత్సరానికి"
 
@@ -8534,6 +8748,14 @@ msgstr "Reactive Resume"
 msgid "Read briefing"
 msgstr "బ్రీఫింగ్ చదువు"
 
+#: src/features/career/offers.tsx
+msgid "Read from a message"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Read from a message, edited by you"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Read it for me"
 msgstr "నా కోసం చదువు"
@@ -8737,6 +8959,7 @@ msgstr "రిఫరెన్స్లు"
 msgid "Referral"
 msgstr "రెఫరల్"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Reflection"
 msgstr "ఆత్మపరిశీలన"
@@ -8792,6 +9015,10 @@ msgstr ""
 msgid "Remember"
 msgstr "గుర్తుంచుకో"
 
+#: src/features/assistant/messages.tsx
+msgid "Remember as a fact in Knowledge"
+msgstr ""
+
 #: src/features/career/preferences.tsx
 msgid "Remember facts from my messages"
 msgstr "నా సందేశాల నుండి వాస్తవాలను గుర్తుంచుకో"
@@ -8801,8 +9028,16 @@ msgid "Remember for {company} only?"
 msgstr "{company} కోసం మాత్రమే గుర్తుంచుకోవాలా?"
 
 #: src/features/assistant/messages.tsx
+msgid "Remember for this application only?"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "Remember this for future coaching?"
 msgstr "భవిష్యత్ కోచింగ్ కోసం దీన్ని గుర్తుంచుకోవాలా?"
+
+#: src/features/assistant/messages.tsx
+msgid "Remembered for this application only: “{text}”"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Remembered: “{text}”"
@@ -9056,6 +9291,7 @@ msgstr "డిజైన్ డిఫాల్ట్‌లను రీసెట�
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Respond by"
 msgstr "స్పందించాల్సిన గడువు"
 
@@ -9108,6 +9344,7 @@ msgstr "సంస్కరణ పునరుద్ధరించబడిం�
 msgid "Restricted to its employer or application."
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Result"
 msgstr "ఫలితం"
@@ -9505,6 +9742,10 @@ msgstr ""
 msgid "Salary range"
 msgstr "జీతం పరిధి"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Same length"
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Sample resume"
 msgstr "నమూనా రెజ్యూమ్"
@@ -9693,6 +9934,10 @@ msgstr ""
 msgid "Saved description"
 msgstr "సేవ్ చేయబడిన వివరణ"
 
+#: src/features/assistant/messages.tsx
+msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
 msgstr ""
@@ -9839,6 +10084,7 @@ msgid "Search saved answers"
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
 msgid "Search terms go to your web search service."
 msgstr "శోధన పదాలు మీ వెబ్ సెర్చ్ సర్వీస్‌కు వెళ్తాయి."
 
@@ -9872,8 +10118,16 @@ msgid "Searched the web"
 msgstr "వెబ్‌లో వెతికారు"
 
 #: src/features/assistant/messages.tsx
+msgid "Searched your Knowledge"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "Searching the web…"
 msgstr "వెబ్‌లో శోధిస్తోంది..."
+
+#: src/features/assistant/messages.tsx
+msgid "Searching your Knowledge…"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Second offer"
@@ -9998,8 +10252,20 @@ msgid "Sends this PDF to your configured AI provider instead of reading its text
 msgstr "ఈ PDFని దాని టెక్స్ట్ లేయర్‌ని చదవడానికి బదులుగా మీ కాన్ఫిగర్ చేసిన AI ప్రొవైడర్‌కి పంపుతుంది."
 
 #: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message and this application (posting, notes, documents sent) to {label}."
+msgstr ""
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages and this application (posting, notes, documents sent) to {label}."
+msgstr ""
+
+#: src/features/workspace/coach-sheet.tsx
 msgid "Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
 msgstr "మీ సందేశం, మునుపటి సందేశాలు, ఈ ఉద్యోగ దరఖాస్తు (ప్రకటన, గమనికలు, పంపిన పత్రాలు) మరియు జ్ఞాన విభాగంలో ప్రారంభించిన సమాచారాన్ని {label}కు పంపుతుంది."
+
+#: src/features/workspace/coach-sheet.tsx
+msgid "Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
+msgstr ""
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -10077,6 +10343,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
 msgstr "ఉద్యోగాలను కనుగొనడానికి సెట్టింగులలో వెబ్ శోధనను సెటప్ చేయండి."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/settings/index.tsx
@@ -10423,6 +10693,7 @@ msgstr "సైన్ అవుట్ చేసారు, కానీ ఈ పర
 msgid "since last view"
 msgstr "చివరి వీక్షణ నుండి"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Situation"
 msgstr "పరిస్థితి"
@@ -10730,8 +11001,12 @@ msgid "Stop when you're done. Nothing is sent until then."
 msgstr "పూర్తయ్యాక ఆపండి. అప్పటివరకు ఏదీ పంపబడదు."
 
 #: src/features/assistant/chat-view.tsx
-msgid "Stopped"
-msgstr "ఆపివేయబడింది"
+msgid "Stopped before answering."
+msgstr ""
+
+#: src/features/assistant/chat-view.tsx
+msgid "Stopped before the answer finished."
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Stopped. No edits were proposed."
@@ -10937,6 +11212,7 @@ msgstr "తమిళ్"
 msgid "Target roles"
 msgstr "లక్ష్య పదవులు"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Task"
 msgstr "పని"
@@ -11100,6 +11376,10 @@ msgstr "ఖాతా మారింది. మళ్లీ ప్రయత్�
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "చిరునామాలో లాటిన్ చిన్న అక్షరాలు మరియు సంఖ్యలు మాత్రమే ఉండాలి, సింగిల్ డాష్‌లతో వేరు చేయబడాలి."
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "The answer changed since, so it wasn't restored."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "The application keeps its other details."
 msgstr "ఉద్యోగ దరఖాస్తు దాని ఇతర వివరాలను ఉంచుతుంది."
@@ -11132,9 +11412,17 @@ msgstr "అంతర్నిర్మిత రీడర్ సక్రియ�
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "తనిఖీలు యాంత్రికంగా ఉంటాయి. ఇది మీ జాబితా ఎంట్రీలకు రీడర్ ఎలా ప్రతిస్పందించవచ్చో భాషా నమూనాను అడుగుతుంది మరియు తిరిగి వ్రాయాలని సూచిస్తుంది. ఇది స్కోర్‌లో భాగం కాదు."
 
+#: src/features/assistant/provider.tsx
+msgid "The coach asks before remembering facts you state."
+msgstr ""
+
 #: src/features/career/preferences.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "కోచ్ మీ సందేశాల నుండి ఏదీ గుర్తుంచుకోదు."
+
+#: src/features/assistant/provider.tsx
+msgid "The coach doesn't remember anything you write."
+msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET."
@@ -11147,6 +11435,10 @@ msgstr "ఈ సర్వర్‌లో కోచ్ సెటప్ చేయ�
 #: src/features/career/preferences.tsx
 msgid "The coach proposes each fact in the chat. Nothing is saved until you agree."
 msgstr "కోచ్ ప్రతి వాస్తవాన్ని చాట్‌లో ప్రతిపాదిస్తుంది. మీరు అంగీకరించే వరకు ఏదీ సేవ్ చేయబడదు."
+
+#: src/features/assistant/provider.tsx
+msgid "The coach remembers facts you state, and tells you."
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -11172,6 +11464,10 @@ msgstr ""
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
 msgstr "ప్రస్తుత స్థితి ముందుగా “పునరుద్ధరించడానికి ముందు”గా సేవ్ చేయబడుతుంది."
+
+#: src/features/assistant/messages.tsx
+msgid "the document"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "The editor opens on Check, which checks the imported resume again."
@@ -11436,6 +11732,10 @@ msgstr "ఈ కనెక్షన్ మీ సర్వర్ ద్వార�
 #: src/features/assistant/chat-view.tsx
 msgid "This conversation couldn't be opened."
 msgstr "ఈ సంభాషణ తెరవడం సాధ్యపడలేదు."
+
+#: src/features/assistant/provider.tsx
+msgid "This conversation's connection is off or was removed. Choose the one it uses next."
+msgstr ""
 
 #: src/features/documents/import-file.ts
 msgid "This cover letter file isn't valid."
@@ -11901,6 +12201,7 @@ msgstr "{suggestion}ని ప్రయత్నించండి"
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
@@ -12038,7 +12339,9 @@ msgstr "లింక్‌లను అండర్లైన్ చేయండ�
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
+#: src/features/workspace/tabs/apply.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
@@ -12051,10 +12354,6 @@ msgstr "రద్దు చేయి"
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
 msgstr "తెలియదు"
-
-#: src/features/career/offers.tsx
-msgid "Unknown · ask"
-msgstr "తెలియదు · అడగండి"
 
 #: src/features/documents/document-sheets.tsx
 msgid "Unlink"
@@ -12161,6 +12460,11 @@ msgstr "ఫోటోను అప్‌లోడ్ చేస్తోంది.
 msgid "URL"
 msgstr "URL"
 
+#. placeholder {0}: fallback.label
+#: src/features/assistant/provider.tsx
+msgid "Use {0}"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "Use {minimum}"
 msgstr "{minimum}ని ఉపయోగించండి"
@@ -12248,6 +12552,7 @@ msgstr "“{resumeName}”లోని వివరాలను ఉపయోగ�
 msgid "Use details from the resume"
 msgstr "రెజ్యూమ్ నుండి వివరాలను ఉపయోగించండి"
 
+#: src/features/assistant/messages.tsx
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "అన్ని దరఖాస్తులకు ఉపయోగించు"
@@ -12365,6 +12670,10 @@ msgstr "పదవులు, ఆఫర్‌లను తనిఖీ చేయ�
 msgid "Used when {connected} can't read a page. No account needed."
 msgstr "{connected} పేజీని చదవలేనప్పుడు ఉపయోగించబడుతుంది. ఖాతా అవసరం లేదు."
 
+#: src/features/assistant/messages.tsx
+msgid "Used: {summary}"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 #: src/features/write/fields.ts
 msgid "Username"
@@ -12390,6 +12699,11 @@ msgstr ""
 msgid "Uses your resume's template and Design, and fits any screen. Change them in Design."
 msgstr "మీ రెజ్యూమ్ టెంప్లేట్ మరియు డిజైన్‌ను ఉపయోగిస్తుంది, ఏ స్క్రీన్‌కైనా సరిపోతుంది. వాటిని డిజైన్‌లో మార్చండి."
 
+#. placeholder {0}: proposal.factIds .map((id) => facts?.find((fact) => fact.id === id)?.text) .filter((value): value is string => !!value) .map(shortLabel) .join(" · ")
+#: src/features/workspace/tabs/apply.tsx
+msgid "Uses: {0}"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Uzbek"
 msgstr "ఉజ్‌బెక్"
@@ -12404,6 +12718,7 @@ msgstr "విభాగం బాయిలర్‌ప్లేట్‌గా �
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Verbal offer"
 msgstr "మౌఖిక ఆఫర్"
 
@@ -12548,9 +12863,17 @@ msgstr "వెబ్ యాక్సెస్ సెట్టింగ్‌ల�
 msgid "Web page"
 msgstr "వెబ్ పేజీ"
 
-#: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/provider.tsx
 msgid "Web research"
 msgstr "వెబ్ పరిశోధన"
+
+#: src/features/assistant/provider.tsx
+msgid "Web research · Retry"
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "Web research · Set up"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Web search didn't finish."
@@ -12688,6 +13011,7 @@ msgstr "మీరు పని చేయాలనుకునే చోటు"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Where you work"
 msgstr "పని చేసే చోటు"
 
@@ -12722,6 +13046,10 @@ msgstr "వెడల్పు"
 
 #: src/features/settings/application-profile.tsx
 msgid "Willing to relocate"
+msgstr ""
+
+#: src/features/assistant/provider.tsx
+msgid "With Knowledge off, nothing you write is remembered."
 msgstr ""
 
 #: src/features/career/offers.tsx
@@ -12852,6 +13180,7 @@ msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/workspace/tabs/messages.tsx
 msgid "Written offer"
 msgstr "లిఖిత ఆఫర్"
 
@@ -12975,6 +13304,10 @@ msgstr "మీ సమాధానం"
 msgid "Your answer · {mode}"
 msgstr "మీ సమాధానం · {mode}"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Your answer changed while the draft was written. Draft again to use it."
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your attempts"
 msgstr "మీ ప్రయత్నాలు"
@@ -13010,6 +13343,11 @@ msgstr "మీ పత్రం సేవ్ చేయబడింది. ఎడ�
 #: src/features/share/custom-domain.tsx
 msgid "Your domain"
 msgstr "మీ డొమైన్"
+
+#: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/coach-sheet.tsx
+msgid "Your edited story is saved to Knowledge."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Your email address is broken across pieces of text."
@@ -13050,6 +13388,10 @@ msgstr "మీ మార్జిన్‌లు చాలా ఇరుకుగ
 #: src/features/assistant/coach-screen.tsx
 msgid "your message"
 msgstr "మీ సందేశం"
+
+#: src/features/assistant/chat-view.tsx
+msgid "Your message is kept."
+msgstr ""
 
 #: src/features/write/outline.tsx
 msgid "Your name"

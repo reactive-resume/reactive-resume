@@ -549,9 +549,12 @@ function EditProviderDialog({ provider, onClose }: EditProviderDialogProps) {
 
 type EditProviderFormProps = { provider: SavedProvider; onClose: () => void };
 
-function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
+function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) {
 	const queryClient = useQueryClient();
 	const confirm = useConfirm();
+	// The saved provider as it is now, not as it was when the dialog opened: the switch shows what each save did.
+	const { data: providers } = useQuery(orpc.aiProviders.list.queryOptions());
+	const provider = providers?.find((item) => item.id === opened.id) ?? opened;
 	const [fields, setFields] = useState<ProviderFields>({
 		label: provider.label,
 		model: provider.model,
@@ -595,15 +598,29 @@ function EditProviderForm({ provider, onClose }: EditProviderFormProps) {
 		else setFailure(result.error ?? t`The provider didn't answer. Check the key, the model and the base URL.`);
 	};
 
-	const setEnabled = (enabled: boolean) =>
+	const setEnabled = (enabled: boolean) => {
+		setFailure(null);
 		update.mutate(
 			{ id: provider.id, enabled },
 			{
-				onSuccess: () => void invalidate(),
-				onError: (error) =>
-					setFailure(getOrpcErrorMessage(error, { fallback: t`Couldn't turn the provider on or off. Try again.` })),
+				onSuccess: (saved) => {
+					queryClient.setQueryData(orpc.aiProviders.list.queryKey(), (list) =>
+						list?.map((item) => (item.id === saved.id ? saved : item)),
+					);
+					void invalidate();
+				},
+				onError: (error) => {
+					setFailure(
+						getOrpcErrorMessage(error, {
+							fallback: t`Couldn't turn the provider on or off. Try again.`,
+							allowServerMessage: true,
+						}),
+					);
+					void invalidate();
+				},
 			},
 		);
+	};
 
 	return (
 		<>

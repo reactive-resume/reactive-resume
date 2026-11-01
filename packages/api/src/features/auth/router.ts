@@ -8,6 +8,7 @@ import { applicationProfileRecordSchema } from "@reactive-resume/schema/applicat
 import { applicationPipelineSchema } from "@reactive-resume/schema/applications/lanes";
 import { careerProfileDataSchema, careerWorkspaceSchema, discoverySourceSchema } from "@reactive-resume/schema/career";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
+import { localeSchema } from "@reactive-resume/utils/locale";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { protectedProcedure, publicProcedure } from "../../context";
 import { applicationDto } from "../../dto/application";
@@ -56,20 +57,23 @@ export const authRouter = {
 			tags: ["Authentication"],
 			operationId: "getProfile",
 			summary: "Get your profile",
-			description: "Returns only the authenticated user's profile and timezone. No secrets are included.",
+			description:
+				"Returns only the authenticated user's profile, timezone and interface language (null until an app reports one). No secrets are included.",
 		})
 		.input(z.object({}).optional())
 		.output(
-			createSelectSchema(schema.user).pick({
-				id: true,
-				name: true,
-				username: true,
-				displayUsername: true,
-				image: true,
-				email: true,
-				emailVerified: true,
-				timezone: true,
-			}),
+			createSelectSchema(schema.user)
+				.pick({
+					id: true,
+					name: true,
+					username: true,
+					displayUsername: true,
+					image: true,
+					email: true,
+					emailVerified: true,
+					timezone: true,
+				})
+				.extend({ locale: localeSchema.nullable() }),
 		)
 		.handler(({ context }) => authService.getProfile(context.user.id)),
 
@@ -81,7 +85,7 @@ export const authRouter = {
 			operationId: "updateProfile",
 			summary: "Update your profile",
 			description:
-				"Updates only the authenticated user's name, username, image, or timezone. Usernames must be unique.",
+				"Updates only the authenticated user's name, username, image, timezone, or interface language. The language picks the language of account emails. Usernames must be unique.",
 		})
 		.input(
 			z.object({
@@ -95,6 +99,7 @@ export const authRouter = {
 					.optional(),
 				image: z.url().nullable().optional(),
 				timezone: timezoneSchema.optional(),
+				locale: localeSchema.optional(),
 			}),
 		)
 		.output(z.object({ status: z.boolean() }))
@@ -104,6 +109,7 @@ export const authRouter = {
 				...(input.username !== undefined ? { username: input.username } : {}),
 				...(input.image !== undefined ? { image: input.image } : {}),
 				...(input.timezone !== undefined ? { timezone: input.timezone } : {}),
+				...(input.locale !== undefined ? { locale: input.locale } : {}),
 			}),
 		),
 
@@ -255,6 +261,8 @@ export const authRouter = {
 					username: true,
 					displayUsername: true,
 					image: true,
+					timezone: true,
+					locale: true,
 					emailVerified: true,
 					createdAt: true,
 					updatedAt: true,

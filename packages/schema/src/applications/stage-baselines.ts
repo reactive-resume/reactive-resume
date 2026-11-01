@@ -140,8 +140,8 @@ const following = new WeakSet<object>();
 type Input = Record<string, unknown> | undefined;
 /**
  * The immediate stage writes, by mutation: the application each one writes, and the stage it saved. `update` answers
- * with the application; `submitApplication` with its `stages`. (A message's changes wait behind Undo, so the screen
- * that applies them follows them from the press with `write`; bulk moves go through `begin`.)
+ * with the application; `submitApplication` with its `stages`. (A message's Apply and Undo are followed by the screen
+ * from the press with `write`; bulk moves go through `begin`.)
  */
 const FOLLOWED: Record<
 	string,

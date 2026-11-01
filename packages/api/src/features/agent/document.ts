@@ -6,6 +6,7 @@ import type {
 import type { Passage, ProposalEvidence, ProposalTarget, RequirementCoverage } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { UIMessage } from "ai";
+import { ORPCError } from "@orpc/client";
 import { and, desc, eq } from "drizzle-orm";
 import {
 	proposeEditsInputSchema,
@@ -444,11 +445,13 @@ export function resolveDocumentEdits(
 ): ProposeEditsOutput {
 	// Tailoring never edits a resume other jobs share: only the copy made for the posting's application.
 	if (document.kind === "resume" && review.posting && document.applicationId !== review.posting.applicationId)
-		throw new Error(NOT_JOB_COPY_MESSAGE);
+		throw new ORPCError("BAD_REQUEST", { message: NOT_JOB_COPY_MESSAGE });
 	const schema = document.kind === "resume" ? proposeResumeEditsInputSchema : proposeEditsInputSchema;
 	const parsed = schema.safeParse(input);
 	if (!parsed.success)
-		throw new Error("This suggestion couldn't be prepared. Read the document again, or edit it in Write.");
+		throw new ORPCError("BAD_REQUEST", {
+			message: "This suggestion couldn't be prepared. Read the document again, or edit it in Write.",
+		});
 	return "changes" in parsed.data
 		? resolveResumeEdits(document, parsed.data, review)
 		: resolveEdits(document, parsed.data, review);
