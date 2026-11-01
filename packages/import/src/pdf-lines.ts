@@ -117,6 +117,7 @@ function annotationTarget(doc: ExtractedDocument, span: TextSpan): string | unde
 					.get(page.pageNumber)
 					?.find(
 						(link) =>
+							Boolean(link.url) &&
 							cell.x < Math.max(link.rect[0], link.rect[2]) &&
 							cell.x + cell.width > Math.min(link.rect[0], link.rect[2]) &&
 							cell.y < page.height - Math.min(link.rect[1], link.rect[3]) &&
@@ -1361,15 +1362,25 @@ function importLines(source: ExtractedDocument): ImportLine[] {
 	const prefix: ImportLine[] = [];
 	const sidebar: ImportLine[] = [];
 	const main: ImportLine[] = [];
+	const all: ImportLine[] = [];
+	const flush = () => {
+		all.push(...prefix, ...sidebar, ...main);
+		prefix.length = 0;
+		sidebar.length = 0;
+		main.length = 0;
+	};
 	let columns: { x: number; top: number } | null = null;
 	for (const page of doc.pages) {
 		const streams = pageToLines(page, isHeading, columns);
+		// A new full-width section ends the preceding column group. Without it,
+		// retain cross-page column streams so sidebar continuations keep their owner.
+		if ((sidebar.length || main.length) && streams.prefix.some((line) => line.heading)) flush();
 		columns = streams.columns;
 		prefix.push(...streams.prefix);
 		sidebar.push(...streams.sidebar);
 		main.push(...streams.main);
 	}
-	const all = [...prefix, ...sidebar, ...main];
+	flush();
 	const ordered = attachListMarkers(
 		orderExperienceHeaders(
 			attachRecordDates(
@@ -1599,6 +1610,22 @@ function readIdentity(lines: ImportLine[], doc: ExtractedDocument) {
 		.map((line) => line.text)
 		.join(" ");
 	return { name, headline, email, phone, location, website, customFields };
+}
+
+function mergeIdentity(basics: ResumeData["basics"], identity: ReturnType<typeof readIdentity>): ResumeData["basics"] {
+	if (!identity) return basics;
+	return {
+		...basics,
+		...identity,
+		name: identity.name || basics.name,
+		email: identity.email || basics.email,
+		phone: identity.phone || basics.phone,
+		website: identity.website.url ? identity.website : basics.website,
+		customFields: identity.customFields.length ? identity.customFields : basics.customFields,
+		// Geometry owns headline/location boundaries, including deliberately empty fields.
+		// A name below the contact row is not also a location.
+		location: !identity.name && identity.location === basics.name ? basics.location : identity.location,
+	};
 }
 
 function educationCells(row: TextLine) {
@@ -1902,15 +1929,7 @@ function parseGeometryResume(doc: ExtractedDocument) {
 		const flat = flatPdfResume(doc);
 		flat.summary.content = toHtmlBlocks(prose.map((line) => line.text));
 		// Geometry identity is the owner; the text parse only fills fields it left empty.
-		const basics: Record<string, unknown> = { ...flat.basics };
-		for (const [key, value] of Object.entries(readIdentity(lines, doc) ?? {})) {
-			const empty =
-				!value ||
-				(Array.isArray(value) && !value.length) ||
-				(typeof value === "object" && "url" in value && !value.url);
-			if (!empty) basics[key] = value;
-		}
-		return parseResumeData({ ...flat, basics });
+		return parseResumeData({ ...flat, basics: mergeIdentity(flat.basics, readIdentity(lines, doc)) });
 	}
 
 	const parsed = parseResumeText(
@@ -1926,8 +1945,7 @@ function parseGeometryResume(doc: ExtractedDocument) {
 		if (introduction.length)
 			parsed.summary.content = toHtmlBlocks(introduction.map((line) => line.text)) + parsed.summary.content;
 	}
-	const basics = readIdentity(lines, doc);
-	if (basics) parsed.basics = { ...parsed.basics, ...basics };
+	parsed.basics = mergeIdentity(parsed.basics, readIdentity(lines, doc));
 	const records: { header: RecordHeader; body: string[] }[] = [];
 	let active: (typeof records)[number] | undefined;
 	for (const line of lines) {
@@ -1939,9 +1957,11 @@ function parseGeometryResume(doc: ExtractedDocument) {
 	}
 	if (
 		!records.length ||
+		records.length < parsed.sections.experience.items.length ||
 		(records.length !== parsed.sections.experience.items.length &&
 			parsed.sections.experience.items.some(
-				(item) => !records.some((record) => record.header.company === item.company),
+				(item) =>
+					!records.some((record) => record.header.company === item.company && record.header.position === item.position),
 			))
 	)
 		return parseResumeData(projectSectionFields(parsed, lines, doc));

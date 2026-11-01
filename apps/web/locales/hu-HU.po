@@ -2726,6 +2726,10 @@ msgstr "A szoftver be tudja olvasni az önéletrajzát?"
 msgid "Cancel"
 msgstr "Mégsem"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3231,10 +3235,6 @@ msgstr "Oszlopok"
 msgid "Columns can scramble the order text is read in."
 msgstr "Az oszlopok kódolhatják a sorrend szövegének beolvasását."
 
-#: src/features/homepage/sections.tsx
-msgid "Coming soon"
-msgstr "Hamarosan"
-
 #: src/features/career/today.tsx
 msgid "Coming up"
 msgstr "Hamarosan"
@@ -3406,6 +3406,11 @@ msgstr "Csatlakoztassa saját mesterségesintelligencia-szolgáltatóját, hogy 
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "Csatlakoztatva"
+
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
@@ -4379,8 +4384,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "Fiók létrehozása"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4643,6 +4657,10 @@ msgstr "Jelentkezés törlése"
 msgid "Delete conversation"
 msgstr "Beszélgetés törlése"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4870,8 +4888,26 @@ msgid "Discard unsaved changes?"
 msgstr "Elveted a nem mentett módosításokat?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "Leválasztás"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6218,6 +6254,10 @@ msgstr "Kérj visszajelzést az önéletrajzodra a Discordon"
 msgid "Get started"
 msgstr "Kezdje el"
 
+#: src/features/homepage/sections.tsx
+msgid "Get the beta on"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
 msgstr "Egyre hosszabb. Próbálkozzon a „rövidebb” lehetőséggel, vagy vágja ki a legkevésbé konkrét bekezdést."
@@ -6904,6 +6944,10 @@ msgstr "A problémák és az állásegyeztetés továbbra is működik mestersé
 msgid "It has entries but isn't placed on a page."
 msgstr "Vannak benne bejegyzések, de nincs oldalra helyezve."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "Lehet, hogy törölték. Válassz másik történetet, vagy adj hozzá újat."
@@ -7052,6 +7096,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "Csak egy címet adjon meg, hogy a szoftvernek ne kelljen találgatnia, melyiket használja."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "Tartsa meg a hozzáférést, amikor nem használja az alkalmazást."
 
@@ -8497,7 +8542,11 @@ msgid "No commands match that search."
 msgstr "Egyetlen parancs sem felel meg a keresésnek."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "Még nincsenek csatlakoztatott alkalmazások. Itt jelennek meg azok az alkalmazások, amelyeknek hozzáférést adsz a fiókodhoz."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "Még nincsenek csatlakoztatott alkalmazások. Itt jelennek meg azok az alkalmazások, amelyeknek hozzáférést adsz a fiókodhoz."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -10310,16 +10359,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "Olvassa el az e-mail címét."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "Olvassa el profiladatait."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "Olvassa el a fiókjában található összes adatot, beleértve a teljes adatexportálást is: profilja és e-mail címe, dokumentumok, álláspályázatok, karrieradatok és coaching beszélgetések."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11179,12 +11238,12 @@ msgid "Revoke {0}"
 msgstr "{0} visszavonása"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "Hozzáférés visszavonása"
+#~ msgid "Revoke access"
+#~ msgstr "Hozzáférés visszavonása"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "Egy alkalmazás fiókjához való hozzáférésének visszavonása."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "Egy alkalmazás fiókjához való hozzáférésének visszavonása."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12201,6 +12260,7 @@ msgstr "Az oldalsávokat gyakran utoljára olvassák be, vagy keverik a fő oszl
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

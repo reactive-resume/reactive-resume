@@ -75,7 +75,7 @@ type WebMcpToolDefinition<Input extends z.ZodObject> = {
 	description: string;
 	input: Input;
 	annotations?: WebMcpToolAnnotations;
-	/** Returns what the agent reads: a string as is, anything else as JSON. Throw to report a failure. */
+	/** Returns what the agent reads: a string as is, anything else as JSON. Failures return an error string; aborts still reject. */
 	execute: (input: z.output<Input>, signal: AbortSignal | undefined) => unknown;
 };
 
@@ -88,11 +88,20 @@ export function defineWebMcpTool<Input extends z.ZodObject>(definition: WebMcpTo
 		inputSchema: toInputSchema(definition.input),
 		annotations: definition.annotations ?? {},
 		execute: async (input, options) => {
-			const parsed = definition.input.safeParse(input ?? {});
-			if (!parsed.success) throw new Error(`Invalid input.\n${z.prettifyError(parsed.error)}`);
+			const signal = options?.signal;
+			try {
+				signal?.throwIfAborted();
+				const parsed = definition.input.safeParse(input ?? {});
+				if (!parsed.success) throw new Error(`Invalid input.\n${z.prettifyError(parsed.error)}`);
 
-			const result = await definition.execute(parsed.data, options?.signal);
-			return typeof result === "string" ? result : JSON.stringify(result);
+				const result = await definition.execute(parsed.data, signal);
+				return typeof result === "string" ? result : JSON.stringify(result);
+			} catch (error) {
+				// Chrome hides thrown tool errors. Return failures as text so the agent can correct its call.
+				signal?.throwIfAborted();
+				if (error instanceof Error && error.name === "AbortError") throw error;
+				return `Error: ${error instanceof Error ? error.message : String(error)}`;
+			}
 		},
 	};
 }

@@ -2726,6 +2726,10 @@ msgstr "소프트웨어가 이력서를 읽을 수 있나요?"
 msgid "Cancel"
 msgstr "취소"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3231,10 +3235,6 @@ msgstr "열"
 msgid "Columns can scramble the order text is read in."
 msgstr "열은 텍스트를 읽는 순서를 뒤섞을 수 있습니다."
 
-#: src/features/homepage/sections.tsx
-msgid "Coming soon"
-msgstr "출시 예정"
-
 #: src/features/career/today.tsx
 msgid "Coming up"
 msgstr "예정"
@@ -3406,6 +3406,11 @@ msgstr "자체 AI 공급자를 연결하여 언어 모델이 목록 항목을 �
 #: src/features/settings/ai/providers.tsx
 msgid "Connected"
 msgstr "연결됨"
+
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
 
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
@@ -4379,8 +4384,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "계정 만들기"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4643,6 +4657,10 @@ msgstr "지원 삭제"
 msgid "Delete conversation"
 msgstr "대화 삭제"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4870,8 +4888,26 @@ msgid "Discard unsaved changes?"
 msgstr "저장하지 않은 변경 사항을 버릴까요?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "연결 해제"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6218,6 +6254,10 @@ msgstr "Discord에서 이력서 피드백 받기"
 msgid "Get started"
 msgstr "시작하기"
 
+#: src/features/homepage/sections.tsx
+msgid "Get the beta on"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
 msgstr "점점 길어진다. \"더 짧게\" 시도하거나 최소한의 구체적인 단락을 잘라보세요."
@@ -6904,6 +6944,10 @@ msgstr "이슈와 직업 매칭은 AI 없이도 계속 작동합니다."
 msgid "It has entries but isn't placed on a page."
 msgstr "항목이 있지만 페이지에 배치되지 않습니다."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "삭제되었을 수 있습니다. 다른 스토리를 선택하거나 새로 추가하세요."
@@ -7052,6 +7096,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "주소는 하나만 남겨서 소프트웨어가 어느 것을 써야 할지 헷갈리지 않게 하세요."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "애플리케이션을 사용하지 않을 때도 액세스를 유지합니다."
 
@@ -8497,7 +8542,11 @@ msgid "No commands match that search."
 msgstr "검색과 일치하는 명령이 없습니다."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "아직 연결된 애플리케이션이 없습니다. 계정 접근을 허용한 앱이 여기에 표시됩니다."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "아직 연결된 애플리케이션이 없습니다. 계정 접근을 허용한 앱이 여기에 표시됩니다."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -10310,16 +10359,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "이메일 주소를 읽습니다."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "프로필 정보를 읽습니다."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "프로필, 이메일 주소, 문서, 입사 지원서, 경력 데이터, 코칭 대화 등 전체 데이터 내보내기를 포함하여 계정의 모든 데이터를 읽어보세요."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11179,12 +11238,12 @@ msgid "Revoke {0}"
 msgstr "{0} 취소"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "액세스 취소"
+#~ msgid "Revoke access"
+#~ msgstr "액세스 취소"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "귀하의 계정에 대한 애플리케이션의 액세스를 취소하십시오."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "귀하의 계정에 대한 애플리케이션의 액세스를 취소하십시오."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12201,6 +12260,7 @@ msgstr "사이드바는 종종 마지막으로 읽히거나 기본 열에 혼합
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

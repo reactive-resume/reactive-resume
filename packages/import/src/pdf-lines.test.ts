@@ -58,6 +58,103 @@ const first: Cell[] = [
 	{ text: "Area Alpha", x: 40, y: 130 },
 	{ text: "Place Alpha • 2010 – 2014", x: 385, y: 130 },
 ];
+
+it("keeps a URL annotation when an overlapping internal link appears first", () => {
+	const data = parsePdfResume(
+		document(
+			[...prefix.slice(0, 2), { text: "Portfolio", x: 40, y: 60 }, ...prefix.slice(2), ...first],
+			[
+				{ page: 1, rect: [40, 772, 85, 782], url: null },
+				{ page: 1, rect: [40, 772, 85, 782], url: "https://portfolio.example/" },
+			],
+		),
+	);
+	expect(data.basics.website.url).toBe("https://portfolio.example/");
+});
+
+it("retains the text-parsed name when the geometry identity has contacts above the name", () => {
+	const data = parsePdfResume(
+		document([
+			{ text: "reviewer@example.invalid", x: 40, y: 20 },
+			{ text: "Fictional Reviewer", x: 40, y: 40 },
+			...prefix.slice(2),
+			...first,
+		]),
+	);
+	expect(data.basics.name).toBe("Fictional Reviewer");
+	expect(data.basics.email).toBe("reviewer@example.invalid");
+	expect(data.basics.location).toBe("");
+});
+
+it.each(["Principal Engineer", "Engineer"])(
+	"keeps a second %s role at the same company when only the first header has geometry evidence",
+	(position) => {
+		const data = parsePdfResume(
+			document([
+				...prefix.slice(0, 2),
+				{ text: "Experience", x: 40, y: 80, font: "heading" },
+				{ text: "Company Alpha", x: 40, y: 100, font: "strong" },
+				{ text: "Remote", x: 450, y: 100 },
+				{ text: "Engineer", x: 40, y: 120 },
+				{ text: "2020 – 2021", x: 450, y: 120 },
+				{ text: "• Built useful tools.", x: 40, y: 140 },
+				{ text: "Company Alpha", x: 40, y: 180 },
+				{ text: position, x: 40, y: 200 },
+				{ text: "2018 – 2019", x: 40, y: 220 },
+				{ text: "• Led platform work.", x: 40, y: 240 },
+			]),
+		);
+		expect(data.sections.experience.items.map(({ company, position }) => ({ company, position }))).toEqual([
+			{ company: "Company Alpha", position: "Engineer" },
+			{ company: "Company Alpha", position },
+		]);
+		expect(data.sections.experience.items[1]?.description).toContain("Led platform work.");
+	},
+);
+
+it("keeps a later full-width section after the earlier page's column content", () => {
+	const lines = documentToLines(
+		document([
+			...prefix.slice(0, 2),
+			{ text: "Education", x: 40, y: 80, font: "heading" },
+			{ text: "Experience", x: 300, y: 80, font: "heading" },
+			{ text: "School Alpha", x: 40, y: 110 },
+			{ text: "Degree Alpha", x: 40, y: 130 },
+			{ text: "Company Alpha", x: 300, y: 110 },
+			{ text: "Engineer", x: 300, y: 130 },
+			{ text: "Summary", x: 40, y: 20, width: 500, font: "heading", page: 2 },
+			{ text: "Builds useful products for careful teams.", x: 40, y: 45, width: 500, page: 2 },
+			{ text: "Skills", x: 40, y: 100, font: "heading", page: 2 },
+			{ text: "Projects", x: 300, y: 100, font: "heading", page: 2 },
+			{ text: "TypeScript", x: 40, y: 120, page: 2 },
+			{ text: "Accessibility", x: 40, y: 140, page: 2 },
+			{ text: "Project Alpha", x: 300, y: 120, page: 2 },
+			{ text: "Built useful tools.", x: 300, y: 140, page: 2 },
+		]),
+	);
+	for (const text of ["Company Alpha", "School Alpha", "Summary"]) expect(lines).toContain(text);
+	expect(lines.indexOf("Company Alpha")).toBeLessThan(lines.indexOf("Summary"));
+	expect(lines.indexOf("School Alpha")).toBeLessThan(lines.indexOf("Summary"));
+});
+
+it("keeps a sidebar continuation with its section across pages without a full-width boundary", () => {
+	const lines = documentToLines(
+		document([
+			...prefix.slice(0, 2),
+			{ text: "Education", x: 40, y: 80, font: "heading" },
+			{ text: "Experience", x: 300, y: 80, font: "heading" },
+			{ text: "School Alpha", x: 40, y: 110 },
+			{ text: "Degree Alpha", x: 40, y: 130 },
+			{ text: "Company Alpha", x: 300, y: 110 },
+			{ text: "Engineer", x: 300, y: 130 },
+			{ text: "Continued school note", x: 40, y: 20, page: 2 },
+			{ text: "Continued role note", x: 300, y: 20, page: 2 },
+		]),
+	);
+	for (const text of ["Continued school note", "School Alpha", "Company Alpha"]) expect(lines).toContain(text);
+	expect(lines.indexOf("Continued school note")).toBeGreaterThan(lines.indexOf("School Alpha"));
+	expect(lines.indexOf("Continued school note")).toBeLessThan(lines.indexOf("Company Alpha"));
+});
 it("keeps an unassigned right-hand body cell in its record description", () => {
 	const data = parsePdfResume(
 		document([...prefix, ...first, { text: "Unassigned right-hand detail", x: 300, y: 165 }]),
