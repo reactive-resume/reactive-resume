@@ -34,13 +34,13 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
   <Step title="Or drop the file">
     Drag the file from your computer anywhere onto the Documents page. The page shows **Drop to import**; let go and choose how to read it.
 
-    <Frame caption="Dropping a file on Documents">
-      <img src="/images/guides/importing-resumes/drop-to-import.webp" alt="The Documents page covered by a green drop area reading Drop to import, PDF, Word or JSON. We'll build a resume from it" />
+    <Frame caption="Drop a supported resume file onto Documents">
+      <img src="/images/guides/importing-resumes/drop-to-import.webp" alt="Documents displaying the Drop to import overlay while a fictional JSON file is dragged over it" />
     </Frame>
 
   </Step>
   <Step title="Choose local or AI reading">
-    On web, PDF offers **Read on this device**. On mobile, the AI switch is off by default and the text layer is read on your server without an AI provider. Choose AI reading only if you want the complete file sent to the named provider. Word needs AI; the dialog explains this before file selection and offers **Set up AI** without leaving your task. JSON and LinkedIn imports stay local.
+    On web, PDF offers **Read on this device (free)**. On mobile, the AI switch is off by default and the text layer is read on your server without an AI provider. Choose AI reading only if you want the complete PDF sent to the named provider. After you choose a Word file, the dialog explains that it needs AI and offers **Set up AI** without leaving your task. AI reading asks you to approve the destination before sending; Word sends extracted document text. JSON and LinkedIn imports stay local.
   </Step>
   <Step title="Wait for the three steps">
     The dialog shows **Reading the file**, **Finding sections** and **Filling in entries**, with a note beside each as it finishes. JSON and LinkedIn files take a moment; PDF and Word files read by an AI provider can take longer. Select **Cancel** to stop.
@@ -48,8 +48,8 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
   <Step title="Open the new resume">
     When the import finishes, the dialog tells you how many sections and entries it found. Select **Open in editor** to start reviewing, or **Stay here** to keep working on Documents. The new resume has a **New** badge on its card.
 
-    <Frame caption="A finished import">
-      <img src="/images/guides/importing-resumes/import-finished.webp" alt="The Imported dialog for David-Kowalski-Resume.pdf with all three steps checked, 9 sections and 58 entries found, and Stay here and Open in editor buttons" />
+    <Frame caption="Review the import summary before opening the resume">
+      <img src="/images/guides/importing-resumes/import-finished.webp" alt="Completed import dialog for Fictional-Resume.json with section and entry counts, Stay here and Open in editor" />
     </Frame>
 
   </Step>
@@ -59,10 +59,10 @@ A cover letter exported from Reactive Resume as JSON imports as a letter, not a 
 
 When you open an imported resume from the dialog, the **Write** panel starts with a note naming the file you imported and counting its sections and entries.
 
-<Frame caption="The note after an import">
+<Frame caption="Review the imported resume in the editor">
   <img
     src="/images/guides/importing-resumes/imported-from-note.webp"
-    alt="A green note reading Imported from David-Kowalski-Resume.pdf. 9 sections, 58 entries. Everything was read clearly"
+    alt="Editor opened after importing the fictional JSON resume, with its import status message"
   />
 </Frame>
 
@@ -100,12 +100,12 @@ Go through every section before you send the resume. PDF and Word files don't st
 
 **"This file type can't be imported."** The file isn't one of the supported types. Export your resume as PDF, Word or JSON, or use your LinkedIn data export.
 
-**"Reading Word files needs an AI provider."** Use **Set up AI** in the import dialog and test the connection, or import a PDF or JSON version instead. **Choose another file** lets you pick a different file without closing the dialog, and **Start blank** gives you an empty resume.
+**Word needs AI.** After choosing a Word file, use **Set up AI** and test the connection, or select **Back** and import a PDF or JSON version instead. If a dropped file reaches the error **Reading Word files needs an AI provider**, **Choose another file** lets you pick a different file without closing the dialog, and **Start blank** gives you an empty resume.
 
-<Frame caption="A Word file without an AI provider">
+<Frame caption="Word reading offers AI setup; PDF and JSON provide a local alternative">
   <img
     src="/images/guides/importing-resumes/import-word-needs-ai.webp"
-    alt="The Couldn't import dialog for Resume.docx saying Reading Word files needs an AI provider, with Start blank and Choose another file buttons"
+    alt="Fictional Word file in Choose how to read this file, with the AI requirement, Set up AI and Back"
   />
 </Frame>
 

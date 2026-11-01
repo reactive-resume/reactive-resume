@@ -1,6 +1,6 @@
 ---
 title: "Formatting text"
-description: "Use bold, italics, bulleted and numbered lists, and links in your summary and descriptions, clear old formatting, and improve a line with AI."
+description: "Format summaries and descriptions with the text toolbar, alignment and More formatting menus, keyboard shortcuts, links and optional AI suggestions."
 ---
 
 Your summary and every description field accept formatted text. Use it to make achievements scannable: a bulleted list under each job, a bold phrase where it matters, a link to a project. This page covers the formatting toolbar, Markdown shortcuts, links, and the **Improve** button.
@@ -9,24 +9,46 @@ Your summary and every description field accept formatted text. Use it to make a
 
 Click into a summary or description and a toolbar appears under the text. It stays out of the way until the text has focus, and clicking its buttons doesn't move your cursor.
 
-<Frame caption="The formatting toolbar under the summary">
+<Frame caption="The current formatting toolbar under Summary">
   <img
     src="/images/guides/formatting-text/formatting-toolbar.webp"
-    alt="The formatting toolbar with Bold, Italic, Link, Bulleted list, Numbered list and Clear formatting buttons, an Improve button, and a character count underneath"
+    alt="Focused Summary field with Bold, Italic, Underline, Link, list, Text alignment, More formatting and Improve controls"
   />
 </Frame>
 
-| Button               | What it does                                                                                                                              |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **Bold**             | Makes the selected text bold.                                                                                                             |
-| **Italic**           | Makes the selected text italic.                                                                                                           |
-| **Link**             | Adds, changes or removes a link on the selected text.                                                                                     |
-| **Bulleted list**    | Turns the current paragraph into a bulleted list, or back into a paragraph.                                                               |
-| **Numbered list**    | Turns the current paragraph into a numbered list, or back into a paragraph.                                                               |
-| **Clear formatting** | Removes all formatting from the selected text, including lists and alignment.                                                             |
-| **Improve**          | Suggests a better version of the line your cursor is in. Needs an AI provider. See [Improving a line with AI](#improving-a-line-with-ai). |
+| Button              | What it does                                                                                                                              |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Bold**            | Makes the selected text bold.                                                                                                             |
+| **Italic**          | Makes the selected text italic.                                                                                                           |
+| **Underline**       | Underlines the selected text.                                                                                                             |
+| **Link**            | Adds, changes or removes a link on the selected text.                                                                                     |
+| **Bulleted list**   | Turns the current paragraph into a bulleted list, or back into a paragraph.                                                               |
+| **Numbered list**   | Turns the current paragraph into a numbered list, or back into a paragraph.                                                               |
+| **Text alignment**  | Opens **Align left**, **Align center**, **Align right** and **Justify**.                                                                  |
+| **More formatting** | Opens the additional controls listed below, including **Clear formatting**.                                                               |
+| **Improve**         | Suggests a better version of the line your cursor is in. Needs an AI provider. See [Improving a line with AI](#improving-a-line-with-ai). |
 
 A button is highlighted when its formatting applies where your cursor is. Under the toolbar, a footer shows a hint for the field and how many characters it holds.
+
+### More formatting
+
+| Control                 | What it does                                                          |
+| ----------------------- | --------------------------------------------------------------------- |
+| **Strikethrough**       | Draws a line through selected text.                                   |
+| **Code**                | Gives selected text an inline code style.                             |
+| **Highlight**           | Adds or removes a highlight behind selected text.                     |
+| **Text color**          | Chooses a text color; **Default** returns to the template's color.    |
+| **Text style**          | Chooses **Paragraph**, **Heading 1**, **Heading 2** or **Heading 3**. |
+| **Indent**, **Outdent** | Increases or decreases paragraph indentation.                         |
+| **Horizontal line**     | Inserts a separator.                                                  |
+| **Clear formatting**    | Removes text marks, lists and alignment from the selection.           |
+
+<Frame caption="More formatting holds additional controls and Clear formatting">
+  <img
+    src="/images/guides/formatting-text/more-formatting.webp"
+    alt="More formatting menu with Strikethrough, Code, Highlight, Text color, Text style, Indent, Outdent, Horizontal line and Clear formatting"
+  />
+</Frame>
 
 ### Keyboard and Markdown shortcuts
 
@@ -36,6 +58,7 @@ You can format without the toolbar:
 | -------------------------------------------------------- | ---------------------- |
 | <kbd>⌘</kbd> <kbd>B</kbd> (<kbd>Ctrl</kbd> <kbd>B</kbd>) | Bold                   |
 | <kbd>⌘</kbd> <kbd>I</kbd> (<kbd>Ctrl</kbd> <kbd>I</kbd>) | Italic                 |
+| <kbd>⌘</kbd> <kbd>U</kbd> (<kbd>Ctrl</kbd> <kbd>U</kbd>) | Underline              |
 | `- ` or `* ` at the start of a line                      | Starts a bulleted list |
 | `1. ` at the start of a line                             | Starts a numbered list |
 | `**text**`                                               | Makes "text" bold      |
@@ -55,10 +78,10 @@ Inside a text field, <kbd>⌘</kbd> <kbd>Z</kbd> (<kbd>Ctrl</kbd> <kbd>Z</kbd>) 
   </Step>
 </Steps>
 
-<Frame caption="The Link address dialog">
+<Frame caption="Enter or remove a link address">
   <img
     src="/images/guides/formatting-text/link-address-dialog.webp"
-    alt="The Link address dialog with an https:// field, the hint Leave it empty to remove the link, and Cancel and Confirm buttons"
+    alt="Link address dialog with an https:// field, Leave it empty to remove the link, Cancel and Confirm"
   />
 </Frame>
 
@@ -66,13 +89,13 @@ To change a link, put your cursor in it and select **Link** again. To remove it,
 
 Links don't open when you click them in the editor, so you can click into linked text to edit it.
 
-## Formatting the toolbar doesn't offer
+## Keep formatting readable
 
-The toolbar keeps to formatting that reads well on a resume and survives applicant tracking systems. Text you import, or wrote in an older version of Reactive Resume, may carry other formatting, such as headings, colors, highlights, underlines or centered text. That formatting is kept and still prints.
+Use headings, colors and highlights sparingly. Clear section names, left-aligned paragraphs and short bullets make a resume easier to scan. Check contrast and review [Check mode](/guides/checking-your-resume) before applying; decorative formatting doesn't guarantee that an applicant tracking system will read the document correctly.
 
-To remove it, select the text and choose **Clear formatting**.
+To remove unwanted formatting, select the text and choose **More formatting → Clear formatting**.
 
-If a description contains a table, the editor keeps the table as it is and shows "Original table formatting is preserved. This content is read-only because it cannot be edited safely." You can still see it on the page, but you can't edit it in the text box.
+If an imported table cannot be edited safely, the editor keeps its formatting and shows "Original table formatting is preserved. This content is read-only because it cannot be edited safely." You can still see it on the page, but you can't edit it in the text box.
 
 ## Improving a line with AI
 
@@ -86,28 +109,36 @@ If a description contains a table, the editor keeps the table as it is and shows
     Choose **Stronger verb**, **Add a result** or **Make it shorter**, or select **Ask for something else…**, describe
     what should change, and select **Ask**.
   </Step>
+  <Step title="Approve the destination">
+    Check the named provider, model and shared data, then select **Allow this operation**. **Don't share** cancels the
+    request and leaves your writing unchanged.
+  </Step>
   <Step title="Review the suggestion">
     Select **Replace** to use it, or **Keep mine** to leave your line as it was. If the suggestion adds facts, it asks
     you to check they're accurate.
   </Step>
 </Steps>
 
-Only that one line changes, and only when you select **Replace**. If you edit the line while the suggestion is loading, it isn't applied.
+The request sends that line, the entire current field and any rewrite instructions to the approved AI provider. In Notes, that includes the entire Notes field. Only that one line changes, and only when you select **Replace**. If you edit the line while the suggestion is loading, it isn't applied.
 
-Improve needs an AI provider. If you haven't connected one, selecting **Improve** opens the assistant so you can set one up. See [Connecting an AI provider](/guides/using-ai).
+Improve needs a tested, enabled AI provider. On the website, **Set up AI** in the Improve panel lets you connect one without leaving the field. Formatting and manual editing work without AI. See [Connecting an AI provider](/guides/using-ai).
 
 ## On a phone
 
-On screens narrower than 768 pixels, such as phones and small tablets held upright, the toolbar docks to the bottom of the screen, just above the keyboard, with larger buttons. Swipe the formatting buttons sideways to reach every action. **Done** stays visible at the right; select it to close the keyboard, or tap outside the text box.
+In a phone browser on screens narrower than 768 pixels, such as phones and small tablets held upright, the toolbar docks to the bottom of the screen, just above the keyboard, with larger buttons. Swipe the formatting buttons sideways to reach every action. **Done** stays visible at the right; select it to close the keyboard, or tap outside the text box.
 
-<Frame caption="The formatting toolbar docked above the keyboard on a phone">
+<Frame caption="Formatting controls dock while editing in a phone browser">
   <img
     src="/images/guides/formatting-text/phone-formatting-toolbar.webp"
-    alt="A description being edited on a phone, with the formatting toolbar pinned to the bottom of the screen"
+    alt="Phone-browser description field with formatting controls docked at the bottom and Done beside them"
   />
 </Frame>
 
 See [Editing on a phone or tablet](/guides/editing-on-mobile) for the rest of the mobile editor.
+
+### In the iOS and Android apps
+
+The native toolbar also docks above the keyboard. Swipe to reach **Bold**, **Italic**, the two list controls, **Link** and **Text style**. **Text style** contains **Underline**, **Strikethrough**, **Paragraph** and **Heading 1–3**. **Improve selected line** and **Done** stay beside the scrolling controls. Alignment, text color, highlight, code, indentation, horizontal lines and clear formatting aren't native toolbar actions; use the website for those controls. Existing formatting is kept until you edit it.
 
 ## Related guides
 

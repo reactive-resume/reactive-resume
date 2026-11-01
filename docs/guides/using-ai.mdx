@@ -21,13 +21,13 @@ without entering your own key. The steps below apply when personal providers are
     Select your name at the bottom of the sidebar, choose **Settings**, then choose **AI & developer**. You can also go to `https://rxresu.me/dashboard/settings/ai` directly. Self-hosted instances use their own address.
   </Step>
   <Step title="Start adding a provider">
-    Under **AI providers**, select **Add provider** (the dashed button below your saved providers).
+    Under **AI providers**, select **Add AI provider** (the dashed button below your saved providers).
   </Step>
   <Step title="Choose the provider and fill in the fields">
     Pick your provider from the **Provider** list. Reactive Resume fills in that provider's usual **Model** and **Base URL** for you. Paste your key into **API key**, and change the model if you want a different one.
 
-    <Frame caption="The Add provider dialog with an example model. Current suggestions are listed below.">
-      <img src="/images/guides/using-ai/add-provider-dialog.webp" alt="Add provider dialog with Provider set to OpenAI, a hidden API key, Model gpt-4.1, Name Personal OpenAI and the default OpenAI base URL" />
+    <Frame caption="Connect a provider from AI and developer settings">
+      <img src="/images/guides/using-ai/add-provider-dialog.webp" alt="Add provider dialog with provider choice, API key, Model, Name, Base URL and Save and test" />
     </Frame>
 
   </Step>
@@ -81,10 +81,10 @@ The base URL must start with `https://` and point to a public address. On the ho
 
 Each saved provider appears as a row under **AI providers**, showing its name, model and the last four characters of the key. The row shows **Off** next to the name when the provider isn't in use.
 
-<Frame caption="A provider after a successful test">
+<Frame caption="A connected provider after a successful test">
   <img
     src="/images/guides/using-ai/provider-row-connected.webp"
-    alt="AI providers section with one provider named Work gateway, model gpt-5-mini, and a Test button reading Connected · 40 ms, followed by the Add provider button"
+    alt="AI and developer settings with a tested local example provider and Account, Profile, Preferences and AI and developer navigation"
   />
 </Frame>
 
@@ -94,10 +94,10 @@ Select **Test** on a row to check it again. The button changes to **Connected** 
 
 Select **Edit** on a provider's row.
 
-<Frame caption="Editing a saved provider">
+<Frame caption="Edit a saved provider without exposing its key">
   <img
     src="/images/guides/using-ai/edit-provider-dialog.webp"
-    alt="Edit dialog for a provider named Work gateway, with an empty API key field reading Leave empty to keep the saved key, the model, name and base URL fields, the Use this provider switch turned on, Delete provider and Save and test"
+    alt="Edit provider dialog for the local example connection, with model, base URL and use controls; saved key is not shown"
   />
 </Frame>
 
@@ -130,10 +130,10 @@ If connection lookup fails, retry it before setting up another provider. Your sa
 
 ![Interview preparation keeps its form and offers Try again when AI connections cannot be loaded](/images/guides/career/rx98-schedule-lookup-error.png)
 
-<Frame caption="Connecting a provider from the assistant panel">
+<Frame caption="The assistant needs a provider; manual editing remains available">
   <img
     src="/images/guides/using-ai/assistant-connect-provider.webp"
-    alt="Assistant panel showing Connect an AI provider, with OpenAI, Anthropic and Other · OpenAI-compatible options and a link to Settings for more providers"
+    alt="Assistant connection choices beside the editor, with no AI provider connected"
   />
 </Frame>
 
