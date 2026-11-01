@@ -152,7 +152,9 @@ it("keeps automatic layout and single-cell rows on phones", () => {
 
 	expect(container.querySelector("table")?.className).not.toContain("table-fixed");
 	expect(container.querySelector("thead")).toBeNull();
-	expect(screen.getByText(`Globex · ${LONG_NOTE}`)).toBeTruthy();
+	// The company is isolated in its own direction; the next step after it is interface text.
+	const meta = screen.getByText("Globex", { selector: "bdi" }).parentElement;
+	expect(meta?.textContent).toBe(`Globex · ${LONG_NOTE}`);
 });
 
 const twoApplications = () => [

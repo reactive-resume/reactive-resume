@@ -73,10 +73,14 @@ function ContactList({ contacts, disabled, onChange }: ContactsProps) {
 				<div key={`${contact.name}-${index}`} className="flex items-start gap-2.5 text-sm">
 					<div className="grid min-w-0 flex-1">
 						<span className="truncate font-medium">
-							{contact.name}
+							<bdi>{contact.name}</bdi>
 							{contact.type && <span className="font-normal text-ink-3"> · {contact.type}</span>}
 						</span>
-						{contact.role && <span className="truncate text-xs text-ink-3">{contact.role}</span>}
+						{contact.role && (
+							<span dir="auto" className="truncate text-xs text-ink-3">
+								{contact.role}
+							</span>
+						)}
 						{contact.email && (
 							<a href={`mailto:${contact.email}`} className="truncate text-xs text-accent-text hover:underline">
 								{contact.email}

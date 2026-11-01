@@ -170,7 +170,8 @@ Its callback URL is `APP_URL` followed by `/api/auth/callback/custom`.
 
 Reactive Resume sends email for account verification, password resets and email changes. Sending turns on only when
 `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` and `SMTP_FROM` are all set. Until then, each email is written to the server log
-instead, so you can still copy verification links from there.
+instead, so you can still copy verification links from there. Each email goes out in the account's interface language, or English while
+that language has no translation for it.
 
 | Variable      | Default | Description                                                                                                                                                                    |
 | ------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

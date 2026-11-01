@@ -20,6 +20,7 @@ import { stageScope } from "@/features/applications/queries";
 import { listedApplication } from "@/features/applications/stage-actions";
 import { useOpenReminder } from "@/features/reminders/open";
 import { useReviewPrompt } from "@/features/reviews/use-review-prompt";
+import { useAccountLocale } from "@/features/settings/account-locale";
 import { i18n, initI18n } from "@/i18n";
 import { EmptyState, Screen, Toaster, WindowSafeAreaProvider, useReducedMotion, useTheme } from "@/ui";
 import { fontAssets } from "@/ui/fonts";
@@ -78,6 +79,7 @@ function RootStack() {
 	const reduced = useReducedMotion();
 	useOpenReminder();
 	useReviewPrompt();
+	useAccountLocale();
 
 	return (
 		<ThemeProvider value={navigationTheme}>

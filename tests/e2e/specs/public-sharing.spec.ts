@@ -180,3 +180,36 @@ test("a primary in Trash keeps the short link closed until Primary is switched o
 	await expect(copy).toBeEnabled();
 	await expect.poll(async () => (await page.request.get(`/${account.username}`)).status()).toBe(200);
 });
+
+test("wraps the Pikachu web page's contact line on a phone", async ({ browser, authPage: page }, testInfo) => {
+	test.setTimeout(60_000);
+	await createSampleResumeFromDashboard(page, testInfo);
+	const resumeId = new URL(page.url()).pathname.split("/")[2];
+	// Pikachu draws its header inside a row; a long location pushes the contact line past a phone's width.
+	const patched = await page.request.patch(`/api/openapi/resumes/${resumeId}`, {
+		data: {
+			operations: [
+				{ op: "replace", path: "/metadata/template", value: "pikachu" },
+				{ op: "replace", path: "/basics/location", value: "Berlin-Charlottenburg, Deutschland" },
+			],
+		},
+	});
+	await expect(patched).toBeOK();
+	await page.reload();
+	const publicUrl = await makeResumePublic(page);
+
+	const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
+	try {
+		await phone.goto(publicUrl);
+		const contacts = phone.locator("[data-region=header] a");
+		await expect(contacts.first()).toBeVisible();
+		expect(await contacts.count()).toBeGreaterThan(2);
+		for (const contact of await contacts.all()) {
+			const box = await contact.boundingBox();
+			expect(box && box.x + box.width).toBeLessThanOrEqual(390);
+		}
+		expect(await phone.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+	} finally {
+		await phone.close();
+	}
+});

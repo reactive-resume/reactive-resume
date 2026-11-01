@@ -30,7 +30,7 @@ msgstr "Το \"{0} · {1}\" και το χρονοδιάγραμμά του δι
 msgid "“{0}” hidden"
 msgstr "\"{0}\" κρυφό"
 
-#. placeholder {0}: document.name
+#. placeholder {0}: isolate(document.name)
 #: src/features/documents/document-actions.tsx
 msgid "“{0}” moved to Trash"
 msgstr "Το \"{0}\" μετακινήθηκε στον Κάδο απορριμμάτων"
@@ -1222,6 +1222,11 @@ msgstr "Μια αριθμητική ημερομηνία διαβάζεται δ
 msgid "A page is rotated."
 msgstr "Μια σελίδα είναι περιστραμμένη."
 
+#. Email footer. author: Amruth Pillai, linked
+#: src/features/auth/email-text.ts
+msgid "A passion project by {author}."
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "A pasted posting can be saved as an application afterwards."
 msgstr "Μια επικολλημένη ανάρτηση εργασίας μπορεί να αποθηκευτεί ως αίτηση εργασίας στη συνέχεια."
@@ -1351,6 +1356,10 @@ msgstr "Λογαριασμός"
 
 #: src/features/settings/account/profile.tsx
 msgid "Account details"
+msgstr ""
+
+#: src/features/settings/preferences.tsx
+msgid "Account emails use it too."
 msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
@@ -1774,8 +1783,8 @@ msgstr "Προσθήκη εθελοντισμού"
 msgid "Add your name"
 msgstr "Προσθέστε το όνομά σας"
 
-#. placeholder {0}: role.trim()
-#. placeholder {1}: company.trim()
+#. placeholder {0}: isolate(role.trim())
+#. placeholder {1}: isolate(company.trim())
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Added {0} at {1}"
 msgstr "Προστέθηκε το {0} στο {1}"
@@ -2395,6 +2404,23 @@ msgstr "Εφαρμογή 1 αλλαγής"
 msgid "Approve and create packet"
 msgstr ""
 
+#: src/features/auth/email-text.ts
+msgid "Approve change"
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Approve changing your {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Approve email change"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Approve your email change"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Arabic"
 msgstr "Αραβικά"
@@ -2864,6 +2890,7 @@ msgstr "Λίστα με κουκκίδες"
 msgid "By {0}"
 msgstr ""
 
+#: src/features/auth/email-text.ts
 #: src/features/homepage/footer.tsx
 msgid "By the community, for the community."
 msgstr "Από την κοινότητα, για την κοινότητα."
@@ -4731,6 +4758,10 @@ msgstr "Δημιουργία και άνοιγμα"
 msgid "Create key"
 msgstr "Δημιουργία κλειδιού"
 
+#: src/features/auth/email-text.ts
+msgid "Create new password"
+msgstr ""
+
 #. Call-to-action link from login page to account registration page
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
@@ -6411,6 +6442,10 @@ msgstr "Για πύλες ή υπαλλήλους προσλήψεων που ζ
 msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
 msgstr "Για σενάρια, επεκτάσεις και πελάτες MCP. Τα κλειδιά λειτουργούν όπως εσείς και μπορούν να διαβάσουν και να επεξεργαστούν τα έγγραφά σας."
 
+#: src/features/auth/email-text.ts
+msgid "For security, only use links from emails sent by Reactive Resume."
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "For the next round:"
 msgstr "Για τον επόμενο γύρο:"
@@ -7050,9 +7085,30 @@ msgstr "Εάν κάποιος σας έστειλε αυτόν τον σύνδε
 msgid "If the app did not open, try again on a device where it is installed."
 msgstr "Εάν η εφαρμογή δεν άνοιξε, δοκιμάστε ξανά σε μια συσκευή όπου είναι εγκατεστημένη."
 
+#: src/features/auth/email-text.ts
+msgid "If the button does not work, copy and paste this link into your browser:"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If this was not you, you can ignore this message and your password will remain unchanged."
+msgstr ""
+
+#. Email change approval. newEmail is an email address
+#: src/features/auth/email-text.ts
+msgid "If you approve, we'll send a link to {newEmail} to finish the change."
+msgstr ""
+
 #: src/hooks/use-form-blocker.tsx
 msgid "If you close this dialog, your changes are lost."
 msgstr "Αν κλείσετε αυτό το παράθυρο, οι αλλαγές σας θα χαθούν."
+
+#: src/features/auth/email-text.ts
+msgid "If you did not create this account, you can safely ignore this email."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Ignore"
@@ -11607,6 +11663,12 @@ msgstr "Επαναφορά προεπιλογών σχεδίασης"
 msgid "Reset password"
 msgstr "Επαναφορά κωδικού πρόσβασης"
 
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Reset your {appName} password"
+msgstr ""
+
+#: src/features/auth/email-text.ts
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "Επαναφορά κωδικού πρόσβασης"
@@ -13266,6 +13328,11 @@ msgstr "Ορισμένο κείμενο βρίσκεται εκτός της σ�
 msgid "Some text is rotated."
 msgstr "Ορισμένο κείμενο είναι περιστραμμένο."
 
+#. Email change approval. appName: Reactive Resume; previousEmail and newEmail are email addresses
+#: src/features/auth/email-text.ts
+msgid "Someone asked to change your {appName} email from {previousEmail} to {newEmail}."
+msgstr ""
+
 #: src/libs/error-message.ts
 msgid "Something went wrong. Please try again."
 msgstr "Κάτι πήγε στραβά. Παρακαλώ δοκιμάστε ξανά."
@@ -14010,6 +14077,11 @@ msgstr "Ταϊλανδικά"
 msgid "Thank you for keeping it free."
 msgstr "Σας ευχαριστούμε που το κρατήσατε δωρεάν."
 
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Thanks for signing up for {appName}. Verify your email address to continue."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "Ευχαριστώ, Sam. Ορίστε ένα: στη Northwind Labs ηγήθηκα του επανασχεδιασμού της αρχικής εμπειρίας χρήσης, από 14 συνεντεύξεις πελατών έως μια συντομότερη ρύθμιση."
@@ -14494,6 +14566,10 @@ msgstr ""
 
 #: src/features/career/draft-recovery.tsx
 msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "This confirms the address belongs to you, which keeps your account secure."
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
@@ -15599,9 +15675,22 @@ msgstr "Κωδικός επαλήθευσης"
 msgid "Verify"
 msgstr "Επαλήθευση"
 
+#: src/features/auth/email-text.ts
+msgid "Verify email"
+msgstr ""
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verify with a backup code"
 msgstr "Επαλήθευση με εφεδρικό κωδικό"
+
+#: src/features/auth/email-text.ts
+msgid "Verify your email"
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Verify your email for {appName}"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
@@ -15746,6 +15835,11 @@ msgstr "WCAG 2.1 AA"
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "We read the page and save the posting for Check, the assistant and your letter."
 msgstr "Διαβάζουμε τη σελίδα και αποθηκεύουμε την ανάρτηση εργασίας για τον Έλεγχο, τον βοηθό και την επιστολή σας."
+
+#. Password reset email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "We received a request to reset your {appName} password."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "We sent a confirmation link to {email}. Open it to finish the change."

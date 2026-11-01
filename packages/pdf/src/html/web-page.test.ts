@@ -50,6 +50,19 @@ describe("renderResumeWebPage", () => {
 		expect(css).toMatch(/@media \(max-width:640px\)\{[\s\S]*\[data-part=main\]\{order:1\}/);
 	});
 
+	it("lets a folded header shrink to the phone, so its contact line wraps instead of running off it", async () => {
+		const data = structuredClone(sampleResumeData);
+		data.metadata.template = "pikachu";
+		const { css } = await renderResumeWebPage({ data });
+
+		const fold = css.slice(css.indexOf("@media (max-width:640px)"));
+		expect(fold).toContain(
+			".rr [data-split]>*,.rr [data-region]{width:auto!important;max-width:none!important;flex:0 1 auto!important}",
+		);
+		// The folded part still never grows: only shrinking is allowed.
+		expect(fold).not.toMatch(/\[data-region\][^}]*flex:1/);
+	});
+
 	it("makes the name the page's heading and section titles its subheadings", async () => {
 		const data = structuredClone(sampleResumeData);
 		const { html } = await renderResumeWebPage({ data });

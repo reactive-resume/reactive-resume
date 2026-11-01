@@ -44,3 +44,23 @@ it("keeps supported table formatting and drops other CSS from imported tables", 
 	expect(html).toContain("padding: 4px");
 	expect(html).not.toMatch(/position|inset|background-image/);
 });
+
+it("lets each block of written text take its own direction without saving it", () => {
+	const html =
+		"<p>Entwicklung inkl. Arabisch (العربية) und RTL-Layouts.</p><ul><li><p>العربية أولاً</p><p>English next</p><ul><li><p>Nested English</p></li></ul></li></ul>";
+	const element = document.createElement("div");
+	const editor = new Editor({ element, extensions: richTextExtensions, content: html });
+	try {
+		expect([...element.querySelectorAll("p, li")].map((block) => block.getAttribute("dir"))).toEqual([
+			"auto",
+			"auto",
+			null,
+			"auto",
+			"auto",
+			null,
+		]);
+		expect(editor.getHTML()).not.toContain("dir=");
+	} finally {
+		editor.destroy();
+	}
+});
