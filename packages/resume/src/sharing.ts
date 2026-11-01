@@ -18,6 +18,29 @@ export const publicResumePath = ({ username, slug, isPrimary }: ResumeAddress) =
 /** A resume's web page at `origin` (the app, or its alias). */
 export const publicResumeUrl = (origin: string, address: ResumeAddress) => `${origin}${publicResumePath(address)}`;
 
+/** How the resume list that finds the account's other primary is doing. */
+export type ShareListState = "pending" | "error" | "ready" | "offline";
+
+/** The Share query state without the platform-specific offline override. */
+export function shareListState(query: { isPending: boolean; isError: boolean }): Exclude<ShareListState, "offline"> {
+	return query.isPending ? "pending" : query.isError ? "error" : "ready";
+}
+
+/**
+ * Whether Copy may offer the account short link. Only a known, published primary target counts: the resume's own
+ * published state when it is primary, or another primary's published state only after the list lookup succeeded.
+ * Cached data from an earlier success cannot make a failed lookup look current.
+ */
+export function shortLinkOpens(input: {
+	isPrimary: boolean;
+	isPublic: boolean;
+	listState: ShareListState;
+	otherPrimaryIsPublic: boolean | undefined;
+}) {
+	if (input.isPrimary) return input.isPublic;
+	return input.listState === "ready" && (input.otherPrimaryIsPublic ?? false);
+}
+
 type DailyStat = { date: string; views: number; downloads: number };
 
 /** Share's numbers: views and downloads over the last 30 days, and each day's views against the peak. */

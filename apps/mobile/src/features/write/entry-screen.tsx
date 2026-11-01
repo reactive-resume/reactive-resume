@@ -136,12 +136,12 @@ export function SummaryScreen({ autoFocus }: SummaryScreenProps) {
 					disabled={locked}
 					hint={t`2–3 sentences reads best`}
 					autoFocus={!locked && (autoFocus || !content)}
-					onChange={(html) =>
+					onChange={(html, options) =>
 						update(
 							(draft) => {
 								draft.summary.content = html;
 							},
-							{ coalesceKey: "summary.content" },
+							{ coalesceKey: "summary.content", ...options },
 						)
 					}
 				/>

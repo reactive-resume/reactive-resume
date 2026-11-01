@@ -1,0 +1,1 @@
+ALTER TABLE "resume" ADD COLUMN "auto_slug" boolean DEFAULT false NOT NULL;

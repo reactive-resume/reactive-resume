@@ -253,15 +253,45 @@ export async function linkAnonymousAccount({
 		const rewriteUploadsUrl = (column: unknown) =>
 			sql`case when ${column} is not null then replace(${column}, 'uploads/' || ${fromUserId} || '/', 'uploads/' || ${toUserId} || '/') else null end`;
 
+		// A guest who published has an auto-claimed primary resume. The target account may already have one, and an
+		// account holds at most one (`resume_primary_unique`), so the move drops the guest's role first. The role is
+		// restored below only when the target has none: the guest's work must never displace the target's primary.
+		const [guestPrimary] = await tx
+			.select({ id: schema.resume.id })
+			.from(schema.resume)
+			.where(and(eq(schema.resume.userId, fromUserId), eq(schema.resume.isPrimary, true)))
+			.for("update");
 		// An existing account may already use a slug; suffix the guest's copy to keep (user, slug) unique.
 		await tx
 			.update(schema.resume)
 			.set({
 				userId: toUserId,
 				slug: sql`case when exists (select 1 from resume r where r.user_id = ${toUserId} and r.slug = resume.slug) then resume.slug || '-' || right(resume.id, 6) else resume.slug end`,
+				isPrimary: false,
 				data: rewriteUploadsJson(schema.resume.data),
 			})
 			.where(eq(schema.resume.userId, fromUserId));
+		// Keep the guest's published resume as the target's primary when the target has none. Its own savepoint keeps
+		// the link intact if another writer claims the role at the same moment; that writer's primary then wins.
+		if (guestPrimary) {
+			try {
+				await tx.transaction((savepoint) =>
+					savepoint
+						.update(schema.resume)
+						.set({ isPrimary: true })
+						.where(
+							and(
+								eq(schema.resume.id, guestPrimary.id),
+								eq(schema.resume.userId, toUserId),
+								sql`not exists (select 1 from resume r where r.user_id = ${toUserId} and r.is_primary)`,
+							),
+						),
+				);
+			} catch (error) {
+				if ((error as { cause?: { constraint?: string } } | null)?.cause?.constraint !== "resume_primary_unique")
+					throw error;
+			}
+		}
 
 		await tx
 			.update(schema.resumeVersion)

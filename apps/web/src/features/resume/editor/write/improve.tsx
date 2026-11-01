@@ -31,13 +31,15 @@ type ImprovePanelProps = {
 	/** Where the line sits, e.g. the field's label. */
 	where: string;
 	onClose: () => void;
+	/** Applies the accepted text as its own editor/app history event. */
+	onAccept: (text: string) => void;
 };
 
 /**
  * B · Improve: pick what to change, then Replace or Keep mine. Only the one line changes, and only when the user
  * replaces it; if the line was edited meanwhile, the suggestion is not applied.
  */
-export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps) {
+export function ImprovePanel({ editor, line, where, onClose, onAccept }: ImprovePanelProps) {
 	const providers = useHasUsableAiProvider();
 	const provider = providers.usableProviders[0];
 	const [asking, setAsking] = useState(false);
@@ -70,7 +72,7 @@ export function ImprovePanel({ editor, line, where, onClose }: ImprovePanelProps
 	const replace = (text: string) => {
 		const current = editor.state.doc.textBetween(line.from, line.to);
 		if (current !== line.text) return setChanged(true);
-		editor.chain().focus().insertContentAt({ from: line.from, to: line.to }, text).run();
+		onAccept(text);
 		onClose();
 	};
 

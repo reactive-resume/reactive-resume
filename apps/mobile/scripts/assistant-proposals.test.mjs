@@ -182,6 +182,43 @@ beforeEach(async () => {
 	await letterStore.load("<p>Old</p>");
 });
 
+test("resume accepted AI replacement is its own undo step after rapid typing", () => {
+	const current = () => resumeStore.getState();
+	const content = () => current().document?.data?.summary?.content;
+	current().update(
+		(draft) => {
+			draft.summary.content = "<p>Owned</p>";
+		},
+		{ coalesceKey: "summary.content" },
+	);
+	current().update(
+		(draft) => {
+			draft.summary.content = "<p>Owned synthetic delivery.</p>";
+		},
+		{ coalesceKey: "summary.content" },
+	);
+	current().update(
+		(draft) => {
+			draft.summary.content = "<p>Led fictional delivery work.</p>";
+		},
+		{ coalesceKey: "summary.content", newStep: true },
+	);
+	assert.equal(content(), "<p>Led fictional delivery work.</p>");
+	current().undo();
+	assert.equal(content(), "<p>Owned synthetic delivery.</p>", "Undo restores the user's line");
+	current().redo();
+	assert.equal(content(), "<p>Led fictional delivery work.</p>", "Redo restores the AI replacement");
+
+	current().update(
+		(draft) => {
+			draft.summary.content = "<p>Led fictional delivery work. More</p>";
+		},
+		{ coalesceKey: "summary.content" },
+	);
+	current().undo();
+	assert.equal(content(), "<p>Led fictional delivery work.</p>", "Later typing is a separate step");
+});
+
 for (const kind of ["resume", "letter"]) {
 	const open = () =>
 		kind === "resume" ? documents.useResumeAssistantDocument("resume") : documents.useLetterAssistantDocument("letter");

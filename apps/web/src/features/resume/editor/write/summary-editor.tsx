@@ -14,12 +14,12 @@ export function SummaryEditor({ locked }: { locked: boolean }) {
 			value={content}
 			disabled={locked}
 			hint={<Trans>2–3 sentences reads best</Trans>}
-			onChange={(html) =>
+			onChange={(html, options) =>
 				updateResumeData(
 					(draft) => {
 						draft.summary.content = html;
 					},
-					{ coalesceKey: "summary.content" },
+					{ coalesceKey: "summary.content", ...options },
 				)
 			}
 		/>

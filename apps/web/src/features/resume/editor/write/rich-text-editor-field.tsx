@@ -26,6 +26,7 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { useKeyboardInset } from "@reactive-resume/ui/hooks/use-keyboard-inset";
 import { cn } from "@reactive-resume/utils/style";
 import { ImprovePanel, lineAtCaret } from "./improve";
+import { acceptImproveLine } from "./improve-history";
 import { richTextExtensions } from "@/components/input/rich-text-extensions";
 import { hasUnsupportedTableMarkup, toPreviewHtml } from "@/components/input/rich-text-markup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -169,7 +170,7 @@ export type RichTextEditorProps = {
 	/** Accessible name of the text box. */
 	label: string;
 	value: string;
-	onChange: (html: string) => void;
+	onChange: (html: string, options?: { newStep?: boolean }) => void;
 	/** Guidance under the text while editing, e.g. "2–3 sentences reads best". */
 	hint?: ReactNode;
 	disabled?: boolean;
@@ -204,6 +205,7 @@ export function RichTextEditor({
 	const ai = useHasUsableAiProvider();
 	const mobile = useBreakpoint() === "mobile";
 	const keyboardInset = useKeyboardInset();
+	const acceptedReplacement = useRef(false);
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
 	const editorValue = useMemo(() => (readOnlyTable ? toPreviewHtml(value) : value), [readOnlyTable, value]);
 
@@ -228,7 +230,11 @@ export function RichTextEditor({
 				),
 			},
 		},
-		onUpdate: ({ editor }) => onChange(editor.getHTML()),
+		onUpdate: ({ editor }) => {
+			const newStep = acceptedReplacement.current;
+			acceptedReplacement.current = false;
+			onChange(editor.getHTML(), newStep ? { newStep: true } : undefined);
+		},
 	});
 
 	const state = useEditorState({
@@ -266,6 +272,12 @@ export function RichTextEditor({
 	}, [editor, focusRequest]);
 
 	const editing = focused || improving !== null || menus.open;
+
+	const acceptImprove = (line: ImproveLine, text: string) => {
+		if (!editor) return;
+		acceptedReplacement.current = true;
+		acceptImproveLine(editor, line, text);
+	};
 
 	const startImprove = () => {
 		if (!editor || ai.isUnavailable) return;
@@ -401,6 +413,7 @@ export function RichTextEditor({
 					line={improving}
 					where={label}
 					onClose={() => setImproving(null)}
+					onAccept={(text) => acceptImprove(improving, text)}
 				/>
 			)}
 

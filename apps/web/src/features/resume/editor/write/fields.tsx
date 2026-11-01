@@ -17,7 +17,11 @@ import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features
 export const useEntry = (sectionId: string, entryId: string) =>
 	useCurrentBuilderResumeSelector((resume) => findEntry(resume.data, sectionId, entryId) ?? null);
 
-export type EntryWriter = (key: string, mutate: (entry: Record<string, unknown>) => void) => void;
+export type EntryWriter = (
+	key: string,
+	mutate: (entry: Record<string, unknown>) => void,
+	options?: { newStep?: boolean },
+) => void;
 
 /**
  * Writes one field of an entry. The key names the field, so typing in one field folds into one undo step
@@ -27,13 +31,13 @@ export function useEntryWriter(sectionId: string, entryId: string): EntryWriter 
 	const updateResumeData = useUpdateResumeData();
 
 	return useCallback(
-		(key, mutate) => {
+		(key, mutate, options) => {
 			updateResumeData(
 				(draft) => {
 					const entry = findEntry(draft, sectionId, entryId);
 					if (entry) mutate(entry as Entry & Record<string, unknown>);
 				},
-				{ coalesceKey: `${entryId}:${key}` },
+				{ coalesceKey: `${entryId}:${key}`, ...options },
 			);
 		},
 		[updateResumeData, sectionId, entryId],
