@@ -315,8 +315,38 @@ test("application coach history survives provider-list failure", async ({ authPa
 			headers: { ...response.headers(), "content-length": String(Buffer.byteLength(body)) },
 		});
 	});
+	const mixed = await page.evaluate(async () => {
+		const response = await fetch("/api/rpc/agent/threads/list/__batch__", {
+			method: "POST",
+			headers: { "content-type": "application/json", "x-orpc-batch": "streaming" },
+			body: JSON.stringify(
+				["agent/threads/list", "aiProviders/list"].map((path) => ({
+					url: `${location.origin}/api/rpc/${path}`,
+					body: { json: {} },
+				})),
+			),
+		});
+		return {
+			status: response.status,
+			events: (await response.text())
+				.split("\n")
+				.filter((line) => line.startsWith("data: "))
+				.map((line) => JSON.parse(line.slice(6))),
+		};
+	});
+	expect(mixed.status).toBe(207);
+	expect(mixed.events).toHaveLength(2);
+	expect(mixed.events.find((event: { index: number }) => event.index === 0)).toMatchObject({
+		status: 200,
+		body: { json: expect.arrayContaining([expect.objectContaining({ applicationId: id })]) },
+	});
+	expect(mixed.events.find((event: { index: number }) => event.index === 1)).toMatchObject({
+		status: 500,
+		body: { json: { code: "INTERNAL_SERVER_ERROR", message: "Provider lookup unavailable" } },
+	});
+	const beforeReload = blocked;
 	await page.reload();
-	await expect.poll(() => blocked).toBeGreaterThan(0);
+	await expect.poll(() => blocked).toBeGreaterThan(beforeReload);
 	await expect(page.getByText("You left the document out.", { exact: true })).toBeVisible({ timeout: 12000 });
 	await expect(composer).toBeDisabled();
 	await page.screenshot({ path: info.outputPath("coach-history-provider-error.png") });
