@@ -284,7 +284,7 @@ test("built browser extractor reads structured posting fields while session deco
 		}),
 	);
 	await page.goto("https://jobs.example.test/role?token=URL_DECOY&jk=74");
-	await page.addScriptTag({ path: resolve("apps/web/public/capture-helper/content.js") });
+	await page.addScriptTag({ path: resolve("apps/web/dist/capture-helper/content.js") });
 	const result = await page.evaluate(() => {
 		const extractor = (
 			window as unknown as { RRPosting: { captureDocument: (doc: Document, address: string) => unknown } }
@@ -402,7 +402,7 @@ test("real browser capture rejects different same-title postings and retains equ
 		}),
 	);
 	await page.goto("https://jobs.example.test/list");
-	await page.addScriptTag({ path: resolve("apps/web/public/capture-helper/content.js") });
+	await page.addScriptTag({ path: resolve("apps/web/dist/capture-helper/content.js") });
 	const read = () =>
 		page.evaluate(() =>
 			(
