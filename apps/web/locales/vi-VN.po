@@ -1392,7 +1392,6 @@ msgstr "Tích cực"
 msgid "Activity"
 msgstr "Hoạt động"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1447,14 +1446,6 @@ msgstr "Thêm vị trí"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "Thêm ghi chú"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "Thêm ghi chú…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2645,6 +2636,11 @@ msgstr "Cử nhân, Thiết kế Truyền thông"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "Mặt sau"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3921,8 +3917,8 @@ msgid "Copy stylesheet"
 msgstr "Sao chép bảng định kiểu"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "Sao chép toàn bộ mô tả công việc từ tin tuyển dụng và dán vào bên dưới. Chúng tôi sẽ điền các trường giúp bạn và lưu lại văn bản cùng đơn ứng tuyển này để chấm điểm mức độ phù hợp và tinh chỉnh."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4691,6 +4687,10 @@ msgstr "Thư xin việc — {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "Thư xin việc · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4908,6 +4908,10 @@ msgstr "Cột ngày"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "Định dạng ngày"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7500,7 +7504,6 @@ msgstr "Mô tả công việc"
 msgid "Job link or posting text"
 msgstr "Liên kết công việc hoặc văn bản đăng việc làm"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "Phù hợp công việc"
@@ -7979,6 +7982,11 @@ msgstr "Thư · chưa gửi"
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "Nội dung thư"
@@ -8079,8 +8087,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "Liên kết Reactive Resume (được khuyến nghị)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "Liên kết một Reactive Resume để dùng tính năng chấm điểm mức độ phù hợp và tinh chỉnh bằng AI."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8095,6 +8103,10 @@ msgstr "Liên kết đơn xin việc"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "Liên kết hồ sơ xin việc…"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8331,6 +8343,18 @@ msgstr "Đã khóa"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Đã khóa. Mở khóa để chỉnh sửa."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9217,6 +9241,10 @@ msgstr "Chưa có việc làm"
 msgid "No keys yet."
 msgstr "Chưa có chìa khóa."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "Không có dòng nào trông giống chức danh đi kèm với nhà tuyển dụng."
@@ -9295,6 +9323,7 @@ msgstr "Không có phản hồi"
 msgid "No results found."
 msgstr "Không tìm thấy kết quả."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "Không có sơ yếu lý lịch"
@@ -10238,8 +10267,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "Dán một liên kết công việc. Chúng tôi sẽ lưu tin tuyển dụng để Kiểm tra, trợ lý và thư của bạn có thể sử dụng."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "Dán tin tuyển dụng một lần. Nó tạo ra bản sơ yếu lý lịch được điều chỉnh, điểm phù hợp, bản nháp thư xin việc và nơi theo dõi vị trí."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11805,6 +11834,10 @@ msgstr "chi tiết sơ yếu lý lịch"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "Tệp CV"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13461,6 +13494,10 @@ msgstr "Kết quả giai đoạn"
 msgid "Stage stays {stage}"
 msgstr "Giai đoạn giữ nguyên {stage}"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13751,6 +13788,7 @@ msgstr "Ủng hộ"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "Có bằng chứng"
 
@@ -14171,8 +14209,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "Ứng dụng đã đưa bạn đến đây đã gửi một yêu cầu ủy quyền không hợp lệ. Hãy quay lại ứng dụng và thử lại."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "Đơn xin việc mà lá thư này dành cho."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14556,6 +14594,10 @@ msgstr "Không thể mở hồ sơ ứng tuyển này."
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "Đơn xin việc này chưa có tin tuyển dụng nào được lưu. Dán nó để phù hợp với nó."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "Trình duyệt này không thể ghi âm ở đây. Hãy chọn tệp âm thanh hoặc nhập câu trả lời."
@@ -14692,8 +14734,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Chữ cái này và “{resumeName}” là hai PDFs, được đặt tên phù hợp."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "Bức thư này đã bị khóa. Mở khóa nó từ menu của nó để chỉnh sửa."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15451,6 +15502,14 @@ msgstr "Sử dụng bố cục một cột cho bất kỳ nội dung nào cần 
 #: src/features/ats-checker/messages.ts
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "Sử dụng khổ A4 hoặc US Letter để bố cục không bị lỗi khi kết xuất lại."
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
 
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
@@ -16220,6 +16279,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "Viết một lá thư"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."

@@ -92,7 +92,7 @@ const applicationSchema = createSelectSchema(schema.application, {
 	appliedAt: z.date(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
-});
+}).omit({ submittedAt: true });
 
 /** An application's stage as a write left it, with the ID of its latest stage change: what a later move expects. */
 export const savedStagesSchema = z.array(
@@ -133,6 +133,9 @@ const applicationSummarySchema = applicationSchema.pick({
 });
 
 const applicationSummaryWithInitialDetailSchema = applicationSummarySchema.extend({
+	// Optional for clients connecting to older servers without submission hints.
+	sentResumeVersionId: applicationSchema.shape.sentResumeVersionId.optional(),
+	sentCoverLetterVersionId: applicationSchema.shape.sentCoverLetterVersionId.optional(),
 	/** A small number of full rows can be attached to the initial list response for eager detail rendering. */
 	initialDetail: applicationSchema.omit({ userId: true }).optional(),
 });

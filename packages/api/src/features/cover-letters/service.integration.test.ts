@@ -6,6 +6,8 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { coverLettersRouter } from "./router";
+import { coverLetterService as service } from "./service";
 
 const fixture = vi.hoisted(() => ({
 	db: undefined as ReturnType<typeof drizzle> | undefined,
@@ -29,7 +31,6 @@ function getPool(): Pool {
 
 // Opt-in real PostgreSQL tests. Use a disposable database; all tables live in an isolated schema.
 describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned persistence", () => {
-	let service: typeof import("./service").coverLetterService;
 	const schemaName = `cover_letter_test_${randomUUID().replaceAll("-", "")}`;
 	let admin: Pool;
 
@@ -80,7 +81,6 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		await fixture.pool
 			.query(`CREATE TABLE agent_threads (id text PRIMARY KEY, user_id text, working_resume_id text, cover_letter_id text, edits_accepted integer DEFAULT 0, updated_at timestamptz DEFAULT now());
 		CREATE TABLE agent_messages (id text PRIMARY KEY, user_id text, thread_id text, role text DEFAULT 'assistant', status text DEFAULT 'streaming', sequence integer DEFAULT 0, error text, ui_message jsonb, created_at timestamptz DEFAULT now(), updated_at timestamptz DEFAULT now());`);
-		service = (await import("./service")).coverLetterService;
 	});
 	afterAll(async () => {
 		await fixture.pool?.end();
@@ -596,7 +596,10 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 			() => service.update({ userId: "alice", id: replacement.id, expectedRevision: 1, applicationId: "alice-app" }),
 			() => service.update({ userId: "alice", id: original.id, expectedRevision: 1, applicationId: null }),
 		]) {
-			await expect(change()).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			await expect(change()).rejects.toMatchObject({
+				code: "BAD_REQUEST",
+				data: { reason: "SUBMITTED_DOCUMENT_LOCKED" },
+			});
 			const application = (
 				await getPool().query(
 					"SELECT cover_letter_id, sent_cover_letter_version_id FROM application WHERE id='alice-app'",
@@ -633,7 +636,6 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 	});
 
 	it("accepts procedure defaults, rejects invalid input, and permits only one concurrent writer", async () => {
-		const { coverLettersRouter } = await import("./router");
 		const client = createRouterClient(coverLettersRouter, { context: { user: { id: "alice" } } as never });
 		const created = await client.create({ name: "Through procedure" });
 		expect(created).toMatchObject({ recipient: "", content: "", revision: 1 });
@@ -645,10 +647,13 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 		]);
 		expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
 		expect(results.find((result) => result.status === "rejected")).toMatchObject({ reason: { code: "CONFLICT" } });
+		const persisted = (await getPool().query("SELECT revision, content FROM cover_letter WHERE id=$1", [created.id]))
+			.rows[0];
+		expect(persisted.revision).toBe(2);
+		expect(["First editor", "Second editor"]).toContain(persisted.content);
 	});
 
 	it("preserves custom and omitted letter framing through saves, copies, JSON and history", async () => {
-		const { coverLettersRouter } = await import("./router");
 		const client = createRouterClient(coverLettersRouter, { context: { user: { id: "alice" } } as never });
 		const created = await client.create({ name: "Custom framing", greeting: "Hallo Dana,", signOff: "Vielen Dank!" });
 		const custom = { greeting: "Hallo Dana,", signOff: "Vielen Dank!" };
@@ -935,7 +940,6 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 	});
 
 	it.each([false, true])("refreshes design while respecting sender linking (%s)", async (senderLinked) => {
-		const { coverLettersRouter } = await import("./router");
 		const client = createRouterClient(coverLettersRouter, { context: { user: { id: "alice" } } as never });
 		const source = structuredClone(defaultResumeData);
 		source.basics.name = "Original sender";
@@ -985,7 +989,6 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("cover-letter owned
 	});
 
 	it("edits standalone sender details and isolates copies, links and account ownership", async () => {
-		const { coverLettersRouter } = await import("./router");
 		const client = createRouterClient(coverLettersRouter, { context: { user: { id: "alice" } } as never });
 		const created = await client.create({ name: "Standalone" });
 		const sender = { name: "Jordan Reyes", email: "jordan@example.test", phone: "+49 30 5550100", location: "Berlin" };
