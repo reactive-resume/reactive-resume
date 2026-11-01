@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {Το ζήτημα # θα μπορούσε να σ�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Η επιταγή έχει κάτι για έλεγχο #. Μπορείτε ακόμα να κάνετε λήψη.} other {Το Check έχει # πράγματα για έλεγχο. Μπορείτε ακόμα να κάνετε λήψη.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "Το {item} επέστρεψε στην αρχική του θέση."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "Το {item} δεν βρίσκεται πάνω από θέση όπου μπορεί να αφεθεί."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "Το {item} βρίσκεται πάνω από: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "Το {item} αφέθηκε σε: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "Το {item} αφέθηκε σε θέση όπου δεν επιτρέπεται. Δεν μετακινήθηκε τίποτα."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "Το {item} αφέθηκε στην αρχική του θέση. Δεν μετακινήθηκε τίποτα."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "Επαφές"
 msgid "Contain"
 msgstr "Εντός πλαισίου"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Περιεχόμενο"
@@ -5125,6 +5150,10 @@ msgstr "σύρετε · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Σύρετε και αποθέστε ενότητες εδώ για να τις μετακινήσετε μεταξύ των στηλών"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Σύρετέ το με τον δείκτη για να το μετακινήσετε ή χρησιμοποιήστε το μενού του."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Φορτώστε τα στάδιά σας πριν εισαγάγετε ονομασμένα στάδια. Τα δεδομένα CSV διατηρούνται."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Φόρτωση"
 
@@ -8215,6 +8245,10 @@ msgstr "Μεταφέρθηκε στο {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Μετακινεί την αίτηση από {0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Η μετακίνηση του {item} ακυρώθηκε. Δεν μετακινήθηκε τίποτα."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "Σελίδα"
 msgid "Page {0}"
 msgstr "Σελίδα {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Σελίδα {0}, πλαϊνή μπάρα"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Σελίδα {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "Επιλέξτε μία μορφή και χρησιμοποιήστε �
 msgid "Pick two examples"
 msgstr "Επιλέξτε δύο παραδείγματα"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "Επιλέχθηκε το {item}."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Επιλογή των ιστοριών σας"
@@ -9753,6 +9801,16 @@ msgstr "Πορτογαλικά (Πορτογαλίας)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Θέση"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "θέση {position} από {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "θέση {position} από {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "Τίτλος"
 msgid "To"
 msgstr "Να"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Για να το επιλέξετε, πατήστε Διάστημα ή Enter. Χρησιμοποιήστε τα βέλη για να το μετακινήσετε, Διάστημα ή Enter για να το αφήσετε ή Escape για ακύρωση."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "Ανώνυμο κλειδί πρόσβασης"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Χωρίς τίτλο"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Στοιχείο χωρίς τίτλο"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

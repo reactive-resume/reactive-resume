@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {בעיית # עלולה לעלות לך התאמה
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {לצ'ק יש דבר # לסקור. אתה עדיין יכול להוריד.} other {לצ'ק יש דברים של # לסקור. אתה עדיין יכול להוריד.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} חזר למקומו המקורי."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} לא נמצא מעל מקום שבו אפשר לשחרר אותו."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} נמצא מעל: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} שוחרר על: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} שוחרר במקום שאסור להעביר אליו. שום דבר לא הוזז."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} שוחרר במקומו המקורי. שום דבר לא הוזז."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "אנשי קשר"
 msgid "Contain"
 msgstr "הצגה מלאה"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "תוכן"
@@ -5125,6 +5150,10 @@ msgstr "גרור · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "גרור ושחרר סעיפים כאן כדי להעביר אותם בין עמודות"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "גררו אותו עם הסמן כדי להזיז אותו, או השתמשו בתפריט שלו."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "יש לטעון את השלבים שלך לפני ייבוא שלבים בעלי שם. נתוני ה־CSV שלך יישמרו."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "טוען"
 
@@ -8215,6 +8245,10 @@ msgstr "הועבר לשלב {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "מעביר את המועמדות מ-{0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "העברת {item} בוטלה. שום דבר לא הוזז."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "עמוד"
 msgid "Page {0}"
 msgstr "עמוד {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "עמוד {0}, סרגל צד"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "עמוד {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "בחר תבנית אחת והשתמש בה בכל מקום."
 msgid "Pick two examples"
 msgstr "בחר שתי דוגמאות"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} נבחר להזזה."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "בוחר את הסיפורים שלך"
@@ -9753,6 +9801,16 @@ msgstr "פורטוגזית (פורטוגל)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "תפקיד"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "מיקום {position} מתוך {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "מיקום {position} מתוך {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "כותרת"
 msgid "To"
 msgstr "אֶל"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "כדי להרים אותו, הקישו רווח או Enter. השתמשו במקשי החצים כדי להזיז אותו, ברווח או ב-Enter כדי לשחרר, או ב-Escape כדי לבטל."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "מפתח גישה ללא שם"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ללא כותרת"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "פריט ללא כותרת"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

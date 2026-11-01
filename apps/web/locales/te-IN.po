@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# సమస్య మీకు సరిపోల�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {చెక్ రివ్యూ చేయడానికి # విషయం ఉంది. మీరు ఇప్పటికీ డౌన్‌లోడ్ చేసుకోవచ్చు.} other {చెక్ రివ్యూ చేయడానికి # విషయాలు ఉన్నాయి. మీరు ఇప్పటికీ డౌన్‌లోడ్ చేసుకోవచ్చు.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} మొదలైన చోటికి తిరిగి వచ్చింది."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} ఉంచగలిగే చోటు పైన లేదు."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} దీని పైన ఉంది: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} ఇక్కడ ఉంచబడింది: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} వెళ్లలేని చోట ఉంచబడింది. ఏదీ తరలించబడలేదు."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} మొదలైన చోటే ఉంచబడింది. ఏదీ తరలించబడలేదు."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "పరిచయాలు"
 msgid "Contain"
 msgstr "పూర్తిగా చూపు"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "విషయం"
@@ -5125,6 +5150,10 @@ msgstr "లాగండి · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "విభాగాలను ఇక్కడకి డ్రాగ్ చేసి వదలండి, వీటిని కాలమ్స్ మధ్యలో తరలించేందుకు"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "తరలించడానికి పాయింటర్‌తో లాగండి లేదా దాని మెనూను ఉపయోగించండి."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "పేరున్న దశలను దిగుమతి చేసే ముందు మీ దశలను లోడ్ చేయండి. మీ CSV డేటా అలాగే ఉంటుంది."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "లోడ్ అవుతోంది"
 
@@ -8215,6 +8245,10 @@ msgstr "{label}కు తరలించబడింది"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "దరఖాస్తును {0} నుండి తరలిస్తుంది."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} తరలింపు రద్దు చేయబడింది. ఏదీ తరలించబడలేదు."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "పేజ్"
 msgid "Page {0}"
 msgstr "పేజ్ {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "పేజ్ {0}, సైడ్‌బార్"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "పేజ్ {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "ఒక ఫార్మాట్‌ను ఎంచుకుని దా
 msgid "Pick two examples"
 msgstr "రెండు ఉదాహరణలను ఎంచుకోండి"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} ఎంచుకోబడింది."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "మీ కథలను ఎంచుకుంటోంది"
@@ -9753,6 +9801,16 @@ msgstr "పోర్చుగీస్ (పోర్చుగల్)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "పాజిషన్"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total}లో స్థానం {position}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total}లో స్థానం {position}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "టైటిల్"
 msgid "To"
 msgstr "కు"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "దాన్ని ఎత్తడానికి Space లేదా Enter నొక్కండి. తరలించడానికి బాణం కీలను, ఉంచడానికి Space లేదా Enterను, రద్దు చేయడానికి Escapeను ఉపయోగించండి."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "పేరులేని పాస్‌కీ"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "శీర్షిక లేని"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "శీర్షిక లేని అంశం"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

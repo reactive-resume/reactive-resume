@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {Masalah # bisa membuat Anda kehilangan uang.} othe
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Periksa apakah ada hal # untuk ditinjau. Anda masih dapat mengunduh.} other {Periksa apakah ada # hal untuk ditinjau. Anda masih dapat mengunduh.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} kembali ke tempat semula."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} tidak berada di atas tempat yang bisa menjadi tujuannya."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} berada di atas {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} dilepas di {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} dilepas di tempat yang tidak diizinkan. Tidak ada yang dipindahkan."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} dilepas di tempat semula. Tidak ada yang dipindahkan."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "Kontak"
 msgid "Contain"
 msgstr "Tampilkan utuh"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Konten"
@@ -5125,6 +5150,10 @@ msgstr "seret · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Seret dan jatuhkan bagian ke sini untuk memindahkannya antar kolom"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Seret dengan penunjuk untuk memindahkannya, atau gunakan menunya."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Muat tahap Anda sebelum mengimpor tahap bernama. Data CSV Anda tetap disimpan."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Memuat"
 
@@ -8215,6 +8245,10 @@ msgstr "Dipindahkan ke {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Memindahkan lamaran dari {0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Pemindahan {item} dibatalkan. Tidak ada yang dipindahkan."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "Halaman"
 msgid "Page {0}"
 msgstr "Halaman {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Halaman {0}, bilah sisi"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Halaman {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "Pilih satu format dan gunakan di mana pun."
 msgid "Pick two examples"
 msgstr "Pilih dua contoh"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} diambil."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Memilih cerita Anda"
@@ -9753,6 +9801,16 @@ msgstr "Portugis (Portugal)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Posisi"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "posisi {position} dari {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "posisi {position} dari {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "Judul"
 msgid "To"
 msgstr "Ke"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Untuk mengambilnya, tekan Spasi atau Enter. Gunakan tombol panah untuk memindahkannya, Spasi atau Enter untuk melepasnya, atau Escape untuk membatalkan."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "Kunci sandi yang tidak disebutkan namanya"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Tanpa judul"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Item tanpa judul"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

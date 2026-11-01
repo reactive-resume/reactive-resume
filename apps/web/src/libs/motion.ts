@@ -24,6 +24,12 @@ export const TAB_SPRING = { type: "spring", duration: 0.4, bounce: 0.3 } as cons
 export const DRAG_SETTLE = { duration: D2 * 1000, easing: `cubic-bezier(${EASE_MOVE.join(", ")})` };
 
 /**
+ * dnd-kit auto-scroll while dragging: only the outer 8% of a scroll container scrolls it, and gently (at most 600px/s
+ * at the very edge). dnd-kit's default (20%, up to 2000px/s) threw a short drag near a list's end pages away.
+ */
+export const DRAG_AUTO_SCROLL = { threshold: { x: 0.08, y: 0.08 }, acceleration: 3 };
+
+/**
  * Hotkey mode switches land at once: the editor's mode-switch indicator skips its slide for this one change
  * (keyboard shortcuts are used too often to animate). The flag stays two frames, until the new position has painted.
  */

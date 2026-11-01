@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {Problema # vă poate costa o potrivire.} other {Pr
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Cecul are de revizuit #. Încă puteți descărca.} other {Check are # lucruri de revizuit. Încă puteți descărca.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} a revenit la locul inițial."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} nu se află deasupra unui loc unde poate fi plasat."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} se află deasupra: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} a fost plasat pe: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} a fost plasat unde nu poate fi pus. Nimic nu a fost mutat."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} a fost plasat la locul inițial. Nimic nu a fost mutat."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "Contacte"
 msgid "Contain"
 msgstr "Încadrare"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Conținut"
@@ -5125,6 +5150,10 @@ msgstr "trage · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Glisați și fixați secțiunile aici pentru a le muta între coloane"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Trage-l cu indicatorul pentru a-l muta sau folosește meniul lui."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Încărcați etapele înainte de a importa etape cu nume. Datele CSV sunt păstrate."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Se încarcă"
 
@@ -8215,6 +8245,10 @@ msgstr "Mutată în {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Mută candidatura din {0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Mutarea pentru {item} a fost anulată. Nimic nu a fost mutat."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "Pagină"
 msgid "Page {0}"
 msgstr "Pagina {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Pagina {0}, bară laterală"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Pagina {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "Alegeți un format și utilizați-l peste tot."
 msgid "Pick two examples"
 msgstr "Alegeți două exemple"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} a fost preluat."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Se aleg poveștile dvs."
@@ -9753,6 +9801,16 @@ msgstr "Portugheză (Portugalia)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Poziție"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "poziția {position} din {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "poziția {position} din {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "Titlu"
 msgid "To"
 msgstr "La"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Pentru a-l prelua, apasă Spațiu sau Enter. Folosește săgețile pentru a-l muta, Spațiu sau Enter pentru a-l plasa sau Escape pentru a anula."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "Cheie de acces fără nume"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Fără titlu"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Element fără titlu"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

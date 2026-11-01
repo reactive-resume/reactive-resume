@@ -33,8 +33,13 @@ function ToastFuse({ timeout }: { timeout: number }) {
 	);
 }
 
+/**
+ * Pressing a toast's action closes the toast, once its own handler has run; the handler can keep it open with
+ * `event.preventBaseUIHandler()`. Once closed, the action does nothing while the toast animates out, so a second
+ * click can't run Undo twice.
+ */
 function ToastList({ closeLabel, timeout }: { closeLabel: string; timeout: number }) {
-	const { toasts } = ToastPrimitive.useToastManager();
+	const { toasts, close } = ToastPrimitive.useToastManager();
 
 	return toasts.map((toastItem) => (
 		<ToastPrimitive.Root
@@ -53,6 +58,15 @@ function ToastList({ closeLabel, timeout }: { closeLabel: string; timeout: numbe
 				{toastItem.actionProps && (
 					<ToastPrimitive.Action
 						data-slot="toast-action"
+						onClickCapture={(event) => {
+							if (event.currentTarget.dataset.actionRan === undefined) return;
+							event.preventDefault();
+							event.stopPropagation();
+						}}
+						onClick={(event) => {
+							event.currentTarget.dataset.actionRan = "";
+							close(toastItem.id);
+						}}
 						className="-my-1 shrink-0 rounded-sm px-1 py-1 text-sm font-semibold underline underline-offset-3 transition-opacity hover:opacity-80"
 					/>
 				)}

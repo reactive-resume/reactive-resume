@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vite-plus/test";
-import { sectionProgress } from "./scroll";
+import { afterEach, describe, expect, it, vi } from "vite-plus/test";
+import { goToScene, sectionProgress, useLanding } from "./scroll";
 
 describe("section progress", () => {
 	it("measures a pinned scene by how far its sticky stage has travelled", () => {
@@ -13,5 +13,29 @@ describe("section progress", () => {
 		expect(sectionProgress(1000, 600, 1000, false)).toBe(0);
 		expect(sectionProgress(700, 600, 1000, false)).toBe(0.5);
 		expect(sectionProgress(-50, 2400, 1000, false)).toBe(1);
+	});
+});
+
+describe("scene navigation", () => {
+	afterEach(() => vi.unstubAllGlobals());
+	it("keeps the last destination when an earlier view-transition update arrives late", () => {
+		const scrollTo = vi.fn();
+		const updates: (() => void)[] = [];
+		vi.stubGlobal("CSS", { supports: () => true });
+		vi.stubGlobal("window", { scrollY: 0, innerHeight: 900, scrollTo, matchMedia: () => ({ matches: false }) });
+		vi.stubGlobal("document", {
+			querySelector: (selector: string) => ({
+				getBoundingClientRect: () => ({ top: selector.includes('"6"') ? 6000 : 1000, height: 900 }),
+			}),
+			startViewTransition: ({ update }: { update: () => void }) => {
+				updates.push(update);
+			},
+		});
+		useLanding.setState({ activeScene: 0 });
+		goToScene(6, 0);
+		goToScene(1, 0);
+		expect(scrollTo).toHaveBeenLastCalledWith({ top: 1000, behavior: "smooth" });
+		updates[0]?.();
+		expect(scrollTo).toHaveBeenLastCalledWith({ top: 1000, behavior: "smooth" });
 	});
 });

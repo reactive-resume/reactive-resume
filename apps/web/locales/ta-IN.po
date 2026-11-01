@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# சிக்கல் உங்களுக்�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {மதிப்பாய்வு செய்ய # விஷயம் உள்ளது. நீங்கள் இன்னும் பதிவிறக்கம் செய்யலாம்.} other {சரிபார்க்க # விஷயங்கள் உள்ளன. நீங்கள் இன்னும் பதிவிறக்கம் செய்யலாம்.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} தொடங்கிய இடத்திற்குத் திரும்பியது."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} வைக்கக்கூடிய இடத்தின் மேல் இல்லை."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} இதன் மேல் உள்ளது: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} இங்கே வைக்கப்பட்டது: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} செல்ல முடியாத இடத்தில் வைக்கப்பட்டது. எதுவும் நகர்த்தப்படவில்லை."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} தொடங்கிய இடத்திலேயே வைக்கப்பட்டது. எதுவும் நகர்த்தப்படவில்லை."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "தொடர்புகள்"
 msgid "Contain"
 msgstr "முழுமையாகக் காட்டு"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "உள்ளடக்கம்"
@@ -5125,6 +5150,10 @@ msgstr "இழுக்கவும் · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "பகுதிகளை நெடுவரிசைகளுக்குள் நகர்த்த இதே இடத்திற்கு இழுத்து விடவும்"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "நகர்த்த, சுட்டியால் இழுக்கவும் அல்லது அதன் மெனுவைப் பயன்படுத்தவும்."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "பெயரிடப்பட்ட நிலைகளை இறக்குமதி செய்யும் முன் உங்கள் நிலைகளை ஏற்றவும். உங்கள் CSV தரவு பாதுகாக்கப்படும்."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "ஏற்றப்படுகிறது"
 
@@ -8215,6 +8245,10 @@ msgstr "{label} நிலைக்கு நகர்த்தப்பட்ட
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "விண்ணப்பத்தை {0} நிலையிலிருந்து நகர்த்தும்."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} நகர்த்துதல் ரத்துசெய்யப்பட்டது. எதுவும் நகர்த்தப்படவில்லை."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "பக்கம்"
 msgid "Page {0}"
 msgstr "பக்கம் {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "பக்கம் {0}, சைட்பார்"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "பக்கம் {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "ஒரு வடிவமைப்பைத் தேர்ந்தெ�
 msgid "Pick two examples"
 msgstr "இரண்டு எடுத்துக்காட்டுகளைத் தேர்ந்தெடுங்கள்"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} எடுக்கப்பட்டது."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "உங்கள் கதைகளைத் தேர்ந்தெடுக்கிறது"
@@ -9753,6 +9801,16 @@ msgstr "போர்ச்சுகீஸ் (போர்ச்சுகல்)
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "பதவி"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total} இல் நிலை {position}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total} இல் நிலை {position}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "தலைப்பு"
 msgid "To"
 msgstr "செய்ய"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "எடுக்க Space அல்லது Enter ஐ அழுத்தவும். நகர்த்த அம்புக்குறி விசைகளையும், வைக்க Space அல்லது Enter ஐயும், ரத்துசெய்ய Escape ஐயும் பயன்படுத்தவும்."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "பெயரிடப்படாத பாஸ் கீ"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "பெயரிடப்படாதது"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "தலைப்பில்லாத உருப்படி"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

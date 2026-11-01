@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# 문제로 인해 일치 비용이 발생할 수 
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {수표에는 검토할 # 항목이 있습니다. 아직 다운로드할 수 있습니다.} other {수표에는 검토할 # 항목이 있습니다. 아직 다운로드할 수 있습니다.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item}이(가) 원래 위치로 돌아왔습니다."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item}이(가) 놓을 수 있는 위치 위에 있지 않습니다."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item}이(가) {place} 위에 있습니다."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item}을(를) {place}에 놓았습니다."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item}을(를) 놓을 수 없는 위치에 놓았습니다. 아무것도 이동하지 않았습니다."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item}을(를) 원래 위치에 놓았습니다. 아무것도 이동하지 않았습니다."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "연락처"
 msgid "Contain"
 msgstr "전체 표시"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "내용"
@@ -5125,6 +5150,10 @@ msgstr "드래그 · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "섹션을 이곳으로 끌어다 놓아 열 사이에서 이동하세요"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "포인터로 끌어서 이동하거나 메뉴를 사용하세요."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "이름이 있는 단계를 가져오기 전에 내 단계를 불러오세요. CSV 데이터는 유지됩니다."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "불러오는 중"
 
@@ -8215,6 +8245,10 @@ msgstr "{label}(으)로 이동함"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "지원 내역을 {0} 단계에서 이동합니다."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} 이동이 취소되었습니다. 아무것도 이동하지 않았습니다."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "페이지"
 msgid "Page {0}"
 msgstr "페이지 {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "페이지 {0}, 사이드바"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "페이지 {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "하나의 형식을 정해 모든 곳에 동일하게 사용하세요."
 msgid "Pick two examples"
 msgstr "사례 두 개 고르기"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item}을(를) 들었습니다."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "스토리 고르는 중"
@@ -9753,6 +9801,16 @@ msgstr "포르투갈어(포르투갈)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "직책"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total}개 중 {position}번째"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total}개 중 {position}번째, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "제목"
 msgid "To"
 msgstr "에게"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "들려면 Space 또는 Enter를 누르세요. 화살표 키로 이동하고, Space 또는 Enter로 놓거나 Escape로 취소하세요."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "이름 없는 패스키"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "제목 없음"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "제목 없는 항목"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

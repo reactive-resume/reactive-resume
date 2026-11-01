@@ -67,7 +67,7 @@ export function Design() {
 			data-scene={SCENE.design}
 			data-pin
 			aria-labelledby="design-title"
-			className="relative h-[320vh] motion-reduce:h-svh min-[900px]:h-[360vh]"
+			className="relative h-[320vh] min-[900px]:h-[360vh]"
 		>
 			<div className="sticky top-0 h-svh overflow-clip [--dpt:52%] [--pw:min(66vw,42vh)] [--w1:clamp(0,(var(--p)-.1)/.1,1)] [--w2:clamp(0,(var(--p)-.26)/.1,1)] [--w3:clamp(0,(var(--p)-.42)/.1,1)] [--w4:clamp(0,(var(--p)-.58)/.1,1)] [--z:clamp(0,(var(--p)-.76)/.16,1)] min-[900px]:[--dpt:57%] min-[900px]:[--pw:min(24vw,44vh)]">
 				<Doodle

@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {مشکل # ممکن است برای شما هزی�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {چک چیزی # برای بررسی دارد. هنوز هم می توانید دانلود کنید.} other {چک چیزهایی برای بررسی # دارد. هنوز هم می توانید دانلود کنید.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} به جای اولش برگشت."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} روی جایی نیست که بتوان آن را رها کرد."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} روی این است: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} روی این رها شد: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} در جایی رها شد که مجاز نیست. چیزی جابه‌جا نشد."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} در جای اولش رها شد. چیزی جابه‌جا نشد."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "مخاطبان"
 msgid "Contain"
 msgstr "نمایش کامل"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "محتوا"
@@ -5125,6 +5150,10 @@ msgstr "بکشید · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "برای جابه‌جا کردن بخش‌ها بین ستون‌ها، آن‌ها را اینجا بکشید و رها کنید"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "برای جابه‌جایی، آن را با نشانگر بکشید یا از منوی آن استفاده کنید."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "پیش از وارد کردن مرحله‌های نام‌گذاری‌شده، مرحله‌های خود را بارگیری کنید. داده‌های CSV شما حفظ می‌شوند."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "در حال بارگذاری"
 
@@ -8215,6 +8245,10 @@ msgstr "به {label} منتقل شد"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "درخواست را از {0} منتقل می‌کند."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "جابه‌جایی {item} لغو شد. چیزی جابه‌جا نشد."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "صفحه"
 msgid "Page {0}"
 msgstr "صفحه {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "صفحه {0}، نوار کناری"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "صفحه {page}، {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "یک قالب انتخاب کنید و همه‌جا از آن استف�
 msgid "Pick two examples"
 msgstr "دو نمونه انتخاب کنید"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} برداشته شد."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "در حال انتخاب داستان‌های شما"
@@ -9753,6 +9801,16 @@ msgstr "پرتغالی (پرتغال)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "موقعیت شغلی"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "جایگاه {position} از {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "جایگاه {position} از {total}، {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "عنوان"
 msgid "To"
 msgstr "به"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "برای برداشتن، کلید فاصله یا Enter را فشار دهید. با کلیدهای جهت‌نما آن را جابه‌جا کنید، با فاصله یا Enter رها کنید یا با Escape لغو کنید."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "کلید عبور نام‌گذاری‌نشده"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "بدون عنوان"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "مورد بدون عنوان"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

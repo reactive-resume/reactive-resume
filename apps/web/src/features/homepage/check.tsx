@@ -165,7 +165,7 @@ export function Check() {
 			data-scene={SCENE.check}
 			data-pin
 			aria-labelledby="check-title"
-			className="relative h-[245vh] motion-reduce:h-svh min-[900px]:h-[295vh]"
+			className="relative h-[245vh] min-[900px]:h-[295vh]"
 		>
 			<div className="sticky top-0 h-svh overflow-clip [--chk:var(--sp)] [--dw:calc(clamp(0,(var(--sp)-.42)*20,1)*(1-clamp(0,(var(--sp)-.7)*20,1)))] [--lo:clamp(0,(var(--p)-.04)*10,1)] [--pw:min(62vw,40vh)] [--sp:clamp(0,(var(--p)-.06)/.8,1)] [--sv:clamp(0,var(--p)/.24,1)] min-[900px]:[--pw:min(28vw,58vh)]">
 				<h2

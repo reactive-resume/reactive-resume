@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {Sự cố # có thể khiến bạn mất một tr
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Kiểm tra có thứ # để xem lại. Bạn vẫn có thể tải xuống.} other {Kiểm tra có # những thứ cần xem lại. Bạn vẫn có thể tải xuống.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} đã trở về vị trí ban đầu."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} không ở trên vị trí có thể thả."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} đang ở trên {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} đã được thả vào {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} đã được thả vào vị trí không được phép. Không có gì bị di chuyển."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} đã được thả vào vị trí ban đầu. Không có gì bị di chuyển."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "Liên hệ"
 msgid "Contain"
 msgstr "Vừa khít"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Nội dung"
@@ -5125,6 +5150,10 @@ msgstr "kéo · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Kéo và thả các mục ở đây để di chuyển giữa các cột"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Kéo bằng con trỏ để di chuyển, hoặc dùng menu của mục này."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Tải các giai đoạn của bạn trước khi nhập các giai đoạn có tên. Dữ liệu CSV của bạn được giữ lại."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Đang tải"
 
@@ -8215,6 +8245,10 @@ msgstr "Đã chuyển sang {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Chuyển hồ sơ ứng tuyển khỏi {0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Đã hủy di chuyển {item}. Không có gì bị di chuyển."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "Trang"
 msgid "Page {0}"
 msgstr "Trang {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Trang {0}, thanh bên"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Trang {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "Chọn một định dạng và dùng nhất quán ở mọi nơi."
 msgid "Pick two examples"
 msgstr "Chọn hai ví dụ"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "Đã nhấc {item}."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Đang chọn câu chuyện của bạn"
@@ -9753,6 +9801,16 @@ msgstr "Bồ Đào Nha (Bồ Đào Nha)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Vị trí"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "vị trí {position} trên {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "vị trí {position} trên {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "Tiêu đề"
 msgid "To"
 msgstr "ĐẾN"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Để nhấc lên, nhấn Phím cách hoặc Enter. Dùng các phím mũi tên để di chuyển, Phím cách hoặc Enter để thả, hoặc Escape để hủy."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "Khóa truy cập không có tên"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Không có tiêu đề"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Mục không có tiêu đề"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

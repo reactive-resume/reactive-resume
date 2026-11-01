@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {Problém # vás může stát zápas.} other {Probl
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Check má # věc ke kontrole. Stále můžete stahovat.} other {Check má # věci ke kontrole. Stále můžete stahovat.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} je zpět na původním místě."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} není nad místem, kam ho lze umístit."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} je nad: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} byl umístěn na: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} byl umístěn tam, kam nemůže. Nic se nepřesunulo."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} byl umístěn na původní místo. Nic se nepřesunulo."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -3471,6 +3495,7 @@ msgstr "Kontakty"
 msgid "Contain"
 msgstr "Zobrazit celý"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Obsah"
@@ -5125,6 +5150,10 @@ msgstr "přetáhnout · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Přetažením sekce sem je přesunete mezi sloupci"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Přesuňte ho přetažením ukazatelem, nebo použijte jeho nabídku."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -7642,6 +7671,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Před importem pojmenovaných fází načtěte své fáze. Data CSV zůstanou zachována."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Načítání"
 
@@ -8215,6 +8245,10 @@ msgstr "Přesunuto do {label}"
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
 msgstr "Přesune žádost z fáze {0}."
+
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Přesun položky {item} byl zrušen. Nic se nepřesunulo."
 
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
@@ -9392,6 +9426,16 @@ msgstr "Stránka"
 msgid "Page {0}"
 msgstr "Stránka {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Stránka {0}, postranní panel"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Stránka {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9679,6 +9723,10 @@ msgstr "Vyberte si jeden formát a používejte jej všude."
 msgid "Pick two examples"
 msgstr "Vyberte dva příklady"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "Zvednuto: {item}."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Vybírají se vaše příběhy"
@@ -9753,6 +9801,16 @@ msgstr "Portugalština (Portugalsko)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Pozice"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "pozice {position} z {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "pozice {position} z {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -13901,6 +13959,10 @@ msgstr "Název"
 msgid "To"
 msgstr "Na"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Zvednete ho mezerníkem nebo klávesou Enter. Šipkami ho přesunete, mezerníkem nebo Enterem pustíte a klávesou Escape akci zrušíte."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14281,6 +14343,10 @@ msgstr "Nejmenovaný přístupový klíč"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Bez názvu"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Položka bez názvu"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
