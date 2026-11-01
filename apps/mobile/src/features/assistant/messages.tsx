@@ -17,11 +17,11 @@ import { useRouter } from "expo-router";
 import { memo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-native";
 import { agentKnowledgeUsed } from "@reactive-resume/ai/tools/agent-tool-contracts";
-import { blockText, proposalText } from "@reactive-resume/resume/proposals";
+import { additionParts, blockText, needsConfirmation, proposalText } from "@reactive-resume/resume/proposals";
 import { webSources } from "./chat";
 import { handToAssistant } from "./handoff";
 import { AssistantMarkdown } from "./markdown";
-import { isProposeEdits, requirementsOf, skippedCount, toProposals } from "./proposals";
+import { isProposeEdits, requirementsOf, skippedCount, titleOf, toProposals } from "./proposals";
 import { client, orpc } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
 import { ReportAiContent } from "@/features/ai/report-content";
@@ -254,6 +254,12 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 				</Status>
 			);
 		case "tool-read_attachment":
+			if (part.state === "output-error")
+				return (
+					<Status status="error">
+						<Trans>Couldn't read the attachment: {part.errorText}</Trans>
+					</Status>
+				);
 			return (
 				<Status status={working ? "running" : undefined}>
 					<Trans>Read the attachment</Trans>
@@ -342,6 +348,7 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 				<View style={{ gap: space.s2 }}>
 					{list.length > 0 ? (
 						<ChangeSet
+							title={titleOf(part)}
 							proposals={list}
 							states={states}
 							locked={proposals.locked || forJobCopy}
@@ -509,6 +516,8 @@ function QuestionCard({ part, readOnly, busy = false, onAnswer }: QuestionCardPr
 }
 
 type ChangeSetProps = {
+	/** What the set does, as the assistant titled it. */
+	title: string;
 	proposals: readonly Proposal[];
 	states: readonly ProposalState[];
 	locked: boolean;
@@ -520,7 +529,17 @@ type ChangeSetProps = {
 };
 
 /** "n proposed edits" with Accept all, then each edit numbered: where it lands, old text struck, new text, why. */
-function ChangeSet({ proposals, states, locked, onAccept, onReject, onEdit, requirements, factText }: ChangeSetProps) {
+function ChangeSet({
+	title,
+	proposals,
+	states,
+	locked,
+	onAccept,
+	onReject,
+	onEdit,
+	requirements,
+	factText,
+}: ChangeSetProps) {
 	const { t } = useLingui();
 	const { colors, radius, size, space } = useTheme();
 	// Edits whose wording is open, saving or failed to save can't be accepted from here, by any path (web proposal-list).
@@ -532,7 +551,14 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject, onEdit, requ
 		if (allowed.length > 0) onAccept(allowed);
 	};
 	const pending = proposals.filter((proposal, index) => acceptable(proposal, index));
+	// Edits that add a detail are accepted one by one, after the user checks them (web proposal-list).
+	const checked = pending.filter((proposal) => !needsConfirmation(proposal));
+	const toConfirm = pending.length - checked.length;
 	const accepted = states.filter((state) => state === "accepted").length;
+	// Worded from the undecided edits, as on the web: a locked set or one being rewritten still has edits to decide.
+	const count = states.some((state) => state === "pending")
+		? plural(proposals.length, { one: "# proposed edit", other: "# proposed edits" })
+		: t`${accepted} of ${proposals.length} applied`;
 
 	return (
 		<View style={{ borderWidth: 1, borderColor: colors.line, borderRadius: radius.rLg, overflow: "hidden" }}>
@@ -550,14 +576,25 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject, onEdit, requ
 				}}
 			>
 				<Text variant="label" accessibilityRole="header" style={{ flex: 1 }}>
-					{pending.length > 0
-						? plural(proposals.length, { one: "# proposed edit", other: "# proposed edits" })
-						: t`${accepted} of ${proposals.length} applied`}
+					{title ? `${title} · ${count}` : count}
 				</Text>
-				{pending.length > 1 ? (
-					<Button size="sm" label={t`Accept all`} disabled={locked} onPress={() => accept(pending)} />
+				{checked.length > 1 ? (
+					<Button
+						size="sm"
+						label={toConfirm > 0 ? t`Accept the others` : t`Accept all`}
+						disabled={locked}
+						onPress={() => accept(checked)}
+					/>
 				) : null}
 			</View>
+			{toConfirm > 0 && checked.length > 1 ? (
+				<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s3, paddingTop: space.s2 }}>
+					{plural(toConfirm, {
+						one: "# edit adds a new detail, so accept it on its own once you've checked it.",
+						other: "# edits add new details, so accept each on its own once you've checked it.",
+					})}
+				</Text>
+			) : null}
 			{requirements.length > 0 ? <Coverage requirements={requirements} factText={factText} /> : null}
 			{proposals.map((proposal, index) => (
 				<View
@@ -594,7 +631,11 @@ function ChangeSet({ proposals, states, locked, onAccept, onReject, onEdit, requ
 							{proposal.location}
 						</Text>
 					</View>
-					{proposal.before ? (
+					{additionParts(proposal) ? (
+						<Text variant="callout" color="ink3">
+							<Trans>Adds after: {additionParts(proposal)?.anchor}</Trans>
+						</Text>
+					) : proposal.before ? (
 						<Text variant="callout" color="ink3" style={{ textDecorationLine: "line-through" }}>
 							{proposalText(proposal, "before")}
 						</Text>
@@ -681,7 +722,7 @@ function ProposalBody({
 						backgroundColor: colors.accentSoft,
 					}}
 				>
-					{proposalText(proposal, "after")}
+					{additionParts(proposal)?.added ?? proposalText(proposal, "after")}
 				</Text>
 			) : (
 				<TextInput
@@ -712,6 +753,25 @@ function ProposalBody({
 					{proposal.why}
 				</Text>
 			) : null}
+			{proposal.addsClaims && state === "pending" ? (
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						alignSelf: "flex-start",
+						gap: space.s1,
+						paddingHorizontal: space.s2,
+						paddingVertical: space.s1,
+						borderRadius: radius.rMd,
+						backgroundColor: colors.warnSoft,
+					}}
+				>
+					<Icon name="warning-circle" size={14} color={colors.warnText} />
+					<Text variant="caption" color="warnText">
+						<Trans>New detail: check it's true</Trans>
+					</Text>
+				</View>
+			) : null}
 			<ProposalReview proposal={proposal} factText={factText} />
 			{state === "pending" && draft !== null ? (
 				<View style={{ gap: space.s1 }}>
@@ -740,6 +800,7 @@ function ProposalBody({
 			) : (
 				<ProposalOutcome
 					state={state}
+					superseded={proposal.superseded === true}
 					locked={locked}
 					onAccept={onAccept}
 					onReject={onReject}
@@ -926,13 +987,15 @@ function Coverage({ requirements, factText }: { requirements: readonly Requireme
 
 type ProposalOutcomeProps = {
 	state: ProposalState;
+	/** A later suggestion replaced it. */
+	superseded: boolean;
 	locked: boolean;
 	onAccept: () => void;
 	onReject: () => void;
 	onEdit: (() => void) | undefined;
 };
 
-function ProposalOutcome({ state, locked, onAccept, onReject, onEdit }: ProposalOutcomeProps) {
+function ProposalOutcome({ state, superseded, locked, onAccept, onReject, onEdit }: ProposalOutcomeProps) {
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
 	if (state === "pending")
@@ -954,7 +1017,13 @@ function ProposalOutcome({ state, locked, onAccept, onReject, onEdit }: Proposal
 		);
 	return (
 		<Text variant="caption" color={state === "stale" ? "warnText" : "ink3"} style={{ minHeight: 28 }}>
-			{state === "stale" ? <Trans>Out of date: the text has changed since.</Trans> : <Trans>Rejected</Trans>}
+			{state === "stale" ? (
+				<Trans>Out of date: the text has changed since.</Trans>
+			) : superseded ? (
+				<Trans>Replaced by a newer suggestion</Trans>
+			) : (
+				<Trans>Rejected</Trans>
+			)}
 		</Text>
 	);
 }

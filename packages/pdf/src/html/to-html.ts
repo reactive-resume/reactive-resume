@@ -134,6 +134,11 @@ function toCssDeclarations(input: Style, context: Context) {
 			LENGTH_KEYS.has(key) && key.endsWith("Radius") && typeof raw === "string" && PERCENT.test(raw.trim());
 		const css = percentCorner ? raw.trim() : cssValue(key, converted[key], fontSize);
 		if (css === undefined) continue;
+		// Templates already mirror geometry; direction must reach text without flipping browser flex axes again.
+		if (key === "direction") {
+			declarations.push(["--rr-text-direction", css]);
+			continue;
+		}
 		for (const target of EXPANDED[key] ?? [key]) declarations.push([kebab(target), css]);
 	}
 	return { declarations, fontSize, hidden };
@@ -393,8 +398,9 @@ function bandColor(page: HostElement): string | undefined {
  */
 const BASE_CSS = `
 .rr,.rr *{box-sizing:border-box;margin:0;padding:0;border:0 solid}
-.rr .v{display:flex;flex-direction:column;position:relative;min-width:0;align-content:flex-start}
+.rr .v{display:flex;flex-direction:column;direction:ltr;position:relative;min-width:0;align-content:flex-start}
 .rr .t{display:block;min-width:0;overflow-wrap:break-word}
+.rr .t,.rr .t span,.rr .t a{direction:var(--rr-text-direction,ltr)}
 .rr a{color:inherit;text-decoration:none}
 .rr h1,.rr h2{font:inherit}
 .rr .s,.rr .i{flex-shrink:0;display:block}
@@ -410,6 +416,7 @@ const BASE_CSS = `
 .rr [data-part=header-sidebar]>[data-region=header]{order:0}
 .rr [data-region=sidebar]{background-color:var(--rr-band,transparent)}
 .rr [data-fold]{flex-direction:column!important;align-items:flex-start!important;row-gap:8px}
+.rr:dir(rtl) [data-fold]{align-items:flex-end!important}
 .rr [data-fold]>*{width:auto!important;max-width:100%!important;flex:none!important}
 .rr [data-fixed]{display:none!important}
 }

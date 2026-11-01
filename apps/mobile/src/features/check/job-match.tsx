@@ -60,9 +60,10 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 	const posting = applicationId ? (application.data?.jobDescription?.trim() ?? "") : pasted.trim();
 	const company = applicationId ? application.data?.company : undefined;
 	const location = applicationId ? application.data?.location : undefined;
+	const role = applicationId ? application.data?.role : undefined;
 	const match = useMemo(
-		() => (posting ? matchPosting(data, posting, { company, location }) : null),
-		[data, posting, company, location],
+		() => (posting ? matchPosting(data, posting, { company, location, role }) : null),
+		[data, posting, company, location, role],
 	);
 	const open = match?.missing.find((entry) => entry.term === term);
 	const link = async (applicationId: string) => {
@@ -351,16 +352,19 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 								other: `“${open.label}” appears # times in the posting. If it's part of your experience, add it where it belongs.`,
 							})}
 						</Text>
+						{/* Only a skill's name goes into Skills as it is; a phrase from the posting needs a place in context. */}
+						{open.skill ? (
+							<Button
+								label={t`Add to Skills`}
+								disabled={locked}
+								onPress={() => {
+									editWithUndo(id, (draft) => addSkill(draft, open.label), t`“${isolate(open.label)}” added to Skills`);
+									setTerm(null);
+								}}
+							/>
+						) : null}
 						<Button
-							label={t`Add to Skills`}
-							disabled={locked}
-							onPress={() => {
-								editWithUndo(id, (draft) => addSkill(draft, open.label), t`“${isolate(open.label)}” added to Skills`);
-								setTerm(null);
-							}}
-						/>
-						<Button
-							variant="secondary"
+							variant={open.skill ? "secondary" : "primary"}
 							label={t`Ask the assistant to work it in`}
 							disabled={locked}
 							onPress={() => {
@@ -368,7 +372,10 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 								router.push({
 									pathname: routes.assistant(id),
 									params: {
-										ask: t`Help me work “${open.label}” into my resume, only where my experience supports it.`,
+										// A pasted posting goes with it: without a linked application the assistant can't see it.
+										ask: applicationId
+											? t`Help me work “${open.label}” into my resume, only where my experience supports it.`
+											: `${t`Help me work “${open.label}” into my resume, only where my experience supports it.`}\n\n${t`The posting:`}\n${posting.slice(0, 6_000)}`,
 									},
 								});
 							}}

@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {Не вдалося розмістити правку #: її текст змінено. Попросіть ще раз переробити.} other {Не вдалося розмістити зміни #: їхній текст змінено. Попросіть ще раз їх переробити.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# запис} few {# записи} many {# записів} other {# запису}}"
@@ -211,6 +213,11 @@ msgstr "{0, plural, one {# запис} few {# записи} many {# записі
 #: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# факт} few {# факти} many {# фактів} other {# факту}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -823,6 +830,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# перевірити} other {# перевірити}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
@@ -1013,6 +1024,10 @@ msgstr "прийняти"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "Прийняти все"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1354,6 +1369,10 @@ msgstr "Додайте закінчення домену, наприклад {do
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Додайте ці записи там, де керуєте доменом, а потім перевірте. Зміни можуть поширюватися кілька годин."
@@ -1425,6 +1444,11 @@ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Address line 2"
+msgstr ""
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
 msgstr ""
 
 #: src/features/design/advanced.tsx
@@ -2473,6 +2497,10 @@ msgstr "Перевірте інший файл"
 msgid "Check DNS"
 msgstr "Перевірити DNS"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -2525,6 +2553,10 @@ msgstr "Перевірте цю вакансію на відповідність
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "Перевірте перегляди"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3452,6 +3484,11 @@ msgstr "Не вдалося зв’язатися з вашим постачал
 msgid "Couldn't read that file. Try again."
 msgstr "Не вдалося прочитати цей файл. Спробуйте ще раз."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Не вдалося прочитати експортований PDF."
@@ -3546,6 +3583,7 @@ msgid "Couldn't save the theme. Try again."
 msgstr "Не вдалося зберегти тему. Спробуйте знову."
 
 #: app/(tabs)/settings/preferences.tsx
+#: src/features/career/hooks.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "Не вдалося зберегти часовий пояс. Спробуйте ще раз."
 
@@ -3791,6 +3829,10 @@ msgstr "Створити копію"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Спочатку створіть або імпортуйте резюме, а потім поверніться, щоб скопіювати його для цієї роботи."
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3807,6 +3849,10 @@ msgstr "Створено {0} · Останнє використання {1} · �
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "Створення документа…"
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4880,6 +4926,10 @@ msgstr "Факти"
 msgid "Failed"
 msgstr "Не вдалося"
 
+#: src/features/career/today.tsx
+msgid "Failed · open to check it"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Family name"
 msgstr ""
@@ -5327,9 +5377,18 @@ msgstr "Іврит"
 msgid "Help & docs"
 msgstr "Довідка та документи"
 
+#. placeholder {0}: starter.company
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "Допоможи мені перетворити досягнення на розповідь за схемою «Ситуація, Завдання, Дія, Результат, Рефлексія»."
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #. placeholder {0}: open.label
 #: src/features/check/job-match.tsx
@@ -6044,6 +6103,10 @@ msgstr "Останнє редагування"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Last reviewed"
+msgstr ""
+
+#: src/features/career/today.tsx
+msgid "Last run failed"
 msgstr ""
 
 #. placeholder {0}: time.when(row.lastSeenAt)
@@ -6805,6 +6868,10 @@ msgstr "більше"
 msgid "More details"
 msgstr "Детальніше"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6992,6 +7059,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Ім’я"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -7094,6 +7165,10 @@ msgstr "Нова розмова"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "Натомість новий супровідний лист"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7388,6 +7463,10 @@ msgstr "Резюме не вибрано"
 
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9122,10 +9201,6 @@ msgstr "Видалити {name}"
 msgid "Remove connection"
 msgstr "Видалити підключення"
 
-#: src/features/ai/web-access.tsx
-#~ msgid "Remove connection?"
-#~ msgstr "Вилучити підключення?"
-
 #: src/features/share/custom-domain.tsx
 msgid "Remove domain"
 msgstr "Видалити домен"
@@ -9259,6 +9334,10 @@ msgstr "Замінити фото"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Замініть таблиці звичайними абзацами та списками. Комірки видобуваються у порядку зберігання, а не в порядку читання."
+
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
@@ -9755,6 +9834,10 @@ msgstr "Лінія"
 #: src/features/check/writing.tsx
 msgid "Run again"
 msgstr "Запустити знову"
+
+#: src/features/career/today.tsx
+msgid "Running"
+msgstr ""
 
 #. placeholder {0}: new Intl.DateTimeFormat(locale, { timeZone: timezone, dateStyle: "medium", timeStyle: "short" }).format(runAt)
 #: src/features/career/schedule-sheet.tsx
@@ -11347,6 +11430,10 @@ msgstr "Перевірка з’єднання…"
 msgid "Testing…"
 msgstr "Тестування…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11596,6 +11683,10 @@ msgstr "PDF перевіряється на сервері та не збері�
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/ai/error.ts
@@ -12688,6 +12779,11 @@ msgstr "Використати ці відповіді"
 msgid "Use this date"
 msgstr "Використовуйте цю дату"
 
+#. placeholder {0}: time.deviceTimeZone
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({0})"
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 msgid "Use this device's timezone ({deviceTimezone})"
 msgstr "Використовувати часовий пояс цього пристрою ({deviceTimezone})"
@@ -13006,6 +13102,10 @@ msgstr "Яка базова заробітна плата?"
 #: src/features/application-detail/sheets.tsx
 msgid "What it asks for"
 msgstr "Що він вимагає"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "What matters to you"

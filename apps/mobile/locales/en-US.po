@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# entry} other {# entries}}"
@@ -211,6 +213,11 @@ msgstr "{0, plural, one {# entry} other {# entries}}"
 #: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# fact} other {# facts}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -823,6 +830,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# to check} other {# to check}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 
@@ -1013,6 +1024,10 @@ msgstr "Accept"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "Accept all"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr "Accept the others"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1354,6 +1369,10 @@ msgstr "Add the domain ending, like {domain}.com"
 msgid "Add the offer's terms"
 msgstr "Add the offer's terms"
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr "Add them as a section called “More from your file” to sort later"
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1428,6 +1447,11 @@ msgstr "Address line 1"
 #: src/features/settings/application-profile.tsx
 msgid "Address line 2"
 msgstr "Address line 2"
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
+msgstr "Adds after: {0}"
 
 #: src/features/design/advanced.tsx
 msgid "Advanced"
@@ -2475,6 +2499,10 @@ msgstr "Check another file"
 msgid "Check DNS"
 msgstr "Check DNS"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
@@ -2527,6 +2555,10 @@ msgstr "Check this role against your evidence"
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "Check views"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr "Check what was found"
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3454,6 +3486,11 @@ msgstr "Couldn't reach your AI provider. Try again or check its key in AI settin
 msgid "Couldn't read that file. Try again."
 msgstr "Couldn't read that file. Try again."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr "Couldn't read the attachment: {0}"
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Couldn't read the exported PDF."
@@ -3548,6 +3585,7 @@ msgid "Couldn't save the theme. Try again."
 msgstr "Couldn't save the theme. Try again."
 
 #: app/(tabs)/settings/preferences.tsx
+#: src/features/career/hooks.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "Couldn't save the timezone. Try again."
 
@@ -3793,6 +3831,10 @@ msgstr "Create copy"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Create or import a resume first, then return to copy it for this job."
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr "Create resume"
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3809,6 +3851,10 @@ msgstr "Created {0} · Last used {1} · Expires {2}"
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "Creating document…"
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr "Creating the resume…"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4882,6 +4928,10 @@ msgstr "Facts"
 msgid "Failed"
 msgstr "Failed"
 
+#: src/features/career/today.tsx
+msgid "Failed · open to check it"
+msgstr "Failed · open to check it"
+
 #: src/features/settings/application-profile.tsx
 msgid "Family name"
 msgstr "Family name"
@@ -5329,9 +5379,18 @@ msgstr "Hebrew"
 msgid "Help & docs"
 msgstr "Help & docs"
 
+#. placeholder {0}: starter.company
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr "Help me prepare for my {0} interview."
+
 #: src/features/assistant/coach-screen.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr "Help me weigh the offer I have against what I want."
 
 #. placeholder {0}: open.label
 #: src/features/check/job-match.tsx
@@ -6047,6 +6106,10 @@ msgstr "Last edited"
 #: src/features/workspace/answer-library.tsx
 msgid "Last reviewed"
 msgstr "Last reviewed"
+
+#: src/features/career/today.tsx
+msgid "Last run failed"
+msgstr "Last run failed"
 
 #. placeholder {0}: time.when(row.lastSeenAt)
 #: src/features/career/today.tsx
@@ -6807,6 +6870,10 @@ msgstr "More"
 msgid "More details"
 msgstr "More details"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr "More from your file"
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6994,6 +7061,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Name"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr "Name and contact details weren't found. Add them in Basics."
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -7096,6 +7167,10 @@ msgstr "New conversation"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "New cover letter instead"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr "New detail: check it's true"
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7391,6 +7466,10 @@ msgstr "No resume selected"
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
 msgstr "No resumes yet"
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
+msgstr "No sections were found in this file."
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -9124,10 +9203,6 @@ msgstr "Remove {name}"
 msgid "Remove connection"
 msgstr "Remove connection"
 
-#: src/features/ai/web-access.tsx
-#~ msgid "Remove connection?"
-#~ msgstr "Remove connection?"
-
 #: src/features/share/custom-domain.tsx
 msgid "Remove domain"
 msgstr "Remove domain"
@@ -9261,6 +9336,10 @@ msgstr "Replace photo"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
+
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr "Replaced by a newer suggestion"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
@@ -9757,6 +9836,10 @@ msgstr "Rule"
 #: src/features/check/writing.tsx
 msgid "Run again"
 msgstr "Run again"
+
+#: src/features/career/today.tsx
+msgid "Running"
+msgstr "Running"
 
 #. placeholder {0}: new Intl.DateTimeFormat(locale, { timeZone: timezone, dateStyle: "medium", timeStyle: "short" }).format(runAt)
 #: src/features/career/schedule-sheet.tsx
@@ -11349,6 +11432,10 @@ msgstr "Testing the connection…"
 msgid "Testing…"
 msgstr "Testing…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr "text"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11599,6 +11686,10 @@ msgstr "The PDF is checked on the server and not stored. Send this preview to se
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
 msgstr "The posting text or retrieved page. Links also go to the reader and the site being read."
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
+msgstr "The posting:"
 
 #: src/features/ai/error.ts
 msgid "The provider limited this request. Wait and try again; check your account quota."
@@ -12690,6 +12781,11 @@ msgstr "Use these answers"
 msgid "Use this date"
 msgstr "Use this date"
 
+#. placeholder {0}: time.deviceTimeZone
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({0})"
+msgstr "Use this device's timezone ({0})"
+
 #: app/(tabs)/settings/preferences.tsx
 msgid "Use this device's timezone ({deviceTimezone})"
 msgstr "Use this device's timezone ({deviceTimezone})"
@@ -13008,6 +13104,10 @@ msgstr "What is the base salary?"
 #: src/features/application-detail/sheets.tsx
 msgid "What it asks for"
 msgstr "What it asks for"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr "What kinds of roles fit what I've done so far?"
 
 #: src/features/career/preferences.tsx
 msgid "What matters to you"

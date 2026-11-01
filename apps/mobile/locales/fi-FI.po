@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {# muokkausta ei voitu sijoittaa: sen tekstiä muutettiin. Pyydä uudelleen tekemään se.} other {#-muokkauksia ei voitu sijoittaa: niiden tekstiä muutettiin. Pyydä tekemään ne uudelleen.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# merkintä} other {# merkintää}}"
@@ -211,6 +213,11 @@ msgstr "{0, plural, one {# merkintä} other {# merkintää}}"
 #: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# fakta} other {# faktaa}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -823,6 +830,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# tarkistettavaksi} other {# tarkistettavaksi}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
@@ -1013,6 +1024,10 @@ msgstr "Hyväksyä"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "Hyväksy kaikki"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1354,6 +1369,10 @@ msgstr "Lisää verkkotunnuksen pääte, kuten {domain}.com"
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Lisää nämä tietueet palveluun, jossa hallinnoit verkkotunnusta, ja tarkista sitten. Muutosten näkyminen kaikille voi kestää muutaman tunnin."
@@ -1425,6 +1444,11 @@ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Address line 2"
+msgstr ""
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
 msgstr ""
 
 #: src/features/design/advanced.tsx
@@ -2473,6 +2497,10 @@ msgstr "Tarkista toinen tiedosto"
 msgid "Check DNS"
 msgstr "Tarkista DNS"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -2525,6 +2553,10 @@ msgstr "Vertaa tätä tehtävää näyttöösi"
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "Tarkista näkymät"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3452,6 +3484,11 @@ msgstr "Ei saatu yhteyttä tekoälypalveluntarjoajaasi. Yritä uudelleen tai tar
 msgid "Couldn't read that file. Try again."
 msgstr "Tiedostoa ei voitu lukea. Yritä uudelleen."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "Vietyä PDF-tiedostoa ei voitu lukea."
@@ -3546,6 +3583,7 @@ msgid "Couldn't save the theme. Try again."
 msgstr "Teemaa ei voitu tallentaa. Yritä uudelleen."
 
 #: app/(tabs)/settings/preferences.tsx
+#: src/features/career/hooks.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "Aikavyöhykettä ei voitu tallentaa. Yritä uudelleen."
 
@@ -3791,6 +3829,10 @@ msgstr "Luo kopio"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Luo tai tuo ensin ansioluettelo ja palaa sitten kopioimaan se tätä työtä varten."
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3807,6 +3849,10 @@ msgstr "Luotu {0} · Viimeksi käytetty {1} · Vanhenee {2}"
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "Luodaan asiakirjaa…"
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4880,6 +4926,10 @@ msgstr "Faktat"
 msgid "Failed"
 msgstr "Epäonnistui"
 
+#: src/features/career/today.tsx
+msgid "Failed · open to check it"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Family name"
 msgstr ""
@@ -5327,9 +5377,18 @@ msgstr "heprea"
 msgid "Help & docs"
 msgstr "Ohjeet ja asiakirjat"
 
+#. placeholder {0}: starter.company
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "Auta minua muuttamaan saavutus tarinaksi, jossa on tilanne, tehtävä, toiminta, tulos ja pohdinta."
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #. placeholder {0}: open.label
 #: src/features/check/job-match.tsx
@@ -6044,6 +6103,10 @@ msgstr "Viimeksi muokattu"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Last reviewed"
+msgstr ""
+
+#: src/features/career/today.tsx
+msgid "Last run failed"
 msgstr ""
 
 #. placeholder {0}: time.when(row.lastSeenAt)
@@ -6805,6 +6868,10 @@ msgstr "Lisää"
 msgid "More details"
 msgstr "Lisätietoja"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6992,6 +7059,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Nimi"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -7094,6 +7165,10 @@ msgstr "Uusi keskustelu"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "Uusi saatekirje tilalle"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7388,6 +7463,10 @@ msgstr "Ansioluetteloa ei ole valittu"
 
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9122,10 +9201,6 @@ msgstr "Poista {name}"
 msgid "Remove connection"
 msgstr "Poista yhteys"
 
-#: src/features/ai/web-access.tsx
-#~ msgid "Remove connection?"
-#~ msgstr "Poistetaanko yhteys?"
-
 #: src/features/share/custom-domain.tsx
 msgid "Remove domain"
 msgstr "Poista verkkotunnus"
@@ -9259,6 +9334,10 @@ msgstr "Vaihda valokuva"
 #: src/features/ats-checker/messages.ts
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Korvaa taulukot tavallisilla kappaleilla ja listoilla. Solut poimitaan tallennusjärjestyksessä, ei lukujärjestyksessä."
+
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
@@ -9755,6 +9834,10 @@ msgstr "Viiva"
 #: src/features/check/writing.tsx
 msgid "Run again"
 msgstr "Suorita uudelleen"
+
+#: src/features/career/today.tsx
+msgid "Running"
+msgstr ""
 
 #. placeholder {0}: new Intl.DateTimeFormat(locale, { timeZone: timezone, dateStyle: "medium", timeStyle: "short" }).format(runAt)
 #: src/features/career/schedule-sheet.tsx
@@ -11347,6 +11430,10 @@ msgstr "Testataan yhteyttä…"
 msgid "Testing…"
 msgstr "Testaus…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11596,6 +11683,10 @@ msgstr "PDF on tarkistettu palvelimella, eikä sitä tallenneta. Lähetä tämä
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/ai/error.ts
@@ -12688,6 +12779,11 @@ msgstr "Käytä näitä vastauksia"
 msgid "Use this date"
 msgstr "Käytä tätä päivämäärää"
 
+#. placeholder {0}: time.deviceTimeZone
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({0})"
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 msgid "Use this device's timezone ({deviceTimezone})"
 msgstr "Käytä tämän laitteen aikavyöhykettä ({deviceTimezone})"
@@ -13006,6 +13102,10 @@ msgstr "Mikä on peruspalkka?"
 #: src/features/application-detail/sheets.tsx
 msgid "What it asks for"
 msgstr "Mitä se pyytää"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "What matters to you"

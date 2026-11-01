@@ -7,6 +7,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
+import { coachStarters } from "@reactive-resume/schema/career-starters";
 import { formatList } from "@reactive-resume/utils/locale";
 import { refreshThreads, useThreads } from "./chat";
 import { ChatView, ContextChip, type ChatHistory } from "./chat-view";
@@ -24,6 +25,9 @@ import { useDeleteThread, useThreadTime, useThreadTitle } from "./threads";
 import { client, orpc } from "@/api/client";
 import { useSession } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
+import { useApplications } from "@/features/applications/queries";
+import { useNow, useOpportunities } from "@/features/career/hooks";
+import { collectInterviews } from "@/features/career/scheduling";
 import { StoryEditor } from "@/features/career/stories";
 import { Button, Icon, IconButton, ListRow, Sheet, Text, TextField, showToast, useTheme } from "@/ui";
 
@@ -314,14 +318,34 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: string) => void }) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
-	const starters: Array<{ icon: IconName; text: string }> = [
-		{ icon: "list-magnifying-glass", text: t`Which opportunities best match my priorities?` },
-		{
-			icon: "list-numbers",
-			text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
-		},
-		{ icon: "user-sound", text: t`What interview answers should I practice?` },
-	];
+	const applications = useApplications();
+	const opportunities = useOpportunities();
+	const now = useNow();
+	const open = (applications.data ?? []).filter((application) => application.status !== "closed");
+	// Starters that fit the account: an upcoming interview, an offer or found roles come first when there are some.
+	const starters = coachStarters({
+		nextInterviewCompany: collectInterviews(open, now)[0]?.application.company,
+		offers: open.filter((application) => application.status === "offer").length,
+		opportunities: (opportunities.data ?? []).filter((row) => !row.trackedApplicationId).length,
+	}).map((starter): { icon: IconName; text: string } => {
+		switch (starter.kind) {
+			case "interview":
+				return { icon: "microphone", text: t`Help me prepare for my ${starter.company} interview.` };
+			case "offers":
+				return { icon: "scales", text: t`Help me weigh the offer I have against what I want.` };
+			case "opportunities":
+				return { icon: "list-magnifying-glass", text: t`Which opportunities best match my priorities?` };
+			case "story":
+				return {
+					icon: "list-numbers",
+					text: t`Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story.`,
+				};
+			case "practice":
+				return { icon: "user-sound", text: t`What interview answers should I practice?` };
+			default:
+				return { icon: "compass", text: t`What kinds of roles fit what I've done so far?` };
+		}
+	});
 	return (
 		<View style={{ gap: space.s4, paddingTop: space.s4 }}>
 			<View style={{ gap: space.s2 }}>
@@ -337,7 +361,7 @@ function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: stri
 			</View>
 			{starters.map((starter) => (
 				<Pressable
-					key={starter.icon}
+					key={starter.text}
 					accessibilityRole="button"
 					disabled={disabled}
 					onPress={() => onPick(starter.text)}

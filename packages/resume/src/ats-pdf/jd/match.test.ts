@@ -344,3 +344,26 @@ describe("posting boundaries and known employers", () => {
 		expect(selected).toContain("kubernetes");
 	});
 });
+
+describe("job match terms a resume can't use (RX-99 A2-15)", () => {
+	const posting = `Lumenpay is hiring a Senior Product Designer.
+About the role
+You will lead design for checkout flows and bring 6+ years of experience. Run research, evolve our design system and analyze funnel data.
+Requirements
+- 6+ years in product design
+- WCAG 2.2 AA accessibility audits
+- Figma and design systems
+- Lumenpay values ownership`;
+	const resume =
+		"Senior Designer at Northwind Labs. Improved checkout-flow accessibility. Figma. Design systems. Usability tests.";
+
+	it("leaves out the employer, the job title, counts and generic verbs, and reads hyphenated compounds", () => {
+		const report = matchJobDescription({
+			jobDescription: posting,
+			resumeText: resume,
+			role: "Senior Product Designer",
+		});
+		expect(report.missingTerms).toEqual(["accessibility audits", "funnel data", "wcag"]);
+		expect(report.matchedTerms).toContain("checkout flows");
+	});
+});

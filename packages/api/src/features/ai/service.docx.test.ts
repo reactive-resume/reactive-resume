@@ -1,6 +1,7 @@
 import { Buffer } from "node:buffer";
 import { deflateRawSync } from "node:zlib";
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
+import { zipSync } from "fflate";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 
 const generateTextMock = vi.hoisted(() => vi.fn());
@@ -85,7 +86,11 @@ function createDocxBase64(text: string): string {
 	return Buffer.concat([local, central, eocd]).toString("base64");
 }
 
-const { aiService } = await import("./service");
+const { aiService, extractDocxTextFromBytes } = await import("./service");
+
+const paragraph = (text: string) => `<w:p><w:r><w:t>${text}</w:t></w:r></w:p>`;
+const part = (root: string, ...texts: string[]) =>
+	new TextEncoder().encode(`<?xml version="1.0"?><w:${root}>${texts.map(paragraph).join("")}</w:${root}>`);
 
 describe("AI DOCX parsing", () => {
 	it("sends DOCX content as extracted text instead of an unsupported file part", async () => {
@@ -106,5 +111,25 @@ describe("AI DOCX parsing", () => {
 		expect(messages).toContain("Jane Doe & Co");
 		expect(messages).toContain("converted to plain text");
 		expect(messages).not.toContain('"type":"file"');
+	});
+});
+
+describe("extractDocxTextFromBytes", () => {
+	it("reads the page header and footer around the body, each repeated header once", () => {
+		const docx = zipSync({
+			"word/document.xml": part("document", "Experience", "Designer at Lumen"),
+			"word/header1.xml": part("hdr", "Priya Raman", "priya@example.com · Berlin"),
+			"word/header2.xml": part("hdr", "Priya Raman", "priya@example.com · Berlin"),
+			"word/footer1.xml": part("ftr", "linkedin.com/in/priya"),
+		});
+		expect(extractDocxTextFromBytes(docx)).toBe(
+			"Priya Raman\npriya@example.com · Berlin\n\nExperience\nDesigner at Lumen\n\nlinkedin.com/in/priya",
+		);
+	});
+
+	it("still refuses a file with no text anywhere", () => {
+		expect(() => extractDocxTextFromBytes(zipSync({ "word/document.xml": part("document") }))).toThrow(
+			"DOCX document content is empty.",
+		);
 	});
 });

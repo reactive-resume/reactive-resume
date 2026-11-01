@@ -1,6 +1,10 @@
+import type { ImportReview } from "@reactive-resume/import/review";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { DocumentPickerAsset } from "expo-document-picker";
 import { t } from "@lingui/core/macro";
 import { File } from "expo-file-system";
+import { extractDocxText } from "@reactive-resume/import/docx-text";
+import { reviewImport, withLeftoverSection } from "@reactive-resume/import/review";
 import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/data";
 import { client, rest, SessionChangedError } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
@@ -14,6 +18,36 @@ export type ImportFormat =
 	| "DOCX"
 	| "LETTER";
 export type ImportedDocument = { id: string; type: "resume" | "letter" };
+/** A file read with AI, waiting for the user to check what came in before the resume is created. */
+export type ImportToReview = {
+	type: "review";
+	data: ResumeData;
+	review: ImportReview;
+	/** The file's own lines were compared with what came in (a Word file); a PDF read with AI isn't on the phone. */
+	compared: boolean;
+};
+
+/** The Word file's own lines, to list what the reader left out; null when they can't be read this way. */
+async function wordLines(file: File) {
+	try {
+		return extractDocxText(await file.bytes()).split("\n");
+	} catch {
+		return null;
+	}
+}
+
+/** Creates the reviewed resume, with what the reader couldn't place kept as a section when the user chose to. */
+export async function createReviewedResume(pending: ImportToReview, keepLeftovers: boolean, signal: AbortSignal) {
+	const scope = getAccountScope();
+	if (!scope) throw new SessionChangedError();
+	const data =
+		keepLeftovers && pending.review.notImported.length > 0
+			? withLeftoverSection(pending.data, pending.review.notImported, t`More from your file`)
+			: pending.data;
+	const id = await client.resume.import({ data }, { signal, context: { scope } });
+	if (getAccountScope() !== scope) throw new SessionChangedError();
+	return { id, type: "resume" as const };
+}
 
 export class ImportError extends Error {}
 
@@ -42,7 +76,7 @@ export async function importDocument(
 	aiAvailable: boolean,
 	aiPdf: boolean,
 	signal: AbortSignal,
-): Promise<ImportedDocument> {
+): Promise<ImportedDocument | ImportToReview> {
 	const scope = getAccountScope();
 	if (!scope) throw new SessionChangedError();
 	const options = { signal, context: { scope } };
@@ -97,9 +131,11 @@ export async function importDocument(
 					)
 				: await client.ai.parsePdf(input, options);
 		assertCurrent();
-		const id = await client.resume.import({ data }, options);
+		// A model's reading is checked before anything is created (web new-document dialog). The phone has no PDF
+		// text reader, so only a Word file's leftover lines are listed.
+		const lines = format === "DOCX" ? await wordLines(file) : null;
 		assertCurrent();
-		return { id, type: "resume" };
+		return { type: "review", data, review: reviewImport(data, lines ?? undefined), compared: lines !== null };
 	}
 	const body = new FormData();
 	if (json && typeof json === "object" && "data" in json && !("sections" in json) && !("metadata" in json)) {

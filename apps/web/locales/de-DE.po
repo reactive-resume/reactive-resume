@@ -94,6 +94,11 @@ msgstr "(erforderlich)"
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
 msgstr "{0, plural, =1 {Änderung übernommen} other {# Änderungen übernommen}}"
 
+#. placeholder {0}: overflow.authored
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr ""
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
@@ -203,6 +208,7 @@ msgstr "{0, plural, one {# Dokument in den Papierkorb verschoben} other {# Dokum
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {#-Bearbeitung konnte nicht platziert werden: Der Text wurde geändert. Bitten Sie noch einmal darum, es noch einmal zu machen.} other {#-Änderungen konnten nicht platziert werden: Ihr Text wurde geändert. Bitten Sie erneut, sie zu wiederholen.}}"
 
+#. placeholder {0}: section.entries
 #. placeholder {0}: step.entries
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
@@ -226,6 +232,11 @@ msgstr "{0, plural, one {# Feld ist im Editor zur kurzen Prüfung markiert.} oth
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
 msgstr "{0, plural, one {Das Problem # wird ignoriert.} other {#-Probleme werden ignoriert.}}"
+
+#. placeholder {0}: review.notImported.length
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: proposals.length
 #: src/features/assistant/conversation.tsx
@@ -367,6 +378,11 @@ msgstr ""
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {Vor # Minute begonnen} other {Vor # Minuten begonnen}}"
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
+msgstr ""
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -963,6 +979,10 @@ msgstr "{toCheck, plural, one {Das Feld # muss überprüft werden.} other {#-Fel
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# zur Überprüfung} other {# zur Überprüfung}}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "{total, plural, one {# public link will change} other {# public links will change}}"
 msgstr ""
@@ -1129,6 +1149,10 @@ msgstr "Ein Code von einer Authentifizierungs-App bei der Anmeldung"
 msgid "A comfortable length, and it fits on one page."
 msgstr "Eine angenehme Länge, und es passt auf eine Seite."
 
+#: src/features/assistant/conversation.tsx
+msgid "A conversation's files can total up to 100 MB. Start a new conversation."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A date is in the future."
 msgstr "Ein Datum liegt in der Zukunft."
@@ -1155,6 +1179,10 @@ msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A fact that's no longer in Knowledge"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
 msgstr ""
 
 #: src/features/career/coach-chat.tsx
@@ -1308,6 +1336,10 @@ msgstr "Akzeptieren"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept all"
 msgstr "Akzeptiere alles"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1734,6 +1766,10 @@ msgstr "Fügen Sie die Domainendung hinzu, z. B. {domain}.com"
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Fügen Sie diese Einträge dort hinzu, wo Sie die Domain verwalten, und prüfen Sie dann. Änderungen können einige Stunden brauchen, bis sie überall ankommen."
@@ -1828,6 +1864,11 @@ msgstr ""
 
 #: src/features/settings/profile.tsx
 msgid "Address line 2"
+msgstr ""
+
+#. placeholder {0}: addition.anchor
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Adds after: {0}"
 msgstr ""
 
 #: src/features/templates/gallery.tsx
@@ -2583,6 +2624,10 @@ msgid "Attach a resume file (PDF, up to 10 MB)"
 msgstr "Lebenslaufdatei anhängen (PDF, bis zu 10 MB)"
 
 #: src/features/assistant/conversation.tsx
+msgid "Attach up to 10 files per message."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Attachment"
 msgstr "Anhang"
@@ -3178,6 +3223,10 @@ msgstr "Diese Stelle mit Ihren Belegen abgleichen"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Check views"
 msgstr "Überprüfen Sie die Ansichten"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/libs/seo.ts
 msgid "Check whether software can read your resume PDF. Runs entirely in your browser, so your file is never uploaded."
@@ -4317,6 +4366,11 @@ msgstr "Diese Datei konnte nicht gelesen werden. Wählen Sie eine .csv-Datei und
 msgid "Couldn't read that file. Try again."
 msgstr "Diese Datei konnte nicht gelesen werden. Versuchen Sie es erneut."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "Die Daten von {entries} konnten nicht gelesen werden, daher bleiben sie am Ende. Korrigieren Sie ihre Daten und sortieren Sie erneut."
@@ -4448,7 +4502,7 @@ msgstr "Die Geschichte konnte nicht gespeichert werden. Versuchen Sie es erneut.
 msgid "Couldn't save the tags. Try again."
 msgstr "Die Stichwörter konnten nicht gespeichert werden. Versuchen Sie es erneut."
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "Die Zeitzone konnte nicht gespeichert werden. Versuchen Sie es erneut."
 
@@ -4798,6 +4852,10 @@ msgstr ""
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
 msgstr "Jetzt einen erstellen"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Create resume"
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
@@ -5588,7 +5646,7 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Ziehen Sie das Bild, um es neu zu positionieren, und verwenden Sie den Schieberegler zum Zoomen vor dem Hochladen."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -6212,6 +6270,11 @@ msgstr "Fakten, Geschichten und Präferenzen, die in Ihrem Wissen eingeschaltet 
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to check it"
+msgstr ""
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
@@ -6269,6 +6332,10 @@ msgstr "Dateiname"
 #: src/features/resume/import/read-file.ts
 msgid "file read"
 msgstr "Datei gelesen"
+
+#: src/features/assistant/conversation.tsx
+msgid "Files can be up to 25 MB."
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
@@ -6870,9 +6937,18 @@ msgstr "Hebräisch"
 msgid "Help & docs"
 msgstr "Hilfe und Dokumente"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "Hilf mir, aus einem Erfolg eine Geschichte mit Situation, Aufgabe, Handlung, Ergebnis und Reflexion zu machen."
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7857,6 +7933,10 @@ msgstr "Zuletzt bearbeitet"
 msgid "Last reviewed"
 msgstr ""
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr ""
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7870,6 +7950,10 @@ msgstr ""
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "Zuletzt verwendet"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8128,6 +8212,10 @@ msgstr ""
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
 msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
@@ -8753,6 +8841,10 @@ msgstr "Mehr zu {title}"
 msgid "More formatting"
 msgstr "Weitere Formatierung"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "More from your file"
+msgstr ""
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
 msgstr "Weitere Optionen"
@@ -8934,6 +9026,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Name"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Name of {label}"
 msgstr "Name von {label}"
@@ -9056,6 +9152,10 @@ msgstr ""
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter instead"
 msgstr "Stattdessen neues Anschreiben"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New document"
@@ -9402,6 +9502,10 @@ msgstr ""
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "Noch keine Lebensläufe."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "No sections were found in this file."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "No selected documents were deleted. Refresh to see what remains."
@@ -10685,6 +10789,16 @@ msgstr "Üben · Ihr Einstieg, etwa 40 Sekunden laut"
 msgid "Practice another question"
 msgstr "Eine andere Frage üben"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr ""
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "Üben Sie für Ihre Interviews bei {company}."
@@ -11737,6 +11851,10 @@ msgstr "Ersetzen Sie Icon-Schriftarten durch reinen Text und exportieren Sie ern
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Ersetzen Sie Tabellen durch einfache Absätze und Listen. Zellen werden in Speicherreihenfolge extrahiert, nicht in Lesereihenfolge."
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "Ersetzt „{current}“ in der Bewerbung."
@@ -12251,6 +12369,11 @@ msgstr "Erneut ausführen"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "Nutzerforschung mit Kunden durchführen"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -12779,6 +12902,10 @@ msgstr "Abschnitte"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Sections · print order"
 msgstr "Abschnitte · Druckreihenfolge"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Sections found"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Sections use headings systems recognize, and work experience shows."
@@ -13782,6 +13909,10 @@ msgid "Step {0} of {1}"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
+msgid "Still runs onto page {next}."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -14201,6 +14332,10 @@ msgstr "Die Suche Ihres Servers wird getestet…"
 msgid "Testing…"
 msgstr "Testen…"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Text"
 msgstr "Text"
@@ -14544,6 +14679,10 @@ msgstr "Die Stellenausschreibung wurde mit dieser Stellenbewerbung gespeichert."
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
 msgstr ""
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The posting:"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "Der Anbieter antwortete nicht. Überprüfen Sie den Schlüssel, das Modell und die Basis URL."
@@ -14861,6 +15000,10 @@ msgstr "Diese Datei ist groß für einen Lebenslauf."
 msgid "This file is larger than many application forms accept."
 msgstr "Diese Datei ist größer, als viele Bewerbungsformulare akzeptieren."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
 msgstr "Diese Datei ist kein lesbares Bild. Wähle ein Foto im Format PNG, JPEG, WebP oder GIF."
@@ -14876,6 +15019,10 @@ msgstr "Diese Datei verwendet viele verschiedene Schriftarten."
 #: src/features/ats-checker/messages.ts
 msgid "This file uses Type 3 fonts, which carry drawings instead of characters."
 msgstr "Diese Datei verwendet Type-3-Schriftarten, die Zeichnungen statt Zeichen enthalten."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -15051,8 +15198,12 @@ msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Dieser Anmeldeversuch ist abgelaufen oder wurde bereits verwendet. Versuchen Sie es erneut."
 
 #: src/features/career/workspace/practise.tsx
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr ""
+
+#: src/features/career/workspace/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
-msgstr "Diese Geschichte ist nicht verfügbar oder verwendet ausgeschaltete Fakten."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "This time does not exist in the selected timezone. Choose another time."
@@ -15082,6 +15233,19 @@ msgstr "Straffen"
 msgid "Tighten to one page"
 msgstr "Auf eine Seite spannen"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It already fits on one page, so only cut what's weak."
+msgstr ""
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next} by about {0} lines."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next}."
+msgstr ""
+
 #: src/features/career/shared.tsx
 msgid "Tightening"
 msgstr "Wird gestrafft"
@@ -15109,6 +15273,10 @@ msgstr "Uhrzeit, Link, Gesprächspartner, Gesendetes"
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "Zeiten werden in {timeZone} angezeigt."
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr ""
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15794,6 +15962,10 @@ msgstr "Dieses Ziel verwenden"
 msgid "Use this device's timezone ({device})"
 msgstr "Zeitzone dieses Geräts verwenden ({device})"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "Nutzen Sie diesen Anbieter"
@@ -16226,6 +16398,10 @@ msgstr "Was es überprüft"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "Die zugeordnete Kategorie bestimmt Erinnerungen, versandte Dokumente und Einblicke. Sie lässt sich später nicht ändern; füge stattdessen eine neue Phase hinzu."
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
@@ -16723,6 +16899,10 @@ msgstr "Ihre Antwort"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Your answer changed while the draft was written. Draft again to use it."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "Your assistant files can total up to 1 GB. Delete conversations you no longer need."
 msgstr ""
 
 #: src/features/career/workspace/practise.tsx

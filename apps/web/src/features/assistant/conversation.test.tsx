@@ -20,7 +20,14 @@ vi.mock("@tanstack/react-query", () => ({
 	useQuery: mocks.receipts,
 }));
 vi.mock("@/features/resume/editor/store", () => ({
-	useEditorStore: { setState: mocks.publish },
+	// Nothing drawn yet: no overflow line under applied sets.
+	useEditorStore: Object.assign(
+		(select: (state: { rendered: { pageCount: number } }) => unknown) => select({ rendered: { pageCount: 0 } }),
+		{ setState: mocks.publish },
+	),
+}));
+vi.mock("@/features/resume/builder/draft", () => ({
+	useResumeStore: (select: (state: { resume: null }) => unknown) => select({ resume: null }),
 }));
 vi.mock("@/libs/orpc/client", () => ({
 	client: { agent: { attachments: { create: mocks.attach }, messages: { setEditStatus: mocks.record } } },

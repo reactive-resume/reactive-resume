@@ -61,7 +61,21 @@ export function measureOverflow(data: ResumeData, rendered: { pageCount: number;
  * Fit to the authored pages: tightens density, then margins, then size (never below 9 pt), waiting for the page
  * to re-render after each step. The whole run is one undo step.
  */
-export async function runFit() {
+export function runFit() {
+	const id = useResumeStore.getState().resume?.id;
+	if (!id) return Promise.resolve();
+	const current = fitting.get(id);
+	if (current) return current;
+	const run = fitOnce().finally(() => fitting.delete(id));
+	fitting.set(id, run);
+	return run;
+}
+
+// One Fit at a time per resume: a second press joins the run already going instead of reading a page count that
+// hasn't caught up with the first run's last step. Runs for different resumes stay apart.
+const fitting = new Map<string, Promise<void>>();
+
+async function fitOnce() {
 	const { resume, updateResumeData, undo } = useResumeStore.getState();
 	if (!resume) return;
 	const { metadata } = resume.data;

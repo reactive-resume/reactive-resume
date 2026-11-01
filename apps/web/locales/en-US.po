@@ -89,6 +89,11 @@ msgstr "(required)"
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
 msgstr "{0, plural, =1 {Edit applied} other {# edits applied}}"
 
+#. placeholder {0}: overflow.authored
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, =1 {Fit to one page} other {Fit to # pages}}"
+msgstr "{0, plural, =1 {Fit to one page} other {Fit to # pages}}"
+
 #. placeholder {0}: open.jdCount
 #. placeholder {1}: open.label
 #. placeholder {2}: open.label
@@ -198,6 +203,7 @@ msgstr "{0, plural, one {# document moved to Trash} other {# documents moved to 
 msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 msgstr "{0, plural, one {# edit couldn't be placed: its text changed. Ask again to redo it.} other {# edits couldn't be placed: their text changed. Ask again to redo them.}}"
 
+#. placeholder {0}: section.entries
 #. placeholder {0}: step.entries
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
@@ -221,6 +227,11 @@ msgstr "{0, plural, one {# field is flagged for a quick look in the editor.} oth
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
 msgstr "{0, plural, one {# issue is ignored.} other {# issues are ignored.}}"
+
+#. placeholder {0}: review.notImported.length
+#: src/features/documents/new-document-dialog.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
 
 #. placeholder {0}: proposals.length
 #: src/features/assistant/conversation.tsx
@@ -362,6 +373,11 @@ msgstr "{0, plural, one {Showing # application that needs a follow-up.} other {S
 #: src/features/career/workspace/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
+msgstr "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -958,6 +974,10 @@ msgstr "{toCheck, plural, one {# field needs a look.} other {# fields need a loo
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# to check} other {# to check}}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+
 #: src/features/settings/account/profile.tsx
 msgid "{total, plural, one {# public link will change} other {# public links will change}}"
 msgstr "{total, plural, one {# public link will change} other {# public links will change}}"
@@ -1124,6 +1144,10 @@ msgstr "A code from an authenticator app at sign-in"
 msgid "A comfortable length, and it fits on one page."
 msgstr "A comfortable length, and it fits on one page."
 
+#: src/features/assistant/conversation.tsx
+msgid "A conversation's files can total up to 100 MB. Start a new conversation."
+msgstr "A conversation's files can total up to 100 MB. Start a new conversation."
+
 #: src/features/ats-checker/messages.ts
 msgid "A date is in the future."
 msgstr "A date is in the future."
@@ -1151,6 +1175,10 @@ msgstr "A fact that isn't available here. Saving will fail; edit the story first
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A fact that's no longer in Knowledge"
 msgstr "A fact that's no longer in Knowledge"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "A fact this story uses is switched off or changed since. Edit the story to check it."
+msgstr "A fact this story uses is switched off or changed since. Edit the story to check it."
 
 #: src/features/career/coach-chat.tsx
 msgid "A fact you've since forgotten"
@@ -1303,6 +1331,10 @@ msgstr "Accept"
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept all"
 msgstr "Accept all"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Accept the others"
+msgstr "Accept the others"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1729,6 +1761,10 @@ msgstr "Add the domain ending, like {domain}.com"
 msgid "Add the offer's terms"
 msgstr "Add the offer's terms"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr "Add them as a section called “More from your file” to sort later"
+
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1826,6 +1862,11 @@ msgstr "Address line 1"
 #: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr "Address line 2"
+
+#. placeholder {0}: addition.anchor
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Adds after: {0}"
+msgstr "Adds after: {0}"
 
 #: src/features/templates/gallery.tsx
 msgid "Adjust fonts, colors, spacing and sections in the resume builder. Export your finished resume to PDF or Word, or share a link. The PDFs above are examples to help you compare designs."
@@ -2580,6 +2621,10 @@ msgid "Attach a resume file (PDF, up to 10 MB)"
 msgstr "Attach a resume file (PDF, up to 10 MB)"
 
 #: src/features/assistant/conversation.tsx
+msgid "Attach up to 10 files per message."
+msgstr "Attach up to 10 files per message."
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Attachment"
 msgstr "Attachment"
@@ -3175,6 +3220,10 @@ msgstr "Check this role against your evidence"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Check views"
 msgstr "Check views"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Check what was found"
+msgstr "Check what was found"
 
 #: src/libs/seo.ts
 msgid "Check whether software can read your resume PDF. Runs entirely in your browser, so your file is never uploaded."
@@ -4314,6 +4363,11 @@ msgstr "Couldn't read that file. Choose a .csv file and try again."
 msgid "Couldn't read that file. Try again."
 msgstr "Couldn't read that file. Try again."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr "Couldn't read the attachment: {0}"
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
@@ -4445,7 +4499,7 @@ msgstr "Couldn't save the story. Try again."
 msgid "Couldn't save the tags. Try again."
 msgstr "Couldn't save the tags. Try again."
 
-#: src/features/settings/preferences.tsx
+#: src/features/settings/use-save-timezone.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "Couldn't save the timezone. Try again."
 
@@ -4795,6 +4849,10 @@ msgstr "Create new password"
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
 msgstr "Create one now"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Create resume"
+msgstr "Create resume"
 
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/share/format.ts
@@ -5585,8 +5643,8 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Drag to reposition and use the slider to zoom before uploading."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
-msgstr "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. We fill in every section and flag anything we're unsure of."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
+msgstr "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Drop a PDF here or choose a file"
@@ -6209,6 +6267,11 @@ msgstr "Facts, stories and preferences that are switched on in Knowledge"
 msgid "Failed"
 msgstr "Failed"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Failed · {0} · open to check it"
+msgstr "Failed · {0} · open to check it"
+
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr "Family name"
@@ -6266,6 +6329,10 @@ msgstr "File name"
 #: src/features/resume/import/read-file.ts
 msgid "file read"
 msgstr "file read"
+
+#: src/features/assistant/conversation.tsx
+msgid "Files can be up to 25 MB."
+msgstr "Files can be up to 25 MB."
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Fill fields"
@@ -6867,9 +6934,18 @@ msgstr "Hebrew"
 msgid "Help & docs"
 msgstr "Help & docs"
 
+#. placeholder {0}: starter.company
+#: src/features/career/coach.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr "Help me prepare for my {0} interview."
+
 #: src/features/career/coach.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
+
+#: src/features/career/coach.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr "Help me weigh the offer I have against what I want."
 
 #: src/features/settings/preferences.tsx
 msgid "Help translate"
@@ -7854,6 +7930,10 @@ msgstr "Last edited"
 msgid "Last reviewed"
 msgstr "Last reviewed"
 
+#: src/features/career/today.tsx
+msgid "Last run failed · open to check it"
+msgstr "Last run failed · open to check it"
+
 #. placeholder {0}: when(row.lastSeenAt)
 #: src/features/career/today.tsx
 msgid "Last seen in search: {0}"
@@ -7867,6 +7947,10 @@ msgstr "Last updated: {0}"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Last used"
 msgstr "Last used"
+
+#: src/features/career/today.tsx
+msgid "Later interviews"
+msgstr "Later interviews"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -8126,6 +8210,10 @@ msgstr "Link {0} label"
 #: src/features/settings/profile.tsx
 msgid "Link {0} URL"
 msgstr "Link {0} URL"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Link a fact to practice this story"
+msgstr "Link a fact to practice this story"
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Link a Reactive Resume (recommended)"
@@ -8750,6 +8838,10 @@ msgstr "More for {title}"
 msgid "More formatting"
 msgstr "More formatting"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "More from your file"
+msgstr "More from your file"
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "More options"
 msgstr "More options"
@@ -8931,6 +9023,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Name"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr "Name and contact details weren't found. Add them in Basics."
+
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Name of {label}"
 msgstr "Name of {label}"
@@ -9053,6 +9149,10 @@ msgstr "New cover letter"
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter instead"
 msgstr "New cover letter instead"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "New detail: check it's true"
+msgstr "New detail: check it's true"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New document"
@@ -9399,6 +9499,10 @@ msgstr "No resumes yet"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "No resumes yet."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "No sections were found in this file."
+msgstr "No sections were found in this file."
 
 #: src/features/documents/document-actions.tsx
 msgid "No selected documents were deleted. Refresh to see what remains."
@@ -10682,6 +10786,16 @@ msgstr "Practice · Your opening, about 40 seconds aloud"
 msgid "Practice another question"
 msgstr "Practice another question"
 
+#. placeholder {0}: next.application.company
+#: src/features/career/knowledge/stories.tsx
+msgctxt "Button: rehearse interview answers"
+msgid "Practice for {0}"
+msgstr "Practice for {0}"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Practice for which interview?"
+msgstr "Practice for which interview?"
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Practice for your {company} interviews."
 msgstr "Practice for your {company} interviews."
@@ -11734,6 +11848,10 @@ msgstr "Replace icon fonts with plain text, then re-export."
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Replaced by a newer suggestion"
+msgstr "Replaced by a newer suggestion"
+
 #: src/features/career/workspace/messages.tsx
 msgid "Replaces “{current}” on the application."
 msgstr "Replaces “{current}” on the application."
@@ -12248,6 +12366,11 @@ msgstr "Run again"
 #: src/features/homepage/prepare.tsx
 msgid "Run research with customers"
 msgstr "Run research with customers"
+
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Running · {0}"
+msgstr "Running · {0}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Runs onto page {next}"
@@ -12776,6 +12899,10 @@ msgstr "Sections"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Sections · print order"
 msgstr "Sections · print order"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Sections found"
+msgstr "Sections found"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Sections use headings systems recognize, and work experience shows."
@@ -13779,6 +13906,10 @@ msgid "Step {0} of {1}"
 msgstr "Step {0} of {1}"
 
 #: src/features/assistant/conversation.tsx
+msgid "Still runs onto page {next}."
+msgstr "Still runs onto page {next}."
+
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -14198,6 +14329,10 @@ msgstr "Testing your server's search…"
 msgid "Testing…"
 msgstr "Testing…"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "text"
+msgstr "text"
+
 #: src/features/resume/editor/write/entries.tsx
 msgid "Text"
 msgstr "Text"
@@ -14541,6 +14676,10 @@ msgstr "The posting saved with this application."
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
 msgstr "The posting text or retrieved page. Links also go to the reader and the site being read."
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The posting:"
+msgstr "The posting:"
+
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "The provider didn't answer. Check the key, the model and the base URL."
@@ -14858,6 +14997,10 @@ msgstr "This file is large for a resume."
 msgid "This file is larger than many application forms accept."
 msgstr "This file is larger than many application forms accept."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+msgstr "This file is long, so only its first pages were compared with what came in. Check the rest in the editor."
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
 msgstr "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
@@ -14873,6 +15016,10 @@ msgstr "This file uses a lot of different fonts."
 #: src/features/ats-checker/messages.ts
 msgid "This file uses Type 3 fonts, which carry drawings instead of characters."
 msgstr "This file uses Type 3 fonts, which carry drawings instead of characters."
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
+msgstr "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
@@ -15048,6 +15195,10 @@ msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "This sign-in attempt expired or was already used. Try again."
 
 #: src/features/career/workspace/practise.tsx
+msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+msgstr "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
+
+#: src/features/career/workspace/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
 msgstr "This story is unavailable or uses facts that are switched off."
 
@@ -15079,6 +15230,19 @@ msgstr "Tighten"
 msgid "Tighten to one page"
 msgstr "Tighten to one page"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It already fits on one page, so only cut what's weak."
+msgstr "Tighten to one page. It already fits on one page, so only cut what's weak."
+
+#. placeholder {0}: overflow.lines
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next} by about {0} lines."
+msgstr "Tighten to one page. It runs onto page {next} by about {0} lines."
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. It runs onto page {next}."
+msgstr "Tighten to one page. It runs onto page {next}."
+
 #: src/features/career/shared.tsx
 msgid "Tightening"
 msgstr "Tightening"
@@ -15106,6 +15270,10 @@ msgstr "Time, link, who, what you sent"
 #: src/features/career/offer-entry.tsx
 msgid "Times are shown in {timeZone}."
 msgstr "Times are shown in {timeZone}."
+
+#: src/features/career/today.tsx
+msgid "Times here are in {timeZone}, your account's timezone."
+msgstr "Times here are in {timeZone}, your account's timezone."
 
 #: src/features/settings/preferences.tsx
 msgid "Timezone"
@@ -15791,6 +15959,10 @@ msgstr "Use this destination"
 msgid "Use this device's timezone ({device})"
 msgstr "Use this device's timezone ({device})"
 
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({deviceTimeZone})"
+msgstr "Use this device's timezone ({deviceTimeZone})"
+
 #: src/features/settings/ai/providers.tsx
 msgid "Use this provider"
 msgstr "Use this provider"
@@ -16223,6 +16395,10 @@ msgstr "What it checks"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
 msgstr "What it counts as decides reminders, sent documents and Insights. It can't be changed later; add a new stage instead."
+
+#: src/features/career/coach.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr "What kinds of roles fit what I've done so far?"
 
 #: src/features/career/coach-chat.tsx
 msgid "What matters"
@@ -16721,6 +16897,10 @@ msgstr "Your answer"
 #: src/features/career/workspace/apply.tsx
 msgid "Your answer changed while the draft was written. Draft again to use it."
 msgstr "Your answer changed while the draft was written. Draft again to use it."
+
+#: src/features/assistant/conversation.tsx
+msgid "Your assistant files can total up to 1 GB. Delete conversations you no longer need."
+msgstr "Your assistant files can total up to 1 GB. Delete conversations you no longer need."
 
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx

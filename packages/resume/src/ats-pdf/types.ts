@@ -360,6 +360,8 @@ export type JdTermMatch = {
 	jdCount: number;
 	resumeCount: number;
 	weight: number;
+	/** A name the curated skill list knows ("Figma", "SQL"): one that belongs in Skills as it is. */
+	skill?: boolean;
 };
 
 export type JdMatchReport = {
