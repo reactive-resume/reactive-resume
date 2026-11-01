@@ -2428,10 +2428,6 @@ msgstr "ఆర్కైవ్ చేయబడింది (దానిని �
 msgid "Area of study"
 msgstr "అధ్యయనం యొక్క ప్రాంతం"
 
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "సాఫ్ట్‌వేర్ చదివినట్లు"
-
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -2537,6 +2533,11 @@ msgstr "అసిస్టెంట్ సంభాషణలు"
 #: src/features/settings/ai/web-access.tsx
 msgid "Assistant."
 msgstr "సహాయకుడు."
+
+#. Password rule shown under the password field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "At least 8 characters."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "At Northwind Labs I led research for our onboarding redesign. I interviewed 14 customers, found three drop-off points, and we shipped a shorter setup. Activation rose from 31% to 44%."
@@ -3195,10 +3196,6 @@ msgstr "మీ ఇమెయిల్‌ను తనిఖీ చేయండి
 msgid "Check your email for a link to reset your password."
 msgstr "మీ పాస్‌వర్డ్‌ను రీసెట్ చేయడానికి లింక్ కోసం మీ ఇమెయిల్‌ను తనిఖీ చేయండి."
 
-#: src/features/auth/pages/register.tsx
-msgid "Check your email for a link to verify your account."
-msgstr "మీ అకౌంట్‌ను ధృవీకరించడానికి లింక్ కోసం మీ ఇమెయిల్‌ను తనిఖీ చేయండి."
-
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
 msgid "Check your resume’s ATS readability"
@@ -3799,12 +3796,10 @@ msgstr "కంటెంట్ గ్రిడ్‌లో అమర్చబడ�
 msgid "Content revision: {0}"
 msgstr ""
 
-#. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/assistant/conversation.tsx
-#: src/features/auth/pages/register.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Continue"
 msgstr "కొనసాగించు"
@@ -4053,6 +4048,7 @@ msgid "Couldn't connect. Check the key and try again."
 msgstr "కనెక్ట్ చేయడం సాధ్యపడలేదు. కీని తనిఖీ చేసి, మళ్లీ ప్రయత్నించండి."
 
 #: src/features/auth/pages/login.tsx
+#: src/features/homepage/hero.tsx
 msgid "Couldn't continue as a guest. Try again."
 msgstr "అతిథిగా కొనసాగడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
 
@@ -4759,10 +4755,6 @@ msgstr "కవర్ లెటర్స్"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Create"
 msgstr "సృష్టించండి"
-
-#: src/features/templates/gallery.tsx
-msgid "Create a free account, then choose your template in Design. Switch layouts anytime without rewriting your content."
-msgstr "ఉచిత ఖాతాను సృష్టించండి, ఆపై డిజైన్లో మీ టెంప్లేట్‌ను ఎంచుకోండి. మీ కంటెంట్‌ని మళ్లీ వ్రాయకుండా ఎప్పుడైనా లేఅవుట్‌లను మార్చండి."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Create a new resume"
@@ -7178,6 +7170,10 @@ msgstr "రెజ్యూమెను దిగుమతి చేయండి"
 msgid "Import a resume, start a letter, save a job, copy one for a job, or start blank."
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
+msgid "Import a Word file instead"
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Import failed. Check the CSV and try again."
 msgstr "దిగుమతి విఫలమైంది. CSVని తనిఖీ చేసి మళ్లీ ప్రయత్నించండి."
@@ -7212,8 +7208,8 @@ msgid "Import the one you have, or start blank."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
-msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
-msgstr "ఈ ఫైల్‌ని ఉచిత Reactive Resumeకి దిగుమతి చేయండి. ప్రతి సమస్య చెక్‌లో మీ కోసం వేచి ఉంది."
+msgid "Import this file into a free Reactive Resume, then keep checking it in Check as you edit. Check reads the resume you're editing, so its findings can differ from this file's."
+msgstr ""
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Import this file into the browser helper, review the destination and fill report. Unsupported forms use exact PDF downloads and copyable answers below. Native browser integration requires its own verified build."
@@ -10079,6 +10075,11 @@ msgstr ""
 msgid "Optional for local Ollama"
 msgstr "స్థానిక Ollama కోసం ఐచ్ఛికం"
 
+#. Hint under the optional username field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "Optional. Leave it empty and we'll make one from your email. You can change it in Settings."
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
@@ -10133,10 +10134,6 @@ msgstr "ఆర్గనైజేషన్"
 #: src/features/resume/editor/write/improve.tsx
 msgid "Original"
 msgstr ""
-
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "అసలు పేజీ"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
@@ -10513,6 +10510,10 @@ msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Pick a template below to start with it, or choose later in Design. Switch layouts anytime without rewriting your content."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -13662,6 +13663,14 @@ msgstr "GitHub లో స్టార్‌లు"
 msgid "Start"
 msgstr "ప్రారంభించండి"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume"
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version from Documents."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Start a debrief"
 msgstr "సమీక్ష ప్రారంభించు"
@@ -14689,6 +14698,10 @@ msgstr "ప్రొఫైల్, పోర్ట్‌ఫోలియో లే
 msgid "There is no summary paragraph."
 msgstr "సారాంశ పేరాగ్రాఫ్ లేదు."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -15037,10 +15050,6 @@ msgstr "ఈ సర్వర్ ప్రామాణిక దశలను ఉ�
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "ఈ సైన్-ఇన్ ప్రయత్నం గడువు ముగిసింది లేదా ఇప్పటికే ఉపయోగించబడింది. మళ్ళీ ప్రయత్నించండి."
 
-#: src/features/auth/pages/register.tsx
-msgid "This step is optional, but recommended."
-msgstr "ఈ దశ ఐచ్ఛికం, కాని సిఫారసు చేయబడింది."
-
 #: src/features/career/workspace/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
 msgstr "ఈ కథ అందుబాటులో లేదు లేదా ఆఫ్ చేసిన వాస్తవాలను ఉపయోగిస్తుంది."
@@ -15275,6 +15284,10 @@ msgstr "దీనితో మళ్లీ ప్రయత్నించు"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
+msgstr ""
+
+#: src/features/homepage/hero.tsx
+msgid "Try it without an account"
 msgstr ""
 
 #: src/routes/auth/native-callback.tsx
@@ -15757,6 +15770,10 @@ msgstr "నమూనాను ఉపయోగించండి"
 msgid "Use saved version"
 msgstr ""
 
+#: src/features/templates/gallery.tsx
+msgid "Use the {name} template"
+msgstr ""
+
 #: src/features/resume/editor/check/actions.ts
 msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
@@ -15783,6 +15800,10 @@ msgstr "ఈ ప్రొవైడర్‌ని ఉపయోగించండ�
 
 #: src/features/career/workspace/fit.tsx
 msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Use this template"
 msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
@@ -15932,10 +15953,6 @@ msgstr "కోడ్‌ను ధ్రువీకరిస్తోంది..
 msgid "Verifying code…"
 msgstr "ధృవీకరణ కోడ్…"
 
-#: src/features/auth/pages/register.tsx
-msgid "Verifying your email confirms that you own this address."
-msgstr "మీ ఇమెయిల్‌ని ధృవీకరించడం వలన ఈ చిరునామా మీ స్వంతమని నిర్ధారిస్తుంది."
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date}"
 msgstr "{date} వెర్షన్ పంపబడింది"
@@ -16073,6 +16090,10 @@ msgstr "మేము {email}కి నిర్ధారణ లింక్‌�
 msgid "We sent a link to {currentEmail} to approve the change. Then open the link we send to {email}."
 msgstr "మార్పును ఆమోదించడానికి మేము {currentEmail}కి లింక్‌ని పంపాము. ఆపై మేము {email}కి పంపే లింక్‌ను తెరవండి."
 
+#: src/features/auth/pages/register.tsx
+msgid "We sent a link to verify your account. It's optional, and you can resend it from Settings."
+msgstr ""
+
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
 msgid "We sent a new verification link to {0}."
@@ -16143,10 +16164,12 @@ msgstr "ప్రతి అవసరాన్ని అంచనా వేస్
 msgid "Went well"
 msgstr "బాగా జరిగింది"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a parser reads"
 msgstr "పార్సర్ ఏమి చదువుతుంది"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a person sees"
 msgstr "ఒక వ్యక్తి ఏమి చూస్తాడు"
@@ -16671,10 +16694,6 @@ msgstr "మీరు అతిథి ఖాతాను ఉపయోగిస్
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "మీరు {MAX_APPLICATION_LANES} దశల పరిమితిని చేరుకున్నారు. మరో దశను జోడించడానికి ఒకదాన్ని తీసివేయండి."
-
-#: src/features/auth/pages/register.tsx
-msgid "Your account is ready"
-msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

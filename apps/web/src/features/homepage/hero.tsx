@@ -1,11 +1,17 @@
 import type { CSSProperties } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
-import { useEffect, useRef } from "react";
+import { Trans } from "@lingui/react/macro";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE } from "./scroll";
 import { Sheet } from "./sheet";
 import { CtaLink, Doodle } from "./ui";
+import { authClient } from "@/libs/auth/client";
+import { sessionQueryKey } from "@/libs/root-context";
 
 const fragmentKind = {
 	display: "font-anybody leading-none",
@@ -261,9 +267,47 @@ export function Hero() {
 					<p className="max-w-full font-display text-base leading-[1.45] text-pretty text-ink-2 min-[900px]:max-w-[min(25em,calc(50vw-var(--pw)/2-5vw))] min-[900px]:text-[clamp(17px,1.3vw,20px)]">
 						{t`Build a professional resume, download it as PDF or Word, and manage your job search in one place. Free templates, no ads, no paywall.`}
 					</p>
-					<CtaLink size="hero" />
+					<div className="flex flex-col items-end gap-2">
+						<CtaLink size="hero" />
+						<GuestLink />
+					</div>
 				</div>
 			</div>
 		</section>
+	);
+}
+
+/**
+ * "Try it without an account", under the hero's call to action, where the server allows guests: a guest session opens
+ * Documents, and signing up later keeps the work.
+ */
+function GuestLink() {
+	const { flags, session } = useRouteContext({ strict: false });
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const [pending, setPending] = useState(false);
+	if (!flags?.allowGuestLogin || session) return null;
+
+	const start = async () => {
+		setPending(true);
+		const { error } = await authClient.signIn.anonymous();
+		if (error) {
+			setPending(false);
+			toast.add({ type: "error", description: error.message || t`Couldn't continue as a guest. Try again.` });
+			return;
+		}
+		await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
+		void navigate({ to: "/dashboard" });
+	};
+
+	return (
+		<button
+			type="button"
+			disabled={pending}
+			onClick={() => void start()}
+			className="font-ui text-sm text-ink-2 underline underline-offset-3 transition-colors hover:text-ink disabled:opacity-60"
+		>
+			<Trans>Try it without an account</Trans>
+		</button>
 	);
 }

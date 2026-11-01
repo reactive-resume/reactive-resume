@@ -1,4 +1,5 @@
 // Kept apart from ./new-document-dialog.tsx, so the library loads without the importers that dialog needs.
+import type { Template } from "@reactive-resume/schema/templates";
 import { t } from "@lingui/core/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -56,7 +57,8 @@ export function useStartDocument(applicationId?: string) {
 
 	return {
 		creating,
-		startBlank: () =>
+		/** A blank resume; with `template`, in that template (chosen in the gallery before signing up). */
+		startBlank: (template?: Template) =>
 			start(async () => {
 				const resumeId = await createResume({
 					name: t`Untitled resume`,
@@ -64,6 +66,11 @@ export function useStartDocument(applicationId?: string) {
 					autoName: true,
 					withSampleData: false,
 				});
+				if (template)
+					await client.resume.patch({
+						id: resumeId,
+						operations: [{ op: "replace", path: "/metadata/template", value: template }],
+					});
 				await created(resumeId, "resume");
 				void navigate({ to: "/builder/$resumeId", params: { resumeId } });
 			}),

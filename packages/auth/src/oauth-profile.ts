@@ -140,7 +140,8 @@ async function isUsernameTaken(candidate: string): Promise<boolean> {
 	return Boolean(existingUser);
 }
 
-async function allocateUniqueUsername(email: string, preferredUsername?: string | null): Promise<string> {
+/** A free username from `preferredUsername`, else the email's local part, with `-1`, `-2`… when taken. */
+export async function allocateUniqueUsername(email: string, preferredUsername?: string | null): Promise<string> {
 	const emailLocalPart = getEmailLocalPart(email);
 	const preferred = preferredUsername ? toUsername(preferredUsername) : "";
 	const normalizedEmailLocalPart = toUsername(emailLocalPart);

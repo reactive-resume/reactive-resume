@@ -2428,10 +2428,6 @@ msgstr "ആർക്കൈവ് ചെയ്‌തു (അടയ്ക്കു
 msgid "Area of study"
 msgstr "പഠന മേഖല"
 
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "സോഫ്റ്റ്വെയർ അത് വായിക്കുന്നത് പോലെ"
-
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -2537,6 +2533,11 @@ msgstr "അസിസ്റ്റൻ്റ് സംഭാഷണങ്ങൾ"
 #: src/features/settings/ai/web-access.tsx
 msgid "Assistant."
 msgstr "അസിസ്റ്റൻ്റ്."
+
+#. Password rule shown under the password field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "At least 8 characters."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "At Northwind Labs I led research for our onboarding redesign. I interviewed 14 customers, found three drop-off points, and we shipped a shorter setup. Activation rose from 31% to 44%."
@@ -3195,10 +3196,6 @@ msgstr "നിങ്ങളുടെ ഇമെയിൽ പരിശോധിക�
 msgid "Check your email for a link to reset your password."
 msgstr "നിങ്ങളുടെ പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യുന്നതിനുള്ള ഒരു ലിങ്കിനായി നിങ്ങളുടെ ഇമെയിൽ പരിശോധിക്കുക."
 
-#: src/features/auth/pages/register.tsx
-msgid "Check your email for a link to verify your account."
-msgstr "നിങ്ങളുടെ അക്കൗണ്ട് സ്ഥിരീകരിക്കുന്നതിന് ഒരു ലിങ്കിനായി നിങ്ങളുടെ ഇമെയിൽ പരിശോധിക്കുക."
-
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
 msgid "Check your resume’s ATS readability"
@@ -3799,12 +3796,10 @@ msgstr "ഉള്ളടക്കം ഒരു ഗ്രിഡിലായി ക
 msgid "Content revision: {0}"
 msgstr ""
 
-#. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/assistant/conversation.tsx
-#: src/features/auth/pages/register.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Continue"
 msgstr "തുടരുക"
@@ -4053,6 +4048,7 @@ msgid "Couldn't connect. Check the key and try again."
 msgstr "ബന്ധിപ്പിക്കാൻ കഴിഞ്ഞില്ല. കീ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/auth/pages/login.tsx
+#: src/features/homepage/hero.tsx
 msgid "Couldn't continue as a guest. Try again."
 msgstr "അതിഥിയായി തുടരാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
@@ -4759,10 +4755,6 @@ msgstr "കവർ ലെറ്ററുകൾ"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Create"
 msgstr "സൃഷ്‌ടിക്കുക"
-
-#: src/features/templates/gallery.tsx
-msgid "Create a free account, then choose your template in Design. Switch layouts anytime without rewriting your content."
-msgstr "ഒരു സൗജന്യ അക്കൗണ്ട് സൃഷ്ടിക്കുക, തുടർന്ന് നിങ്ങളുടെ ടെംപ്ലേറ്റ് ഡിസൈൻ തിരഞ്ഞെടുക്കുക. നിങ്ങളുടെ ഉള്ളടക്കം മാറ്റിയെഴുതാതെ എപ്പോൾ വേണമെങ്കിലും ലേഔട്ടുകൾ മാറ്റുക."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Create a new resume"
@@ -7178,6 +7170,10 @@ msgstr "ഒരു റെസ്യൂമെ ഇറക്കുമതി ചെയ
 msgid "Import a resume, start a letter, save a job, copy one for a job, or start blank."
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
+msgid "Import a Word file instead"
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Import failed. Check the CSV and try again."
 msgstr "ഇറക്കുമതി failed. CSV പരിശോധിച്ച് again പരീക്ഷിക്കുക."
@@ -7212,8 +7208,8 @@ msgid "Import the one you have, or start blank."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
-msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
-msgstr "ഈ ഫയൽ ഒരു സൗജന്യ Reactive Resume-ലേക്ക് ഇമ്പോർട്ടുചെയ്യുക. എല്ലാ പ്രശ്‌നങ്ങളും ചെക്കിൽ നിങ്ങൾക്കായി കാത്തിരിക്കുന്നു."
+msgid "Import this file into a free Reactive Resume, then keep checking it in Check as you edit. Check reads the resume you're editing, so its findings can differ from this file's."
+msgstr ""
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Import this file into the browser helper, review the destination and fill report. Unsupported forms use exact PDF downloads and copyable answers below. Native browser integration requires its own verified build."
@@ -10079,6 +10075,11 @@ msgstr ""
 msgid "Optional for local Ollama"
 msgstr "പ്രാദേശിക Ollama-ന് ഓപ്ഷണൽ"
 
+#. Hint under the optional username field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "Optional. Leave it empty and we'll make one from your email. You can change it in Settings."
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
@@ -10133,10 +10134,6 @@ msgstr "സ്ഥാപനം"
 #: src/features/resume/editor/write/improve.tsx
 msgid "Original"
 msgstr ""
-
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "യഥാർത്ഥ പേജ്"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
@@ -10513,6 +10510,10 @@ msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Pick a template below to start with it, or choose later in Design. Switch layouts anytime without rewriting your content."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -13662,6 +13663,14 @@ msgstr "GitHub-ലെ സ്റ്റാറുകൾ"
 msgid "Start"
 msgstr "ആരംഭിക്കുക"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume"
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version from Documents."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Start a debrief"
 msgstr "ഒരു അവലോകനം തുടങ്ങുക"
@@ -14689,6 +14698,10 @@ msgstr "പ്രൊഫൈൽ, പോർട്ട്‌ഫോളിയോ അല
 msgid "There is no summary paragraph."
 msgstr "സംഗ്രഹ ഖണ്ഡിക ഇല്ല."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -15037,10 +15050,6 @@ msgstr "ഈ സർവർ സാധാരണ ഘട്ടങ്ങൾ ഉപയ�
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "ഈ സൈൻ-ഇൻ ശ്രമം കാലഹരണപ്പെട്ടു അല്ലെങ്കിൽ ഇതിനകം ഉപയോഗിച്ചു. വീണ്ടും ശ്രമിക്കുക."
 
-#: src/features/auth/pages/register.tsx
-msgid "This step is optional, but recommended."
-msgstr "ഈ പടി ഐച്ചികമാണ്, പക്ഷേ നിർദ്ദേശിക്കപ്പെടുന്നു."
-
 #: src/features/career/workspace/practise.tsx
 msgid "This story is unavailable or uses facts that are switched off."
 msgstr "ഈ കഥ ലഭ്യമല്ല, അല്ലെങ്കിൽ ഓഫാക്കിയ വസ്തുതകൾ ഉപയോഗിക്കുന്നു."
@@ -15275,6 +15284,10 @@ msgstr "ഇതുപയോഗിച്ച് വീണ്ടും ശ്രമ�
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
+msgstr ""
+
+#: src/features/homepage/hero.tsx
+msgid "Try it without an account"
 msgstr ""
 
 #: src/routes/auth/native-callback.tsx
@@ -15757,6 +15770,10 @@ msgstr "സാമ്പിൾ ഉപയോഗിക്കുക"
 msgid "Use saved version"
 msgstr ""
 
+#: src/features/templates/gallery.tsx
+msgid "Use the {name} template"
+msgstr ""
+
 #: src/features/resume/editor/check/actions.ts
 msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
@@ -15783,6 +15800,10 @@ msgstr "ഈ ദാതാവിനെ ഉപയോഗിക്കുക"
 
 #: src/features/career/workspace/fit.tsx
 msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Use this template"
 msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
@@ -15932,10 +15953,6 @@ msgstr "കോഡ് പരിശോദിക്കുന്നു..."
 msgid "Verifying code…"
 msgstr "കോഡ് പരിശോധിക്കുന്നു…"
 
-#: src/features/auth/pages/register.tsx
-msgid "Verifying your email confirms that you own this address."
-msgstr "നിങ്ങളുടെ ഇമെയിൽ പരിശോധിച്ചുറപ്പിക്കുന്നത് ഈ വിലാസം നിങ്ങളുടേതാണെന്ന് സ്ഥിരീകരിക്കുന്നു."
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date}"
 msgstr "പതിപ്പ് അയച്ചത് {date}"
@@ -16073,6 +16090,10 @@ msgstr "{email}-ലേക്ക് ഞങ്ങൾ ഒരു സ്ഥിരീ�
 msgid "We sent a link to {currentEmail} to approve the change. Then open the link we send to {email}."
 msgstr "മാറ്റം അംഗീകരിക്കാൻ ഞങ്ങൾ {currentEmail} എന്നതിലേക്ക് ഒരു ലിങ്ക് അയച്ചു. തുടർന്ന് ഞങ്ങൾ {email} എന്നതിലേക്ക് അയയ്ക്കുന്ന ലിങ്ക് തുറക്കുക."
 
+#: src/features/auth/pages/register.tsx
+msgid "We sent a link to verify your account. It's optional, and you can resend it from Settings."
+msgstr ""
+
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
 msgid "We sent a new verification link to {0}."
@@ -16143,10 +16164,12 @@ msgstr "ഓരോ ആവശ്യകതയും വിലയിരുത്ത�
 msgid "Went well"
 msgstr "നന്നായി പോയി"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a parser reads"
 msgstr "ഒരു പാഴ്‌സർ വായിക്കുന്നത്"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a person sees"
 msgstr "ഒരാൾ കാണുന്നത്"
@@ -16671,10 +16694,6 @@ msgstr "നിങ്ങൾ ഒരു അതിഥി അക്കൗണ്ട്
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "നിങ്ങൾ {MAX_APPLICATION_LANES} ഘട്ടങ്ങളുടെ പരിധിയിലെത്തി. മറ്റൊന്ന് ചേർക്കാൻ ഒരു ഘട്ടം നീക്കം ചെയ്യുക."
-
-#: src/features/auth/pages/register.tsx
-msgid "Your account is ready"
-msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

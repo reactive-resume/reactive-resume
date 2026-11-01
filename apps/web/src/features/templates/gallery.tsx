@@ -44,7 +44,7 @@ export function TemplateGallery() {
 							</a>
 						</div>
 						<p className="mt-3 text-sm text-ink-3">
-							{t`Create a free account, then choose your template in Design. Switch layouts anytime without rewriting your content.`}
+							{t`Pick a template below to start with it, or choose later in Design. Switch layouts anytime without rewriting your content.`}
 						</p>
 
 						<section aria-labelledby="layout-advice" className="mt-10 max-w-2xl">
@@ -96,14 +96,25 @@ export function TemplateGallery() {
 									<p className="mt-3 font-display text-[17px] leading-[1.45] text-pretty text-ink-2">
 										{i18n._(template.description)}
 									</p>
-									<a
-										href={`/templates/pdf/${id}.pdf`}
-										download={`${name}-resume-example.pdf`}
-										className={cn(linkClass, "mt-2 inline-flex min-h-11 items-center text-sm font-semibold")}
-										aria-label={t`Download ${name} sample PDF`}
-									>
-										{t`Download sample PDF`}
-									</a>
+									<div className="mt-2 flex flex-wrap items-center gap-x-5">
+										{/* Signed out, through sign-up; signed in, straight to a blank resume in this template. */}
+										<Link
+											to="/auth/register"
+											search={{ callbackURL: `/dashboard?template=${id}` }}
+											className={cn(linkClass, "inline-flex min-h-11 items-center text-sm font-semibold")}
+											aria-label={t`Use the ${name} template`}
+										>
+											{t`Use this template`}
+										</Link>
+										<a
+											href={`/templates/pdf/${id}.pdf`}
+											download={`${name}-resume-example.pdf`}
+											className={cn(linkClass, "inline-flex min-h-11 items-center text-sm font-semibold")}
+											aria-label={t`Download ${name} sample PDF`}
+										>
+											{t`Download sample PDF`}
+										</a>
+									</div>
 								</article>
 							);
 						})}
