@@ -19,6 +19,7 @@ import { getPdfCategoryDescription, getPdfCategoryLabel, getPdfFindingMessage } 
 import { savePendingImport, takePendingImport } from "./pending-import";
 import { runAtsCheck } from "./run-ats-check";
 import { RollingNumber } from "@/components/ui/rolling-number";
+import { useStartDocument } from "@/features/documents/use-start-document";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS, POP_CLASS, stagger } from "@/libs/motion";
 import { client } from "@/libs/orpc/client";
@@ -33,7 +34,7 @@ const SAMPLE = { url: "/templates/pdf/onyx.pdf", name: "Sample resume.pdf" };
 type State =
 	| { name: "idle"; error?: string }
 	| { name: "busy"; file: File; step: number }
-	| { name: "done"; file: File; result: AtsCheckResult }
+	| { name: "done"; file: File; result: AtsCheckResult; importError?: string }
 	| { name: "importing" };
 
 const stepOf = (progress: ExtractProgress) => (progress.phase === "loading" ? 0 : progress.phase === "text" ? 1 : 2);
@@ -55,7 +56,8 @@ type AtsCheckerProps = {
 
 /**
  * The public checker: drop a PDF, watch three steps, then see the score, what could cost a match, and the file as
- * software reads it. "Fix these in the editor" imports the same file (after signing up, if needed) and opens Check.
+ * software reads it. "Fix these in the editor" imports the same file (after signing up, if needed) and opens Check; a
+ * file with no text offers a blank resume or a Word import instead.
  */
 export function AtsChecker({ signedIn, importPending }: AtsCheckerProps) {
 	const navigate = useNavigate();
@@ -81,7 +83,8 @@ export function AtsChecker({ signedIn, importPending }: AtsCheckerProps) {
 		}
 	};
 
-	const importAndOpen = async (file: File) => {
+	// A failed import goes back to the report it came from, with the reason, rather than to an empty upload screen.
+	const importAndOpen = async (file: File, result?: AtsCheckResult) => {
 		setState({ name: "importing" });
 		let readFile: Awaited<ReturnType<typeof loadReadFile>> | undefined;
 		try {
@@ -91,18 +94,16 @@ export function AtsChecker({ signedIn, importPending }: AtsCheckerProps) {
 			const resumeId = await client.resume.import({ data });
 			await navigate({ to: "/builder/$resumeId", params: { resumeId }, search: { mode: "check" } });
 		} catch (error) {
-			setState({
-				name: "idle",
-				error:
-					readFile && error instanceof readFile.ImportError
-						? error.message
-						: getOrpcErrorMessage(error, { fallback: t`Couldn't import the file. Try again from Documents.` }),
-			});
+			const message =
+				readFile && error instanceof readFile.ImportError
+					? error.message
+					: getOrpcErrorMessage(error, { fallback: t`Couldn't import the file. Try again from Documents.` });
+			setState(result ? { name: "done", file, result, importError: message } : { name: "idle", error: message });
 		}
 	};
 
-	const fix = async (file: File) => {
-		if (signedIn) return importAndOpen(file);
+	const fix = async (file: File, result: AtsCheckResult) => {
+		if (signedIn) return importAndOpen(file, result);
 		await savePendingImport(file);
 		await navigate({ to: "/auth/register", search: { callbackURL: "/ats-checker?import=1" } });
 	};
@@ -141,7 +142,9 @@ export function AtsChecker({ signedIn, importPending }: AtsCheckerProps) {
 				<Result
 					result={state.result}
 					file={state.file}
-					onFix={() => void fix(state.file)}
+					signedIn={signedIn}
+					importError={state.importError}
+					onFix={() => void fix(state.file, state.result)}
 					onReset={() => setState({ name: "idle" })}
 				/>
 			) : (
@@ -376,10 +379,21 @@ function issueRows(report: PdfAtsReport): Row[] {
 	return rows;
 }
 
-type ResultProps = { result: AtsCheckResult; file: File; onFix: () => void; onReset: () => void };
+type ResultProps = {
+	result: AtsCheckResult;
+	file: File;
+	signedIn: boolean;
+	importError: string | undefined;
+	onFix: () => void;
+	onReset: () => void;
+};
 
-function Result({ result, file, onFix, onReset }: ResultProps) {
+// A file with no text behind its pages has nothing to import: the editor would open empty.
+const UNREADABLE = new Set(["NO_TEXT_LAYER", "IMAGE_ONLY_DOCUMENT"]);
+
+function Result({ result, file, signedIn, importError, onFix, onReset }: ResultProps) {
 	const { report } = result;
+	const unreadable = report.findings.some((finding) => UNREADABLE.has(finding.code));
 	const rows = issueRows(report);
 	const [open, setOpen] = useState<string | null>(rows[0]?.key ?? null);
 	const [lens, setLens] = useState<"page" | "text">("page");
@@ -479,15 +493,39 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 				)}
 
 				<div className="grid gap-2.5 rounded-xl bg-accent-soft p-4 max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:z-20 max-lg:rounded-none max-lg:border-t max-lg:border-line max-lg:bg-surface max-lg:pb-[max(1rem,env(safe-area-inset-bottom))]">
-					<b className="text-[15px] font-semibold max-lg:hidden">
-						<Trans>Fix these in a few minutes</Trans>
-					</b>
-					<span className="text-[13px] leading-[19px] text-ink-2 max-lg:hidden">
-						<Trans>Import this file into a free Reactive Resume. Every issue is waiting for you in Check.</Trans>
-					</span>
-					<Button className="h-10" onClick={onFix}>
-						<Trans>Fix these in the editor</Trans>
-					</Button>
+					{importError && (
+						<p role="alert" className="text-[13px] leading-[19px] text-danger-text">
+							{importError}
+						</p>
+					)}
+					{unreadable ? (
+						<>
+							<b className="text-[15px] font-semibold max-lg:hidden">
+								<Trans>There's no text here to bring into the editor</Trans>
+							</b>
+							<span className="text-[13px] leading-[19px] text-ink-2 max-lg:hidden">
+								<Trans>
+									Start a blank resume and paste your sections in, or import the Word version from Documents.
+								</Trans>
+							</span>
+							<StartInstead signedIn={signedIn} />
+						</>
+					) : (
+						<>
+							<b className="text-[15px] font-semibold max-lg:hidden">
+								<Trans>Fix these in a few minutes</Trans>
+							</b>
+							<span className="text-[13px] leading-[19px] text-ink-2 max-lg:hidden">
+								<Trans>
+									Import this file into a free Reactive Resume, then keep checking it in Check as you edit. Check reads
+									the resume you're editing, so its findings can differ from this file's.
+								</Trans>
+							</span>
+							<Button className="h-10" onClick={onFix}>
+								<Trans>Fix these in the editor</Trans>
+							</Button>
+						</>
+					)}
 				</div>
 
 				<button type="button" className="w-fit text-sm text-ink-2 underline underline-offset-2" onClick={onReset}>
@@ -500,10 +538,10 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 					<Tabs value={lens} onValueChange={(value) => setLens(value as "page" | "text")}>
 						<TabsList aria-label={t`How to show the file`}>
 							<TabsTrigger value="page">
-								<Trans>Original page</Trans>
+								<Trans>What a person sees</Trans>
 							</TabsTrigger>
 							<TabsTrigger value="text">
-								<Trans>As software reads it</Trans>
+								<Trans>What a parser reads</Trans>
 							</TabsTrigger>
 						</TabsList>
 					</Tabs>
@@ -534,6 +572,30 @@ function Result({ result, file, onFix, onReset }: ResultProps) {
 					</pre>
 				</div>
 			</section>
+		</div>
+	);
+}
+
+/**
+ * For a file with no text: a blank resume to paste into, or Documents to import the Word version. Signed out, both go
+ * through sign-up first.
+ */
+function StartInstead({ signedIn }: { signedIn: boolean }) {
+	const navigate = useNavigate();
+	const { creating, startBlank } = useStartDocument();
+	const signUp = () => void navigate({ to: "/auth/register", search: { callbackURL: "/dashboard" } });
+	return (
+		<div className="flex flex-wrap gap-2">
+			<Button className="h-10" loading={creating} onClick={() => (signedIn ? void startBlank() : signUp())}>
+				<Trans>Start a blank resume</Trans>
+			</Button>
+			<Button
+				variant="secondary"
+				className="h-10"
+				onClick={() => (signedIn ? void navigate({ to: "/dashboard" }) : signUp())}
+			>
+				<Trans>Import a Word file instead</Trans>
+			</Button>
 		</div>
 	);
 }

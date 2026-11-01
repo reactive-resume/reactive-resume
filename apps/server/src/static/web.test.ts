@@ -241,7 +241,14 @@ describe("web app fallback classification", () => {
 		},
 	);
 
-	it.each(["/templates", "/templates/azurill", "/templates/azurill.pdf"])(
+	it("sends /templates to the template gallery", async () => {
+		const response = await handleWebApp(new Request("https://example.com/templates?locale=de-DE"));
+
+		expect(response.status).toBe(301);
+		expect(response.headers.get("Location")).toBe("/resume-templates?locale=de-DE");
+	});
+
+	it.each(["/templates/azurill", "/templates/azurill.pdf"])(
 		"returns 404 for retired template preview %s",
 		async (pathname) => {
 			const response = await handleWebApp(new Request(`https://example.com${pathname}`));

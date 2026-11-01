@@ -76,21 +76,23 @@ Only the first 30 pages of a long file are checked; the report says so when that
 
 Above your file, switch between two views:
 
-- **Original page** shows the PDF as a person sees it.
-- **As software reads it** shows the plain text a parser extracts, in the order it comes out.
+- **What a person sees** shows the PDF as it looks.
+- **What a parser reads** shows the plain text a parser extracts, in the order it comes out. The editor's Check uses the same two names.
 
 Compare the two. Look for a sidebar landing in the middle of your experience, contact details split across lines, or icons turning into empty boxes.
 
 <Frame caption="Compare extracted text with the original page">
   <img
     src="/images/guides/using-the-ats-checker/as-software-reads-it.webp"
-    alt="ATS checker with As software reads it selected, showing the fictional resume as extracted plain text"
+    alt="ATS checker with What a parser reads selected, showing the fictional resume as extracted plain text"
   />
 </Frame>
 
 ## Fix the issues in Reactive Resume
 
-Select **Fix these in the editor** to import the same file into a free Reactive Resume account. The file is read in your browser, the same way the check read it, and the new resume opens in **Check** with the issues waiting for you.
+Select **Fix these in the editor** to import the same file into a free Reactive Resume account. The file is read in your browser, the same way the check read it, and the new resume opens in **Check**. Check reads the resume you're now editing rather than the original file, so its findings can differ: problems in how the file was made (fonts, columns, missing tags) don't carry over, while content checks do. If the import fails, the report stays on screen with the reason.
+
+A PDF with no text behind its pages (a scan or a picture) has nothing to import. Instead of **Fix these in the editor**, the checker offers **Start a blank resume**, to paste your sections in, and **Import a Word file instead**, which opens Documents. If you're signed out, both go through sign-up first.
 
 - **If you're signed in,** the import starts straight away.
 - **If you aren't,** you're taken to create an account first. The file waits in your browser in the meantime and is imported as soon as you're back, then removed from the browser.
