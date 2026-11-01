@@ -570,6 +570,14 @@ msgstr "{0} मध्ये {accepted} लागू गरियो"
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
+msgstr ""
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
 msgstr "{authored, plural, =1 {एक पृष्ठमा मिलाउनुहोस्} other {# पृष्ठमा मिलाउनुहोस्}}"
@@ -621,6 +629,10 @@ msgstr "{count, plural, one {# प्रविष्टि} other {# प्र�
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# खुला समस्या} other {# खुला समस्याहरू}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{count, plural, one {Added page {page} and moved # section onto it} other {Added page {page} and moved # sections onto it}}"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -853,10 +865,6 @@ msgstr "{open, plural, one {# समीक्षा गर्न चीज।} o
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {# पृष्ठ} other {# पृष्ठहरू}}"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
-msgstr "{pages, plural, one {9 pt मा अझै # पृष्ठ। कुनै खण्ड लुकाउनुहोस् वा प्रविष्टिहरू छोट्याउनुहोस्।} other {9 pt मा अझै # पृष्ठ। कुनै खण्ड लुकाउनुहोस् वा प्रविष्टिहरू छोट्याउनुहोस्।}}"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
@@ -1650,6 +1658,15 @@ msgstr "देशको कोडसहित एउटा थप्नुहो
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Add page"
 msgstr "पृष्ठ थप्नुहोस्"
+
+#. placeholder {0}: authored + 1
+#: src/features/resume/editor/design/fit.ts
+msgid "Add page {0}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Add page {next}"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Add passkey"
@@ -4421,6 +4438,10 @@ msgstr "तपाईंका परिवर्तनहरू सुरक्�
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't save your changes. Try again."
 msgstr "तपाईंका परिवर्तनहरू सुरक्षित गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
+
+#: src/features/resume/builder/draft.ts
+msgid "Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again."
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Couldn't save your preferences. Try again."
@@ -7815,6 +7836,10 @@ msgstr "सिकाइ बजेट"
 msgid "Leave"
 msgstr "छोड्नुहोस्"
 
+#: src/features/resume/builder/draft.ts
+msgid "Leave anyway"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr "पृष्ठको वरिपरि कम्तीमा आधा इन्च ठाउँ छोड्नुहोस्।"
@@ -8271,6 +8296,10 @@ msgstr "सम्पादन लक गर्नुहोस्"
 #: src/features/documents/document-card.tsx
 msgid "Locked"
 msgstr "ताला लगाइएको"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Locked · unlock to save"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
@@ -10085,6 +10114,10 @@ msgstr "पृष्ठ पढाइ सकिएन।"
 msgid "Page view"
 msgstr "पृष्ठ दृश्य"
 
+#: src/routes/builder/$resumeId/-components/design-panel.tsx
+msgid "Pages and sections"
+msgstr ""
+
 #: src/features/documents/page-navigation.tsx
 msgid "Pagination"
 msgstr ""
@@ -11221,6 +11254,10 @@ msgstr "आयत (पूर्ण चौडाइ)"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Red"
 msgstr "रातो"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Redo"
+msgstr ""
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Redo resume change"
@@ -14712,6 +14749,10 @@ msgid "This resume isn't shared right now."
 msgstr "यो रेजुमे अहिले साझा गरिएको छैन।"
 
 #: src/features/resume/builder/draft.ts
+msgid "This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "This resume was updated by an AI agent."
 msgstr "यो बायोडाटा एक एआई एजेन्टद्वारा अद्यावधिक गरिएको थियो।"
 
@@ -15170,17 +15211,12 @@ msgstr "अधोरेखित लिङ्कहरू"
 #: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
-#: src/features/resume/editor/check/actions.ts
-#: src/features/resume/editor/design/fit.ts
-#: src/features/resume/editor/design/template-group.tsx
+#: src/features/resume/builder/undo-toast.ts
 #: src/features/resume/editor/proposals/proposals.ts
-#: src/features/resume/editor/webmcp.ts
-#: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/editor/write/section-row.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "पूर्ववत गर्नुहोस्"
@@ -15459,10 +15495,6 @@ msgstr "नमूना प्रयोग गर्नुहोस्"
 
 #: src/features/career/draft-recovery.tsx
 msgid "Use saved version"
-msgstr ""
-
-#: src/features/resume/editor/check/actions.ts
-msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -16331,6 +16363,10 @@ msgid "You're looking at a saved version. It can't be edited."
 msgstr "तपाईं सुरक्षित संस्करण हेर्दै हुनुहुन्छ। यसलाई सम्पादन गर्न सकिँदैन।"
 
 #: src/features/resume/builder/draft.ts
+msgid "You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "You're offline. Reconnect to save your changes before leaving."
 msgstr "तपाईं अफलाइन हुनुहुन्छ। छोड्नु अघि आफ्ना परिवर्तनहरू बचत गर्न पुन: जडान गर्नुहोस्।"
 
@@ -16341,6 +16377,10 @@ msgstr "तपाईं अद्यावधिक हुनुहुन्छ"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "तपाईं अतिथि खाता प्रयोग गर्दै हुनुहुन्छ"
+
+#: src/features/resume/builder/undo-toast.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."

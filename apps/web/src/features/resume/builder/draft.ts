@@ -51,8 +51,10 @@ type ResumeUpdateEvent = { mutation: ResumeUpdateMutation };
  * `offline`: the browser is offline; changes are kept on this device and sent when it reconnects.
  * `error`: the server rejected or couldn't be reached while online; changes are kept on this device
  * and the editor offers Retry.
+ * `locked`: the resume was locked (here or elsewhere) before the changes reached the server; they're kept on this
+ * device and sent once it's unlocked.
  */
-type SaveStatus = "idle" | "saving" | "saved" | "offline" | "error" | "conflict";
+type SaveStatus = "idle" | "saving" | "saved" | "offline" | "error" | "conflict" | "locked";
 
 type UpdateResumeDataOptions = {
 	/** Proposals this edit applied, recorded with their wording in this undo step alongside the authored data. */
@@ -448,9 +450,12 @@ async function flushResumeSave(id: string) {
 		runtime.hasPendingLocalChanges = true;
 		runtime.saveFailed = true;
 		runtime.conflict = error instanceof ORPCError && error.code === "RESUME_VERSION_CONFLICT";
+		const locked = error instanceof ORPCError && error.code === "RESUME_LOCKED";
 		storeUnsavedResume(useResumeStore.getState().resume ?? submitted);
-		// The editor bar shows the state ("Offline · saved on this device" or "Not saved · Retry").
-		useResumeStore.getState().setSaveStatus(runtime.conflict ? "conflict" : isBrowserOffline() ? "offline" : "error");
+		// The editor bar shows the state ("Offline · saved on this device", "Locked · unlock to save" or "Not saved · Retry").
+		useResumeStore
+			.getState()
+			.setSaveStatus(runtime.conflict ? "conflict" : locked ? "locked" : isBrowserOffline() ? "offline" : "error");
 	} finally {
 		if (runtime.slowSaveToastId !== undefined) {
 			toast.close(runtime.slowSaveToastId);
@@ -811,6 +816,14 @@ export const useResumeStore = create<ResumeStore>()(
 	})),
 );
 
+// Unlocking sends what couldn't be saved while the resume was locked, without waiting for Retry.
+useResumeStore.subscribe((state, previous) => {
+	const resume = state.resume;
+	if (!resume || previous.resume?.id !== resume.id || !previous.resume.isLocked || resume.isLocked) return;
+	if (state.saveStatus === "locked" || (state.saveStatus === "error" && runtimes.get(resume.id)?.saveFailed))
+		state.retrySave();
+});
+
 type ImmerSet = (fn: (state: WritableDraft<ResumeStore>) => void) => void;
 type StoreGet = () => ResumeStore;
 
@@ -1146,7 +1159,8 @@ export function savePendingChanges(id: string): boolean | Promise<boolean> {
 				state.resume?.id !== id ||
 				state.saveStatus === "error" ||
 				state.saveStatus === "offline" ||
-				state.saveStatus === "conflict"
+				state.saveStatus === "conflict" ||
+				state.saveStatus === "locked"
 			) {
 				finish(false);
 			} else if (state.saveStatus === "saved" && !runtime.hasPendingLocalChanges) {
@@ -1172,13 +1186,45 @@ export function useResumeCleanup() {
 	const resumeId = params.resumeId;
 	const reset = useResumeStore((state) => state.reset);
 
-	useBlocker({
+	const blocker = useBlocker({
 		shouldBlockFn: async ({ next }) => {
 			if (!resumeId || ("resumeId" in next.params && next.params.resumeId === resumeId)) return false;
 			return !(await savePendingChanges(resumeId));
 		},
 		enableBeforeUnload: () => !!resumeId && (runtimes.get(resumeId)?.hasPendingLocalChanges ?? false),
+		withResolver: true,
 	});
+	const { status: blockerStatus, proceed, reset: stay } = blocker;
+
+	// Leaving waited for a save that didn't happen: say why, and let the user leave with the changes kept on this device.
+	useEffect(() => {
+		if (blockerStatus !== "blocked") return;
+		const status = useResumeStore.getState().saveStatus;
+		// A conflict has its own Reload; the editor stays open until it's settled.
+		if (status === "conflict") return stay?.();
+		let leaving = false;
+		toast.add({
+			id: "resume-leave-unsaved",
+			type: status === "offline" ? "info" : "error",
+			timeout: 0,
+			description:
+				status === "offline"
+					? t`You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back.`
+					: status === "locked"
+						? t`This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them.`
+						: t`Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again.`,
+			actionProps: {
+				children: t`Leave anyway`,
+				onClick: () => {
+					leaving = true;
+					proceed?.();
+				},
+			},
+			onClose: () => {
+				if (!leaving) stay?.();
+			},
+		});
+	}, [blockerStatus, proceed, stay]);
 
 	useEffect(() => {
 		if (!resumeId) return;

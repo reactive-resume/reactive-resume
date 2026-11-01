@@ -227,9 +227,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {ចូលការិយាល័យ # ថ្ងៃក្នុងមួយសប្តាហ៍} other {ចូលការិយាល័យ # ថ្ងៃក្នុងមួយសប្តាហ៍}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, other {# ទំព័រ}}"
@@ -555,6 +555,10 @@ msgstr "{active, plural, one {ពាក្យសុំការងារសក�
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel} ។ ផ្ញើពាក្យសុំការងារនេះ និង ចំណេះដឹង របស់អ្នក; អ្នកផ្តល់សេវារបស់អ្នកអាចគិតថ្លៃ។"
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1287,6 +1291,11 @@ msgstr "បន្ថែមមួយជាមួយលេខកូដប្រទ
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "បន្ថែមទំព័រ"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -3039,10 +3048,6 @@ msgstr "មាតិកាត្រូវបានរៀបចំតាមទម
 #: src/features/workspace/application-packet.tsx
 msgid "Content revision: {0}"
 msgstr ""
-
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "ខ្លឹមសារនៅតែលើសទំព័រ។ លាក់ផ្នែក ឬកាត់បន្ថយធាតុ។"
 
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
@@ -6060,8 +6065,6 @@ msgstr "រៀបចំអត្ថបទតាមផ្ដេក។ អត្�
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "ប្លង់"
 
@@ -8084,6 +8087,10 @@ msgstr "ការអានទំព័រមិនបានបញ្ចប់ទ
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "ទិដ្ឋភាពទំព័រ"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -12331,7 +12338,6 @@ msgstr "គូសបន្ទាត់ក្រោមតំណ"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13278,6 +13284,11 @@ msgstr "អ្នកគ្មានអ៊ីនធឺណិតទេ។ ព្�
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "អ្នកបានតាមទាន់គ្រប់យ៉ាងហើយ"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/practise.tsx

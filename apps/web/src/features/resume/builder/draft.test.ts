@@ -45,6 +45,16 @@ const toastMocks = vi.hoisted(() => ({
 	close: vi.fn(),
 }));
 
+type LeaveToast = {
+	id?: string;
+	timeout?: number;
+	description: string;
+	actionProps: { onClick: () => void };
+	onClose: () => void;
+};
+const leaveToast = () =>
+	(toastMocks.add.mock.calls as unknown as [LeaveToast][]).find(([toast]) => toast.id === "resume-leave-unsaved")?.[0];
+
 vi.mock("@orpc/client", async (importOriginal) => ({
 	ORPCError: (await importOriginal<typeof import("@orpc/client")>()).ORPCError,
 	consumeEventIterator: consumeEventIteratorMock,
@@ -243,6 +253,7 @@ describe("builder resume autosave", () => {
 		orpcMocks.getResumeById.mockReset();
 		orpcMocks.importResume.mockReset();
 		useBlockerMock.mockReset();
+		useBlockerMock.mockReturnValue({ status: "idle" });
 		orpcMocks.patchResume.mockReset();
 		orpcMocks.streamSubscribe.mockReset();
 		orpcMocks.updateResume.mockReset();
@@ -704,6 +715,67 @@ describe("builder resume autosave", () => {
 		orpcMocks.updateResume.mockResolvedValueOnce(withBasicsName(initial, "Keep this draft"));
 		expect(await blocker.shouldBlockFn({ next: { params: {} } })).toBe(false);
 		expect(blocker.enableBeforeUnload()).toBe(false);
+		hook.unmount();
+	});
+
+	it("says a save failed because the resume was locked, and sends it once unlocked (L3-05)", async () => {
+		const initial = makeResume("locked-save");
+		useResumeStore.getState().initialize(initial);
+		orpcMocks.updateResume.mockRejectedValueOnce(new ORPCError("RESUME_LOCKED"));
+		useResumeStore.getState().updateResumeData((draft) => {
+			draft.basics.name = "Typed before the lock";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		await flushMicrotasks();
+		expect(useResumeStore.getState().saveStatus).toBe("locked");
+
+		orpcMocks.updateResume.mockResolvedValueOnce(withBasicsName(initial, "Typed before the lock"));
+		useResumeStore.setState((state) => {
+			if (state.resume) state.resume.isLocked = true;
+		});
+		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(1);
+		useResumeStore.setState((state) => {
+			if (state.resume) state.resume.isLocked = false;
+		});
+		await flushMicrotasks();
+		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(2);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].data.basics.name).toBe("Typed before the lock");
+	});
+
+	it("explains a blocked leave and lets the user leave with the draft kept (L3-05)", () => {
+		const initial = makeResume("leave-anyway");
+		useResumeStore.getState().initialize(initial);
+		useResumeStore.getState().setSaveStatus("error");
+		routerParamsMock.value = { resumeId: initial.id };
+		const proceed = vi.fn();
+		const reset = vi.fn();
+		useBlockerMock.mockReturnValue({ status: "blocked", proceed, reset });
+		const hook = renderHook(() => useResumeCleanup());
+		const shown = leaveToast();
+		assert(shown);
+		expect(shown.timeout).toBe(0);
+		expect(shown.description).toContain("Couldn't save your latest changes");
+		shown.actionProps.onClick();
+		shown.onClose();
+		expect(proceed).toHaveBeenCalledTimes(1);
+		expect(reset).not.toHaveBeenCalled();
+		hook.unmount();
+	});
+
+	it("stays when the leave toast is dismissed", () => {
+		const initial = makeResume("leave-dismissed");
+		useResumeStore.getState().initialize(initial);
+		useResumeStore.getState().setSaveStatus("offline");
+		routerParamsMock.value = { resumeId: initial.id };
+		const proceed = vi.fn();
+		const reset = vi.fn();
+		useBlockerMock.mockReturnValue({ status: "blocked", proceed, reset });
+		const hook = renderHook(() => useResumeCleanup());
+		const shown = leaveToast();
+		assert(shown);
+		shown.onClose();
+		expect(reset).toHaveBeenCalledTimes(1);
+		expect(proceed).not.toHaveBeenCalled();
 		hook.unmount();
 	});
 

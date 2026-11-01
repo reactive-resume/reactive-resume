@@ -9,15 +9,38 @@ import { DocumentMenu } from "@/features/document-menu";
 import { routes } from "@/routes";
 import { BuilderChrome, useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
+import { IconButton } from "@/ui";
 
-/** Fills the chrome from the draft once for every pane: name and save status. ⌘Z / ⇧⌘Z undo and redo. */
+/** Fills the chrome from the draft once for every pane: name, save status, Undo and Redo. ⌘Z / ⇧⌘Z undo and redo. */
 function DraftChrome() {
 	const { t } = useLingui();
 	const name = useResumeStore((state) => state.document?.name);
 	const status = useResumeStore((state) => state.status);
 	const locked = useResumeStore((state) => state.locked);
 	const retry = useResumeStore((state) => state.retry);
-	useBuilderChrome({ title: name, save: name ? { status, locked, onRetry: retry } : undefined });
+	const canUndo = useResumeStore((state) => state.canUndo && !state.locked);
+	const canRedo = useResumeStore((state) => state.canRedo && !state.locked);
+	useBuilderChrome({
+		title: name,
+		save: name ? { status, locked, onRetry: retry } : undefined,
+		// The resume's Undo and Redo, in view on every pane: a phone has no ⌘Z.
+		actions: name ? (
+			<>
+				<IconButton
+					icon="arrow-counter-clockwise"
+					label={t`Undo`}
+					disabled={!canUndo}
+					onPress={() => useResumeStore.getState().undo()}
+				/>
+				<IconButton
+					icon="arrow-clockwise"
+					label={t`Redo`}
+					disabled={!canRedo}
+					onPress={() => useResumeStore.getState().redo()}
+				/>
+			</>
+		) : undefined,
+	});
 	useKeyCommands([
 		{ id: "undo", input: "z", title: t`Undo`, run: () => useResumeStore.getState().undo() },
 		{ id: "redo", input: "z", shift: true, title: t`Redo`, run: () => useResumeStore.getState().redo() },

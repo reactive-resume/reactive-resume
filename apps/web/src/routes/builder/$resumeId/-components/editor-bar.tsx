@@ -2,6 +2,7 @@ import type { EditorMode } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { DocumentMenu } from "./document-menu";
 import { useCurrentBuilderResumeSelector, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
@@ -16,8 +17,8 @@ type EditorBarProps = {
 };
 
 /**
- * The 56px editor bar. Desktop: back, name and save state · Write/Design/Check/Share · history, assistant and
- * Download PDF. The mode switch stays centered through a `1fr auto 1fr` grid.
+ * The 56px editor bar. Desktop: back, name and save state · Write/Design/Check/Share · Undo, Redo, history, assistant
+ * and Download PDF. The mode switch stays centered through a `1fr auto 1fr` grid.
  */
 export function EditorBar({ layout, pinnable }: EditorBarProps) {
 	// Download needs a connection.
@@ -26,7 +27,13 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 	const { onDownloadPDF, isExporting } = useResumeExport(resume);
 
 	return (
-		<EditorBarFrame layout={layout} pinnable={pinnable} menu={<DocumentMenu />} modes={<ModeTabs />}>
+		<EditorBarFrame
+			layout={layout}
+			pinnable={pinnable}
+			menu={<DocumentMenu />}
+			modes={<ModeTabs />}
+			history={<UndoRedo />}
+		>
 			<DownloadButtons
 				busy={isExporting}
 				onDownload={() => void onDownloadPDF()}
@@ -36,6 +43,35 @@ export function EditorBar({ layout, pinnable }: EditorBarProps) {
 				disabled={offline}
 			/>
 		</EditorBarFrame>
+	);
+}
+
+/** The document's Undo and Redo, the same steps as ⌘Z and ⇧⌘Z outside a field. Phones have no keyboard for those. */
+function UndoRedo() {
+	const undo = useResumeStore((state) => state.undo);
+	const redo = useResumeStore((state) => state.redo);
+	const canUndo = useResumeStore((state) => state.undoStack.length > 0 && !state.resume?.isLocked);
+	const canRedo = useResumeStore((state) => state.redoStack.length > 0 && !state.resume?.isLocked);
+
+	return (
+		<>
+			<IconButton
+				icon="arrow-counter-clockwise"
+				label={t`Undo`}
+				shortcut="⌘Z"
+				className="text-ink-2"
+				disabled={!canUndo}
+				onClick={undo}
+			/>
+			<IconButton
+				icon="arrow-clockwise"
+				label={t`Redo`}
+				shortcut="⇧⌘Z"
+				className="text-ink-2"
+				disabled={!canRedo}
+				onClick={redo}
+			/>
+		</>
 	);
 }
 

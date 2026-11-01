@@ -51,11 +51,28 @@ export function useSectionTitle(section: WriteSection | null) {
 	return title.trim() || (section ? i18n._(SECTION_TITLES[section.type]) : "");
 }
 
-/** A toast with Undo, for destructive edits that don't ask first. */
+/**
+ * A toast with Undo, for destructive edits that don't ask first. Undo takes back this edit only: while it's still the
+ * latest step it's the resume's Undo; after another edit it puts the change back with `restore` when there is one,
+ * or says to use Undo.
+ */
 export function useUndoToast() {
 	const { t } = useLingui();
-	return (message: string) =>
-		showToast({ message, action: { label: t`Undo`, onPress: () => useResumeStore.getState().undo() } });
+	return (message: string, restore?: (draft: WritableDraft<ResumeData>) => void) => {
+		const changed = useResumeStore.getState().data;
+		showToast({
+			message,
+			action: {
+				label: t`Undo`,
+				onPress: () => {
+					const current = useResumeStore.getState();
+					if (changed && current.data === changed) return current.undo();
+					if (restore && !current.locked) return edit(restore);
+					showToast({ message: t`You've made changes since. Use Undo to step back through them.` });
+				},
+			},
+		});
+	};
 }
 
 /** "+ Add {type}": a draft entry at the end of the section. Returns its id. */
@@ -71,12 +88,22 @@ export function useDeleteEntry() {
 	const { t } = useLingui();
 	const undoToast = useUndoToast();
 	return (section: WriteSection, entryId: string) => {
+		const data = useResumeStore.getState().data;
+		const entries = data ? getEntries(data as WritableDraft<ResumeData>, section) : [];
+		const index = entries.findIndex((entry) => entry.id === entryId);
+		const deleted = entries[index];
+		if (!deleted) return;
 		edit((draft) => {
-			const entries = getEntries(draft, section);
-			const index = entries.findIndex((entry) => entry.id === entryId);
-			if (index !== -1) entries.splice(index, 1);
+			const items = getEntries(draft, section);
+			const at = items.findIndex((entry) => entry.id === entryId);
+			if (at !== -1) items.splice(at, 1);
 		});
-		undoToast(t`Entry deleted`);
+		// After later edits, Undo puts the entry back where it was.
+		undoToast(t`Entry deleted`, (draft) => {
+			const items = getEntries(draft, section);
+			if (!items.some((entry) => entry.id === entryId))
+				items.splice(Math.min(index, items.length), 0, structuredClone(deleted));
+		});
 	};
 }
 

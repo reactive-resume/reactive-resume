@@ -227,9 +227,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {ആഴ്ചയിൽ # ഓഫീസ് ദിവസം} other {ആഴ്ചയിൽ # ഓഫീസ് ദിവസങ്ങൾ}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# പേജ്} other {# പേജുകൾ}}"
@@ -555,6 +555,10 @@ msgstr "{active, plural, one {# സജീവ അപേക്ഷ} other {# സജ
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. ഈ അപേക്ഷയും നിങ്ങളുടെ അറിവ് അയയ്ക്കുന്നു; നിങ്ങളുടെ ദാതാവ് നിരക്ക് ഈടാക്കാം."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1287,6 +1291,11 @@ msgstr "രാജ്യ കോഡ് സഹിതം ഒന്ന് ചേർ�
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "പേജ് ചേർക്കുക"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -3039,10 +3048,6 @@ msgstr "ഉള്ളടക്കം ഒരു ഗ്രിഡിലായി ക
 #: src/features/workspace/application-packet.tsx
 msgid "Content revision: {0}"
 msgstr ""
-
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "ഉള്ളടക്കം ഇപ്പോഴും കടന്നുപോകുന്നു. ഒരു വിഭാഗം മറയ്‌ക്കുക അല്ലെങ്കിൽ എൻട്രികൾ ചുരുക്കുക."
 
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
@@ -6060,8 +6065,6 @@ msgstr "ടെക്സ്റ്റ് തിരശ്ചീനമായി ക�
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "ലേയൗട്ട്"
 
@@ -8084,6 +8087,10 @@ msgstr "പേജ് വായന പൂർത്തിയായില്ല."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "പേജ് കാഴ്ച"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -12331,7 +12338,6 @@ msgstr "ലിങ്കുകൾക്ക് അടിവരയിടുക"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13278,6 +13284,11 @@ msgstr "നിങ്ങൾ ഓഫ്‌ലൈനാണ്. നിങ്ങൾ �
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "എല്ലാം കണ്ടുകഴിഞ്ഞു"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/practise.tsx

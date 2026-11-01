@@ -227,9 +227,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {सप्ताह में # दिन ऑफ़िस में} other {सप्ताह में # दिन ऑफ़िस में}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# पृष्ठ} other {# पृष्ठ}}"
@@ -555,6 +555,10 @@ msgstr "{active, plural, one {# सक्रिय आवेदन} other {# स
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. यह आवेदन और आपका ज्ञानकोश भेजता है; आपका प्रदाता शुल्क ले सकता है."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1287,6 +1291,11 @@ msgstr "देश कोड सहित एक नंबर जोड़ें;
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "पेज जोड़ें"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -3039,10 +3048,6 @@ msgstr "सामग्री ग्रिड में व्यवस्थि
 #: src/features/workspace/application-packet.tsx
 msgid "Content revision: {0}"
 msgstr ""
-
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "सामग्री अभी भी खत्म हो गई है. किसी अनुभाग को छुपाएं या प्रविष्टियों को छोटा करें."
 
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
@@ -6060,8 +6065,6 @@ msgstr "टेक्स्ट को क्षैतिज रूप से व�
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "लेआउट"
 
@@ -8084,6 +8087,10 @@ msgstr "पेज पढ़ना ख़त्म नहीं हुआ."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "पृष्ठ का दृश्य"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -12331,7 +12338,6 @@ msgstr "लिंकों को रेखांकित करें"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13278,6 +13284,11 @@ msgstr "आप ऑफ़लाइन हैं. पुनः कनेक्ट 
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "सब कुछ अप-टू-डेट है"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/practise.tsx

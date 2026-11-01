@@ -6,6 +6,7 @@ import { useState } from "react";
 import { addEntry, edit, requestFocus, useSectionTitle, useSortByDate, useUndoToast, useWriteData } from "./hooks";
 import { deleteCustomSection, findPlacement, getSectionObject, NO_PAGES, placeSection, selectPages } from "./model";
 import { IconPickerSheet, PromptSheet } from "./pickers";
+import { useResumeStore } from "@/draft";
 import { routes } from "@/routes";
 import { Icon, ListRow, Sheet, Switch, Text, useTheme } from "@/ui";
 
@@ -274,14 +275,38 @@ export function SectionSheet({ resumeId, section, open, onClose, onMove }: Secti
 							onPress={() => {
 								close();
 								if (section.kind === "custom") {
+									const data = useResumeStore.getState().data;
+									const custom = data?.customSections.find((item) => item.id === section.id);
+									const places = (data?.metadata.layout.pages ?? []).map((page) => ({
+										main: page.main.indexOf(section.id),
+										sidebar: page.sidebar.indexOf(section.id),
+									}));
 									edit((draft) => deleteCustomSection(draft, section.id));
-									undoToast(t`${title} deleted`);
+									// After later edits, Undo adds the section back where it was.
+									undoToast(t`${title} deleted`, (draft) => {
+										if (!custom || draft.customSections.some((item) => item.id === custom.id)) return;
+										draft.customSections.push(structuredClone(custom));
+										draft.metadata.layout.pages.forEach((page, index) => {
+											const place = places[index];
+											if (place && place.main !== -1) page.main.splice(place.main, 0, custom.id);
+											if (place && place.sidebar !== -1) page.sidebar.splice(place.sidebar, 0, custom.id);
+										});
+									});
 								} else {
+									const before = "items" in settings ? { items: settings.items } : { content: settings.content };
 									change((target) => {
 										if ("items" in target) target.items = [];
 										else target.content = "";
 									});
-									undoToast(t`${title} cleared`);
+									// After later edits, Undo puts the entries back if the section is still empty.
+									undoToast(t`${title} cleared`, (draft) => {
+										const target = getSectionObject(draft, section);
+										if (!target) return;
+										if ("items" in target && "items" in before && target.items.length === 0)
+											target.items = structuredClone(before.items) as typeof target.items;
+										else if ("content" in target && "content" in before && !target.content)
+											target.content = before.content;
+									});
 								}
 							}}
 						/>

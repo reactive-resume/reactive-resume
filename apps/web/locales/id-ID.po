@@ -570,6 +570,14 @@ msgstr "{accepted} dari {0} diterapkan"
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
+msgstr ""
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
 msgstr "{authored, plural, =1 {Muatkan dalam satu halaman} other {Muatkan dalam # halaman}}"
@@ -621,6 +629,10 @@ msgstr "{count, plural, one {Entri #} other {Entri #}}"
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# masalah terbuka} other {# masalah terbuka}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{count, plural, one {Added page {page} and moved # section onto it} other {Added page {page} and moved # sections onto it}}"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -853,10 +865,6 @@ msgstr "{open, plural, one {# hal yang perlu ditinjau.} other {# hal yang perlu 
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {halaman #} other {# halaman}}"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
-msgstr "{pages, plural, one {Masih # halaman pada 9 pt. Sembunyikan satu bagian atau persingkat entri.} other {Masih # halaman pada 9 pt. Sembunyikan satu bagian atau persingkat entri.}}"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
@@ -1650,6 +1658,15 @@ msgstr "Tambahkan satu dengan kode negaranya; beberapa formulir lamaran mewajibk
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Add page"
 msgstr "Tambah halaman"
+
+#. placeholder {0}: authored + 1
+#: src/features/resume/editor/design/fit.ts
+msgid "Add page {0}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Add page {next}"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Add passkey"
@@ -4421,6 +4438,10 @@ msgstr "Tidak dapat menyimpan perubahan Anda. Coba lagi sebelum melanjutkan."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't save your changes. Try again."
 msgstr "Tidak dapat menyimpan perubahan Anda. Coba lagi."
+
+#: src/features/resume/builder/draft.ts
+msgid "Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again."
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Couldn't save your preferences. Try again."
@@ -7815,6 +7836,10 @@ msgstr "Anggaran belajar"
 msgid "Leave"
 msgstr "Tinggalkan"
 
+#: src/features/resume/builder/draft.ts
+msgid "Leave anyway"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr "Sisakan setidaknya setengah inci di sekeliling halaman."
@@ -8271,6 +8296,10 @@ msgstr "Kunci pengeditan"
 #: src/features/documents/document-card.tsx
 msgid "Locked"
 msgstr "Terkunci"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Locked · unlock to save"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
@@ -10085,6 +10114,10 @@ msgstr "Pembacaan halaman belum selesai."
 msgid "Page view"
 msgstr "Tampilan halaman"
 
+#: src/routes/builder/$resumeId/-components/design-panel.tsx
+msgid "Pages and sections"
+msgstr ""
+
 #: src/features/documents/page-navigation.tsx
 msgid "Pagination"
 msgstr ""
@@ -11221,6 +11254,10 @@ msgstr "Persegi panjang (lebar penuh)"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Red"
 msgstr "Merah"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Redo"
+msgstr ""
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Redo resume change"
@@ -14712,6 +14749,10 @@ msgid "This resume isn't shared right now."
 msgstr "Resume ini tidak dibagikan saat ini."
 
 #: src/features/resume/builder/draft.ts
+msgid "This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "This resume was updated by an AI agent."
 msgstr "Resume ini diperbarui oleh agen AI."
 
@@ -15170,17 +15211,12 @@ msgstr "Garis bawahi tautan"
 #: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
-#: src/features/resume/editor/check/actions.ts
-#: src/features/resume/editor/design/fit.ts
-#: src/features/resume/editor/design/template-group.tsx
+#: src/features/resume/builder/undo-toast.ts
 #: src/features/resume/editor/proposals/proposals.ts
-#: src/features/resume/editor/webmcp.ts
-#: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/editor/write/section-row.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "Membuka"
@@ -15459,10 +15495,6 @@ msgstr "Gunakan contoh"
 
 #: src/features/career/draft-recovery.tsx
 msgid "Use saved version"
-msgstr ""
-
-#: src/features/resume/editor/check/actions.ts
-msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -16331,6 +16363,10 @@ msgid "You're looking at a saved version. It can't be edited."
 msgstr "Anda sedang melihat versi tersimpan. Versi ini tidak dapat diedit."
 
 #: src/features/resume/builder/draft.ts
+msgid "You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "You're offline. Reconnect to save your changes before leaving."
 msgstr "Anda sedang luring. Hubungkan kembali untuk menyimpan perubahan Anda sebelum keluar."
 
@@ -16341,6 +16377,10 @@ msgstr "Semua sudah terbaru"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "Anda menggunakan akun tamu"
+
+#: src/features/resume/builder/undo-toast.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."

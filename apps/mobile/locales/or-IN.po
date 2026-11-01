@@ -227,9 +227,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {ସପ୍ତାହକୁ # ଅଫିସ୍ ଦିନ} other {ସପ୍ତାହକୁ # ଅଫିସ୍ ଦିନ}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# ପେଜ୍} other {# ପେଜ୍}}"
@@ -555,6 +555,10 @@ msgstr "{active, plural, one {# ସକ୍ରିୟ ଆବେଦନ} other {# ସ
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}। ଏହି ଆବେଦନ ଓ ଆପଣଙ୍କ ଜ୍ଞାନ ପଠାଏ; ପ୍ରଦାତା ଶୁଳ୍କ ନେଇପାରନ୍ତି।"
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1287,6 +1291,11 @@ msgstr "ଏହାର ଦେଶ କୋଡ୍ ସହିତ ଗୋଟିଏ ଯୋ�
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "ପେଜ୍ ଯୋଡନ୍ତୁ"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -3044,10 +3053,6 @@ msgstr "ବିଷୟବସ୍ତୁ ଏକ ଗ୍ରିଡ୍‌ରେ ସଜ୍
 #: src/features/workspace/application-packet.tsx
 msgid "Content revision: {0}"
 msgstr ""
-
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "ବିଷୟବସ୍ତୁ ଏବେ ମଧ୍ୟ ସୀମା ଟପୁଛି। ବିଭାଗ ଲୁଚାନ୍ତୁ କିମ୍ବା ଏଣ୍ଟ୍ରି ଛୋଟ କରନ୍ତୁ।"
 
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
@@ -6077,8 +6082,6 @@ msgstr "ଟେକ୍ସଟ୍‌କୁ ଭୂସମାନ୍ତର ଭାବର�
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "ଲେଆଉଟ୍"
 
@@ -8105,6 +8108,10 @@ msgstr "ପୃଷ୍ଠା ପ reading ିବା ସମାପ୍ତ ହେଲା
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "ପୃଷ୍ଠା ଦୃଶ୍ୟ |"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -12369,7 +12376,6 @@ msgstr "ଲିଙ୍କଗୁଡିକ ଅଣ୍ଡରଲାଇନ୍ କରନ�
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13323,6 +13329,11 @@ msgstr "ଆପଣ ଅଫଲାଇନ୍। ପୁଣି ସଂଯୋଗ ହେ�
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "ଆପଣ ଅପ୍-ଟୁ-ଡେଟ୍ ଅଛନ୍ତି"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/practise.tsx

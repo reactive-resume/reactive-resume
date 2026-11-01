@@ -570,6 +570,14 @@ msgstr "{accepted} នៃ {0} បានអនុវត្ត"
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
+msgstr ""
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
 msgstr "{authored, plural, =1 {ដាក់ឱ្យសមនឹងមួយទំព័រ} other {ដាក់ឱ្យសមនឹង # ទំព័រ}}"
@@ -621,6 +629,10 @@ msgstr "{count, plural, one {ធាតុ #} other {ធាតុ #}}"
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {បញ្ហាដែលមិនទាន់ដោះស្រាយ #} other {បញ្ហាដែលមិនទាន់ដោះស្រាយ #}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{count, plural, one {Added page {page} and moved # section onto it} other {Added page {page} and moved # sections onto it}}"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -853,10 +865,6 @@ msgstr "{open, plural, one {# រឿងដែលត្រូវពិនិត�
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {ទំព័រ #} other {ទំព័រ #}}"
-
-#: src/features/resume/editor/design/fit.ts
-msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
-msgstr "{pages, plural, one {នៅតែ # ទំព័រនៅ 9 pt។ លាក់ផ្នែកមួយ ឬកាត់ធាតុឱ្យខ្លី។} other {នៅតែ # ទំព័រនៅ 9 pt។ លាក់ផ្នែកមួយ ឬកាត់ធាតុឱ្យខ្លី។}}"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
@@ -1650,6 +1658,15 @@ msgstr "បន្ថែមមួយជាមួយលេខកូដប្រទ
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Add page"
 msgstr "បន្ថែមទំព័រ"
+
+#. placeholder {0}: authored + 1
+#: src/features/resume/editor/design/fit.ts
+msgid "Add page {0}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Add page {next}"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Add passkey"
@@ -4421,6 +4438,10 @@ msgstr "មិនអាចរក្សាទុកការផ្លាស់ប
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't save your changes. Try again."
 msgstr "មិនអាចរក្សាទុកការផ្លាស់ប្តូររបស់អ្នកបានទេ។ ព្យាយាមម្តងទៀត។"
+
+#: src/features/resume/builder/draft.ts
+msgid "Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again."
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Couldn't save your preferences. Try again."
@@ -7815,6 +7836,10 @@ msgstr "ថវិកាសិក្សា"
 msgid "Leave"
 msgstr "ចាកចេញ"
 
+#: src/features/resume/builder/draft.ts
+msgid "Leave anyway"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr "ទុកចន្លោះយ៉ាងតិចកន្លះអ៊ីញជុំវិញទំព័រ។"
@@ -8271,6 +8296,10 @@ msgstr "ចាក់សោការកែសម្រួល"
 #: src/features/documents/document-card.tsx
 msgid "Locked"
 msgstr "ចាក់សោ"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Locked · unlock to save"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
@@ -10085,6 +10114,10 @@ msgstr "ការអានទំព័រមិនបានបញ្ចប់ទ
 msgid "Page view"
 msgstr "ទិដ្ឋភាពទំព័រ"
 
+#: src/routes/builder/$resumeId/-components/design-panel.tsx
+msgid "Pages and sections"
+msgstr ""
+
 #: src/features/documents/page-navigation.tsx
 msgid "Pagination"
 msgstr ""
@@ -11221,6 +11254,10 @@ msgstr "ចតុកោណ (ទទឹងពេញ)"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Red"
 msgstr "ក្រហម"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Redo"
+msgstr ""
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Redo resume change"
@@ -14712,6 +14749,10 @@ msgid "This resume isn't shared right now."
 msgstr "ប្រវត្តិរូបសង្ខេបនេះមិនត្រូវបានចែករំលែកនៅពេលនេះទេ។"
 
 #: src/features/resume/builder/draft.ts
+msgid "This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "This resume was updated by an AI agent."
 msgstr "ប្រវត្តិរូបសង្ខេបនេះត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយភ្នាក់ងារ AI។"
 
@@ -15170,17 +15211,12 @@ msgstr "គូសបន្ទាត់ក្រោមតំណ"
 #: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
-#: src/features/resume/editor/check/actions.ts
-#: src/features/resume/editor/design/fit.ts
-#: src/features/resume/editor/design/template-group.tsx
+#: src/features/resume/builder/undo-toast.ts
 #: src/features/resume/editor/proposals/proposals.ts
-#: src/features/resume/editor/webmcp.ts
-#: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/editor/write/section-row.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "មិនធ្វើវិញ"
@@ -15459,10 +15495,6 @@ msgstr "ប្រើគំរូ"
 
 #: src/features/career/draft-recovery.tsx
 msgid "Use saved version"
-msgstr ""
-
-#: src/features/resume/editor/check/actions.ts
-msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -16331,6 +16363,10 @@ msgid "You're looking at a saved version. It can't be edited."
 msgstr "អ្នកកំពុងមើលកំណែដែលបានរក្សាទុក។ វាមិនអាចកែសម្រួលបានទេ។"
 
 #: src/features/resume/builder/draft.ts
+msgid "You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "You're offline. Reconnect to save your changes before leaving."
 msgstr "អ្នកគ្មានអ៊ីនធឺណិតទេ។ ភ្ជាប់ឡើងវិញដើម្បីរក្សាទុកការផ្លាស់ប្តូររបស់អ្នកមុនពេលចាកចេញ។"
 
@@ -16341,6 +16377,10 @@ msgstr "អ្នកបានតាមទាន់គ្រប់យ៉ាងហ
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "អ្នកកំពុងប្រើគណនីភ្ញៀវ"
+
+#: src/features/resume/builder/undo-toast.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."

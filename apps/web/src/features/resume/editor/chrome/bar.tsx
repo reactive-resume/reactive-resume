@@ -17,15 +17,17 @@ type EditorBarFrameProps = {
 	menu: ReactNode;
 	/** The mode switch; phones switch from their tab bar instead. */
 	modes: ReactNode;
+	/** Undo and Redo, first in the actions. */
+	history?: ReactNode;
 	/** Share and Download, after History and the assistant. */
 	children: ReactNode;
 };
 
 /**
- * The 56px editor bar: back, the document's name and save state · the mode switch · History, the assistant, Share and
- * Download. The mode switch stays centered through a `1fr auto 1fr` grid.
+ * The 56px editor bar: back, the document's name and save state · the mode switch · Undo and Redo, History, the
+ * assistant, Share and Download. The mode switch stays centered through a `1fr auto 1fr` grid.
  */
-export function EditorBarFrame({ layout, pinnable, menu, modes, children }: EditorBarFrameProps) {
+export function EditorBarFrame({ layout, pinnable, menu, modes, history, children }: EditorBarFrameProps) {
 	const setSheetTab = useEditorStore((state) => state.setSheetTab);
 
 	return (
@@ -39,6 +41,7 @@ export function EditorBarFrame({ layout, pinnable, menu, modes, children }: Edit
 			{layout === "mobile" ? <span /> : modes}
 
 			<div className="flex items-center justify-end gap-1">
+				{history}
 				{/* History lives in the Download & history sheet; the clock opens it there. */}
 				{layout === "desktop" && (
 					<IconButton

@@ -227,9 +227,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {ವಾರದಲ್ಲಿ # ದಿನ ಕಛೇರಿಯಲ್ಲಿ} other {ವಾರದಲ್ಲಿ # ದಿನಗಳು ಕಚೇರಿಯಲ್ಲಿ}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# ಪುಟ} other {# ಪುಟಗಳು}}"
@@ -555,6 +555,10 @@ msgstr "{active, plural, one {# ಸಕ್ರಿಯ ಅರ್ಜಿ} other {# ಸ
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. ಈ ಅರ್ಜಿ ಮತ್ತು ನಿಮ್ಮ ಜ್ಞಾನವನ್ನು ಕಳುಹಿಸುತ್ತದೆ; ನಿಮ್ಮ ಪೂರೈಕೆದಾರರು ಶುಲ್ಕ ವಿಧಿಸಬಹುದು."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1287,6 +1291,11 @@ msgstr "ದೇಶದ ಕೋಡ್‌ನೊಂದಿಗೆ ಒಂದನ್ನು 
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "ಪುಟವನ್ನು ಸೇರಿಸಿ"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -3039,10 +3048,6 @@ msgstr "ವಿಷಯವನ್ನು ಗ್ರಿಡ್‌ನಲ್ಲಿ ಜೋ�
 #: src/features/workspace/application-packet.tsx
 msgid "Content revision: {0}"
 msgstr ""
-
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "ವಿಷಯ ಇನ್ನೂ ಮುಗಿದಿದೆ. ವಿಭಾಗವನ್ನು ಮರೆಮಾಡಿ ಅಥವಾ ನಮೂದುಗಳನ್ನು ಕಡಿಮೆ ಮಾಡಿ."
 
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
@@ -6060,8 +6065,6 @@ msgstr "ಪಠ್ಯವನ್ನು ಅಡ್ಡಡ್ಡಲಾಗಿ ಜೋಡ�
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "ಲೇಔಟ್‌"
 
@@ -8084,6 +8087,10 @@ msgstr "ಪುಟ ಓದುವಿಕೆ ಮುಗಿಯಲಿಲ್ಲ."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "ಪುಟ ವೀಕ್ಷಣೆ"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -12331,7 +12338,6 @@ msgstr "ಲಿಂಕ್‌ಗಳನ್ನು ಅಂಡರ್‌ಲೈನ್ ಮ�
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13278,6 +13284,11 @@ msgstr "ನೀವು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿರುವಿರ�
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "ನೀವು ಎಲ್ಲವನ್ನೂ ನೋಡಿದ್ದೀರಿ"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/practise.tsx

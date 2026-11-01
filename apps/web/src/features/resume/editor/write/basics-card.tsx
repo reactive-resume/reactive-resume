@@ -194,6 +194,7 @@ export function CustomFields({ fields, locked, edit }: CustomFieldsProps) {
 					<Input
 						disabled={locked}
 						aria-label={t`Field ${index + 1}`}
+						dir="auto"
 						value={field.text}
 						onChange={(event) =>
 							edit(`${field.id}.text`, (list) => {
@@ -217,6 +218,7 @@ export function CustomFields({ fields, locked, edit }: CustomFieldsProps) {
 							<Input
 								disabled={locked}
 								type="url"
+								dir="ltr"
 								aria-label={t`Link address`}
 								placeholder="https://"
 								value={field.link}

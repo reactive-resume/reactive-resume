@@ -1,6 +1,6 @@
 ---
 title: "Fitting content on a page"
-description: "See when your resume runs onto an extra page, fit it back with one click, or tighten text size, density, margins and content yourself."
+description: "See when your resume runs onto an extra page, fit it back or add a page with one click, or tighten text size, density, margins and content yourself."
 ---
 
 Many employers expect a one-page resume, or two pages at most. Reactive Resume tells you as soon as your content runs past the pages you planned, and can tighten the design for you until it fits. This guide covers the automatic fit and the changes you can make by hand.
@@ -9,7 +9,7 @@ Many employers expect a one-page resume, or two pages at most. Reactive Resume t
 
 Your layout has a set number of pages (one, unless you add more; see [Arranging the layout](/guides/arranging-the-layout)). When the content needs more than that, three things show it:
 
-- A warning above the first page says how far it runs over, for example "Runs onto page 2 by about 6 lines", next to a **Fit to one page** button.
+- A warning above the first page says how far it runs over, for example "Runs onto page 2 by about 6 lines", next to **Add page 2** and **Fit to one page** buttons.
 - A dashed amber line with the page number marks where each extra page begins.
 - The zoom bar at the bottom of the page shows the total number of pages.
 
@@ -46,7 +46,13 @@ Select **Fit to one page** in the warning (it reads **Fit to 2 pages**, **Fit to
 
 If your density or margins are exact values from Advanced rather than one of the presets, Fit goes straight to Compact or Narrow for that step. It stops as soon as everything fits and tells you what it changed, for example "Fits on one page: Compact, narrow margins, 10 pt". Select **Undo** in that message, or press <kbd>⌘</kbd> <kbd>Z</kbd> (<kbd>Ctrl</kbd> <kbd>Z</kbd> on Windows and Linux), to reverse the whole fit in one step.
 
-If the content still doesn't fit at 9 pt, the message says so ("Still 2 pages at 9 pt. Hide a section or shorten entries."). At that point, trim the content itself.
+If the content still doesn't fit at 9 pt, Fit puts the design back as it was and says so ("Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries."). Select **Add page 2** in that message to plan a second page, or trim the content itself. In the mobile app, Fit leaves the design unchanged in that case and the Page tab shows the same message.
+
+## Add a page instead
+
+When two pages are fine, select **Add page 2** in the warning (**Add page 3** and so on when your layout already has more pages). Reactive Resume adds a page after the last one and moves the sections that spill onto it, each in the column it was in. If no section starts on the extra page, it moves the one that runs across the break. It's one step: select **Undo** in the message to take it back.
+
+The button appears only when there's a section to move. If one long section is all the page holds, shorten it, or split it across pages yourself in **Design → Page → Pages and sections**.
 
 ## Tighten the design yourself
 
@@ -70,7 +76,7 @@ Design changes only go so far. A resume that fits because its content is focused
 - **Shorten entries.** Cut filler words, keep measurable results, and aim for three to five bullet points per job.
 - **Hide what doesn't help.** Hide older or less relevant entries and sections from the page without deleting them; see [Editing entries](/guides/editing-entries) and [Managing sections](/guides/managing-sections).
 - **Put short sections in columns.** Skills, languages and interests take less height in two or three columns; see [Arranging the layout](/guides/arranging-the-layout#section-columns).
-- **Plan a second page.** If two pages are acceptable, add a page and move less important sections onto it, so page one holds your strongest material. The warning then counts two planned pages.
+- **Plan a second page.** If two pages are acceptable, add a page and move less important sections onto it, so page one holds your strongest material. **Add page 2** does this for the sections that spill; **Design → Page → Pages and sections** lets you choose which ones move. The warning then counts two planned pages.
 
 <Tip>
   If your resume will only be read on screen, the **Free-form** paper format makes each page as tall as its content, so

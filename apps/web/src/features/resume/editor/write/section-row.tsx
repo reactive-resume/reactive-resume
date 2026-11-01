@@ -35,6 +35,7 @@ import { addEntryTo } from "./actions";
 import { countEntriesToCheck, getEntries, getSectionObject } from "./model";
 import { IconPicker } from "@/components/input/icon-picker";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { undoToast } from "@/features/resume/builder/undo-toast";
 import { usePrompt } from "@/hooks/use-confirm";
 import { DRAG_SETTLE } from "@/libs/motion";
 import { getSectionTitle } from "@/libs/resume/section";
@@ -197,9 +198,6 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 			{ newStep: true },
 		);
 
-	const undoToast = (description: string) =>
-		toast.add({ description, actionProps: { children: t`Undo`, onClick: () => useResumeStore.getState().undo() } });
-
 	const isSkills = section.type === "skills";
 	const canSort = section.type === "experience" || section.type === "education";
 	const columns =
@@ -245,14 +243,29 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 	};
 
 	const reset = () => {
+		const before = "items" in settings ? { items: settings.items } : { content: settings.content };
 		edit((target) => {
 			if ("items" in target) target.items = [];
 			else target.content = "";
 		});
-		undoToast(t`${title} cleared`);
+		undoToast(t`${title} cleared`, {
+			// Later edits came after the clear: put the entries back if the section is still empty.
+			restore: () =>
+				edit((target) => {
+					if ("items" in target && "items" in before && target.items.length === 0)
+						target.items = structuredClone(before.items) as typeof target.items;
+					else if ("content" in target && "content" in before && !target.content) target.content = before.content;
+				}),
+		});
 	};
 
 	const remove = () => {
+		const data = useResumeStore.getState().resume?.data;
+		const custom = data?.customSections.find((item) => item.id === section.id);
+		const places = (data?.metadata.layout.pages ?? []).map((page) => ({
+			main: page.main.indexOf(section.id),
+			sidebar: page.sidebar.indexOf(section.id),
+		}));
 		updateResumeData(
 			(draft) => {
 				draft.customSections = draft.customSections.filter((custom) => custom.id !== section.id);
@@ -263,7 +276,23 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 			},
 			{ newStep: true },
 		);
-		undoToast(t`${title} deleted`);
+		undoToast(t`${title} deleted`, {
+			// Later edits came after the delete: add the section back where it was.
+			restore: () =>
+				custom &&
+				updateResumeData(
+					(draft) => {
+						if (draft.customSections.some((item) => item.id === custom.id)) return;
+						draft.customSections.push(structuredClone(custom));
+						draft.metadata.layout.pages.forEach((page, index) => {
+							const place = places[index];
+							if (place && place.main !== -1) page.main.splice(place.main, 0, custom.id);
+							if (place && place.sidebar !== -1) page.sidebar.splice(place.sidebar, 0, custom.id);
+						});
+					},
+					{ newStep: true },
+				),
+		});
 	};
 
 	return (

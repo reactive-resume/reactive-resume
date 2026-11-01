@@ -24,7 +24,6 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Sheet, SheetClose, SheetContent } from "@reactive-resume/ui/components/sheet";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
@@ -34,6 +33,7 @@ import { createEntry, describeEntry, getEntries, getPrimaryField, isDraftEntry }
 import { entryElementId, keepOpenedEntryInView } from "./reveal";
 import { useSectionTitle } from "./section-row";
 import { useCurrentResume, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { undoToast } from "@/features/resume/builder/undo-toast";
 import { DRAG_SETTLE } from "@/libs/motion";
 import { getCompatibleMoveTargets, getSourceSectionTitle, moveItem } from "@/libs/resume/move-item";
 
@@ -253,17 +253,32 @@ function PhoneEntryScreen({
 }
 
 function deleteEntry(section: WriteSection, entryId: string) {
-	const { updateResumeData, undo } = useResumeStore.getState();
+	const { resume, updateResumeData } = useResumeStore.getState();
+	const entries = resume ? getEntries(resume.data, section) : [];
+	const index = entries.findIndex((entry) => entry.id === entryId);
+	const deleted = entries[index];
+	if (!deleted) return;
 	updateResumeData(
 		(draft) => {
-			const entries = getEntries(draft, section);
-			const index = entries.findIndex((entry) => entry.id === entryId);
-			if (index !== -1) entries.splice(index, 1);
+			const items = getEntries(draft, section);
+			const at = items.findIndex((entry) => entry.id === entryId);
+			if (at !== -1) items.splice(at, 1);
 		},
 		{ newStep: true },
 	);
 	useEditorStore.setState({ selection: null });
-	toast.add({ description: t`Entry deleted`, actionProps: { children: t`Undo`, onClick: undo } });
+	undoToast(t`Entry deleted`, {
+		// Later edits came after the delete: put the entry back where it was.
+		restore: () =>
+			useResumeStore.getState().updateResumeData(
+				(draft) => {
+					const items = getEntries(draft, section);
+					if (!items.some((entry) => entry.id === entryId))
+						items.splice(Math.min(index, items.length), 0, structuredClone(deleted));
+				},
+				{ newStep: true },
+			),
+	});
 }
 
 type EntryMenuProps = { section: WriteSection; entry: Entry };

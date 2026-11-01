@@ -3,10 +3,12 @@ import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
 import { plural, t } from "@lingui/core/macro";
+import { addPageWith, spillingSections } from "@reactive-resume/resume/spill";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useEditorStore } from "../store";
 import { applyDensity, applyMargins, applyTextSize, fitToPages, matchDensity, matchMargins } from "./presets";
 import { useResumeStore } from "@/features/resume/builder/draft";
+import { undoToast } from "@/features/resume/builder/undo-toast";
 
 const RENDER_TIMEOUT_MS = 8000;
 
@@ -57,18 +59,38 @@ export function measureOverflow(data: ResumeData, rendered: { pageCount: number;
 	return { authored, pageCount: rendered.pageCount, lines };
 }
 
+/** Adds a page after the last one and moves the sections that spill onto it, as one undo step. */
+export function addSpillPage() {
+	const { resume, updateResumeData } = useResumeStore.getState();
+	if (!resume) return false;
+	const moving = spillingSections(resume.data.metadata.layout.pages, useEditorStore.getState().rendered.pageMap?.nodes);
+	if (!moving) return false;
+	const page = resume.data.metadata.layout.pages.length + 1;
+	updateResumeData((draft) => addPageWith(draft.metadata.layout.pages, moving), { newStep: true });
+	const count = moving.main.length + moving.sidebar.length;
+	undoToast(
+		plural(count, {
+			one: `Added page ${page} and moved # section onto it`,
+			other: `Added page ${page} and moved # sections onto it`,
+		}),
+	);
+	return true;
+}
+
 /**
  * Fit to the authored pages: tightens density, then margins, then size (never below 9 pt), waiting for the page
- * to re-render after each step. The whole run is one undo step.
+ * to re-render after each step. The whole run is one undo step. When even that doesn't fit, it takes its own steps
+ * back and says so, offering a page instead.
  */
 export async function runFit() {
-	const { resume, updateResumeData, undo } = useResumeStore.getState();
+	const { resume, updateResumeData } = useResumeStore.getState();
 	if (!resume) return;
 	const { metadata } = resume.data;
 	const authored = Math.max(1, metadata.layout.pages.length);
 	const key = `design.fit:${Date.now()}`;
 	let version = useEditorStore.getState().rendered.version;
 	let applied = false;
+	let fitted: ResumeData | undefined;
 
 	const result = await fitToPages(
 		{ density: matchDensity(metadata), margins: matchMargins(metadata), size: metadata.typography.body.fontSize },
@@ -76,6 +98,7 @@ export async function runFit() {
 			version = useEditorStore.getState().rendered.version;
 			applied = true;
 			updateResumeData((draft) => applyStep(draft.metadata, step), { coalesceKey: key, sameStep: true });
+			fitted = useResumeStore.getState().resume?.data;
 		},
 		async () => {
 			if (applied) await waitForRender(version);
@@ -83,16 +106,25 @@ export async function runFit() {
 		},
 	);
 
-	const undoAction = { children: t`Undo`, onClick: undo };
 	if (!result.fits) {
-		const pages = useEditorStore.getState().rendered.pageCount;
+		// Nothing gained: put the design back, unless something else was edited meanwhile.
+		const current = useResumeStore.getState();
+		const reverted = !!fitted && current.resume?.data === fitted;
+		if (reverted) current.undo();
+		const addPage = { children: t`Add page ${authored + 1}`, onClick: () => void addSpillPage() };
 		toast.add({
 			type: "warning",
-			description: plural(pages, {
-				one: "Still # page at 9 pt. Hide a section or shorten entries.",
-				other: "Still # pages at 9 pt. Hide a section or shorten entries.",
-			}),
-			...(applied ? { actionProps: undoAction } : {}),
+			description: reverted
+				? plural(authored, {
+						1: "Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.",
+						other:
+							"Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.",
+					})
+				: plural(authored, {
+						1: "Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.",
+						other: "Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.",
+					}),
+			actionProps: addPage,
 		});
 		return;
 	}
@@ -102,8 +134,5 @@ export async function runFit() {
 	const details = [density ? densityLabel()[density] : null, margins ? marginsLabel()[margins] : null, t`${size} pt`]
 		.filter(Boolean)
 		.join(", ");
-	toast.add({
-		description: plural(authored, { 1: `Fits on one page: ${details}`, other: `Fits on # pages: ${details}` }),
-		actionProps: undoAction,
-	});
+	undoToast(plural(authored, { 1: `Fits on one page: ${details}`, other: `Fits on # pages: ${details}` }));
 }

@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { addPageWith, spillingSections } from "@reactive-resume/resume/spill";
 import { fitResume } from "./fit";
 import { usePageZoom, ZoomViewport } from "./use-page-zoom";
 import { usePreview } from "./usePreview";
@@ -74,6 +75,11 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 		try {
 			const fitted = await fitResume(data, () => mounted.current && latestData.current === data);
 			if (!mounted.current || latestData.current !== data) return;
+			// Squeezing that still runs over gains nothing: leave the design as it was and offer a page instead.
+			if (!fitted.fits) {
+				setFitFailed(true);
+				return;
+			}
 			let applied = false;
 			draft.update(
 				(value) => {
@@ -84,10 +90,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 				},
 				{ newStep: true },
 			);
-			if (applied) {
-				setFitApplied(true);
-				setFitFailed(!fitted.fits);
-			}
+			if (applied) setFitApplied(true);
 		} catch {
 			if (mounted.current) setFitFailed(true);
 		} finally {
@@ -96,6 +99,14 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 	};
 	const authored = Math.max(1, data?.metadata.layout.pages.length ?? 1);
 	const overflow = result && result.pageCount > authored;
+	// The sections that spill go onto a new page: the other way out besides Fit.
+	const spilling = overflow && data ? spillingSections(data.metadata.layout.pages, result.pageMap.nodes) : null;
+	const addPage = () => {
+		if (!spilling || draft.locked) return;
+		draft.update((value) => addPageWith(value.metadata.layout.pages, spilling), { newStep: true });
+		setFitFailed(false);
+		setFitApplied(false);
+	};
 	const currentPage = Math.min(
 		result?.pageCount ?? 1,
 		Number(Object.entries(rows).find(([, row]) => (row.y + row.height) * (zoom ?? 1) > offset)?.[0] ?? 0) + 1,
@@ -144,7 +155,13 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 				/>
 			) : null}
 			{fitFailed ? (
-				<Banner tone="warn" message={t`Content still runs over. Hide a section or shorten entries.`} />
+				<Banner
+					tone="warn"
+					message={plural(authored, {
+						1: "Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.",
+						other: "Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.",
+					})}
+				/>
 			) : null}
 			{fitApplied ? (
 				<Button
@@ -187,6 +204,14 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 								{index === 0 && overflow ? (
 									<View style={{ maxWidth: width, gap: space.s1 }}>
 										<Text variant="callout" color="warnText">{t`Runs onto page ${authored + 1}`}</Text>
+										{spilling ? (
+											<Button
+												variant="secondary"
+												label={t`Add page ${authored + 1}`}
+												disabled={draft.locked || preview.rendering || fitting}
+												onPress={addPage}
+											/>
+										) : null}
 										<Button
 											variant="secondary"
 											label={plural(authored, { 1: "Fit to one page", other: "Fit to # pages" })}
