@@ -137,7 +137,7 @@ test("reviews and atomically saves a structural set with offscreen Undo and reac
 	await expect(page.getByText("1 of 1 applied", { exact: true })).toBeVisible();
 	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).toContain("CPACC");
 	await page.getByRole("button", { name: "Assistant", exact: true }).click();
-	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await page.locator('[data-slot="toast"]').getByRole("button", { name: "Undo", exact: true }).click();
 	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).not.toContain("CPACC");
 	await page.reload();
 	await page.getByRole("button", { name: "Assistant", exact: true }).click();
