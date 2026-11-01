@@ -414,6 +414,9 @@ it("hands the selected story to Practise for the next interview", async () => {
 			],
 		},
 	];
+	api.data.facts = [
+		{ id: "backing-fact", status: "active", applicationId: null, revisions: [], updatedAt: new Date("2026-10-01") },
+	];
 	api.data.stories = [
 		{
 			id: "chosen-story",
@@ -426,19 +429,65 @@ it("hands the selected story to Practise for the next interview", async () => {
 				result: "",
 				reflection: "",
 				tags: [],
-				factIds: [],
+				factIds: ["backing-fact"],
 			},
 		},
 	];
 	mount(<StoriesPage storyId="chosen-story" edit={false} />);
-	const button = await screen.findByRole("button", { name: /^Practice$/ });
+	const button = await screen.findByRole("button", { name: /^Practice for Next Co$/ });
 	fireEvent.click(button);
 	expect(api.navigate).toHaveBeenCalledWith(
 		expect.objectContaining({
 			params: { applicationId: "next-application", tab: "practise" },
-			search: { speak: true, story: "chosen-story" },
+			search: { speak: true, story: "chosen-story", round: "next-interview" },
 		}),
 	);
+});
+
+it("doesn't offer Practice for a story with no facts to back it (L6-07)", async () => {
+	api.data.applications = [
+		{
+			id: "next-application",
+			company: "Next Co",
+			role: "Engineer",
+			status: "interview",
+			activity: [
+				{
+					id: "next-interview",
+					type: "interview",
+					at: new Date("2026-10-09T12:00:00Z"),
+					kind: "technical",
+					durationMinutes: 60,
+					location: "",
+					notes: "",
+					participants: [],
+					audience: "hiring-manager",
+					timezone: "UTC",
+				},
+			],
+		},
+	];
+	api.data.stories = [
+		{
+			id: "unbacked-story",
+			updatedAt: new Date(),
+			data: {
+				title: "Story without facts",
+				situation: "S",
+				task: "T",
+				action: "A",
+				result: "",
+				reflection: "",
+				tags: [],
+				factIds: [],
+			},
+		},
+	];
+	mount(<StoriesPage storyId="unbacked-story" edit={false} />);
+	const button = await screen.findByRole("button", { name: /^Practice$/ });
+	expect(button).toHaveAttribute("aria-disabled", "true");
+	fireEvent.click(button);
+	expect(api.navigate).not.toHaveBeenCalled();
 });
 
 it.each([

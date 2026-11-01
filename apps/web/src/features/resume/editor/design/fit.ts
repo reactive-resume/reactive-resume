@@ -13,18 +13,19 @@ import { undoToast } from "@/features/resume/builder/undo-toast";
 const RENDER_TIMEOUT_MS = 8000;
 
 /** Resolves once a render newer than `version` is on screen (or after a timeout, so Fit never hangs). */
+/** Resolves `true` once a render newer than `version` lands, or `false` when none arrived in time. */
 function waitForRender(version: number) {
-	return new Promise<void>((resolve) => {
-		if (useEditorStore.getState().rendered.version > version) return resolve();
+	return new Promise<boolean>((resolve) => {
+		if (useEditorStore.getState().rendered.version > version) return resolve(true);
 		const timer = setTimeout(() => {
 			unsubscribe();
-			resolve();
+			resolve(false);
 		}, RENDER_TIMEOUT_MS);
 		const unsubscribe = useEditorStore.subscribe((state) => {
 			if (state.rendered.version <= version) return;
 			clearTimeout(timer);
 			unsubscribe();
-			resolve();
+			resolve(true);
 		});
 	});
 }
@@ -88,7 +89,21 @@ export function addSpillPage() {
  * to re-render after each step. The whole run is one undo step. When even that doesn't fit, it takes its own steps
  * back and says so, offering a page instead.
  */
-export async function runFit() {
+export function runFit() {
+	const id = useResumeStore.getState().resume?.id;
+	if (!id) return Promise.resolve();
+	const current = fitting.get(id);
+	if (current) return current;
+	const run = fitOnce().finally(() => fitting.delete(id));
+	fitting.set(id, run);
+	return run;
+}
+
+// One Fit at a time per resume: a second press joins the run already going instead of reading a page count that
+// hasn't caught up with the first run's last step. Runs for different resumes stay apart.
+const fitting = new Map<string, Promise<void>>();
+
+async function fitOnce() {
 	const { resume, updateResumeData } = useResumeStore.getState();
 	if (!resume) return;
 	const { metadata } = resume.data;
@@ -100,6 +115,8 @@ export async function runFit() {
 	// An edit between two steps starts its own undo step, so one Undo could no longer take the whole run back.
 	let expected: ResumeData | undefined = resume.data;
 	let interrupted = false;
+	// A step whose render never arrived was measured on the page before it: don't take the design back on that.
+	let timedOut = false;
 
 	const result = await fitToPages(
 		{ density: matchDensity(metadata), margins: matchMargins(metadata), size: metadata.typography.body.fontSize },
@@ -112,15 +129,22 @@ export async function runFit() {
 			expected = fitted;
 		},
 		async () => {
-			if (applied) await waitForRender(version);
+			if (applied && !(await waitForRender(version))) timedOut = true;
 			return useEditorStore.getState().rendered.pageCount <= authored;
 		},
 	);
 
+	if (!result.fits && timedOut) {
+		toast.add({
+			type: "warning",
+			description: t`The preview took too long to update, so Fit stopped. Check the pages, and use Undo to take its changes back.`,
+		});
+		return;
+	}
 	if (!result.fits) {
 		// Nothing gained: put the design back, unless something else was edited meanwhile.
 		const current = useResumeStore.getState();
-		const reverted = !interrupted && !!fitted && current.resume?.data === fitted;
+		const reverted = !interrupted && !timedOut && !!fitted && current.resume?.data === fitted;
 		if (reverted) current.undo();
 		const addPage = { children: t`Add page ${authored + 1}`, onClick: () => void addSpillPage() };
 		toast.add({

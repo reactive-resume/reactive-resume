@@ -107,8 +107,16 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 	const spilling =
 		overflow && data && !previewData ? spillingSections(data.metadata.layout.pages, result.pageMap.nodes) : null;
 	const addPage = () => {
-		if (!spilling || draft.locked) return;
-		draft.update((value) => addPageWith(value.metadata.layout.pages, spilling), { newStep: true });
+		if (!spilling || draft.locked || !data) return;
+		const measured = JSON.stringify(data.metadata.layout.pages);
+		draft.update(
+			(value) => {
+				// The layout changed before this render caught up: the sections measured here may not spill any more.
+				if (JSON.stringify(value.metadata.layout.pages) !== measured) return;
+				addPageWith(value.metadata.layout.pages, spilling);
+			},
+			{ newStep: true },
+		);
 		setFitFailed(false);
 		setFitApplied(false);
 	};

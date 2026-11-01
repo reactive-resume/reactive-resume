@@ -16,8 +16,10 @@ type UndoToastOptions = Omit<NonNullable<Parameters<typeof toast.add>[0]>, "desc
  * change another way when it can, or says to use Undo in the editor.
  */
 export function undoToast(description: string, { restore, ...options }: UndoToastOptions = {}) {
-	const { resume } = useResumeStore.getState();
+	const { resume, undoStack } = useResumeStore.getState();
 	const changed = resume?.data;
+	// The history step this change made: a revision from elsewhere can clear history and leave the data as it is.
+	const step = undoStack.at(-1);
 	const resumeId = resume?.id;
 	return toast.add({
 		...options,
@@ -28,7 +30,8 @@ export function undoToast(description: string, { restore, ...options }: UndoToas
 				const current = useResumeStore.getState();
 				// The toast can outlive the resume it was about: another one open here is left alone.
 				if (!current.resume || current.resume.id !== resumeId) return;
-				if (changed && current.resume.data === changed) return current.undo();
+				if (changed && current.resume.data === changed && step && current.undoStack.at(-1) === step)
+					return current.undo();
 				if (restore && !current.resume.isLocked && restore()) return;
 				toast.add({ description: t`You've made changes since. Use Undo to step back through them.` });
 			},

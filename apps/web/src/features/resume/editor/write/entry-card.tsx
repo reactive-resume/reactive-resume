@@ -29,7 +29,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { EntryFields } from "./entries";
 import { useEntry, useEntryWriter } from "./fields";
-import { createEntry, describeEntry, getEntries, getPrimaryField, isDraftEntry } from "./model";
+import { createEntry, describeEntry, getEntries, getPrimaryField, getSectionObject, isDraftEntry } from "./model";
 import { entryElementId, keepOpenedEntryInView } from "./reveal";
 import { useSectionTitle } from "./section-row";
 import { useCurrentResume, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
@@ -271,7 +271,9 @@ function deleteEntry(section: WriteSection, entryId: string) {
 		// Later edits came after the delete: put the entry back where it was.
 		restore: () => {
 			const current = useResumeStore.getState().resume;
-			if (!current || getEntries(current.data, section).some((entry) => entry.id === entryId)) return false;
+			// Its section was deleted since: there's nowhere to put it back.
+			if (!current || !getSectionObject(current.data, section)) return false;
+			if (getEntries(current.data, section).some((entry) => entry.id === entryId)) return false;
 			useResumeStore.getState().updateResumeData(
 				(draft) => {
 					const items = getEntries(draft, section);

@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {# திருத்தத்தை வைக்க முடியவில்லை: அதன் உரை மாற்றப்பட்டது. அதை மீண்டும் செய்ய மீண்டும் கேளுங்கள்.} other {# திருத்தங்களைச் செய்ய முடியவில்லை: அவற்றின் உரை மாற்றப்பட்டது. அவற்றை மீண்டும் செய்ய மீண்டும் கேளுங்கள்.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# பதிவு} other {# பதிவுகள்}}"
@@ -211,6 +213,11 @@ msgstr "{0, plural, one {# பதிவு} other {# பதிவுகள்}}"
 #: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# உண்மை} other {# உண்மைகள்}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -827,6 +834,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {சரிபார்க்க #} other {சரிபார்க்க #}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
@@ -1017,6 +1028,10 @@ msgstr "ஏற்றுக்கொள்"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "அனைத்தையும் ஏற்றுக்கொள்"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1363,6 +1378,10 @@ msgstr "{domain}.com போன்ற டொமைன் முடிவைச்
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "டொமைனை நீங்கள் நிர்வகிக்கும் இடத்தில் இந்தப் பதிவுகளைச் சேர்த்து, பின்னர் சரிபார்க்கவும். மாற்றங்கள் அனைவரையும் சென்றடைய சில மணிநேரம் ஆகலாம்."
@@ -1434,6 +1453,11 @@ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Address line 2"
+msgstr ""
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
 msgstr ""
 
 #: src/features/design/advanced.tsx
@@ -2482,6 +2506,10 @@ msgstr "மற்றொரு கோப்பை சரிபார்க்க�
 msgid "Check DNS"
 msgstr "DNS-ஐச் சரிபார்"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -2534,6 +2562,10 @@ msgstr "இந்தப் பதவியை உங்கள் சான்ற
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "காட்சிகளை சரிபார்க்கவும்"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3457,6 +3489,11 @@ msgstr "உங்கள் AI வழங்குநரை அணுக முட
 msgid "Couldn't read that file. Try again."
 msgstr "அந்தக் கோப்பைப் படிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "ஏற்றுமதி செய்யப்பட்ட PDF ஐப் படிக்க முடியவில்லை."
@@ -3555,6 +3592,7 @@ msgid "Couldn't save the theme. Try again."
 msgstr "தீம் சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
 #: app/(tabs)/settings/preferences.tsx
+#: src/features/career/hooks.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "நேர மண்டலத்தைச் சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
@@ -3800,6 +3838,10 @@ msgstr "நகலை உருவாக்கவும்"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "முதலில் ரெஸ்யூமை உருவாக்கவும் அல்லது இறக்குமதி செய்யவும், பிறகு இந்த வேலைக்காக அதை நகலெடுக்க திரும்பவும்."
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3816,6 +3858,10 @@ msgstr "உருவாக்கப்பட்டது {0} · கடைசி�
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "ஆவணத்தை உருவாக்குகிறது…"
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4889,6 +4935,10 @@ msgstr "உண்மைகள்"
 msgid "Failed"
 msgstr "தோல்வியடைந்தது"
 
+#: src/features/career/today.tsx
+msgid "Failed · open to check it"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Family name"
 msgstr ""
@@ -5336,9 +5386,18 @@ msgstr "ஹீப்ரூ"
 msgid "Help & docs"
 msgstr "உதவி & ஆவணங்கள்"
 
+#. placeholder {0}: starter.company
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "ஒரு சாதனையை சூழ்நிலை, பணி, செயல், முடிவு, பிரதிபலிப்பு கொண்ட கதையாக மாற்ற எனக்கு உதவுங்கள்."
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #. placeholder {0}: open.label
 #: src/features/check/job-match.tsx
@@ -6053,6 +6112,10 @@ msgstr "கடைசியாக திருத்தப்பட்டது"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Last reviewed"
+msgstr ""
+
+#: src/features/career/today.tsx
+msgid "Last run failed"
 msgstr ""
 
 #. placeholder {0}: time.when(row.lastSeenAt)
@@ -6812,6 +6875,10 @@ msgstr "மேலும்"
 msgid "More details"
 msgstr "மேலும் விவரங்கள்"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6999,6 +7066,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "பெயர்"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -7101,6 +7172,10 @@ msgstr "புதிய உரையாடல்"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "அதற்கு பதிலாக புதிய கவர் கடிதம்"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7395,6 +7470,10 @@ msgstr "சுயவிவரம் தேர்ந்தெடுக்கப�
 
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9267,6 +9346,10 @@ msgstr "படத்தை மாற்றவும்"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "அட்டவணைகளை எளிய பத்திகள் மற்றும் பட்டியல்களாக மாற்றவும். செல்கள் படிக்கும் வரிசையில் அல்ல, சேமிப்பு வரிசையில்தான் பிரித்தெடுக்கப்படும்."
 
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
+
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
 msgstr "மாற்று நிலை"
@@ -9762,6 +9845,10 @@ msgstr "கோடு"
 #: src/features/check/writing.tsx
 msgid "Run again"
 msgstr "மீண்டும் இயக்கு"
+
+#: src/features/career/today.tsx
+msgid "Running"
+msgstr ""
 
 #. placeholder {0}: new Intl.DateTimeFormat(locale, { timeZone: timezone, dateStyle: "medium", timeStyle: "short" }).format(runAt)
 #: src/features/career/schedule-sheet.tsx
@@ -11354,6 +11441,10 @@ msgstr "இணைப்பைச் சோதிக்கிறது…"
 msgid "Testing…"
 msgstr "சோதனை…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11603,6 +11694,10 @@ msgstr "PDF சேவையகத்தில் சரிபார்க்க�
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/ai/error.ts
@@ -12694,6 +12789,11 @@ msgstr "இந்தப் பதில்களைப் பயன்படு�
 msgid "Use this date"
 msgstr "இந்த தேதியைப் பயன்படுத்தவும்"
 
+#. placeholder {0}: time.deviceTimeZone
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({0})"
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 msgid "Use this device's timezone ({deviceTimezone})"
 msgstr "இந்தச் சாதனத்தின் நேர மண்டலத்தைப் பயன்படுத்தவும் ({deviceTimezone})"
@@ -13012,6 +13112,10 @@ msgstr "அடிப்படை சம்பளம் என்ன?"
 #: src/features/application-detail/sheets.tsx
 msgid "What it asks for"
 msgstr "அது என்ன கேட்கிறது"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "What matters to you"

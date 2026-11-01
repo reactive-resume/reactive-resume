@@ -9,6 +9,9 @@ const mocks = vi.hoisted(() => {
 	const history: Data[] = [];
 	const store = {
 		resume: { id: "resume-1", data: { entries: [], headline: "" } as Data, isLocked: false },
+		get undoStack() {
+			return history;
+		},
 		update: (edit: (draft: Data) => void) => {
 			history.push(store.resume.data);
 			const draft = structuredClone(store.resume.data);
@@ -49,6 +52,13 @@ beforeEach(() => {
 
 it("undoes the deletion while it's the latest step", () => {
 	deleteFirst();
+	mocks.toasts[0]?.actionProps?.onClick();
+	expect(mocks.store.resume.data.entries).toEqual(["Acme", "Globex"]);
+});
+
+it("puts the entry back when a revision from elsewhere cleared the history", () => {
+	deleteFirst();
+	mocks.history.length = 0;
 	mocks.toasts[0]?.actionProps?.onClick();
 	expect(mocks.store.resume.data.entries).toEqual(["Acme", "Globex"]);
 });

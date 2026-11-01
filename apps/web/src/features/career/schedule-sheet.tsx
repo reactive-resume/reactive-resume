@@ -86,6 +86,10 @@ export function rollForward(at: Date, intervalDays: number, timeZone: string, no
 }
 
 /** When a briefing runs; mirrors the server, which recomputes it from the interview on save. */
+/** A new briefing's lead: 24 hours before, or 2 hours when that has passed (then it runs now either way). */
+const firstLeadAhead = (start: Date | undefined, timeZone: string, now: Date): Lead =>
+	start && prepareRunAt(start, "24h", timeZone) <= now && prepareRunAt(start, "2h", timeZone) > now ? "2h" : "24h";
+
 const prepareRunAt = (start: Date, lead: Lead, timeZone: string) =>
 	lead === "morning"
 		? fromZoned(toZoned(start, timeZone).date, "08:00", timeZone)
@@ -152,6 +156,8 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 
 	// The form starts once its data is in, and again for each schedule opened; closing drops it.
 	const [form, setForm] = useState<Form | null>(null);
+	// A lead the person picked stays; until then it follows the chosen interview.
+	const [leadChosen, setLeadChosen] = useState(false);
 	if (shown && form?.target !== shown && schedules && profile && applications && !providersLoading) {
 		const [head, kind, applicationId] = shown.split(":");
 		const existing = head === "new" ? null : (schedules.find((row) => row.id === shown) ?? null);
@@ -167,13 +173,14 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 			every: String(existing?.intervalDays ?? 1),
 			...toZoned(at, timeZone),
 			interviewId: existing?.interviewId ?? upcoming[0]?.interview.id ?? "",
-			lead: (existing?.lead as Lead | null) ?? "24h",
+			lead: (existing?.lead as Lead | null) ?? firstLeadAhead(upcoming[0]?.start, timeZone, now),
 			aiProviderId: providers.find((provider) => provider.id === existing?.aiProviderId)?.id ?? providers[0]?.id ?? "",
 			applicationId: existing?.applicationId ?? applicationId ?? open[0]?.id ?? "",
 			enabled: existing?.enabled ?? true,
 			email: existing?.email ?? false,
 		};
 		setForm({ target: shown, existing, initial, draft: initial, touched: {}, submitted: false, discarding: false });
+		setLeadChosen(false);
 	}
 
 	const draft = form?.draft;
@@ -397,7 +404,15 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 												{...props}
 												disabled={choices.length === 0}
 												value={draft.interviewId}
-												onChange={(event) => set({ interviewId: event.target.value })}
+												onChange={(event) => {
+													const chosen = choices.find((item) => item.interview.id === event.target.value);
+													set({
+														interviewId: event.target.value,
+														...(leadChosen || form?.existing?.lead || !chosen
+															? {}
+															: { lead: firstLeadAhead(chosen.start, timeZone, now) }),
+													});
+												}}
 												className="pointer-coarse:text-base"
 											>
 												{choices.map((item) => (
@@ -415,7 +430,10 @@ export function ScheduleSheet({ schedule, onScheduleChange, onDelete }: Schedule
 									<Segments
 										label={t`Prepare a briefing`}
 										value={draft.lead}
-										onChange={(lead) => set({ lead: lead as Lead })}
+										onChange={(lead) => {
+											setLeadChosen(true);
+											set({ lead: lead as Lead });
+										}}
 										options={[
 											{ value: "24h", label: t`24 hours before` },
 											{ value: "2h", label: t`2 hours before` },

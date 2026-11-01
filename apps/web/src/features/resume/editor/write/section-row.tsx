@@ -267,10 +267,7 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 	const remove = () => {
 		const data = useResumeStore.getState().resume?.data;
 		const custom = data?.customSections.find((item) => item.id === section.id);
-		const places = (data?.metadata.layout.pages ?? []).map((page) => ({
-			main: page.main.indexOf(section.id),
-			sidebar: page.sidebar.indexOf(section.id),
-		}));
+		const places = layoutPlaces(data?.metadata.layout.pages ?? [], section.id);
 		updateResumeData(
 			(draft) => {
 				draft.customSections = draft.customSections.filter((custom) => custom.id !== section.id);
@@ -461,16 +458,34 @@ function useProposedCount(sectionId: string) {
 }
 
 type LayoutPage = { fullWidth: boolean; main: string[]; sidebar: string[] };
+type LayoutPlace = { main: number; sidebar: number; others: string[]; pageCount: number };
+
+/** Where a section sits on each page, with the sections it shares that page with, to find the page again later. */
+function layoutPlaces(pages: LayoutPage[], id: string): LayoutPlace[] {
+	return pages.map((page) => ({
+		main: page.main.indexOf(id),
+		sidebar: page.sidebar.indexOf(id),
+		others: [...page.main, ...page.sidebar].filter((other) => other !== id),
+		pageCount: pages.length,
+	}));
+}
 
 /**
- * Puts a restored section back where it was: its page and column, at its place. A page made full width since takes it
- * in its main column; a page deleted since leaves it at the end of the last page.
+ * Puts a restored section back where it was: its column and place, on the page that still holds the sections it
+ * shared it with (pages deleted or reordered since shift indexes). A page made full width since takes it in its main
+ * column; a page that can't be found leaves it at the end of the last page.
  */
-function restoreToLayout(pages: LayoutPage[], id: string, places: { main: number; sidebar: number }[]) {
+function restoreToLayout(pages: LayoutPage[], id: string, places: LayoutPlace[]) {
 	let placed = false;
 	places.forEach((place, index) => {
-		const page = pages[index];
-		if (!page || (place.main === -1 && place.sidebar === -1)) return;
+		if (place.main === -1 && place.sidebar === -1) return;
+		const byNeighbours = pages.find((page) =>
+			place.others.some((other) => [...page.main, ...page.sidebar].includes(other)),
+		);
+		// A page it had to itself is known only by position, which holds while the page count hasn't changed.
+		const page =
+			byNeighbours ?? (place.others.length === 0 && pages.length === place.pageCount ? pages[index] : undefined);
+		if (!page) return;
 		if (place.sidebar !== -1 && !page.fullWidth)
 			page.sidebar.splice(Math.min(place.sidebar, page.sidebar.length), 0, id);
 		else page.main.splice(Math.min(place.main === -1 ? page.main.length : place.main, page.main.length), 0, id);

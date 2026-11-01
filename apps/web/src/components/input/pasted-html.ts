@@ -5,8 +5,10 @@ const PASTED_STYLE = /^(color|background|background-color|font|font-family|font-
 // Word's list paragraphs: class `MsoListParagraph…`, or `mso-list` in the inline style.
 const WORD_LIST = /\bmso-list\s*:\s*l\d/i;
 // The marker Word types in front of each item ("·", "o", "§", "1.", "a)") and the non-breaking spaces after it.
-const WORD_MARKER = /^\s*(?:[·•o§▪◦\-–]|\(?[0-9a-z]{1,3}[.)])[\s ]+/i;
 const ORDERED_MARKER = /^\s*\(?[0-9a-z]{1,3}[.)]/i;
+// Without Word's marker span, only a bullet glyph or a number is read as one, so "Inc. grew revenue" keeps its words.
+const BARE_MARKER = /^\s*(?:[·•o§▪◦]|\(?\d{1,3}[.)])[\s\u00a0]+/;
+const IGNORE_SPAN = /\bmso-list\s*:\s*ignore/i;
 
 function isWordListItem(element: Element) {
 	return (
@@ -31,8 +33,9 @@ type WordMarker = { ordered: boolean; number: number | undefined };
 function stripWordMarker(item: Element): WordMarker {
 	const result: WordMarker = { ordered: false, number: undefined };
 	let spanned = false;
-	for (const marker of item.querySelectorAll('[style*="mso-list"]')) {
-		if (!/ignore/i.test(marker.getAttribute("style") ?? "")) continue;
+	// Attribute selectors match the style's case exactly; Word may write `MSO-LIST:Ignore`.
+	for (const marker of item.querySelectorAll("[style]")) {
+		if (!IGNORE_SPAN.test(marker.getAttribute("style") ?? "")) continue;
 		const text = marker.textContent ?? "";
 		result.ordered ||= ORDERED_MARKER.test(text);
 		result.number ??= markerNumber(text);
@@ -46,7 +49,7 @@ function stripWordMarker(item: Element): WordMarker {
 			node.textContent = "";
 			continue;
 		}
-		const match = spanned ? null : WORD_MARKER.exec(text);
+		const match = spanned ? null : BARE_MARKER.exec(text);
 		if (match) {
 			result.ordered ||= ORDERED_MARKER.test(match[0]);
 			result.number ??= markerNumber(match[0]);
@@ -60,16 +63,29 @@ function stripWordMarker(item: Element): WordMarker {
 /** Which Word list a paragraph belongs to (its `lfo` number): a bullet list and a numbered one next to it stay apart. */
 const listInstance = (element: Element) => /\blfo(\d+)/i.exec(element.getAttribute("style") ?? "")?.[1];
 
+/** Whether a list paragraph's marker is a number, read without changing it. */
+function isOrderedItem(item: Element) {
+	for (const marker of item.querySelectorAll("[style]"))
+		if (IGNORE_SPAN.test(marker.getAttribute("style") ?? "")) return ORDERED_MARKER.test(marker.textContent ?? "");
+	return /^\s*\(?\d{1,3}[.)]/.test(item.textContent ?? "");
+}
+
+/** Whether `item` continues the list `first` starts: the same `lfo` list, or without one, the same kind of marker. */
+function sameList(first: Element, item: Element) {
+	const instance = listInstance(first);
+	if (instance !== undefined || listInstance(item) !== undefined) return listInstance(item) === instance;
+	return isOrderedItem(item) === isOrderedItem(first);
+}
+
 /** Word's list paragraphs as lists: each run of one list becomes one `<ul>` (or `<ol>`, from its first number). */
 function convertWordLists(body: HTMLElement) {
 	const document = body.ownerDocument;
 	for (const paragraph of body.querySelectorAll("p")) {
 		if (!paragraph.isConnected || !isWordListItem(paragraph)) continue;
-		const instance = listInstance(paragraph);
 		const run: Element[] = [];
 		for (
 			let item: Element | null = paragraph;
-			item && isWordListItem(item) && listInstance(item) === instance;
+			item && isWordListItem(item) && sameList(paragraph, item);
 			item = item.nextElementSibling
 		)
 			run.push(item);

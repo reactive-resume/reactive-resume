@@ -236,14 +236,17 @@ export type ReviewContext = {
 
 const NO_REVIEW_CONTEXT: ReviewContext = { facts: new Map(), posting: null };
 
-type ReviewFields = Pick<ProposeEditsInput["edits"][number], "requirement" | "evidence" | "factIds" | "unsupported">;
+type ReviewFields = Pick<
+	ProposeEditsInput["edits"][number],
+	"requirement" | "evidence" | "factIds" | "unsupported" | "addsClaims"
+>;
 type Cite = (
 	passageIds?: readonly string[],
 	factIds?: readonly string[],
 ) => { evidence: ProposalEvidence[]; unresolved: number };
 /** What a reviewed change shows the user: the requirement it addresses, what's cited, what nothing backs. */
 type Review = Partial<
-	Pick<ProposeEditsOutput["edits"][number], "requirement" | "evidence" | "unresolved" | "unsupported">
+	Pick<ProposeEditsOutput["edits"][number], "requirement" | "evidence" | "unresolved" | "unsupported" | "addsClaims">
 >;
 
 /**
@@ -283,6 +286,8 @@ function reviewer(document: LoadedDocument, review: ReviewContext) {
 			...(evidence.length > 0 ? { evidence } : {}),
 			...(unresolved > 0 ? { unresolved } : {}),
 			...(unsupported.length > 0 ? { unsupported } : {}),
+			// A word the document doesn't use ("term") is too weak a sign on its own: most rewrites have one.
+			...(fields.addsClaims || unsupported.some((claim) => claim.kind !== "term") ? { addsClaims: true } : {}),
 		};
 	};
 	return { byId, cite, reviewOf };
@@ -527,6 +532,7 @@ function combinedReview(reviews: readonly Review[]): Review {
 		...(evidence.length > 0 ? { evidence } : {}),
 		...(unresolved > 0 ? { unresolved } : {}),
 		...(unsupported.length > 0 ? { unsupported } : {}),
+		...(reviews.some((review) => review.addsClaims) ? { addsClaims: true } : {}),
 	};
 }
 

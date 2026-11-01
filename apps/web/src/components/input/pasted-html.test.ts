@@ -48,6 +48,22 @@ describe("cleanPastedHtml", () => {
 		expect(cleanPastedHtml(html)).toBe("<ul><li>Bullet</li></ul><ol><li>Step</li></ol>");
 	});
 
+	it("reads Word's marker span whatever its case, and keeps authored words that only look like a marker", () => {
+		const html = [
+			'<p style="mso-list:l0 level1 lfo1"><span style="MSO-LIST:Ignore">·<span>&nbsp;</span></span>Shipped</p>',
+			'<p class="MsoListParagraph">Inc. grew revenue</p>',
+		].join("");
+		expect(cleanPastedHtml(html)).toBe("<ul><li>Shipped</li></ul><ul><li>Inc. grew revenue</li></ul>");
+	});
+
+	it("keeps Word lists without a list number apart when their markers differ", () => {
+		const html = [
+			'<p class="MsoListParagraph">·&nbsp;Bullet</p>',
+			'<p class="MsoListParagraph">1.&nbsp;Numbered</p>',
+		].join("");
+		expect(cleanPastedHtml(html)).toBe("<ul><li>Bullet</li></ul><ol><li>Numbered</li></ol>");
+	});
+
 	it("leaves plain markup alone", () => {
 		const html = '<p>One <a href="https://example.com">link</a></p><ul><li>Item</li></ul>';
 		expect(cleanPastedHtml(html)).toBe(html);

@@ -38,6 +38,8 @@ export type JdMatchOptions = {
 	company?: string | undefined;
 	/** Where the job is, when known. A city is never a term to add either. */
 	location?: string | undefined;
+	/** The job's title, when known. "Product Designer" names the job, not a skill to add to a resume. */
+	role?: string | undefined;
 };
 
 type JdTerm = { term: string; count: number; inRequirements: boolean; words: number; isSkill: boolean };
@@ -161,16 +163,23 @@ function guessEmployerAndPlace(posting: string): string[] {
  * them from ordinary words ("Data" of "Data Systems").
  */
 function excludedPhrases(posting: string, options: JdMatchOptions): string[][] {
+	// The title with and without its level: "Senior Product Designer" is also "Product Designer".
+	const role = options.role?.replace(/\(.*?\)/g, "").trim() ?? "";
+	const unleveled = role.replace(/^(?:senior|sr\.?|junior|jr\.?|lead|staff|principal|associate|head of)\s+/i, "");
 	const sources = [
 		options.company ?? "",
 		...(options.location ?? "").split(/[,()/·|]/),
 		...guessEmployerAndPlace(posting),
+		role,
+		...(unleveled !== role ? [unleveled] : []),
 	];
 	const phrases: string[][] = [];
 
 	for (const source of sources) {
 		const tokens = tokenize(normalizeForMatching(source));
 		if (tokens.length === 0 || (source !== options.company && isKnownSkillForm(tokens.join(" ")))) continue;
+		// A one-word title ("Designer") still leaves the word free for longer terms elsewhere.
+		if ((source === role || source === unleveled) && tokens.length < 2) continue;
 		// A one-word place such as "Remote" or "hybrid" is already noise, and hiding it would split "hybrid cloud".
 		if (tokens.length === 1 && isGenericWord(tokens[0] ?? "")) continue;
 		phrases.push(tokens);
@@ -324,11 +333,12 @@ function collectJdTerms(options: JdMatchOptions): Map<string, JdTerm> {
 function countResumeNgrams(resumeText: string): Map<string, number> {
 	const counts = new Map<string, number>();
 
-	for (const run of splitIntoRuns(normalizeForMatching(resumeText))) {
-		const tokens = tokenize(run);
-
+	/** Counts each window of `tokens`; with `only`, just the windows that include one of those positions. */
+	const count = (tokens: readonly string[], only?: ReadonlySet<number>) => {
 		for (let size = 1; size <= MAX_NGRAM_LENGTH; size += 1) {
 			for (let start = 0; start + size <= tokens.length; start += 1) {
+				if (only && !Array.from({ length: size }, (_, offset) => start + offset).some((index) => only.has(index)))
+					continue;
 				const window = tokens.slice(start, start + size);
 				const raw = window.join(" ");
 				const stemmed = window.map(stemFreeText).join(" ");
@@ -337,6 +347,26 @@ function countResumeNgrams(resumeText: string): Map<string, number> {
 				if (stemmed !== raw) counts.set(stemmed, (counts.get(stemmed) ?? 0) + 1);
 			}
 		}
+	};
+
+	for (const run of splitIntoRuns(normalizeForMatching(resumeText))) {
+		const tokens = tokenize(run);
+		count(tokens);
+		// "checkout-flow accessibility" also says "checkout flow": a posting's "checkout flows" is there. Only the
+		// phrases the split adds are counted, so the other words aren't counted twice.
+		const split: string[] = [];
+		const parts = new Set<number>();
+		for (const token of tokens) {
+			if (!/\p{L}-\p{L}/u.test(token)) {
+				split.push(token);
+				continue;
+			}
+			for (const part of token.split("-").filter(Boolean)) {
+				parts.add(split.length);
+				split.push(part);
+			}
+		}
+		if (parts.size > 0) count(split, parts);
 	}
 
 	return counts;
@@ -408,6 +438,7 @@ export function matchJobDescription(options: JdMatchOptions): JdMatchReport {
 		jdCount: entry.count,
 		resumeCount: resumeCountFor(entry.term, resumeCounts),
 		weight: Math.round(weigh(entry) * 1000) / 1000,
+		...(entry.isSkill ? { skill: true } : {}),
 	}));
 
 	const matched = terms.filter((term) => term.resumeCount > 0);

@@ -27,8 +27,9 @@ import {
 import { buildAiExtractionTemplate } from "@reactive-resume/ai/resume/extraction-template";
 import { sanitizeAndParseResumeJson } from "@reactive-resume/ai/resume/sanitize";
 import { AI_PROVIDER_DEFAULT_BASE_URLS, AI_PROVIDER_DISPLAY_NAMES, aiProviderSchema } from "@reactive-resume/ai/types";
-import { ZipEntryTooLargeError, unzipEntries } from "@reactive-resume/import/zip";
-import { decodeEntities } from "../web-access/builtin";
+import { extractDocxText } from "@reactive-resume/import/docx-text";
+import { withLinkTargets } from "@reactive-resume/import/review";
+import { extractPdf } from "../resume/pdf-analysis";
 import { isDirectOpenAIProvider } from "./capabilities";
 import { aiDeadline } from "./generate-json";
 import { aiTransport, resolveAiBaseUrl } from "./url-policy";
@@ -87,9 +88,6 @@ const TEST_CONNECTION_TIMEOUT_MS = z.coerce
 	.max(MAX_ABORT_SIGNAL_TIMEOUT_MS)
 	.catch(30_000)
 	.parse(process.env.AI_TEST_TIMEOUT_MS?.trim() || undefined);
-const DOCX_DOCUMENT_XML_PATH = "word/document.xml";
-// Resume bodies are kilobytes; this leaves room for long documents without trusting the archive's declared size.
-const MAX_DOCX_DOCUMENT_XML_BYTES = 20 * 1024 * 1024;
 
 export function getModel(input: GetModelInput) {
 	const { provider, model, apiKey } = input;
@@ -364,7 +362,24 @@ async function parsePdf(input: ParsePdfInput): Promise<ResumeData> {
 		}),
 	}).catch((error: unknown) => logAndRethrow("Failed to generate the text with the model", error));
 
-	return parseAndValidateResumeJson(result.text);
+	return withLinkTargets(parseAndValidateResumeJson(result.text), await pdfLinks(input.file, input.signal));
+}
+
+/**
+ * The addresses behind a PDF's links ("LinkedIn" linking to the profile): a model reading the page sees only the
+ * words. Best effort; an unreadable file still imports.
+ */
+async function pdfLinks(file: z.infer<typeof fileInputSchema>, signal?: AbortSignal) {
+	try {
+		const raw = await extractPdf(
+			new File([Buffer.from(file.data, "base64")], file.name, { type: "application/pdf" }),
+			signal,
+			0,
+		);
+		return raw.links.flatMap((link) => (link.url ? [link.url] : []));
+	} catch {
+		return [];
+	}
 }
 
 type ParseDocxInput = z.infer<typeof aiCredentialsSchema> & {
@@ -373,50 +388,18 @@ type ParseDocxInput = z.infer<typeof aiCredentialsSchema> & {
 	mediaType: "application/msword" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 };
 
-function readDocumentXml(data: string): string {
-	let entries: Record<string, Uint8Array>;
-	try {
-		entries = unzipEntries(
-			Buffer.from(data, "base64"),
-			(name) => name === DOCX_DOCUMENT_XML_PATH,
-			MAX_DOCX_DOCUMENT_XML_BYTES,
-		);
-	} catch (error) {
-		if (error instanceof ZipEntryTooLargeError) throw new Error("DOCX document content is too large.");
-		throw new Error("Invalid DOCX archive.");
-	}
-	const xml = entries[DOCX_DOCUMENT_XML_PATH];
-	if (!xml) throw new Error("DOCX document content not found.");
-	return new TextDecoder().decode(xml);
-}
+/** A Word file's text, page headers and footers included (see `@reactive-resume/import/docx-text`). */
+export const extractDocxTextFromBytes = extractDocxText;
 
-function extractDocxText(file: z.infer<typeof fileInputSchema>): string {
-	const documentXml = readDocumentXml(file.data);
-	// ponytail: minimal OOXML body-text extraction; add a DOCX parser dependency if tracked changes matter.
-	const text = decodeEntities(
-		// `[^<>]` keeps each match from scanning past the next tag, so malformed markup costs linear time.
-		documentXml
-			.replace(/<w:tab\b[^<>]*\/>/g, "\t")
-			.replace(/<w:br\b[^<>]*\/>/g, "\n")
-			.replace(/<\/w:p>/g, "\n")
-			.replace(/<[^<>]*>/g, ""),
-	)
-		.replace(/\r/g, "")
-		.split("\n")
-		.map((line) => line.trimEnd())
-		.join("\n")
-		.replace(/\n{3,}/g, "\n\n")
-		.trim();
-
-	if (!text) throw new Error("DOCX document content is empty.");
-	return text;
+function docxFileText(file: z.infer<typeof fileInputSchema>): string {
+	return extractDocxText(Buffer.from(file.data, "base64"));
 }
 
 async function parseDocx(input: ParseDocxInput): Promise<ResumeData> {
 	const model = getModel(input);
 	const messages =
 		input.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-			? buildResumeParsingTextMessages({ userPrompt: docxParserUserPrompt, text: extractDocxText(input.file) })
+			? buildResumeParsingTextMessages({ userPrompt: docxParserUserPrompt, text: docxFileText(input.file) })
 			: buildResumeParsingMessages({
 					userPrompt: docxParserUserPrompt,
 					file: input.file,

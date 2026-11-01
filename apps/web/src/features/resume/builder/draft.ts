@@ -1254,6 +1254,8 @@ export function useResumeCleanup() {
 		const initial = useResumeStore.getState().saveStatus;
 		// A conflict has its own Reload; the editor stays open until it's settled.
 		if (initial === "conflict") return stay?.();
+		// The save landed between the wait timing out and this effect: nothing is left unsaved.
+		if (initial === "saved") return proceed?.();
 		show(initial);
 		const unsubscribe = useResumeStore.subscribe((state, previous) => {
 			if (state.saveStatus === previous.saveStatus || leaving || settled) return;

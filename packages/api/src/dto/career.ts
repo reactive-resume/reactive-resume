@@ -25,6 +25,16 @@ export const savedItemSchema = createSelectSchema(tables.careerArtifact, {
 	evidence: z.object({ factIds: z.array(z.string()), storyIds: z.array(z.string()) }),
 });
 export const careerScheduleSchema = createSelectSchema(tables.careerSchedule).omit({ aiProviderVersion: true });
+/** A schedule in the list, with how its latest run went: "failed" after its last try, with the reason. */
+export const careerScheduleListItemSchema = careerScheduleSchema.extend({
+	lastRun: z
+		.object({
+			status: z.enum(["queued", "running", "completed", "failed", "canceled"]),
+			error: z.string().nullable(),
+		})
+		.nullable()
+		.optional(),
+});
 export const careerNotificationSchema = createSelectSchema(tables.careerNotification, {
 	notice: careerNoticeSchema,
 }).extend({

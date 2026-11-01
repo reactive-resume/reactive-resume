@@ -10,6 +10,9 @@ const mocks = vi.hoisted(() => {
 	const history: Data[] = [];
 	const store = {
 		resume: { data: { summary: "" } as Data },
+		get undoStack() {
+			return history;
+		},
 		updateResumeData: (edit: (draft: Data) => void) => {
 			history.push(store.resume.data);
 			const draft = structuredClone(store.resume.data);

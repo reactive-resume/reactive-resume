@@ -110,6 +110,8 @@ export function useDeleteEntry() {
 		});
 		// After later edits, Undo puts the entry back where it was.
 		undoToast(t`Entry deleted`, (draft) => {
+			// Its section was deleted since: there's nowhere to put it back.
+			if (!getSectionObject(draft, section)) return false;
 			const items = getEntries(draft, section);
 			if (items.some((entry) => entry.id === entryId)) return false;
 			items.splice(Math.min(index, items.length), 0, structuredClone(deleted));

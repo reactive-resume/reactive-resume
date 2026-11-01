@@ -14,6 +14,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { cn } from "@reactive-resume/utils/style";
 import { pendingCommits } from "./pending-commits";
+import { deviceTimeZone } from "@/features/settings/use-save-timezone";
 import { D2, EASE, EXIT } from "@/libs/motion";
 
 // ---- Time: always in the user's timezone, "Thu 8 Oct, 17:58". Relative time is secondary text. ----
@@ -36,21 +37,35 @@ export function useCareerTime() {
 	const { session } = useRouteContext({ strict: false });
 	const timeZone = session?.user.timezone ?? "UTC";
 	const locale = i18n.locale;
+	const device = deviceTimeZone();
+	// When the account's timezone isn't this device's, clock times say which zone they're in ("16:56 UTC").
+	const labelled = !!device && device !== timeZone;
 	const format = (value: Date | string, options: Intl.DateTimeFormatOptions) =>
 		new Intl.DateTimeFormat(locale, { timeZone, ...options }).format(new Date(value));
+	const plain = (value: Date | string) => format(value, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+	const clock = (value: Date | string) =>
+		labelled
+			? format(value, { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "short" })
+			: plain(value);
 
 	return {
 		timeZone,
+		/** This device's timezone, when it differs from the account's: times then carry their zone. */
+		deviceTimeZone: labelled ? device : undefined,
 		locale,
-		/** "Thu 8 Oct, 17:58" */
+		/** "Thu 8 Oct, 17:58" ("Thu 8 Oct, 17:58 UTC" when the account's timezone isn't this device's) */
 		when: (value: Date | string) =>
-			`${format(value, { weekday: "short", day: "numeric", month: "short" })}, ${format(value, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" })}`,
+			`${format(value, { weekday: "short", day: "numeric", month: "short" })}, ${clock(value)}`,
 		/** "Thu 8 Oct" */
 		day: (value: Date | string) => format(value, { weekday: "short", day: "numeric", month: "short" }),
 		/** "25 Sep" */
 		date: (value: Date | string) => format(value, { day: "numeric", month: "short" }),
-		/** "17:58" */
-		time: (value: Date | string) => format(value, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }),
+		/** "17:58" ("17:58 UTC" when the account's timezone isn't this device's) */
+		time: clock,
+		/** "17:58" with no zone, where space is short and the zone is said once nearby. */
+		plainTime: plain,
+		/** "17:58 – 18:58", with the zone once at the end when the account's timezone isn't this device's. */
+		timeRange: (start: Date | string, end: Date | string) => `${plain(start)} – ${clock(end)}`,
 		format,
 		/** "In 23 hours", "Yesterday": the largest whole unit. */
 		relative: (value: Date | string, now = new Date()) => {

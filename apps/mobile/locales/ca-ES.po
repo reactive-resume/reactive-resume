@@ -201,6 +201,8 @@ msgid "{0, plural, one {# edit couldn't be placed: its text changed. Ask again t
 msgstr "{0, plural, one {No s'ha pogut fer l'edició de #: el seu text ha canviat. Torna a demanar que ho torni a fer.} other {No s'han pogut fer edicions de #: el seu text ha canviat. Torna a demanar que les torni a fer.}}"
 
 #. placeholder {0}: entries.length
+#. placeholder {0}: section.entries
+#: src/features/documents/new-document.tsx
 #: src/features/write/outline.tsx
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# entrada} other {# entrades}}"
@@ -211,6 +213,11 @@ msgstr "{0, plural, one {# entrada} other {# entrades}}"
 #: src/features/assistant/messages.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# fet} other {# fets}}"
+
+#. placeholder {0}: pending.review.notImported.length
+#: src/features/documents/new-document.tsx
+msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
 
 #. placeholder {0}: filtered.length
 #: src/features/applications/list-screen.tsx
@@ -827,6 +834,10 @@ msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# per comprovar} other {# per comprovar}}"
 
 #: src/features/assistant/messages.tsx
+msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
 msgstr ""
 
@@ -1017,6 +1028,10 @@ msgstr "Acceptar"
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
 msgstr "Acceptar-ho tot"
+
+#: src/features/assistant/messages.tsx
+msgid "Accept the others"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1363,6 +1378,10 @@ msgstr "Afegeix el final del domini, com ara {domain}.com"
 msgid "Add the offer's terms"
 msgstr ""
 
+#: src/features/documents/new-document.tsx
+msgid "Add them as a section called “More from your file” to sort later"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Afegiu aquests registres on gestioneu el domini i, després, comproveu-ho. Els canvis poden trigar unes hores a arribar a tothom."
@@ -1434,6 +1453,11 @@ msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Address line 2"
+msgstr ""
+
+#. placeholder {0}: additionParts(proposal)?.anchor
+#: src/features/assistant/messages.tsx
+msgid "Adds after: {0}"
 msgstr ""
 
 #: src/features/design/advanced.tsx
@@ -2482,6 +2506,10 @@ msgstr "Comproveu un altre fitxer"
 msgid "Check DNS"
 msgstr "Comprova el DNS"
 
+#: src/features/documents/new-document.tsx
+msgid "Check each section against your file in the editor: a PDF read with AI isn't compared line by line on this device."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Check email addresses, links, names, countries and salary. A salary amount needs currency and pay period."
 msgstr ""
@@ -2534,6 +2562,10 @@ msgstr "Contrasteu aquest lloc amb les vostres proves"
 #: src/features/check/screen.tsx
 msgid "Check views"
 msgstr "Comproveu les vistes"
+
+#: src/features/documents/new-document.tsx
+msgid "Check what was found"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "Check your preferences. Invalid changes are not saved."
@@ -3457,6 +3489,11 @@ msgstr "No s'ha pogut contactar amb el vostre proveïdor d'IA. Torna-ho a provar
 msgid "Couldn't read that file. Try again."
 msgstr "No s'ha pogut llegir aquest fitxer. Torneu-ho a provar."
 
+#. placeholder {0}: part.errorText
+#: src/features/assistant/messages.tsx
+msgid "Couldn't read the attachment: {0}"
+msgstr ""
+
 #: src/features/check/parser.tsx
 msgid "Couldn't read the exported PDF."
 msgstr "No s'ha pogut llegir el PDF exportat."
@@ -3555,6 +3592,7 @@ msgid "Couldn't save the theme. Try again."
 msgstr "No s'ha pogut desar el tema. Torna-ho a provar."
 
 #: app/(tabs)/settings/preferences.tsx
+#: src/features/career/hooks.ts
 msgid "Couldn't save the timezone. Try again."
 msgstr "No s'ha pogut desar el fus horari. Torneu-ho a provar."
 
@@ -3800,6 +3838,10 @@ msgstr "Crea una còpia"
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Creeu o importeu primer un currículum vitae i, a continuació, torneu a copiar-lo per a aquesta feina."
 
+#: src/features/documents/new-document.tsx
+msgid "Create resume"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -3816,6 +3858,10 @@ msgstr "Creat {0} · Darrera utilització {1} · Caduca {2}"
 #: src/features/documents/new-document.tsx
 msgid "Creating document…"
 msgstr "S'està creant el document…"
+
+#: src/features/documents/new-document.tsx
+msgid "Creating the resume…"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4889,6 +4935,10 @@ msgstr "Fets"
 msgid "Failed"
 msgstr "Ha fallat"
 
+#: src/features/career/today.tsx
+msgid "Failed · open to check it"
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Family name"
 msgstr ""
@@ -5336,9 +5386,18 @@ msgstr "Hebreu"
 msgid "Help & docs"
 msgstr "Ajuda i documentació"
 
+#. placeholder {0}: starter.company
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me prepare for my {0} interview."
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "Help me turn an accomplishment into a Situation, Task, Action, Result and Reflection story."
 msgstr "Ajuda'm a convertir un assoliment en una història amb Situació, Tasca, Acció, Resultat i Reflexió."
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Help me weigh the offer I have against what I want."
+msgstr ""
 
 #. placeholder {0}: open.label
 #: src/features/check/job-match.tsx
@@ -6053,6 +6112,10 @@ msgstr "Última edició"
 
 #: src/features/workspace/answer-library.tsx
 msgid "Last reviewed"
+msgstr ""
+
+#: src/features/career/today.tsx
+msgid "Last run failed"
 msgstr ""
 
 #. placeholder {0}: time.when(row.lastSeenAt)
@@ -6812,6 +6875,10 @@ msgstr "Més"
 msgid "More details"
 msgstr "Més detalls"
 
+#: src/features/documents/import-file.ts
+msgid "More from your file"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
@@ -6999,6 +7066,10 @@ msgctxt "DNS record"
 msgid "Name"
 msgstr "Nom"
 
+#: src/features/documents/new-document.tsx
+msgid "Name and contact details weren't found. Add them in Basics."
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Name of person {0}"
@@ -7101,6 +7172,10 @@ msgstr "Nova conversa"
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "Nova carta de presentació"
+
+#: src/features/assistant/messages.tsx
+msgid "New detail: check it's true"
+msgstr ""
 
 #: src/features/documents/library.tsx
 #: src/features/search/search-screen.tsx
@@ -7395,6 +7470,10 @@ msgstr "No s'ha seleccionat cap currículum"
 
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "No sections were found in this file."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9267,6 +9346,10 @@ msgstr "Substitueix la foto"
 msgid "Replace tables with plain paragraphs and lists. Cells extract in storage order, not reading order."
 msgstr "Substitueix les taules per paràgrafs i llistes simples. Les cel·les s'extreuen en l'ordre d'emmagatzematge, no en l'ordre de lectura."
 
+#: src/features/assistant/messages.tsx
+msgid "Replaced by a newer suggestion"
+msgstr ""
+
 #: src/features/applications/lane-settings.tsx
 msgid "Replacement lane"
 msgstr "Etapa de substitució"
@@ -9762,6 +9845,10 @@ msgstr "Línia"
 #: src/features/check/writing.tsx
 msgid "Run again"
 msgstr "Torna a executar"
+
+#: src/features/career/today.tsx
+msgid "Running"
+msgstr ""
 
 #. placeholder {0}: new Intl.DateTimeFormat(locale, { timeZone: timezone, dateStyle: "medium", timeStyle: "short" }).format(runAt)
 #: src/features/career/schedule-sheet.tsx
@@ -11354,6 +11441,10 @@ msgstr "S'està provant la connexió..."
 msgid "Testing…"
 msgstr "Proves…"
 
+#: src/features/documents/new-document.tsx
+msgid "text"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/write/fields.ts
 msgid "Text"
@@ -11603,6 +11694,10 @@ msgstr "El PDF està comprovat al servidor i no s'emmagatzema. Envieu aquesta vi
 
 #: src/api/ai-consent.ts
 msgid "The posting text or retrieved page. Links also go to the reader and the site being read."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The posting:"
 msgstr ""
 
 #: src/features/ai/error.ts
@@ -12694,6 +12789,11 @@ msgstr "Utilitza aquestes respostes"
 msgid "Use this date"
 msgstr "Utilitzeu aquesta data"
 
+#. placeholder {0}: time.deviceTimeZone
+#: src/features/career/today.tsx
+msgid "Use this device's timezone ({0})"
+msgstr ""
+
 #: app/(tabs)/settings/preferences.tsx
 msgid "Use this device's timezone ({deviceTimezone})"
 msgstr "Utilitza la zona horària d'aquest dispositiu ({deviceTimezone})"
@@ -13012,6 +13112,10 @@ msgstr "Quin és el sou base?"
 #: src/features/application-detail/sheets.tsx
 msgid "What it asks for"
 msgstr "El que demana"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What kinds of roles fit what I've done so far?"
+msgstr ""
 
 #: src/features/career/preferences.tsx
 msgid "What matters to you"
