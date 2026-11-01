@@ -99,7 +99,7 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 											: t`Your short link and custom domain point to “${otherPrimary.name}”, which isn't published.`
 										: resume.isPublic
 											? t`Turn this on to open this resume at your short link and custom domain.`
-											: t`Publish this resume to open it at your short link and custom domain. If another resume holds Primary, turn it on for this one instead.`
+											: t`Publish this resume to open it at your short link and custom domain.`
 					}
 					trailing={
 						<Switch

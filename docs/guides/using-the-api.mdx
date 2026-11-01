@@ -69,7 +69,8 @@ supported. Renames preserve an old address for 30 days.
 A slug generated at creation after this change follows the resume's name while the resume has never been published: a
 rename or a blank resume's new headline moves it, with no redirect, since nobody has been sent it. Publishing the resume
 or setting `slug` keeps the slug from then on. Generated slugs skip addresses that another resume's old address still
-redirects from.
+redirects from. A headline or name with no writable characters (for example CJK-only or emoji-only text) keeps the
+neutral `resume` address, or the next free `resume-N`.
 
 Slugs generated before this change never follow the name. Renaming such a resume keeps its address.
 

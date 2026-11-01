@@ -244,7 +244,7 @@ function PrimaryRow({ setting: { update, isPending }, current, listState }: Prim
 									: t`Your short link and custom domain point to “${current.name}”, which isn't published.`
 								: isPublic
 									? t`Turn this on to open this resume at your short link and custom domain.`
-									: t`Publish this resume to open it at your short link and custom domain. If another resume holds Primary, turn it on for this one instead.`
+									: t`Publish this resume to open it at your short link and custom domain.`
 			}
 			className="items-start py-0"
 		/>
