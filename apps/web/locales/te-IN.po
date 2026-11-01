@@ -2750,6 +2750,10 @@ msgstr "సాఫ్ట్‌వేర్ మీ రెజ్యూమెను 
 msgid "Cancel"
 msgstr "రద్దు చేయండి"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3427,6 +3431,11 @@ msgstr "మీ జాబితా ఎంట్రీలను చదవడాన
 msgid "Connected"
 msgstr "కనెక్ట్ చేయబడింది"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "కనెక్ట్ చేయబడిన అప్లికేషన్లు"
@@ -3983,6 +3992,10 @@ msgstr "ఆ ఫైల్‌ను చదవడం సాధ్యపడలేద
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "{entries}లోని తేదీలను చదవడం సాధ్యపడలేదు, కాబట్టి అవి చివరలోనే ఉంటాయి. వాటి తేదీలను సరిచేసి మళ్ళీ క్రమబద్ధీకరించండి."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4396,8 +4409,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "ఖాతాను సృష్టించండి"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4660,6 +4682,10 @@ msgstr "దరఖాస్తును తొలగించండి"
 msgid "Delete conversation"
 msgstr "సంభాషణను తొలగించండి"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4887,8 +4913,26 @@ msgid "Discard unsaved changes?"
 msgstr "సేవ్ చేయని మార్పులను విస్మరించాలా?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "డిస్కనెక్ట్ చేయండి"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6929,6 +6973,10 @@ msgstr "సమస్యలు మరియు జాబ్ మ్యాచ్ �
 msgid "It has entries but isn't placed on a page."
 msgstr "ఇది ఎంట్రీలను కలిగి ఉంది కానీ పేజీలో ఉంచబడలేదు."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "అది తొలగించబడి ఉండవచ్చు. మరో కథను ఎంచుకోండి లేదా కొత్తది జోడించండి."
@@ -7077,6 +7125,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "ఒకే చిరునామాను ఉంచండి; అప్పుడు ఏది వాడాలో సాఫ్ట్‌వేర్ ఊహించాల్సిన అవసరం ఉండదు."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "మీరు అప్లికేషన్‌ను ఉపయోగించనప్పుడు యాక్సెస్‌ను ఉంచండి."
 
@@ -8527,7 +8576,11 @@ msgid "No commands match that search."
 msgstr "ఆ శోధనకు సరిపోయే కమాండ్లు ఏవీ లేవు."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "ఇంకా కనెక్ట్ చేయబడిన అప్లికేషన్‌లు లేవు. మీ ఖాతాను యాక్సెస్ చేయడానికి మీరు అనుమతించే యాప్‌లు ఇక్కడ కనిపిస్తాయి."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "ఇంకా కనెక్ట్ చేయబడిన అప్లికేషన్‌లు లేవు. మీ ఖాతాను యాక్సెస్ చేయడానికి మీరు అనుమతించే యాప్‌లు ఇక్కడ కనిపిస్తాయి."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -10364,16 +10417,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "మీ ఇమెయిల్ చిరునామాను చదవండి."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "మీ ప్రొఫైల్ సమాచారాన్ని చదవండి."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "పూర్తి డేటా ఎగుమతితో సహా మీ ఖాతాలోని మొత్తం డేటాను చదవండి: మీ ప్రొఫైల్ మరియు ఇమెయిల్ చిరునామా, పత్రాలు, ఉద్యోగ దరఖాస్తులు, కెరీర్ డేటా మరియు కోచింగ్ సంభాషణలు."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11233,12 +11296,12 @@ msgid "Revoke {0}"
 msgstr "{0}ని రద్దు చేయండి"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "యాక్సెస్‌ని రద్దు చేయండి"
+#~ msgid "Revoke access"
+#~ msgstr "యాక్సెస్‌ని రద్దు చేయండి"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "మీ ఖాతాకు అప్లికేషన్ యాక్సెస్‌ను ఉపసంహరించుకోండి."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "మీ ఖాతాకు అప్లికేషన్ యాక్సెస్‌ను ఉపసంహరించుకోండి."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12255,6 +12318,7 @@ msgstr "సైడ్‌బార్లు తరచుగా చివరిగ�
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

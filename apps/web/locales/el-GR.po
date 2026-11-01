@@ -2750,6 +2750,10 @@ msgstr "Μπορεί το λογισμικό να διαβάσει το βιογ
 msgid "Cancel"
 msgstr "Ακύρωση"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3427,6 +3431,11 @@ msgstr "Συνδέστε τον δικό σας πάροχο τεχνητής ν
 msgid "Connected"
 msgstr "Συνδεδεμένος"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Συνδεδεμένες εφαρμογές"
@@ -3983,6 +3992,10 @@ msgstr "Δεν ήταν δυνατή η ανάγνωση αυτού του αρ�
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "Δεν ήταν δυνατή η ανάγνωση των ημερομηνιών στο {entries}, οπότε παραμένουν στο τέλος. Διορθώστε τις ημερομηνίες τους και ταξινομήστε ξανά."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4396,8 +4409,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "Δημιουργία λογαριασμού"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4660,6 +4682,10 @@ msgstr "Διαγραφή αίτησης"
 msgid "Delete conversation"
 msgstr "Διαγραφή συνομιλίας"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4887,8 +4913,26 @@ msgid "Discard unsaved changes?"
 msgstr "Απόρριψη μη αποθηκευμένων αλλαγών;"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "Αποσύνδεση"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6929,6 +6973,10 @@ msgstr "Τα ζητήματα και η αντιστοίχιση εργασία�
 msgid "It has entries but isn't placed on a page."
 msgstr "Έχει καταχωρήσεις αλλά δεν τοποθετείται σε σελίδα."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "Ίσως έχει διαγραφεί. Επιλέξτε άλλη ιστορία ή προσθέστε μια νέα."
@@ -7077,6 +7125,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "Κρατήστε μία μόνο διεύθυνση, ώστε το λογισμικό να μη χρειάζεται να μαντέψει ποια να χρησιμοποιήσει."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "Διατηρήστε την πρόσβαση όταν δεν χρησιμοποιείτε την εφαρμογή."
 
@@ -8527,7 +8576,11 @@ msgid "No commands match that search."
 msgstr "Καμία εντολή δεν ταιριάζει με αυτήν την αναζήτηση."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "Δεν υπάρχουν ακόμα συνδεδεμένες εφαρμογές. Οι εφαρμογές στις οποίες επιτρέπετε πρόσβαση στον λογαριασμό σας εμφανίζονται εδώ."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "Δεν υπάρχουν ακόμα συνδεδεμένες εφαρμογές. Οι εφαρμογές στις οποίες επιτρέπετε πρόσβαση στον λογαριασμό σας εμφανίζονται εδώ."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -10364,16 +10417,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "Διαβάστε τη διεύθυνση email σας."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "Διαβάστε τις πληροφορίες του προφίλ σας."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "Διαβάστε όλα τα δεδομένα στον λογαριασμό σας, συμπεριλαμβανομένης μιας πλήρους εξαγωγής δεδομένων: το προφίλ και τη διεύθυνση email σας, έγγραφα, αιτήσεις εργασίας, δεδομένα καριέρας και συνομιλίες καθοδήγησης."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11233,12 +11296,12 @@ msgid "Revoke {0}"
 msgstr "Ανάκληση {0}"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "Ανάκληση πρόσβασης"
+#~ msgid "Revoke access"
+#~ msgstr "Ανάκληση πρόσβασης"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "Ανακαλέστε την πρόσβαση μιας εφαρμογής στον λογαριασμό σας."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "Ανακαλέστε την πρόσβαση μιας εφαρμογής στον λογαριασμό σας."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12255,6 +12318,7 @@ msgstr "Οι πλευρικές γραμμές συχνά διαβάζονται
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

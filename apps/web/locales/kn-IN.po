@@ -2750,6 +2750,10 @@ msgstr "ಸಾಫ್ಟ್‌ವೇರ್ ನಿಮ್ಮ ರೆಸ್ಯೂಮ�
 msgid "Cancel"
 msgstr "ರದ್ದು ಮಾಡಿ"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3427,6 +3431,11 @@ msgstr "ನಿಮ್ಮ ಪಟ್ಟಿ ನಮೂದುಗಳನ್ನು ಓದ
 msgid "Connected"
 msgstr "ಸಂಪರ್ಕಿಸಲಾಗಿದೆ"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "ಸಂಪರ್ಕಿತ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು"
@@ -3983,6 +3992,10 @@ msgstr "ಆ ಫೈಲ್ ಓದಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. �
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "{entries} ನಲ್ಲಿನ ದಿನಾಂಕಗಳನ್ನು ಓದಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ, ಆದ್ದರಿಂದ ಅವು ಕೊನೆಯಲ್ಲಿ ಉಳಿಯುತ್ತವೆ. ಅವುಗಳ ದಿನಾಂಕಗಳನ್ನು ಸರಿಪಡಿಸಿ ಮತ್ತು ಮತ್ತೆ ವಿಂಗಡಿಸಿ."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4396,8 +4409,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "ಖಾತೆ ರಚಿಸಿ"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4660,6 +4682,10 @@ msgstr "ಅರ್ಜಿಯನ್ನು ಅಳಿಸಿ"
 msgid "Delete conversation"
 msgstr "ಸಂಭಾಷಣೆಯನ್ನು ಅಳಿಸಿ"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4887,8 +4913,26 @@ msgid "Discard unsaved changes?"
 msgstr "ಉಳಿಸದ ಬದಲಾವಣೆಗಳನ್ನು ತ್ಯಜಿಸುವುದೇ?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "ಡಿಸ್ಕನೆಕ್ಟ್ ಮಾಡಿ"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6929,6 +6973,10 @@ msgstr "ಸಮಸ್ಯೆಗಳು ಮತ್ತು ಕೆಲಸದ ಹೊಂದ
 msgid "It has entries but isn't placed on a page."
 msgstr "ಇದು ನಮೂದುಗಳನ್ನು ಹೊಂದಿದೆ ಆದರೆ ಪುಟದಲ್ಲಿ ಇರಿಸಲಾಗಿಲ್ಲ."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "ಇದನ್ನು ಅಳಿಸಿರಬಹುದು. ಬೇರೆ ಕಥೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ ಅಥವಾ ಹೊಸದನ್ನು ಸೇರಿಸಿ."
@@ -7077,6 +7125,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "ಒಂದೇ ವಿಳಾಸವನ್ನು ಇಟ್ಟುಕೊಳ್ಳಿ; ಆಗ ಯಾವುದನ್ನು ಬಳಸಬೇಕೆಂದು ತಂತ್ರಾಂಶ ಊಹಿಸಬೇಕಾಗಿಲ್ಲ."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "ನೀವು ಅಪ್ಲಿಕೇಶನ್ ಅನ್ನು ಬಳಸದೆ ಇರುವಾಗ ಪ್ರವೇಶವನ್ನು ಇರಿಸಿಕೊಳ್ಳಿ."
 
@@ -8527,7 +8576,11 @@ msgid "No commands match that search."
 msgstr "ಆ ಹುಡುಕಾಟಕ್ಕೆ ಹೊಂದುವ ಯಾವುದೇ ಆದೇಶಗಳಿಲ್ಲ."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "ಇನ್ನೂ ಯಾವುದೇ ಸಂಪರ್ಕಿತ ಅಪ್ಲಿಕೇಶನ್‌ಗಳಿಲ್ಲ. ನಿಮ್ಮ ಖಾತೆಗೆ ಪ್ರವೇಶಿಸಲು ನೀವು ಅನುಮತಿಸುವ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "ಇನ್ನೂ ಯಾವುದೇ ಸಂಪರ್ಕಿತ ಅಪ್ಲಿಕೇಶನ್‌ಗಳಿಲ್ಲ. ನಿಮ್ಮ ಖಾತೆಗೆ ಪ್ರವೇಶಿಸಲು ನೀವು ಅನುಮತಿಸುವ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -10364,16 +10417,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ಓದಿ."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿಯನ್ನು ಓದಿ."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "ಸಂಪೂರ್ಣ ಡೇಟಾ ರಫ್ತು ಸೇರಿದಂತೆ ನಿಮ್ಮ ಖಾತೆಯಲ್ಲಿರುವ ಎಲ್ಲಾ ಡೇಟಾವನ್ನು ಓದಿ: ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಮತ್ತು ಇಮೇಲ್ ವಿಳಾಸ, ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳು, ಉದ್ಯೋಗ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು, ವೃತ್ತಿ ಡೇಟಾ ಮತ್ತು ಕೋಚಿಂಗ್ ಸಂಭಾಷಣೆಗಳು."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11233,12 +11296,12 @@ msgid "Revoke {0}"
 msgstr "{0} ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "ಪ್ರವೇಶವನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ"
+#~ msgid "Revoke access"
+#~ msgstr "ಪ್ರವೇಶವನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "ನಿಮ್ಮ ಖಾತೆಗೆ ಅಪ್ಲಿಕೇಶನ್‌ನ ಪ್ರವೇಶವನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "ನಿಮ್ಮ ಖಾತೆಗೆ ಅಪ್ಲಿಕೇಶನ್‌ನ ಪ್ರವೇಶವನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12255,6 +12318,7 @@ msgstr "ಸೈಡ್‌ಬಾರ್‌ಗಳನ್ನು ಸಾಮಾನ್ಯ�
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

@@ -175,6 +175,7 @@ test("a short drag near the bottom of the outline moves a section a few places, 
 	const scrolled = (await panel.evaluate((element) => element.scrollTop)) - scrollBefore;
 	expect(scrolled).toBeLessThan(40);
 	const after = await outlineOrder(page);
+	expect(after.indexOf(id)).not.toBe(before.indexOf(id));
 	expect(Math.abs(after.indexOf(id) - before.indexOf(id))).toBeLessThanOrEqual(3);
 });
 

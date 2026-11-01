@@ -18,17 +18,62 @@ describe("section progress", () => {
 
 describe("scene navigation", () => {
 	afterEach(() => vi.unstubAllGlobals());
+	it.each(["wheel", "touchmove", "PageDown", "ArrowDown", " ", "a"])(
+		"respects %s input during a pending scene jump",
+		async (input) => {
+			const scrollTo = vi.fn();
+			const target = Object.assign(new EventTarget(), {
+				scrollY: 0,
+				innerHeight: 900,
+				scrollTo,
+				matchMedia: () => ({ matches: false }),
+			});
+			let update = () => {};
+			let finish = () => {};
+			const updateCallbackDone = new Promise<void>((resolve) => (finish = resolve));
+			vi.stubGlobal("CSS", { supports: () => true });
+			vi.stubGlobal("window", target);
+			vi.stubGlobal("document", {
+				querySelector: () => ({ getBoundingClientRect: () => ({ top: 6000, height: 900 }) }),
+				startViewTransition: (options: { update: () => void }) => {
+					update = options.update;
+					return { updateCallbackDone };
+				},
+			});
+			useLanding.setState({ activeScene: 0 });
+			goToScene(6, 0);
+			target.dispatchEvent(
+				input === "wheel" || input === "touchmove"
+					? new Event(input)
+					: Object.assign(new Event("keydown"), { key: input }),
+			);
+			update();
+			finish();
+			await updateCallbackDone;
+			if (input === "a") expect(scrollTo).toHaveBeenCalledWith({ top: 6000, behavior: "instant" });
+			else expect(scrollTo).not.toHaveBeenCalled();
+		},
+	);
 	it("keeps the last destination when an earlier view-transition update arrives late", () => {
 		const scrollTo = vi.fn();
 		const updates: (() => void)[] = [];
 		vi.stubGlobal("CSS", { supports: () => true });
-		vi.stubGlobal("window", { scrollY: 0, innerHeight: 900, scrollTo, matchMedia: () => ({ matches: false }) });
+		vi.stubGlobal(
+			"window",
+			Object.assign(new EventTarget(), {
+				scrollY: 0,
+				innerHeight: 900,
+				scrollTo,
+				matchMedia: () => ({ matches: false }),
+			}),
+		);
 		vi.stubGlobal("document", {
 			querySelector: (selector: string) => ({
 				getBoundingClientRect: () => ({ top: selector.includes('"6"') ? 6000 : 1000, height: 900 }),
 			}),
 			startViewTransition: ({ update }: { update: () => void }) => {
 				updates.push(update);
+				return { updateCallbackDone: Promise.resolve() };
 			},
 		});
 		useLanding.setState({ activeScene: 0 });

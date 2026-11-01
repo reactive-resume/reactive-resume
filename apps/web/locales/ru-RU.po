@@ -2750,6 +2750,10 @@ msgstr "Может ли программное обеспечение прочи
 msgid "Cancel"
 msgstr "Отмена"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3427,6 +3431,11 @@ msgstr "Подключите своего собственного постав�
 msgid "Connected"
 msgstr "Подключено"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Подключенные приложения"
@@ -3983,6 +3992,10 @@ msgstr "Не удалось прочитать этот файл. Попробу
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "Не удалось распознать даты в {entries}, поэтому они остаются в конце. Исправьте даты и отсортируйте снова."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4396,8 +4409,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "Создать аккаунт"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4660,6 +4682,10 @@ msgstr "Удалить заявку"
 msgid "Delete conversation"
 msgstr "Удалить разговор"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4887,8 +4913,26 @@ msgid "Discard unsaved changes?"
 msgstr "Отменить несохраненные изменения?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "Отключить"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6929,6 +6973,10 @@ msgstr "Проблемы и сопоставление заданий по-пр�
 msgid "It has entries but isn't placed on a page."
 msgstr "В нем есть записи, но он не размещен на странице."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "Возможно, она была удалена. Выберите другую историю или добавьте новую."
@@ -7077,6 +7125,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "Оставьте один адрес, чтобы программе не приходилось гадать, какой использовать."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "Сохраняйте доступ, когда вы не используете приложение."
 
@@ -8527,7 +8576,11 @@ msgid "No commands match that search."
 msgstr "По этому запросу команд не найдено."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "Подключенных приложений пока нет. Здесь появятся приложения, которым вы разрешите доступ к учетной записи."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "Подключенных приложений пока нет. Здесь появятся приложения, которым вы разрешите доступ к учетной записи."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -10364,16 +10417,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "Прочтите свой адрес электронной почты."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "Прочтите информацию своего профиля."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "Прочитайте все данные в своей учетной записи, включая полный экспорт данных: ваш профиль и адрес электронной почты, документы, заявления о приеме на работу, данные о карьере и беседы с тренерами."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11233,12 +11296,12 @@ msgid "Revoke {0}"
 msgstr "Отозвать {0}"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "Отозвать доступ"
+#~ msgid "Revoke access"
+#~ msgstr "Отозвать доступ"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "Отмените доступ приложения к вашей учетной записи."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "Отмените доступ приложения к вашей учетной записи."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12255,6 +12318,7 @@ msgstr "Боковые панели часто читаются последни
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"

@@ -64,6 +64,8 @@ describe("handleIntegrations", () => {
 		expect(response.headers.get("Content-Type")).toBe("application/json");
 		expect(response.headers.get("Cache-Control")).toBe("public, max-age=3600");
 		expect(document).toMatchObject({ version: 3 });
+		expect(document.credentials.oauth.setup).toContain("resource=https://rxresu.me");
+		expect(document.credentials.oauth.setup).toContain("invalid_target");
 		expect(document.surfaces.map((surface: { type: string; url: string }) => [surface.type, surface.url])).toEqual([
 			["http", "https://rxresu.me/api/openapi"],
 			["mcp", "https://rxresu.me/mcp"],

@@ -106,6 +106,8 @@ const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 export const prefersReducedMotion = () => window.matchMedia(reducedMotionQuery).matches;
 
 let sceneNavigation = 0;
+let stopSceneNavigation: (() => void) | undefined;
+const scrollKeys = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
 
 const supportsTransitionTypes = () => globalThis.CSS?.supports?.("selector(:active-view-transition-type(a))") === true;
 
@@ -118,6 +120,7 @@ const supportsTransitionTypes = () => globalThis.CSS?.supports?.("selector(:acti
 export function goToScene(index: number, at: number) {
 	const section = document.querySelector<HTMLElement>(`[data-scene="${index}"]`);
 	if (!section) return;
+	stopSceneNavigation?.();
 	const rect = section.getBoundingClientRect();
 	const top = rect.top + window.scrollY + at * Math.max(0, rect.height - window.innerHeight);
 	const navigation = ++sceneNavigation;
@@ -128,7 +131,21 @@ export function goToScene(index: number, at: number) {
 	if (prefersReducedMotion()) return cut();
 	if (Math.abs(index - useLanding.getState().activeScene) <= 1) return window.scrollTo({ top, behavior: "smooth" });
 	if (!document.startViewTransition || !supportsTransitionTypes()) return cut();
-	document.startViewTransition({ update: cut, types: ["page"] });
+	const controller = new AbortController();
+	const cleanup = () => {
+		controller.abort();
+		if (stopSceneNavigation === cleanup) stopSceneNavigation = undefined;
+	};
+	const interrupt = (event: Event) => {
+		if (event.type === "keydown" && !scrollKeys.has((event as KeyboardEvent).key)) return;
+		sceneNavigation++;
+		cleanup();
+	};
+	stopSceneNavigation = cleanup;
+	for (const type of ["wheel", "touchmove", "keydown"])
+		window.addEventListener(type, interrupt, { passive: true, signal: controller.signal });
+	const transition = document.startViewTransition({ update: cut, types: ["page"] });
+	void transition.updateCallbackDone.then(cleanup, cleanup);
 }
 
 /**
