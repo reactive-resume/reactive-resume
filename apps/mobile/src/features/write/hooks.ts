@@ -18,19 +18,23 @@ export function useWriteData<T>(select: (data: ResumeData) => T, fallback: T): T
 export const useEntry = (sectionId: string, entryId: string) =>
 	useWriteData((data) => findEntry(data, sectionId, entryId) ?? null, null);
 
-export type EntryWriter = (key: string, mutate: (entry: Record<string, unknown>) => void) => void;
+export type EntryWriter = (
+	key: string,
+	mutate: (entry: Record<string, unknown>) => void,
+	options?: { newStep?: boolean },
+) => void;
 
 /** Writes one field of an entry. Typing in one field folds into one undo step; another field starts a new one. */
 export function useEntryWriter(sectionId: string, entryId: string): EntryWriter {
 	const update = useResumeStore((state) => state.update);
 	return useCallback(
-		(key, mutate) =>
+		(key, mutate, options) =>
 			update(
 				(draft) => {
 					const entry = findEntry(draft, sectionId, entryId);
 					if (entry) mutate(entry as Entry & Record<string, unknown>);
 				},
-				{ coalesceKey: `${entryId}:${key}` },
+				{ coalesceKey: `${entryId}:${key}`, ...options },
 			),
 		[update, sectionId, entryId],
 	);

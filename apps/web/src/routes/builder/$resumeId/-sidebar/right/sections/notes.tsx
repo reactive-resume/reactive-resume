@@ -17,10 +17,10 @@ function NotesSectionForm() {
 	const notes = resume.data.metadata.notes;
 	const updateResumeData = useUpdateResumeData();
 
-	const onChange = (value: string) => {
+	const onChange = (value: string, options?: { newStep?: boolean }) => {
 		updateResumeData((draft) => {
 			draft.metadata.notes = value;
-		});
+		}, options);
 	};
 
 	return (

@@ -104,10 +104,14 @@ function Description({
 			<RichTextEditor
 				label={label ?? t`Description`}
 				value={str(valuesOf(entry)[field])}
-				onChange={(html) =>
-					write(field, (target) => {
-						target[field] = html;
-					})
+				onChange={(html, options) =>
+					write(
+						field,
+						(target) => {
+							target[field] = html;
+						},
+						options,
+					)
 				}
 			/>
 		</div>
@@ -203,10 +207,14 @@ function IconAndColor({ entry, write }: FieldSetProps) {
 function Roles({ entry, write, page }: FieldSetProps) {
 	const roles = valuesOf(entry).roles ?? [];
 
-	const writeRoles = (key: string, mutate: (roles: RoleItem[]) => void) =>
-		write(`roles:${key}`, (target) => {
-			mutate(target.roles as RoleItem[]);
-		});
+	const writeRoles = (key: string, mutate: (roles: RoleItem[]) => void, options?: { newStep?: boolean }) =>
+		write(
+			`roles:${key}`,
+			(target) => {
+				mutate(target.roles as RoleItem[]);
+			},
+			options,
+		);
 
 	return (
 		<div className="col-span-full grid gap-3">
@@ -273,11 +281,15 @@ function Roles({ entry, write, page }: FieldSetProps) {
 						<RichTextEditor
 							label={t`Description of role ${index + 1}`}
 							value={role.description}
-							onChange={(html) =>
-								writeRoles(`${role.id}:description`, (list) => {
-									const target = list[index];
-									if (target) target.description = html;
-								})
+							onChange={(html, options) =>
+								writeRoles(
+									`${role.id}:description`,
+									(list) => {
+										const target = list[index];
+										if (target) target.description = html;
+									},
+									options,
+								)
 							}
 						/>
 					</div>

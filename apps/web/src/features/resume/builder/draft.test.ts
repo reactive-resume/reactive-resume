@@ -1136,6 +1136,50 @@ describe("builder resume undo/redo", () => {
 		expect(store().redoStack.length > 0).toBe(false);
 	});
 
+	it("keeps an accepted AI replacement as its own step after rapid typing and starts a new step for later typing", () => {
+		const store = useResumeStore.getState;
+		store().initialize(makeResume("undo-improve"));
+
+		store().updateResumeData(
+			(draft) => {
+				draft.summary.content = "Owned";
+			},
+			{ coalesceKey: "summary.content" },
+		);
+		store().updateResumeData(
+			(draft) => {
+				draft.summary.content = "Owned synthetic delivery.";
+			},
+			{ coalesceKey: "summary.content" },
+		);
+		// The accepted AI replacement arrives inside the typing coalesce window and must still be its own step.
+		store().updateResumeData(
+			(draft) => {
+				draft.summary.content = "Led fictional delivery work.";
+			},
+			{ coalesceKey: "summary.content", newStep: true },
+		);
+
+		expect(store().undoStack.length).toBe(2);
+		store().undo();
+		expect(store().resume?.data.summary.content).toBe("Owned synthetic delivery.");
+		store().redo();
+		expect(store().resume?.data.summary.content).toBe("Led fictional delivery work.");
+
+		// Typing immediately after the replacement is a new step, not merged back into the AI one.
+		store().updateResumeData(
+			(draft) => {
+				draft.summary.content = "Led fictional delivery work. More";
+			},
+			{ coalesceKey: "summary.content" },
+		);
+		expect(store().undoStack.length).toBe(3);
+		store().undo();
+		expect(store().resume?.data.summary.content).toBe("Led fictional delivery work.");
+		store().undo();
+		expect(store().resume?.data.summary.content).toBe("Owned synthetic delivery.");
+	});
+
 	it("merges typing in one field into one step, but not edits to different fields", () => {
 		const store = useResumeStore.getState;
 		store().initialize(makeResume("undo-fields"));
