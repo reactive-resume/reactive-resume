@@ -2726,6 +2726,10 @@ msgstr "O software pode ler o seu currículo?"
 msgid "Cancel"
 msgstr "Cancelar"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3407,9 +3411,14 @@ msgstr "Ligue o seu próprio fornecedor de IA para que um modelo de linguagem le
 msgid "Connected"
 msgstr "Conectado"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
-msgstr "Aplicativos conectados"
+msgstr "Aplicações ligadas"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -4375,8 +4384,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "Criar conta"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4639,6 +4657,10 @@ msgstr "Eliminar candidatura"
 msgid "Delete conversation"
 msgstr "Eliminar conversa"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4866,8 +4888,26 @@ msgid "Discard unsaved changes?"
 msgstr "Descartar alterações não guardadas?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "Desligar"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -6900,6 +6940,10 @@ msgstr "Os problemas e a correspondência de trabalho ainda funcionam sem IA."
 msgid "It has entries but isn't placed on a page."
 msgstr "Possui entradas, mas não é colocado numa página."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "Pode ter sido apagada. Escolha outra história ou adicione uma nova."
@@ -7048,6 +7092,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "Mantenha um único endereço, para que o software não tenha de adivinhar qual usar."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "Manter o acesso quando não estiver a utilizar a aplicação."
 
@@ -8493,8 +8538,12 @@ msgid "No commands match that search."
 msgstr "Nenhum comando corresponde a essa pesquisa."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
-msgstr "Ainda não há aplicações ligadas. As aplicações a que permitir acesso à sua conta aparecem aqui."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "Ainda não há aplicações ligadas. As aplicações a que permitir acesso à sua conta aparecem aqui."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr ""
 
 #: src/features/applications/components/detail/contacts.tsx
 msgid "No contacts yet."
@@ -10306,16 +10355,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "Ler o seu endereço de email."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "Ler as informações do seu perfil."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "Leia todos os dados da sua conta, incluindo uma exportação completa de dados: o seu perfil e endereço de e-mail, documentos, formulários de emprego, dados de carreira e conversas de coaching."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11175,12 +11234,12 @@ msgid "Revoke {0}"
 msgstr "Revogar {0}"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "Revogar o acesso"
+#~ msgid "Revoke access"
+#~ msgstr "Revogar o acesso"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "Revogar o acesso de uma aplicação à sua conta."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "Revogar o acesso de uma aplicação à sua conta."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12197,6 +12256,7 @@ msgstr "As barras laterais são geralmente lidas por último ou misturadas na co
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
