@@ -20,6 +20,7 @@ import {
 	nextStepSortKey,
 } from "@/features/applications/next-step";
 import { useApplications } from "@/features/applications/queries";
+import { offerHintFor, useOfferHints } from "@/features/applications/stage-actions";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -48,6 +49,7 @@ export function TodayScreen() {
 	const time = useCareerTime();
 	const queries = useTodayQueries();
 	const applications = useApplications();
+	const hints = useOfferHints();
 	const action = useCareerAction();
 	const pull = usePullRefresh(action.refresh, applications.refetch, time.profile.refetch);
 	const undo = useUndoRows();
@@ -106,8 +108,10 @@ export function TodayScreen() {
 	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
 	const attention = (applications.data ?? [])
 		.flatMap((row) => {
-			const step = getNextStep(row, now, lanes.lanes, time.timeZone);
-			return needsAttention(step, now) ? [{ row, step, key: nextStepSortKey(row, now, time.timeZone) }] : [];
+			const step = getNextStep(row, now, lanes.lanes, time.timeZone, offerHintFor(hints, row.id));
+			return needsAttention(step, now)
+				? [{ row, step, key: nextStepSortKey(row, now, time.timeZone, offerHintFor(hints, row.id)) }]
+				: [];
 		})
 		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.row.id, b.row.id));
 	const openSchedule = (schedule: Schedule) =>

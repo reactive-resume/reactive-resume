@@ -1,4 +1,5 @@
 import type { ApplicationLane } from "../lanes";
+import type { OfferHint } from "../next-step";
 import type { ApplicationSummary } from "../types";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -21,10 +22,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/com
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { getCategoryLane, getDisplayLane, getLaneLabel, laneMoveInput } from "../lanes";
+import { getStageDisplay } from "../lanes";
+import { getCategoryLane, getDisplayLane, getLaneLabel } from "../lanes";
 import { compareNextStepSortKeys, describeNextStep, getNextStep, nextStepSortKey } from "../next-step";
+import { offerHintFor, useOfferHints } from "../queries";
 import { LIST_ORDER } from "../stages";
-import { useInvalidateApplications } from "../use-application-actions";
+import { useInvalidateApplications, useMoveWithUndo } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { ClosedLaneItems } from "./application-actions-menu";
 import { useCareerTime, useNow } from "@/features/career/shared";
@@ -38,9 +41,12 @@ type Sort = { key: SortKey; direction: "asc" | "desc" };
 type SortValue = string | number | readonly [number, number];
 
 // Sort keys are computed once per row, not once per comparison.
-const sortValue: Record<SortKey, (application: ApplicationSummary, now: Date, timeZone: string) => SortValue> = {
+const sortValue: Record<
+	SortKey,
+	(application: ApplicationSummary, now: Date, timeZone: string, offer?: OfferHint | null) => SortValue
+> = {
 	role: (application) => application.role,
-	next: (application, now, timeZone) => nextStepSortKey(application, now, timeZone),
+	next: (application, now, timeZone, offer) => nextStepSortKey(application, now, timeZone, offer),
 	updated: (application) => new Date(application.updatedAt).getTime(),
 };
 
@@ -70,6 +76,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 	const phone = breakpoint === "mobile";
 	const { lanes, active } = useApplicationLanes();
 	const now = useNow();
+	const hints = useOfferHints();
 	const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
 	// Next step first: what's dated soonest, then whatever has waited longest in its stage.
 	const [sort, setSort] = useState<Sort>({ key: "next", direction: "asc" });
@@ -90,7 +97,10 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 	const groups = useMemo(() => {
 		const sign = sort.direction === "asc" ? 1 : -1;
 		const keys = new Map(
-			applications.map((application) => [application.id, sortValue[sort.key](application, now, timeZone)]),
+			applications.map((application) => [
+				application.id,
+				sortValue[sort.key](application, now, timeZone, offerHintFor(hints, application.id)),
+			]),
 		);
 		const key = (application: ApplicationSummary) => keys.get(application.id) ?? 0;
 		const rowsByLane = new Map<string, ApplicationSummary[]>();
@@ -112,7 +122,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 				),
 			}))
 			.filter((group) => group.rows.length > 0);
-	}, [applications, showClosed, sort, lanes, active, timeZone, now]);
+	}, [applications, showClosed, sort, lanes, active, timeZone, now, hints]);
 
 	const toggleGroup = (status: string) =>
 		setCollapsed((current) => {
@@ -270,7 +280,18 @@ const ApplicationRow = memo(function ApplicationRow({
 }: ApplicationRowProps) {
 	const { i18n } = useLingui();
 	const { timeZone } = useCareerTime();
-	const next = describeNextStep(getNextStep(application, undefined, timeZone), application, i18n.locale, timeZone);
+	const hints = useOfferHints(application.status === "offer");
+	const { lanes } = useApplicationLanes();
+	const accepted = application.status === "closed" && application.closedReason === "accepted";
+	const stage = accepted
+		? getStageDisplay(lanes, application)
+		: { color: lane.color, label: getLaneLabel(lane), accepted: false };
+	const next = describeNextStep(
+		getNextStep(application, undefined, timeZone, offerHintFor(hints, application.id)),
+		application,
+		i18n.locale,
+		timeZone,
+	);
 	const sent = application.status !== "saved";
 	const tone = next.tone === "warn" ? "text-warn-text" : next.tone === "muted" ? "text-ink-3" : "text-ink-2";
 
@@ -342,8 +363,9 @@ const ApplicationRow = memo(function ApplicationRow({
 			</td>
 			<td className="px-2 max-xl:hidden">
 				<span className="flex min-w-0 items-center gap-1.5 text-ink-2">
-					<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: lane.color }} />
-					<span className="truncate">{getLaneLabel(lane)}</span>
+					<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: stage.color }} />
+					{stage.accepted && <Icon name="check" size={14} className="shrink-0 text-accent-text" />}
+					<span className="truncate">{stage.label}</span>
 				</span>
 			</td>
 			<td className="px-2">
@@ -392,11 +414,13 @@ const ApplicationRow = memo(function ApplicationRow({
 
 type BulkBarProps = { ids: string[]; onDone: () => void };
 
-/** For the checked rows: move them, tag them, close them with a reason, or delete them (after asking). */
+/** For the checked rows: move them or close them (with Undo), tag them, or delete them (after asking). */
 function BulkBar({ ids, onDone }: BulkBarProps) {
 	const invalidate = useInvalidateApplications();
+	const moveWithUndo = useMoveWithUndo();
+	const rows = ids.map((id) => ({ id }));
 	const confirm = useConfirm();
-	const { lanes, active, mode } = useApplicationLanes();
+	const { lanes, active } = useApplicationLanes();
 	const [tag, setTag] = useState("");
 
 	const bulkUpdate = useMutation({
@@ -441,7 +465,21 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 					{active
 						.filter((lane) => lane.category !== "closed")
 						.map((lane) => (
-							<DropdownMenuItem key={lane.id} onClick={() => bulkUpdate.mutate({ ids, ...laneMoveInput(lane, mode) })}>
+							<DropdownMenuItem
+								key={lane.id}
+								onClick={() => {
+									const label = getLaneLabel(lane);
+									moveWithUndo({
+										applications: rows,
+										lane,
+										description: plural(ids.length, {
+											one: `# application moved to ${label}`,
+											other: `# applications moved to ${label}`,
+										}),
+									});
+									onDone();
+								}}
+							>
 								<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: lane.color }} />
 								<span className="truncate">{getLaneLabel(lane)}</span>
 							</DropdownMenuItem>
@@ -479,13 +517,15 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 				<DropdownMenuContent align="start">
 					<ClosedLaneItems
 						lanes={active}
-						onPick={(lane, reason) =>
-							bulkUpdate.mutate(
-								lane
-									? { ids, ...laneMoveInput(lane, mode, reason) }
-									: { ids, ...laneMoveInput(getCategoryLane(lanes, "closed"), mode, reason ?? null) },
-							)
-						}
+						onPick={(lane, reason) => {
+							moveWithUndo({
+								applications: rows,
+								lane: lane ?? getCategoryLane(lanes, "closed"),
+								closedReason: lane ? reason : (reason ?? null),
+								description: plural(ids.length, { one: "# application closed", other: "# applications closed" }),
+							});
+							onDone();
+						}}
 					/>
 				</DropdownMenuContent>
 			</DropdownMenu>

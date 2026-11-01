@@ -33,6 +33,7 @@ import {
 	needsAttention,
 	nextStepSortKey,
 } from "@/features/applications/next-step";
+import { offerHintFor, useOfferHints } from "@/features/applications/queries";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
@@ -146,6 +147,7 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	const { data, isError, refetch } = useQuery(orpc.career.notifications.queryOptions({ input: {} }));
 	const applicationQuery = useQuery(applicationsListQueryOptions());
 	const applications = applicationQuery.data;
+	const hints = useOfferHints();
 	const [showRead, setShowRead] = useState(false);
 	const [pending, setPending] = useState<string[]>([]);
 	const setReadAt = (id: string, readAt: Date | null) =>
@@ -166,8 +168,10 @@ function NeedsYou({ now, onReview, className }: NeedsYouProps) {
 	// The same next-step rules as the Applications list: due follow-ups, no reply, interviews this week, offers.
 	const attention = (applications ?? [])
 		.flatMap((application) => {
-			const step = getNextStep(application, now, timeZone);
-			return needsAttention(step, now) ? [{ application, step, key: nextStepSortKey(application, now, timeZone) }] : [];
+			const step = getNextStep(application, now, timeZone, offerHintFor(hints, application.id));
+			return needsAttention(step, now)
+				? [{ application, step, key: nextStepSortKey(application, now, timeZone, offerHintFor(hints, application.id)) }]
+				: [];
 		})
 		.sort((a, b) => compareNextStepSortKeys(a.key, b.key, a.application.id, b.application.id));
 

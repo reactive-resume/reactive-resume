@@ -1,7 +1,7 @@
 import type { ApplicationSummary as Application } from "./types";
 import type { IconName } from "@/ui";
-import type { NextStep } from "@reactive-resume/schema/applications/next-step";
-export type { NextStep } from "@reactive-resume/schema/applications/next-step";
+import type { NextStep, OfferHint } from "@reactive-resume/schema/applications/next-step";
+export type { NextStep, OfferHint } from "@reactive-resume/schema/applications/next-step";
 import type { ApplicationLane } from "@reactive-resume/schema/applications/lanes";
 import { plural, t } from "@lingui/core/macro";
 import { getNextStep as sharedGetNextStep } from "@reactive-resume/schema/applications/next-step";
@@ -22,14 +22,19 @@ export const daysInStage = (
 	lanes: readonly ApplicationLane[] = [],
 ) => Math.max(0, Math.floor((now.getTime() - laneSince(application, lanes).getTime()) / 86_400_000));
 
-/** Preserve native lane-aware callers while deriving canonical next steps through the shared contract. */
+/**
+ * What's known of an application's newest saved offer: its reply deadline. `null` means no offer is saved yet;
+ * leaving it out means it isn't known here (the step then reads as deciding on the offer).
+ */
+
 export function getNextStep(
 	application: Parameters<typeof sharedGetNextStep>[0],
 	now = new Date(),
 	_lanes: readonly ApplicationLane[] = [],
 	timeZone = "UTC",
+	offer?: OfferHint | null,
 ): NextStep {
-	return sharedGetNextStep(application, now, timeZone);
+	return sharedGetNextStep(application, now, timeZone, offer);
 }
 
 export type NextStepText = { icon: IconName; title: string; sub: string; tone: "normal" | "warn" | "muted" };
@@ -67,6 +72,22 @@ export function describeNextStep(
 				tone: "normal",
 			};
 		}
+		case "offer":
+			return step.respondBy
+				? {
+						icon: step.overdue ? "clock" : "calendar-dot",
+						title: t`Reply to the offer`,
+						sub: t`By ${formatWhen(step.respondBy, locale, timeZone, true)}`,
+						tone: step.overdue ? "warn" : "normal",
+					}
+				: step.terms
+					? { icon: "scales", title: t`Decide on the offer`, sub: t`Compare it with your other offers`, tone: "normal" }
+					: {
+							icon: "scales",
+							title: t`Add the offer's terms`,
+							sub: t`Pay, deadline and conditions, so you can compare and decide`,
+							tone: "normal",
+						};
 		case "follow-up":
 			return {
 				icon: step.overdue ? "clock" : "calendar-dot",
@@ -111,13 +132,6 @@ export function describeNextStep(
 				title: t`No interview scheduled`,
 				sub: t`Add the date when you have it`,
 				tone: "normal",
-			};
-		case "offer":
-			return {
-				icon: "scales",
-				title: t`Decide on the offer`,
-				sub: plural(step.days, { one: "For # day", other: "For # days" }),
-				tone: "warn",
 			};
 		case "not-applied":
 			return { icon: "bookmark-simple", title: t`Not applied yet`, sub: "", tone: "muted" };

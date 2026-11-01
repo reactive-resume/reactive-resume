@@ -101,3 +101,39 @@ describe("buildIssues", () => {
 		expect(issuesOf(fixed)).toEqual([]);
 	});
 });
+
+describe("fragments split off by an import (J2-02)", () => {
+	const split = () =>
+		makeResume((resume) => {
+			resume.sections.experience.items.push({
+				id: "fragment",
+				hidden: false,
+				company:
+					"Built accessible services for global customers, mentored four engineers, and reduced processing time by",
+				position: "",
+				location: "",
+				period: "",
+				website: { url: "", label: "", inlineLink: false },
+				description: "<p>25%.</p>",
+				roles: [],
+			} as ResumeData["sections"]["experience"]["items"][number]);
+		});
+
+	it("offers Merge into previous entry instead of Add dates, and merging clears it", () => {
+		const data = split();
+		const codes = issuesOf(data).map((issue) => issue.finding.code);
+		expect(codes).toContain("FRAGMENTED_ENTRY");
+		expect(codes).not.toContain("EMPTY_PERIOD");
+
+		const issue = only(data, "FRAGMENTED_ENTRY");
+		expect(issue).toMatchObject({
+			title: "Looks like part of the entry above",
+			target: { kind: "item", sectionId: "experience", itemId: "fragment" },
+			fix: { kind: "apply", label: "Merge into previous entry" },
+		});
+		const fixed = applyFix(data, issue);
+		expect(fixed.sections.experience.items.map((item) => item.id)).toEqual(["kettle"]);
+		expect(fixed.sections.experience.items[0]?.description).toContain("reduced processing time by 25%.");
+		expect(issuesOf(fixed)).toEqual([]);
+	});
+});

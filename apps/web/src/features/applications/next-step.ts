@@ -1,6 +1,6 @@
 import type { ApplicationSummary } from "./types";
 import type { ApplicationStageSource, NextStep } from "@reactive-resume/schema/applications/next-step";
-export type { NextStep } from "@reactive-resume/schema/applications/next-step";
+export type { NextStep, OfferHint } from "@reactive-resume/schema/applications/next-step";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
 import { interviewKindOf } from "./interviews";
@@ -62,6 +62,22 @@ export function describeNextStep(
 				tone: "normal",
 			};
 		}
+		case "offer":
+			return step.respondBy
+				? {
+						icon: step.overdue ? "clock" : "calendar-dot",
+						title: t`Reply to the offer`,
+						sub: t`By ${formatWhen(step.respondBy, locale, timeZone, true)}`,
+						tone: step.overdue ? "warn" : "normal",
+					}
+				: step.terms
+					? { icon: "scales", title: t`Decide on the offer`, sub: t`Compare it with your other offers`, tone: "normal" }
+					: {
+							icon: "scales",
+							title: t`Add the offer's terms`,
+							sub: t`Pay, deadline and conditions, so you can compare and decide`,
+							tone: "normal",
+						};
 		case "follow-up":
 			return {
 				icon: step.overdue ? "clock" : "calendar-dot",
@@ -106,13 +122,6 @@ export function describeNextStep(
 				title: t`No interview scheduled`,
 				sub: t`Add the date when you have it`,
 				tone: "normal",
-			};
-		case "offer":
-			return {
-				icon: "scales",
-				title: t`Decide on the offer`,
-				sub: plural(step.days, { one: "For # day", other: "For # days" }),
-				tone: "warn",
 			};
 		case "not-applied":
 			return { icon: "bookmark-simple", title: t`Not applied yet`, sub: "", tone: "muted" };

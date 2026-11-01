@@ -2,7 +2,7 @@ import type { ApplicationTimelineEntry } from "@reactive-resume/schema/applicati
 import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { ApplicationLane } from "@reactive-resume/schema/applications/lanes";
 import { getActiveApplicationLanes, getApplicationLane } from "@reactive-resume/schema/applications/lanes";
-import { getStageLabel } from "./stages";
+import { getClosedReasonLabel, getStageLabel } from "./stages";
 
 export type { ApplicationLane };
 
@@ -17,6 +17,20 @@ export function getDisplayLane(lanes: readonly ApplicationLane[], application: L
 	const lane = getApplicationLane(lanes, application);
 	if (!lane.retiredAt) return lane;
 	return getApplicationLane(lanes, { status: application.status });
+}
+
+/**
+ * How an application's stage reads: its lane's name and colour, except an accepted offer, which is a win and keeps the
+ * Offer colour with a check rather than reading as one more closed application.
+ */
+export function getStageDisplay(
+	lanes: readonly ApplicationLane[],
+	application: LaneSource & { closedReason?: ApplicationClosedReason | null | undefined },
+) {
+	if (application.status === "closed" && application.closedReason === "accepted")
+		return { color: getCategoryLane(lanes, "offer").color, label: getClosedReasonLabel("accepted"), accepted: true };
+	const lane = getDisplayLane(lanes, application);
+	return { color: lane.color, label: getLaneLabel(lane), accepted: false };
 }
 
 /** The default lane of a category, where legacy writes land. */

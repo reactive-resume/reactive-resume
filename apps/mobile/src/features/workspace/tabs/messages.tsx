@@ -7,8 +7,10 @@ import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState, useSyncExternalStore } from "react";
 import { View } from "react-native";
+import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
 import { latest, useAutosave, useDraft, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { isFixedChange, openChanges } from "../logic";
 import { AiNotice, Block, CheckRow, Pill, SaveError, useWorking, workingSteps } from "../parts";
@@ -22,7 +24,8 @@ import { useUserTime } from "@/features/application-detail/hooks";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
-import { useInvalidateApplications } from "@/features/applications/queries";
+import { stageScope, useInvalidateApplications } from "@/features/applications/queries";
+import { listedApplication, offerHintFor, useOfferHints } from "@/features/applications/stage-actions";
 import { formatMoney } from "@/features/career/offer-compare";
 import { OfferEntry } from "@/features/career/offer-entry";
 import { withUndo } from "@/features/career/undo";
@@ -39,6 +42,9 @@ export function MessagesTab() {
 
 function Messages({ application, version, now }: WorkspaceTabProps) {
 	const { space } = useTheme();
+	const router = useRouter();
+	// "Add the offer's terms" from a move to Offer opens the offer form at once.
+	const { offer } = useLocalSearchParams<{ offer?: string }>();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
 	const readOnly = version?.data.kind === "reply";
@@ -48,7 +54,13 @@ function Messages({ application, version, now }: WorkspaceTabProps) {
 
 	return (
 		<View style={{ gap: space.s4 }}>
-			{!readOnly ? <OfferEntry application={application} /> : null}
+			{!readOnly ? (
+				<OfferEntry
+					application={application}
+					initialOpen={offer === "new"}
+					onDone={() => router.setParams({ offer: undefined })}
+				/>
+			) : null}
 			<PasteBox
 				key={`paste-${version?.id ?? "live"}`}
 				application={application}
@@ -204,9 +216,15 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	const selected = applied ? applied.changes : ticked;
 	const contact = application.contacts[0]?.name.split(" ")[0];
 	const lanes = useApplicationLanes();
+	const offerHints = useOfferHints();
 	const current =
 		application.followUpNote ||
-		describeNextStep(getNextStep(application, now, lanes.lanes, timeZone), application, i18n.locale, timeZone).title;
+		describeNextStep(
+			getNextStep(application, now, lanes.lanes, timeZone, offerHintFor(offerHints, application.id)),
+			application,
+			i18n.locale,
+			timeZone,
+		).title;
 	const from = getLaneLabel(resolveLane(lanes.lanes, application));
 
 	const describe = (change: (typeof changes)[number]) => {
@@ -256,15 +274,25 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 		if (!replyApplies.start(pendingKey, { changes: chosen, at: new Date() })) return;
 		// The account that pressed Apply; the commit is dropped if another one is signed in by then.
 		const origin = getDraftScope();
+		// A bulk move of this application chosen while the changes wait behind Undo, or are on their way, starts from
+		// the stage they save.
+		const saved = stageBaselinesFor(queryClient).write(
+			stageScope(),
+			application.id,
+			listedApplication(queryClient, application.id),
+		);
 		withUndo({
 			message: t`Application updated`,
-			restore: () => replyApplies.finish(pendingKey),
+			restore: () => {
+				saved(undefined);
+				replyApplies.finish(pendingKey);
+			},
 			failed: () => showToast({ message: t`Couldn't update the application. Nothing was changed; try again.` }),
 			// The client, not this screen's mutation: the commit may run after the screen is gone.
 			commit: async () => {
 				try {
 					await dispatchForOrigin(origin, getDraftScope, async () => {
-						await client.career.applyReply({ id: reply.id, changes: chosen });
+						saved(savedStageIn(await client.career.applyReply({ id: reply.id, changes: chosen }), application.id));
 						await Promise.all([
 							invalidate(),
 							queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() }),
@@ -272,6 +300,8 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 						]);
 					});
 				} finally {
+					// A failed or dropped commit saved nothing (a saved one has settled already).
+					saved(undefined);
 					replyApplies.finish(pendingKey);
 				}
 			},

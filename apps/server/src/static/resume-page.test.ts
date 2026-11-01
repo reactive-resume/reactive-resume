@@ -82,14 +82,65 @@ it("authorizes only the fixed application script, even if rendered content conta
 	expect(csp?.match(/script-src ([^;]*)/)?.[1]).not.toContain("'unsafe-inline'");
 });
 
+it("sends a mistyped app address to the app instead of saying a resume isn't shared (J2-16)", async () => {
+	const { loadPublicWebPage } = await import("@reactive-resume/api/features/resume/web-page");
+	vi.mocked(loadPublicWebPage).mockResolvedValue({ status: "unavailable" } as never);
+	const { serveResumePage } = await import("./resume-page");
+
+	const profile = await serveResumePage(
+		new Request("https://resume.example/applications"),
+		{ username: "applications", primary: true },
+		"test",
+	);
+	expect(profile.status).toBe(302);
+	expect(profile.headers.get("location")).toBe("/dashboard/applications");
+
+	const nested = await serveResumePage(
+		new Request("https://resume.example/settings/profile?x=1"),
+		{ username: "settings", slug: "profile" },
+		"test",
+	);
+	expect(nested.headers.get("location")).toBe("/dashboard/settings/profile?x=1");
+
+	// Any other address that isn't a shared resume still says so.
+	const unknown = await serveResumePage(
+		new Request("https://resume.example/ada/resume"),
+		{ username: "ada", slug: "resume" },
+		"test",
+	);
+	expect(unknown.status).toBe(404);
+});
+
+it("still shows a shared resume whose owner's username looks like an app page", async () => {
+	const { loadPublicWebPage } = await import("@reactive-resume/api/features/resume/web-page");
+	vi.mocked(loadPublicWebPage).mockResolvedValue({
+		status: "ready",
+		data: structuredClone(defaultResumeData),
+		username: "career",
+		slug: "resume",
+		updatedAt: new Date(),
+		indexable: false,
+		hasPassword: false,
+		showDownloadButtons: false,
+		customDomain: null,
+	} as never);
+	const { serveResumePage } = await import("./resume-page");
+	const response = await serveResumePage(
+		new Request("https://resume.example/career/resume"),
+		{ username: "career", slug: "resume" },
+		"test",
+	);
+	expect(response.status).toBe(200);
+});
+
 it("gives a visitor at an address with no shared resume a way to the app's home, in their language", async () => {
 	const { loadPublicWebPage } = await import("@reactive-resume/api/features/resume/web-page");
 	vi.mocked(loadPublicWebPage).mockResolvedValue({ status: "unavailable" } as never);
 	const { serveResumePage } = await import("./resume-page");
 
 	const response = await serveResumePage(
-		new Request("https://resume.example/login", { headers: { "accept-language": "de-DE" } }),
-		{ username: "login", primary: true },
+		new Request("https://resume.example/unshared-user", { headers: { "accept-language": "de-DE" } }),
+		{ username: "unshared-user", primary: true },
 		"test",
 	);
 

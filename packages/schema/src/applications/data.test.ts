@@ -1,6 +1,6 @@
 import type { ApplicationStatus, ApplicationTimelineEntry } from "./data";
 import { describe, expect, it } from "vite-plus/test";
-import { hasApplicationSubmission } from "./data";
+import { applicationTimelineEntrySchema, hasApplicationSubmission, latestStageEntryId } from "./data";
 
 const stage = (status: ApplicationStatus): Extract<ApplicationTimelineEntry, { type: "stage" }> => ({
 	id: status,
@@ -28,4 +28,18 @@ describe("confirmed application submission", () => {
 	it("allows a job to return to preparation without treating old history as a new submission", () => {
 		expect(hasApplicationSubmission({ status: "saved", activity: [stage("applied"), stage("saved")] })).toBe(false);
 	});
+});
+
+it("stage-write identity survives date edits, API sorting, legacy dates and same-clock moves", () => {
+	const legacy = { ...stage("saved"), at: new Date("2099-01-01T12:00:00Z") };
+	const first = { ...stage("applied"), writeSequence: 1 };
+	const second = { ...stage("interview"), at: new Date("2026-10-29T08:00:00Z"), writeSequence: 2 };
+	for (const entries of [
+		[legacy, first, second],
+		[second, first, legacy],
+	]) {
+		expect(latestStageEntryId(entries.map((entry) => applicationTimelineEntrySchema.parse(entry)))).toBe("interview");
+	}
+	expect(latestStageEntryId([legacy, { ...second, at: new Date("2020-01-01") }])).toBe("interview");
+	expect(latestStageEntryId([stage("applied"), legacy])).toBe("saved");
 });

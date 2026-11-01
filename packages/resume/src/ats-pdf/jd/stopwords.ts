@@ -32,6 +32,41 @@ const RECRUITING_BOILERPLATE =
 	"regard religion remote required requirement requirements responsibilities responsibility role roles salary " +
 	"seeking sex sexual skills status team teams thrive time title veteran welcome work working workplace years";
 
+/** Counted words: "five teams" names a size, not a skill. */
+const NUMBER_WORDS =
+	"zero four five six seven eight nine ten eleven twelve fifteen twenty thirty forty fifty hundred thousand " +
+	"million billion dozen dozens multi multiple";
+
+/**
+ * Words that describe the work or the job rather than name a skill. A senior reader is told to add "drive",
+ * "grow" or "background" to a resume and stops trusting the list.
+ *
+ * Verbs and qualifiers carry nothing on their own or at the head of a phrase: "drive hiring", "senior engineers",
+ * "improve deployment". Nouns carry nothing on their own but do name a skill with the word before them or after
+ * them: "big data", "hybrid cloud", "partner management", "technical lead", "engineering managers".
+ */
+const LEADING_GENERIC_WORDS =
+	"drive driving grow growing partnering lead leading own owning building help helping improve " +
+	"improving deliver delivering create creating define defining ensure ensuring shape " +
+	"shaping scale scaling run running bring bringing take taking coach collaborate collaborating managing " +
+	"various several varied nice-to-have must-have bonus-points " +
+	"multi-year year-round day-to-day day days week weeks month months year yearly annual annually quarterly " +
+	"daily weekly onsite on-site full-time part-time senior junior " +
+	"mid-level large small modern complex world-class impactful successful " +
+	"great top early current future overall ideal ideally thing things stuff ways asap values-driven";
+
+const SOLO_GENERIC_WORDS =
+	"partner build head chief ceo cto cfo coo founder founders director directors manager managers " +
+	"changes background backgrounds hybrid big global impact frameworks domain domains area areas space spaces " +
+	"part parts level levels mission missions vision values record group groups report staff";
+
+/** Never part of a term, wherever they appear. */
 export const JD_STOPWORDS: ReadonlySet<string> = new Set(
-	[...FUNCTION_WORDS.split(" "), ...RECRUITING_BOILERPLATE.split(" ")].filter(Boolean),
+	[...FUNCTION_WORDS.split(" "), ...RECRUITING_BOILERPLATE.split(" "), ...NUMBER_WORDS.split(" ")].filter(Boolean),
 );
+
+/** Never a term on their own, nor the first word of one. */
+export const JD_LEADING_GENERIC_WORDS: ReadonlySet<string> = new Set(LEADING_GENERIC_WORDS.split(" "));
+
+/** Never a term on their own; fine inside a longer one. */
+export const JD_SOLO_GENERIC_WORDS: ReadonlySet<string> = new Set(SOLO_GENERIC_WORDS.split(" "));

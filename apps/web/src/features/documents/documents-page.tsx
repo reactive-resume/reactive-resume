@@ -509,8 +509,10 @@ function storeView(view: "grid" | "list") {
 	}
 }
 
-/** The first visit: import is the filled button here, and only here. Choose a file opens the picker straight away. */
-function FirstRun({ onFile }: { onFile: (file: File) => void }) {
+type FirstRunProps = { onFile: (file: File) => void };
+
+/** The first visit: import is the filled button here, and only here. Choose a file opens the file picker itself. */
+function FirstRun({ onFile }: FirstRunProps) {
 	const { startBlank, trySample, creating } = useStartDocument();
 	const inputRef = useRef<HTMLInputElement>(null);
 

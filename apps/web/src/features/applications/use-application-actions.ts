@@ -1,14 +1,18 @@
 import type { ApplicationLane } from "./lanes";
-import type { ApplicationSummary } from "./types";
+import type { Application, ApplicationSummary } from "./types";
 import type { ApplicationClosedReason, ApplicationStatus } from "@reactive-resume/schema/applications/data";
-import { t } from "@lingui/core/macro";
+import type { QueryClient } from "@tanstack/react-query";
+import { plural, t } from "@lingui/core/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
+import { stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { getCategoryLane, getLaneLabel, laneMoveInput } from "./lanes";
-import { applicationsListQueryKey } from "./queries";
+import { applicationDetailQueryKey, applicationsListQueryKey } from "./queries";
 import { applicationLanesQueryKey, useApplicationLanes } from "./use-application-lanes";
+import { withUndo } from "@/features/career/shared";
 import { toastError } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
+import { client, orpc } from "@/libs/orpc/client";
 
 /** Refreshes everything that shows applications: the list, the open one, stats, tags and documents' job lines. */
 export function useInvalidateApplications() {
@@ -29,15 +33,126 @@ export function useInvalidateApplications() {
 	};
 }
 
+type MoveWithUndoInput = {
+	applications: readonly Pick<ApplicationSummary, "id">[];
+	lane: ApplicationLane;
+	/** For a Closed lane without a preset outcome. */
+	closedReason?: ApplicationClosedReason | null | undefined;
+	/** What the toast says; Undo sits beside it. */
+	description: string;
+};
+
+type Stage = Pick<ApplicationSummary, "status" | "laneId" | "closedReason">;
+
+const stageOf = ({ status, laneId, closedReason }: Stage): Stage => ({ status, laneId, closedReason });
+
+/** The web app talks to one server, as one account per page load: one scope for its stage baselines. */
+export const STAGE_SCOPE = "";
+
+/** An application as this page has it: its list row, or its open detail. */
+export const listedApplication = (queryClient: QueryClient, id: string) =>
+	queryClient.getQueryData<ApplicationSummary[]>(applicationsListQueryKey())?.find((item) => item.id === id) ??
+	queryClient.getQueryData<Application>(applicationDetailQueryKey(id));
+
+/**
+ * Moves applications to a lane with Undo, the way Delete and Dismiss work: the list shows the move at once, the server
+ * gets it when the toast closes (after 6 seconds, when another toast replaces it, or when the page is hidden), and Undo
+ * puts the rows back without a write, so no stage history is recorded for a move that was taken back.
+ *
+ * The write carries each row's stage from before the move, and the server leaves any row whose stage has changed since:
+ * a move made to one of these rows in the meantime, here or on another device, wins. A second move of a row made here
+ * before the first is saved is saved after it, from what it saved. Undo and a failed write put back only these rows,
+ * and only those still showing this move.
+ */
+export function useMoveWithUndo() {
+	const queryClient = useQueryClient();
+	const invalidate = useInvalidateApplications();
+	const { mode } = useApplicationLanes();
+	const listKey = applicationsListQueryKey();
+
+	return ({ applications, lane, closedReason, description }: MoveWithUndoInput) => {
+		const ids = applications.map((application) => application.id);
+		if (ids.length === 0) return;
+		const input = laneMoveInput(lane, mode, closedReason);
+		const status = lane.category;
+		const reason = status === "closed" ? (input.closedReason ?? null) : null;
+		const moved: Partial<Stage> = { status, closedReason: reason, ...(mode === "lanes" ? { laneId: lane.id } : {}) };
+		const showsMove = (row: Stage) =>
+			row.status === status && (row.closedReason ?? null) === reason && (mode !== "lanes" || row.laneId === lane.id);
+
+		void queryClient.cancelQueries({ queryKey: listKey });
+		const before = new Map<string, Stage>();
+		const listed = new Map<string, ApplicationSummary | Application>();
+		for (const id of ids) {
+			const row = listedApplication(queryClient, id);
+			if (!row) continue;
+			before.set(id, stageOf(row));
+			listed.set(id, row);
+		}
+		const { baselines, settle } = stageBaselinesFor(queryClient).begin(STAGE_SCOPE, listed);
+
+		const revert = <Row extends Stage & { id: string }>(row: Row): Row => {
+			const stage = before.get(row.id);
+			return stage && showsMove(row) ? { ...row, ...stage } : row;
+		};
+		const selected = new Set(ids);
+		const apply = <Row extends Stage & { id: string }>(row: Row): Row =>
+			selected.has(row.id) ? { ...row, ...moved } : row;
+
+		queryClient.setQueryData<ApplicationSummary[]>(listKey, (current) => current?.map(apply));
+		// The open application (sheet, workspace) shows the move too.
+		for (const id of ids)
+			queryClient.setQueryData<Application>(applicationDetailQueryKey(id), (current) => current && apply(current));
+
+		const restore = () => {
+			settle([]);
+			queryClient.setQueryData<ApplicationSummary[]>(listKey, (current) => current?.map(revert));
+			for (const id of ids)
+				queryClient.setQueryData<Application>(applicationDetailQueryKey(id), (current) => current && revert(current));
+			for (const id of ids) invalidate(id);
+		};
+
+		withUndo({
+			description,
+			commit: async () => {
+				try {
+					const expectedStages = await Promise.all(
+						[...baselines].map(async ([id, baseline]) => ({ id, ...(await baseline) })),
+					);
+					const { updated, stages } = await client.applications.bulkUpdate({ ids, ...input, expectedStages });
+					settle(stages ?? []);
+					const kept = ids.length - updated;
+					if (kept > 0)
+						toast.add({
+							description: plural(kept, {
+								one: "# application changed in the meantime, so it keeps its newer stage",
+								other: "# applications changed in the meantime, so they keep their newer stage",
+							}),
+						});
+				} catch (error) {
+					restore();
+					toastError(error, t`Couldn't update the applications. Try again.`);
+				} finally {
+					for (const id of ids) invalidate(id);
+				}
+			},
+			onUndo: restore,
+		});
+	};
+}
+
 /**
  * Stage changes, closing and deleting, shared by the list, board and detail sheet. A move shows at once (the list
- * updates optimistically) and says so in a toast, whichever way it was made.
+ * updates optimistically) and says so in a toast, whichever way it was made. Reaching Offer offers to add the offer's
+ * terms; accepting an offer offers to close the other open applications, only if the user chooses to.
  */
 export function useApplicationActions() {
 	const queryClient = useQueryClient();
 	const invalidate = useInvalidateApplications();
 	const listKey = applicationsListQueryKey();
 	const { lanes, mode } = useApplicationLanes();
+	const router = useRouter();
+	const moveWithUndo = useMoveWithUndo();
 
 	const update = useMutation({
 		...orpc.applications.update.mutationOptions(),
@@ -84,6 +199,57 @@ export function useApplicationActions() {
 					: undefined;
 			if (!lane) return;
 			const label = getLaneLabel(lane);
+			const reason = input.closedReason ?? lane.closedReason;
+
+			if (lane.category === "offer") {
+				toast.add({
+					description: t`Moved to ${label}`,
+					actionProps: {
+						children: t`Add the offer's terms`,
+						onClick: () =>
+							void router.navigate({
+								to: "/dashboard/applications/$applicationId/{-$tab}",
+								params: { applicationId: input.id, tab: "messages" },
+								search: { offer: "new" },
+							}),
+					},
+				});
+				return;
+			}
+
+			if (lane.category === "closed" && reason === "accepted") {
+				const others = (queryClient.getQueryData<ApplicationSummary[]>(listKey) ?? []).filter(
+					(row) => row.id !== input.id && row.status !== "closed",
+				);
+				if (others.length === 0) {
+					toast.add({ description: t`Closed as Accepted offer` });
+					return;
+				}
+				const closedLane = getCategoryLane(lanes, "closed");
+				toast.add({
+					description: plural(others.length, {
+						one: "Closed as Accepted offer. Close your other open application as Accepted another offer?",
+						other: "Closed as Accepted offer. Close your # other open applications as Accepted another offer?",
+					}),
+					// A choice, not a notice: it stays until it's answered or dismissed.
+					timeout: 0,
+					actionProps: {
+						children: plural(others.length, { one: "Close it", other: "Close all #" }),
+						onClick: () =>
+							moveWithUndo({
+								applications: others,
+								lane: closedLane,
+								closedReason: "accepted-other",
+								description: plural(others.length, {
+									one: "# application closed as Accepted another offer",
+									other: "# applications closed as Accepted another offer",
+								}),
+							}),
+					},
+				});
+				return;
+			}
+
 			toast.add({
 				description:
 					lane.category !== "closed"

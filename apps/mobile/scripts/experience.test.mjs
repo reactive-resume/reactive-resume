@@ -29,6 +29,7 @@ const routes = {
 	applications: (view = "list") => (view === "list" ? "/applications" : `/applications/${view}`),
 	new: (context = "documents") => (context === "documents" ? "/new" : `/new?context=${context}`),
 	newJob: () => "/applications?create=1",
+	career: (pane = "today") => `/career/${pane}`,
 };
 const router = { push: (href) => calls.push(href), back() {} };
 const theme = {
@@ -108,7 +109,8 @@ const nodes = (tree) =>
 			: [tree, ...nodes(tree.props.children)];
 const render = (component, props) => {
 	cursor = 0;
-	return component(props);
+	const tree = component(props);
+	return tree?.type?.name === "ScopedOfferEntry" ? tree.type(tree.props) : tree;
 };
 const reset = () => {
 	hooks = [];
@@ -201,6 +203,7 @@ const exportBoundary = {
 	printResume: async () => calls.push("print"),
 };
 const { DownloadTab } = load("features/share/download.tsx", {
+	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
 	"expo-web-browser": { openBrowserAsync: async (url) => calls.push({ browser: url }) },
 	"@reactive-resume/resume/ats": { lintResumeForAts: () => ({ findings: [] }) },
 	"@reactive-resume/resume/cover-letter": {},
@@ -210,7 +213,6 @@ const { DownloadTab } = load("features/share/download.tsx", {
 	"./model": { safeFileName },
 	"@/api/client": { client: {} },
 	"@/draft": draftBoundary,
-	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
 });
 const { ExportScreen } = load("features/share/export-screen.tsx", {
 	"expo-network": { useNetworkState: () => ({ isConnected: true }) },
@@ -333,6 +335,14 @@ const defaultLanes = schemaLanes.createDefaultApplicationLanes();
 const laneQuery = {
 	useApplicationLanes: () => ({ lanes: defaultLanes, active: defaultLanes, supported: false, ready: true }),
 };
+// Offer hints for Next step: none known unless a case sets them.
+let offerHint;
+const stageActionsStub = {
+	useOfferHints: () => undefined,
+	offerHintFor: () => offerHint,
+	useStageMovedToast: () => (moved, lane) => calls.push({ moved: moved.id, lane: lane.category }),
+	acceptedStage: () => null,
+};
 const nextSteps = load("features/applications/next-step.ts", {
 	"@reactive-resume/schema/applications/next-step": domainNextStep,
 	"./stages": stages,
@@ -365,11 +375,16 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"@/features/applications/lane-queries": laneQuery,
 	"@/features/applications/lanes": lanes,
 	"@/features/applications/next-step": nextSteps,
+	"@/features/applications/stage-actions": stageActionsStub,
 	"@/features/applications/stages": stages,
 	"@/features/applications/queries": {
 		useApplicationMutations: () => ({ update: { isPending: false, mutate: (input) => calls.push(input) } }),
 	},
-	"@/features/reminders": {},
+	"@/features/reminders": {
+		...load("features/reminders/ics.ts"),
+		zonedParts: () => ({ date: "2026-11-01" }),
+		shareIcs: async (event, file) => calls.push({ event, file }),
+	},
 	"@/features/share/files": {},
 });
 const application = {
@@ -446,6 +461,31 @@ for (const [overrides, label, destination] of [
 	assert.equal(calls.at(-1), `/applications/job-a/${destination}`);
 	if (!overrides.status) assert.ok(!nodes(tree).some((node) => node.props.label === "Schedule an interview"));
 }
+// J2-17: at Offer, Next step asks for the offer's terms (opening the form), then compares once they're saved.
+const atOffer = {
+	...application,
+	status: "offer",
+	activity: [{ id: "earlier", type: "interview", kind: "behavioral", at: "2099-01-01T12:00:00Z", durationMinutes: 60 }],
+};
+offerHint = null;
+reset();
+tree = render(NextStepCard, { application: atOffer, onOpenInterview() {} });
+control(tree, "Add the offer's terms").onPress();
+assert.deepEqual(calls.at(-1), { pathname: "/applications/job-a/messages", params: { offer: "new" } });
+offerHint = { respondBy: null };
+reset();
+tree = render(NextStepCard, { application: atOffer, onOpenInterview() {} });
+control(tree, "Compare offers").onPress();
+assert.equal(calls.at(-1), "/career/offers");
+offerHint = { respondBy: "2026-11-02T01:00:00Z" };
+reset();
+tree = render(NextStepCard, { application: atOffer, onOpenInterview() {} });
+control(tree, "Add to calendar").onPress();
+await settle();
+assert.equal(calls[0].event.uid, "offer-job-a");
+assert.equal(calls[0].event.start.toISOString(), new Date(offerHint.respondBy).toISOString());
+assert.ok(calls[0].file.endsWith("2026-11-01.ics"), "calendar filename uses account day");
+offerHint = undefined;
 console.log(
 	"PASS file-first sharing, single-flight/current-document/offline PDF export, fallback, explicit stage edits and state-aware next actions",
 );
@@ -466,6 +506,11 @@ const { ApplicationsListScreen } = load("features/applications/list-screen.tsx",
 	"./lane-queries": laneQuery,
 	"./lanes": lanes,
 	"./list": listLogic,
+	"./stage-actions": {
+		offerHintFor: () => undefined,
+		useOfferHints: () => undefined,
+		useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
+	},
 	"./next-step": {
 		getNextStep: () => (needsFollowUpFixture ? { kind: "no-reply", days: 20 } : {}),
 		describeNextStep: () => ({ title: "Saved" }),
@@ -870,8 +915,14 @@ const { OfferEntry } = load("features/career/offer-entry.tsx", {
 		client: { career: { createOffer: async (input) => calls.push(input) } },
 		useOffers: () => ({ data: savedOffers }),
 	},
+	"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
 	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
 	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
+	"@/features/applications/lane-queries": laneQuery,
+	"@/features/applications/lanes": lanes,
+	"@/features/applications/stage-actions": {
+		useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
+	},
 	"@/features/applications/queries": { useApplications: () => offerApplications },
 });
 reset();
@@ -945,6 +996,24 @@ control(offerView(), "Respond by").onChange("");
 control(offerView(), "Save offer").onPress();
 await settle();
 assert.equal(calls[0].respondBy, null, "a genuinely blank deadline needs no loaded profile");
+// J2-06: a new application scope starts with fresh component state. Saving moves it to Offer, with Undo.
+reset();
+offerProfile = { isSuccess: true, isPending: false, isError: false };
+const appliedEntry = render(OfferEntry, {
+	application: { id: "job", company: "Fictional Labs", role: "Engineer", status: "applied" },
+	initialOpen: true,
+});
+const appliedForm = nodes(appliedEntry).find((node) => typeof node.type === "function" && node.props.onClose);
+assert.ok(appliedForm, "initialOpen shows the form at once");
+reset();
+const appliedView = () => render(appliedForm.type, { ...appliedForm.props, onClose() {} });
+control(appliedView(), "Currency").onChangeText("EUR");
+control(appliedView(), "Save offer").onPress();
+await settle();
+const moved = calls.find((call) => call?.moveWithUndo)?.moveWithUndo;
+assert.deepEqual(moved?.applications, [{ id: "job" }]);
+assert.equal(moved?.lane.category, "offer");
+assert.equal(moved?.message, "Offer saved. Fictional Labs moved to Offer.");
 console.log("PASS native offer validation, draft preservation, profile loading/failure and blank deadline");
 
 // Native Save must stay reachable for validation, then focus the actual missing input.
@@ -1309,6 +1378,7 @@ const discovered = ["Platform engineer", "Reliability engineer"].map((role, inde
 	discoverySource: null,
 }));
 const { TodayScreen } = load("features/career/today.tsx", {
+	"@/features/applications/stage-actions": { useOfferHints: () => undefined, offerHintFor: () => undefined },
 	"expo-web-browser": { openBrowserAsync: async () => {} },
 	"./hooks": {
 		client: {
@@ -1665,6 +1735,7 @@ console.log("PASS native Today past note edit preserves exact seconds and change
 		"@reactive-resume/schema/career": {},
 		"@reactive-resume/utils/timezone": { fromZonedDateTime: () => new Date("2026-11-02T12:00:00Z") },
 		"./hooks": scheduleHooks,
+		"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
 		"./scheduling": {
 			collectInterviews: () => [],
 			nextCareerRun: () => new Date("2026-11-02T12:00:00Z"),
@@ -1676,7 +1747,6 @@ console.log("PASS native Today past note edit preserves exact seconds and change
 		"@/auth/session": { useSession: () => ({ status: "signed-in", server: "https://fictional.example" }) },
 		"@/features/ai/providers": { useHasAIProvider: () => scheduleAi },
 		"@/features/ai/web-access": {},
-		"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
 	});
 	for (const state of ["loading", "error", "empty", "configured"]) {
 		reset();
@@ -1747,6 +1817,13 @@ console.log("PASS native custom-field Undo restores its field without reverting 
 // A job selected before its summary arrives must never become an unlinked copy.
 let copyApplications = { data: [], isFetching: true, refetch() {} };
 const { NewDocument } = load("features/documents/new-document.tsx", {
+	"./copy-for-job": {
+		copyForJob: async (input) => {
+			calls.push(input);
+			return "copy";
+		},
+	},
+	"./filter": { defaultCopySource: (rows) => rows.find((row) => !row.applicationId) ?? rows[0] },
 	react: { ...react, useEffect() {} },
 	"@tanstack/react-query": { useQuery: () => copyApplications },
 	"expo-document-picker": {},
@@ -1947,3 +2024,57 @@ nudge.props.action.onPress();
 assert.equal(calls.at(-1), "/applications/owed-0", "single nudge opens Details rather than the Apply tab");
 console.log("PASS native full dismissal, follow-up filter clearing and Details navigation");
 reset();
+
+// A failed link retries the already-created job, with its original request ID and draft intact.
+const nativeCreateRequests = [];
+let failNativeLink = true;
+let nonce = 0;
+const requestIds = load("../../../packages/utils/src/string.ts", { uuid: { v7: () => `native-request-${++nonce}` } });
+const nativeDraft = { document: { id: "base-retry" }, status: "saved", locked: false, flush: async () => {} };
+const { JobMatch } = load("features/check/job-match.tsx", {
+	react: { ...react, useEffect() {}, useMemo: (make) => make() },
+	"@reactive-resume/utils/string": requestIds,
+	"./actions": {},
+	"./model": { matchPosting: () => null },
+	"@/api/client": {
+		client: {
+			applications: {
+				create: async (input) => {
+					nativeCreateRequests.push(input);
+					return "saved-job";
+				},
+			},
+			documents: {
+				linkApplication: async () => {
+					if (failNativeLink) throw new Error("Offline");
+				},
+			},
+		},
+	},
+	"@/draft": { useResumeStore: { getState: () => nativeDraft } },
+	"@/draft/runtime": { resume: { refresh: async () => {}, blur: async () => {} } },
+	"@/features/applications/queries": {
+		useApplications: () => ({ data: [] }),
+		useApplication: () => ({}),
+		useInvalidateApplications: () => () => {},
+	},
+	"@/features/documents/copy-for-job": {},
+});
+reset();
+const matchView = () =>
+	render(JobMatch, { id: "base-retry", data: { metadata: {} }, applicationId: null, locked: false, offline: false });
+control(matchView(), "Paste a job posting").onChangeText("Build reliable systems.");
+control(matchView(), "Save as a job…").onPress();
+control(matchView(), "Company").onChangeText("Retry Co");
+control(matchView(), "Role").onChangeText("Engineer");
+control(matchView(), "Save and link this resume").onPress();
+await settle();
+assert.equal(control(matchView(), "Company").value, "Retry Co");
+assert.equal(control(matchView(), "Paste a job posting").value, "Build reliable systems.");
+failNativeLink = false;
+control(matchView(), "Save and link this resume").onPress();
+await settle();
+assert.equal(nativeCreateRequests.length, 2);
+assert.equal(nativeCreateRequests[0].newId, nativeCreateRequests[1].newId, "link retry returns the original job");
+assert.equal(control(matchView(), "Paste a job posting").value, "");
+console.log("PASS native saved-job link retries retain original ID and draft until success");

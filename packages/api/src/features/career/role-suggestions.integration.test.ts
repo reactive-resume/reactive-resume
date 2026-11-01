@@ -77,10 +77,16 @@ describe.skipIf(!databaseUrl)("reviewed target role suggestions", () => {
 					id: "alice",
 					name: "Alice Example",
 					email: "alice@example.test",
-					username: "alice",
-					displayUsername: "alice",
+					username: `${schemaName}-alice`,
+					displayUsername: `${schemaName}-alice`,
 				},
-				{ id: "bob", name: "Bob Example", email: "bob@example.test", username: "bob", displayUsername: "bob" },
+				{
+					id: "bob",
+					name: "Bob Example",
+					email: "bob@example.test",
+					username: `${schemaName}-bob`,
+					displayUsername: `${schemaName}-bob`,
+				},
 			]);
 		await getDb()
 			.insert(tables.application)

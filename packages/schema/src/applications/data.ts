@@ -155,6 +155,8 @@ export const applicationTimelineEntrySchema = z.discriminatedUnion("type", [
 		laneLabel: z.string().max(80).nullable().optional(),
 		closedReason: applicationClosedReasonSchema.nullable().optional(),
 		canonicalTransition: z.boolean().optional(),
+		/** Server-assigned write order, independent of the editable display date. Absent on legacy entries. */
+		writeSequence: z.number().int().positive().optional(),
 	}),
 	timelineBaseSchema.extend({
 		type: z.literal("note"),
@@ -168,6 +170,27 @@ export const applicationTimelineEntrySchema = z.discriminatedUnion("type", [
 
 export type ApplicationTimelineEntry = z.infer<typeof applicationTimelineEntrySchema>;
 export type InterviewTimelineEntry = Extract<ApplicationTimelineEntry, { type: "interview" }>;
+
+/**
+ * Latest stage write, independent of display dates and API timeline sorting. Sequenced writes supersede legacy
+ * entries; a legacy-only history keeps its date-based fallback until its next move.
+ */
+export function latestStageEntryId(
+	activity: readonly (Pick<ApplicationTimelineEntry, "id" | "type" | "at"> & { writeSequence?: number | undefined })[],
+): string | null {
+	let latest: (typeof activity)[number] | undefined;
+	for (const entry of activity)
+		if (
+			entry.type === "stage" &&
+			(!latest ||
+				(entry.writeSequence ?? 0) > (latest.writeSequence ?? 0) ||
+				(entry.writeSequence === undefined &&
+					latest.writeSequence === undefined &&
+					new Date(entry.at).getTime() >= new Date(latest.at).getTime()))
+		)
+			latest = entry;
+	return latest?.id ?? null;
+}
 
 // Reserved for AI enrichment output (autofill / match-score). Free-form so the shape can
 // evolve without a migration. See the AI roadmap in the applications feature.

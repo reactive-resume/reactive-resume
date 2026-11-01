@@ -118,10 +118,25 @@ msgstr "{0, plural, one {# aplikim aktiv} other {# aplikime aktive}}"
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# përgjigje} other {# përgjigje}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {# application closed as Accepted another offer} other {# applications closed as Accepted another offer}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application closed} other {# applications closed}}"
+msgstr ""
+
 #. placeholder {0}: result.deleted
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
 msgstr "{0, plural, one {# aplikim u fshi} other {# aplikime u fshinë}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application moved to {label}} other {# applications moved to {label}}}"
+msgstr ""
 
 #. placeholder {0}: importable.length
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -263,6 +278,16 @@ msgstr "{0, plural, one {Aplikuar para # dite} other {Aplikuar para # ditësh}}"
 #: src/features/career/knowledge/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {Mbështet # histori} other {Mbështet # histori}}"
+
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {Close it} other {Close all #}}"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
+msgstr ""
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -651,6 +676,10 @@ msgid "{entry} doesn't say when. Dates place it on your timeline."
 msgstr "{entry} nuk thotë se kur. Datat e vendosin atë në afatin tuaj kohor."
 
 #: src/features/resume/editor/check/issues.ts
+msgid "{entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job."
+msgstr ""
+
+#: src/features/resume/editor/check/issues.ts
 msgid "{entry} names the role but not what you did, so it adds no keywords."
 msgstr "{entry} emërton rolin, por jo atë që keni bërë, kështu që nuk shton fjalë kyçe."
 
@@ -705,6 +734,10 @@ msgstr "{item} u lëshua aty ku nuk mund të shkojë. Nuk u zhvendos asgjë."
 #: src/libs/dnd.ts
 msgid "{item} was dropped where it started. Nothing moved."
 msgstr "{item} u lëshua aty ku nisi. Nuk u zhvendos asgjë."
+
+#: src/features/applications/use-application-actions.ts
+msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
+msgstr ""
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -1140,6 +1173,10 @@ msgstr "Një lidhje çon diku tjetër nga adresa që tregon."
 msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "Mendimi i një modeli, jo verdikti. Mund të jetë e gabuar."
 
+#: src/features/career/offer-entry.tsx
+msgid "a month"
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "A name helps you tell passkeys apart, like “Work laptop”."
 msgstr "Një emër të ndihmon të dallosh çelësat e kalimit, si \"Laptopi i punës\"."
@@ -1199,6 +1236,10 @@ msgstr "Një plan me kohë, hyrja juaj, historitë që do të sillni dhe pyetjet
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
 msgstr "Një adresë web është shkruar pa https://."
+
+#: src/features/career/offer-entry.tsx
+msgid "a year"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "About"
@@ -1334,8 +1375,11 @@ msgstr "Shto një shtet"
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Shtoni një fakt, për shembull “Në 2025 kam qenë mentor për dy menaxherë produkti fillestarë”"
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/new-document-dialog.tsx
+msgid "Add a job"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
 msgid "Add a job…"
 msgstr ""
 
@@ -1355,6 +1399,10 @@ msgstr "Shto një lidhje"
 #: src/features/resume/editor/check/issues.ts
 msgid "Add a location"
 msgstr "Shto një vendndodhje"
+
+#: src/features/career/offer-entry.tsx
+msgid "Add a newer offer"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Add a note"
@@ -1640,6 +1688,12 @@ msgstr "Shtoni domenin pas @, si {name}@example.com"
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Shto mbarimin e domenit, si {domain}.com"
+
+#: src/features/applications/components/detail/next-step-card.tsx
+#: src/features/applications/next-step.ts
+#: src/features/applications/use-application-actions.ts
+msgid "Add the offer's terms"
+msgstr ""
 
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1997,6 +2051,10 @@ msgstr "Një hyrje nuk ka data"
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "një gabim"
+
+#: src/features/career/offer-entry.tsx
+msgid "an hour"
+msgstr ""
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -2730,6 +2788,11 @@ msgstr "hyrje në listë {n}"
 msgid "Bulleted list"
 msgstr "Lista me pika"
 
+#. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
+#: src/features/applications/next-step.ts
+msgid "By {0}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "By the community, for the community."
 msgstr "Nga komuniteti, për komunitetin."
@@ -3273,6 +3336,10 @@ msgstr "Mbyllur"
 msgid "Closed as {label}"
 msgstr "E mbyllur si {label}"
 
+#: src/features/applications/use-application-actions.ts
+msgid "Closed as Accepted offer"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -3339,6 +3406,7 @@ msgstr "Kompakte"
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
@@ -3347,11 +3415,20 @@ msgstr "Kompakte"
 msgid "Company"
 msgstr "Kompania"
 
+#: src/features/career/offer-entry.tsx
+msgid "Compare"
+msgstr ""
+
 #. placeholder {0}: application.company
 #: src/features/career/workspace/practise.tsx
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Krahasoni përpjekjet për të parë çfarë u përmirësua. Pyetjet e ushtrimit janë të simuluara, jo nga {0}."
 
+#: src/features/applications/next-step.ts
+msgid "Compare it with your other offers"
+msgstr ""
+
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Compare offers"
 msgstr "Krahaso ofertat"
@@ -3654,6 +3731,11 @@ msgstr "Kopjo kodet"
 msgid "Copy conversation"
 msgstr "Kopjo bisedën"
 
+#. placeholder {0}: resume.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copy for {0}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Copy for a job…"
 msgstr "Kopjo për një punë…"
@@ -3669,6 +3751,10 @@ msgstr "Kopjojeni tani. Për sigurinë tuaj, nuk do të shfaqet më."
 #: src/features/homepage/share.tsx
 msgid "Copy link"
 msgstr "Kopjo lidhjen"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Copy made for {company}. This resume is unchanged."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "Copy public link"
@@ -3796,6 +3882,7 @@ msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "Pyetjet nuk mund të kopjoheshin. Përzgjidhni tekstin dhe kopjojeni manualisht."
 
 #: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't copy the resume. Try again."
 msgstr "CV nuk mund të kopjohej. Provoni përsëri."
 
@@ -4128,10 +4215,6 @@ msgstr "Ai ndryshim nuk mund të ruhej. Provo sërish."
 msgid "Couldn't save that to Knowledge. Try again."
 msgstr "Nuk mund të ruhej te Njohuritë. Provoni përsëri."
 
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the application. Try again."
-msgstr "Aplikimi nuk mund të ruhej. Provoni përsëri."
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't save the change. Try again."
 msgstr "Ndryshimi nuk mund të ruhej. Provoni përsëri."
@@ -4143,6 +4226,15 @@ msgstr "Dokumentet nuk mund të ruheshin. Provoni përsëri."
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Couldn't save the follow-up. Try again."
 msgstr "Ndjekja nuk mund të ruhej. Provoni përsëri."
+
+#: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the job and its copy. Try again."
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the job. Try again."
+msgstr ""
 
 #: src/features/applications/components/application-notes.tsx
 msgid "Couldn't save the notes. Try again."
@@ -4322,6 +4414,7 @@ msgid "Couldn't update the application. Try again."
 msgstr "Aplikimi nuk mund të përditësohej. Provoni përsëri."
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "Aplikimet për punë nuk mund të përditësoheshin. Provo sërish."
 
@@ -4508,10 +4601,9 @@ msgstr "Krijuar"
 msgid "Created “{finalName}”"
 msgstr "Krijuar \"{finalName}\""
 
-#. placeholder {0}: job.company
 #: src/features/documents/new-document-dialog.tsx
-msgid "Created and linked to {0}"
-msgstr "Krijuar dhe lidhur me {0}"
+msgid "Created and linked to {company}"
+msgstr "Krijuar dhe lidhur me {company}"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and upload"
@@ -7143,6 +7235,10 @@ msgstr "Përputhja e punës"
 msgid "Job posting"
 msgstr "shpallje pune"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Job posting (optional)"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Job posting <0>· optional, adds a keyword match</0>"
 msgstr "Postimi i punës <0>· opsional, shton një përputhje të fjalëve kyçe</0>"
@@ -7706,6 +7802,10 @@ msgstr "Lidhni një aplikim për punë…"
 msgid "Link copied"
 msgstr "Lidhja u kopjua"
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Link this resume"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
 msgstr "Lidhja me aplikimin për punë"
@@ -7765,10 +7865,6 @@ msgstr "LinkedIn"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
 msgstr "LinkedIn, Referim…"
-
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Linking…"
-msgstr "Po lidh…"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/settings/profile.tsx
@@ -7947,6 +8043,10 @@ msgstr "Kërko"
 msgid "Looks exactly like the page. Use it for applications and email."
 msgstr "Duket tamam si faqja. Përdoreni atë për aplikime për punë dhe email."
 
+#: src/features/resume/editor/check/issues.ts
+msgid "Looks like part of the entry above"
+msgstr ""
+
 #. Link to backup-code verification flow when authenticator app is unavailable
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Lost access to your authenticator?"
@@ -7972,6 +8072,10 @@ msgstr "Kryesore"
 #: src/routes/_home/-sections/header.tsx
 msgid "Main navigation"
 msgstr "Navigimi kryesor"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Make a copy for this job"
+msgstr ""
 
 #: src/features/homepage/design.tsx
 msgid "Make any of them yours."
@@ -8169,6 +8273,14 @@ msgstr "E mesme"
 #: src/features/homepage/prepare.tsx
 msgid "Mentor other designers"
 msgstr "Mentorim i dizajnerëve të tjerë"
+
+#: src/features/resume/editor/check/issues.ts
+msgid "Merge into previous entry"
+msgstr ""
+
+#: src/features/resume/editor/check/issues.ts
+msgid "Merged into the entry above"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Message saved with this application"
@@ -9026,6 +9138,10 @@ msgstr "Jo në CV-në tuaj"
 msgid "Not in your resume · add only if true"
 msgstr "Jo në rezymenë tuaj · shtoni vetëm nëse është e vërtetë"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Not linked to a job"
+msgstr ""
+
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "Jo tani"
@@ -9223,6 +9339,11 @@ msgstr "Ofertë"
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "Oferta e punës u ruajt"
+
+#. placeholder {0}: target.company
+#: src/features/career/offer-entry.tsx
+msgid "Offer saved. {0} moved to Offer."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
@@ -9822,6 +9943,10 @@ msgstr "Oraret e pezulluara i ruajnë parametrat e tyre."
 #: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "Periudha e pagesës"
+
+#: src/features/applications/next-step.ts
+msgid "Pay, deadline and conditions, so you can compare and decide"
+msgstr ""
 
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
@@ -11091,6 +11216,10 @@ msgstr "Përgjigje"
 msgid "Reply copied"
 msgstr "Përgjigjja u kopjua"
 
+#: src/features/applications/next-step.ts
+msgid "Reply to the offer"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -11151,6 +11280,11 @@ msgstr "Burime"
 #: src/features/career/offers.tsx
 msgid "Respond by"
 msgstr "Përgjigjuni deri më"
+
+#. placeholder {0}: day(data.respondBy)
+#: src/features/career/offer-entry.tsx
+msgid "respond by {0}"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Responsibility"
@@ -11464,6 +11598,7 @@ msgstr "Pikërisht tani"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Role"
 msgstr "Pozicioni"
@@ -11600,8 +11735,8 @@ msgid "Save an unprotected copy, with no password and no permissions restriction
 msgstr "Ruani një kopje të pambrojtur, pa fjalëkalim dhe pa kufizime lejesh."
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Save and link"
-msgstr "Ruani dhe lidhni"
+msgid "Save and link this resume"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11616,8 +11751,8 @@ msgid "Save another offer to compare"
 msgstr "Ruani një ofertë tjetër për të krahasuar"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Save as application…"
-msgstr "Ruaje si aplikim pune…"
+msgid "Save as a job…"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -11651,6 +11786,14 @@ msgstr "Ruaj intervistën"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "Ruaj punën"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Save job and make a copy"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Save job, create and open"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Save message without AI"
@@ -11700,6 +11843,10 @@ msgstr ""
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Ruaj këto kushte oferte për krahasim"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Save this resume's changes before copying it."
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11759,8 +11906,8 @@ msgid "Saved a story: {0}"
 msgstr "U ruajt një histori: {0}"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Saved as an application and linked"
-msgstr "Ruajtur si një aplikim pune dhe i lidhur"
+msgid "Saved as a job and linked to this resume"
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -11785,6 +11932,10 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Saved to Applications"
 msgstr "U ruajt te Aplikimet"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Saved to Applications as a saved job, then linked to the copy. No AI request is made."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
@@ -13249,6 +13400,11 @@ msgstr "Etiketa…"
 msgid "Tailor"
 msgstr "Përshtatuni me përshkrimin e punës"
 
+#. placeholder {0}: application.company
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Tailor a copy for {0} so this resume stays as it is for other jobs, or link this resume itself."
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr ""
@@ -13553,6 +13709,10 @@ msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -14085,8 +14245,8 @@ msgid "This resume is password-protected"
 msgstr "Kjo CV është e mbrojtur me fjalëkalim"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "This resume isn't linked to an application yet."
-msgstr "Kjo CV nuk është ende e lidhur me një aplikim për punë."
+msgid "This resume isn't linked to an application yet. Pick one to make a copy for it."
+msgstr ""
 
 #: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
@@ -14831,6 +14991,10 @@ msgstr "Përdorni mostrën"
 
 #: src/features/career/draft-recovery.tsx
 msgid "Use saved version"
+msgstr ""
+
+#: src/features/resume/editor/check/actions.ts
+msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts

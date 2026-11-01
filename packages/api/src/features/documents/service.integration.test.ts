@@ -139,8 +139,8 @@ describe.skipIf(!databaseUrl)("Trash batch operations", () => {
 					id,
 					name: id,
 					email: `${id}@example.test`,
-					username: id,
-					displayUsername: id,
+					username: `${schemaName}-${id}`,
+					displayUsername: `${schemaName}-${id}`,
 				})),
 			);
 		await getDb()
@@ -582,7 +582,7 @@ describe.skipIf(!databaseUrl)("Trash batch operations", () => {
 		});
 
 		const pdf = createPublicResumePdf({
-			username: "alice",
+			username: `${schemaName}-alice`,
 			slug: "public-resume",
 			requestHeaders: new Headers(),
 			trustedClient: "127.0.0.1",
@@ -753,40 +753,46 @@ describe.skipIf(!databaseUrl)("Trash batch operations", () => {
 	}, 30_000);
 	it("sends a renamed account's old public links to its new username for 30 days, and only its own", async () => {
 		await seed();
+		const oldUsername = `${schemaName}-alice`;
+		const newUsername = `${schemaName}-alice-new`;
 		const db = getDb();
 		await db.update(tables.resume).set({ isPublic: true }).where(eq(tables.resume.id, "alice-active"));
 		await db
 			.update(tables.user)
-			.set({ username: "alice-new", displayUsername: "alice-new" })
+			.set({ username: newUsername, displayUsername: newUsername })
 			.where(eq(tables.user.id, "alice"));
 		const { loadPublicWebPage } = await import("../resume/web-page");
 		const visit = (match: { username: string; slug: string } | { username: string; primary: true }) =>
 			loadPublicWebPage({ match, requestHeaders: new Headers(), trustedClient: "test" });
 
-		await expect(visit({ username: "alice", slug: "active" })).resolves.toEqual({
+		await expect(visit({ username: oldUsername, slug: "active" })).resolves.toEqual({
 			status: "moved",
-			username: "alice-new",
+			username: newUsername,
 			slug: "active",
 			isPrimary: false,
 			movedBy: "username",
 		});
-		await expect(visit({ username: "Alice", slug: "active" })).resolves.toMatchObject({ status: "moved" });
+		await expect(visit({ username: oldUsername.toUpperCase(), slug: "active" })).resolves.toMatchObject({
+			status: "moved",
+		});
 		// Another account never answers for a name it didn't release.
-		await expect(visit({ username: "bob", slug: "active" })).resolves.toEqual({ status: "unavailable" });
+		await expect(visit({ username: `${schemaName}-bob`, slug: "active" })).resolves.toEqual({ status: "unavailable" });
 
 		// The primary resume's short link moves to the new short link.
 		await db.update(tables.resume).set({ isPrimary: true }).where(eq(tables.resume.id, "alice-active"));
-		await expect(visit({ username: "alice", primary: true })).resolves.toEqual({
+		await expect(visit({ username: oldUsername, primary: true })).resolves.toEqual({
 			status: "moved",
-			username: "alice-new",
+			username: newUsername,
 			slug: "active",
 			isPrimary: true,
 			movedBy: "username",
 		});
 
 		// After 30 days the name is free for anyone, so the old links stop resolving to this account.
-		await pool.query(`UPDATE released_username SET released_at = now() - interval '31 days' WHERE username = 'alice'`);
-		await expect(visit({ username: "alice", slug: "active" })).resolves.toEqual({ status: "unavailable" });
+		await pool.query("UPDATE released_username SET released_at = now() - interval '31 days' WHERE username = $1", [
+			oldUsername,
+		]);
+		await expect(visit({ username: oldUsername, slug: "active" })).resolves.toEqual({ status: "unavailable" });
 	}, 30_000);
 	it("names a second import of the same person apart from the first, ignoring Trash and other accounts", async () => {
 		await seed();

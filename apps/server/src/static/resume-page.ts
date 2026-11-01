@@ -15,6 +15,7 @@ import {
 } from "@reactive-resume/pdf/web-page-document";
 import { publicResumePath } from "@reactive-resume/resume/sharing";
 import { getResumeSocialMeta } from "@reactive-resume/resume/social-meta";
+import { mistypedAppPath } from "@reactive-resume/utils/app-paths";
 import { BASE_SECURITY_HEADERS, contentSecurityPolicy } from "./web";
 
 const origin = () => new URL(env.APP_URL).origin;
@@ -122,7 +123,17 @@ async function showPage(request: Request, match: ResumeMatch, trustedClient: str
 	const previewToken = new URL(request.url).searchParams.get("preview") ?? undefined;
 	const result = await loadPublicWebPage({ match, requestHeaders: request.headers, trustedClient, previewToken });
 
-	if (result.status === "unavailable") return unavailableResponse(request);
+	if (result.status === "unavailable") {
+		// `/applications` typed without `/dashboard` is the app's page, not a resume that isn't shared.
+		const appPath =
+			!options.customDomain && "username" in match ? mistypedAppPath(new URL(request.url).pathname) : null;
+		if (appPath)
+			return new Response(null, {
+				status: 302,
+				headers: { Location: `${appPath}${new URL(request.url).search}`, "Cache-Control": "no-store" },
+			});
+		return unavailableResponse(request);
+	}
 	if (result.status === "moved") return movedResponse(request, result);
 	if (result.status === "password") {
 		const lang = result.locale;

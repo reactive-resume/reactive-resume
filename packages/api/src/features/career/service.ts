@@ -25,7 +25,7 @@ import { requestRunCancellation } from "../agent/cancellation";
 import { aiProvidersService } from "../ai-providers/service";
 import { findTrackedPosting } from "../applications/duplicates";
 import { syncFollowUp } from "../applications/follow-up";
-import { applicationTransitionValues, ensureApplicationPipeline } from "../applications/lanes";
+import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "../applications/lanes";
 import { applicationService, assertApplicationVersion, recordSentResume } from "../applications/service";
 import { assertSharedDocument, lockUser } from "../documents/ownership";
 import { matchPosting } from "./matching";
@@ -939,17 +939,21 @@ export const careerService = {
 			.delete(tables.careerArtifact)
 			.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)));
 	},
-	/** Applies the ticked changes of a read employer message. Reaching Applied goes through Mark as applied. */
+	/**
+	 * Applies the ticked changes of a read employer message. Reaching Applied goes through Mark as applied. Returns the
+	 * application's stage only when this call writes it, so a repeat cannot acknowledge another device's move.
+	 */
 	applyReply: async (userId: string, id: string, selected: number[]) => {
 		const [saved] = await db
 			.select()
 			.from(tables.careerArtifact)
 			.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)));
 		if (!saved?.applicationId || saved.data.kind !== "reply") throw new ORPCError("NOT_FOUND");
-		if (saved.data.applied) return;
 		const applicationId = saved.applicationId;
+		// A repeat saved no stage; acknowledging the current row could adopt another device's later move.
+		if (saved.data.applied) return { stages: [] };
 		const context = await careerService.context({ userId, applicationId });
-		await db.transaction(async (tx) => {
+		return db.transaction(async (tx) => {
 			await lockUser(tx, userId);
 			const [application] = await tx
 				.select()
@@ -964,7 +968,7 @@ export const careerService = {
 				.for("update");
 			if (!item?.applicationId || item.data.kind !== "reply") throw new ORPCError("NOT_FOUND");
 			const data = item.data;
-			if (data.applied) return;
+			if (data.applied) return { stages: [] };
 
 			if (
 				selected.some((index) => !Number.isInteger(index) || index < 0 || index >= data.changes.length) ||
@@ -1027,6 +1031,7 @@ export const careerService = {
 				.update(tables.careerArtifact)
 				.set({ data: { ...data, applied: { at: now.toISOString(), changes: selected } } })
 				.where(eq(tables.careerArtifact.id, id));
+			return { stages: updated && transition.changed ? [savedStageOf(updated)] : [] };
 		});
 	},
 	workspace: async (userId: string, applicationId: string) => {
@@ -1090,7 +1095,7 @@ export const careerService = {
 		expectedDocuments?: { resumeId: string | null; coverLetterId: string | null },
 	) => {
 		const parsed = careerWorkspaceSchema.shape.answers.parse(answers);
-		await db.transaction(async (tx) => {
+		return await db.transaction(async (tx) => {
 			await lockUser(tx, userId);
 			const [application] = await tx
 				.select()
@@ -1165,7 +1170,7 @@ export const careerService = {
 						);
 					if (!version) throw conflict();
 				}
-				return;
+				return { stages: [] };
 			}
 			if (!isDeepStrictEqual(current.answers, expectedAnswers) && !isDeepStrictEqual(current.answers, parsed))
 				throw new ORPCError("CONFLICT", {
@@ -1198,6 +1203,7 @@ export const careerService = {
 					evidence: { factIds: await ownedFactIds(tx, userId, sent), storyIds: [] },
 					inputVersion: hash(JSON.stringify([applicationId, at, sent])),
 				});
+			return { stages: [savedStageOf(submitted)] };
 		});
 	},
 	/** Copies the workspace's answers into Saved when the application is marked as applied: what was sent. */

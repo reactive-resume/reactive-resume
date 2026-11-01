@@ -1,0 +1,1 @@
+ALTER TABLE "create_request" ADD COLUMN "application_id" text;

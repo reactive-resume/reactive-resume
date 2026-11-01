@@ -1,3 +1,5 @@
+import type { SavedData } from "@/features/workspace/hooks";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { OfferTerms } from "@reactive-resume/schema/career";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
@@ -6,43 +8,127 @@ import { View } from "react-native";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
 import { offerApplications, parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
 import { client, useCareerAction, useCareerTime, useOffers } from "./hooks";
+import { formatMoney } from "./offer-compare";
 import { EditorSheet, LoadState } from "./shared";
 import { WallClockField } from "@/features/application-detail/date-field";
+import { useApplicationLanes } from "@/features/applications/lane-queries";
+import { resolveLane } from "@/features/applications/lanes";
 import { useApplications } from "@/features/applications/queries";
+import { useMoveWithUndo } from "@/features/applications/stage-actions";
 import { routes } from "@/routes";
-import { Banner, Button, SelectSheet, Text, TextField, showToast, useTheme } from "@/ui";
+import { Banner, Button, Card, SelectSheet, Text, TextField, showToast, useTheme } from "@/ui";
 
-type Application = { id: string; company: string; role: string };
-type OfferEntryProps = { application?: Application; primary?: boolean };
-/** "Add offer". An offer belongs to an application, so with none yet it leads to adding one instead. */
-export function OfferEntry({ application, primary = false }: OfferEntryProps) {
+type Application = { id: string; company: string; role: string; status?: ApplicationStatus | undefined };
+type OfferEntryProps = {
+	application?: Application | undefined;
+	primary?: boolean;
+	/** Open the form at once ("Add the offer's terms" from a move to Offer). */
+	initialOpen?: boolean | undefined;
+	/** Called when the form closes, saved or not. */
+	onDone?: (() => void) | undefined;
+};
+type OfferTermsSaved = SavedData<"offer">;
+type OfferSaved = { id: string; data: OfferTermsSaved };
+
+/** Stages before Offer: saving an offer for an application still at one of these moves it to Offer, with Undo. */
+const BEFORE_OFFER: readonly ApplicationStatus[] = ["saved", "applied", "screening", "interview"];
+
+/**
+ * Add offer, and the offer saved last for this application in view as a one-line summary, so saving doesn't make the
+ * terms disappear into Saved.
+ */
+export function OfferEntry(props: OfferEntryProps) {
+	return <ScopedOfferEntry key={props.application?.id ?? "global"} {...props} />;
+}
+function ScopedOfferEntry({ application, primary = false, initialOpen = false, onDone }: OfferEntryProps) {
 	const { t } = useLingui();
-	const router = useRouter();
+	const [open, setOpen] = useState(initialOpen);
+	const [requested, setRequested] = useState(initialOpen);
+	if (initialOpen !== requested) {
+		setRequested(initialOpen);
+		if (initialOpen) setOpen(true);
+	}
 	const applications = useApplications();
-	const [open, setOpen] = useState(false);
-	const variant = primary ? "primary" : "secondary";
+	const router = useRouter();
+	const offers = useOffers();
+	const [justSaved, setJustSaved] = useState<OfferSaved | null>(null);
+	const latest =
+		justSaved ??
+		(application
+			? (offers.data ?? [])
+					.filter((item) => item.data.kind === "offer" && item.applicationId === application.id)
+					.toSorted((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
+			: undefined);
+	const close = () => {
+		setOpen(false);
+		onDone?.();
+	};
 	if (!open && !application && (!applications.data || (applications.isError && !applications.data.length)))
 		return <LoadState query={applications} />;
 	if (!open && !application && applications.data?.length === 0)
 		return (
-			<Button variant={variant} label={t`Add an application first`} onPress={() => router.push(routes.newJob())} />
+			<Button
+				variant={primary ? "primary" : "secondary"}
+				label={t`Add an application first`}
+				onPress={() => router.push(routes.newJob())}
+			/>
 		);
 	return (
 		<>
-			<Button variant={variant} label={t`Add offer`} onPress={() => setOpen(true)} />
-			{open ? <OfferForm {...(application ? { application } : {})} onClose={() => setOpen(false)} /> : null}
+			{latest?.data.kind === "offer" ? <OfferSummary offer={latest.data} id={latest.id} /> : null}
+			<Button
+				variant={primary ? "primary" : "secondary"}
+				label={latest && application ? t`Add a newer offer` : t`Add offer`}
+				onPress={() => setOpen(true)}
+			/>
+			{open ? <OfferForm {...(application ? { application } : {})} onClose={close} onSaved={setJustSaved} /> : null}
 		</>
 	);
 }
 
-type OfferFormProps = OfferEntryProps & { onClose: () => void };
-function OfferForm({ application, onClose }: OfferFormProps) {
+/** "Written offer · €182,000 a year · respond by 12 Nov 2026 · Compare" */
+type OfferSummaryProps = { offer: OfferTermsSaved; id: string };
+function OfferSummary({ offer, id }: OfferSummaryProps) {
+	const { t } = useLingui();
+	const { space } = useTheme();
+	const router = useRouter();
+	const { locale, timeZone } = useCareerTime();
+	const period = { year: t`a year`, month: t`a month`, hour: t`an hour` }[offer.period];
+	const respondBy = offer.respondBy
+		? new Intl.DateTimeFormat(locale, { timeZone, dateStyle: "medium" }).format(new Date(offer.respondBy))
+		: null;
+	const parts = [
+		offer.version === "verbal" ? t`Verbal offer` : t`Written offer`,
+		offer.base === null ? null : `${formatMoney(locale, offer.currency, offer.base)} ${period}`,
+		respondBy ? t`respond by ${respondBy}` : null,
+	].filter(Boolean);
+	return (
+		<Card style={{ gap: space.s2 }}>
+			<Text accessibilityLiveRegion="polite">{parts.join(" · ")}</Text>
+			<Button
+				variant="ghost"
+				size="sm"
+				label={t`Compare`}
+				onPress={() => router.push({ pathname: routes.career("offers"), params: { a: id } })}
+			/>
+		</Card>
+	);
+}
+
+type OfferFormProps = {
+	application?: Application | undefined;
+	onClose: () => void;
+	onSaved: (offer: OfferSaved) => void;
+};
+function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { locale, timeZone, profile } = useCareerTime();
 	const router = useRouter();
 	const applications = useApplications();
 	const action = useCareerAction();
+	const lanes = useApplicationLanes();
+	const moveWithUndo = useMoveWithUndo();
 	const [applicationId, setApplicationId] = useState(application?.id ?? "");
 	const savedOffers = useOffers();
 	const [draft, setTerms] = useState(() => ({
@@ -241,7 +327,19 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 								() => client.career.createOffer(payload.data),
 								(result) => {
 									if (!application && result) router.setParams({ a: result.id });
-									showToast({ message: t`Offer saved` });
+									if (result?.data.kind === "offer") onSaved({ id: result.id, data: result.data });
+									const row = applications.data?.find((item) => item.id === payload.data.applicationId);
+									const target = application ?? row;
+									const status = application?.status ?? row?.status;
+									if (target && status && BEFORE_OFFER.includes(status))
+										// An offer means the application is at Offer; Undo keeps the offer and leaves the stage.
+										moveWithUndo({
+											applications: [{ id: payload.data.applicationId }],
+											lane: resolveLane(lanes.lanes, { status: "offer" }),
+											supported: lanes.supported,
+											message: t`Offer saved. ${target.company} moved to Offer.`,
+										});
+									else showToast({ message: t`Offer saved` });
 									onClose();
 								},
 							);

@@ -28,7 +28,7 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-res
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { getCategoryLane, getDisplayLane, getLaneLabel, getNextLane, laneMoveInput } from "../lanes";
+import { getCategoryLane, getDisplayLane, getLaneLabel, getNextLane, getStageDisplay, laneMoveInput } from "../lanes";
 import { daysInLane } from "../next-step";
 import { applicationDetailQueryOptions, getInitialApplicationDetail } from "../queries";
 import { getClosedReasonLabel } from "../stages";
@@ -126,9 +126,13 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 	const current = getDisplayLane(lanes, application);
 	const steps = active.filter((lane) => lane.category !== "closed");
 	const next = getNextLane(lanes, current);
-	const reached = steps.findIndex((lane) => lane.id === current.id);
-	const since = daysInLane(application);
+	const stage = getStageDisplay(lanes, application);
 	const closed = application.status === "closed";
+	// An accepted offer keeps its pipeline filled through Offer: it was won, not lost.
+	const reached = stage.accepted
+		? steps.findLastIndex((lane) => lane.category === "offer")
+		: steps.findIndex((lane) => lane.id === current.id);
+	const since = daysInLane(application);
 	// Leaving Saved for Applied records the submission first.
 	const goTo = (lane: ApplicationLane) => {
 		if (lane.id === current.id) return;
@@ -226,7 +230,9 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 										>
 											<span
 												className="h-1.5 rounded-sm transition-colors duration-standard"
-												style={{ background: !closed && index <= reached ? lane.color : "var(--line)" }}
+												style={{
+													background: (!closed || stage.accepted) && index <= reached ? lane.color : "var(--line)",
+												}}
 											/>
 											<span
 												className={cn(
@@ -243,10 +249,11 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 						</ol>
 						<div className="flex flex-wrap items-center justify-between gap-2">
 							<span className="flex min-w-0 items-center gap-1.5 text-sm">
-								<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: current.color }} />
-								<strong className="truncate font-semibold">{getLaneLabel(current)}</strong>
+								<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: stage.color }} />
+								{stage.accepted && <Icon name="check" size={16} className="shrink-0 text-accent-text" />}
+								<strong className="truncate font-semibold">{stage.label}</strong>
 								<span className="shrink-0 text-ink-3">
-									{closed && application.closedReason ? (
+									{stage.accepted ? null : closed && application.closedReason ? (
 										<>· {getClosedReasonLabel(application.closedReason)}</>
 									) : (
 										<>
@@ -310,6 +317,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 
 			<CloseDialog
 				open={closing}
+				status={application.status}
 				onOpenChange={setClosing}
 				lanes={active}
 				onClose={(lane, reason) => (lane ? moveTo(application, lane, reason) : reason && close(application, reason))}

@@ -9,10 +9,11 @@ import { RefreshControl, Pressable, SectionList, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { applicationError } from "./error";
 import { useApplicationLanes } from "./lane-queries";
-import { getLaneLabel, laneInput, resolveLane } from "./lanes";
+import { getLaneLabel, resolveLane } from "./lanes";
 import { filterApplications, groupApplications, visibleSelection } from "./list";
 import { describeNextStep, getNextStep, needsFollowUp } from "./next-step";
 import { useApplicationDetailPrefetch, useApplicationMutations, useApplications } from "./queries";
+import { offerHintFor, useMoveWithUndo, useOfferHints } from "./stage-actions";
 import { CLOSED_REASONS, getClosedReasonLabel } from "./stages";
 import { useSession } from "@/auth/session";
 import { useNow, useUserTime } from "@/features/application-detail/hooks";
@@ -79,6 +80,8 @@ function ApplicationsList() {
 	const firstAppearance = useFirstAppearance(!query.isPending);
 	const { timeZone } = useUserTime();
 	const { bulkUpdate, bulkDelete } = useApplicationMutations();
+	const offerHints = useOfferHints();
+	const moveWithUndo = useMoveWithUndo();
 	const { search, setSearch } = useApplicationSearch();
 	const [tag, setTag] = useState("");
 	const [showClosed, setShowClosed] = useState(false);
@@ -106,10 +109,13 @@ function ApplicationsList() {
 	const [dismissed, setDismissed] = useState(readDismissed);
 	// Same rule as web and Career → Today: a due follow-up, or ten days without a reply.
 	const owesFollowUp = (application: (typeof applications)[number]) =>
-		needsFollowUp(getNextStep(application, now, laneList, timeZone), now);
+		needsFollowUp(getNextStep(application, now, laneList, timeZone, offerHintFor(offerHints, application.id)), now);
 	const owed = applications
 		.filter((application) => !dismissed.includes(application.id) && owesFollowUp(application))
-		.map((application) => ({ application, step: getNextStep(application, now, laneList, timeZone) }))
+		.map((application) => ({
+			application,
+			step: getNextStep(application, now, laneList, timeZone, offerHintFor(offerHints, application.id)),
+		}))
 		.sort((a, b) => (b.step.kind === "no-reply" ? b.step.days : -1) - (a.step.kind === "no-reply" ? a.step.days : -1));
 	const company = owed[0]?.application.company ?? "";
 	const count = owed.length;
@@ -127,7 +133,7 @@ function ApplicationsList() {
 		(application) => !followUpOnly || owesFollowUp(application),
 	);
 	const filtersActive = Boolean(search.trim() || tag || showClosed || followUpOnly);
-	const groups = groupApplications(filtered, sort, direction, now, laneList, timeZone);
+	const groups = groupApplications(filtered, sort, direction, now, laneList, timeZone, offerHints);
 	const selectedIds = visibleSelection(groups, collapsed, selected);
 	const onViewableItemsChanged = useApplicationDetailPrefetch();
 	const tags = [...new Set(applications.flatMap((item) => item.tags))].sort();
@@ -153,27 +159,36 @@ function ApplicationsList() {
 			(bulk === "tag" && !newTag.trim())
 		)
 			return;
+		const ids = selectedIds;
+		// Moves and closes show at once with Undo; the server gets them when the toast ends.
+		if (bulk === "move" || bulk === "close") {
+			const lane = bulk === "close" ? resolveLane(lanes.lanes, { status: "closed" }) : moveLane;
+			moveWithUndo({
+				applications: ids.map((id) => ({ id })),
+				lane,
+				supported: lanes.supported,
+				...(lane.category === "closed" && !lane.closedReason ? { closedReason: reason } : {}),
+				message:
+					lane.category === "closed"
+						? plural(ids.length, { one: "# application closed", other: "# applications closed" })
+						: plural(ids.length, {
+								one: `# application moved to ${getLaneLabel(lane)}`,
+								other: `# applications moved to ${getLaneLabel(lane)}`,
+							}),
+			});
+			setBulk(null);
+			setSelected(new Set());
+			setSelecting(false);
+			return;
+		}
 		lock.current = true;
 		setBusy(true);
 		setFailure(null);
-		const ids = selectedIds;
 		try {
 			const count =
 				bulk === "delete"
 					? (await bulkDelete.mutateAsync({ ids })).deleted
-					: (
-							await bulkUpdate.mutateAsync({
-								ids,
-								...(bulk === "tag"
-									? { addTags: [newTag.trim()] }
-									: bulk === "close"
-										? { status: "closed" as const }
-										: laneInput(moveLane, lanes.supported)),
-								...(bulk === "close" || (bulk === "move" && moveLane.category === "closed" && !moveLane.closedReason)
-									? { closedReason: reason }
-									: {}),
-							})
-						).updated;
+					: (await bulkUpdate.mutateAsync({ ids, addTags: [newTag.trim()] })).updated;
 			setResult(
 				plural(ids.length, { one: `${count} of # application changed.`, other: `${count} of # applications changed.` }),
 			);
@@ -444,7 +459,12 @@ function ApplicationsList() {
 						</Pressable>
 					)}
 					renderItem={({ item, index }) => {
-						const next = describeNextStep(getNextStep(item, now, lanes.lanes, timeZone), item, i18n.locale, timeZone);
+						const next = describeNextStep(
+							getNextStep(item, now, lanes.lanes, timeZone, offerHintFor(offerHints, item.id)),
+							item,
+							i18n.locale,
+							timeZone,
+						);
 						const sentDocuments = [
 							item.resumeId ? t`Resume` : null,
 							item.coverLetterId ? t`Cover letter` : null,

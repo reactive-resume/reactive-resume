@@ -1,14 +1,15 @@
+import type { EditableFields } from "../../dto/application";
 import type { DocumentFilters, DocumentSummary } from "../../dto/documents";
 import { ORPCError } from "@orpc/client";
 import { and, asc, count, eq, gte, inArray, isNotNull, isNull, lt, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { applicationService } from "../applications/service";
+import { applicationService, insertApplication } from "../applications/service";
 import { coverLetterService } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
 import { followNameWithSlug } from "../resume/slugs";
 import { listDocumentPage, listDocuments } from "./listing";
-import { lockUser } from "./ownership";
+import { isRetriedCreate, lockUser, recordCreateRequest } from "./ownership";
 
 type DocumentType = DocumentSummary["type"];
 type DocumentRef = { userId: string; type: DocumentType; id: string };
@@ -361,28 +362,94 @@ export const documentsService = {
 		await deleteForGood(input, new Date());
 	},
 
-	/** Duplicates a resume for a job, selecting the working copy while preserving submitted versions. */
+	/**
+	 * Duplicates a resume for a job, selecting the working copy while preserving submitted versions. A new job given
+	 * with it is saved in the copy's transaction, so there is never a job without its copy or a copy without its job.
+	 * With `newId`, a retry (a lost response, a second press, a remounted screen) returns the copy already made.
+	 */
 	copyForJob: async (input: {
 		userId: string;
 		resumeId: string;
 		applicationId?: string | undefined;
+		application?: (EditableFields & { company: string; role: string }) | undefined;
 		name?: string | undefined;
+		newId?: string | undefined;
 	}) => {
-		const source = await resumeService.getById({ id: input.resumeId, userId: input.userId });
+		if (input.applicationId && input.application)
+			throw new ORPCError("BAD_REQUEST", { message: "Give an existing job or a new one, not both." });
+
 		const application = input.applicationId ? await assertOwnedApplication(input.userId, input.applicationId) : null;
+		const { userId, resumeId, applicationId, application: newJob, name, newId } = input;
+		// What this copy is for: a retry must ask for the same, so a reused ID never returns or links another resume.
+		const created = newId && {
+			table: "resume" as const,
+			id: newId,
+			userId,
+			request: { operation: "documents.copyForJob", resumeId, applicationId, application: newJob, name },
+		};
+		let retried = Boolean(created && (await isRetriedCreate(db, created)));
+		let id = retried && created ? created.id : undefined;
+		if (!id) {
+			const source = await resumeService.getById({ id: resumeId, userId });
+			try {
+				id = await resumeService.create({
+					...(created ? { id: created.id } : {}),
+					userId,
+					name: name ?? suggestCopyName(source.name, application?.company ?? newJob?.company),
+					tags: source.tags,
+					locale: source.data.metadata.page.locale as never,
+					data: source.data,
+					...(created || newJob
+						? {
+								inTransaction: async (tx, copyId) => {
+									if (created) await recordCreateRequest(tx, created);
+									if (!newJob) return;
+									const jobId = await insertApplication(tx, { userId, fields: { ...newJob, resumeId: copyId } });
+									await tx.update(schema.resume).set({ applicationId: jobId }).where(eq(schema.resume.id, copyId));
+									if (created)
+										await tx
+											.update(schema.createRequest)
+											.set({ applicationId: jobId })
+											.where(eq(schema.createRequest.id, copyId));
+								},
+							}
+						: {}),
+				});
+			} catch (error) {
+				// Two presses at once: the first made the copy, the second returns it.
+				if (!created || !(await isRetriedCreate(db, created))) throw error;
+				id = created.id;
+				retried = true;
+			}
+		}
 
-		const id = await resumeService.create({
-			userId: input.userId,
-			name: input.name ?? suggestCopyName(source.name, application?.company),
-			tags: source.tags,
-			locale: source.data.metadata.page.locale as never,
-			data: source.data,
-		});
+		const [copy] = retried
+			? await db
+					.select({ applicationId: schema.resume.applicationId })
+					.from(schema.resume)
+					.where(eq(schema.resume.id, id))
+			: [];
+		// The job saved with this copy is part of what the request made: if it has since been deleted or unlinked, a retry
+		// is refused rather than saving the job again.
+		if (retried && newJob) {
+			const [receipt] = await db
+				.select({ applicationId: schema.createRequest.applicationId })
+				.from(schema.createRequest)
+				.where(and(eq(schema.createRequest.id, id), eq(schema.createRequest.userId, userId)));
+			if (!receipt?.applicationId || receipt.applicationId !== copy?.applicationId)
+				throw new ORPCError("CONFLICT", {
+					message: "The job saved with this copy has since been deleted, unlinked or changed.",
+				});
+		}
 
+		// A retry completes only links the first attempt didn't finish; a link the user has changed since stays.
 		if (application) {
-			await update({ userId: input.userId, type: "resume", id }, { applicationId: application.id });
-			if (!application.sentResumeVersionId && (!application.resumeId || application.status === "saved"))
-				await applicationService.update({ userId: input.userId, id: application.id, resumeId: id });
+			const jobUnchanged = !application.resumeId || application.resumeId === resumeId;
+			if (!retried || (!copy?.applicationId && (jobUnchanged || application.resumeId === id)))
+				await update({ userId, type: "resume", id }, { applicationId: application.id });
+			const linkable = !application.sentResumeVersionId && (!application.resumeId || application.status === "saved");
+			if (linkable && application.resumeId !== id && (!retried || jobUnchanged))
+				await applicationService.update({ userId, id: application.id, resumeId: id });
 		}
 
 		return id;

@@ -16,9 +16,11 @@ type NextStepSource = ApplicationStageSource & {
 };
 
 /**
- * What an application needs next, derived rather than stored: the earliest interview still to come, else the
- * follow-up date, else what its stage is waiting on. Closed applications need nothing.
+ * What an application needs next: an offer decision or deadline at Offer; otherwise the earliest upcoming
+ * interview, follow-up date, then what its stage awaits. Closed applications need nothing.
  */
+export type OfferHint = { respondBy: string | null };
+
 export type NextStep =
 	| { kind: "interview"; interview: InterviewTimelineEntry; at: Date }
 	| { kind: "follow-up"; at: Date; note: string; overdue: boolean }
@@ -29,7 +31,7 @@ export type NextStep =
 	/** Interview stage with no interview recorded yet. */
 	| { kind: "no-interview"; days: number }
 	/** Offer stage: the user decides. */
-	| { kind: "offer"; days: number }
+	| { kind: "offer"; days: number; respondBy: Date | null; overdue: boolean; terms: boolean }
 	| { kind: "not-applied" }
 	| { kind: "closed" };
 
@@ -49,8 +51,27 @@ const daysBetween = (from: Date, to: Date) => Math.max(0, Math.floor((to.getTime
 const daysInStage = (application: ApplicationStageSource, now: Date) =>
 	daysBetween(applicationStageSince(application), now);
 
-export function getNextStep(application: NextStepSource, now = new Date(), timeZone = "UTC"): NextStep {
+export function getNextStep(
+	application: NextStepSource,
+	now = new Date(),
+	timeZone = "UTC",
+	offer?: OfferHint | null,
+): NextStep {
 	if (application.status === "closed") return { kind: "closed" };
+	if (application.status === "offer") {
+		if (!offer?.respondBy && application.followUpAt) {
+			const at = followUpInstant(application, timeZone) ?? new Date(application.followUpAt);
+			return { kind: "follow-up", at, note: application.followUpNote ?? "", overdue: at.getTime() < now.getTime() };
+		}
+		const respondBy = offer?.respondBy ? new Date(offer.respondBy) : null;
+		return {
+			kind: "offer",
+			days: daysInStage(application, now),
+			respondBy,
+			overdue: respondBy !== null && respondBy.getTime() < now.getTime(),
+			terms: offer !== null,
+		};
+	}
 
 	const upcoming = application.activity
 		.filter((entry): entry is InterviewTimelineEntry => entry.type === "interview")
@@ -68,7 +89,6 @@ export function getNextStep(application: NextStepSource, now = new Date(), timeZ
 
 	const days = daysInStage(application, now);
 	if (application.status === "applied" && days >= FOLLOW_UP_AFTER_DAYS) return { kind: "no-reply", days };
-	if (application.status === "offer") return { kind: "offer", days };
 	if (application.status === "interview") {
 		const since = applicationStageSince(application).getTime();
 		const feedbackDue = application.activity.some(
@@ -112,9 +132,11 @@ export function nextStepSortKey(
 	application: NextStepSource,
 	now = new Date(),
 	timeZone = "UTC",
+	offer?: OfferHint | null,
 ): [rank: number, time: number] {
-	const step = getNextStep(application, now, timeZone);
+	const step = getNextStep(application, now, timeZone, offer);
 	if (step.kind === "interview" || step.kind === "follow-up") return [0, step.at.getTime()];
+	if (step.kind === "offer" && step.respondBy) return [0, step.respondBy.getTime()];
 	return [1, applicationStageSince(application).getTime()];
 }
 

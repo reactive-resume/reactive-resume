@@ -1,4 +1,5 @@
 import type { ApplicationLane } from "./lanes";
+import type { OfferHint } from "./next-step";
 import type { ApplicationSummary as Application } from "./types";
 import { createDefaultApplicationLanes, resolveLane, visibleLanes } from "./lanes";
 import { compareNextStepSortKeys, nextStepSortKey } from "./next-step";
@@ -32,11 +33,20 @@ export function groupApplications(
 		position: LIST_ORDER.indexOf(lane.category),
 	})),
 	timeZone = "UTC",
+	offers?: ReadonlyMap<string, OfferHint>,
 ) {
 	// Next step reads the same keys as web: dated steps soonest first, then the longest wait in the stage.
 	const keys = new Map(
 		sort === "next"
-			? applications.map((application) => [application.id, nextStepSortKey(application, now, timeZone)])
+			? applications.map((application) => [
+					application.id,
+					nextStepSortKey(
+						application,
+						now,
+						timeZone,
+						offers === undefined ? undefined : (offers.get(application.id) ?? null),
+					),
+				])
 			: [],
 	);
 	const compare = (a: Application, b: Application) => {

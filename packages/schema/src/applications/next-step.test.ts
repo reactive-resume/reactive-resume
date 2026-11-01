@@ -92,3 +92,22 @@ it("shares account-clock sorting while preserving explicitly timed midnight foll
 		application.followUpAt.getTime(),
 	]);
 });
+
+it("orders offers by saved reply deadlines before undated decisions, preserving stage age", () => {
+	const early = app("early", "offer", "2026-10-21", "2026-10-30");
+	const late = app("late", "offer", "2026-10-01", "2026-10-30");
+	const earlyHint = { respondBy: "2026-11-01T09:00:00Z" };
+	const lateHint = { respondBy: "2026-11-03T09:00:00Z" };
+	expect(nextStepSortKey(early, now, "Pacific/Honolulu", earlyHint)).toEqual([0, Date.parse(earlyHint.respondBy)]);
+	expect(nextStepSortKey(late, now, "Pacific/Honolulu", lateHint)).toEqual([0, Date.parse(lateHint.respondBy)]);
+	expect(
+		compareNextStepSortKeys(
+			nextStepSortKey(early, now, "UTC", earlyHint),
+			nextStepSortKey(late, now, "UTC", lateHint),
+			early.id,
+			late.id,
+		),
+	).toBeLessThan(0);
+	expect(nextStepSortKey(late, now, "UTC", null)).toEqual([1, Date.parse("2026-10-01")]);
+	expect(getNextStep(early, now, "UTC", earlyHint)).toMatchObject({ kind: "offer", days: 10 });
+});

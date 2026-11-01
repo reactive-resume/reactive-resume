@@ -96,3 +96,5 @@ export type { AtsRuleCode } from "./catalog";
 export type { AtsCategory, AtsCategoryScore, AtsFinding, AtsFindingParams, AtsReport, AtsSeverity } from "./types";
 export type { SectionPlacement, WalkedItem, WalkedSection } from "./walk";
 export { ATS_CATEGORIES, ATS_RULE_CODES, atsRuleCategory } from "./catalog";
+export type { AtsVerdict } from "./merge";
+export { atsVerdict, mergeIntoPreviousEntry } from "./merge";

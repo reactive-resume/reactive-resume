@@ -118,10 +118,25 @@ msgstr "{0, plural, one {# ସକ୍ରିୟ ଆବେଦନ} other {# ସକ�
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {#ଟି ଉତ୍ତର} other {#ଟି ଉତ୍ତର}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {# application closed as Accepted another offer} other {# applications closed as Accepted another offer}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application closed} other {# applications closed}}"
+msgstr ""
+
 #. placeholder {0}: result.deleted
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
 msgstr "{0, plural, one {#ଟି ଆବେଦନ ଡିଲିଟ୍ ହେଲା} other {#ଟି ଆବେଦନ ଡିଲିଟ୍ ହେଲା}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application moved to {label}} other {# applications moved to {label}}}"
+msgstr ""
 
 #. placeholder {0}: importable.length
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -263,6 +278,16 @@ msgstr "{0, plural, one {# ଦିନ ପୂର୍ବରୁ ଆବେଦନ କ�
 #: src/features/career/knowledge/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {#ଟି କାହାଣୀକୁ ସମର୍ଥନ କରେ} other {#ଟି କାହାଣୀକୁ ସମର୍ଥନ କରେ}}"
+
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {Close it} other {Close all #}}"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
+msgstr ""
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -651,6 +676,10 @@ msgid "{entry} doesn't say when. Dates place it on your timeline."
 msgstr "{entry} କେବେ କହିବ ନାହିଁ | ତାରିଖ ଏହାକୁ ତୁମ ଟାଇମଲାଇନରେ ରଖ |"
 
 #: src/features/resume/editor/check/issues.ts
+msgid "{entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job."
+msgstr ""
+
+#: src/features/resume/editor/check/issues.ts
 msgid "{entry} names the role but not what you did, so it adds no keywords."
 msgstr "{entry} ଭୂମିକା ନାମ କରେ କିନ୍ତୁ ତୁମେ ଯାହା କଲ ତାହା ନୁହେଁ, ତେଣୁ ଏହା କ key ଣସି କୀ ଶବ୍ଦ ଯୋଗ କରେ ନାହିଁ |"
 
@@ -705,6 +734,10 @@ msgstr "{item} ଯାଇପାରିବ ନାହିଁ ଏଭଳି ସ୍ଥ�
 #: src/libs/dnd.ts
 msgid "{item} was dropped where it started. Nothing moved."
 msgstr "{item} ଆରମ୍ଭ ସ୍ଥାନରେ ହିଁ ରଖାଗଲା। କିଛି ଘୁଞ୍ଚାଯାଇନାହିଁ।"
+
+#: src/features/applications/use-application-actions.ts
+msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
+msgstr ""
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -1140,6 +1173,10 @@ msgstr "ଏକ ଲିଙ୍କ୍ ଦେଖାଉଥିବା ଠିକଣା �
 msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "ଏକ ମଡେଲର ମତ, ଏକ ନିଷ୍ପତ୍ତି ନୁହେଁ | ଏହା ଭୁଲ ହୋଇପାରେ |"
 
+#: src/features/career/offer-entry.tsx
+msgid "a month"
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "A name helps you tell passkeys apart, like “Work laptop”."
 msgstr "“ୱାର୍କ ଲାପଟପ୍” ପରି ଏକ ନାମ ଆପଣଙ୍କୁ ପାସ୍କିଗୁଡ଼ିକୁ ପୃଥକ ଭାବରେ କହିବାକୁ ସାହାଯ୍ୟ କରେ |"
@@ -1199,6 +1236,10 @@ msgstr "ସମୟ ନିର୍ଦ୍ଧାରିତ ଯୋଜନା, ଆପଣ�
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
 msgstr "ଏକ ୱେବ ଠିକଣା https:// ବିନା ଲେଖାଯାଇଛି।"
+
+#: src/features/career/offer-entry.tsx
+msgid "a year"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "About"
@@ -1334,8 +1375,11 @@ msgstr "ଏକ ଦେଶ ଯୋଡ଼ନ୍ତୁ"
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "ଏକ ତଥ୍ୟ ଯୋଡ଼ନ୍ତୁ, ଉଦାହରଣ ସ୍ୱରୂପ “2025ରେ ମୁଁ ଦୁଇଜଣ ଆସୋସିଏଟ୍ PMଙ୍କୁ ମେଣ୍ଟର କରିଥିଲି”"
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/new-document-dialog.tsx
+msgid "Add a job"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
 msgid "Add a job…"
 msgstr ""
 
@@ -1355,6 +1399,10 @@ msgstr "ଏକ ଲିଙ୍କ୍ ଯୋଡନ୍ତୁ |"
 #: src/features/resume/editor/check/issues.ts
 msgid "Add a location"
 msgstr "ଏକ ଅବସ୍ଥାନ ଯୋଡନ୍ତୁ |"
+
+#: src/features/career/offer-entry.tsx
+msgid "Add a newer offer"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Add a note"
@@ -1640,6 +1688,12 @@ msgstr "@ ପରେ ଡୋମେନ୍ ଯୋଡନ୍ତୁ, ଯେପରିକ
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com ପରି ଡୋମେନ୍ ଶେଷକୁ ଯୋଡନ୍ତୁ |"
+
+#: src/features/applications/components/detail/next-step-card.tsx
+#: src/features/applications/next-step.ts
+#: src/features/applications/use-application-actions.ts
+msgid "Add the offer's terms"
+msgstr ""
 
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1997,6 +2051,10 @@ msgstr "ଏକ ପ୍ରବେଶର କ dates ଣସି ତାରିଖ ନା�
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "ଏକ ତ୍ରୁଟି |"
+
+#: src/features/career/offer-entry.tsx
+msgid "an hour"
+msgstr ""
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -2730,6 +2788,11 @@ msgstr "ତାଲିକା ପ୍ରବେଶ {n} |"
 msgid "Bulleted list"
 msgstr "ବୁଲେଟେଡ୍ ତାଲିକା |"
 
+#. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
+#: src/features/applications/next-step.ts
+msgid "By {0}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "By the community, for the community."
 msgstr "ସମୁଦାୟ ଦ୍ୱାରା, ସମୁଦାୟ ପାଇଁ।"
@@ -3273,6 +3336,10 @@ msgstr "ବନ୍ଦ |"
 msgid "Closed as {label}"
 msgstr "{label} ଭାବେ ବନ୍ଦ ହୋଇଛି"
 
+#: src/features/applications/use-application-actions.ts
+msgid "Closed as Accepted offer"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -3339,6 +3406,7 @@ msgstr "ସଂକ୍ଷିପ୍ତ"
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
@@ -3347,11 +3415,20 @@ msgstr "ସଂକ୍ଷିପ୍ତ"
 msgid "Company"
 msgstr "କମ୍ପାନୀ"
 
+#: src/features/career/offer-entry.tsx
+msgid "Compare"
+msgstr ""
+
 #. placeholder {0}: application.company
 #: src/features/career/workspace/practise.tsx
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "କ'ଣ ଉନ୍ନତି ହେଲା ଦେଖିବାକୁ ପ୍ରୟାସଗୁଡ଼ିକ ତୁଳନା କରନ୍ତୁ। ଅଭ୍ୟାସ ପ୍ରଶ୍ନଗୁଡ଼ିକ ଅନୁକରଣ କରାଯାଇଛି, {0}ରୁ ନୁହେଁ।"
 
+#: src/features/applications/next-step.ts
+msgid "Compare it with your other offers"
+msgstr ""
+
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Compare offers"
 msgstr "ଅଫର୍ ତୁଳନା କରନ୍ତୁ"
@@ -3654,6 +3731,11 @@ msgstr "କୋଡ୍ କପି କରନ୍ତୁ"
 msgid "Copy conversation"
 msgstr "କଥୋପକଥନ କପି କରନ୍ତୁ"
 
+#. placeholder {0}: resume.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copy for {0}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Copy for a job…"
 msgstr "ଚାକିରି ପାଇଁ କପି କରନ୍ତୁ…"
@@ -3669,6 +3751,10 @@ msgstr "ଏହାକୁ ବର୍ତ୍ତମାନ କପି କରନ୍ତୁ
 #: src/features/homepage/share.tsx
 msgid "Copy link"
 msgstr "ଲିଙ୍କ୍ କପି କରନ୍ତୁ |"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Copy made for {company}. This resume is unchanged."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "Copy public link"
@@ -3796,6 +3882,7 @@ msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "ପ୍ରଶ୍ନଗୁଡ଼ିକ କପି କରିହେଲା ନାହିଁ। ଟେକ୍ସଟ୍ ଚୟନ କରି ନିଜେ କପି କରନ୍ତୁ।"
 
 #: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't copy the resume. Try again."
 msgstr "ରେଜ୍ୟୁମେ କପି କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
@@ -4128,10 +4215,6 @@ msgstr "ସେହି ପରିବର୍ତ୍ତନ ସଞ୍ଚୟ କରିପ
 msgid "Couldn't save that to Knowledge. Try again."
 msgstr "ତାହା ଜ୍ଞାନରେ ସେଭ୍ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the application. Try again."
-msgstr "ଆବେଦନ ସେଭ୍ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't save the change. Try again."
 msgstr "ପରିବର୍ତ୍ତନ ସେଭ୍ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
@@ -4143,6 +4226,15 @@ msgstr "ଡକ୍ୟୁମେଣ୍ଟଗୁଡ଼ିକ ସେଭ୍ କରି�
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Couldn't save the follow-up. Try again."
 msgstr "ଫଲୋ-ଅପ୍ ସେଭ୍ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
+
+#: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the job and its copy. Try again."
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the job. Try again."
+msgstr ""
 
 #: src/features/applications/components/application-notes.tsx
 msgid "Couldn't save the notes. Try again."
@@ -4322,6 +4414,7 @@ msgid "Couldn't update the application. Try again."
 msgstr "ଆବେଦନ ଅଦ୍ୟତନ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "ଚାକିରି ଆବେଦନଗୁଡ଼ିକ ଅପଡେଟ୍ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
@@ -4508,10 +4601,9 @@ msgstr "ତିଆରି ହୋଇଛି"
 msgid "Created “{finalName}”"
 msgstr "“{finalName}” ସୃଷ୍ଟି |"
 
-#. placeholder {0}: job.company
 #: src/features/documents/new-document-dialog.tsx
-msgid "Created and linked to {0}"
-msgstr "{0} ସହିତ ସୃଷ୍ଟି ଏବଂ ସଂଯୁକ୍ତ |"
+msgid "Created and linked to {company}"
+msgstr "{company} ସହିତ ସୃଷ୍ଟି ଏବଂ ସଂଯୁକ୍ତ |"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and upload"
@@ -7144,6 +7236,10 @@ msgstr "ଚାକିରି ମେଳ |"
 msgid "Job posting"
 msgstr "ଚାକିରି ପୋଷ୍ଟିଂ |"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Job posting (optional)"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Job posting <0>· optional, adds a keyword match</0>"
 msgstr "ଚାକିରି ବିଜ୍ଞାପନ <0>· ଇଚ୍ଛାଧୀନ, କୀୱାର୍ଡ ମେଳ ଦେଖିବାର ସୁବିଧା ଯୋଡ଼େ</0>"
@@ -7707,6 +7803,10 @@ msgstr "ଏକ ଚାକିରି ଆବେଦନକୁ ଲିଙ୍କ୍ କ�
 msgid "Link copied"
 msgstr "ଲିଙ୍କ୍ କପି ହୋଇଛି |"
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Link this resume"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
 msgstr "ଚାକିରି ଆବେଦନ ସହିତ ଲିଙ୍କ୍ |"
@@ -7766,10 +7866,6 @@ msgstr "LinkedIn"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
 msgstr "LinkedIn, ରେଫରାଲ୍…"
-
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Linking…"
-msgstr "ଲିଙ୍କ୍…"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/settings/profile.tsx
@@ -7948,6 +8044,10 @@ msgstr "ଖୋଜନ୍ତୁ"
 msgid "Looks exactly like the page. Use it for applications and email."
 msgstr "ପୃଷ୍ଠା ପରି ଠିକ୍ ଦେଖାଯାଏ। ଚାକିରି ଆବେଦନ ଓ ଇମେଲ୍ ପାଇଁ ଏହାକୁ ବ୍ୟବହାର କରନ୍ତୁ।"
 
+#: src/features/resume/editor/check/issues.ts
+msgid "Looks like part of the entry above"
+msgstr ""
+
 #. Link to backup-code verification flow when authenticator app is unavailable
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Lost access to your authenticator?"
@@ -7973,6 +8073,10 @@ msgstr "ମୁଖ୍ୟ"
 #: src/routes/_home/-sections/header.tsx
 msgid "Main navigation"
 msgstr "ମୁଖ୍ୟ ନାଭିଗେସନ୍"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Make a copy for this job"
+msgstr ""
 
 #: src/features/homepage/design.tsx
 msgid "Make any of them yours."
@@ -8170,6 +8274,14 @@ msgstr "ମଧ୍ୟମ"
 #: src/features/homepage/prepare.tsx
 msgid "Mentor other designers"
 msgstr "ଅନ୍ୟ ଡିଜାଇନରଙ୍କୁ ମେଣ୍ଟର କରିବା"
+
+#: src/features/resume/editor/check/issues.ts
+msgid "Merge into previous entry"
+msgstr ""
+
+#: src/features/resume/editor/check/issues.ts
+msgid "Merged into the entry above"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Message saved with this application"
@@ -9027,6 +9139,10 @@ msgstr "ଆପଣଙ୍କ ରେଜ୍ୟୁମେରେ ନାହିଁ"
 msgid "Not in your resume · add only if true"
 msgstr "ତୁମର ରେଜୁମ୍ ରେ ନୁହେଁ · କେବଳ ସତ ହେଲେ ଯୋଗ କର |"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Not linked to a job"
+msgstr ""
+
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "ଏବେ ନୁହେଁ"
@@ -9224,6 +9340,11 @@ msgstr "ଅଫର୍"
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "ଚାକିରି ଅଫର୍ ସେଭ୍ ହୋଇଛି"
+
+#. placeholder {0}: target.company
+#: src/features/career/offer-entry.tsx
+msgid "Offer saved. {0} moved to Offer."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
@@ -9824,6 +9945,10 @@ msgstr "ବିରତ ସମୟସୂଚୀ ସେମାନଙ୍କ ସେଟି
 #: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "ଦେୟ ଅବଧି"
+
+#: src/features/applications/next-step.ts
+msgid "Pay, deadline and conditions, so you can compare and decide"
+msgstr ""
 
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
@@ -11093,6 +11218,10 @@ msgstr "ଉତ୍ତର"
 msgid "Reply copied"
 msgstr "ଉତ୍ତର କପି ହେଲା"
 
+#: src/features/applications/next-step.ts
+msgid "Reply to the offer"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -11153,6 +11282,11 @@ msgstr "ସମ୍ପଦ"
 #: src/features/career/offers.tsx
 msgid "Respond by"
 msgstr "ଉତ୍ତର ଦେବାର ଶେଷ ତାରିଖ"
+
+#. placeholder {0}: day(data.respondBy)
+#: src/features/career/offer-entry.tsx
+msgid "respond by {0}"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Responsibility"
@@ -11466,6 +11600,7 @@ msgstr "ଏହି ମୁହୂର୍ତ୍ତରେ"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Role"
 msgstr "ପଦବୀ"
@@ -11602,8 +11737,8 @@ msgid "Save an unprotected copy, with no password and no permissions restriction
 msgstr "କୌଣସି ପାସୱାର୍ଡ କିମ୍ବା ଅନୁମତି ପ୍ରତିବନ୍ଧକ ବିନା ଏକ ଅସୁରକ୍ଷିତ କପି ସେଭ୍ କରନ୍ତୁ।"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Save and link"
-msgstr "ସେଭ୍ କରନ୍ତୁ ଏବଂ ଲିଙ୍କ୍ କରନ୍ତୁ |"
+msgid "Save and link this resume"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11618,8 +11753,8 @@ msgid "Save another offer to compare"
 msgstr "ତୁଳନା କରିବାକୁ ଅନ୍ୟ ଏକ ଅଫର୍ ସେଭ୍ କରନ୍ତୁ"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Save as application…"
-msgstr "ଚାକିରି ଆବେଦନ ଭାବରେ ସଞ୍ଚୟ କରନ୍ତୁ…"
+msgid "Save as a job…"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -11653,6 +11788,14 @@ msgstr "ସାକ୍ଷାତକାର ସେଭ୍ କରନ୍ତୁ"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "ଚାକିରି ସଞ୍ଚୟ କର |"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Save job and make a copy"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Save job, create and open"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Save message without AI"
@@ -11702,6 +11845,10 @@ msgstr ""
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "ତୁଳନା କରିବାକୁ ଏହି ଅଫର୍ ସର୍ତ୍ତାବଳୀ ସେଭ୍ କରନ୍ତୁ"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Save this resume's changes before copying it."
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11761,8 +11908,8 @@ msgid "Saved a story: {0}"
 msgstr "ଏକ କାହାଣୀ ସେଭ୍ ହେଲା: {0}"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Saved as an application and linked"
-msgstr "ଚାକିରି ଆବେଦନ ଭାବରେ ସେଭ୍ ଓ ଲିଙ୍କ୍ ହେଲା"
+msgid "Saved as a job and linked to this resume"
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -11787,6 +11934,10 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Saved to Applications"
 msgstr "ଆବେଦନଗୁଡ଼ିକରେ ସେଭ୍ ହେଲା"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Saved to Applications as a saved job, then linked to the copy. No AI request is made."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
@@ -13251,6 +13402,11 @@ msgstr "ଟ୍ୟାଗ୍ସ…"
 msgid "Tailor"
 msgstr "କାର୍ଯ୍ୟ ବର୍ଣ୍ଣନା ସହିତ ଖାପ ଖୁଆଇ |"
 
+#. placeholder {0}: application.company
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Tailor a copy for {0} so this resume stays as it is for other jobs, or link this resume itself."
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr ""
@@ -13555,6 +13711,10 @@ msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -14087,8 +14247,8 @@ msgid "This resume is password-protected"
 msgstr "ଏହି ରେଜ୍ୟୁମେ ପାସୱାର୍ଡ ଦ୍ୱାରା ସୁରକ୍ଷିତ"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "This resume isn't linked to an application yet."
-msgstr "ଏହି ରେଜ୍ୟୁମେ ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ଚାକିରି ଆବେଦନ ସହ ଲିଙ୍କ୍ ହୋଇନାହିଁ।"
+msgid "This resume isn't linked to an application yet. Pick one to make a copy for it."
+msgstr ""
 
 #: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
@@ -14834,6 +14994,10 @@ msgstr "ନମୁନା ବ୍ୟବହାର କରନ୍ତୁ |"
 
 #: src/features/career/draft-recovery.tsx
 msgid "Use saved version"
+msgstr ""
+
+#: src/features/resume/editor/check/actions.ts
+msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts

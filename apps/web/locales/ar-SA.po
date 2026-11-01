@@ -118,10 +118,25 @@ msgstr "{0, plural, one {طلب نشط واحد} two {طلبان نشطان} few
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, zero {لا إجابات} one {إجابة واحدة} two {إجابتان} few {# إجابات} many {# إجابة} other {# إجابة}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {# application closed as Accepted another offer} other {# applications closed as Accepted another offer}}"
+msgstr "{0, plural, zero {لم يُغلق أي طلب بحالة قبول عرض آخر} one {أُغلق طلب واحد بحالة قبول عرض آخر} two {أُغلق طلبان بحالة قبول عرض آخر} few {أُغلقت # طلبات بحالة قبول عرض آخر} many {أُغلق # طلبًا بحالة قبول عرض آخر} other {أُغلق # طلب بحالة قبول عرض آخر}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application closed} other {# applications closed}}"
+msgstr "{0, plural, zero {لم يُغلق أي طلب} one {أُغلق طلب واحد} two {أُغلق طلبان} few {أُغلقت # طلبات} many {أُغلق # طلبًا} other {أُغلق # طلب}}"
+
 #. placeholder {0}: result.deleted
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
 msgstr "{0, plural, one {تم حذف طلب واحد} two {تم حذف طلبين} few {تم حذف # طلبات} many {تم حذف # طلبًا} other {تم حذف # طلب}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application moved to {label}} other {# applications moved to {label}}}"
+msgstr "{0, plural, zero {لم يُنقل أي طلب إلى {label}} one {نُقل طلب واحد إلى {label}} two {نُقل طلبان إلى {label}} few {نُقلت # طلبات إلى {label}} many {نُقل # طلبًا إلى {label}} other {نُقل # طلب إلى {label}}}"
 
 #. placeholder {0}: importable.length
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -263,6 +278,16 @@ msgstr "{0, plural, zero {تم التقديم اليوم} one {تم التقدي
 #: src/features/career/knowledge/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, zero {لا تدعم أي قصة} one {تدعم قصة واحدة} two {تدعم قصتين} few {تدعم # قصص} many {تدعم # قصة} other {تدعم # قصة}}"
+
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {Close it} other {Close all #}}"
+msgstr "{0, plural, zero {إغلاق} one {إغلاقه} two {إغلاق الطلبين} few {إغلاق الطلبات # كلها} many {إغلاق الطلبات # كلها} other {إغلاق الطلبات # كلها}}"
+
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
+msgstr "{0, plural, zero {أُغلق بحالة قبول العرض. لا توجد طلبات أخرى مفتوحة.} one {أُغلق بحالة قبول العرض. هل تريد إغلاق طلبك الآخر المفتوح بحالة قبول عرض آخر؟} two {أُغلق بحالة قبول العرض. هل تريد إغلاق طلبيك الآخرين المفتوحين بحالة قبول عرض آخر؟} few {أُغلق بحالة قبول العرض. هل تريد إغلاق طلباتك الأخرى المفتوحة وعددها # بحالة قبول عرض آخر؟} many {أُغلق بحالة قبول العرض. هل تريد إغلاق طلباتك الأخرى المفتوحة وعددها # بحالة قبول عرض آخر؟} other {أُغلق بحالة قبول العرض. هل تريد إغلاق طلباتك الأخرى المفتوحة وعددها # بحالة قبول عرض آخر؟}}"
 
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
@@ -651,6 +676,10 @@ msgid "{entry} doesn't say when. Dates place it on your timeline."
 msgstr "{entry} لا يذكر متى. التواريخ تضعها على الجدول الزمني الخاص بك."
 
 #: src/features/resume/editor/check/issues.ts
+msgid "{entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job."
+msgstr "لا يحتوي {entry} على تواريخ ويبدو جزءًا من جملة اقتُطعت من الإدخال السابق، وقد يحدث ذلك عند تقسيم نقطة أثناء استيراد PDF. ستجعله إضافة التواريخ يبدو وظيفة منفصلة."
+
+#: src/features/resume/editor/check/issues.ts
 msgid "{entry} names the role but not what you did, so it adds no keywords."
 msgstr "{entry} يسمي الدور ولكن ليس ما قمت به، لذلك لا يضيف أي كلمات رئيسية."
 
@@ -705,6 +734,10 @@ msgstr "تم إفلات {item} في مكان غير مسموح به. لم يتم
 #: src/libs/dnd.ts
 msgid "{item} was dropped where it started. Nothing moved."
 msgstr "تم إفلات {item} في مكانه الأصلي. لم يتم نقل أي شيء."
+
+#: src/features/applications/use-application-actions.ts
+msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
+msgstr "{kept, plural, zero {لم تتغير أي طلبات في هذه الأثناء} one {تغير طلب واحد في هذه الأثناء، لذلك يحتفظ بمرحلته الأحدث} two {تغير طلبان في هذه الأثناء، لذلك يحتفظان بمرحلتيهما الأحدث} few {تغيرت # طلبات في هذه الأثناء، لذلك تحتفظ بمراحلها الأحدث} many {تغير # طلبًا في هذه الأثناء، لذلك تحتفظ بمراحلها الأحدث} other {تغير # طلب في هذه الأثناء، لذلك تحتفظ بمراحلها الأحدث}}"
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -1140,6 +1173,10 @@ msgstr "رابط يشير إلى مكان مختلف عن العنوان الذ�
 msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "رأي نموذجي وليس حكم. يمكن أن يكون خطأ."
 
+#: src/features/career/offer-entry.tsx
+msgid "a month"
+msgstr "شهريًا"
+
 #: src/features/settings/account/security.tsx
 msgid "A name helps you tell passkeys apart, like “Work laptop”."
 msgstr "يساعدك الاسم على التمييز بين مفاتيح المرور، مثل “كمبيوتر العمل المحمول”."
@@ -1199,6 +1236,10 @@ msgstr "خطة موقوتة، وافتتاحيتك، والقصص التي ست�
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
 msgstr "عنوان ويب مكتوب بدون https://."
+
+#: src/features/career/offer-entry.tsx
+msgid "a year"
+msgstr "سنويًا"
 
 #: src/features/homepage/footer.tsx
 msgid "About"
@@ -1334,8 +1375,11 @@ msgstr "أضف دولة"
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "أضف حقيقة، مثلًا “وجّهتُ اثنين من مديري المنتجات المبتدئين في 2025”"
 
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/new-document-dialog.tsx
+msgid "Add a job"
+msgstr "إضافة وظيفة"
+
+#: src/features/documents/document-actions.tsx
 msgid "Add a job…"
 msgstr ""
 
@@ -1355,6 +1399,10 @@ msgstr "أضف رابطا"
 #: src/features/resume/editor/check/issues.ts
 msgid "Add a location"
 msgstr "أضف موقعًا"
+
+#: src/features/career/offer-entry.tsx
+msgid "Add a newer offer"
+msgstr "إضافة عرض أحدث"
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Add a note"
@@ -1640,6 +1688,12 @@ msgstr "أضف المجال بعد @، مثل {name}@example.com"
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "أضف نهاية النطاق، مثل {domain}.com"
+
+#: src/features/applications/components/detail/next-step-card.tsx
+#: src/features/applications/next-step.ts
+#: src/features/applications/use-application-actions.ts
+msgid "Add the offer's terms"
+msgstr "إضافة شروط العرض"
 
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1997,6 +2051,10 @@ msgstr "الإدخال ليس له تواريخ"
 #: src/features/assistant/conversation.tsx
 msgid "an error"
 msgstr "خطأ"
+
+#: src/features/career/offer-entry.tsx
+msgid "an hour"
+msgstr "في الساعة"
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -2730,6 +2788,11 @@ msgstr "إدخال القائمة {n}"
 msgid "Bulleted list"
 msgstr "قائمة نقطية"
 
+#. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
+#: src/features/applications/next-step.ts
+msgid "By {0}"
+msgstr "بحلول {0}"
+
 #: src/features/homepage/footer.tsx
 msgid "By the community, for the community."
 msgstr "من المجتمع وللمجتمع."
@@ -3273,6 +3336,10 @@ msgstr "مغلق"
 msgid "Closed as {label}"
 msgstr "أُغلقت بالحالة {label}"
 
+#: src/features/applications/use-application-actions.ts
+msgid "Closed as Accepted offer"
+msgstr "أُغلق بحالة قبول العرض"
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
@@ -3339,6 +3406,7 @@ msgstr "مضغوط"
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
@@ -3347,11 +3415,20 @@ msgstr "مضغوط"
 msgid "Company"
 msgstr "الشركة"
 
+#: src/features/career/offer-entry.tsx
+msgid "Compare"
+msgstr "مقارنة"
+
 #. placeholder {0}: application.company
 #: src/features/career/workspace/practise.tsx
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "قارن المحاولات لترى ما تحسّن. أسئلة التمرين محاكاة، وليست من {0}."
 
+#: src/features/applications/next-step.ts
+msgid "Compare it with your other offers"
+msgstr "قارنه بعروضك الأخرى"
+
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Compare offers"
 msgstr "قارن العروض"
@@ -3654,6 +3731,11 @@ msgstr "نسخ الرموز"
 msgid "Copy conversation"
 msgstr "انسخ المحادثة"
 
+#. placeholder {0}: resume.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copy for {0}"
+msgstr "نسخة لوظيفة لدى {0}"
+
 #: src/features/documents/document-actions.tsx
 msgid "Copy for a job…"
 msgstr "نسخ لوظيفة..."
@@ -3669,6 +3751,10 @@ msgstr "انسخه الآن. حرصًا على أمانك، لن يتم عرضه
 #: src/features/homepage/share.tsx
 msgid "Copy link"
 msgstr "نسخ الوصلة"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Copy made for {company}. This resume is unchanged."
+msgstr "أُنشئت نسخة لوظيفة لدى {company}. لم تتغير هذه السيرة الذاتية."
 
 #: src/features/documents/document-actions.tsx
 msgid "Copy public link"
@@ -3796,6 +3882,7 @@ msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "تعذّر نسخ الأسئلة. حدّد النص وانسخه يدويًا."
 
 #: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't copy the resume. Try again."
 msgstr "تعذّر نسخ السيرة الذاتية. حاول مرة أخرى."
 
@@ -4128,10 +4215,6 @@ msgstr "تعذر حفظ هذا التغيير. حاول ثانية."
 msgid "Couldn't save that to Knowledge. Try again."
 msgstr "تعذّر حفظ ذلك في المعرفة. حاول مرة أخرى."
 
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the application. Try again."
-msgstr "تعذّر حفظ الطلب. حاول مرة أخرى."
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't save the change. Try again."
 msgstr "تعذّر حفظ التغيير. حاول مرة أخرى."
@@ -4143,6 +4226,15 @@ msgstr "تعذّر حفظ المستندات. حاول مرة أخرى."
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Couldn't save the follow-up. Try again."
 msgstr "تعذر حفظ المتابعة. حاول مرة أخرى."
+
+#: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the job and its copy. Try again."
+msgstr "تعذر حفظ الوظيفة ونسختها. حاول مجددًا."
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the job. Try again."
+msgstr "تعذر حفظ الوظيفة. حاول مجددًا."
 
 #: src/features/applications/components/application-notes.tsx
 msgid "Couldn't save the notes. Try again."
@@ -4322,6 +4414,7 @@ msgid "Couldn't update the application. Try again."
 msgstr "تعذّر تحديث الطلب. حاول مرة أخرى."
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "لا يمكن تحديث طلبات العمل. حاول ثانية."
 
@@ -4508,10 +4601,9 @@ msgstr "تم الإنشاء"
 msgid "Created “{finalName}”"
 msgstr "تم إنشاء \"{finalName}\""
 
-#. placeholder {0}: job.company
 #: src/features/documents/new-document-dialog.tsx
-msgid "Created and linked to {0}"
-msgstr "تم إنشاؤها وربطها بـ {0}"
+msgid "Created and linked to {company}"
+msgstr "تم إنشاؤها وربطها بـ {company}"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and upload"
@@ -7143,6 +7235,10 @@ msgstr "مباراة الوظيفة"
 msgid "Job posting"
 msgstr "إعلان وظيفة"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Job posting (optional)"
+msgstr "إعلان الوظيفة (اختياري)"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Job posting <0>· optional, adds a keyword match</0>"
 msgstr "إعلان الوظيفة <0>· اختياري، يضيف مقارنة للكلمات المفتاحية</0>"
@@ -7706,6 +7802,10 @@ msgstr "ربط طلب التوظيف..."
 msgid "Link copied"
 msgstr "تم نسخ الرابط"
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Link this resume"
+msgstr "ربط هذه السيرة الذاتية"
+
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
 msgstr "رابط لطلب الوظيفة"
@@ -7765,10 +7865,6 @@ msgstr "لينكد إن"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "LinkedIn, Referral…"
 msgstr "LinkedIn، إحالة…"
-
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Linking…"
-msgstr "ربط…"
 
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/settings/profile.tsx
@@ -7947,6 +8043,10 @@ msgstr "ابحث عن"
 msgid "Looks exactly like the page. Use it for applications and email."
 msgstr "تبدو تماما مثل الصفحة. استخدامه لطلبات العمل والبريد الإلكتروني."
 
+#: src/features/resume/editor/check/issues.ts
+msgid "Looks like part of the entry above"
+msgstr "يبدو جزءًا من الإدخال السابق"
+
 #. Link to backup-code verification flow when authenticator app is unavailable
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Lost access to your authenticator?"
@@ -7972,6 +8072,10 @@ msgstr "رئيسي"
 #: src/routes/_home/-sections/header.tsx
 msgid "Main navigation"
 msgstr "التنقل الرئيسي"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Make a copy for this job"
+msgstr "إنشاء نسخة لهذه الوظيفة"
 
 #: src/features/homepage/design.tsx
 msgid "Make any of them yours."
@@ -8169,6 +8273,14 @@ msgstr "واسطة"
 #: src/features/homepage/prepare.tsx
 msgid "Mentor other designers"
 msgstr "توجيه مصممين آخرين"
+
+#: src/features/resume/editor/check/issues.ts
+msgid "Merge into previous entry"
+msgstr "دمج مع الإدخال السابق"
+
+#: src/features/resume/editor/check/issues.ts
+msgid "Merged into the entry above"
+msgstr "دُمج مع الإدخال السابق"
 
 #: src/features/career/workspace/messages.tsx
 msgid "Message saved with this application"
@@ -9026,6 +9138,10 @@ msgstr "غير موجود في سيرتك الذاتية"
 msgid "Not in your resume · add only if true"
 msgstr "ليس في سيرتك الذاتية · أضف فقط إذا كان هذا صحيحًا"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Not linked to a job"
+msgstr "غير مرتبط بوظيفة"
+
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "ليس الآن"
@@ -9223,6 +9339,11 @@ msgstr "عرض وظيفي"
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "تم حفظ العرض الوظيفي"
+
+#. placeholder {0}: target.company
+#: src/features/career/offer-entry.tsx
+msgid "Offer saved. {0} moved to Offer."
+msgstr "حُفظ العرض. نُقل {0} إلى مرحلة العرض."
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
@@ -9822,6 +9943,10 @@ msgstr "الجداول المتوقفة مؤقتًا تحتفظ بإعدادات
 #: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "فترة الدفع"
+
+#: src/features/applications/next-step.ts
+msgid "Pay, deadline and conditions, so you can compare and decide"
+msgstr "الأجر والموعد النهائي والشروط، لتتمكن من المقارنة واتخاذ القرار"
 
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
@@ -11091,6 +11216,10 @@ msgstr "الرد"
 msgid "Reply copied"
 msgstr "تم نسخ الرد"
 
+#: src/features/applications/next-step.ts
+msgid "Reply to the offer"
+msgstr "الرد على العرض"
+
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -11151,6 +11280,11 @@ msgstr "الموارد"
 #: src/features/career/offers.tsx
 msgid "Respond by"
 msgstr "الرد قبل"
+
+#. placeholder {0}: day(data.respondBy)
+#: src/features/career/offer-entry.tsx
+msgid "respond by {0}"
+msgstr "الرد بحلول {0}"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Responsibility"
@@ -11464,6 +11598,7 @@ msgstr "الآن تمامًا"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Role"
 msgstr "الوظيفة"
@@ -11600,8 +11735,8 @@ msgid "Save an unprotected copy, with no password and no permissions restriction
 msgstr "احفظ نسخة غير محمية، بلا كلمة مرور وبلا قيود صلاحيات."
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Save and link"
-msgstr "حفظ والربط"
+msgid "Save and link this resume"
+msgstr "حفظ وربط هذه السيرة الذاتية"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11616,8 +11751,8 @@ msgid "Save another offer to compare"
 msgstr "احفظ عرضًا آخر للمقارنة"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Save as application…"
-msgstr "حفظ كطلب وظيفة..."
+msgid "Save as a job…"
+msgstr "حفظ كوظيفة…"
 
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -11651,6 +11786,14 @@ msgstr "احفظ المقابلة"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Save job"
 msgstr "حفظ الوظيفة"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Save job and make a copy"
+msgstr "حفظ الوظيفة وإنشاء نسخة"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Save job, create and open"
+msgstr "حفظ الوظيفة وإنشاء النسخة وفتحها"
 
 #: src/features/career/workspace/messages.tsx
 msgid "Save message without AI"
@@ -11700,6 +11843,10 @@ msgstr ""
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "احفظ شروط هذا العرض للمقارنة"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Save this resume's changes before copying it."
+msgstr "احفظ تغييرات هذه السيرة الذاتية قبل نسخها."
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11759,8 +11906,8 @@ msgid "Saved a story: {0}"
 msgstr "تم حفظ قصة: {0}"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Saved as an application and linked"
-msgstr "تم حفظه كطلب وظيفة وربطه"
+msgid "Saved as a job and linked to this resume"
+msgstr "حُفظ كوظيفة ورُبط بهذه السيرة الذاتية"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -11785,6 +11932,10 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Saved to Applications"
 msgstr "تم الحفظ في الطلبات"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Saved to Applications as a saved job, then linked to the copy. No AI request is made."
+msgstr "تُحفظ في الطلبات كوظيفة محفوظة ثم تُربط بالنسخة. لا يُرسل أي طلب إلى الذكاء الاصطناعي."
 
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
@@ -13249,6 +13400,11 @@ msgstr "العلامات…"
 msgid "Tailor"
 msgstr "التكيف مع الوصف الوظيفي"
 
+#. placeholder {0}: application.company
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Tailor a copy for {0} so this resume stays as it is for other jobs, or link this resume itself."
+msgstr "خصص نسخة لوظيفة لدى {0} لتبقى هذه السيرة الذاتية كما هي للوظائف الأخرى، أو اربط هذه السيرة الذاتية نفسها."
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr ""
@@ -13554,6 +13710,10 @@ msgstr ""
 #: src/features/settings/ai/providers.tsx
 msgid "The connection works. Turn on Use this provider to use it."
 msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
+msgstr "تحصل النسخة على إعلان الوظيفة، وتبقى هذه السيرة الذاتية كما هي للوظائف الأخرى."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
@@ -14085,8 +14245,8 @@ msgid "This resume is password-protected"
 msgstr "هذه السيرة الذاتية محمية بكلمة مرور"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "This resume isn't linked to an application yet."
-msgstr "لم يتم ربط هذه السيرة الذاتية بطلب وظيفة حتى الآن."
+msgid "This resume isn't linked to an application yet. Pick one to make a copy for it."
+msgstr "هذه السيرة الذاتية غير مرتبطة بطلب بعد. اختر طلبًا لإنشاء نسخة له."
 
 #: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
@@ -14832,6 +14992,10 @@ msgstr "استخدم العينة"
 #: src/features/career/draft-recovery.tsx
 msgid "Use saved version"
 msgstr ""
+
+#: src/features/resume/editor/check/actions.ts
+msgid "Use the builder's Undo to undo earlier changes."
+msgstr "استخدم التراجع في المحرر للتراجع عن التغييرات السابقة."
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"

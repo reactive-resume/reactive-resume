@@ -12,7 +12,10 @@ vi.mock("@tanstack/react-router", () => ({
 	useRouteContext: () => ({ session: { user: { timezone: "Europe/Berlin" } } }),
 }));
 vi.mock("@/libs/orpc/client", () => ({
-	orpc: { applications: { update: { mutationOptions: () => ({ mutationFn: update }) } } },
+	orpc: {
+		applications: { update: { mutationOptions: () => ({ mutationFn: update }) } },
+		career: { savedItems: { queryOptions: () => ({ queryKey: ["offers"], queryFn: async () => [] }) } },
+	},
 }));
 vi.mock("../../use-application-actions", () => ({ useInvalidateApplications: () => vi.fn() }));
 

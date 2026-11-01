@@ -12,9 +12,12 @@ import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { followStageWrites } from "@reactive-resume/schema/applications/stage-baselines";
 import { restoreSession } from "@/auth/session";
 import { SessionGate } from "@/auth/session-gate";
 import { IncomingPosting } from "@/features/applications/incoming-posting";
+import { stageScope } from "@/features/applications/queries";
+import { listedApplication } from "@/features/applications/stage-actions";
 import { useOpenReminder } from "@/features/reminders/open";
 import { useReviewPrompt } from "@/features/reviews/use-review-prompt";
 import { i18n, initI18n } from "@/i18n";
@@ -29,6 +32,8 @@ Observe.configure({ integrations: { "expo-router": { filteredParams: ["code", "s
 void SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
+// A bulk move chosen while a single stage change is on its way starts from what that change saved.
+followStageWrites(queryClient, stageScope, (id) => listedApplication(queryClient, id));
 
 function useNavigationTheme() {
 	const { scheme, colors, fonts } = useTheme();

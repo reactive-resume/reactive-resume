@@ -17754,6 +17754,12 @@
 																},
 																"canonicalTransition": {
 																	"type": "boolean"
+																},
+																"writeSequence": {
+																	"type": "integer",
+																	"minimum": -9007199254740991,
+																	"maximum": 9007199254740991,
+																	"exclusiveMinimum": 0
 																}
 															},
 															"required": [
@@ -18343,6 +18349,11 @@
 									"stageEnteredAt": {
 										"type": "string",
 										"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+									},
+									"newId": {
+										"type": "string",
+										"format": "uuid",
+										"description": "A UUID the client chose for the new application. A retry of the same request with the same ID (after a lost response, say) returns the application already saved instead of saving another. The ID with any other request, one already used by a resume or application, or one whose application has since been deleted is refused with CONFLICT and nothing changes."
 									}
 								},
 								"required": [
@@ -18679,6 +18690,11 @@
 									"coverLetterFile": {
 										"type": "string",
 										"contentMediaType": "application/pdf"
+									},
+									"newId": {
+										"type": "string",
+										"format": "uuid",
+										"description": "A UUID the client chose for the new application. A retry of the same request with the same ID (after a lost response, say) returns the application already saved instead of saving another. The ID with any other request, one already used by a resume or application, or one whose application has since been deleted is refused with CONFLICT and nothing changes."
 									}
 								},
 								"required": [
@@ -18811,6 +18827,73 @@
 										"items": {
 											"type": "string"
 										}
+									},
+									"expectedStages": {
+										"type": "array",
+										"maxItems": 200,
+										"items": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string"
+												},
+												"status": {
+													"enum": [
+														"saved",
+														"applied",
+														"screening",
+														"interview",
+														"offer",
+														"closed"
+													],
+													"type": "string"
+												},
+												"laneId": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"closedReason": {
+													"anyOf": [
+														{
+															"enum": [
+																"accepted",
+																"not-selected",
+																"withdrew",
+																"accepted-other",
+																"no-response"
+															],
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"stageEntryId": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													],
+													"description": "The ID of its latest stage change in `activity` then, so a move away and back counts too."
+												}
+											},
+											"required": [
+												"id",
+												"status",
+												"closedReason"
+											]
+										},
+										"description": "The stage each application had when the move was chosen. An application whose stage has changed since is left as it is, so a later move wins over a deferred one."
 									}
 								},
 								"required": [
@@ -18830,10 +18913,78 @@
 									"properties": {
 										"updated": {
 											"type": "number"
+										},
+										"stages": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"status": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"laneId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"stageEntryId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"status",
+													"laneId",
+													"closedReason",
+													"stageEntryId"
+												]
+											},
+											"description": "Each counted application's stage as saved, with the ID of its latest stage change: what a later move of it expects."
 										}
 									},
 									"required": [
-										"updated"
+										"updated",
+										"stages"
 									]
 								}
 							}
@@ -19363,6 +19514,12 @@
 																},
 																"canonicalTransition": {
 																	"type": "boolean"
+																},
+																"writeSequence": {
+																	"type": "integer",
+																	"minimum": -9007199254740991,
+																	"maximum": 9007199254740991,
+																	"exclusiveMinimum": 0
 																}
 															},
 															"required": [
@@ -19965,6 +20122,12 @@
 																		},
 																		"canonicalTransition": {
 																			"type": "boolean"
+																		},
+																		"writeSequence": {
+																			"type": "integer",
+																			"minimum": -9007199254740991,
+																			"maximum": 9007199254740991,
+																			"exclusiveMinimum": 0
 																		}
 																	},
 																	"required": [
@@ -20729,6 +20892,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -22106,6 +22275,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -23556,6 +23731,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -24728,6 +24909,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -25443,6 +25630,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -26182,6 +26375,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -26990,6 +27189,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -27796,6 +28001,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -28600,6 +28811,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -29344,6 +29561,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -30066,6 +30289,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -30808,6 +31037,12 @@
 															},
 															"canonicalTransition": {
 																"type": "boolean"
+															},
+															"writeSequence": {
+																"type": "integer",
+																"minimum": -9007199254740991,
+																"maximum": 9007199254740991,
+																"exclusiveMinimum": 0
 															}
 														},
 														"required": [
@@ -31107,6 +31342,73 @@
 										"items": {
 											"type": "string"
 										}
+									},
+									"expectedStages": {
+										"type": "array",
+										"maxItems": 200,
+										"items": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "string"
+												},
+												"status": {
+													"enum": [
+														"saved",
+														"applied",
+														"screening",
+														"interview",
+														"offer",
+														"closed"
+													],
+													"type": "string"
+												},
+												"laneId": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"closedReason": {
+													"anyOf": [
+														{
+															"enum": [
+																"accepted",
+																"not-selected",
+																"withdrew",
+																"accepted-other",
+																"no-response"
+															],
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													]
+												},
+												"stageEntryId": {
+													"anyOf": [
+														{
+															"type": "string"
+														},
+														{
+															"type": "null"
+														}
+													],
+													"description": "The ID of its latest stage change in `activity` then, so a move away and back counts too."
+												}
+											},
+											"required": [
+												"id",
+												"status",
+												"closedReason"
+											]
+										},
+										"description": "The stage each application had when the move was chosen. An application whose stage has changed since is left as it is, so a later move wins over a deferred one."
 									}
 								},
 								"required": [
@@ -31126,10 +31428,78 @@
 									"properties": {
 										"updated": {
 											"type": "number"
+										},
+										"stages": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"status": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"laneId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"stageEntryId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"status",
+													"laneId",
+													"closedReason",
+													"stageEntryId"
+												]
+											},
+											"description": "Each counted application's stage as saved, with the ID of its latest stage change: what a later move of it expects."
 										}
 									},
 									"required": [
-										"updated"
+										"updated",
+										"stages"
 									]
 								}
 							}
@@ -39733,6 +40103,12 @@
 																		},
 																		"canonicalTransition": {
 																			"type": "boolean"
+																		},
+																		"writeSequence": {
+																			"type": "integer",
+																			"minimum": -9007199254740991,
+																			"maximum": 9007199254740991,
+																			"exclusiveMinimum": 0
 																		}
 																	},
 																	"required": [
@@ -50925,7 +51301,86 @@
 				},
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"stages": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"status": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"laneId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"stageEntryId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"status",
+													"laneId",
+													"closedReason",
+													"stageEntryId"
+												]
+											},
+											"description": "The stage this call saved, with its stage-write ID. Empty on repeats or when no stage changed."
+										}
+									},
+									"required": [
+										"stages"
+									]
+								}
+							}
+						}
 					},
 					"default": {
 						"description": "Structured API error. See status and code; do not branch on message text.",
@@ -51783,7 +52238,86 @@
 				},
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"stages": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"status": {
+														"enum": [
+															"saved",
+															"applied",
+															"screening",
+															"interview",
+															"offer",
+															"closed"
+														],
+														"type": "string"
+													},
+													"laneId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"closedReason": {
+														"anyOf": [
+															{
+																"enum": [
+																	"accepted",
+																	"not-selected",
+																	"withdrew",
+																	"accepted-other",
+																	"no-response"
+																],
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"stageEntryId": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"status",
+													"laneId",
+													"closedReason",
+													"stageEntryId"
+												]
+											},
+											"description": "The stage this call saved on submission, with its stage-write ID. Empty on accepted retries."
+										}
+									},
+									"required": [
+										"stages"
+									]
+								}
+							}
+						}
 					},
 					"default": {
 						"description": "Structured API error. See status and code; do not branch on message text.",
@@ -65996,11 +66530,145 @@
 										"minLength": 1,
 										"description": "The job the copy is for; omit for no job yet."
 									},
+									"application": {
+										"type": "object",
+										"properties": {
+											"company": {
+												"type": "string",
+												"minLength": 1,
+												"description": "The company applied to."
+											},
+											"role": {
+												"type": "string",
+												"minLength": 1,
+												"description": "The role / job title."
+											},
+											"location": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"sourceUrl": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"jobDescription": {
+												"anyOf": [
+													{
+														"type": "string",
+														"maxLength": 20000
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"postingSource": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"method": {
+																"enum": [
+																	"paste",
+																	"builtin",
+																	"firecrawl",
+																	"tavily",
+																	"exa"
+																],
+																"type": "string"
+															},
+															"format": {
+																"enum": [
+																	"text",
+																	"markdown"
+																],
+																"type": "string"
+															},
+															"requestedUrl": {
+																"type": "string",
+																"format": "uri"
+															},
+															"resolvedUrl": {
+																"type": "string",
+																"format": "uri"
+															},
+															"retrievedAt": {
+																"type": "string",
+																"format": "date-time"
+															},
+															"providerFetchedAt": {
+																"type": "string",
+																"format": "date-time"
+															},
+															"truncated": {
+																"type": "boolean"
+															},
+															"completeness": {
+																"enum": [
+																	"unknown",
+																	"incomplete"
+																],
+																"type": "string"
+															},
+															"fallbackReason": {
+																"enum": [
+																	"unsafe-url",
+																	"unreachable",
+																	"not-a-page",
+																	"too-large",
+																	"auth",
+																	"quota",
+																	"malformed",
+																	"empty",
+																	"challenge",
+																	"timeout",
+																	"unavailable",
+																	"rate-limit"
+																],
+																"type": "string"
+															}
+														},
+														"required": [
+															"method",
+															"format",
+															"truncated",
+															"completeness"
+														]
+													},
+													{
+														"type": "null"
+													}
+												]
+											}
+										},
+										"required": [
+											"company",
+											"role"
+										],
+										"description": "A new job to save with the copy: both are saved together, or neither is. Not with `applicationId`."
+									},
 									"name": {
 										"type": "string",
 										"minLength": 1,
 										"maxLength": 100,
 										"description": "Defaults to “{source} — {company}”."
+									},
+									"newId": {
+										"type": "string",
+										"format": "uuid",
+										"description": "A UUID the client chose for the new copy. A retry of the same request with the same ID (after a lost response, say) returns the copy already made, and its job, instead of making another. The ID with any other request, one already used by a resume or application, or one whose copy or job has since been deleted or moved to Trash, or whose new-job copy was unlinked or relinked to another job, is refused with CONFLICT and nothing changes."
 									}
 								},
 								"required": [
@@ -97754,6 +98422,7 @@
 															"SECTION_MISSING_FROM_LAYOUT",
 															"NO_VISIBLE_EXPERIENCE",
 															"MISSING_EXPERIENCE_DESCRIPTION",
+															"FRAGMENTED_ENTRY",
 															"NON_STANDARD_SECTION_TITLE",
 															"MULTI_COLUMN_PROSE_SECTION",
 															"PROSE_SECTION_IN_SIDEBAR",
@@ -97826,6 +98495,7 @@
 															"SECTION_MISSING_FROM_LAYOUT",
 															"NO_VISIBLE_EXPERIENCE",
 															"MISSING_EXPERIENCE_DESCRIPTION",
+															"FRAGMENTED_ENTRY",
 															"NON_STANDARD_SECTION_TITLE",
 															"MULTI_COLUMN_PROSE_SECTION",
 															"PROSE_SECTION_IN_SIDEBAR",
@@ -99052,6 +99722,16 @@
 										"type": "string",
 										"minLength": 1,
 										"maxLength": 20000
+									},
+									"company": {
+										"type": "string",
+										"maxLength": 200,
+										"description": "The employer, so its name is never reported as a missing term."
+									},
+									"location": {
+										"type": "string",
+										"maxLength": 200,
+										"description": "Where the job is, so the place is never reported as a missing term."
 									}
 								},
 								"required": [
@@ -114038,11 +114718,145 @@
 										"minLength": 1,
 										"description": "The job the copy is for; omit for no job yet."
 									},
+									"application": {
+										"type": "object",
+										"properties": {
+											"company": {
+												"type": "string",
+												"minLength": 1,
+												"description": "The company applied to."
+											},
+											"role": {
+												"type": "string",
+												"minLength": 1,
+												"description": "The role / job title."
+											},
+											"location": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"sourceUrl": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"jobDescription": {
+												"anyOf": [
+													{
+														"type": "string",
+														"maxLength": 20000
+													},
+													{
+														"type": "null"
+													}
+												]
+											},
+											"postingSource": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"method": {
+																"enum": [
+																	"paste",
+																	"builtin",
+																	"firecrawl",
+																	"tavily",
+																	"exa"
+																],
+																"type": "string"
+															},
+															"format": {
+																"enum": [
+																	"text",
+																	"markdown"
+																],
+																"type": "string"
+															},
+															"requestedUrl": {
+																"type": "string",
+																"format": "uri"
+															},
+															"resolvedUrl": {
+																"type": "string",
+																"format": "uri"
+															},
+															"retrievedAt": {
+																"type": "string",
+																"format": "date-time"
+															},
+															"providerFetchedAt": {
+																"type": "string",
+																"format": "date-time"
+															},
+															"truncated": {
+																"type": "boolean"
+															},
+															"completeness": {
+																"enum": [
+																	"unknown",
+																	"incomplete"
+																],
+																"type": "string"
+															},
+															"fallbackReason": {
+																"enum": [
+																	"unsafe-url",
+																	"unreachable",
+																	"not-a-page",
+																	"too-large",
+																	"auth",
+																	"quota",
+																	"malformed",
+																	"empty",
+																	"challenge",
+																	"timeout",
+																	"unavailable",
+																	"rate-limit"
+																],
+																"type": "string"
+															}
+														},
+														"required": [
+															"method",
+															"format",
+															"truncated",
+															"completeness"
+														]
+													},
+													{
+														"type": "null"
+													}
+												]
+											}
+										},
+										"required": [
+											"company",
+											"role"
+										],
+										"description": "A new job to save with the copy: both are saved together, or neither is. Not with `applicationId`."
+									},
 									"name": {
 										"type": "string",
 										"minLength": 1,
 										"maxLength": 100,
 										"description": "Defaults to “{source} — {company}”."
+									},
+									"newId": {
+										"type": "string",
+										"format": "uuid",
+										"description": "A UUID the client chose for the new copy. A retry of the same request with the same ID (after a lost response, say) returns the copy already made, and its job, instead of making another. The ID with any other request, one already used by a resume or application, or one whose copy or job has since been deleted or moved to Trash, or whose new-job copy was unlinked or relinked to another job, is refused with CONFLICT and nothing changes."
 									}
 								},
 								"required": [

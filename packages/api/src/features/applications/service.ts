@@ -7,12 +7,14 @@ import type {
 	ApplicationTimelineEntry,
 	InterviewDetails,
 } from "@reactive-resume/schema/applications/data";
+import { createHash } from "node:crypto";
 import { ORPCError } from "@orpc/client";
 import { and, arrayContains, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
+import { latestStageEntryId } from "@reactive-resume/schema/applications/data";
 import { isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
 import { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
@@ -21,13 +23,62 @@ import { requestRunCancellation } from "../agent/cancellation";
 import { prepareRunAt } from "../career/scheduling";
 import { coverLetterService } from "../cover-letters/service";
 import { writeLetterVersion } from "../cover-letters/versions";
-import { lockUser } from "../documents/ownership";
+import { isRetriedCreate, lockUser, recordCreateRequest } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { writeVersion } from "../resume/version-history";
 import { getStorageService, uploadFile } from "../storage/service";
 import { assertUntrackedPosting, findTrackedPosting } from "./duplicates";
 import { syncFollowUp } from "./follow-up";
-import { applicationTransitionValues, ensureApplicationPipeline } from "./lanes";
+import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "./lanes";
+
+/**
+ * Saves a new application inside the caller's transaction, under the user's lock: Add application, and Copy for a job
+ * when the job is saved with its copy. Returns its ID. With a client-chosen ID, `request` is what the client asked for:
+ * a retry of the same request returns the application without saving again, and any other use of the ID is refused.
+ */
+export async function insertApplication(
+	tx: DbOrTx,
+	input: {
+		userId: string;
+		id?: string | undefined;
+		request?: unknown;
+		fields: EditableFields & { company: string; role: string };
+		stage?: {
+			status?: ApplicationStatus | undefined;
+			laneId?: string | undefined;
+			closedReason?: ApplicationClosedReason | null | undefined;
+		};
+		at?: Date;
+	},
+) {
+	const id = input.id ?? generateId();
+	const created = input.id ? { table: "application" as const, id, userId: input.userId, request: input.request } : null;
+	await lockUser(tx, input.userId);
+	if (created && (await isRetriedCreate(tx, created))) return id;
+	await assertUntrackedPosting(tx, input.userId, input.fields.sourceUrl);
+	const { values } = await applicationTransitionValues(tx, input.userId, input.stage ?? {}, undefined, input.at);
+	const [row] = await tx
+		.insert(schema.application)
+		.values({
+			id,
+			userId: input.userId,
+			...input.fields,
+			followUpDateOnly:
+				input.fields.followUpDateOnly ??
+				isDateOnlyFollowUp({
+					followUpAt: input.fields.followUpAt ?? null,
+					followUpDateOnly: input.fields.followUpDateOnly,
+				}),
+			...values,
+		})
+		.returning();
+	if (created) await recordCreateRequest(tx, created);
+	if (row) {
+		await recordSentResume(row, tx);
+		if (row.followUpAt) await syncFollowUp(tx, row);
+	}
+	return id;
+}
 
 function timelineDate(value: Date | string): Date {
 	return value instanceof Date ? value : new Date(value);
@@ -75,12 +126,20 @@ function timelineDay(value: Date | string) {
 }
 
 function sortTimeline(activity: ApplicationTimelineEntry[]): ApplicationTimelineEntry[] {
-	return [...activity].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+	return [...activity].sort(
+		(a, b) =>
+			new Date(b.at).getTime() - new Date(a.at).getTime() ||
+			(b.type === "stage" ? (b.writeSequence ?? 0) : 0) - (a.type === "stage" ? (a.writeSequence ?? 0) : 0),
+	);
 }
 
 /** Lane-only transitions also anchor the current stage. Retirement preserves the last event's identity. */
 function currentStageAnchor(activity: ApplicationTimelineEntry[], status: ApplicationStatus) {
-	return sortTimeline(activity).find((entry) => entry.type === "stage" && entry.stage === status);
+	const id = latestStageEntryId(activity);
+	return (
+		activity.find((entry) => entry.id === id && entry.type === "stage" && entry.stage === status) ??
+		sortTimeline(activity).find((entry) => entry.type === "stage" && entry.stage === status)
+	);
 }
 
 function assertCurrentStageAnchorLatest(
@@ -577,6 +636,8 @@ export const applicationService = {
 		input: EditableFields &
 			DocumentFiles & {
 				userId: string;
+				/** The new application's ID, chosen by the client so a retry can't save it twice. */
+				newId?: string | undefined;
 				company: string;
 				role: string;
 				status?: ApplicationStatus | undefined;
@@ -585,32 +646,38 @@ export const applicationService = {
 				stageEnteredAt?: string | undefined;
 			},
 	) => {
-		const { userId, status, laneId, stageEnteredAt, closedReason, resumeFile, coverLetterFile, ...fields } = input;
-		fields.followUpDateOnly ??= isDateOnlyFollowUp({ followUpAt: fields.followUpAt ?? null });
-		const id = generateId();
+		const { userId, status, laneId, stageEnteredAt, closedReason, resumeFile, coverLetterFile, newId, ...fields } =
+			input;
+		const file = async (value: File | undefined) =>
+			value && {
+				name: value.name,
+				size: value.size,
+				type: value.type,
+				sha256: createHash("sha256")
+					.update(new Uint8Array(await value.arrayBuffer()))
+					.digest("hex"),
+			};
+		const request = {
+			operation: "applications.create",
+			fields,
+			stage: { status, laneId, closedReason, stageEnteredAt },
+			files: { resume: await file(resumeFile), coverLetter: await file(coverLetterFile) },
+		};
+		// A retry of a create that already landed (a lost response, a second press) returns the same application.
+		if (newId && (await isRetriedCreate(db, { table: "application", id: newId, userId, request }))) return newId;
 		await assertOwnedResume(userId, fields.resumeId);
 		await assertOwnedCoverLetter(userId, fields.coverLetterId);
 		return withDocumentFiles(userId, { resumeFile, coverLetterFile }, (uploadedFields) =>
-			db.transaction(async (tx) => {
-				await lockUser(tx, userId);
-				await assertUntrackedPosting(tx, userId, fields.sourceUrl);
-				const { values } = await applicationTransitionValues(
-					tx,
+			db.transaction((tx) =>
+				insertApplication(tx, {
 					userId,
-					{ status, laneId, closedReason },
-					undefined,
-					stageEnteredAt ? atFromDateString(stageEnteredAt) : new Date(),
-				);
-				const [row] = await tx
-					.insert(schema.application)
-					.values({ id, userId, ...fields, ...uploadedFields, ...values })
-					.returning();
-				if (row) {
-					await recordSentResume(row, tx);
-					if (row.followUpAt) await syncFollowUp(tx, row);
-				}
-				return id;
-			}),
+					id: newId,
+					request,
+					fields: { ...fields, ...uploadedFields },
+					stage: { status, laneId, closedReason },
+					at: stageEnteredAt ? atFromDateString(stageEnteredAt) : new Date(),
+				}),
+			),
 		);
 	},
 	importMany: async (input: {
@@ -965,7 +1032,8 @@ export const applicationService = {
 			});
 
 			if (!activity.some((entry) => entry.id === input.entryId)) throw new ORPCError("NOT_FOUND");
-			assertCurrentStageAnchorLatest(activity, existing.status, anchor?.id);
+			if (input.date !== undefined && activity.some((entry) => entry.id === input.entryId && entry.type === "stage"))
+				assertCurrentStageAnchorLatest(activity, existing.status, anchor?.id);
 
 			const [updated] = await tx
 				.update(schema.application)
@@ -1003,7 +1071,7 @@ export const applicationService = {
 			}
 
 			const activity = existing.activity.filter((item) => item.id !== input.entryId);
-			assertCurrentStageAnchorLatest(activity, existing.status, anchor?.id);
+			if (entry.type === "stage") assertCurrentStageAnchorLatest(activity, existing.status, anchor?.id);
 
 			const [updated] = await tx
 				.update(schema.application)
@@ -1045,13 +1113,42 @@ export const applicationService = {
 		laneId?: string | undefined;
 		closedReason?: ApplicationClosedReason | null | undefined;
 		addTags?: string[] | undefined;
+		expectedStages?:
+			| {
+					id: string;
+					status: ApplicationStatus;
+					laneId?: string | null | undefined;
+					closedReason: ApplicationClosedReason | null;
+					stageEntryId?: string | null | undefined;
+			  }[]
+			| undefined;
 	}) =>
 		db.transaction(async (tx) => {
 			await lockUser(tx, input.userId);
 			const pipeline = await ensureApplicationPipeline(tx, input.userId);
 			const scope = and(inArray(schema.application.id, input.ids), eq(schema.application.userId, input.userId));
 			const rows = await tx.select().from(schema.application).where(scope).for("update");
+			const expected = new Map(input.expectedStages?.map((stage) => [stage.id, stage]));
+			// Each moved row's stage as saved, so the client's next move of it can start from there.
+			const stages: ReturnType<typeof savedStageOf>[] = [];
+			const saved = (row: ApplicationRow) => stages.push(savedStageOf(row));
+			let updated = 0;
 			for (const row of rows) {
+				// Rows are locked, so this check and the write below see the same stage: a move made since wins, even one
+				// that has come back to the same stage. Every move, lane-only ones too, adds a stage change, so a client that
+				// sends one is checked on it rather than on the lane, which also changes without a move (a retired lane's
+				// rows going to its replacement, a legacy row getting its default lane).
+				const stage = expected.get(row.id);
+				if (
+					stage &&
+					(stage.status !== row.status ||
+						(stage.closedReason ?? null) !== (row.closedReason ?? null) ||
+						(stage.stageEntryId === undefined
+							? stage.laneId !== undefined && (stage.laneId ?? null) !== (row.laneId ?? null)
+							: stage.stageEntryId !== latestStageEntryId(row.activity)))
+				)
+					continue;
+				updated += 1;
 				const { values, transition } = await applicationTransitionValues(
 					tx,
 					input.userId,
@@ -1061,15 +1158,19 @@ export const applicationService = {
 					pipeline,
 				);
 				const tags = [...new Set([...row.tags, ...(input.addTags ?? [])])];
-				if (!transition.changed && tags.length === row.tags.length) continue;
-				const [updated] = await tx
+				if (!transition.changed && tags.length === row.tags.length) {
+					saved(row);
+					continue;
+				}
+				const [written] = await tx
 					.update(schema.application)
 					.set({ ...values, tags })
 					.where(and(eq(schema.application.id, row.id), eq(schema.application.userId, input.userId)))
 					.returning();
-				if (updated && transition.canonicalTransition) await recordSentResume(updated, tx);
+				saved(written ?? row);
+				if (written && transition.canonicalTransition) await recordSentResume(written, tx);
 			}
-			return { updated: rows.length };
+			return { updated, stages };
 		}),
 
 	bulkDelete: async (input: { userId: string; ids: string[] }) => {

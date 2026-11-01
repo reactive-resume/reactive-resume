@@ -1,7 +1,9 @@
 import { createRouter } from "@tanstack/react-router";
+import { followStageWrites } from "@reactive-resume/schema/applications/stage-baselines";
 import { ErrorScreen } from "./components/layout/error-screen";
 import { LoadingScreen } from "./components/layout/loading-screen";
 import { NotFoundScreen } from "./components/layout/not-found-screen";
+import { listedApplication, STAGE_SCOPE } from "./features/applications/use-application-actions";
 import { registerAccountReset } from "./libs/auth/account-scope";
 import { clearAccountState, syncAccountDataAcrossTabs } from "./libs/auth/clear-account-data";
 import { orpc } from "./libs/orpc/client";
@@ -15,6 +17,12 @@ const supportsTransitionTypes = globalThis.CSS?.supports?.("selector(:active-vie
 
 export const getRouter = async () => {
 	const queryClient = getQueryClient();
+	// A bulk move chosen while a single stage change is on its way starts from what that change saved.
+	followStageWrites(
+		queryClient,
+		() => STAGE_SCOPE,
+		(id) => listedApplication(queryClient, id),
+	);
 	// A root load that discovers another account drops this account's cached data before adopting the new identity.
 	registerAccountReset(() => clearAccountState(queryClient));
 	syncAccountDataAcrossTabs(queryClient);

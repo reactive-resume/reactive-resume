@@ -452,7 +452,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						<Trans>Enhanced reading was unavailable. The built-in reader retrieved this posting.</Trans>
 					</p>
 				)}
-				{description !== null && (
+				{/* Pasted text that came back unchanged (AI couldn't read it) is already in a box above: no second copy. A
+				    captured posting has no box above, so its text stays here. */}
+				{description !== null && (link || Boolean(initialCapture?.description) || description.trim() !== text) && (
 					<div className="grid gap-1.5">
 						<Label htmlFor={`${id}-description`}>
 							<Trans>Saved description</Trans>

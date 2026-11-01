@@ -9,10 +9,14 @@ const resumeServiceMock = vi.hoisted(() => ({
 	setLocked: vi.fn(),
 }));
 const applicationServiceMock = vi.hoisted(() => ({ update: vi.fn() }));
+const insertApplicationMock = vi.hoisted(() => vi.fn());
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
 vi.mock("../resume/service", () => ({ resumeService: resumeServiceMock }));
 vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: vi.fn(), update: vi.fn() } }));
-vi.mock("../applications/service", () => ({ applicationService: applicationServiceMock }));
+vi.mock("../applications/service", () => ({
+	applicationService: applicationServiceMock,
+	insertApplication: insertApplicationMock,
+}));
 
 const { documentsService } = await import("./service");
 

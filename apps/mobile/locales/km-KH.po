@@ -133,6 +133,23 @@ msgstr "{0, plural, one {បានផ្លាស់ប្តូរ {count} ក�
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, other {ចម្លើយ #}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {# application closed as Accepted another offer} other {# applications closed as Accepted another offer}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application closed} other {# applications closed}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#. placeholder {1}: getLaneLabel(lane)
+#. placeholder {2}: getLaneLabel(lane)
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -249,6 +266,16 @@ msgstr "{0, plural, other {បានដាក់ពាក្យ # ថ្ងៃ�
 #: src/features/career/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, other {គាំទ្ររឿង #}}"
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Close it} other {Close all #}}"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
+msgstr ""
 
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
@@ -578,6 +605,10 @@ msgid "{entry} doesn't say when. Dates place it on your timeline."
 msgstr "{entry} មិន​និយាយ​ថា​ពេល​ណា​ទេ។ កាលបរិច្ឆេទដាក់វានៅលើបន្ទាត់ពេលវេលារបស់អ្នក។"
 
 #: src/features/check/issues.ts
+msgid "{entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job."
+msgstr ""
+
+#: src/features/check/issues.ts
 msgid "{entry} names the role but not what you did, so it adds no keywords."
 msgstr "{entry} ដាក់ឈ្មោះតួនាទីនេះ ប៉ុន្តែមិនមែនអ្វីដែលអ្នកបានធ្វើនោះទេ ដូច្នេះវាមិនបន្ថែមពាក្យគន្លឹះទេ។"
 
@@ -608,6 +639,10 @@ msgstr "{issues, plural, one {បញ្ហា # អាចធ្វើឱ្យ�
 #: src/features/share/download.tsx
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {ពិនិត្យមានរឿង # ដើម្បីពិនិត្យ។ អ្នកនៅតែអាចទាញយកបាន។} other {ពិនិត្យមានរឿង # ដើម្បីពិនិត្យមើល។ អ្នកនៅតែអាចទាញយកបាន។}}"
+
+#: src/features/applications/stage-actions.ts
+msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
+msgstr ""
 
 #: src/features/applications/next-step.ts
 msgid "{kind} interview"
@@ -861,6 +896,10 @@ msgstr "តំណមួយចង្អុលទៅកន្លែងផ្សេ
 msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "គំនិតរបស់តារាម៉ូដែល មិនមែនជាសាលក្រមទេ។ វាអាចខុស។"
 
+#: src/features/career/offer-entry.tsx
+msgid "a month"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
 msgstr "កាលបរិច្ឆេទជាលេខអានខុសគ្នាទៅតាមប្រទេសនីមួយៗ។"
@@ -896,6 +935,10 @@ msgstr "ផែនការកំណត់ពេល សេចក្ដីផ្�
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
 msgstr "អាសយដ្ឋានវេបសាយត៍មួយត្រូវបានសរសេរដោយគ្មាន https://."
+
+#: src/features/career/offer-entry.tsx
+msgid "a year"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
@@ -990,8 +1033,11 @@ msgstr "បន្ថែមប្រទេសមួយ។"
 msgid "Add a fact"
 msgstr "បន្ថែមការពិតមួយ។"
 
-#: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
+msgid "Add a job"
+msgstr ""
+
+#: src/features/documents/document-sheets.tsx
 msgid "Add a job…"
 msgstr ""
 
@@ -1002,6 +1048,10 @@ msgstr "បន្ថែមតំណ"
 #: src/features/check/issues.ts
 msgid "Add a location"
 msgstr "បន្ថែមទីតាំង"
+
+#: src/features/career/offer-entry.tsx
+msgid "Add a newer offer"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Add a note"
@@ -1257,6 +1307,12 @@ msgstr "បន្ថែមដែនបន្ទាប់ពី @ ដូចជា
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "បន្ថែមការបញ្ចប់ដែន ដូចជា {domain}.com"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/applications/next-step.ts
+#: src/features/applications/stage-actions.ts
+msgid "Add the offer's terms"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1570,6 +1626,10 @@ msgstr "ធាតុមួយមិនមានកាលបរិច្ឆេទ
 #: src/features/assistant/chat-view.tsx
 msgid "an error"
 msgstr "កំហុស"
+
+#: src/features/career/offer-entry.tsx
+msgid "an hour"
+msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
@@ -2186,6 +2246,11 @@ msgstr "បញ្ជីចំណុច"
 msgid "Burgundy"
 msgstr "ប៊ឺហ្គូឌី"
 
+#. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
+#: src/features/applications/next-step.ts
+msgid "By {0}"
+msgstr ""
+
 #: app/(tabs)/settings/index.tsx
 msgid "by <0>Amruth Pillai</0>"
 msgstr "ដោយ <0>Amruth Pillai</0>"
@@ -2208,6 +2273,7 @@ msgstr "តើកម្មវិធីអាចអានប្រវត្តិ
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/ats-checker/checker.tsx
+#: src/features/check/job-match.tsx
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
 #: src/features/search/search-screen.tsx
@@ -2658,6 +2724,10 @@ msgstr "បិទ…"
 msgid "Closed"
 msgstr "បិទ"
 
+#: src/features/applications/stage-actions.ts
+msgid "Closed as Accepted offer"
+msgstr ""
+
 #: src/features/applications-board/insights-screen.tsx
 msgid "Closed: {closed}"
 msgstr "បិទ៖ {closed}"
@@ -2710,17 +2780,28 @@ msgstr "បង្រួម"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/fields.ts
 msgid "Company"
 msgstr "ក្រុមហ៊ុន"
 
+#: src/features/career/offer-entry.tsx
+msgid "Compare"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {company}."
 msgstr "ប្រៀបធៀបការព្យាយាមដើម្បីមើលអ្វីដែលប្រសើរឡើង។ សំណួរអនុវត្តត្រូវបានក្លែងធ្វើ មិនមែនមកពី {company} ទេ។"
 
+#: src/features/applications/next-step.ts
+msgid "Compare it with your other offers"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/shell.tsx
 msgid "Compare offers"
 msgstr "ប្រៀបធៀបការផ្តល់ការងារ"
@@ -2961,12 +3042,22 @@ msgstr "ចម្លងកូដ"
 msgid "Copy created"
 msgstr "ច្បាប់ចម្លងត្រូវបានបង្កើតឡើង"
 
+#. placeholder {0}: document.application.company
+#. placeholder {0}: source.application.company
+#: src/features/documents/new-document.tsx
+msgid "Copy for {0}"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Copy for a job…"
 msgstr "ថតចម្លងសម្រាប់ការងារ…"
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Copy for this job"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Copy made for {company}. This resume is unchanged."
 msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
@@ -3061,6 +3152,10 @@ msgstr "មិនអាចបញ្ជាក់ការរក្សាទុក
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "មិនអាចបញ្ជាក់ការរក្សាទុកបានទេ។ ពិនិត្យពាក្យសុំមុននឹងព្យាយាមម្តងទៀត ដើម្បីជៀសវាងការស្ទួនគ្នា។"
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't copy the resume. Your edits are kept. Try again."
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
@@ -3322,9 +3417,17 @@ msgstr "មិនអាចរក្សាទុកទំនាក់ទំនង
 msgid "Couldn't save the follow-up. Try again."
 msgstr "មិនអាចរក្សាទុកការតាមដានបានទេ។ ព្យាយាមម្តងទៀត។"
 
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job and its copy. Your edits are kept. Try again."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't save the job description. Try again."
 msgstr "មិនអាចរក្សាទុកការពិពណ៌នាការងារបានទេ។ ព្យាយាមម្តងទៀត។"
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job. Try again."
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't save the notes. Your text is still here."
@@ -3448,6 +3551,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Couldn't update the application. Nothing was changed; try again."
 msgstr "មិនអាចធ្វើបច្ចុប្បន្នភាពពាក្យសុំបានទេ។ គ្មានអ្វីត្រូវបានផ្លាស់ប្តូរទេ; ព្យាយាមម្តងទៀត។"
+
+#: src/features/applications/stage-actions.ts
+msgid "Couldn't update the applications. Try again."
+msgstr "មិនអាចអាប់ដេតពាក្យសុំការងារបានទេ។ ព្យាយាមម្តងទៀត។"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't update the interview. Try again."
@@ -4831,8 +4938,8 @@ msgid "For the next round:"
 msgstr "សម្រាប់ជុំបន្ទាប់៖"
 
 #: src/features/check/job-match.tsx
-msgid "For this visit only. Link an application to keep its posting here."
-msgstr "សម្រាប់ការទស្សនានេះតែប៉ុណ្ណោះ។ ភ្ជាប់ពាក្យសុំការងារ ដើម្បីរក្សាការប្រកាសការងាររបស់ខ្លួននៅទីនេះ។"
+msgid "For this visit only. Save it as a job to keep it."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "For which job?"
@@ -5538,6 +5645,10 @@ msgstr "ការផ្គូផ្គងការងារមិនមែនជ
 msgid "Job posting · optional, adds a keyword match"
 msgstr "ការប្រកាសការងារ · ជាជម្រើស បន្ថែមការផ្គូផ្គងពាក្យគន្លឹះ"
 
+#: src/features/documents/new-document.tsx
+msgid "Job posting (optional)"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Job posting link"
 msgstr "តំណការប្រកាសការងារ"
@@ -5977,6 +6088,10 @@ msgstr "ភ្ជាប់ពាក្យសុំការងារ ឬបិ�
 msgid "Link copied"
 msgstr "បានចម្លងតំណ"
 
+#: src/features/check/job-match.tsx
+msgid "Link this resume"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Link to application"
 msgstr "ភ្ជាប់ទៅពាក្យសុំការងារ"
@@ -6199,6 +6314,10 @@ msgstr "ស្វែងរក"
 msgid "Looks exactly like the page. Use it for applications and email."
 msgstr "មើលទៅពិតជាដូចទំព័រ។ ប្រើវាសម្រាប់ពាក្យសុំការងារ និងអ៊ីមែល។"
 
+#: src/features/check/issues.ts
+msgid "Looks like part of the entry above"
+msgstr ""
+
 #: src/features/design/design-pane.tsx
 msgid "Lower the design sheet"
 msgstr "ទម្លាក់សន្លឹករចនា"
@@ -6207,6 +6326,10 @@ msgstr "ទម្លាក់សន្លឹករចនា"
 #: src/features/design/layout-screen.tsx
 msgid "Main"
 msgstr "មេ"
+
+#: src/features/check/job-match.tsx
+msgid "Make a copy for this job"
+msgstr ""
 
 #: src/features/ai/provider-list.tsx
 msgid "Make default"
@@ -6390,6 +6513,14 @@ msgstr "មធ្យមដើម្បីឆ្លើយតបដំបូង"
 #: src/features/career/offers.tsx
 msgid "Meets your minimum base salary."
 msgstr "បំពេញតាមប្រាក់ខែគោលអប្បបរមារបស់អ្នក។"
+
+#: src/features/check/issues.ts
+msgid "Merge into previous entry"
+msgstr ""
+
+#: src/features/check/issues.ts
+msgid "Merged into the entry above"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Message"
@@ -6595,9 +6726,8 @@ msgstr "បានផ្លាស់ទី {0} នៃ {1} ទៅធុងសំ�
 
 #. placeholder {0}: getLaneHistoryLabel(lanes.lanes, entry)
 #. placeholder {0}: getLaneLabel(lane)
-#. placeholder {0}: getLaneLabel(target)
 #: src/features/application-detail/sections.tsx
-#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/stage-actions.ts
 msgid "Moved to {0}"
 msgstr "បានផ្លាស់ទីទៅ {0}"
 
@@ -7124,6 +7254,10 @@ msgstr "មិនមាននៅក្នុងប្រវត្តិរូប
 msgid "Not in your resume · add only if true"
 msgstr "មិនមាននៅក្នុងប្រវត្តិរូបសង្ខេបរបស់អ្នក · បន្ថែមតែប្រសិនបើពិត"
 
+#: src/features/documents/new-document.tsx
+msgid "Not linked to a job"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Not now"
@@ -7274,6 +7408,11 @@ msgstr "ផ្តល់ការងារ"
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "បានរក្សាទុកសំណើការងារ"
+
+#. placeholder {0}: target.company
+#: src/features/career/offer-entry.tsx
+msgid "Offer saved. {0} moved to Offer."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
@@ -7764,6 +7903,10 @@ msgstr "ផ្អាក"
 #: src/features/settings/application-profile.tsx
 msgid "Pay period"
 msgstr "រយៈពេលបើកប្រាក់"
+
+#: src/features/applications/next-step.ts
+msgid "Pay, deadline and conditions, so you can compare and decide"
+msgstr ""
 
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -8789,6 +8932,10 @@ msgstr "ការឆ្លើយតប"
 msgid "Reply copied"
 msgstr "បានចម្លងការឆ្លើយតប"
 
+#: src/features/applications/next-step.ts
+msgid "Reply to the offer"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Report"
 msgstr "របាយការណ៍"
@@ -8839,6 +8986,10 @@ msgstr "កំណត់លំនាំដើមនៃការរចនាឡើ
 #: src/features/career/offers.tsx
 msgid "Respond by"
 msgstr "ឆ្លើយតបត្រឹម"
+
+#: src/features/career/offer-entry.tsx
+msgid "respond by {respondBy}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Response deadline has passed."
@@ -9180,6 +9331,8 @@ msgstr "ត្រូវហើយ។"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/check/job-match.tsx
+#: src/features/documents/new-document.tsx
 msgid "Role"
 msgstr "មុខតំណែង"
 
@@ -9299,6 +9452,10 @@ msgstr ""
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "រក្សាទុកច្បាប់ចម្លងដែលមិនបានការពារ ដោយគ្មានពាក្យសម្ងាត់ និងគ្មានការដាក់កម្រិតសិទ្ធិ។"
 
+#: src/features/check/job-match.tsx
+msgid "Save and link this resume"
+msgstr "រក្សាទុក និងភ្ជាប់ប្រវត្តិរូបនេះ"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
 msgstr "រក្សាទុកនិងសាកល្បង"
@@ -9306,6 +9463,10 @@ msgstr "រក្សាទុកនិងសាកល្បង"
 #: src/features/career/offers.tsx
 msgid "Save another offer to compare"
 msgstr "រក្សាទុកការផ្តល់ការងារមួយទៀតដើម្បីប្រៀបធៀប"
+
+#: src/features/check/job-match.tsx
+msgid "Save as a job…"
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "Save changes"
@@ -9336,6 +9497,14 @@ msgstr "រក្សាទុកការសម្ភាសន៍"
 #: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "រក្សាទុកការងារ"
+
+#: src/features/documents/new-document.tsx
+msgid "Save job and create copy"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Save job and make a copy"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Save lane"
@@ -9442,6 +9611,10 @@ msgstr "ការពិពណ៌នាដែលបានរក្សាទុក
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "Saved to Applications as a saved job, then linked to the copy. No AI request is made."
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -10644,6 +10817,11 @@ msgstr "ស្លាកផ្តល់ឱ្យកម្មវិធីនូវ
 msgid "Tags…"
 msgstr "ស្លាក…"
 
+#. placeholder {0}: choice.company
+#: src/features/check/job-match.tsx
+msgid "Tailor a copy for {0} so this resume stays as it is for other jobs, or link this resume itself."
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr ""
@@ -10897,6 +11075,10 @@ msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
 #: src/features/history/history.tsx

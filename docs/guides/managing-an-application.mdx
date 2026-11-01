@@ -54,7 +54,9 @@ Each move is added to the activity history. **Mark as applied** uses the date yo
 2. Otherwise, the follow-up you set.
 3. Otherwise, what the stage is waiting on. For **Applied**, how long ago you applied, turning into "No reply in _n_ days" after 10 days. For **Screening**, how long you've been waiting to hear back. For **Interview**, "Waiting for interview feedback" once every interview is behind you, or "No interview scheduled" before you've added one. For **Offer**, "Decide on the offer".
 
-A **Saved** application shows "Not applied yet", and a closed one shows its reason. Overdue follow-ups, long waits and offers to decide are highlighted in amber.
+At **Offer**, the offer leads instead: **Reply to the offer** by the deadline saved with its terms (amber once it has passed), **Decide on the offer** with **Compare offers** when terms are saved without a deadline, or **Add the offer's terms** when none are saved yet. When no deadline is saved, a follow-up you set comes first. Interviews booked before the offer stay in **Activity** and the calendar.
+
+A **Saved** application shows "Not applied yet", and a closed one shows its reason. Overdue follow-ups and long waits are highlighted in amber.
 
 <Frame caption="Review next steps and sent documents in the detail sheet">
   <img
@@ -63,7 +65,9 @@ A **Saved** application shows "Not applied yet", and a closed one shows its reas
   />
 </Frame>
 
-Select **Edit** to **Schedule an interview…**, **Edit this interview…**, or **Set a follow-up…** (**Change the follow-up…** when one is set). When the next step has a date, **Add to calendar** downloads it as an `.ics` file. See [Scheduling interviews](/guides/scheduling-interviews).
+Select **Edit** to **Schedule an interview…**, **Edit this interview…**, or **Set a follow-up…** (**Change the follow-up…** when one is set). When the next step has a date, including an offer's reply deadline, **Add to calendar** downloads it as an `.ics` file. See [Scheduling interviews](/guides/scheduling-interviews).
+
+Moving an application to **Offer** shows **Moved to Offer** with **Add the offer's terms**, which opens the offer form on the workspace's **Messages** tab. See [Comparing job offers](/guides/comparing-job-offers).
 
 ## Seeing what you sent
 
@@ -152,7 +156,8 @@ When an application ends, close it rather than deleting it, so its history still
 <Steps>
   <Step title="Select Mark as closed…">It's at the bottom of the details sheet.</Step>
   <Step title="Choose a reason">
-    Pick **Not selected**, **I withdrew**, **Accepted another offer** or **No response**. If you've added your own
+    Pick **Accepted offer**, **Not selected**, **I withdrew**, **Accepted another offer** or **No response**. From
+    **Offer**, **Accepted offer** is chosen for you; earlier stages start on **Not selected**. If you've added your own
     Closed stages, choose one under **Stage**; a stage with a preset outcome, such as **Ghosted**, doesn't ask for a
     reason.
   </Step>
@@ -162,9 +167,11 @@ When an application ends, close it rather than deleting it, so its history still
 <Frame caption="Record why an application ended">
   <img
     src="/images/guides/managing-an-application/close-this-application-dialog.webp"
-    alt="Mark as closed dialog with outcome reasons and a confirmation action"
+    alt="Mark as closed dialog for an application at Offer, with the reasons Accepted offer, Not selected, I withdrew, Accepted another offer and No response, Accepted offer chosen, and Cancel and Mark as closed buttons"
   />
 </Frame>
+
+An accepted offer reads as a win: the sheet keeps the stepper filled through **Offer** and shows **Accepted offer** with a check in the Offer colour. When you have other open applications, a message asks whether to close them as **Accepted another offer**. Nothing else closes unless you choose **Close all _n_**, and that close has **Undo**.
 
 You can also close applications from a board card's **⋯** menu, or several at once from the List view. To bring a closed application back, turn on **Show closed**, open it and select **Reopen**. It returns to **Applied** (your standard Applied stage, whatever you've named it).
 

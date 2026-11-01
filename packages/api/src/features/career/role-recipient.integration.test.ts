@@ -169,10 +169,16 @@ describe.skipIf(!databaseUrl)("role recipient approval through router, PostgreSQ
 						id: "alice",
 						name: "Alice Example",
 						email: "alice@example.test",
-						username: "alice",
-						displayUsername: "alice",
+						username: `${schemaName}-alice`,
+						displayUsername: `${schemaName}-alice`,
 					},
-					{ id: "bob", name: "Bob Example", email: "bob@example.test", username: "bob", displayUsername: "bob" },
+					{
+						id: "bob",
+						name: "Bob Example",
+						email: "bob@example.test",
+						username: `${schemaName}-bob`,
+						displayUsername: `${schemaName}-bob`,
+					},
 				])
 				.returning();
 			const alice = users[0];

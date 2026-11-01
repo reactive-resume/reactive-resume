@@ -133,6 +133,23 @@ msgstr "{0, plural, one {# അപേക്ഷകളിൽ {count} എണ്ണ�
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# ഉത്തരം} other {# ഉത്തരങ്ങൾ}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {# application closed as Accepted another offer} other {# applications closed as Accepted another offer}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application closed} other {# applications closed}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#. placeholder {1}: getLaneLabel(lane)
+#. placeholder {2}: getLaneLabel(lane)
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -249,6 +266,16 @@ msgstr "{0, plural, one {# ദിവസം മുമ്പ് അപേക്ഷ
 #: src/features/career/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {# കഥയെ പിന്തുണയ്ക്കുന്നു} other {# കഥകളെ പിന്തുണയ്ക്കുന്നു}}"
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Close it} other {Close all #}}"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
+msgstr ""
 
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
@@ -578,6 +605,10 @@ msgid "{entry} doesn't say when. Dates place it on your timeline."
 msgstr "{entry} എപ്പോൾ എന്ന് പറയുന്നില്ല. തീയതികൾ അത് നിങ്ങളുടെ ടൈംലൈനിൽ സ്ഥാപിക്കുന്നു."
 
 #: src/features/check/issues.ts
+msgid "{entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job."
+msgstr ""
+
+#: src/features/check/issues.ts
 msgid "{entry} names the role but not what you did, so it adds no keywords."
 msgstr "{entry} റോളിന് പേരിടുന്നു, പക്ഷേ നിങ്ങൾ ചെയ്തതല്ല, അതിനാൽ ഇത് കീവേഡുകളൊന്നും ചേർക്കുന്നില്ല."
 
@@ -608,6 +639,10 @@ msgstr "{issues, plural, one {# പ്രശ്നത്തിന് നിങ�
 #: src/features/share/download.tsx
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {പരിശോധിക്കാൻ # കാര്യമുണ്ട്. നിങ്ങൾക്ക് ഇപ്പോഴും ഡൗൺലോഡ് ചെയ്യാം.} other {പരിശോധിക്കാൻ # കാര്യങ്ങൾ ഉണ്ട്. നിങ്ങൾക്ക് ഇപ്പോഴും ഡൗൺലോഡ് ചെയ്യാം.}}"
+
+#: src/features/applications/stage-actions.ts
+msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
+msgstr ""
 
 #: src/features/applications/next-step.ts
 msgid "{kind} interview"
@@ -861,6 +896,10 @@ msgstr "ഒരു ലിങ്ക് കാണിക്കുന്ന വില
 msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "ഒരു മോഡലിൻ്റെ അഭിപ്രായം, ഒരു വിധിയല്ല. അത് തെറ്റായിരിക്കാം."
 
+#: src/features/career/offer-entry.tsx
+msgid "a month"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
 msgstr "ഒരു അക്ക തീയതി വ്യത്യസ്ത രാജ്യങ്ങളിൽ വ്യത്യസ്തമായി വായിക്കപ്പെടുന്നു."
@@ -896,6 +935,10 @@ msgstr "സമയബന്ധിതമായ പ്ലാൻ, നിങ്ങള
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
 msgstr "ഒരു വെബ് വിലാസം https:// ഇല്ലാതെ എഴുതിയിരിക്കുന്നു."
+
+#: src/features/career/offer-entry.tsx
+msgid "a year"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
@@ -990,8 +1033,11 @@ msgstr "ഒരു രാജ്യം ചേർക്കുക"
 msgid "Add a fact"
 msgstr "ഒരു വസ്തുത ചേർക്കുക"
 
-#: src/features/documents/document-sheets.tsx
 #: src/features/documents/new-document.tsx
+msgid "Add a job"
+msgstr ""
+
+#: src/features/documents/document-sheets.tsx
 msgid "Add a job…"
 msgstr ""
 
@@ -1002,6 +1048,10 @@ msgstr "ഒരു ലിങ്ക് ചേർക്കുക"
 #: src/features/check/issues.ts
 msgid "Add a location"
 msgstr "ഒരു ലൊക്കേഷൻ ചേർക്കുക"
+
+#: src/features/career/offer-entry.tsx
+msgid "Add a newer offer"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Add a note"
@@ -1257,6 +1307,12 @@ msgstr "{name}@example.com പോലെ @ എന്നതിന് ശേഷം 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com പോലെയുള്ള ഡൊമെയ്ൻ അവസാനം ചേർക്കുക"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/applications/next-step.ts
+#: src/features/applications/stage-actions.ts
+msgid "Add the offer's terms"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1570,6 +1626,10 @@ msgstr "ഒരു എൻട്രിക്ക് തീയതികളില്�
 #: src/features/assistant/chat-view.tsx
 msgid "an error"
 msgstr "ഒരു പിശക്"
+
+#: src/features/career/offer-entry.tsx
+msgid "an hour"
+msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
@@ -2186,6 +2246,11 @@ msgstr "ബുള്ളറ്റ് ലിസ്റ്റ്"
 msgid "Burgundy"
 msgstr "ബർഗണ്ടി"
 
+#. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
+#: src/features/applications/next-step.ts
+msgid "By {0}"
+msgstr ""
+
 #: app/(tabs)/settings/index.tsx
 msgid "by <0>Amruth Pillai</0>"
 msgstr "<0>Amruth Pillai</0> തയ്യാറാക്കിയത്"
@@ -2208,6 +2273,7 @@ msgstr "സോഫ്റ്റ്‌വെയറിന് നിങ്ങളു�
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/ats-checker/checker.tsx
+#: src/features/check/job-match.tsx
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
 #: src/features/search/search-screen.tsx
@@ -2658,6 +2724,10 @@ msgstr "അടയ്ക്കുക..."
 msgid "Closed"
 msgstr "അടച്ചു"
 
+#: src/features/applications/stage-actions.ts
+msgid "Closed as Accepted offer"
+msgstr ""
+
 #: src/features/applications-board/insights-screen.tsx
 msgid "Closed: {closed}"
 msgstr "അടച്ചത്: {closed}"
@@ -2710,17 +2780,28 @@ msgstr "ഒതുക്കമുള്ളത്"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/fields.ts
 msgid "Company"
 msgstr "കമ്പനി"
 
+#: src/features/career/offer-entry.tsx
+msgid "Compare"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {company}."
 msgstr "മെച്ചപ്പെടുത്തലുകൾ കാണാനുള്ള നിങ്ങളുടെ ശ്രമങ്ങൾ താരതമ്യം ചെയ്യുക. ഇവ സിമുലേറ്റഡ് പ്രാക്ടീസ് ചോദ്യങ്ങളാണ്, {company}-ൽ നിന്നുള്ള ചോദ്യങ്ങളല്ല."
 
+#: src/features/applications/next-step.ts
+msgid "Compare it with your other offers"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/shell.tsx
 msgid "Compare offers"
 msgstr "ഓഫറുകൾ താരതമ്യം ചെയ്യുക"
@@ -2961,12 +3042,22 @@ msgstr "കോഡ് പകർത്തുക"
 msgid "Copy created"
 msgstr "പകർപ്പ് സൃഷ്ടിച്ചു"
 
+#. placeholder {0}: document.application.company
+#. placeholder {0}: source.application.company
+#: src/features/documents/new-document.tsx
+msgid "Copy for {0}"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Copy for a job…"
 msgstr "ജോലിക്കായി പകർത്തുക..."
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Copy for this job"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Copy made for {company}. This resume is unchanged."
 msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
@@ -3061,6 +3152,10 @@ msgstr "സേവ് സ്ഥിരീകരിക്കാനായില്�
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "സേവ് സ്ഥിരീകരിക്കാനായില്ല. ഡ്യൂപ്ലിക്കേറ്റ് ഒഴിവാക്കാൻ, വീണ്ടും ശ്രമിക്കുന്നതിന് മുമ്പ് അപേക്ഷ പരിശോധിക്കുക."
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't copy the resume. Your edits are kept. Try again."
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
@@ -3322,9 +3417,17 @@ msgstr "കോൺടാക്റ്റുകൾ സേവ് ചെയ്യാ�
 msgid "Couldn't save the follow-up. Try again."
 msgstr "ഫോളോ-അപ്പ് സേവ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job and its copy. Your edits are kept. Try again."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't save the job description. Try again."
 msgstr "ജോലി വിവരണം സേവ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job. Try again."
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't save the notes. Your text is still here."
@@ -3448,6 +3551,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Couldn't update the application. Nothing was changed; try again."
 msgstr "അപേക്ഷ അപ്‌ഡേറ്റ് ചെയ്യാനായില്ല. ഒന്നും മാറ്റിയിട്ടില്ല; വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/applications/stage-actions.ts
+msgid "Couldn't update the applications. Try again."
+msgstr "തൊഴിൽ അപേക്ഷകൾ അപ്‌ഡേറ്റ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't update the interview. Try again."
@@ -4831,8 +4938,8 @@ msgid "For the next round:"
 msgstr "അടുത്ത റൗണ്ടിനായി:"
 
 #: src/features/check/job-match.tsx
-msgid "For this visit only. Link an application to keep its posting here."
-msgstr "ഈ സന്ദർശനത്തിന് മാത്രം. ഇവിടെ ജോലി പോസ്റ്റുചെയ്യുന്നത് നിലനിർത്താൻ ഒരു അപേക്ഷ ലിങ്ക് ചെയ്യുക."
+msgid "For this visit only. Save it as a job to keep it."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "For which job?"
@@ -5538,6 +5645,10 @@ msgstr "ജോലി പൊരുത്തം വായനാക്ഷമത സ
 msgid "Job posting · optional, adds a keyword match"
 msgstr "ജോലി പോസ്റ്റിംഗ് · ഓപ്ഷണൽ, ഒരു കീവേഡ് പൊരുത്തം ചേർക്കുന്നു"
 
+#: src/features/documents/new-document.tsx
+msgid "Job posting (optional)"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Job posting link"
 msgstr "ജോലി പോസ്റ്റിംഗ് ലിങ്ക്"
@@ -5977,6 +6088,10 @@ msgstr "ഒരു ജോബ് ജോബ് ആപ്ലിക്കേഷൻ �
 msgid "Link copied"
 msgstr "ലിങ്ക് പകർത്തി"
 
+#: src/features/check/job-match.tsx
+msgid "Link this resume"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Link to application"
 msgstr "ജോലി അപേക്ഷയിലേക്കുള്ള ലിങ്ക്"
@@ -6199,6 +6314,10 @@ msgstr "തിരയേണ്ടത്"
 msgid "Looks exactly like the page. Use it for applications and email."
 msgstr "പേജ് പോലെ തന്നെ തോന്നുന്നു. ജോലി അപേക്ഷകൾക്കും ഇമെയിലുകൾക്കും ഇത് ഉപയോഗിക്കുക."
 
+#: src/features/check/issues.ts
+msgid "Looks like part of the entry above"
+msgstr ""
+
 #: src/features/design/design-pane.tsx
 msgid "Lower the design sheet"
 msgstr "ഡിസൈൻ ഷീറ്റ് താഴ്ത്തുക"
@@ -6207,6 +6326,10 @@ msgstr "ഡിസൈൻ ഷീറ്റ് താഴ്ത്തുക"
 #: src/features/design/layout-screen.tsx
 msgid "Main"
 msgstr "മെയിൻ"
+
+#: src/features/check/job-match.tsx
+msgid "Make a copy for this job"
+msgstr ""
 
 #: src/features/ai/provider-list.tsx
 msgid "Make default"
@@ -6390,6 +6513,14 @@ msgstr "ആദ്യ മറുപടിക്ക് ഇടത്തരം"
 #: src/features/career/offers.tsx
 msgid "Meets your minimum base salary."
 msgstr "നിങ്ങളുടെ ഏറ്റവും കുറഞ്ഞ അടിസ്ഥാന ശമ്പളം നിറവേറ്റുന്നു."
+
+#: src/features/check/issues.ts
+msgid "Merge into previous entry"
+msgstr ""
+
+#: src/features/check/issues.ts
+msgid "Merged into the entry above"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Message"
@@ -6595,9 +6726,8 @@ msgstr "{1}-ൽ {0} ട്രാഷിലേക്ക് നീക്കി. ല
 
 #. placeholder {0}: getLaneHistoryLabel(lanes.lanes, entry)
 #. placeholder {0}: getLaneLabel(lane)
-#. placeholder {0}: getLaneLabel(target)
 #: src/features/application-detail/sections.tsx
-#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/stage-actions.ts
 msgid "Moved to {0}"
 msgstr "{0}-ലേക്ക് നീക്കി"
 
@@ -7124,6 +7254,10 @@ msgstr "നിങ്ങളുടെ റിസ്യൂമിൽ ഇല്ല"
 msgid "Not in your resume · add only if true"
 msgstr "നിങ്ങളുടെ റെസ്യൂമെയിൽ ഇല്ല · ശരിയാണെങ്കിൽ മാത്രം ചേർക്കുക"
 
+#: src/features/documents/new-document.tsx
+msgid "Not linked to a job"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Not now"
@@ -7274,6 +7408,11 @@ msgstr "ഓഫർ"
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "ജോലി ഓഫർ സേവ് ചെയ്തു"
+
+#. placeholder {0}: target.company
+#: src/features/career/offer-entry.tsx
+msgid "Offer saved. {0} moved to Offer."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
@@ -7764,6 +7903,10 @@ msgstr "താൽക്കാലികമായി നിർത്തി"
 #: src/features/settings/application-profile.tsx
 msgid "Pay period"
 msgstr "ശമ്പള കാലയളവ്"
+
+#: src/features/applications/next-step.ts
+msgid "Pay, deadline and conditions, so you can compare and decide"
+msgstr ""
 
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -8789,6 +8932,10 @@ msgstr "മറുപടി"
 msgid "Reply copied"
 msgstr "മറുപടി പകർത്തി"
 
+#: src/features/applications/next-step.ts
+msgid "Reply to the offer"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Report"
 msgstr "റിപ്പോർട്ട് ചെയ്യുക"
@@ -8839,6 +8986,10 @@ msgstr "ഡിസൈൻ ഡിഫോൾട്ടുകൾ പുനഃസജ്�
 #: src/features/career/offers.tsx
 msgid "Respond by"
 msgstr "മറുപടി നൽകേണ്ട തീയതി"
+
+#: src/features/career/offer-entry.tsx
+msgid "respond by {respondBy}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Response deadline has passed."
@@ -9180,6 +9331,8 @@ msgstr "ശരിയാണ്"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/check/job-match.tsx
+#: src/features/documents/new-document.tsx
 msgid "Role"
 msgstr "തസ്തിക"
 
@@ -9299,6 +9452,10 @@ msgstr ""
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "പാസ്‌വേഡോ അനുമതി നിയന്ത്രണങ്ങളോ ഇല്ലാത്ത, സംരക്ഷിക്കപ്പെടാത്ത ഒരു പകർപ്പ് സേവ് ചെയ്യുക."
 
+#: src/features/check/job-match.tsx
+msgid "Save and link this resume"
+msgstr ""
+
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
 msgstr "സംരക്ഷിച്ച് പരീക്ഷിക്കുക"
@@ -9306,6 +9463,10 @@ msgstr "സംരക്ഷിച്ച് പരീക്ഷിക്കുക"
 #: src/features/career/offers.tsx
 msgid "Save another offer to compare"
 msgstr "താരതമ്യം ചെയ്യാൻ മറ്റൊരു ഓഫർ സേവ് ചെയ്യുക"
+
+#: src/features/check/job-match.tsx
+msgid "Save as a job…"
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "Save changes"
@@ -9336,6 +9497,14 @@ msgstr "അഭിമുഖം സേവ് ചെയ്യുക"
 #: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "ജോലി സംരക്ഷിക്കുക"
+
+#: src/features/documents/new-document.tsx
+msgid "Save job and create copy"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Save job and make a copy"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Save lane"
@@ -9442,6 +9611,10 @@ msgstr "സംരക്ഷിച്ച വിവരണം"
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "Saved to Applications as a saved job, then linked to the copy. No AI request is made."
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -10644,6 +10817,11 @@ msgstr "ടാഗുകൾ സോഫ്റ്റ്‌വെയറിന് വ�
 msgid "Tags…"
 msgstr "ടാഗുകൾ…"
 
+#. placeholder {0}: choice.company
+#: src/features/check/job-match.tsx
+msgid "Tailor a copy for {0} so this resume stays as it is for other jobs, or link this resume itself."
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr ""
@@ -10897,6 +11075,10 @@ msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
 #: src/features/history/history.tsx
