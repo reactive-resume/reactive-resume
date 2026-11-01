@@ -717,7 +717,6 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 				.map((entry) => entry.name)
 				.sort();
 			const owner = "20261031160926_rx106_follow_up_owner";
-			const clock = "20261031174650_rx106_follow_up_clock";
 			const apply = async (name: string) => {
 				const file = new URL(`${name}/migration.sql`, migrations);
 				await upgrade.query((await readFile(file, "utf8")).replaceAll('"public".', ""));
@@ -820,8 +819,9 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 			]);
 			expect(await notifications()).toHaveLength(5);
 
-			await apply(owner);
-			await apply(clock);
+			// Apply the rest of the shipped chain in order, including the clock, RX-98's schema migration and the
+			// forward correction, so this populated upgrade runs against the same composed schema as production.
+			for (const directory of directories.filter((name) => name >= owner)) await apply(directory);
 
 			expect(await scheduleRows()).toEqual([
 				{
