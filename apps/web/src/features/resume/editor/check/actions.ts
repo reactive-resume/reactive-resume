@@ -14,13 +14,24 @@ export function checkStateOf(draft: ResumeData) {
 	return draft.metadata.check;
 }
 
-/** One undo step, confirmed in a toast whose Undo takes it back. */
+/**
+ * One undo step, confirmed in a toast whose Undo takes it back, as the app does. Undo there takes back this change only
+ * while it is still the latest one; after another edit it would undo that edit instead, so it points to the builder's
+ * Undo.
+ */
 export function editWithUndo(edit: (draft: ResumeData) => void, message: string) {
-	const store = useResumeStore.getState();
-	store.updateResumeData(edit, { newStep: true });
+	useResumeStore.getState().updateResumeData(edit, { newStep: true });
+	const changed = useResumeStore.getState().resume?.data;
 	toast.add({
 		description: message,
-		actionProps: { children: t`Undo`, onClick: () => useResumeStore.getState().undo() },
+		actionProps: {
+			children: t`Undo`,
+			onClick: () => {
+				const current = useResumeStore.getState();
+				if (changed && current.resume?.data === changed) current.undo();
+				else toast.add({ description: t`Use the builder's Undo to undo earlier changes.` });
+			},
+		},
 	});
 }
 

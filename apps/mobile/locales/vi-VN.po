@@ -133,6 +133,23 @@ msgstr "{0, plural, other {Đã thay đổi {count} trên # hồ sơ ứng tuy�
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, other {# câu trả lời}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {# application closed as Accepted another offer} other {# applications closed as Accepted another offer}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application closed} other {# applications closed}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#. placeholder {1}: getLaneLabel(lane)
+#. placeholder {2}: getLaneLabel(lane)
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -249,6 +266,16 @@ msgstr "{0, plural, other {Đã ứng tuyển # ngày trước}}"
 #: src/features/career/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, other {Làm cơ sở cho # câu chuyện}}"
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Close it} other {Close all #}}"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
+msgstr ""
 
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
@@ -557,6 +584,10 @@ msgid "{entry} doesn't say when. Dates place it on your timeline."
 msgstr "{entry} không nói khi nào. Ngày đặt nó trên dòng thời gian của bạn."
 
 #: src/features/check/issues.ts
+msgid "{entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job."
+msgstr ""
+
+#: src/features/check/issues.ts
 msgid "{entry} names the role but not what you did, so it adds no keywords."
 msgstr "{entry} đặt tên cho vai trò chứ không phải tên bạn đã làm nên không thêm từ khóa nào."
 
@@ -587,6 +618,10 @@ msgstr "{issues, plural, one {Sự cố # có thể khiến bạn mất một tr
 #: src/features/share/download.tsx
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Kiểm tra có thứ # để xem lại. Bạn vẫn có thể tải xuống.} other {Kiểm tra có # những thứ cần xem lại. Bạn vẫn có thể tải xuống.}}"
+
+#: src/features/applications/stage-actions.ts
+msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
+msgstr ""
 
 #: src/features/applications/next-step.ts
 msgid "{kind} interview"
@@ -836,6 +871,10 @@ msgstr "Một liên kết trỏ đến nơi khác với địa chỉ mà nó hi�
 msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "Ý kiến ​​của một người mẫu, không phải là một phán quyết. Nó có thể sai."
 
+#: src/features/career/offer-entry.tsx
+msgid "a month"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
 msgstr "Một ngày dạng số được đọc khác nhau ở mỗi quốc gia."
@@ -871,6 +910,10 @@ msgstr "Kế hoạch theo thời gian, phần mở đầu của bạn, các câu
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
 msgstr "Một địa chỉ web được viết mà không có https://."
+
+#: src/features/career/offer-entry.tsx
+msgid "a year"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
@@ -960,6 +1003,10 @@ msgstr "Thêm một quốc gia"
 msgid "Add a fact"
 msgstr "Thêm một sự thật"
 
+#: src/features/documents/new-document.tsx
+msgid "Add a job"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "Thêm một liên kết"
@@ -967,6 +1014,10 @@ msgstr "Thêm một liên kết"
 #: src/features/check/issues.ts
 msgid "Add a location"
 msgstr "Thêm vị trí"
+
+#: src/features/career/offer-entry.tsx
+msgid "Add a newer offer"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Add a note"
@@ -1214,6 +1265,12 @@ msgstr "Thêm miền sau @, như {name}@example.com"
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Thêm phần cuối cùng của tên miền, như {domain}.com"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/applications/next-step.ts
+#: src/features/applications/stage-actions.ts
+msgid "Add the offer's terms"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1527,6 +1584,10 @@ msgstr "Một mục không có ngày tháng"
 #: src/features/assistant/chat-view.tsx
 msgid "an error"
 msgstr "một lỗi"
+
+#: src/features/career/offer-entry.tsx
+msgid "an hour"
+msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
@@ -2143,6 +2204,11 @@ msgstr "Danh sách có dấu đầu dòng"
 msgid "Burgundy"
 msgstr "Đỏ rượu vang"
 
+#. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
+#: src/features/applications/next-step.ts
+msgid "By {0}"
+msgstr ""
+
 #: app/(tabs)/settings/index.tsx
 msgid "by <0>Amruth Pillai</0>"
 msgstr "bởi <0>Amruth Pillai</0>"
@@ -2165,6 +2231,7 @@ msgstr "Phần mềm có đọc được sơ yếu lý lịch của bạn không
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/ats-checker/checker.tsx
+#: src/features/check/job-match.tsx
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
 #: src/features/search/search-screen.tsx
@@ -2603,6 +2670,10 @@ msgstr "Đóng…"
 msgid "Closed"
 msgstr "Đã đóng"
 
+#: src/features/applications/stage-actions.ts
+msgid "Closed as Accepted offer"
+msgstr ""
+
 #: src/features/applications-board/insights-screen.tsx
 msgid "Closed: {closed}"
 msgstr "Đã đóng: {closed}"
@@ -2654,17 +2725,28 @@ msgstr "Gọn"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/fields.ts
 msgid "Company"
 msgstr "Công ty"
 
+#: src/features/career/offer-entry.tsx
+msgid "Compare"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {company}."
 msgstr "So sánh những nỗ lực của bạn để xem sự tiến bộ của bạn. Các câu hỏi thực hành được mô phỏng và không đến từ {company}."
 
+#: src/features/applications/next-step.ts
+msgid "Compare it with your other offers"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/shell.tsx
 msgid "Compare offers"
 msgstr "So sánh các lời đề nghị"
@@ -2897,12 +2979,22 @@ msgstr "Sao chép mã"
 msgid "Copy created"
 msgstr "Bản sao đã được tạo"
 
+#. placeholder {0}: document.application.company
+#. placeholder {0}: source.application.company
+#: src/features/documents/new-document.tsx
+msgid "Copy for {0}"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Copy for a job…"
 msgstr "Sao chép cho một công việc…"
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Copy for this job"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Copy made for {company}. This resume is unchanged."
 msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
@@ -2997,6 +3089,10 @@ msgstr "Không thể xác nhận việc lưu. Hãy kiểm tra Hồ sơ ứng tuy
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "Không thể xác nhận việc lưu. Hãy kiểm tra hồ sơ ứng tuyển trước khi thử lại để tránh trùng lặp."
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't copy the resume. Your edits are kept. Try again."
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
@@ -3256,9 +3352,17 @@ msgstr "Không thể lưu danh bạ. Hãy thử lại."
 msgid "Couldn't save the follow-up. Try again."
 msgstr "Không thể lưu nội dung theo dõi. Hãy thử lại."
 
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job and its copy. Your edits are kept. Try again."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't save the job description. Try again."
 msgstr "Không thể lưu mô tả công việc. Hãy thử lại."
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job. Try again."
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't save the notes. Your text is still here."
@@ -3382,6 +3486,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Couldn't update the application. Nothing was changed; try again."
 msgstr "Không thể cập nhật hồ sơ ứng tuyển. Chưa có gì thay đổi; hãy thử lại."
+
+#: src/features/applications/stage-actions.ts
+msgid "Couldn't update the applications. Try again."
+msgstr "Không thể cập nhật đơn xin việc. Hãy thử lại."
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't update the interview. Try again."
@@ -3648,6 +3756,10 @@ msgstr "Tổng kết"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "Phỏng vấn tóm tắt"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -4753,8 +4865,8 @@ msgid "For the next round:"
 msgstr "Cho vòng tiếp theo:"
 
 #: src/features/check/job-match.tsx
-msgid "For this visit only. Link an application to keep its posting here."
-msgstr "Chỉ dành cho lần truy cập này. Liên kết hồ sơ ứng tuyển để giữ bài đăng công việc của mình ở đây."
+msgid "For this visit only. Save it as a job to keep it."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "For which job?"
@@ -5446,6 +5558,10 @@ msgstr "Phù hợp công việc không nằm trong điểm dễ đọc."
 msgid "Job posting · optional, adds a keyword match"
 msgstr "Tin tuyển dụng · tùy chọn, thêm đối chiếu từ khóa"
 
+#: src/features/documents/new-document.tsx
+msgid "Job posting (optional)"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Job posting link"
 msgstr "Liên kết tin tuyển dụng"
@@ -5879,6 +5995,10 @@ msgstr "Liên kết hồ sơ ứng tuyển hoặc dán tin tuyển dụng để 
 msgid "Link copied"
 msgstr "Đã sao chép liên kết"
 
+#: src/features/check/job-match.tsx
+msgid "Link this resume"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Link to application"
 msgstr "Liên kết tới đơn xin việc"
@@ -6096,6 +6216,10 @@ msgstr "Tìm gì"
 msgid "Looks exactly like the page. Use it for applications and email."
 msgstr "Trông giống hệt như trang đó. Dùng cho hồ sơ ứng tuyển và email."
 
+#: src/features/check/issues.ts
+msgid "Looks like part of the entry above"
+msgstr ""
+
 #: src/features/design/design-pane.tsx
 msgid "Lower the design sheet"
 msgstr "Hạ tờ thiết kế xuống"
@@ -6104,6 +6228,10 @@ msgstr "Hạ tờ thiết kế xuống"
 #: src/features/design/layout-screen.tsx
 msgid "Main"
 msgstr "Chính"
+
+#: src/features/check/job-match.tsx
+msgid "Make a copy for this job"
+msgstr ""
 
 #: src/features/ai/provider-list.tsx
 msgid "Make default"
@@ -6287,6 +6415,14 @@ msgstr "trung bình đến câu trả lời đầu tiên"
 #: src/features/career/offers.tsx
 msgid "Meets your minimum base salary."
 msgstr "Đáp ứng mức lương cơ bản tối thiểu của bạn."
+
+#: src/features/check/issues.ts
+msgid "Merge into previous entry"
+msgstr ""
+
+#: src/features/check/issues.ts
+msgid "Merged into the entry above"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Message"
@@ -6491,9 +6627,8 @@ msgstr "Đã chuyển {0} của {1} vào Thùng rác. Các tài liệu bị khó
 
 #. placeholder {0}: getLaneHistoryLabel(lanes.lanes, entry)
 #. placeholder {0}: getLaneLabel(lane)
-#. placeholder {0}: getLaneLabel(target)
 #: src/features/application-detail/sections.tsx
-#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/stage-actions.ts
 msgid "Moved to {0}"
 msgstr "Đã chuyển đến {0}"
 
@@ -7009,6 +7144,10 @@ msgstr "Không có trong sơ yếu lý lịch của bạn"
 msgid "Not in your resume · add only if true"
 msgstr "Không có trong lý lịch của bạn · chỉ thêm nếu đúng"
 
+#: src/features/documents/new-document.tsx
+msgid "Not linked to a job"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Not now"
@@ -7157,6 +7296,11 @@ msgstr "Đề nghị"
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "Đã lưu đề nghị tuyển dụng"
+
+#. placeholder {0}: target.company
+#: src/features/career/offer-entry.tsx
+msgid "Offer saved. {0} moved to Offer."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
@@ -7645,6 +7789,10 @@ msgstr "Đã tạm dừng"
 #: src/features/settings/application-profile.tsx
 msgid "Pay period"
 msgstr "Kỳ trả lương"
+
+#: src/features/applications/next-step.ts
+msgid "Pay, deadline and conditions, so you can compare and decide"
+msgstr ""
 
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -8662,6 +8810,10 @@ msgstr "Thư trả lời"
 msgid "Reply copied"
 msgstr "Đã sao chép thư trả lời"
 
+#: src/features/applications/next-step.ts
+msgid "Reply to the offer"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Report"
 msgstr "Báo cáo"
@@ -8712,6 +8864,10 @@ msgstr "Đặt lại mặc định thiết kế"
 #: src/features/career/offers.tsx
 msgid "Respond by"
 msgstr "Hạn trả lời"
+
+#: src/features/career/offer-entry.tsx
+msgid "respond by {respondBy}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Response deadline has passed."
@@ -9050,6 +9206,8 @@ msgstr "Phải"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/check/job-match.tsx
+#: src/features/documents/new-document.tsx
 msgid "Role"
 msgstr "Vị trí"
 
@@ -9169,6 +9327,10 @@ msgstr ""
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "Lưu một bản không bảo vệ, không mật khẩu và không hạn chế quyền."
 
+#: src/features/check/job-match.tsx
+msgid "Save and link this resume"
+msgstr ""
+
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
 msgstr "Lưu và kiểm tra"
@@ -9176,6 +9338,10 @@ msgstr "Lưu và kiểm tra"
 #: src/features/career/offers.tsx
 msgid "Save another offer to compare"
 msgstr "Lưu thêm một lời đề nghị để so sánh"
+
+#: src/features/check/job-match.tsx
+msgid "Save as a job…"
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "Save changes"
@@ -9206,6 +9372,14 @@ msgstr "Lưu buổi phỏng vấn"
 #: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "Lưu công việc"
+
+#: src/features/documents/new-document.tsx
+msgid "Save job and create copy"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Save job and make a copy"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Save lane"
@@ -9312,6 +9486,10 @@ msgstr "Mô tả đã lưu"
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "Saved to Applications as a saved job, then linked to the copy. No AI request is made."
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -10504,6 +10682,11 @@ msgstr "Thẻ (tags) cung cấp cho phần mềm thứ tự đọc rõ ràng. H�
 msgid "Tags…"
 msgstr "Thẻ…"
 
+#. placeholder {0}: choice.company
+#: src/features/check/job-match.tsx
+msgid "Tailor a copy for {0} so this resume stays as it is for other jobs, or link this resume itself."
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr ""
@@ -10757,6 +10940,10 @@ msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
 #: src/features/history/history.tsx

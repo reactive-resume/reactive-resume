@@ -133,6 +133,23 @@ msgstr "{0, plural, one {지원 #건 중 {count}건이 변경되었습니다.} o
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, other {답변 #개}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {# application closed as Accepted another offer} other {# applications closed as Accepted another offer}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application closed} other {# applications closed}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#. placeholder {1}: getLaneLabel(lane)
+#. placeholder {2}: getLaneLabel(lane)
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -249,6 +266,16 @@ msgstr "{0, plural, other {#일 전 지원}}"
 #: src/features/career/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, other {스토리 #개의 근거}}"
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Close it} other {Close all #}}"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
+msgstr ""
 
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
@@ -557,6 +584,10 @@ msgid "{entry} doesn't say when. Dates place it on your timeline."
 msgstr "{entry}는 언제인지 말하지 않습니다. 날짜는 타임라인에 표시됩니다."
 
 #: src/features/check/issues.ts
+msgid "{entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job."
+msgstr ""
+
+#: src/features/check/issues.ts
 msgid "{entry} names the role but not what you did, so it adds no keywords."
 msgstr "{entry}는 역할의 이름을 지정하지만 사용자가 수행한 작업이 아니므로 키워드를 추가하지 않습니다."
 
@@ -587,6 +618,10 @@ msgstr "{issues, plural, one {# 문제로 인해 일치 비용이 발생할 수 
 #: src/features/share/download.tsx
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {수표에는 검토할 # 항목이 있습니다. 아직 다운로드할 수 있습니다.} other {수표에는 검토할 # 항목이 있습니다. 아직 다운로드할 수 있습니다.}}"
+
+#: src/features/applications/stage-actions.ts
+msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
+msgstr ""
 
 #: src/features/applications/next-step.ts
 msgid "{kind} interview"
@@ -836,6 +871,10 @@ msgstr "링크가 표시된 주소와 다른 곳을 가리키고 있습니다."
 msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "평결이 아닌 모델의 의견입니다. 틀릴 수도 있습니다."
 
+#: src/features/career/offer-entry.tsx
+msgid "a month"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
 msgstr "숫자로만 된 날짜는 국가마다 다르게 해석됩니다."
@@ -871,6 +910,10 @@ msgstr "시간별 계획, 오프닝, 가져갈 스토리와 물어볼 질문. �
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
 msgstr "웹 주소가 https:// 없이 작성되어 있습니다."
+
+#: src/features/career/offer-entry.tsx
+msgid "a year"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
@@ -960,6 +1003,10 @@ msgstr "국가 추가"
 msgid "Add a fact"
 msgstr "사실 추가"
 
+#: src/features/documents/new-document.tsx
+msgid "Add a job"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "링크 추가"
@@ -967,6 +1014,10 @@ msgstr "링크 추가"
 #: src/features/check/issues.ts
 msgid "Add a location"
 msgstr "위치 추가"
+
+#: src/features/career/offer-entry.tsx
+msgid "Add a newer offer"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Add a note"
@@ -1214,6 +1265,12 @@ msgstr "{name}@example.com처럼 @ 뒤에 도메인을 추가하세요."
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com와 같은 도메인 끝자리를 추가하세요."
+
+#: src/features/application-detail/sections.tsx
+#: src/features/applications/next-step.ts
+#: src/features/applications/stage-actions.ts
+msgid "Add the offer's terms"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1527,6 +1584,10 @@ msgstr "항목에 날짜가 없습니다."
 #: src/features/assistant/chat-view.tsx
 msgid "an error"
 msgstr "오류"
+
+#: src/features/career/offer-entry.tsx
+msgid "an hour"
+msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
@@ -2143,6 +2204,11 @@ msgstr "글머리 기호 목록"
 msgid "Burgundy"
 msgstr "버건디"
 
+#. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
+#: src/features/applications/next-step.ts
+msgid "By {0}"
+msgstr ""
+
 #: app/(tabs)/settings/index.tsx
 msgid "by <0>Amruth Pillai</0>"
 msgstr "개발: <0>Amruth Pillai</0>"
@@ -2165,6 +2231,7 @@ msgstr "소프트웨어가 이력서를 읽을 수 있나요?"
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/ats-checker/checker.tsx
+#: src/features/check/job-match.tsx
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
 #: src/features/search/search-screen.tsx
@@ -2603,6 +2670,10 @@ msgstr "닫다…"
 msgid "Closed"
 msgstr "닫은"
 
+#: src/features/applications/stage-actions.ts
+msgid "Closed as Accepted offer"
+msgstr ""
+
 #: src/features/applications-board/insights-screen.tsx
 msgid "Closed: {closed}"
 msgstr "종료됨: {closed}"
@@ -2654,17 +2725,28 @@ msgstr "간결하게"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/fields.ts
 msgid "Company"
 msgstr "회사"
 
+#: src/features/career/offer-entry.tsx
+msgid "Compare"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {company}."
 msgstr "무엇이 개선되었는지 확인하기 위해 시도를 비교하십시오. 연습 문제는 {company}에서가 아닌 시뮬레이션됩니다."
 
+#: src/features/applications/next-step.ts
+msgid "Compare it with your other offers"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/shell.tsx
 msgid "Compare offers"
 msgstr "오퍼 비교"
@@ -2897,12 +2979,22 @@ msgstr "코드 복사"
 msgid "Copy created"
 msgstr "사본이 생성되었습니다."
 
+#. placeholder {0}: document.application.company
+#. placeholder {0}: source.application.company
+#: src/features/documents/new-document.tsx
+msgid "Copy for {0}"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Copy for a job…"
 msgstr "작업용 복사…"
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Copy for this job"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Copy made for {company}. This resume is unchanged."
 msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
@@ -2997,6 +3089,10 @@ msgstr "저장 여부를 확인할 수 없습니다. 중복을 피하려면 다�
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "저장 여부를 확인할 수 없습니다. 중복을 피하려면 다시 시도하기 전에 지원 내용을 확인하세요."
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't copy the resume. Your edits are kept. Try again."
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
@@ -3256,9 +3352,17 @@ msgstr "연락처를 저장할 수 없습니다. 다시 시도해 보세요."
 msgid "Couldn't save the follow-up. Try again."
 msgstr "후속 연락을 저장할 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job and its copy. Your edits are kept. Try again."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't save the job description. Try again."
 msgstr "직무 설명을 저장할 수 없습니다. 다시 시도해 보세요."
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job. Try again."
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't save the notes. Your text is still here."
@@ -3382,6 +3486,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Couldn't update the application. Nothing was changed; try again."
 msgstr "지원을 업데이트할 수 없습니다. 변경된 내용이 없습니다. 다시 시도해 보세요."
+
+#: src/features/applications/stage-actions.ts
+msgid "Couldn't update the applications. Try again."
+msgstr "채용 지원서를 업데이트할 수 없습니다. 다시 시도해 보세요."
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't update the interview. Try again."
@@ -3648,6 +3756,10 @@ msgstr "회고"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "브리핑 인터뷰"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -4753,8 +4865,8 @@ msgid "For the next round:"
 msgstr "다음 라운드를 위해:"
 
 #: src/features/check/job-match.tsx
-msgid "For this visit only. Link an application to keep its posting here."
-msgstr "이번 방문에만 해당됩니다. 채용 공고를 여기에 유지하려면 지원 내역를 연결하세요."
+msgid "For this visit only. Save it as a job to keep it."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "For which job?"
@@ -5446,6 +5558,10 @@ msgstr "직무 일치도는 가독성 점수에 포함되지 않습니다."
 msgid "Job posting · optional, adds a keyword match"
 msgstr "채용 공고 · 선택 사항, 키워드 일치도 추가"
 
+#: src/features/documents/new-document.tsx
+msgid "Job posting (optional)"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Job posting link"
 msgstr "채용 공고 링크"
@@ -5879,6 +5995,10 @@ msgstr "지원 내역를 연결하거나 채용 공고를 붙여넣어 조건을
 msgid "Link copied"
 msgstr "링크가 복사되었습니다"
 
+#: src/features/check/job-match.tsx
+msgid "Link this resume"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Link to application"
 msgstr "입사지원 바로가기"
@@ -6096,6 +6216,10 @@ msgstr "찾을 대상"
 msgid "Looks exactly like the page. Use it for applications and email."
 msgstr "페이지와 정확히 같습니다. 입사 지원서 및 이메일에 사용하세요."
 
+#: src/features/check/issues.ts
+msgid "Looks like part of the entry above"
+msgstr ""
+
 #: src/features/design/design-pane.tsx
 msgid "Lower the design sheet"
 msgstr "디자인 시트를 내리세요"
@@ -6104,6 +6228,10 @@ msgstr "디자인 시트를 내리세요"
 #: src/features/design/layout-screen.tsx
 msgid "Main"
 msgstr "메인"
+
+#: src/features/check/job-match.tsx
+msgid "Make a copy for this job"
+msgstr ""
 
 #: src/features/ai/provider-list.tsx
 msgid "Make default"
@@ -6287,6 +6415,14 @@ msgstr "첫 번째 응답의 중앙값"
 #: src/features/career/offers.tsx
 msgid "Meets your minimum base salary."
 msgstr "최저 기본급을 충족합니다."
+
+#: src/features/check/issues.ts
+msgid "Merge into previous entry"
+msgstr ""
+
+#: src/features/check/issues.ts
+msgid "Merged into the entry above"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Message"
@@ -6491,9 +6627,8 @@ msgstr "{1}의 {0}을(를) 휴지통으로 이동했습니다. 잠긴 문서를 
 
 #. placeholder {0}: getLaneHistoryLabel(lanes.lanes, entry)
 #. placeholder {0}: getLaneLabel(lane)
-#. placeholder {0}: getLaneLabel(target)
 #: src/features/application-detail/sections.tsx
-#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/stage-actions.ts
 msgid "Moved to {0}"
 msgstr "{0}로 이동했습니다."
 
@@ -7009,6 +7144,10 @@ msgstr "이력서에 없음"
 msgid "Not in your resume · add only if true"
 msgstr "이력서에 없음 · 사실인 경우에만 추가하세요"
 
+#: src/features/documents/new-document.tsx
+msgid "Not linked to a job"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Not now"
@@ -7157,6 +7296,11 @@ msgstr "오퍼"
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "오퍼 저장됨"
+
+#. placeholder {0}: target.company
+#: src/features/career/offer-entry.tsx
+msgid "Offer saved. {0} moved to Offer."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
@@ -7645,6 +7789,10 @@ msgstr "일시중지됨"
 #: src/features/settings/application-profile.tsx
 msgid "Pay period"
 msgstr "지급 주기"
+
+#: src/features/applications/next-step.ts
+msgid "Pay, deadline and conditions, so you can compare and decide"
+msgstr ""
 
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -8662,6 +8810,10 @@ msgstr "답장"
 msgid "Reply copied"
 msgstr "답장이 복사되었습니다"
 
+#: src/features/applications/next-step.ts
+msgid "Reply to the offer"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Report"
 msgstr "신고"
@@ -8712,6 +8864,10 @@ msgstr "디자인 기본값 재설정"
 #: src/features/career/offers.tsx
 msgid "Respond by"
 msgstr "회신 기한"
+
+#: src/features/career/offer-entry.tsx
+msgid "respond by {respondBy}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Response deadline has passed."
@@ -9050,6 +9206,8 @@ msgstr "오른쪽"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/check/job-match.tsx
+#: src/features/documents/new-document.tsx
 msgid "Role"
 msgstr "직무"
 
@@ -9169,6 +9327,10 @@ msgstr ""
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "비밀번호와 권한 제한이 없는 보호되지 않은 사본으로 저장하세요."
 
+#: src/features/check/job-match.tsx
+msgid "Save and link this resume"
+msgstr ""
+
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
 msgstr "저장 및 테스트"
@@ -9176,6 +9338,10 @@ msgstr "저장 및 테스트"
 #: src/features/career/offers.tsx
 msgid "Save another offer to compare"
 msgstr "비교할 오퍼를 하나 더 저장하세요"
+
+#: src/features/check/job-match.tsx
+msgid "Save as a job…"
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "Save changes"
@@ -9206,6 +9372,14 @@ msgstr "면접 저장"
 #: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "직업 저장"
+
+#: src/features/documents/new-document.tsx
+msgid "Save job and create copy"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Save job and make a copy"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Save lane"
@@ -9312,6 +9486,10 @@ msgstr "저장된 설명"
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "Saved to Applications as a saved job, then linked to the copy. No AI request is made."
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -10504,6 +10682,11 @@ msgstr "태그는 소프트웨어에 명확한 읽기 순서를 제공합니다.
 msgid "Tags…"
 msgstr "태그…"
 
+#. placeholder {0}: choice.company
+#: src/features/check/job-match.tsx
+msgid "Tailor a copy for {0} so this resume stays as it is for other jobs, or link this resume itself."
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr ""
@@ -10757,6 +10940,10 @@ msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
 #: src/features/history/history.tsx

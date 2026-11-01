@@ -1,3 +1,6 @@
+import type { SavedData, SavedItem } from "./hooks";
+import type { ApplicationSummary } from "@/features/applications/types";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { OfferTerms } from "@reactive-resume/schema/career";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -12,29 +15,125 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { CareerLoadError } from "./load-state";
+import { formatMoney } from "./offer-compare";
 import { useCareerTime } from "./shared";
-import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { getCategoryLane } from "@/features/applications/lanes";
+import {
+	applicationsListQueryKey,
+	applicationsListQueryOptions,
+	savedOffersQueryOptions,
+} from "@/features/applications/queries";
+import { useMoveWithUndo } from "@/features/applications/use-application-actions";
+import { useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { orpc } from "@/libs/orpc/client";
 
-type Application = { id: string; company: string; role: string };
-type OfferEntryProps = { application?: Application; primary?: boolean };
+type Application = { id: string; company: string; role: string; status?: ApplicationStatus | undefined };
+type OfferEntryProps = {
+	application?: Application | undefined;
+	primary?: boolean;
+	/** Open the form at once ("Add the offer's terms" from a move to Offer). */
+	initialOpen?: boolean | undefined;
+	/** Called when the form closes, saved or not. */
+	onDone?: (() => void) | undefined;
+};
+type Offer = SavedItem & { data: SavedData<"offer"> };
+/** A saved offer as the summary needs it: what createOffer returns, or a row from the saved offers list. */
+type OfferLike = Pick<Offer, "id" | "data"> & { application?: { company: string } | null | undefined };
 
-export function OfferEntry({ application, primary = false }: OfferEntryProps) {
-	const [open, setOpen] = useState(false);
-	return open ? (
-		<OfferForm {...(application ? { application } : {})} onClose={() => setOpen(false)} />
-	) : (
-		<Button variant={primary ? "primary" : "secondary"} onClick={() => setOpen(true)}>
-			<Trans>Add offer</Trans>
-		</Button>
+/** Stages before Offer: saving an offer for an application still at one of these moves it to Offer, with Undo. */
+const BEFORE_OFFER: readonly ApplicationStatus[] = ["saved", "applied", "screening", "interview"];
+
+/**
+ * Add offer, and the offer saved last for this application in view as a one-line summary, so saving doesn't make the
+ * terms disappear into Saved.
+ */
+export function OfferEntry({ application, primary = false, initialOpen = false, onDone }: OfferEntryProps) {
+	const [open, setOpen] = useState(initialOpen);
+	const [requested, setRequested] = useState(initialOpen);
+	if (initialOpen !== requested) {
+		setRequested(initialOpen);
+		if (initialOpen) setOpen(true);
+	}
+	const [justSaved, setJustSaved] = useState<OfferLike | null>(null);
+	const offers = useQuery({ ...savedOffersQueryOptions(), enabled: Boolean(application) });
+	const latest: OfferLike | undefined =
+		justSaved ??
+		(application
+			? (offers.data ?? [])
+					.filter((item): item is Offer => item.data.kind === "offer" && item.applicationId === application.id)
+					.toSorted((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
+			: undefined);
+	const close = () => {
+		setOpen(false);
+		onDone?.();
+	};
+
+	return (
+		<div className="grid gap-3">
+			{latest && !open && <OfferSummary offer={latest} />}
+			{open ? (
+				<OfferForm
+					{...(application ? { application } : {})}
+					onClose={close}
+					onSaved={(offer) => {
+						if (offer) setJustSaved(offer);
+						close();
+					}}
+				/>
+			) : (
+				<Button variant={primary ? "primary" : "secondary"} className="w-fit" onClick={() => setOpen(true)}>
+					{latest && application ? <Trans>Add a newer offer</Trans> : <Trans>Add offer</Trans>}
+				</Button>
+			)}
+		</div>
 	);
 }
 
-type OfferFormProps = OfferEntryProps & { onClose: () => void };
-function OfferForm({ application, onClose }: OfferFormProps) {
+const periodLabel = (period: OfferTerms["period"]) =>
+	({ year: t`a year`, month: t`a month`, hour: t`an hour` })[period];
+
+/** "Written offer · €182,000 a year · respond by Thu 12 Nov · Compare" */
+function OfferSummary({ offer }: { offer: OfferLike }) {
+	const { locale, day } = useCareerTime();
+	const { data } = offer;
+	const parts = [
+		data.version === "verbal" ? t`Verbal offer` : t`Written offer`,
+		data.base === null ? null : `${formatMoney(locale, data.currency, data.base)} ${periodLabel(data.period)}`,
+		data.respondBy ? t`respond by ${day(data.respondBy)}` : null,
+	].filter(Boolean);
+
+	return (
+		<div
+			role="status"
+			className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-line bg-surface px-3 py-2.5 text-sm"
+		>
+			<Icon name="scales" size={18} className="text-ink-2" />
+			<span className="min-w-0 flex-1">
+				{offer.application?.company ? <b className="font-semibold">{offer.application.company} · </b> : null}
+				{parts.join(" · ")}
+			</span>
+			<Link
+				to="/dashboard/career/offers"
+				search={{ a: offer.id }}
+				className="text-sm font-medium text-accent-text hover:underline"
+			>
+				<Trans>Compare</Trans>
+			</Link>
+		</div>
+	);
+}
+
+type OfferFormProps = {
+	application?: Application | undefined;
+	onClose: () => void;
+	onSaved: (offer: OfferLike | null) => void;
+};
+function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 	const id = useId();
 	const { locale, timeZone } = useCareerTime();
 	const queryClient = useQueryClient();
+	const moveWithUndo = useMoveWithUndo();
+	const { lanes } = useApplicationLanes();
 	const applications = useQuery({ ...applicationsListQueryOptions(), enabled: !application });
 	const [applicationId, setApplicationId] = useState(application?.id ?? "");
 	const [terms, setTerms] = useState(() => ({
@@ -61,10 +160,28 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 	const showDeadlineError = !!deadlineMessage && (submitted || touched.deadline);
 	const save = useMutation({
 		...orpc.career.createOffer.mutationOptions(),
-		onSuccess: () => {
+		onSuccess: (offer, input) => {
 			void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
-			toast.add({ description: t`Offer saved` });
-			onClose();
+			const row = (
+				applications.data ?? queryClient.getQueryData<ApplicationSummary[]>(applicationsListQueryKey())
+			)?.find((item) => item.id === input.applicationId);
+			const target = application ?? row;
+			const status = application?.status ?? row?.status;
+			if (target && status && BEFORE_OFFER.includes(status)) {
+				// An offer means the application is at Offer; Undo keeps the offer and leaves the stage where it was.
+				moveWithUndo({
+					applications: [{ id: input.applicationId }],
+					lane: getCategoryLane(lanes, "offer"),
+					description: t`Offer saved. ${target.company} moved to Offer.`,
+				});
+			} else {
+				toast.add({ description: t`Offer saved` });
+			}
+			onSaved(
+				offer?.data.kind === "offer"
+					? { id: offer.id, data: offer.data, ...(target ? { application: { company: target.company } } : {}) }
+					: null,
+			);
 		},
 	});
 	const textFields = [

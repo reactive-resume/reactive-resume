@@ -10,7 +10,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const update = vi.hoisted(() => vi.fn().mockResolvedValue({}));
 vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
 vi.mock("@/libs/orpc/client", () => ({
-	orpc: { applications: { update: { mutationOptions: () => ({ mutationFn: update }) } } },
+	orpc: {
+		applications: { update: { mutationOptions: () => ({ mutationFn: update }) } },
+		career: { savedItems: { queryOptions: () => ({ queryKey: ["offers"], queryFn: async () => [] }) } },
+	},
 }));
 vi.mock("../../use-application-actions", () => ({ useInvalidateApplications: () => vi.fn() }));
 

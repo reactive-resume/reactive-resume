@@ -20,7 +20,7 @@ Check updates as you edit. Switch to **Write**, change something, and the score 
 
 ## Read the score
 
-The panel starts with a score from 0 to 100 and a short verdict: **Reads cleanly** (80 and above), **Mostly readable** (50 to 79) or **Hard for software to read** (below 50).
+The panel starts with a score from 0 to 100 and a short verdict: **Reads cleanly** (80 and above), **Mostly readable** (50 to 79) or **Hard for software to read** (below 50). While any entry **Looks like part of the entry above**, the verdict stays **Mostly readable**, whatever the score.
 
 <Frame caption="Check shows issues beside the affected resume">
   <img
@@ -29,7 +29,7 @@ The panel starts with a score from 0 to 100 and a short verdict: **Reads cleanly
   />
 </Frame>
 
-The score is the share of checks your resume passes, for example **19 of 22 checks pass**. There are 22 checks, grouped into five categories:
+The score is the share of checks your resume passes, for example **19 of 23 checks pass**. There are 23 checks, grouped into five categories:
 
 | Category             | What it looks at                                                                                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -37,9 +37,9 @@ The score is the share of checks your resume passes, for example **19 of 22 chec
 | **Dates**            | Every experience and education entry has dates, in a form software reads, that don't run backwards or start in the future.                                                |
 | **Layout**           | Every section with entries is placed on a page, text reads in order (sidebars, multi-column sections), and body text size, line height and page margins aren't too small. |
 | **Section headings** | Headings are ones software looks for, such as Experience, Education and Skills, and some work history shows.                                                              |
-| **Writing**          | Every role describes what you did.                                                                                                                                        |
+| **Writing**          | Every role describes what you did, and no entry is a sentence an import split off the entry above it.                                                                     |
 
-The heading check only runs when your resume's language is English, so resumes in other languages have 21 checks.
+The heading check only runs when your resume's language is English, so resumes in other languages have 22 checks.
 
 <Note>
   The score measures how reliably software can read your resume. It doesn't predict whether you'll be shortlisted.
@@ -71,6 +71,12 @@ The **Issues** tab lists every open issue as a numbered card, most serious first
     Many issues fix in one step. The card's main button says what it does, for example **Hide the photo**, **Use one column**, **Switch to one column** or **Use the standard heading**. A message confirms the change and offers **Undo**.
 
     Other issues need you to write something, such as a missing phone number or a role with no description. Their button, for example **Add a phone number** or **Describe the role**, switches to **Write** and opens the right field.
+
+    After a PDF import, a bullet can arrive as an entry of its own: no dates, and a company or title cut out of a sentence. It ends on a comma or a word such as "by", or starts with a word such as "and". It can also run on for more than 10 words right after a line cut on a comma, a dash or a word such as "by" or "through", or read as prose, opening on an ordinary lower-case word, right after a line left without a full stop. Bullets written without full stops throughout don't count as left open, and a name that starts lower-case, such as **eBay** or **iOS**, isn't prose. Check reports it as **Looks like part of the entry above** instead of asking for dates, because dates would make it look like a separate job. A long or lower-case heading on its own, such as **eBay** or **Senior Vice President of Global Engineering Operations**, is a real entry, and Check asks for its dates. An entry with dates, a link or roles of its own is never reported this way, so merging never loses them. **Merge into previous entry** adds its text to the end of the entry above it and removes it; **Undo** in the message puts it back until you make another edit, and the builder's **Undo** after that. If it really is its own entry, select **Ignore** and add its dates in **Write**.
+
+    <Frame caption="A sentence an import split off the entry above">
+      <img src="/images/guides/checking-your-resume/fragment-entry.webp" alt="Issue card in the Writing category titled Looks like part of the entry above, quoting an entry that ends mid-sentence with processing time by, explaining it has no dates and reads like a sentence cut off the entry above, with Merge into previous entry, Show on page and Ignore" />
+    </Frame>
 
   </Step>
   <Step title="Or set the issue aside">
@@ -106,11 +112,20 @@ The **Job match** tab picks out the terms a job posting stresses and shows which
   <Step title="Give it a posting">
     If the resume is linked to an application that has a saved posting, Job match uses that posting. If the linked application has no posting yet, paste it into the box and select **Save to the application**. Otherwise, choose an application from the list, or paste the posting into the box and select **Match this posting**.
 
-    A pasted posting is kept for this visit only. To keep it, select **Save as application…**, enter the **Company** and **Role**, and select **Save and link**. This creates an application and links the resume to it.
+    A pasted posting is kept for this visit only. To keep it, select **Save as a job…** and enter the **Company** and **Role**. **Save job and make a copy** saves the job and a copy of this resume linked to it, together (if either can't be saved, neither is), and opens the copy on Job match, so you tailor the copy and this resume stays as it is for other jobs. Trying again after a dropped connection doesn't save the job or the copy twice. **Save and link this resume** links this resume itself instead.
+
+    Choosing an application for a resume that isn't that job's copy asks the same thing: **Make a copy for this job** or **Link this resume**. Unsaved edits are saved before the copy is made.
+
+    <Frame caption="Saving a pasted posting as a job, with a copy to tailor">
+      <img src="/images/guides/checking-your-resume/job-match-save-as-job.webp" alt="Job match with a pasted posting, Company Northwind Labs and Role filled in, Save job and make a copy, Save and link this resume and Cancel, above 5 of 19 posting terms appear and the missing and covered terms" />
+    </Frame>
 
   </Step>
   <Step title="Review the terms">
     The tab shows how many posting terms appear, for example **19 of 25 posting terms appear**. Terms under **Not in your resume · add only if true** are missing. Terms under **Already covered** are there already: select one to highlight where it appears on the page.
+
+    The count leaves out what a resume shouldn't claim: the employer's name and the job's location (from the linked application, or from a pasted posting: "Fieldnote is hiring", "Engineer at Fieldnote", or a title's tail after a dash that the posting also names as the employer or that ends like a company name, such as "Acme Corp"; a tail such as "Staff Engineer — Observability" is the field and still counts), plain numbers such as "12+", lines about pay and perks such as salary, equity, holiday and relocation, and single generic words such as "drive", "grow" or "background". A skill that contains one counts whole, such as "big data", "hybrid cloud" or "technical lead", and so does a pair the posting repeats, such as "help desk" or "early childhood". A tool named after one of those words still counts when the posting writes it as a name: "Experience managing Workday" counts Workday. Everyday words that are also tool names, such as "rails" or "next", count only when the posting writes them as a name, such as "Go, Java" or a bullet starting "Go and Kubernetes". This is a word comparison, not a judgement of fit.
+
   </Step>
   <Step title="Add a missing term, if it's true">
     Select a missing term to see how often the posting uses it, then choose:

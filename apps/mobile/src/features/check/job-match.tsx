@@ -1,17 +1,33 @@
+import type { RouterInput } from "@/api/client";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
+import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { editWithUndo } from "./actions";
 import { addSkill, checkStateOf, matchPosting } from "./model";
 import { client } from "@/api/client";
 import { useResumeStore } from "@/draft";
 import { resume } from "@/draft/runtime";
 import { useApplication, useApplications, useInvalidateApplications } from "@/features/applications/queries";
+import { copyForJob } from "@/features/documents/copy-for-job";
 import { routes } from "@/routes";
-import { Banner, Button, Card, Chip, SelectSheet, Sheet, Skeleton, Text, TextArea, useTheme } from "@/ui";
+import {
+	Banner,
+	Button,
+	Card,
+	Chip,
+	SelectSheet,
+	Sheet,
+	Skeleton,
+	Text,
+	TextArea,
+	TextField,
+	showToast,
+	useTheme,
+} from "@/ui";
 
 type JobMatchProps = {
 	id: string;
@@ -21,6 +37,8 @@ type JobMatchProps = {
 	offline: boolean;
 	onTerm: (term: string) => void;
 };
+
+type NewJob = NonNullable<RouterInput["documents"]["copyForJob"]["application"]>;
 
 export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: JobMatchProps) {
 	const router = useRouter();
@@ -33,10 +51,19 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 	const [term, setTerm] = useState<string | null>(null);
 	const [linking, setLinking] = useState(false);
 	const [failed, setFailed] = useState(false);
+	/** A job picked for a resume that isn't its copy, waiting for "make a copy" or "link this resume". */
+	const [choice, setChoice] = useState<{ id: string; company: string } | null>(null);
+	const [saveJob, setSaveJob] = useState<{ company: string; role: string } | null>(null);
+	const [copyFailed, setCopyFailed] = useState<string | null>(null);
 	const controller = useRef<AbortController | null>(null);
 	useEffect(() => () => controller.current?.abort(), []);
 	const posting = applicationId ? (application.data?.jobDescription?.trim() ?? "") : pasted.trim();
-	const match = useMemo(() => (posting ? matchPosting(data, posting) : null), [data, posting]);
+	const company = applicationId ? application.data?.company : undefined;
+	const location = applicationId ? application.data?.location : undefined;
+	const match = useMemo(
+		() => (posting ? matchPosting(data, posting, { company, location }) : null),
+		[data, posting, company, location],
+	);
 	const open = match?.missing.find((entry) => entry.term === term);
 	const link = async (applicationId: string) => {
 		if (controller.current || locked || offline) return;
@@ -69,6 +96,78 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 			if (controller.current === request) controller.current = null;
 		}
 	};
+	/**
+	 * Saves pending edits, copies this resume for the job and opens the copy on Job match; this resume is unchanged. A
+	 * new job is saved with its copy: both land, or neither does. A retry (a lost response, Check opened again) sends
+	 * the same ID, so the copy is made once.
+	 */
+	const makeCopy = async (job: { applicationId: string; company: string } | { application: NewJob }) => {
+		if (controller.current || offline) return;
+		const request = new AbortController();
+		controller.current = request;
+		setLinking(true);
+		setCopyFailed(null);
+		try {
+			await useResumeStore.getState().flush();
+			const ready = useResumeStore.getState();
+			if (request.signal.aborted || ready.document?.id !== id) return;
+			if (ready.conflict || ready.status === "error" || ready.status === "offline") throw new Error("Draft not saved");
+			const copyId = await copyForJob(
+				"application" in job
+					? { resumeId: id, application: job.application }
+					: { resumeId: id, applicationId: job.applicationId },
+				request.signal,
+			);
+			void invalidate();
+			setChoice(null);
+			setSaveJob(null);
+			const company = "application" in job ? job.application.company : job.company;
+			showToast({ message: t`Copy made for ${company}. This resume is unchanged.` });
+			router.replace({ pathname: routes.builder(copyId, "check"), params: { tab: "match" } });
+		} catch {
+			if (!request.signal.aborted)
+				setCopyFailed(
+					"application" in job
+						? t`Couldn't save the job and its copy. Your edits are kept. Try again.`
+						: t`Couldn't copy the resume. Your edits are kept. Try again.`,
+				);
+		} finally {
+			if (!request.signal.aborted) setLinking(false);
+			if (controller.current === request) controller.current = null;
+		}
+	};
+	/** Saves the pasted posting as a job, with its own copy or linked to this resume; a retry saves it once. */
+	const savePosting = async (then: "copy" | "link") => {
+		if (!saveJob || !saveJob.company.trim() || !saveJob.role.trim() || controller.current || offline) return;
+		const text = pasted.trim();
+		const truncated = text.length > 20_000;
+		const job: NewJob = {
+			company: saveJob.company.trim(),
+			role: saveJob.role.trim(),
+			jobDescription: text.slice(0, 20_000),
+			postingSource: { method: "paste", format: "text", truncated, completeness: truncated ? "incomplete" : "unknown" },
+		};
+		if (then === "copy") return void (await makeCopy({ application: job }));
+		const key = `save-job:${id}:${JSON.stringify(job)}`;
+		let jobId: string;
+		try {
+			jobId = await client.applications.create({ ...job, newId: pendingRequestId(key) });
+			settleRequestId(key);
+			void invalidate();
+		} catch {
+			setCopyFailed(t`Couldn't save the job. Try again.`);
+			return;
+		}
+		await link(jobId);
+		setSaveJob(null);
+		setPasted("");
+	};
+	const pick = (value: string) => {
+		const entry = (applications.data ?? []).find((item) => item.id === value);
+		// Unlinking, or picking the job this resume already belongs to, needs no choice.
+		if (!value || !entry || value === applicationId) return void link(value);
+		setChoice({ id: entry.id, company: entry.company });
+	};
 	return (
 		<View style={{ gap: space.s3 }}>
 			{applications.isPending ? (
@@ -91,9 +190,32 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 							label: `${entry.company} · ${entry.role}`,
 						})),
 					]}
-					onChange={(value) => void link(value)}
+					onChange={pick}
 				/>
 			)}
+			{choice && (
+				<Card style={{ gap: space.s2 }}>
+					<Text>{t`Tailor a copy for ${choice.company} so this resume stays as it is for other jobs, or link this resume itself.`}</Text>
+					<Button
+						label={t`Make a copy for this job`}
+						disabled={linking || offline}
+						loading={linking}
+						onPress={() => void makeCopy({ applicationId: choice.id, company: choice.company })}
+					/>
+					<Button
+						variant="secondary"
+						label={t`Link this resume`}
+						disabled={linking || offline || locked}
+						onPress={() => {
+							const target = choice.id;
+							setChoice(null);
+							void link(target);
+						}}
+					/>
+					<Button variant="ghost" label={t`Cancel`} disabled={linking} onPress={() => setChoice(null)} />
+				</Card>
+			)}
+			{copyFailed && <Banner tone="danger" message={copyFailed} />}
 			{failed && (
 				<Banner tone="danger" message={t`Couldn't link the application. Check Applications before retrying.`} />
 			)}
@@ -117,13 +239,55 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 					/>
 				</Card>
 			) : (
-				<TextArea
-					label={t`Paste a job posting`}
-					value={pasted}
-					maxLength={20_000}
-					onChangeText={setPasted}
-					helper={t`For this visit only. Link an application to keep its posting here.`}
-				/>
+				<>
+					<TextArea
+						label={t`Paste a job posting`}
+						value={pasted}
+						maxLength={20_000}
+						onChangeText={setPasted}
+						helper={t`For this visit only. Save it as a job to keep it.`}
+					/>
+					{pasted.trim() && !saveJob && (
+						<Button
+							variant="secondary"
+							label={t`Save as a job…`}
+							disabled={offline}
+							onPress={() => setSaveJob({ company: "", role: "" })}
+						/>
+					)}
+					{pasted.trim() && saveJob && (
+						<Card style={{ gap: space.s2 }}>
+							<TextField
+								label={t`Company`}
+								value={saveJob.company}
+								maxLength={200}
+								editable={!linking}
+								onChangeText={(company) => setSaveJob((current) => current && { ...current, company })}
+							/>
+							<TextField
+								label={t`Role`}
+								value={saveJob.role}
+								maxLength={200}
+								editable={!linking}
+								onChangeText={(role) => setSaveJob((current) => current && { ...current, role })}
+							/>
+							<Text color="ink3">{t`The copy gets the job's posting and keeps this resume as it is for other jobs.`}</Text>
+							<Button
+								label={t`Save job and make a copy`}
+								loading={linking}
+								disabled={linking || offline || !saveJob.company.trim() || !saveJob.role.trim()}
+								onPress={() => void savePosting("copy")}
+							/>
+							<Button
+								variant="secondary"
+								label={t`Save and link this resume`}
+								disabled={linking || offline || locked || !saveJob.company.trim() || !saveJob.role.trim()}
+								onPress={() => void savePosting("link")}
+							/>
+							<Button variant="ghost" label={t`Cancel`} disabled={linking} onPress={() => setSaveJob(null)} />
+						</Card>
+					)}
+				</>
 			)}
 			{!posting ? (
 				<Text color="ink3">

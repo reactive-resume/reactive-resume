@@ -254,8 +254,8 @@ describe.skipIf(!process.env.INTEGRATIONS_TEST_DATABASE_URL)(
 						id,
 						name: `${id} Example`,
 						email: `${id}@example.test`,
-						username: id,
-						displayUsername: id,
+						username: `${schemaName}-${id}`,
+						displayUsername: `${schemaName}-${id}`,
 						emailVerified: true,
 					})),
 				);

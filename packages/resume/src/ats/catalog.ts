@@ -68,6 +68,10 @@ export const ATS_RULE_CATALOG_V1 = {
 		severity: "warning",
 		category: "writing",
 	},
+	FRAGMENTED_ENTRY: {
+		severity: "warning",
+		category: "writing",
+	},
 	NON_STANDARD_SECTION_TITLE: {
 		severity: "info",
 		category: "headings",

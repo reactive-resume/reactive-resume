@@ -28,7 +28,7 @@ import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-a
 import { DocumentCard, DocumentRow } from "./document-card";
 import { LibraryError } from "./library-error";
 import { PageNavigation } from "./page-navigation";
-import { useStartDocument } from "./use-start-document";
+import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { PageHeader } from "@/components/layout/page-header";
 import { useDialogStore } from "@/dialogs/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
@@ -259,7 +259,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			)}
 
 			{failed ? null : firstRun ? (
-				<FirstRun onChooseFile={() => openDialog("document.new", undefined)} />
+				<FirstRun onFile={(file) => openDialog("document.new", { file })} />
 			) : (
 				<>
 					{(tags.length > 0 || hasPublic) && (
@@ -418,12 +418,27 @@ function storeView(view: "grid" | "list") {
 	}
 }
 
-/** The first visit: import is the filled button here, and only here. */
-function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
+type FirstRunProps = { onFile: (file: File) => void };
+
+/** The first visit: import is the filled button here, and only here. Choose a file opens the file picker itself. */
+function FirstRun({ onFile }: FirstRunProps) {
 	const { startBlank, trySample, creating } = useStartDocument();
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	return (
 		<section className="max-w-xl pt-4 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
+			<input
+				ref={inputRef}
+				type="file"
+				accept={IMPORT_ACCEPT}
+				className="hidden"
+				aria-label={t`Choose a file to import`}
+				onChange={(event) => {
+					const file = event.target.files?.[0];
+					event.target.value = "";
+					if (file) onFile(file);
+				}}
+			/>
 			<EmptyState
 				title={<Trans>Let's start with what you have</Trans>}
 				description={
@@ -433,7 +448,7 @@ function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
 					</Trans>
 				}
 				action={
-					<Button onClick={onChooseFile}>
+					<Button onClick={() => inputRef.current?.click()}>
 						<Icon name="file-arrow-up" size={18} />
 						<Trans>Choose a file</Trans>
 					</Button>

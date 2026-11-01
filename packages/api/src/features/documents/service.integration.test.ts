@@ -139,8 +139,8 @@ describe.skipIf(!databaseUrl)("Trash batch operations", () => {
 					id,
 					name: id,
 					email: `${id}@example.test`,
-					username: id,
-					displayUsername: id,
+					username: `${schemaName}-${id}`,
+					displayUsername: `${schemaName}-${id}`,
 				})),
 			);
 		await getDb()
@@ -582,7 +582,7 @@ describe.skipIf(!databaseUrl)("Trash batch operations", () => {
 		});
 
 		const pdf = createPublicResumePdf({
-			username: "alice",
+			username: `${schemaName}-alice`,
 			slug: "public-resume",
 			requestHeaders: new Headers(),
 			trustedClient: "127.0.0.1",

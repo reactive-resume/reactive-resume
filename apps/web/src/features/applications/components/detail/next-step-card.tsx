@@ -3,8 +3,9 @@ import type { InterviewTimelineEntry } from "@reactive-resume/schema/application
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { useId, useState } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
 	DialogContent,
@@ -28,6 +29,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { buildIcs } from "../../ics";
 import { dayKey } from "../../interviews";
 import { describeNextStep, getNextStep } from "../../next-step";
+import { offerHintFor, useOfferHints } from "../../queries";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { useCareerTime } from "@/features/career/shared";
 import { orpc } from "@/libs/orpc/client";
@@ -44,15 +46,23 @@ type NextStepCardProps = {
 export function NextStepCard({ application, onScheduleInterview }: NextStepCardProps) {
 	const { locale, timeZone } = useCareerTime();
 	const [followUpOpen, setFollowUpOpen] = useState(false);
-	const step = getNextStep(application);
+	const hints = useOfferHints(application.status === "offer");
+	const step = getNextStep(application, undefined, offerHintFor(hints, application.id));
 	const text = describeNextStep(step, application, locale, timeZone);
+	const dated =
+		step.kind === "interview" || step.kind === "follow-up" ? step.at : step.kind === "offer" ? step.respondBy : null;
 
 	const addToCalendar = () => {
-		if (step.kind !== "interview" && step.kind !== "follow-up") return;
-		const start = step.at;
+		if (!dated) return;
+		const start = dated;
 		const minutes = step.kind === "interview" ? step.interview.durationMinutes : 30;
 		const ics = buildIcs({
-			uid: step.kind === "interview" ? step.interview.id : `follow-up-${application.id}`,
+			uid:
+				step.kind === "interview"
+					? step.interview.id
+					: step.kind === "offer"
+						? `offer-${application.id}`
+						: `follow-up-${application.id}`,
 			title: `${text.title} · ${application.role}, ${application.company}`,
 			start,
 			end: new Date(start.getTime() + minutes * 60_000),
@@ -105,7 +115,18 @@ export function NextStepCard({ application, onScheduleInterview }: NextStepCardP
 						</DropdownMenu>
 					)}
 				</div>
-				{(step.kind === "interview" || step.kind === "follow-up") && (
+				{step.kind === "offer" && (
+					<Link
+						to={step.terms ? "/dashboard/career/offers" : "/dashboard/applications/$applicationId/{-$tab}"}
+						params={{ applicationId: application.id, tab: "messages" }}
+						search={step.terms ? {} : { offer: "new" as const }}
+						className={buttonVariants({ size: "sm", variant: "ghost", className: "ms-7 w-fit" })}
+					>
+						<Icon name="scales" size={16} />
+						{step.terms ? <Trans>Compare offers</Trans> : <Trans>Add the offer's terms</Trans>}
+					</Link>
+				)}
+				{dated && (
 					<Button size="sm" variant="ghost" className="ms-7 w-fit" onClick={addToCalendar}>
 						<Icon name="calendar-dots" size={16} />
 						<Trans>Add to calendar</Trans>

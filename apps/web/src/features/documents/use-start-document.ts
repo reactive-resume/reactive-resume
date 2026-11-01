@@ -9,6 +9,9 @@ import { useDialogStore } from "@/dialogs/store";
 import { toastError } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
+/** The files Import reads; the first-run picker offers the same ones. */
+export const IMPORT_ACCEPT = ".pdf,.docx,.json,.zip,application/pdf,application/json,application/zip";
+
 // One create at a time across every caller: a click repeated, or a dialog reopened, while one is in flight does nothing.
 let starting = false;
 

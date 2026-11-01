@@ -4,7 +4,7 @@ import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/dat
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
-import { atsRuleCategory } from "@reactive-resume/resume/ats";
+import { atsRuleCategory, mergeIntoPreviousEntry } from "@reactive-resume/resume/ats";
 import { formatList } from "@reactive-resume/utils/locale";
 import { describeEntry, findEntry, getSectionObject, resolveSection } from "../write/model";
 import { getSectionTitle } from "@/libs/resume/section";
@@ -235,6 +235,20 @@ function describeFinding(finding: AtsFinding, data: ResumeData, target: PageMapT
 				title: t`No work experience shows`,
 				body: t`Systems look for an experience section. Projects or volunteering can show the same history.`,
 				fix: { kind: "write", label: t`Add experience`, target: { kind: "section", sectionId: "experience" } },
+			};
+		case "FRAGMENTED_ENTRY":
+			return {
+				title: t`Looks like part of the entry above`,
+				body: t`${entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job.`,
+				fix: {
+					kind: "apply",
+					label: t`Merge into previous entry`,
+					icon: "arrow-up",
+					done: t`Merged into the entry above`,
+					apply: (draft) => {
+						mergeIntoPreviousEntry(draft, finding.pointer);
+					},
+				},
 			};
 		case "MISSING_EXPERIENCE_DESCRIPTION":
 			return {

@@ -34,6 +34,7 @@ export function groupApplications(
 ) {
 	const nextTime = (application: Application) => {
 		const step = getNextStep(application, now);
+		if (step.kind === "offer") return step.respondBy?.getTime() ?? Infinity;
 		return step.kind === "interview" || step.kind === "follow-up" ? step.at.getTime() : Infinity;
 	};
 	const compare = (a: Application, b: Application) => {

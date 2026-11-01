@@ -1,5 +1,8 @@
+import type { OfferHint } from "./next-step";
 import type { Application, ApplicationSummary } from "./types";
 import type { QueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { orpc } from "@/libs/orpc/client";
 
 // A single source of truth for the lightweight applications list query so the query key stays identical
@@ -35,3 +38,29 @@ export function hydrateApplicationDetail(queryClient: QueryClient, summary: Appl
 	// List snapshots render immediately, then refresh on the first detail open.
 	queryClient.setQueryData(detailKey, detail, { updatedAt: 0 });
 }
+
+/** Every saved offer, the one query Career's Offers page shares; Next step reads reply deadlines from it. */
+export const savedOffersQueryOptions = () => orpc.career.savedItems.queryOptions({ input: { kind: "offer" } });
+
+/**
+ * Each application's newest saved offer, as Next step needs it. Undefined until the offers have loaded (or when
+ * they can't), so an application at Offer reads "Decide on the offer" rather than claiming no terms were saved.
+ */
+export function useOfferHints(enabled = true): ReadonlyMap<string, OfferHint> | undefined {
+	const { data } = useQuery({ ...savedOffersQueryOptions(), enabled });
+	return useMemo(() => {
+		if (!data) return undefined;
+		const hints = new Map<string, OfferHint & { at: number }>();
+		for (const item of data) {
+			if (item.data.kind !== "offer" || !item.applicationId) continue;
+			const at = new Date(item.createdAt).getTime();
+			const known = hints.get(item.applicationId);
+			if (!known || at > known.at) hints.set(item.applicationId, { respondBy: item.data.respondBy, at });
+		}
+		return hints;
+	}, [data]);
+}
+
+/** What Next step knows of an application's offer: its hint, null when none is saved, undefined when unknown. */
+export const offerHintFor = (hints: ReadonlyMap<string, OfferHint> | undefined, applicationId: string) =>
+	hints ? (hints.get(applicationId) ?? null) : undefined;

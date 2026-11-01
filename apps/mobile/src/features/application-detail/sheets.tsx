@@ -20,6 +20,7 @@ import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, laneInput, resolveLane } from "@/features/applications/lanes";
 import { PriorNoResponse } from "@/features/applications/prior-no-response";
 import { useApplication, useApplicationMutations } from "@/features/applications/queries";
+import { useAcceptedPrompt } from "@/features/applications/stage-actions";
 import { CLOSED_REASONS, getClosedReasonLabel } from "@/features/applications/stages";
 import { DEFAULT_LEAD, followUpStart, REMINDER_LEADS, useReminders } from "@/features/reminders";
 import {
@@ -63,7 +64,11 @@ function CloseForm({ application, lane: initialLane, onClose }: Omit<Application
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();
 	const lanes = useApplicationLanes();
-	const [reason, setReason] = useState<ApplicationClosedReason>("not-selected");
+	const acceptedPrompt = useAcceptedPrompt();
+	// Closing from Offer is usually accepting it, so that's the default there.
+	const [reason, setReason] = useState<ApplicationClosedReason>(
+		application.status === "offer" ? "accepted" : "not-selected",
+	);
 	const [laneId, setLaneId] = useState(initialLane?.id ?? "");
 	const selectedLane = lanes.active.find((item) => item.id === laneId && item.category === "closed");
 	const lane = selectedLane ?? resolveLane(lanes.lanes, { status: "closed" });
@@ -103,7 +108,8 @@ function CloseForm({ application, lane: initialLane, onClose }: Omit<Application
 						{
 							onSuccess: () => {
 								onClose();
-								showToast({ message: t`Application closed` });
+								if ((lane.closedReason ?? reason) === "accepted") acceptedPrompt(application);
+								else showToast({ message: t`Application closed` });
 							},
 							onError: (error) => showToast({ message: applicationError(error) }),
 						},

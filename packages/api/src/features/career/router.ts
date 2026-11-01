@@ -12,6 +12,7 @@ import {
 	roleSuggestionsOutputSchema,
 } from "@reactive-resume/schema/career";
 import { protectedProcedure } from "../../context";
+import { savedStagesSchema } from "../../dto/application";
 import {
 	careerFactSchema,
 	careerNotificationSchema,
@@ -330,7 +331,13 @@ export const careerRouter = {
 			summary: "Apply suggested changes from a message",
 		})
 		.input(id.extend({ changes: z.array(z.number().int().min(0)).max(4) }))
-		.output(z.void())
+		.output(
+			z.object({
+				stages: savedStagesSchema.describe(
+					"The stage this call saved, with its stage-write ID. Empty on repeats or when no stage changed.",
+				),
+			}),
+		)
 		.handler(({ context, input }) => careerService.applyReply(context.user.id, input.id, input.changes)),
 	fitEvidence: protectedProcedure
 		.route({
@@ -390,7 +397,13 @@ export const careerRouter = {
 					.optional(),
 			}),
 		)
-		.output(z.void())
+		.output(
+			z.object({
+				stages: savedStagesSchema.describe(
+					"The stage this call saved on submission, with its stage-write ID. Empty on accepted retries.",
+				),
+			}),
+		)
 		.handler(({ context, input }) =>
 			careerService.submitApplication(
 				context.user.id,

@@ -30,6 +30,7 @@ import { getLaneLabel, laneInput, resolveLane, visibleLanes } from "@/features/a
 import { filterApplications } from "@/features/applications/list";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { useApplicationMutations, useApplications } from "@/features/applications/queries";
+import { offerHintFor, useOfferHints, useStageMovedToast } from "@/features/applications/stage-actions";
 import { routes } from "@/routes";
 import { useIsTablet } from "@/shell/use-is-tablet";
 import {
@@ -94,6 +95,7 @@ function Board() {
 	const [actionLane, setActionLane] = useState<ApplicationLane | undefined>();
 	const { search } = useApplicationSearch();
 	const { update } = useApplicationMutations();
+	const stageMoved = useStageMovedToast();
 	// One open flag per sheet: a sheet's late dismissal can never close the one that replaced it.
 	const [moving, setMoving] = useState<Application | null>(null);
 	const [moveOpen, setMoveOpen] = useState(false);
@@ -152,7 +154,7 @@ function Board() {
 		update.mutate(
 			{ id: application.id, ...laneInput(lane, laneQuery.supported) },
 			{
-				onSuccess: () => showToast({ message: t`Moved to ${getLaneLabel(lane)}` }),
+				onSuccess: () => stageMoved(application, lane),
 				onError: (error) => {
 					setPending((current) => pendingAfterError(current, application.id, stage));
 					showToast({ message: applicationError(error) });
@@ -572,7 +574,13 @@ function BoardCard({ application, onMove }: BoardCardProps) {
 	const { space } = useTheme();
 	const { timeZone } = useUserTime();
 	const lanes = useApplicationLanes();
-	const next = describeNextStep(getNextStep(application, undefined, lanes.lanes), application, i18n.locale, timeZone);
+	const hints = useOfferHints();
+	const next = describeNextStep(
+		getNextStep(application, undefined, lanes.lanes, offerHintFor(hints, application.id)),
+		application,
+		i18n.locale,
+		timeZone,
+	);
 
 	return (
 		<Card>

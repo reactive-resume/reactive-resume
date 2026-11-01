@@ -5,6 +5,7 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { savedStageIn, stageBaselinesFor } from "@reactive-resume/schema/applications/stage-baselines";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -27,14 +28,19 @@ import { Swap, useCareerTime, withUndo, Working, workingSteps } from "../shared"
 import { AiNotice } from "./fit";
 import { getCategoryLane, getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
-import { useInvalidateApplications } from "@/features/applications/use-application-actions";
+import { offerHintFor, useOfferHints } from "@/features/applications/queries";
+import {
+	listedApplication,
+	STAGE_SCOPE,
+	useInvalidateApplications,
+} from "@/features/applications/use-application-actions";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { orpc } from "@/libs/orpc/client";
 
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
 
 /** W15–W17: paste what the employer wrote, read it, reply, and apply the changes it implies only if you choose. */
-export function MessagesTab({ application, version, now }: WorkspaceTabProps) {
+export function MessagesTab({ application, version, now, offerForm }: WorkspaceTabProps) {
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
 	const readOnly = version?.data.kind === "reply";
@@ -50,7 +56,13 @@ export function MessagesTab({ application, version, now }: WorkspaceTabProps) {
 	return (
 		<div className="grid items-start gap-5 @3xl:grid-cols-[minmax(0,1fr)_280px] @5xl:grid-cols-[minmax(0,1fr)_360px]">
 			<div className="grid gap-4">
-				{!readOnly && <OfferEntry application={application} />}
+				{!readOnly && (
+					<OfferEntry
+						application={application}
+						initialOpen={offerForm?.open ?? false}
+						{...(offerForm ? { onDone: offerForm.onDone } : {})}
+					/>
+				)}
 				<PasteBox
 					key={`paste-${version?.id ?? "live"}`}
 					application={application}
@@ -211,6 +223,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	const invalidate = useInvalidateApplications();
 	const apply = useMutation(orpc.career.applyReply.mutationOptions());
 	const { lanes } = useApplicationLanes();
+	const hints = useOfferHints(application.status === "offer");
 	const changes = reply.data.changes;
 
 	// A stage the application is already at (or can't reach from Saved) is shown fixed: nothing to apply.
@@ -229,7 +242,12 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	const contact = application.contacts[0]?.name.split(" ")[0];
 	const current =
 		application.followUpNote ||
-		describeNextStep(getNextStep(application, now), application, i18n.locale, timeZone).title;
+		describeNextStep(
+			getNextStep(application, now, offerHintFor(hints, application.id)),
+			application,
+			i18n.locale,
+			timeZone,
+		).title;
 
 	const describe = (change: (typeof changes)[number]) => {
 		switch (change.type) {
@@ -276,17 +294,29 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	const onApply = () => {
 		const chosen = ticked;
 		setAppliedNow({ changes: chosen, at: new Date() });
+		// A bulk move of this application chosen while the changes wait behind Undo, or are on their way, starts from
+		// the stage they save.
+		const saved = stageBaselinesFor(queryClient).write(
+			STAGE_SCOPE,
+			application.id,
+			listedApplication(queryClient, application.id),
+		);
 		withUndo({
 			description: t`Application updated`,
-			onUndo: () => setAppliedNow(null),
+			onUndo: () => {
+				saved(undefined);
+				setAppliedNow(null);
+			},
 			commit: () =>
 				apply.mutateAsync({ id: reply.id, changes: chosen }).then(
-					() => {
+					(answer) => {
+						saved(savedStageIn(answer, application.id));
 						invalidate(application.id);
 						void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
 						void queryClient.invalidateQueries({ queryKey: orpc.career.schedules.key() });
 					},
 					() => {
+						saved(undefined);
 						setAppliedNow(null);
 						toast.add({
 							type: "error",

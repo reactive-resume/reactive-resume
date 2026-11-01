@@ -36,7 +36,10 @@ vi.mock("@/libs/orpc/client", () => ({
 			deleteTimelineEntry: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			update: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 		},
-		career: { schedules: { queryOptions: () => ({ queryKey: ["schedules"], queryFn: () => [] }) } },
+		career: {
+			schedules: { queryOptions: () => ({ queryKey: ["schedules"], queryFn: () => [] }) },
+			savedItems: { queryOptions: () => ({ queryKey: ["offers"], queryFn: async () => [] }) },
+		},
 	},
 }));
 

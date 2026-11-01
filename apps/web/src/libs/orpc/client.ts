@@ -1,4 +1,4 @@
-import type { InferRouterOutputs, RouterClient } from "@orpc/server";
+import type { InferRouterInputs, InferRouterOutputs, RouterClient } from "@orpc/server";
 import type router from "@reactive-resume/api/routers";
 import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
@@ -63,3 +63,4 @@ export const streamClient: RouterClient<typeof router> = createORPCClient(
 export const orpc = createTanstackQueryUtils(client);
 
 export type RouterOutput = InferRouterOutputs<typeof router>;
+export type RouterInput = InferRouterInputs<typeof router>;

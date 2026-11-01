@@ -10,6 +10,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { createDefaultOwnedApplicationLanes, MAX_APPLICATION_LANES } from "@reactive-resume/db/application-lanes";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { latestStageEntryId } from "@reactive-resume/schema/applications/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { lockUser } from "../documents/ownership";
 
@@ -83,6 +84,7 @@ function resolveApplicationTransition(
 function applicationStageEntry(
 	transition: Awaited<ReturnType<typeof resolveApplicationTransition>>,
 	at: Date,
+	writeSequence: number,
 ): ApplicationTimelineEntry {
 	return {
 		id: generateId(),
@@ -93,8 +95,24 @@ function applicationStageEntry(
 		laneLabel: transition.lane.label,
 		closedReason: transition.closedReason,
 		canonicalTransition: transition.canonicalTransition,
+		writeSequence,
 	};
 }
+
+/** An application's stage as a write left it, for the client's next move of it: see `savedStagesSchema`. */
+export const savedStageOf = (row: {
+	id: string;
+	status: ApplicationStatus;
+	laneId: string | null;
+	closedReason: ApplicationClosedReason | null;
+	activity: ApplicationTimelineEntry[];
+}) => ({
+	id: row.id,
+	status: row.status,
+	laneId: row.laneId,
+	closedReason: row.closedReason,
+	stageEntryId: latestStageEntryId(row.activity),
+});
 
 /** Caller holds owner/application locks; stage/history/date decisions are shared by every writer. */
 export async function applicationTransitionValues(
@@ -107,6 +125,12 @@ export async function applicationTransitionValues(
 ) {
 	const { lanes } = pipeline ?? (await ensureApplicationPipeline(tx, userId));
 	const transition = resolveApplicationTransition(lanes, input, current);
+	const writeSequence =
+		1 +
+		(current?.activity ?? []).reduce(
+			(sequence, entry) => (entry.type === "stage" ? Math.max(sequence, entry.writeSequence ?? 0) : sequence),
+			0,
+		);
 	return {
 		transition,
 		values: {
@@ -114,7 +138,9 @@ export async function applicationTransitionValues(
 			laneId: transition.laneId,
 			closedReason: transition.closedReason,
 			...(transition.changed
-				? { activity: [...(current?.activity ?? []), applicationStageEntry(transition, at)] }
+				? {
+						activity: [...(current?.activity ?? []), applicationStageEntry(transition, at, writeSequence)],
+					}
 				: {}),
 			...(!current || (transition.canonicalTransition && transition.status === "applied") ? { appliedAt: at } : {}),
 		},

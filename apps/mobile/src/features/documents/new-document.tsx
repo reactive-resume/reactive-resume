@@ -10,6 +10,8 @@ import { useRouter, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { forEachDatedEntry, hasUnreadableDateText } from "@reactive-resume/schema/resume/dates";
+import { copyForJob } from "./copy-for-job";
+import { defaultCopySource } from "./filter";
 import { importDocument, ImportError } from "./import-file";
 import { useNewDocuments } from "./new-documents";
 import { documentError, useDocumentRefresh, useDocuments } from "./queries";
@@ -17,9 +19,12 @@ import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { routes } from "@/routes";
-import { Banner, Button, Card, ListRow, Screen, SelectSheet, Switch, Text, TextField, useTheme } from "@/ui";
+import { Banner, Button, Card, ListRow, Screen, SelectSheet, Switch, Text, TextArea, TextField, useTheme } from "@/ui";
 
 type Step = "choose" | "copy" | "import";
+
+/** The "For which job?" option that adds a job inline instead of picking a saved one. */
+const ADD_JOB = "__add-job";
 
 export function NewDocument() {
 	const router = useRouter();
@@ -41,6 +46,7 @@ export function NewDocument() {
 	const [step, setStep] = useState<Step>(params.step === "copy" ? "copy" : "choose");
 	const [sourceId, setSourceId] = useState<string | null>(params.sourceResumeId ?? null);
 	const [jobId, setJobId] = useState<string | null>(params.applicationId ?? null);
+	const [newJob, setNewJob] = useState<{ company: string; role: string; posting: string } | null>(null);
 	const [name, setName] = useState<string | null>(null);
 	const [aiPdf, setAiPdf] = useState<boolean | null>(null);
 	const [asset, setAsset] = useState<DocumentPickerAsset | null>(null);
@@ -61,11 +67,13 @@ export function NewDocument() {
 		enabled: step === "copy" && session.status === "signed-in",
 	});
 	const resumes = (documents.data ?? []).filter((document) => document.type === "resume");
-	const source = resumes.find((document) => document.id === sourceId) ?? resumes[0];
+	const source = resumes.find((document) => document.id === sourceId) ?? defaultCopySource(resumes);
 	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
-	const job = jobs.find((application) => application.id === jobId);
+	const job = newJob ? undefined : jobs.find((application) => application.id === jobId);
+	const company = newJob ? newJob.company.trim() : job?.company;
+	const newJobReady = !newJob || (!!newJob.company.trim() && !!newJob.role.trim());
 	const suggested = (
-		job ? `${source?.name.split(" — ")[0] ?? ""} — ${job.company}` : t`${source?.name ?? ""} (copy)`
+		company ? `${source?.name.split(" — ")[0] ?? ""} — ${company}` : t`${source?.name ?? ""} (copy)`
 	).slice(0, 100);
 	const cleanupFile = () => {
 		try {
@@ -161,16 +169,43 @@ export function NewDocument() {
 		});
 	const copy = () =>
 		run(async (signal) => {
-			if (!source || !(name ?? suggested).trim()) return;
-			const id = await client.documents.copyForJob(
-				{ resumeId: source.id, name: (name ?? suggested).trim(), ...(job ? { applicationId: job.id } : {}) },
-				{ signal },
-			);
+			if (!source || !(name ?? suggested).trim() || !newJobReady) return;
+			const pasted = newJob?.posting.trim() ?? "";
+			const truncated = pasted.length > 20_000;
+			const input = {
+				resumeId: source.id,
+				name: (name ?? suggested).trim(),
+				...(newJob
+					? {
+							// The job and its copy are saved together, or neither is.
+							application: {
+								company: newJob.company.trim(),
+								role: newJob.role.trim(),
+								...(pasted
+									? {
+											jobDescription: pasted.slice(0, 20_000),
+											postingSource: {
+												method: "paste" as const,
+												format: "text" as const,
+												truncated,
+												completeness: truncated ? ("incomplete" as const) : ("unknown" as const),
+											},
+										}
+									: {}),
+							},
+						}
+					: job
+						? { applicationId: job.id }
+						: {}),
+			};
+			const id = await copyForJob(input, signal);
+			if (newJob) void applications.refetch();
 			if (current(signal)) {
 				const document = { id, type: "resume" as const };
+				const forJob = Boolean(newJob || job);
 				setCreated(document);
 				setApplicationLinked(true);
-				if (job && ai.hasAIProvider) onCopiedForJob(id);
+				if (forJob && ai.hasAIProvider) onCopiedForJob(id);
 				else open(document);
 			}
 		});
@@ -372,13 +407,24 @@ export function NewDocument() {
 									<SelectSheet
 										label={t`Start from`}
 										value={source?.id ?? null}
-										options={resumes.map((document) => ({ value: document.id, label: document.name }))}
+										options={resumes.map((document) => ({
+											value: document.id,
+											label: document.name,
+											description: document.application
+												? t`Copy for ${document.application.company}`
+												: t`Not linked to a job`,
+										}))}
 										disabled={busy}
 										onChange={(id) => {
 											setSourceId(id);
 											setName(null);
 										}}
 									/>
+									{source && (
+										<Text variant="caption" color="ink3">
+											{source.application ? t`Copy for ${source.application.company}` : t`Not linked to a job`}
+										</Text>
+									)}
 									{applications.isError && (
 										<Banner
 											tone="danger"
@@ -388,20 +434,51 @@ export function NewDocument() {
 									)}
 									<SelectSheet
 										label={t`For which job?`}
-										value={job?.id ?? ""}
+										value={newJob ? ADD_JOB : (job?.id ?? "")}
 										options={[
 											{ value: "", label: t`No job yet` },
 											...jobs.map((application) => ({
 												value: application.id,
 												label: `${application.company} · ${application.role}`,
 											})),
+											{ value: ADD_JOB, label: t`Add a job`, icon: "plus" },
 										]}
 										disabled={busy || applications.isPending}
 										onChange={(id) => {
-											setJobId(id || null);
+											setNewJob(id === ADD_JOB ? { company: "", role: "", posting: "" } : null);
+											if (id !== ADD_JOB) setJobId(id || null);
 											setName(null);
 										}}
 									/>
+									{newJob && (
+										<>
+											<TextField
+												label={t`Company`}
+												value={newJob.company}
+												maxLength={200}
+												editable={!busy}
+												onChangeText={(company) => setNewJob((current) => current && { ...current, company })}
+											/>
+											<TextField
+												label={t`Role`}
+												value={newJob.role}
+												maxLength={200}
+												editable={!busy}
+												onChangeText={(role) => setNewJob((current) => current && { ...current, role })}
+											/>
+											<TextArea
+												label={t`Job posting (optional)`}
+												value={newJob.posting}
+												maxLength={100_000}
+												editable={!busy}
+												onChangeText={(posting) => setNewJob((current) => current && { ...current, posting })}
+											/>
+											<Text
+												variant="caption"
+												color="ink3"
+											>{t`Saved to Applications as a saved job, then linked to the copy. No AI request is made.`}</Text>
+										</>
+									)}
 									<TextField
 										label={t`Name`}
 										value={name ?? suggested}
@@ -410,9 +487,10 @@ export function NewDocument() {
 										editable={!busy}
 									/>
 									<Button
-										label={t`Create copy`}
+										label={newJob ? t`Save job and create copy` : t`Create copy`}
 										loading={busy}
 										disabled={
+											!newJobReady ||
 											!source ||
 											!(name ?? suggested).trim() ||
 											(name ?? suggested).length > 100 ||

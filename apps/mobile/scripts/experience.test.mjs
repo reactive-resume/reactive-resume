@@ -29,6 +29,7 @@ const routes = {
 	applications: (view = "list") => (view === "list" ? "/applications" : `/applications/${view}`),
 	new: (context = "documents") => (context === "documents" ? "/new" : `/new?context=${context}`),
 	newJob: () => "/applications?create=1",
+	career: (pane = "today") => `/career/${pane}`,
 };
 const router = { push: (href) => calls.push(href), back() {} };
 const theme = {
@@ -323,6 +324,14 @@ const laneQuery = {
 	useApplicationLanes: () => ({ lanes: defaultLanes, active: defaultLanes, supported: false, ready: true }),
 };
 const nextSteps = load("features/applications/next-step.ts", { "./stages": stages, "./history": history });
+// Offer hints for Next step: none known unless a case sets them.
+let offerHint;
+const stageActionsStub = {
+	useOfferHints: () => undefined,
+	offerHintFor: () => offerHint,
+	useStageMovedToast: () => (moved, lane) => calls.push({ moved: moved.id, lane: lane.category }),
+	acceptedStage: () => null,
+};
 const time = { locale: "en-US", timeZone: "UTC", when: String, time: String, day: String, utcDay: String };
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
 	"@tanstack/react-query": {},
@@ -350,6 +359,7 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"@/features/applications/lane-queries": laneQuery,
 	"@/features/applications/lanes": lanes,
 	"@/features/applications/next-step": nextSteps,
+	"@/features/applications/stage-actions": stageActionsStub,
 	"@/features/applications/stages": stages,
 	"@/features/applications/queries": {
 		useApplicationMutations: () => ({ update: { isPending: false, mutate: (input) => calls.push(input) } }),
@@ -431,6 +441,23 @@ for (const [overrides, label, destination] of [
 	assert.equal(calls.at(-1), `/applications/job-a/${destination}`);
 	if (!overrides.status) assert.ok(!nodes(tree).some((node) => node.props.label === "Schedule an interview"));
 }
+// J2-17: at Offer, Next step asks for the offer's terms (opening the form), then compares once they're saved.
+const atOffer = {
+	...application,
+	status: "offer",
+	activity: [{ id: "earlier", type: "interview", kind: "behavioral", at: "2099-01-01T12:00:00Z", durationMinutes: 60 }],
+};
+offerHint = null;
+reset();
+tree = render(NextStepCard, { application: atOffer, onOpenInterview() {} });
+control(tree, "Add the offer's terms").onPress();
+assert.deepEqual(calls.at(-1), { pathname: "/applications/job-a/messages", params: { offer: "new" } });
+offerHint = { respondBy: null };
+reset();
+tree = render(NextStepCard, { application: atOffer, onOpenInterview() {} });
+control(tree, "Compare offers").onPress();
+assert.equal(calls.at(-1), "/career/offers");
+offerHint = undefined;
 console.log(
 	"PASS file-first sharing, single-flight/current-document/offline PDF export, fallback, explicit stage edits and state-aware next actions",
 );
@@ -451,6 +478,11 @@ const { ApplicationsListScreen } = load("features/applications/list-screen.tsx",
 	"./lanes": lanes,
 	"./list": listLogic,
 	"./next-step": { getNextStep: () => ({}), describeNextStep: () => ({ title: "Saved" }) },
+	"./stage-actions": {
+		offerHintFor: () => undefined,
+		useOfferHints: () => undefined,
+		useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
+	},
 	"./queries": {
 		useApplications: () => ({ data: applications }),
 		useApplicationMutations: () => ({}),
@@ -812,10 +844,17 @@ const { OfferEntry } = load("features/career/offer-entry.tsx", {
 			},
 		}),
 		client: { career: { createOffer: async (input) => calls.push(input) } },
+		useOffers: () => ({ data: [] }),
 	},
+	"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
 	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
 	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
+	"@/features/applications/lane-queries": laneQuery,
+	"@/features/applications/lanes": lanes,
 	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+	"@/features/applications/stage-actions": {
+		useMoveWithUndo: () => (input) => calls.push({ moveWithUndo: input }),
+	},
 });
 reset();
 const entryView = () => render(OfferEntry, { application: { id: "job", company: "Fictional Labs", role: "Engineer" } });
@@ -859,6 +898,24 @@ control(offerView(), "Respond by").onChange("");
 control(offerView(), "Save offer").onPress();
 await settle();
 assert.equal(calls[0].respondBy, null, "a genuinely blank deadline needs no loaded profile");
+// J2-06: saving an offer for an application before Offer moves it there, with Undo.
+calls.length = 0;
+offerProfile = { isSuccess: true, isPending: false, isError: false };
+const appliedEntry = render(OfferEntry, {
+	application: { id: "job", company: "Fictional Labs", role: "Engineer", status: "applied" },
+	initialOpen: true,
+});
+const appliedForm = nodes(appliedEntry).find((node) => typeof node.type === "function" && node.props.onClose);
+assert.ok(appliedForm, "initialOpen shows the form at once");
+reset();
+const appliedView = () => render(appliedForm.type, { ...appliedForm.props, onClose() {} });
+control(appliedView(), "Currency").onChangeText("EUR");
+control(appliedView(), "Save offer").onPress();
+await settle();
+const moved = calls.find((call) => call?.moveWithUndo)?.moveWithUndo;
+assert.deepEqual(moved?.applications, [{ id: "job" }]);
+assert.equal(moved?.lane.category, "offer");
+assert.equal(moved?.message, "Offer saved. Fictional Labs moved to Offer.");
 console.log("PASS native offer validation, draft preservation, profile loading/failure and blank deadline");
 
 // Native Save must stay reachable for validation, then focus the actual missing input.

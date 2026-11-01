@@ -36,6 +36,7 @@ import { buildIcs } from "@/features/applications/ics";
 import { formatDuration, interviewKindOf, isInterview } from "@/features/applications/interviews";
 import { getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
+import { offerHintFor, useOfferHints } from "@/features/applications/queries";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { D1, EASE } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
@@ -46,6 +47,8 @@ export type WorkspaceSearch = {
 	version?: string | undefined;
 	speak?: boolean | undefined;
 	story?: string | undefined;
+	/** Messages opens with the offer form ("Add the offer's terms"). */
+	offer?: "new" | undefined;
 };
 
 /** What every tab receives: the application, and a saved version to show read-only ("Open in Prepare"). */
@@ -60,6 +63,8 @@ export type WorkspaceTabProps = {
 	story?: string | undefined;
 	now: Date;
 	go: (tab: WorkspaceTab, search?: WorkspaceSearch) => void;
+	/** Messages: open the offer form at once, then forget the request once it closes. */
+	offerForm?: { open: boolean; onDone: () => void } | undefined;
 };
 
 const DAY = 86_400_000;
@@ -176,6 +181,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 		go,
 		speak: search.speak === true,
 		story: search.story,
+		offerForm: { open: search.offer === "new", onDone: () => setSearch({ offer: undefined }) },
 	};
 	// Messages shows the newest read message: it waits for a decision while its changes aren't applied.
 	const newestReply = saved.data?.find((item) => item.data.kind === "reply");
@@ -467,7 +473,8 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 		...orpc.documents.list.queryOptions({ input: { trashed: true } }),
 		enabled: hasSentVersion,
 	});
-	const step = getNextStep(application, now);
+	const hints = useOfferHints(application.status === "offer");
+	const step = getNextStep(application, now, offerHintFor(hints, application.id));
 	const text = describeNextStep(step, application, i18n.locale, timeZone);
 	const upcoming = step.kind === "interview" ? step.interview : interview;
 	const soon = upcoming ? minutesUntil(new Date(upcoming.at), now) <= 60 : false;

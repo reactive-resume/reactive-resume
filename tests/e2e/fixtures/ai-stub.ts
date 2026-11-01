@@ -261,6 +261,10 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 				text(message.content).includes("experienced resume reviewer"),
 			);
 			const asksForImprove = parsed.messages.some((message) => text(message.content).includes("You improve one line"));
+			// Reading an employer's message: an invitation to interview, which proposes moving the application there.
+			const asksForReply = parsed.messages.some((message) =>
+				text(message.content).includes("Read the employer's message."),
+			);
 			const content = asksForRoles
 				? JSON.stringify(roles)
 				: asksForFit
@@ -286,7 +290,16 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 							})
 						: asksForImprove
 							? JSON.stringify({ text: "Led fictional delivery work.", why: "Uses a direct verb.", addsFacts: false })
-							: "1";
+							: asksForReply
+								? JSON.stringify({
+										title: "They're inviting you to interview",
+										asks: [],
+										unconfirmed: [],
+										reply: "Thank you, I'd be glad to.",
+										changes: [{ type: "stage", stage: "interview" }],
+										offer: null,
+									})
+								: "1";
 			response.writeHead(200, { "content-type": "application/json" });
 			response.end(
 				JSON.stringify({

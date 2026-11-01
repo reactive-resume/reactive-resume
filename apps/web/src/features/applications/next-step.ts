@@ -22,6 +22,8 @@ type StageSource = Pick<ApplicationSummary, "status" | "activity" | "appliedAt">
  */
 export type NextStep =
 	| { kind: "interview"; interview: InterviewTimelineEntry; at: Date }
+	/** At Offer the offer leads: its reply deadline, deciding on saved terms, or saving the terms first. */
+	| { kind: "offer"; respondBy: Date | null; overdue: boolean; terms: boolean }
 	| { kind: "follow-up"; at: Date; note: string; overdue: boolean }
 	| { kind: "no-reply"; days: number }
 	| { kind: "waiting"; days: number }
@@ -53,8 +55,45 @@ const daysInStage = (application: StageSource, now: Date) =>
 		now,
 	);
 
-export function getNextStep(application: NextStepSource, now = new Date()): NextStep {
+/**
+ * What's known of an application's newest saved offer: its reply deadline. `null` means no offer is saved yet;
+ * leaving it out means it isn't known here (the step then reads as deciding on the offer).
+ */
+export type OfferHint = { respondBy: string | null };
+
+export function getNextStep(
+	application: NextStepSource,
+	now = new Date(),
+	offer?: OfferHint | null | undefined,
+): NextStep {
 	if (application.status === "closed") return { kind: "closed" };
+
+	const followUp = () => {
+		if (!application.followUpAt) return null;
+		const at = new Date(application.followUpAt);
+		return {
+			kind: "follow-up" as const,
+			at,
+			note: application.followUpNote ?? "",
+			overdue: at.getTime() < now.getTime(),
+		};
+	};
+
+	// An interview booked before the offer doesn't come next any more: the offer's reply deadline does, then a
+	// follow-up set for it, then deciding on (or saving) its terms.
+	if (application.status === "offer") {
+		const respondBy = offer?.respondBy ? new Date(offer.respondBy) : null;
+		if (!respondBy) {
+			const step = followUp();
+			if (step) return step;
+		}
+		return {
+			kind: "offer",
+			respondBy,
+			overdue: respondBy ? respondBy.getTime() < now.getTime() : false,
+			terms: offer !== null,
+		};
+	}
 
 	const upcoming = application.activity
 		.filter(isInterview)
@@ -63,10 +102,8 @@ export function getNextStep(application: NextStepSource, now = new Date()): Next
 		.sort((a, b) => a.at.getTime() - b.at.getTime())[0];
 	if (upcoming) return { kind: "interview", ...upcoming };
 
-	if (application.followUpAt) {
-		const at = new Date(application.followUpAt);
-		return { kind: "follow-up", at, note: application.followUpNote ?? "", overdue: at.getTime() < now.getTime() };
-	}
+	const step = followUp();
+	if (step) return step;
 
 	if (application.status === "saved") return { kind: "not-applied" };
 
@@ -104,6 +141,22 @@ export function describeNextStep(
 				tone: "normal",
 			};
 		}
+		case "offer":
+			return step.respondBy
+				? {
+						icon: step.overdue ? "clock" : "calendar-dot",
+						title: t`Reply to the offer`,
+						sub: t`By ${formatWhen(step.respondBy, locale, timeZone, true)}`,
+						tone: step.overdue ? "warn" : "normal",
+					}
+				: step.terms
+					? { icon: "scales", title: t`Decide on the offer`, sub: t`Compare it with your other offers`, tone: "normal" }
+					: {
+							icon: "scales",
+							title: t`Add the offer's terms`,
+							sub: t`Pay, deadline and conditions, so you can compare and decide`,
+							tone: "normal",
+						};
 		case "follow-up":
 			return {
 				icon: step.overdue ? "clock" : "calendar-dot",

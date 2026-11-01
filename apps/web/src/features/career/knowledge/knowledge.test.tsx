@@ -16,6 +16,7 @@ const api = vi.hoisted(() => ({
 	saveStory: vi.fn(),
 	saveFact: vi.fn(),
 	navigate: vi.fn(),
+	moveWithUndo: vi.fn(),
 }));
 vi.mock("@/libs/orpc/client", () => {
 	const endpoint = (name: string) => ({
@@ -92,7 +93,18 @@ vi.mock("@/features/applications/queries", () => ({
 		queryFn: async () => api.data.applications ?? [],
 		retry: false,
 	}),
+	applicationsListQueryKey: () => ["applications"],
+	savedOffersQueryOptions: () => ({
+		queryKey: ["savedItems"],
+		queryFn: async () => api.data.savedItems ?? [],
+		retry: false,
+	}),
 }));
+vi.mock("@/features/applications/use-application-actions", () => ({ useMoveWithUndo: () => api.moveWithUndo }));
+vi.mock("@/features/applications/use-application-lanes", async () => {
+	const { createDefaultApplicationLanes } = await import("@reactive-resume/schema/applications/lanes");
+	return { useApplicationLanes: () => ({ lanes: createDefaultApplicationLanes(), mode: "lanes" }) };
+});
 vi.mock("@reactive-resume/ui/components/toast", () => ({ toast: { add: vi.fn() } }));
 
 import { OfferEntry } from "../offer-entry";
@@ -485,4 +497,59 @@ it("publishes target roles to search consumers only after a successful preferenc
 	await waitFor(() =>
 		expect(clients.at(-1)?.getQueryData(["profile"])).toMatchObject({ targetRoles: ["Reviewed platform engineer"] }),
 	);
+});
+
+it("moves an Applied job to Offer with Undo once its offer is saved, and keeps the terms in view (J2-06)", async () => {
+	const terms = {
+		kind: "offer",
+		version: "written",
+		currency: "EUR",
+		period: "year",
+		base: 182000,
+		variable: null,
+		variableConditions: "",
+		equity: "",
+		location: "",
+		officeDays: null,
+		leave: "",
+		learning: null,
+		other: "",
+		respondBy: null,
+	};
+	api.createOffer.mockResolvedValue({ id: "offer-1", applicationId: "job-a", createdAt: new Date(), data: terms });
+	const done = vi.fn();
+	mount(
+		<OfferEntry
+			application={{ id: "job-a", company: "Fieldnote", role: "VP of Engineering", status: "applied" }}
+			initialOpen
+			onDone={done}
+		/>,
+	);
+	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "EUR" } });
+	fireEvent.change(screen.getByLabelText("Base salary"), { target: { value: "182000" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+
+	await waitFor(() =>
+		expect(api.moveWithUndo).toHaveBeenCalledWith(
+			expect.objectContaining({
+				applications: [{ id: "job-a" }],
+				lane: expect.objectContaining({ category: "offer" }),
+				description: "Offer saved. Fieldnote moved to Offer.",
+			}),
+		),
+	);
+	expect(done).toHaveBeenCalled();
+	const summary = await screen.findByRole("status");
+	expect(summary.textContent).toContain("Written offer");
+	expect(summary.textContent).toContain("€182,000 a year");
+	expect(screen.getByRole("button", { name: "Add a newer offer" })).toBeTruthy();
+});
+
+it("leaves an application already at Offer where it is", async () => {
+	api.createOffer.mockResolvedValue(null);
+	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer", status: "offer" }} initialOpen />);
+	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "EUR" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	await waitFor(() => expect(api.createOffer).toHaveBeenCalled());
+	expect(api.moveWithUndo).not.toHaveBeenCalled();
 });

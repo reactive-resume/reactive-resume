@@ -201,6 +201,10 @@ Use `PATCH` for partial application, interview, timeline-entry and cover-letter 
 
 State-changing operations do not implement `Idempotency-Key`. Treat mutations as unsafe to retry automatically, including requests that timed out: the change might already have happened. Read the current resource before deciding whether to repeat a write. Repeating create, copy, import or AI operations can create duplicates or incur provider charges.
 
+Two creates take an optional `newId`, a UUID you choose: creating an application and copying a resume for a job. Repeating the same request with the same `newId` returns what the first one saved, without saving it again. The same `newId` with a different request, one already used by a resume or application, or one whose copy or job has since been deleted or moved to Trash returns `409` (`CONFLICT`) and changes nothing.
+
+`PATCH /applications` bulk moves take optional `expectedStages`: each application's stage, and the ID of its latest stage change, when you chose the move. An application that has changed since is left as it is. The response lists each moved application's stage as saved, with its latest stage change, to send as the expected stage of a later move. Marking an application as applied (`POST /career/workspace/{applicationId}/submit`) and applying a message's changes (`POST /career/saved/{id}/apply`) answer the same way, with `stages`. When `expectedStages` carries a stage change ID, the lane isn't compared: a lane-only move adds a stage change, and a removed stage's applications moving to its replacement isn't a move.
+
 ## Authentication methods
 
 The API accepts three kinds of credentials:
@@ -297,3 +301,5 @@ Self-hosters upgrading an installation can read [Migrating from v5](/self-hostin
     How large request bodies reach Vercel installations.
   </Card>
 </CardGroup>
+
+Stage events may include a server-assigned `writeSequence`. It records write order independently of the editable `at` date; older events may omit it. Career submission and message-apply `stages` answers acknowledge only the stage written by that call. Accepted repeats return an empty array, so they cannot acknowledge a later move from another device. Reload before making another move after a lost response.

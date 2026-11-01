@@ -1,3 +1,4 @@
+import type { RouterInput } from "@/libs/orpc/client";
 import type { JdTermMatch } from "@reactive-resume/resume/ats-pdf";
 import type { ResumeData, SkillItem } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
@@ -5,6 +6,7 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useId, useMemo, useState } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -15,13 +17,19 @@ import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { formatList } from "@reactive-resume/utils/locale";
-import { generateId } from "@reactive-resume/utils/string";
+import { generateId, pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { checkStateOf, editWithUndo } from "./actions";
 import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
 import { openAssistantFrom } from "@/features/assistant/open";
-import { useCurrentBuilderResumeSelector, useIsResumeLocked, usePatchResume } from "@/features/resume/builder/draft";
+import { useNewDocumentsStore } from "@/features/documents/new-documents";
+import {
+	savePendingChanges,
+	useCurrentBuilderResumeSelector,
+	useIsResumeLocked,
+	usePatchResume,
+} from "@/features/resume/builder/draft";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
@@ -36,7 +44,13 @@ type JobMatchResult = { found: MatchedTerm[]; missing: MatchedTerm[]; total: num
 
 export type JobMatch = {
 	/** The application the resume was made for, once the list has loaded. */
-	application: { id: string; company: string; role: string; jobDescription: string | null } | null;
+	application: {
+		id: string;
+		company: string;
+		role: string;
+		location?: string | null | undefined;
+		jobDescription: string | null;
+	} | null;
 	/** The linked application's posting, or the one pasted this visit when none is linked. */
 	posting: string;
 	result: JobMatchResult | null;
@@ -74,7 +88,12 @@ export function useJobMatch(data: ResumeData | undefined): JobMatch {
 		if (!engine || !posting) return null;
 		const hidden = new Set(hiddenTerms ?? []);
 		const terms = engine
-			.matchJobDescription({ jobDescription: posting, resumeText })
+			.matchJobDescription({
+				jobDescription: posting,
+				resumeText,
+				company: selectedApplication?.company,
+				location: selectedApplication?.location ?? undefined,
+			})
 			.terms.filter((term) => !hidden.has(term.term))
 			.map((term) => ({ ...term, label: termAsWritten(engine.surfaceFormsOf(term.term), posting) ?? term.term }));
 
@@ -83,7 +102,7 @@ export function useJobMatch(data: ResumeData | undefined): JobMatch {
 			missing: terms.filter((term) => term.resumeCount === 0),
 			total: terms.length,
 		};
-	}, [engine, posting, resumeText, hiddenTerms]);
+	}, [engine, posting, resumeText, hiddenTerms, selectedApplication?.company, selectedApplication?.location]);
 
 	return { application: selectedApplication, posting, result, hiddenTerms: hiddenTerms ?? [] };
 }
@@ -313,9 +332,108 @@ function useLinkApplication() {
 	return { link, isPending };
 }
 
+type NewJob = NonNullable<RouterInput["documents"]["copyForJob"]["application"]>;
+
+/**
+ * Copies this resume for a job and opens the copy on Job match, leaving this one as it was. Tailoring then happens on
+ * the job's own copy, never on the base every later copy starts from. Unsaved edits are saved first, so the copy has
+ * what's on screen.
+ */
+function useMakeCopy() {
+	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const markNew = useNewDocumentsStore((state) => state.markNew);
+	const { mutateAsync, isPending } = useMutation(orpc.documents.copyForJob.mutationOptions());
+
+	/** A copy for an existing job, or for a new one saved with it: both land together, or neither does. */
+	const makeCopy = async (job: { applicationId: string; company: string } | { application: NewJob }) => {
+		if (!(await savePendingChanges(resumeId))) {
+			toast.add({ type: "error", description: t`Save this resume's changes before copying it.` });
+			return false;
+		}
+		const input =
+			"application" in job
+				? { resumeId, application: job.application }
+				: { resumeId, applicationId: job.applicationId };
+		const company = "application" in job ? job.application.company : job.company;
+		// A retry (a lost response, a second press, Check opened again) sends the same ID, so it's made once.
+		const key = `copy-for-job:${JSON.stringify(input)}`;
+		try {
+			const copyId = await mutateAsync({ ...input, newId: pendingRequestId(key) });
+			settleRequestId(key);
+			markNew(copyId);
+			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
+			void queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });
+			useEditorStore.setState({ pastedPosting: "" });
+			toast.add({ description: t`Copy made for ${company}. This resume is unchanged.` });
+			// The editor resets when this resume's shell unmounts, so the copy's tab is chosen once it has opened.
+			await navigate({ to: "/builder/$resumeId", params: { resumeId: copyId }, search: { mode: "check" } });
+			useEditorStore.setState({ checkTab: "match" });
+			return true;
+		} catch (error) {
+			toastError(
+				error,
+				"application" in job
+					? t`Couldn't save the job and its copy. Try again.`
+					: t`Couldn't copy the resume. Try again.`,
+			);
+			return false;
+		}
+	};
+
+	return { makeCopy, isPending };
+}
+
+type CopyOrLinkProps = {
+	application: { id: string; company: string; role: string };
+	onDone: () => void;
+};
+
+/**
+ * A job picked for a resume that isn't its copy: make a copy for it (the default, so this resume stays as it is), or
+ * link this resume itself.
+ */
+function CopyOrLink({ application, onDone }: CopyOrLinkProps) {
+	const { link, isPending: linking } = useLinkApplication();
+	const { makeCopy, isPending: copying } = useMakeCopy();
+	const locked = useIsResumeLocked();
+
+	return (
+		<div className={cn(ENTER_CLASS, "grid gap-2 rounded-lg border border-line p-3")}>
+			<p className="text-[13px] leading-[19px] text-ink-2">
+				<Trans>
+					Tailor a copy for {application.company} so this resume stays as it is for other jobs, or link this resume
+					itself.
+				</Trans>
+			</p>
+			<div className="flex flex-wrap gap-1.5">
+				<Button
+					size="sm"
+					disabled={copying || linking}
+					onClick={() => void makeCopy({ applicationId: application.id, company: application.company }).then(onDone)}
+				>
+					<Icon name="copy" size={16} />
+					<Trans>Make a copy for this job</Trans>
+				</Button>
+				<Button
+					size="sm"
+					variant="ghost"
+					disabled={locked || copying || linking}
+					onClick={() => void link(application.id).then(onDone)}
+				>
+					<Trans>Link this resume</Trans>
+				</Button>
+			</div>
+		</div>
+	);
+}
+
 /** Where the posting comes from, with Change (link another application or unlink) or Save as application. */
 function PostingSource({ application }: { application: JobMatch["application"] }) {
 	const [changing, setChanging] = useState(false);
+	const [pickedId, setPickedId] = useState<string | null>(null);
+	const picked = useApplicationChoice(pickedId);
 	const { link } = useLinkApplication();
 
 	if (!application) {
@@ -362,13 +480,17 @@ function PostingSource({ application }: { application: JobMatch["application"] }
 			</div>
 			{changing && (
 				<div className="grid gap-2">
-					<ApplicationPicker
-						value={application.id}
-						onChange={(id) => {
-							setChanging(false);
-							void link(id);
-						}}
-					/>
+					<ApplicationPicker value={picked?.id ?? application.id} onChange={setPickedId} />
+					{picked && picked.id !== application.id && (
+						<CopyOrLink
+							key={picked.id}
+							application={picked}
+							onDone={() => {
+								setChanging(false);
+								setPickedId(null);
+							}}
+						/>
+					)}
 					<Button
 						size="sm"
 						variant="ghost"
@@ -384,6 +506,12 @@ function PostingSource({ application }: { application: JobMatch["application"] }
 			)}
 		</div>
 	);
+}
+
+/** The open application with this id, from the list the picker shows. */
+function useApplicationChoice(id: string | null) {
+	const { data: applications } = useQuery(applicationsListQueryOptions());
+	return id ? ((applications ?? []).find((application) => application.id === id) ?? null) : null;
 }
 
 function ApplicationPicker({ value, onChange }: { value: string | null; onChange: (id: string) => void }) {
@@ -418,7 +546,8 @@ function ApplicationPicker({ value, onChange }: { value: string | null; onChange
 function NoPosting({ application }: { application: JobMatch["application"] }) {
 	const pasted = useEditorStore((state) => state.pastedPosting);
 	const [draft, setDraft] = useState(pasted);
-	const { link, isPending } = useLinkApplication();
+	const [pickedId, setPickedId] = useState<string | null>(null);
+	const picked = useApplicationChoice(pickedId);
 	const queryClient = useQueryClient();
 	const { mutate: savePosting, isPending: saving } = useMutation({
 		...orpc.applications.update.mutationOptions(),
@@ -467,14 +596,10 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 				<Trans>Match against a job</Trans>
 			</strong>
 			<p className="text-[13px] leading-[19px] text-ink-2">
-				<Trans>This resume isn't linked to an application yet.</Trans>
+				<Trans>This resume isn't linked to an application yet. Pick one to make a copy for it.</Trans>
 			</p>
-			<ApplicationPicker value={null} onChange={(id) => void link(id)} />
-			{isPending && (
-				<span className="text-xs text-ink-3">
-					<Trans>Linking…</Trans>
-				</span>
-			)}
+			<ApplicationPicker value={pickedId} onChange={setPickedId} />
+			{picked && <CopyOrLink key={picked.id} application={picked} onDone={() => setPickedId(null)} />}
 			<span className="text-center text-xs text-ink-3">
 				<Trans>or</Trans>
 			</span>
@@ -501,7 +626,10 @@ function NoPosting({ application }: { application: JobMatch["application"] }) {
 	);
 }
 
-/** Saves the pasted posting as a new application (company and role are required) and links the resume to it. */
+/**
+ * Saves the pasted posting as a job (company and role are required). By default the job gets its own copy of this
+ * resume and the copy opens on Job match; linking this resume itself is the secondary choice.
+ */
 function SaveAsApplication() {
 	const [open, setOpen] = useState(false);
 	const [company, setCompany] = useState("");
@@ -510,33 +638,49 @@ function SaveAsApplication() {
 	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const queryClient = useQueryClient();
 	const { link } = useLinkApplication();
-	const { mutateAsync: create, isPending } = useMutation(orpc.applications.create.mutationOptions());
+	const { makeCopy, isPending: copying } = useMakeCopy();
+	const locked = useIsResumeLocked();
+	const { mutateAsync: create, isPending: saving } = useMutation(orpc.applications.create.mutationOptions());
 	const companyId = useId();
+	const busy = copying || saving;
 
 	if (!open) {
 		return (
 			<Button size="sm" variant="ghost" className="w-fit" onClick={() => setOpen(true)}>
 				<Icon name="briefcase" size={16} />
-				<Trans>Save as application…</Trans>
+				<Trans>Save as a job…</Trans>
 			</Button>
 		);
 	}
 
-	const save = async () => {
-		try {
-			const id = await create({
-				company: company.trim(),
-				role: role.trim(),
-				jobDescription: posting.trim().slice(0, MAX_POSTING_CHARS),
-				resumeId,
-			});
-			await queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });
-			await link(id);
-			useEditorStore.setState({ pastedPosting: "" });
-			toast.add({ description: t`Saved as an application and linked` });
-		} catch (error) {
-			toastError(error, t`Couldn't save the application. Try again.`);
+	const pasted = posting.trim();
+	const truncated = pasted.length > MAX_POSTING_CHARS;
+	const job: NewJob = {
+		company: company.trim(),
+		role: role.trim(),
+		jobDescription: pasted.slice(0, MAX_POSTING_CHARS),
+		postingSource: { method: "paste", format: "text", truncated, completeness: truncated ? "incomplete" : "unknown" },
+	};
+
+	const save = async (mode: "copy" | "link") => {
+		if (mode === "copy") {
+			await makeCopy({ application: job });
+			return;
 		}
+		// The job is saved with this resume linked; a retry sends the same ID, so it's saved once.
+		const key = `save-job:${resumeId}:${JSON.stringify(job)}`;
+		let id: string;
+		try {
+			id = await create({ ...job, resumeId, newId: pendingRequestId(key) });
+			settleRequestId(key);
+		} catch (error) {
+			toastError(error, t`Couldn't save the job. Try again.`);
+			return;
+		}
+		await queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });
+		await link(id);
+		useEditorStore.setState({ pastedPosting: "" });
+		toast.add({ description: t`Saved as a job and linked to this resume` });
 	};
 
 	return (
@@ -544,7 +688,7 @@ function SaveAsApplication() {
 			className="grid gap-2"
 			onSubmit={(event) => {
 				event.preventDefault();
-				void save();
+				void save("copy");
 			}}
 		>
 			<div className="grid grid-cols-2 gap-2">
@@ -561,11 +705,23 @@ function SaveAsApplication() {
 					<Input id={`${companyId}-role`} required value={role} onChange={(event) => setRole(event.target.value)} />
 				</div>
 			</div>
-			<div className="flex gap-1.5">
-				<Button size="sm" type="submit" disabled={!company.trim() || !role.trim() || isPending}>
-					<Trans>Save and link</Trans>
+			<p className="text-xs leading-[17px] text-ink-3">
+				<Trans>The copy gets the job's posting and keeps this resume as it is for other jobs.</Trans>
+			</p>
+			<div className="flex flex-wrap gap-1.5">
+				<Button size="sm" type="submit" disabled={!company.trim() || !role.trim() || busy}>
+					<Icon name="copy" size={16} />
+					<Trans>Save job and make a copy</Trans>
 				</Button>
-				<Button size="sm" variant="ghost" onClick={() => setOpen(false)}>
+				<Button
+					size="sm"
+					variant="ghost"
+					disabled={!company.trim() || !role.trim() || busy || locked}
+					onClick={() => void save("link")}
+				>
+					<Trans>Save and link this resume</Trans>
+				</Button>
+				<Button size="sm" variant="ghost" disabled={busy} onClick={() => setOpen(false)}>
 					<Trans>Cancel</Trans>
 				</Button>
 			</div>

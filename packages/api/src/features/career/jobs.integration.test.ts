@@ -125,14 +125,16 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 		fixture.email.mockReset().mockResolvedValue(true);
 		fixture.generate.mockReset().mockResolvedValue({ item: null, answer: null });
 		await pool.query('TRUNCATE "user" CASCADE');
-		await getDb().insert(tables.user).values({
-			id: "alice",
-			name: "Alice Example",
-			email: "alice@example.test",
-			username: "alice",
-			displayUsername: "alice",
-			emailVerified: true,
-		});
+		await getDb()
+			.insert(tables.user)
+			.values({
+				id: "alice",
+				name: "Alice Example",
+				email: "alice@example.test",
+				username: `${schemaName}-alice`,
+				displayUsername: `${schemaName}-alice`,
+				emailVerified: true,
+			});
 	});
 
 	const due = () => new Date(Date.now() - 60_000);

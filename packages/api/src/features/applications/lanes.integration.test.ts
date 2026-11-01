@@ -1,7 +1,8 @@
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
+import type { StageBaseline } from "@reactive-resume/schema/applications/stage-baselines";
 import { randomUUID } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { createRouterClient } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
@@ -126,11 +127,17 @@ describe.skipIf(!databaseUrl)("application lanes: persisted owner and workflow i
 				{
 					id: "alice",
 					name: "Alice Fixture",
-					username: "alice",
-					displayUsername: "alice",
+					username: `${schemaName}-alice`,
+					displayUsername: `${schemaName}-alice`,
 					email: "alice@example.test",
 				},
-				{ id: "bob", name: "Bob Fixture", username: "bob", displayUsername: "bob", email: "bob@example.test" },
+				{
+					id: "bob",
+					name: "Bob Fixture",
+					username: `${schemaName}-bob`,
+					displayUsername: `${schemaName}-bob`,
+					email: "bob@example.test",
+				},
 			]);
 	});
 	async function addLane(label: string, category: ApplicationStatus, closedReason?: "no-response") {
@@ -293,6 +300,924 @@ describe.skipIf(!databaseUrl)("application lanes: persisted owner and workflow i
 		expect(edited.appliedAt).toEqual(before.appliedAt);
 		await applications.update({ userId: "alice", id, laneId: custom.id });
 		expect((await read(id)).activity).toHaveLength(2);
+	});
+
+	it("a deferred bulk move through the router leaves rows whose stage changed since, and moves the rest", async () => {
+		const { applicationsRouter } = await import("./router");
+		const { latestStageEntryId } = await import("@reactive-resume/schema/applications/data");
+		const client = createRouterClient(applicationsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const alpha = await applications.create({ userId: "alice", company: "Alpha", role: "Role", status: "applied" });
+		const beta = await applications.create({ userId: "alice", company: "Beta", role: "Role", status: "applied" });
+		const seen = await Promise.all([read(alpha), read(beta)]);
+		const expectedStages = seen.map((row) => ({
+			id: row.id,
+			status: row.status,
+			laneId: row.laneId,
+			closedReason: row.closedReason,
+		}));
+
+		// The user bulk-moves both to Interview (deferred behind Undo), then moves Alpha to Offer, which is written first.
+		await client.update({ id: alpha, status: "offer" });
+		const result = await client.bulkUpdate({ ids: [alpha, beta], status: "interview", expectedStages });
+
+		expect(result.updated).toBe(1);
+		const [alphaAfter, betaAfter] = await Promise.all([read(alpha), read(beta)]);
+		// Only the moved row comes back, with its stage and stage change as saved.
+		expect(result.stages).toEqual([
+			{
+				id: beta,
+				status: "interview",
+				laneId: betaAfter.laneId,
+				closedReason: null,
+				stageEntryId: latestStageEntryId(betaAfter.activity),
+			},
+		]);
+		expect(alphaAfter.status).toBe("offer");
+		// No Interview step was recorded for the move that lost.
+		expect(
+			alphaAfter.activity
+				.filter((entry) => entry.type === "stage")
+				.map((entry) => entry.stage)
+				.sort(),
+		).toEqual(["applied", "offer"]);
+		expect(betaAfter.status).toBe("interview");
+
+		// Without expected stages (an older client), the move is written as before.
+		await client.bulkUpdate({ ids: [alpha], status: "screening" });
+		expect((await read(alpha)).status).toBe("screening");
+	});
+
+	it("two quick bulk moves of one row from one client are saved in order, the second from what the first saved", async () => {
+		const { applicationsRouter } = await import("./router");
+		const { stageBaselinesFor } = await import("@reactive-resume/schema/applications/stage-baselines");
+		const client = createRouterClient(applicationsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const id = await applications.create({ userId: "alice", company: "Aspen", role: "Lead", status: "applied" });
+		const listed = await read(id);
+		const tracker = stageBaselinesFor({});
+		const commit = async (move: ReturnType<typeof tracker.begin>, status: "interview" | "offer") => {
+			const expectedStages = await Promise.all(
+				[...move.baselines].map(async ([row, baseline]) => ({ id: row, ...(await baseline) })),
+			);
+			const result = await client.bulkUpdate({ ids: [id], status, expectedStages });
+			move.settle(result.stages);
+			return result;
+		};
+
+		// Both moves start from the list as it was (the list shows the first move, not its stage change).
+		const first = tracker.begin("", new Map([[id, listed]]));
+		const second = tracker.begin("", new Map([[id, { ...listed, status: "interview" as const }]]));
+		const [secondResult, firstResult] = await Promise.all([commit(second, "offer"), commit(first, "interview")]);
+
+		expect([firstResult.updated, secondResult.updated]).toEqual([1, 1]);
+		const after = await read(id);
+		expect(after.status).toBe("offer");
+		expect(
+			after.activity
+				.filter((entry) => entry.type === "stage")
+				.map((entry) => entry.stage)
+				.reverse(),
+		).toEqual(["applied", "interview", "offer"]);
+
+		// The list's older timeline alone (a client that doesn't follow its first move) is refused, as before.
+		const stale = { id, status: "interview" as const, laneId: after.laneId, closedReason: null, stageEntryId: null };
+		expect(await client.bulkUpdate({ ids: [id], status: "screening", expectedStages: [stale] })).toMatchObject({
+			updated: 0,
+			stages: [],
+		});
+	});
+
+	it("a bulk move chosen while a single move of the row is on its way is saved after it, from its answer", async () => {
+		const { applicationsRouter } = await import("./router");
+		const { latestStageEntryId } = await import("@reactive-resume/schema/applications/data");
+		const { stageBaselinesFor } = await import("@reactive-resume/schema/applications/stage-baselines");
+		const client = createRouterClient(applicationsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const commit = async (move: { baselines: Map<string, Promise<object>> }, ids: string[], status: "offer") => {
+			const expectedStages = await Promise.all(
+				[...move.baselines].map(async ([row, baseline]) => ({ id: row, ...(await baseline) })),
+			);
+			return client.bulkUpdate({ ids, status, expectedStages: expectedStages as never });
+		};
+		const stagesOf = async (id: string) =>
+			(await read(id)).activity
+				.filter((entry) => entry.type === "stage")
+				.map((entry) => entry.stage)
+				.reverse();
+
+		// The single move is sent first; the bulk move is chosen before its answer, while the list shows it moved.
+		const id = await applications.create({ userId: "alice", company: "Birch", role: "Lead", status: "applied" });
+		const listed = await read(id);
+		const tracker = stageBaselinesFor({});
+		const answered = tracker.write("", id, listed);
+		// The update answers with the application; the app's follower takes its stage from it.
+		const stageOf = (row: {
+			status: StageBaseline["status"];
+			laneId?: string | null | undefined;
+			closedReason: StageBaseline["closedReason"];
+			activity: Parameters<typeof latestStageEntryId>[0];
+		}) => ({
+			status: row.status,
+			laneId: row.laneId ?? null,
+			closedReason: row.closedReason,
+			stageEntryId: latestStageEntryId(row.activity),
+		});
+		const single = client.update({ id, status: "interview" }).then((row) => answered(stageOf(row)));
+		const bulk = tracker.begin("", new Map([[id, { ...listed, status: "interview" as const }]]));
+		await single;
+		expect(await commit(bulk, [id], "offer")).toMatchObject({ updated: 1 });
+		expect(await stagesOf(id)).toEqual(["applied", "interview", "offer"]);
+
+		// The list's older timeline alone (no follow-up of the single move) is refused, as before.
+		const other = await applications.create({ userId: "alice", company: "Cedar", role: "Lead", status: "applied" });
+		const stale = await read(other);
+		await client.update({ id: other, status: "interview" });
+		const unfollowed = stageBaselinesFor({}).begin("", new Map([[other, { ...stale, status: "interview" as const }]]));
+		expect(await commit(unfollowed, [other], "offer")).toMatchObject({ updated: 0 });
+
+		// A move made elsewhere after the single move's answer still wins over the bulk move.
+		const elsewhere = await applications.create({
+			userId: "alice",
+			company: "Dogwood",
+			role: "Lead",
+			status: "applied",
+		});
+		const before = await read(elsewhere);
+		const settleSingle = tracker.write("", elsewhere, before);
+		settleSingle(stageOf(await client.update({ id: elsewhere, status: "interview" })));
+		await client.update({ id: elsewhere, status: "screening" });
+		await client.update({ id: elsewhere, status: "interview" });
+		const late = tracker.begin("", new Map([[elsewhere, { ...before, status: "interview" as const }]]));
+		expect(await commit(late, [elsewhere], "offer")).toMatchObject({ updated: 0 });
+		expect((await read(elsewhere)).status).toBe("interview");
+	});
+
+	it("Career submit and message changes answer with their saved stage, and a bulk move after them is saved", async () => {
+		const { applicationsRouter } = await import("./router");
+		const { careerRouter } = await import("../career/router");
+		const { savedStageIn, stageBaselinesFor } = await import("@reactive-resume/schema/applications/stage-baselines");
+		const context = {
+			locale: "en-US",
+			reqHeaders: new Headers(),
+			authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+		} as never;
+		const apps = createRouterClient(applicationsRouter, { context });
+		const careerClient = createRouterClient(careerRouter, { context });
+		const tracker = stageBaselinesFor({});
+		const bulkTo = async (id: string, listed: Awaited<ReturnType<typeof read>>, status: "interview" | "offer") => {
+			const move = tracker.begin("", new Map([[id, listed]]));
+			const expectedStages = await Promise.all(
+				[...move.baselines].map(async ([row, baseline]) => ({ id: row, ...(await baseline) })),
+			);
+			const result = await apps.bulkUpdate({ ids: [id], status, expectedStages });
+			move.settle(result.stages);
+			return result.updated;
+		};
+		const stagesOf = async (id: string) =>
+			(await read(id)).activity
+				.filter((entry) => entry.type === "stage")
+				.map((entry) => entry.stage)
+				.reverse();
+		const replyFor = async (id: string) => {
+			const version = (await career.context({ userId: "alice", applicationId: id })).version;
+			const reply = await career.saveSavedItem({
+				userId: "alice",
+				applicationId: id,
+				interviewId: null,
+				title: "Interview invitation",
+				data: {
+					kind: "reply",
+					message: "Interview invitation",
+					title: "Interview invitation",
+					asks: [],
+					unconfirmed: [],
+					reply: "",
+					changes: [{ type: "stage", stage: "interview" }],
+					offer: null,
+					applied: null,
+				},
+				evidence: { factIds: [], storyIds: [] },
+				inputVersion: version,
+			});
+			if (!reply) throw new Error("Expected reply");
+			return reply.id;
+		};
+
+		// Mark as applied answers with the stage it saved; the list (still Saved) is behind, the bulk move isn't.
+		const submitted = await applications.create({ userId: "alice", company: "Fir", role: "Lead", status: "saved" });
+		const listedSaved = await read(submitted);
+		const answered = tracker.write("", submitted, listedSaved);
+		const submitAnswer = await careerClient.submitApplication({
+			applicationId: submitted,
+			answers: [],
+			expectedAnswers: [],
+		});
+		expect(submitAnswer.stages).toEqual([
+			expect.objectContaining({ id: submitted, status: "applied", stageEntryId: expect.any(String) }),
+		]);
+		answered(savedStageIn(submitAnswer, submitted));
+		expect(await bulkTo(submitted, listedSaved, "interview")).toBe(1);
+		expect(await stagesOf(submitted)).toEqual(["saved", "applied", "interview"]);
+		// Repeating Mark as applied once the application has moved on is refused, as before.
+		expect(
+			(await careerClient
+				.submitApplication({ applicationId: submitted, answers: [], expectedAnswers: [] })
+				.catch((error: { code?: string }) => error.code)) as unknown,
+		).toBe("CONFLICT");
+
+		// Only the write acknowledges its saved stage; a repeat must not adopt the current row.
+		const replied = await applications.create({ userId: "alice", company: "Hazel", role: "Lead", status: "applied" });
+		const listedApplied = await read(replied);
+		const reply = await replyFor(replied);
+		const saved = tracker.write("", replied, listedApplied);
+		const replyAnswer = await careerClient.applyReply({ id: reply, changes: [0] });
+		expect(replyAnswer.stages).toEqual([expect.objectContaining({ id: replied, status: "interview" })]);
+		expect(await careerClient.applyReply({ id: reply, changes: [0] })).toEqual({ stages: [] });
+		saved(savedStageIn(replyAnswer, replied));
+		expect(await bulkTo(replied, listedApplied, "offer")).toBe(1);
+		expect(await stagesOf(replied)).toEqual(["applied", "interview", "offer"]);
+
+		// The same instrument with the list's older timeline alone (no answer followed, as before) is refused.
+		const unfollowed = await applications.create({ userId: "alice", company: "Ivy", role: "Lead", status: "saved" });
+		const listedUnfollowed = await read(unfollowed);
+		await careerClient.submitApplication({ applicationId: unfollowed, answers: [], expectedAnswers: [] });
+		const blind = stageBaselinesFor({}).begin("", new Map([[unfollowed, listedUnfollowed]]));
+		const blindStages = await Promise.all([...blind.baselines].map(async ([row, b]) => ({ id: row, ...(await b) })));
+		expect(
+			(await apps.bulkUpdate({ ids: [unfollowed], status: "interview", expectedStages: blindStages })).updated,
+		).toBe(0);
+
+		// A move made elsewhere after the Career change's answer still wins over the bulk move.
+		const raced = await applications.create({ userId: "alice", company: "Juniper", role: "Lead", status: "saved" });
+		const listedRaced = await read(raced);
+		const racedAnswer = tracker.write("", raced, listedRaced);
+		racedAnswer(
+			savedStageIn(
+				await careerClient.submitApplication({ applicationId: raced, answers: [], expectedAnswers: [] }),
+				raced,
+			),
+		);
+		await apps.update({ id: raced, status: "screening" });
+		await apps.update({ id: raced, status: "applied" });
+		expect(await bulkTo(raced, listedRaced, "interview")).toBe(0);
+		expect((await read(raced)).status).toBe("applied");
+	});
+
+	it("a retired lane doesn't stop a bulk move that checks stage changes, and an older client still checks the lane", async () => {
+		const { applicationsRouter } = await import("./router");
+		const client = createRouterClient(applicationsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const { latestStageEntryId } = await import("@reactive-resume/schema/applications/data");
+		const takeHome = await addLane("Take-home", "interview");
+		const replacement = await addLane("Panel", "interview");
+		const id = await applications.create({ userId: "alice", company: "Kauri", role: "Lead", laneId: takeHome.id });
+		const other = await applications.create({ userId: "alice", company: "Larch", role: "Lead", laneId: takeHome.id });
+		const listed = await Promise.all([read(id), read(other)]);
+		// The lane is retired (settings, not a move) after the list was read.
+		const pipeline = await lanes.get("alice");
+		await lanes.retire("alice", {
+			id: takeHome.id,
+			replacementId: replacement.id,
+			expectedRevision: pipeline.revision,
+		});
+		const [row, olderRow] = listed;
+		if (!row || !olderRow) throw new Error("Expected rows");
+
+		const checked = await client.bulkUpdate({
+			ids: [id],
+			status: "offer",
+			expectedStages: [
+				{
+					id,
+					status: row.status,
+					laneId: row.laneId,
+					closedReason: null,
+					stageEntryId: latestStageEntryId(row.activity),
+				},
+			],
+		});
+		const older = await client.bulkUpdate({
+			ids: [other],
+			status: "offer",
+			expectedStages: [{ id: other, status: olderRow.status, laneId: olderRow.laneId, closedReason: null }],
+		});
+		expect([checked.updated, older.updated]).toEqual([1, 0]);
+		expect((await read(id)).status).toBe("offer");
+		// A lane-only move elsewhere adds a stage change, so it still wins over a bulk move that checks stage changes.
+		const third = await applications.create({
+			userId: "alice",
+			company: "Maple",
+			role: "Lead",
+			laneId: replacement.id,
+		});
+		const thirdListed = await read(third);
+		await client.update({ id: third, laneId: "application-lane:alice:interview" });
+		const laneMoved = await client.bulkUpdate({
+			ids: [third],
+			status: "offer",
+			expectedStages: [
+				{
+					id: third,
+					status: thirdListed.status,
+					laneId: thirdListed.laneId,
+					closedReason: null,
+					stageEntryId: latestStageEntryId(thirdListed.activity),
+				},
+			],
+		});
+		expect(laneMoved.updated).toBe(0);
+	});
+
+	it("a deferred bulk move leaves a row moved away and back since, but not one only edited since", async () => {
+		const { applicationsRouter } = await import("./router");
+		const { latestStageEntryId } = await import("@reactive-resume/schema/applications/data");
+		const client = createRouterClient(applicationsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const alpha = await applications.create({ userId: "alice", company: "Alpha", role: "Role", status: "applied" });
+		const beta = await applications.create({ userId: "alice", company: "Beta", role: "Role", status: "saved" });
+		// Beta has two stage changes; the API lists them newest first, the stored timeline oldest first.
+		await client.update({ id: beta, status: "applied" });
+		const seen = await Promise.all([read(alpha), read(beta)]);
+		const expectedStages = seen.map((row) => ({
+			id: row.id,
+			status: row.status,
+			laneId: row.laneId,
+			closedReason: row.closedReason,
+			stageEntryId: latestStageEntryId(row.activity),
+		}));
+
+		// Inside the Undo window Alpha goes to Offer and back to Applied; Beta only gets a note.
+		await client.update({ id: alpha, status: "offer" });
+		await client.update({ id: alpha, status: "applied" });
+		await client.addNote({ id: beta, text: "Recruiter called" });
+		const alphaBefore = await read(alpha);
+		const result = await client.bulkUpdate({ ids: [alpha, beta], status: "interview", expectedStages });
+
+		expect(result.updated).toBe(1);
+		expect(result.stages.map((stage) => stage.id)).toEqual([beta]);
+		const alphaAfter = await read(alpha);
+		expect(alphaAfter.status).toBe("applied");
+		expect(alphaAfter.activity).toEqual(alphaBefore.activity);
+		expect(alphaAfter.updatedAt).toEqual(alphaBefore.updatedAt);
+		expect((await read(beta)).status).toBe("interview");
+	});
+
+	describe("stage write order before noon UTC", () => {
+		beforeEach(() => vi.useFakeTimers({ toFake: ["Date"] }).setSystemTime(new Date("2026-11-01T08:00:00Z")));
+		afterEach(() => vi.useRealTimers());
+		const clients = async () => {
+			const context = {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never;
+			return {
+				apps: createRouterClient((await import("./router")).applicationsRouter, { context }),
+				careerClient: createRouterClient((await import("../career/router")).careerRouter, { context }),
+			};
+		};
+		const replyFor = async (id: string) => {
+			const item = await career.saveSavedItem({
+				userId: "alice",
+				applicationId: id,
+				interviewId: null,
+				title: "Interview invitation",
+				data: {
+					kind: "reply",
+					message: "Interview invitation",
+					title: "Interview invitation",
+					asks: [],
+					unconfirmed: [],
+					reply: "",
+					changes: [{ type: "stage", stage: "interview" }],
+					offer: null,
+					applied: null,
+				},
+				evidence: { factIds: [], storyIds: [] },
+				inputVersion: (await career.context({ userId: "alice", applicationId: id })).version,
+			});
+			if (!item) throw new Error("Expected reply");
+			return item.id;
+		};
+		const checked = async (id: string) => {
+			const row = await read(id);
+			return {
+				id,
+				status: row.status,
+				laneId: row.laneId,
+				closedReason: row.closedReason,
+				stageEntryId: (await import("@reactive-resume/schema/applications/data")).latestStageEntryId(row.activity),
+			};
+		};
+		const stored = async (id: string) =>
+			(await pool.query("SELECT status, lane_id, activity FROM application WHERE id = $1", [id])).rows[0];
+
+		it.each(["dated", "undated"] as const)(
+			"%s: outside lane-only and ABA win; notes and retirement still allow bulk",
+			async (kind) => {
+				const { apps } = await clients();
+				const referral = await addLane("Referral", "applied");
+				const replacement = await addLane("Referral replacement", "applied");
+				const ids = await Promise.all(
+					["lane", "aba", "notes", "retire"].map((company) =>
+						apps.create({
+							company,
+							role: "Lead",
+							status: "applied",
+							...(company === "retire" ? { laneId: referral.id } : {}),
+							...(kind === "dated" ? { stageEnteredAt: "2026-11-01" } : {}),
+						}),
+					),
+				);
+				const [lane, aba, notes, retired] = ids as [string, string, string, string];
+				const expectedStages = await Promise.all(ids.map(checked));
+				await apps.update({ id: lane, laneId: referral.id, stageEnteredAt: "2026-10-30" });
+				await apps.update({ id: aba, status: "screening" });
+				await apps.update({ id: aba, status: "applied" });
+				await apps.addNote({ id: notes, text: "Keep this note" });
+				await apps.lanes.retire({
+					id: referral.id,
+					replacementId: replacement.id,
+					expectedRevision: (await lanes.get("alice")).revision,
+				});
+				const outside = await Promise.all([stored(lane), stored(aba)]);
+				const result = await apps.bulkUpdate({ ids, status: "interview", expectedStages });
+				expect(result.updated).toBe(2);
+				expect(result.stages.map((stage) => stage.id).sort()).toEqual([notes, retired].sort());
+				expect(await Promise.all([stored(lane), stored(aba)])).toEqual(outside);
+				expect((await stored(lane)).lane_id).toBe(replacement.id);
+				expect(
+					(await stored(aba)).activity
+						.filter((e: { type: string }) => e.type === "stage")
+						.map((e: { stage: string }) => e.stage),
+				).toEqual(["applied", "screening", "applied"]);
+				expect((await stored(notes)).status).toBe("interview");
+				expect((await stored(retired)).status).toBe("interview");
+			},
+		);
+
+		it.each(["dated", "undated"] as const)(
+			"%s: answered Career reply then bulk uses its saved write before list reload",
+			async (kind) => {
+				const { apps, careerClient } = await clients();
+				const { savedStageIn, stageBaselinesFor } =
+					await import("@reactive-resume/schema/applications/stage-baselines");
+				const id = await apps.create({
+					company: "Cedar",
+					role: "Lead",
+					status: "applied",
+					...(kind === "dated" ? { stageEnteredAt: "2026-11-01" } : {}),
+				});
+				const listed = await read(id);
+				const tracker = stageBaselinesFor({});
+				const settle = tracker.write("", id, listed);
+				const answer = await careerClient.applyReply({ id: await replyFor(id), changes: [0] });
+				settle(savedStageIn(answer, id));
+				await new Promise((resolve) => setTimeout(resolve, 0));
+				const bulk = tracker.begin("", new Map([[id, listed]]));
+				const expectedStages = await Promise.all(
+					[...bulk.baselines].map(async ([id, value]) => ({ id, ...(await value) })),
+				);
+				expect((await apps.bulkUpdate({ ids: [id], status: "offer", expectedStages })).updated).toBe(1);
+				const row = await stored(id);
+				expect(row.status).toBe("offer");
+				expect(row.activity.map((e: { stage: string }) => e.stage)).toEqual(["applied", "interview", "offer"]);
+				expect((await read(id)).activity.filter((entry) => entry.type === "stage").map((entry) => entry.stage)).toEqual(
+					kind === "dated" ? ["applied", "offer", "interview"] : ["offer", "interview", "applied"],
+				);
+			},
+		);
+
+		it("legacy histories upgrade on their next move; current write cannot be deleted by changing display order", async () => {
+			const { apps } = await clients();
+			const referral = await addLane("Referral", "applied");
+			const id = await apps.create({
+				company: "Legacy",
+				role: "Lead",
+				status: "applied",
+				stageEnteredAt: "2026-11-01",
+			});
+			await pool.query(
+				"UPDATE application SET activity = (SELECT jsonb_agg(entry - 'writeSequence') FROM jsonb_array_elements(activity) entry) WHERE id = $1",
+				[id],
+			);
+			const before = await checked(id);
+			await apps.update({ id, laneId: referral.id, stageEnteredAt: "2026-10-30" });
+			const current = await checked(id);
+			expect(current.stageEntryId).not.toBe(before.stageEntryId);
+			if (!current.stageEntryId) throw new Error("Expected current stage identity");
+			expect(
+				await apps
+					.deleteTimelineEntry({ id, entryId: current.stageEntryId })
+					.catch((error: { code: string }) => error.code),
+			).toBe("BAD_REQUEST");
+			expect((await stored(id)).activity).toHaveLength(2);
+		});
+
+		it.each(["reply", "submission"] as const)(
+			"repeated %s cannot acknowledge an outside later move",
+			async (action) => {
+				const { apps, careerClient } = await clients();
+				const { savedStageIn, stageBaselinesFor } =
+					await import("@reactive-resume/schema/applications/stage-baselines");
+				const referral = await addLane("Referral", "applied");
+				const id = await apps.create({
+					company: "Hazel",
+					role: "Lead",
+					status: action === "reply" ? "applied" : "saved",
+					stageEnteredAt: "2026-11-01",
+				});
+				const listed = await read(id);
+				const reply = action === "reply" ? await replyFor(id) : null;
+				const send = () =>
+					reply
+						? careerClient.applyReply({ id: reply, changes: [0] })
+						: careerClient.submitApplication({ applicationId: id, answers: [], expectedAnswers: [] });
+				await send();
+				await apps.update(action === "reply" ? { id, status: "offer" } : { id, laneId: referral.id });
+				const outside = await stored(id);
+				const tracker = stageBaselinesFor({});
+				const settle = tracker.write("", id, listed);
+				const repeated = await send();
+				expect(repeated).toEqual({ stages: [] });
+				settle(savedStageIn(repeated, id));
+				const bulk = tracker.begin("", new Map([[id, listed]]));
+				const expectedStages = await Promise.all(
+					[...bulk.baselines].map(async ([id, value]) => ({ id, ...(await value) })),
+				);
+				expect(
+					await apps.bulkUpdate({ ids: [id], status: "closed", closedReason: "withdrew", expectedStages }),
+				).toEqual({ updated: 0, stages: [] });
+				expect(await stored(id)).toEqual(outside);
+			},
+		);
+	});
+
+	it("keeps unrelated notes and interviews editable after a backdated lane move", async () => {
+		const { applicationsRouter } = await import("./router");
+		const client = createRouterClient(applicationsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const lane = await addLane("Referral", "applied");
+		const id = await client.create({
+			company: "Backdated",
+			role: "Lead",
+			status: "applied",
+			stageEnteredAt: "2026-11-01",
+		});
+		await client.addNote({ id, text: "Private note" });
+		await client.addInterview({ id, at: "2026-11-03T08:00:00Z", kind: "other" });
+		await client.update({ id, laneId: lane.id, stageEnteredAt: "2026-10-30" });
+		const before = await client.getById({ id });
+		const note = before.activity.find((entry) => entry.type === "note");
+		const interview = before.activity.find((entry) => entry.type === "interview");
+		if (!note || !interview) throw new Error("Expected note and interview");
+		const stages = before.activity.filter((entry) => entry.type === "stage");
+		const edited = await client.updateTimelineEntry({ id, entryId: note.id, text: "Corrected", date: "2026-11-02" });
+		expect(edited.activity.find((entry) => entry.id === note.id)).toMatchObject({ text: "Corrected" });
+		await client.deleteTimelineEntry({ id, entryId: note.id });
+		await client.deleteTimelineEntry({ id, entryId: interview.id });
+		const after = await client.getById({ id });
+		expect(after.activity).toEqual(stages);
+		expect(after).toMatchObject({ status: before.status, laneId: before.laneId, appliedAt: before.appliedAt });
+		expect((await pool.query("SELECT activity FROM application WHERE id = $1", [id])).rows[0]?.activity).toEqual(
+			JSON.parse(JSON.stringify(stages)),
+		);
+	});
+
+	it("distinguishes follow-up dates in retried creation requests through the router", async () => {
+		const { applicationsRouter } = await import("./router");
+		const client = createRouterClient(applicationsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const newId = randomUUID();
+		const followUpAt = new Date("2026-11-10T08:00:00Z");
+		const request = { newId, company: "Date receipt", role: "Lead", followUpAt };
+		expect(await client.create(request)).toBe(newId);
+		expect(await client.create({ ...request, followUpAt: new Date(followUpAt) })).toBe(newId);
+		await expect(client.create({ ...request, followUpAt: new Date("2026-12-10T08:00:00Z") })).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		expect((await pool.query("SELECT id, follow_up_at FROM application WHERE id = $1", [newId])).rows).toEqual([
+			{ id: newId, follow_up_at: followUpAt },
+		]);
+		expect((await pool.query("SELECT id FROM create_request WHERE id = $1", [newId])).rows).toEqual([{ id: newId }]);
+	});
+
+	it.each(["resumeFile", "coverLetterFile"] as const)(
+		"binds the creation receipt to %s bytes before accepting a retry",
+		async (slot) => {
+			const { applicationsRouter } = await import("./router");
+			const client = createRouterClient(applicationsRouter, {
+				context: {
+					locale: "en-US",
+					reqHeaders: new Headers(),
+					authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+				} as never,
+			});
+			const { uploadFile } = await import("../storage/service");
+			const upload = vi.mocked(uploadFile).mockResolvedValue({ url: "uploads/cv.pdf" } as never);
+			const file = (body: string, lastModified: number) =>
+				new File([body], "document.pdf", { type: "application/pdf", lastModified });
+			const original = file("%PDF-1.4 A", 1);
+			const request = { newId: randomUUID(), company: "Attachment receipt", role: "Lead", [slot]: original };
+			expect(await client.create(request)).toBe(request.newId);
+			const before = (await pool.query("SELECT * FROM application WHERE id = $1", [request.newId])).rows;
+			const receipt = (await pool.query("SELECT * FROM create_request WHERE id = $1", [request.newId])).rows;
+			expect(await client.create({ ...request, [slot]: file("%PDF-1.4 A", 2) })).toBe(request.newId);
+			await expect(client.create({ ...request, [slot]: file("%PDF-1.4 B", 1) })).rejects.toMatchObject({
+				code: "CONFLICT",
+			});
+			expect((await pool.query("SELECT * FROM application WHERE id = $1", [request.newId])).rows).toEqual(before);
+			expect((await pool.query("SELECT * FROM create_request WHERE id = $1", [request.newId])).rows).toEqual(receipt);
+			expect(upload).toHaveBeenCalledTimes(1);
+			expect(upload.mock.calls[0]?.[0].data).toEqual(new Uint8Array(await original.arrayBuffer()));
+		},
+	);
+
+	it("saves a job with its copy once, through the router, whatever the retries, and never one without the other", async () => {
+		const { documentsRouter } = await import("../documents/router");
+		const { resumeService } = await import("../resume/service");
+		const client = createRouterClient(documentsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const base = await resumeService.create({ userId: "alice", name: "Base", tags: [], locale: "en-US" });
+		const job = {
+			company: "Fieldnote",
+			role: "Designer",
+			jobDescription: "Figma and SQL.",
+			sourceUrl: "https://jobs.example.test/fieldnote/designer",
+		};
+		const copies = () =>
+			getDb()
+				.select()
+				.from(tables.resume)
+				.where(eq(tables.resume.userId, "alice"))
+				.then((rows) => rows.filter((row) => row.id !== base));
+		const jobs = () => getDb().select().from(tables.application).where(eq(tables.application.userId, "alice"));
+
+		// A double press sends the same ID twice at once; a lost response is retried with it.
+		const id = randomUUID();
+		const [first, second] = await Promise.all([
+			client.copyForJob({ resumeId: base, application: job, newId: id }),
+			client.copyForJob({ resumeId: base, application: job, newId: id }),
+		]);
+		const retried = await client.copyForJob({ resumeId: base, application: job, newId: id });
+
+		expect([first, second, retried]).toEqual([id, id, id]);
+		const [savedJob, ...moreJobs] = await jobs();
+		expect(moreJobs).toEqual([]);
+		expect(savedJob).toMatchObject({
+			company: "Fieldnote",
+			status: "saved",
+			resumeId: id,
+			jobDescription: "Figma and SQL.",
+		});
+		expect((await copies()).map((row) => [row.id, row.applicationId, row.name])).toEqual([
+			[id, savedJob?.id, "Base — Fieldnote"],
+		]);
+		const [baseRow] = await getDb().select().from(tables.resume).where(eq(tables.resume.id, base));
+		expect(baseRow?.applicationId).toBeNull();
+
+		// A job that can't be saved (its posting is already tracked) leaves no copy behind either.
+		await expect(client.copyForJob({ resumeId: base, application: job, newId: randomUUID() })).rejects.toMatchObject({
+			code: "CONFLICT",
+		});
+		expect(await copies()).toHaveLength(1);
+		expect(await jobs()).toHaveLength(1);
+
+		// Another account can't reuse the ID.
+		const bob = createRouterClient(documentsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "bob" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const bobBase = await resumeService.create({ userId: "bob", name: "Bob", tags: [], locale: "en-US" });
+		await expect(bob.copyForJob({ resumeId: bobBase, newId: id })).rejects.toMatchObject({ code: "CONFLICT" });
+
+		// Saving and linking a job is retry-safe the same way.
+		const { applicationsRouter } = await import("./router");
+		const apps = createRouterClient(applicationsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const jobId = randomUUID();
+		const linked = { company: "Northwind", role: "Lead", resumeId: base, newId: jobId };
+		expect(await Promise.all([apps.create(linked), apps.create(linked)])).toEqual([jobId, jobId]);
+		expect(await apps.create(linked)).toBe(jobId);
+		expect((await jobs()).filter((row) => row.company === "Northwind")).toHaveLength(1);
+	});
+
+	it("a late retry of a copy respects what happened since, through the router, and expected presses log nothing", async () => {
+		const { documentsRouter } = await import("../documents/router");
+		const { applicationsRouter } = await import("./router");
+		const { resumeService } = await import("../resume/service");
+		const context = {
+			locale: "en-US",
+			reqHeaders: new Headers(),
+			authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+		} as never;
+		const documents = createRouterClient(documentsRouter, { context });
+		const apps = createRouterClient(applicationsRouter, { context });
+		const newResume = (name: string) => resumeService.create({ userId: "alice", name, tags: [], locale: "en-US" });
+		const purge = async (id: string) => {
+			await documents.trash({ type: "resume", id });
+			await documents.purge({ type: "resume", id });
+		};
+		const snapshot = async () => ({
+			resumes: await getDb().select().from(tables.resume).where(eq(tables.resume.userId, "alice")),
+			jobs: await getDb().select().from(tables.application).where(eq(tables.application.userId, "alice")),
+			receipts: await getDb().select().from(tables.createRequest),
+		});
+		const conflict = { code: "CONFLICT" };
+		const errors = vi.spyOn(console, "error");
+
+		// Concurrent presses of one request: one copy, and the presses that lose the race are answered, not logged.
+		const base = await newResume("Base");
+		const pressed = { resumeId: base, application: { company: "Northwind", role: "Lead" }, newId: randomUUID() };
+		const presses = await Promise.all([1, 2, 3, 4].map(() => documents.copyForJob(pressed)));
+		expect(new Set(presses)).toEqual(new Set([pressed.newId]));
+		expect(errors.mock.calls.filter(([message]) => String(message).includes("Couldn't create the resume"))).toEqual([]);
+
+		// A retry needs only its receipt: the copy is returned after the source was deleted for good.
+		const source = await newResume("Source");
+		const fromSource = { resumeId: source, newId: randomUUID() };
+		expect(await documents.copyForJob(fromSource)).toBe(fromSource.newId);
+		await purge(source);
+		expect(await documents.copyForJob(fromSource)).toBe(fromSource.newId);
+
+		// Resumes and applications share the ID space: a job's ID can't name a copy, nor a resume's a job.
+		const unreceipted = await apps.create({ company: "Contoso", role: "Engineer" });
+		let before = await snapshot();
+		await expect(documents.copyForJob({ resumeId: base, newId: unreceipted })).rejects.toMatchObject(conflict);
+		await expect(apps.create({ company: "Fabrikam", role: "Engineer", newId: base })).rejects.toMatchObject(conflict);
+		expect(await snapshot()).toEqual(before);
+
+		// A copy deleted or moved to Trash since, or one whose new job was deleted since, isn't brought back or re-saved.
+		const deleted = { resumeId: base, application: { company: "Gone Co", role: "Lead" }, newId: randomUUID() };
+		const trashed = { resumeId: base, application: { company: "Bin Co", role: "Lead" }, newId: randomUUID() };
+		const jobless = { resumeId: base, application: { company: "Jobless Co", role: "Lead" }, newId: randomUUID() };
+		for (const request of [deleted, trashed, jobless]) await documents.copyForJob(request);
+		await purge(deleted.newId);
+		await documents.trash({ type: "resume", id: trashed.newId });
+		const joblessJob = (await snapshot()).jobs.find((job) => job.company === "Jobless Co");
+		await apps.delete({ id: joblessJob?.id ?? "" });
+		before = await snapshot();
+		for (const request of [deleted, trashed, jobless])
+			await expect(documents.copyForJob(request)).rejects.toMatchObject(conflict);
+		expect(await snapshot()).toEqual(before);
+
+		// A retry of a copy for a saved job leaves the job's link alone once the user has linked another resume.
+		const saved = await apps.create({ company: "Linked Co", role: "Lead", resumeId: base });
+		const forSaved = { resumeId: base, applicationId: saved, newId: randomUUID() };
+		expect(await documents.copyForJob(forSaved)).toBe(forSaved.newId);
+		const other = await newResume("Other");
+		await apps.update({ id: saved, resumeId: other });
+		expect(await documents.copyForJob(forSaved)).toBe(forSaved.newId);
+		expect((await read(saved)).resumeId).toBe(other);
+		errors.mockRestore();
+
+		// A job saved with a file and deleted since: its retry is refused before the file is uploaded again.
+		const storage = await import("../storage/service");
+		const upload = vi.mocked(storage.uploadFile).mockResolvedValue({ url: "uploads/cv.pdf" } as never);
+		const withFile = {
+			company: "Filed Co",
+			role: "Lead",
+			newId: randomUUID(),
+			resumeFile: new File(["%PDF-1.4"], "cv.pdf", { type: "application/pdf" }),
+		};
+		expect(await apps.create(withFile)).toBe(withFile.newId);
+		await apps.delete({ id: withFile.newId });
+		await expect(apps.create(withFile)).rejects.toMatchObject(conflict);
+		expect(upload).toHaveBeenCalledTimes(1);
+	});
+
+	it("refuses a client ID reused for another request or held by another row, through the router, changing nothing", async () => {
+		const { documentsRouter } = await import("../documents/router");
+		const { applicationsRouter } = await import("./router");
+		const { resumeService } = await import("../resume/service");
+		const context = {
+			locale: "en-US",
+			reqHeaders: new Headers(),
+			authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+		} as never;
+		const documents = createRouterClient(documentsRouter, { context });
+		const apps = createRouterClient(applicationsRouter, { context });
+		const base = await resumeService.create({ userId: "alice", name: "Base", tags: [], locale: "en-US" });
+		const contoso = await apps.create({ company: "Contoso", role: "Engineer" });
+		const snapshot = async () => ({
+			resumes: await getDb().select().from(tables.resume).where(eq(tables.resume.userId, "alice")),
+			jobs: await getDb().select().from(tables.application).where(eq(tables.application.userId, "alice")),
+			receipts: await getDb().select().from(tables.createRequest),
+		});
+		const conflict = { code: "CONFLICT" };
+
+		// The base's own ID as the copy's: no copy, and the base is never linked to the job (J2-05).
+		const before = await snapshot();
+		await expect(documents.copyForJob({ resumeId: base, applicationId: contoso, newId: base })).rejects.toMatchObject(
+			conflict,
+		);
+		await expect(
+			documents.copyForJob({ resumeId: base, application: { company: "Fieldnote", role: "Designer" }, newId: base }),
+		).rejects.toMatchObject(conflict);
+		// An existing job's ID for a different job: the new job is not dropped silently, and nothing is saved.
+		await expect(apps.create({ company: "Different Co", role: "Engineer", newId: contoso })).rejects.toMatchObject(
+			conflict,
+		);
+		expect(await snapshot()).toEqual(before);
+
+		// A copy made under an ID, then that ID with a different request: refused, the copy and its job left as they were.
+		const copyId = randomUUID();
+		const request = { resumeId: base, application: { company: "Fieldnote", role: "Designer" }, newId: copyId };
+		expect(await documents.copyForJob(request)).toBe(copyId);
+		const made = await snapshot();
+		for (const other of [
+			{ ...request, application: { company: "Other Co", role: "Designer" } },
+			{ ...request, name: "Renamed" },
+			{ resumeId: base, applicationId: contoso, newId: copyId },
+			{ resumeId: copyId, newId: copyId },
+		])
+			await expect(documents.copyForJob(other)).rejects.toMatchObject(conflict);
+		await expect(apps.create({ company: "Fieldnote", role: "Designer", newId: copyId })).rejects.toMatchObject(
+			conflict,
+		);
+		expect(await snapshot()).toEqual(made);
+
+		// The same request is still a retry after the copy and its job were edited: same copy, nothing new.
+		const job = made.jobs.find((row) => row.company === "Fieldnote");
+		await documents.rename({ type: "resume", id: copyId, name: "Edited copy" });
+		await apps.update({ id: job?.id ?? "", company: "Fieldnote Ltd" });
+		const edited = await snapshot();
+		expect(await documents.copyForJob(request)).toBe(copyId);
+		expect(await snapshot()).toEqual(edited);
+
+		// Two different requests racing on one ID: one is saved, the other refused, and only one copy and job exist.
+		const raced = randomUUID();
+		const results = await Promise.allSettled([
+			documents.copyForJob({ resumeId: base, application: { company: "Alpha", role: "Lead" }, newId: raced }),
+			documents.copyForJob({ resumeId: base, application: { company: "Beta", role: "Lead" }, newId: raced }),
+		]);
+		expect(results.map((result) => result.status).sort()).toEqual(["fulfilled", "rejected"]);
+		expect(results.find((result) => result.status === "rejected")).toMatchObject({ reason: conflict });
+		const after = await snapshot();
+		expect(after.resumes.filter((row) => row.id === raced)).toHaveLength(1);
+		expect(after.jobs.filter((row) => row.company === "Alpha" || row.company === "Beta")).toHaveLength(1);
+		expect(after.receipts.filter((row) => row.id === raced)).toHaveLength(1);
+
+		// A copy and a job racing on one ID: only one of them is saved.
+		const shared = randomUUID();
+		const pair = await Promise.allSettled([
+			documents.copyForJob({ resumeId: base, newId: shared }),
+			apps.create({ company: "Gamma", role: "Lead", newId: shared }),
+		]);
+		expect(pair.map((result) => result.status).sort()).toEqual(["fulfilled", "rejected"]);
+		const held = await snapshot();
+		expect(
+			held.resumes.filter((row) => row.id === shared).length + held.jobs.filter((row) => row.id === shared).length,
+		).toBe(1);
 	});
 
 	it("Closed presets derive outcome and retain immutable historical no-response evidence after reopening", async () => {

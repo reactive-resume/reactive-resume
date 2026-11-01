@@ -2,6 +2,7 @@ import type { ApplicationSummary } from "../types";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { describeNextStep, getNextStep } from "../next-step";
+import { offerHintFor, useOfferHints } from "../queries";
 import { ApplicationActionsMenu } from "./application-actions-menu";
 import { useCareerTime } from "@/features/career/shared";
 
@@ -16,7 +17,13 @@ type ApplicationCardProps = {
 /** A board card: the company's initial, role and company, and the next step (warn when it's overdue). */
 export function ApplicationCard({ application, onClick, withMenu = false, dragging = false }: ApplicationCardProps) {
 	const { locale, timeZone } = useCareerTime();
-	const next = describeNextStep(getNextStep(application), application, locale, timeZone);
+	const hints = useOfferHints(application.status === "offer");
+	const next = describeNextStep(
+		getNextStep(application, undefined, offerHintFor(hints, application.id)),
+		application,
+		locale,
+		timeZone,
+	);
 
 	return (
 		<div

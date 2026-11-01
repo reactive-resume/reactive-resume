@@ -8,7 +8,7 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ApplicationList } from "./list-view";
 
-const mocks = vi.hoisted(() => ({ breakpoint: "desktop", invalidate: vi.fn() }));
+const mocks = vi.hoisted(() => ({ breakpoint: "desktop", invalidate: vi.fn(), moveWithUndo: vi.fn() }));
 vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
@@ -23,9 +23,13 @@ vi.mock("@/libs/orpc/client", () => ({
 			bulkUpdate: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			bulkDelete: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 		},
+		career: { savedItems: { queryOptions: () => ({ queryKey: ["offers"], queryFn: async () => [] }) } },
 	},
 }));
-vi.mock("../use-application-actions", () => ({ useInvalidateApplications: () => mocks.invalidate }));
+vi.mock("../use-application-actions", () => ({
+	useInvalidateApplications: () => mocks.invalidate,
+	useMoveWithUndo: () => mocks.moveWithUndo,
+}));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => mocks.breakpoint }));
 
@@ -186,4 +190,31 @@ it("sorts by role with company as the tiebreak, and by soonest next step with no
 	expect(order()).toEqual(["Mid", "Acme", "Zeta"]);
 	fireEvent.click(screen.getByRole("button", { name: "Next step" }));
 	expect(order()).toEqual(["Zeta", "Acme", "Mid"]);
+});
+
+it("moves and closes the checked rows with Undo instead of writing at once (J2-18)", async () => {
+	mocks.moveWithUndo.mockClear();
+	renderList(twoApplications());
+	fireEvent.click(screen.getByRole("checkbox", { name: "Select Product Designer at Initech" }));
+
+	await userEvent.click(screen.getByRole("button", { name: "Move to…" }));
+	await userEvent.click(await screen.findByRole("menuitem", { name: "Interview" }));
+	expect(mocks.moveWithUndo).toHaveBeenLastCalledWith(
+		expect.objectContaining({
+			applications: [{ id: "app-2" }],
+			lane: expect.objectContaining({ category: "interview" }),
+			description: "1 application moved to Interview",
+		}),
+	);
+
+	fireEvent.click(screen.getByRole("checkbox", { name: "Select Product Designer at Initech" }));
+	await userEvent.click(screen.getByRole("button", { name: "Close…" }));
+	await userEvent.click(await screen.findByRole("menuitem", { name: "Accepted another offer" }));
+	expect(mocks.moveWithUndo).toHaveBeenLastCalledWith(
+		expect.objectContaining({
+			applications: [{ id: "app-2" }],
+			lane: expect.objectContaining({ category: "closed" }),
+			closedReason: "accepted-other",
+		}),
+	);
 });

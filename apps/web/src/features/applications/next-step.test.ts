@@ -86,3 +86,64 @@ it("keeps a follow-up on the calendar date selected in its browser-local editor"
 		expect(describeNextStep(step, { status: "applied", closedReason: null }, "en-GB", timeZone).sub).toBe(expected);
 	}
 });
+
+describe("Next step at the Offer stage (J2-17)", () => {
+	const atOffer = (patch: Partial<Source> = {}) =>
+		application({
+			status: "offer",
+			activity: [
+				{ id: "s1", type: "stage", stage: "applied", at: day(-20) },
+				{ id: "s2", type: "stage", stage: "offer", at: day(-1) },
+				interview(day(5), "earlier-round"),
+			],
+			...patch,
+		});
+
+	it("asks for the offer's terms instead of an interview booked before the offer", () => {
+		expect(getNextStep(atOffer(), NOW, null)).toEqual({ kind: "offer", respondBy: null, overdue: false, terms: false });
+	});
+
+	it("leads with the reply deadline of the saved offer", () => {
+		const respondBy = day(3).toISOString();
+		expect(getNextStep(atOffer(), NOW, { respondBy })).toEqual({
+			kind: "offer",
+			respondBy: new Date(respondBy),
+			overdue: false,
+			terms: true,
+		});
+		const late = getNextStep(atOffer(), NOW, { respondBy: day(-1).toISOString() });
+		expect(late).toMatchObject({ kind: "offer", overdue: true });
+	});
+
+	it("reads as a decision when terms are saved without a deadline, or not known yet", () => {
+		const text = (offer?: { respondBy: string | null } | null) =>
+			describeNextStep(getNextStep(atOffer(), NOW, offer), { status: "offer", closedReason: null }, "en-US", "UTC");
+		expect(text(null).title).toBe("Add the offer's terms");
+		expect(text({ respondBy: null }).title).toBe("Decide on the offer");
+		expect(text().title).toBe("Decide on the offer");
+		expect(text({ respondBy: day(3).toISOString() })).toMatchObject({ title: "Reply to the offer", tone: "normal" });
+		expect(text({ respondBy: day(-1).toISOString() })).toMatchObject({ title: "Reply to the offer", tone: "warn" });
+	});
+
+	it("puts a follow-up set at Offer ahead of an interview booked before it, but after the reply deadline", () => {
+		const followUpAt = day(2);
+		const withFollowUp = atOffer({
+			followUpAt,
+			followUpNote: "Ask about the start date",
+			activity: [interview(day(1))],
+		});
+
+		expect(getNextStep(withFollowUp, NOW, null)).toEqual({
+			kind: "follow-up",
+			at: new Date(followUpAt),
+			note: "Ask about the start date",
+			overdue: false,
+		});
+		expect(getNextStep(withFollowUp, NOW, { respondBy: day(3).toISOString() })).toMatchObject({ kind: "offer" });
+	});
+
+	it("leaves earlier stages as they were", () => {
+		const step = getNextStep(application({ status: "interview", activity: [interview(day(2))] }), NOW, null);
+		expect(step).toMatchObject({ kind: "interview" });
+	});
+});

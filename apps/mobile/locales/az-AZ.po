@@ -133,6 +133,23 @@ msgstr "{0, plural, one {# müraciətdən {count} dəyişdirildi.} other {# mür
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# cavab} other {# cavab}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {# application closed as Accepted another offer} other {# applications closed as Accepted another offer}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application closed} other {# applications closed}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#. placeholder {1}: getLaneLabel(lane)
+#. placeholder {2}: getLaneLabel(lane)
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -249,6 +266,16 @@ msgstr "{0, plural, one {# gün əvvəl müraciət edilib} other {# gün əvvəl
 #: src/features/career/facts.tsx
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {# hekayəni dəstəkləyir} other {# hekayəni dəstəkləyir}}"
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Close it} other {Close all #}}"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/stage-actions.ts
+msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
+msgstr ""
 
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
@@ -557,6 +584,10 @@ msgid "{entry} doesn't say when. Dates place it on your timeline."
 msgstr "{entry} nə vaxt demir. Tarixlər onu taymlaynınıza yerləşdirir."
 
 #: src/features/check/issues.ts
+msgid "{entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job."
+msgstr ""
+
+#: src/features/check/issues.ts
 msgid "{entry} names the role but not what you did, so it adds no keywords."
 msgstr "{entry} rolu adlandırır, lakin sizin etdiyinizi deyil, ona görə də heç bir açar söz əlavə etmir."
 
@@ -587,6 +618,10 @@ msgstr "{issues, plural, one {# problemi sizə bir matça başa gələ bilər.} 
 #: src/features/share/download.tsx
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Yoxlamada nəzərdən keçirilməli # var. Siz hələ də yükləyə bilərsiniz.} other {Yoxlamanın nəzərdən keçirilməsi üçün # şeyləri var. Siz hələ də yükləyə bilərsiniz.}}"
+
+#: src/features/applications/stage-actions.ts
+msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
+msgstr ""
 
 #: src/features/applications/next-step.ts
 msgid "{kind} interview"
@@ -836,6 +871,10 @@ msgstr "Keçid göstərdiyi ünvandan fərqli yerə yönləndirir."
 msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "Bir modelin rəyi, hökm deyil. Səhv ola bilər."
 
+#: src/features/career/offer-entry.tsx
+msgid "a month"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
 msgstr "Rəqəmli tarix müxtəlif ölkələrdə fərqli oxunur."
@@ -871,6 +910,10 @@ msgstr "Vaxta bölünmüş plan, girişiniz, gətirəcəyiniz hekayələr və ve
 #: src/features/ats-checker/messages.ts
 msgid "A web address is written without https://."
 msgstr "Veb ünvanı https:// olmadan yazılıb."
+
+#: src/features/career/offer-entry.tsx
+msgid "a year"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
@@ -960,6 +1003,10 @@ msgstr "Ölkə əlavə edin"
 msgid "Add a fact"
 msgstr "Bir fakt əlavə edin"
 
+#: src/features/documents/new-document.tsx
+msgid "Add a job"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "Link əlavə edin"
@@ -967,6 +1014,10 @@ msgstr "Link əlavə edin"
 #: src/features/check/issues.ts
 msgid "Add a location"
 msgstr "Məkan əlavə edin"
+
+#: src/features/career/offer-entry.tsx
+msgid "Add a newer offer"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Add a note"
@@ -1214,6 +1265,12 @@ msgstr "{name}@example.com kimi @-dan sonra domen əlavə edin"
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "{domain}.com kimi domen sonunu əlavə edin"
+
+#: src/features/application-detail/sections.tsx
+#: src/features/applications/next-step.ts
+#: src/features/applications/stage-actions.ts
+msgid "Add the offer's terms"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1527,6 +1584,10 @@ msgstr "Girişin tarixi yoxdur"
 #: src/features/assistant/chat-view.tsx
 msgid "an error"
 msgstr "səhv"
+
+#: src/features/career/offer-entry.tsx
+msgid "an hour"
+msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "An older app kept these edits. They can't safely replace “{name}”. Keep them as a separate document, or load the saved version and edit it here."
@@ -2143,6 +2204,11 @@ msgstr "Markerli siyahı"
 msgid "Burgundy"
 msgstr "Bordo"
 
+#. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
+#: src/features/applications/next-step.ts
+msgid "By {0}"
+msgstr ""
+
 #: app/(tabs)/settings/index.tsx
 msgid "by <0>Amruth Pillai</0>"
 msgstr "<0>Amruth Pillai</0> tərəfindən"
@@ -2165,6 +2231,7 @@ msgstr "Proqram sizin CV-nizi oxuya bilərmi?"
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/ats-checker/checker.tsx
+#: src/features/check/job-match.tsx
 #: src/features/check/parser.tsx
 #: src/features/check/writing.tsx
 #: src/features/search/search-screen.tsx
@@ -2603,6 +2670,10 @@ msgstr "Bağlayın..."
 msgid "Closed"
 msgstr "bağlıdır"
 
+#: src/features/applications/stage-actions.ts
+msgid "Closed as Accepted offer"
+msgstr ""
+
 #: src/features/applications-board/insights-screen.tsx
 msgid "Closed: {closed}"
 msgstr "Bağlanıb: {closed}"
@@ -2654,17 +2725,28 @@ msgstr "Yığcam"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/fields.ts
 msgid "Company"
 msgstr "Şirkət"
 
+#: src/features/career/offer-entry.tsx
+msgid "Compare"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {company}."
 msgstr "Təkmilləşdirmələri görmək üçün cəhdlərinizi müqayisə edin. Bunlar {company} sualları deyil, simulyasiya edilmiş təcrübə suallarıdır."
 
+#: src/features/applications/next-step.ts
+msgid "Compare it with your other offers"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/shell.tsx
 msgid "Compare offers"
 msgstr "Təklifləri müqayisə et"
@@ -2897,12 +2979,22 @@ msgstr "Kodu kopyalayın"
 msgid "Copy created"
 msgstr "Kopya yaradıldı"
 
+#. placeholder {0}: document.application.company
+#. placeholder {0}: source.application.company
+#: src/features/documents/new-document.tsx
+msgid "Copy for {0}"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Copy for a job…"
 msgstr "İş üçün kopyalayın..."
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "Copy for this job"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Copy made for {company}. This resume is unchanged."
 msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
@@ -2997,6 +3089,10 @@ msgstr "Yadda saxlama təsdiqlənmədi. Təkrarlanmanın qarşısını almaq ü�
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't confirm the save. Check the application before retrying to avoid a duplicate."
 msgstr "Yadda saxlamanı təsdiqləmək mümkün olmadı. Dublikatın qarşısını almaq üçün yenidən cəhd etməzdən əvvəl müraciəti yoxlayın."
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't copy the resume. Your edits are kept. Try again."
+msgstr ""
 
 #: src/features/assistant/chat-view.tsx
 msgid "Couldn't copy the transcript. Try again."
@@ -3256,9 +3352,17 @@ msgstr "Kontaktları saxlamaq mümkün olmadı. Yenidən cəhd edin."
 msgid "Couldn't save the follow-up. Try again."
 msgstr "İzləməni saxlamaq mümkün olmadı. Yenidən cəhd edin."
 
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job and its copy. Your edits are kept. Try again."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Couldn't save the job description. Try again."
 msgstr "İş təsvirini saxlamaq mümkün olmadı. Yenidən cəhd edin."
+
+#: src/features/check/job-match.tsx
+msgid "Couldn't save the job. Try again."
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 msgid "Couldn't save the notes. Your text is still here."
@@ -3382,6 +3486,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Couldn't update the application. Nothing was changed; try again."
 msgstr "Müraciəti yeniləmək mümkün olmadı. Heç nə dəyişdirilmədi; yenidən cəhd edin."
+
+#: src/features/applications/stage-actions.ts
+msgid "Couldn't update the applications. Try again."
+msgstr "İş müraciətlərini yeniləmək mümkün olmadı. Yenidən cəhd edin."
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't update the interview. Try again."
@@ -3648,6 +3756,10 @@ msgstr "Təhlil"
 #: src/features/application-detail/sections.tsx
 msgid "Debrief interview"
 msgstr "Təhlil müsahibəsi"
+
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
 
 #: src/features/design/controls.tsx
 msgid "Decrease {label}"
@@ -4753,8 +4865,8 @@ msgid "For the next round:"
 msgstr "Növbəti mərhələ üçün:"
 
 #: src/features/check/job-match.tsx
-msgid "For this visit only. Link an application to keep its posting here."
-msgstr "Yalnız bu ziyarət üçün. Elanı burada saxlamaq üçün müraciəti əlaqələndirin."
+msgid "For this visit only. Save it as a job to keep it."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "For which job?"
@@ -5446,6 +5558,10 @@ msgstr "İş uyğunluğu oxunaqlılıq xalının bir hissəsi deyil."
 msgid "Job posting · optional, adds a keyword match"
 msgstr "İş elanı · isteğe bağlıdır, açar söz uyğunluğu əlavə edir"
 
+#: src/features/documents/new-document.tsx
+msgid "Job posting (optional)"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Job posting link"
 msgstr "İş elanının linki"
@@ -5879,6 +5995,10 @@ msgstr "Açar sözləri müqayisə etmək üçün müraciəti əlaqələndirin v
 msgid "Link copied"
 msgstr "Link kopyalandı"
 
+#: src/features/check/job-match.tsx
+msgid "Link this resume"
+msgstr ""
+
 #: src/features/documents/document-sheets.tsx
 msgid "Link to application"
 msgstr "İş ərizəsinə keçid"
@@ -6096,6 +6216,10 @@ msgstr "Axtarılacaq"
 msgid "Looks exactly like the page. Use it for applications and email."
 msgstr "Tam olaraq səhifəyə bənzəyir. İş ərizələri və e-poçt üçün istifadə edin."
 
+#: src/features/check/issues.ts
+msgid "Looks like part of the entry above"
+msgstr ""
+
 #: src/features/design/design-pane.tsx
 msgid "Lower the design sheet"
 msgstr "Dizayn vərəqini aşağı salın"
@@ -6104,6 +6228,10 @@ msgstr "Dizayn vərəqini aşağı salın"
 #: src/features/design/layout-screen.tsx
 msgid "Main"
 msgstr "Əsas"
+
+#: src/features/check/job-match.tsx
+msgid "Make a copy for this job"
+msgstr ""
 
 #: src/features/ai/provider-list.tsx
 msgid "Make default"
@@ -6287,6 +6415,14 @@ msgstr "ilk cavab üçün median"
 #: src/features/career/offers.tsx
 msgid "Meets your minimum base salary."
 msgstr "Minimum əmək haqqınıza cavab verir."
+
+#: src/features/check/issues.ts
+msgid "Merge into previous entry"
+msgstr ""
+
+#: src/features/check/issues.ts
+msgid "Merged into the entry above"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Message"
@@ -6491,9 +6627,8 @@ msgstr "{1} sənəddən {0} Zibil qutusuna köçürüldü. Kilidli sənədlər b
 
 #. placeholder {0}: getLaneHistoryLabel(lanes.lanes, entry)
 #. placeholder {0}: getLaneLabel(lane)
-#. placeholder {0}: getLaneLabel(target)
 #: src/features/application-detail/sections.tsx
-#: src/features/applications-board/board-screen.tsx
+#: src/features/applications/stage-actions.ts
 msgid "Moved to {0}"
 msgstr "{0}-a köçürüldü"
 
@@ -7009,6 +7144,10 @@ msgstr "CV-nizdə yoxdur"
 msgid "Not in your resume · add only if true"
 msgstr "CV-nizdə yoxdur · yalnız doğru olduqda əlavə edin"
 
+#: src/features/documents/new-document.tsx
+msgid "Not linked to a job"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Not now"
@@ -7157,6 +7296,11 @@ msgstr "Təklif"
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "İş təklifi yadda saxlanıldı"
+
+#. placeholder {0}: target.company
+#: src/features/career/offer-entry.tsx
+msgid "Offer saved. {0} moved to Offer."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
@@ -7645,6 +7789,10 @@ msgstr "Fasilə verildi"
 #: src/features/settings/application-profile.tsx
 msgid "Pay period"
 msgstr "Ödəniş dövrü"
+
+#: src/features/applications/next-step.ts
+msgid "Pay, deadline and conditions, so you can compare and decide"
+msgstr ""
 
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
@@ -8662,6 +8810,10 @@ msgstr "Cavab"
 msgid "Reply copied"
 msgstr "Cavab kopyalandı"
 
+#: src/features/applications/next-step.ts
+msgid "Reply to the offer"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Report"
 msgstr "Hesabat"
@@ -8712,6 +8864,10 @@ msgstr "Dizayn standartlarını sıfırlayın"
 #: src/features/career/offers.tsx
 msgid "Respond by"
 msgstr "Cavab müddəti"
+
+#: src/features/career/offer-entry.tsx
+msgid "respond by {respondBy}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Response deadline has passed."
@@ -9050,6 +9206,8 @@ msgstr "Doğru"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
+#: src/features/check/job-match.tsx
+#: src/features/documents/new-document.tsx
 msgid "Role"
 msgstr "Vəzifə"
 
@@ -9169,6 +9327,10 @@ msgstr ""
 msgid "Save an unprotected copy, with no password and no permissions restrictions."
 msgstr "Parolsuz və icazə məhdudiyyəti olmayan qorunmamış nüsxə saxlayın."
 
+#: src/features/check/job-match.tsx
+msgid "Save and link this resume"
+msgstr ""
+
 #: src/features/ai/provider-editor.tsx
 msgid "Save and test"
 msgstr "Saxlayın və sınaqdan keçirin"
@@ -9176,6 +9338,10 @@ msgstr "Saxlayın və sınaqdan keçirin"
 #: src/features/career/offers.tsx
 msgid "Save another offer to compare"
 msgstr "Müqayisə üçün başqa təklif saxlayın"
+
+#: src/features/check/job-match.tsx
+msgid "Save as a job…"
+msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 msgid "Save changes"
@@ -9206,6 +9372,14 @@ msgstr "Müsahibəni saxla"
 #: src/features/search/search-screen.tsx
 msgid "Save job"
 msgstr "İşə qənaət edin"
+
+#: src/features/documents/new-document.tsx
+msgid "Save job and create copy"
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "Save job and make a copy"
+msgstr ""
 
 #: src/features/applications/lane-settings.tsx
 msgid "Save lane"
@@ -9312,6 +9486,10 @@ msgstr "Saxlanmış təsvir"
 
 #: src/features/settings/application-profile.tsx
 msgid "Saved profile reloaded. Unsaved changes discarded."
+msgstr ""
+
+#: src/features/documents/new-document.tsx
+msgid "Saved to Applications as a saved job, then linked to the copy. No AI request is made."
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -10504,6 +10682,11 @@ msgstr "Teqlər proqrama aydın oxunma ardıcıllığı verir. Alətiniz bunu t�
 msgid "Tags…"
 msgstr "Teqlər…"
 
+#. placeholder {0}: choice.company
+#: src/features/check/job-match.tsx
+msgid "Tailor a copy for {0} so this resume stays as it is for other jobs, or link this resume itself."
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr ""
@@ -10757,6 +10940,10 @@ msgstr ""
 
 #: src/features/ai/provider-editor.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#: src/features/check/job-match.tsx
+msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
 #: src/features/history/history.tsx
