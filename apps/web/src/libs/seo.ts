@@ -39,3 +39,6 @@ export const getTemplatesMeta = () => ({
 	title: `${t`Free resume templates with PDF examples`} | ${appName}`,
 	description: t`Browse free resume templates, compare one-column and two-column layouts, and download sample PDFs. Customize your resume and export to PDF or Word.`,
 });
+
+/** Shared app and saved-document tab title. Marketing pages keep their own search titles. */
+export const getPageTitle = (label: string) => `${label} | ${appName}`;

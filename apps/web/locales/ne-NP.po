@@ -1219,6 +1219,7 @@ msgstr "उपलब्धि"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "खाता"
@@ -1722,6 +1723,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "एआई र विकासकर्ता"
@@ -2393,6 +2395,14 @@ msgstr "रेजुमे फाइल संलग्न गर्नुहो
 msgid "Attachment"
 msgstr "संलग्नक"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "प्रमाणीकरण त्रुटि"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "पहुँच अनुमति दिनुहोस्"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2484,6 +2494,7 @@ msgid "Background color"
 msgstr "पृष्ठभूमि रङ"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "ब्याकअप कोड"
 
@@ -3201,6 +3212,7 @@ msgstr "{label} का रूपमा बन्द गरियो"
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "कोच"
@@ -4371,6 +4383,7 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "खाता बनाउनुहोस्"
 
@@ -4902,6 +4915,7 @@ msgstr "प्रलेखन (Documentation)"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "कागजातहरू"
 
@@ -5714,6 +5728,7 @@ msgid "Fact type"
 msgstr "तथ्यको प्रकार"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "तथ्यहरू"
@@ -6002,6 +6017,10 @@ msgstr "कुन कामको लागि?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "बिर्साउनुहोस्"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "पासवर्ड बिर्सनुभयो"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -6956,6 +6975,10 @@ msgstr "जापानी"
 msgid "Job"
 msgstr "काम"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "जागिर आवेदनको कार्यक्षेत्र"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -6990,6 +7013,10 @@ msgstr "काम खोज असफल भयो। फेरि प्रय�
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "रोजगार खोज पाइपलाइन"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "जागिर खोज प्राथमिकताहरू"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8516,6 +8543,11 @@ msgstr "कुनै सच्याइ छैन"
 msgid "No country matches."
 msgstr "कुनै देशहरू फेला परेनन्।"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "कुनै आवरण पत्र चयन गरिएको छैन"
+
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
 msgstr ""
@@ -8527,6 +8559,10 @@ msgstr "कुनै मिति फेला परेन।"
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "कुनै कागजात संलग्न छैन"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8652,6 +8688,11 @@ msgstr "कुनै परिणाम फेला परेन।"
 msgid "No resume"
 msgstr "रिजुमे छैन"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "कुनै बायोडाटा चयन गरिएको छैन"
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "अझै रिजुम छैन।"
@@ -8722,9 +8763,6 @@ msgstr "नम्बर {number} · {name}"
 msgid "none"
 msgstr "कुनै पनि"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "कुनै पनि छैन"
@@ -9010,6 +9048,7 @@ msgstr "जागिरको प्रस्ताव सेभ भयो"
 msgid "Offer type"
 msgstr "जागिरको प्रस्तावको प्रकार"
 
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "प्रस्तावहरू"
@@ -9853,6 +9892,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "प्राथमिकता (Preferences)"
@@ -10003,6 +10043,7 @@ msgstr "दक्षता (Proficiency)"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "प्रोफाइल"
@@ -10859,6 +10900,7 @@ msgstr "पूर्वनिर्धारित डिजाइन रिस�
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "पासवर्ड रिसेट गर्नुहोस्"
 
@@ -11072,6 +11114,10 @@ msgstr "बचत पुन: प्रयास गर्नुहोस्"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "पुन: प्रयास गर्दै..."
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "एपमा फर्कनुहोस्"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -11669,8 +11715,8 @@ msgid "Search job postings"
 msgstr "नौकरी पोस्टिंग खोज्नुहोस्"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "खोज्नुहोस् वा चलाउनुहोस्..."
+msgid "Search or run a command…"
+msgstr "खोज्नुहोस् वा आदेश चलाउनुहोस्…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -11988,6 +12034,7 @@ msgstr "आफ्नो प्रमाणीकरण एप सेट अप �
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "सेटिङहरू"
@@ -12109,8 +12156,8 @@ msgid "Show all types"
 msgstr "सबै प्रकार देखाउनुहोस्"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "शो बन्द"
+msgid "Show closed applications"
+msgstr "बन्द गरिएका जागिर आवेदनहरू देखाउनुहोस्"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12199,6 +12246,7 @@ msgstr "साइडबारहरू प्रायः अन्तिमम�
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "साइन इन"
 
@@ -12717,6 +12765,7 @@ msgstr "यी ब्याकअप कोडहरू कतै सुरक�
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "कथाहरू"
 
@@ -13903,6 +13952,7 @@ msgstr "को"
 
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "आज"
@@ -13986,6 +14036,7 @@ msgstr "अनुवादहरू"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "रद्दीटोकरी"
 
@@ -14141,6 +14192,10 @@ msgstr "दुई स्तम्भ, एक्सेन्ट रङहरू �
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "दुई स्तम्भ, हल्का खैरो Sidebar र सूक्ष्म आइकनहरू सहित न्यूनतम; कानुनी, वित्त वा कार्यकारी भूमिकाहरूका लागि व्यावसायिक र शालीन।"
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "दुई-चरणीय प्रमाणीकरण"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

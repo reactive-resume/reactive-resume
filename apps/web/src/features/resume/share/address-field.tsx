@@ -89,7 +89,7 @@ export function AddressField({ url, username, update }: AddressFieldProps) {
 						"flex h-[38px] min-w-0 flex-1 items-center overflow-hidden rounded-lg border bg-raised transition-colors duration-quick focus-within:ring-3",
 						invalid
 							? "border-danger focus-within:border-danger focus-within:ring-danger/15"
-							: "border-line-2 focus-within:border-accent focus-within:ring-accent-soft",
+							: "border-control-border focus-within:border-accent focus-within:ring-accent-soft",
 					)}
 				>
 					{/* A long host or username truncates, so the part being edited stays visible. */}

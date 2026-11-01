@@ -23,6 +23,7 @@ import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
 import { isAppSectionPath } from "@reactive-resume/utils/app-paths";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { BreakpointIndicator } from "@/components/layout/breakpoint-indicator";
+import { NavigationFocus } from "@/components/layout/navigation-focus";
 import { DialogManager } from "@/dialogs/manager";
 import { CommandPalette } from "@/features/command-palette";
 import { useDocumentWebMcpTools } from "@/features/documents/webmcp";
@@ -100,6 +101,7 @@ function RootComponent() {
 										<DirectionProvider direction={dir}>
 											<TooltipProvider>
 												<ConfirmDialogProvider>
+													<NavigationFocus />
 													<Outlet />
 
 													{!isBuilder && (

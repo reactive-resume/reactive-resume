@@ -129,6 +129,8 @@ export function DrawerControls({ pinnable }: { pinnable: boolean }) {
 			{!pinned && (
 				<IconButton
 					icon={open ? "sidebar-simple" : "sidebar-simple"}
+					id="editor-panel-toggle"
+					aria-controls="editor-panel"
 					label={open ? t`Hide panel` : t`Show panel`}
 					aria-expanded={open}
 					className="text-ink-2"

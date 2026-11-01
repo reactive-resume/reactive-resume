@@ -87,7 +87,7 @@ export function QuestionCard({ part, readOnly, busy = false, onAnswer }: Questio
 							disabled={busy}
 							onChange={(event) => setOther(event.target.value)}
 							placeholder={t`Or in your own words…`}
-							className="h-8 min-w-0 flex-1 rounded-md border border-line-2 bg-raised px-2 text-sm text-ink transition-[border-color,box-shadow] outline-none focus:border-accent"
+							className="h-8 min-w-0 flex-1 rounded-md border border-control-border bg-raised px-2 text-sm text-ink transition-[border-color,box-shadow] outline-none focus:border-accent"
 						/>
 						<Button type="submit" size="sm" disabled={busy || !other.trim()}>
 							<Trans>Send</Trans>

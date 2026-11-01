@@ -163,7 +163,7 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 							<th scope="col" className="w-32 px-2 text-start font-medium max-xl:hidden">
 								<Trans>Stage</Trans>
 							</th>
-							<th scope="col" className="w-20 px-2 text-start font-medium">
+							<th scope="col" className="w-36 px-2 text-start font-medium">
 								<Trans>Sent</Trans>
 							</th>
 							{header("updated", t`Updated`, "w-28 max-lg:hidden")}
@@ -347,7 +347,7 @@ const ApplicationRow = memo(function ApplicationRow({
 					</span>
 				) : (
 					<span className={cn("text-xs", sent ? "text-warn-text" : "text-ink-3")}>
-						<Trans>None</Trans>
+						<Trans>No documents attached</Trans>
 					</span>
 				)}
 			</td>

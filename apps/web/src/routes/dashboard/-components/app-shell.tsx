@@ -190,14 +190,14 @@ function Sidebar() {
 
 			<button
 				type="button"
-				aria-label={t`Search or run…`}
+				aria-label={t`Search or run a command…`}
 				aria-keyshortcuts="Meta+K"
 				onClick={() => openPalette(true)}
 				className="flex h-[34px] items-center gap-2 rounded-lg border border-line bg-bg px-2.5 text-sm text-ink-3 transition-colors duration-quick hover:text-ink-2"
 			>
 				<Icon name="magnifying-glass" size={18} />
 				<span className="flex-1 text-start">
-					<Trans>Search or run…</Trans>
+					<Trans>Search or run a command…</Trans>
 				</span>
 				<Kbd>⌘K</Kbd>
 			</button>
@@ -279,7 +279,7 @@ function Rail() {
 			<RailTip label={t`Search`} icon="magnifying-glass">
 				<button
 					type="button"
-					aria-label={t`Search or run…`}
+					aria-label={t`Search or run a command…`}
 					onClick={() => openPalette(true)}
 					className="grid size-10 place-items-center rounded-lg text-ink-2 transition-[background-color,scale] duration-quick ease-enter hover:bg-hover active:scale-[0.97]"
 				/>

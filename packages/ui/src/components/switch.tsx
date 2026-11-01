@@ -4,7 +4,7 @@ import { useId } from "react";
 import { cn } from "@reactive-resume/utils/style";
 
 const trackClassName =
-	"relative inline-flex shrink-0 items-center rounded-sm bg-line-2 transition-colors duration-quick group-data-checked/switch:bg-accent group-data-disabled/switch:opacity-50 h-5 w-8";
+	"relative inline-flex shrink-0 items-center rounded-sm bg-control-border transition-colors duration-quick group-data-checked/switch:bg-accent group-data-disabled/switch:opacity-50 h-5 w-8";
 
 const thumbClassName =
 	"pointer-events-none block origin-left data-checked:origin-right rtl:origin-right rtl:data-checked:origin-left group-active/switch:not-data-disabled:scale-x-[1.15] rounded-sm bg-white shadow-e1 transition-transform duration-quick ease-enter ms-0.5 size-4 data-checked:translate-x-3 rtl:data-checked:-translate-x-3";

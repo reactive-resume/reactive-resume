@@ -565,7 +565,7 @@ function ImportProgress({ stage, notes }: { stage: number; notes: string[] }) {
 							) : current ? (
 								<Spinner decorative className={cn(POP_CLASS, "size-[18px]")} />
 							) : (
-								<span className="size-[18px] rounded-full border-[1.5px] border-line-2" />
+								<span className="size-[18px] rounded-full border-[1.5px] border-control-border" />
 							)}
 							<span className="font-medium">{label}</span>
 							{done && notes[index] && <span className="text-xs text-ink-3">{notes[index]}</span>}

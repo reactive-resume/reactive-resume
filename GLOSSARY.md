@@ -108,6 +108,12 @@ directors, a committee, a plank, or a noticeboard.
 **Stage** — where an application sits in the pipeline (applied, interviewing, offer, rejected).
 Not a theatre stage or a phase of construction.
 
+**Show closed applications** — reveal job applications in their final, Closed stage. An imperative action, never a closed performance or show.
+
+**Search or run a command…** — open the command palette to find items or execute an app command. "Run" means execute software, never physical movement.
+
+**No resume selected / No cover letter selected** — empty document selectors in a job form or submission confirmation. **No documents attached** describes an application row without linked resume/letter documents. These describe documents, never people; do not translate them as "nobody".
+
 **Source** — where the user found the job listing (a job board, a referral, a company site).
 Singular, and specific to one application. Not a source code file and not a data source.
 

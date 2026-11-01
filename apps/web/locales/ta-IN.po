@@ -1219,6 +1219,7 @@ msgstr "சாதனை"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "கணக்கு"
@@ -1722,6 +1723,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "AI & டெவலப்பர்"
@@ -2393,6 +2395,14 @@ msgstr "ரெஸ்யூம் கோப்பை இணைக்கவும�
 msgid "Attachment"
 msgstr "இணைப்பு"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "அங்கீகாரப் பிழை"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "அணுகலை அனுமதி"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2484,6 +2494,7 @@ msgid "Background color"
 msgstr "பின்னணி நிறம்"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "காப்பு குறியீடு"
 
@@ -3201,6 +3212,7 @@ msgstr "{label} என மூடப்பட்டது"
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "ஆலோசகர்"
@@ -4371,6 +4383,7 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "கணக்கை உருவாக்கவும்"
 
@@ -4902,6 +4915,7 @@ msgstr "ஆவணங்கள்"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "ஆவணங்கள்"
 
@@ -5714,6 +5728,7 @@ msgid "Fact type"
 msgstr "உண்மையின் வகை"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "உண்மைகள்"
@@ -6002,6 +6017,10 @@ msgstr "எந்த வேலைக்கு?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "மறந்துவிடு"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "கடவுச்சொல் மறந்துவிட்டதா"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -6956,6 +6975,10 @@ msgstr "ஜப்பானியம்"
 msgid "Job"
 msgstr "வேலை"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "வேலை விண்ணப்பப் பணியிடம்"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -6990,6 +7013,10 @@ msgstr "வேலை தேடல் தோல்வியடைந்தது.
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "வேலை தேடல் நிலைவரிசை"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "வேலை தேடல் விருப்பங்கள்"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8516,6 +8543,11 @@ msgstr "திருத்தங்கள் இல்லை"
 msgid "No country matches."
 msgstr "எந்த நாடுகளும் இல்லை."
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "முகப்புக் கடிதம் தேர்ந்தெடுக்கப்படவில்லை"
+
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
 msgstr ""
@@ -8527,6 +8559,10 @@ msgstr "தேதிகள் எதுவும் காணப்படவி�
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "ஆவணங்கள் எதுவும் இணைக்கப்படவில்லை"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8652,6 +8688,11 @@ msgstr "எந்த முடிவுகளும் கிடைக்கவ�
 msgid "No resume"
 msgstr "ரெஸ்யூம் இல்லை"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "சுயவிவரம் தேர்ந்தெடுக்கப்படவில்லை"
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "இன்னும் ரெஸ்யூம்கள் இல்லை."
@@ -8722,9 +8763,6 @@ msgstr "எண். {number} · {name}"
 msgid "none"
 msgstr "எதுவும் இல்லை"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "இல்லை"
@@ -9010,6 +9048,7 @@ msgstr "வேலைவாய்ப்புச் சலுகை சேமி�
 msgid "Offer type"
 msgstr "வேலைவாய்ப்புச் சலுகையின் வகை"
 
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "சலுகைகள்"
@@ -9853,6 +9892,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "விருப்பங்கள்"
@@ -10003,6 +10043,7 @@ msgstr "திறமைத் தரம்"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "சுயவிவரம்"
@@ -10859,6 +10900,7 @@ msgstr "வடிவமைப்பு இயல்புநிலைகளை �
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "கடவுச்சொல்லை மீட்டமை"
 
@@ -11072,6 +11114,10 @@ msgstr "மீண்டும் சேமிக்க முயற்சிக�
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "மீண்டும் முயற்சிக்கிறது…"
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "செயலிக்குத் திரும்பு"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -11669,8 +11715,8 @@ msgid "Search job postings"
 msgstr "வேலை இடுகைகளைத் தேடுங்கள்"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "தேடவும் அல்லது இயக்கவும்…"
+msgid "Search or run a command…"
+msgstr "தேடு அல்லது கட்டளையை இயக்கு…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -11988,6 +12034,7 @@ msgstr "உங்கள் அங்கீகாரச் செயலியை 
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "அமைப்புகள்"
@@ -12109,8 +12156,8 @@ msgid "Show all types"
 msgstr "எல்லா வகைகளையும் காட்டு"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "காட்சி மூடப்பட்டது"
+msgid "Show closed applications"
+msgstr "மூடப்பட்ட வேலை விண்ணப்பங்களைக் காட்டு"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12199,6 +12246,7 @@ msgstr "பக்கப்பட்டிகள் பெரும்பால�
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "உள்நுழைக"
 
@@ -12717,6 +12765,7 @@ msgstr "இந்தக் காப்புக் குறியீடுக�
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "கதைகள்"
 
@@ -13903,6 +13952,7 @@ msgstr "செய்ய"
 
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "இன்று"
@@ -13986,6 +14036,7 @@ msgstr "மொழிபெயர்ப்புகள்"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "குப்பை"
 
@@ -14141,6 +14192,10 @@ msgstr "அழகூட்ட நிறங்களும் சுத்தம�
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "இளஞ்சாம்பல் சைட்பாரும் மென்மையான ஐகான்களும் கொண்ட குறைந்த வடிவமைப்பு இரு நெடுவரிசை; சட்டம், நிதி அல்லது நிர்வாக பதவிகளுக்கு தொழில்முறை மற்றும் மிதமான தோற்றம்."
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "இருபடி அங்கீகாரம்"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

@@ -302,7 +302,11 @@ function ApplicationsList() {
 										: t`Paste a job link. We'll save the posting so Check, the assistant and your letter can use it.`
 								}
 								action={{
-									label: !applications.length ? t`Save a job` : filtersActive ? t`Clear filters` : t`Show closed`,
+									label: !applications.length
+										? t`Save a job`
+										: filtersActive
+											? t`Clear filters`
+											: t`Show closed applications`,
 									onPress: () =>
 										applications.length
 											? !filtersActive

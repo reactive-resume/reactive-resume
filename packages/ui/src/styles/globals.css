@@ -27,7 +27,8 @@
 	--raised: oklch(1 0 0); /* #FFFFFF menus, dialogs, inputs */
 	--sunken: oklch(0.952 0.006 95); /* #F0EFEB wells, tracks, page canvas */
 	--line: oklch(0.9 0.006 95); /* #DFDEDA dividers */
-	--line-2: oklch(0.82 0.008 95); /* #C5C4BE input borders */
+	--line-2: oklch(0.82 0.008 95); /* #C5C4BE decorative rules */
+	--control-border: #888680;
 	--ink: oklch(0.22 0.01 95); /* #1C1B15 primary text */
 	--ink-2: oklch(0.42 0.01 95); /* #4F4D47 secondary text */
 	--ink-3: oklch(0.53 0.01 95); /* #6D6C65 meta, placeholder (minimum for text) */
@@ -87,6 +88,7 @@
 	--sunken: oklch(0.145 0.006 95); /* #0B0A08 */
 	--line: oklch(0.29 0.007 95); /* #2C2B27 */
 	--line-2: oklch(0.4 0.008 95); /* #494843 */
+	--control-border: #73726c;
 	--ink: oklch(0.95 0.005 95); /* #EFEEEB */
 	--ink-2: oklch(0.79 0.008 95); /* #BCBAB5 */
 	--ink-3: oklch(0.67 0.008 95); /* #979590 */
@@ -150,6 +152,7 @@
 	--color-sunken: var(--sunken);
 	--color-line: var(--line);
 	--color-line-2: var(--line-2);
+	--color-control-border: var(--control-border);
 	--color-ink: var(--ink);
 	--color-ink-2: var(--ink-2);
 	--color-ink-3: var(--ink-3);
@@ -276,4 +279,12 @@
 	to {
 		scale: 0 1;
 	}
+}
+
+/* Addresses and phone numbers retain their syntax inside an RTL interface. */
+input[type="email"],
+input[type="url"],
+input[type="tel"] {
+	direction: ltr;
+	text-align: start;
 }

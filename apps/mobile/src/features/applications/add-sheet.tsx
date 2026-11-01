@@ -609,7 +609,7 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 										label={t`Resume`}
 										value={resumeId}
 										options={[
-											{ value: "", label: t`None` },
+											{ value: "", label: t`No resume selected` },
 											...docs.filter((doc) => doc.type === "resume").map((doc) => ({ value: doc.id, label: doc.name })),
 										]}
 										onChange={setResumeId}
@@ -620,7 +620,7 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 											label={t`Cover letter submitted (optional)`}
 											value={letterId}
 											options={[
-												{ value: "", label: t`None` },
+												{ value: "", label: t`No cover letter selected` },
 												...docs
 													.filter((doc) => doc.type === "letter")
 													.map((doc) => ({ value: doc.id, label: doc.name })),

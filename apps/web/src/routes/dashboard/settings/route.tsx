@@ -5,6 +5,7 @@ import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-r
 import { Fragment } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { popTransition } from "@/features/settings/root";
+import { getPageTitle } from "@/libs/seo";
 
 type Page = {
 	to:
@@ -32,7 +33,10 @@ const getProjectLinks = () => [
 	{ href: "https://opencollective.com/reactive-resume/donate", label: t`Donate` },
 ];
 
-export const Route = createFileRoute("/dashboard/settings")({ component: RouteComponent });
+export const Route = createFileRoute("/dashboard/settings")({
+	head: () => ({ meta: [{ title: getPageTitle(t`Settings`) }] }),
+	component: RouteComponent,
+});
 
 function RouteComponent() {
 	const pathname = useRouterState({ select: (state) => state.location.pathname });

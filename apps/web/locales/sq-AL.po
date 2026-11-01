@@ -1219,6 +1219,7 @@ msgstr "Arritje"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "Llogaria"
@@ -1722,6 +1723,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "AI dhe zhvillues"
@@ -2393,6 +2395,14 @@ msgstr "Bashkëngjit një skedar CV-je (PDF)"
 msgid "Attachment"
 msgstr "Shtojcë"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "Gabim autentikimi"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "Lejo qasjen"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2484,6 +2494,7 @@ msgid "Background color"
 msgstr "Ngjyra e sfondit"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "Kodi rezervë"
 
@@ -3201,6 +3212,7 @@ msgstr "E mbyllur si {label}"
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "Këshilltari"
@@ -4371,6 +4383,7 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "Krijo llogari"
 
@@ -4902,6 +4915,7 @@ msgstr "Dokumentacioni"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "Dokumentet"
 
@@ -5714,6 +5728,7 @@ msgid "Fact type"
 msgstr "Lloji i faktit"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "Faktet"
@@ -6002,6 +6017,10 @@ msgstr "Për cilën punë?"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "Harro"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "Keni harruar fjalëkalimin"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -6956,6 +6975,10 @@ msgstr "Japonisht"
 msgid "Job"
 msgstr "Job"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "Hapësira e punës së aplikimit për punë"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -6990,6 +7013,10 @@ msgstr "Kërkimi i punës dështoi. Provo sërish ose ngjit një lidhje për pos
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "Procesi i kërkimit të punës"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "Preferencat e kërkimit të punës"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8516,6 +8543,11 @@ msgstr "Pa korrigjime"
 msgid "No country matches."
 msgstr "Nuk u gjet asnjë shtet."
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "Nuk është zgjedhur letër motivimi"
+
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
 msgstr ""
@@ -8527,6 +8559,10 @@ msgstr "Nuk u gjetën data."
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "Nuk ka dokumente të bashkëngjitura"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8652,6 +8688,11 @@ msgstr "Nuk u gjetën rezultate."
 msgid "No resume"
 msgstr "Asnjë rezyme"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "Nuk është zgjedhur CV"
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "Ende nuk ka rinisje."
@@ -8722,9 +8763,6 @@ msgstr "Nr {number} · {name}"
 msgid "none"
 msgstr "asnjë"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "Asnjë"
@@ -9010,6 +9048,7 @@ msgstr "Oferta e punës u ruajt"
 msgid "Offer type"
 msgstr "Lloji i ofertës së punës"
 
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "Ofertat"
@@ -9853,6 +9892,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "Preferenca"
@@ -10003,6 +10043,7 @@ msgstr "Aftësi"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "Profili"
@@ -10859,6 +10900,7 @@ msgstr "Rivendos standardet e dizajnit"
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "Rivendos fjalëkalimin"
 
@@ -11072,6 +11114,10 @@ msgstr "Riprovoni ruajtjen"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "Po provon sërish…"
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "Kthehu te aplikacioni"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -11669,8 +11715,8 @@ msgid "Search job postings"
 msgstr "Kërkoni postime pune"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "Kërko ose ekzekuto…"
+msgid "Search or run a command…"
+msgstr "Kërko ose ekzekuto një komandë…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -11988,6 +12034,7 @@ msgstr "Konfiguroni aplikacionin e autentikimit"
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "Parametrat"
@@ -12109,8 +12156,8 @@ msgid "Show all types"
 msgstr "Shfaq të gjitha llojet"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "Shfaq të mbyllura"
+msgid "Show closed applications"
+msgstr "Shfaq aplikimet e mbyllura për punë"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12199,6 +12246,7 @@ msgstr "Shiritat anësor shpesh lexohen të fundit, ose të përziera në kolon�
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "Kyçu"
 
@@ -12717,6 +12765,7 @@ msgstr "Ruajini këto kode rezervë diku të sigurt. Secili ju lejon të hyni nj
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "Historitë"
 
@@ -13903,6 +13952,7 @@ msgstr "te"
 
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "Sot"
@@ -13986,6 +14036,7 @@ msgstr "Përkthime"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "Koshi"
 
@@ -14141,6 +14192,10 @@ msgstr "Dy kolona me ngjyra theksi dhe tipografi të pastër; zgjedhje e balancu
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "Dy kolona, minimal me shirit anësor gri të çelët dhe ikona delikate; profesional dhe i përmbajtur për role ligjore, financiare ose ekzekutive."
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "Autentikimi me dy faktorë"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

@@ -66,7 +66,7 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 			<span id={labelId} className="text-xs font-medium text-ink-2">
 				<Trans>Where you're looking for work</Trans>
 			</span>
-			<div className="flex min-h-10 flex-wrap items-center gap-[5px] rounded-md border border-line-2 bg-raised p-[5px]">
+			<div className="flex min-h-10 flex-wrap items-center gap-[5px] rounded-md border border-control-border bg-raised p-[5px]">
 				{shown.codes.map((code) => {
 					const country = name(code);
 					return (

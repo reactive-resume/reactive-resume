@@ -123,7 +123,7 @@ export function FactsPage({ highlight }: FactsPageProps) {
 			<MemoryCard />
 
 			<div className="flex flex-wrap items-center gap-2">
-				<label className="flex h-[34px] w-full items-center gap-1.5 rounded-md border border-line-2 bg-raised px-2.5 transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)] sm:w-[280px] pointer-coarse:h-11">
+				<label className="flex h-[34px] w-full items-center gap-1.5 rounded-md border border-control-border bg-raised px-2.5 transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)] sm:w-[280px] pointer-coarse:h-11">
 					<Icon name="magnifying-glass" size={18} className="text-ink-3" />
 					<input
 						type="search"

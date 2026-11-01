@@ -5,8 +5,10 @@ import { createFileRoute, Link, Outlet, useMatchRoute } from "@tanstack/react-ro
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { PageHeader } from "@/components/layout/page-header";
+import { getPageTitle } from "@/libs/seo";
 
 export const Route = createFileRoute("/dashboard/career")({
+	head: () => ({ meta: [{ title: getPageTitle(t`Career`) }] }),
 	component: CareerLayout,
 });
 

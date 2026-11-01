@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { defaultLocale, isLocale, localeSchema, localizedUrl, supportedLocales } from "@reactive-resume/utils/locale";
 
 const storageKey = "locale";
+const persistLocale = (locale: Locale) => Cookies.set(storageKey, locale, { expires: 365, path: "/", sameSite: "lax" });
 const messageLoaders = import.meta.glob<{ messages: Messages }>("../../locales/*.po");
 const relativeTimeDivisions: Array<{ amount: number; unit: Intl.RelativeTimeFormatUnit }> = [
 	{ amount: 31_536_000_000, unit: "year" },
@@ -110,7 +111,7 @@ export const getLocale = () => {
 	const requested = new URLSearchParams(window.location.search).get(storageKey);
 	if (isLocale(requested)) {
 		const locale = resolveLocale(requested);
-		Cookies.set(storageKey, locale);
+		persistLocale(locale);
 		return locale;
 	}
 
@@ -150,7 +151,7 @@ export const loadLocale = async (locale: string) => {
 export const changeLocale = (value: string | null) => {
 	if (!value || !isLocale(value)) return;
 	const locale = resolveLocale(value);
-	Cookies.set(storageKey, locale);
+	persistLocale(locale);
 	window.history.replaceState(window.history.state, "", localizedUrl(window.location.href, locale));
 	window.location.reload();
 };

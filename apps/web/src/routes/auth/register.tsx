@@ -1,8 +1,11 @@
+import { t } from "@lingui/core/macro";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { RegisterPage } from "@/features/auth/pages/register";
 import { getAuthRedirectOptions } from "@/features/auth/redirect";
+import { getPageTitle } from "@/libs/seo";
 
 export const Route = createFileRoute("/auth/register")({
+	head: () => ({ meta: [{ title: getPageTitle(t`Create account`) }] }),
 	component: RouteComponent,
 	beforeLoad: ({ context, search }) => {
 		// Guests come here to keep their work: signing up or in from a guest session moves it to that account.

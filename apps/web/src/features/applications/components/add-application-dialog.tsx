@@ -668,9 +668,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 					id={`${id}-resume`}
 					value={resumeId}
 					onChange={(event) => setResumeId(event.target.value)}
-					className="h-9 rounded-md border border-line bg-surface px-2 text-sm"
+					className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
 				>
-					<option value="">{t`None`}</option>
+					<option value="">{t`No resume selected`}</option>
 					{documents
 						?.filter((document) => document.type === "resume")
 						.map((document) => (
@@ -689,9 +689,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture }: AddApplication
 						id={`${id}-letter`}
 						value={coverLetterId}
 						onChange={(event) => setCoverLetterId(event.target.value)}
-						className="h-9 rounded-md border border-line bg-surface px-2 text-sm"
+						className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
 					>
-						<option value="">{t`None`}</option>
+						<option value="">{t`No cover letter selected`}</option>
 						{documents
 							?.filter((document) => document.type === "letter")
 							.map((document) => (

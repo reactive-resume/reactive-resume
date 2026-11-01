@@ -89,6 +89,13 @@ function InputBox({
 	const ref = useRef<ComponentRef<typeof TextInput>>(null);
 	const [focused, setFocused] = useState(false);
 	const border = error ? 2 : focused ? 2 : 1;
+	const ltr =
+		input.keyboardType === "url" ||
+		input.keyboardType === "email-address" ||
+		input.keyboardType === "phone-pad" ||
+		input.inputMode === "url" ||
+		input.inputMode === "email" ||
+		input.inputMode === "tel";
 
 	return (
 		<Pressable
@@ -96,6 +103,7 @@ function InputBox({
 			onPress={() => ref.current?.focus()}
 			style={{
 				flexDirection: "row",
+				direction: ltr ? "ltr" : undefined,
 				alignItems: multiline ? "flex-start" : "center",
 				gap: space.s2,
 				minHeight: minHeight ?? size.input,
@@ -141,7 +149,8 @@ function InputBox({
 						flex: 1,
 						color: colors.ink,
 						paddingVertical: multiline ? 0 : space.s2,
-						textAlign: I18nManager.isRTL ? "right" : "left",
+						textAlign: ltr ? "left" : I18nManager.isRTL ? "right" : "left",
+						writingDirection: ltr ? "ltr" : undefined,
 					},
 				]}
 			/>
@@ -466,7 +475,7 @@ export function Chip({ label, selected, onPress, icon, onRemove }: ChipProps) {
 				paddingEnd: onRemove ? space.s1 + space.s0 : space.s3,
 				borderRadius: radius.rLg,
 				borderWidth: 1,
-				borderColor: selected ? colors.accent : colors.line2,
+				borderColor: selected ? colors.accent : colors.lineStrong,
 				backgroundColor: pressed && onPress && !android ? colors.sunken : selected ? colors.accentSoft : colors.raised,
 				overflow: "hidden",
 			})}

@@ -1219,6 +1219,7 @@ msgstr "実績"
 #: src/features/settings/account/page.tsx
 #: src/features/settings/root.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/account.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Account"
 msgstr "アカウント"
@@ -1722,6 +1723,7 @@ msgstr ""
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/ai/page.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/ai.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "AI & developer"
 msgstr "AIと開発者"
@@ -2393,6 +2395,14 @@ msgstr "履歴書ファイルを添付（PDF）"
 msgid "Attachment"
 msgstr "添付ファイル"
 
+#: src/routes/auth/error.tsx
+msgid "Authentication error"
+msgstr "認証エラー"
+
+#: src/routes/auth/consent.tsx
+msgid "Authorize access"
+msgstr "アクセスを許可"
+
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
 #: src/features/settings/profile.tsx
 msgid "Authorized to work in {0}"
@@ -2484,6 +2494,7 @@ msgid "Background color"
 msgstr "背景色"
 
 #: src/features/auth/pages/verify-2fa.tsx
+#: src/routes/auth/verify-2fa-backup.tsx
 msgid "Backup code"
 msgstr "バックアップコード"
 
@@ -3201,6 +3212,7 @@ msgstr "{label}として終了"
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "コーチ"
@@ -4371,6 +4383,7 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "アカウントを作成"
 
@@ -4902,6 +4915,7 @@ msgstr "ドキュメント"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/index.tsx
 msgid "Documents"
 msgstr "書類"
 
@@ -5714,6 +5728,7 @@ msgid "Fact type"
 msgstr "事実の種類"
 
 #: src/features/career/coach-chat.tsx
+#: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Facts"
 msgstr "事実"
@@ -6002,6 +6017,10 @@ msgstr "どの仕事に？"
 #: src/features/career/knowledge/facts.tsx
 msgid "Forget"
 msgstr "忘れさせる"
+
+#: src/routes/auth/forgot-password.tsx
+msgid "Forgot password"
+msgstr "パスワードを忘れた場合"
 
 #. Link label to password reset page from login form
 #: src/features/auth/pages/login.tsx
@@ -6956,6 +6975,10 @@ msgstr "日本語"
 msgid "Job"
 msgstr "仕事"
 
+#: src/routes/dashboard/applications/$applicationId.{-$tab}.tsx
+msgid "Job application workspace"
+msgstr "応募のワークスペース"
+
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -6990,6 +7013,10 @@ msgstr "就職活動に失敗しました。もう一度試すか、求人情報
 #: src/features/applications/components/insights-view.tsx
 msgid "Job search pipeline"
 msgstr "求人応募パイプライン"
+
+#: src/routes/dashboard/career/knowledge/preferences.tsx
+msgid "Job search preferences"
+msgstr "求人検索の設定"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Job title"
@@ -8516,6 +8543,11 @@ msgstr "修正なし"
 msgid "No country matches."
 msgstr "一致する国がありません。"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No cover letter selected"
+msgstr "カバーレターが選択されていません"
+
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
 msgstr ""
@@ -8527,6 +8559,10 @@ msgstr "日付が見つかりませんでした。"
 #: src/features/career/workspace/apply.tsx
 msgid "no documents"
 msgstr ""
+
+#: src/features/applications/components/list-view.tsx
+msgid "No documents attached"
+msgstr "書類が添付されていません"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
@@ -8652,6 +8688,11 @@ msgstr "結果が見つかりません。"
 msgid "No resume"
 msgstr "履歴書なし"
 
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume selected"
+msgstr "履歴書が選択されていません"
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
 msgstr "まだ履歴書はありません。"
@@ -8722,9 +8763,6 @@ msgstr "No.{number}・{name}"
 msgid "none"
 msgstr "なし"
 
-#: src/features/applications/components/add-application-dialog.tsx
-#: src/features/applications/components/application-detail-sheet.tsx
-#: src/features/applications/components/list-view.tsx
 #: src/features/career/today.tsx
 msgid "None"
 msgstr "なし"
@@ -9010,6 +9048,7 @@ msgstr "オファーを保存しました"
 msgid "Offer type"
 msgstr "オファーの種類"
 
+#: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "オファー"
@@ -9853,6 +9892,7 @@ msgstr ""
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/features/settings/preferences.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/preferences.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Preferences"
 msgstr "環境設定"
@@ -10003,6 +10043,7 @@ msgstr "熟練度"
 #: src/features/homepage/sheet.tsx
 #: src/features/settings/profile.tsx
 #: src/features/settings/root.tsx
+#: src/routes/dashboard/settings/profile.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Profile"
 msgstr "プロフィール"
@@ -10859,6 +10900,7 @@ msgstr "デザインのデフォルトをリセットする"
 
 #. Primary action button label on reset-password form
 #: src/features/auth/pages/reset-password.tsx
+#: src/routes/auth/reset-password.tsx
 msgid "Reset password"
 msgstr "パスワードをリセット"
 
@@ -11072,6 +11114,10 @@ msgstr "保存を再試行してください"
 #: src/features/documents/library-error.tsx
 msgid "Retrying…"
 msgstr "再試行中…"
+
+#: src/routes/auth/native-callback.tsx
+msgid "Return to the app"
+msgstr "アプリに戻る"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reuse scope"
@@ -11669,8 +11715,8 @@ msgid "Search job postings"
 msgstr "求人情報を検索する"
 
 #: src/routes/dashboard/-components/app-shell.tsx
-msgid "Search or run…"
-msgstr "検索または実行…"
+msgid "Search or run a command…"
+msgstr "検索またはコマンドを実行…"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Search role, company or contact"
@@ -11988,6 +12034,7 @@ msgstr "認証アプリを設定"
 #: src/features/settings/root.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/settings/index.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Settings"
 msgstr "設定"
@@ -12109,8 +12156,8 @@ msgid "Show all types"
 msgstr "すべての種類を表示"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Show closed"
-msgstr "ショーは終了しました"
+msgid "Show closed applications"
+msgstr "終了した応募を表示"
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -12199,6 +12246,7 @@ msgstr "サイドバーは多くの場合、最後に読まれるか、メイン
 #: src/features/auth/components/guest-banner.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
+#: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "サインイン"
 
@@ -12717,6 +12765,7 @@ msgstr "これらのバックアップコードを安全な場所に保管して
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
+#: src/routes/dashboard/career/knowledge/stories.{-$storyId}.tsx
 msgid "Stories"
 msgstr "ストーリー"
 
@@ -13903,6 +13952,7 @@ msgstr "に"
 
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
 msgstr "今日"
@@ -13986,6 +14036,7 @@ msgstr "翻訳"
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
+#: src/routes/dashboard/trash.tsx
 msgid "Trash"
 msgstr "ゴミ箱"
 
@@ -14141,6 +14192,10 @@ msgstr "アクセントカラーとクリーンなタイポグラフィを組み
 #: src/dialogs/resume/template/data.ts
 msgid "Two-column, minimal with light gray sidebar and subtle icons; professional and understated for legal, finance, or executive roles."
 msgstr "淡いグレーのサイドバーと控えめなアイコンを備えた、ミニマルな 2 カラムレイアウト。法務・金融・経営幹部などの職種にふさわしい、プロフェッショナルで落ち着いたデザインです。"
+
+#: src/routes/auth/verify-2fa.tsx
+msgid "Two-factor authentication"
+msgstr "二要素認証"
 
 #: src/features/auth/pages/verify-2fa.tsx
 #: src/features/command-palette/pages/navigation.tsx

@@ -1,7 +1,10 @@
+import { t } from "@lingui/core/macro";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { OAuthConsentPage } from "@/features/auth/pages/consent";
+import { getPageTitle } from "@/libs/seo";
 
 export const Route = createFileRoute("/auth/consent")({
+	head: () => ({ meta: [{ title: getPageTitle(t`Authorize access`) }] }),
 	beforeLoad: ({ context }) => {
 		if (!context.session) {
 			throw redirect({

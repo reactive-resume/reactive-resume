@@ -8,8 +8,10 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { D2, EASE } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
+import { getPageTitle } from "@/libs/seo";
 
 export const Route = createFileRoute("/dashboard/career/knowledge")({
+	head: () => ({ meta: [{ title: getPageTitle(t`Knowledge`) }] }),
 	component: KnowledgeLayout,
 });
 

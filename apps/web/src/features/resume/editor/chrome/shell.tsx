@@ -3,6 +3,7 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { TabsContent } from "@reactive-resume/ui/components/tabs";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
@@ -149,19 +150,43 @@ function DesktopBody({ mode, panelLabel, panel, page, assistant, column, replace
 	);
 }
 
-/** Tablets: the page, with the panel as a 380px drawer over it. */
+/** The drawer and visible canvas share the available width; ResizeObserver refits the page. */
 function TabletBody({ mode, panelLabel, panel, page }: BodyProps) {
 	const drawerOpen = useEditorStore((state) => state.drawerOpen);
+	const panelRef = useRef<HTMLDivElement>(null);
+	useLayoutEffect(() => {
+		// All opening paths (including selecting page text) must refit to the narrower canvas.
+		if (drawerOpen) useEditorStore.getState().setZoom("fit");
+	}, [drawerOpen]);
+	useEffect(() => {
+		if (!drawerOpen) return;
+		const close = (event: KeyboardEvent) => {
+			if (
+				event.key !== "Escape" ||
+				event.defaultPrevented ||
+				document.querySelector('[role="dialog"][aria-modal="true"]')
+			)
+				return;
+			event.preventDefault();
+			const returnFocus = event.target instanceof Node && panelRef.current?.contains(event.target);
+			useEditorStore.setState({ drawerOpen: false });
+			if (returnFocus) document.getElementById("editor-panel-toggle")?.focus();
+		};
+		window.addEventListener("keydown", close);
+		return () => window.removeEventListener("keydown", close);
+	}, [drawerOpen]);
 
 	return (
 		<div className="relative min-h-0">
-			<main id="main-content" className="h-full min-w-0">
+			<main id="main-content" className={cn("h-full min-w-0", drawerOpen && "ps-[380px]")}>
 				{page}
 			</main>
 			<TabsContent
 				key={mode}
 				value={mode}
 				aria-label={panelLabel}
+				ref={panelRef}
+				id="editor-panel"
 				inert={!drawerOpen}
 				className={cn(
 					"absolute inset-y-0 start-0 z-20 w-[380px] max-w-[calc(100%-3rem)] overflow-y-auto border-e border-line bg-surface shadow-e3 transition-transform duration-emphasized ease-enter [overflow-anchor:none]",
