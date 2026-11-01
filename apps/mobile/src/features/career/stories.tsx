@@ -1,7 +1,7 @@
 import type { Fact, Story } from "./hooks";
 import type { CareerStoryData } from "@reactive-resume/schema/career";
 import type { ComponentRef } from "react";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRef, useState } from "react";
 import { type TextInput, View } from "react-native";
@@ -108,12 +108,22 @@ export function Stories() {
 	);
 }
 
-type StoryEditorProps = { story: Story | null; facts: Fact[]; onClose: () => void };
-function StoryEditor({ story, facts, onClose }: StoryEditorProps) {
+type StoryEditorProps = {
+	story: Story | null;
+	facts: Fact[];
+	onClose: () => void;
+	/**
+	 * A coach's proposal opened with Edit first: its parts and scope start the draft, edits are handed back as they're
+	 * typed (so closing keeps them for the review card), and `onSaved` follows a successful save.
+	 */
+	proposal?: { story: CareerStoryData; onChange: (story: CareerStoryData) => void; onSaved: () => void };
+};
+export function StoryEditor({ story, facts, onClose, proposal }: StoryEditorProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const [draft, setDraft] = useState<CareerStoryData>(
 		() =>
+			proposal?.story ??
 			story?.data ?? {
 				applicationId: null,
 				title: "",
@@ -134,7 +144,14 @@ function StoryEditor({ story, facts, onClose }: StoryEditorProps) {
 	const available = facts.filter(
 		(fact) => fact.status === "active" && (!fact.applicationId || fact.applicationId === draft.applicationId),
 	);
-	const change = (patch: Partial<CareerStoryData>) => setDraft((current) => ({ ...current, ...patch }));
+	const change = (patch: Partial<CareerStoryData>) =>
+		setDraft((current) => {
+			const next = { ...current, ...patch };
+			proposal?.onChange(next);
+			return next;
+		});
+	// Proposed facts this scope can't use: they won't back the story, and the server would refuse them.
+	const unavailable = draft.factIds.filter((id) => !available.some((fact) => fact.id === id));
 	const payload = { ...draft, factIds: draft.factIds.filter((id) => available.some((fact) => fact.id === id)) };
 	const valid = careerStoryInputSchema.safeParse(payload).success;
 	const missingTitle = !draft.title.trim();
@@ -157,10 +174,11 @@ function StoryEditor({ story, facts, onClose }: StoryEditorProps) {
 		);
 	return (
 		<EditorSheet
-			dirty={dirty}
+			// A proposal's edits are kept for its review card, so closing never discards them.
+			dirty={proposal ? false : dirty}
 			pending={action.pending}
 			onClose={onClose}
-			title={story ? t`Edit STARR story` : t`New STARR story`}
+			title={proposal ? t`Edit the proposed story` : story ? t`Edit STARR story` : t`New STARR story`}
 		>
 			<View style={{ padding: space.s4, gap: space.s4 }}>
 				<Text color="ink3">{t`Situation, Task and Action are required. Leave Result and Reflection blank until you can support them.`}</Text>
@@ -204,6 +222,15 @@ function StoryEditor({ story, facts, onClose }: StoryEditorProps) {
 						}
 					/>
 				))}
+				{unavailable.length > 0 ? (
+					<Banner
+						tone="warn"
+						message={plural(unavailable.length, {
+							one: "# proposed fact isn't available here and won't back the story.",
+							other: "# proposed facts aren't available here and won't back the story.",
+						})}
+					/>
+				) : null}
 				{action.error ? <Banner tone="danger" message={action.error} /> : null}
 				<Button
 					label={t`Save story`}
@@ -217,7 +244,10 @@ function StoryEditor({ story, facts, onClose }: StoryEditorProps) {
 							}
 							return;
 						}
-						void action.run(() => client.career.saveStory({ ...payload, ...(story ? { id: story.id } : {}) }), onClose);
+						void action.run(
+							() => client.career.saveStory({ ...payload, ...(story ? { id: story.id } : {}) }),
+							proposal ? proposal.onSaved : onClose,
+						);
 					}}
 				/>
 			</View>

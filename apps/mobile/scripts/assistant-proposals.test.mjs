@@ -30,6 +30,16 @@ const shared = evaluate(
 	}).outputFiles[0].text,
 	{},
 );
+const agentContracts = evaluate(
+	buildSync({
+		entryPoints: [new URL("../../../packages/ai/src/tools/agent-tool-contracts.ts", import.meta.url).pathname],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text,
+	{},
+);
 const { defaultResumeData } = evaluate(
 	buildSync({
 		entryPoints: [mobileRequire.resolve("@reactive-resume/schema/resume/default")],
@@ -133,6 +143,7 @@ function store(kind) {
 const resumeStore = store("resume");
 const letterStore = store("letter");
 const dependencies = {
+	"@reactive-resume/ai/tools/agent-tool-contracts": agentContracts,
 	react: { useMemo: (fn) => fn() },
 	immer: { produce },
 	zustand: {
@@ -397,15 +408,24 @@ test("native chat records real successes and explicit history changes, never ref
 			react: hooks,
 			"@legendapp/list/react-native": { LegendList: "LegendList" },
 			"@lingui/react/macro": { Trans: "Trans", useLingui: () => ({ t: (parts) => parts.join("") }) },
-			"@orpc/client": { ORPCError: class extends Error {} },
+			"@orpc/client": mobileRequire("@orpc/client"),
+			"expo-router": { useRouter: () => ({ push: () => assert.fail("Off edit cannot navigate") }) },
+			"./handoff": { handToAssistant: () => assert.fail("Off edit cannot hand off text") },
+			"@/features/career/facts": { factCategories: [] },
+			"@/features/documents/queries": { useDocuments: () => ({ data: [] }) },
+			"@/routes": { routes: {} },
 			"@tanstack/react-query": {
-				useQuery: () => ({
-					data: { messages: [message], thread: {}, isReadOnly: false },
-					isFetchedAfterMount: true,
-					refetch: () => receiptRead(),
-				}),
+				useQuery: (options) => {
+					const data = { messages: [message], thread: {}, isReadOnly: false };
+					return {
+						data: options?.select ? options.select(data) : data,
+						isFetchedAfterMount: true,
+						refetch: () => receiptRead(),
+					};
+				},
 				useQueryClient: () => ({}),
 			},
+			"@reactive-resume/utils/http": { isNetworkError: () => false },
 			ai: {},
 			"@reactive-resume/ai/tools/agent-tool-contracts": evaluate(
 				buildSync({
@@ -631,7 +651,12 @@ test("both native API adapters include unsynchronized proposal decisions in thei
 				},
 			},
 			"@lingui/core/macro": dependencies["@lingui/core/macro"],
-			"@orpc/client": { ORPCError: class extends Error {} },
+			"@orpc/client": mobileRequire("@orpc/client"),
+			"expo-router": { useRouter: () => ({ push: () => assert.fail("Off edit cannot navigate") }) },
+			"./handoff": { handToAssistant: () => assert.fail("Off edit cannot hand off text") },
+			"@/features/career/facts": { factCategories: [] },
+			"@/features/documents/queries": { useDocuments: () => ({ data: [] }) },
+			"@/routes": { routes: {} },
 		},
 	);
 	const document = {
@@ -699,6 +724,12 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 			"./markdown": { AssistantMarkdown: "Markdown" },
 			"./proposals": proposals,
 			"@/api/client": {},
+			"@orpc/client": mobileRequire("@orpc/client"),
+			"expo-router": { useRouter: () => ({ push: () => assert.fail("Off edit cannot navigate") }) },
+			"./handoff": { handToAssistant: () => assert.fail("Off edit cannot hand off text") },
+			"@/features/career/facts": { factCategories: [] },
+			"@/features/documents/queries": { useDocuments: () => ({ data: [] }) },
+			"@/routes": { routes: {} },
 			"@/features/ai/report-content": { ReportAiContent: "Report" },
 			"@/ui": { ...dependencies["@/ui"], Button: "Button", Text: "Text", Icon: "Icon", useTheme: () => theme },
 		},

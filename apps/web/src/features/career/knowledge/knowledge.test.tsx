@@ -58,6 +58,7 @@ vi.mock("@/libs/orpc/client", () => {
 					"suggestTargetRoles",
 					"updateFact",
 					"createOffer",
+					"updateOffer",
 				].map((name) => [name, endpoint(name)]),
 			),
 		},

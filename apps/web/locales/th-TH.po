@@ -209,7 +209,9 @@ msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, other {# รายการ}}"
 
 #. placeholder {0}: knowledge.active.length
+#. placeholder {0}: knowledge.facts.length
 #. placeholder {0}: used.facts.length
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {# fact} other {# facts}}"
@@ -230,6 +232,11 @@ msgstr "{0, plural, one {ปัญหา # จะถูกละเว้น} ot
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "{0, plural, one {# proposed edit} other {# proposed edits}}"
 msgstr "{0, plural, one {# เสนอให้แก้ไข} other {# เสนอการแก้ไข}}"
+
+#. placeholder {0}: unavailable.length
+#: src/features/career/knowledge/stories.tsx
+msgid "{0, plural, one {# proposed fact isn't available here and won't back the story.} other {# proposed facts aren't available here and won't back the story.}}"
+msgstr ""
 
 #. placeholder {0}: done.length
 #: src/features/career/today.tsx
@@ -259,7 +266,9 @@ msgstr "{0, plural, other {# ส่วน}}"
 msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {เลือก # แล้ว} other {เลือก # แล้ว}}"
 
+#. placeholder {0}: knowledge.stories.length
 #. placeholder {0}: used.stories.length
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, other {# เรื่องราว}}"
@@ -328,6 +337,11 @@ msgstr "{0, plural, other {นำเข้าใบสมัคร # ราย�
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
 msgstr "{0, plural, other {คลังความรู้ · ข้อเท็จจริง # ข้อ}}"
+
+#. placeholder {0}: -difference
+#: src/features/career/workspace/apply.tsx
+msgid "{0, plural, one {Longer by # word} other {Longer by # words}}"
+msgstr ""
 
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
@@ -400,6 +414,11 @@ msgstr ""
 #: src/features/applications/components/insights-view.tsx
 msgid "{0} closed"
 msgstr "{0} ปิดแล้ว"
+
+#. placeholder {0}: props.providerLabel
+#: src/features/assistant/conversation.tsx
+msgid "{0} didn't respond."
+msgstr ""
 
 #. placeholder {0}: semantics.dates.length
 #: src/features/resume/editor/check/parser-view.tsx
@@ -491,12 +510,6 @@ msgstr "พบคำ {0} จาก {1} คำ"
 msgid "{0} posting"
 msgstr "ลงประกาศรับสมัครงาน {0}"
 
-#. placeholder {0}: props.providerLabel
-#. placeholder {1}: getOrpcErrorMessage(error, { fallback: t`an error`, allowServerMessage: true, })
-#: src/features/assistant/conversation.tsx
-msgid "{0} returned “{1}”. Your message is kept."
-msgstr "{0} ส่งคืน “{1}” ข้อความของคุณถูกเก็บไว้"
-
 #. placeholder {0}: selection.length
 #: src/features/career/today.tsx
 msgid "{0} selected"
@@ -552,6 +565,10 @@ msgstr "{0}. แก้ไขปัญหาแล้ว"
 #: src/features/assistant/conversation.tsx
 msgid "{accepted} of {0} applied"
 msgstr "ปรับใช้แล้ว {accepted} จาก {0}"
+
+#: src/features/career/workspace/apply.tsx
+msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -644,6 +661,10 @@ msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "{delta} vs {version}"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "{difference, plural, one {Shorter by # word} other {Shorter by # words}}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
@@ -747,6 +768,10 @@ msgstr "สัมภาษณ์ {kind}"
 #: src/features/career/coach-thread.tsx
 msgid "{label} connection"
 msgstr "การเชื่อมต่อ {label}"
+
+#: src/features/assistant/connection-notice.tsx
+msgid "{label} is off or was removed. Choose the connection this conversation uses next."
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "{length}m"
@@ -855,6 +880,10 @@ msgstr "{proposed, plural, one {# เสนอ} other {# เสนอ}}"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "{relevant, plural, one {# relevant reviewed answer} other {# relevant reviewed answers}}"
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "{removed, plural, one {changes or removes # of your sentences} other {changes or removes # of your sentences}}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
@@ -1120,6 +1149,10 @@ msgstr "วันที่จะไม่ถูกอ่าน"
 msgid "A fact changed. Review this story."
 msgstr "ข้อเท็จจริงมีการเปลี่ยนแปลง ตรวจทานเรื่องราวนี้"
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "A fact that isn't available here. Saving will fail; edit the story first."
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "A fact that's no longer in Knowledge"
 msgstr ""
@@ -1320,6 +1353,7 @@ msgstr "บัญชี"
 msgid "Account details"
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Action"
@@ -1700,6 +1734,12 @@ msgstr ""
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "เพิ่มเรกคอร์ดเหล่านี้ในที่ที่คุณจัดการโดเมน แล้วตรวจสอบ การเปลี่ยนแปลงอาจใช้เวลาสองสามชั่วโมงกว่าจะมีผลกับทุกคน"
 
+#: src/features/career/coach-chat.tsx
+msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
+"\n"
+"{text}"
+msgstr ""
+
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/shell.tsx
@@ -1713,6 +1753,10 @@ msgstr "เพิ่มไปยังไปป์ไลน์"
 #: src/features/career/workspace/fit.tsx
 msgid "Add to questions"
 msgstr "เพิ่มในคำถาม"
+
+#: src/features/career/coach-chat.tsx
+msgid "Add to resume"
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Add to Skills"
@@ -1761,6 +1805,10 @@ msgstr "เพิ่มในคลังความรู้เป็นคว
 msgid "Added to Knowledge as an experience."
 msgstr "เพิ่มในคลังความรู้เป็นประสบการณ์แล้ว"
 
+#: src/features/career/coach-chat.tsx
+msgid "Added to Knowledge."
+msgstr ""
+
 #: src/features/resume/share/address-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Address"
@@ -1777,10 +1825,6 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Address line 2"
 msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "Adds a reminder to Today if you haven't heard back by then."
-msgstr "เพิ่มการแจ้งเตือนใน “วันนี้” หากยังไม่ได้รับการตอบกลับภายในเวลานั้น"
 
 #: src/features/templates/gallery.tsx
 msgid "Adjust fonts, colors, spacing and sections in the resume builder. Export your finished resume to PDF or Word, or share a link. The PDFs above are examples to help you compare designs."
@@ -2050,10 +2094,6 @@ msgstr "ไม่สามารถอ่านฟอนต์ที่ฝัง
 msgid "An entry has no dates"
 msgstr "รายการไม่มีวันที่"
 
-#: src/features/assistant/conversation.tsx
-msgid "an error"
-msgstr "ข้อผิดพลาด"
-
 #: src/features/career/offer-entry.tsx
 msgid "an hour"
 msgstr ""
@@ -2099,6 +2139,10 @@ msgstr "คัดลอกคำตอบแล้ว"
 #: src/features/assistant/question-card.tsx
 msgid "Answer in your own words"
 msgstr "ตอบด้วยคำพูดของคุณเอง"
+
+#: src/features/career/workspace/apply.tsx
+msgid "Answer replaced"
+msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Answer source"
@@ -2377,6 +2421,10 @@ msgstr "ถาม"
 msgid "Ask {0}"
 msgstr "ถาม {0}"
 
+#: src/features/career/offers.tsx
+msgid "Ask {company}"
+msgstr ""
+
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "ถามเกี่ยวกับใบสมัครนี้…"
@@ -2605,6 +2653,7 @@ msgstr "กลับไปที่การลงชื่อเข้าใช
 msgid "Back to stories"
 msgstr "กลับไปที่เรื่องราว"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/remember.tsx
@@ -2644,6 +2693,7 @@ msgstr "บาริสต้า, 2012"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Base salary"
 msgstr "เงินเดือนพื้นฐาน"
 
@@ -2704,10 +2754,12 @@ msgstr "ตัวหนา"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Bonus"
 msgstr "โบนัส"
 
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Bonus conditions"
 msgstr "เงื่อนไขโบนัส"
 
@@ -2846,6 +2898,7 @@ msgstr "ซอฟต์แวร์สามารถอ่านเรซูเ
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
+#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/offer-entry.tsx
@@ -2906,6 +2959,11 @@ msgstr "ใบรับรอง"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Change"
 msgstr "เปลี่ยน"
+
+#: src/features/career/coach-thread.tsx
+msgctxt "Change what the coach remembers"
+msgid "Change"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 #: src/features/settings/ai/web-access.tsx
@@ -3051,6 +3109,14 @@ msgstr "ตรวจสอบตัวเลขและชื่อก่อน
 msgid "Check reads your resume the way hiring software does and explains what to fix in plain words. It runs in your browser, so the file stays with you: 0 uploads."
 msgstr "คุณสมบัติ ตรวจสอบ อ่านเรซูเม่ของคุณในลักษณะเดียวกับที่ซอฟต์แวร์จัดหางานทำ และอธิบายสิ่งที่ต้องแก้ไขด้วยคำพูดง่ายๆ มันทำงานในเบราว์เซอร์ของคุณ ดังนั้นไฟล์ของคุณจึงยังคงอยู่ในอุปกรณ์ของคุณ: อัปโหลด 0 ครั้ง"
 
+#: src/features/career/workspace/apply.tsx
+msgid "Check that nothing you wrote yourself is lost."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Check that these facts support what the story claims before saving."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Check the details"
 msgstr "ตรวจสอบรายละเอียด"
@@ -3101,6 +3167,10 @@ msgstr "กำลังตรวจสอบ {0}"
 #: src/features/career/shared.tsx
 msgid "Checking against Knowledge"
 msgstr "กำลังตรวจสอบกับคลังความรู้"
+
+#: src/features/career/coach-thread.tsx
+msgid "Checking for a web search service…"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Checking layout and content"
@@ -3239,6 +3309,10 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Choose where each stage named in the file goes, or add it as a new stage."
 msgstr "เลือกว่าจะย้ายแต่ละขั้นตอนที่ระบุชื่อในไฟล์ไปที่ใด หรือเพิ่มเป็นขั้นตอนใหม่"
+
+#: src/features/assistant/connection-notice.tsx
+msgid "Choose…"
+msgstr ""
 
 #: src/components/level/combobox.tsx
 msgid "Circle"
@@ -3537,6 +3611,10 @@ msgstr "เชื่อมต่อ {0}"
 msgid "Connect {domain}"
 msgstr "เชื่อมต่อ {domain}"
 
+#: src/features/career/coach-thread.tsx
+msgid "Connect a search service in Settings to research the web. The coach can still read public links you paste."
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Connect a service"
 msgstr "เชื่อมต่อบริการ"
@@ -3562,7 +3640,7 @@ msgid "Connect and test an AI provider in Settings, or keep entering roles manua
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Connect another…"
 msgstr "เชื่อมต่ออีก..."
 
@@ -3600,7 +3678,7 @@ msgstr "กำลังเชื่อมต่อบัญชี {providerName}
 msgid "Connection saved"
 msgstr "บันทึกการเชื่อมต่อแล้ว"
 
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Connection: {text}"
 msgstr "การเชื่อมต่อ: {text}"
 
@@ -3672,6 +3750,7 @@ msgstr ""
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/assistant/conversation.tsx
 #: src/features/auth/pages/register.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Continue"
 msgstr "ทำต่อ"
 
@@ -3725,6 +3804,14 @@ msgstr "การสนทนาเกี่ยวกับงานหนึ่
 #: src/features/settings/ai/mcp.tsx
 msgid "Copied"
 msgstr "คัดลอกแล้ว"
+
+#: src/features/career/coach-chat.tsx
+msgid "Copies for {company}"
+msgstr ""
+
+#: src/features/career/coach-chat.tsx
+msgid "Copies for this job"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/answer-library.tsx
@@ -3826,6 +3913,10 @@ msgstr "คัดลอกใบรับรองผลการเรียน
 msgid "Correct"
 msgstr "แก้ไขให้ถูกต้อง"
 
+#: src/features/career/offer-entry.tsx
+msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Correct the year, or write \"Present\" for ongoing work."
 msgstr "แก้ไขปีให้ถูกต้อง หรือเขียนว่า \"Present\" สำหรับงานที่ยังดำเนินอยู่"
@@ -3876,6 +3967,10 @@ msgstr "เปลี่ยนกำหนดการนี้ไม่ได้
 #: src/dialogs/auth/change-password.tsx
 msgid "Couldn't change your password. Check your current password and try again."
 msgstr "เปลี่ยนรหัสผ่านไม่ได้ ตรวจสอบรหัสผ่านปัจจุบันแล้วลองอีกครั้ง"
+
+#: src/features/career/coach-thread.tsx
+msgid "Couldn't check for a web search service. Retry."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Couldn't check which resume opens your short link. Reload the page and try again."
@@ -3945,6 +4040,10 @@ msgstr "สร้างบัญชีของคุณไม่ได้ ล�
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Couldn't delete that offer. Try again."
 msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
@@ -4146,6 +4245,10 @@ msgstr "เตรียมประวัติย่อสำหรับพิ
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "ไม่สามารถเสนอการแก้ไขเหล่านี้ได้: {0}"
+
+#: src/libs/error-message.ts
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Couldn't reach the AI provider. Try again in a moment."
@@ -4356,6 +4459,10 @@ msgstr "ตั้งรหัสผ่านไม่ได้ ลองอี�
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "ตั้งค่าการยืนยันแบบสองขั้นตอนไม่ได้ ลองอีกครั้ง"
 
+#: src/features/career/coach-chat.tsx
+msgid "Couldn't share that fact. Try again."
+msgstr ""
+
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
 msgstr "แสดงตัวอย่างไม่ได้"
@@ -4391,6 +4498,7 @@ msgid "Couldn't suggest roles. Try again or enter roles manually."
 msgstr ""
 
 #: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Couldn't switch connections. Try again."
 msgstr "สลับการเชื่อมต่อไม่ได้ ลองอีกครั้ง"
 
@@ -4420,6 +4528,10 @@ msgstr "เปิดหรือปิดผู้ให้บริการไ
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't undo that. Try again."
 msgstr "เลิกทำไม่ได้ ลองอีกครั้ง"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't undo the update. The application is unchanged."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't unlink the application. Try again."
@@ -4657,6 +4769,7 @@ msgstr "ข้อมูล CSV"
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
 msgid "Currency"
 msgstr "สกุลเงิน"
@@ -4887,6 +5000,10 @@ msgstr "ลบทิ้ง คำสำคัญที่ซ่อนไว้�
 #: src/features/documents/document-actions.tsx
 msgid "Delete now…"
 msgstr "ลบตอนนี้..."
+
+#: src/features/career/offers.tsx
+msgid "Delete offer"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete page"
@@ -5525,6 +5642,10 @@ msgstr "แก้ไขรายละเอียด..."
 msgid "Edit entry"
 msgstr "แก้ไขรายการ"
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Edit first"
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Edit interview"
 msgstr "แก้ไขบทสัมภาษณ์"
@@ -5544,6 +5665,10 @@ msgstr "แก้ไขลิงค์"
 #: src/features/applications/components/detail/activity.tsx
 msgid "Edit note"
 msgstr "แก้ไขโน้ต"
+
+#: src/features/career/offer-entry.tsx
+msgid "Edit offer terms"
+msgstr ""
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Edit posting"
@@ -5568,6 +5693,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Edit schedule"
 msgstr "แก้ไขกำหนดการ"
+
+#: src/features/career/offers.tsx
+msgid "Edit terms"
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Edit the email"
@@ -5825,6 +5954,10 @@ msgstr "ป้อนรหัสผ่านเพื่อปิดการย
 msgid "Enter your password."
 msgstr "ป้อนรหัสผ่านของคุณ"
 
+#: src/features/career/offers.tsx
+msgid "Entered by you"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Entries"
 msgstr "รายการ"
@@ -5839,6 +5972,7 @@ msgstr "ตัวเลือกรายการ"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Equity"
 msgstr "หุ้น"
 
@@ -5994,10 +6128,12 @@ msgstr "ข้อเท็จจริง · ความสำเร็จ"
 msgid "Fact forgotten"
 msgstr "ลืมข้อเท็จจริงแล้ว"
 
+#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 msgid "Fact type"
 msgstr "ประเภทข้อเท็จจริง"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/career/knowledge/facts.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -6005,6 +6141,7 @@ msgid "Facts"
 msgstr "ข้อเท็จจริง"
 
 #: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Facts, stories and preferences that are switched on in Knowledge"
 msgstr "ข้อเท็จจริง เรื่องราว และความต้องการที่เปิดใช้ในคลังความรู้"
 
@@ -7221,6 +7358,14 @@ msgstr "ปัญหา"
 msgid "Issues and Job match still work without AI."
 msgstr "ปัญหาและการจับคู่งานยังคงทำงานได้โดยไม่มี AI"
 
+#: src/features/assistant/conversation.tsx
+msgid "It can also search Knowledge available to this application (facts and stories) and send what it finds."
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "It can also search your shared Knowledge (facts and stories) and send what it finds."
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "มีรายการแต่ไม่ได้วางไว้บนหน้า"
@@ -7519,6 +7664,8 @@ msgstr "เขมร"
 msgid "Kind regards,"
 msgstr "ขอแสดงความนับถือ"
 
+#: src/features/assistant/conversation.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
@@ -7526,6 +7673,11 @@ msgstr "ขอแสดงความนับถือ"
 #: src/routes/dashboard/career/route.tsx
 msgid "Knowledge"
 msgstr "คลังความรู้"
+
+#. placeholder {0}: when(cutoffAt)
+#: src/features/career/coach-chat.tsx
+msgid "Knowledge changed on {0}. Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
@@ -7535,8 +7687,9 @@ msgstr "โหลดคลังความรู้ไม่ได้ ลอ�
 msgid "Knowledge doesn’t mention mentoring."
 msgstr "คลังความรู้ไม่ได้กล่าวถึงการเป็นพี่เลี้ยง"
 
-#: src/features/assistant/conversation.tsx
-msgid "Knowledge facts the assistant looks up are sent too."
+#: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Knowledge is off for this message: the coach doesn't read it or remember anything you say"
 msgstr ""
 
 #: src/features/career/role-suggestions.tsx
@@ -7652,11 +7805,13 @@ msgstr "นำไปสู่เหตุผลที่คุณเหมาะ
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Learning budget"
 msgstr "งบประมาณการเรียนรู้"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Leave"
 msgstr "ออก"
 
@@ -7692,6 +7847,14 @@ msgstr "นำการวิจัยสำหรับการออกแบ
 msgid "Left"
 msgstr "ซ้าย"
 
+#: src/features/career/offers.tsx
+msgid "Left blank"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Left blank. Add it later only if you can support it."
+msgstr ""
+
 #: src/features/resume/import/read-file.ts
 msgid "Legacy Word files aren't supported. Open the file in Word and save it as .docx first."
 msgstr "ไม่รองรับไฟล์ Word รุ่นเก่า เปิดไฟล์ใน Word และบันทึกเป็น .docx ก่อน"
@@ -7721,11 +7884,15 @@ msgstr "ความยาวไม่ใช่ข้อบกพร่อง �
 msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 msgstr "ให้ไคลเอนต์ AI เช่น Claude หรือ Cursor อ่านและแก้ไขเรซูเม่ของคุณ โดยใช้คีย์ API ด้านบน"
 
+#: src/features/assistant/conversation.tsx
+msgid "Let the assistant search facts and stories you share with all applications, read-only"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 msgid "Let's start with what you have"
 msgstr "เริ่มจากสิ่งที่คุณมี"
 
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Lets the coach search public pages through your web search service"
 msgstr "ให้โค้ชค้นหาหน้าเว็บสาธารณะผ่านบริการค้นหาเว็บของคุณ"
 
@@ -8385,6 +8552,15 @@ msgstr "ข้อความ · วางจากอีเมลของค�
 msgid "Messages · Reply to Sam at Fieldnote"
 msgstr "ข้อความ · ตอบกลับ Sam ที่ Fieldnote"
 
+#: src/features/career/coach-chat.tsx
+msgid "Messages above aren't sent to the AI anymore, so it won't remember them. Start a new conversation to keep context together."
+msgstr ""
+
+#: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Messages from before Knowledge changed aren't sent."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Microphone blocked. Allow it in your browser settings, or type your answer."
 msgstr "ไมโครโฟนถูกบล็อก อนุญาตในการตั้งค่าเบราว์เซอร์ หรือพิมพ์คำตอบของคุณ"
@@ -8825,8 +9001,8 @@ msgstr "ขั้นตอนถัดไป: {0}"
 
 #. placeholder {0}: change.note
 #: src/features/career/workspace/messages.tsx
-msgid "Next step: {0}. Adds a reminder to Today."
-msgstr "ขั้นตอนถัดไป: {0} เพิ่มการแจ้งเตือนใน “วันนี้”"
+msgid "Next step: {0}. Sets the application's follow-up date."
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Next time, I’d agree how to measure success before the first prototype."
@@ -8846,6 +9022,10 @@ msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
 msgid "No AI provider is used for this operation."
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "No amount stated · value uncertain"
 msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -9209,6 +9389,10 @@ msgstr "ไม่ใช่สำหรับฉัน"
 msgid "not found"
 msgstr "ไม่พบ"
 
+#: src/features/career/offers.tsx
+msgid "Not found in the message"
+msgstr ""
+
 #. placeholder {0}: report.jd.missingTerms.join(", ")
 #: src/features/ats-checker/checker.tsx
 msgid "Not found: {0}"
@@ -9217,10 +9401,6 @@ msgstr "ไม่พบ: {0}"
 #: src/features/career/offers.tsx
 msgid "Not in either offer yet"
 msgstr "ยังไม่มีในข้อเสนอใดเลย"
-
-#: src/features/career/offers.tsx
-msgid "Not in the offer · ask {company}"
-msgstr "ไม่มีในข้อเสนอ · ถาม {company}"
 
 #: src/features/ats-checker/report/jd-coverage.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
@@ -9278,6 +9458,10 @@ msgstr "ไม่ได้เลือก"
 msgid "Not set up"
 msgstr "ไม่ได้ตั้งค่า"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Not stated"
+msgstr ""
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "Not sure what to write?"
 msgstr "ไม่แน่ใจว่าจะเขียนอะไรดี?"
@@ -9334,6 +9518,11 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Nothing is applied for or created until you choose."
 msgstr "จะไม่มีการสมัครหรือสร้างอะไรจนกว่าคุณจะเลือก"
+
+#: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Nothing is sent until you choose a connection for this conversation."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Nothing marks a role as ongoing."
@@ -9429,6 +9618,10 @@ msgstr "ปิดอยู่ เปิดตัวเลือกนี้เ�
 msgid "Offer"
 msgstr "ข้อเสนอ"
 
+#: src/features/career/offers.tsx
+msgid "Offer deleted"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Offer saved"
 msgstr "บันทึกข้อเสนอแล้ว"
@@ -9438,7 +9631,16 @@ msgstr "บันทึกข้อเสนอแล้ว"
 msgid "Offer saved. {0} moved to Offer."
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Offer terms"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
+msgid "Offer terms updated"
+msgstr ""
+
+#: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Offer type"
 msgstr "ประเภทข้อเสนอ"
 
@@ -9447,6 +9649,10 @@ msgstr "ประเภทข้อเสนอ"
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "ข้อเสนองาน"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Office days a week"
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Office days a week, at most"
@@ -9518,6 +9724,10 @@ msgstr "อนุญาตเฉพาะแอปพลิเคชันที
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Only applies when the section fits on a single page."
 msgstr "ใช้ได้เฉพาะเมื่อส่วนนั้นพอดีกับหน้าเดียวเท่านั้น"
+
+#: src/features/career/coach-chat.tsx
+msgid "Only for {company}"
+msgstr ""
 
 #: src/features/homepage/faq.tsx
 msgid "Only if you want it to. Add your own key from OpenAI, Anthropic, Google Gemini, OpenRouter, Ollama or another provider for sharper lines, tailoring to a job posting, coaching for applications and interviews, and reading Word files. Without a key, nothing is sent to an AI service."
@@ -9617,6 +9827,10 @@ msgstr "เปิดตัวแก้ไขในตัว"
 #: src/features/career/workspace/saved.tsx
 msgid "Open in Offers"
 msgstr "เปิดในข้อเสนองาน"
+
+#: src/features/career/coach-chat.tsx
+msgid "Open in the resume's assistant"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
@@ -9784,6 +9998,7 @@ msgstr "อื่นๆ · รองรับการใช้งาน OpenAI"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Other benefits"
 msgstr "สวัสดิการอื่นๆ"
 
@@ -10038,6 +10253,7 @@ msgstr "กำหนดการที่หยุดชั่วคราวจ
 
 #: src/features/career/knowledge/preferences.tsx
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/settings/profile.tsx
 msgid "Pay period"
 msgstr "รอบการจ่าย"
@@ -10063,14 +10279,17 @@ msgid "People using it"
 msgstr "คนใช้มัน"
 
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Per hour"
 msgstr "ต่อชั่วโมง"
 
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Per month"
 msgstr "ต่อเดือน"
 
 #: src/features/career/offer-entry.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Per year"
 msgstr "ต่อปี"
 
@@ -10734,6 +10953,14 @@ msgstr "อ่านออกเสียงด้วยเสียงของ
 msgid "Read briefing"
 msgstr "อ่านสรุปย่อ"
 
+#: src/features/career/offers.tsx
+msgid "Read from a message"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "Read from a message, edited by you"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Read it for me"
@@ -11018,6 +11245,7 @@ msgstr "การอ้างอิง"
 msgid "Referred by…, things to emphasize, etc."
 msgstr "ผู้แนะนำ…, สิ่งที่ควรเน้น ฯลฯ"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Reflection"
@@ -11086,12 +11314,17 @@ msgstr ""
 msgid "Relocation"
 msgstr ""
 
+#: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/remember.tsx
 msgid "Remember"
 msgstr "จดจำ"
+
+#: src/features/career/coach-chat.tsx
+msgid "Remember as a fact in Knowledge"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Remember facts from my messages"
@@ -11109,6 +11342,10 @@ msgstr "จดจำสิ่งนี้ไว้สำหรับการโ
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Remember your password? <0/>"
 msgstr "จำรหัสผ่านได้? <0/>"
+
+#: src/features/career/coach-chat.tsx
+msgid "Remembered for {name} only: “{text}”"
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Remembered: “{text}”"
@@ -11384,6 +11621,7 @@ msgstr "ทรัพยากร"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Respond by"
 msgstr "ตอบกลับภายใน"
 
@@ -11436,6 +11674,7 @@ msgstr "กู้คืนเวอร์ชันจาก {0} สถานะ�
 msgid "Restricted to its employer or application."
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Result"
@@ -11828,6 +12067,10 @@ msgstr "Sam"
 msgid "Sam, Fieldnote"
 msgstr "Sam, Fieldnote"
 
+#: src/features/career/workspace/apply.tsx
+msgid "Same length"
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Same you. Less starting over."
 msgstr "ยังเป็นคุณคนเดิม แต่ไม่ต้องเริ่มใหม่บ่อยๆ"
@@ -12039,6 +12282,10 @@ msgstr ""
 msgid "Saved description"
 msgstr "คำอธิบายที่บันทึกไว้"
 
+#: src/features/career/coach-chat.tsx
+msgid "Saved from your message as you wrote it. Nothing is sent to the AI."
+msgstr ""
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Saved just now"
 msgstr "บันทึกเมื่อสักครู่"
@@ -12224,6 +12471,7 @@ msgid "Search saved answers"
 msgstr ""
 
 #: src/features/career/coach.tsx
+#: src/features/career/workspace/coach-sheet.tsx
 msgid "Search terms go to your web search service."
 msgstr "คำค้นหาจะถูกส่งไปยังบริการค้นหาเว็บของคุณ"
 
@@ -12260,6 +12508,10 @@ msgstr "ค้นหา…"
 msgid "Searched the web"
 msgstr "ค้นหาเว็บแล้ว"
 
+#: src/features/assistant/conversation.tsx
+msgid "Searched your Knowledge"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Searches and reads pages with {connectedProvider}, whichever AI provider you use."
 msgstr "ค้นหาและอ่านหน้าด้วย {connectedProvider} ไม่ว่าคุณจะใช้ผู้ให้บริการ AI รายใด"
@@ -12283,6 +12535,10 @@ msgstr "กำลังค้นหาบนเว็บ"
 #: src/features/assistant/conversation.tsx
 msgid "Searching the web…"
 msgstr "กำลังค้นหาเว็บ..."
+
+#: src/features/assistant/conversation.tsx
+msgid "Searching your Knowledge…"
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Secret copied"
@@ -12449,9 +12705,21 @@ msgstr "ส่งเรื่องราวนี้และข้อเท็
 msgid "Sends your message and the posting to {provider} with your key, only when you press send."
 msgstr "ส่งข้อความของคุณและประกาศรับสมัครงานไปที่ {provider} ด้วยรหัสของคุณ เฉพาะเมื่อคุณกดส่งเท่านั้น"
 
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message and this application (posting, notes, documents sent) to {connection}."
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Sends your message to {provider} with your key, only when you press send."
 msgstr "ส่งข้อความของคุณไปที่ {provider} ด้วยรหัสของคุณ เฉพาะเมื่อคุณกดส่งเท่านั้น"
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here and this application (posting, notes, documents sent) to {connection}."
+msgstr ""
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents sent) and Knowledge that's switched on to {connection}."
+msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to {connection}."
@@ -12526,6 +12794,10 @@ msgstr ""
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
 msgstr "ตั้งค่าแอปยืนยันตัวตนของคุณ"
+
+#: src/features/career/workspace/messages.tsx
+msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/settings/root.tsx
@@ -12871,6 +13143,7 @@ msgstr "คอลัมน์เดียวพร้อมหัวข้อส
 msgid "Single-column; polished and serious for senior or enterprise-level positions."
 msgstr "คอลัมน์เดียว มีความเรียบหรูและเป็นทางการ เหมาะสำหรับตำแหน่งผู้บริหารหรือระดับอาวุโส"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Situation"
@@ -13276,14 +13549,18 @@ msgstr "หยุดบันทึกเสียง"
 msgid "Stop when you're done. Nothing is sent until then."
 msgstr "กดหยุดเมื่อพูดจบ จะไม่มีการส่งอะไรจนกว่าจะถึงตอนนั้น"
 
-#: src/features/career/coach-chat.tsx
-msgid "Stopped"
-msgstr "หยุดแล้ว"
-
 #. placeholder {0}: clock(seconds)
 #: src/features/career/workspace/practise.tsx
 msgid "Stopped at {0}"
 msgstr "หยุดที่ {0}"
+
+#: src/features/career/coach-chat.tsx
+msgid "Stopped before answering."
+msgstr ""
+
+#: src/features/career/coach-chat.tsx
+msgid "Stopped before the answer finished."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Stopped. No edits were proposed."
@@ -13293,6 +13570,7 @@ msgstr "หยุดแล้ว ไม่มีการเสนอการ�
 msgid "Store these backup codes somewhere safe. Each one signs you in once if you lose your device."
 msgstr "เก็บรหัสสำรองเหล่านี้ไว้ในที่ปลอดภัย หากอุปกรณ์หาย แต่ละรหัสใช้เข้าสู่ระบบได้หนึ่งครั้ง"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/workspace/prepare.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -13566,6 +13844,7 @@ msgstr "ทมิฬ"
 msgid "Target roles"
 msgstr "ตำแหน่งงานเป้าหมาย"
 
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/homepage/remember.tsx
 msgid "Task"
@@ -13787,6 +14066,30 @@ msgstr ""
 msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
 msgstr "ที่อยู่ต้องประกอบด้วยตัวอักษรละตินพิมพ์เล็กและตัวเลขเท่านั้น คั่นด้วยขีดกลางเดี่ยว"
 
+#: src/libs/error-message.ts
+msgid "The AI provider couldn't finish this reply. Try again, or change the connection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The AI provider doesn't offer this model. Choose another model, or change the connection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The AI provider is limiting requests (rate limit or quota). Wait a minute and try again, or change the connection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The AI provider is unavailable right now. Try again in a moment, or change the connection."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "The AI provider rejected the saved key. Check the key in Settings, or change the connection."
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "The answer changed since, so it wasn't restored."
+msgstr ""
+
 #: src/features/homepage/faq.tsx
 msgid "The app is translated into {languages} languages by volunteers, and a resume can be written in any language, including right-to-left scripts like Arabic and Hebrew."
 msgstr "แอปนี้ได้รับการแปลเป็นภาษา {languages} โดยอาสาสมัคร และสามารถเขียนเรซูเม่เป็นภาษาใดก็ได้ รวมถึงสคริปต์ที่อ่านจากขวาไปซ้าย เช่น อารบิกและฮีบรู"
@@ -13798,6 +14101,10 @@ msgstr "แอปพลิเคชันที่ส่งคุณมาที
 #: src/features/documents/document-actions.tsx
 msgid "The application this letter is for."
 msgstr "จดหมายสมัครงานนี้มีไว้เพื่อ"
+
+#: src/features/assistant/conversation.tsx
+msgid "The assistant can search facts and stories you share with all applications. It can't change them."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "The assistant isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Everything else works without it."
@@ -13811,9 +14118,17 @@ msgstr "เครื่องอ่านในตัวยังคงทำง
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
 msgstr "เช็คเป็นแบบกลไก สิ่งนี้จะถามโมเดลภาษาว่าผู้อ่านจะตอบสนองต่อรายการของคุณอย่างไรและแนะนำให้เขียนใหม่ มันไม่ได้เป็นส่วนหนึ่งของคะแนน"
 
+#: src/features/career/coach-thread.tsx
+msgid "The coach asks before remembering facts you state."
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach doesn't remember anything from your messages."
 msgstr "โค้ชจะไม่จดจำอะไรจากข้อความของคุณ"
+
+#: src/features/career/coach-thread.tsx
+msgid "The coach doesn't remember anything you write."
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "The coach isn't set up on this server. Whoever runs it needs to set ENCRYPTION_SECRET. Knowledge, Offers and your applications work without it."
@@ -13826,6 +14141,10 @@ msgstr "โค้ชจะเสนอข้อเท็จจริงแต่
 #: src/features/career/workspace/shell.tsx
 msgid "The coach reads these for this application only."
 msgstr "โค้ชจะอ่านสิ่งเหล่านี้สำหรับใบสมัครนี้เท่านั้น"
+
+#: src/features/career/coach-thread.tsx
+msgid "The coach remembers facts you state, and tells you."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "The coach saves facts you state, and tells you. You can undo."
@@ -14195,6 +14514,10 @@ msgstr "เปิดการสนทนานี้ไม่ได้ รี�
 msgid "This conversation's AI connection is unavailable. Its history stays here. Fix the saved connection or choose a model before sending again."
 msgstr ""
 
+#: src/features/assistant/connection-notice.tsx
+msgid "This conversation's connection is off or was removed. Choose the one it uses next."
+msgstr ""
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
@@ -14354,6 +14677,10 @@ msgstr ""
 
 #: src/features/settings/profile.tsx
 msgid "This removes the saved profile and its references. Career preferences, documents and submitted answers stay unchanged. This cannot be undone."
+msgstr ""
+
+#: src/libs/error-message.ts
+msgid "This reply couldn't finish. Try again."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -14838,7 +15165,9 @@ msgstr "ขีดเส้นใต้ลิงก์"
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
 #: src/features/career/today.tsx
+#: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/check/actions.ts
@@ -14867,7 +15196,6 @@ msgid "University of Porto"
 msgstr "University of Porto"
 
 #: src/features/career/offer-entry.tsx
-#: src/features/career/offers.tsx
 #: src/features/settings/profile.tsx
 msgid "Unknown"
 msgstr "ไม่ทราบ"
@@ -14990,6 +15318,11 @@ msgstr "กำลังอัปโหลดรูปภาพ…"
 msgid "URL"
 msgstr "URL"
 
+#. placeholder {0}: fallback.label
+#: src/features/assistant/connection-notice.tsx
+msgid "Use {0}"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum}"
 msgstr "ใช้ {minimum}"
@@ -15079,6 +15412,7 @@ msgstr "ใช้ค่าเริ่มต้น"
 msgid "Use details from “{0}”"
 msgstr "ใช้รายละเอียดจาก “{0}”"
 
+#: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
 msgid "Use for all applications"
 msgstr "ใช้กับใบสมัครทั้งหมด"
@@ -15086,10 +15420,6 @@ msgstr "ใช้กับใบสมัครทั้งหมด"
 #: src/features/career/knowledge/facts.tsx
 msgid "Use in coaching: {excerpt}"
 msgstr "ใช้ในการโค้ช: {excerpt}"
-
-#: src/features/assistant/conversation.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/resume/share/address-field.tsx
 msgid "Use lowercase letters, numbers and single dashes."
@@ -15167,6 +15497,7 @@ msgstr ""
 msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sentence."
 msgstr "ใช้รายการหัวข้อย่อยปกติของโปรแกรมแก้ไข เพื่อไม่ให้มีอักขระหลงเหลืออยู่กลางประโยค"
 
+#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Used"
 msgstr "ที่ใช้"
@@ -15226,6 +15557,11 @@ msgstr "ใช้การค้นหาเว็บของผู้ให้
 msgid "Uses your browser’s voice"
 msgstr "ใช้เสียงของเบราว์เซอร์"
 
+#. placeholder {0}: proposal.factIds .map((id) => facts?.find((fact) => fact.id === id)?.text) .filter(Boolean) .map((value) => shortLabel(value ?? "")) .join(" · ")
+#: src/features/career/workspace/apply.tsx
+msgid "Uses: {0}"
+msgstr ""
+
 #: src/libs/locale.ts
 msgid "Uzbek"
 msgstr "อุซเบก"
@@ -15248,6 +15584,7 @@ msgstr "เปลี่ยนคำขึ้นต้นให้หลากห
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Verbal offer"
 msgstr "ข้อเสนอด้วยวาจา"
 
@@ -15441,9 +15778,17 @@ msgstr "หน้าเว็บ"
 msgid "Web page preview"
 msgstr "ตัวอย่างหน้าเว็บ"
 
-#: src/features/career/coach.tsx
+#: src/features/career/coach-thread.tsx
 msgid "Web research"
 msgstr "การค้นคว้าบนเว็บ"
+
+#: src/features/career/coach-thread.tsx
+msgid "Web research · Retry"
+msgstr ""
+
+#: src/features/career/coach-thread.tsx
+msgid "Web research · Set up"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "Web search didn't finish."
@@ -15637,6 +15982,7 @@ msgstr "สถานที่ที่คุณอยากทำงาน"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Where you work"
 msgstr "สถานที่ทำงาน"
 
@@ -15715,6 +16061,10 @@ msgstr "ประวัติย่อของฉันจะผ่านระ
 
 #: src/features/settings/profile.tsx
 msgid "Willing to relocate"
+msgstr ""
+
+#: src/features/career/coach-thread.tsx
+msgid "With Knowledge off, nothing you write is remembered."
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -15865,6 +16215,7 @@ msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
+#: src/features/career/workspace/messages.tsx
 msgid "Written offer"
 msgstr "ข้อเสนอเป็นลายลักษณ์อักษร"
 
@@ -16021,6 +16372,10 @@ msgstr ""
 msgid "Your answer"
 msgstr "คำตอบของคุณ"
 
+#: src/features/career/workspace/apply.tsx
+msgid "Your answer changed while the draft was written. Draft again to use it."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Your attempts"
@@ -16094,6 +16449,10 @@ msgstr "รายละเอียดของคุณมีการเปล
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Your domain"
 msgstr "โดเมนของคุณ"
+
+#: src/features/career/coach-chat.tsx
+msgid "Your edited story is saved to Knowledge."
+msgstr ""
 
 #. placeholder {0}: copy.name
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16179,6 +16538,10 @@ msgstr "ขอบกระดาษของคุณแคบมาก"
 #: src/features/career/coach.tsx
 msgid "your message"
 msgstr "ข้อความของคุณ"
+
+#: src/features/assistant/conversation.tsx
+msgid "Your message is kept."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"

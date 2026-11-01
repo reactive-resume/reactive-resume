@@ -6,20 +6,29 @@ import type {
 	RequirementCoverage,
 	UnsupportedClaim,
 } from "@reactive-resume/resume/proposals";
+import type { FactCategory } from "@reactive-resume/schema/career";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
-import { plural } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
+import { ORPCError } from "@orpc/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { memo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, TextInput, View } from "react-native";
+import { agentKnowledgeUsed } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { blockText, proposalText } from "@reactive-resume/resume/proposals";
 import { webSources } from "./chat";
+import { handToAssistant } from "./handoff";
 import { AssistantMarkdown } from "./markdown";
 import { isProposeEdits, requirementsOf, skippedCount, toProposals } from "./proposals";
 import { client, orpc } from "@/api/client";
+import { getAccountScope } from "@/auth/session";
 import { ReportAiContent } from "@/features/ai/report-content";
-import { Button, Icon, Text, showToast, useTheme } from "@/ui";
+import { factCategories } from "@/features/career/facts";
+import { useDocuments } from "@/features/documents/queries";
+import { routes } from "@/routes";
+import { Button, Icon, ListRow, SelectSheet, Sheet, Switch, Text, TextArea, showToast, useTheme } from "@/ui";
 
 export type EditStatus = Proposal["status"];
 
@@ -49,6 +58,8 @@ type MessageViewProps = {
 	proposals: ProposalHandlers | null;
 	/** Null while an answer can't continue the reply (context left out): the question asks for a new message instead. */
 	onAnswer: ((toolCallId: string, answer: string) => void) | null;
+	/** The coach: the user's messages can be remembered in Knowledge, in this application's scope or all. */
+	remember?: { applicationId: string | null } | null;
 };
 
 /** Memoized: while a reply streams, only its own message re-renders; the ones above keep their props. */
@@ -59,6 +70,7 @@ export const MessageView = memo(function MessageView({
 	answerable,
 	proposals,
 	onAnswer,
+	remember,
 }: MessageViewProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
@@ -84,6 +96,7 @@ export const MessageView = memo(function MessageView({
 				{files.map((file) => (
 					<FileChip key={file.url} name={file.filename ?? t`Attachment`} />
 				))}
+				{remember && text && !streaming ? <RememberMessage message={message} scope={remember} /> : null}
 			</View>
 		);
 	}
@@ -121,6 +134,10 @@ export const MessageView = memo(function MessageView({
 					/>
 				);
 			})}
+			{!streaming && proposals ? <UsedReads message={message} /> : null}
+			{!streaming && remember && reportText ? (
+				<AddToResume text={reportText} applicationId={remember.applicationId} />
+			) : null}
 			{!streaming ? <ReportAiContent source="assistant" text={reportText} /> : null}
 			{sources.length > 0 ? (
 				<View style={{ gap: space.s1 }}>
@@ -375,6 +392,12 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 		}
 		case "tool-remember_fact":
 			return streaming ? null : <RememberNote part={part} />;
+		case "tool-search_career_knowledge":
+			return (
+				<Status status={working ? "running" : undefined}>
+					{working ? <Trans>Searching your Knowledge…</Trans> : <Trans>Searched your Knowledge</Trans>}
+				</Status>
+			);
 		default:
 			return null;
 	}
@@ -938,7 +961,11 @@ function ProposalOutcome({ state, locked, onAccept, onReject, onEdit }: Proposal
 
 // ---- Coach memory: a fact proposed for Knowledge, or saved automatically with Undo ----
 
-type RememberOutput = { status?: unknown; id?: unknown; fact?: { text?: unknown } };
+type RememberOutput = { status?: unknown; id?: unknown; fact?: { text?: unknown; applicationId?: unknown } };
+
+/** The server's reason when it has one (the quote isn't in the message, the message is gone). */
+const reason = (error: unknown, fallback: string) =>
+	error instanceof ORPCError && error.message ? error.message : fallback;
 
 function RememberNote({ part }: { part: ToolPart }) {
 	const { t } = useLingui();
@@ -946,10 +973,13 @@ function RememberNote({ part }: { part: ToolPart }) {
 	const queryClient = useQueryClient();
 	const [outcome, setOutcome] = useState<"pending" | "saved" | "dismissed" | "undone">("pending");
 	const [busy, setBusy] = useState(false);
+	const [shared, setShared] = useState(false);
 	const output = (part.state === "output-available" ? part.output : null) as RememberOutput | null;
 	const text = typeof output?.fact?.text === "string" ? output.fact.text : null;
 	if (!output || !text || outcome === "dismissed" || outcome === "undone") return null;
 	const refresh = () => void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
+	// Remembered in a job's workspace: private to that job until the user shares it.
+	const scoped = typeof output.fact?.applicationId === "string" && !shared;
 
 	// Memory mode Automatically: already saved, with Undo.
 	if (output.status === "saved" && typeof output.id === "string") {
@@ -958,8 +988,28 @@ function RememberNote({ part }: { part: ToolPart }) {
 			<View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: space.s2 }}>
 				<Icon name="check-circle" size={18} color={colors.accentText} />
 				<Text variant="callout" color="ink2" style={{ flexShrink: 1 }}>
-					<Trans>Remembered: “{text}”</Trans>
+					{scoped ? <Trans>Remembered for this application only: “{text}”</Trans> : <Trans>Remembered: “{text}”</Trans>}
 				</Text>
+				{scoped ? (
+					<Button
+						variant="link"
+						label={t`Use for all applications`}
+						loading={busy}
+						onPress={() => {
+							setBusy(true);
+							client.career
+								.updateFact({ id, share: true })
+								.then(() => {
+									setShared(true);
+									refresh();
+								})
+								.catch((error: unknown) =>
+									showToast({ message: reason(error, t`Couldn't share that fact. Try again.`) }),
+								)
+								.finally(() => setBusy(false));
+						}}
+					/>
+				) : null}
 				<Button
 					variant="link"
 					label={t`Undo`}
@@ -989,7 +1039,11 @@ function RememberNote({ part }: { part: ToolPart }) {
 	return (
 		<View style={{ gap: space.s2, padding: space.s3, borderRadius: radius.rLg, backgroundColor: colors.sunken }}>
 			<Text variant="label">
-				<Trans>Remember this for future coaching?</Trans>
+				{scoped ? (
+					<Trans>Remember for this application only?</Trans>
+				) : (
+					<Trans>Remember this for future coaching?</Trans>
+				)}
 			</Text>
 			<Text variant="callout" color="ink2">
 				{text}
@@ -1007,12 +1061,166 @@ function RememberNote({ part }: { part: ToolPart }) {
 								setOutcome("saved");
 								refresh();
 							})
-							.catch(() => showToast({ message: t`Couldn't remember that. Try again.` }))
+							.catch((error: unknown) => showToast({ message: reason(error, t`Couldn't remember that. Try again.`) }))
 							.finally(() => setBusy(false));
 					}}
 				/>
 				<Button size="sm" variant="ghost" label={t`Not now`} onPress={() => setOutcome("dismissed")} />
 			</View>
 		</View>
+	);
+}
+
+// ---- Remember a message on demand, in any memory mode: the user reviews the words, kind and scope first ----
+
+type RememberMessageProps = { message: UIMessage; scope: { applicationId: string | null } };
+
+function RememberMessage({ message, scope }: RememberMessageProps) {
+	const { t } = useLingui();
+	const { colors, radius, space } = useTheme();
+	const queryClient = useQueryClient();
+	const quote = (message.parts.find((part) => part.type === "text")?.text ?? "").trim().slice(0, 4000);
+	const [open, setOpen] = useState(false);
+	const [text, setText] = useState(() => quote.slice(0, 2000));
+	const [category, setCategory] = useState<FactCategory>("accomplishment");
+	const [onlyHere, setOnlyHere] = useState(true);
+	const [state, setState] = useState<"idle" | "saving" | "saved" | "forgotten">("idle");
+	if (!quote) return null;
+
+	const save = () => {
+		setState("saving");
+		client.career
+			.saveFact({
+				applicationId: scope.applicationId && onlyHere ? scope.applicationId : null,
+				text: text.trim(),
+				category,
+				source: { kind: "user-message", id: message.id, quote },
+			})
+			.then((fact) => {
+				setState(fact ? "saved" : "forgotten");
+				setOpen(false);
+				void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
+			})
+			.catch((error: unknown) => {
+				setState("idle");
+				showToast({ message: reason(error, t`Couldn't remember that. Try again.`) });
+			});
+	};
+
+	if (state === "saved" || state === "forgotten")
+		return (
+			<Text variant="caption" color="ink3">
+				{state === "saved" ? (
+					<Trans>Added to Knowledge.</Trans>
+				) : (
+					<Trans>Not saved — this fact was forgotten before.</Trans>
+				)}
+			</Text>
+		);
+	if (!open)
+		return <Button variant="link" size="sm" icon="bookmark-simple" label={t`Remember`} onPress={() => setOpen(true)} />;
+	return (
+		<View
+			style={{
+				alignSelf: "stretch",
+				gap: space.s2,
+				padding: space.s3,
+				borderRadius: radius.rLg,
+				borderWidth: 1,
+				borderColor: colors.line,
+				backgroundColor: colors.raised,
+			}}
+		>
+			<TextArea
+				label={t`Remember as a fact in Knowledge`}
+				value={text}
+				onChangeText={setText}
+				maxLength={2000}
+				minLines={3}
+			/>
+			<SelectSheet label={t`Fact type`} value={category} options={factCategories()} onChange={setCategory} />
+			{scope.applicationId ? (
+				<Switch label={t`Only for this application`} value={onlyHere} onValueChange={setOnlyHere} />
+			) : null}
+			<Text variant="caption" color="ink3">
+				<Trans>Saved from your message as you wrote it. Nothing is sent to the AI.</Trans>
+			</Text>
+			<View style={{ flexDirection: "row", gap: space.s2 }}>
+				<Button size="sm" label={t`Remember`} loading={state === "saving"} disabled={!text.trim()} onPress={save} />
+				<Button size="sm" variant="ghost" label={t`Cancel`} onPress={() => setOpen(false)} />
+			</View>
+		</View>
+	);
+}
+
+// ---- What a document reply read: the document, and the facts and stories its Knowledge search found ----
+
+function UsedReads({ message }: { message: UIMessage }) {
+	const { space } = useTheme();
+	const knowledge = agentKnowledgeUsed(message);
+	const readDocument = message.parts.some(
+		(part) =>
+			(part.type === "tool-read_resume" || part.type === "tool-read_letter") &&
+			(part as ToolPart).state === "output-available",
+	);
+	if (!readDocument && knowledge.facts.length === 0 && knowledge.stories.length === 0) return null;
+	const summary = [
+		...(readDocument ? [t`the document`] : []),
+		...(knowledge.facts.length ? [plural(knowledge.facts.length, { one: "# fact", other: "# facts" })] : []),
+		...(knowledge.stories.length ? [plural(knowledge.stories.length, { one: "# story", other: "# stories" })] : []),
+	].join(" · ");
+	return (
+		<View style={{ gap: space.s1 }}>
+			<Text variant="caption" color="ink3">{t`Used: ${summary}`}</Text>
+			{knowledge.facts.map((fact) => (
+				<Text key={fact.id} variant="caption" color="ink2">
+					{`• ${fact.text}`}
+				</Text>
+			))}
+			{knowledge.stories.map((story) => (
+				<Text key={story.id} variant="caption" color="ink2">
+					{`• ${story.title}`}
+				</Text>
+			))}
+		</View>
+	);
+}
+
+// ---- Hand an answer to a resume's assistant: it proposes the edits there, for review ----
+
+type AddToResumeProps = { text: string; applicationId: string | null };
+
+/**
+ * Opens a resume's assistant with the answer in its message box, unsent. In a job's workspace, that job's copies come
+ * first. The text is handed over in memory for this account and resume, never in a route.
+ */
+function AddToResume({ text, applicationId }: AddToResumeProps) {
+	const router = useRouter();
+	const [open, setOpen] = useState(false);
+	const documents = useDocuments();
+	const resumes = (documents.data ?? []).filter((document) => document.type === "resume" && !document.isLocked);
+	const forJob = applicationId ? resumes.filter((resume) => resume.application?.id === applicationId) : [];
+	const ordered = [...forJob, ...resumes.filter((resume) => !forJob.includes(resume))];
+	const scope = getAccountScope();
+	if (ordered.length === 0 || !scope) return null;
+	const ask = t`Add this to my resume where it fits. Propose the edits for me to review:\n\n${text}`.slice(0, 2000);
+	return (
+		<>
+			<Button variant="link" size="sm" icon="file-plus" label={t`Add to resume`} onPress={() => setOpen(true)} />
+			<Sheet open={open} onClose={() => setOpen(false)} title={t`Open in the resume's assistant`}>
+				{ordered.map((resume) => (
+					<ListRow
+						key={resume.id}
+						title={resume.name}
+						subtitle={forJob.includes(resume) ? t`Copy for this job` : undefined}
+						onPress={() => {
+							setOpen(false);
+							handToAssistant(scope, resume.id, ask);
+							router.push(routes.assistant(resume.id));
+						}}
+					/>
+				))}
+			</Sheet>
+		</>
 	);
 }

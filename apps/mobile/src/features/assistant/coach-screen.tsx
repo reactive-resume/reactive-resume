@@ -9,12 +9,22 @@ import { useState } from "react";
 import { Pressable, View } from "react-native";
 import { formatList } from "@reactive-resume/utils/locale";
 import { refreshThreads, useThreads } from "./chat";
-import { ChatView, ContextChip } from "./chat-view";
-import { ModelButton, ModelSheet, ProviderGate, useConversationProvider } from "./provider";
+import { ChatView, ContextChip, type ChatHistory } from "./chat-view";
+import {
+	ConnectionNotice,
+	ModelButton,
+	ModelSheet,
+	ProviderGate,
+	useConversationProvider,
+	useMemoryNote,
+	useWebSearch,
+	WebResearchChip,
+} from "./provider";
 import { useDeleteThread, useThreadTime, useThreadTitle } from "./threads";
 import { client, orpc } from "@/api/client";
 import { useSession } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
+import { StoryEditor } from "@/features/career/stories";
 import { Button, Icon, IconButton, ListRow, Sheet, Text, TextField, showToast, useTheme } from "@/ui";
 
 type Chips = { application: boolean; memory: boolean; web: boolean; offers: boolean };
@@ -49,6 +59,7 @@ function useCoachKnowledge() {
 			),
 	);
 	return {
+		all: facts.data ?? [],
 		isPending: facts.isPending || stories.isPending,
 		isError: facts.isError || stories.isError,
 		retry: () => {
@@ -80,8 +91,10 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 
 	const conversations = (threads.data ?? []).filter((thread) => thread.scope === "career");
 	const summary = threads.data?.find((thread) => thread.id === threadId);
-	const { provider, label, choose } = useConversationProvider(providers, summary, threadId);
+	const { provider, stranded, label, choose } = useConversationProvider(providers, summary, threadId);
 	const title = useThreadTitle();
+	const web = useWebSearch();
+	const memory = useMemoryNote(chips.memory);
 
 	const context: MessageContext = {
 		// A career conversation has no document or posting to leave out.
@@ -89,35 +102,45 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 		posting: true,
 		application: chips.application,
 		memory: chips.memory,
-		web: chips.web,
+		// Web research needs a search service; a choice made before it went away doesn't count.
+		web: chips.web && web.canSearch,
 		...(offerIds.length > 0 && chips.offers ? { offerIds } : {}),
 	};
 	const knowledgeBlocks = chips.memory && (knowledge.isPending || knowledge.isError);
 
-	// The privacy line names exactly what goes. The chips choose what this message adds; earlier messages always go.
-	const parts = [
-		t`your message`,
-		t`earlier messages in this chat`,
-		...(chips.application ? [t`application summaries`] : []),
-		...(context.offerIds ? [plural(offerIds.length, { one: "# saved offer", other: "# saved offers" })] : []),
-		...(chips.memory
-			? [
-					t`your preferences`,
-					...(knowledge.facts > 0 ? [plural(knowledge.facts, { one: "# fact", other: "# facts" })] : []),
-					...(knowledge.stories > 0 ? [t`your stories`] : []),
-				]
-			: []),
-	];
-	const list = formatList(i18n.locale, parts);
+	// The privacy line names exactly what goes and what the coach may keep. The chips choose what this message adds;
+	// earlier messages go too, except those written before Knowledge last changed.
+	const privacyFor = ({ earlier, withheld }: ChatHistory) => {
+		const parts = [
+			t`your message`,
+			...(earlier > 0 ? [t`earlier messages in this chat`] : []),
+			...(chips.application ? [t`application summaries`] : []),
+			...(context.offerIds ? [plural(offerIds.length, { one: "# saved offer", other: "# saved offers" })] : []),
+			...(chips.memory
+				? [
+						t`your preferences`,
+						...(knowledge.facts > 0 ? [plural(knowledge.facts, { one: "# fact", other: "# facts" })] : []),
+						...(knowledge.stories > 0 ? [t`your stories`] : []),
+					]
+				: []),
+		];
+		const list = formatList(i18n.locale, parts);
+		return [
+			stranded
+				? t`Nothing is sent until you choose a connection for this conversation.`
+				: chips.memory && knowledge.isError
+					? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
+					: chips.memory && knowledge.isPending
+						? t`Loading Knowledge before you send…`
+						: t`When you tap send, ${list} go to ${connection}.`,
+			...(withheld > 0 ? [t`Messages from before Knowledge changed aren't sent.`] : []),
+			...(context.web ? [t`Search terms go to your web search service.`] : []),
+			memory.note,
+		]
+			.filter(Boolean)
+			.join(" ");
+	};
 	const connection = /connection$/i.test(label) ? label : t`${label} connection`;
-	const privacy = [
-		chips.memory && knowledge.isError
-			? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
-			: chips.memory && knowledge.isPending
-				? t`Loading Knowledge before you send…`
-				: t`When you tap send, ${list} go to ${connection}.`,
-		...(chips.web ? [t`Search terms go to your web search service.`] : []),
-	].join(" ");
 
 	const newConversation = () => {
 		setThreadId(null);
@@ -195,7 +218,34 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 						])
 					}
 					connection={connection}
-					privacy={privacy}
+					privacy={privacyFor}
+					remember={{ applicationId: null }}
+					facts={knowledge.all}
+					storyEditor={({ story, onChange, onSaved, onClose }) => (
+						<StoryEditor
+							story={null}
+							facts={knowledge.all}
+							proposal={{
+								story,
+								onChange,
+								onSaved: () => {
+									onSaved();
+									showToast({ message: t`Your edited story is saved to Knowledge.` });
+								},
+							}}
+							onClose={onClose}
+						/>
+					)}
+					notice={
+						stranded ? (
+							<ConnectionNotice
+								label={summary?.providerLabel ?? null}
+								fallback={providers.usableProviders[0]}
+								onUse={(id) => void choose(id)}
+								onChoose={() => setModelOpen(true)}
+							/>
+						) : null
+					}
 					placeholder={t`Ask about your next career step…`}
 					assistantName={t`Coach`}
 					disabled={knowledgeBlocks || !provider}
@@ -219,12 +269,8 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 								pressed={chips.memory}
 								onPress={() => setChips({ ...chips, memory: !chips.memory })}
 							/>
-							<ContextChip
-								icon="globe-hemisphere-west"
-								label={t`Web research`}
-								pressed={chips.web}
-								onPress={() => setChips({ ...chips, web: !chips.web })}
-							/>
+							<WebResearchChip web={web} pressed={chips.web} onPress={() => setChips({ ...chips, web: !chips.web })} />
+							{memory.chip}
 							{offerIds.length > 0 ? (
 								<ContextChip
 									icon="hand-heart"

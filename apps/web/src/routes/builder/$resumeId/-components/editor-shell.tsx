@@ -11,6 +11,7 @@ import { EditorBar } from "./editor-bar";
 import { DesignPanel, DesignSheet, ModePanel } from "./mode-panels";
 import { useEditorHotkeys } from "./use-editor-hotkeys";
 import { ResumeAssistant } from "@/features/assistant/dock";
+import { takeAssistantHandoff } from "@/features/assistant/handoff";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { IssueStepper } from "@/features/resume/editor/check/page-layer";
@@ -84,10 +85,20 @@ function useOpenVersionFromUrl() {
 	}, [version, navigate]);
 }
 
-/** `?assistant=` opens the assistant on that conversation; `?ask=` only fills its composer. Both then leave the URL. */
+/**
+ * `?assistant=` opens the assistant on that conversation; `?ask=` only fills its composer. Both then leave the URL. Text
+ * handed over in the app (the coach's Add to resume) fills the composer the same way, without passing through the URL.
+ */
 function useOpenAssistantFromUrl() {
 	const { assistant, ask } = routeApi.useSearch();
+	const { resumeId } = routeApi.useParams();
+	const { session } = routeApi.useRouteContext();
 	const navigate = routeApi.useNavigate();
+
+	useEffect(() => {
+		const handed = takeAssistantHandoff(session.user.id, resumeId);
+		if (handed) openAssistantFrom({ draft: handed });
+	}, [session.user.id, resumeId]);
 
 	useEffect(() => {
 		if (!openAssistantFrom({ assistant, draft: ask })) return;

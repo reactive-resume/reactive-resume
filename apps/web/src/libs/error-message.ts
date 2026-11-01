@@ -1,8 +1,30 @@
+import type { AgentReplyError } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { plural, t } from "@lingui/core/macro";
 import { ORPCError } from "@orpc/client";
+import { agentReplyError } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { isNetworkError } from "@reactive-resume/utils/http";
+
+const replyErrorText = (key: AgentReplyError) =>
+	({
+		providerKey: t`The AI provider rejected the saved key. Check the key in Settings, or change the connection.`,
+		providerModel: t`The AI provider doesn't offer this model. Choose another model, or change the connection.`,
+		providerLimit: t`The AI provider is limiting requests (rate limit or quota). Wait a minute and try again, or change the connection.`,
+		providerDown: t`The AI provider is unavailable right now. Try again in a moment, or change the connection.`,
+		provider: t`The AI provider couldn't finish this reply. Try again, or change the connection.`,
+		failed: t`This reply couldn't finish. Try again.`,
+	})[key];
+
+/** A failed reply that another AI connection could fix (a rejected key, a missing model, a limit, an outage). */
+export const isProviderFailure = (error: unknown) =>
+	(error instanceof Error && agentReplyError(error.message)?.startsWith("provider") === true) ||
+	(error instanceof ORPCError && error.code === "AI_CREDENTIAL_DECRYPTION_FAILED");
 
 export function getReadableErrorMessage(error: unknown, fallback: string): string {
+	if (isNetworkError(error)) return t`Couldn't reach Reactive Resume. Check your internet connection, then try again.`;
+	// A reply's failure, in the server's fixed words: shown in the reader's language.
+	const reply = error instanceof Error && !(error instanceof ORPCError) ? agentReplyError(error.message) : null;
+	if (reply) return replyErrorText(reply);
 	// A font download failed (see `assertPdfFonts`).
 	if (error instanceof Error && error.cause === "pdf-text-loss") return t`Fonts could not be loaded. Try again.`;
 	if (error instanceof ORPCError && error.code === "BAD_REQUEST") {

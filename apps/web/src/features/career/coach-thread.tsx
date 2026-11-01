@@ -1,4 +1,5 @@
 import type { ChatAttachment, MessageContext } from "@/features/assistant/chat";
+import type { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { QueryClient } from "@tanstack/react-query";
 import type { UIMessage } from "ai";
@@ -7,18 +8,28 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
+import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { formatFileSize } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { useSessionDraft } from "./hooks";
-import { useCareerTime, useNow, withUndo } from "./shared";
+import { MemoryCard } from "./knowledge/facts";
+import { ContextChip, useCareerTime, useNow, withUndo } from "./shared";
 import { fileToBase64 } from "@/features/assistant/chat";
 import { toastError } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
@@ -71,6 +82,8 @@ export function useCoachKnowledge(applicationId: string | null) {
 	);
 	return {
 		loaded: facts.isSuccess && stories.isSuccess,
+		/** Changes whenever Knowledge is read again, so what depends on it can be read again too. */
+		updatedAt: facts.dataUpdatedAt,
 		isPending: facts.isPending || stories.isPending,
 		isError: facts.isError || stories.isError,
 		retry: () => {
@@ -147,6 +160,8 @@ export function deleteConversation(queryClient: QueryClient, id: string, hide: (
 
 // ---- The thread ----
 
+export type ChatHistory = { earlier: number; withheld: number };
+
 export type Prompt = { text: string; attachments: ChatAttachment[]; used: Used };
 
 type CoachThreadProps = {
@@ -166,7 +181,10 @@ type CoachThreadProps = {
 	header: (messages: readonly UIMessage[]) => ReactNode;
 	empty: (send: (text: string) => void) => ReactNode;
 	chips?: ReactNode;
-	privacy: ReactNode;
+	/** Above the composer: what needs a decision before the next message (a connection that went away). */
+	notice?: ReactNode;
+	/** The privacy line, given how many earlier messages still go and how many Knowledge changes hold back. */
+	privacy: (history: ChatHistory) => ReactNode;
 	placeholder: string;
 	/** Keeps the unsent draft when the thread closes (the sheet). */
 	draftKey?: string;
@@ -228,6 +246,7 @@ export function CoachThread(props: CoachThreadProps) {
 				</div>
 				<Composer
 					{...props}
+					privacy={props.privacy({ earlier: 0, withheld: 0 })}
 					streaming={starting}
 					disabled={props.disabled ?? false}
 					ensureThread={ensureThread}
@@ -256,7 +275,7 @@ function Empty({ render, send }: EmptyProps) {
 }
 
 export const contentClass = {
-	page: "mx-auto grid w-full max-w-[720px] content-start gap-6 px-6 py-6",
+	page: "mx-auto grid w-full max-w-[720px] content-start gap-6 px-6 py-6 max-sm:px-4 max-sm:py-4",
 	sheet: "grid content-start gap-4 p-[18px]",
 };
 
@@ -317,7 +336,8 @@ function ThreadSession(props: SessionProps) {
 
 type Upload = ChatAttachment & { size: number };
 
-type ComposerProps = Pick<CoachThreadProps, "placeholder" | "chips" | "privacy" | "draftKey" | "variant"> & {
+type ComposerProps = Pick<CoachThreadProps, "placeholder" | "chips" | "notice" | "draftKey" | "variant"> & {
+	privacy: ReactNode;
 	streaming: boolean;
 	disabled: boolean;
 	ensureThread: () => Promise<string>;
@@ -381,8 +401,9 @@ export function Composer(props: ComposerProps) {
 	const sendLabel = props.streaming ? t`Stop` : t`Send`;
 
 	return (
-		<div className={page ? "border-t border-line px-6 py-3" : "px-3.5 pt-2 pb-3.5"}>
+		<div className={page ? "border-t border-line px-6 py-3 max-sm:px-3 max-sm:py-2" : "px-3.5 pt-2 pb-3.5"}>
 			<div className={cn("grid gap-2", page && "mx-auto w-full max-w-[720px]")}>
+				{props.notice}
 				<div className="grid rounded-xl border border-control-border bg-raised transition-colors duration-quick focus-within:border-accent">
 					<label htmlFor={id} className="sr-only">
 						<Trans>Message the coach</Trans>
@@ -406,7 +427,8 @@ export function Composer(props: ComposerProps) {
 						className="field-sizing-content max-h-[200px] min-h-[68px] w-full resize-none bg-transparent px-4 pt-3 pb-1.5 text-base leading-[22px] outline-none placeholder:text-ink-3 disabled:opacity-60 md:text-[15px]"
 					/>
 					<div className="flex items-end gap-1.5 px-3 pb-2.5">
-						<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+						{/* One row on phones that scrolls sideways, so the chips don't push the message out of view. */}
+						<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5 max-sm:[scrollbar-width:none] max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:*:shrink-0">
 							{props.chips}
 							{attachments.map((attachment) => (
 								<span
@@ -466,6 +488,144 @@ export function Composer(props: ComposerProps) {
 				{props.privacy}
 			</div>
 		</div>
+	);
+}
+
+// ---- Composer parts shared by Career → Coach and the workspace sheet ----
+
+/** What the coach may keep from this message, where the user types, with the mode one tap away. */
+export function MemoryNote({ knowledge }: { knowledge: boolean }) {
+	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
+	if (!profile) return null;
+	const note = !knowledge
+		? t`With Knowledge off, nothing you write is remembered.`
+		: {
+				ask: t`The coach asks before remembering facts you state.`,
+				auto: t`The coach remembers facts you state, and tells you.`,
+				off: t`The coach doesn't remember anything you write.`,
+			}[profile.memoryMode];
+	return (
+		<>
+			{note}{" "}
+			<Popover>
+				<PopoverTrigger
+					render={
+						<button type="button" className="font-medium text-ink-2 underline underline-offset-2 hover:text-ink" />
+					}
+				>
+					<Trans context="Change what the coach remembers">Change</Trans>
+				</PopoverTrigger>
+				<PopoverContent align="start" className="w-[min(420px,calc(100vw-2rem))] p-2">
+					<MemoryCard />
+				</PopoverContent>
+			</Popover>
+		</>
+	);
+}
+
+type WebResearchChipProps = {
+	status: { data?: { search: boolean } | undefined; isPending: boolean; isError: boolean; refetch: () => unknown };
+	pressed: boolean;
+	onPressedChange: (pressed: boolean) => void;
+};
+
+/**
+ * Web research needs a search service. Without one the chip is a way to set it up, not a switch that claims to send
+ * searches anywhere; reading links the user pastes doesn't need it.
+ */
+export function WebResearchChip({ status, pressed, onPressedChange }: WebResearchChipProps) {
+	if (status.data?.search)
+		return (
+			<ContextChip
+				pressed={pressed}
+				onPressedChange={onPressedChange}
+				label={t`Web research`}
+				tooltip={t`Lets the coach search public pages through your web search service`}
+				offIcon="globe-hemisphere-west"
+			/>
+		);
+	const chip =
+		"touch-target inline-flex h-7 items-center gap-1 rounded-sm border border-dashed border-line px-[9px] text-xs font-medium text-ink-3";
+	if (status.isPending || status.isError)
+		return (
+			<Tooltip>
+				<TooltipTrigger
+					render={
+						<button
+							type="button"
+							aria-disabled={status.isPending}
+							onClick={() => status.isError && void status.refetch()}
+							className={chip}
+						/>
+					}
+				>
+					<Icon name={status.isError ? "arrow-clockwise" : "globe-hemisphere-west"} size={16} />
+					{status.isError ? t`Web research · Retry` : t`Web research`}
+				</TooltipTrigger>
+				<TooltipContent>
+					{status.isError ? t`Couldn't check for a web search service. Retry.` : t`Checking for a web search service…`}
+				</TooltipContent>
+			</Tooltip>
+		);
+	return (
+		<Tooltip>
+			<TooltipTrigger render={<Link to="/dashboard/settings/ai" className={cn(chip, "hover:text-ink-2")} />}>
+				<Icon name="globe-hemisphere-west" size={16} />
+				<Trans>Web research · Set up</Trans>
+			</TooltipTrigger>
+			<TooltipContent>
+				<Trans>
+					Connect a search service in Settings to research the web. The coach can still read public links you paste.
+				</Trans>
+			</TooltipContent>
+		</Tooltip>
+	);
+}
+
+type UsableProvider = ReturnType<typeof useHasUsableAiProvider>["usableProviders"][number];
+
+type ModelChipProps = {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	providers: readonly UsableProvider[];
+	current: UsableProvider | undefined;
+	label: string;
+	onChoose: (id: string) => void;
+};
+
+/** "Demo AI · gpt-4.1-mini": the connection this conversation uses; the menu switches it. */
+export function ModelChip({ open, onOpenChange, providers, current, label, onChoose }: ModelChipProps) {
+	const navigate = useNavigate();
+	const text = current ? `${current.label} · ${current.model}` : label;
+	return (
+		<DropdownMenu open={open} onOpenChange={onOpenChange}>
+			<DropdownMenuTrigger
+				render={
+					<button
+						type="button"
+						aria-label={t`Connection: ${text}`}
+						className="flex h-7 max-w-[50%] min-w-0 items-center rounded-sm bg-sunken px-2 font-mono text-xs text-ink-2 transition-colors duration-quick hover:text-ink aria-expanded:text-ink"
+					/>
+				}
+			>
+				<span className="truncate">{text}</span>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="w-64">
+				{providers.map((item) => (
+					<DropdownMenuItem key={item.id} onClick={() => onChoose(item.id)}>
+						<span className="grid min-w-0 flex-1">
+							<span className="truncate">{item.label}</span>
+							<span className="truncate font-mono text-xs text-ink-3">{item.model}</span>
+						</span>
+						{item.id === current?.id && <Icon name="check" size={16} />}
+					</DropdownMenuItem>
+				))}
+				{providers.length > 0 && <DropdownMenuSeparator />}
+				<DropdownMenuItem onClick={() => void navigate({ to: "/dashboard/settings/ai" })}>
+					<Trans>Connect another…</Trans>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
 
