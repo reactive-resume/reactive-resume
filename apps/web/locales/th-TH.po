@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {ปัญหา # อาจทำให้คุ�
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {เช็คมีของ # ให้รีวิวครับ คุณยังสามารถดาวน์โหลดได้} other {เช็คมีสิ่งของ # ที่ต้องตรวจสอบ คุณยังสามารถดาวน์โหลดได้}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} กลับไปที่ตำแหน่งเดิมแล้ว"
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} ไม่ได้อยู่เหนือตำแหน่งที่วางได้"
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} อยู่เหนือ {place}"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "วาง {item} ที่ {place} แล้ว"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "วาง {item} ในตำแหน่งที่วางไม่ได้ ไม่มีสิ่งใดถูกย้าย"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "วาง {item} ที่ตำแหน่งเดิม ไม่มีสิ่งใดถูกย้าย"
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -2726,6 +2750,10 @@ msgstr "ซอฟต์แวร์สามารถอ่านเรซูเ
 msgid "Cancel"
 msgstr "ยกเลิก"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3403,6 +3431,11 @@ msgstr "เชื่อมต่อผู้ให้บริการ AI ข�
 msgid "Connected"
 msgstr "เชื่อมต่อแล้ว"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "แอพพลิเคชั่นที่เชื่อมต่อ"
@@ -3471,6 +3504,7 @@ msgstr "ผู้ติดต่อ"
 msgid "Contain"
 msgstr "แสดงทั้งภาพ"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "เนื้อหา"
@@ -3958,6 +3992,10 @@ msgstr "อ่านไฟล์นั้นไม่ได้ ลองอี�
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "อ่านวันที่ของ {entries} ไม่ได้ จึงยังอยู่ท้ายสุด แก้ไขวันที่แล้วจัดเรียงอีกครั้ง"
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4371,8 +4409,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "สร้างบัญชี"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4635,6 +4682,10 @@ msgstr "ลบใบสมัคร"
 msgid "Delete conversation"
 msgstr "ลบการสนทนา"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4862,8 +4913,26 @@ msgid "Discard unsaved changes?"
 msgstr "ละทิ้งการเปลี่ยนแปลงที่ยังไม่ได้บันทึกไหม"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "ตัดการเชื่อมต่อ"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -5125,6 +5194,10 @@ msgstr "ลาก · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "ลากและวางส่วนต่าง ๆ ที่นี่เพื่อย้ายระหว่างคอลัมน์"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "ลากด้วยตัวชี้เพื่อย้าย หรือใช้เมนูของรายการนี้"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -6905,6 +6978,10 @@ msgstr "ปัญหาและการจับคู่งานยังค
 msgid "It has entries but isn't placed on a page."
 msgstr "มีรายการแต่ไม่ได้วางไว้บนหน้า"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "อาจถูกลบไปแล้ว เลือกเรื่องราวอื่นหรือเพิ่มเรื่องใหม่"
@@ -7053,6 +7130,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "ใส่ที่อยู่เดียวพอ เพื่อไม่ให้ซอฟต์แวร์ต้องเดาว่าจะใช้อันไหน"
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "ให้การเข้าถึงเมื่อคุณไม่ได้ใช้แอปพลิเคชัน"
 
@@ -7647,6 +7725,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "โหลดขั้นตอนของคุณก่อนนำเข้าขั้นตอนที่มีชื่อ ข้อมูล CSV ของคุณจะยังคงอยู่"
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "กำลังโหลด"
 
@@ -8221,6 +8300,10 @@ msgstr "ย้ายไปยัง {label} แล้ว"
 msgid "Moves the application from {0}."
 msgstr "ย้ายใบสมัครจาก {0}"
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "ยกเลิกการย้าย {item} แล้ว ไม่มีสิ่งใดถูกย้าย"
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "หน้าที่ของฉันคือหาสาเหตุ โดยไม่เพิ่มงานซัพพอร์ต"
@@ -8498,7 +8581,11 @@ msgid "No commands match that search."
 msgstr "ไม่มีคำสั่งที่ตรงกับการค้นหานั้น"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "ยังไม่มีแอปพลิเคชันที่เชื่อมต่อ แอปที่คุณอนุญาตให้เข้าถึงบัญชีจะแสดงที่นี่"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "ยังไม่มีแอปพลิเคชันที่เชื่อมต่อ แอปที่คุณอนุญาตให้เข้าถึงบัญชีจะแสดงที่นี่"
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -9397,6 +9484,16 @@ msgstr "หน้า"
 msgid "Page {0}"
 msgstr "หน้า {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "หน้า {0}, แถบด้านข้าง"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "หน้า {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9686,6 +9783,10 @@ msgstr "เลือกรูปแบบเดียวแล้วใช้ใ
 msgid "Pick two examples"
 msgstr "เลือกสองตัวอย่าง"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "หยิบ {item} แล้ว"
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "กำลังเลือกเรื่องราวของคุณ"
@@ -9760,6 +9861,16 @@ msgstr "โปรตุเกส (โปรตุเกส)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "ตำแหน่ง"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "ตำแหน่ง {position} จาก {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "ตำแหน่ง {position} จาก {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -10313,16 +10424,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "อ่านที่อยู่อีเมลของคุณ"
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "อ่านข้อมูลโปรไฟล์ของคุณ"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "อ่านข้อมูลทั้งหมดในบัญชีของคุณ รวมถึงการส่งออกข้อมูลที่สมบูรณ์: โปรไฟล์และที่อยู่อีเมล เอกสาร การสมัครงาน ข้อมูลอาชีพ และการสนทนาการฝึกสอน"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11182,12 +11303,12 @@ msgid "Revoke {0}"
 msgstr "เพิกถอน {0}"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "เพิกถอนการเข้าถึง"
+#~ msgid "Revoke access"
+#~ msgstr "เพิกถอนการเข้าถึง"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "เพิกถอนการเข้าถึงบัญชีของคุณของแอปพลิเคชัน"
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "เพิกถอนการเข้าถึงบัญชีของคุณของแอปพลิเคชัน"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12205,6 +12326,7 @@ msgstr "แถบด้านข้างมักจะถูกอ่านค
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13909,6 +14031,10 @@ msgstr "ชื่อ"
 msgid "To"
 msgstr "ถึง"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "กด Space หรือ Enter เพื่อหยิบ ใช้ปุ่มลูกศรเพื่อย้าย กด Space หรือ Enter เพื่อวาง หรือกด Escape เพื่อยกเลิก"
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14289,6 +14415,10 @@ msgstr "พาสคีย์ที่ไม่ระบุชื่อ"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ไม่มีชื่อ"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "รายการที่ไม่มีชื่อ"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

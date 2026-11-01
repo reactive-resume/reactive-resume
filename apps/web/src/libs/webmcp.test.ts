@@ -101,7 +101,7 @@ describe("defineWebMcpTool", () => {
 	});
 
 	it("refuses input that doesn't match the schema, saying why", async () => {
-		await expect(echo.execute({ text: "" })).rejects.toThrow(/Invalid input\.[\s\S]*text/);
+		await expect(echo.execute({ text: "" })).resolves.toMatch(/Error: Invalid input\.[\s\S]*text/);
 	});
 
 	it("passes the call's abort signal on", async () => {
@@ -125,7 +125,21 @@ describe("defineWebMcpTool", () => {
 			},
 		});
 
-		await expect(tool.execute({})).rejects.toThrow("The resume is locked.");
+		await expect(tool.execute({})).resolves.toBe("Error: The resume is locked.");
+	});
+	it("preserves abort rejection and never executes a pre-aborted call", async () => {
+		const execute = vi.fn(() => "done");
+		const tool = defineWebMcpTool({ name: "wait", title: "Wait", description: "Waits.", input: z.object({}), execute });
+		const controller = new AbortController();
+		const reason = new Error("Cancelled by caller");
+		controller.abort(reason);
+		await expect(tool.execute({}, { signal: controller.signal })).rejects.toBe(reason);
+		expect(execute).not.toHaveBeenCalled();
+		const abort = new DOMException("Cancelled", "AbortError");
+		execute.mockImplementation(() => {
+			throw abort;
+		});
+		await expect(tool.execute({})).rejects.toBe(abort);
 	});
 });
 

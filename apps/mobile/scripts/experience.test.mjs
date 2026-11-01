@@ -828,6 +828,8 @@ offerApplications = { isPending: true };
 assert.equal(render(OfferEntry, {}).type, "LoadState", "unknown metadata offers no ready action");
 offerApplications = { isError: true };
 assert.equal(render(OfferEntry, {}).type, "LoadState", "failed metadata stays retryable, not empty");
+offerApplications = { isError: true, data: [] };
+assert.equal(render(OfferEntry, {}).type, "LoadState", "failed refresh with cached empty metadata stays retryable");
 offerApplications = { data: [] };
 // With no application to attach it to, Add offer leads to saving a job first.
 control(render(OfferEntry, {}), "Add an application first").onPress();
@@ -840,6 +842,11 @@ const formElement = nodes(entryView()).find((node) => typeof node.type === "func
 assert.ok(formElement);
 reset();
 const offerView = () => render(formElement.type, { ...formElement.props, onClose() {} });
+const initialOffers = savedOffers;
+savedOffers = [];
+offerView();
+assert.equal(control(offerView(), "Currency").value, "", "empty results do not invent a currency");
+savedOffers = initialOffers;
 offerView();
 assert.equal(control(offerView(), "Currency").value, "GBP", "starts in the last offer's currency");
 savedOffers = [{ createdAt: "2026-11-01T00:00:00Z", data: { kind: "offer", currency: "EUR" } }];
@@ -1529,3 +1536,43 @@ for (const state of ["loading", "error", "empty", "configured"]) {
 }
 assert.equal(scheduleRetries, 1);
 console.log("PASS native preparation distinguishes loading/error from empty/configured AI lookup");
+
+const { CustomFields } = load("features/write/basics-screen.tsx", {
+	"expo-image": { Image: "Image" },
+	"@reactive-resume/utils/string": { generateId: () => "new-field" },
+	"./entry-fields": { BoundText: "BoundText", LinkField: "LinkField", useValidators: () => ({}) },
+	"./entry-screen": { EditorScreen: "EditorScreen" },
+	"./hooks": { useWriteData: () => null },
+	"./pickers": { IconPickerSheet: "IconPickerSheet", PromptSheet: "PromptSheet" },
+	"./picture-screen": { resolvePictureUrl: () => "" },
+	"@/auth/session": { useSession: () => ({}) },
+	"@/draft": { useIsResumeLocked: () => false, useResumeStore: {} },
+});
+reset();
+const removedField = { id: "field-one", icon: "acorn", text: "Portfolio", link: "https://portfolio.example/" };
+let fieldDocument = { headline: "Before", fields: [removedField] };
+const fieldHistory = [];
+const updateFields = (mutate) => {
+	fieldHistory.push(structuredClone(fieldDocument));
+	fieldDocument = structuredClone(fieldDocument);
+	mutate(fieldDocument.fields);
+};
+const fieldView = () =>
+	render(CustomFields, {
+		fields: fieldDocument.fields,
+		locked: false,
+		update: updateFields,
+		undo: () => (fieldDocument = fieldHistory.pop()),
+	});
+control(fieldView(), "Remove field").onPress();
+assert.equal(fieldDocument.fields.length, 0);
+const removalToast = calls.find((value) => value.message === "Field removed");
+assert.ok(removalToast);
+fieldHistory.push(structuredClone(fieldDocument));
+fieldDocument = { ...fieldDocument, headline: "Later edit" };
+removalToast.action.onPress();
+assert.equal(fieldDocument.headline, "Later edit", "field Undo preserves a later edit");
+assert.deepEqual(fieldDocument.fields, [removedField], "field Undo restores only the removed field");
+removalToast.action.onPress();
+assert.deepEqual(fieldDocument.fields, [removedField], "a restored field is never duplicated");
+console.log("PASS native custom-field Undo restores its field without reverting later edits or duplicating it");

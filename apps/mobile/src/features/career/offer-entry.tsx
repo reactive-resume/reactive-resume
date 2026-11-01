@@ -21,7 +21,8 @@ export function OfferEntry({ application, primary = false }: OfferEntryProps) {
 	const applications = useApplications();
 	const [open, setOpen] = useState(false);
 	const variant = primary ? "primary" : "secondary";
-	if (!open && !application && !applications.data) return <LoadState query={applications} />;
+	if (!open && !application && (!applications.data || (applications.isError && !applications.data.length)))
+		return <LoadState query={applications} />;
 	if (!open && !application && applications.data?.length === 0)
 		return (
 			<Button variant={variant} label={t`Add an application first`} onPress={() => router.push(routes.newJob())} />
@@ -51,7 +52,10 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 	// Until the currency is typed, it's the one the last offer was in, so the two compare.
 	const [currencyTyped, setCurrencyTyped] = useState(false);
 	const [previousCurrency, setPreviousCurrency] = useState<string>();
-	if (previousCurrency === undefined && savedOffers.data) setPreviousCurrency(previousOfferCurrency(savedOffers.data));
+	if (previousCurrency === undefined && savedOffers.data) {
+		const currency = previousOfferCurrency(savedOffers.data);
+		if (currency) setPreviousCurrency(currency);
+	}
 	const terms = currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
 	const [more, setMore] = useState(false);
 	const [amounts, setAmounts] = useState({ base: "", variable: "", learning: "" });

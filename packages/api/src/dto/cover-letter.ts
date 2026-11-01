@@ -105,6 +105,11 @@ export const coverLetterDto = {
 					),
 					picture: coverLetterStyleSchema.shape.picture
 						.pick({ hidden: true })
+						.extend({
+							hidden: coverLetterStyleSchema.shape.picture.shape.hidden.describe(
+								"Whether to hide the copied photo on the letter.",
+							),
+						})
 						.describe("Whether the photo the letter copied from its resume is hidden on the letter."),
 				})
 				.partial()

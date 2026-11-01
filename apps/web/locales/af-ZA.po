@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {#-kwessie kan jou 'n wedstryd kos.} other {#-kwess
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Check het # ding om te hersien. Jy kan steeds aflaai.} other {Check het # dinge om te hersien. Jy kan steeds aflaai.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} is terug waar dit begin het."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} is nie oor 'n plek waarheen dit kan gaan nie."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} is oor {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} is op {place} neergesit."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} is neergesit waar dit nie kan gaan nie. Niks is geskuif nie."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} is neergesit waar dit begin het. Niks is geskuif nie."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -2726,6 +2750,10 @@ msgstr "Kan sagteware jou CV lees?"
 msgid "Cancel"
 msgstr "Kanselleer"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3403,6 +3431,11 @@ msgstr "Koppel jou eie KI-verskaffer om 'n taalmodel jou lysinskrywings te laat 
 msgid "Connected"
 msgstr "Verbonde"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Gekoppelde toepassings"
@@ -3471,6 +3504,7 @@ msgstr "Kontakte"
 msgid "Contain"
 msgstr "Pas in"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Inhoud"
@@ -3958,6 +3992,10 @@ msgstr "Kon nie daardie lêer lees nie. Probeer weer."
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "Kon nie die datums op {entries} lees nie, so hulle bly aan die einde. Maak hul datums reg en sorteer weer."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4371,8 +4409,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "Skep rekening"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4635,6 +4682,10 @@ msgstr "Vee aansoek uit"
 msgid "Delete conversation"
 msgstr "Vee gesprek uit"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4862,8 +4913,26 @@ msgid "Discard unsaved changes?"
 msgstr "Gooi ongestoorde veranderinge weg?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "Ontkoppel"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -5125,6 +5194,10 @@ msgstr "sleep · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Sleep en los afdelings hier om hulle tussen kolomme te skuif"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Sleep dit met 'n wyser om dit te skuif, of gebruik die kieslys daarvan."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -6905,6 +6978,10 @@ msgstr "Kwessies en Job match werk steeds sonder KI."
 msgid "It has entries but isn't placed on a page."
 msgstr "Dit het inskrywings, maar word nie op 'n bladsy geplaas nie."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "Dit is dalk uitgevee. Kies 'n ander storie of voeg 'n nuwe een by."
@@ -7053,6 +7130,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "Hou by een adres, sodat sagteware nie hoef te raai watter een om te gebruik nie."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "Behou toegang wanneer jy nie die toepassing gebruik nie."
 
@@ -7647,6 +7725,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Laai jou fases voordat jy benoemde fases invoer. Jou CSV-data word behou."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Laai tans"
 
@@ -8221,6 +8300,10 @@ msgstr "Geskuif na {label}"
 msgid "Moves the application from {0}."
 msgstr "Skuif die aansoek uit {0}."
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "Skuif van {item} is gekanselleer. Niks is geskuif nie."
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "My taak was om uit te vind waarom, sonder om ondersteuningswerk by te voeg."
@@ -8498,7 +8581,11 @@ msgid "No commands match that search."
 msgstr "Geen opdragte pas by daardie soektog nie."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "Nog geen gekoppelde toepassings nie. Programme wat jy toegang tot jou rekening gee, verskyn hier."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "Nog geen gekoppelde toepassings nie. Programme wat jy toegang tot jou rekening gee, verskyn hier."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -9397,6 +9484,16 @@ msgstr "Bladsy"
 msgid "Page {0}"
 msgstr "Bladsy {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Bladsy {0}, sybalk"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Bladsy {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9686,6 +9783,10 @@ msgstr "Kies een formaat en gebruik dit oral."
 msgid "Pick two examples"
 msgstr "Kies twee voorbeelde"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} opgetel."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Kies jou stories"
@@ -9760,6 +9861,16 @@ msgstr "Portugees (Portugal)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Posisie"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "posisie {position} van {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "posisie {position} van {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -10313,16 +10424,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "Lees jou e-posadres."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "Lees jou profielinligting."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "Lees alle data in jou rekening, insluitend 'n volledige data-uitvoer: jou profiel en e-posadres, dokumente, werksaansoeke, loopbaandata en afrigtinggesprekke."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11182,12 +11303,12 @@ msgid "Revoke {0}"
 msgstr "Herroep {0}"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "Herroep toegang"
+#~ msgid "Revoke access"
+#~ msgstr "Herroep toegang"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "Herroep 'n toepassing se toegang tot jou rekening."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "Herroep 'n toepassing se toegang tot jou rekening."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12205,6 +12326,7 @@ msgstr "Sidebars word dikwels laaste gelees, of in die hoofkolom gemeng."
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13909,6 +14031,10 @@ msgstr "Titel"
 msgid "To"
 msgstr "Om"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Druk Spasie of Enter om dit op te tel. Gebruik die pyltjiesleutels om dit te skuif, Spasie of Enter om dit neer te sit, of Escape om te kanselleer."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14289,6 +14415,10 @@ msgstr "Onbenoemde pasleutel"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Titelloos"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Item sonder titel"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

@@ -84,10 +84,10 @@ export function BasicsScreen({ resumeId, focusField }: BasicsScreenProps) {
 				fields={basics.customFields}
 				locked={locked}
 				focusField={focusField}
-				update={(mutate, options) =>
-					useResumeStore.getState().update((draft) => mutate(draft.basics.customFields), options)
-				}
-				undo={() => useResumeStore.getState().undo()}
+				update={(mutate, options) => {
+					const store = useResumeStore.getState();
+					if (store.document?.id === resumeId) store.update((draft) => mutate(draft.basics.customFields), options);
+				}}
 			/>
 		</EditorScreen>
 	);
@@ -157,10 +157,9 @@ type CustomFieldsProps = {
 	locked: boolean;
 	focusField?: string | undefined;
 	update: (mutate: (list: CustomField[]) => void, options: UpdateOptions) => void;
-	undo: () => void;
 };
 
-export function CustomFields({ fields, locked, focusField, update, undo }: CustomFieldsProps) {
+export function CustomFields({ fields, locked, focusField, update }: CustomFieldsProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const [iconFor, setIconFor] = useState<string | null>(null);
@@ -232,7 +231,20 @@ export function CustomFields({ fields, locked, focusField, update, undo }: Custo
 							disabled={locked}
 							onPress={() => {
 								update((list) => void list.splice(index, 1), { newStep: true });
-								showToast({ message: t`Field removed`, action: { label: t`Undo`, onPress: undo } });
+								showToast({
+									message: t`Field removed`,
+									action: {
+										label: t`Undo`,
+										onPress: () =>
+											update(
+												(list) => {
+													if (!list.some((item) => item.id === field.id))
+														list.splice(Math.min(index, list.length), 0, field);
+												},
+												{ newStep: true },
+											),
+									},
+								});
 							}}
 						/>
 					</View>

@@ -465,10 +465,11 @@ function FromSection({ letter, disabled }: FromSectionProps) {
 					<CustomFields
 						fields={letter.style.basics.customFields}
 						locked={disabled}
-						update={(mutate, options) =>
-							useLetterStore.getState().update((draft) => mutate(draft.style.basics.customFields), options)
-						}
-						undo={() => useLetterStore.getState().undo()}
+						update={(mutate, options) => {
+							const store = useLetterStore.getState();
+							if (store.document?.id === letter.id)
+								store.update((draft) => mutate(draft.style.basics.customFields), options);
+						}}
 					/>
 				</>
 			) : null}

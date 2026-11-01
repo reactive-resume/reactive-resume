@@ -47,7 +47,7 @@ type FirstApplicationProps = { variant: "primary" | "secondary"; children: React
 /** An offer belongs to an application, so with none yet "Add offer" leads to adding one instead. */
 function FirstApplication({ variant, children }: FirstApplicationProps) {
 	const applications = useQuery(applicationsListQueryOptions());
-	if (applications.isError && !applications.data)
+	if (applications.isError && !applications.data?.length)
 		return <CareerLoadError onRetry={() => void applications.refetch()} />;
 	if (applications.isPending) return <Skeleton className="h-9 w-40" />;
 	if (applications.data?.length !== 0) return children;
@@ -73,7 +73,10 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 	// Until the currency is typed, it's the one the last offer was in, so the two compare.
 	const [currencyTyped, setCurrencyTyped] = useState(false);
 	const [previousCurrency, setPreviousCurrency] = useState<string>();
-	if (previousCurrency === undefined && savedOffers.data) setPreviousCurrency(previousOfferCurrency(savedOffers.data));
+	if (previousCurrency === undefined && savedOffers.data) {
+		const currency = previousOfferCurrency(savedOffers.data);
+		if (currency) setPreviousCurrency(currency);
+	}
 	const terms = currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
 	const [more, setMore] = useState(false);
 	const [amounts, setAmounts] = useState({ base: "", variable: "", learning: "" });

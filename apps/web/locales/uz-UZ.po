@@ -665,6 +665,30 @@ msgstr "{issues, plural, one {# muammosi sizga qimmatga tushishi mumkin.} other 
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {Tekshirish uchun # narsa bor. Siz hali ham yuklab olishingiz mumkin.} other {Tekshirish uchun # narsalarni ko'rib chiqish kerak. Siz hali ham yuklab olishingiz mumkin.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} boshlang‘ich joyiga qaytdi."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} qo‘yish mumkin bo‘lgan joy ustida emas."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} quyidagi ustida: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} bu yerga qo‘yildi: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} qo‘yib bo‘lmaydigan joyga tashlandi. Hech narsa ko‘chirilmadi."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} boshlang‘ich joyiga qo‘yildi. Hech narsa ko‘chirilmadi."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -2726,6 +2750,10 @@ msgstr "Dasturiy ta'minot sizning rezyumeingizni o'qiy oladimi?"
 msgid "Cancel"
 msgstr "Bekor qilish"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -3403,6 +3431,11 @@ msgstr "Til modeli roʻyxatdagi yozuvlaringizni oʻqishi va qayta yozishni takli
 msgid "Connected"
 msgstr "Ulangan"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Ulangan ilovalar"
@@ -3471,6 +3504,7 @@ msgstr "Kontaktlar"
 msgid "Contain"
 msgstr "Sig'dirish"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Mazmun"
@@ -3958,6 +3992,10 @@ msgstr "Bu faylni o'qib bo'lmadi. Qayta urinib ko'ring."
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "{entries} dagi sanalarni o'qib bo'lmadi, shuning uchun ular oxirida qoladi. Sanalarini tuzating va qayta tartiblang."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4371,8 +4409,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "Hisob yaratish"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4635,6 +4682,10 @@ msgstr "Arizani o'chirish"
 msgid "Delete conversation"
 msgstr "Suhbatni o'chirish"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4862,8 +4913,26 @@ msgid "Discard unsaved changes?"
 msgstr "Saqlanmagan o'zgarishlar bekor qilinsinmi?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "Uzib qo‘yish"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -5125,6 +5194,10 @@ msgstr "torting · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Bo‘limlarni ustunlar orasida ko‘chirish uchun shu yergа tortib tashlang"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Ko‘chirish uchun ko‘rsatkich bilan torting yoki uning menyusidan foydalaning."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -6905,6 +6978,10 @@ msgstr "Muammolar va Job match hali ham AIsiz ishlaydi."
 msgid "It has entries but isn't placed on a page."
 msgstr "Unda yozuvlar bor, lekin sahifada joylashtirilmagan."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "U o'chirilgan bo'lishi mumkin. Boshqa hikoya tanlang yoki yangisini qo'shing."
@@ -7053,6 +7130,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "Bitta manzil qoldiring, toki dastur qaysi birini ishlatishni taxmin qilishga majbur bo'lmasin."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "Ilovadan foydalanmayotganingizda ruxsatni saqlang."
 
@@ -7647,6 +7725,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Nomlangan bosqichlarni import qilishdan oldin bosqichlaringizni yuklang. CSV ma’lumotlaringiz saqlanadi."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "Yuklanmoqda"
 
@@ -8221,6 +8300,10 @@ msgstr "{label}ga ko‘chirildi"
 msgid "Moves the application from {0}."
 msgstr "Arizani “{0}” bosqichidan o'tkazadi."
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item} ko‘chirilishi bekor qilindi. Hech narsa ko‘chirilmadi."
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "Mening vazifam qo'llab-quvvatlash ishini ko'paytirmasdan sababini aniqlash edi."
@@ -8498,7 +8581,11 @@ msgid "No commands match that search."
 msgstr "Bu qidiruvga mos buyruq topilmadi."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgid "No connected applications yet. Apps you allow to access your account appear here."
+#~ msgstr "Hali ulangan ilovalar yo‘q. Hisobingizga kirishga ruxsat bergan ilovalar shu yerda ko'rinadi."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
 msgstr "Hali ulangan ilovalar yo‘q. Hisobingizga kirishga ruxsat bergan ilovalar shu yerda ko'rinadi."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -9397,6 +9484,16 @@ msgstr "Sahifa"
 msgid "Page {0}"
 msgstr "{0} sahifa"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "{0} sahifa, yon panel"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "{page} sahifa, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9686,6 +9783,10 @@ msgstr "Bitta formatni tanlang va uni hamma joyda ishlating."
 msgid "Pick two examples"
 msgstr "Ikkita misol tanlang"
 
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} olindi."
+
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
 msgstr "Hikoyalaringiz tanlanmoqda"
@@ -9760,6 +9861,16 @@ msgstr "Portugalcha (Portugaliya)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Lavozim"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total} tadan {position}-o‘rin"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total} tadan {position}-o‘rin, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -10313,16 +10424,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "Elektron pochta manzilingizni o'qing."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "Profil ma'lumotlarini o'qing."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "Hisobingizdagi barcha maʼlumotlarni, jumladan, toʻliq maʼlumotlarni eksport qilishni oʻqing: profilingiz va elektron pochta manzilingiz, hujjatlar, ishga arizalar, martaba maʼlumotlari va murabbiylik suhbatlari."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -11182,12 +11303,12 @@ msgid "Revoke {0}"
 msgstr "{0}ni bekor qilish"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "Kirishni bekor qilish"
+#~ msgid "Revoke access"
+#~ msgstr "Kirishni bekor qilish"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "Ilovaning hisobingizga kirishini bekor qiling."
+#~ msgid "Revoke an application's access to your account."
+#~ msgstr "Ilovaning hisobingizga kirishini bekor qiling."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12205,6 +12326,7 @@ msgstr "Yon panellar ko'pincha oxirgi o'qiladi yoki asosiy ustunga aralashtirila
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13909,6 +14031,10 @@ msgstr "Sarlavha"
 msgid "To"
 msgstr "Kimga"
 
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Olish uchun Probel yoki Enter tugmasini bosing. Ko‘chirish uchun strelka tugmalaridan, qo‘yish uchun Probel yoki Enter tugmasidan, bekor qilish uchun Escape tugmasidan foydalaning."
+
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14289,6 +14415,10 @@ msgstr "Nomsiz kirish kaliti"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "Sarlavhasiz"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Sarlavhasiz element"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"

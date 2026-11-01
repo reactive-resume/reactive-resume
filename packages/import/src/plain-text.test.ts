@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
-import { parseResumeText } from "./plain-text";
+import { parseResumeText, standaloneDate } from "./plain-text";
 
 const SAMPLE = `Ada Lovelace
 Senior Software Engineer
@@ -249,3 +249,52 @@ describe("parseResumeText keeps content the layout hides", () => {
 		expect(data.sections.certifications.items).toHaveLength(0);
 	});
 });
+
+describe("plain-text header conservation", () => {
+	it.each(["eBay", "3M", "iRobot", "1Password"])("does not append %s to an unfinished bullet", (company) => {
+		for (const header of [`${company}  Senior Engineer  2018 – 2020`, `${company}  Senior Engineer\n2018 – 2020`]) {
+			const data = parseResumeText(
+				`EXPERIENCE\nAcme  Engineer\n2020 – 2021\n• Built tools\n${header}\n• Shipped search\n`,
+			);
+			expect(data.sections.experience.items).toHaveLength(2);
+			expect(data.sections.experience.items[0]).toMatchObject({
+				company: "Acme",
+				description: "<ul><li>Built tools</li></ul>",
+			});
+			expect(data.sections.experience.items[1]).toMatchObject({
+				company,
+				position: "Senior Engineer",
+				period: "2018 – 2020",
+				description: "<ul><li>Shipped search</li></ul>",
+			});
+		}
+	});
+	it.each([
+		["Google", "Software Engineer, Cloud", "Mountain View, CA"],
+		["Acme", "Director, Product", "Remote"],
+	])("preserves commas inside conventional %s headers", (company, position, location) => {
+		const data = parseResumeText(`EXPERIENCE\n${company}  ${position}\n${location}  2019 – 2021\n• Built things.\n`);
+		expect(data.sections.experience.items[0]).toMatchObject({ company, position, location, period: "2019 – 2021" });
+	});
+	it("keeps lower-case prose after a bullet as prose", () => {
+		const data = parseResumeText(
+			"EXPERIENCE\nAcme  Engineer  2020 – 2021\n• Built tools\nreferences available on request\n",
+		);
+		expect(data.sections.experience.items[0]?.description).toBe(
+			"<ul><li>Built tools</li></ul><p>references available on request</p>",
+		);
+	});
+});
+
+it.each(["2018", "Jan 2020", "2020 – 2021", "Jan 2020 – Present"])(
+	"uses exact dates as record evidence / %s",
+	(value) => {
+		expect(standaloneDate(value)).toBe(value);
+	},
+);
+it.each(["Presented 2020 – 2021 research", "Built systems in 2018", "https://example.invalid/2020", "• 2018", ""])(
+	"keeps date mentions inside body text / %s",
+	(value) => {
+		expect(standaloneDate(value)).toBe("");
+	},
+);

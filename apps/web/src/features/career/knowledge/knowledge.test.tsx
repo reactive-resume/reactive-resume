@@ -139,6 +139,47 @@ afterEach(() => {
 	vi.useRealTimers();
 });
 
+it("retries failed application refreshes even when an empty result remains cached", async () => {
+	api.data.applications = [];
+	mount(<OfferEntry />);
+	await screen.findByRole("link", { name: "Add an application first" });
+	const client = clients[0];
+	if (!client) throw new Error("Missing mounted query client");
+	api.fail.add("applications");
+	await act(() => client.invalidateQueries({ queryKey: ["applications"] }));
+	expect(await screen.findByRole("button", { name: "Try again" })).toBeDefined();
+	expect(screen.queryByRole("link", { name: "Add an application first" })).toBeNull();
+	api.fail.delete("applications");
+	api.data.applications = [{ id: "job-a", company: "Acme", role: "Engineer" }];
+	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+	expect(await screen.findByRole("button", { name: "Add offer" })).toBeDefined();
+});
+
+it("prefills currency when an offer arrives after an initially empty saved-offers result", async () => {
+	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+	const client = clients[0];
+	if (!client) throw new Error("Missing mounted query client");
+	await waitFor(() => expect(client.getQueryState(["savedItems"])?.status).toBe("success"));
+	const currency = screen.getByLabelText("Currency") as HTMLInputElement;
+	expect(currency.value).toBe("");
+	await act(() => {
+		client.setQueryData(
+			["savedItems"],
+			[{ id: "late", createdAt: new Date("2026-11-01"), data: { kind: "offer", currency: "GBP" } }],
+		);
+	});
+	await waitFor(() => expect(currency.value).toBe("GBP"));
+	fireEvent.change(currency, { target: { value: "EUR" } });
+	await act(() => {
+		client.setQueryData(
+			["savedItems"],
+			[{ id: "later", createdAt: new Date("2026-11-02"), data: { kind: "offer", currency: "USD" } }],
+		);
+	});
+	expect(currency.value).toBe("EUR");
+});
+
 it("keeps an unfinished story after navigating away and remounting, until Cancel explicitly discards it", async () => {
 	let view = mount(<StoriesPage storyId={undefined} edit />);
 	const title = await screen.findByRole("textbox", { name: "Title" });

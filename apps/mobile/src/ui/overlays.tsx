@@ -537,6 +537,9 @@ export type ToastOptions = {
 
 type ActiveToast = ToastOptions & { id: number; lifetime: number };
 
+/** Toasts whose action has run: a second tap that reaches the same render (before it re-renders) does nothing. */
+const actedToasts = new WeakSet<ActiveToast>();
+
 let toasts: ActiveToast[] = [];
 let nextToastId = 1;
 const toastTimers = new Map<number, ReturnType<typeof setTimeout>>();
@@ -679,7 +682,14 @@ export function Toaster() {
 							<Pressable
 								accessibilityRole="button"
 								onPress={() => {
-									action.onPress();
+									if (actedToasts.has(item)) return;
+									actedToasts.add(item);
+									try {
+										action.onPress();
+									} catch (error) {
+										actedToasts.delete(item);
+										throw error;
+									}
 									dismissToast(item.id);
 								}}
 								style={({ pressed }) => ({

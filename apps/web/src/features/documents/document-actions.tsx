@@ -109,10 +109,11 @@ export function useDocumentActions() {
 					description: t`“${document.name}” moved to Trash`,
 					actionProps: {
 						children: t`Undo`,
+						// The trashed card has gone, and a mutation's own callbacks with it: catch the promise.
 						onClick: () =>
-							restore.mutate(ref(document), {
-								onError: (error) => toastError(error, t`Couldn't restore the document. Try again.`),
-							}),
+							void restore
+								.mutateAsync(ref(document))
+								.catch((error: unknown) => toastError(error, t`Couldn't restore the document. Try again.`)),
 					},
 				});
 			} catch (error) {
