@@ -7,6 +7,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { lazyRouteComponent } from "@tanstack/react-router";
 import { Suspense, useState } from "react";
+import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
@@ -15,7 +16,7 @@ import { useCurrentBuilderResumeSelector, useResumeData, useResumeStore } from "
 import { CheckPageLayer, PageViewToggle } from "@/features/resume/editor/check/page-layer";
 import { ParserView } from "@/features/resume/editor/check/parser-view";
 import { CanvasStatusPill, usePageScale, ZoomBar } from "@/features/resume/editor/chrome";
-import { measureOverflow, runFit } from "@/features/resume/editor/design/fit";
+import { runFit } from "@/features/resume/editor/design/fit";
 import { PageOverlay } from "@/features/resume/editor/page-overlay";
 import { markProposals, pendingProposals } from "@/features/resume/editor/proposals/proposals";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -215,8 +216,8 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 		);
 	}
 
-	// Content past the authored pages: a dashed warn line at the page boundary.
-	if (overflow && pageNumber > overflow.authored) {
+	// Every continuation belongs to its authored page, even before the last authored page starts.
+	if (overflow?.spills.some((spill) => spill.pages.includes(pageNumber))) {
 		return (
 			<figcaption className="relative mb-2.5 border-t-[1.5px] border-dashed border-warn">
 				<span className="absolute end-0 -top-2.5 rounded bg-sunken px-1.5 text-[11px] font-semibold text-warn-text">
@@ -233,24 +234,26 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 	);
 }
 
-type OverflowChipProps = { authored: number; lines: number | null };
+type OverflowChipProps = NonNullable<ReturnType<typeof measureOverflow>>;
 
-/** "Runs onto page 2 by about 6 lines" with Fit, which tightens the design until it fits (one undo step). */
-function OverflowChip({ authored, lines }: OverflowChipProps) {
+/** Names the first authored page that spills, with Fit using the existing single undo step. */
+function OverflowChip({ authored, spills, pageCount }: OverflowChipProps) {
 	const [fitting, setFitting] = useState(false);
-	const next = authored + 1;
+	const first = spills[0];
+	const page = first?.authoredPage;
+	const lines = first?.lines;
 
 	return (
 		<span className="flex min-h-8 items-center gap-2 rounded-lg bg-warn-soft py-1 ps-3 pe-1.5 text-[13px] text-warn-text">
 			<Icon name="square-split-horizontal" size={18} />
-			{lines ? (
+			{first && first.pages.length === 1 && lines ? (
 				<Plural
 					value={lines}
-					one={`Runs onto page ${next} by about # line`}
-					other={`Runs onto page ${next} by about # lines`}
+					one={`Page ${page} runs over by about # line`}
+					other={`Page ${page} runs over by about # lines`}
 				/>
 			) : (
-				<Trans>Runs onto page {next}</Trans>
+				<Plural value={pageCount} one="Runs to # page" other="Runs to # pages" />
 			)}
 			<button
 				type="button"
