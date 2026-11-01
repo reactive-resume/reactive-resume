@@ -42,13 +42,11 @@ export function useCareerTime() {
 	const labelled = !!device && device !== timeZone;
 	const format = (value: Date | string, options: Intl.DateTimeFormatOptions) =>
 		new Intl.DateTimeFormat(locale, { timeZone, ...options }).format(new Date(value));
+	const plain = (value: Date | string) => format(value, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 	const clock = (value: Date | string) =>
-		format(value, {
-			hour: "2-digit",
-			minute: "2-digit",
-			hourCycle: "h23",
-			...(labelled ? { timeZoneName: "short" as const } : {}),
-		});
+		labelled
+			? format(value, { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "short" })
+			: plain(value);
 
 	return {
 		timeZone,
@@ -64,6 +62,10 @@ export function useCareerTime() {
 		date: (value: Date | string) => format(value, { day: "numeric", month: "short" }),
 		/** "17:58" ("17:58 UTC" when the account's timezone isn't this device's) */
 		time: clock,
+		/** "17:58" with no zone, where space is short and the zone is said once nearby. */
+		plainTime: plain,
+		/** "17:58 – 18:58", with the zone once at the end when the account's timezone isn't this device's. */
+		timeRange: (start: Date | string, end: Date | string) => `${plain(start)} – ${clock(end)}`,
 		format,
 		/** "In 23 hours", "Yesterday": the largest whole unit. */
 		relative: (value: Date | string, now = new Date()) => {
