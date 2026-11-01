@@ -641,6 +641,95 @@ describe.skipIf(!databaseURL)("MCP OAuth flow with PostgreSQL", () => {
 		expect(tokens).toEqual([]);
 	}, 30_000);
 
+	it("refuses UserInfo for a token without offline_access once its session ends", async () => {
+		if (!databaseURL) return;
+		process.env.DATABASE_URL = databaseURL;
+		process.env.APP_URL = "http://localhost:33920";
+		process.env.AUTH_SECRET = "oauth-integration-test-secret-only";
+		const { handleAuth, handleOAuth } = await import("./auth");
+		const { db } = await import("@reactive-resume/db/client");
+		const schema = await import("@reactive-resume/db/schema");
+		const { eq } = await import("drizzle-orm");
+		const origin = process.env.APP_URL;
+		const redirectURI = "http://127.0.0.1:33921/callback";
+		const post = (path: string, body: object, cookie = "") =>
+			handleAuth(
+				new Request(`${origin}/api/auth/${path}`, {
+					method: "POST",
+					headers: { "content-type": "application/json", origin, cookie },
+					body: JSON.stringify(body),
+				}),
+			);
+		const client = await (
+			await post("oauth2/register", { client_name: "Session-bound", redirect_uris: [redirectURI] })
+		).json();
+		const unique = randomBytes(6).toString("hex");
+		const signup = await post("sign-up/email", {
+			name: "Session Test",
+			email: `session-${unique}@example.com`,
+			username: `session-${unique}`,
+			password: "password123",
+		});
+		const user = (await signup.json()).user;
+		const cookie = signup.headers
+			.getSetCookie()
+			.map((value) => value.split(";", 1)[0])
+			.join("; ");
+		const verifier = randomBytes(32).toString("base64url");
+		const query = new URLSearchParams({
+			client_id: client.client_id,
+			redirect_uri: redirectURI,
+			response_type: "code",
+			scope: "openid api:read",
+			code_challenge: createHash("sha256").update(verifier).digest("base64url"),
+			code_challenge_method: "S256",
+			resource: origin,
+		});
+		let target = new URL(
+			(
+				await handleAuth(new Request(`${origin}/api/auth/oauth2/authorize?${query}`, { headers: { cookie } }))
+			).headers.get("location") ?? "",
+			origin,
+		);
+		if (target.pathname === "/api/auth/oauth") {
+			target = new URL(
+				(await handleOAuth(new Request(target, { headers: { cookie } }))).headers.get("location") ?? "",
+				origin,
+			);
+		}
+		const accepted = await post("oauth2/consent", { accept: true, oauth_query: target.search.slice(1) }, cookie);
+		const code = new URL((await accepted.json()).url).searchParams.get("code") ?? "";
+		const tokens = await (
+			await handleAuth(
+				new Request(`${origin}/api/auth/oauth2/token`, {
+					method: "POST",
+					headers: { "content-type": "application/x-www-form-urlencoded" },
+					body: new URLSearchParams({
+						grant_type: "authorization_code",
+						client_id: client.client_id,
+						code,
+						redirect_uri: redirectURI,
+						code_verifier: verifier,
+						resource: origin,
+					}),
+				}),
+			)
+		).json();
+		const userinfo = () =>
+			handleAuth(
+				new Request(`${origin}/api/auth/oauth2/userinfo`, {
+					headers: { authorization: `Bearer ${tokens.access_token}` },
+				}),
+			);
+		expect((await userinfo()).status).toBe(200);
+		expect((await post("sign-out", {}, cookie)).status).toBe(200);
+		// The grant stays, so the ended session is the only reason to refuse.
+		expect(await db.select().from(schema.oauthConsent).where(eq(schema.oauthConsent.userId, user.id))).toHaveLength(1);
+		const refused = await userinfo();
+		expect(refused.status).toBe(401);
+		await expect(refused.json()).resolves.toMatchObject({ error: "invalid_token" });
+	}, 30_000);
+
 	it.each(["login", "max-age", "create"])(
 		"requires fresh authentication for %s without looping",
 		async (mode) => {

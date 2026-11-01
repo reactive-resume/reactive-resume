@@ -17,29 +17,27 @@ i18n.loadAndActivate({ locale: "en", messages: {} });
 const { ConnectedAppsSection } = await import("./connected-apps");
 
 it("shows registered application names, keeps unnamed or unavailable clients revocable, and revokes the consent", async () => {
-	oauth2.getConsents.mockResolvedValue({
-		data: [
-			{
-				id: "consent-1",
-				clientId: "codex-client-id",
-				scopes: ["api:read"],
-				createdAt: new Date("2026-10-01T12:00:00Z"),
-			},
-			{
-				id: "consent-2",
-				clientId: "unnamed-client-id",
-				scopes: ["api:read"],
-				createdAt: new Date("2026-10-01T12:00:00Z"),
-			},
-			{
-				id: "consent-3",
-				clientId: "unavailable-client-id",
-				scopes: ["api:read"],
-				createdAt: new Date("2026-10-01T12:00:00Z"),
-			},
-		],
-		error: null,
-	});
+	const consents = [
+		{
+			id: "consent-1",
+			clientId: "codex-client-id",
+			scopes: ["api:read"],
+			createdAt: new Date("2026-10-01T12:00:00Z"),
+		},
+		{
+			id: "consent-2",
+			clientId: "unnamed-client-id",
+			scopes: ["api:read"],
+			createdAt: new Date("2026-10-01T12:00:00Z"),
+		},
+		{
+			id: "consent-3",
+			clientId: "unavailable-client-id",
+			scopes: ["api:read"],
+			createdAt: new Date("2026-10-01T12:00:00Z"),
+		},
+	];
+	oauth2.getConsents.mockResolvedValue({ data: consents, error: null });
 	oauth2.publicClient.mockImplementation(({ query }: { query: { client_id: string } }) => {
 		if (query.client_id === "unavailable-client-id") return Promise.reject(new Error("Network unavailable"));
 		return Promise.resolve({
@@ -71,10 +69,14 @@ it("shows registered application names, keeps unnamed or unavailable clients rev
 	expect(within(dialog).getByText("Disconnect “Codex”?")).toBeTruthy();
 	fireEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
 	expect(oauth2.deleteConsent).not.toHaveBeenCalled();
+	expect(within(connection).queryByText("api:read")).toBeNull();
+	expect(within(connection).getByText(/Connected/)).toBeTruthy();
+	// The server no longer lists the revoked consent, so the refetch removes its row.
+	oauth2.getConsents.mockResolvedValue({ data: consents.slice(1), error: null });
 	fireEvent.click(within(connection).getByRole("button", { name: "Disconnect Codex" }));
 	fireEvent.click(within(await screen.findByRole("alertdialog")).getByRole("button", { name: "Disconnect" }));
 	await waitFor(() => expect(oauth2.deleteConsent).toHaveBeenCalledWith({ id: "consent-1" }));
 	expect(toasts.add).toHaveBeenCalledWith(expect.objectContaining({ description: "Disconnected “Codex”." }));
-	expect(within(connection).queryByText("api:read")).toBeNull();
-	expect(within(connection).getByText(/Connected/)).toBeTruthy();
+	await waitFor(() => expect(screen.queryByText("Codex")).toBeNull());
+	expect(screen.getByText("unnamed-client-id")).toBeTruthy();
 });

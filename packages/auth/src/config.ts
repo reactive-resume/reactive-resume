@@ -779,7 +779,9 @@ const getAuthConfig = () => {
 					return;
 				try {
 					await validateOAuthGrant(payload);
-				} catch {
+				} catch (error) {
+					// Only a refused grant makes the token inactive; a failed lookup is a server error, not a revocation.
+					if (!isAPIError(error)) throw error;
 					return ctx.json({ active: false });
 				}
 			}),
@@ -966,7 +968,8 @@ const getAuthConfig = () => {
 							userInfo: async ({ jwt }) => {
 								try {
 									await validateOAuthGrant(jwt);
-								} catch {
+								} catch (error) {
+									if (!isAPIError(error)) throw error;
 									throw new APIError("UNAUTHORIZED", {
 										error: "invalid_token",
 										error_description: "Reconnect the application to restore access.",
@@ -999,6 +1002,8 @@ const getAuthConfig = () => {
 				// Desktop MCP clients (Cursor, older Claude Code) omit application_type while registering
 				// loopback or custom-scheme callbacks; register those as native. An explicit type is kept.
 				clientRegistrationDefaultApplicationType: "infer",
+				// The consent page loads the client through this endpoint, which verifies the signed request first.
+				allowPublicClientPrelogin: true,
 				rateLimit: oauthProviderRateLimit,
 				silenceWarnings: { oauthAuthServerConfig: true },
 			}) as WithoutEndpointMetadata<ReturnType<typeof oauthProvider>>,

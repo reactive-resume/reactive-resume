@@ -33,6 +33,12 @@ test("requires explicit OAuth consent before denying or allowing access", async 
 	});
 	query.append("resource", origin);
 	await page.route(`${callback}**`, (route) => route.fulfill({ body: "Client callback" }));
+	await page.goto(`/api/auth/oauth2/authorize?${query}`);
+	const tampered = new URL(page.url()).searchParams;
+	tampered.set("state", "tampered");
+	await page.goto(`/auth/consent?${tampered}`);
+	await expect(page.getByText(invalidRequest)).toBeVisible();
+	await expect(page.getByRole("button", { name: "Allow access", exact: true })).toHaveCount(0);
 	for (const accept of [false, true]) {
 		await page.goto(`/api/auth/oauth2/authorize?${query}`);
 		await expect(page.getByRole("heading", { name: "Connect an application" })).toBeVisible();
@@ -277,14 +283,34 @@ test("keeps OAuth callbacks through registration while refusing guests and missi
 	expect(new URL(page.url()).searchParams.get("callbackURL")).toBe(login.searchParams.get("callbackURL"));
 	const guest = await page.request.post("/api/auth/sign-in/anonymous", { headers: { origin }, data: {} });
 	expect(guest.status()).toBe(200);
-	// A dead request tells guests so too, instead of offering sign-up links that resume it.
-	for (const dead of [`client_id=${client.client_id}`, "client_id=unknown-client&sig=forged"]) {
+	// A dead request tells guests so too, instead of offering sign-up links that resume it. That includes a
+	// well-formed request whose signature no longer matches, which only the server can tell.
+	const tamperedRequest = new URL(login.searchParams.get("callbackURL") ?? "", origin).searchParams;
+	tamperedRequest.set("scope", "openid api:read api:write api:delete");
+	for (const dead of [
+		`client_id=${client.client_id}`,
+		"client_id=unknown-client&sig=forged",
+		tamperedRequest.toString(),
+	]) {
 		await page.goto(`/auth/consent?${dead}`);
 		await expect(page.getByText(invalidRequest)).toBeVisible();
 		await expect(page.getByText("Create an account to connect apps. Guest accounts are temporary.")).toHaveCount(0);
 		await expect(page.getByRole("button", { name: "Create account", exact: true })).toHaveCount(0);
 	}
+	// While the client lookup is pending, a guest sees the loading state, not links for a request not yet checked.
+	let releaseLookup = () => {};
+	const lookupHeld = new Promise<void>((resolve) => {
+		releaseLookup = resolve;
+	});
+	await page.route("**/api/auth/oauth2/public-client-prelogin", async (route) => {
+		await lookupHeld;
+		await route.continue();
+	});
 	await page.goto(`/api/auth/oauth2/authorize?${query}`);
+	await expect(page.getByRole("status")).toHaveText("Loading connection request...");
+	await expect(page.getByRole("button", { name: "Create account", exact: true })).toHaveCount(0);
+	await expect(page.getByRole("button", { name: "Sign in", exact: true })).toHaveCount(0);
+	releaseLookup();
 	await expect(page.getByText("Create an account to connect apps. Guest accounts are temporary.")).toBeVisible();
 	await expect(page.getByRole("button", { name: "Allow access" })).toHaveCount(0);
 	await expect(page.getByText(/temp-.*@reactive-resume.local/)).toHaveCount(0);
@@ -312,6 +338,8 @@ test("keeps OAuth callbacks through registration while refusing guests and missi
 	await page.getByLabel("Email address", { exact: true }).fill(account.email);
 	await page.getByLabel("Password", { exact: true }).fill(account.password);
 	await page.getByRole("button", { name: "Sign up", exact: true }).click();
-	await expect(page.getByRole("button", { name: "Allow access", exact: true })).toBeVisible();
 	await expect(page.getByText(`Signed in as ${account.email}`)).toBeVisible();
+	await page.getByRole("button", { name: "Allow access", exact: true }).click();
+	await page.waitForURL(/^http:\/\/127\.0\.0\.1:33921\/callback\?/);
+	expect(new URL(page.url()).searchParams.get("code")).toBeTruthy();
 });

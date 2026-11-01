@@ -62,7 +62,11 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 		enabled: validRequest,
 		retry: false,
 		queryFn: async () => {
-			const { data, error } = await authClient.oauth2.publicClient({ query: { client_id: clientId } });
+			// The provider checks the request's signature and expiry here, so a forged or expired request reads as invalid.
+			const { data, error } = await authClient.oauth2.publicClientPrelogin({
+				client_id: clientId,
+				oauth_query: oauthQuery,
+			});
 			if (error || !data)
 				throw new Error(
 					t`This connection request is invalid or has expired. Start the connection again from your client.`,
@@ -95,10 +99,14 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 					</p>
 				)}
 			</div>
-			{/* A dead request comes first: its sign-up links would only resume a request that can't continue. */}
+			{/* Settle the request before offering anything: sign-up links would only resume a dead request. */}
 			{!validRequest || isError ? (
 				<p key="invalid" role="alert" className={ENTER_CLASS}>
 					<Trans>This connection request is invalid or has expired. Start the connection again from your client.</Trans>
+				</p>
+			) : isPending ? (
+				<p role="status">
+					<Trans>Loading connection request...</Trans>
 				</p>
 			) : isAnonymous ? (
 				<div className="space-y-4">
@@ -135,10 +143,6 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 						</p>
 					)}
 				</div>
-			) : isPending ? (
-				<p role="status">
-					<Trans>Loading connection request...</Trans>
-				</p>
 			) : client ? (
 				<div className={cn(ENTER_CLASS, "space-y-4")}>
 					<div className="space-y-1 wrap-anywhere">
