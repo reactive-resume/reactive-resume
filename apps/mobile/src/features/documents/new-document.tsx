@@ -70,6 +70,7 @@ export function NewDocument() {
 	const source = resumes.find((document) => document.id === sourceId) ?? defaultCopySource(resumes);
 	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
 	const job = newJob ? undefined : jobs.find((application) => application.id === jobId);
+	const waitingForJob = !newJob && Boolean(jobId) && !job && applications.isFetching;
 	const company = newJob ? newJob.company.trim() : job?.company;
 	const newJobReady = !newJob || (!!newJob.company.trim() && !!newJob.role.trim());
 	const suggested = (
@@ -137,10 +138,19 @@ export function NewDocument() {
 		run(async (signal) => {
 			let document: ImportedDocument;
 			if (kind === "letter") {
-				const latest = resumes.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())[0];
+				const latest = resumes.toSorted((a, b) => b.editedAt.getTime() - a.editedAt.getTime())[0];
+				// A number when an untitled letter already exists, so the library can tell them apart until they're named.
+				const base = t`Untitled letter`;
+				const taken = new Set(
+					(await client.documents.list({ type: "letter", q: base }, { signal })).map((letter) =>
+						letter.name.toLowerCase(),
+					),
+				);
+				let name = base;
+				for (let number = 2; taken.has(name.toLowerCase()); number++) name = `${base} ${number}`;
 				const letter = await client.coverLetters.create(
 					{
-						name: t`Untitled letter`,
+						name,
 						recipient: "",
 						content: "",
 						...(latest ? { resumeId: latest.id } : {}),
@@ -169,7 +179,7 @@ export function NewDocument() {
 		});
 	const copy = () =>
 		run(async (signal) => {
-			if (!source || !(name ?? suggested).trim() || !newJobReady) return;
+			if (!source || !(name ?? suggested).trim() || !newJobReady || waitingForJob) return;
 			const pasted = newJob?.posting.trim() ?? "";
 			const truncated = pasted.length > 20_000;
 			const input = {
@@ -194,15 +204,15 @@ export function NewDocument() {
 									: {}),
 							},
 						}
-					: job
-						? { applicationId: job.id }
+					: jobId
+						? { applicationId: jobId }
 						: {}),
 			};
 			const id = await copyForJob(input, signal);
 			if (newJob) void applications.refetch();
 			if (current(signal)) {
 				const document = { id, type: "resume" as const };
-				const forJob = Boolean(newJob || job);
+				const forJob = Boolean(newJob || jobId);
 				setCreated(document);
 				setApplicationLinked(true);
 				if (forJob && ai.hasAIProvider) onCopiedForJob(id);
@@ -495,7 +505,8 @@ export function NewDocument() {
 											!(name ?? suggested).trim() ||
 											(name ?? suggested).length > 100 ||
 											documents.isError ||
-											applications.isError
+											applications.isError ||
+											waitingForJob
 										}
 										onPress={() => void copy()}
 									/>

@@ -213,9 +213,14 @@ function aboveEnding(value: Readonly<Record<string, unknown>>): AboveEnding {
  * President of Global Engineering Operations", "eBay Marketplace" and "iOS platform lead" are real headings.
  */
 function readsAsSentence(text: string, above: AboveEnding): boolean {
-	if (isCutMidSentence(text)) return true;
+	if ((above.cut || above.open) && isCutMidSentence(text)) return true;
 	const words = text.split(/\s+/).filter(Boolean);
-	if (above.cut && words.length > MAX_HEADING_WORDS) return true;
+	if (
+		words.length > MAX_HEADING_WORDS &&
+		(above.cut ||
+			(isCutMidSentence(text) && /\b(?:built|shipped|reduced|led|delivered|managed|improved|mentored)\b/i.test(text)))
+	)
+		return true;
 	const prose = /^(?:[\d•·*-]|\p{Ll}[^\p{Lu}]*$)/u.test(words[0] ?? "");
 	return (above.cut || above.open) && words.length >= 4 && prose;
 }
@@ -247,6 +252,7 @@ function fragmentPointers(sections: readonly WalkedSection[]): ReadonlySet<strin
 
 			const headings = fields.map((field) => textOf(item.value[field])).filter(Boolean);
 			const above = aboveEnding(previous.value);
+			if (fragments.has(previous.pointer)) above.open = true;
 			const fragment =
 				headings.length > 0
 					? headings.some((heading) => readsAsSentence(heading, above))

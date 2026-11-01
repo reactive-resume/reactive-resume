@@ -32,6 +32,7 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 	const open = useEditorStore((state) => state.basicsOpen);
 	const selected = useEditorStore((state) => state.selection?.kind === "header");
 	const write = useBasicsWriter();
+	const updateResumeData = useUpdateResumeData();
 
 	const text = (key: TextKey) => ({
 		value: basics[key],
@@ -111,7 +112,15 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 								})
 							}
 						/>
-						<CustomFields fields={basics.customFields} locked={locked} />
+						<CustomFields
+							fields={basics.customFields}
+							locked={locked}
+							edit={(key, mutate) =>
+								updateResumeData((draft) => mutate(draft.basics.customFields), {
+									coalesceKey: `basics.customFields.${key}`,
+								})
+							}
+						/>
 					</fieldset>
 				</CollapsibleContent>
 			</Collapsible>
@@ -157,14 +166,16 @@ function PhotoRow({ locked }: { locked: boolean }) {
 	);
 }
 
-/** Extra contact details (icon, text and an optional link), as "Add field" under Website. */
-type CustomFieldsProps = { fields: CustomField[]; locked: boolean };
-function CustomFields({ fields, locked }: CustomFieldsProps) {
-	const updateResumeData = useUpdateResumeData();
-
-	const edit = (key: string, mutate: (list: CustomField[]) => void) =>
-		updateResumeData((draft) => mutate(draft.basics.customFields), { coalesceKey: `basics.customFields.${key}` });
-
+/**
+ * Extra contact details (icon, text and an optional link), as "Add field" under Website. `edit` changes the list where
+ * it's kept: the resume's basics, or a letter's own sender details.
+ */
+type CustomFieldsProps = {
+	fields: CustomField[];
+	locked: boolean;
+	edit: (key: string, mutate: (list: CustomField[]) => void) => void;
+};
+export function CustomFields({ fields, locked, edit }: CustomFieldsProps) {
 	return (
 		<div className="col-span-full grid gap-2">
 			{fields.map((field, index) => (

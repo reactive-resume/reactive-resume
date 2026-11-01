@@ -56,6 +56,7 @@ const resume = (id: string, name: string, edited: string, application: { company
 	trashedAt: null,
 	createdAt: new Date("2026-10-01T00:00:00Z"),
 	updatedAt: new Date(edited),
+	editedAt: new Date(edited),
 	application: application ? { id: `job-${id}`, role: "Director", ...application } : null,
 });
 

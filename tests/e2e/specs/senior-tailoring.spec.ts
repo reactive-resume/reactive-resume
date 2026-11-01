@@ -401,7 +401,7 @@ test("reaching Offer asks for terms, saving them keeps them in view, and accepti
 	// An offer added in Career → Offers for an Applied job moves it to Offer once the Undo window closes.
 	await page.goto("/dashboard/career/offers");
 	await page.getByRole("button", { name: "Add offer" }).first().click();
-	await page.getByLabel("Application").selectOption({ label: "Fieldnote · VP of Engineering" });
+	await page.getByLabel("Application").selectOption(third);
 	await page.getByLabel("Currency").fill("EUR");
 	await page.getByLabel("Base salary").fill("175000");
 	await page.getByRole("button", { name: "Save offer" }).click();

@@ -311,3 +311,36 @@ it("a Help Desk term never suppresses the distinct named tool Zendesk", () => {
 	});
 	expect(report.matchedTerms).toContain("zendesk");
 });
+
+describe("posting boundaries and known employers", () => {
+	const terms = (jobDescription: string, company?: string) => {
+		const report = matchJobDescription({ jobDescription, resumeText: "", company });
+		return [...report.missingTerms, ...report.matchedTerms];
+	};
+	it("keeps equity research requirements", () => {
+		expect(terms("Requirements\nExperience in equity research and financial modeling.")).toContain(
+			"financial modeling",
+		);
+	});
+	it("keeps skills after required skills and get-to-do headings", () => {
+		for (const heading of ["Required skills", "What you'll get to do"])
+			expect(terms(`Benefits\nPaid vacation\n${heading}\nKubernetes and Terraform`)).toEqual(
+				expect.arrayContaining(["kubernetes", "terraform"]),
+			);
+	});
+	it("keeps a field after a role's middle dot", () => {
+		expect(terms("Senior Engineer · Observability\nBuild reliable services with Observability.")).toContain(
+			"observability",
+		);
+	});
+	it("subsumes a standalone token of a canonical hyphenated skill", () => {
+		const selected = terms("Requirements\nLead generation and generation expertise.");
+		expect(selected).toContain("lead-generation");
+		expect(selected).not.toContain("generation");
+	});
+	it.each(["Google Cloud", "Amazon Web Services"])("excludes explicitly supplied employer %s", (company) => {
+		const selected = terms(`${company} is hiring.\nRequirements\n${company}, Kubernetes and Terraform`, company);
+		expect(selected).not.toContain(company === "Google Cloud" ? "google-cloud" : "aws");
+		expect(selected).toContain("kubernetes");
+	});
+});

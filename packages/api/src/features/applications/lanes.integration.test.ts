@@ -1110,6 +1110,15 @@ describe.skipIf(!databaseUrl)("application lanes: persisted owner and workflow i
 			await expect(documents.copyForJob(request)).rejects.toMatchObject(conflict);
 		expect(await snapshot()).toEqual(before);
 
+		// Relinking a new-job copy to a different live job must not satisfy the original receipt.
+		const relocated = { resumeId: base, application: { company: "Original Co", role: "Lead" }, newId: randomUUID() };
+		await documents.copyForJob(relocated);
+		const replacementJob = await apps.create({ company: "Replacement Co", role: "Lead" });
+		await documents.linkApplication({ type: "resume", id: relocated.newId, applicationId: replacementJob });
+		before = await snapshot();
+		await expect(documents.copyForJob(relocated)).rejects.toMatchObject(conflict);
+		expect(await snapshot()).toEqual(before);
+
 		// A retry of a copy for a saved job leaves the job's link alone once the user has linked another resume.
 		const saved = await apps.create({ company: "Linked Co", role: "Lead", resumeId: base });
 		const forSaved = { resumeId: base, applicationId: saved, newId: randomUUID() };

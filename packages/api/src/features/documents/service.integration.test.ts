@@ -674,4 +674,139 @@ describe.skipIf(!databaseUrl)("Trash batch operations", () => {
 		const [restored] = await getDb().select().from(tables.resume).where(eq(tables.resume.id, "alice-trashed-2"));
 		expect(restored).toBeDefined();
 	});
+	it("keeps Last edited on content edits while every change still moves updatedAt and the save fence", async () => {
+		await seed();
+		const db = getDb();
+		const alice = (ref: { type: "resume" | "letter"; id: string }) => ({ ...ref, userId: "alice" });
+		const resumeRef = alice({ type: "resume", id: "alice-active" });
+		const letterRef = alice({ type: "letter", id: "alice-letter" });
+		await service.restore(letterRef);
+		const past = new Date("2026-01-01T00:00:00Z");
+		await db.update(tables.resume).set({ editedAt: past, updatedAt: past }).where(eq(tables.resume.id, "alice-active"));
+		await db
+			.update(tables.coverLetter)
+			.set({ editedAt: past, updatedAt: past })
+			.where(eq(tables.coverLetter.id, "alice-letter"));
+		const read = async () => {
+			const [resume] = await db.select().from(tables.resume).where(eq(tables.resume.id, "alice-active"));
+			const [letter] = await db.select().from(tables.coverLetter).where(eq(tables.coverLetter.id, "alice-letter"));
+			if (!resume || !letter) throw new Error("Seeded documents are missing.");
+			return { resume, letter };
+		};
+
+		// Details: tags, rename, lock and unlock, Trash and restore, and the share switch.
+		await service.setTags({ ...resumeRef, tags: ["design"] });
+		await service.setTags({ ...letterRef, tags: ["design"] });
+		await service.rename({ ...resumeRef, name: "Renamed" });
+		await service.rename({ ...letterRef, name: "Renamed letter" });
+		await service.setLocked({ ...resumeRef, isLocked: true });
+		await service.setLocked({ ...resumeRef, isLocked: false });
+		await service.setLocked({ ...letterRef, isLocked: true });
+		await service.setLocked({ ...letterRef, isLocked: false });
+		await service.trash(resumeRef);
+		await service.restore(resumeRef);
+		await db.update(tables.resume).set({ isPublic: true }).where(eq(tables.resume.id, "alice-active"));
+		const details = await read();
+		expect(details.resume.editedAt).toEqual(past);
+		expect(details.letter.editedAt).toEqual(past);
+		// updatedAt still moves, so a save from before these changes is still refused.
+		expect(details.resume.updatedAt.getTime()).toBeGreaterThan(past.getTime());
+		expect(details.letter.updatedAt.getTime()).toBeGreaterThan(past.getTime());
+		const { resumeService } = await import("../resume/service");
+		await expect(
+			resumeService.update({ id: "alice-active", userId: "alice", name: "Stale", expectedUpdatedAt: past }),
+		).rejects.toMatchObject({ code: "RESUME_VERSION_CONFLICT" });
+
+		const listed = await service.list({
+			userId: "alice",
+			trashed: false,
+			type: "all",
+			q: "",
+			tags: [],
+			public: false,
+			sort: "edited",
+		});
+		expect(listed.items.find((row) => row.id === "alice-active")?.editedAt).toEqual(past);
+
+		// Content: the resume's data, and the letter's text or recipient.
+		const data = structuredClone(details.resume.data);
+		data.basics.headline = "Staff engineer";
+		await db.update(tables.resume).set({ data }).where(eq(tables.resume.id, "alice-active"));
+		await db
+			.update(tables.coverLetter)
+			.set({ recipientCompany: "Northwind Labs" })
+			.where(eq(tables.coverLetter.id, "alice-letter"));
+		const content = await read();
+		expect(content.resume.editedAt?.getTime()).toBeGreaterThan(past.getTime());
+		expect(content.letter.editedAt?.getTime()).toBeGreaterThan(past.getTime());
+		const after = await service.list({
+			userId: "alice",
+			trashed: false,
+			type: "letter",
+			q: "",
+			tags: [],
+			public: false,
+			sort: "edited",
+		});
+		expect(after.items[0]).toMatchObject({ id: "alice-letter", recipient: "Northwind Labs" });
+		expect(after.items[0]?.editedAt).toEqual(content.letter.editedAt);
+	}, 30_000);
+	it("sends a renamed account's old public links to its new username for 30 days, and only its own", async () => {
+		await seed();
+		const db = getDb();
+		await db.update(tables.resume).set({ isPublic: true }).where(eq(tables.resume.id, "alice-active"));
+		await db
+			.update(tables.user)
+			.set({ username: "alice-new", displayUsername: "alice-new" })
+			.where(eq(tables.user.id, "alice"));
+		const { loadPublicWebPage } = await import("../resume/web-page");
+		const visit = (match: { username: string; slug: string } | { username: string; primary: true }) =>
+			loadPublicWebPage({ match, requestHeaders: new Headers(), trustedClient: "test" });
+
+		await expect(visit({ username: "alice", slug: "active" })).resolves.toEqual({
+			status: "moved",
+			username: "alice-new",
+			slug: "active",
+			isPrimary: false,
+			movedBy: "username",
+		});
+		await expect(visit({ username: "Alice", slug: "active" })).resolves.toMatchObject({ status: "moved" });
+		// Another account never answers for a name it didn't release.
+		await expect(visit({ username: "bob", slug: "active" })).resolves.toEqual({ status: "unavailable" });
+
+		// The primary resume's short link moves to the new short link.
+		await db.update(tables.resume).set({ isPrimary: true }).where(eq(tables.resume.id, "alice-active"));
+		await expect(visit({ username: "alice", primary: true })).resolves.toEqual({
+			status: "moved",
+			username: "alice-new",
+			slug: "active",
+			isPrimary: true,
+			movedBy: "username",
+		});
+
+		// After 30 days the name is free for anyone, so the old links stop resolving to this account.
+		await pool.query(`UPDATE released_username SET released_at = now() - interval '31 days' WHERE username = 'alice'`);
+		await expect(visit({ username: "alice", slug: "active" })).resolves.toEqual({ status: "unavailable" });
+	}, 30_000);
+	it("names a second import of the same person apart from the first, ignoring Trash and other accounts", async () => {
+		await seed();
+		const { findFreeResumeName } = await import("../resume/slugs");
+		const db = getDb();
+		const add = (id: string, userId: string, name: string) =>
+			db.insert(tables.resume).values({ id, userId, name, slug: id, data: structuredClone(defaultResumeData) });
+
+		await expect(findFreeResumeName("alice", "Morgan Chen", "Engineering lead")).resolves.toBe("Morgan Chen");
+		await add("first", "alice", "Morgan Chen");
+		await add("bobs", "bob", "Morgan Chen — Engineering lead");
+		await expect(findFreeResumeName("alice", "morgan chen", "Engineering lead")).resolves.toBe(
+			"morgan chen — Engineering lead",
+		);
+		await add("second", "alice", "Morgan Chen — Engineering lead");
+		await expect(findFreeResumeName("alice", "Morgan Chen", "Engineering lead")).resolves.toBe(
+			"Morgan Chen — Engineering lead (2)",
+		);
+		await expect(findFreeResumeName("alice", "Morgan Chen")).resolves.toBe("Morgan Chen (2)");
+		// A resume in Trash doesn't hold its name.
+		await expect(findFreeResumeName("alice", "Trashed one")).resolves.toBe("Trashed one");
+	}, 30_000);
 });

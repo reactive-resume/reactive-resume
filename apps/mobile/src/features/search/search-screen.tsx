@@ -8,18 +8,37 @@ import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, BackHandler, Platform, Pressable, ScrollView, TextInput, View } from "react-native";
 import { rank } from "./rank";
-import { orpc } from "@/api/client";
-import { useSession } from "@/auth/session";
+import { client, orpc } from "@/api/client";
+import { getAccountScope, useSession } from "@/auth/session";
+import { useHasAIProvider } from "@/features/ai/providers";
 import { useApplications } from "@/features/applications/queries";
-import { useDocuments } from "@/features/documents/queries";
 import { routes } from "@/routes";
 import { useIsTablet } from "@/shell/use-is-tablet";
-import { EmptyState, Icon, IconButton, ListRow, Text, setThemePreference, showToast, useTheme } from "@/ui";
+import {
+	Banner,
+	Button,
+	EmptyState,
+	Icon,
+	IconButton,
+	ListRow,
+	Text,
+	setThemePreference,
+	showToast,
+	useTheme,
+} from "@/ui";
 
 type Page = "root" | "resumes" | "applications" | "threads" | "theme";
 type Thread = RouterOutput["agent"]["threads"]["list"][number];
 type Row = { key: string; icon: IconName; title: string; subtitle?: string | undefined; onPress: () => void };
-type Group = { key: string; heading: string; rows: Row[]; more?: Page | undefined; loading?: string | undefined };
+type Group = {
+	key: string;
+	heading: string;
+	rows: Row[];
+	more?: Page | undefined;
+	loading?: string | undefined;
+	error?: boolean | undefined;
+	retry?: (() => unknown) | undefined;
+};
 
 /** Results per kind while typing on the first page; "Show all" opens the kind's own page. */
 const PREVIEW = 3;
@@ -32,6 +51,32 @@ function useThreads(enabled: boolean) {
 		queryKey: [...options.queryKey, session.server],
 		enabled: enabled && session.status === "signed-in",
 	});
+}
+
+function useDocumentSearch(search: string, type: "resume" | "letter" | "all", limit: number, enabled: boolean) {
+	const session = useSession();
+	const scope = getAccountScope();
+	const text = search.trim().slice(0, 500);
+	const tooLong = search.trim().length > 500;
+	const [q, setQ] = useState(text);
+	useEffect(() => {
+		const timer = setTimeout(() => setQ(text), 200);
+		return () => clearTimeout(timer);
+	}, [text]);
+	const options = orpc.documents.list.queryOptions({
+		input: { q, type, limit, offset: 0, sort: "edited", tags: [], trashed: false },
+	});
+	const query = useQuery({
+		...options,
+		queryKey: [...options.queryKey, scope],
+		enabled: enabled && !tooLong && session.status === "signed-in" && q === text,
+	});
+	return {
+		...query,
+		data: !tooLong && q === text ? query.data : undefined,
+		isPending: enabled && session.status === "signed-in" && !tooLong && (q !== text || query.isPending),
+		isError: !tooLong && q === text && query.isError,
+	};
 }
 
 /**
@@ -49,8 +94,18 @@ export function SearchScreen() {
 	const [page, setPage] = useState<Page>("root");
 	const typing = query.trim().length > 0;
 
-	const documents = useDocuments();
+	const resumeQuery = useDocumentSearch(
+		query,
+		"resume",
+		page === "resumes" ? 100 : PREVIEW + 1,
+		typing || page === "resumes",
+	);
+	const letterQuery = useDocumentSearch(query, "letter", 9, typing && page === "root");
 	const applications = useApplications();
+	const ai = useHasAIProvider();
+	const latestDocument = useDocumentSearch("", "all", 1, signedIn);
+	const name = latestDocument.data?.[0]?.name;
+	const needsProvider = !ai.isUnavailable && !ai.hasAIProvider;
 	const threads = useThreads(typing || page === "threads");
 
 	// Search is a modal: leave it for the destination, back to an open tab when the destination is one.
@@ -102,18 +157,17 @@ export function SearchScreen() {
 		},
 	});
 
-	const live = (documents.data ?? []).map((document) => ({
-		...document,
-		title: document.name,
-		keywords: [document.slug, ...document.tags, document.application?.company, document.application?.role],
-		time: document.updatedAt.getTime(),
-	}));
-	const resumes = live.filter((document) => document.type === "resume");
-	const letters = live.filter((document) => document.type === "letter");
+	const resumes = resumeQuery.data ?? [];
+	const letters = letterQuery.data ?? [];
 	const jobs = (applications.data ?? []).map((application) => ({
 		...application,
 		title: application.company,
-		keywords: [application.role],
+		keywords: [
+			application.role,
+			application.location,
+			...application.tags,
+			...application.contacts.map((contact) => contact.name),
+		],
 		time: application.updatedAt.getTime(),
 	}));
 	const conversations = (threads.data ?? [])
@@ -150,6 +204,15 @@ export function SearchScreen() {
 			keywords: [t`Check a PDF`],
 			root: true,
 			onPress: () => go(routes.atsChecker()),
+		},
+		{
+			key: "career",
+			icon: "compass",
+			title: t`Career`,
+			keywords: [t`Coach`, t`Knowledge`, t`Offers`, t`Today`],
+			account: true,
+			root: true,
+			onPress: () => go(routes.career()),
 		},
 		{
 			key: "new-application",
@@ -229,15 +292,36 @@ export function SearchScreen() {
 	];
 	const available = actions.filter((action) => signedIn || !action.account);
 
-	const ask = (question: string) => {
-		// The mobile assistant lives in the resume editor, so a question goes to the resume edited last.
-		const latest = resumes.toSorted((a, b) => b.time - a.time)[0];
+	const ask = async (question: string) => {
+		if (needsProvider) {
+			go(routes.settings("ai"));
+			return;
+		}
+		const scope = getAccountScope();
+		let latest: DocumentSummary | undefined;
+		try {
+			[latest] = await client.documents.list({
+				type: "all",
+				sort: "edited",
+				limit: 1,
+				offset: 0,
+				tags: [],
+				trashed: false,
+			});
+		} catch {
+			showToast({ message: t`Couldn't load this. Check your connection and try again.` });
+			return;
+		}
+		if (scope !== getAccountScope()) return;
 		if (!latest) {
 			showToast({ message: t`Create a resume first, then ask about it.` });
 			return;
 		}
-		// M6-T3's assistant route: `?ask=` sends the question in a new conversation.
-		go({ pathname: routes.assistant(latest.id), params: { ask: question } });
+		// The assistant routes' `?ask=` sends the question in a new conversation.
+		go({
+			pathname: latest.type === "letter" ? routes.letterAssistant(latest.id) : routes.assistant(latest.id),
+			params: { ask: question },
+		});
 	};
 
 	const setTheme = (value: ThemePreference) => {
@@ -265,9 +349,20 @@ export function SearchScreen() {
 			heading: t`Resumes`,
 			rows: [
 				{ key: "create", icon: "plus", title: t`Create a new resume`, onPress: () => go(routes.new()) },
-				...rank(query, resumes).map(documentRow),
+				...resumes.map(documentRow),
+				...(resumes.length === 100
+					? [
+							{
+								key: "more.resumes",
+								icon: "arrow-right" as const,
+								title: t`Show all`,
+								onPress: () =>
+									go({ pathname: routes.documents(), params: { q: query.trim().slice(0, 500), type: "resume" } }),
+							},
+						]
+					: []),
 			],
-			loading: loading(documents.isPending, t`Loading resumes…`),
+			loading: loading(resumeQuery.isPending, t`Loading resumes…`),
 		});
 	} else if (page === "applications") {
 		groups.push({
@@ -309,20 +404,37 @@ export function SearchScreen() {
 		});
 	} else {
 		const kinds: [string, string, Row[], Page | undefined][] = [
-			["resumes", t`Resumes`, rank(query, resumes).map(documentRow), "resumes"],
-			["letters", t`Letters`, rank(query, letters).map(documentRow), undefined],
+			["resumes", t`Resumes`, resumes.map(documentRow), "resumes"],
+			["letters", t`Letters`, letters.slice(0, 8).map(documentRow), undefined],
 			["applications", t`Applications`, rank(query, jobs).map(applicationRow), "applications"],
 			["threads", t`Assistant conversations`, rank(query, conversations).map(threadRow), "threads"],
 			["actions", t`Actions`, rank(query, available), undefined],
 		];
 		for (const [key, heading, rows, more] of kinds) {
-			if (rows.length === 0) continue;
+			const source = key === "resumes" ? resumeQuery : key === "letters" ? letterQuery : undefined;
+			if (key === "letters" && letters.length > 8)
+				rows.push({
+					key: "more.letters",
+					icon: "arrow-right",
+					title: t`Show all letters`,
+					onPress: () =>
+						go({ pathname: routes.documents(), params: { q: query.trim().slice(0, 500), type: "letter" } }),
+				});
+			if (rows.length === 0 && !source?.isPending && !source?.isError) continue;
 			const capped = key !== "letters" && key !== "actions" && rows.length > PREVIEW;
-			groups.push({ key, heading, rows: capped ? rows.slice(0, PREVIEW) : rows, more: capped ? more : undefined });
+			groups.push({
+				key,
+				heading,
+				rows: capped ? rows.slice(0, PREVIEW) : rows,
+				more: capped ? more : undefined,
+				loading: source?.isPending ? t`Loading…` : undefined,
+				error: source?.isError,
+				retry: source?.refetch,
+			});
 		}
 	}
 
-	const results = groups.some((group) => group.rows.length > 0 || group.loading);
+	const results = groups.some((group) => group.rows.length > 0 || group.loading || group.error);
 	const question = query.trim();
 	const showAsk = signedIn && question.length > 0 && page !== "theme";
 	const first = groups.flatMap((group) => group.rows)[0];
@@ -361,7 +473,16 @@ export function SearchScreen() {
 						value={query}
 						onChangeText={setQuery}
 						onKeyPress={(event) => onKey(event.nativeEvent.key)}
-						onSubmitEditing={() => (first ? first.onPress() : showAsk ? ask(question) : undefined)}
+						onSubmitEditing={() => {
+							if (
+								(page === "root" || page === "resumes") &&
+								typing &&
+								(resumeQuery.isPending || (page === "root" && letterQuery.isPending))
+							)
+								return;
+							if (first) first.onPress();
+							else if (showAsk) void ask(question);
+						}}
 						placeholder={page === "root" ? t`Type a command or search…` : t`Search…`}
 						placeholderTextColor={colors.ink3}
 						accessibilityLabel={t`Search commands`}
@@ -396,7 +517,7 @@ export function SearchScreen() {
 					/>
 				) : null}
 				{groups.map((group) =>
-					group.rows.length > 0 || group.loading ? (
+					group.rows.length > 0 || group.loading || group.error ? (
 						<View key={group.key} style={{ paddingTop: space.s3 }}>
 							<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s4, paddingBottom: space.s1 }}>
 								{group.heading}
@@ -421,6 +542,18 @@ export function SearchScreen() {
 									</Text>
 								</View>
 							) : null}
+							{group.error ? (
+								<>
+									<Banner tone="danger" message={t`Couldn't load this. Check your connection and try again.`} />
+									<Button
+										label={t`Retry`}
+										variant="secondary"
+										onPress={() => {
+											void group.retry?.();
+										}}
+									/>
+								</>
+							) : null}
 							{group.more ? (
 								<ListRow
 									title={t`Show all`}
@@ -437,7 +570,17 @@ export function SearchScreen() {
 						<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s4, paddingBottom: space.s1 }}>
 							{t`Ask`}
 						</Text>
-						<ListRow leading="sparkle" title={t`Ask the assistant “${question}”`} onPress={() => ask(question)} />
+						<ListRow
+							leading="sparkle"
+							title={
+								needsProvider
+									? t`Connect an AI provider to ask “${question}”`
+									: name
+										? t`Ask about “${name}”: ${question}`
+										: t`Ask the assistant “${question}”`
+							}
+							onPress={() => ask(question)}
+						/>
 					</View>
 				) : null}
 			</ScrollView>

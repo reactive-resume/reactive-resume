@@ -110,7 +110,9 @@ function ScheduleForm({
 			: nextCareerRun(new Date(), 1, timezone);
 		return {
 			kind: (schedule?.kind as Input["kind"]) ?? initialKind,
-			query: schedule?.query || [...profile.targetRoles, ...profile.locations].join(" · "),
+			query:
+				schedule?.query ??
+				(initialKind === "follow-up" ? "" : [...profile.targetRoles, ...profile.locations].join(" · ")),
 			every: String(schedule?.intervalDays ?? 1),
 			...toZoned(at, timezone),
 			time: schedule ? toZoned(at, timezone).time : "08:00",
@@ -129,7 +131,12 @@ function ScheduleForm({
 	const action = useCareerAction();
 	const set = (patch: Partial<typeof draft>) => setDraft((current) => ({ ...current, ...patch }));
 	const interview = upcoming.find((row) => row.interview.id === draft.interviewId);
-	const at = fromZonedDateTime(draft.date, draft.time, timezone);
+	const unchangedFollowUp =
+		schedule?.kind === "follow-up" &&
+		draft.kind === "follow-up" &&
+		draft.date === initial.date &&
+		draft.time === initial.time;
+	const at = unchangedFollowUp ? new Date(schedule.nextRunAt) : fromZonedDateTime(draft.date, draft.time, timezone);
 	const runAt = draft.kind === "prepare" && interview ? prepareRunAt(interview.start, draft.lead, timezone) : at;
 	const provider = ai.usableProviders.find((row) => row.id === draft.aiProviderId) ?? ai.defaultProvider;
 	const blocked =
@@ -144,11 +151,11 @@ function ScheduleForm({
 			return setValidation(t`Add a role or company to look for.`);
 		if (blocked) return;
 		if (!runAt) return setValidation(t`This date or time does not exist in your timezone. Choose another time.`);
-		if (draft.kind !== "prepare" && runAt <= now) return setValidation(t`Pick a time after now.`);
+		if (draft.kind !== "prepare" && !unchangedFollowUp && runAt <= now) return setValidation(t`Pick a time after now.`);
 		const input: Input = {
 			...(schedule ? { id: schedule.id } : {}),
 			kind: draft.kind,
-			query: draft.kind === "discovery" ? draft.query.trim() : "",
+			query: draft.kind !== "prepare" ? draft.query.trim() : "",
 			applicationId:
 				draft.kind === "prepare"
 					? (interview?.application.id ?? null)
@@ -288,10 +295,12 @@ function ScheduleForm({
 					<>
 						<SelectSheet
 							label={t`Application`}
+							disabled={!!schedule}
 							value={draft.applicationId}
 							onChange={(applicationId) => set({ applicationId })}
 							options={open.map((row) => ({ value: row.id, label: `${row.company} · ${row.role}` }))}
 						/>
+						<TextField label={t`Follow-up note`} value={draft.query} onChangeText={(query) => set({ query })} />
 						{!open.length ? <Banner tone="warn" message={t`Add an application first.`} /> : null}
 					</>
 				)}

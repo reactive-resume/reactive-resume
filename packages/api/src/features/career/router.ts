@@ -33,7 +33,14 @@ import { careerVoiceRouter } from "./voice";
 const id = z.object({ id: z.string().min(1) });
 const applicationInput = z.object({ applicationId: z.string().min(1) });
 const savedItemOutput = savedItemSchema.extend({
-	application: z.object({ company: z.string(), role: z.string() }).nullable(),
+	application: z
+		.object({
+			company: z.string(),
+			role: z.string(),
+			status: z.string().nullable().optional(),
+			closedReason: z.string().nullable().optional(),
+		})
+		.nullable(),
 	outdated: z.boolean(),
 	submission: z
 		.boolean()

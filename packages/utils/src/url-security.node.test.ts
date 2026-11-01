@@ -140,8 +140,29 @@ describe("isAllowedOAuthRedirectUri", () => {
 		expect(isAllowedOAuthRedirectUri("http://example.com/cb", trustedOrigins)).toBe(false);
 	});
 
-	it("rejects non-https/non-http protocols", () => {
-		expect(isAllowedOAuthRedirectUri("ftp://example.com/cb", trustedOrigins)).toBe(false);
+	it.each(["ftp://example.com/cb", "ws://example.com/cb", "about:blank", "mailto:a@example.com"])(
+		"rejects the network or browser scheme %s",
+		(uri) => {
+			expect(isAllowedOAuthRedirectUri(uri, trustedOrigins)).toBe(false);
+		},
+	);
+
+	it.each(["cursor://anysphere.cursor-mcp/oauth/callback", "com.example.app:/callback"])(
+		"allows the native app callback %s",
+		(uri) => {
+			expect(isAllowedOAuthRedirectUri(uri, trustedOrigins)).toBe(true);
+		},
+	);
+
+	it.each([
+		"cursor://anysphere.cursor-mcp",
+		"cursor://anysphere.cursor-mcp?x=1",
+		"cursor://u:p@anysphere.cursor-mcp/cb",
+		"cursor://anysphere.cursor-mcp/cb#x",
+		"myapp:/callback",
+		"com.example.app://",
+	])("rejects the malformed native callback %s", (uri) => {
+		expect(isAllowedOAuthRedirectUri(uri, trustedOrigins)).toBe(false);
 	});
 
 	it("allows a trusted origin on a private network, for LAN-only self-hosted deployments", () => {

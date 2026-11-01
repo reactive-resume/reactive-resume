@@ -3,6 +3,9 @@
 	"tags": ["-lintignore"],
 	"ignoreBinaries": ["pdftotext"],
 	"workspaces": {
+		".": {
+			"entry": ["tests/e2e/fixtures/application-order.cjs"]
+		},
 		"apps/mobile": {
 			"ignoreExportsUsedInFile": true,
 			"ignoreIssues": {
@@ -14,6 +17,7 @@
 				"scripts/**/*.{mjs,mts,tsx}",
 				"src/features/licences/generate.cjs",
 				"src/draft/index.ts",
+				"src/features/applications/next-step.ts",
 				"src/features/applications/stages.ts",
 				"src/features/assistant/chat-view.tsx",
 				"src/features/workspace/hooks.ts",

@@ -66,7 +66,7 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 	);
 	const open = match?.missing.find((entry) => entry.term === term);
 	const link = async (applicationId: string) => {
-		if (controller.current || locked || offline) return;
+		if (controller.current || locked || offline) return false;
 		const request = new AbortController();
 		controller.current = request;
 		setLinking(true);
@@ -74,7 +74,7 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 		try {
 			await useResumeStore.getState().flush();
 			const ready = useResumeStore.getState();
-			if (request.signal.aborted || ready.document?.id !== id || ready.locked) return;
+			if (request.signal.aborted || ready.document?.id !== id || ready.locked) return false;
 			if (ready.conflict || ready.status === "error" || ready.status === "offline") throw new Error("Draft not saved");
 			await client.documents.linkApplication(
 				{ type: "resume", id, applicationId: applicationId || null },
@@ -86,11 +86,13 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 				await resume.blur();
 			}
 			void invalidate();
+			return true;
 		} catch {
 			if (!request.signal.aborted) {
 				setFailed(true);
 				void invalidate();
 			}
+			return false;
 		} finally {
 			if (!request.signal.aborted) setLinking(false);
 			if (controller.current === request) controller.current = null;
@@ -152,13 +154,13 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 		let jobId: string;
 		try {
 			jobId = await client.applications.create({ ...job, newId: pendingRequestId(key) });
-			settleRequestId(key);
 			void invalidate();
 		} catch {
 			setCopyFailed(t`Couldn't save the job. Try again.`);
 			return;
 		}
-		await link(jobId);
+		if (!(await link(jobId))) return;
+		settleRequestId(key);
 		setSaveJob(null);
 		setPasted("");
 	};

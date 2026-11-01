@@ -5,7 +5,7 @@ import type { MessageDescriptor } from "@lingui/core";
 import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { msg } from "@lingui/core/macro";
+import { msg, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Fragment, useMemo } from "react";
@@ -17,6 +17,7 @@ import { getEntries, getOutlineRows, getSectionKind, getSectionType, moveSection
 import { SectionRow } from "./section-row";
 import { SummaryEditor } from "./summary-editor";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { dndContextProps } from "@/libs/dnd";
 
 const ADD_LABELS: Record<CustomSectionType, MessageDescriptor> = {
 	summary: msg`Add text`,
@@ -85,7 +86,7 @@ export function Outline({ locked, page }: OutlineProps) {
 	};
 
 	return (
-		<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+		<DndContext {...dndContextProps(true)} sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
 			<SortableContext items={activeRows.map((row) => row.id)} strategy={verticalListSortingStrategy}>
 				<div className="grid gap-0.5">
 					{activeRows.map((row, index) => {
@@ -101,6 +102,7 @@ export function Outline({ locked, page }: OutlineProps) {
 									sectionId={row.id}
 									locked={locked}
 									page={page}
+									dragGroup={dragGroup(row, multiPage)}
 									onMove={(direction) =>
 										move(row.id, activeRows[direction === "up" ? index - 1 : index + 1], direction)
 									}
@@ -123,6 +125,12 @@ export function Outline({ locked, page }: OutlineProps) {
 	);
 }
 
+/** The page and column a row prints in, as the dividers show it, for drag announcements. */
+function dragGroup(row: OutlineRow, multiPage: boolean) {
+	if (row.column === "sidebar") return multiPage ? t`Page ${row.page + 1}, sidebar` : t`Sidebar`;
+	return multiPage ? t`Page ${row.page + 1}` : undefined;
+}
+
 function Divider({ label, subtle = false }: { label: React.ReactNode; subtle?: boolean }) {
 	return (
 		<div className="flex items-center gap-2 px-1 pt-2 pb-1">
@@ -136,10 +144,11 @@ type OutlineSectionProps = {
 	sectionId: string;
 	locked: boolean;
 	page: PageSettings;
+	dragGroup?: string | undefined;
 	onMove?: ((direction: "up" | "down") => void) | undefined;
 };
 
-function OutlineSection({ sectionId, locked, page, onMove }: OutlineSectionProps) {
+function OutlineSection({ sectionId, locked, page, dragGroup, onMove }: OutlineSectionProps) {
 	const { i18n } = useLingui();
 	// Select the type (a string) rather than a new section object, so the row renders only when it changes.
 	const type = useCurrentBuilderResumeSelector((resume) => getSectionType(resume.data, sectionId) ?? null);
@@ -150,7 +159,7 @@ function OutlineSection({ sectionId, locked, page, onMove }: OutlineSectionProps
 	if (!stableSection) return null;
 
 	return (
-		<SectionRow section={stableSection} locked={locked} onMove={onMove}>
+		<SectionRow section={stableSection} locked={locked} dragGroup={dragGroup} onMove={onMove}>
 			{stableSection.kind === "summary" ? (
 				<SummaryEditor locked={locked} />
 			) : (
@@ -204,7 +213,7 @@ function EntryList({ section, locked, page }: EntryListProps) {
 	};
 
 	return (
-		<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+		<DndContext {...dndContextProps(true)} sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
 			<SortableContext items={entryIds} strategy={verticalListSortingStrategy}>
 				{entryIds.map((entryId, index) => (
 					<EntryCard

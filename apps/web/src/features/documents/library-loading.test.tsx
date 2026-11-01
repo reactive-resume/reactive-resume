@@ -25,6 +25,8 @@ vi.mock("@/libs/orpc/client", () => ({
 }));
 vi.mock("@tanstack/react-router", () => ({
 	Link: ({ children }: { children: ReactNode }) => <a href="/dashboard">{children}</a>,
+	useNavigate: () => vi.fn(),
+	useRouter: () => ({ subscribe: () => () => {} }),
 }));
 vi.mock("@/features/resume/builder/draft", () => ({ isEditableElementFocused: () => false }));
 vi.mock("./document-actions", () => ({
@@ -34,7 +36,7 @@ vi.mock("./document-actions", () => ({
 }));
 vi.mock("./document-card", () => ({ DocumentCard: () => null, DocumentRow: () => null }));
 vi.mock("./use-start-document", () => ({
-	IMPORT_ACCEPT: ".pdf",
+	IMPORT_ACCEPT: ".pdf,.docx,.json",
 	useStartDocument: () => ({ startBlank: vi.fn(), trySample: vi.fn(), creating: false }),
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn(async () => true) }));

@@ -13,6 +13,7 @@ const ENGLISH = {
 	wrongPassword: "That password isn't correct. Check it with the resume owner and try again.",
 	unavailableTitle: "This resume isn't shared right now.",
 	unavailableHint: "If someone sent you this link, ask them for a new one.",
+	home: "Go to Reactive Resume",
 };
 
 export type WebPageMessages = typeof ENGLISH;

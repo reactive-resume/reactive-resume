@@ -2,18 +2,21 @@ import type { SavedData, SavedItem } from "./hooks";
 import type { ApplicationSummary } from "@/features/applications/types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { OfferTerms } from "@reactive-resume/schema/career";
+import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
-import { parseOfferEntry } from "@reactive-resume/schema/career-offer";
-import { Button } from "@reactive-resume/ui/components/button";
+import { offerApplications, parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
+import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
+import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { cn } from "@reactive-resume/utils/style";
 import { CareerLoadError } from "./load-state";
 import { formatMoney } from "./offer-compare";
 import { useCareerTime } from "./shared";
@@ -25,10 +28,18 @@ import {
 } from "@/features/applications/queries";
 import { useMoveWithUndo } from "@/features/applications/use-application-actions";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
+import { MoreOptions } from "@/features/resume/editor/write/fields";
 import { orpc } from "@/libs/orpc/client";
 
-type Application = { id: string; company: string; role: string; status?: ApplicationStatus | undefined };
+type Application = {
+	id: string;
+	company: string;
+	role: string;
+	status?: ApplicationStatus | undefined;
+	closedReason?: string | null;
+};
 type OfferEntryProps = {
+	frame?: ((action: ReactNode) => ReactNode) | undefined;
 	application?: Application | undefined;
 	primary?: boolean;
 	/** Open the form at once ("Add the offer's terms" from a move to Offer). */
@@ -47,7 +58,16 @@ const BEFORE_OFFER: readonly ApplicationStatus[] = ["saved", "applied", "screeni
  * Add offer, and the offer saved last for this application in view as a one-line summary, so saving doesn't make the
  * terms disappear into Saved.
  */
-export function OfferEntry({ application, primary = false, initialOpen = false, onDone }: OfferEntryProps) {
+export function OfferEntry(props: OfferEntryProps) {
+	return <ScopedOfferEntry key={props.application?.id ?? "global"} {...props} />;
+}
+function ScopedOfferEntry({
+	application,
+	primary = false,
+	initialOpen = false,
+	onDone,
+	frame = (action) => action,
+}: OfferEntryProps) {
 	const [open, setOpen] = useState(initialOpen);
 	const [requested, setRequested] = useState(initialOpen);
 	if (initialOpen !== requested) {
@@ -68,24 +88,31 @@ export function OfferEntry({ application, primary = false, initialOpen = false, 
 		onDone?.();
 	};
 
-	return (
+	if (open)
+		return (
+			<OfferForm
+				application={application}
+				onClose={close}
+				onSaved={(offer) => {
+					if (offer) setJustSaved(offer);
+					close();
+				}}
+			/>
+		);
+	const variant = primary ? "primary" : "secondary";
+	const add = (
+		<Button variant={variant} className="w-fit" onClick={() => setOpen(true)}>
+			{latest && application ? <Trans>Add a newer offer</Trans> : <Trans>Add offer</Trans>}
+		</Button>
+	);
+	const action = application ? add : <FirstApplication variant={variant}>{add}</FirstApplication>;
+	return latest ? (
 		<div className="grid gap-3">
-			{latest && !open && <OfferSummary offer={latest} />}
-			{open ? (
-				<OfferForm
-					{...(application ? { application } : {})}
-					onClose={close}
-					onSaved={(offer) => {
-						if (offer) setJustSaved(offer);
-						close();
-					}}
-				/>
-			) : (
-				<Button variant={primary ? "primary" : "secondary"} className="w-fit" onClick={() => setOpen(true)}>
-					{latest && application ? <Trans>Add a newer offer</Trans> : <Trans>Add offer</Trans>}
-				</Button>
-			)}
+			<OfferSummary offer={latest} />
+			{frame(action)}
 		</div>
+	) : (
+		frame(action)
 	);
 }
 
@@ -123,6 +150,22 @@ function OfferSummary({ offer }: { offer: OfferLike }) {
 	);
 }
 
+type FirstApplicationProps = { variant: "primary" | "secondary"; children: ReactNode };
+
+/** An offer belongs to an application, so with none yet "Add offer" leads to adding one instead. */
+function FirstApplication({ variant, children }: FirstApplicationProps) {
+	const applications = useQuery(applicationsListQueryOptions());
+	if (applications.isError && !applications.data?.length)
+		return <CareerLoadError onRetry={() => void applications.refetch()} />;
+	if (applications.isPending) return <Skeleton className="h-9 w-40" />;
+	if (applications.data?.length !== 0) return children;
+	return (
+		<Link to="/dashboard/applications" search={{ create: true }} className={buttonVariants({ variant })}>
+			<Trans>Add an application first</Trans>
+		</Link>
+	);
+}
+
 type OfferFormProps = {
 	application?: Application | undefined;
 	onClose: () => void;
@@ -130,16 +173,27 @@ type OfferFormProps = {
 };
 function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 	const id = useId();
+	const navigate = useNavigate();
 	const { locale, timeZone } = useCareerTime();
 	const queryClient = useQueryClient();
 	const moveWithUndo = useMoveWithUndo();
 	const { lanes } = useApplicationLanes();
 	const applications = useQuery({ ...applicationsListQueryOptions(), enabled: !application });
 	const [applicationId, setApplicationId] = useState(application?.id ?? "");
-	const [terms, setTerms] = useState(() => ({
+	const savedOffers = useQuery(orpc.career.savedItems.queryOptions({ input: { kind: "offer" } }));
+	const [draft, setTerms] = useState(() => ({
 		...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }),
 		currency: "",
 	}));
+	// Until the currency is typed, it's the one the last offer was in, so the two compare.
+	const [currencyTyped, setCurrencyTyped] = useState(false);
+	const [previousCurrency, setPreviousCurrency] = useState<string>();
+	if (previousCurrency === undefined && savedOffers.data) {
+		const currency = previousOfferCurrency(savedOffers.data);
+		if (currency) setPreviousCurrency(currency);
+	}
+	const terms = currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
+	const [more, setMore] = useState(false);
 	const [amounts, setAmounts] = useState({ base: "", variable: "", learning: "" });
 	const [date, setDate] = useState("");
 	const [time, setTime] = useState("17:00");
@@ -161,6 +215,7 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 	const save = useMutation({
 		...orpc.career.createOffer.mutationOptions(),
 		onSuccess: (offer, input) => {
+			if (!application && offer) void navigate({ to: "/dashboard/career/offers", search: { a: offer.id } });
 			void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
 			const row = (
 				applications.data ?? queryClient.getQueryData<ApplicationSummary[]>(applicationsListQueryKey())
@@ -191,6 +246,30 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 		{ key: "leave", label: t`Leave`, max: 500 },
 		{ key: "other", label: t`Other benefits`, max: 1000 },
 	] as const;
+	const currencyInvalid = (submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency);
+	const amountField = (key: "base" | "variable" | "learning", label: string) => {
+		const invalid = (submitted || touched[key]) && amountErrors[key];
+		return (
+			<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
+				<label htmlFor={`${id}-${key}`}>{label}</label>
+				<Input
+					id={`${id}-${key}`}
+					inputMode="decimal"
+					value={amounts[key]}
+					onBlur={() => touch(key)}
+					aria-invalid={invalid}
+					aria-describedby={invalid ? `${id}-${key}-error` : undefined}
+					onChange={(event) => setAmounts((current) => ({ ...current, [key]: event.target.value }))}
+				/>
+				{invalid && (
+					<span id={`${id}-${key}-error`} className="flex items-start gap-1.5 text-xs text-danger-text">
+						<Icon name="warning-circle" />
+						<span>{t`Enter a full amount, such as 95000, or leave blank.`}</span>
+					</span>
+				)}
+			</div>
+		);
+	};
 	return (
 		<form
 			noValidate
@@ -198,6 +277,7 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 			onSubmit={(event) => {
 				event.preventDefault();
 				setSubmitted(true);
+				if (amountErrors.variable || amountErrors.learning) setMore(true);
 				if (payload.success && !save.isPending) save.mutate(payload.data);
 			}}
 		>
@@ -207,8 +287,8 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 			<p className="text-sm text-ink-2">
 				<Trans>Enter terms yourself. No AI request is made. Leave unknown amounts blank.</Trans>
 			</p>
-			<fieldset disabled={save.isPending} className="grid gap-3 sm:grid-cols-2">
-				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
+			<fieldset disabled={save.isPending} className="grid items-start gap-3 sm:grid-cols-2">
+				<div className="grid gap-1.5 sm:col-span-2 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 					<label htmlFor={`${id}-application`}>
 						<Trans>Application</Trans>
 					</label>
@@ -222,24 +302,18 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 						required
 					>
 						<option value="">{t`Choose an application`}</option>
-						{(application ? [application] : (applications.data ?? [])).map((row) => (
+						{(application ? [application] : offerApplications(applications.data ?? [])).map((row) => (
 							<option key={row.id} value={row.id}>
-								{row.company} · {row.role}
+								{row.company} · {row.role} ·{" "}
+								{row.closedReason === "accepted"
+									? t`Accepted`
+									: row.status === "offer"
+										? t`Offer`
+										: row.status === "closed"
+											? t`Closed`
+											: t`In progress`}
 							</option>
 						))}
-					</NativeSelect>
-				</div>
-				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-					<label htmlFor={`${id}-version`}>
-						<Trans>Offer type</Trans>
-					</label>
-					<NativeSelect
-						id={`${id}-version`}
-						value={terms.version}
-						onChange={(event) => change({ version: event.target.value as OfferTerms["version"] })}
-					>
-						<option value="written">{t`Written offer`}</option>
-						<option value="verbal">{t`Verbal offer`}</option>
 					</NativeSelect>
 				</div>
 				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
@@ -252,20 +326,22 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 						maxLength={3}
 						required
 						pattern="[A-Z]{3}"
-						placeholder="EUR"
 						onBlur={() => touch("currency")}
-						aria-invalid={(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency)}
-						aria-describedby={
-							(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency) ? `${id}-currency-error` : undefined
-						}
-						onChange={(event) => change({ currency: event.target.value.toUpperCase() })}
+						aria-invalid={currencyInvalid}
+						aria-describedby={`${id}-currency-hint`}
+						onChange={(event) => {
+							setCurrencyTyped(true);
+							change({ currency: event.target.value.toUpperCase() });
+						}}
 					/>
-					{(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency) && (
-						<p id={`${id}-currency-error`} className="flex items-start gap-1.5 text-xs text-danger-text">
-							<Icon name="warning-circle" />
-							<span>{t`Enter a three-letter currency code.`}</span>
-						</p>
-					)}
+					{/* A hint, not a placeholder: a placeholder "EUR" reads as a currency already chosen. */}
+					<p
+						id={`${id}-currency-hint`}
+						className={cn("flex items-start gap-1.5 text-xs", currencyInvalid ? "text-danger-text" : "text-ink-3")}
+					>
+						{currencyInvalid && <Icon name="warning-circle" />}
+						<span>{t`Enter a three-letter currency code.`}</span>
+					</p>
 				</div>
 				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 					<label htmlFor={`${id}-period`}>
@@ -281,61 +357,8 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 						<option value="hour">{t`Per hour`}</option>
 					</NativeSelect>
 				</div>
-				{(
-					[
-						{ key: "base", label: t`Base salary` },
-						{ key: "variable", label: t`Bonus` },
-						{ key: "learning", label: t`Learning budget` },
-					] as const
-				).map(({ key, label }) => (
-					<div key={key} className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-						<label htmlFor={`${id}-${key}`}>{label}</label>
-						<Input
-							id={`${id}-${key}`}
-							inputMode="decimal"
-							value={amounts[key]}
-							onBlur={() => touch(key)}
-							aria-invalid={(submitted || touched[key]) && amountErrors[key]}
-							aria-describedby={(submitted || touched[key]) && amountErrors[key] ? `${id}-${key}-error` : undefined}
-							onChange={(event) => setAmounts((current) => ({ ...current, [key]: event.target.value }))}
-						/>
-						{(submitted || touched[key]) && amountErrors[key] && (
-							<span id={`${id}-${key}-error`} className="flex items-start gap-1.5 text-xs text-danger-text">
-								<Icon name="warning-circle" />
-								<span>{t`Enter a full amount, such as 95000, or leave blank.`}</span>
-							</span>
-						)}
-					</div>
-				))}
-				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-					<label htmlFor={`${id}-office`}>
-						<Trans>Office days per week</Trans>
-					</label>
-					<NativeSelect
-						id={`${id}-office`}
-						value={terms.officeDays ?? ""}
-						onChange={(event) => change({ officeDays: event.target.value === "" ? null : Number(event.target.value) })}
-					>
-						<option value="">{t`Unknown`}</option>
-						{[0, 1, 2, 3, 4, 5].map((days) => (
-							<option key={days} value={days}>
-								{days}
-							</option>
-						))}
-					</NativeSelect>
-				</div>
-				{textFields.map(({ key, label, max }) => (
-					<div key={key} className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
-						<label htmlFor={`${id}-${key}`}>{label}</label>
-						<Input
-							id={`${id}-${key}`}
-							value={terms[key]}
-							maxLength={max}
-							onChange={(event) => change({ [key]: event.target.value })}
-						/>
-					</div>
-				))}
-				<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
+				{amountField("base", t`Base salary`)}
+				<div className="grid gap-1.5 sm:col-start-1 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
 					<label htmlFor={`${id}-date`}>
 						<Trans>Respond by</Trans>
 					</label>
@@ -359,18 +382,73 @@ function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 							type="time"
 							onBlur={() => touch("deadline")}
 							aria-invalid={showDeadlineError}
-							aria-describedby={showDeadlineError ? `${id}-deadline-error` : undefined}
+							aria-describedby={`${id}-time-zone${showDeadlineError ? ` ${id}-deadline-error` : ""}`}
 							required
 							value={time}
 							onChange={(event) => setTime(event.target.value)}
 						/>
+						<p id={`${id}-time-zone`} className="text-xs text-ink-3">
+							{t`Times are shown in ${timeZone}.`}
+						</p>
 					</div>
 				)}
+				<MoreOptions open={more} onOpenChange={setMore}>
+					<div className="grid items-start gap-3 sm:grid-cols-2">
+						<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
+							<label htmlFor={`${id}-version`}>
+								<Trans>Offer type</Trans>
+							</label>
+							<NativeSelect
+								id={`${id}-version`}
+								value={terms.version}
+								onChange={(event) => change({ version: event.target.value as OfferTerms["version"] })}
+							>
+								<option value="written">{t`Written offer`}</option>
+								<option value="verbal">{t`Verbal offer`}</option>
+							</NativeSelect>
+						</div>
+						{amountField("variable", t`Bonus`)}
+						{amountField("learning", t`Learning budget`)}
+						<div className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
+							<label htmlFor={`${id}-office`}>
+								<Trans>Office days per week</Trans>
+							</label>
+							<NativeSelect
+								id={`${id}-office`}
+								value={terms.officeDays ?? ""}
+								onChange={(event) =>
+									change({ officeDays: event.target.value === "" ? null : Number(event.target.value) })
+								}
+							>
+								<option value="">{t`Unknown`}</option>
+								{[0, 1, 2, 3, 4, 5].map((days) => (
+									<option key={days} value={days}>
+										{days}
+									</option>
+								))}
+							</NativeSelect>
+						</div>
+						{textFields.map(({ key, label, max }) => (
+							<div key={key} className="grid gap-1.5 [&>label]:text-xs [&>label]:font-medium [&>label]:text-ink-2">
+								<label htmlFor={`${id}-${key}`}>{label}</label>
+								<Input
+									id={`${id}-${key}`}
+									value={terms[key]}
+									maxLength={max}
+									onChange={(event) => change({ [key]: event.target.value })}
+								/>
+							</div>
+						))}
+					</div>
+				</MoreOptions>
 			</fieldset>
-			<p className="text-xs text-ink-3">{t`Times are shown in ${timeZone}.`}</p>
 			{!application && applications.isError && <CareerLoadError onRetry={() => void applications.refetch()} />}
 			{!application && applications.data?.length === 0 && (
-				<Link to="/dashboard/applications">
+				<Link
+					to="/dashboard/applications"
+					search={{ create: true }}
+					className="w-fit text-sm text-accent-text underline"
+				>
 					<Trans>Add an application first</Trans>
 				</Link>
 			)}

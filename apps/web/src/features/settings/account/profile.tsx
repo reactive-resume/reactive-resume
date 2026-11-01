@@ -1,5 +1,5 @@
 import type { AuthSession } from "@reactive-resume/auth/types";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouteContext, useRouter } from "@tanstack/react-router";
@@ -18,10 +18,11 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { SettingsSection } from "../section";
+import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { isImeComposing } from "@/libs/keyboard";
-import { orpc } from "@/libs/orpc/client";
+import { client, orpc } from "@/libs/orpc/client";
 import { sessionQueryKey } from "@/libs/root-context";
 
 const nameSchema = z.string().trim().min(1).max(64);
@@ -39,6 +40,8 @@ type FieldProps = {
 	/** Saves the new value; resolves to an error message, or null when it saved. */
 	save: (value: string) => Promise<string | null>;
 	validate: (value: string) => string | null;
+	/** Asks before saving a valid change; false puts the saved value back. */
+	confirm?: (value: string) => Promise<boolean>;
 	prefix?: string;
 	hint?: React.ReactNode;
 	type?: "text" | "email";
@@ -52,6 +55,7 @@ function SavedField({
 	value,
 	save,
 	validate,
+	confirm,
 	prefix,
 	hint,
 	type = "text",
@@ -68,6 +72,10 @@ function SavedField({
 		if (next === value) return setError(null);
 		const invalid = validate(next);
 		if (invalid) return setError(invalid);
+		if (confirm && !(await confirm(next))) {
+			setDraft(value);
+			return setError(null);
+		}
 		setSaving(true);
 		let failure: string | null;
 		try {
@@ -138,6 +146,29 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 	const smtpEnabled = context.flags?.smtpEnabled ?? false;
 	const user = session.user;
 	const host = window.location.host;
+	const ask = useConfirm();
+
+	// The username is part of every public link: changing it moves them, so say how many first.
+	const confirmUsername = async () => {
+		let total: number;
+		try {
+			({ total } = await client.documents.page({ type: "resume", public: true, limit: 1 }));
+		} catch {
+			// Unknown is not none: still warn, without a count.
+			total = -1;
+		}
+		if (total === 0) return true;
+		return ask(
+			total > 0
+				? plural(total, { one: "# public link will change", other: "# public links will change" })
+				: t`Your public links will change`,
+			{
+				description: t`Links you've already shared keep working for 30 days, then stop. Share the new ones before then.`,
+				confirmText: t`Change username`,
+				cancelText: t`Keep username`,
+			},
+		);
+	};
 
 	const updateUser = async (patch: Parameters<typeof authClient.updateUser>[0]) => {
 		const { error } = await authClient.updateUser(patch);
@@ -195,7 +226,9 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 							? null
 							: t`Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores.`
 					}
+					confirm={confirmUsername}
 					save={(username) => updateUser({ username, displayUsername: username })}
+					hint={<Trans>Part of every public link. Old links keep working for 30 days after a change.</Trans>}
 				/>
 				<SavedField
 					className="sm:col-span-2"

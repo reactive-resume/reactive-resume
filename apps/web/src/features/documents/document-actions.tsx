@@ -3,7 +3,8 @@ import type { IconName } from "@reactive-resume/ui/components/icon";
 import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { lazy, Suspense, useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { publicResumeUrl } from "@reactive-resume/resume/sharing";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -27,6 +28,7 @@ import { useNewDocumentsStore } from "./new-documents";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { useDocumentDownload } from "@/features/applications/use-document-download";
 import { useShareOrigin } from "@/features/resume/share/use-share-origin";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -109,10 +111,11 @@ export function useDocumentActions() {
 					description: t`“${document.name}” moved to Trash`,
 					actionProps: {
 						children: t`Undo`,
+						// The trashed card has gone, and a mutation's own callbacks with it: catch the promise.
 						onClick: () =>
-							restore.mutate(ref(document), {
-								onError: (error) => toastError(error, t`Couldn't restore the document. Try again.`),
-							}),
+							void restore
+								.mutateAsync(ref(document))
+								.catch((error: unknown) => toastError(error, t`Couldn't restore the document. Try again.`)),
 					},
 				});
 			} catch (error) {
@@ -321,7 +324,10 @@ type DocumentMenuProps = {
 	variant?: "dropdown" | "context";
 };
 
-/** Open, Copy public link, Rename, Duplicate, Copy for a job (or Link to application), Tags, Lock, then Move to Trash. */
+/**
+ * Open, Share… and Copy public link (resumes), Download PDF, Select, Rename, Duplicate, Copy for a job (or Link to
+ * application), Tags, Lock, then Move to Trash.
+ */
 export function DocumentMenuContent({
 	document,
 	onOpen,
@@ -332,6 +338,8 @@ export function DocumentMenuContent({
 	variant = "dropdown",
 }: DocumentMenuProps) {
 	const actions = useDocumentActions();
+	const navigate = useNavigate();
+	const { download, downloading } = useDocumentDownload();
 	const { data: session } = authClient.useSession();
 	const [, copy] = useCopyToClipboard();
 	const origin = useShareOrigin();
@@ -348,6 +356,23 @@ export function DocumentMenuContent({
 	];
 	const liveEntries: MenuEntry[] = [
 		{ icon: "arrow-square-out", label: t`Open`, onSelect: onOpen },
+		...(document.type === "resume"
+			? [
+					{
+						icon: "share-network",
+						label: t`Share…`,
+						// The editor's Share view: public link, password, web page and download settings.
+						onSelect: () =>
+							void navigate({ to: "/builder/$resumeId", params: { resumeId: document.id }, search: { mode: "share" } }),
+					} satisfies MenuEntry,
+				]
+			: []),
+		{
+			icon: "file-pdf",
+			label: t`Download PDF`,
+			onSelect: () => void download(document.type, document.id),
+			disabled: downloading === document.id,
+		},
 		...(url
 			? [
 					{
@@ -485,6 +510,13 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 	);
 }
 
+// The Save a job form reads postings and is large; the library loads it only when someone adds a job here.
+const AddApplicationDialog = lazy(() =>
+	import("@/features/applications/components/add-application-dialog").then((module) => ({
+		default: module.AddApplicationDialog,
+	})),
+);
+
 type LinkApplicationDialogProps = { document: DocumentSummary | null; onClose: () => void };
 
 /** Link to application… for letters: the job the letter is for. */
@@ -494,6 +526,7 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 	const [document, onOpenChangeComplete] = useClosingValue(requested);
 	const { data: applications } = useQuery({ ...applicationsListQueryOptions(), enabled: requested !== null });
 	const link = useMutation(orpc.documents.linkApplication.mutationOptions());
+	const [addingJob, setAddingJob] = useState(false);
 
 	const choose = async (applicationId: string | null) => {
 		if (!document) return;
@@ -544,16 +577,30 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 					))}
 					{jobs.length === 0 && (
 						<p className="text-sm text-ink-2">
-							<Trans>No applications yet. Add one in Applications first.</Trans>
+							<Trans>No applications yet.</Trans>
 						</p>
 					)}
 				</div>
-				{document?.application && (
-					<DialogFooter>
+				<DialogFooter>
+					{document?.application && (
 						<Button variant="ghost" disabled={link.isPending} onClick={() => void choose(null)}>
 							<Trans>Unlink</Trans>
 						</Button>
-					</DialogFooter>
+					)}
+					<Button variant="secondary" disabled={link.isPending} onClick={() => setAddingJob(true)}>
+						<Icon name="plus" />
+						<Trans>Add a job…</Trans>
+					</Button>
+				</DialogFooter>
+				{addingJob && (
+					<Suspense fallback={null}>
+						<AddApplicationDialog
+							forPicker
+							open
+							onOpenChange={setAddingJob}
+							onAdded={(applicationId) => void choose(applicationId)}
+						/>
+					</Suspense>
 				)}
 			</DialogContent>
 		</Dialog>

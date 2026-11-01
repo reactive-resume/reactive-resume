@@ -5,6 +5,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useId, useState } from "react";
+import { followUpInstant, isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -26,6 +27,7 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
+import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { buildIcs } from "../../ics";
 import { dayKey } from "../../interviews";
 import { describeNextStep, getNextStep } from "../../next-step";
@@ -47,7 +49,7 @@ export function NextStepCard({ application, onScheduleInterview }: NextStepCardP
 	const { locale, timeZone } = useCareerTime();
 	const [followUpOpen, setFollowUpOpen] = useState(false);
 	const hints = useOfferHints(application.status === "offer");
-	const step = getNextStep(application, undefined, offerHintFor(hints, application.id));
+	const step = getNextStep(application, undefined, timeZone, offerHintFor(hints, application.id));
 	const text = describeNextStep(step, application, locale, timeZone);
 	const dated =
 		step.kind === "interview" || step.kind === "follow-up" ? step.at : step.kind === "offer" ? step.respondBy : null;
@@ -70,7 +72,7 @@ export function NextStepCard({ application, onScheduleInterview }: NextStepCardP
 			...(step.kind === "interview" && step.interview.notes ? { description: step.interview.notes } : {}),
 		});
 		const blob = new Blob([ics], { type: "text/calendar" });
-		const date = dayKey(start, step.kind === "interview" ? timeZone : undefined);
+		const date = dayKey(start, timeZone);
 		downloadWithAnchor(blob, `${application.company}-${date}.ics`.replace(/[^\w.-]+/g, "-"));
 	};
 
@@ -144,14 +146,28 @@ type FollowUpDialogProps = { application: Application; open: boolean; onOpenChan
 /** The follow-up: a date and a note, or cleared. */
 function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps) {
 	const id = useId();
+	const { timeZone } = useCareerTime();
 	const invalidate = useInvalidateApplications();
 	const [date, setDate] = useState("");
+	const [time, setTime] = useState("09:00");
 	const [note, setNote] = useState("");
 	const [wasOpen, setWasOpen] = useState(false);
 	if (open !== wasOpen) {
 		setWasOpen(open);
 		if (open) {
-			setDate(application.followUpAt ? dayKey(new Date(application.followUpAt)) : "");
+			setDate(
+				application.followUpAt
+					? dayKey(followUpInstant(application, timeZone) ?? new Date(application.followUpAt), timeZone)
+					: "",
+			);
+			const existing = followUpInstant(application, timeZone);
+			setTime(
+				existing
+					? new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(
+							existing,
+						)
+					: "09:00",
+			);
 			setNote(application.followUpNote ?? "");
 		}
 	}
@@ -180,9 +196,34 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 					className="grid gap-3"
 					onSubmit={(event) => {
 						event.preventDefault();
-						// A date at 9:00 local time, so it reads as that day everywhere.
-						const at = date ? new Date(`${date}T09:00`) : null;
-						update.mutate({ id: application.id, followUpAt: at, followUpNote: note.trim() || null });
+						const existing = followUpInstant(application, timeZone);
+						const originalTime = existing
+							? new Intl.DateTimeFormat("en-GB", {
+									timeZone,
+									hour: "2-digit",
+									minute: "2-digit",
+									hourCycle: "h23",
+								}).format(existing)
+							: "09:00";
+						const unchanged = !!existing && date === dayKey(existing, timeZone) && time === originalTime;
+
+						const at =
+							unchanged && application.followUpAt
+								? new Date(application.followUpAt)
+								: fromZonedDateTime(date, time, timeZone);
+						if (!at) {
+							toast.add({
+								type: "error",
+								description: t`This date or time does not exist in your timezone. Choose another time.`,
+							});
+							return;
+						}
+						update.mutate({
+							id: application.id,
+							followUpAt: at,
+							followUpDateOnly: unchanged && isDateOnlyFollowUp(application),
+							followUpNote: note.trim() || null,
+						});
 					}}
 				>
 					<div className="grid gap-1.5">
@@ -190,6 +231,12 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 							<Trans>Date</Trans>
 						</Label>
 						<Input id={`${id}-date`} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+					</div>
+					<div className="grid gap-1.5">
+						<Label htmlFor={`${id}-time`}>
+							<Trans>Time</Trans>
+						</Label>
+						<Input id={`${id}-time`} type="time" value={time} onChange={(event) => setTime(event.target.value)} />
 					</div>
 					<div className="grid gap-1.5">
 						<Label htmlFor={`${id}-note`}>

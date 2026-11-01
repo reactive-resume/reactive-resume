@@ -324,8 +324,10 @@ function useLinkApplication() {
 			patchResume((resume) => {
 				resume.applicationId = applicationId;
 			});
+			return true;
 		} catch (error) {
 			toastError(error, t`Couldn't link the application. Try again.`);
+			return false;
 		}
 	};
 
@@ -411,7 +413,11 @@ function CopyOrLink({ application, onDone }: CopyOrLinkProps) {
 				<Button
 					size="sm"
 					disabled={copying || linking}
-					onClick={() => void makeCopy({ applicationId: application.id, company: application.company }).then(onDone)}
+					onClick={() =>
+						void makeCopy({ applicationId: application.id, company: application.company }).then((saved) => {
+							if (saved) onDone();
+						})
+					}
 				>
 					<Icon name="copy" size={16} />
 					<Trans>Make a copy for this job</Trans>
@@ -420,7 +426,11 @@ function CopyOrLink({ application, onDone }: CopyOrLinkProps) {
 					size="sm"
 					variant="ghost"
 					disabled={locked || copying || linking}
-					onClick={() => void link(application.id).then(onDone)}
+					onClick={() =>
+						void link(application.id).then((saved) => {
+							if (saved) onDone();
+						})
+					}
 				>
 					<Trans>Link this resume</Trans>
 				</Button>
@@ -672,13 +682,13 @@ function SaveAsApplication() {
 		let id: string;
 		try {
 			id = await create({ ...job, resumeId, newId: pendingRequestId(key) });
-			settleRequestId(key);
 		} catch (error) {
 			toastError(error, t`Couldn't save the job. Try again.`);
 			return;
 		}
 		await queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });
-		await link(id);
+		if (!(await link(id))) return;
+		settleRequestId(key);
 		useEditorStore.setState({ pastedPosting: "" });
 		toast.add({ description: t`Saved as a job and linked to this resume` });
 	};

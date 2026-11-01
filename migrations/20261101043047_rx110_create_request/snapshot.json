@@ -3,8 +3,8 @@
   "dialect": "postgres",
   "id": "3d32d8f1-b7e2-46b0-bfde-9ea05eb2b07a",
   "prevIds": [
-    "c625e5f7-c927-46e4-a583-f7a049e8a938",
-    "f4763d19-4c06-408d-aa90-056adaa8bc81"
+    "49d48212-055e-4545-b070-a37b845efb84",
+    "977e85a2-830a-47aa-8ede-e7b09cee6541"
   ],
   "ddl": [
     {
@@ -1662,6 +1662,19 @@
       "generated": null,
       "identity": null,
       "name": "follow_up_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "application"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "false",
+      "generated": null,
+      "identity": null,
+      "name": "follow_up_date_only",
       "entityType": "columns",
       "schema": "public",
       "table": "application"
@@ -6282,6 +6295,19 @@
       "table": "cover_letter"
     },
     {
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "edited_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "cover_letter"
+    },
+    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -6719,6 +6745,19 @@
       "generated": null,
       "identity": null,
       "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "resume"
+    },
+    {
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "edited_at",
       "entityType": "columns",
       "schema": "public",
       "table": "resume"

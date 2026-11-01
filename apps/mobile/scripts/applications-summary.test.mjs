@@ -8,7 +8,9 @@ const { MutationObserver, QueryClient, QueryObserver } = createRequire(new URL("
 	"@tanstack/react-query",
 );
 
+let followUpDomain;
 function load(path, mocks = {}) {
+	const dependencies = { "@reactive-resume/schema/applications/follow-up": followUpDomain, ...mocks };
 	const module = { exports: {} };
 	const code = transformSync(readFileSync(new URL("../src/" + path, import.meta.url), "utf8"), {
 		loader: path.endsWith(".tsx") ? "tsx" : "ts",
@@ -16,8 +18,8 @@ function load(path, mocks = {}) {
 	}).code;
 	new Function("require", "module", "exports", code)(
 		(name) => {
-			assert.ok(name in mocks, "Missing boundary: " + name);
-			return mocks[name];
+			assert.ok(name in dependencies, "Missing boundary: " + name);
+			return dependencies[name];
 		},
 		module,
 		module.exports,
@@ -25,6 +27,11 @@ function load(path, mocks = {}) {
 	return module.exports;
 }
 
+const zod = createRequire(new URL("../../../packages/schema/package.json", import.meta.url))("zod");
+const timeParser = load("../../../packages/utils/src/timezone.ts", { zod });
+followUpDomain = load("../../../packages/schema/src/applications/follow-up.ts", {
+	"@reactive-resume/utils/timezone": timeParser,
+});
 const stages = load("features/applications/stages.ts", {
 	"@lingui/core/macro": { t: String },
 });
@@ -44,8 +51,14 @@ const lanes = load("features/applications/lanes.ts", {
 	"@reactive-resume/schema/applications/lanes": schemaLanes,
 	"./stages": stages,
 });
-const history = load("features/applications/history.ts");
+const domainNextStep = load("../../../packages/schema/src/applications/next-step.ts", {
+	"./follow-up": followUpDomain,
+});
+const history = load("features/applications/history.ts", {
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
+});
 const nextStep = load("features/applications/next-step.ts", {
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
 	"./stages": stages,
 	"./history": history,
 	"@/ui": {},
@@ -464,6 +477,78 @@ const appliedLaneMove = {
 };
 assert.equal(nextStep.daysInStage(appliedLaneMove, new Date("2026-01-11")), 3);
 assert.deepEqual(nextStep.getNextStep(appliedLaneMove, new Date("2026-01-11")), { kind: "no-reply", days: 10 });
+// J4-20: Interview and Offer rows say what they're waiting on, never "Waiting to hear back".
+const stageOnly = (status, extra = []) => ({
+	...full[0],
+	status,
+	laneId: null,
+	followUpAt: null,
+	activity: [stage(`${status}-entry`, status, "2026-01-01"), ...extra],
+});
+const day11 = new Date("2026-01-11");
+assert.deepEqual(nextStep.getNextStep(stageOnly("interview", [interview("past", "2026-01-05T10:00:00.000Z")]), day11), {
+	kind: "interview-feedback",
+	days: 10,
+});
+assert.deepEqual(nextStep.getNextStep(stageOnly("interview"), day11), { kind: "no-interview", days: 10 });
+assert.deepEqual(nextStep.getNextStep(stageOnly("offer"), day11), {
+	kind: "offer",
+	days: 10,
+	respondBy: null,
+	overdue: false,
+	terms: true,
+});
+assert.deepEqual(nextStep.getNextStep(stageOnly("screening"), day11), { kind: "waiting", days: 10 });
+assert.equal(
+	nextStep.describeNextStep(
+		{ kind: "offer", days: 10, respondBy: null, overdue: false, terms: true },
+		{ status: "offer", closedReason: null },
+		"en",
+		"UTC",
+	).title,
+	"Decide on the offer",
+);
+// J4-09: one rule for what needs the user, shared by Today and the Applications banner.
+assert.deepEqual(
+	[
+		{ kind: "no-reply", days: 12 },
+		{ kind: "offer", days: 1 },
+		{ kind: "interview", at: new Date("2026-01-15"), interview: {} },
+		{ kind: "interview", at: new Date("2026-01-30"), interview: {} },
+		{ kind: "follow-up", at: new Date("2026-01-11T12:00:00Z"), note: "", overdue: false },
+		{ kind: "follow-up", at: new Date("2026-01-20"), note: "", overdue: false },
+		{ kind: "waiting", days: 3 },
+		{ kind: "not-applied" },
+	].map((step) => [nextStep.needsAttention(step, day11), nextStep.needsFollowUp(step, day11)]),
+	[
+		[true, true],
+		[true, false],
+		[true, false],
+		[false, false],
+		[true, true],
+		[false, false],
+		[false, false],
+		[false, false],
+	],
+);
+// J4-07: a group imported in one go orders by each row's own stage date, longest wait first.
+const imported = [
+	["niantic", 9],
+	["bethesda", 35],
+	["sucker-punch", 21],
+].map(([id, days]) => ({
+	...stageOnly("applied"),
+	id,
+	updatedAt: new Date("2026-02-10"),
+	appliedAt: new Date(new Date("2026-02-10").getTime() - days * 86_400_000),
+	activity: [stage(`${id}-applied`, "applied", new Date(new Date("2026-02-10").getTime() - days * 86_400_000))],
+}));
+assert.deepEqual(
+	list
+		.groupApplications(imported, "next", "asc", new Date("2026-02-10"))
+		.flatMap((group) => group.data.map(({ id }) => id)),
+	["bethesda", "sucker-punch", "niantic"],
+);
 for (const status of ["closed", "applied"]) {
 	const outcomes = insights.computeOutcomes(
 		[
@@ -1071,27 +1156,29 @@ queryClient.clear();
 			interview("earlier", new Date("2026-11-04T14:30:00Z")),
 		],
 	};
-	assert.deepEqual(nextStep.getNextStep(atOffer, now, [], null), {
+	assert.deepEqual(nextStep.getNextStep(atOffer, now, [], "UTC", null), {
 		kind: "offer",
+		days: 1,
 		respondBy: null,
 		overdue: false,
 		terms: false,
 	});
 	const deadline = "2026-11-12T17:00:00Z";
-	assert.deepEqual(nextStep.getNextStep(atOffer, now, [], { respondBy: deadline }), {
+	assert.deepEqual(nextStep.getNextStep(atOffer, now, [], "UTC", { respondBy: deadline }), {
 		kind: "offer",
+		days: 1,
 		respondBy: new Date(deadline),
 		overdue: false,
 		terms: true,
 	});
 	const title = (offer) =>
-		nextStep.describeNextStep(nextStep.getNextStep(atOffer, now, [], offer), atOffer, "en-US", "UTC").title;
+		nextStep.describeNextStep(nextStep.getNextStep(atOffer, now, [], "UTC", offer), atOffer, "en-US", "UTC").title;
 	assert.equal(title(null), "Add the offer's terms");
 	assert.equal(title({ respondBy: null }), "Decide on the offer");
 	assert.equal(title(undefined), "Decide on the offer");
 	assert.equal(title({ respondBy: deadline }), "Reply to the offer");
 	assert.equal(
-		nextStep.getNextStep({ ...atOffer, status: "interview" }, now, [], null).kind,
+		nextStep.getNextStep({ ...atOffer, status: "interview" }, now, [], "UTC", null).kind,
 		"interview",
 		"earlier stages keep their interview step",
 	);
@@ -1103,14 +1190,44 @@ queryClient.clear();
 		followUpNote: "Ask about the start date",
 		activity: [...atOffer.activity, interview("tomorrow", new Date("2026-10-31T10:00:00Z"))],
 	};
-	assert.deepEqual(nextStep.getNextStep(withFollowUp, now, [], null), {
+	assert.deepEqual(nextStep.getNextStep(withFollowUp, now, [], "UTC", null), {
 		kind: "follow-up",
 		at: followUpAt,
 		note: "Ask about the start date",
 		overdue: false,
 	});
-	assert.equal(nextStep.getNextStep(withFollowUp, now, [], { respondBy: deadline }).kind, "offer");
+	assert.equal(nextStep.getNextStep(withFollowUp, now, [], "UTC", { respondBy: deadline }).kind, "offer");
 }
 console.log(
 	"PASS native application summaries, lanes/history, old-server write guards, cache rollback and authoritative reminder cancellation",
+);
+
+const timezoneOrder = list.groupApplications(
+	[
+		{
+			...full[0],
+			id: "legacy",
+			status: "applied",
+			activity: [],
+			followUpAt: new Date("2030-01-03T00:00:00Z"),
+			followUpDateOnly: true,
+		},
+		{
+			...full[0],
+			id: "exact",
+			status: "applied",
+			activity: [],
+			followUpAt: new Date("2030-01-03T12:00:00Z"),
+			followUpDateOnly: false,
+		},
+	],
+	"next",
+	"asc",
+	new Date("2030-01-01T00:00:00Z"),
+	undefined,
+	"Pacific/Honolulu",
+);
+assert.deepEqual(
+	timezoneOrder.flatMap((group) => group.data.map((row) => row.id)),
+	["exact", "legacy"],
 );

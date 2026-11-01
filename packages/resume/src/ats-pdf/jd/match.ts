@@ -50,9 +50,9 @@ const OFFER_LINE =
 	/\b(?:salary|salaries|compensation|equity|bonus(?:es)?|holidays?|vacation|pto|paid time off|relocation|pension|401\s?\(?k\)?|perks?|stipend|parental leave|per (?:year|annum|month|hour)|days? (?:of )?(?:annual )?leave)\b/;
 /** A heading that opens the offer's part of a posting; its lines are skipped until a heading about the work. */
 const OFFER_HEADING =
-	/^(?:what we offer|what you(?:'| wi)ll get|benefits|perks|compensation|our offer|why (?:join|work)|what'?s in it for you|the package|pay and benefits|salary)\b/;
+	/^(?:what we offer|what you(?:'| wi)ll get$|benefits|perks|compensation|our offer|why (?:join|work)|what'?s in it for you|the package|pay and benefits|salary)\b/;
 const WORK_HEADING =
-	/^(?:about (?:the role|you|the team|the job)|the role|responsibilities|what you(?:'| wi)ll (?:do|need|bring)|requirements|qualifications|who you are|your profile|must[- ]haves?|nice[- ]to[- ]haves?)\b/;
+	/^(?:about (?:the role|you|the team|the job)|the role|responsibilities|required skills|what you(?:'| wi)ll (?:do|need|bring|get to do)|requirements|qualifications|who you are|your profile|must[- ]haves?|nice[- ]to[- ]haves?)\b/;
 const BULLET = /^[\s•▪◦‣·*-]+/;
 
 /** The posting's lines that say what the job asks for: offer lines and offer sections are dropped. */
@@ -71,7 +71,14 @@ function workLines(posting: string): string[] {
 			continue;
 		}
 		if (heading && (WORK_HEADING.test(text) || REQUIREMENTS_HEADING.test(text))) inOffer = false;
-		if (inOffer || OFFER_LINE.test(text)) continue;
+		if (
+			inOffer ||
+			(OFFER_LINE.test(text) &&
+				!/\b(?:experience|expertise|skills?|knowledge|proficien|research|analysis|manage|build|develop|design|responsib|require)/.test(
+					text,
+				))
+		)
+			continue;
 
 		lines.push(line);
 	}
@@ -136,7 +143,11 @@ function guessEmployerAndPlace(posting: string): string[] {
 		}
 		// "Fieldnote · Lisbon · Full-time": a job's details line, company first.
 		const parts = line.split(/\s+·\s+/);
-		if (parts.length > 1) names.push(parts[0] ?? "", (parts[1] ?? "").replace(/\(.*?\)/g, ""));
+		if (
+			parts.length > 1 &&
+			!/\b(?:engineer|developer|designer|manager|director|analyst|lead|senior|staff)\b/i.test(parts[0] ?? "")
+		)
+			names.push(parts[0] ?? "", (parts[1] ?? "").replace(/\(.*?\)/g, ""));
 	}
 
 	return names.filter(readsAsName);
@@ -159,7 +170,7 @@ function excludedPhrases(posting: string, options: JdMatchOptions): string[][] {
 
 	for (const source of sources) {
 		const tokens = tokenize(normalizeForMatching(source));
-		if (tokens.length === 0 || isKnownSkillForm(tokens.join(" "))) continue;
+		if (tokens.length === 0 || (source !== options.company && isKnownSkillForm(tokens.join(" ")))) continue;
 		// A one-word place such as "Remote" or "hybrid" is already noise, and hiding it would split "hybrid cloud".
 		if (tokens.length === 1 && isGenericWord(tokens[0] ?? "")) continue;
 		phrases.push(tokens);
@@ -360,10 +371,12 @@ function selectTerms(entries: readonly JdTerm[], maxTerms: number): JdTerm[] {
 	for (const entry of ranked) {
 		if (selected.length >= maxTerms) break;
 
+		const phrase = (term: string) => term.replace(/-/g, " ");
 		const subsumed = selected.some(
 			(chosen) =>
-				(` ${chosen.term} `.includes(` ${entry.term} `) || ` ${entry.term} `.includes(` ${chosen.term} `)) &&
-				entry.count <= chosen.count,
+				(` ${phrase(chosen.term)} `.includes(` ${phrase(entry.term)} `) ||
+					` ${phrase(entry.term)} `.includes(` ${phrase(chosen.term)} `)) &&
+				(entry.count <= chosen.count || (chosen.isSkill && !entry.isSkill)),
 		);
 		if (subsumed) continue;
 

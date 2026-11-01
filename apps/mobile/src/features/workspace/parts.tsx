@@ -281,19 +281,22 @@ export function SaveError({ autosave }: SaveErrorProps) {
 	const { space } = useTheme();
 	if (!autosave.error) return null;
 	const conflict = autosave.error === "CONFLICT";
+	const recovered = autosave.error === "RECOVERED_DRAFT";
 	const takeServer = autosave.takeServerVersion;
 	return (
 		<View style={{ gap: space.s2 }}>
 			<Banner
 				tone="danger"
 				message={
-					conflict
-						? t`This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy.`
-						: t`This wasn't saved. Your text is kept on this device.`
+					recovered
+						? t`Recovered an unsaved draft. Review it before saving over the current version.`
+						: conflict
+							? t`This changed somewhere else, so it wasn't saved. Your text is kept here; Retry saves it over the other copy.`
+							: t`This wasn't saved. Your text is kept on this device.`
 				}
 				action={autosave.resolving ? undefined : { label: t`Retry`, onPress: autosave.retry }}
 			/>
-			{conflict && takeServer ? (
+			{(conflict || recovered) && takeServer ? (
 				<Button
 					variant="secondary"
 					size="sm"

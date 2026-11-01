@@ -13,6 +13,7 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { DraftRecovery } from "../draft-recovery";
 import {
 	latest,
 	useDebouncedSave,
@@ -88,13 +89,20 @@ type PasteBoxProps = {
 
 /** W15: the employer's message, kept with the application, and "Read it for me". */
 function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
-	const [message, setMessage] = useState(initial);
+	const draft = useSessionDraft(
+		readOnly ? null : `message:${application.id}`,
+		initial,
+		(value) => (typeof value === "string" && value.length <= 20000 ? value : undefined),
+		true,
+	);
+	const { value: message, setValue: setMessage } = draft;
 	const generate = useGenerate(application.id);
 	const { provider } = useDefaultProvider();
-	const flush = useDebouncedSave(message, initial, onSave);
+	const flush = useDebouncedSave(readOnly || draft.restored ? initial : message, initial, onSave);
 
 	return (
 		<div className="grid gap-3">
+			<DraftRecovery {...draft} />
 			<div className="grid gap-1.5">
 				<label htmlFor={`${application.id}-message`} className="text-xs font-medium text-ink-2">
 					{t`Paste a message from ${application.company}`}
@@ -243,7 +251,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	const current =
 		application.followUpNote ||
 		describeNextStep(
-			getNextStep(application, now, offerHintFor(hints, application.id)),
+			getNextStep(application, now, timeZone, offerHintFor(hints, application.id)),
 			application,
 			i18n.locale,
 			timeZone,

@@ -322,6 +322,11 @@ msgstr "{0, plural, one {Životopis (#)} other {Životopisy (#)}}"
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {Znovu zobrazit # ignorovaný problém} few {Znovu zobrazit # ignorované problémy} other {Znovu zobrazit # ignorovaných problémů}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -531,6 +536,10 @@ msgstr "{closed} zavřeno"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {Aktualizován # dokument} few {Aktualizovány # dokumenty} other {Aktualizováno # dokumentů}}"
@@ -542,6 +551,10 @@ msgstr "{cost} ročně"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "{cost} za první rok"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -559,8 +572,16 @@ msgstr "{day} · {length} min"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· od dneška} one {· po dobu # dne} other {· po dobu # dní}}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: bez odpovědi # den. Krátké připomenutí je teď obvykle v pořádku.} few {{company}: bez odpovědi # dny. Krátké připomenutí je teď obvykle v pořádku.} other {{company}: bez odpovědi # dní. Krátké připomenutí je teď obvykle v pořádku.}}"
+
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
 msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
@@ -692,6 +713,10 @@ msgstr "Typ {pairing}"
 #: src/features/assistant/page-marks.tsx
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# navržená úprava na této stránce · nic se nezmění bez vašeho přijetí} few {# navržené úpravy na této stránce · nic se nezmění bez vašeho přijetí} other {# navržených úprav na této stránce · nic se nezmění bez vašeho přijetí}}"
+
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
@@ -945,6 +970,11 @@ msgstr "Přijmout"
 msgid "Accept all"
 msgstr "Přijměte všechny"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Přijato"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Přijal další nabídku"
@@ -1005,6 +1035,10 @@ msgstr "Přidejte fakt"
 
 #: src/features/documents/new-document.tsx
 msgid "Add a job"
+msgstr ""
+
+#: src/features/documents/document-sheets.tsx
+msgid "Add a job…"
 msgstr ""
 
 #: src/features/write/basics-screen.tsx
@@ -1132,6 +1166,10 @@ msgstr "Přidejte průvodní dopis"
 msgid "Add dates"
 msgstr "Přidejte data"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "Přidejte vzdělání"
@@ -1186,8 +1224,8 @@ msgid "Add offer"
 msgstr "Přidat nabídku"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Zadejte podmínky pracovní nabídky ručně nebo využijte volitelné získání údajů pomocí AI ve Zprávách."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1257,6 +1295,10 @@ msgstr "Přidat štítek"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "Přidejte text"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1847,6 +1889,10 @@ msgstr "Vzestupně"
 msgid "Ask"
 msgstr "Požádat"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Zeptejte se na tuto žádost…"
@@ -1911,10 +1957,6 @@ msgstr "Asistent"
 #: src/features/search/search-screen.tsx
 msgid "Assistant conversations"
 msgstr "Konverzace s Asistentem"
-
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "V 09:00 toho dne ({timeZone})."
 
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
@@ -2258,6 +2300,7 @@ msgstr "Zrušit požadavek"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Kariéra"
 
@@ -2276,7 +2319,7 @@ msgstr "Osvědčení"
 #: app/(auth)/sign-in.tsx
 #: src/features/letters/write.tsx
 msgid "Change"
-msgstr "Přeměna"
+msgstr "Změnit"
 
 #: src/features/ai/web-access.tsx
 msgid "Change connection"
@@ -2315,6 +2358,10 @@ msgstr "Změnit téma na…"
 msgid "Change timezone"
 msgstr "Změnit časové pásmo"
 
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Přímo změnil životopis (dřívější konverzace)"
@@ -2326,6 +2373,11 @@ msgstr "Změny se nepodařilo uložit. Zkusit znovu, než budete pokračovat."
 #: src/features/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Změní pouze názvy sekcí a data data, nikoli váš obsah."
+
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
@@ -2667,6 +2719,8 @@ msgstr "Blízko…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "ZAVŘENO"
 
@@ -2680,6 +2734,7 @@ msgstr "Zavřeno: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Kouč"
@@ -2830,6 +2885,10 @@ msgstr "Připojte poskytovatele AI"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Připojte poskytovatele AI v Nastavení, aby se obnovoval automaticky."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Chcete-li číst podrobnosti z vloženého textu, připojte se k poskytovateli AI. Ruční zadávání funguje bez AI."
@@ -2853,6 +2912,10 @@ msgstr "Propojte nástroje, které používáte pro psaní, hledání práce a p
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Připojeno · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Připojené aplikace"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3217,6 +3280,7 @@ msgstr "Stránku této verze nelze načíst."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Toto se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu."
 
@@ -3250,6 +3314,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Nepodařilo se označit jako odeslané. Zkuste to znovu."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3512,6 +3577,10 @@ msgid "Couldn't upload the photo."
 msgstr "Fotku se nepodařilo nahrát."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Fotografii se nepodařilo nahrát. Zkuste to znovu."
 
@@ -3542,6 +3611,7 @@ msgstr "Vyplnit"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3558,6 +3628,7 @@ msgid "Cover letter — {0}"
 msgstr "Průvodní dopis — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Soubor průvodního dopisu"
@@ -4146,6 +4217,7 @@ msgstr "Stažení otevře systémovou nabídku sdílení. Vyberte poskytovatele 
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Stáhnout otevře list sdílení systému. Vyberte poskytovatele úložiště pro uložení souboru. Propojený motivační dopis se otevře jako druhý soubor."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Stáhnout PDF"
@@ -4800,6 +4872,7 @@ msgid "Follow-up date"
 msgstr "Datum následné kontroly"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Následná poznámka"
 
@@ -4866,7 +4939,7 @@ msgstr "Pro další kolo:"
 
 #: src/features/check/job-match.tsx
 msgid "For this visit only. Save it as a job to keep it."
-msgstr ""
+msgstr "Jen pro tuto návštěvu. Chcete-li jej zachovat, uložte jej jako pracovní nabídku."
 
 #: src/features/documents/new-document.tsx
 msgid "For which job?"
@@ -5066,6 +5139,7 @@ msgstr "Nadpis 3"
 msgid "Heading changed"
 msgstr "Nadpis se změnil"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Titulek"
@@ -5346,6 +5420,10 @@ msgid "Import it"
 msgstr "Importujte to"
 
 #: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
 msgstr "Importujte svůj aktuální životopis nebo začněte znovu se svým jménem."
 
@@ -5373,6 +5451,15 @@ msgstr "Vylepšete vybraný řádek"
 #: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Zlepšení…"
+
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
@@ -5663,6 +5750,10 @@ msgstr "Držte se dvou až tří rodin písem. Každé další písmo je další
 msgid "Keep together"
 msgstr "Držte pohromadě"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Zachovává nejkonkrétnější části"
@@ -5703,6 +5794,7 @@ msgstr "s pozdravem"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Znalosti"
 
@@ -5784,6 +5876,7 @@ msgid "Later"
 msgstr "Později"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Nejnovější"
 
@@ -6060,6 +6153,10 @@ msgstr "Propojeno. Jméno, e-mail, telefon a město se aktualizují, když to ud
 msgid "Links"
 msgstr "Odkazy"
 
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "List"
 msgstr "Seznam"
@@ -6156,6 +6253,7 @@ msgstr "Načítání vaší veřejné adresy…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6473,6 +6571,7 @@ msgstr "více"
 msgid "More details"
 msgstr "Další podrobnosti"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "Více možností"
@@ -6851,6 +6950,9 @@ msgid "No application"
 msgstr "Žádná žádost o zaměstnání"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Zatím žádné žádosti o zaměstnání. Nejprve přidejte jeden do žádostí o zaměstnání."
@@ -6879,6 +6981,10 @@ msgstr "Nebyly nalezeny žádné obvyklé nadpisy sekcí."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "O tomto dokumentu zatím žádné konverzace."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6931,6 +7037,10 @@ msgstr ""
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Žádné ikony neodpovídají."
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
@@ -7015,10 +7125,6 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "Zatím žádná odpověď"
-
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "Žádná odezva"
@@ -7030,6 +7136,10 @@ msgstr "Žádné výsledky"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Žádné resumé"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7289,6 +7399,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Vypnuto. Tento resumé můžete vidět pouze vy."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Nabídka"
@@ -7307,6 +7419,7 @@ msgid "Offer type"
 msgstr "Typ nabídky"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Nabídky"
 
@@ -7440,6 +7553,7 @@ msgstr "Na místě"
 msgid "Onsite interview"
 msgstr "Pohovor na místě"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Otevřít"
@@ -7868,10 +7982,12 @@ msgstr "Fotografie"
 msgid "Photo hidden"
 msgstr "Fotka skryta"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "Fotografie skrytá na stránce."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Foto na stránce."
@@ -8504,6 +8620,12 @@ msgstr "Doba nahrávání"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Náborář"
@@ -8921,6 +9043,7 @@ msgstr "Výsledek"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8945,6 +9068,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Zpětná vazba na životopisy, pomoc s produktem a nápady komunity."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Soubor životopisu"
@@ -9022,6 +9146,7 @@ msgstr "Načteno {0} pomocí {1}. Čas načtení neurčuje čerstvost původu."
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -9110,10 +9235,6 @@ msgstr ""
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "Zkontrolovat návrh"
-
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
 msgstr "Před použitím tohoto resumé si projděte každou sekci."
@@ -9133,6 +9254,10 @@ msgstr "Zhodnotit mou odpověď"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "„Zhodnotit mou odpověď“ odešle otázku, co jste řekli, tento inzerát a vaše Znalosti poskytovateli {providerName}."
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
@@ -9974,6 +10099,10 @@ msgstr "Před označením žádosti jako podané zkraťte otázky na 2 000 znak�
 msgid "Shorter"
 msgstr "Kratší"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "Zobrazit"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Zobrazit „Vytvořeno pomocí Reactive Resume“"
@@ -9987,9 +10116,14 @@ msgstr "Zobrazit {0} více"
 msgid "Show {title} on the page"
 msgstr "Zobrazit {title} na stránce"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Zobrazit vše"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "Zobrazit všechny průvodní dopisy"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -10051,6 +10185,7 @@ msgstr "Zobrazit více"
 msgid "Show on page"
 msgstr "Zobrazit na stránce"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Zobrazit fotografii"
@@ -11083,6 +11218,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "Server vrátil neplatný výsledek importu. Před dalším pokusem obnovte Dokumenty."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "Verzi serveru se nepodařilo načíst. Váš text je zachován; zkuste to znovu."
@@ -11222,6 +11358,8 @@ msgstr "Tento soubor motivačního dopisu není platný."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Toto datum nebo čas ve vašem časovém pásmu neexistuje. Vyberte jiný čas."
@@ -11511,6 +11649,7 @@ msgstr "Utáhněte na jednu stránku"
 msgid "Tightening"
 msgstr "Zestručňuje se"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Čas"
@@ -11558,6 +11697,11 @@ msgstr "Název"
 msgid "To"
 msgstr "Na"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Pro kontrolu"
@@ -11568,6 +11712,7 @@ msgstr "Chcete-li dostávat připomenutí, povolte oznámení v nastavení zař�
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Dnes"
@@ -11807,6 +11952,7 @@ msgstr "Podtrhněte odkazy"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12053,6 +12199,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 
@@ -12282,6 +12430,10 @@ msgstr "Dobrovolnictví"
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "Počkejte na načtení časového pásma svého účtu, při neúspěchu to zkuste znovu, nebo vymažte termín."
 
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"
 msgstr "Čeká na vás"
@@ -12321,6 +12473,7 @@ msgstr "Vyhledávání na webu se nezdařilo: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "Vyhledávání na webu hledá práci v těchto zemích. Vyberte až tři země."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Web"
@@ -12574,6 +12727,10 @@ msgstr "Čísla pište číslicemi"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Popište v pěti částech něco, co jste udělali. Části „Výsledek“ a „Reflexe“ nechte prázdné, dokud je nebudete moci doložit."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12845,6 +13002,10 @@ msgstr "vašeho poskytovatele"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Vaše veřejné odkazy začínají {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

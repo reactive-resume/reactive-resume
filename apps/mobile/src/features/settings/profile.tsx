@@ -1,4 +1,5 @@
 import type { RouterOutput } from "@/api/client";
+import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { File } from "expo-file-system";
@@ -7,7 +8,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { client, orpc, rest } from "@/api/client";
 import { useSession } from "@/auth/session";
-import { Avatar, Button, ListRow, Sheet, TextField, showToast, useTheme } from "@/ui";
+import { Avatar, Button, ConfirmDialog, ListRow, Sheet, TextField, showToast, useTheme } from "@/ui";
 
 type Profile = RouterOutput["auth"]["getProfile"];
 type ProfileFieldProps = { field: "name" | "username"; value: string; server: string };
@@ -23,6 +24,7 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 	const mutation = useMutation({
 		mutationKey: ["settings", "profile", field],
 		mutationFn: async () => {
+			if (invalid) throw new Error("Invalid profile field");
 			const result = await client.auth.updateProfile({ [field]: trimmed });
 			if (!result.status) throw new Error("Profile update rejected");
 		},
@@ -31,9 +33,20 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 			setEdit(null);
 		},
 	});
-	const commit = () => {
+	// The username is part of every public link: changing it moves them, so say how many first.
+	const [publicLinks, setPublicLinks] = useState<number | null>(null);
+	const commit = async () => {
 		setTouched(true);
-		if (!invalid && trimmed !== value && !mutation.isPending) mutation.mutate();
+		if (invalid || trimmed === value || mutation.isPending) return;
+		if (field === "username") {
+			// Unknown is not none: still warn, without a count.
+			const total = await client.documents
+				.page({ type: "resume", public: true, limit: 1 })
+				.then((page) => page.total)
+				.catch(() => -1);
+			if (total !== 0) return setPublicLinks(total);
+		}
+		mutation.mutate();
 	};
 	const error =
 		touched && invalid
@@ -46,25 +59,50 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 					: t`Couldn't save. Try again.`
 				: undefined;
 	return (
-		<TextField
-			label={field === "name" ? t`Name` : t`Username`}
-			value={draft}
-			onChangeText={(next) => {
-				setEdit(next);
-				mutation.reset();
-			}}
-			onBlur={commit}
-			submitBehavior="blurAndSubmit"
-			editable={!mutation.isPending}
-			autoCapitalize={field === "username" ? "none" : "words"}
-			autoCorrect={field !== "username"}
-			textContentType={field === "name" ? "name" : "username"}
-			returnKeyType="done"
-			error={error}
-			helper={
-				mutation.isPending ? t`Saving…` : field === "username" ? t`Your public links begin with ${server}/` : undefined
-			}
-		/>
+		<>
+			<TextField
+				label={field === "name" ? t`Name` : t`Username`}
+				value={draft}
+				onChangeText={(next) => {
+					setEdit(next);
+					mutation.reset();
+				}}
+				onBlur={() => void commit()}
+				submitBehavior="blurAndSubmit"
+				editable={!mutation.isPending}
+				autoCapitalize={field === "username" ? "none" : "words"}
+				autoCorrect={field !== "username"}
+				textContentType={field === "name" ? "name" : "username"}
+				returnKeyType="done"
+				error={error}
+				helper={
+					mutation.isPending
+						? t`Saving…`
+						: field === "username"
+							? t`Your public links begin with ${server}/`
+							: undefined
+				}
+			/>
+			<ConfirmDialog
+				open={publicLinks !== null}
+				title={
+					publicLinks !== null && publicLinks > 0
+						? plural(publicLinks, { one: "# public link will change", other: "# public links will change" })
+						: t`Your public links will change`
+				}
+				message={t`Links you've already shared keep working for 30 days, then stop. Share the new ones before then.`}
+				confirmLabel={t`Change username`}
+				cancelLabel={t`Keep username`}
+				onConfirm={() => {
+					setPublicLinks(null);
+					mutation.mutate();
+				}}
+				onCancel={() => {
+					setPublicLinks(null);
+					setEdit(null);
+				}}
+			/>
+		</>
 	);
 }
 

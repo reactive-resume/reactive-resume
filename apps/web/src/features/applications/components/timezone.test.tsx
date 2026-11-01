@@ -8,13 +8,19 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createDefaultApplicationLanes } from "@reactive-resume/schema/applications/lanes";
 
-const account = vi.hoisted(() => ({ timeZone: "UTC", saveInterview: vi.fn(), download: vi.fn() }));
+const account = vi.hoisted(() => ({
+	timeZone: "UTC",
+	saveInterview: vi.fn(),
+	download: vi.fn(),
+	offers: [] as unknown[],
+}));
 vi.mock("@reactive-resume/utils/file", async (importOriginal) => ({
 	...(await importOriginal<typeof import("@reactive-resume/utils/file")>()),
 	downloadWithAnchor: account.download,
 }));
 vi.mock("@tanstack/react-router", () => ({
 	useRouteContext: () => ({ session: { user: { timezone: account.timeZone } } }),
+	Link: ({ children }: { children: ReactNode }) => <a href="/dashboard/career/offers">{children}</a>,
 }));
 vi.mock("./interview-dialog", () => ({
 	InterviewDialog: ({ day }: { day: string | null }) => <output data-testid="scheduled-day">{day}</output>,
@@ -38,7 +44,13 @@ vi.mock("@/libs/orpc/client", () => ({
 		},
 		career: {
 			schedules: { queryOptions: () => ({ queryKey: ["schedules"], queryFn: () => [] }) },
-			savedItems: { queryOptions: () => ({ queryKey: ["offers"], queryFn: async () => [] }) },
+			savedItems: {
+				queryOptions: () => ({
+					queryKey: ["offers"],
+					initialData: account.offers,
+					queryFn: async () => account.offers,
+				}),
+			},
 		},
 	},
 }));
@@ -87,6 +99,7 @@ function show(children: ReactNode) {
 
 beforeEach(() => {
 	account.download.mockClear();
+	account.offers = [];
 	i18n.load("en-GB", {});
 	i18n.activate("en-GB");
 	vi.useFakeTimers();
@@ -107,12 +120,12 @@ it.each([
 	expect(account.download).toHaveBeenCalledWith(expect.any(Blob), `Northstar-${date}.ics`);
 });
 
-it("keeps follow-up calendar filenames on the date selected by the browser-local editor", () => {
+it("names follow-up calendar downloads on the account date used by Today", () => {
 	account.timeZone = "Pacific/Honolulu";
 	const followUp = { ...application("2026-10-31T23:30:00Z"), activity: [], followUpAt: new Date(2026, 9, 30, 9) };
 	show(<NextStepCard application={followUp} onScheduleInterview={vi.fn()} />);
 	fireEvent.click(screen.getByRole("button", { name: "Add to calendar" }));
-	expect(account.download).toHaveBeenCalledWith(expect.any(Blob), "Northstar-2026-10-30.ics");
+	expect(account.download).toHaveBeenCalledWith(expect.any(Blob), "Northstar-2026-10-29.ics");
 });
 
 it.each([
@@ -296,4 +309,22 @@ it("uses neutral empty-state wording under the browsed month heading", () => {
 	expect(screen.getByRole("heading", { name: "November 2026" })).toBeDefined();
 	expect(within(screen.getByTestId("interview-agenda")).getByText("Nothing scheduled yet")).toBeDefined();
 	expect(screen.queryByText("No interviews this month")).toBeNull();
+});
+
+it.each([
+	["UTC", "2026-10-31"],
+	["Europe/Berlin", "2026-11-01"],
+])("names an offer deadline download on the %s account date", (timeZone, date) => {
+	account.timeZone = timeZone;
+	account.offers = [
+		{ applicationId: "application", createdAt: new Date(), data: { kind: "offer", respondBy: "2026-10-31T23:30:00Z" } },
+	];
+	show(
+		<NextStepCard
+			application={{ ...application("2026-11-15T09:00:00Z"), status: "offer" }}
+			onScheduleInterview={vi.fn()}
+		/>,
+	);
+	fireEvent.click(screen.getByRole("button", { name: "Add to calendar" }));
+	expect(account.download.mock.calls[0]?.[1]).toBe(`Northstar-${date}.ics`);
 });

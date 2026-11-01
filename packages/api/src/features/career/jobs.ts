@@ -6,9 +6,11 @@ import { db } from "@reactive-resume/db/client";
 import * as tables from "@reactive-resume/db/schema";
 import { sendCareerNotification } from "@reactive-resume/email/transport";
 import { env } from "@reactive-resume/env/server";
+import { followUpInstant } from "@reactive-resume/schema/applications/follow-up";
 import { generateId } from "@reactive-resume/utils/string";
 import { STALE_AGENT_RUN_TTL_MS } from "../agent/runs";
 import { aiProvidersService } from "../ai-providers/service";
+import { syncFollowUp } from "../applications/follow-up";
 import { readOpenPosting, searchJobPostings } from "../applications/posting";
 import { lockUser } from "../documents/ownership";
 import { documentsService } from "../documents/service";
@@ -18,6 +20,7 @@ import { generateCareer } from "./generate";
 import { matchPosting } from "./matching";
 import { noticeText } from "./notices";
 import { isCareerSchedulingEnabled } from "./runner";
+import { assertScheduleCapacity } from "./schedule-limit";
 import {
 	canonicalOpportunityUrl,
 	nextFutureCareerRun,
@@ -38,19 +41,26 @@ function assertRunner() {
 		});
 }
 
-// Enough for a discovery search per field plus briefings and follow-ups for a busy search.
-const MAX_SCHEDULES_PER_USER = 100;
 const READ_NOTIFICATION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 // Due jobs inspected per claim; owners that are busy or locked are skipped, not waited on.
 const CLAIM_CANDIDATES = 20;
 
 export const careerJobs = {
-	list: (userId: string) =>
-		db
+	list: async (userId: string) => {
+		const rows = await db
 			.select()
 			.from(tables.careerSchedule)
 			.where(eq(tables.careerSchedule.userId, userId))
-			.orderBy(desc(tables.careerSchedule.createdAt)),
+			.orderBy(desc(tables.careerSchedule.updatedAt), desc(tables.careerSchedule.id));
+		const applications = new Set<string>();
+		return rows.filter((row) => {
+			if (row.kind !== "follow-up" || !row.applicationId) return true;
+			if (applications.has(row.applicationId)) return false;
+			applications.add(row.applicationId);
+			return true;
+		});
+	},
+
 	save: async (userId: string, input: z.infer<typeof careerScheduleInputSchema> & { id?: string | undefined }) => {
 		if (input.enabled) assertRunner();
 		const application = await requireCareerApplication({ userId, ...input });
@@ -60,6 +70,8 @@ export const careerJobs = {
 		);
 		if (input.kind === "prepare" && interview?.type === "interview")
 			input.nextRunAt = prepareRunAt(new Date(interview.at), input.lead ?? "24h", input.timezone);
+		if (input.kind === "discovery" && input.query.length > 500)
+			throw new ORPCError("BAD_REQUEST", { message: "Search queries can contain up to 500 characters." });
 		if (input.kind === "discovery" && !input.query.trim())
 			throw new ORPCError("BAD_REQUEST", { message: "Enter a job search query." });
 		if (
@@ -102,10 +114,61 @@ export const careerJobs = {
 		let keepQueuedAt: Date | null = null;
 		return db.transaction(async (tx) => {
 			await lockUser(tx, userId);
+			if (input.applicationId) {
+				const [ownedApplication] = await tx
+					.select()
+					.from(tables.application)
+					.where(and(eq(tables.application.id, input.applicationId), eq(tables.application.userId, userId)))
+					.for("update");
+				if (!ownedApplication) throw new ORPCError("NOT_FOUND");
+				if (input.kind === "follow-up") {
+					// Match the sheet's original clock; the projection below still uses the current account clock.
+					const keepLogicalDay =
+						ownedApplication.followUpDateOnly &&
+						followUpInstant(ownedApplication, input.timezone)?.getTime() === input.nextRunAt.getTime();
+					if (id) {
+						const [owned] = await tx
+							.select()
+							.from(tables.careerSchedule)
+							.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)))
+							.for("update");
+						if (!owned || owned.kind !== "follow-up" || owned.applicationId !== input.applicationId)
+							throw new ORPCError("NOT_FOUND");
+						if (
+							input.enabled &&
+							owned.lastQueuedAt &&
+							input.nextRunAt <= owned.lastQueuedAt &&
+							(!owned.enabled || (!keepLogicalDay && input.nextRunAt.getTime() !== owned.nextRunAt.getTime()))
+						)
+							throw new ORPCError("BAD_REQUEST", {
+								message: "Choose a new run time when rescheduling completed or canceled work.",
+							});
+					}
+					const [updated] = await tx
+						.update(tables.application)
+						.set({
+							followUpAt: keepLogicalDay ? ownedApplication.followUpAt : input.nextRunAt,
+							followUpNote: input.query || null,
+							followUpDateOnly: keepLogicalDay,
+						})
+						.where(eq(tables.application.id, input.applicationId))
+						.returning();
+					if (!updated) throw new ORPCError("NOT_FOUND");
+					const row = await syncFollowUp(tx, updated, {
+						timezone: input.timezone,
+						enabled: input.enabled,
+						email: input.email,
+						...(input.locale ? { locale: input.locale } : {}),
+					});
+					if (!row) throw new ORPCError("NOT_FOUND");
+					return row;
+				}
+			}
 			let aiProviderVersion: string | null = null;
 			if (input.kind === "prepare" && input.enabled && input.aiProviderId)
 				aiProviderVersion = (await aiProvidersService.getRunnableById({ userId, id: input.aiProviderId }, tx))
 					.recipientVersion;
+
 			if (id) {
 				const [owned] = await tx
 					.select()
@@ -128,14 +191,7 @@ export const careerJobs = {
 			}
 			if (!id) {
 				// The user lock also keeps the cap valid under concurrent creates.
-				const [count] = await tx
-					.select({ total: sql<number>`count(*)::int` })
-					.from(tables.careerSchedule)
-					.where(eq(tables.careerSchedule.userId, userId));
-				if ((count?.total ?? 0) >= MAX_SCHEDULES_PER_USER)
-					throw new ORPCError("BAD_REQUEST", {
-						message: `You can keep up to ${MAX_SCHEDULES_PER_USER} schedules. Delete one you no longer need first.`,
-					});
+				await assertScheduleCapacity(tx, userId);
 			}
 			const [row] = id
 				? await tx
@@ -152,9 +208,31 @@ export const careerJobs = {
 		});
 	},
 	delete: async (userId: string, id: string) => {
-		await db
-			.delete(tables.careerSchedule)
-			.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)));
+		await db.transaction(async (tx) => {
+			await lockUser(tx, userId);
+			const [found] = await tx
+				.select()
+				.from(tables.careerSchedule)
+				.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)));
+			if (!found) return;
+			if (found.kind === "follow-up" && found.applicationId) {
+				const [application] = await tx
+					.select()
+					.from(tables.application)
+					.where(and(eq(tables.application.id, found.applicationId), eq(tables.application.userId, userId)))
+					.for("update");
+				if (!application) return;
+				const [updated] = await tx
+					.update(tables.application)
+					.set({ followUpAt: null, followUpNote: null, followUpDateOnly: false })
+					.where(eq(tables.application.id, application.id))
+					.returning();
+				if (updated) await syncFollowUp(tx, updated);
+			} else
+				await tx
+					.delete(tables.careerSchedule)
+					.where(and(eq(tables.careerSchedule.id, id), eq(tables.careerSchedule.userId, userId)));
+		});
 	},
 	notifications: async (userId: string) => {
 		const rows = await db
@@ -265,14 +343,14 @@ async function enqueue() {
 			.limit(20)
 			.for("update", { skipLocked: true });
 		for (const schedule of due) {
-			// A schedule switched back on for a time that already ran gets a fresh job; finished ones stay as history.
+			// A completed follow-up occurrence is immutable; metadata edits never create another delivery.
 			await tx
 				.delete(tables.careerJob)
 				.where(
 					and(
 						eq(tables.careerJob.scheduleId, schedule.id),
 						eq(tables.careerJob.dueAt, schedule.nextRunAt),
-						sql`${tables.careerJob.status} in ('completed', 'canceled', 'failed')`,
+						sql`(${tables.careerJob.status} in ('canceled', 'failed') or (${schedule.kind} <> 'follow-up' and ${tables.careerJob.status} = 'completed'))`,
 					),
 				);
 			await tx
@@ -482,6 +560,29 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 				return;
 			}
 		}
+		let followUpNote = schedule.query;
+		if (schedule.kind === "follow-up") {
+			// Same user → application → schedule → job order as edits; publication sees the winning note revision.
+			const [live] = await tx
+				.select()
+				.from(tables.careerSchedule)
+				.where(and(eq(tables.careerSchedule.id, schedule.id), eq(tables.careerSchedule.userId, job.userId)))
+				.for("update");
+			if (!live?.enabled || live.kind !== "follow-up") {
+				await tx
+					.update(tables.careerJob)
+					.set({ status: "canceled", lease: null, leaseUntil: null })
+					.where(
+						and(
+							eq(tables.careerJob.id, job.id),
+							eq(tables.careerJob.lease, job.lease ?? ""),
+							eq(tables.careerJob.status, "running"),
+						),
+					);
+				return;
+			}
+			followUpNote = live.query;
+		}
 		const [current] = await tx
 			.select()
 			.from(tables.careerJob)
@@ -569,6 +670,7 @@ async function execute(job: typeof tables.careerJob.$inferSelect) {
 									type: schedule.kind === "prepare" ? "briefing" : "followup",
 									company: application?.company ?? "",
 									role: application?.role ?? "",
+									...(schedule.kind === "follow-up" && followUpNote ? { note: followUpNote } : {}),
 								},
 					url: workspaceUrl(schedule.applicationId, schedule.kind === "prepare" ? "prepare" : undefined),
 				})

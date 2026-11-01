@@ -45,7 +45,10 @@ export async function handleResumeCard(request: Request, username: string, slug:
 	// Everything the drawing depends on, so a repeat skips the fonts and the picture's fetch.
 	const inputs = [text, data.metadata.typography, data.metadata.page.locale, data.picture.url];
 	const key = createHash("sha256").update(JSON.stringify(inputs)).digest("hex");
-	const headers = { "Cache-Control": "public, max-age=3600", ETag: `"${key.slice(0, 32)}"` };
+	const headers = {
+		"Cache-Control": card.isReleasedUsername ? "no-store" : "public, max-age=3600",
+		ETag: `"${key.slice(0, 32)}"`,
+	};
 	if (matchesIfNoneMatch(request.headers.get("if-none-match"), headers.ETag))
 		return new Response(null, { status: 304, headers });
 

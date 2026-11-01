@@ -174,3 +174,43 @@ it("retries a lost save after Check is opened again with the same request, so th
 	expect(retry).toEqual(first);
 	expect(api.create).not.toHaveBeenCalled();
 });
+
+it("keeps saved-job choices visible when copying or linking fails", async () => {
+	useEditorStore.setState({ pastedPosting: "" });
+	api.applications = [{ id: "job-retry", company: "Retry Co", role: "Engineer", status: "saved" }];
+	api.save.mockResolvedValue(true);
+	api.copyForJob.mockReset().mockRejectedValue(new Error("Network error"));
+	api.link.mockReset().mockRejectedValueOnce(new Error("Network error")).mockResolvedValue(undefined);
+	mount();
+	const picker = await screen.findByRole("combobox", { name: "Link an application" });
+	await screen.findByRole("option", { name: "Engineer · Retry Co" });
+	fireEvent.change(picker, { target: { value: "job-retry" } });
+	fireEvent.click(screen.getByRole("button", { name: "Make a copy for this job" }));
+	await waitFor(() => expect(api.copyForJob).toHaveBeenCalledTimes(1));
+	expect(screen.getByRole("button", { name: "Make a copy for this job" })).toBeDefined();
+	fireEvent.click(screen.getByRole("button", { name: "Link this resume" }));
+	await waitFor(() => expect(api.link).toHaveBeenCalledTimes(1));
+	expect(screen.getByRole("button", { name: "Link this resume" })).toBeDefined();
+	fireEvent.click(screen.getByRole("button", { name: "Link this resume" }));
+	await waitFor(() => expect(api.link).toHaveBeenCalledTimes(2));
+	await waitFor(() => expect(screen.queryByRole("button", { name: "Link this resume" })).toBeNull());
+});
+
+it("reuses the created job ID when saving succeeds but linking fails", async () => {
+	useEditorStore.setState({ pastedPosting: "Build reliable systems." });
+	api.applications = [];
+	api.create.mockReset().mockResolvedValue("saved-job");
+	api.link.mockReset().mockRejectedValueOnce(new Error("Offline")).mockResolvedValue(undefined);
+	mount();
+	fireEvent.click(await screen.findByRole("button", { name: "Save as a job…" }));
+	fireEvent.change(screen.getByLabelText("Company"), { target: { value: "Retry Co" } });
+	fireEvent.change(screen.getByLabelText("Role"), { target: { value: "Engineer" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save and link this resume" }));
+	await waitFor(() => expect(api.link).toHaveBeenCalledTimes(1));
+	expect(useEditorStore.getState().pastedPosting).toBe("Build reliable systems.");
+	await waitFor(() => expect(screen.getByRole("button", { name: "Save and link this resume" })).toBeEnabled());
+	fireEvent.click(screen.getByRole("button", { name: "Save and link this resume" }));
+	await waitFor(() => expect(api.link).toHaveBeenCalledTimes(2));
+	expect(api.create.mock.calls[0]?.[0].newId).toBe(api.create.mock.calls[1]?.[0].newId);
+	await waitFor(() => expect(useEditorStore.getState().pastedPosting).toBe(""));
+});

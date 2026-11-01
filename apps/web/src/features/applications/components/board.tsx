@@ -1,5 +1,6 @@
 import type { ApplicationLane } from "../lanes";
 import type { ApplicationSummary } from "../types";
+import type { DndLabel } from "@/libs/dnd";
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import {
 	DndContext,
@@ -30,6 +31,7 @@ import { CLOSED_REASONS, getClosedReasonLabel } from "../stages";
 import { useApplicationActions } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { ApplicationCard } from "./application-card";
+import { dndContextProps } from "@/libs/dnd";
 import { DRAG_SETTLE } from "@/libs/motion";
 
 type BoardProps = {
@@ -104,7 +106,13 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 	};
 
 	return (
-		<DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+		<DndContext
+			{...dndContextProps(false)}
+			sensors={sensors}
+			collisionDetection={pointerWithin}
+			onDragStart={onDragStart}
+			onDragEnd={onDragEnd}
+		>
 			<div className="flex h-full min-h-0 gap-3 overflow-x-auto pb-4">
 				{columns.map((lane) => (
 					<Column key={lane.id} lane={lane} applications={byLane.get(lane.id) ?? []} onOpen={onOpen} />
@@ -159,8 +167,8 @@ type ColumnProps = {
 };
 
 function Column({ lane, applications, onOpen }: ColumnProps) {
-	const { setNodeRef, isOver } = useDroppable({ id: lane.id });
 	const label = getLaneLabel(lane);
+	const { setNodeRef, isOver } = useDroppable({ id: lane.id, data: { label } satisfies DndLabel });
 	const [visible, setVisible] = useState(COLUMN_PAGE_SIZE);
 	const shown = applications.slice(0, visible);
 	const remaining = applications.length - shown.length;
@@ -202,7 +210,10 @@ type DraggableCardProps = { application: ApplicationSummary; onOpen: (applicatio
 
 // Re-renders with every drag context change; the closure here stays stable, so the card itself doesn't.
 function DraggableCard({ application, onOpen }: DraggableCardProps) {
-	const { setNodeRef, listeners, isDragging } = useDraggable({ id: application.id });
+	const { setNodeRef, listeners, isDragging } = useDraggable({
+		id: application.id,
+		data: { label: [application.role, application.company].filter(Boolean).join(", ") } satisfies DndLabel,
+	});
 
 	return (
 		<div ref={setNodeRef} {...listeners} className={cn(isDragging && "opacity-40")}>

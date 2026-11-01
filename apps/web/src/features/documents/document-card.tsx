@@ -38,7 +38,7 @@ function useDocumentMeta(document: DocumentSummary) {
 	const type = document.type === "resume" ? t`Resume` : t`Letter`;
 	if (document.trashedAt)
 		return plural(daysLeftInTrash(document.trashedAt), { one: `${type} · # day left`, other: `${type} · # days left` });
-	return t`${type} · Edited ${formatRelativeTime(document.updatedAt, i18n.locale)}`;
+	return t`${type} · Edited ${formatRelativeTime(document.editedAt, i18n.locale)}`;
 }
 
 /** Opens the document in its editor: resumes and letters share the editor shell. */
@@ -113,12 +113,16 @@ function RenameInput({ document, onDone }: { document: DocumentSummary; onDone: 
 	);
 }
 
-/** A letter's page, drawn from lines: letters have no thumbnail render. */
-function LetterThumbnail({ name }: { name: string }) {
+/** A letter's page, drawn from lines (letters have no thumbnail render), addressed to its recipient once there is one. */
+function LetterThumbnail({ name, recipient }: { name: string; recipient: string | null }) {
 	return (
 		<div aria-hidden="true" className="flex size-full flex-col gap-1.5 bg-white p-[14%] text-[0]">
 			<span className="h-1.5 w-2/5 rounded-sm bg-[#c9c9c9]" />
-			<span className="mb-3 h-1 w-3/5 rounded-sm bg-[#e2e2e2]" />
+			{recipient ? (
+				<span className="mb-2 truncate text-[11px] leading-4 font-semibold text-[#3a3a3a]">{recipient}</span>
+			) : (
+				<span className="mb-3 h-1 w-3/5 rounded-sm bg-[#e2e2e2]" />
+			)}
 			<span className="h-1 w-1/3 rounded-sm bg-[#d4d4d4]" />
 			{Array.from({ length: 7 }, (_, index) => (
 				<span key={index} className={cn("h-1 rounded-sm bg-[#e6e6e6]", index % 3 === 2 ? "w-4/5" : "w-full")} />
@@ -154,6 +158,7 @@ export function DocumentCard({
 	const [renaming, setRenaming] = useState(false);
 	const isNew = useNewDocumentsStore((state) => state.ids.includes(document.id)) && !document.trashedAt;
 	const meta = useDocumentMeta(document);
+	const recipient = document.recipient;
 	const menuProps = {
 		document,
 		onOpen: () => openDocument(document),
@@ -194,7 +199,7 @@ export function DocumentCard({
 						{document.type === "resume" ? (
 							<ResumeThumbnail resume={document} />
 						) : (
-							<LetterThumbnail name={document.name} />
+							<LetterThumbnail name={document.name} recipient={document.recipient} />
 						)}
 						<span className="absolute start-2 top-2 flex gap-1">
 							{isNew && (
@@ -214,7 +219,9 @@ export function DocumentCard({
 							aria-label={t`Select ${document.name}`}
 							className={cn(
 								"absolute end-2 top-2 shadow-e1 transition-[opacity,background-color,border-color] duration-quick",
-								!selecting && "opacity-0 group-hover/card:opacity-100 focus-visible:opacity-100",
+								// Touch has no hover: the box stays visible there, as the list view's does.
+								!selecting &&
+									"opacity-0 group-hover/card:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100",
 							)}
 						/>
 					)}
@@ -228,11 +235,20 @@ export function DocumentCard({
 							<h3 className="truncate text-sm leading-5 font-semibold">{document.name}</h3>
 						)}
 						<span className="truncate text-xs text-ink-3">{meta}</span>
-						{document.application && (
+						{document.application ? (
 							<span className="flex min-w-0 items-center gap-1 text-xs text-ink-2">
 								<Icon name="briefcase" size={14} />
 								<span className="truncate">{document.application.company}</span>
 							</span>
+						) : (
+							recipient && (
+								<span className="flex min-w-0 items-center gap-1 text-xs text-ink-2">
+									<Icon name="envelope-simple" size={14} />
+									<span className="truncate">
+										<Trans comment="A letter's recipient under its name in the library">To {recipient}</Trans>
+									</span>
+								</span>
+							)
 						)}
 					</div>
 					<DropdownMenu>
@@ -342,7 +358,7 @@ export function DocumentRow({
 					{document.trashedAt ? (
 						<Plural value={daysLeftInTrash(document.trashedAt)} one="# day left" other="# days left" />
 					) : (
-						formatRelativeTime(document.updatedAt, i18n.locale)
+						formatRelativeTime(document.editedAt, i18n.locale)
 					)}
 				</td>
 				<td className="w-10 pe-2 text-end">

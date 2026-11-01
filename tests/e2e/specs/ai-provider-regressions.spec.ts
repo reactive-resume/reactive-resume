@@ -282,6 +282,7 @@ test("application coach history survives provider-list failure", async ({ authPa
 		.toBe(true);
 	const count = stub.requests.length;
 	let blocked = 0;
+	let failProviders = true;
 	await page.route("**/api/rpc/**", async (route) => {
 		const req = route.request();
 		const batched = new URL(req.url()).pathname.endsWith("/__batch__");
@@ -289,7 +290,7 @@ test("application coach history survives provider-list failure", async ({ authPa
 		const providers = entries.flatMap((entry, index) =>
 			new URL(entry.url).pathname === "/api/rpc/aiProviders/list" ? [index] : [],
 		);
-		if (!providers.length) return route.continue();
+		if (!failProviders || !providers.length) return route.continue();
 		blocked++;
 		const response = await route.fetch();
 		const error = {
@@ -349,12 +350,17 @@ test("application coach history survives provider-list failure", async ({ authPa
 	await expect.poll(() => blocked).toBeGreaterThan(beforeReload);
 	await expect(page.getByText("You left the document out.", { exact: true })).toBeVisible({ timeout: 12000 });
 	await expect(composer).toBeDisabled();
+	const retryProvider = page.getByRole("button", { name: "Try again", exact: true }).first();
+	// Disabled also covers pending lookup; wait for its error before restoring the provider endpoint.
+	await expect(retryProvider).toBeVisible();
 	await page.screenshot({ path: info.outputPath("coach-history-provider-error.png") });
 	expect(stub.requests.length).toBe(count);
-	await page.getByRole("button", { name: "Try again", exact: true }).first().click({ timeout: 10000 });
-	await page.unroute("**/api/rpc/**");
+	// Keep in-flight interceptions alive; only new provider requests should use the real server.
+	failProviders = false;
+	await retryProvider.click({ timeout: 10000 });
 	await expect(composer).toBeEnabled();
 	expect(stub.requests.length).toBe(count);
+	await page.unrouteAll({ behavior: "wait" });
 });
 
 test("Improve shows original target and replacement can be undone", async ({ authPage: page }, info) => {

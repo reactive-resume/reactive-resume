@@ -24,6 +24,7 @@ import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
 import { aiProvidersService } from "../ai-providers/service";
 import { findTrackedPosting } from "../applications/duplicates";
+import { syncFollowUp } from "../applications/follow-up";
 import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "../applications/lanes";
 import { applicationService, assertApplicationVersion, recordSentResume } from "../applications/service";
 import { assertSharedDocument, lockUser } from "../documents/ownership";
@@ -689,6 +690,8 @@ export const careerService = {
 				company: tables.application.company,
 				role: tables.application.role,
 				activity: tables.application.activity,
+				status: tables.application.status,
+				closedReason: tables.application.closedReason,
 			})
 			.from(tables.careerArtifact)
 			.leftJoin(tables.application, eq(tables.application.id, tables.careerArtifact.applicationId))
@@ -699,8 +702,8 @@ export const careerService = {
 					input.kind ? sql`${tables.careerArtifact.data}->>'kind' = ${input.kind}` : undefined,
 				),
 			)
-			.orderBy(desc(tables.careerArtifact.createdAt));
-		return rows.map(({ item, company, role, activity }) => {
+			.orderBy(desc(tables.careerArtifact.createdAt), desc(tables.careerArtifact.id));
+		return rows.map(({ item, company, role, activity, status, closedReason }) => {
 			// Restore schema key order before hashing: JSONB reorders object keys on disk.
 			const parsed =
 				item.data.kind === "answers" ? careerWorkspaceSchema.shape.answers.safeParse(item.data.answers) : null;
@@ -718,7 +721,7 @@ export const careerService = {
 								entry.canonicalTransition !== false &&
 								item.inputVersion === hash(JSON.stringify([item.applicationId, entry.at, answers])),
 						)),
-				application: company === null ? null : { company, role: role ?? "" },
+				application: company === null ? null : { company, role: role ?? "", status, closedReason },
 				// Knowledge, the posting or documents changed since it was written.
 				outdated: item.data.kind !== "answers" && context !== null && item.inputVersion !== context.version,
 			};
@@ -1014,10 +1017,16 @@ export const careerService = {
 			const { values, transition } = await applicationTransitionValues(tx, userId, { status }, application, now);
 			const [updated] = await tx
 				.update(tables.application)
-				.set({ ...values, followUpAt, followUpNote })
+				.set({
+					...values,
+					followUpAt,
+					followUpNote,
+					...(changes.some((change) => change.type === "follow-up") ? { followUpDateOnly: false } : {}),
+				})
 				.where(and(eq(tables.application.id, application.id), eq(tables.application.userId, userId)))
 				.returning();
 			if (updated && transition.canonicalTransition) await recordSentResume(updated, tx);
+			if (updated && changes.some((change) => change.type === "follow-up")) await syncFollowUp(tx, updated);
 			await tx
 				.update(tables.careerArtifact)
 				.set({ data: { ...data, applied: { at: now.toISOString(), changes: selected } } })

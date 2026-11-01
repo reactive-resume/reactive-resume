@@ -406,6 +406,11 @@ export const documentsService = {
 									if (!newJob) return;
 									const jobId = await insertApplication(tx, { userId, fields: { ...newJob, resumeId: copyId } });
 									await tx.update(schema.resume).set({ applicationId: jobId }).where(eq(schema.resume.id, copyId));
+									if (created)
+										await tx
+											.update(schema.createRequest)
+											.set({ applicationId: jobId })
+											.where(eq(schema.createRequest.id, copyId));
 								},
 							}
 						: {}),
@@ -426,8 +431,16 @@ export const documentsService = {
 			: [];
 		// The job saved with this copy is part of what the request made: if it has since been deleted or unlinked, a retry
 		// is refused rather than saving the job again.
-		if (retried && newJob && !copy?.applicationId)
-			throw new ORPCError("CONFLICT", { message: "The job saved with this copy has since been deleted or unlinked." });
+		if (retried && newJob) {
+			const [receipt] = await db
+				.select({ applicationId: schema.createRequest.applicationId })
+				.from(schema.createRequest)
+				.where(and(eq(schema.createRequest.id, id), eq(schema.createRequest.userId, userId)));
+			if (!receipt?.applicationId || receipt.applicationId !== copy?.applicationId)
+				throw new ORPCError("CONFLICT", {
+					message: "The job saved with this copy has since been deleted, unlinked or changed.",
+				});
+		}
 
 		// A retry completes only links the first attempt didn't finish; a link the user has changed since stays.
 		if (application) {

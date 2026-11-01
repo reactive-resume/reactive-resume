@@ -720,3 +720,40 @@ describe("split entries are read by grammar, not by a list of company or title w
 		expect(atsVerdict(lint(data))).toBe("mostly");
 	});
 });
+
+it("rejoins a cut sentence in its original paragraph", () => {
+	const data = makeResume((resume) => {
+		resume.sections.experience.items = [
+			experienceItem({ id: "a", description: "<p>Reduced processing time by</p>" }),
+			experienceItem({
+				id: "b",
+				company: "25% across the region",
+				position: "",
+				location: "",
+				period: "",
+				description: "",
+			}),
+		];
+	});
+	expect(mergeIntoPreviousEntry(data, "/sections/experience/items/1")).toBe(true);
+	expect(data.sections.experience.items[0]?.description).toBe(
+		"<p>Reduced processing time by 25% across the region</p>",
+	);
+});
+it("keeps an undated company ending in a dangling word after a closed sentence", () => {
+	const data = makeResume((resume) => {
+		resume.sections.experience.items = [
+			experienceItem({ id: "a", description: "<p>Delivered reliable services.</p>" }),
+			experienceItem({
+				id: "b",
+				company: "Design With",
+				position: "Director",
+				location: "",
+				period: "",
+				description: "<p>Led design.</p>",
+			}),
+		];
+	});
+	expect(codesOf(data)).not.toContain("FRAGMENTED_ENTRY");
+	expect(codesOf(data)).toContain("EMPTY_PERIOD");
+});

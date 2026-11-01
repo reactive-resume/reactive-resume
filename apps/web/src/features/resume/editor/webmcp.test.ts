@@ -171,10 +171,21 @@ describe("resume editor WebMCP tools", () => {
 					{ op: "replace", path: "/basics/nope/deeper", value: "x" },
 				],
 			}),
-		).rejects.toThrow(/The replace operation at \/basics\/nope\/deeper failed: .* Nothing was changed\./);
+		).resolves.toMatch(/The replace operation at \/basics\/nope\/deeper failed: .* Nothing was changed\./);
 
 		expect(useResumeStore.getState().resume?.data.basics.name).toBe(defaultResumeData.basics.name);
 		expect(useResumeStore.getState().undoStack).toHaveLength(0);
+		await vi.advanceTimersByTimeAsync(500);
+		expect(updateResume).not.toHaveBeenCalled();
+	});
+
+	it("returns malformed-input errors without scheduling a save", async () => {
+		const tool = mountTools(makeResume());
+		await expect(tool("apply_resume_patch").execute({ operations: "nope" })).resolves.toMatch(/Error: Invalid input/);
+		expect(useResumeStore.getState().resume?.data).toEqual(defaultResumeData);
+		expect(useResumeStore.getState().undoStack).toHaveLength(0);
+		await vi.advanceTimersByTimeAsync(500);
+		expect(updateResume).not.toHaveBeenCalled();
 	});
 
 	it("rejects values the resume schema doesn't allow", async () => {
@@ -184,7 +195,7 @@ describe("resume editor WebMCP tools", () => {
 			tool("apply_resume_patch").execute({
 				operations: [{ op: "replace", path: "/metadata/template", value: "nope" }],
 			}),
-		).rejects.toThrow(/Patch produced invalid resume data/);
+		).resolves.toMatch(/Patch produced invalid resume data/);
 	});
 
 	it("refuses to edit a locked resume", async () => {
@@ -192,7 +203,7 @@ describe("resume editor WebMCP tools", () => {
 
 		await expect(
 			tool("apply_resume_patch").execute({ operations: [{ op: "replace", path: "/basics/name", value: "Ada" }] }),
-		).rejects.toThrow(/locked/);
+		).resolves.toMatch(/locked/);
 		expect(toastMocks.add).not.toHaveBeenCalled();
 	});
 
@@ -216,6 +227,6 @@ describe("resume editor WebMCP tools", () => {
 		const tool = mountTools(makeResume());
 		useResumeStore.getState().reset();
 
-		await expect(tool("read_resume").execute({})).rejects.toThrow("The resume is no longer open in the editor.");
+		await expect(tool("read_resume").execute({})).resolves.toMatch("The resume is no longer open in the editor.");
 	});
 });

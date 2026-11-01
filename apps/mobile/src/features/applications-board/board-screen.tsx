@@ -576,7 +576,7 @@ function BoardCard({ application, onMove }: BoardCardProps) {
 	const lanes = useApplicationLanes();
 	const hints = useOfferHints();
 	const next = describeNextStep(
-		getNextStep(application, undefined, lanes.lanes, offerHintFor(hints, application.id)),
+		getNextStep(application, undefined, lanes.lanes, timeZone, offerHintFor(hints, application.id)),
 		application,
 		i18n.locale,
 		timeZone,

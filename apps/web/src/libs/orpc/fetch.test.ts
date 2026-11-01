@@ -21,8 +21,19 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("RPC fetch", () => {
+	it("bounds keepalive to small requests instead of failing supported large drafts", async () => {
+		fetchMock.mockResolvedValue(new Response("ok"));
+		const { rpcFetch } = await import("./fetch");
+		await rpcFetch(rpcUrl, { method: "POST", body: "small draft" });
+		expect(fetchMock.mock.calls[0]?.[1]?.keepalive).toBe(true);
+		await rpcFetch(rpcUrl, { method: "POST", body: new Uint8Array(100000) });
+		expect(fetchMock.mock.calls[1]?.[1]?.keepalive).toBe(false);
+	});
+
 	it("uploads large wire bytes to Blob, then sends a tiny reference to the original RPC", async () => {
 		queueStaging();
+		const { setAccountScope } = await import("@/libs/auth/account-scope");
+		setAccountScope("alice");
 		const { rpcFetch } = await import("./fetch");
 		const result = await rpcFetch(
 			new Request(rpcUrl, {
@@ -53,6 +64,7 @@ describe("RPC fetch", () => {
 		expect(headers.get("content-type")).toBe(contentType);
 		expect(headers.get("x-example")).toBe("preserved");
 		expect(headers.get("x-client-timezone")).toBe(Intl.DateTimeFormat().resolvedOptions().timeZone);
+		expect(headers.get("x-account-id")).toBe("alice");
 	});
 
 	it("sends large requests directly once staging is unavailable on Docker", async () => {
@@ -66,5 +78,14 @@ describe("RPC fetch", () => {
 			expect(url).toBe(rpcUrl);
 			expect(Buffer.from(sent.body as ArrayBuffer).equals(Buffer.from(largeBody))).toBe(true);
 		}
+	});
+
+	it("sends the account the page was rendered for so a swapped session refuses its writes", async () => {
+		fetchMock.mockResolvedValue(new Response("ok"));
+		const { setAccountScope } = await import("@/libs/auth/account-scope");
+		const { rpcFetch } = await import("./fetch");
+		setAccountScope("alice");
+		await rpcFetch(rpcUrl, { method: "POST", body: "small draft" });
+		expect(new Headers(fetchMock.mock.calls[0]?.[1]?.headers).get("x-account-id")).toBe("alice");
 	});
 });

@@ -1,14 +1,20 @@
 import type { Page, Route } from "@playwright/test";
-import { Pool } from "pg";
+import { Client } from "pg";
 import { approveLocalStubOperations } from "../fixtures/ai-consent";
 import { startAiStub } from "../fixtures/ai-stub";
 import { expect, test } from "../fixtures/test";
 
 // Both server and browser run at 08:00 UTC; display dates must never stand for write order.
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const stored = async (id: string) =>
-	(await pool.query("select status, lane_id, activity from application where id = $1", [id])).rows[0];
+const stored = async (id: string) => {
+	const client = new Client({ connectionString: process.env.DATABASE_URL });
+	await client.connect();
+	try {
+		return (await client.query("select status, lane_id, activity from application where id = $1", [id])).rows[0];
+	} finally {
+		await client.end();
+	}
+};
 async function history(id: string, intended: unknown) {
 	await test.info().attach("SQL history and intended result", {
 		body: JSON.stringify({ clock: new Date().toISOString(), intended, stored: await stored(id) }, null, 2),
@@ -22,7 +28,6 @@ test.beforeAll(async () => {
 });
 test.afterAll(async () => {
 	await stub?.close();
-	await pool.end();
 });
 test.beforeEach(async ({ authPage }) => {
 	await approveLocalStubOperations(authPage);

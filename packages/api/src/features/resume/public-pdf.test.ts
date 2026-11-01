@@ -142,11 +142,13 @@ describe("createPublicResumePdf", () => {
 		expect(query?.text).toContain('"resume_slug_redirect"');
 		expect(query?.text).toContain('"resume_slug_redirect"."expires_at" > now()');
 		expect(query?.text).toContain('"resume_slug_redirect"."user_id" = "resume"."user_id"');
-		expect(query?.text).toContain('order by "resume"."slug" = $4 desc');
+		// A current username, then a current slug, wins over a released username or a previous slug.
+		expect(query?.text).toContain('order by "user"."username" = $5 desc, "resume"."slug" = $6 desc');
 		expect(query?.params[0]).toBe("old-slug");
 		expect(query?.params[1]).toBe("old-slug");
 		expect(query?.params[2]).toBe("jane");
-		expect(query?.params[3]).toBe("old-slug");
+		expect(query?.params[3]).toBe("jane");
+		expect(query?.params[5]).toBe("old-slug");
 		expect(mocks.consume).toHaveBeenCalledWith({ trustedClient: input.trustedClient, resumeId: resume.id });
 		expect(mocks.renderPdf).toHaveBeenCalledWith(
 			expect.objectContaining({ data: resume.data, filename: "Ada-Lovelace-Resume.pdf" }),

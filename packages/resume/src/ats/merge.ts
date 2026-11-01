@@ -66,7 +66,15 @@ export function mergeIntoPreviousEntry(data: ResumeData, pointer: string): boole
 				: `<p>${heading}</p>${description}`;
 
 	const before = typeof previous.description === "string" ? previous.description : "";
-	previous.description = `${before}${moved}`;
+	// Rejoin a split sentence inside its final paragraph/bullet, rather than adding a new block.
+	const tail = before.match(/^(.*?)(<\/(?:p|li)>)(\s*(?:<\/(?:ul|ol)>)?\s*)$/s);
+	const lastText = stripHtml(before).trim();
+	const continuation = lastText.length > 0 && !/[.!?…"”)]$/.test(lastText);
+	const firstParagraph = moved.match(/^<p>(.*?)<\/p>(.*)$/s);
+	previous.description =
+		tail && continuation && firstParagraph
+			? `${tail[1]?.trimEnd()} ${firstParagraph[1]}${tail[2]}${tail[3]}${firstParagraph[2]}`
+			: `${before}${moved}`;
 	items.splice(index, 1);
 	return true;
 }

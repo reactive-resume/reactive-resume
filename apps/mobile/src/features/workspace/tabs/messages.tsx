@@ -97,7 +97,7 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 	const { t } = useLingui();
 	const { space } = useTheme();
 	// Kept on the device until the server has it, so a failed save survives leaving the tab.
-	const draft = useDraft(readOnly ? null : `message:${application.id}`, initial);
+	const draft = useDraft(readOnly ? null : `message:${application.id}`, initial, true);
 	const message = draft.value;
 	const generate = useGenerate(application.id);
 	const provider = useHasAIProvider().defaultProvider;
@@ -220,7 +220,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 	const current =
 		application.followUpNote ||
 		describeNextStep(
-			getNextStep(application, now, lanes.lanes, offerHintFor(offerHints, application.id)),
+			getNextStep(application, now, lanes.lanes, timeZone, offerHintFor(offerHints, application.id)),
 			application,
 			i18n.locale,
 			timeZone,

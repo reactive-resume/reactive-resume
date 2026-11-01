@@ -6,7 +6,7 @@ import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useObserve } from "expo-observe";
-import { useRouter, Stack, useFocusEffect } from "expo-router";
+import { useRouter, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { RefreshControl, I18nManager, Platform, Pressable, ScrollView, View, useWindowDimensions } from "react-native";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
@@ -77,9 +77,10 @@ function DocumentItem({
 	const { colors, space, radius, size } = useTheme();
 	const ids = useNewDocuments((state) => state.ids);
 	const trashed = document.trashedAt;
+	const recipient = document.recipient;
 	const meta = trashed
 		? plural(daysLeftInTrash(trashed), { one: "# day left", other: "# days left" })
-		: document.updatedAt.toLocaleDateString(i18n.locale);
+		: document.editedAt.toLocaleDateString(i18n.locale);
 	const body = (
 		<View
 			style={{
@@ -120,10 +121,16 @@ function DocumentItem({
 						)}
 						{document.isPublic && <Text variant="caption" color="accentText">{t`Public`}</Text>}
 						{document.isLocked && <Text variant="caption" color="ink2">{t`Locked`}</Text>}
-						{document.application && (
+						{document.application ? (
 							<Text variant="caption" color="ink2">
 								{document.application.company}
 							</Text>
+						) : (
+							recipient && (
+								<Text variant="caption" color="ink2">
+									{t({ comment: "A letter's recipient under its name in the library", message: `To ${recipient}` })}
+								</Text>
+							)
 						)}
 						{document.tags.map((tag) => (
 							<Text key={tag} variant="caption" color="ink3">
@@ -170,16 +177,35 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 		queryKey: [...countsOptions.queryKey, scope],
 		enabled: session.status === "signed-in",
 	});
-	const [q, setQ] = useState("");
+	const params = useLocalSearchParams<{ q?: string; type?: string }>();
+	const initialQ = typeof params.q === "string" ? params.q.slice(0, 500) : "";
+	const initialType = params.type === "letter" || params.type === "resume" ? params.type : "all";
+	const [q, setQ] = useState(initialQ);
 	const [query, setQuery] = useState(q);
 	useEffect(() => {
 		const timer = setTimeout(() => setQuery(q), 300);
 		return () => clearTimeout(timer);
 	}, [q]);
-	const [type, setType] = useState<DocumentTypeFilter>("all");
+	const [type, setType] = useState<DocumentTypeFilter>(initialType);
 	const [sort, setSort] = useState<DocumentSort>("edited");
 	const [tags, setTags] = useState<string[]>([]);
 	const [publicOnly, setPublicOnly] = useState(false);
+	const request = JSON.stringify([params.q, params.type]);
+	const [lastRequest, setLastRequest] = useState(request);
+	if (lastRequest !== request) {
+		setLastRequest(request);
+		if (params.q !== undefined || params.type !== undefined) {
+			setQ(initialQ);
+			setQuery(initialQ);
+			setType(initialType);
+			setTags([]);
+			setPublicOnly(false);
+			setSort("edited");
+		}
+	}
+	useEffect(() => {
+		if (params.q !== undefined || params.type !== undefined) router.setParams({ q: undefined, type: undefined });
+	}, [params.q, params.type, router]);
 	const filterKey = JSON.stringify([trashed, q, type, tags, publicOnly, sort, scope]);
 	const [page, setPage] = useState({ filterKey, offset: 0, total: 0 });
 	const offset = page.filterKey === filterKey ? page.offset : 0;
@@ -257,6 +283,10 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	const recoveryStart = Math.min(recoveryOffset, Math.max(0, Math.floor((pending.length - 1) / 100) * 100));
 	const recoverable = trashed ? [] : pending.slice(recoveryStart, recoveryStart + 100);
 	const filtered = all;
+	const emptyType =
+		!trashed && type !== "all" && !q && !tags.length && !publicOnly && offset === 0 && displayed?.counts[type] === 0
+			? type
+			: null;
 	const firstAppearance = useFirstAppearance(filtered.length > 0);
 	const selected = rowsCurrent ? filtered.filter((document) => selection.includes(documentKey(document))) : [];
 	const { refetch: refetchDocuments } = documents;
@@ -592,7 +622,20 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 							<Skeleton height={size.row * 2} />
 							<Skeleton height={size.row * 2} />
 						</View>
-					) : documents.isError ? undefined : (
+					) : documents.isError ? undefined : emptyType ? (
+						// A type tab with nothing of its kind is empty, not filtered: it offers to make one.
+						<EmptyState
+							variant="card"
+							icon={emptyType === "letter" ? "envelope-simple" : "file-text"}
+							title={emptyType === "letter" ? t`No cover letters yet` : t`No resumes yet`}
+							message={
+								emptyType === "letter"
+									? t`Write one for a job, or start from your latest resume.`
+									: t`Import the one you have, or start blank.`
+							}
+							action={{ label: t`New document`, onPress: () => router.push(routes.new()) }}
+						/>
+					) : (
 						<EmptyState
 							variant="card"
 							icon={trashed ? "trash" : "file-text"}

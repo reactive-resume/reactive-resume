@@ -4,6 +4,7 @@ import type { SQLWrapper } from "drizzle-orm";
 import { and, arrayContains, asc, desc, eq, gte, isNull, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import { application, coverLetter, resume } from "@reactive-resume/db/schema";
+import { coverLetterRecipientText } from "../cover-letters/html";
 
 type ListInput = DocumentFilters & { userId: string; limit?: number | undefined; offset?: number | undefined };
 
@@ -23,6 +24,10 @@ function library(database: DbOrTx, input: ListInput) {
 			trashedAt: resume.trashedAt,
 			createdAt: resume.createdAt,
 			updatedAt: resume.updatedAt,
+			// The migration backfills existing documents from updated_at; coalesce only covers a row that slipped in null.
+			editedAt: sql<Date>`coalesce(${resume.editedAt}, ${resume.updatedAt})`.mapWith(resume.updatedAt).as("edited_at"),
+			recipient: sql<string | null>`null::text`.as("recipient"),
+			legacyRecipient: sql<string | null>`null::text`.as("legacy_recipient"),
 			applicationId: sql<string | null>`${application.id}`.as("application_id"),
 			company: application.company,
 			role: application.role,
@@ -44,6 +49,19 @@ function library(database: DbOrTx, input: ListInput) {
 			trashedAt: coverLetter.trashedAt,
 			createdAt: coverLetter.createdAt,
 			updatedAt: coverLetter.updatedAt,
+			editedAt: sql<Date>`coalesce(${coverLetter.editedAt}, ${coverLetter.updatedAt})`
+				.mapWith(coverLetter.updatedAt)
+				.as("edited_at"),
+			recipient: sql<
+				string | null
+			>`coalesce(nullif(${coverLetter.recipientCompany}, ''), nullif(${coverLetter.recipientName}, ''))`.as(
+				"recipient",
+			),
+			legacyRecipient: sql<
+				string | null
+			>`case when ${coverLetter.layout} = 'freeform' then ${coverLetter.recipient} else null end`.as(
+				"legacy_recipient",
+			),
 			applicationId: sql<string | null>`${application.id}`.as("application_id"),
 			company: application.company,
 			role: application.role,
@@ -87,7 +105,7 @@ async function readDocuments(database: DbOrTx, input: ListInput) {
 	const order =
 		input.sort === "name"
 			? asc(sql`lower(${rows.name})`)
-			: desc(input.sort === "created" ? rows.createdAt : rows.updatedAt);
+			: desc(input.sort === "created" ? rows.createdAt : rows.editedAt);
 	const query = database.select().from(rows).where(where).orderBy(order, asc(rows.type), asc(rows.id)).$dynamic();
 	const paginated = input.limit !== undefined || input.offset !== undefined;
 	const items = await (paginated ? query.limit(input.limit ?? 20).offset(input.offset ?? 0) : query);
@@ -98,8 +116,9 @@ async function readDocuments(database: DbOrTx, input: ListInput) {
 				.where(where)
 		: undefined;
 	return {
-		items: items.map(({ applicationId, company, role, ...row }): DocumentSummary => ({
+		items: items.map(({ applicationId, company, role, legacyRecipient, ...row }): DocumentSummary => ({
 			...row,
+			recipient: row.recipient ?? (coverLetterRecipientText(legacyRecipient ?? "") || null),
 			application: applicationId ? { id: applicationId, company: company ?? "", role: role ?? "" } : null,
 		})),
 		total: totals?.[0]?.total ?? items.length,

@@ -4,6 +4,8 @@ import { ErrorScreen } from "./components/layout/error-screen";
 import { LoadingScreen } from "./components/layout/loading-screen";
 import { NotFoundScreen } from "./components/layout/not-found-screen";
 import { listedApplication, STAGE_SCOPE } from "./features/applications/use-application-actions";
+import { registerAccountReset } from "./libs/auth/account-scope";
+import { clearAccountState, syncAccountDataAcrossTabs } from "./libs/auth/clear-account-data";
 import { orpc } from "./libs/orpc/client";
 import { getQueryClient } from "./libs/query/client";
 import { loadRootContext } from "./libs/root-context";
@@ -21,6 +23,9 @@ export const getRouter = async () => {
 		() => STAGE_SCOPE,
 		(id) => listedApplication(queryClient, id),
 	);
+	// A root load that discovers another account drops this account's cached data before adopting the new identity.
+	registerAccountReset(() => clearAccountState(queryClient));
+	syncAccountDataAcrossTabs(queryClient);
 
 	const { theme, locale, session, flags } = await loadRootContext(queryClient);
 

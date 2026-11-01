@@ -60,7 +60,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 		return { meta: [{ title }, { name: "description", content: description }] };
 	},
 	beforeLoad: async ({ context, location, preload }) => {
-		const root = await loadRootContext(context.queryClient);
+		const root = await loadRootContext(context.queryClient, { commit: !preload });
 		const { aliasUrl, appUrl } = root.flags;
 		// Sign-in and the editor live on APP_URL; the alias (APP_ALIAS_URL) only serves the public pages. The server
 		// redirects full page loads; this catches links followed inside the app.

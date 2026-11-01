@@ -152,3 +152,30 @@ it("does not announce removal when a remote lock prevents editing", async () => 
 	expect(mocks.toast.mock.calls.some(([value]) => value.description === "Photo removed")).toBe(false);
 	client.clear();
 });
+
+it("rejects unreadable photo bytes before opening the crop dialog", async () => {
+	const { client } = renderPhoto();
+	vi.stubGlobal(
+		"Image",
+		class {
+			src = "";
+			decode = async () => {
+				throw new Error("unreadable");
+			};
+		},
+	);
+	const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+	if (!input) throw new Error("Missing photo input");
+	await act(async () => {
+		fireEvent.change(input, { target: { files: [new File(["not an image"], "bad.png", { type: "image/png" })] } });
+	});
+	expect(screen.queryByRole("dialog", { name: "Crop photo" })).toBeNull();
+	expect(mocks.toast).toHaveBeenCalledWith(
+		expect.objectContaining({
+			type: "error",
+			description: "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo.",
+		}),
+	);
+	vi.unstubAllGlobals();
+	client.clear();
+});

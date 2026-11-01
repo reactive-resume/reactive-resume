@@ -19,7 +19,7 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 	const { locale, timeZone } = useCareerTime();
 	const hints = useOfferHints(application.status === "offer");
 	const next = describeNextStep(
-		getNextStep(application, undefined, offerHintFor(hints, application.id)),
+		getNextStep(application, undefined, timeZone, offerHintFor(hints, application.id)),
 		application,
 		locale,
 		timeZone,

@@ -17,6 +17,8 @@ export const createRequest = pg.pgTable(
 			.references(() => user.id, { onDelete: "cascade" }),
 		/** SHA-256 of what the request asked for, not of what the row later becomes, so later edits don't matter. */
 		fingerprint: pg.text("fingerprint").notNull(),
+		/** Job created atomically with a copy. Retained after deletion to reject stale retries. */
+		applicationId: pg.text("application_id"),
 		createdAt: pg.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	},
 	(t) => [pg.index().on(t.userId)],

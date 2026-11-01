@@ -84,7 +84,7 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 	const offline = useResumeStore((state) => state.saveStatus === "offline");
 
 	const { mutate: trashResume } = useMutation(orpc.documents.trash.mutationOptions());
-	const { mutate: restoreResume } = useMutation(orpc.documents.restore.mutationOptions());
+	const { mutateAsync: restoreResume } = useMutation(orpc.documents.restore.mutationOptions());
 	const { mutate: setLockedResume } = useMutation(orpc.resume.setLocked.mutationOptions());
 
 	// Locking is reversible, so it doesn't ask for confirmation.
@@ -115,10 +115,10 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 						description: t`“${name}” moved to Trash`,
 						actionProps: {
 							children: t`Undo`,
+							// By now the editor has gone, and a mutation's own callbacks go with it: catch the promise.
 							onClick: () =>
-								restoreResume(
-									{ type: "resume", id },
-									{ onError: (error) => toast.add({ type: "error", description: getResumeErrorMessage(error) }) },
+								void restoreResume({ type: "resume", id }).catch((error: unknown) =>
+									toast.add({ type: "error", description: getResumeErrorMessage(error) }),
 								),
 						},
 					});

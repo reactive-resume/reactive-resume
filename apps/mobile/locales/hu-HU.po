@@ -322,6 +322,11 @@ msgstr "{0, plural, one {Önéletrajz (#)} other {Önéletrajzok (#)}}"
 msgid "{0, plural, one {Show # ignored issue again} other {Show # ignored issues again}}"
 msgstr "{0, plural, one {# figyelmen kívül hagyott probléma újbóli megjelenítése} other {# figyelmen kívül hagyott probléma újbóli megjelenítése}}"
 
+#. placeholder {0}: filtered.length
+#: src/features/applications/list-screen.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
+
 #. placeholder {0}: -minutes
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
@@ -531,6 +536,10 @@ msgstr "{closed} lezárt"
 msgid "{company} · {tabName}"
 msgstr "{company} · {tabName}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# dokumentum frissítve} other {# dokumentum frissítve}}"
@@ -542,6 +551,10 @@ msgstr "{cost} évente"
 #: src/features/share/custom-domain.tsx
 msgid "{cost} the first year"
 msgstr "{cost} az első évben"
+
+#: src/features/applications/list-screen.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{count, plural, one {# column} other {# columns}}"
@@ -559,8 +572,16 @@ msgstr "{day} · {length} m"
 msgid "{days, plural, =0 {· since today} one {· for # day} other {· for # days}}"
 msgstr "{days, plural, =0 {· ma óta} one {· # napja} other {· # napja}}"
 
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
+msgstr "{days, plural, one {{company}: # napja nincs válasz. Most általában rendben van egy rövid utánkövetés.} other {{company}: # napja nincs válasz. Most általában rendben van egy rövid utánkövetés.}}"
+
 #: src/features/documents/queries.ts
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
 msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
@@ -692,6 +713,10 @@ msgstr "{pairing} típus"
 #: src/features/assistant/page-marks.tsx
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# javasolt módosítás ezen az oldalon · semmi sem változik, amíg el nem fogadod} other {# javasolt módosítás ezen az oldalon · semmi sem változik, amíg el nem fogadod}}"
+
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
@@ -945,6 +970,11 @@ msgstr "Elfogadás"
 msgid "Accept all"
 msgstr "Elfogadja az összeset"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "Accepted"
+msgstr "Elfogadott"
+
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
 msgstr "Elfogadott egy másik ajánlatot"
@@ -1005,6 +1035,10 @@ msgstr "Tény hozzáadása"
 
 #: src/features/documents/new-document.tsx
 msgid "Add a job"
+msgstr ""
+
+#: src/features/documents/document-sheets.tsx
+msgid "Add a job…"
 msgstr ""
 
 #: src/features/write/basics-screen.tsx
@@ -1132,6 +1166,10 @@ msgstr "Adjon hozzá kísérőlevelet"
 msgid "Add dates"
 msgstr "Adjon hozzá dátumokat"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Add education"
 msgstr "Add hozzá az oktatást"
@@ -1186,8 +1224,8 @@ msgid "Add offer"
 msgstr "Állásajánlat hozzáadása"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Add meg kézzel az állásajánlat feltételeit, vagy használd az Üzenetek lapon az opcionális MI-alapú adatkinyerést."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr "Add meg kézzel az állásajánlat feltételeit, beleértve az elfogadott ajánlatokat, vagy használd az Üzenetek lapon az opcionális MI-alapú adatkinyerést. Az elfogadott állapotra váltás nem rögzít feltételeket."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1257,6 +1295,10 @@ msgstr "Címke hozzáadása"
 #: src/features/write/fields.ts
 msgid "Add text"
 msgstr "Szöveg hozzáadása"
+
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
@@ -1847,6 +1889,10 @@ msgstr "Emelkedő"
 msgid "Ask"
 msgstr "Kérdez"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Kérdezz erről a jelentkezésről…"
@@ -1911,10 +1957,6 @@ msgstr "Helyettes"
 #: src/features/search/search-screen.tsx
 msgid "Assistant conversations"
 msgstr "Asszisztensi beszélgetések"
-
-#: src/features/application-detail/sheets.tsx
-msgid "At 09:00 that day ({timeZone})."
-msgstr "Aznap 09:00-kor ({timeZone})."
 
 #: app/_layout.tsx
 #: src/features/ats-checker/checker.tsx
@@ -2258,6 +2300,7 @@ msgstr "Törölje a kérést"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Karrier"
 
@@ -2315,6 +2358,10 @@ msgstr "Téma módosítása erre:…"
 msgid "Change timezone"
 msgstr "Időzóna módosítása"
 
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "Közvetlenül megváltoztatta az önéletrajzot (egy korábbi beszélgetés)"
@@ -2326,6 +2373,11 @@ msgstr "A módosításokat nem sikerült menteni. Újrapróbálkozás, mielőtt 
 #: src/features/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Csak a szakaszcímeket és a dátumszavakat módosítja, a tartalmat nem."
+
+#. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/draft/conflict-sheet.tsx
 msgid "Changes to “{name}” were saved on another device. Your edits are still on this device. Choose which version to keep."
@@ -2667,6 +2719,8 @@ msgstr "Közeli…"
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Zárt"
 
@@ -2680,6 +2734,7 @@ msgstr "Zárva: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Coach"
@@ -2830,6 +2885,10 @@ msgstr "Csatlakoztasson egy AI-szolgáltatót"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Csatlakoztass egy AI-szolgáltatót a Beállításokban az automatikus frissítéshez."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Csatlakozzon egy AI-szolgáltatóhoz, hogy részleteket olvashasson be a beillesztett szövegből. A kézi bevitel AI nélkül is működik."
@@ -2853,6 +2912,10 @@ msgstr "Csatlakoztassa az íráshoz, álláskereséshez és munkához használt 
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Csatlakoztatva · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Csatlakoztatott alkalmazások"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3217,6 +3280,7 @@ msgstr "Nem sikerült betölteni ennek a verziónak az oldalát."
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/career/shared.tsx
+#: src/features/search/search-screen.tsx
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Nem sikerült betölteni. Ellenőrizze a kapcsolatot, és próbálja újra."
 
@@ -3250,6 +3314,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Nem sikerült beadottként megjelölni. Próbáld újra."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3512,6 +3577,10 @@ msgid "Couldn't upload the photo."
 msgstr "Nem sikerült feltölteni a fényképet."
 
 #: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr "Nem sikerült feltölteni a fotót. Válassz olvasható PNG-, JPEG-, WebP- vagy GIF-fotót, legfeljebb 10 MB méretben, majd próbáld újra."
+
+#: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "Nem sikerült feltölteni a fotót. Próbáld újra."
 
@@ -3542,6 +3611,7 @@ msgstr "Kitöltés"
 #: app/_layout.tsx
 #: app/letter/[id]/_layout.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Cover letter"
@@ -3558,6 +3628,7 @@ msgid "Cover letter — {0}"
 msgstr "Kísérőlevél — {0}"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Cover letter file"
 msgstr "Kísérőlevél fájl"
@@ -4146,6 +4217,7 @@ msgstr "A letöltés megnyitja a rendszer megosztási menüjét. A fájl mentés
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "A letöltés megnyitja a rendszermegosztási lapot. Válasszon tárhelyszolgáltatót a fájl mentéséhez. A hivatkozott motivációs levél második fájlként nyílik meg."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "PDF letöltése"
@@ -4800,6 +4872,7 @@ msgid "Follow-up date"
 msgstr "Utánkövetés dátuma"
 
 #: src/features/applications/add-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Utánkövetési jegyzet"
 
@@ -5066,6 +5139,7 @@ msgstr "Címsor 3"
 msgid "Heading changed"
 msgstr "A címsor megváltozott"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Főcím"
@@ -5346,6 +5420,10 @@ msgid "Import it"
 msgstr "Importálja"
 
 #: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
 msgstr "Importálja jelenlegi önéletrajzát, vagy kezdje újra a nevét."
 
@@ -5373,6 +5451,15 @@ msgstr "A kiválasztott vonal javítása"
 #: src/features/write/improve.tsx
 msgid "Improving…"
 msgstr "Javuló…"
+
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Including closed"
@@ -5663,6 +5750,10 @@ msgstr "Maradj két-három betűcsaládnál. Minden további betűtípus újabb 
 msgid "Keep together"
 msgstr "Tartsuk együtt"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Megtartja a legspecifikusabb részeket"
@@ -5703,6 +5794,7 @@ msgstr "Üdvözlettel,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Tudástár"
 
@@ -5784,6 +5876,7 @@ msgid "Later"
 msgstr "Később"
 
 #: src/features/assistant/chat-view.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Legújabb"
 
@@ -6060,6 +6153,10 @@ msgstr "Összekapcsolva. Név, e-mail, telefonszám és város frissítése az �
 msgid "Links"
 msgstr "Linkek"
 
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
+
 #: src/features/applications-board/views.tsx
 msgid "List"
 msgstr "Lista"
@@ -6156,6 +6253,7 @@ msgstr "Nyilvános cím betöltése…"
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
 #: src/features/write/improve.tsx
@@ -6473,6 +6571,7 @@ msgstr "Többet"
 msgid "More details"
 msgstr "További részletek"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "További lehetőségek"
@@ -6851,6 +6950,9 @@ msgid "No application"
 msgstr "Nincs álláspályázat"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Még nincs álláspályázat. Először adjon hozzá egyet az álláspályázatokhoz."
@@ -6879,6 +6981,10 @@ msgstr "Nem található megszokott szakaszcím."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Még nincsenek beszélgetések erről a dokumentumról."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6931,6 +7037,10 @@ msgstr ""
 #: src/features/write/pickers.tsx
 msgid "No icons match."
 msgstr "Egyetlen ikon sem egyezik."
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "No job yet"
@@ -7015,10 +7125,6 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "No reply yet"
-msgstr "Még nincs válasz"
-
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "Nincs válasz"
@@ -7030,6 +7136,10 @@ msgstr "Nincs eredmény"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Nincs önéletrajz"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7289,6 +7399,8 @@ msgid "Off. Only you can see this resume."
 msgstr "Le. Ezt az önéletrajzot csak Ön láthatja."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Offer"
 msgstr "Ajánlat"
@@ -7307,6 +7419,7 @@ msgid "Offer type"
 msgstr "Állásajánlat típusa"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Ajánlatok"
 
@@ -7440,6 +7553,7 @@ msgstr "Helyszíni"
 msgid "Onsite interview"
 msgstr "Helyszíni interjú"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Megnyitás"
@@ -7868,10 +7982,12 @@ msgstr "Fotó"
 msgid "Photo hidden"
 msgstr "A fotó elrejtve"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "A fotó elrejtve az oldalról."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Fotó az oldalon."
@@ -8504,6 +8620,12 @@ msgstr "Felvétel ideje"
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
+#: src/features/workspace/parts.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Recruiter"
 msgstr "Toborzó"
@@ -8921,6 +9043,7 @@ msgstr "Eredmény"
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
@@ -8945,6 +9068,7 @@ msgid "Resume feedback, product help, and community ideas."
 msgstr "Önéletrajz-visszajelzés, segítség a termékhez és közösségi ötletek."
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Önéletrajzfájl"
@@ -9022,6 +9146,7 @@ msgstr "A {0} letöltve a {1} használatával. A visszakeresési idő nem határ
 #: src/features/letters/page.tsx
 #: src/features/letters/share.tsx
 #: src/features/letters/write.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
@@ -9110,10 +9235,6 @@ msgstr ""
 msgid "Review checks only reflect what you checked yourself."
 msgstr ""
 
-#: src/features/career/today.tsx
-msgid "Review draft"
-msgstr "Vázlat áttekintése"
-
 #: src/features/write/outline.tsx
 msgid "Review each section before using this resume."
 msgstr "Az önéletrajz használata előtt tekintse át az egyes részeket."
@@ -9133,6 +9254,10 @@ msgstr "Válaszom értékelése"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "A Válaszom értékelése elküldi a kérdést, az elmondottakat, ezt a hirdetést és a Tudástáradat ide: {providerName}."
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr "Tekintsd át az engedélyeket, és válaszd le az alkalmazásokat a böngésződben. Előfordulhat, hogy ott be kell jelentkezned."
 
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
@@ -9974,6 +10099,10 @@ msgstr "Rövidítsd a kérdéseket 2000, a válaszokat 6000 karakterre, mielőtt
 msgid "Shorter"
 msgstr "Rövidebb"
 
+#: src/features/applications/list-screen.tsx
+msgid "Show"
+msgstr "Megmutat"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "„Reactive Resume-val készült” megjelenítése"
@@ -9987,9 +10116,14 @@ msgstr "További {0} megjelenítése"
 msgid "Show {title} on the page"
 msgstr "A {title} megjelenítése az oldalon"
 
+#: src/features/applications/list-screen.tsx
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Összes megjelenítése"
+
+#: src/features/search/search-screen.tsx
+msgid "Show all letters"
+msgstr "Összes motivációs levél megjelenítése"
 
 #: src/features/career/facts.tsx
 msgid "Show all types"
@@ -10051,6 +10185,7 @@ msgstr "Mutass többet"
 msgid "Show on page"
 msgstr "Megjelenítés az oldalon"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Fotó megjelenítése"
@@ -11083,6 +11218,7 @@ msgstr ""
 msgid "The server returned an invalid import result. Refresh Documents before retrying."
 msgstr "A szerver érvénytelen importálási eredményt adott vissza. Az újrapróbálkozás előtt frissítse a(z) Dokumentumok fájlt."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/workspace/parts.tsx
 msgid "The server version couldn't be loaded. Your text is kept; try again."
 msgstr "A szerver verzióját nem sikerült betölteni. A szöveged megmarad; próbáld újra."
@@ -11222,6 +11358,8 @@ msgstr "Ez a motivációs levél fájl nem érvényes."
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
 msgstr ""
 
+#: src/features/application-detail/sheets.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/career/schedule-sheet.tsx
 msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr "Ez a dátum vagy idő nem létezik az Ön időzónájában. Válassz másik időpontot."
@@ -11511,6 +11649,7 @@ msgstr "Húzza meg egy oldalra"
 msgid "Tightening"
 msgstr "Tömörítés"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Időpont"
@@ -11558,6 +11697,11 @@ msgstr "Cím"
 msgid "To"
 msgstr "Címzett"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Ellenőrizni"
@@ -11568,6 +11712,7 @@ msgstr "Ha emlékeztetőt szeretne kapni, engedélyezze az értesítéseket az e
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Ma"
@@ -11807,6 +11952,7 @@ msgstr "A hivatkozások aláhúzása"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12053,6 +12199,8 @@ msgid "Use reviewed roles in preferences"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx
+#: src/features/application-detail/sections.tsx
+#: src/features/career/preferences.tsx
 msgid "Use saved version"
 msgstr ""
 
@@ -12282,6 +12430,10 @@ msgstr "Önkéntesség"
 msgid "Wait for your account timezone to load, retry if it failed, or clear the deadline."
 msgstr "Várd meg, amíg betöltődik a fiókod időzónája, sikertelen betöltés esetén próbáld újra, vagy ürítsd ki a határidő mezőjét."
 
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Waiting for you"
 msgstr "Rád vár"
@@ -12321,6 +12473,7 @@ msgstr "A webes keresés sikertelen: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "Az internetes keresések ezekben az országokban keresnek állást. Válasszon legfeljebb három országot."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Weboldal"
@@ -12574,6 +12727,10 @@ msgstr "Számokat számjegyekkel írj"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Írj egy ötrészes történetet valamiről, amit tettél. Az Eredmény és Tanulság mezőt hagyd üresen, amíg nem tudod alátámasztani a tartalmukat."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12845,6 +13002,10 @@ msgstr "a szolgáltatód"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Nyilvános linkjei a következővel kezdődnek: {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."
