@@ -1420,7 +1420,6 @@ msgstr "செயலில்"
 msgid "Activity"
 msgstr "செயல்பாடு"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1475,14 +1474,6 @@ msgstr "இருப்பிடத்தைச் சேர்க்கவு�
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "குறிப்பைச் சேர்க்கவும்"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "குறிப்பைச் சேர்க்கவும்…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2686,6 +2677,11 @@ msgstr "பி.ஏ., கம்யூனிகேஷன் டிசைன்"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "மீண்டும்"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3966,8 +3962,8 @@ msgid "Copy stylesheet"
 msgstr "பாணித்தாளை நகலெடுக்கவும்"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "அறிவிப்பிலிருந்து முழு வேலை விளக்கத்தையும் நகலெடுத்து கீழே ஒட்டவும். உங்களுக்காக நாங்கள் புலங்களை நிரப்புவோம், மேலும் பொருத்த மதிப்பெண் மற்றும் தனிப்பயனாக்கத்திற்காக அந்த உரையை இந்த விண்ணப்பத்துடன் சேமித்து வைப்போம்."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4741,6 +4737,10 @@ msgstr "அட்டை கடிதம் - {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "அட்டை கடிதம் · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4962,6 +4962,10 @@ msgstr "தேதிகளுக்கான நெடுவரிசை"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "தேதி வடிவம்"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7558,7 +7562,6 @@ msgstr "வேலை விளக்கம்"
 msgid "Job link or posting text"
 msgstr "வேலை இணைப்பு அல்லது வேலை இடுகை உரை"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "வேலை போட்டி"
@@ -8037,6 +8040,11 @@ msgstr "கடிதம் · இன்னும் அனுப்பப்ப�
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "கடித உடல்"
@@ -8137,8 +8145,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "Reactive Resume ஒன்றை இணைக்கவும் (பரிந்துரைக்கப்படுகிறது)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "AI பொருத்த மதிப்பெண்ணையும் தனிப்பயனாக்கத்தையும் பயன்படுத்த ஒரு Reactive Resume ரெஸ்யூமை இணைக்கவும்."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8153,6 +8161,10 @@ msgstr "வேலை விண்ணப்பத்தை இணைக்கவ�
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "வேலை விண்ணப்பத்தை இணைக்கவும்..."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8389,6 +8401,18 @@ msgstr "பூட்டப்பட்டது"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "பூட்டப்பட்டது. திருத்த, திறக்கவும்."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9287,6 +9311,10 @@ msgstr "இன்னும் வேலை இல்லை"
 msgid "No keys yet."
 msgstr "இன்னும் சாவிகள் இல்லை."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "பணிப் பதவியும் முதலாளியும் இணைந்த வரி எதுவும் தெரியவில்லை."
@@ -9365,6 +9393,7 @@ msgstr "பதில் இல்லை"
 msgid "No results found."
 msgstr "எந்த முடிவுகளும் கிடைக்கவில்லை."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "ரெஸ்யூம் இல்லை"
@@ -10312,8 +10341,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "வேலை இணைப்பை ஒட்டவும். சரிபார்ப்பு, உதவியாளர் மற்றும் உங்கள் கடிதம் பயன்படுத்தும்படி வேலை இடுகையைச் சேமிப்போம்."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "வேலை அறிவிப்பை ஒருமுறை ஒட்டுங்கள். அது உங்கள் ரெஸ்யூமின் ஏற்ப மாற்றிய நகல், பொருத்த மதிப்பெண், கவர் கடித வரைவு, பதவியைக் கண்காணிக்க ஓர் இடம் ஆகியவற்றுக்குப் பயன்படும்."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11883,6 +11912,10 @@ msgstr "ரெஸ்யூம் விவரங்கள்"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "ரெஸ்யூம் கோப்பு"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13543,6 +13576,10 @@ msgstr "நிலையின் முடிவு"
 msgid "Stage stays {stage}"
 msgstr "நிலை {stage}-ஆகவே இருக்கும்"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13837,6 +13874,7 @@ msgstr "ஆதரவு"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "சான்று உள்ளது"
 
@@ -14261,8 +14299,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "உங்களை இங்கு அனுப்பிய பயன்பாடு தவறான அங்கீகாரக் கோரிக்கையை வழங்கியது. பயன்பாட்டிற்குத் திரும்பி மீண்டும் முயற்சிக்கவும்."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "இந்த கடிதம் வேலைக்கான விண்ணப்பம்."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14650,6 +14688,10 @@ msgstr "இந்த விண்ணப்பத்தைத் திறக்�
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "இந்த வேலை விண்ணப்பத்தில் இதுவரை எந்த வேலை இடுகையும் சேமிக்கப்படவில்லை. அதனுடன் பொருந்த அதை ஒட்டவும்."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "இந்த உலாவியால் இங்கே பதிவு செய்ய முடியாது. ஒலிக் கோப்பைத் தேர்ந்தெடுக்கவும், அல்லது உங்கள் பதிலைத் தட்டச்சு செய்யவும்."
@@ -14794,8 +14836,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "இந்த கடிதம் மற்றும் \"{resumeName}\" என இரண்டு PDFs, பொருந்துமாறு பெயரிடப்பட்டது."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "இந்த கடிதம் பூட்டப்பட்டுள்ளது. திருத்த, அதன் மெனுவிலிருந்து திறக்கவும்."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15567,6 +15618,14 @@ msgstr "வரிசையாகப் படிக்க வேண்டிய 
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "தளவமைப்பு மீண்டும் காட்டப்படும்போதும் மாறாமல் இருக்க A4 அல்லது US Letter அளவைப் பயன்படுத்தவும்."
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
+
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
 msgstr "குறைந்தது 3 எழுத்துகளைப் பயன்படுத்தவும்."
@@ -16335,6 +16394,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "ஒரு கடிதம் எழுதுங்கள்"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."

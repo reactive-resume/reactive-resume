@@ -130,6 +130,11 @@ export function WorkspaceScreen({ tab, children }: WorkspaceScreenProps) {
 	return (
 		<View style={{ flex: 1 }}>
 			<Stack.Screen options={{ title: application.company }} />
+			<Button
+				label={t`Stage, details and timeline`}
+				variant="secondary"
+				onPress={() => router.push(routes.applicationDetails(application.id))}
+			/>
 			<KeyboardAwareScrollView
 				extraKeyboardSpace={keyboardSpace}
 				bottomOffset={space.s6}

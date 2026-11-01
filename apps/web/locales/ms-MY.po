@@ -1420,7 +1420,6 @@ msgstr "Aktif"
 msgid "Activity"
 msgstr "Aktiviti"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1475,14 +1474,6 @@ msgstr "Tambah lokasi"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "Tambah nota"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "Tambah nota…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2686,6 +2677,11 @@ msgstr "BA, Reka Bentuk Komunikasi"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "belakang"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3966,8 +3962,8 @@ msgid "Copy stylesheet"
 msgstr "Salin helaian gaya"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "Salin keseluruhan penerangan kerja daripada iklan tersebut dan tampalkannya di bawah. Kami akan mengisi medan untuk anda dan menyimpan teks itu bersama permohonan ini untuk pemarkahan padanan dan penyesuaian."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4741,6 +4737,10 @@ msgstr "Surat lamaran — {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "Surat lamaran · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4962,6 +4962,10 @@ msgstr "Lajur tarikh"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "Format tarikh"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7558,7 +7562,6 @@ msgstr "Penerangan kerja"
 msgid "Job link or posting text"
 msgstr "Pautan kerja atau teks siaran kerja"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "Padanan kerja"
@@ -8037,6 +8040,11 @@ msgstr "Surat · belum dihantar"
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "Badan surat"
@@ -8137,8 +8145,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "Pautkan Reactive Resume (disyorkan)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "Pautkan sebuah Reactive Resume untuk menggunakan pemarkahan padanan dan penyesuaian AI."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8153,6 +8161,10 @@ msgstr "Pautkan permohonan kerja"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "Pautkan permohonan kerja…"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8389,6 +8401,18 @@ msgstr "Terkunci"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Terkunci. Buka kunci untuk mengedit."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9287,6 +9311,10 @@ msgstr "Belum ada kerja"
 msgid "No keys yet."
 msgstr "Tiada kunci lagi."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "Tiada baris yang kelihatan seperti jawatan yang dipasangkan dengan majikan."
@@ -9365,6 +9393,7 @@ msgstr "Tiada respon"
 msgid "No results found."
 msgstr "Tiada keputusan dijumpai."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "Tiada resume"
@@ -10312,8 +10341,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "Tampal pautan kerja. Kami akan menyimpan siaran kerja supaya Semak, pembantu dan surat anda boleh menggunakannya."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "Tampal siaran kerja sekali. Ia menghasilkan salinan resume anda yang disesuaikan, skor padanan, draf surat iringan dan tempat untuk menjejaki peranan itu."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11883,6 +11912,10 @@ msgstr "butiran resume"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "Fail resume"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13543,6 +13576,10 @@ msgstr "Hasil peringkat"
 msgid "Stage stays {stage}"
 msgstr "Peringkat kekal {stage}"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13837,6 +13874,7 @@ msgstr "Sokongan"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "Disokong"
 
@@ -14261,8 +14299,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "Aplikasi yang menghantar anda ke sini membuat permintaan kebenaran yang tidak sah. Kembali ke aplikasi itu dan cuba lagi."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "Permohonan kerja surat ini adalah untuk."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14650,6 +14688,10 @@ msgstr "Permohonan ini tidak dapat dibuka."
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "Permohonan kerja ini tidak mempunyai siaran kerja yang disimpan lagi. Tampalkannya untuk dipadankan dengannya."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "Pelayar ini tidak dapat merakam di sini. Pilih fail audio, atau taip jawapan anda."
@@ -14794,8 +14836,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Surat ini dan \"{resumeName}\" sebagai dua PDFs, dinamakan untuk dipadankan."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "Surat ini dikunci. Buka kuncinya daripada menunya untuk mengedit."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15567,6 +15618,14 @@ msgstr "Gunakan satu lajur untuk apa-apa yang perlu dibaca secara berurutan."
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "Gunakan A4 atau US Letter supaya susun atur kekal walaupun diberi rendering semula."
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
+
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
 msgstr "Gunakan sekurang-kurangnya 3 aksara."
@@ -16335,6 +16394,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "Tulis surat"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."

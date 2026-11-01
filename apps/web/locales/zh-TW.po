@@ -1420,7 +1420,6 @@ msgstr "積極的"
 msgid "Activity"
 msgstr "活動"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1475,14 +1474,6 @@ msgstr "新增地點"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "新增註釋"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "新增備註…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2686,6 +2677,11 @@ msgstr "傳播設計學士"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "後退"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3966,8 +3962,8 @@ msgid "Copy stylesheet"
 msgstr "複製樣式表"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "從職缺公告中複製完整的職缺描述並貼到下方。我們會為您填寫各個欄位，並將該文字與這份應徵一併保存，用於符合度評分與履歷客製。"
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4741,6 +4737,10 @@ msgstr "求職信 — {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "求職信·Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4962,6 +4962,10 @@ msgstr "日期欄"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "日期格式"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7558,7 +7562,6 @@ msgstr "職缺描述"
 msgid "Job link or posting text"
 msgstr "職位連結或職位發布文本"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "職位匹配"
@@ -8037,6 +8040,11 @@ msgstr "求職信 · 尚未寄出"
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "信體"
@@ -8137,8 +8145,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "連結 Reactive Resume（建議）"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "連結一份 Reactive Resume 履歷，即可使用 AI 符合度評分與客製功能。"
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8153,6 +8161,10 @@ msgstr "連結職位申請"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "連結工作申請..."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8389,6 +8401,18 @@ msgstr "鎖定"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "鎖定。解鎖即可編輯。"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9287,6 +9311,10 @@ msgstr "還沒有工作"
 msgid "No keys yet."
 msgstr "還沒有鑰匙。"
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "沒有看起來像「職稱 + 雇主」這種搭配的行。"
@@ -9365,6 +9393,7 @@ msgstr "沒有回應"
 msgid "No results found."
 msgstr "找不到相符的結果。"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "沒有履歷"
@@ -10312,8 +10341,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "貼上職位連結。我們將保存招聘訊息，以便檢查、助理和您的信件可以使用它。"
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "只要貼上一次職缺公告，就能產生客製化履歷、契合度分數、求職信草稿，以及追蹤該職缺的位置。"
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11883,6 +11912,10 @@ msgstr "履歷詳情"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "履歷檔案"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13543,6 +13576,10 @@ msgstr "階段結果"
 msgid "Stage stays {stage}"
 msgstr "階段維持為「{stage}」"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13837,6 +13874,7 @@ msgstr "支援"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "有證據"
 
@@ -14261,8 +14299,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "將您導向至此的應用程式提出了無效的授權要求。請返回該應用程式後再試一次。"
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "這封信所針對的工作申請。"
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14650,6 +14688,10 @@ msgstr "無法開啟這筆應徵紀錄。"
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "此職位申請尚未保存職位發布。粘貼它以匹配它。"
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "此瀏覽器無法在這裡錄音。請選擇音訊檔案，或輸入您的回答。"
@@ -14794,8 +14836,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "此字母與“{resumeName}”為兩個PDFs，命名相符。"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "這封信被鎖住了。從選單中將其解鎖以進行編輯。"
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15567,6 +15618,14 @@ msgstr "對於需要按順序閱讀的內容，使用單欄佈局。"
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "使用 A4 或美式信紙尺寸，讓版面在重新轉譯後依然保持完好。"
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
+
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
 msgstr "至少使用 3 個字元。"
@@ -16335,6 +16394,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "寫信"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."

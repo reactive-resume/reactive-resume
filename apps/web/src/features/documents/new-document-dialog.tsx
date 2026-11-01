@@ -14,6 +14,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
+import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -279,6 +280,8 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	});
 
 	const { startBlank, trySample, newLetter, creating } = useStartDocument(data?.applicationId);
+	const { data: letterResumes } = useQuery(orpc.resume.list.queryOptions());
+	const [letterResumeId, setLetterResumeId] = useState(data?.sourceResumeId ?? "");
 
 	const chooseFile = () => inputRef.current?.click();
 
@@ -378,13 +381,28 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						</DialogDescription>
 					</DialogHeader>
 
+					<label className="grid gap-1.5 text-sm">
+						<Trans>Resume for a new letter</Trans>
+						<NativeSelect
+							value={letterResumeId}
+							onChange={(event) => setLetterResumeId(event.target.value)}
+							disabled={creating}
+						>
+							<option value="">{t`No resume`}</option>
+							{letterResumes?.map((resume) => (
+								<option key={resume.id} value={resume.id}>
+									{resume.name}
+								</option>
+							))}
+						</NativeSelect>
+					</label>
 					{context === "letters" && (
 						<ChoiceTile
 							icon="envelope-simple"
 							title={t`New cover letter`}
 							description={t`Start a letter for a job, or write one from scratch.`}
 							disabled={creating}
-							onClick={() => void newLetter()}
+							onClick={() => void newLetter(letterResumeId || null)}
 						/>
 					)}
 					{(context === "applications" || context === "career") && (
@@ -445,7 +463,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 								type="button"
 								className="flex items-center gap-1.5 text-ink-2 hover:text-ink disabled:opacity-60"
 								disabled={creating}
-								onClick={() => void newLetter()}
+								onClick={() => void newLetter(letterResumeId || null)}
 							>
 								<Icon name="envelope-simple" size={18} />
 								<Trans>New cover letter instead</Trans>

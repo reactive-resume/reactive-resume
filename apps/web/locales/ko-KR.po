@@ -1420,7 +1420,6 @@ msgstr "활동적인"
 msgid "Activity"
 msgstr "활동"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1475,14 +1474,6 @@ msgstr "위치 추가"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "메모 추가"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "메모 추가…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2686,6 +2677,11 @@ msgstr "학사, 커뮤니케이션 디자인"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "뒤쪽에"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3966,8 +3962,8 @@ msgid "Copy stylesheet"
 msgstr "스타일시트 복사"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "채용 공고의 직무 설명 전체를 복사해 아래에 붙여넣으세요. 항목을 대신 채워 드리고, 적합도 평가와 맞춤 작성을 위해 이 지원 내역에 텍스트를 보관합니다."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4741,6 +4737,10 @@ msgstr "자기 소개서 — {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "자기 소개서 · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4962,6 +4962,10 @@ msgstr "날짜 열"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "날짜 형식"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7558,7 +7562,6 @@ msgstr "직무 설명"
 msgid "Job link or posting text"
 msgstr "채용 링크 또는 채용 공고 텍스트"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "직업 일치"
@@ -8037,6 +8040,11 @@ msgstr "커버레터 · 아직 보내지 않음"
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "편지 본문"
@@ -8137,8 +8145,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "Reactive Resume 연결 (권장)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "AI 적합도 평가와 맞춤 작성을 사용하려면 Reactive Resume 이력서를 연결하세요."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8153,6 +8161,10 @@ msgstr "입사 지원서 연결"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "입사 지원서 연결…"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8389,6 +8401,18 @@ msgstr "잠김"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "잠겼습니다. 편집하려면 잠금을 해제하세요."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9287,6 +9311,10 @@ msgstr "아직 일자리가 없습니다"
 msgid "No keys yet."
 msgstr "아직 열쇠가 없습니다."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "직함과 회사명이 함께 있는 줄을 찾을 수 없습니다."
@@ -9365,6 +9393,7 @@ msgstr "응답 없음"
 msgid "No results found."
 msgstr "결과가 없습니다."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "이력서 없음"
@@ -10312,8 +10341,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "채용 링크를 붙여넣으세요. 수표, 조수 및 귀하의 편지가 이를 사용할 수 있도록 채용 공고를 저장하겠습니다."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "채용 공고를 한 번만 붙여넣으세요. 맞춤 이력서 사본, 적합도 점수, 커버레터 초안, 지원 추적 공간이 모두 만들어집니다."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11883,6 +11912,10 @@ msgstr "이력서 세부정보"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "이력서 파일"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13543,6 +13576,10 @@ msgstr "단계 결과"
 msgid "Stage stays {stage}"
 msgstr "단계 유지: {stage}"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13837,6 +13874,7 @@ msgstr "지원하다"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "뒷받침됨"
 
@@ -14261,8 +14299,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "이곳으로 보낸 애플리케이션이 잘못된 인증 요청을 보냈습니다. 애플리케이션으로 돌아가 다시 시도해 보세요."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "이 편지의 용도는 입사 지원서입니다."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14650,6 +14688,10 @@ msgstr "이 지원 내역을 열 수 없습니다."
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "이 채용 지원서에는 아직 저장된 채용 공고가 없습니다. 일치하도록 붙여넣으세요."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "이 브라우저에서는 녹음할 수 없습니다. 오디오 파일을 선택하거나 답변을 입력하세요."
@@ -14794,8 +14836,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "이 문자와 \"{resumeName}\"는 두 개의 PDFs로 일치하도록 명명되었습니다."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "이 편지는 잠겨 있습니다. 편집하려면 메뉴에서 잠금을 해제하세요."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15567,6 +15618,14 @@ msgstr "순서대로 읽혀야 하는 내용에는 단일 열을 사용하세요
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "레이아웃이 다시 렌더링되어도 유지되도록 A4 또는 US Letter 크기를 사용하세요."
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
+
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
 msgstr "3자 이상 입력하세요."
@@ -16335,6 +16394,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "편지 쓰기"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."

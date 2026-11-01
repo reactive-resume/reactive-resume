@@ -1420,7 +1420,6 @@ msgstr "Aktiv"
 msgid "Activity"
 msgstr "Aktivität"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1475,14 +1474,6 @@ msgstr "Fügen Sie einen Standort hinzu"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "Fügen Sie eine Notiz hinzu"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "Notiz hinzufügen…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2686,6 +2677,11 @@ msgstr "BA, Kommunikationsdesign"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "Zurück"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3966,8 +3962,8 @@ msgid "Copy stylesheet"
 msgstr "Stylesheet kopieren"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "Kopieren Sie die vollständige Stellenbeschreibung aus der Ausschreibung und fügen Sie sie unten ein. Wir füllen die Felder für Sie aus und speichern den Text bei dieser Bewerbung für die Übereinstimmungsbewertung und die Anpassung."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4741,6 +4737,10 @@ msgstr "Anschreiben – {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "Anschreiben · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4962,6 +4962,10 @@ msgstr "Datumsspalte"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "Datumsformat"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7558,7 +7562,6 @@ msgstr "Stellenbeschreibung"
 msgid "Job link or posting text"
 msgstr "Stellenlink oder Stellenausschreibungstext"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "Job-Match"
@@ -8037,6 +8040,11 @@ msgstr "Anschreiben · noch nicht gesendet"
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "Briefkörper"
@@ -8137,8 +8145,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "Reactive Resume verknüpfen (empfohlen)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "Verknüpfen Sie einen Reactive Resume-Lebenslauf, um KI-Matching und -Anpassung zu nutzen."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8153,6 +8161,10 @@ msgstr "Verlinken Sie eine Bewerbung"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "Stellenbewerbung verlinken…"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8389,6 +8401,18 @@ msgstr "Gesperrt"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Gesperrt. Zum Bearbeiten entsperren."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9287,6 +9311,10 @@ msgstr "Noch kein Job"
 msgid "No keys yet."
 msgstr "Noch keine Schlüssel."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "Keine Zeile sieht wie eine Jobbezeichnung in Kombination mit einem Arbeitgeber aus."
@@ -9365,6 +9393,7 @@ msgstr "Keine Antwort"
 msgid "No results found."
 msgstr "Keine Ergebnisse gefunden."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "Kein Lebenslauf"
@@ -10312,8 +10341,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "Fügen Sie einen Job-Link ein. Wir speichern die Stellenausschreibung, damit Check, der Assistent und Ihr Anschreiben sie verwenden können."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "Fügen Sie eine Stellenanzeige einmal ein. Daraus entstehen eine angepasste Kopie Ihres Lebenslaufs, eine Übereinstimmungsbewertung, ein Entwurf für das Anschreiben und ein Ort, um die Stelle zu verfolgen."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11883,6 +11912,10 @@ msgstr "Details zum Lebenslauf"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "Lebenslauf-Datei"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13543,6 +13576,10 @@ msgstr "Phasenergebnis"
 msgid "Stage stays {stage}"
 msgstr "Phase bleibt {stage}"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13837,6 +13874,7 @@ msgstr "Unterstützung"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "Belegt"
 
@@ -14261,8 +14299,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "Die Anwendung, die Sie hierher geschickt hat, hat eine ungültige Autorisierungsanfrage gestellt. Kehren Sie zur Anwendung zurück und versuchen Sie es erneut."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "Die Stellenbewerbung, für die dieses Schreiben gilt."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14650,6 +14688,10 @@ msgstr "Diese Bewerbung konnte nicht geöffnet werden."
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "Für diese Bewerbung ist noch keine Stellenausschreibung gespeichert. Fügen Sie sie ein, um damit abzugleichen."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "Dieser Browser kann hier nicht aufnehmen. Wählen Sie eine Audiodatei oder tippen Sie Ihre Antwort."
@@ -14794,8 +14836,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Dieser Buchstabe und „{resumeName}“ als zwei PDFs, passend benannt."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "Dieser Brief ist gesperrt. Entsperren Sie es aus dem Menü, um es zu bearbeiten."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15567,6 +15618,14 @@ msgstr "Verwenden Sie eine einzelne Spalte für alles, was in Reihenfolge gelese
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "Verwenden Sie A4 oder US Letter, damit das Layout ein erneutes Rendern übersteht."
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
+
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
 msgstr "Verwenden Sie mindestens 3 Zeichen."
@@ -16335,6 +16394,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "Schreibe einen Brief"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."

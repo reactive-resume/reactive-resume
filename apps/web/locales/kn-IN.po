@@ -1420,7 +1420,6 @@ msgstr "ಸಕ್ರಿಯ"
 msgid "Activity"
 msgstr "ಚಟುವಟಿಕೆ"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1475,14 +1474,6 @@ msgstr "ಸ್ಥಳವನ್ನು ಸೇರಿಸಿ"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "ಟಿಪ್ಪಣಿ ಸೇರಿಸಿ"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "ಟಿಪ್ಪಣಿ ಸೇರಿಸಿ…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2686,6 +2677,11 @@ msgstr "ಬಿಎ, ಸಂವಹನ ವಿನ್ಯಾಸ"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "ಹಿಂದೆ"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3966,8 +3962,8 @@ msgid "Copy stylesheet"
 msgstr "ಸ್ಟೈಲ್‌ಶೀಟ್ ನಕಲಿಸಿ"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "ಪೋಸ್ಟಿಂಗ್‌ನಿಂದ ಸಂಪೂರ್ಣ ಉದ್ಯೋಗ ವಿವರಣೆಯನ್ನು ನಕಲಿಸಿ ಕೆಳಗೆ ಅಂಟಿಸಿ. ನಾವು ನಿಮಗಾಗಿ ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡುತ್ತೇವೆ ಮತ್ತು ಹೊಂದಾಣಿಕೆ ಸ್ಕೋರಿಂಗ್ ಹಾಗೂ ಸೂಕ್ತಗೊಳಿಸುವಿಕೆಗಾಗಿ ಈ ಅರ್ಜಿಯೊಂದಿಗೆ ಪಠ್ಯವನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತೇವೆ."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4741,6 +4737,10 @@ msgstr "ಕವರ್ ಲೆಟರ್ - {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "ಕವರ್ ಲೆಟರ್ · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4962,6 +4962,10 @@ msgstr "ದಿನಾಂಕದ ಕಾಲಮ್"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "ದಿನಾಂಕ ಸ್ವರೂಪ"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7558,7 +7562,6 @@ msgstr "ಉದ್ಯೋಗ ವಿವರಣೆ"
 msgid "Job link or posting text"
 msgstr "ಉದ್ಯೋಗ ಲಿಂಕ್ ಅಥವಾ ಉದ್ಯೋಗ ಪೋಸ್ಟ್ ಪಠ್ಯ"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "ಕೆಲಸದ ಹೊಂದಾಣಿಕೆ"
@@ -8037,6 +8040,11 @@ msgstr "ಪತ್ರ · ಇನ್ನೂ ಕಳುಹಿಸಿಲ್ಲ"
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "ಅಕ್ಷರದ ದೇಹ"
@@ -8137,8 +8145,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "Reactive Resume ಲಿಂಕ್ ಮಾಡಿ (ಶಿಫಾರಸು)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "AI ಹೊಂದಾಣಿಕೆ ಅಂಕ ಮತ್ತು ಸೂಕ್ತಗೊಳಿಸುವಿಕೆಯನ್ನು ಬಳಸಲು ಒಂದು Reactive Resume ರೆಸ್ಯೂಮ್ ಅನ್ನು ಲಿಂಕ್ ಮಾಡಿ."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8153,6 +8161,10 @@ msgstr "ಉದ್ಯೋಗ ಅರ್ಜಿಯನ್ನು ಲಿಂಕ್ ಮಾ
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "ಉದ್ಯೋಗ ಅರ್ಜಿಯನ್ನು ಲಿಂಕ್ ಮಾಡಿ..."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8389,6 +8401,18 @@ msgstr "ಲಾಕ್ ಮಾಡಲಾಗಿದೆ"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "ಲಾಕ್ ಮಾಡಲಾಗಿದೆ. ಸಂಪಾದಿಸಲು ಅನ್‌ಲಾಕ್ ಮಾಡಿ."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9287,6 +9311,10 @@ msgstr "ಇನ್ನೂ ಕೆಲಸವಿಲ್ಲ"
 msgid "No keys yet."
 msgstr "ಇನ್ನೂ ಯಾವುದೇ ಕೀಗಳಿಲ್ಲ."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "ಉದ್ಯೋಗ ಶೀರ್ಷಿಕೆಯನ್ನು ಉದ್ಯೋಗದಾತರೊಂದಿಗೆ ಜೋಡಿಸಿದಂತೆ ಕಾಣುವ ಯಾವುದೇ ಸಾಲುಗಳಿಲ್ಲ."
@@ -9365,6 +9393,7 @@ msgstr "ಪ್ರತಿಕ್ರಿಯೆ ಇಲ್ಲ"
 msgid "No results found."
 msgstr "ಯಾವುದೇ ಫಲಿತಾಂಶಗಳು ಕಂಡುಬರಲಿಲ್ಲ."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "ರೆಸ್ಯೂಮೆ ಇಲ್ಲ"
@@ -10312,8 +10341,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "ಕೆಲಸದ ಲಿಂಕ್ ಅನ್ನು ಅಂಟಿಸಿ. ನಾವು ಕೆಲಸದ ಪೋಸ್ಟಿಂಗ್ ಅನ್ನು ಉಳಿಸುತ್ತೇವೆ ಆದ್ದರಿಂದ ಪರಿಶೀಲಿಸಿ, ಸಹಾಯಕ ಮತ್ತು ನಿಮ್ಮ ಪತ್ರ ಅದನ್ನು ಬಳಸಬಹುದು."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "ಉದ್ಯೋಗ ಜಾಹೀರಾತನ್ನು ಒಮ್ಮೆ ಅಂಟಿಸಿ. ಅದರಿಂದ ನಿಮ್ಮ ರೆಸ್ಯೂಮೆಯ ಹೊಂದಿಸಿದ ಪ್ರತಿ, ಹೊಂದಾಣಿಕೆ ಸ್ಕೋರ್, ಕವರ್ ಲೆಟರ್ ಡ್ರಾಫ್ಟ್ ಮತ್ತು ಹುದ್ದೆಯನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಲು ಒಂದು ಸ್ಥಳ ಸಿಗುತ್ತದೆ."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11883,6 +11912,10 @@ msgstr "ರೆಸ್ಯೂಮೆ ವಿವರಗಳು"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "ರೆಸ್ಯೂಮ್ ಫೈಲ್"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13543,6 +13576,10 @@ msgstr "ಹಂತದ ಫಲಿತಾಂಶ"
 msgid "Stage stays {stage}"
 msgstr "ಹಂತ {stage} ಆಗಿಯೇ ಉಳಿಯುತ್ತದೆ"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13837,6 +13874,7 @@ msgstr "ಬೆಂಬಲ"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "ಬೆಂಬಲಿತ"
 
@@ -14261,8 +14299,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "ನಿಮ್ಮನ್ನು ಇಲ್ಲಿಗೆ ಕಳುಹಿಸಿದ ಅಪ್ಲಿಕೇಶನ್ ಅಮಾನ್ಯ ದೃಢೀಕರಣ ವಿನಂತಿಯನ್ನು ಮಾಡಿದೆ. ಅಪ್ಲಿಕೇಶನ್‌ಗೆ ಹಿಂತಿರುಗಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "ಈ ಪತ್ರವು ಉದ್ಯೋಗ ಅರ್ಜಿಗಾಗಿ."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14650,6 +14688,10 @@ msgstr "ಈ ಅರ್ಜಿಯನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯ
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "ಈ ಉದ್ಯೋಗ ಅರ್ಜಿಯಲ್ಲಿ ಇನ್ನೂ ಯಾವುದೇ ಉದ್ಯೋಗ ಪೋಸ್ಟ್ ಉಳಿಸಿಲ್ಲ. ಅದರೊಂದಿಗೆ ಹೊಂದಿಸಲು ಅದನ್ನು ಅಂಟಿಸಿ."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "ಈ ಬ್ರೌಸರ್ ಇಲ್ಲಿ ರೆಕಾರ್ಡ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ. ಆಡಿಯೊ ಫೈಲ್ ಆಯ್ಕೆಮಾಡಿ, ಅಥವಾ ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಟೈಪ್ ಮಾಡಿ."
@@ -14794,8 +14836,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "ಈ ಅಕ್ಷರ ಮತ್ತು \"{resumeName}\" ಎರಡು PDFs, ಹೊಂದಿಕೆಯಾಗುವಂತೆ ಹೆಸರಿಸಲಾಗಿದೆ."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "ಈ ಪತ್ರವನ್ನು ಲಾಕ್ ಮಾಡಲಾಗಿದೆ. ಸಂಪಾದಿಸಲು ಅದರ ಮೆನುವಿನಿಂದ ಅದನ್ನು ಅನ್ಲಾಕ್ ಮಾಡಿ."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15567,6 +15618,14 @@ msgstr "ಕ್ರಮವಾಗಿ ಓದಬೇಕಾದ ಯಾವುದೇ ವಿ
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "ವಿನ್ಯಾಸ ಮರು-ರೆಂಡರ್ ಆದಾಗಲೂ ಉಳಿಯುವಂತೆ A4 ಅಥವಾ US Letter ಬಳಸಿ."
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
+
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
 msgstr "ಕನಿಷ್ಠ 3 ಅಕ್ಷರಗಳನ್ನು ಬಳಸಿ."
@@ -16335,6 +16394,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "ಪತ್ರ ಬರೆಯಿರಿ"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."

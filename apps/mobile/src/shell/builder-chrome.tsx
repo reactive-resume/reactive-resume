@@ -42,6 +42,7 @@ export type BuilderChromeSlots = {
 	actions?: ReactNode;
 	/** Under the top bar, full width: the locked banner. The offline strip shows by itself when `save.status` is offline. */
 	banner?: ReactNode;
+	applicationId?: string | null | undefined;
 	/** Counts on the pane tabs (`warn` badges), by pane, for example `{ check: 3 }` for open issues. */
 	badges?: Partial<Record<string, number | string>> | undefined;
 };
@@ -234,18 +235,20 @@ function Frame<T extends string>({ panes, tabletPanes, page, title, onExport, mo
 
 /** The top bar and the screen's banner. Reads the slots, so slot changes re-render only this, never the Stack. */
 function ChromeTopBar() {
+	const router = useRouter();
 	const { t } = useLingui();
 	const tablet = useIsTablet();
 	const slots = slot.useSlot();
 	const frame = use(FrameContext);
 	if (!frame) return null;
 	const exportDocument = slots.onExport ?? frame.onExport;
+	const applicationId = slots.applicationId;
 
 	return (
 		<>
 			<TopBar
-				backLabel={t`Back to Documents`}
-				onBack={frame.leave}
+				backLabel={slots.applicationId ? t`Back to application` : t`Back to Documents`}
+				onBack={applicationId ? () => router.replace(routes.applicationDetails(applicationId)) : frame.leave}
 				title={slots.title ?? frame.title}
 				onTitlePress={slots.onMenu}
 				titleLabel={t`Document menu`}

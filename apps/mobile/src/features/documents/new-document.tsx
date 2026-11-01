@@ -46,6 +46,7 @@ export function NewDocument() {
 	const [setup, setSetup] = useState(false);
 	const [step, setStep] = useState<Step>(params.step === "copy" ? "copy" : "choose");
 	const [sourceId, setSourceId] = useState<string | null>(params.sourceResumeId ?? null);
+	const [letterResumeId, setLetterResumeId] = useState(params.sourceResumeId ?? "");
 	const [jobId, setJobId] = useState<string | null>(params.applicationId ?? null);
 	const [newJob, setNewJob] = useState<{ company: string; role: string; posting: string } | null>(null);
 	const [name, setName] = useState<string | null>(null);
@@ -141,7 +142,7 @@ export function NewDocument() {
 		run(async (signal) => {
 			let document: ImportedDocument;
 			if (kind === "letter") {
-				const latest = resumes.toSorted((a, b) => b.editedAt.getTime() - a.editedAt.getTime())[0];
+				const selected = resumes.find((resume) => resume.id === letterResumeId);
 				// A number when an untitled letter already exists, so the library can tell them apart until they're named.
 				const base = t`Untitled letter`;
 				const taken = new Set(
@@ -156,7 +157,7 @@ export function NewDocument() {
 						name,
 						recipient: "",
 						content: "",
-						...(latest ? { resumeId: latest.id } : {}),
+						...(selected ? { resumeId: selected.id } : {}),
 						...(params.applicationId ? { applicationId: params.applicationId } : {}),
 					},
 					{ signal },
@@ -453,6 +454,16 @@ export function NewDocument() {
 											onPress={() => void create("blank")}
 										/>
 									</Card>
+									<SelectSheet
+										label={t`Resume for a new letter`}
+										value={letterResumeId}
+										options={[
+											{ value: "", label: t`No resume` },
+											...resumes.map((resume) => ({ value: resume.id, label: resume.name })),
+										]}
+										onChange={setLetterResumeId}
+										disabled={busy}
+									/>
 									<Button
 										label={t`New cover letter instead`}
 										icon="envelope-simple"

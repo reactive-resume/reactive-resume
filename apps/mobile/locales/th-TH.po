@@ -1080,7 +1080,6 @@ msgstr "การดำเนินการสำหรับ {0} ที่ {1}
 msgid "Active"
 msgstr "คล่องแคล่ว"
 
-#: src/features/application-detail/sections.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Add"
 msgstr "เพิ่ม"
@@ -1116,14 +1115,6 @@ msgstr "เพิ่มสถานที่"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note"
-msgstr "เพิ่มบันทึก"
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note…"
-msgstr "เพิ่มโน้ต…"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Add a person"
@@ -2126,6 +2117,10 @@ msgstr "อาเซอร์ไบจาน"
 #: src/features/write/entry-sheet.tsx
 msgid "Back"
 msgstr "กลับ"
+
+#: src/shell/builder-chrome.tsx
+msgid "Back to application"
+msgstr ""
 
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
@@ -3781,6 +3776,10 @@ msgstr "จดหมายสมัครงาน"
 msgid "Cover letter — {0}"
 msgstr "จดหมายปะหน้า — {0}"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
@@ -3953,6 +3952,10 @@ msgstr "วันที่สร้าง"
 #: src/features/design/advanced.tsx
 msgid "Date format"
 msgstr "รูปแบบวันที่"
+
+#: src/features/application-detail/sections.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -6210,6 +6213,11 @@ msgctxt "US Letter paper size (8.5 × 11 in), shown beside A4"
 msgid "Letter"
 msgstr "Letter"
 
+#: src/features/documents/document-sheets.tsx
+#: src/features/letters/write.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Letter body"
 msgstr "เนื้อจดหมาย"
@@ -6526,6 +6534,18 @@ msgstr "เอกสารที่ล็อคถูกข้าม ปลด�
 #: src/features/write/outline.tsx
 msgid "Locked. Unlock to edit."
 msgstr "ล็อคแล้ว ปลดล็อคเพื่อแก้ไข"
+
+#: src/features/application-detail/sections.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Long press to select"
@@ -7405,6 +7425,7 @@ msgstr "ไม่มีการตอบสนอง"
 msgid "No results"
 msgstr "ไม่มีผลลัพธ์"
 
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "ไม่มีเรซูเม่"
@@ -8261,8 +8282,8 @@ msgid "PDF check canceled. Retry when ready."
 msgstr "การตรวจสอบ PDF ถูกยกเลิก ลองอีกครั้งเมื่อพร้อม"
 
 #: src/features/application-detail/sections.tsx
-msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
-msgstr "PDF เท่านั้น · ไฟล์ละไม่เกิน 10 MB การเชื่อมโยงประวัติย่อใน Reactive Resume จะเปิดใช้การให้คะแนนความเหมาะสมและปรับแต่งด้วย AI"
+msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
@@ -9446,6 +9467,10 @@ msgstr "คำติชมประวัติย่อ ความช่ว�
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "ไฟล์เรซูเม่"
+
+#: src/features/documents/new-document.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -10968,6 +10993,10 @@ msgstr "เรียงซ้อนกัน"
 msgid "Stage stays {stage}"
 msgstr "ขั้นตอนยังคงเป็น {stage}"
 
+#: src/features/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Start"
 msgstr "เริ่ม"
@@ -11790,6 +11819,11 @@ msgid "This application has no posting yet. Add one in Applications."
 msgstr "ใบสมัครนี้ยังไม่มีประกาศรับสมัครงาน เพิ่มหนึ่งรายการในใบสมัคร"
 
 #: src/features/applications/error.ts
+#: src/features/documents/queries.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
+#: src/features/applications/error.ts
 msgid "This changed elsewhere. Reload and try again."
 msgstr "รายการนี้ถูกเปลี่ยนจากที่อื่น โหลดใหม่แล้วลองอีกครั้ง"
 
@@ -11952,6 +11986,10 @@ msgstr "จดหมายสมัครงานนี้มีการเป
 #: src/features/letters/write.tsx
 msgid "This letter is locked. Unlock it in Documents to edit."
 msgstr "จดหมายนี้ถูกล็อกอยู่ ปลดล็อกในเอกสารเพื่อแก้ไข"
+
+#: src/features/documents/document-sheets.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "This letter keeps its recipient as written."
@@ -12594,6 +12632,10 @@ msgstr "ใช้ขนาด A4 หรือ US Letter เพื่อให้
 msgid "Use AI for PDF imports"
 msgstr "ใช้ AI สำหรับการนำเข้า PDF"
 
+#: src/features/application-detail/sections.tsx
+msgid "Use an existing letter"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Use an http or https job posting link before saving."
 msgstr "ใช้ลิงก์ประกาศงาน http หรือ https ก่อนบันทึก"
@@ -13188,6 +13230,10 @@ msgstr ""
 #: src/features/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "เขียนจดหมาย"
+
+#: src/features/documents/document-sheets.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"

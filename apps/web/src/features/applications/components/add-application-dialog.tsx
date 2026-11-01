@@ -221,7 +221,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			...(sourceLink ? { sourceUrl: sourceLink } : {}),
 			...(stage !== "saved" && stageDate ? { stageEnteredAt: stageDate } : {}),
 			...(resumeId ? { resumeId } : {}),
-			...(stage !== "saved" && coverLetterId ? { coverLetterId } : {}),
+			...(coverLetterId ? { coverLetterId } : {}),
 			jobDescription: postingDescription || null,
 			postingSource,
 		};
@@ -693,28 +693,30 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						))}
 				</select>
 			</div>
-			{stage !== "saved" && (
-				<div className="grid gap-1.5">
-					<Label htmlFor={`${id}-letter`}>
+			<div className="grid gap-1.5">
+				<Label htmlFor={`${id}-letter`}>
+					{stage === "saved" ? (
+						<Trans>Cover letter (optional)</Trans>
+					) : (
 						<Trans>Cover letter submitted (optional)</Trans>
-					</Label>
-					<select
-						id={`${id}-letter`}
-						value={coverLetterId}
-						onChange={(event) => setCoverLetterId(event.target.value)}
-						className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
-					>
-						<option value="">{t`No cover letter selected`}</option>
-						{documents
-							?.filter((document) => document.type === "letter")
-							.map((document) => (
-								<option key={document.id} value={document.id}>
-									{document.name}
-								</option>
-							))}
-					</select>
-				</div>
-			)}
+					)}
+				</Label>
+				<select
+					id={`${id}-letter`}
+					value={coverLetterId}
+					onChange={(event) => setCoverLetterId(event.target.value)}
+					className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
+				>
+					<option value="">{t`No cover letter selected`}</option>
+					{documents
+						?.filter((document) => document.type === "letter" && !document.isLocked)
+						.map((document) => (
+							<option key={document.id} value={document.id}>
+								{document.name}
+							</option>
+						))}
+				</select>
+			</div>
 			<DialogFooter>
 				<Button
 					type="button"
