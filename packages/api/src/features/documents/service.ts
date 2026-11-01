@@ -6,6 +6,7 @@ import * as schema from "@reactive-resume/db/schema";
 import { applicationService } from "../applications/service";
 import { coverLetterService } from "../cover-letters/service";
 import { resumeService } from "../resume/service";
+import { followNameWithSlug } from "../resume/slugs";
 import { listDocumentPage, listDocuments } from "./listing";
 import { lockUser } from "./ownership";
 
@@ -58,6 +59,9 @@ type LetterChanges = Partial<typeof schema.coverLetter.$inferInsert>;
 async function update(ref: DocumentRef, resume: ResumeChanges, letter: LetterChanges = resume as LetterChanges) {
 	await db.transaction(async (tx) => {
 		await lockUser(tx, ref.userId);
+		// A private resume's app-made address follows a new name, like a rename in the editor.
+		if (ref.type === "resume" && resume.name !== undefined)
+			await followNameWithSlug(tx, { userId: ref.userId, resumeId: ref.id, name: resume.name });
 		const rows =
 			ref.type === "resume"
 				? await tx.update(schema.resume).set(resume).where(owned(ref)).returning({ id: schema.resume.id })

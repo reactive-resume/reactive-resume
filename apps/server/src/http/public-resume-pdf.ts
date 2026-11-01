@@ -1,4 +1,5 @@
 import { createPublicResumePdf } from "@reactive-resume/api/features/resume/public-pdf";
+import { contentDisposition } from "@reactive-resume/utils/http";
 
 const noStoreResponse = (body: string, status: number) =>
 	new Response(body, { status, headers: { "Cache-Control": "private, no-store" } });
@@ -36,14 +37,17 @@ export async function handlePublicResumePdf(
 			countDownload: download,
 		});
 
-		if (!result.body) return new Response(null, { status: 304, headers: cacheHeaders(result.etag) });
+		const headers = {
+			...cacheHeaders(result.etag),
+			"Content-Disposition": contentDisposition(result.filename, download ? "attachment" : "inline"),
+		};
+		if (!result.body) return new Response(null, { status: 304, headers });
 
 		return new Response(result.body, {
 			headers: {
 				"Content-Type": "application/pdf",
-				"Content-Disposition": `${download ? "attachment" : "inline"}; filename="${result.filename.replaceAll('"', "")}"`,
 				"X-Content-Type-Options": "nosniff",
-				...cacheHeaders(result.etag),
+				...headers,
 			},
 		});
 	} catch (error) {

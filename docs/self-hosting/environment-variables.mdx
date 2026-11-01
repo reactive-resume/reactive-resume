@@ -40,14 +40,34 @@ turn on an optional feature.
 
 ## Server
 
-| Variable          | Default                   | Description                                                                                                                                                                                                                                                                                                                   |
-| ----------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PORT`            | `3000`                    | Port the production server listens on. The official image sets it to `3000`. If you change it, update your port mapping and health check to match.                                                                                                                                                                            |
-| `NODE_ENV`        | `production` in the image | When `production`, the server listens on `PORT` and turns on rate limiting. Leave it as the image sets it.                                                                                                                                                                                                                    |
-| `SERVER_PORT`     | `3001`                    | Port the server listens on when `NODE_ENV` is not `production`, which is the local development setup. Ignored by the image.                                                                                                                                                                                                   |
-| `TRUSTED_PROXIES` | empty                     | Comma-separated IP addresses or CIDRs of reverse proxies whose forwarded client address is trusted, for example `172.18.0.1,10.0.0.0/8`. Set it behind nginx, Caddy or Traefik so per-visitor rate limits and client addresses stay correct. Leave it unset for direct connections, and never include public client networks. |
-| `APP_REVISION`    | unset                     | Full 40-character Git commit SHA reported as `revision` by `/api/health`. Official Docker images set it automatically; set it yourself for a custom build if you want to identify the running commit.                                                                                                                         |
-| `ROOT_RESUME_ID`  | unset                     | Shows one public resume at `/` instead of the home page. See [Show one resume at your root address](/self-hosting/examples#show-one-resume-at-your-root-address).                                                                                                                                                             |
+| Variable          | Default                   | Description                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`            | `3000`                    | Port the production server listens on. The official image sets it to `3000`. If you change it, update your port mapping and health check to match.                                                                                                                                                                                                                     |
+| `NODE_ENV`        | `production` in the image | When `production`, the server listens on `PORT` and turns on rate limiting. Leave it as the image sets it.                                                                                                                                                                                                                                                             |
+| `SERVER_PORT`     | `3001`                    | Port the server listens on when `NODE_ENV` is not `production`, which is the local development setup. Ignored by the image.                                                                                                                                                                                                                                            |
+| `ROOT_RESUME_ID`  | unset                     | Shows one public resume at `/` instead of the home page. See [Show one resume at your root address](/self-hosting/examples#show-one-resume-at-your-root-address).                                                                                                                                                                                                      |
+| `TRUSTED_PROXIES` | empty (trust none)        | Comma-separated IPv4/IPv6 addresses or CIDRs of your reverse proxies. The Node server accepts `X-Forwarded-For` only from a trusted socket peer, walks the chain from right to left through trusted hops, and uses the first untrusted address for IP-based limits. Malformed chains fall back to the socket address. See [Reverse-proxy trust](#reverse-proxy-trust). |
+| `APP_REVISION`    | unset                     | Optional full Git commit SHA: exactly 40 lowercase hexadecimal characters. `/api/health` reports it as `revision`, or `null` when unset. Official Docker builds embed their source SHA; custom builds can use the Docker build argument or set the runtime variable. This is deployment metadata, not a health check or a version override.                            |
+
+### Reverse-proxy trust
+
+Without `TRUSTED_PROXIES`, the Node server ignores forwarded IP headers. Visitors behind one proxy then share its
+IP-based limits, including sign-in and public resume password attempts. Set this variable to the actual proxy address
+as seen by the app, not your public domain, visitors' addresses or every private network.
+
+```dotenv
+# Example only: a proxy with this fixed address on a private Docker network.
+TRUSTED_PROXIES="172.30.107.2"
+# Multiple proxy hops can use comma-separated addresses or narrow CIDRs:
+# TRUSTED_PROXIES="172.30.107.2,fd00:107::2/128"
+```
+
+Keep the app inaccessible from the public internet except through your proxy. The proxy must replace client-supplied
+forwarded headers or append the actual peer address correctly. Never use `0.0.0.0/0` or `::/0`: a client could supply
+its own identity and bypass rate limits. If another proxy or CDN is in front, configure that trust boundary too and
+trust only the intermediary addresses you control. Vercel and Cloudflare use their deployment adapters to resolve
+the client address; this variable configures the Node socket-based path. Cloudron supplies its proxy address when
+no explicit value is set. See the [safe Docker proxy examples](/self-hosting/examples#what-every-reverse-proxy-needs).
 
 ## Second domain and custom domains
 

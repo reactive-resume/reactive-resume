@@ -22,16 +22,16 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
   <Step title="Name the key and choose when it expires">
     Under **What's it for?**, enter a name that reminds you where the key is used, such as "Resume sync script". Under **Expires**, choose **30 days**, **90 days** or **Never**, then select **Create key**. If you signed in more than a day ago, you're asked to sign in again first.
 
-    <Frame caption="The New API key dialog">
-      <img src="/images/guides/using-the-api/new-api-key-dialog.webp" alt="New API key dialog with the name Resume sync script entered and 90 days selected under Expires" />
+    <Frame caption="Name a key and choose its expiration">
+      <img src="/images/guides/using-the-api/new-api-key-dialog.webp" alt="New API key dialog with Resume sync script entered and expiration choices" />
     </Frame>
 
   </Step>
   <Step title="Copy the key">
     Select **Copy**, store the key somewhere safe (a password manager or your deployment's secret store), then select **Done**.
 
-    <Frame caption="The key is shown once, right after you create it">
-      <img src="/images/guides/using-the-api/api-key-shown-once.webp" alt="New API key dialog showing the generated key with a Copy button and the warning Copy it now. For your security, it won't be shown again." />
+    <Frame caption="Copy a new key once; example value hidden">
+      <img src="/images/guides/using-the-api/api-key-shown-once.webp" alt="New API key dialog with the one-time key value hidden, Copy and Done, and the warning that it will not be shown again" />
     </Frame>
 
     <Warning>
@@ -43,10 +43,10 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
 
 Your keys are listed in the **API keys** table with the date each was created, the date it was last used and when it expires. Expired keys disappear from the list and stop working.
 
-<Frame caption="The API keys section in AI & developer settings">
+<Frame caption="Manage API keys from settings">
   <img
     src="/images/guides/using-the-api/api-keys-section.webp"
-    alt="API keys table listing two keys, Claude Desktop that never expires and Resume sync script that expires on 29 Dec 2026, each with a Revoke button"
+    alt="API keys table with a fictional Resume sync script key, creation and expiration dates, last use and Revoke"
   />
 </Frame>
 
@@ -54,17 +54,25 @@ Your keys are listed in the **API keys** table with the date each was created, t
 
 Sharing controls belong to resume metadata, outside the resume's `data` object:
 
-| Field                 | Meaning                                                                                                             |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `isPublic`            | Publishes or unpublishes the web page.                                                                              |
-| `showDownloadButtons` | Allows visitors to download the public PDF. The owner keeps download access.                                        |
-| `showInSearchEngines` | Opts a published, non-password-protected resume into search indexing. Defaults to `false`.                          |
-| `hideContactDetails`  | Redacts dedicated contact fields from public representations. Defaults to `false`.                                  |
-| `isPrimary`           | Selects the account's resume for `/<username>` and its verified domain. Only a published resume can become primary. |
+| Field                 | Meaning                                                                                                                                                                               |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isPublic`            | Publishes or unpublishes the web page. Publishing a page that was not public makes the resume primary when the account has no primary resume and the request doesn't set `isPrimary`. |
+| `showDownloadButtons` | Allows visitors to download the public PDF. The owner keeps download access.                                                                                                          |
+| `showInSearchEngines` | Opts a published, non-password-protected resume into search indexing. Defaults to `false`.                                                                                            |
+| `hideContactDetails`  | Redacts dedicated contact fields from public representations. Defaults to `false`.                                                                                                    |
+| `isPrimary`           | Selects the account's resume for `/<username>` and its verified domain. Only a published resume can become primary.                                                                   |
 
 New or changed `slug` values must be 1–64 characters: lowercase letters and numbers separated by single dashes.
 An invalid value returns `INVALID_SLUG` (HTTP 400). Reads and updates that retain an unchanged legacy slug remain
 supported. Renames preserve an old address for 30 days.
+
+A slug generated at creation after this change follows the resume's name while the resume has never been published: a
+rename or a blank resume's new headline moves it, with no redirect, since nobody has been sent it. Publishing the resume
+or setting `slug` keeps the slug from then on. Generated slugs skip addresses that another resume's old address still
+redirects from. A headline or name with no writable characters (for example CJK-only or emoji-only text) keeps the
+neutral `resume` address, or the next free `resume-N`.
+
+Slugs generated before this change never follow the name. Renaming such a resume keeps its address.
 
 Authenticated custom-domain operations live under `/api/openapi`: `GET /custom-domain`, `PUT /custom-domain` with
 `{ "hostname": "resume.example.com" }`, `POST /custom-domain/verify`, and `DELETE /custom-domain`.
@@ -245,8 +253,8 @@ Branch on `code` rather than on the message text. Invalid input uses `400`, miss
   <Step title="Revoke it">
     Select **Revoke**. The key stops working at once, and a message confirms which key you revoked.
 
-    <Frame caption="Revoking a key shows an Undo action">
-      <img src="/images/guides/using-the-api/revoke-key-undo-toast.webp" alt="Message reading Revoked Claude Desktop. Apps using it stop working now, with an Undo link" />
+    <Frame caption="Revoke a key you no longer need">
+      <img src="/images/guides/using-the-api/revoke-key-undo-toast.webp" alt="API key revocation message with Undo, in current settings with standalone Profile navigation" />
     </Frame>
 
   </Step>

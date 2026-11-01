@@ -454,10 +454,10 @@ on **2026-10-02**. For a shorter orientation, read
 
 - **Recover from an empty resume-copy dialog.** Opening **Copy a resume for a job** without an existing resume previously showed an empty source list and a disabled **Create and open** button. The dialog now explains the prerequisite and offers **Import or create a resume**, including when opened directly from an application. Returning to the copy flow keeps that application selected. Importing or creating a blank resume during preparation links it to the saved job. [bec152b7e](https://github.com/reactive-resume/reactive-resume/commit/bec152b7e), [3e7849e51](https://github.com/reactive-resume/reactive-resume/commit/3e7849e51)
 
-<Frame caption="Resumes and letters share one Documents library">
+<Frame caption="Search, filter and organize documents">
   <img
     src="/images/guides/managing-documents/documents-grid.webp"
-    alt="Documents with All, Resumes and Letters tabs, search, sorting, tag filters and a grid of resume and letter cards."
+    alt="Documents with three fictional resumes, current toolbar, tag filters and grid controls"
   />
 </Frame>
 
@@ -476,10 +476,10 @@ on **2026-10-02**. For a shorter orientation, read
 
 - **Keep parser results tied to the open resume.** Switching documents could display another resume’s cached extracted text. Parser results now include the resume ID and reset with the rendered page. [bc92b8cf7](https://github.com/reactive-resume/reactive-resume/commit/bc92b8cf7)
 
-<Frame caption="Write, Design and Check replace the builder's sidebars and dock">
+<Frame caption="Write your details beside the rendered resume">
   <img
     src="/images/getting-started/editor-overview.webp"
-    alt="The v6 resume editor with Write, Design and Check modes, editable Basics on the left and the rendered resume page on the right."
+    alt="Resume editor with David Kowalski's fictional sample, editable Basics and a rendered page, plus Write, Design, Check and Share modes"
   />
 </Frame>
 
@@ -506,19 +506,19 @@ on **2026-10-02**. For a shorter orientation, read
 - **Undo stylesheet typing within the code editor.** The editor previously routed typing undo to resume-wide history. It now keeps its own typing history, reports fatal stylesheet limits and explains unsupported PDF styles. Unsupported declarations or selectors may still be skipped. [9a803305c](https://github.com/reactive-resume/reactive-resume/commit/9a803305c)
 - **Apply heading text styles even when an icon is present.** Icon-bearing headings previously passed only color into their text. Font size, weight, style, spacing, line height, alignment, decoration and text transform now reach the title as well. [677ff17c1](https://github.com/reactive-resume/reactive-resume/commit/677ff17c1)
 
-<Frame caption="Pick an entry on the rendered page to edit its custom CSS">
+<Frame caption="A section rule beside the rendered resume">
   <img
     src="/images/guides/applying-custom-styles/pick-an-entry-on-the-page.webp"
-    alt="Custom Styles editing an education entry's color, with the selected entry outlined on the rendered resume."
+    alt="Semantic CSS rule for the Education section beside the fictional sample resume"
   />
 </Frame>
 
 ## Check mode & the public ATS checker
 
-<Frame caption="Check connects findings to the lines they affect">
+<Frame caption="Check shows issues beside the affected resume">
   <img
     src="/images/guides/checking-your-resume/check-mode-overview.webp"
-    alt="Check mode with a live readability score, Issues, Job match and Writing tabs, fix actions and numbered findings on the resume page."
+    alt="Check mode with readability score 82, four issues, suggested fixes and numbered markers on the fictional sample resume"
   />
 </Frame>
 
@@ -528,10 +528,10 @@ on **2026-10-02**. For a shorter orientation, read
 - **Inspect what a parser reads.** Switch between the rendered page and text extracted from its PDF in reading order. Deep checks of the exported PDF pin findings to their source lines while the resume remains unchanged, and a pin opens the full report. [565424631](https://github.com/reactive-resume/reactive-resume/commit/565424631), [6c2bc74f9](https://github.com/reactive-resume/reactive-resume/commit/6c2bc74f9)
 - **Continue from a public check into editing.** The rebuilt public ATS checker accepts a resume and optional posting, groups readability and layout findings, and offers **Fix these in the editor**. The file waits in the browser through sign-up and imports after sign-in. The score describes text extraction reliability; it does not predict hiring outcomes. Resume drop targets now distinguish checker files from document imports. [d9ed63f72](https://github.com/reactive-resume/reactive-resume/commit/d9ed63f72), [9a803305c](https://github.com/reactive-resume/reactive-resume/commit/9a803305c)
 
-<Frame caption="The public checker offers a direct path from findings to an editable resume">
+<Frame caption="Read the score and issues beside the sample PDF">
   <img
     src="/images/guides/using-the-ats-checker/report-and-fix.webp"
-    alt="An ATS report grouped by readability, layout and posting terms, followed by a Fix these in the editor button."
+    alt="ATS checker showing a fictional sample with score 99, contact-detail issues and Fix these in the editor"
   />
 </Frame>
 
@@ -544,10 +544,10 @@ on **2026-10-02**. For a shorter orientation, read
 
 - **Enable shared AI and web access for all users.** Self-hosters can set `AI_PROVIDER`, `AI_MODEL`, `AI_API_KEY` and an optional `AI_BASE_URL`, plus `WEB_ACCESS_PROVIDER`, `WEB_ACCESS_API_KEY` and an optional Firecrawl `WEB_ACCESS_API_URL`. Each globally configured integration takes precedence over personal credentials and hides their settings controls; saved personal keys remain available after shared configuration is removed. Shared credentials stay on the server and need no `ENCRYPTION_SECRET`; encrypted personal AI and web-access keys remain supported when it is set. See [Job search and AI](/self-hosting/job-search-and-ai). [bec152b7e](https://github.com/reactive-resume/reactive-resume/commit/bec152b7e), [bc92b8cf7](https://github.com/reactive-resume/reactive-resume/commit/bc92b8cf7)
 
-<Frame caption="The assistant works beside the document it is helping with">
+<Frame caption="The assistant works beside your document">
   <img
     src="/images/guides/using-the-assistant/assistant-beside-the-page.webp"
-    alt="The resume editor with an Assistant panel beside the rendered page, suggested starting prompts and a document context chip."
+    alt="Assistant beside the fictional resume, showing starting prompts, document context and a message field"
   />
 </Frame>
 
@@ -563,10 +563,10 @@ on **2026-10-02**. For a shorter orientation, read
 
 - **Protect pending letter edits when changing documents.** Late save responses no longer replace the newly opened letter. Downloads, history and other document changes wait for pending saves and stop with a retryable error when saving fails. [bc92b8cf7](https://github.com/reactive-resume/reactive-resume/commit/bc92b8cf7)
 
-<Frame caption="A letter has its own editor, recipient fields and live resume links">
+<Frame caption="Write a letter beside its rendered page">
   <img
     src="/images/guides/writing-a-cover-letter/letter-editor-write.webp"
-    alt="A standalone letter editor with recipient name, company, date, linked resume details and a live letter preview."
+    alt="Letter editor for fictional Priya Shah at Northwind Games, with sender details linked to Game Developer Resume and a rendered letter"
   />
 </Frame>
 
@@ -583,10 +583,10 @@ on **2026-10-02**. For a shorter orientation, read
 
 - **Find jobs with one optional web connection.** Applications supports keyword search through Firecrawl, Tavily or Exa. Review results, choose a posting and check its imported details before saving. Shared services or one encrypted personal connection supply search and enhanced reading; self-hosted Firecrawl is supported. The built-in public-URL reader remains available without credentials. [bec152b7e](https://github.com/reactive-resume/reactive-resume/commit/bec152b7e), [3e7849e51](https://github.com/reactive-resume/reactive-resume/commit/3e7849e51)
 
-<Frame caption="The board shows each application's next step">
+<Frame caption="Board view groups applications by stage">
   <img
     src="/images/guides/tracking-job-applications/applications-board-view.webp"
-    alt="Application board columns for Saved, Applied, Screening and Interview, with next-step labels on job cards."
+    alt="Applications board showing Saved, Applied, Screening and Interview columns with fictional job cards"
   />
 </Frame>
 
@@ -599,19 +599,19 @@ on **2026-10-02**. For a shorter orientation, read
 - **Read outcomes from actual stage history.** Insights adds progression, response rate, median time to first reply and tailored-versus-base resume comparisons. Active totals exclude closed applications, and weekly submissions use the sent date and exclude jobs only saved for later. [462db6011](https://github.com/reactive-resume/reactive-resume/commit/462db6011), [9a803305c](https://github.com/reactive-resume/reactive-resume/commit/9a803305c)
 - **Review CSV column matching before import.** See and adjust recognized columns, inspect the import summary and download skipped rows. Exports include closed reasons, and legacy rejected/archived values remain readable. [462db6011](https://github.com/reactive-resume/reactive-resume/commit/462db6011), [cbc76b03b](https://github.com/reactive-resume/reactive-resume/commit/cbc76b03b)
 
-<Frame caption="Schedule interviews and take them into your own calendar">
+<Frame caption="Calendar and upcoming interviews">
   <img
     src="/images/guides/scheduling-interviews/applications-calendar-view.webp"
-    alt="An application interview calendar with color-coded interview types and an upcoming-interview list showing times, durations and locations."
+    alt="Applications Calendar with a month grid and a fictional upcoming technical interview listed with its time and duration"
   />
 </Frame>
 
 ## Sharing, downloads & version history
 
-<Frame caption="Sharing and all four export formats live in one panel">
+<Frame caption="Download & history offers five resume formats">
   <img
     src="/images/guides/exporting-your-resume/share-sheet-download-tab.webp"
-    alt="Share and export with Link, Download and History tabs, PDF, Word, Markdown and JSON formats, an editable filename and a non-blocking Check warning."
+    alt="Download & history panel showing PDF, Word, OpenDocument, Markdown and JSON, an editable file name, and Download PDF"
   />
 </Frame>
 
@@ -622,10 +622,10 @@ on **2026-10-02**. For a shorter orientation, read
 - **Recover the state before a restore.** Restoring saves pending edits and preserves **Before restore** before replacing the document. Resume undo history resets; restore **Before restore** to go back. Session autosaves and transient kinds retain 90 days of history, while named and protected milestones remain until their document is deleted. The timeline includes all permanent checkpoints alongside the 100 most recent expiring versions. Named-version creation and restore stop if pending edits cannot be saved. [bc92b8cf7](https://github.com/reactive-resume/reactive-resume/commit/bc92b8cf7), [060750a86](https://github.com/reactive-resume/reactive-resume/commit/060750a86), [6e412c2f6](https://github.com/reactive-resume/reactive-resume/commit/6e412c2f6)
 - **Open your own password-protected resume without its visitor password.** Owner access now bypasses the public password gate for viewing and statistics while visitors still need access. Download statistics explicitly explain that repeat successful clicks can count more than once. [9a803305c](https://github.com/reactive-resume/reactive-resume/commit/9a803305c)
 
-<Frame caption="Name a milestone or preview an editing session before restoring it">
+<Frame caption="Name a version so you can recognize it later">
   <img
     src="/images/guides/undoing-changes-and-version-history/history-tab.webp"
-    alt="History with a field to name the current version and a timeline containing Now, a named milestone, an Editing session and Created."
+    alt="Download & history with the History tab selected and a named Original for game studios version among saved versions"
   />
 </Frame>
 
@@ -654,10 +654,10 @@ on **2026-10-02**. For a shorter orientation, read
 
 - **Keep popups usable inside sheets.** Every sheet popup now renders inside a drawer viewport. Shared UI fonts are consistent across the homepage and app, and footer text no longer clips. [bec152b7e](https://github.com/reactive-resume/reactive-resume/commit/bec152b7e), [ec0932c5d](https://github.com/reactive-resume/reactive-resume/commit/ec0932c5d)
 
-<Frame caption="Phone editing gives entries their own screen">
+<Frame caption="Edit an experience in the phone browser">
   <img
     src="/images/guides/editing-on-mobile/phone-entry-screen.webp"
-    alt="A phone experience editor with stacked fields, structured dates, a Present switch and a rich-text description."
+    alt="Fictional experience open in the phone browser with position, company, dates and description fields"
   />
 </Frame>
 

@@ -131,6 +131,12 @@ const draftBoundary = {
 };
 const document = load("features/share/document.ts", { "@/draft": draftBoundary });
 const { safeFileName } = load("features/share/model.ts");
+assert.equal(safeFileName("李明-Resume"), "李明-Resume", "Native exports keep a Unicode full name intact");
+assert.equal(
+	safeFileName('../../etc/passwd\r\nX-Injected: "yes"'),
+	"etcpasswdX-Injected yes",
+	"Native exports remove traversal, control characters, quotes and separators",
+);
 const exportedBytes = new Uint8Array([1, 2, 3]);
 const translatedLetterWords = {
 	greeting: (name) => `Liebe ${name},`,

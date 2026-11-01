@@ -17,8 +17,8 @@ test("actual MV3 action through real extension popup and isolated Chrome injecti
 		ignoreDefaultArgs: ["--disable-extensions"],
 		args: [
 			"--enable-unsafe-extension-debugging",
-			"--disable-extensions-except=" + resolve("apps/web/public/capture-helper"),
-			"--load-extension=" + resolve("apps/web/public/capture-helper"),
+			"--disable-extensions-except=" + resolve("apps/web/dist/capture-helper"),
+			"--load-extension=" + resolve("apps/web/dist/capture-helper"),
 		],
 	});
 	try {
@@ -26,7 +26,7 @@ test("actual MV3 action through real extension popup and isolated Chrome injecti
 		if (!browser) throw new Error("Missing extension browser");
 		const cdp = await browser.newBrowserCDPSession();
 		const ext = await cdp.send("Extensions.getExtensions");
-		const extension = ext.extensions.find((x) => x.path === resolve("apps/web/public/capture-helper"));
+		const extension = ext.extensions.find((x) => x.path === resolve("apps/web/dist/capture-helper"));
 		if (!extension) throw new Error("MV3 helper did not load");
 		const id = extension.id;
 		console.log("EXTENSION", ext);

@@ -179,7 +179,9 @@ Your instance is running. Next, you might want to:
 - **Turn on job search and AI.** Connect shared Firecrawl and AI services, or enable personal keys with
   `ENCRYPTION_SECRET`. See [Job search and AI](/self-hosting/job-search-and-ai).
 - **Serve it over HTTPS.** Put a reverse proxy in front and set `APP_URL` to the public `https://` address. See
-  [Deployment examples](/self-hosting/examples).
+  [Deployment examples](/self-hosting/examples). Set `TRUSTED_PROXIES` to that proxy's private socket address (for
+  example, `TRUSTED_PROXIES="172.30.107.2"` only when you assigned it that address), so visitors don't share one
+  IP-based rate limit. Keep port `3000` private and follow the examples' forwarded-header rules.
 
 <Warning>
   `APP_URL` must match the address in the browser's address bar exactly, including `https://`. If it doesn't, sign-in

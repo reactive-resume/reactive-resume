@@ -241,15 +241,23 @@ function Roles({ entry, write, page, disabled, focusField }: FieldProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const roles = (entry as unknown as Values).roles ?? [];
-	const writeRoles = (key: string, mutate: (roles: RoleItem[]) => void) =>
-		write(`roles:${key}`, (target) => {
-			mutate(target.roles as RoleItem[]);
-		});
-	const update = (role: RoleItem, key: string, mutate: (role: RoleItem) => void) =>
-		writeRoles(`${role.id}:${key}`, (list) => {
-			const target = list.find((item) => item.id === role.id);
-			if (target) mutate(target);
-		});
+	const writeRoles = (key: string, mutate: (roles: RoleItem[]) => void, options?: { newStep?: boolean }) =>
+		write(
+			`roles:${key}`,
+			(target) => {
+				mutate(target.roles as RoleItem[]);
+			},
+			options,
+		);
+	const update = (role: RoleItem, key: string, mutate: (role: RoleItem) => void, options?: { newStep?: boolean }) =>
+		writeRoles(
+			`${role.id}:${key}`,
+			(list) => {
+				const target = list.find((item) => item.id === role.id);
+				if (target) mutate(target);
+			},
+			options,
+		);
 
 	return (
 		<View style={{ gap: space.s3 }}>
@@ -322,10 +330,15 @@ function Roles({ entry, write, page, disabled, focusField }: FieldProps) {
 						autoFocus={!disabled && focusField === `roles/${index}/description`}
 						value={role.description}
 						disabled={disabled}
-						onChange={(html) =>
-							update(role, "description", (target) => {
-								target.description = html;
-							})
+						onChange={(html, options) =>
+							update(
+								role,
+								"description",
+								(target) => {
+									target.description = html;
+								},
+								options,
+							)
 						}
 					/>
 				</View>
@@ -426,10 +439,14 @@ export function EntryFields({ type, autoFocus, ...props }: EntryFieldsProps) {
 						value={str(values[field.key])}
 						disabled={disabled}
 						autoFocus={!disabled && focusField === field.key}
-						onChange={(html) =>
-							write(field.key, (target) => {
-								target[field.key] = html;
-							})
+						onChange={(html, options) =>
+							write(
+								field.key,
+								(target) => {
+									target[field.key] = html;
+								},
+								options,
+							)
 						}
 					/>
 				);
