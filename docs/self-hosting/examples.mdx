@@ -14,10 +14,13 @@ Whatever proxy you use, configure it so that:
 - **The whole site goes to the app.** The app serves pages, the API (`/api/`), the MCP server (`/mcp`), uploads and
   assets from one address. Don't split or rewrite paths.
 - **`APP_URL` is the public address**, for example `APP_URL="https://resume.example.com"`.
-- **Client-supplied IP headers are replaced or removed.** The Node server uses its connection's remote address for
-  IP-based limits, such as sign-in attempts and public resume passwords, and ignores forwarded IP headers. Behind a
-  reverse proxy, users share the proxy's IP-based limit. Vercel uses the client address supplied by its deployment
-  adapter. The examples below also replace `X-Forwarded-For` and remove alternate IP headers at the proxy.
+- **Trust only the proxy's actual socket address.** Set `TRUSTED_PROXIES` on the app to the proxy's private IP or a
+  narrowly scoped CIDR. Otherwise visitors share the proxy's IP-based sign-in and resume-password limits. The Node
+  server walks `X-Forwarded-For` right to left through trusted hops; it ignores the header from untrusted peers.
+- **Client-supplied IP headers are replaced or removed.** These recipes put the proxy directly at the internet edge.
+  Caddy and Traefik use their safe default forwarded-header handling; nginx explicitly overwrites `X-Forwarded-For`.
+  Don't enable a proxy's insecure forwarded-header trust. A CDN or another proxy in front needs its own restricted
+  trust configuration; do not copy an all-address trust range.
 - **Streaming responses aren't buffered**, and idle reads are allowed for at least 5 minutes. Assistant replies and
   live updates stream from the server, and a single Assistant reply can take up to 4 minutes.
 - **Request bodies of at least 50 MB are accepted.** People can attach files of up to 25 MB to the Assistant, and
@@ -27,6 +30,10 @@ Whatever proxy you use, configure it so that:
   Once a proxy is in front, don't publish the app's port `3000` on a public interface, or clients can bypass the proxy's
   HTTPS and access controls. Remove the `ports` entry, or bind it to `127.0.0.1:3000:3000`.
 </Warning>
+
+The recipes assign the proxy `172.30.107.2` on a private `172.30.107.0/24` Docker network and set
+`TRUSTED_PROXIES="172.30.107.2"` on the app. Choose an unused subnet for your host; if you change it, change all three
+values together. Don't substitute a broad private range. See [Reverse-proxy trust](/self-hosting/environment-variables#reverse-proxy-trust).
 
 ## Caddy
 
@@ -38,6 +45,9 @@ services:
   caddy:
     image: caddy:2
     restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.30.107.2
     ports:
       - "80:80"
       - "443:443"
@@ -65,6 +75,8 @@ services:
     image: amruthpillai/reactive-resume:latest
     restart: unless-stopped
     env_file: .env
+    environment:
+      TRUSTED_PROXIES: "172.30.107.2"
     volumes:
       - reactive_resume_data:/app/data
     depends_on:
@@ -75,6 +87,12 @@ volumes:
   caddy_data:
   postgres_data:
   reactive_resume_data:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.30.107.0/24
 ```
 
 ```text Caddyfile
@@ -103,6 +121,9 @@ services:
   traefik:
     image: traefik:v3
     restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.30.107.2
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -140,6 +161,8 @@ services:
     image: amruthpillai/reactive-resume:latest
     restart: unless-stopped
     env_file: .env
+    environment:
+      TRUSTED_PROXIES: "172.30.107.2"
     volumes:
       - reactive_resume_data:/app/data
     depends_on:
@@ -161,6 +184,12 @@ volumes:
   traefik_letsencrypt:
   postgres_data:
   reactive_resume_data:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.30.107.0/24
 ```
 
 Add `ACME_EMAIL="you@example.com"` to `.env` for Let's Encrypt notices. Traefik skips containers whose health check
@@ -179,6 +208,9 @@ With [nginx](https://nginx.org/) you manage certificates yourself, for example w
 nginx:
   image: nginx:stable-alpine
   restart: unless-stopped
+  networks:
+    default:
+      ipv4_address: 172.30.107.2
   ports:
     - "80:80"
     - "443:443"
@@ -187,6 +219,22 @@ nginx:
     - ./certs:/etc/nginx/certs:ro
   depends_on:
     - reactive-resume
+```
+
+Add the following to the app service and to the top level of that compose file, respectively. This fixes nginx's
+private address and trusts only that address:
+
+```yaml compose.yml
+services:
+  reactive-resume:
+    environment:
+      TRUSTED_PROXIES: "172.30.107.2"
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.30.107.0/24
 ```
 
 ```nginx nginx.conf lines expandable
