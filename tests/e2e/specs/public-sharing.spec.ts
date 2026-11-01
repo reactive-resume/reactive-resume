@@ -3,6 +3,109 @@ import { createSampleResumeFromDashboard, makeResumePublic, openSidebarSection }
 import { failRpcProcedure } from "../fixtures/rpc-failure";
 import { expect, test } from "../fixtures/test";
 
+for (const { locale, name, rtl } of [
+	{ locale: "en-US", name: "Jane Doe", rtl: false },
+	{ locale: "ar-SA", name: "مريم أحمد", rtl: true },
+	{ locale: "he-IL", name: "נועה כהן", rtl: true },
+]) {
+	test(`keeps the ${locale} public page's picture, name and bullets on their reading side`, async ({
+		browser,
+		authPage: page,
+	}, testInfo) => {
+		await createSampleResumeFromDashboard(page, testInfo);
+		const resumeId = new URL(page.url()).pathname.split("/")[2];
+		await expect(
+			await page.request.patch(`/api/openapi/resumes/${resumeId}`, {
+				data: {
+					operations: [
+						{ op: "replace", path: "/metadata/template", value: "onyx" },
+						{ op: "replace", path: "/metadata/page/locale", value: locale },
+						{ op: "replace", path: "/basics/name", value: name },
+					],
+				},
+			}),
+		).toBeOK();
+		await page.reload();
+		const publicUrl = await makeResumePublic(page);
+		const visitor = await browser.newPage();
+		try {
+			await visitor.goto(publicUrl);
+			await expect(visitor.locator("html")).toHaveAttribute("dir", rtl ? "rtl" : "ltr");
+			for (const width of [1280, 390]) {
+				await visitor.setViewportSize({ width, height: 900 });
+				const heading = visitor.getByRole("heading", { level: 1, name });
+				await expect(heading).toBeVisible();
+				const picture = visitor.locator("[data-region=header] img");
+				await expect(picture).toBeVisible();
+				const [photo, header] = await Promise.all([
+					picture.boundingBox(),
+					visitor.locator("[data-region=header]").boundingBox(),
+				]);
+				if (!photo || !header) throw new Error("The public header is missing.");
+				const photoInset = rtl ? header.x + header.width - photo.x - photo.width : photo.x - header.x;
+				expect(photoInset).toBeLessThan(2);
+				await expect(heading).toHaveCSS("direction", rtl ? "rtl" : "ltr");
+				await expect(heading).toHaveCSS("text-align", rtl ? "right" : "left");
+
+				const bullet = visitor.getByText("•", { exact: true }).first();
+				const geometry = await bullet.evaluate((marker) => {
+					const row = marker.parentElement;
+					if (!row) throw new Error("The bullet has no row.");
+					const content = [...row.children].find((child) => child !== marker);
+					if (!content) throw new Error("The bullet has no content.");
+					const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+					const text = walker.nextNode();
+					if (!text) throw new Error("The bullet content has no text.");
+					const range = document.createRange();
+					range.selectNodeContents(text);
+					const firstLine = range.getClientRects()[0];
+					if (!firstLine) throw new Error("The bullet text has no line.");
+					return {
+						marker: marker.getBoundingClientRect().toJSON(),
+						row: row.getBoundingClientRect().toJSON(),
+						text: firstLine.toJSON(),
+					};
+				});
+				const markerInset = rtl ? geometry.row.right - geometry.marker.right : geometry.marker.left - geometry.row.left;
+				const textGap = rtl ? geometry.marker.left - geometry.text.right : geometry.text.left - geometry.marker.right;
+				expect(markerInset).toBeLessThan(2);
+				expect(textGap).toBeGreaterThanOrEqual(-1);
+				expect(textGap).toBeLessThan(24);
+				expect(await visitor.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+			}
+
+			// Column placement is independent of text direction, including an explicit choice in Design.
+			for (const side of [null, "left", "right"]) {
+				await expect(
+					await page.request.patch(`/api/openapi/resumes/${resumeId}`, {
+						data: {
+							operations: [
+								{ op: "replace", path: "/metadata/template", value: "gengar" },
+								...(side ? [{ op: "add", path: "/metadata/layout/sidebarSide", value: side }] : []),
+							],
+						},
+					}),
+				).toBeOK();
+				await visitor.setViewportSize({ width: 1280, height: 900 });
+				await visitor.reload();
+				const sidebar = visitor.locator("[data-region=sidebar]");
+				const main = visitor.locator("[data-region=main]");
+				await expect(sidebar).toBeVisible();
+				const [sidebarBox, mainBox] = await Promise.all([sidebar.boundingBox(), main.boundingBox()]);
+				if (!sidebarBox || !mainBox) throw new Error("The public columns are missing.");
+				expect(sidebarBox.x < mainBox.x).toBe((side ?? (rtl ? "right" : "left")) === "left");
+				await visitor.setViewportSize({ width: 390, height: 900 });
+				const [foldedSidebar, foldedMain] = await Promise.all([sidebar.boundingBox(), main.boundingBox()]);
+				if (!foldedSidebar || !foldedMain) throw new Error("The folded public columns are missing.");
+				expect(foldedSidebar.y).toBeGreaterThanOrEqual(foldedMain.y + foldedMain.height);
+				expect(await visitor.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+			}
+		} finally {
+			await visitor.close();
+		}
+	});
+}
+
 test("counts a visitor's PDF download without counting the preview", async ({ browser, authPage: page }, testInfo) => {
 	test.setTimeout(60_000);
 	await createSampleResumeFromDashboard(page, testInfo);
