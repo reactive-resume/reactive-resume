@@ -36,8 +36,9 @@ function redirectDestination(redirectUri: string | null) {
 	try {
 		const url = new URL(redirectUri);
 		if (url.protocol === "http:" || url.protocol === "https:") return url.host;
-		// Any installed app can claim a custom scheme and pair it with a familiar host, so name the scheme too.
-		return url.host ? `${url.protocol}//${url.host}` : url.protocol.replace(/:$/, "");
+		// Any installed app can claim a custom scheme, even one spelled like a website, so keep the scheme and its
+		// separator: a site's host never ends in ":".
+		return url.host ? `${url.protocol}//${url.host}` : url.protocol;
 	} catch {
 		return null;
 	}

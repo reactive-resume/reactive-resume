@@ -96,8 +96,12 @@ test("requires explicit OAuth consent before denying or allowing access", async 
 test("names an app callback's scheme, not just its host, before consent", async ({ authPage: page, baseURL }) => {
 	const origin = new URL(baseURL ?? "http://localhost:3000").origin;
 	for (const [callback, destination] of [
+		["https://www.cursor.com/agents/mcp/oauth/callback", "www.cursor.com"],
+		// An app scheme spelled like a website must not read as that website.
+		["www.cursor.com:/oauth/callback", "www.cursor.com:"],
+		["com.example.app:/oauth/callback", "com.example.app:"],
+		["cursor://anysphere.cursor-mcp/oauth/callback", "cursor://anysphere.cursor-mcp"],
 		["evilapp://www.cursor.com/oauth/callback", "evilapp://www.cursor.com"],
-		["com.example.app:/oauth/callback", "com.example.app"],
 	]) {
 		const registration = await page.request.post("/api/auth/oauth2/register", {
 			headers: { origin },
