@@ -268,11 +268,15 @@ test("application coach history survives provider-list failure", async ({ authPa
 			const history = await page.request.post("/api/rpc/agent/threads/get", { data: { json: { id: threads[0].id } } });
 			expect(history.ok()).toBe(true);
 			const { json: thread } = await history.json();
-			const messages = JSON.stringify(thread.messages);
+			const hasText = (role: string, text: string) =>
+				thread.messages.some(
+					(message: { role: string; parts: { type: string; text?: string }[] }) =>
+						message.role === role && message.parts.some((part) => part.type === "text" && part.text?.includes(text)),
+				);
 			return (
 				!thread.thread.activeRunId &&
-				messages.includes("Remember this fictional history") &&
-				messages.includes("You left the document out.")
+				hasText("user", "Remember this fictional history") &&
+				hasText("assistant", "You left the document out.")
 			);
 		})
 		.toBe(true);
