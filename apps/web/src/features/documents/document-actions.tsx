@@ -341,6 +341,7 @@ export function DocumentMenuContent({
 	const actions = useDocumentActions();
 	const navigate = useNavigate();
 	const { download, downloading } = useDocumentDownload();
+	const openDialog = useDialogStore((state) => state.openDialog);
 	const { data: session } = authClient.useSession();
 	const [, copy] = useCopyToClipboard();
 	const origin = useShareOrigin();
@@ -389,6 +390,25 @@ export function DocumentMenuContent({
 		document.type === "resume"
 			? { icon: "briefcase", label: t`Copy for a job…`, onSelect: () => actions.copyForJob(document) }
 			: { icon: "briefcase", label: t`Link to application…`, onSelect: onLink, disabled: document.isLocked },
+		...(document.type === "resume"
+			? [
+					{
+						icon: "link-simple-horizontal",
+						label: t`Link to application…`,
+						onSelect: onLink,
+						disabled: document.isLocked,
+					} satisfies MenuEntry,
+				]
+			: []),
+		...(document.type === "resume"
+			? [
+					{
+						icon: "envelope-simple",
+						label: t`Write a letter…`,
+						onSelect: () => openDialog("document.new", { context: "letters", sourceResumeId: document.id }),
+					} satisfies MenuEntry,
+				]
+			: []),
 		{ icon: "tag", label: t`Tags…`, onSelect: onTags, disabled: document.isLocked },
 		document.isLocked
 			? { icon: "lock-open", label: t`Unlock`, onSelect: () => actions.setLocked(document, false) }
@@ -534,6 +554,7 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 		try {
 			await link.mutateAsync({ type: document.type, id: document.id, applicationId });
 			await queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
+			await queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
 			onClose();
 		} catch (error) {
 			toastError(
@@ -543,6 +564,9 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 		}
 	};
 
+	const submitted =
+		document?.type === "letter" &&
+		applications?.some((item) => item.coverLetterId === document.id && item.sentCoverLetterVersionId);
 	const jobs = (applications ?? []).filter((application) => application.status !== "closed");
 
 	return (
@@ -557,22 +581,42 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 						<Trans>Link to application</Trans>
 					</DialogTitle>
 					<DialogDescription>
-						<Trans>The application this letter is for.</Trans>
+						<Trans>The application this document is for.</Trans>
 					</DialogDescription>
 				</DialogHeader>
+				{submitted && (
+					<p className="text-sm text-ink-2">
+						<Trans>This letter is recorded as sent. Its application link stays with that submission.</Trans>
+					</p>
+				)}
 				<div className="grid max-h-72 gap-1 overflow-y-auto">
 					{jobs.map((application) => (
 						<Button
 							key={application.id}
 							variant={document?.application?.id === application.id ? "secondary" : "ghost"}
 							className="h-auto justify-start py-2 text-start"
-							disabled={link.isPending}
+							disabled={
+								link.isPending ||
+								Boolean(submitted) ||
+								Boolean(
+									document?.type === "letter" &&
+									application.sentCoverLetterVersionId &&
+									application.coverLetterId !== document.id,
+								)
+							}
 							onClick={() => void choose(application.id)}
 						>
 							<Icon name="briefcase" className="text-ink-2" />
 							<span className="grid min-w-0">
 								<span className="truncate font-medium">{application.role}</span>
 								<span className="truncate text-xs text-ink-3">{application.company}</span>
+								{document?.type === "letter" &&
+									application.sentCoverLetterVersionId &&
+									application.coverLetterId !== document.id && (
+										<span className="text-xs text-ink-3">
+											<Trans>Letter already sent</Trans>
+										</span>
+									)}
 							</span>
 						</Button>
 					))}
@@ -584,11 +628,15 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 				</div>
 				<DialogFooter>
 					{document?.application && (
-						<Button variant="ghost" disabled={link.isPending} onClick={() => void choose(null)}>
+						<Button variant="ghost" disabled={link.isPending || Boolean(submitted)} onClick={() => void choose(null)}>
 							<Trans>Unlink</Trans>
 						</Button>
 					)}
-					<Button variant="secondary" disabled={link.isPending} onClick={() => setAddingJob(true)}>
+					<Button
+						variant="secondary"
+						disabled={link.isPending || Boolean(submitted)}
+						onClick={() => setAddingJob(true)}
+					>
 						<Icon name="plus" />
 						<Trans>Add a job…</Trans>
 					</Button>

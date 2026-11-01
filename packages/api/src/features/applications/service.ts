@@ -15,13 +15,14 @@ import * as schema from "@reactive-resume/db/schema";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
 import { latestStageEntryId } from "@reactive-resume/schema/applications/data";
+import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 import { isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
 import { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
 import { coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
 import { prepareRunAt } from "../career/scheduling";
-import { coverLetterService } from "../cover-letters/service";
+import { coverLetterService, linkLetterToApplication } from "../cover-letters/service";
 import { writeLetterVersion } from "../cover-letters/versions";
 import { isRetriedCreate, lockUser, recordCreateRequest } from "../documents/ownership";
 import { resumeService } from "../resume/service";
@@ -75,6 +76,8 @@ export async function insertApplication(
 	if (created) await recordCreateRequest(tx, created);
 	if (row) {
 		await recordSentResume(row, tx);
+		if (row.coverLetterId)
+			await linkLetterToApplication(tx, { userId: input.userId, letterId: row.coverLetterId, applicationId: row.id });
 		if (row.followUpAt) await syncFollowUp(tx, row);
 	}
 	return id;
@@ -206,7 +209,28 @@ async function assertOwnedCoverLetter(userId: string, coverLetterId: string | nu
 // Stages at which an application has been sent.
 const SENT_STAGES = new Set<ApplicationStatus>(["applied", "screening", "interview", "offer"]);
 
+/** Whether a stage means the application has already been sent (and so carries a submission record). */
+export const isSentStage = (status: ApplicationStatus) => SENT_STAGES.has(status);
+
 type ApplicationRow = typeof schema.application.$inferSelect;
+
+type SubmissionHistory = Pick<
+	ApplicationRow,
+	"status" | "activity" | "sentResumeVersionId" | "sentCoverLetterVersionId" | "submittedAt"
+>;
+
+/**
+ * Whether this application has already been submitted at any point in its life. The immediate status alone is not
+ * enough: a Closed job may have been Applied earlier, and reopening it must not turn a late-linked draft into a new
+ * sent receipt. `submittedAt` is durable (timeline edits cannot remove it); sent versions and a stage entry in a sent
+ * stage are fallbacks for rows created before the marker existed. appliedAt is not sound (Saved rows carry a default).
+ */
+export const hasSubmitted = (row: SubmissionHistory) =>
+	row.submittedAt != null ||
+	isSentStage(row.status) ||
+	Boolean(row.sentResumeVersionId) ||
+	Boolean(row.sentCoverLetterVersionId) ||
+	row.activity.some((entry) => entry.type === "stage" && isSentStage(entry.stage));
 
 /**
  * Once an application has been sent (Applied or later), its linked resume is saved as a "sent" version, named after
@@ -216,6 +240,8 @@ type ApplicationRow = typeof schema.application.$inferSelect;
 export async function recordSentResume(row: ApplicationRow, client: DbOrTx): Promise<ApplicationRow> {
 	if (!SENT_STAGES.has(row.status)) return row;
 	const changes: Partial<ApplicationRow> = {};
+	// The first sent snapshot also fixes the durable lifetime submission marker. Later timeline edits cannot erase it.
+	if (!row.submittedAt) changes.submittedAt = new Date();
 
 	if (row.resumeId && !row.sentResumeVersionId) {
 		const [resume] = await client
@@ -487,6 +513,8 @@ const applicationSummarySelect = {
 	resumeFileUrl: schema.application.resumeFileUrl,
 	coverLetterUrl: schema.application.coverLetterUrl,
 	coverLetterId: schema.application.coverLetterId,
+	sentResumeVersionId: schema.application.sentResumeVersionId,
+	sentCoverLetterVersionId: schema.application.sentCoverLetterVersionId,
 	source: schema.application.source,
 	tags: schema.application.tags,
 	sourceUrl: schema.application.sourceUrl,
@@ -729,6 +757,12 @@ export const applicationService = {
 			for (const row of rows) {
 				await recordSentResume(row, tx);
 				if (row.followUpAt) await syncFollowUp(tx, row);
+				if (row.coverLetterId)
+					await linkLetterToApplication(tx, {
+						userId: input.userId,
+						letterId: row.coverLetterId,
+						applicationId: row.id,
+					});
 			}
 			return { imported: rows.length };
 		});
@@ -783,6 +817,7 @@ export const applicationService = {
 			throw new ORPCError("BAD_REQUEST", {
 				message:
 					"Recorded submitted documents cannot be replaced. Prepare a copy to keep the submitted versions intact.",
+				data: { reason: SUBMITTED_DOCUMENT_LOCKED },
 			});
 		}
 		await assertOwnedResume(userId, fields.resumeId);
@@ -813,6 +848,7 @@ export const applicationService = {
 					throw new ORPCError("BAD_REQUEST", {
 						message:
 							"Recorded submitted documents cannot be replaced. Prepare a copy to keep the submitted versions intact.",
+						data: { reason: SUBMITTED_DOCUMENT_LOCKED },
 					});
 				const { values, transition } = await applicationTransitionValues(
 					tx,
@@ -861,11 +897,27 @@ export const applicationService = {
 							})
 							.where(eq(schema.careerWorkspace.applicationId, id));
 				}
-				// Editing metadata must not mark a linked draft as submitted.
+				// A sent snapshot belongs to the moment the application first enters a sent stage, or to an explicit
+				// submission. Later metadata saves and stage advances must not turn a late-linked draft into "sent".
 				const result =
-					transition.canonicalTransition || fields.resumeId !== undefined || fields.coverLetterId !== undefined
-						? await recordSentResume(updated, tx)
-						: updated;
+					!hasSubmitted(current) && isSentStage(updated.status) ? await recordSentResume(updated, tx) : updated;
+				// Every explicit letter-link write reconciles both sides, including an equal-ID save that may be
+				// repairing a legacy null reverse or multiple aliases.
+				if (fields.coverLetterId !== undefined) {
+					if (fields.coverLetterId !== current.coverLetterId && current.coverLetterId)
+						await linkLetterToApplication(tx, {
+							userId,
+							letterId: current.coverLetterId,
+							applicationId: null,
+							clearApplicationId: id,
+						});
+					if (fields.coverLetterId)
+						await linkLetterToApplication(tx, {
+							userId,
+							letterId: fields.coverLetterId,
+							applicationId: id,
+						});
+				}
 				return stripUserId(result);
 			});
 			if (fields.resumeFileUrl !== undefined || fields.coverLetterUrl !== undefined || resumeFile || coverLetterFile) {
@@ -1168,7 +1220,7 @@ export const applicationService = {
 					.where(and(eq(schema.application.id, row.id), eq(schema.application.userId, input.userId)))
 					.returning();
 				saved(written ?? row);
-				if (written && transition.canonicalTransition) await recordSentResume(written, tx);
+				if (written && transition.canonicalTransition && !hasSubmitted(row)) await recordSentResume(written, tx);
 			}
 			return { updated, stages };
 		}),

@@ -1069,7 +1069,6 @@ msgstr "إجراءات لـ {0} في {1}"
 msgid "Active"
 msgstr "نشيط"
 
-#: src/features/application-detail/sections.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Add"
 msgstr "إضافة"
@@ -1105,14 +1104,6 @@ msgstr "أضف موقعًا"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr "إضافة عرض أحدث"
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note"
-msgstr "أضف ملاحظة"
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note…"
-msgstr "أضف ملاحظة…"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Add a person"
@@ -2111,6 +2102,10 @@ msgstr "الأذرية"
 #: src/features/write/entry-sheet.tsx
 msgid "Back"
 msgstr "خلف"
+
+#: src/shell/builder-chrome.tsx
+msgid "Back to application"
+msgstr ""
 
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
@@ -3749,6 +3744,10 @@ msgstr "خطاب التقديم"
 msgid "Cover letter — {0}"
 msgstr "خطاب تعريفي - {0}"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
@@ -3913,6 +3912,10 @@ msgstr "تاريخ الإنشاء"
 #: src/features/design/advanced.tsx
 msgid "Date format"
 msgstr "تنسيق التاريخ"
+
+#: src/features/application-detail/sections.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -6168,6 +6171,11 @@ msgctxt "US Letter paper size (8.5 × 11 in), shown beside A4"
 msgid "Letter"
 msgstr "US Letter"
 
+#: src/features/documents/document-sheets.tsx
+#: src/features/letters/write.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Letter body"
 msgstr "جسم الرسالة"
@@ -6484,6 +6492,18 @@ msgstr "تم تخطي المستندات المقفلة. فتح لهم أولا.
 #: src/features/write/outline.tsx
 msgid "Locked. Unlock to edit."
 msgstr "مغلق. فتح للتحرير."
+
+#: src/features/application-detail/sections.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Long press to select"
@@ -7351,6 +7371,7 @@ msgstr "لا يوجد رد"
 msgid "No results"
 msgstr "لا توجد نتائج"
 
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "لا السيرة الذاتية"
@@ -8207,8 +8228,8 @@ msgid "PDF check canceled. Retry when ready."
 msgstr "أُلغي فحص PDF. حاول مجددًا عندما تكون مستعدًا."
 
 #: src/features/application-detail/sections.tsx
-msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
-msgstr "PDF فقط · حتى 10 MB لكل ملف. ربط سيرة ذاتية من Reactive Resume يتيح تقييم ملاءمتها للوظيفة وتخصيصها باستخدام AI."
+msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
@@ -9388,6 +9409,10 @@ msgstr "ملاحظات على السيرة الذاتية، ومساعدة في 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "ملف السيرة الذاتية"
+
+#: src/features/documents/new-document.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -10910,6 +10935,10 @@ msgstr "صفوف متراصة"
 msgid "Stage stays {stage}"
 msgstr "تبقى المرحلة {stage}"
 
+#: src/features/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Start"
 msgstr "البداية"
@@ -11724,6 +11753,11 @@ msgid "This application has no posting yet. Add one in Applications."
 msgstr "لا يوجد إعلان وظيفي في الطلب هذا بعد. أضف واحدًا في الطلبات."
 
 #: src/features/applications/error.ts
+#: src/features/documents/queries.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
+#: src/features/applications/error.ts
 msgid "This changed elsewhere. Reload and try again."
 msgstr "تغيّر هذا في مكان آخر. أعد التحميل وحاول مجددًا."
 
@@ -11886,6 +11920,10 @@ msgstr "تم تغيير خطاب التقديم هذا في مكان آخر"
 #: src/features/letters/write.tsx
 msgid "This letter is locked. Unlock it in Documents to edit."
 msgstr "هذا الخطاب مقفل. افتح قفله في «وثائق» لتحريره."
+
+#: src/features/documents/document-sheets.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "This letter keeps its recipient as written."
@@ -12527,6 +12565,10 @@ msgstr "استخدم مقاس A4 أو US Letter حتى يصمد التخطيط �
 msgid "Use AI for PDF imports"
 msgstr "استخدم AI لعمليات استيراد PDF"
 
+#: src/features/application-detail/sections.tsx
+msgid "Use an existing letter"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Use an http or https job posting link before saving."
 msgstr "استخدم رابط نشر الوظيفة http أو https قبل الحفظ."
@@ -13121,6 +13163,10 @@ msgstr ""
 #: src/features/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "اكتب رسالة"
+
+#: src/features/documents/document-sheets.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"

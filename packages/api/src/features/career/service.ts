@@ -28,7 +28,7 @@ import { aiProvidersService } from "../ai-providers/service";
 import { findTrackedPosting } from "../applications/duplicates";
 import { syncFollowUp } from "../applications/follow-up";
 import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "../applications/lanes";
-import { applicationService, assertApplicationVersion, recordSentResume } from "../applications/service";
+import { applicationService, assertApplicationVersion, hasSubmitted, recordSentResume } from "../applications/service";
 import { assertSharedDocument, lockUser } from "../documents/ownership";
 import { matchPosting } from "./matching";
 import { noticeText } from "./notices";
@@ -1099,7 +1099,7 @@ export const careerService = {
 				.where(and(eq(tables.application.id, application.id), eq(tables.application.userId, userId)))
 				.returning();
 			if (!updated) throw new ORPCError("NOT_FOUND");
-			if (transition.canonicalTransition) await recordSentResume(updated, tx);
+			if (transition.canonicalTransition && !hasSubmitted(application)) await recordSentResume(updated, tx);
 			if (changes.some((change) => change.type === "follow-up")) await syncFollowUp(tx, updated);
 			const undo = { before: appliedFields(application), after: appliedFields(updated), offerId };
 			await tx

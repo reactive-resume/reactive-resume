@@ -4,6 +4,7 @@ import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getNetworkStateAsync } from "expo-network";
 import { useRef, useState } from "react";
+import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/errors";
 import { documentRef } from "./filter";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
@@ -24,6 +25,8 @@ const chunks = <T>(items: readonly T[]) =>
 
 export function documentError(error: unknown) {
 	if (error instanceof ORPCError) {
+		if (error.data?.reason === SUBMITTED_DOCUMENT_LOCKED)
+			return t`This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job.`;
 		if (error.code === "UNAUTHORIZED") return t`Your session expired. Sign in again.`;
 		if (error.code === "FORBIDDEN") return t`Unlock it first, then try again.`;
 		if (error.code === "NOT_FOUND") return t`This document is no longer available. Refresh and try again.`;

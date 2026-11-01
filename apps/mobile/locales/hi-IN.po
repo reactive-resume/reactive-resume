@@ -1069,7 +1069,6 @@ msgstr "{1} पर {0} के लिए कार्रवाइयां"
 msgid "Active"
 msgstr "सक्रिय"
 
-#: src/features/application-detail/sections.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Add"
 msgstr "जोड़ें"
@@ -1105,14 +1104,6 @@ msgstr "एक स्थान जोड़ें"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note"
-msgstr "एक नोट जोड़े"
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note…"
-msgstr "एक नोट जोड़ें…"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Add a person"
@@ -2111,6 +2102,10 @@ msgstr "अज़रबैजानी"
 #: src/features/write/entry-sheet.tsx
 msgid "Back"
 msgstr "पीछे"
+
+#: src/shell/builder-chrome.tsx
+msgid "Back to application"
+msgstr ""
 
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
@@ -3749,6 +3744,10 @@ msgstr "कवर लेटर"
 msgid "Cover letter — {0}"
 msgstr "कवर लेटर - {0}"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
@@ -3913,6 +3912,10 @@ msgstr "बनाया गया दिनांक"
 #: src/features/design/advanced.tsx
 msgid "Date format"
 msgstr "तारिख का प्रारूप"
+
+#: src/features/application-detail/sections.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -6168,6 +6171,11 @@ msgctxt "US Letter paper size (8.5 × 11 in), shown beside A4"
 msgid "Letter"
 msgstr "US Letter"
 
+#: src/features/documents/document-sheets.tsx
+#: src/features/letters/write.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Letter body"
 msgstr "पत्र का मुख्य भाग"
@@ -6484,6 +6492,18 @@ msgstr "लॉक किए गए दस्तावेज़ छोड़ द�
 #: src/features/write/outline.tsx
 msgid "Locked. Unlock to edit."
 msgstr "ताला लगा दिया। संपादित करने के लिए अनलॉक करें."
+
+#: src/features/application-detail/sections.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Long press to select"
@@ -7351,6 +7371,7 @@ msgstr "कोई जबाव नहीं"
 msgid "No results"
 msgstr "कोई परिणाम नहीं"
 
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "कोई बायोडाटा नहीं"
@@ -8207,8 +8228,8 @@ msgid "PDF check canceled. Retry when ready."
 msgstr "PDF जाँच रद्द कर दी गई। तैयार होने पर पुनः प्रयास करें।"
 
 #: src/features/application-detail/sections.tsx
-msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
-msgstr "केवल PDF · हर फ़ाइल अधिकतम 10 MB। Reactive Resume लिंक करने पर AI से मिलान स्कोर और नौकरी के अनुसार बदलाव उपलब्ध होते हैं।"
+msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
@@ -9388,6 +9409,10 @@ msgstr "रिज़्यूमे फ़ीडबैक, प्रोडक्
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "रेज़्यूमे फ़ाइल"
+
+#: src/features/documents/new-document.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -10910,6 +10935,10 @@ msgstr "एक के नीचे एक"
 msgid "Stage stays {stage}"
 msgstr "चरण {stage} ही रहेगा"
 
+#: src/features/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Start"
 msgstr "शुरू"
@@ -11724,6 +11753,11 @@ msgid "This application has no posting yet. Add one in Applications."
 msgstr "इस आवेदन में अभी विज्ञापन नहीं है। आवेदन में एक जोड़ें।"
 
 #: src/features/applications/error.ts
+#: src/features/documents/queries.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
+#: src/features/applications/error.ts
 msgid "This changed elsewhere. Reload and try again."
 msgstr "यह कहीं और बदल गया है। फिर से लोड करके कोशिश करें।"
 
@@ -11886,6 +11920,10 @@ msgstr "यह पत्र अन्यत्र बदल गया"
 #: src/features/letters/write.tsx
 msgid "This letter is locked. Unlock it in Documents to edit."
 msgstr "यह पत्र लॉक है। संपादन के लिए दस्तावेज़ में जाकर इसे अनलॉक करें।"
+
+#: src/features/documents/document-sheets.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "This letter keeps its recipient as written."
@@ -12527,6 +12565,10 @@ msgstr "A4 या US Letter इस्तेमाल करें ताकि �
 msgid "Use AI for PDF imports"
 msgstr "PDF आयात के लिए AI का उपयोग करें"
 
+#: src/features/application-detail/sections.tsx
+msgid "Use an existing letter"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Use an http or https job posting link before saving."
 msgstr "सहेजने से पहले http या https जॉब पोस्टिंग लिंक का उपयोग करें।"
@@ -13121,6 +13163,10 @@ msgstr ""
 #: src/features/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "एक पत्र लिखें"
+
+#: src/features/documents/document-sheets.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"

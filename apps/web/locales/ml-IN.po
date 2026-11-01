@@ -1400,7 +1400,6 @@ msgstr "സജീവമാണ്"
 msgid "Activity"
 msgstr "പ്രവർത്തനം"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1455,14 +1454,6 @@ msgstr "ഒരു ലൊക്കേഷൻ ചേർക്കുക"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "ഒരു കുറിപ്പ് ചേർക്കുക"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "ഒരു കുറിപ്പ് ചേർക്കുക…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2662,6 +2653,11 @@ msgstr "ബിഎ, കമ്മ്യൂണിക്കേഷൻ ഡിസൈൻ
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "തിരികെ"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3938,8 +3934,8 @@ msgid "Copy stylesheet"
 msgstr "സ്റ്റൈൽഷീറ്റ് പകർത്തുക"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "പോസ്റ്റിംഗിൽ നിന്ന് ജോലി വിവരണം മുഴുവനായി പകർത്തി താഴെ ഒട്ടിക്കുക. ഞങ്ങൾ നിങ്ങൾക്കായി ഫീൽഡുകൾ പൂരിപ്പിക്കും, കൂടാതെ പൊരുത്ത സ്കോറിംഗിനും ക്രമീകരണത്തിനുമായി ഈ അപേക്ഷയോടൊപ്പം ടെക്സ്റ്റ് സൂക്ഷിക്കുകയും ചെയ്യും."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4712,6 +4708,10 @@ msgstr "കവർ ലെറ്റർ - {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "കവർ ലെറ്റർ · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4929,6 +4929,10 @@ msgstr "തീയതി കോളം"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "തീയതി ഫോർമാറ്റ്"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7521,7 +7525,6 @@ msgstr "ജോലി വിവരണം"
 msgid "Job link or posting text"
 msgstr "ജോലി ലിങ്ക് അല്ലെങ്കിൽ ജോലി പോസ്റ്റിംഗ് ടെക്സ്റ്റ്"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "ജോലി പൊരുത്തം"
@@ -8004,6 +8007,11 @@ msgstr "കത്ത് · ഇതുവരെ അയച്ചിട്ടില�
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "ലെറ്റർ ബോഡി"
@@ -8104,8 +8112,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "ഒരു Reactive Resume ബന്ധിപ്പിക്കുക (ശുപാർശ ചെയ്യുന്നു)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "AI മാച്ച് സ്കോറിംഗും ക്രമീകരണവും ഉപയോഗിക്കാൻ ഒരു Reactive Resume റിസ്യൂം ലിങ്ക് ചെയ്യുക."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8120,6 +8128,10 @@ msgstr "ഒരു ജോലി അപേക്ഷ ലിങ്ക് ചെയ�
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "ഒരു ജോലി അപേക്ഷ ലിങ്ക് ചെയ്യുക..."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8360,6 +8372,18 @@ msgstr ""
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "പൂട്ടി. എഡിറ്റ് ചെയ്യാൻ അൺലോക്ക് ചെയ്യുക."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9246,6 +9270,10 @@ msgstr "ഇതുവരെ ജോലിയില്ല"
 msgid "No keys yet."
 msgstr "ഇതുവരെ കീകളൊന്നുമില്ല."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "ജോലി പേരും തൊഴിലുടമയും ചേർന്ന വരികളൊന്നും കാണുന്നില്ല."
@@ -9324,6 +9352,7 @@ msgstr "പ്രതികരണമില്ല"
 msgid "No results found."
 msgstr "ഒരൊന്നുമാത്രം ഫലങ്ങളൊന്നും ലഭ്യമല്ല."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "റെസ്യൂമെ ഇല്ല"
@@ -10271,8 +10300,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "ജോലി ലിങ്ക് ഒട്ടിക്കുക. ജോലിയുടെ പോസ്‌റ്റിംഗ് ഞങ്ങൾ സംരക്ഷിക്കും, അസിസ്റ്റൻ്റിനും നിങ്ങളുടെ കത്തിനും അത് ഉപയോഗിക്കാനാവും."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "ഒരു ജോലി പോസ്റ്റിംഗ് ഒരിക്കൽ ഒട്ടിക്കുക. അതിൽ നിന്ന് നിങ്ങളുടെ റെസ്യൂമെയുടെ ക്രമീകരിച്ച പകർപ്പ്, ഒരു മാച്ച് സ്കോർ, ഒരു കവർ ലെറ്റർ ഡ്രാഫ്റ്റ്, റോൾ ട്രാക്ക് ചെയ്യാനുള്ള ഒരിടം എന്നിവ ലഭിക്കും."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11842,6 +11871,10 @@ msgstr "റെസ്യൂമെ വിശദാംശങ്ങൾ"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "റെസ്യൂമേ ഫയൽ"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13498,6 +13531,10 @@ msgstr "ഘട്ടത്തിന്റെ ഫലം"
 msgid "Stage stays {stage}"
 msgstr "ഘട്ടം “{stage}” ആയി തുടരും"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13788,6 +13825,7 @@ msgstr "പിന്തുണ"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "പിന്തുണയുണ്ട്"
 
@@ -14208,8 +14246,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "നിങ്ങളെ ഇവിടേക്ക് അയച്ച ആപ്ലിക്കേഷൻ അസാധുവായ അംഗീകാര അഭ്യർത്ഥന നടത്തി. ആപ്ലിക്കേഷനിലേക്ക് മടങ്ങി വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "ഈ കത്ത് ജോലിക്കുള്ള അപേക്ഷയാണ്."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14593,6 +14631,10 @@ msgstr "ഈ അപേക്ഷ തുറക്കാനായില്ല."
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "ഈ അപേക്ഷയിൽ ഇതുവരെ ജോലി പോസ്റ്റിംഗൊന്നും സംരക്ഷിച്ചിട്ടില്ല. അതുമായി പൊരുത്തപ്പെടുത്താൻ അത് ഒട്ടിക്കുക."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "ഈ ബ്രൗസറിന് ഇവിടെ റെക്കോർഡ് ചെയ്യാനാവില്ല. ഒരു ഓഡിയോ ഫയൽ തിരഞ്ഞെടുക്കുക, അല്ലെങ്കിൽ ഉത്തരം ടൈപ്പ് ചെയ്യുക."
@@ -14729,8 +14771,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "ഈ അക്ഷരവും \"{resumeName}\" രണ്ട് PDFs ആയി, പൊരുത്തമുള്ളതായി പേരിട്ടു."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "ഈ കത്ത് പൂട്ടിയിരിക്കുകയാണ്. എഡിറ്റ് ചെയ്യാൻ അതിൻ്റെ മെനുവിൽ നിന്ന് അൺലോക്ക് ചെയ്യുക."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15487,6 +15538,14 @@ msgstr "ക്രമത്തിൽ വായിക്കേണ്ട എന്�
 #: src/features/ats-checker/messages.ts
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "ലേഔട്ട് വീണ്ടും റെൻഡർ ചെയ്യുമ്പോഴും നിലനിൽക്കാൻ A4 അല്ലെങ്കിൽ US Letter ഉപയോഗിക്കുക."
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
 
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
@@ -16252,6 +16311,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "ഒരു കത്ത് എഴുതുക"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
