@@ -799,6 +799,11 @@ const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 	"@reactive-resume/utils/timezone": timeParser,
 });
 let offerProfile = { isSuccess: false, isPending: true, isError: false };
+let savedOffers = [
+	{ createdAt: "2026-09-01T00:00:00Z", data: { kind: "offer", currency: "USD" } },
+	{ createdAt: "2026-10-01T00:00:00Z", data: { kind: "offer", currency: "GBP" } },
+];
+let offerApplications = { data: [] };
 const { OfferEntry } = load("features/career/offer-entry.tsx", {
 	"@reactive-resume/schema/career": careerSchema,
 	"@reactive-resume/schema/career-offer": offerParser,
@@ -812,11 +817,22 @@ const { OfferEntry } = load("features/career/offer-entry.tsx", {
 			},
 		}),
 		client: { career: { createOffer: async (input) => calls.push(input) } },
+		useOffers: () => ({ data: savedOffers }),
 	},
 	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
 	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
-	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+	"@/features/applications/queries": { useApplications: () => offerApplications },
 });
+reset();
+offerApplications = { isPending: true };
+assert.equal(render(OfferEntry, {}).type, "LoadState", "unknown metadata offers no ready action");
+offerApplications = { isError: true };
+assert.equal(render(OfferEntry, {}).type, "LoadState", "failed metadata stays retryable, not empty");
+offerApplications = { data: [] };
+// With no application to attach it to, Add offer leads to saving a job first.
+control(render(OfferEntry, {}), "Add an application first").onPress();
+assert.deepEqual(calls, ["/applications?create=1"]);
+assert.ok(!nodes(render(OfferEntry, {})).some((node) => node.props.label === "Add offer"));
 reset();
 const entryView = () => render(OfferEntry, { application: { id: "job", company: "Fictional Labs", role: "Engineer" } });
 control(entryView(), "Add offer").onPress();
@@ -824,12 +840,23 @@ const formElement = nodes(entryView()).find((node) => typeof node.type === "func
 assert.ok(formElement);
 reset();
 const offerView = () => render(formElement.type, { ...formElement.props, onClose() {} });
+offerView();
+assert.equal(control(offerView(), "Currency").value, "GBP", "starts in the last offer's currency");
+savedOffers = [{ createdAt: "2026-11-01T00:00:00Z", data: { kind: "offer", currency: "EUR" } }];
+assert.equal(control(offerView(), "Currency").value, "GBP", "late refetch cannot replace the draft currency");
+assert.equal(control(offerView(), "Currency").placeholder, undefined, "no placeholder posing as a value");
+assert.match(control(offerView(), "Currency").helper, /three-letter/);
+assert.ok(!nodes(offerView()).some((node) => node.props.label === "Learning budget"), "rarer terms start folded");
+assert.ok(!nodes(offerView()).some((node) => /Times are shown/.test(String(node.props.children))));
 control(offerView(), "Currency").onChangeText("EUR");
+control(offerView(), "More options").onPress();
 control(offerView(), "Learning budget").onChangeText("95k");
 assert.equal(control(offerView(), "Learning budget").error, undefined, "typing shows no premature error");
 control(offerView(), "Learning budget").onBlur();
 assert.match(control(offerView(), "Learning budget").error, /full amount/);
+control(offerView(), "More options").onPress();
 control(offerView(), "Save offer").onPress();
+assert.equal(control(offerView(), "More options").expanded, true, "Save reveals invalid terms for correction");
 assert.deepEqual(calls, [], "invalid optional learning cannot save");
 assert.equal(control(offerView(), "Learning budget").value, "95k", "invalid draft remains editable");
 control(offerView(), "Learning budget").onChangeText("");
@@ -842,6 +869,7 @@ for (const state of ["loading", "failure"]) {
 	assert.equal(control(offerView(), "Respond by").value, "2027-03-28");
 }
 offerProfile = { isSuccess: true, isPending: false, isError: false };
+assert.ok(nodes(offerView()).some((node) => /Times are shown in Europe\/Berlin/.test(String(node.props.children))));
 control(offerView(), "Time").onChange("02:30");
 control(offerView(), "Save offer").onPress();
 assert.deepEqual(calls, [], "nonexistent local time cannot save");

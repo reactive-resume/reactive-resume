@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Keyboard, View, useWindowDimensions } from "react-native";
@@ -18,13 +19,16 @@ import { LETTER_LENGTH, countWords, letterLength } from "./length";
 import { useResumes } from "./queries";
 import { LetterRichText, LetterRichTextToolbar } from "./rich-text-field";
 import { relinkLetter } from "./save";
+import { useSession } from "@/auth/session";
 import { letterFieldFocus, useLetterStore } from "@/draft";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { WallClockField } from "@/features/application-detail/date-field";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import { getLaneLabel, resolveLane } from "@/features/applications/lanes";
 import { useApplications } from "@/features/applications/queries";
-import { BoundText, useValidators } from "@/features/write/entry-fields";
+import { CustomFields } from "@/features/write/basics-screen";
+import { BoundText, LinkField, useValidators } from "@/features/write/entry-fields";
+import { resolvePictureUrl } from "@/features/write/picture-screen";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -364,7 +368,7 @@ type FromSectionProps = { letter: LetterDocument; disabled: boolean };
 
 function FromSection({ letter, disabled }: FromSectionProps) {
 	const validate = useValidators();
-	const text = (key: "name" | "email" | "phone" | "location") => ({
+	const text = (key: "name" | "headline" | "email" | "phone" | "location") => ({
 		value: letter.style.basics[key],
 		disabled,
 		focus: letterFieldFocus,
@@ -435,7 +439,9 @@ function FromSection({ letter, disabled }: FromSectionProps) {
 			)}
 			{!letter.sourceResumeId || !letter.senderLinked ? (
 				<>
+					<SenderPhoto picture={letter.style.picture} disabled={disabled} />
 					<BoundText label={t`Full name`} autoComplete="name" {...text("name")} />
+					<BoundText label={t`Headline`} {...text("headline")} />
 					<BoundText
 						label={t`Email`}
 						keyboardType="email-address"
@@ -445,9 +451,65 @@ function FromSection({ letter, disabled }: FromSectionProps) {
 					/>
 					<BoundText label={t`Phone`} keyboardType="phone-pad" autoComplete="tel" {...text("phone")} />
 					<BoundText label={t`Location`} {...text("location")} />
+					<LinkField
+						label={t`Website`}
+						value={letter.style.basics.website}
+						allowInlineLink={false}
+						disabled={disabled}
+						onChange={(website) =>
+							edit("sender.website", (draft) => {
+								draft.style.basics.website = { url: website.url, label: website.label };
+							})
+						}
+					/>
+					<CustomFields
+						fields={letter.style.basics.customFields}
+						locked={disabled}
+						update={(mutate, options) =>
+							useLetterStore.getState().update((draft) => mutate(draft.style.basics.customFields), options)
+						}
+						undo={() => useLetterStore.getState().undo()}
+					/>
 				</>
 			) : null}
 		</Section>
+	);
+}
+
+type SenderPhotoProps = { picture: LetterDocument["style"]["picture"]; disabled: boolean };
+
+/** The photo the letter copied from its resume, which it can leave off. Uploading one is the resume's job. */
+function SenderPhoto({ picture, disabled }: SenderPhotoProps) {
+	const { t } = useLingui();
+	const { colors, radius, space } = useTheme();
+	const { server } = useSession();
+	const url = resolvePictureUrl(picture.url, server);
+	if (!url) return null;
+
+	return (
+		<View
+			style={{
+				flexDirection: "row",
+				alignItems: "center",
+				gap: space.s3,
+				padding: space.s3,
+				borderRadius: radius.rLg,
+				backgroundColor: colors.surface,
+				borderWidth: 1,
+				borderColor: colors.line,
+			}}
+		>
+			<Image source={{ uri: url }} style={{ width: space.s10, height: space.s10, borderRadius: radius.rMd }} />
+			<Text variant="caption" color="ink2" style={{ flex: 1 }}>
+				{picture.hidden ? t`Photo hidden from the page.` : t`Photo on the page.`}
+			</Text>
+			<Switch
+				label={t`Show photo`}
+				value={!picture.hidden}
+				disabled={disabled}
+				onValueChange={(shown) => edit("sender.picture", (draft) => void (draft.style.picture.hidden = !shown))}
+			/>
+		</View>
 	);
 }
 

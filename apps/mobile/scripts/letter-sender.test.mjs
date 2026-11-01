@@ -39,8 +39,10 @@ const baseline = {
 			phone: "",
 			location: "Berlin",
 			headline: "Engineer",
-			customFields: [],
+			website: { url: "https://jordan.example", label: "" },
+			customFields: [{ id: "gh", icon: "github-logo", text: "github.com/jordan", link: "" }],
 		},
+		picture: { url: "/uploads/photo.png", hidden: false, size: 64 },
 		metadata: { template: "ditto" },
 	},
 };
@@ -95,4 +97,29 @@ test("typing during unlink preserves fresh server sender fields and saves only t
 		proposalSafety: "v1",
 		sender: { name: "Independent name" },
 	});
+});
+
+test("an unlinked letter saves the header details it prints: headline, links and whether the photo shows", async () => {
+	const edited = structuredClone(baseline);
+	edited.style.basics.headline = "";
+	edited.style.basics.website = { url: "", label: "" };
+	edited.style.basics.customFields = [];
+	edited.style.picture.hidden = true;
+	await letterAdapter.save(edited, baseline, "session", false, "fixture", undefined, "v1");
+	assert.deepEqual(calls.pop(), {
+		id: "letter",
+		expectedRevision: 1,
+		sessionId: "session",
+		proposalSafety: "v1",
+		sender: { headline: "", website: { url: "", label: "" }, customFields: [], picture: { hidden: true } },
+	});
+
+	// Hiding the photo while the unlink request was out survives the server's fresh copy of the resume's details.
+	const saved = structuredClone(baseline);
+	saved.revision = 2;
+	saved.style.picture.url = "/uploads/current.png";
+	const current = structuredClone(baseline);
+	current.style.picture.hidden = true;
+	const merged = letterAdapter.merge(saved, baseline, current);
+	assert.deepEqual(merged.style.picture, { url: "/uploads/current.png", hidden: true, size: 64 });
 });

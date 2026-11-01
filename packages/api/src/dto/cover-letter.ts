@@ -93,12 +93,19 @@ export const coverLetterDto = {
 			resumeId: z.string().min(1).nullable().optional().describe("The resume the letter goes with."),
 			applicationId: z.string().min(1).nullable().optional().describe("The job the letter is for."),
 			sender: coverLetterStyleSchema.shape.basics
-				.pick({ name: true, email: true, phone: true, location: true })
 				.extend({
 					name: coverLetterStyleSchema.shape.basics.shape.name.describe("The letter sender's full name."),
+					headline: coverLetterStyleSchema.shape.basics.shape.headline.describe("The letter sender's headline."),
 					email: coverLetterStyleSchema.shape.basics.shape.email.describe("The letter sender's email address."),
 					phone: coverLetterStyleSchema.shape.basics.shape.phone.describe("The letter sender's phone number."),
 					location: coverLetterStyleSchema.shape.basics.shape.location.describe("The letter sender's location."),
+					website: coverLetterStyleSchema.shape.basics.shape.website.describe("The letter sender's website."),
+					customFields: coverLetterStyleSchema.shape.basics.shape.customFields.describe(
+						"The letter sender's other contact details and profile links; replaces the whole list.",
+					),
+					picture: coverLetterStyleSchema.shape.picture
+						.pick({ hidden: true })
+						.describe("Whether the photo the letter copied from its resume is hidden on the letter."),
 				})
 				.partial()
 				.optional()

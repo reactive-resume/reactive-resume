@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { goToScene, prefersReducedMotion, SCENE, useLanding } from "./scroll";
+import { LanguageDoorway } from "./sections";
 import { CtaLink } from "./ui";
 import { useTheme } from "@/features/theme/provider";
 import { orpc } from "@/libs/orpc/client";
@@ -85,6 +86,10 @@ export function LandingHeader() {
 			</nav>
 
 			<div className="ms-auto flex items-center gap-2">
+				<LanguageDoorway
+					className="font-martian h-[34px] gap-[7px] rounded-sm px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] opacity-65 transition-opacity duration-300 hover:opacity-100"
+					nameClassName="max-[639px]:sr-only"
+				/>
 				<GithubLink />
 				<CtaLink size="header" />
 			</div>

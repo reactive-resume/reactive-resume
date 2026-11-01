@@ -155,12 +155,16 @@ export function WebsiteField({ label, value, onChange, allowInlineLink = true }:
 	);
 }
 
-type MoreOptionsProps = { children: ReactNode };
+type MoreOptionsProps = {
+	children: ReactNode;
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
+};
 
 /** Secondary fields (level, icon, colour) stay out of the way until asked for. */
-export function MoreOptions({ children }: MoreOptionsProps) {
+export function MoreOptions({ children, open, onOpenChange }: MoreOptionsProps) {
 	return (
-		<Collapsible className="col-span-full">
+		<Collapsible open={open} onOpenChange={onOpenChange} className="col-span-full">
 			<CollapsibleTrigger className="group/more flex w-fit cursor-pointer items-center gap-1 rounded-sm text-[13px] font-medium text-ink-2 transition-colors duration-quick hover:text-ink">
 				<span
 					aria-hidden="true"

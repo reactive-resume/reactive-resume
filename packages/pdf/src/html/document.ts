@@ -66,6 +66,9 @@ input{font:inherit;height:44px;padding:0 12px;border:1px solid #c9c9d0;border-ra
 input:focus{outline:2px solid #2563eb;outline-offset:1px}
 button{font:inherit;font-weight:600;height:44px;border:0;border-radius:8px;background:#111;color:#fff;cursor:pointer}
 .error{color:#b42318;font-size:14px}
+.home{display:inline-flex;align-items:center;justify-self:center;gap:8px;min-height:44px;margin-top:12px;padding:0 12px;border-radius:8px;color:#111;font-size:15px;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.home svg{width:20px;height:20px}
+.home:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
 `;
 
 /**
@@ -169,13 +172,20 @@ export function renderPasswordDocument(options: {
 	);
 }
 
-/** Off, unknown or trashed resumes read the same, with nothing about the owner. */
-export function renderUnavailableDocument(options: { lang: string; messages: WebPageMessages }): string {
+/**
+ * Off, unknown or trashed resumes read the same, with nothing about the owner. A link to the app's home (`homeUrl`)
+ * gives a visitor who guessed the address somewhere to go.
+ */
+export function renderUnavailableDocument(options: {
+	lang: string;
+	messages: WebPageMessages;
+	homeUrl: string;
+}): string {
 	const { messages } = options;
 	return shell(
 		options.lang,
 		`<title>${escapeHtml(messages.unavailableTitle)}</title><meta name="robots" content="noindex, nofollow">`,
 		MESSAGE_CSS,
-		`<main><h1>${escapeHtml(messages.unavailableTitle)}</h1><p>${escapeHtml(messages.unavailableHint)}</p></main>`,
+		`<main><h1>${escapeHtml(messages.unavailableTitle)}</h1><p>${escapeHtml(messages.unavailableHint)}</p><a class="home" href="${escapeHtml(options.homeUrl)}">${LOGO}${escapeHtml(messages.home)}</a></main>`,
 	);
 }
