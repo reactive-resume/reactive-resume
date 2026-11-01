@@ -101,7 +101,7 @@ describe("createPublicResumePdf", () => {
 		found(buildResume({ isPublic, passwordHash: "hash" }));
 		mocks.resolveAuthentication.mockResolvedValue({ user: { id: "owner-1" }, permissions: ["read"] });
 
-		await expect(createPublicResumePdf(input)).resolves.toMatchObject({ filename: "resume.pdf" });
+		await expect(createPublicResumePdf(input)).resolves.toMatchObject({ filename: "Resume.pdf" });
 		expect(mocks.renderPdf).toHaveBeenCalledOnce();
 		expect(mocks.hasResumeAccess).not.toHaveBeenCalled();
 	});
@@ -149,10 +149,23 @@ describe("createPublicResumePdf", () => {
 		expect(query?.params[3]).toBe("old-slug");
 		expect(mocks.consume).toHaveBeenCalledWith({ trustedClient: input.trustedClient, resumeId: resume.id });
 		expect(mocks.renderPdf).toHaveBeenCalledWith(
-			expect.objectContaining({ data: resume.data, filename: "ada-lovelace.pdf" }),
+			expect.objectContaining({ data: resume.data, filename: "Ada-Lovelace-Resume.pdf" }),
 		);
-		expect(result.filename).toBe("ada-lovelace.pdf");
+		expect(result.filename).toBe("Ada-Lovelace-Resume.pdf");
 		expect(result.body).toBeInstanceOf(File);
+	});
+
+	it("names the public PDF from the resume's full name instead of its public slug", async () => {
+		const resume = buildResume();
+		resume.data.basics.name = "李明";
+		found(resume);
+
+		const result = await createPublicResumePdf({ ...input, slug: "untitled-resume" });
+
+		expect(result.filename).toBe("李明-Resume.pdf");
+		expect(mocks.renderPdf).toHaveBeenCalledWith(
+			expect.objectContaining({ data: resume.data, filename: "李明-Resume.pdf" }),
+		);
 	});
 
 	it("requires password when downloading via renamed slug", async () => {
@@ -181,10 +194,10 @@ describe("createPublicResumePdf", () => {
 
 		const result = await createPublicResumePdf(input);
 
-		expect(result.filename).toBe("ada-lovelace.pdf");
+		expect(result.filename).toBe("Ada-Lovelace-Resume.pdf");
 		expect(mocks.consume).toHaveBeenCalledWith({ trustedClient: input.trustedClient, resumeId: resume.id });
 		expect(mocks.renderPdf).toHaveBeenCalledWith(
-			expect.objectContaining({ data: resume.data, filename: "ada-lovelace.pdf" }),
+			expect.objectContaining({ data: resume.data, filename: "Ada-Lovelace-Resume.pdf" }),
 		);
 	});
 
