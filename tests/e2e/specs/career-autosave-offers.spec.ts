@@ -140,8 +140,9 @@ test("follow-up writes project to Today and back, and attached PDFs count as sen
 		.poll(async () => (await (await page.request.get(`/api/openapi/applications/${job}`)).json()).resumeFileUrl)
 		.toBeTruthy();
 	await page.goto("/dashboard/applications");
-	await expect(page.getByLabel("Resume file", { exact: true })).toBeVisible();
-	await page.getByRole("row").filter({ hasText: "Lumen Health" }).click();
+	const row = page.getByRole("row").filter({ hasText: "Lumen Health" });
+	await expect(row.getByRole("cell", { name: "Resume file", exact: true })).toBeVisible();
+	await row.click();
 	await expect(page.getByLabel("Notes", { exact: true })).toBeVisible();
 	await page.getByLabel("Notes", { exact: true }).scrollIntoViewIfNeeded();
 	await page.screenshot({ animations: "disabled", path: info.outputPath("application-detail.png") });

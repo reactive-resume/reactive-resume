@@ -22,7 +22,8 @@ AND s.application_id=newer.application_id AND (s.updated_at,s.id)<(newer.updated
 UPDATE career_job j SET status='canceled',lease=NULL,lease_until=NULL
 FROM career_schedule s JOIN application a ON a.id=s.application_id AND a.user_id=s.user_id
 WHERE j.schedule_id=s.id AND s.kind='follow-up' AND j.status IN ('queued','running')
-AND ((CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END) IS DISTINCT FROM s.next_run_at OR NOT s.enabled);
+AND ((CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END) IS DISTINCT FROM s.next_run_at OR NOT s.enabled OR EXISTS (SELECT 1 FROM career_job done WHERE done.schedule_id=s.id AND done.user_id=s.user_id AND done.status='completed' AND ((a.follow_up_date_only AND (done.due_at AT TIME ZONE s.timezone)::date=(a.follow_up_at AT TIME ZONE 'UTC')::date)
+ OR (NOT a.follow_up_date_only AND done.due_at=a.follow_up_at))));
 --> statement-breakpoint
 -- Move the delivery index to the projected clock. A completed occurrence stays delivered only when the projection moves
 -- the same occurrence: a logical-day follow-up on the same calendar day, or an exact-time follow-up at the same instant.
@@ -31,7 +32,8 @@ AND ((CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC'):
 WITH projected AS (
  SELECT s.id,s.last_queued_at,s.next_run_at AS current_at,a.follow_up_date_only AS date_only,
   CASE WHEN a.follow_up_date_only THEN ((a.follow_up_at AT TIME ZONE 'UTC')::date + time '09:00') AT TIME ZONE s.timezone ELSE a.follow_up_at END AS at,
-  COALESCE((SELECT j.status='completed' FROM career_job j WHERE j.schedule_id=s.id ORDER BY j.created_at DESC,j.id DESC LIMIT 1),false) AS completed,
+  EXISTS (SELECT 1 FROM career_job done WHERE done.schedule_id=s.id AND done.user_id=s.user_id AND done.status='completed' AND ((a.follow_up_date_only AND (done.due_at AT TIME ZONE s.timezone)::date=(a.follow_up_at AT TIME ZONE 'UTC')::date)
+ OR (NOT a.follow_up_date_only AND done.due_at=a.follow_up_at))) AS completed,
   a.follow_up_note
  FROM career_schedule s JOIN application a ON a.id=s.application_id AND a.user_id=s.user_id
  WHERE s.kind='follow-up' AND a.follow_up_at IS NOT NULL
@@ -39,11 +41,8 @@ WITH projected AS (
 )
 UPDATE career_schedule s SET next_run_at=p.at,query=COALESCE(p.follow_up_note,''),
 last_queued_at=CASE
+ WHEN p.completed THEN p.at
  WHEN p.at IS NOT DISTINCT FROM p.current_at THEN s.last_queued_at
- WHEN s.last_queued_at IS NOT NULL AND p.completed AND (
-  (p.date_only AND (p.at AT TIME ZONE s.timezone)::date=(s.last_queued_at AT TIME ZONE s.timezone)::date)
-  OR (NOT p.date_only AND s.last_queued_at=p.at)
- ) THEN p.at
  ELSE NULL END
 FROM projected p WHERE s.id=p.id;
 --> statement-breakpoint

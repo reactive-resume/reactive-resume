@@ -662,6 +662,10 @@ msgstr "{pairing} አይነት"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {በዚህ ገጽ # የታቀደ ማሻሻያ · እስኪቀበሉት ድረስ ምንም አይቀየርም} other {በዚህ ገጽ # የታቀዱ ማሻሻያዎች · እስኪቀበሉ ድረስ ምንም አይቀየርም}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -968,6 +972,11 @@ msgstr "ሀገር ጨምር"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "አንድ እውነታ ጨምር"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1795,6 +1804,10 @@ msgstr "ወደ ላይ መውጣት"
 msgid "Ask"
 msgstr "ጠይቅ"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "ስለዚህ ማመልከቻ ይጠይቁ…"
@@ -2196,6 +2209,7 @@ msgstr "ጥያቄ ሰርዝ"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "ሙያ"
 
@@ -2252,6 +2266,10 @@ msgstr "ገጽታውን ወደ… ቀይር"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "የሰዓት ሰቅ ቀይር"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2621,6 +2639,7 @@ msgstr "ተዘግቷል፡ {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "አሰልጣኝ"
@@ -2760,6 +2779,10 @@ msgstr "የ AI አቅራቢን ያገናኙ"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "በራስ-ሰር እንዲታደስ በቅንብሮች ውስጥ AI አቅራቢ ያገናኙ።"
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "ከተለጠፈው ጽሑፍ ዝርዝሮችን ለማንበብ የAI አቅራቢን ያገናኙ። በእጅ ግቤት ያለ AI ይሰራል።"
@@ -2783,6 +2806,10 @@ msgstr "ለመጻፍ፣ ለስራ ፍለጋ እና ከሪሱሞችዎ ጋር ለ
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "ተገናኝቷል · {milliseconds} ሚሴ"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "የተገናኙ መተግበሪያዎች"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3166,6 +3193,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "ማመልከቻ እንደቀረበ ምልክት ማድረግ አልተቻለም። እንደገና ይሞክሩ።"
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3418,6 +3446,10 @@ msgstr "ፎቶውን መስቀል አልተቻለም።"
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
 msgstr ""
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "ፎቶውን መስቀል አልተቻለም። እንደገና ይሞክሩ።"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -4048,6 +4080,7 @@ msgstr "ማውረድ የስርዓቱን የማጋሪያ ምናሌ ይከፍታ�
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "ማውረድ የስርዓት ማጋራትን ይከፍታል። ፋይሉን ለማስቀመጥ የማከማቻ አቅራቢን ይምረጡ። የተገናኘ የሽፋን ደብዳቤ እንደ ሁለተኛ ፋይል ይከፈታል."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "PDF አውርድ"
@@ -4969,6 +5002,7 @@ msgstr "ርዕስ 3"
 msgid "Heading changed"
 msgstr "ርዕስ ተቀይሯል።"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "ርዕሰ ነጥብ"
@@ -5247,6 +5281,10 @@ msgstr "ፋይል አስመጣ"
 #: src/features/write/outline.tsx
 msgid "Import it"
 msgstr "አስመጣው።"
+
+#: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
@@ -5567,6 +5605,10 @@ msgstr "ወደ ሁለት ወይም ሶስት ቤተሰቦች ይገደቡ። እ
 msgid "Keep together"
 msgstr "አንድ ላይ ቆይ"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "በጣም ልዩ የሆኑትን ክፍሎች ያቆያል"
@@ -5607,6 +5649,7 @@ msgstr "ምልካም ምኞት፣"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "እውቀት"
 
@@ -5960,6 +6003,10 @@ msgstr "ተያይዟል። የመመዝገቢያ ፅሁፉ ሲሰራ ስም፣ �
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "አገናኞች"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6358,6 +6405,7 @@ msgstr "ተጨማሪ"
 msgid "More details"
 msgstr "ተጨማሪ ዝርዝሮች"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "ተጨማሪ አማራጮች"
@@ -6737,6 +6785,9 @@ msgid "No application"
 msgstr "ምንም የሥራ ማመልከቻ የለም"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "እስካሁን ምንም የስራ ማመልከቻ የለም። በመጀመሪያ በስራ ማመልከቻዎች ውስጥ አንድ ያክሉ።"
@@ -6765,6 +6816,10 @@ msgstr "ምንም መደበኛ የክፍል ርዕሶች አልተገኙም።"
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "ስለዚህ ሰነድ እስካሁን ምንም ንግግሮች የሉም።"
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6916,6 +6971,10 @@ msgstr "ምንም ውጤት የለም።"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "የትምህርት ማስረጃ የለም።"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7186,6 +7245,7 @@ msgid "Offer type"
 msgstr "የሥራ አቅርቦት አይነት"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "ቅናሾች"
 
@@ -7743,10 +7803,12 @@ msgstr "ፎቶ"
 msgid "Photo hidden"
 msgstr "ፎቶ ተደብቋል"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "ፎቶ ከገጹ ተደብቋል።"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "በገጹ ላይ ፎቶ."
@@ -9009,6 +9071,10 @@ msgstr "መልሴን ገምግም"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "«መልሴን ገምግም» ጥያቄውን፣ ያሉትን፣ ይህን የሥራ ማስታወቂያ እና እውቀትዎን ወደ {providerName} ይልካል።"
 
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -9904,6 +9970,7 @@ msgstr "ተጨማሪ አሳይ"
 msgid "Show on page"
 msgstr "በገጽ ላይ አሳይ"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "ፎቶ አሳይ"
@@ -11358,6 +11425,7 @@ msgstr "ወደ አንድ ገጽ አጥብቅ"
 msgid "Tightening"
 msgstr "በማጥበቅ ላይ"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "ሰዓት"
@@ -11405,6 +11473,11 @@ msgstr "ርዕስ"
 msgid "To"
 msgstr "ለ"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "ለማጣራት"
@@ -11415,6 +11488,7 @@ msgstr "አስታዋሽ ለማግኘት በመሣሪያዎ ቅንብሮች ው�
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "ዛሬ"
@@ -11654,6 +11728,7 @@ msgstr "አገናኞችን አስምር"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12170,6 +12245,7 @@ msgstr "የድር ፍለጋ አልተሳካም፡ {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "የድር ፍለጋዎች በእነዚህ አገሮች ውስጥ ሥራዎችን ይፈልጋሉ። እስከ ሦስት አገሮችን ይምረጡ።"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "ድር ገጽ"
@@ -12423,6 +12499,10 @@ msgstr "ቁጥሮችን በአሃዝ ይጻፉ"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "ስላደረጉት አንድ ነገር በአምስት ክፍሎች የተከፈለ ታሪክ ይጻፉ። በማስረጃ ማስደገፍ እስኪችሉ ድረስ «ውጤት» እና «ትምህርት» ባዶ ይተዉ።"
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12694,6 +12774,10 @@ msgstr "የእርስዎ አቅራቢ"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "ይፋዊ ማገናኛዎ የሚጀምረው በ{server}/ ነው"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

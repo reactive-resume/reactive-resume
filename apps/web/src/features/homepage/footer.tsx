@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "@reactive-resume/utils/style";
 import { getHeadline } from "./hero";
 import { SCENE } from "./scroll";
+import { LanguageDoorway } from "./sections";
 import { labelClass } from "./ui";
 import { useTheme } from "@/features/theme/provider";
 
@@ -140,6 +141,7 @@ export function LandingFooter() {
 				{/* Narrow enough to wrap into two balanced lines in any language, without splitting the translation. */}
 				<p className="max-w-[20ch] text-balance">{t`By the community, for the community.`}</p>
 				<p className="flex flex-wrap items-center gap-x-4 gap-y-1">
+					<LanguageDoorway className={cn("gap-1.5", linkClass)} />
 					<span>
 						<Trans>
 							Licensed under{" "}

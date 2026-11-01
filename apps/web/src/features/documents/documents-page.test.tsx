@@ -10,9 +10,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { DocumentsPage } from "./documents-page";
 import { TrashPage } from "./trash-page";
+import { useDialogStore } from "@/dialogs/store";
 import { orpc } from "@/libs/orpc/client";
 
-const requests = vi.hoisted(() => ({ load: vi.fn(), trash: vi.fn(), restore: vi.fn(), purge: vi.fn() }));
+const requests = vi.hoisted(() => ({
+	load: vi.fn(),
+	trash: vi.fn(),
+	restore: vi.fn(),
+	purge: vi.fn(),
+	newLetter: vi.fn(),
+}));
 vi.mock("@/libs/orpc/client", async (importOriginal) => {
 	const actual = await importOriginal<typeof import("@/libs/orpc/client")>();
 	return {
@@ -41,7 +48,10 @@ vi.mock("@tanstack/react-router", () => ({
 	Link: ({ children }: { children: React.ReactNode }) => <a href="/dashboard">{children}</a>,
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
-vi.mock("./use-start-document", () => ({ useStartDocument: () => ({}) }));
+vi.mock("./use-start-document", () => ({
+	IMPORT_ACCEPT: ".pdf,.docx,.json",
+	useStartDocument: () => ({ newLetter: requests.newLetter, creating: false }),
+}));
 vi.mock("./document-actions", () => ({
 	TagsDialog: () => null,
 	LinkApplicationDialog: () => null,
@@ -92,6 +102,8 @@ function page(offset: number, total = 19500): Page {
 			trashedAt: null,
 			createdAt: new Date(),
 			updatedAt: new Date(),
+			editedAt: new Date(),
+			recipient: null,
 			application: null,
 		})),
 		total,
@@ -324,4 +336,83 @@ it("bounds tag selection to twenty while allowing selected tags to be removed", 
 	await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toHaveLength(19));
 	fireEvent.click(screen.getByRole("button", { name: "#tag20" }));
 	await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toContain("tag20"));
+});
+
+it.each([
+	{ type: "letter", title: "No cover letters yet", action: "New cover letter" },
+	{ type: "resume", title: "No resumes yet", action: "New resume" },
+] as const)("an empty $type tab offers to make one instead of clearing filters", async ({ type, title, action }) => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
+	const input = {
+		trashed: false,
+		type,
+		q: "",
+		tags: [],
+		sort: "edited" as const,
+		public: false,
+		limit: 100,
+		offset: 0,
+	};
+	const counts = type === "letter" ? { resume: 3, letter: 0 } : { resume: 0, letter: 2 };
+	client.setQueryData(orpc.documents.page.queryKey({ input }), {
+		items: [],
+		total: 0,
+		counts,
+		tags: [],
+		hasPublic: false,
+	});
+	render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={client}>
+				<DocumentsPage search={{ type, q: "", tags: [], sort: "edited", view: "grid" }} onSearchChange={vi.fn()} />
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+
+	expect(await screen.findByRole("heading", { name: title })).toBeVisible();
+	expect(screen.queryByText("Nothing matches these filters")).toBeNull();
+	expect(screen.queryByRole("button", { name: "Clear search and filters" })).toBeNull();
+	if (type === "letter") {
+		fireEvent.click(screen.getByRole("button", { name: action }));
+		expect(requests.newLetter).toHaveBeenCalledOnce();
+	} else expect(screen.getByRole("button", { name: action })).toBeEnabled();
+});
+
+it("first run's Choose a file opens the file picker, then imports the chosen file", async () => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
+	const input = {
+		trashed: false,
+		type: "all" as const,
+		q: "",
+		tags: [],
+		sort: "edited" as const,
+		public: false,
+		limit: 100,
+		offset: 0,
+	};
+	const empty = { items: [], total: 0, counts: { resume: 0, letter: 0 }, tags: [], hasPublic: false };
+	client.setQueryData(orpc.documents.page.queryKey({ input }), empty);
+	const pick = vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
+	render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={client}>
+				<DocumentsPage
+					search={{ type: "all", q: "", tags: [], sort: "edited", view: "grid" }}
+					onSearchChange={vi.fn()}
+				/>
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+
+	fireEvent.click(await screen.findByRole("button", { name: "Choose a file" }));
+	expect(pick).toHaveBeenCalledOnce();
+	expect(useDialogStore.getState().open).toBe(false);
+
+	const file = new File(["{}"], "resume.json", { type: "application/json" });
+	fireEvent.change(screen.getByLabelText("Choose a file to import"), { target: { files: [file] } });
+	expect(useDialogStore.getState().activeDialog).toEqual({ type: "document.new", data: { file } });
+	pick.mockRestore();
+	act(() => useDialogStore.getState().closeDialog());
 });

@@ -7,7 +7,7 @@ Reactive Resume runs a [Model Context Protocol (MCP)](https://modelcontextprotoc
 
 ## Before you start
 
-- You need a Reactive Resume account.
+- You need a permanent Reactive Resume account. Guest accounts must create an account before connecting apps.
 - Your MCP client must support remote servers over Streamable HTTP, or be able to run the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge.
 - Decide how the client signs in:
   - **OAuth (recommended).** You approve the client in your browser. No secret is copied anywhere.
@@ -17,10 +17,10 @@ Reactive Resume runs a [Model Context Protocol (MCP)](https://modelcontextprotoc
 
 The server address is your instance's address followed by `/mcp`. On the hosted instance it's `https://rxresu.me/mcp`. You can copy it from **Settings** → **AI & developer**, in the **MCP server** section.
 
-<Frame caption="The MCP server section in AI & developer settings">
+<Frame caption="Copy your own instance MCP address">
   <img
     src="/images/guides/using-the-mcp-server/mcp-server-settings.webp"
-    alt="MCP server section showing the address https://rxresu.me/mcp with a Copy button and a Setup guide link"
+    alt="MCP server settings with the local example instance address, Copy and Setup guide, and four settings destinations"
   />
 </Frame>
 
@@ -43,8 +43,8 @@ The server address is your instance's address followed by `/mcp`. On the hosted 
   <Step title="Approve the connection">
     Check the application name under **Connect an application**, read what it will be able to do, and select **Allow access**. Select **Deny access** if you don't recognize the application.
 
-    <Frame caption="The consent screen for a new MCP client">
-      <img src="/images/guides/using-the-mcp-server/oauth-consent.webp" alt="Connect an application screen for a client named Claude, listing access to resumes and job applications, profile information, email address and offline access, with Deny and Allow access buttons" />
+    <Frame caption="Review requested access before allowing a client">
+      <img src="/images/guides/using-the-mcp-server/oauth-consent.webp" alt="Connect an application consent page for Docs example client with requested account and offline-access permissions, Deny and Allow" />
     </Frame>
 
   </Step>
@@ -123,7 +123,7 @@ Then sign in from your agent, as described below.
     npx add-mcp https://rxresu.me/mcp --name reactive-resume -a cursor
     ```
 
-    This adds the server to `.cursor/mcp.json` in your project; add `-g` for `~/.cursor/mcp.json` and all projects. Cursor offers to sign in when it first connects. To use an API key instead, add `--header "x-api-key: YOUR_API_KEY"`.
+    This adds the server to `.cursor/mcp.json` in your project; add `-g` for `~/.cursor/mcp.json` and all projects. Cursor offers to sign in when it first connects; Reactive Resume accepts the callbacks Cursor registers, including `cursor://anysphere.cursor-mcp/oauth/callback`. To use an API key instead, add `--header "x-api-key: YOUR_API_KEY"`, or add `"headers": { "x-api-key": "YOUR_API_KEY" }` to the server entry in `.cursor/mcp.json`. Choose read-only permissions unless you need edits. See [Cursor’s MCP documentation](https://cursor.com/docs/context/mcp).
 
   </Accordion>
   <Accordion title="Codex">
@@ -304,10 +304,19 @@ This section is for client developers and self-hosters.
 - The server checks `x-api-key: <key>` first, then `Authorization: Bearer <token>`. MCP never accepts account session cookies. Invalid explicit credentials cannot borrow a browser session.
 - A request with neither gets `401` and a `WWW-Authenticate: Bearer resource_metadata="<instance>/.well-known/oauth-protected-resource"` header. OAuth clients use it to discover the authorization server.
 - Authorization server metadata is at `/.well-known/oauth-authorization-server`. The authorization server supports dynamic client registration and PKCE with `S256`.
+- Send `resource=<instance origin>` on authorization, token exchange and refresh requests. The root protected-resource metadata supplies the value; `/mcp` is also accepted. Authorization without `resource` is refused before sign-in: the client's registered `redirect_uri` receives `error=invalid_target` with `state` and `iss`, or the server answers `400 invalid_target` when the client or redirect address does not match a registration.
+- Dynamic registration accepts `https://` callbacks on public hosts, `http://` callbacks on `localhost`, `127.0.0.1` or `[::1]`, and app callbacks on a custom scheme with a host and path (`cursor://anysphere.cursor-mcp/oauth/callback`) or the reverse-domain form (`com.example.app:/callback`). A registration without `application_type` that lists a loopback or custom-scheme callback is registered as `native`. Script, file and browser-internal schemes, credentials, fragments and private-network `https://` hosts are refused. Authorization requires the exact registered callback; only a loopback port may differ.
 - New OAuth clients can request `api:read`, `api:write` and `api:delete`. The consent screen describes these permissions alongside identity scopes. Existing identity-only grants and legacy keys without permission statements retain account-wide access for compatibility.
 - The server checks the user, client and consent grant on every authenticated request. Tokens with `offline_access` outlive the browser session that approved them; other tokens remain bound to their login session. Disabled clients, banned accounts and revoked grants cannot continue using signed tokens. Proof-bound DPoP tokens are rejected: this endpoint supports ordinary bearer access tokens.
 - Revoking a refresh token or signing out in the app leaves already-issued JWT access tokens valid for up to 1 hour. Revoking consent under Connected applications blocks them immediately.
-- Revoke a connection under Settings → AI & developer → Connected applications. Revoking the application grant invalidates existing access and refresh tokens. The authorization provider does not support revoking one self-contained JWT independently of its grant.
+- Disconnect a connection under Settings → AI & developer → Connected applications. Review its named permissions and connected date, select **Disconnect**, then confirm the named application. A message confirms the result. This cannot be undone; reconnect from the application to allow it again. On mobile, **Settings → AI & developer → Connected applications** opens the same browser settings; you may need to sign in there. Disconnecting the application grant invalidates existing access and refresh tokens. The authorization provider does not support revoking one self-contained JWT independently of its grant.
+
+<Frame caption="Confirming a disconnect names the application and explains how to reconnect">
+  <img
+    src="/images/guides/using-the-mcp-server/disconnect-app.png"
+    alt="Disconnect Example desktop assistant confirmation, explaining that access stops now and reconnecting requires connecting from the app, with Cancel and Disconnect actions"
+  />
+</Frame>
 
 ## Troubleshooting
 

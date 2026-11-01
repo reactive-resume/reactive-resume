@@ -27,7 +27,8 @@ export type LetterEdits = Partial<
 		"name" | "recipient" | "content" | "greeting" | "signOff" | "recipientName" | "recipientCompany" | "letterDate"
 	>
 > & {
-	sender?: Partial<Pick<CoverLetter["style"]["basics"], "name" | "email" | "phone" | "location">>;
+	/** The letter's own sender details, all of them editable once the sender link is off. */
+	sender?: Partial<CoverLetter["style"]["basics"] & { picture: Pick<CoverLetter["style"]["picture"], "hidden"> }>;
 	metadata?: Partial<Pick<LetterMetadata, "typography" | "design" | "page">>;
 };
 
@@ -45,9 +46,16 @@ const applyEdits = (letter: CoverLetter, { metadata, sender, ...fields }: Letter
 	style: {
 		...letter.style,
 		...(metadata ? { metadata: { ...letter.style.metadata, ...metadata } } : {}),
-		...(sender ? { basics: { ...letter.style.basics, ...sender } } : {}),
+		...(sender ? senderStyle(letter.style, sender) : {}),
 	},
 });
+
+function senderStyle(style: CoverLetter["style"], { picture, ...basics }: NonNullable<LetterEdits["sender"]>) {
+	return {
+		basics: { ...style.basics, ...basics },
+		picture: picture ? { ...style.picture, ...picture } : style.picture,
+	};
+}
 
 /** `conflict`: the letter changed somewhere else, so saving stops until it's reloaded. */
 type LetterSaveStatus = "saved" | "saving" | "error" | "conflict";
@@ -123,7 +131,7 @@ const recoveryEditsSchema = coverLetterSchema
 	.partial()
 	.extend({
 		sender: coverLetterSchema.shape.style.shape.basics
-			.pick({ name: true, email: true, phone: true, location: true })
+			.extend({ picture: coverLetterSchema.shape.style.shape.picture.pick({ hidden: true }) })
 			.partial()
 			.optional(),
 		metadata: coverLetterSchema.shape.style.shape.metadata

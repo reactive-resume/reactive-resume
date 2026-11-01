@@ -12,6 +12,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { GuestTransferNote } from "../components/guest-banner";
 import { SocialAuth } from "../components/social-auth";
 import { getAuthRedirectOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { PasswordInput } from "@/components/input/password-input";
@@ -44,9 +45,11 @@ const formSchema = z.object({
 
 type Props = {
 	disableEmailAuth: boolean;
+	/** Signing up from a guest session moves the guest's work into the new account. */
+	isGuest?: boolean;
 };
 
-export function RegisterPage({ disableEmailAuth }: Props) {
+export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const queryClient = useQueryClient();
 	const [submitted, setSubmitted] = useState(false);
@@ -132,6 +135,8 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 					</Trans>
 				</div>
 			</div>
+
+			{isGuest && <GuestTransferNote />}
 
 			{!disableEmailAuth && (
 				<form

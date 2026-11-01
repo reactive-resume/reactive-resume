@@ -6,12 +6,14 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { useCommandPaletteStore } from "../store";
 import { BaseCommandGroup } from "./base";
 import { useDialogStore } from "@/dialogs/store";
+import { useStartDocument } from "@/features/documents/use-start-document";
 
 export function NavigationCommandGroup() {
 	const navigate = useNavigate();
 	const { session } = useRouteContext({ strict: false });
 	const reset = useCommandPaletteStore((state) => state.reset);
 	const pushPage = useCommandPaletteStore((state) => state.pushPage);
+	const { newLetter, creating } = useStartDocument();
 
 	const onNavigate = async (path: string) => {
 		await navigate({ to: path });
@@ -59,6 +61,19 @@ export function NavigationCommandGroup() {
 				</CommandItem>
 
 				<CommandItem
+					disabled={!session || creating}
+					keywords={[t`Cover letter`, t`Letter`, t`Create`]}
+					value="navigation.letters.new"
+					onSelect={() => {
+						reset();
+						void newLetter();
+					}}
+				>
+					<Icon name="envelope-simple" size={16} />
+					<Trans>New cover letter</Trans>
+				</CommandItem>
+
+				<CommandItem
 					disabled={!session}
 					keywords={[t`Trash`, t`Deleted`]}
 					value="navigation.trash"
@@ -85,6 +100,16 @@ export function NavigationCommandGroup() {
 				>
 					<Icon name="briefcase" size={16} />
 					<Trans>Applications</Trans>
+				</CommandItem>
+
+				<CommandItem
+					disabled={!session}
+					keywords={[t`Career`, t`Coach`, t`Knowledge`, t`Offers`, t`Today`]}
+					value="navigation.career"
+					onSelect={() => onNavigate("/dashboard/career")}
+				>
+					<Icon name="compass" size={16} />
+					<Trans>Career</Trans>
 				</CommandItem>
 
 				<CommandItem

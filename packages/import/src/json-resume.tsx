@@ -5,7 +5,7 @@ import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { generateId } from "@reactive-resume/utils/string";
 import { toRangeDates, toSingleDates } from "./date";
-import { rethrowAsImportError } from "./error";
+import { rethrowAsImportError, summarizeOtherIssues } from "./error";
 import { arrayToHtmlList, toHtmlDescription } from "./html";
 import { parseLevel } from "./level";
 
@@ -27,6 +27,13 @@ const iso8601 = z
 		"Must be a valid ISO 8601 date (YYYY, YYYY-MM, or YYYY-MM-DD)",
 	);
 
+// Many exporters write "" for a field they have no value for (a current role's end date, a missing link), which
+// JSON Resume means as absent.
+const blank = <T extends z.ZodType>(schema: T) =>
+	z.preprocess((value) => (value === "" ? undefined : value), schema.optional());
+const optionalDate = blank(iso8601);
+const optionalUrl = blank(z.url());
+
 const locationSchema = z.looseObject({
 	city: z.string().optional(),
 	countryCode: z.string().optional(),
@@ -36,16 +43,16 @@ const locationSchema = z.looseObject({
 const profileSchema = z.looseObject({
 	network: z.string().optional(),
 	username: z.string().optional(),
-	url: z.url().optional(),
+	url: optionalUrl,
 });
 
 const basicsSchema = z.looseObject({
 	name: z.string().optional(),
 	label: z.string().optional(),
 	image: z.string().optional(),
-	email: z.email().optional(),
+	email: blank(z.email()),
 	phone: z.string().optional(),
-	url: z.url().optional(),
+	url: optionalUrl,
 	summary: z.string().optional(),
 	location: locationSchema.optional(),
 	profiles: z.array(profileSchema).optional(),
@@ -55,52 +62,52 @@ const workSchema = z.looseObject({
 	name: z.string().optional(),
 	location: z.string().optional(),
 	position: z.string().optional(),
-	url: z.url().optional(),
-	startDate: iso8601.optional(),
-	endDate: iso8601.optional(),
+	url: optionalUrl,
+	startDate: optionalDate,
+	endDate: optionalDate,
 	summary: z.string().optional(),
 	highlights: z.array(z.string()).optional(),
 });
 
 const volunteerSchema = z.looseObject({
 	organization: z.string().optional(),
-	url: z.url().optional(),
-	startDate: iso8601.optional(),
-	endDate: iso8601.optional(),
+	url: optionalUrl,
+	startDate: optionalDate,
+	endDate: optionalDate,
 	summary: z.string().optional(),
 	highlights: z.array(z.string()).optional(),
 });
 
 const educationSchema = z.looseObject({
 	institution: z.string().optional(),
-	url: z.url().optional(),
+	url: optionalUrl,
 	area: z.string().optional(),
 	studyType: z.string().optional(),
-	startDate: iso8601.optional(),
-	endDate: iso8601.optional(),
+	startDate: optionalDate,
+	endDate: optionalDate,
 	score: z.string().optional(),
 	courses: z.array(z.string()).optional(),
 });
 
 const awardSchema = z.looseObject({
 	title: z.string().optional(),
-	date: iso8601.optional(),
+	date: optionalDate,
 	awarder: z.string().optional(),
 	summary: z.string().optional(),
 });
 
 const certificateSchema = z.looseObject({
 	name: z.string().optional(),
-	date: iso8601.optional(),
-	url: z.url().optional(),
+	date: optionalDate,
+	url: optionalUrl,
 	issuer: z.string().optional(),
 });
 
 const publicationSchema = z.looseObject({
 	name: z.string().optional(),
 	publisher: z.string().optional(),
-	releaseDate: iso8601.optional(),
-	url: z.url().optional(),
+	releaseDate: optionalDate,
+	url: optionalUrl,
 	summary: z.string().optional(),
 });
 
@@ -129,9 +136,9 @@ const projectSchema = z.looseObject({
 	name: z.string().optional(),
 	description: z.string().optional(),
 	highlights: z.array(z.string()).optional(),
-	startDate: iso8601.optional(),
-	endDate: iso8601.optional(),
-	url: z.url().optional(),
+	startDate: optionalDate,
+	endDate: optionalDate,
+	url: optionalUrl,
 });
 
 const jsonResumeSchema = z.looseObject({
@@ -337,11 +344,54 @@ function convertJSONResume(jsonResume: JSONResume): ResumeData {
 	return resumeDataSchema.parse(result);
 }
 
+const DATE_FIELDS: Record<string, string> = {
+	startDate: "start date",
+	endDate: "end date",
+	date: "date",
+	releaseDate: "release date",
+};
+
+// How each section's entry is named in a sentence, from the entry itself.
+const ENTRY_NAMES: Record<string, (entry: Record<string, unknown>) => string> = {
+	work: (entry) => `your role at ${String(entry.name || entry.position || "an unnamed employer")}`,
+	volunteer: (entry) => `your volunteering at ${String(entry.organization || "an unnamed organization")}`,
+	education: (entry) => `your studies at ${String(entry.institution || "an unnamed school")}`,
+	projects: (entry) => `the project ${String(entry.name || "without a name")}`,
+	awards: (entry) => `the award ${String(entry.title || "without a title")}`,
+	certificates: (entry) => `the certificate ${String(entry.name || "without a name")}`,
+	publications: (entry) => `the publication ${String(entry.name || "without a name")}`,
+};
+
+/** A bad date names the entry in words ("your role at Acme"), not its field path. */
+function describeDateIssue(error: z.ZodError, input: unknown): { message: string; issue: z.core.$ZodIssue } | null {
+	for (const issue of error.issues) {
+		const [section, index, field] = issue.path;
+		const fieldName = typeof field === "string" ? DATE_FIELDS[field] : undefined;
+		const entryName = typeof section === "string" ? ENTRY_NAMES[section] : undefined;
+		if (!fieldName || !entryName || typeof index !== "number" || issue.path.length !== 3) continue;
+		const entries = (input as Record<string, unknown> | null)?.[section as string];
+		const entry = Array.isArray(entries) ? entries[index] : undefined;
+		const record = entry && typeof entry === "object" ? (entry as Record<string, unknown>) : {};
+		return {
+			message: `The ${fieldName} for ${entryName(record)} isn't a date. Use YYYY, YYYY-MM or YYYY-MM-DD in the file, or import a PDF instead.`,
+			issue,
+		};
+	}
+	return null;
+}
+
 export function parseJSONResume(json: string): ResumeData {
+	let input: unknown;
 	try {
-		const jsonResume = jsonResumeSchema.parse(JSON.parse(json));
-		return convertJSONResume(jsonResume);
+		input = JSON.parse(json);
+		return convertJSONResume(jsonResumeSchema.parse(input));
 	} catch (error) {
+		const dateIssue = error instanceof z.ZodError ? describeDateIssue(error, input) : null;
+		if (dateIssue) {
+			// Keep the friendlier date wording without dropping every other field that's wrong in the same file.
+			const others = error instanceof z.ZodError ? summarizeOtherIssues(error, dateIssue.issue) : null;
+			throw new Error(others ? `${dateIssue.message} ${others}` : dateIssue.message);
+		}
 		rethrowAsImportError(error);
 	}
 }

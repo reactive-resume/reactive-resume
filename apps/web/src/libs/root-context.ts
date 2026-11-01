@@ -22,7 +22,7 @@ type RootLoadOptions = {
 // on the next navigation. Anything that signs in, signs out or edits the profile invalidates `sessionQueryKey` before
 // calling `router.invalidate()`. Flags come from server env and only change on a restart.
 export async function loadRootContext(queryClient: QueryClient, options: RootLoadOptions = {}) {
-	const load = ++rootLoadSequence;
+	const load = options.commit === false ? rootLoadSequence : ++rootLoadSequence;
 	const theme = getTheme();
 	const locale = getLocale();
 

@@ -15,19 +15,35 @@ export function arrayToHtmlList(items: string[]): string {
 	return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
 }
 
-export const BULLET_PATTERN = /^\s*[-–—•*◦‣·]\s+/;
+// Glyph markers need no space; punctuation markers do, so "-based" remains prose.
+export const BULLET_PATTERN = /^\s*(?:[•◦‣·]\s*|[-–—*]\s+)/;
 
-/**
- * Converts plain-text lines into escaped HTML: a <ul> when most lines are bullets, otherwise one <p> per line.
- */
+/** Preserves prose and contiguous bullet lists, including a single bullet. */
+export function toHtmlBlocks(lines: string[]): string {
+	const blocks: string[] = [];
+	let bullets: string[] = [];
+	const flush = () => {
+		if (bullets.length) blocks.push(arrayToHtmlList(bullets));
+		bullets = [];
+	};
+	for (const line of lines.map((value) => value.trim()).filter(Boolean)) {
+		if (BULLET_PATTERN.test(line)) {
+			bullets.push(line.replace(BULLET_PATTERN, ""));
+		} else {
+			flush();
+			blocks.push(`<p>${escapeHtml(line)}</p>`);
+		}
+	}
+	flush();
+	return blocks.join("");
+}
+
+/** LinkedIn's historical rule treats predominantly bulleted descriptions as a list. */
 export function toHtml(lines: string[]): string {
 	const cleaned = lines.map((line) => line.trim()).filter(Boolean);
-	if (cleaned.length === 0) return "";
-
 	const bulleted = cleaned.filter((line) => BULLET_PATTERN.test(line));
 	if (bulleted.length >= 2 && bulleted.length * 2 >= cleaned.length) {
 		return arrayToHtmlList(cleaned.map((line) => line.replace(BULLET_PATTERN, "")));
 	}
-
 	return cleaned.map((line) => `<p>${escapeHtml(line.replace(BULLET_PATTERN, ""))}</p>`).join(""); // nosemgrep
 }

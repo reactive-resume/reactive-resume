@@ -107,6 +107,26 @@ describe("loadRootContext", () => {
 		expect(queryClient.getQueryData(["career", "profile"])).toBeUndefined();
 	});
 
+	it("lets a pending committed load certify its account after a later hover preload", async () => {
+		const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+		setAccountScope("alice");
+		queryClient.setQueryData(["career", "profile"], { targetRoles: ["Alice private role"] });
+		registerAccountReset(() => queryClient.clear());
+		getSessionMock.mockResolvedValueOnce({ user: { id: "bob" }, session: { id: "bob-session" } });
+		let release!: () => void;
+		const barrier = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		loadLocaleMock.mockReturnValueOnce(barrier);
+		const committed = loadRootContext(queryClient, { commit: true });
+		await loadRootContext(queryClient, { commit: false });
+		expect(getAccountId()).toBe("alice");
+		release();
+		await committed;
+		expect(getAccountId()).toBe("bob");
+		expect(queryClient.getQueryData(["career", "profile"])).toBeUndefined();
+	});
+
 	it("ignores a stale root load that finishes after a newer one certified the account", async () => {
 		const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 		let release!: () => void;

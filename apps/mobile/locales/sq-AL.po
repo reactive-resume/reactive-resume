@@ -662,6 +662,10 @@ msgstr "Lloji {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# modifikim i propozuar në këtë faqe · asgjë nuk ndryshon derisa të pranoni} other {# modifikime të propozuara në këtë faqe · asgjë nuk ndryshon derisa të pranoni}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -969,6 +973,11 @@ msgstr "Shto një shtet"
 msgid "Add a fact"
 msgstr "Shtoni një fakt"
 
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "Shto një lidhje"
@@ -1145,7 +1154,7 @@ msgstr "Shto ofertë pune"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgstr "Shtoni kushtet e ofertës manualisht, duke përfshirë ofertat e pranuara, ose përdorni nxjerrjen opsionale me AI në Mesazhe. Mbyllja si e pranuar nuk regjistron kushtet."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1795,6 +1804,10 @@ msgstr "Në ngjitje"
 msgid "Ask"
 msgstr "Pyetni"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Pyetni për këtë aplikim…"
@@ -2196,6 +2209,7 @@ msgstr "Anulo kërkesën"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Karriera"
 
@@ -2252,6 +2266,10 @@ msgstr "Ndrysho temën në…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "Ndrysho zonën kohore"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2621,6 +2639,7 @@ msgstr "Mbyllur: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Këshilltari"
@@ -2760,6 +2779,10 @@ msgstr "Lidhni një ofrues të AI"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Lidhni një ofrues AI te Parametrat për ta rifreskuar automatikisht."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Lidhni një ofrues të AI për të lexuar detaje nga teksti i ngjitur. Hyrja manuale funksionon pa AI."
@@ -2783,6 +2806,10 @@ msgstr "Lidhni mjetet që përdorni për të shkruar, për të kërkuar punë dh
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Lidhur · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Aplikacionet e lidhura"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3166,6 +3193,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Nuk mund të shënohej si i aplikuar. Provoni përsëri."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3417,7 +3445,11 @@ msgstr "Fotografia nuk mund të ngarkohej."
 
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
-msgstr ""
+msgstr "Fotografia nuk mund të ngarkohej. Zgjidhni një fotografi të lexueshme PNG, JPEG, WebP ose GIF deri në 10 MB, pastaj provoni përsëri."
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "Fotoja nuk mund të ngarkohej. Provoni përsëri."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -4048,6 +4080,7 @@ msgstr "Shkarkimi hap panelin e ndarjes së sistemit. Zgjidhni një ofrues ruajt
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Shkarkimi hap panelin e ndarjes së sistemit. Zgjidhni një ofrues ruajtjeje për të ruajtur skedarin. Një letër e lidhur hapet si skedar i dytë."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Shkarko PDF"
@@ -4969,6 +5002,7 @@ msgstr "Titulli 3"
 msgid "Heading changed"
 msgstr "Titulli ndryshoi"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Titulli"
@@ -5247,6 +5281,10 @@ msgstr "Importo skedarin"
 #: src/features/write/outline.tsx
 msgid "Import it"
 msgstr "Importojeni atë"
+
+#: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
@@ -5567,6 +5605,10 @@ msgstr "Mbajuni dy ose tre familjeve. Çdo font shtesë është një shans tjet�
 msgid "Keep together"
 msgstr "Mbajini së bashku"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Mban pjesët më specifike"
@@ -5607,6 +5649,7 @@ msgstr "Përshëndetje,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Njohuritë"
 
@@ -5960,6 +6003,10 @@ msgstr "Të lidhura. Përditësimi i emrit, emailit, telefonit dhe qytetit kur b
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Lidhjet"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6358,6 +6405,7 @@ msgstr "Më shumë"
 msgid "More details"
 msgstr "Më shumë detaje"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "Më shumë opsione"
@@ -6737,6 +6785,9 @@ msgid "No application"
 msgstr "Asnjë aplikim për punë"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Nuk ka ende aplikime për punë. Fillimisht shtoni një te Aplikimet."
@@ -6765,6 +6816,10 @@ msgstr "Nuk u gjetën tituj seksionesh konvencionalë."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Nuk ka ende biseda rreth këtij dokumenti."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6916,6 +6971,10 @@ msgstr "Nuk ka rezultate"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Asnjë rezyme"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7186,6 +7245,7 @@ msgid "Offer type"
 msgstr "Lloji i ofertës së punës"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Ofertat"
 
@@ -7743,10 +7803,12 @@ msgstr "Foto"
 msgid "Photo hidden"
 msgstr "Foto e fshehur"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "Foto e fshehur nga faqja."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Foto në faqe."
@@ -9009,6 +9071,10 @@ msgstr "Rishiko përgjigjen time"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "“Rishiko përgjigjen time” dërgon pyetjen, atë që thatë, këtë shpallje dhe Njohuritë tuaja te {providerName}."
 
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr "Shqyrtoni lejet dhe shkëputni aplikacionet në shfletuesin tuaj. Mund t’ju duhet të hyni në llogari atje."
+
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -9904,6 +9970,7 @@ msgstr "Trego më shumë"
 msgid "Show on page"
 msgstr "Shfaq në faqe"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Shfaq foton"
@@ -11358,6 +11425,7 @@ msgstr "Shtrëngoni në një faqe"
 msgid "Tightening"
 msgstr "Po shkurtohet"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Ora"
@@ -11405,6 +11473,11 @@ msgstr "Titulli"
 msgid "To"
 msgstr "te"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Për të kontrolluar"
@@ -11415,6 +11488,7 @@ msgstr "Për të marrë një rikujtues, lejo njoftimet në cilësimet e pajisjes
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Sot"
@@ -11654,6 +11728,7 @@ msgstr "Nënvizoni lidhjet"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12170,6 +12245,7 @@ msgstr "Kërkimi në ueb dështoi: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "Kërkimet në internet kërkojnë punë në këto vende. Zgjidhni deri në tre shtete."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Faqja e internetit"
@@ -12423,6 +12499,10 @@ msgstr "Shkruaji numrat me shifra"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Shkruani një histori për diçka që keni bërë, në pesë pjesë. Lërini bosh Rezultatin dhe Reflektimin derisa të mund t’i mbështetni me prova."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12694,6 +12774,10 @@ msgstr "ofruesi juaj"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Lidhjet tuaja publike fillojnë me {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

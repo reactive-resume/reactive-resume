@@ -20,6 +20,7 @@ import { generateCareer } from "./generate";
 import { matchPosting } from "./matching";
 import { noticeText } from "./notices";
 import { isCareerSchedulingEnabled } from "./runner";
+import { assertScheduleCapacity } from "./schedule-limit";
 import {
 	canonicalOpportunityUrl,
 	nextFutureCareerRun,
@@ -40,8 +41,6 @@ function assertRunner() {
 		});
 }
 
-// Enough for a discovery search per field plus briefings and follow-ups for a busy search.
-const MAX_SCHEDULES_PER_USER = 100;
 const READ_NOTIFICATION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 // Due jobs inspected per claim; owners that are busy or locked are skipped, not waited on.
 const CLAIM_CANDIDATES = 20;
@@ -192,14 +191,7 @@ export const careerJobs = {
 			}
 			if (!id) {
 				// The user lock also keeps the cap valid under concurrent creates.
-				const [count] = await tx
-					.select({ total: sql<number>`count(*)::int` })
-					.from(tables.careerSchedule)
-					.where(eq(tables.careerSchedule.userId, userId));
-				if ((count?.total ?? 0) >= MAX_SCHEDULES_PER_USER)
-					throw new ORPCError("BAD_REQUEST", {
-						message: `You can keep up to ${MAX_SCHEDULES_PER_USER} schedules. Delete one you no longer need first.`,
-					});
+				await assertScheduleCapacity(tx, userId);
 			}
 			const [row] = id
 				? await tx

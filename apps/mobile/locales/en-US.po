@@ -662,6 +662,10 @@ msgstr "{pairing} type"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
@@ -968,6 +972,11 @@ msgstr "Add a country"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "Add a fact"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr "Add a job…"
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1795,6 +1804,10 @@ msgstr "Ascending"
 msgid "Ask"
 msgstr "Ask"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr "Ask about “{name}”: {question}"
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Ask about this application…"
@@ -2196,6 +2209,7 @@ msgstr "Cancel request"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Career"
 
@@ -2252,6 +2266,10 @@ msgstr "Change theme to…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "Change timezone"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr "Change username"
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2621,6 +2639,7 @@ msgstr "Closed: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Coach"
@@ -2760,6 +2779,10 @@ msgstr "Connect an AI provider"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Connect an AI provider in Settings to refresh it automatically."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr "Connect an AI provider to ask “{question}”"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Connect an AI provider to read details from pasted text. Manual entry works without AI."
@@ -2783,6 +2806,10 @@ msgstr "Connect the tools you use for writing, job search and working with your 
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Connected · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Connected applications"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3166,6 +3193,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Couldn't mark it as applied. Try again."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3418,6 +3446,10 @@ msgstr "Couldn't upload the photo."
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
 msgstr "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "Couldn't upload the photo. Try again."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -4048,6 +4080,7 @@ msgstr "Download opens the system share sheet. Choose a storage provider to save
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Download PDF"
@@ -4969,6 +5002,7 @@ msgstr "Heading 3"
 msgid "Heading changed"
 msgstr "Heading changed"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Headline"
@@ -5247,6 +5281,10 @@ msgstr "Import file"
 #: src/features/write/outline.tsx
 msgid "Import it"
 msgstr "Import it"
+
+#: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr "Import the one you have, or start blank."
 
 #: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
@@ -5567,6 +5605,10 @@ msgstr "Keep to two or three families. Each extra font is another chance for one
 msgid "Keep together"
 msgstr "Keep together"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr "Keep username"
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Keeps the most specific parts"
@@ -5607,6 +5649,7 @@ msgstr "Kind regards,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Knowledge"
 
@@ -5960,6 +6003,10 @@ msgstr "Linked. Name, email, phone and city update when the resume does."
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Links"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6358,6 +6405,7 @@ msgstr "More"
 msgid "More details"
 msgstr "More details"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "More options"
@@ -6737,6 +6785,9 @@ msgid "No application"
 msgstr "No application"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr "No applications yet."
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "No applications yet. Add one in Applications first."
@@ -6765,6 +6816,10 @@ msgstr "No conventional section headings were found."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "No conversations about this document yet."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr "No cover letters yet"
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6916,6 +6971,10 @@ msgstr "No results"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "No resume"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr "No resumes yet"
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7186,6 +7245,7 @@ msgid "Offer type"
 msgstr "Offer type"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Offers"
 
@@ -7743,10 +7803,12 @@ msgstr "Photo"
 msgid "Photo hidden"
 msgstr "Photo hidden"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "Photo hidden from the page."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Photo on the page."
@@ -9009,6 +9071,10 @@ msgstr "Review my answer"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr "Review permissions and disconnect apps in your browser. You may need to sign in there."
+
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr "Review readiness and record your submission"
@@ -9904,6 +9970,7 @@ msgstr "Show more"
 msgid "Show on page"
 msgstr "Show on page"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Show photo"
@@ -11358,6 +11425,7 @@ msgstr "Tighten to one page"
 msgid "Tightening"
 msgstr "Tightening"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Time"
@@ -11405,6 +11473,11 @@ msgstr "Title"
 msgid "To"
 msgstr "To"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr "To {recipient}"
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "To check"
@@ -11415,6 +11488,7 @@ msgstr "To get a reminder, allow notifications in your device settings."
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Today"
@@ -11654,6 +11728,7 @@ msgstr "Underline links"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12170,6 +12245,7 @@ msgstr "Web search failed: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "Web searches look for work here, up to three countries."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Website"
@@ -12423,6 +12499,10 @@ msgstr "Write numbers as digits"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr "Write one for a job, or start from your latest resume."
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12694,6 +12774,10 @@ msgstr "your provider"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Your public links begin with {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr "Your public links will change"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

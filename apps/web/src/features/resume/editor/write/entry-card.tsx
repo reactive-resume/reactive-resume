@@ -1,5 +1,6 @@
 import type { PageSettings } from "./entries";
 import type { Entry, WriteSection } from "./model";
+import type { DndLabel } from "@/libs/dnd";
 import type { MessageDescriptor } from "@lingui/core";
 import type { KeyboardEvent, ReactNode, RefObject } from "react";
 import { useSortable } from "@dnd-kit/sortable";
@@ -69,6 +70,7 @@ export function EntryCard({ section, entryId, index, count, page, locked, onMove
 	const autoFocus = useEditorStore((state) => state.focusEntryId === entryId);
 	const { setNodeRef, transform, transition, isDragging, attributes, listeners } = useSortable({
 		id: entryId,
+		data: { label: (entry && describeEntry(section.type, entry).title) || t`Untitled` } satisfies DndLabel,
 		disabled: locked,
 		transition: DRAG_SETTLE,
 	});

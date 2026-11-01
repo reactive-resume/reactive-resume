@@ -77,7 +77,14 @@ export function PictureScreen() {
 			const form = new FormData();
 			form.append("file", file);
 			const response = await rest("/files", { method: "POST", body: form });
-			if (!response.ok) throw new Error("Upload failed");
+			if (!response.ok)
+				throw new Error(
+					response.status === 413
+						? t`Choose a photo smaller than 10 MB.`
+						: response.status === 415
+							? t`Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again.`
+							: "Upload failed",
+				);
 			const uploaded: unknown = await response.json();
 			if (!uploaded || typeof uploaded !== "object" || !("url" in uploaded) || typeof uploaded.url !== "string")
 				throw new Error("Upload failed");
@@ -89,10 +96,12 @@ export function PictureScreen() {
 		// The previous photo stays until an upload succeeds.
 		onError: (error) =>
 			showToast({
-				message:
-					error.message === t`Choose a photo smaller than 10 MB.`
-						? error.message
-						: t`Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again.`,
+				message: [
+					t`Choose a photo smaller than 10 MB.`,
+					t`Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again.`,
+				].includes(error.message)
+					? error.message
+					: t`Couldn't upload the photo. Try again.`,
 				action: { label: t`Retry`, onPress: () => upload.mutate() },
 			}),
 	});

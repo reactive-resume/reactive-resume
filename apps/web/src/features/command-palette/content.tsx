@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useHotkeys } from "@tanstack/react-hotkeys";
+import { useRouteContext } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Command, CommandEmpty, CommandInput, CommandList } from "@reactive-resume/ui/components/command";
 import {
@@ -13,7 +14,7 @@ import {
 import { AskCommandGroup } from "./pages/ask";
 import { NavigationCommandGroup } from "./pages/navigation";
 import { PreferencesCommandGroup } from "./pages/preferences";
-import { ResumesCommandGroup } from "./pages/resumes";
+import { DocumentsCommandGroup, ResumesCommandGroup } from "./pages/resumes";
 import { useCommandPaletteStore } from "./store";
 
 export default function CommandPaletteContent() {
@@ -21,6 +22,7 @@ export default function CommandPaletteContent() {
 	const commandRef = useRef<HTMLDivElement>(null);
 	const [selectedValue, setSelectedValue] = useState("");
 	const { open, search, pages, setOpen, setSearch, goBack } = useCommandPaletteStore();
+	const { session } = useRouteContext({ strict: false });
 
 	const isFirstPage = pages.length === 0;
 	const currentPage = pages[pages.length - 1];
@@ -131,12 +133,16 @@ export default function CommandPaletteContent() {
 					/>
 
 					<CommandList key={commandListPage} data-command-page={commandListPage}>
-						<CommandEmpty>
-							<Trans comment="Empty-state message when no command palette results match the search query">
-								No commands match that search.
-							</Trans>
-						</CommandEmpty>
+						{/* The Ask row is always offered on the first screen once something is typed, so nothing is empty there. */}
+						{!(isFirstPage && session && search.trim()) && (
+							<CommandEmpty>
+								<Trans comment="Empty-state message when no command palette results match the search query">
+									No commands match that search.
+								</Trans>
+							</CommandEmpty>
+						)}
 
+						<DocumentsCommandGroup />
 						<ResumesCommandGroup />
 						<PreferencesCommandGroup />
 						<NavigationCommandGroup />

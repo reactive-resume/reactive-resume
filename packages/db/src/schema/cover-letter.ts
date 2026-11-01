@@ -45,6 +45,10 @@ export const coverLetter = pg.pgTable(
 			.notNull()
 			.defaultNow()
 			.$onUpdate(() => new Date()),
+		// When the letter's text, recipient or design last changed, for "Last edited"; existing letters were backfilled
+		// from `updated_at`. A trigger in the migration keeps it. Renames, tags, locks, application links and Trash move
+		// only `updated_at` and `revision`.
+		editedAt: pg.timestamp("edited_at", { withTimezone: true }).defaultNow(),
 	},
 	(table) => [
 		pg.index().on(table.userId, table.updatedAt.desc(), table.id.desc()),

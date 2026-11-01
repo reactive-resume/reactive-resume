@@ -662,6 +662,10 @@ msgstr "סוג {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# הצעת עריכה בעמוד זה · דבר לא משתנה עד שתאשר} other {# הצעות עריכה בעמוד זה · דבר לא משתנה עד שתאשר}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -968,6 +972,11 @@ msgstr "הוסף מדינה"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "הוסף עובדה"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1795,6 +1804,10 @@ msgstr "עולה"
 msgid "Ask"
 msgstr "לִשְׁאוֹל"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "שאל על המועמדות הזו…"
@@ -2196,6 +2209,7 @@ msgstr "בטל בקשה"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "קריירה"
 
@@ -2252,6 +2266,10 @@ msgstr "שנה את התבנית ל-…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "שנה אזור זמן"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2621,6 +2639,7 @@ msgstr "סגורות: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "מאמן"
@@ -2760,6 +2779,10 @@ msgstr "חבר ספק AI"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "חבר ספק AI בהגדרות כדי לרענן אותו אוטומטית."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "חבר ספק AI לקריאת פרטים מטקסט מודבק. הזנה ידנית זמינה ללא AI."
@@ -2783,6 +2806,10 @@ msgstr "חבר את הכלים שבהם אתה משתמש לכתיבה, חיפו
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "מחובר · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "אפליקציות מחוברות"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3166,6 +3193,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "לא ניתן היה לסמן כהוגש. נסה שוב."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3418,6 +3446,10 @@ msgstr "לא ניתן להעלות את התמונה."
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
 msgstr ""
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "לא ניתן היה להעלות את התמונה. נסה שוב."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -4048,6 +4080,7 @@ msgstr "ההורדה פותחת את תפריט השיתוף של המערכת. 
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "ההורדה פותחת את תפריט השיתוף של המערכת. בחר שירות אחסון לשמירת הקובץ. מכתב מקדים מקושר ייפתח כקובץ נוסף."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "הורדת PDF"
@@ -4969,6 +5002,7 @@ msgstr "כותרת 3"
 msgid "Heading changed"
 msgstr "הכותרת השתנתה"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "כותרת עליונה"
@@ -5247,6 +5281,10 @@ msgstr "ייבוא קובץ"
 #: src/features/write/outline.tsx
 msgid "Import it"
 msgstr "ייבא אותו"
+
+#: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
@@ -5567,6 +5605,10 @@ msgstr "הישאר עם שתיים עד שלוש משפחות גופנים. כל
 msgid "Keep together"
 msgstr "להישאר יחד"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "שומר על החלקים הספציפיים ביותר"
@@ -5607,6 +5649,7 @@ msgstr "בברכה,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "מאגר הידע"
 
@@ -5960,6 +6003,10 @@ msgstr "צָמוּד. שם, דוא\"ל, טלפון ועיר עדכון כאשר 
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "קישורים"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6358,6 +6405,7 @@ msgstr "עוד"
 msgid "More details"
 msgstr "פרטים נוספים"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "אפשרויות נוספות"
@@ -6737,6 +6785,9 @@ msgid "No application"
 msgstr "אין מועמדות לעבודה"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "עדיין אין מועמדות לעבודה. הוסף תחילה אחד במועמדות לעבודה."
@@ -6765,6 +6816,10 @@ msgstr "לא נמצאו כותרות מקטע מקובלות."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "אין עדיין שיחות על המסמך הזה."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6916,6 +6971,10 @@ msgstr "אין תוצאות"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "אין קורות חיים"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7186,6 +7245,7 @@ msgid "Offer type"
 msgstr "סוג הצעת העבודה"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "הצעות"
 
@@ -7743,10 +7803,12 @@ msgstr "תמונה"
 msgid "Photo hidden"
 msgstr "תמונה מוסתרת"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "תמונה מוסתרת מהעמוד."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "תמונה בעמוד."
@@ -9009,6 +9071,10 @@ msgstr "סקור את התשובה שלי"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "\"סקור את התשובה שלי\" שולח את השאלה, את מה שאמרת, את המודעה הזו ואת מאגר הידע שלך אל {providerName}."
 
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -9904,6 +9970,7 @@ msgstr "הצג עוד"
 msgid "Show on page"
 msgstr "הצג בעמוד"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "הצגת תמונה"
@@ -11358,6 +11425,7 @@ msgstr "הדקו לדף אחד"
 msgid "Tightening"
 msgstr "מצמצם"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "שעה"
@@ -11405,6 +11473,11 @@ msgstr "כותרת"
 msgid "To"
 msgstr "אֶל"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "כדי לבדוק"
@@ -11415,6 +11488,7 @@ msgstr "כדי לקבל תזכורת, אפשר הודעות בהגדרות המ�
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "הַיוֹם"
@@ -11654,6 +11728,7 @@ msgstr "קו תחתון של קישורים"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12170,6 +12245,7 @@ msgstr "חיפוש אינטרנט נכשל: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "חיפושים באינטרנט מחפשים משרות במדינות אלו. בחר עד שלוש מדינות."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "אתר אינטרנט"
@@ -12423,6 +12499,10 @@ msgstr "כתוב מספרים בספרות"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "יש לכתוב סיפור בחמישה חלקים על משהו שעשית. יש להשאיר את „תוצאה” ו„רפלקציה” ריקים עד שאפשר יהיה לבסס אותם."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12694,6 +12774,10 @@ msgstr "הספק שלך"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "הקישורים הציבוריים שלך מתחילים ב-{server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

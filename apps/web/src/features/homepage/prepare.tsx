@@ -561,7 +561,7 @@ export function Prepare() {
 			data-scene={SCENE.prepare}
 			data-pin
 			aria-labelledby="prepare-title"
-			className="relative h-[310vh] motion-reduce:h-svh min-[900px]:h-[330vh]"
+			className="relative h-[310vh] min-[900px]:h-[330vh]"
 		>
 			<div className="sticky top-0 h-svh overflow-clip [--db1:clamp(0,(var(--p)-.88)*30,1)] [--db2:clamp(0,(var(--p)-.9)*30,1)] [--db3:clamp(0,(var(--p)-.93)*30,1)] [--db4:clamp(0,(var(--p)-.96)*30,1)] [--e1:clamp(0,(var(--p)-.19)*30,1)] [--e2:clamp(0,(var(--p)-.36)*30,1)] [--e3:clamp(0,(var(--p)-.53)*30,1)] [--e4:clamp(0,(var(--p)-.84)*30,1)] [--fb:clamp(0,(var(--p)-.655)*30,1)] [--in:clamp(0,var(--p)/.06,1)] [--k1:clamp(0,(var(--p)-.4)*40,1)] [--k2:clamp(0,(var(--p)-.43)*40,1)] [--k3:clamp(0,(var(--p)-.46)*40,1)] [--k4:clamp(0,(var(--p)-.49)*40,1)] [--mc:clamp(0,(var(--p)-.13)*30,1)] [--mr:clamp(0,(var(--p)-.085)*25,1)] [--nw:calc(clamp(0,(var(--p)-.69)*20,1)*(1-clamp(0,(var(--p)-.83)*20,1)))] [--pl:clamp(0,var(--p)/.1,1)] [--s1:clamp(0,(var(--p)-.215)*40,1)] [--s2:clamp(0,(var(--p)-.24)*40,1)] [--s3:clamp(0,(var(--p)-.265)*40,1)] [--s4:clamp(0,(var(--p)-.29)*40,1)] [--s5:clamp(0,(var(--p)-.315)*40,1)] [--ty:clamp(0,(var(--p)-.56)/.08,1)]">
 				{/* The day's light through the window: high and cool in the morning, long and warm by late afternoon, gone at dusk. */}

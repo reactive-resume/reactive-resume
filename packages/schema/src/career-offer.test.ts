@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { offerTermsSchema } from "./career";
-import { parseOfferEntry } from "./career-offer";
+import { parseOfferEntry, previousOfferCurrency } from "./career-offer";
 
 const entry = () => ({
 	applicationId: "owned-job",
@@ -85,4 +85,20 @@ it("prioritizes Offer-stage jobs while retaining accepted outcomes and omitting 
 		{ status: "saved", closedReason: null },
 		{ status: "closed", closedReason: "accepted" },
 	]);
+});
+
+describe("previousOfferCurrency", () => {
+	it("starts a new offer in the newest saved offer's currency, and in none without one", () => {
+		const offer = (currency: string, createdAt: string) => ({ createdAt, data: { kind: "offer", currency } });
+		expect(
+			previousOfferCurrency([
+				offer("USD", "2026-10-01T10:00:00Z"),
+				offer("EUR", "2026-10-20T10:00:00Z"),
+				{ createdAt: "2026-10-30T10:00:00Z", data: { kind: "note" } },
+				offer("GBP", "2026-10-05T10:00:00Z"),
+			]),
+		).toBe("EUR");
+		expect(previousOfferCurrency([])).toBe("");
+		expect(previousOfferCurrency(undefined)).toBe("");
+	});
 });

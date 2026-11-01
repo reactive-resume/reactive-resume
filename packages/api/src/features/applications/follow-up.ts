@@ -3,6 +3,8 @@ import { ORPCError } from "@orpc/client";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import * as tables from "@reactive-resume/db/schema";
 import { followUpInstant } from "@reactive-resume/schema/applications/follow-up";
+import { isCareerSchedulingEnabled } from "../career/runner";
+import { assertScheduleCapacity } from "../career/schedule-limit";
 
 type Application = typeof tables.application.$inferSelect;
 /** Caller holds user → application locks. Application fields own the follow-up; schedule is its delivery index. */
@@ -56,11 +58,12 @@ export async function syncFollowUp(
 		nextRunAt: at,
 		query: application.followUpNote ?? "",
 		timezone,
-		enabled: options?.enabled ?? current?.enabled ?? true,
+		enabled: options?.enabled ?? current?.enabled ?? isCareerSchedulingEnabled(),
 		email: options?.email ?? current?.email ?? false,
 		...(options?.locale ? { locale: options.locale } : {}),
 		lastQueuedAt: changed ? null : (current?.lastQueuedAt ?? null),
 	};
+	if (!current) await assertScheduleCapacity(tx, application.userId);
 	const [row] = current
 		? await tx.update(tables.careerSchedule).set(values).where(eq(tables.careerSchedule.id, current.id)).returning()
 		: await tx

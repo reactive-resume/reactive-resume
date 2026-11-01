@@ -128,6 +128,7 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 	const { timeZone } = useCareerTime();
 	const invalidate = useInvalidateApplications();
 	const [date, setDate] = useState("");
+	const [time, setTime] = useState("09:00");
 	const [note, setNote] = useState("");
 	const [wasOpen, setWasOpen] = useState(false);
 	if (open !== wasOpen) {
@@ -137,6 +138,14 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 				application.followUpAt
 					? dayKey(followUpInstant(application, timeZone) ?? new Date(application.followUpAt), timeZone)
 					: "",
+			);
+			const existing = followUpInstant(application, timeZone);
+			setTime(
+				existing
+					? new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(
+							existing,
+						)
+					: "09:00",
 			);
 			setNote(application.followUpNote ?? "");
 		}
@@ -167,8 +176,7 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 					onSubmit={(event) => {
 						event.preventDefault();
 						const existing = followUpInstant(application, timeZone);
-						const unchanged = !!existing && date === dayKey(existing, timeZone);
-						const time = existing
+						const originalTime = existing
 							? new Intl.DateTimeFormat("en-GB", {
 									timeZone,
 									hour: "2-digit",
@@ -176,6 +184,8 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 									hourCycle: "h23",
 								}).format(existing)
 							: "09:00";
+						const unchanged = !!existing && date === dayKey(existing, timeZone) && time === originalTime;
+
 						const at =
 							unchanged && application.followUpAt
 								? new Date(application.followUpAt)
@@ -200,6 +210,12 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 							<Trans>Date</Trans>
 						</Label>
 						<Input id={`${id}-date`} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+					</div>
+					<div className="grid gap-1.5">
+						<Label htmlFor={`${id}-time`}>
+							<Trans>Time</Trans>
+						</Label>
+						<Input id={`${id}-time`} type="time" value={time} onChange={(event) => setTime(event.target.value)} />
 					</div>
 					<div className="grid gap-1.5">
 						<Label htmlFor={`${id}-note`}>

@@ -4,6 +4,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { parseResumeText } from "@reactive-resume/import/plain-text";
 import { Dialog } from "@reactive-resume/ui/components/dialog";
 
 const api = vi.hoisted(() => ({
@@ -11,12 +12,12 @@ const api = vi.hoisted(() => ({
 	importResume: vi.fn(),
 	parsePdf: vi.fn(),
 	parseDocx: vi.fn(),
-	extractPdfLines: vi.fn(),
+	readPdfResume: vi.fn(),
 	createLetter: vi.fn(),
 	listDocuments: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn() }));
-vi.mock("@/features/resume/import/pdf-text", () => ({ extractPdfLines: api.extractPdfLines }));
+vi.mock("@/features/resume/import/pdf-text", () => ({ readPdfResume: api.readPdfResume }));
 vi.mock("@/libs/orpc/client", () => ({
 	client: {
 		documents: { list: api.listDocuments },
@@ -43,13 +44,11 @@ beforeEach(() => {
 	api.listDocuments.mockResolvedValue([]);
 	api.providers.mockRejectedValue(new Error("Provider lookup offline"));
 	api.importResume.mockResolvedValue("imported-resume");
-	api.extractPdfLines.mockResolvedValue([
-		"Alex Morgan",
-		"alex@example.test",
-		"Product Manager",
-		"Experience",
-		"Customer research",
-	]);
+	api.readPdfResume.mockResolvedValue(
+		parseResumeText(
+			["Alex Morgan", "alex@example.test", "Product Manager", "Experience", "Customer research"].join("\n"),
+		),
+	);
 });
 afterEach(() => {
 	cleanup();
@@ -75,7 +74,7 @@ it("imports a PDF through the local text reader when AI connection lookup fails"
 	fireEvent.click(screen.getByRole("button", { name: "Read on this device (free)" }));
 	await screen.findByRole("heading", { name: "Imported" });
 	expect(api.providers).toHaveBeenCalled();
-	expect(api.extractPdfLines).toHaveBeenCalledWith(file);
+	expect(api.readPdfResume).toHaveBeenCalledWith(file);
 	expect(api.importResume).toHaveBeenCalledWith({
 		data: expect.objectContaining({ basics: expect.objectContaining({ name: "Alex Morgan" }) }),
 	});
@@ -93,7 +92,7 @@ it("explains Word prerequisites before any upload and retains the file for in-pl
 	expect(screen.getByRole("button", { name: "Set up AI" })).toBeEnabled();
 	expect(api.importResume).not.toHaveBeenCalled();
 	expect(api.parseDocx).not.toHaveBeenCalled();
-	expect(api.extractPdfLines).not.toHaveBeenCalled();
+	expect(api.readPdfResume).not.toHaveBeenCalled();
 });
 
 it("creates one cover letter while a create is in flight, even across repeat clicks and a reopened dialog", async () => {
@@ -112,4 +111,17 @@ it("creates one cover letter while a create is in flight, even across repeat cli
 	await act(async () => finish({ id: "letter-1" }));
 	fireEvent.click(screen.getByRole("button", { name: "New cover letter instead" }));
 	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledTimes(2));
+});
+
+it("numbers a new letter while untitled ones exist, so the library can tell them apart", async () => {
+	api.listDocuments.mockImplementation(async (input: { type: string }) =>
+		input.type === "letter"
+			? [{ name: "Untitled letter" }, { name: "untitled letter 2" }, { name: "Cover for Acme" }]
+			: [],
+	);
+	api.createLetter.mockResolvedValue({ id: "letter-3" });
+	mount();
+	fireEvent.click(screen.getByRole("button", { name: "New cover letter instead" }));
+	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledOnce());
+	expect(api.createLetter.mock.calls[0]?.[0]).toMatchObject({ name: "Untitled letter 3" });
 });

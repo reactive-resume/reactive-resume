@@ -54861,6 +54861,10 @@
 												"type": "string",
 												"description": "The letter sender's full name."
 											},
+											"headline": {
+												"type": "string",
+												"description": "The letter sender's headline."
+											},
 											"email": {
 												"type": "string",
 												"description": "The letter sender's email address."
@@ -54872,6 +54876,68 @@
 											"location": {
 												"type": "string",
 												"description": "The letter sender's location."
+											},
+											"website": {
+												"type": "object",
+												"properties": {
+													"url": {
+														"type": "string",
+														"description": "The URL to show as a link. Must be a valid URL with a protocol (http:// or https://)."
+													},
+													"label": {
+														"type": "string",
+														"description": "The label to display for the URL. Leave blank to display the URL as-is."
+													}
+												},
+												"required": [
+													"url",
+													"label"
+												],
+												"description": "The letter sender's website."
+											},
+											"customFields": {
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": "string",
+															"description": "The unique identifier for the custom field. Usually generated as a UUID."
+														},
+														"icon": {
+															"type": "string",
+															"description": "The icon to display for the custom field. Must be a valid icon name from @phosphor-icons/web icon set, or an empty string to hide. Default to '' (empty string) when unsure which icons are available."
+														},
+														"text": {
+															"type": "string",
+															"description": "The text to display for the custom field."
+														},
+														"link": {
+															"type": "string",
+															"description": "If the custom field should be a link, the URL to link to."
+														}
+													},
+													"required": [
+														"id",
+														"icon",
+														"text",
+														"link"
+													]
+												},
+												"description": "The letter sender's other contact details and profile links; replaces the whole list."
+											},
+											"picture": {
+												"type": "object",
+												"properties": {
+													"hidden": {
+														"type": "boolean",
+														"description": "Whether to hide the copied photo on the letter."
+													}
+												},
+												"required": [
+													"hidden"
+												],
+												"description": "Whether the photo the letter copied from its resume is hidden on the letter."
 											}
 										},
 										"description": "Edits the letter's own sender details; turn the sender link off first."
@@ -56207,6 +56273,10 @@
 												"type": "string",
 												"description": "The letter sender's full name."
 											},
+											"headline": {
+												"type": "string",
+												"description": "The letter sender's headline."
+											},
 											"email": {
 												"type": "string",
 												"description": "The letter sender's email address."
@@ -56218,6 +56288,68 @@
 											"location": {
 												"type": "string",
 												"description": "The letter sender's location."
+											},
+											"website": {
+												"type": "object",
+												"properties": {
+													"url": {
+														"type": "string",
+														"description": "The URL to show as a link. Must be a valid URL with a protocol (http:// or https://)."
+													},
+													"label": {
+														"type": "string",
+														"description": "The label to display for the URL. Leave blank to display the URL as-is."
+													}
+												},
+												"required": [
+													"url",
+													"label"
+												],
+												"description": "The letter sender's website."
+											},
+											"customFields": {
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": "string",
+															"description": "The unique identifier for the custom field. Usually generated as a UUID."
+														},
+														"icon": {
+															"type": "string",
+															"description": "The icon to display for the custom field. Must be a valid icon name from @phosphor-icons/web icon set, or an empty string to hide. Default to '' (empty string) when unsure which icons are available."
+														},
+														"text": {
+															"type": "string",
+															"description": "The text to display for the custom field."
+														},
+														"link": {
+															"type": "string",
+															"description": "If the custom field should be a link, the URL to link to."
+														}
+													},
+													"required": [
+														"id",
+														"icon",
+														"text",
+														"link"
+													]
+												},
+												"description": "The letter sender's other contact details and profile links; replaces the whole list."
+											},
+											"picture": {
+												"type": "object",
+												"properties": {
+													"hidden": {
+														"type": "boolean",
+														"description": "Whether to hide the copied photo on the letter."
+													}
+												},
+												"required": [
+													"hidden"
+												],
+												"description": "Whether the photo the letter copied from its resume is hidden on the letter."
 											}
 										},
 										"description": "Edits the letter's own sender details; turn the sender link off first."
@@ -64242,7 +64374,25 @@
 											"updatedAt": {
 												"type": "string",
 												"format": "date-time",
-												"x-native-type": "date"
+												"x-native-type": "date",
+												"description": "When anything about the document last changed, its details included."
+											},
+											"editedAt": {
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date",
+												"description": "When its content was last edited: a resume's data, or a letter's text, recipient and design. Renames, tags, sharing, locks and Trash don't move it. Library sorting by edited uses it."
+											},
+											"recipient": {
+												"anyOf": [
+													{
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												],
+												"description": "Who a letter is to: its recipient company, else the recipient's name. Null for resumes and blank letters."
 											},
 											"application": {
 												"anyOf": [
@@ -64283,6 +64433,8 @@
 											"trashedAt",
 											"createdAt",
 											"updatedAt",
+											"editedAt",
+											"recipient",
 											"application"
 										]
 									}
@@ -64547,7 +64699,25 @@
 													"updatedAt": {
 														"type": "string",
 														"format": "date-time",
-														"x-native-type": "date"
+														"x-native-type": "date",
+														"description": "When anything about the document last changed, its details included."
+													},
+													"editedAt": {
+														"type": "string",
+														"format": "date-time",
+														"x-native-type": "date",
+														"description": "When its content was last edited: a resume's data, or a letter's text, recipient and design. Renames, tags, sharing, locks and Trash don't move it. Library sorting by edited uses it."
+													},
+													"recipient": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														],
+														"description": "Who a letter is to: its recipient company, else the recipient's name. Null for resumes and blank letters."
 													},
 													"application": {
 														"anyOf": [
@@ -64588,6 +64758,8 @@
 													"trashedAt",
 													"createdAt",
 													"updatedAt",
+													"editedAt",
+													"recipient",
 													"application"
 												]
 											}

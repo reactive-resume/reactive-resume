@@ -396,7 +396,9 @@ test("valid photo transport failure cannot replace saved picture", async ({ auth
 		await route.fulfill({
 			status: 500,
 			contentType: "application/json",
-			body: JSON.stringify({ message: "Synthetic upload failure" }),
+			body: JSON.stringify({
+				json: { defined: false, code: "INTERNAL_SERVER_ERROR", status: 500, message: "Synthetic upload failure" },
+			}),
 		});
 	});
 	const png = Buffer.from(
@@ -407,11 +409,7 @@ test("valid photo transport failure cannot replace saved picture", async ({ auth
 		.locator('input[type="file"][accept*="image"]')
 		.first()
 		.setInputFiles({ name: "valid.png", mimeType: "image/png", buffer: png });
-	await expect(
-		page.getByText(
-			"Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again.",
-		),
-	).toBeVisible();
+	await expect(page.getByText("Synthetic upload failure", { exact: true })).toBeVisible();
 	expect(attempted).toBe(true);
 	const saved = await (await page.request.get(`/api/openapi/resumes/${id}`)).json();
 	expect(saved.data.picture.url).toBe(original);
@@ -774,4 +772,59 @@ test("HTTP auth settings writes bound to another account are refused and leave t
 	} finally {
 		await pool.query('DELETE FROM "user" WHERE id=$1', [second.id]);
 	}
+});
+
+test("using a reviewed answer clears recovered drafts and resumes later autosaves", async ({ authPage: page }) => {
+	const id = await create(page, "Fictional Harbor Answers");
+	const answer = {
+		id: "project",
+		question: "Describe your project",
+		answer: "I wrote a setup checklist.",
+		factIds: [],
+	};
+	await expect(
+		await page.request.patch(`/api/openapi/career/workspace/${id}`, {
+			data: { answers: [answer], expected: { answers: [] } },
+		}),
+	).toBeOK();
+	await page.goto(`/dashboard/applications/${id}/apply`);
+	await page.getByRole("button", { name: "Save for other applications", exact: true }).click();
+	let dialog = page.getByRole("dialog", { name: "Save for other applications", exact: true });
+	await dialog
+		.getByRole("checkbox", { name: "I reviewed this answer, its evidence and the application context." })
+		.check();
+	await dialog.getByRole("button", { name: "Save reviewed answer", exact: true }).click();
+	await expect(dialog).toBeHidden();
+	const profile = (await (await page.request.get("/api/openapi/auth/profile")).json()) as { id: string };
+	await page.evaluate(
+		({ userId, applicationId }) => {
+			localStorage.setItem(
+				`career-draft:${userId}:answer:${applicationId}:project`,
+				JSON.stringify("Recovered answer"),
+			);
+			localStorage.setItem(
+				`career-draft:${userId}:question:${applicationId}:project`,
+				JSON.stringify("Describe your project again"),
+			);
+		},
+		{ userId: profile.id, applicationId: id },
+	);
+	await page.reload();
+	await expect(page.getByRole("button", { name: "Save recovered draft", exact: true })).toHaveCount(2);
+	await page.getByRole("button", { name: "Use a saved answer", exact: true }).last().click();
+	dialog = page.getByRole("dialog", { name: "Use a saved answer", exact: true });
+	await dialog.getByRole("button", { name: "Review and use", exact: true }).click();
+	dialog = page.getByRole("dialog", { name: "Review for this application", exact: true });
+	await dialog
+		.getByRole("checkbox", { name: "I reviewed this answer, its evidence and the application context." })
+		.check();
+	await dialog.getByRole("button", { name: "Use reviewed answer", exact: true }).click();
+	await expect(dialog).toBeHidden();
+	await expect(page.getByRole("button", { name: "Save recovered draft", exact: true })).toHaveCount(0);
+	const field = page.getByRole("textbox", { name: "Describe your project again", exact: true });
+	await field.fill("Later answer edit after library review");
+	await field.blur();
+	await expect
+		.poll(async () => (await (await page.request.get(`/api/openapi/career/workspace/${id}`)).json()).answers[0].answer)
+		.toBe("Later answer edit after library review");
 });

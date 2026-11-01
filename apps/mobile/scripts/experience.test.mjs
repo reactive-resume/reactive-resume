@@ -131,6 +131,12 @@ const draftBoundary = {
 };
 const document = load("features/share/document.ts", { "@/draft": draftBoundary });
 const { safeFileName } = load("features/share/model.ts");
+assert.equal(safeFileName("李明-Resume"), "李明-Resume", "Native exports keep a Unicode full name intact");
+assert.equal(
+	safeFileName('../../etc/passwd\r\nX-Injected: "yes"'),
+	"etcpasswdX-Injected yes",
+	"Native exports remove traversal, control characters, quotes and separators",
+);
 const exportedBytes = new Uint8Array([1, 2, 3]);
 const translatedLetterWords = {
 	greeting: (name) => `Liebe ${name},`,
@@ -617,12 +623,15 @@ console.log("PASS native New preserves Applications views, pushes from a workspa
 
 // Opening earlier applications must preserve an unsaved job until explicit discard.
 let finishSave;
+let matchedPosting = null;
 const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 	"@reactive-resume/utils/timezone": timeParser,
 	"@/features/application-detail/hooks": { useUserTime: () => ({ timeZone: "UTC" }) },
 	react: { ...react, useEffect: () => {} },
 	"@orpc/client": { ORPCError: class extends Error {} },
-	"@tanstack/react-query": { useQuery: (options) => ({ data: options.queryKey[0] === "posting-match" ? null : [] }) },
+	"@tanstack/react-query": {
+		useQuery: (options) => ({ data: options.queryKey[0] === "posting-match" ? matchedPosting : [] }),
+	},
 	"./date": { parseDateOnly: () => new Date() },
 	"./error": { applicationError: String },
 	"./lane-notice": { LaneNotice: "LaneNotice" },
@@ -631,6 +640,7 @@ const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 	"./prior-no-response": { PriorNoResponse: "PriorNoResponse" },
 	"./queries": {
 		useApplicationMutations: () => ({
+			update: { mutateAsync: async (input) => calls.push(input) },
 			create: {
 				mutateAsync: () =>
 					new Promise((resolve) => {
@@ -692,6 +702,31 @@ priorLink().onOpen("previous");
 discardPrior().onConfirm();
 assert.deepEqual(calls, ["close-draft", "/applications/previous"], "explicit discard opens the prior application");
 console.log("PASS native prior-application draft confirmation and save lock");
+
+reset();
+matchedPosting = { id: "existing-job", company: "Example", role: "Engineer" };
+const pickerView = () =>
+	render(AddApplicationSheet, {
+		initialCapture: {
+			url: "https://example.test/jobs/1",
+			company: "Example",
+			role: "Engineer",
+			description: "Posting",
+		},
+		onClose: () => calls.push("close-picker"),
+		onAdded: (id) => calls.push({ picked: id }),
+	});
+assert.equal(control(pickerView(), "Update posting details").disabled, false);
+control(pickerView(), "Update posting details").onPress();
+await settle();
+assert.equal(calls[0].id, "existing-job");
+assert.deepEqual(
+	calls.slice(1),
+	["close-picker", { picked: "existing-job" }],
+	"duplicate update returns to picker without navigation",
+);
+matchedPosting = null;
+console.log("PASS native duplicate posting update preserves picker flow");
 
 // Default calendar month/day follows the account clock; explicit navigation remains pinned.
 const calendarSchedule = load("features/reminders/schedule.ts", { "@reactive-resume/utils/timezone": {} });
@@ -799,6 +834,11 @@ const offerParser = load("../../../packages/schema/src/career-offer.ts", {
 	"@reactive-resume/utils/timezone": timeParser,
 });
 let offerProfile = { isSuccess: false, isPending: true, isError: false };
+let savedOffers = [
+	{ createdAt: "2026-09-01T00:00:00Z", data: { kind: "offer", currency: "USD" } },
+	{ createdAt: "2026-10-01T00:00:00Z", data: { kind: "offer", currency: "GBP" } },
+];
+let offerApplications = { data: [] };
 const { OfferEntry } = load("features/career/offer-entry.tsx", {
 	"@reactive-resume/schema/career": careerSchema,
 	"@reactive-resume/schema/career-offer": offerParser,
@@ -812,11 +852,24 @@ const { OfferEntry } = load("features/career/offer-entry.tsx", {
 			},
 		}),
 		client: { career: { createOffer: async (input) => calls.push(input) } },
+		useOffers: () => ({ data: savedOffers }),
 	},
 	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
 	"@/features/application-detail/date-field": { WallClockField: "WallClockField" },
-	"@/features/applications/queries": { useApplications: () => ({ data: [] }) },
+	"@/features/applications/queries": { useApplications: () => offerApplications },
 });
+reset();
+offerApplications = { isPending: true };
+assert.equal(render(OfferEntry, {}).type, "LoadState", "unknown metadata offers no ready action");
+offerApplications = { isError: true };
+assert.equal(render(OfferEntry, {}).type, "LoadState", "failed metadata stays retryable, not empty");
+offerApplications = { isError: true, data: [] };
+assert.equal(render(OfferEntry, {}).type, "LoadState", "failed refresh with cached empty metadata stays retryable");
+offerApplications = { data: [] };
+// With no application to attach it to, Add offer leads to saving a job first.
+control(render(OfferEntry, {}), "Add an application first").onPress();
+assert.deepEqual(calls, ["/applications?create=1"]);
+assert.ok(!nodes(render(OfferEntry, {})).some((node) => node.props.label === "Add offer"));
 reset();
 const entryView = () => render(OfferEntry, { application: { id: "job", company: "Fictional Labs", role: "Engineer" } });
 control(entryView(), "Add offer").onPress();
@@ -824,12 +877,28 @@ const formElement = nodes(entryView()).find((node) => typeof node.type === "func
 assert.ok(formElement);
 reset();
 const offerView = () => render(formElement.type, { ...formElement.props, onClose() {} });
+const initialOffers = savedOffers;
+savedOffers = [];
+offerView();
+assert.equal(control(offerView(), "Currency").value, "", "empty results do not invent a currency");
+savedOffers = initialOffers;
+offerView();
+assert.equal(control(offerView(), "Currency").value, "GBP", "starts in the last offer's currency");
+savedOffers = [{ createdAt: "2026-11-01T00:00:00Z", data: { kind: "offer", currency: "EUR" } }];
+assert.equal(control(offerView(), "Currency").value, "GBP", "late refetch cannot replace the draft currency");
+assert.equal(control(offerView(), "Currency").placeholder, undefined, "no placeholder posing as a value");
+assert.match(control(offerView(), "Currency").helper, /three-letter/);
+assert.ok(!nodes(offerView()).some((node) => node.props.label === "Learning budget"), "rarer terms start folded");
+assert.ok(!nodes(offerView()).some((node) => /Times are shown/.test(String(node.props.children))));
 control(offerView(), "Currency").onChangeText("EUR");
+control(offerView(), "More options").onPress();
 control(offerView(), "Learning budget").onChangeText("95k");
 assert.equal(control(offerView(), "Learning budget").error, undefined, "typing shows no premature error");
 control(offerView(), "Learning budget").onBlur();
 assert.match(control(offerView(), "Learning budget").error, /full amount/);
+control(offerView(), "More options").onPress();
 control(offerView(), "Save offer").onPress();
+assert.equal(control(offerView(), "More options").expanded, true, "Save reveals invalid terms for correction");
 assert.deepEqual(calls, [], "invalid optional learning cannot save");
 assert.equal(control(offerView(), "Learning budget").value, "95k", "invalid draft remains editable");
 control(offerView(), "Learning budget").onChangeText("");
@@ -842,6 +911,7 @@ for (const state of ["loading", "failure"]) {
 	assert.equal(control(offerView(), "Respond by").value, "2027-03-28");
 }
 offerProfile = { isSuccess: true, isPending: false, isError: false };
+assert.ok(nodes(offerView()).some((node) => /Times are shown in Europe\/Berlin/.test(String(node.props.children))));
 control(offerView(), "Time").onChange("02:30");
 control(offerView(), "Save offer").onPress();
 assert.deepEqual(calls, [], "nonexistent local time cannot save");
@@ -1019,8 +1089,14 @@ const photoHooks = load("features/write/hooks.ts", {
 	"./fields": {},
 	"./model": {},
 });
+let pictureOptions;
 const { PictureScreen } = load("features/write/picture-screen.tsx", {
-	"@tanstack/react-query": { useMutation: () => ({}) },
+	"@tanstack/react-query": {
+		useMutation: (options) => {
+			pictureOptions = options;
+			return {};
+		},
+	},
 	"expo-file-system": {},
 	"expo-image": { Image: "Image" },
 	"expo-image-picker": {},
@@ -1611,3 +1687,204 @@ console.log("PASS native Today past note edit preserves exact seconds and change
 	assert.equal(scheduleRetries, 1);
 	console.log("PASS native preparation distinguishes loading/error from empty/configured AI lookup");
 }
+
+const { CustomFields } = load("features/write/basics-screen.tsx", {
+	"expo-image": { Image: "Image" },
+	"@reactive-resume/utils/string": { generateId: () => "new-field" },
+	"./entry-fields": { BoundText: "BoundText", LinkField: "LinkField", useValidators: () => ({}) },
+	"./entry-screen": { EditorScreen: "EditorScreen" },
+	"./hooks": { useWriteData: () => null },
+	"./pickers": { IconPickerSheet: "IconPickerSheet", PromptSheet: "PromptSheet" },
+	"./picture-screen": { resolvePictureUrl: () => "" },
+	"@/auth/session": { useSession: () => ({}) },
+	"@/draft": { useIsResumeLocked: () => false, useResumeStore: {} },
+});
+reset();
+const removedField = { id: "field-one", icon: "acorn", text: "Portfolio", link: "https://portfolio.example/" };
+let fieldDocument = { headline: "Before", fields: [removedField] };
+const fieldHistory = [];
+const updateFields = (mutate) => {
+	fieldHistory.push(structuredClone(fieldDocument));
+	fieldDocument = structuredClone(fieldDocument);
+	mutate(fieldDocument.fields);
+};
+const fieldView = () =>
+	render(CustomFields, {
+		fields: fieldDocument.fields,
+		locked: false,
+		update: updateFields,
+		undo: () => (fieldDocument = fieldHistory.pop()),
+	});
+control(fieldView(), "Remove field").onPress();
+assert.equal(fieldDocument.fields.length, 0);
+const removalToast = calls.find((value) => value.message === "Field removed");
+assert.ok(removalToast);
+fieldHistory.push(structuredClone(fieldDocument));
+fieldDocument = { ...fieldDocument, headline: "Later edit" };
+removalToast.action.onPress();
+assert.equal(fieldDocument.headline, "Later edit", "field Undo preserves a later edit");
+assert.deepEqual(fieldDocument.fields, [removedField], "field Undo restores only the removed field");
+removalToast.action.onPress();
+assert.deepEqual(fieldDocument.fields, [removedField], "a restored field is never duplicated");
+console.log("PASS native custom-field Undo restores its field without reverting later edits or duplicating it");
+
+// A job selected before its summary arrives must never become an unlinked copy.
+let copyApplications = { data: [], isFetching: true, refetch() {} };
+const { NewDocument } = load("features/documents/new-document.tsx", {
+	react: { ...react, useEffect() {} },
+	"@tanstack/react-query": { useQuery: () => copyApplications },
+	"expo-document-picker": {},
+	"expo-file-system": {},
+	"expo-network": { getNetworkStateAsync: async () => ({ isConnected: true }) },
+	"expo-router": {
+		useRouter: () => ({ replace: (href) => calls.push(href) }),
+		useLocalSearchParams: () => ({ step: "copy", applicationId: "new-job" }),
+		Stack: { Screen: "StackScreen" },
+	},
+	"@reactive-resume/schema/resume/dates": {},
+	"./import-file": { ImportError: class extends Error {} },
+	"./new-documents": { useNewDocuments: { getState: () => ({ markOpened() {} }) } },
+	"./queries": {
+		useDocuments: () => ({ data: [{ id: "source", type: "resume", name: "Resume" }] }),
+		useDocumentRefresh: () => () => {},
+		documentError: String,
+	},
+	"@/api/client": {
+		client: {
+			documents: {
+				copyForJob: async (input) => {
+					calls.push(input);
+					return "copy";
+				},
+			},
+		},
+		orpc: { applications: { listSummary: { queryOptions: () => ({ queryKey: ["jobs"] }) } } },
+	},
+	"@/auth/session": { getServer: () => "test", useSession: () => ({ server: "test", status: "signed-in" }) },
+	"@/features/ai/providers": { useHasAIProvider: () => ({ hasAIProvider: false }) },
+	"@/features/applications/add-sheet": {},
+});
+reset();
+assert.equal(control(render(NewDocument), "Create copy").disabled, true);
+control(render(NewDocument), "Create copy").onPress();
+await settle();
+assert.deepEqual(calls, [], "pending selected job cannot create an unlinked copy");
+copyApplications = {
+	data: [{ id: "new-job", company: "Example", role: "Engineer", status: "saved" }],
+	isFetching: false,
+	refetch() {},
+};
+assert.equal(control(render(NewDocument), "Create copy").disabled, false);
+control(render(NewDocument), "Create copy").onPress();
+await settle();
+assert.equal(calls[0].applicationId, "new-job");
+console.log("PASS native copy waits for selected job and preserves application ID");
+
+// React Query uses the latest mutation options after asynchronous public-link counting.
+let currentProfileMutation;
+let profileMutationResult;
+let finishLinkCount;
+const { ProfileEditor } = load("features/settings/profile.tsx", {
+	"@tanstack/react-query": {
+		useQueryClient: () => ({ invalidateQueries() {} }),
+		useMutation: (options) => {
+			currentProfileMutation = options;
+			return {
+				isPending: false,
+				reset() {},
+				mutate() {
+					profileMutationResult = currentProfileMutation.mutationFn();
+				},
+			};
+		},
+	},
+	"expo-file-system": {},
+	"expo-image-picker": {},
+	"@/api/client": {
+		client: {
+			documents: {
+				page: () =>
+					new Promise((resolve) => {
+						finishLinkCount = resolve;
+					}),
+			},
+			auth: {
+				updateProfile: async (input) => {
+					calls.push(input);
+					return { status: true };
+				},
+			},
+		},
+	},
+	"@/auth/session": { useSession: () => ({ server: "test" }) },
+});
+reset();
+const usernameField = nodes(render(ProfileEditor, { profile: { name: "Example", username: "old-name" } })).find(
+	(node) => node.props.field === "username",
+);
+reset();
+const profileView = () => render(usernameField.type, usernameField.props);
+control(profileView(), "Username").onChangeText("valid-name");
+control(profileView(), "Username").onBlur();
+control(profileView(), "Username").onChangeText("!");
+profileView();
+finishLinkCount({ total: 1 });
+await settle();
+nodes(profileView())
+	.find((node) => node.type === "ConfirmDialog")
+	.props.onConfirm();
+await assert.rejects(profileMutationResult, /Invalid profile field/);
+assert.deepEqual(calls, [], "invalid draft never reaches profile API after confirmation");
+assert.equal(control(profileView(), "Username").value, "!", "failed validation preserves draft");
+console.log("PASS native username revalidates after asynchronous public-link confirmation");
+
+reset();
+pictureOptions.onError(new Error("Network request failed"));
+assert.equal(calls.at(-1).message, "Couldn't upload the photo. Try again.");
+pictureOptions.onError(new Error("Choose a photo smaller than 10 MB."));
+assert.equal(calls.at(-1).message, "Choose a photo smaller than 10 MB.");
+console.log("PASS native photo failure distinguishes network retry from size guidance");
+
+let preferenceDraft;
+let preferenceLocale;
+const { Preferences } = load("features/career/preferences.tsx", {
+	react: { ...react, useEffect() {}, useLayoutEffect() {} },
+	"@tanstack/react-query": { useQueryClient: () => ({}) },
+	"@reactive-resume/schema/career": careerSchema,
+	"@reactive-resume/utils/amount": amountParser,
+	"./hooks": {
+		useCareerTime: () => ({ locale: preferenceLocale, timeZone: "UTC", profile: { data: { id: "owner" } } }),
+	},
+	"./role-suggestions": { RoleSuggestions: "RoleSuggestions" },
+	"./search-regions-field": { SearchRegionsField: "SearchRegionsField" },
+	"@/api/client": {},
+	"@/auth/session": { useSession: () => ({ server: "test" }) },
+	"@/features/workspace/hooks": {
+		useDraft: (_key, initial) => {
+			preferenceDraft ??= { ...initial, amount: "Invalid draft" };
+			return {
+				value: preferenceDraft,
+				blocked: true,
+				reset: (value) => {
+					preferenceDraft = value;
+				},
+			};
+		},
+	},
+});
+for (const locale of ["de-DE", "fr-FR"]) {
+	reset();
+	preferenceLocale = locale;
+	preferenceDraft = null;
+	const initial = careerSchema.careerProfileDataSchema.parse({
+		minBase: { amount: 1234.56, currency: "EUR", period: "month" },
+	});
+	control(render(Preferences, { initial }), "Use saved version").onPress();
+	assert.equal(
+		amountParser.parseAmount(preferenceDraft.amount, locale),
+		1234.56,
+		`${locale}: restored amount retains exact saved value`,
+	);
+	assert.equal(preferenceDraft.amount, new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(1234.56));
+}
+console.log("PASS native saved Preferences amounts round-trip in comma-decimal locales");

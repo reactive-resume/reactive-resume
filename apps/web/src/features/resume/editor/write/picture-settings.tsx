@@ -28,6 +28,7 @@ import { NumberInput } from "@/components/input/number-input";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
+import { getReadableErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -754,10 +755,13 @@ export function PictureSettings() {
 				handleAutoSave();
 				toast.close(toastId);
 			},
-			onError: () => {
+			onError: (error) => {
 				toast.add({
 					type: "error",
-					description: t`Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again.`,
+					description: getReadableErrorMessage(
+						error,
+						t`Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again.`,
+					),
 					id: toastId,
 				});
 			},

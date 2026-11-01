@@ -150,7 +150,10 @@ export function Preferences({ initial }: PreferencesProps) {
 							onPress={() =>
 								kept.reset({
 									draft: initial,
-									amount: initial.minBase.amount === null ? "" : String(initial.minBase.amount),
+									amount:
+										initial.minBase.amount === null
+											? ""
+											: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(initial.minBase.amount),
 									notice: initial.noticeWeeks === null ? "" : String(initial.noticeWeeks),
 								})
 							}

@@ -239,6 +239,7 @@ export function ResumePreviewClient({
 						transition={reducedMotion ? INSTANT_TRANSITION : EXITING_TRANSITION}
 					>
 						<ResumePreviewLoader
+							data={resumeData}
 							pageCount={getResumePreviewPageCount(resumeData)}
 							pageClassName={pageClassName}
 							pageGap={pageGap}

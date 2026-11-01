@@ -7,9 +7,12 @@ import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
+vi.mock("@tanstack/react-router", () => ({
+	useRouteContext: () => ({ session: { user: { timezone: mocks.timeZone } } }),
+}));
 
 const mocks = vi.hoisted(() => ({
+	timeZone: "UTC",
 	upload: vi.fn(),
 	removeFile: vi.fn(),
 	create: vi.fn(),
@@ -93,6 +96,7 @@ const application: Application = {
 beforeAll(() => i18n.loadAndActivate({ locale: "en", messages: {} }));
 beforeEach(() => {
 	vi.resetAllMocks();
+	mocks.timeZone = "UTC";
 	mocks.upload.mockResolvedValue({
 		url: "https://example.com/api/uploads/user-1/pictures/new.pdf",
 		path: NEW_KEY,
@@ -177,4 +181,19 @@ it("keeps a failed save editable and cancellation performs no client storage cle
 	expect(onOpenChange).toHaveBeenCalledWith(false);
 	expect(mocks.upload).not.toHaveBeenCalled();
 	expect(mocks.removeFile).not.toHaveBeenCalled();
+});
+
+it("lets a changed follow-up day correct an inherited time skipped by daylight saving", async () => {
+	mocks.timeZone = "Europe/Berlin";
+	renderSheet({ ...application, followUpAt: new Date("2027-03-27T01:30:00Z"), followUpDateOnly: false });
+	expect(screen.getByLabelText("Time")).toHaveValue("02:30");
+	fireEvent.change(screen.getByLabelText("Follow-up date"), { target: { value: "2027-03-28" } });
+	fireEvent.change(screen.getByLabelText("Time"), { target: { value: "03:30" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+	await waitFor(() =>
+		expect(mocks.update).toHaveBeenCalledWith(
+			expect.objectContaining({ followUpAt: new Date("2027-03-28T01:30:00Z"), followUpDateOnly: false }),
+			expect.anything(),
+		),
+	);
 });

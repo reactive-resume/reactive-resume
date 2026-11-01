@@ -662,6 +662,10 @@ msgstr "Loại {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# chỉnh sửa được đề xuất trên trang này · không thay đổi gì cho đến khi bạn chấp nhận} other {# chỉnh sửa được đề xuất trên trang này · không thay đổi gì cho đến khi bạn chấp nhận}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -968,6 +972,11 @@ msgstr "Thêm một quốc gia"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "Thêm một sự thật"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1795,6 +1804,10 @@ msgstr "tăng dần"
 msgid "Ask"
 msgstr "Hỏi"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Hỏi về hồ sơ ứng tuyển này…"
@@ -2196,6 +2209,7 @@ msgstr "Hủy yêu cầu"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Sự nghiệp"
 
@@ -2252,6 +2266,10 @@ msgstr "Thay đổi chủ đề thành…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "Đổi múi giờ"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2621,6 +2639,7 @@ msgstr "Đã đóng: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Cố vấn"
@@ -2760,6 +2779,10 @@ msgstr "Kết nối nhà cung cấp AI"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Kết nối nhà cung cấp AI trong Cài đặt để tự động làm mới."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Kết nối nhà cung cấp AI để đọc chi tiết từ văn bản đã dán. Nhập thủ công hoạt động mà không cần AI."
@@ -2783,6 +2806,10 @@ msgstr "Kết nối các công cụ bạn sử dụng để viết, tìm kiếm 
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "đã kết nối · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Ứng dụng được kết nối"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3166,6 +3193,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Không thể đánh dấu là đã ứng tuyển. Hãy thử lại."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3418,6 +3446,10 @@ msgstr "Không thể tải ảnh lên."
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
 msgstr ""
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "Không thể tải ảnh lên. Hãy thử lại."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -4048,6 +4080,7 @@ msgstr "Tải xuống sẽ mở bảng chia sẻ của hệ thống. Chọn nhà
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Tải xuống sẽ mở menu chia sẻ hệ thống. Chọn dịch vụ lưu trữ để lưu file. Thư xin việc được liên kết sẽ mở ra dưới dạng tệp thứ hai."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Tải xuống PDF"
@@ -4969,6 +5002,7 @@ msgstr "Tiêu đề 3"
 msgid "Heading changed"
 msgstr "Tiêu đề đã thay đổi"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Tiêu đề"
@@ -5247,6 +5281,10 @@ msgstr "Nhập tệp"
 #: src/features/write/outline.tsx
 msgid "Import it"
 msgstr "Nhập"
+
+#: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
@@ -5567,6 +5605,10 @@ msgstr "Chỉ dùng hai hoặc ba họ font. Mỗi font thêm vào là thêm m�
 msgid "Keep together"
 msgstr "Hãy giữ vững sự đoàn kết"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Giữ những phần cụ thể nhất"
@@ -5607,6 +5649,7 @@ msgstr "Trân trọng,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Kiến thức"
 
@@ -5960,6 +6003,10 @@ msgstr "Đã liên kết. Cập nhật tên, email, số điện thoại và th�
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Liên kết"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6358,6 +6405,7 @@ msgstr "Thêm"
 msgid "More details"
 msgstr "Thêm chi tiết"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "Nhiều lựa chọn hơn"
@@ -6737,6 +6785,9 @@ msgid "No application"
 msgstr "Không có đơn xin việc"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Chưa có đơn xin việc nào. Hãy thêm một cái vào đơn xin việc trước."
@@ -6765,6 +6816,10 @@ msgstr "Không tìm thấy tiêu đề mục thông thường nào."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Chưa có cuộc trò chuyện nào về tài liệu này."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6916,6 +6971,10 @@ msgstr "Không có kết quả"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Không có sơ yếu lý lịch"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7186,6 +7245,7 @@ msgid "Offer type"
 msgstr "Loại đề nghị tuyển dụng"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Lời đề nghị"
 
@@ -7743,10 +7803,12 @@ msgstr "Ảnh"
 msgid "Photo hidden"
 msgstr "Đã ẩn ảnh"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "Ảnh bị ẩn khỏi trang."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Ảnh trên trang."
@@ -9009,6 +9071,10 @@ msgstr "Đánh giá câu trả lời của tôi"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "“Đánh giá câu trả lời của tôi” sẽ gửi câu hỏi, những gì bạn đã nói, tin tuyển dụng này và Kiến thức của bạn tới {providerName}."
 
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -9904,6 +9970,7 @@ msgstr "Hiển thị thêm"
 msgid "Show on page"
 msgstr "Hiển thị trên trang"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Hiển thị ảnh"
@@ -11358,6 +11425,7 @@ msgstr "Thắt chặt vào một trang"
 msgid "Tightening"
 msgstr "Đang rút gọn"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Giờ"
@@ -11405,6 +11473,11 @@ msgstr "Tiêu đề"
 msgid "To"
 msgstr "ĐẾN"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Cần kiểm tra"
@@ -11415,6 +11488,7 @@ msgstr "Để nhận lời nhắc, hãy cho phép thông báo trong cài đặt 
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Hôm nay"
@@ -11654,6 +11728,7 @@ msgstr "Gạch chân các liên kết"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12170,6 +12245,7 @@ msgstr "Tìm kiếm trên web không thành công: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "Tìm kiếm trên web tìm kiếm việc làm ở các quốc gia này. Chọn tối đa ba quốc gia."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Trang web"
@@ -12423,6 +12499,10 @@ msgstr "Viết số bằng chữ số"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Viết một câu chuyện về việc bạn đã làm, gồm năm phần. Để trống Kết quả và Suy ngẫm cho đến khi bạn có thể đưa ra bằng chứng cho các phần này."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12694,6 +12774,10 @@ msgstr "nhà cung cấp của bạn"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Các liên kết công khai của bạn bắt đầu bằng {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

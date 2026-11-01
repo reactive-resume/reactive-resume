@@ -669,6 +669,30 @@ msgstr "{issues, plural, one {# の問題により、マッチが失われる可
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {# の項目を確認してください。まだダウンロードできます。} other {# の確認事項があることを確認してください。まだダウンロードできます。}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item}は元の位置に戻りました。"
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item}はドロップできる場所の上にありません。"
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item}は{place}の上にあります。"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item}を{place}にドロップしました。"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item}を置けない場所にドロップしました。何も移動していません。"
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item}を元の位置にドロップしました。何も移動していません。"
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -864,7 +888,15 @@ msgstr "{toCheck, plural, one {# フィールドを確認する必要があり�
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# を確認してください} other {# を確認してください}}"
 
-#. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
+#: src/features/settings/account/profile.tsx
+msgid "{total, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {# document} other {# documents}}"
+msgstr ""
+
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr "{type} · 編集済み {0}"
@@ -1189,7 +1221,7 @@ msgstr "すべてを受け入れる"
 #: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
-msgstr "承認されました"
+msgstr "受け入れ済み"
 
 #: src/features/applications/stages.ts
 msgid "Accepted another offer"
@@ -1288,6 +1320,11 @@ msgstr "国を追加"
 #: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "事実を追加（例：「2025年にアソシエイトPM 2名をメンタリングした」）"
+
+#: src/features/documents/document-actions.tsx
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/components/input/chip-input.tsx
 msgid "Add a keyword..."
@@ -2728,6 +2765,10 @@ msgstr "ソフトウェアはあなたの履歴書を読み取ることができ
 msgid "Cancel"
 msgstr "キャンセル"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -2736,6 +2777,7 @@ msgstr ""
 msgid "Capture does not use AI. Review every field before saving."
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
@@ -2758,6 +2800,7 @@ msgstr "カタロニア語"
 msgid "Certifications"
 msgstr "資格・認定"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/settings/account/security.tsx
@@ -2811,6 +2854,10 @@ msgstr "このタイムライン エントリを変更します。"
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "タイムゾーンを変更"
+
+#: src/features/settings/account/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Change your password"
@@ -3016,6 +3063,7 @@ msgstr ""
 msgid "Choose a file"
 msgstr "ファイルを選択してください"
 
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose a file to import"
 msgstr "インポートするファイルを選択してください"
@@ -3210,6 +3258,7 @@ msgstr "{label}として終了"
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "コーチ"
@@ -3239,10 +3288,6 @@ msgstr "列"
 #: src/features/resume/editor/check/issues.ts
 msgid "Columns can scramble the order text is read in."
 msgstr "列は、テキストが読み取られる順序を乱す可能性があります。"
-
-#: src/features/homepage/sections.tsx
-msgid "Coming soon"
-msgstr "近日公開"
 
 #: src/features/career/today.tsx
 msgid "Coming up"
@@ -3416,6 +3461,11 @@ msgstr "独自の AI プロバイダーに接続して、言語モデルにリ�
 msgid "Connected"
 msgstr "接続済み"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "接続されたアプリケーション"
@@ -3484,6 +3534,7 @@ msgstr "連絡先"
 msgid "Contain"
 msgstr "全体表示"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "コンテンツ"
@@ -3975,6 +4026,10 @@ msgstr "そのファイルを読み取れませんでした。もう一度お試
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "{entries} の日付を読み取れなかったため、末尾のままになっています。日付を修正して、もう一度並べ替えてください。"
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4332,6 +4387,7 @@ msgstr "切り抜き"
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/navigation.tsx
 msgid "Cover letter"
 msgstr "カバーレター"
 
@@ -4391,8 +4447,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "アカウントを作成"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4655,6 +4720,10 @@ msgstr "応募を削除"
 msgid "Delete conversation"
 msgstr "会話を削除"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4882,8 +4951,26 @@ msgid "Discard unsaved changes?"
 msgstr "保存されていない変更を破棄しますか？"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "切断"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -4920,6 +5007,7 @@ msgid "Documentation"
 msgstr "ドキュメント"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5026,6 +5114,7 @@ msgid "Download failed. Try again."
 msgstr "ダウンロードに失敗しました。もう一度お試しください。"
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -5145,6 +5234,10 @@ msgstr "ドラッグ · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "ここにセクションをドラッグ＆ドロップして、列間で移動します"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "ポインターでドラッグして移動するか、メニューを使用してください。"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -6231,6 +6324,10 @@ msgstr "Discord で履歴書へのフィードバックをもらう"
 msgid "Get started"
 msgstr "始めましょう"
 
+#: src/features/homepage/sections.tsx
+msgid "Get the beta on"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
 msgstr "長くなりました。 「短く」するか、具体性の低い段落を削除してください。"
@@ -6280,6 +6377,10 @@ msgstr "ダッシュボードへ移動"
 #: src/features/career/workspace/preparation.tsx
 msgid "Go to form answers"
 msgstr ""
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Go to Reactive Resume"
+msgstr "Reactive Resume へ移動"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
@@ -6363,6 +6464,7 @@ msgid "Heading changed"
 msgstr "見出しが変更されました"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Headline"
 msgstr "肩書き"
 
@@ -6687,9 +6789,17 @@ msgstr "インポートの進行状況"
 msgid "Import steps"
 msgstr "インポート手順"
 
+#: src/features/documents/documents-page.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
 msgstr "このファイルを無料の Reactive Resume にインポートします。すべての問題が Check でお待ちしています。"
+
+#: src/features/documents/documents-page.tsx
+msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a PDF, Word or JSON file."
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
@@ -6922,6 +7032,10 @@ msgstr "課題とジョブ マッチは AI なしでも機能します。"
 msgid "It has entries but isn't placed on a page."
 msgstr "エントリはありますが、ページには配置されていません。"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "削除された可能性があります。別のストーリーを選ぶか、新しく追加してください。"
@@ -7070,6 +7184,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "アドレスは 1 つだけにして、ソフトウェアがどれを使うべきか迷わないようにしましょう。"
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "アプリケーションを使用していないときもアクセスを維持する。"
 
@@ -7145,6 +7260,10 @@ msgstr "フォントは2〜3種類に抑えてください。追加するフォ�
 msgid "Keep together"
 msgstr "一緒に"
 
+#: src/features/settings/account/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Keeps the most specific parts"
 msgstr "最も具体的な部分を保持します"
@@ -7195,6 +7314,7 @@ msgstr "クメール語"
 msgid "Kind regards,"
 msgstr "敬具、"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -7409,6 +7529,8 @@ msgid "letter"
 msgstr "手紙"
 
 #: src/features/assistant/document.ts
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7621,6 +7743,10 @@ msgstr "リンク中…"
 msgid "Links"
 msgstr "リンク"
 
+#: src/features/settings/account/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
+
 #: src/features/homepage/hero.tsx
 msgid "Lisbon"
 msgstr "Lisbon"
@@ -7665,6 +7791,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "名前付きのステージをインポートする前に、ステージを読み込んでください。CSVデータは保持されます。"
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "読み込み中"
 
@@ -8239,6 +8366,10 @@ msgstr "{label}に移動"
 msgid "Moves the application from {0}."
 msgstr "応募を{0}から移動します。"
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "{item}の移動をキャンセルしました。何も移動していません。"
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "私の役割は、サポートの負担を増やさずに原因を突き止めることでした。"
@@ -8377,6 +8508,8 @@ msgstr "新しい応募"
 msgid "New conversation"
 msgstr "新しい会話"
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter"
 msgstr ""
@@ -8407,6 +8540,10 @@ msgstr "新しいページ"
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "新しいパスワード"
+
+#: src/features/documents/documents-page.tsx
+msgid "New resume"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "New roles from your search"
@@ -8498,6 +8635,9 @@ msgid "No applications yet"
 msgstr "まだ求人への応募はありません"
 
 #: src/features/documents/document-actions.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "まだ求人への応募はありません。まず求人応募に 1 つ追加してください。"
@@ -8516,7 +8656,7 @@ msgid "No commands match that search."
 msgstr "検索に一致するコマンドはありません。"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+msgid "No connected applications. Apps you allow appear here."
 msgstr "接続されたアプリケーションはまだありません。アカウントへのアクセスを許可したアプリがここに表示されます。"
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -8538,6 +8678,10 @@ msgstr "修正なし"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "No country matches."
 msgstr "一致する国がありません。"
+
+#: src/features/documents/documents-page.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -8678,6 +8822,10 @@ msgstr "結果が見つかりません。"
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "履歴書なし"
+
+#: src/features/documents/documents-page.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
@@ -9043,6 +9191,7 @@ msgstr "オファーを保存しました"
 msgid "Offer type"
 msgstr "オファーの種類"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "オファー"
@@ -9429,6 +9578,16 @@ msgstr "ページ"
 msgid "Page {0}"
 msgstr "ページ {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "ページ {0}、サイドバー"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "ページ {page}、{column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9481,6 +9640,10 @@ msgstr "Parcel & Co."
 #: src/features/homepage/write.tsx
 msgid "Parcel & Co. · Porto"
 msgstr "Parcel & Co. · Porto"
+
+#: src/features/settings/account/profile.tsx
+msgid "Part of every public link. Old links keep working for 30 days after a change."
+msgstr ""
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
@@ -9681,10 +9844,12 @@ msgid "Photo hidden"
 msgstr "写真が隠されました"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "写真はページから隠されています。"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "ページ上の写真。"
 
@@ -9715,6 +9880,10 @@ msgstr "1つの形式を選び、全体を通して使用してください。"
 #: src/features/career/workspace/prepare.tsx
 msgid "Pick two examples"
 msgstr "例を2つ選ぶ"
+
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item}を持ち上げました。"
 
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
@@ -9790,6 +9959,16 @@ msgstr "ポルトガル語（ポルトガル）"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "役職"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "{total}件中{position}番目"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "{total}件中{position}番目、{group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -10343,16 +10522,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "メールアドレスを読み取ります。"
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "プロフィール情報を読み取ります。"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "完全なデータのエクスポートを含む、アカウント内のすべてのデータを読み取ります。これには、プロファイルと電子メール アドレス、書類、求人応募書、キャリア データ、コーチングでの会話が含まれます。"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -10980,6 +11169,7 @@ msgstr "再開する"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -11215,14 +11405,6 @@ msgstr "取り消す"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0}を取り消す"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "アクセスを取り消す"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "アプリケーションのアカウントへのアクセスを取り消します。"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12080,6 +12262,10 @@ msgstr "セクションを共有する"
 msgid "Share via…"
 msgstr "共有方法…"
 
+#: src/features/documents/document-actions.tsx
+msgid "Share…"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
@@ -12194,6 +12380,7 @@ msgid "Show password"
 msgstr "パスワードを表示する"
 
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Show photo"
 msgstr "写真を表示"
 
@@ -12243,6 +12430,7 @@ msgstr "サイドバーは多くの場合、最後に読まれるか、メイン
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13925,6 +14113,8 @@ msgstr "1ページに絞る"
 msgid "Tightening"
 msgstr "簡潔にしています"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "時刻"
@@ -13968,7 +14158,17 @@ msgstr "タイトル"
 msgid "To"
 msgstr "に"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/document-card.tsx
+msgid "To {recipient}"
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "持ち上げるには Space または Enter を押します。矢印キーで移動し、Space または Enter でドロップ、Escape でキャンセルします。"
+
 #: src/features/applications/components/calendar-view.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
@@ -14051,6 +14251,7 @@ msgid "Translations"
 msgstr "翻訳"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Trash"
@@ -14348,6 +14549,10 @@ msgstr "名前なしのパスキー"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "無題"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "無題の項目"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
@@ -14881,6 +15086,7 @@ msgid "Web searches look for work here, up to three countries."
 msgstr "ウェブ検索でこれらの国での仕事を探します。最大 3 か国を選択します。"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Website"
 msgstr "Webサイト"
 
@@ -15242,6 +15448,10 @@ msgstr "数字は算用数字で書く"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "自分が取り組んだことについて、5つの部分に分けてエピソードを書いてください。「結果」と「学び」は、裏付けが得られるまで空欄にしてください。"
 
+#: src/features/documents/documents-page.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "リンクとして認識されるよう、アドレスを省略せず記載してください。"
@@ -15557,6 +15767,14 @@ msgstr "あなたのファイル"
 msgid "Your focus"
 msgstr "あなたの注力分野"
 
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest documents and applications are in this account."
+msgstr ""
+
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "見出しが本文と同じ見た目になっています。"
@@ -15636,6 +15854,10 @@ msgstr "あなたの希望条件"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "あなたのプロバイダー"
+
+#: src/features/settings/account/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #. placeholder {0}: voice.settings.transcribe.label
 #: src/features/career/workspace/practise.tsx

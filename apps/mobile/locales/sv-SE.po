@@ -662,6 +662,10 @@ msgstr "Typ {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# föreslagen ändring på den här sidan · inget ändras förrän du godkänner} other {# föreslagna ändringar på den här sidan · inget ändras förrän du godkänner}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -969,6 +973,11 @@ msgstr "Lägg till ett land"
 msgid "Add a fact"
 msgstr "Lägg till ett faktum"
 
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "Lägg till en länk"
@@ -1145,7 +1154,7 @@ msgstr "Lägg till erbjudande"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgstr "Lägg till erbjudandets villkor manuellt, även för accepterade erbjudanden, eller använd valfri AI-extrahering i Meddelanden. Att stänga som accepterat registrerar inte villkoren."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1795,6 +1804,10 @@ msgstr "Stigande"
 msgid "Ask"
 msgstr "Be"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Fråga om den här ansökan…"
@@ -2196,6 +2209,7 @@ msgstr "Avbryt begäran"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Karriär"
 
@@ -2252,6 +2266,10 @@ msgstr "Ändra tema till…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "Byt tidszon"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2621,6 +2639,7 @@ msgstr "Stängt: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Coach"
@@ -2760,6 +2779,10 @@ msgstr "Anslut en AI-leverantör"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Anslut en AI-leverantör i Inställningar för att uppdatera den automatiskt."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Anslut en AI-leverantör för att läsa detaljer från inklistrad text. Manuell inmatning fungerar utan AI."
@@ -2783,6 +2806,10 @@ msgstr "Koppla ihop verktygen du använder för att skriva, söka jobb och arbet
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Ansluten · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Anslutna applikationer"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3166,6 +3193,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Det gick inte att markera som ansökt. Försök igen."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3417,7 +3445,11 @@ msgstr "Det gick inte att ladda upp fotot."
 
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
-msgstr ""
+msgstr "Det gick inte att ladda upp fotot. Välj ett läsbart foto i PNG-, JPEG-, WebP- eller GIF-format på upp till 10 MB och försök igen."
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "Det gick inte att ladda upp fotot. Försök igen."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -4048,6 +4080,7 @@ msgstr "Nedladdning öppnar systemets delningsmeny. Välj en lagringstjänst fö
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Ladda ner öppnar systemdelningsbladet. Välj en lagringsleverantör för att spara filen. Ett länkat följebrev öppnas som en andra fil."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Ladda ner PDF"
@@ -4969,6 +5002,7 @@ msgstr "Rubrik 3"
 msgid "Heading changed"
 msgstr "Rubrik ändrad"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Rubrik"
@@ -5247,6 +5281,10 @@ msgstr "Importera fil"
 #: src/features/write/outline.tsx
 msgid "Import it"
 msgstr "Importera det"
+
+#: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
@@ -5567,6 +5605,10 @@ msgstr "Håll dig till två eller tre typsnittsfamiljer. Varje extra typsnitt ä
 msgid "Keep together"
 msgstr "Hålla ihop"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Behåller de mest specifika delarna"
@@ -5607,6 +5649,7 @@ msgstr "Med vänlig hälsning,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Kunskap"
 
@@ -5960,6 +6003,10 @@ msgstr "Länkad. Namn, e-post, telefon och stad uppdateras när CV gör det."
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Länkar"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6358,6 +6405,7 @@ msgstr "Mer"
 msgid "More details"
 msgstr "Mer information"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "Fler alternativ"
@@ -6737,6 +6785,9 @@ msgid "No application"
 msgstr "Ingen jobbansökan"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Inga jobbansökningar ännu. Lägg till en i Ansökningar först."
@@ -6765,6 +6816,10 @@ msgstr "Inga konventionella avsnittsrubriker hittades."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Inga konversationer om detta dokument ännu."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6916,6 +6971,10 @@ msgstr "Inga resultat"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Ingen meritförteckning"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7186,6 +7245,7 @@ msgid "Offer type"
 msgstr "Typ av erbjudande"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Erbjudanden"
 
@@ -7743,10 +7803,12 @@ msgstr "Foto"
 msgid "Photo hidden"
 msgstr "Foto dolt"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "Foto dolt från sidan."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Foto på sidan."
@@ -9009,6 +9071,10 @@ msgstr "Granska mitt svar"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "\"Granska mitt svar\" skickar frågan, det du sa, den här annonsen och din Kunskap till {providerName}."
 
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr "Granska behörigheter och koppla från appar i webbläsaren. Du kan behöva logga in där."
+
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -9904,6 +9970,7 @@ msgstr "Visa mer"
 msgid "Show on page"
 msgstr "Visa på sidan"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Visa foto"
@@ -11358,6 +11425,7 @@ msgstr "Dra åt till en sida"
 msgid "Tightening"
 msgstr "Stramar upp"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Tid"
@@ -11405,6 +11473,11 @@ msgstr "Titel"
 msgid "To"
 msgstr "Till"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "För att kontrollera"
@@ -11415,6 +11488,7 @@ msgstr "Tillåt aviseringar i enhetens inställningar för att få en påminnels
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "I dag"
@@ -11654,6 +11728,7 @@ msgstr "Stryk under länkar"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12170,6 +12245,7 @@ msgstr "Webbsökning misslyckades: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "Webbsökningar söker jobb i dessa länder. Välj upp till tre länder."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Webbplats"
@@ -12423,6 +12499,10 @@ msgstr "Skriv tal med siffror"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Skriv en berättelse i fem delar om något du har gjort. Lämna Resultat och Reflektion tomma tills du kan styrka dem."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12694,6 +12774,10 @@ msgstr "din leverantör"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Dina offentliga länkar börjar med {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

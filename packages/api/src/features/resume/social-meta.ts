@@ -16,7 +16,7 @@ export type PublicResumeCardInput = { username: string; slug: string };
  */
 export async function getPublicResumeCardData(
 	input: PublicResumeCardInput,
-): Promise<{ data: ResumeData; isPrimary: boolean; customDomain: string | null } | null> {
+): Promise<{ data: ResumeData; isPrimary: boolean; customDomain: string | null; isReleasedUsername: boolean } | null> {
 	const resume = await findResume(
 		{ username: input.username, slug: input.slug },
 		{
@@ -24,6 +24,7 @@ export async function getPublicResumeCardData(
 			hideContactDetails: schema.resume.hideContactDetails,
 			isPrimary: schema.resume.isPrimary,
 			customDomain: verifiedDomainColumn(),
+			username: schema.user.username,
 		},
 		eq(schema.resume.isPublic, true),
 		isNull(schema.resume.password),
@@ -33,5 +34,6 @@ export async function getPublicResumeCardData(
 		data: publicResumeData(resume),
 		isPrimary: resume.isPrimary,
 		customDomain: resume.isPrimary ? resume.customDomain : null,
+		isReleasedUsername: resume.username?.toLowerCase() !== input.username.toLowerCase(),
 	};
 }

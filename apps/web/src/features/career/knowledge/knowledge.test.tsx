@@ -1,7 +1,7 @@
 import type { CareerProfileData } from "@reactive-resume/schema/career";
 // @vitest-environment happy-dom
 import type { ReactNode } from "react";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -89,7 +89,11 @@ vi.mock("../shared", () => ({
 vi.mock("@/features/applications/queries", () => ({
 	applicationsListQueryOptions: () => ({
 		queryKey: ["applications"],
-		queryFn: async () => api.data.applications ?? [],
+		queryFn: async () => {
+			await api.read("applications");
+			if (api.fail.has("applications")) throw new Error("Offline");
+			return api.data.applications ?? [];
+		},
 		retry: false,
 	}),
 }));
@@ -133,6 +137,47 @@ afterEach(() => {
 	cleanup();
 	clients.splice(0).forEach((client) => client.clear());
 	vi.useRealTimers();
+});
+
+it("retries failed application refreshes even when an empty result remains cached", async () => {
+	api.data.applications = [];
+	mount(<OfferEntry />);
+	await screen.findByRole("link", { name: "Add an application first" });
+	const client = clients[0];
+	if (!client) throw new Error("Missing mounted query client");
+	api.fail.add("applications");
+	await act(() => client.invalidateQueries({ queryKey: ["applications"] }));
+	expect(await screen.findByRole("button", { name: "Try again" })).toBeDefined();
+	expect(screen.queryByRole("link", { name: "Add an application first" })).toBeNull();
+	api.fail.delete("applications");
+	api.data.applications = [{ id: "job-a", company: "Acme", role: "Engineer" }];
+	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+	expect(await screen.findByRole("button", { name: "Add offer" })).toBeDefined();
+});
+
+it("prefills currency when an offer arrives after an initially empty saved-offers result", async () => {
+	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+	const client = clients[0];
+	if (!client) throw new Error("Missing mounted query client");
+	await waitFor(() => expect(client.getQueryState(["savedItems"])?.status).toBe("success"));
+	const currency = screen.getByLabelText("Currency") as HTMLInputElement;
+	expect(currency.value).toBe("");
+	await act(() => {
+		client.setQueryData(
+			["savedItems"],
+			[{ id: "late", createdAt: new Date("2026-11-01"), data: { kind: "offer", currency: "GBP" } }],
+		);
+	});
+	await waitFor(() => expect(currency.value).toBe("GBP"));
+	fireEvent.change(currency, { target: { value: "EUR" } });
+	await act(() => {
+		client.setQueryData(
+			["savedItems"],
+			[{ id: "later", createdAt: new Date("2026-11-02"), data: { kind: "offer", currency: "USD" } }],
+		);
+	});
+	expect(currency.value).toBe("EUR");
 });
 
 it("keeps an unfinished story after navigating away and remounting, until Cancel explicitly discards it", async () => {
@@ -442,10 +487,13 @@ it("blocks invalid optional learning and skipped DST deadlines without losing th
 	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
 	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "EUR" } });
 	const learning = screen.getByLabelText("Learning budget");
+	fireEvent.click(screen.getByRole("button", { name: "More options" }));
 	fireEvent.change(learning, { target: { value: "95k" } });
 	expect(learning.getAttribute("aria-invalid")).not.toBe("true");
 	expect(screen.queryByText("Enter a full amount, such as 95000, or leave blank.")).toBeNull();
+	fireEvent.click(screen.getByRole("button", { name: "More options" }));
 	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	expect(screen.getByRole("button", { name: "More options" }).getAttribute("aria-expanded")).toBe("true");
 	expect(learning.getAttribute("aria-invalid")).toBe("true");
 	expect(api.createOffer).not.toHaveBeenCalled();
 	expect((learning as HTMLInputElement).value).toBe("95k");
@@ -485,4 +533,83 @@ it("publishes target roles to search consumers only after a successful preferenc
 	await waitFor(() =>
 		expect(clients.at(-1)?.getQueryData(["profile"])).toMatchObject({ targetRoles: ["Reviewed platform engineer"] }),
 	);
+});
+
+it("leads to adding an application when there is none, and opens Add offer in place of the empty state", async () => {
+	api.data.applications = [];
+	const view = mount(<OffersPage a={undefined} b={undefined} />);
+	await screen.findByText("No offers to compare yet");
+	expect(await screen.findByText("Add an application first")).toBeDefined();
+	expect(screen.queryByRole("button", { name: "Add offer" })).toBeNull();
+	view.unmount();
+
+	api.data.applications = [{ id: "job-a", company: "Acme", role: "Engineer" }];
+	mount(<OffersPage a={undefined} b={undefined} />);
+	fireEvent.click(await screen.findByRole("button", { name: "Add offer" }));
+	expect(screen.queryByText("No offers to compare yet")).toBeNull();
+	expect(screen.getByRole("button", { name: "Save offer" })).toBeDefined();
+});
+
+it("starts in the last offer's currency, keeps the rarer terms under More options and the timezone with the time", async () => {
+	api.data.savedItems = [
+		{ id: "old", createdAt: new Date("2026-09-01"), data: { kind: "offer", currency: "USD" } },
+		{ id: "new", createdAt: new Date("2026-10-01"), data: { kind: "offer", currency: "GBP" } },
+	];
+	api.createOffer.mockResolvedValue(null);
+	mount(<OfferEntry application={{ id: "job-a", company: "Acme", role: "Engineer" }} />);
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+
+	const currency = screen.getByLabelText("Currency") as HTMLInputElement;
+	await waitFor(() => expect(currency.value).toBe("GBP"));
+	await act(async () => {
+		clients
+			.at(-1)
+			?.setQueryData(
+				["savedItems"],
+				[{ id: "later", createdAt: new Date("2026-11-01"), data: { kind: "offer", currency: "EUR" } }],
+			);
+		await new Promise((resolve) => setTimeout(resolve, 0));
+	});
+	expect(currency.value).toBe("GBP");
+	expect(currency.getAttribute("placeholder")).toBeNull();
+	expect(currency.getAttribute("aria-describedby")).toBeTruthy();
+	expect(screen.getByRole("button", { name: "More options" }).getAttribute("aria-expanded")).toBe("false");
+	expect(screen.queryByText("Times are shown in Europe/Berlin.")).toBeNull();
+	fireEvent.change(screen.getByLabelText("Respond by"), { target: { value: "2026-11-02" } });
+	expect(screen.getByText("Times are shown in Europe/Berlin.")).toBeDefined();
+
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	await waitFor(() => expect(api.createOffer).toHaveBeenCalled());
+	expect(api.createOffer.mock.calls.at(-1)?.[0]).toMatchObject({
+		currency: "GBP",
+		respondBy: "2026-11-02T16:00:00.000Z",
+	});
+
+	fireEvent.click(screen.getByRole("button", { name: "Add offer" }));
+	fireEvent.change(screen.getByLabelText("Currency"), { target: { value: "" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save offer" }));
+	expect((screen.getByLabelText("Currency") as HTMLInputElement).value).toBe("");
+	expect(screen.getByLabelText("Currency").getAttribute("aria-invalid")).toBe("true");
+});
+
+it("waits for application metadata and retries a failed read before offering an empty-account action", async () => {
+	let release: (() => void) | undefined;
+	api.read.mockImplementationOnce(() => new Promise<void>((resolve) => (release = resolve)));
+	api.data.applications = [];
+	const view = mount(<OfferEntry />);
+	expect(screen.queryByRole("button", { name: "Add offer" })).toBeNull();
+	expect(screen.queryByText("Add an application first")).toBeNull();
+	await act(async () => release?.());
+	expect(await screen.findByText("Add an application first")).toBeDefined();
+	view.unmount();
+
+	api.fail.add("applications");
+	mount(<OfferEntry />);
+	expect(await screen.findByRole("alert")).toHaveTextContent("Couldn't load this.");
+	expect(screen.queryByText("Add an application first")).toBeNull();
+	expect(screen.queryByRole("button", { name: "Add offer" })).toBeNull();
+	api.fail.delete("applications");
+	api.data.applications = [{ id: "job-a", company: "Acme", role: "Engineer" }];
+	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+	expect(await screen.findByRole("button", { name: "Add offer" })).toBeDefined();
 });

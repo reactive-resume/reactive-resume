@@ -39,7 +39,12 @@ import {
 } from "@/ui";
 
 type ParsedPosting = RouterOutput["applications"]["ai"]["parsePosting"];
-type AddApplicationSheetProps = { onClose: () => void; initialCapture?: PostingCapture | undefined };
+type AddApplicationSheetProps = {
+	onClose: () => void;
+	initialCapture?: PostingCapture | undefined;
+	/** Opened to pick a job inside another flow (Copy for a job, Link to application): returns the new job there. */
+	onAdded?: ((id: string) => void) | undefined;
+};
 const isLink = (value: string) => {
 	try {
 		const url = new URL(value.trim());
@@ -54,7 +59,7 @@ const today = () => {
 };
 
 /** Mounted until an explicit close/discard; unmounting cancels transient posting requests. */
-export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationSheetProps) {
+export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApplicationSheetProps) {
 	const router = useRouter();
 	const { t } = useLingui();
 	const { timeZone } = useUserTime();
@@ -241,7 +246,8 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 			});
 			if (!current(signal)) return;
 			onClose();
-			router.push(routes.applicationDetails(id));
+			if (onAdded) onAdded(id);
+			else router.push(routes.applicationDetails(id));
 		});
 	const dirty = !!(
 		input ||
@@ -341,7 +347,8 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 											...(description.trim() ? { jobDescription: description.slice(0, 20_000), postingSource } : {}),
 										});
 										onClose();
-										router.push(routes.applicationDetails(duplicate.data.id));
+										if (onAdded) onAdded(duplicate.data.id);
+										else router.push(routes.applicationDetails(duplicate.data.id));
 									})
 								}
 							/>

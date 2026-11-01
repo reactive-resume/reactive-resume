@@ -662,6 +662,10 @@ msgstr "Τύπος {pairing}"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# προτεινόμενη αλλαγή σε αυτήν τη σελίδα · τίποτα δεν αλλάζει μέχρι να την αποδεχτείτε} other {# προτεινόμενες αλλαγές σε αυτήν τη σελίδα · τίποτα δεν αλλάζει μέχρι να τις αποδεχτείτε}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -968,6 +972,11 @@ msgstr "Προσθέστε μια χώρα"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "Προσθέστε ένα γεγονός"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1795,6 +1804,10 @@ msgstr "Αύξουσα"
 msgid "Ask"
 msgstr "Παρακαλώ"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Ρωτήστε για αυτή την αίτηση…"
@@ -2196,6 +2209,7 @@ msgstr "Ακύρωση αιτήματος"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Καριέρα"
 
@@ -2252,6 +2266,10 @@ msgstr "Αλλαγή θέματος σε…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "Αλλαγή ζώνης ώρας"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2621,6 +2639,7 @@ msgstr "Κλειστές: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Σύμβουλος"
@@ -2760,6 +2779,10 @@ msgstr "Συνδέστε έναν πάροχο τεχνητής νοημοσύν
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Συνδέστε έναν πάροχο AI στις Ρυθμίσεις για αυτόματη ανανέωση."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Συνδέστε έναν πάροχο AI για να διαβάσετε λεπτομέρειες από επικολλημένο κείμενο. Η χειροκίνητη καταχώρηση λειτουργεί χωρίς AI."
@@ -2783,6 +2806,10 @@ msgstr "Συνδέστε τα εργαλεία που χρησιμοποιείτ
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Συνδεδεμένο · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Συνδεδεμένες εφαρμογές"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3166,6 +3193,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Δεν ήταν δυνατή η σήμανση ως υποβληθείσα. Προσπαθήστε ξανά."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3418,6 +3446,10 @@ msgstr "Δεν ήταν δυνατή η μεταφόρτωση της φωτογ
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
 msgstr ""
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "Δεν ήταν δυνατή η μεταφόρτωση της φωτογραφίας. Προσπαθήστε ξανά."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -4048,6 +4080,7 @@ msgstr "Η λήψη ανοίγει το μενού κοινοποίησης το
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "Η λήψη ανοίγει το φύλλο κοινής χρήσης συστήματος. Επιλέξτε έναν πάροχο αποθήκευσης για να αποθηκεύσετε το αρχείο. Μια συνδεδεμένη συνοδευτική επιστολή ανοίγει ως δεύτερο αρχείο."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "Λήψη PDF"
@@ -4969,6 +5002,7 @@ msgstr "Επικεφαλίδα 3"
 msgid "Heading changed"
 msgstr "Η επικεφαλίδα άλλαξε"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Επικεφαλίδα θέσης"
@@ -5247,6 +5281,10 @@ msgstr "Εισαγωγή αρχείου"
 #: src/features/write/outline.tsx
 msgid "Import it"
 msgstr "Εισαγάγετε το"
+
+#: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
@@ -5567,6 +5605,10 @@ msgstr "Περιοριστείτε σε δύο ή τρεις οικογένει�
 msgid "Keep together"
 msgstr "Μείνετε μαζί"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Διατηρεί τα πιο συγκεκριμένα μέρη"
@@ -5607,6 +5649,7 @@ msgstr "Με εκτίμηση,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Γνώση"
 
@@ -5960,6 +6003,10 @@ msgstr "Συνδεδεμένο. Ενημέρωση ονόματος, email, τη
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Εδαφος διά παιγνίδι γκολφ"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6358,6 +6405,7 @@ msgstr "Περισσότερα"
 msgid "More details"
 msgstr "Περισσότερες λεπτομέρειες"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "Περισσότερες επιλογές"
@@ -6737,6 +6785,9 @@ msgid "No application"
 msgstr "Καμία αίτηση εργασίας"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Δεν υπάρχουν ακόμη αιτήσεις εργασίας. Προσθέστε ένα στις αιτήσεις εργασίας πρώτα."
@@ -6765,6 +6816,10 @@ msgstr "Δεν βρέθηκαν συμβατικές επικεφαλίδες ε
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Δεν υπάρχουν ακόμη συζητήσεις σχετικά με αυτό το έγγραφο."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6916,6 +6971,10 @@ msgstr "Κανένα αποτέλεσμα"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Χωρίς βιογραφικό"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7186,6 +7245,7 @@ msgid "Offer type"
 msgstr "Τύπος προσφοράς"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Προσφορές"
 
@@ -7743,10 +7803,12 @@ msgstr "Φωτογραφία"
 msgid "Photo hidden"
 msgstr "Κρυφή φωτογραφία"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "Η φωτογραφία είναι κρυμμένη από τη σελίδα."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Φωτογραφία στη σελίδα."
@@ -9009,6 +9071,10 @@ msgstr "Έλεγχος της απάντησής μου"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "Ο \"Έλεγχος της απάντησής μου\" στέλνει την ερώτηση, όσα είπατε, αυτή την αγγελία και τη Γνώση σας προς {providerName}."
 
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr "Ελέγξτε τα δικαιώματα και αποσυνδέστε εφαρμογές στο πρόγραμμα περιήγησής σας. Ίσως χρειαστεί να συνδεθείτε εκεί."
+
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -9904,6 +9970,7 @@ msgstr "Εμφάνιση περισσότερων"
 msgid "Show on page"
 msgstr "Εμφάνιση στη σελίδα"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Εμφάνιση φωτογραφίας"
@@ -11358,6 +11425,7 @@ msgstr "Σφίξτε σε μία σελίδα"
 msgid "Tightening"
 msgstr "Σύμπτυξη κειμένου"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Ώρα"
@@ -11405,6 +11473,11 @@ msgstr "Τίτλος"
 msgid "To"
 msgstr "Να"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Για έλεγχο"
@@ -11415,6 +11488,7 @@ msgstr "Για να λάβετε υπενθύμιση, επιτρέψτε τις
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Σήμερα"
@@ -11654,6 +11728,7 @@ msgstr "Υπογράμμισε συνδέσμους"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12170,6 +12245,7 @@ msgstr "Η αναζήτηση στον Ιστό απέτυχε: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "Οι αναζητήσεις στον Ιστό αναζητούν θέσεις εργασίας σε αυτές τις χώρες. Επιλέξτε έως τρεις χώρες."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Ιστότοπος"
@@ -12423,6 +12499,10 @@ msgstr "Γράψτε τους αριθμούς με ψηφία"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Γράψτε σε πέντε μέρη μια ιστορία για κάτι που κάνατε. Αφήστε κενά τα πεδία «Αποτέλεσμα» και «Αναστοχασμός» μέχρι να μπορείτε να τα τεκμηριώσετε."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12694,6 +12774,10 @@ msgstr "τον παροχέα σας"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Οι δημόσιοι σύνδεσμοί σας ξεκινούν με {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

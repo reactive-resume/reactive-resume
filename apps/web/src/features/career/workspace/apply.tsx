@@ -442,6 +442,7 @@ function AnswerCard({
 								disabled={disabled}
 								onClick={() => {
 									setText(proposal.text);
+									textDraft.accept();
 									onSave({ answer: proposal.text, factIds: proposal.factIds });
 									setProposal(null);
 								}}
@@ -481,6 +482,8 @@ function AnswerCard({
 					onUse={(value) => {
 						setText(value.answer);
 						setQuestion(value.question);
+						textDraft.accept();
+						questionDraft.accept();
 						onSave(value);
 					}}
 				/>

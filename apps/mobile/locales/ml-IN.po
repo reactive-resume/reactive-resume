@@ -662,6 +662,10 @@ msgstr "{pairing} തരം"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {ഈ പേജിൽ # നിർദ്ദേശിത തിരുത്തൽ · അംഗീകരിക്കുന്നതുവരെ ഒന്നും മാറില്ല} other {ഈ പേജിൽ # നിർദ്ദേശിത തിരുത്തലുകൾ · അംഗീകരിക്കുന്നതുവരെ ഒന്നും മാറില്ല}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -968,6 +972,11 @@ msgstr "ഒരു രാജ്യം ചേർക്കുക"
 #: src/features/career/facts.tsx
 msgid "Add a fact"
 msgstr "ഒരു വസ്തുത ചേർക്കുക"
+
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
@@ -1795,6 +1804,10 @@ msgstr "ആരോഹണം"
 msgid "Ask"
 msgstr "ചോദിക്കുക"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "ഈ അപേക്ഷയെക്കുറിച്ച് ചോദിക്കുക…"
@@ -2196,6 +2209,7 @@ msgstr "അഭ്യർത്ഥന റദ്ദാക്കുക"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "കരിയർ"
 
@@ -2252,6 +2266,10 @@ msgstr "തീം… ആക്കുക"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "സമയമേഖല മാറ്റുക"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2621,6 +2639,7 @@ msgstr "അടച്ചത്: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "കോച്ച്"
@@ -2760,6 +2779,10 @@ msgstr "ഒരു AI ദാതാവിനെ ബന്ധിപ്പിക്�
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "ഇത് സ്വയമേവ പുതുക്കാൻ സെറ്റിംഗ്സിൽ ഒരു AI ദാതാവിനെ ബന്ധിപ്പിക്കുക."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "ഒട്ടിച്ച വാചകത്തിൽ നിന്നുള്ള വിശദാംശങ്ങൾ വായിക്കാൻ ഒരു AI ദാതാവിനെ ബന്ധിപ്പിക്കുക. മാനുവൽ എൻട്രി AI ഇല്ലാതെ പ്രവർത്തിക്കുന്നു."
@@ -2783,6 +2806,10 @@ msgstr "എഴുതുന്നതിനും ജോലി തിരയുന�
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "കണക്റ്റുചെയ്തു · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "ബന്ധിപ്പിച്ച ആപ്ലിക്കേഷനുകൾ"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3166,6 +3193,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "അപേക്ഷിച്ചതായി അടയാളപ്പെടുത്താനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3418,6 +3446,10 @@ msgstr "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാനായ�
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
 msgstr ""
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -4048,6 +4080,7 @@ msgstr "ഡൗൺലോഡ് ചെയ്യുമ്പോൾ സിസ്റ�
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "ഡൗൺലോഡ് ചെയ്യുന്നത് സിസ്റ്റം പങ്കിടൽ മെനു തുറക്കുന്നു. ഫയൽ സേവ് ചെയ്യാൻ ഒരു സ്റ്റോറേജ് പ്രൊവൈഡർ തിരഞ്ഞെടുക്കുക. ഒരു ലിങ്ക് ചെയ്‌ത കവർ ലെറ്റർ രണ്ടാമത്തെ ഫയലായി തുറക്കുന്നു."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "PDF ഡൗൺലോഡ് ചെയ്യുക"
@@ -4969,6 +5002,7 @@ msgstr "ഹെഡിംഗ് 3"
 msgid "Heading changed"
 msgstr "തലക്കെട്ട് മാറി"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "ഹെഡ്ലൈൻ"
@@ -5247,6 +5281,10 @@ msgstr "ഫയൽ ഇറക്കുമതി ചെയ്യുക"
 #: src/features/write/outline.tsx
 msgid "Import it"
 msgstr "അത് ഇറക്കുമതി ചെയ്യുക"
+
+#: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
@@ -5567,6 +5605,10 @@ msgstr "രണ്ടോ മൂന്നോ ഫാമിലികളിൽ ഒത
 msgid "Keep together"
 msgstr "ഒരുമിച്ച് നിലനിർത്തുക"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "ഏറ്റവും നിർദ്ദിഷ്ട ഭാഗങ്ങൾ സൂക്ഷിക്കുന്നു"
@@ -5607,6 +5649,7 @@ msgstr "വിശ്വസ്തതയോടെ,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "അറിവ്"
 
@@ -5960,6 +6003,10 @@ msgstr "ലിങ്ക് ചെയ്‌തു. റെസ്യൂമെ ച�
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "ലിങ്കുകൾ"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6358,6 +6405,7 @@ msgstr "കൂടുതൽ"
 msgid "More details"
 msgstr "കൂടുതൽ വിശദാംശങ്ങൾ"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "കൂടുതൽ ഓപ്ഷനുകൾ"
@@ -6737,6 +6785,9 @@ msgid "No application"
 msgstr "ജോലി അപേക്ഷയില്ല"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "ഇതുവരെ ജോലി അപേക്ഷകളൊന്നുമില്ല. ജോലി അപേക്ഷകളിൽ ആദ്യം ഒന്ന് ചേർക്കുക."
@@ -6765,6 +6816,10 @@ msgstr "പതിവ് വിഭാഗ തലക്കെട്ടുകളൊ�
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "ഈ പ്രമാണത്തെക്കുറിച്ച് ഇതുവരെ സംഭാഷണങ്ങളൊന്നുമില്ല."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6916,6 +6971,10 @@ msgstr "ഫലങ്ങളൊന്നുമില്ല"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "റെസ്യൂമെ ഇല്ല"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7186,6 +7245,7 @@ msgid "Offer type"
 msgstr "ജോലി ഓഫറിന്റെ തരം"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "ഓഫറുകൾ"
 
@@ -7743,10 +7803,12 @@ msgstr "ഫോട്ടോ"
 msgid "Photo hidden"
 msgstr "ഫോട്ടോ മറച്ചിരിക്കുന്നു"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "പേജിൽ നിന്ന് ഫോട്ടോ മറച്ചിരിക്കുന്നു."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "പേജിലെ ഫോട്ടോ."
@@ -9009,6 +9071,10 @@ msgstr "എന്റെ ഉത്തരം വിലയിരുത്തുക"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "“എന്റെ ഉത്തരം വിലയിരുത്തുക” ചോദ്യവും നിങ്ങൾ പറഞ്ഞതും ഈ പോസ്റ്റിംഗും നിങ്ങളുടെ അറിവും {providerName}-ലേക്ക് അയയ്ക്കുന്നു."
 
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -9904,6 +9970,7 @@ msgstr "കൂടുതൽ കാണിക്കുക"
 msgid "Show on page"
 msgstr "പേജിൽ കാണിക്കുക"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "ഫോട്ടോ കാണിക്കുക"
@@ -11358,6 +11425,7 @@ msgstr "ഒരു പേജിലേക്ക് മുറുക്കുക"
 msgid "Tightening"
 msgstr "ചുരുക്കുന്നു"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "സമയം"
@@ -11405,6 +11473,11 @@ msgstr "ടൈറ്റിൽ"
 msgid "To"
 msgstr "ലേക്ക്"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "പരിശോധിക്കാൻ"
@@ -11415,6 +11488,7 @@ msgstr "ഒരു റിമൈൻഡർ ലഭിക്കാൻ, നിങ്�
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "ഇന്ന്"
@@ -11654,6 +11728,7 @@ msgstr "ലിങ്കുകൾക്ക് അടിവരയിടുക"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12170,6 +12245,7 @@ msgstr "വെബ് തിരയൽ പരാജയപ്പെട്ടു: {0
 msgid "Web searches look for work here, up to three countries."
 msgstr "ഈ രാജ്യങ്ങളിലെ ജോലികൾക്കായി വെബ് തിരയലുകൾ തിരയുന്നു. മൂന്ന് രാജ്യങ്ങൾ വരെ തിരഞ്ഞെടുക്കുക."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "വെബ്സൈറ്റ്"
@@ -12423,6 +12499,10 @@ msgstr "സംഖ്യകൾ അക്കങ്ങളിൽ എഴുതുക"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "നിങ്ങൾ ചെയ്ത ഒരു കാര്യത്തെക്കുറിച്ച് അഞ്ച് ഭാഗങ്ങളായി ഒരു കഥ എഴുതുക. തെളിവുകൾ നൽകി പിന്തുണയ്ക്കാനാകുന്നതുവരെ ഫലം, പ്രതിഫലനം എന്നിവ ശൂന്യമായി വിടുക."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12694,6 +12774,10 @@ msgstr "നിങ്ങളുടെ ദാതാവ്"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "നിങ്ങളുടെ പൊതു ലിങ്കുകൾ ആരംഭിക്കുന്നത് {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

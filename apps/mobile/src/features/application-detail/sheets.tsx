@@ -255,6 +255,11 @@ function FollowUpForm({ application, onClose }: Omit<ApplicationActionSheetProps
 		// Legacy date-only records retain their selected calendar day.
 		application.followUpAt ? followUpDay(application.followUpAt, timeZone, application.followUpDateOnly) : "",
 	);
+	const [time, setTime] = useState(() =>
+		application.followUpAt
+			? zonedParts(followUpInstant(application, timeZone) ?? application.followUpAt, timeZone).time
+			: "09:00",
+	);
 	const [note, setNote] = useState(application.followUpNote ?? "");
 	const [remind, setRemind] = useState<boolean | null>(null);
 	const reminderOn = remind ?? existing !== null;
@@ -285,10 +290,11 @@ function FollowUpForm({ application, onClose }: Omit<ApplicationActionSheetProps
 		<View style={{ gap: space.s3, paddingHorizontal: space.s4 }}>
 			<Text color="ink2">{t`A reminder to check in, shown as the next step until you do.`}</Text>
 			<WallClockField label={t`Date`} mode="date" value={date} onChange={setDate} />
+			<WallClockField label={t`Time`} mode="time" value={time} onChange={setTime} />
 			<TextField label={t`What to do`} value={note} placeholder={t`Email the recruiter`} onChangeText={setNote} />
 			<ListRow
 				title={t`Remind me on this device`}
-				subtitle={`${application.followUpAt ? zonedParts(followUpInstant(application, timeZone) ?? application.followUpAt, timeZone).time : "09:00"} · ${timeZone}`}
+				subtitle={`${time} · ${timeZone}`}
 				trailing={<Switch label={t`Remind me on this device`} value={reminderOn} onValueChange={setRemind} />}
 			/>
 			<Button
@@ -300,11 +306,11 @@ function FollowUpForm({ application, onClose }: Omit<ApplicationActionSheetProps
 				onPress={() => {
 					const original = followUpInstant(application, timeZone);
 					const clock = original ? zonedParts(original, timeZone) : null;
-					const unchanged = !!original && date === clock?.date;
+					const unchanged = !!original && date === clock?.date && time === clock?.time;
 					const at =
 						unchanged && application.followUpAt
 							? new Date(application.followUpAt)
-							: fromZonedDateTime(date, clock?.time ?? "09:00", timeZone);
+							: fromZonedDateTime(date, time, timeZone);
 					if (at) save(at, unchanged && isDateOnlyFollowUp(application));
 					else showToast({ message: t`This date or time does not exist in your timezone. Choose another time.` });
 				}}

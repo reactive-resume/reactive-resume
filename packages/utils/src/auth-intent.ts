@@ -4,6 +4,6 @@
  * Shared by the browser auth client and the server guard so both agree on which writes are session intents.
  */
 const sessionIntentPaths =
-	/\/api\/auth\/(?:(?:sign-in|sign-up|sign-out|callback|oauth2|reset-password|forget-password|anonymous|one-tap|verify-email)(?:[/?]|$)|two-factor\/verify[\w-]*)/;
+	/^\/api\/auth\/(?:(?:sign-in|sign-up|sign-out|callback|reset-password|forget-password|anonymous|one-tap|verify-email)(?:[/?]|$)|oauth2\/(?:authorize|consent|continue|token)(?:[/?]|$)|two-factor\/verify[\w-]*(?:[/?]|$))/;
 
 export const isSessionIntentPath = (pathname: string) => sessionIntentPaths.test(pathname);

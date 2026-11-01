@@ -2,7 +2,7 @@ import type { DbOrTx } from "@reactive-resume/db/client";
 import type { SQL } from "drizzle-orm";
 import type { SelectedFields } from "drizzle-orm/pg-core";
 import type { SelectResultFields } from "drizzle-orm/query-builders/select.types";
-import { and, desc, eq, gt, inArray, isNull, like, ne, or, sql } from "drizzle-orm";
+import { and, desc, eq, exists, gt, inArray, isNull, like, ne, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { isValidSlug, MAX_SLUG_LENGTH } from "@reactive-resume/schema/resume/slug";
@@ -86,6 +86,32 @@ export async function followNameWithSlug(client: DbOrTx, input: { userId: string
 	} catch (error) {
 		if ((error as { cause?: { constraint?: string } } | null)?.cause?.constraint !== "resume_slug_user_id_unique")
 			throw error;
+	}
+}
+
+/**
+ * A name none of the user's live resumes has, so two imports of one person stay apart in lists and pickers: `name`,
+ * then "name — detail" (the headline), then a number.
+ */
+export async function findFreeResumeName(userId: string, name: string, detail?: string) {
+	const rows = await db
+		.select({ name: schema.resume.name })
+		.from(schema.resume)
+		.where(
+			and(
+				eq(schema.resume.userId, userId),
+				isNull(schema.resume.trashedAt),
+				sql`strpos(lower(${schema.resume.name}), lower(${name.slice(0, 94)})) = 1`,
+			),
+		);
+	const taken = new Set(rows.map((row) => row.name.toLowerCase()));
+	const free = (candidate: string) => !taken.has(candidate.toLowerCase());
+	if (free(name)) return name;
+	const described = detail?.trim() && detail.trim() !== name ? `${name} — ${detail.trim()}`.slice(0, 100) : null;
+	if (described && free(described)) return described;
+	const base = (described ?? name).slice(0, 94);
+	for (let number = 2; ; number++) {
+		if (free(`${base} (${number})`)) return `${base} (${number})`;
 	}
 }
 
@@ -177,8 +203,30 @@ export function matchesSlug(slug: string) {
 export type ResumeMatch = { username: string; slug: string } | { username: string; primary: true } | { id: string };
 
 /**
- * The resume `match` names, outside Trash, with an unbanned owner and meeting any `extra` conditions. A resume's
- * current slug wins over another's redirect.
+ * An account by its username, or by one it gave up in the last 30 days: until then nobody else can claim that name
+ * (released_username's trigger), so old public links keep finding their owner.
+ */
+function matchesUsername(username: string) {
+	return or(
+		eq(schema.user.username, username),
+		exists(
+			db
+				.select({ username: schema.releasedUsername.username })
+				.from(schema.releasedUsername)
+				.where(
+					and(
+						eq(schema.releasedUsername.username, username),
+						eq(schema.releasedUsername.userId, schema.user.id),
+						gt(schema.releasedUsername.releasedAt, sql`now() - interval '30 days'`),
+					),
+				),
+		),
+	);
+}
+
+/**
+ * The resume `match` names, outside Trash, with an unbanned owner and meeting any `extra` conditions. A current
+ * username wins over a released one, and a resume's current slug wins over another's redirect.
  */
 export async function findResume<TColumns extends SelectedFields>(
 	match: ResumeMatch,
@@ -194,14 +242,17 @@ export async function findResume<TColumns extends SelectedFields>(
 			and(
 				"slug" in match ? matchesSlug(match.slug) : undefined,
 				// Usernames are stored lowercase, so `/Jane` opens the same page as `/jane`.
-				"username" in match ? eq(schema.user.username, match.username.toLowerCase()) : eq(schema.resume.id, match.id),
+				"username" in match ? matchesUsername(match.username.toLowerCase()) : eq(schema.resume.id, match.id),
 				"primary" in match ? eq(schema.resume.isPrimary, true) : undefined,
 				isNull(schema.resume.trashedAt),
 				ownerIsNotBanned(),
 				...extra,
 			),
 		)
-		.orderBy(...("slug" in match ? [desc(sql`${schema.resume.slug} = ${match.slug}`)] : []))
+		.orderBy(
+			...("username" in match ? [desc(sql`${schema.user.username} = ${match.username.toLowerCase()}`)] : []),
+			...("slug" in match ? [desc(sql`${schema.resume.slug} = ${match.slug}`)] : []),
+		)
 		.limit(1);
 	return resume as SelectResultFields<TColumns> | undefined;
 }

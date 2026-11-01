@@ -669,6 +669,30 @@ msgstr "{issues, plural, one {בעיית # עלולה לעלות לך התאמה
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {לצ'ק יש דבר # לסקור. אתה עדיין יכול להוריד.} other {לצ'ק יש דברים של # לסקור. אתה עדיין יכול להוריד.}}"
 
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} חזר למקומו המקורי."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} לא נמצא מעל מקום שבו אפשר לשחרר אותו."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} נמצא מעל: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} שוחרר על: {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} שוחרר במקום שאסור להעביר אליו. שום דבר לא הוזז."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} שוחרר במקומו המקורי. שום דבר לא הוזז."
+
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
 msgid "{kind} interview"
@@ -864,7 +888,15 @@ msgstr "{toCheck, plural, one {שדה # צריך להסתכל.} other {שדות 
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# לבדוק} other {# לבדוק}}"
 
-#. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
+#: src/features/settings/account/profile.tsx
+msgid "{total, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {# document} other {# documents}}"
+msgstr ""
+
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr "{type} · ערוך {0}"
@@ -1288,6 +1320,11 @@ msgstr "הוסף מדינה"
 #: src/features/career/knowledge/facts.tsx
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "הוסף עובדה, למשל \"הדרכתי שני מנהלי מוצר זוטרים ב-2025\""
+
+#: src/features/documents/document-actions.tsx
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add a job…"
+msgstr ""
 
 #: src/components/input/chip-input.tsx
 msgid "Add a keyword..."
@@ -2728,6 +2765,10 @@ msgstr "האם תוכנה יכולה לקרוא את קורות החיים של�
 msgid "Cancel"
 msgstr "ביטול"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -2736,6 +2777,7 @@ msgstr ""
 msgid "Capture does not use AI. Review every field before saving."
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
@@ -2758,6 +2800,7 @@ msgstr "קטלאנית"
 msgid "Certifications"
 msgstr "הסמכות"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/settings/account/security.tsx
@@ -2811,6 +2854,10 @@ msgstr "שנה את ערך ציר הזמן הזה."
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "שנה אזור זמן"
+
+#: src/features/settings/account/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Change your password"
@@ -3016,6 +3063,7 @@ msgstr ""
 msgid "Choose a file"
 msgstr "בחר קובץ"
 
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose a file to import"
 msgstr "בחר קובץ לייבוא"
@@ -3210,6 +3258,7 @@ msgstr "נסגר כ־{label}"
 
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
 msgstr "מאמן"
@@ -3239,10 +3288,6 @@ msgstr "עמודות"
 #: src/features/resume/editor/check/issues.ts
 msgid "Columns can scramble the order text is read in."
 msgstr "עמודות יכולות לערבב את סדר הקריאה של הטקסט."
-
-#: src/features/homepage/sections.tsx
-msgid "Coming soon"
-msgstr "בקרוב"
 
 #: src/features/career/today.tsx
 msgid "Coming up"
@@ -3416,6 +3461,11 @@ msgstr "חבר את ספק הבינה המלאכותית שלך כדי שמוד�
 msgid "Connected"
 msgstr "מְחוּבָּר"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "אפליקציות מחוברות"
@@ -3484,6 +3534,7 @@ msgstr "אנשי קשר"
 msgid "Contain"
 msgstr "הצגה מלאה"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "תוכן"
@@ -3975,6 +4026,10 @@ msgstr "לא ניתן היה לקרוא את הקובץ. נסה שוב."
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "לא ניתן היה לקרוא את התאריכים ב-{entries}, ולכן הם נשארים בסוף. תקן את התאריכים שלהם ומיין שוב."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4332,6 +4387,7 @@ msgstr "כיסוי"
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/navigation.tsx
 msgid "Cover letter"
 msgstr "מכתב מקדים"
 
@@ -4391,8 +4447,17 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 msgid "Create account"
 msgstr "יצירת חשבון"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4655,6 +4720,10 @@ msgstr "מחיקת מועמדות"
 msgid "Delete conversation"
 msgstr "מחיקת שיחה"
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 msgid "Delete entry"
@@ -4882,8 +4951,26 @@ msgid "Discard unsaved changes?"
 msgstr "לבטל שינויים שלא נשמרו?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "ניתוק"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -4920,6 +5007,7 @@ msgid "Documentation"
 msgstr "תיעוד"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Documents"
@@ -5026,6 +5114,7 @@ msgid "Download failed. Try again."
 msgstr "ההורדה נכשלה. נסה שוב."
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -5145,6 +5234,10 @@ msgstr "גרור · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "גרור ושחרר סעיפים כאן כדי להעביר אותם בין עמודות"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "גררו אותו עם הסמן כדי להזיז אותו, או השתמשו בתפריט שלו."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -6231,6 +6324,10 @@ msgstr "קבלו משוב על קורות החיים ב-Discord"
 msgid "Get started"
 msgstr "התחל"
 
+#: src/features/homepage/sections.tsx
+msgid "Get the beta on"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
 msgstr "מתארך. נסה \"קצר יותר\", או חתוך את הפסקה הפחות ספציפית."
@@ -6280,6 +6377,10 @@ msgstr "מעבר ללוח בקרה"
 #: src/features/career/workspace/preparation.tsx
 msgid "Go to form answers"
 msgstr ""
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Go to Reactive Resume"
+msgstr "מעבר אל Reactive Resume"
 
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
@@ -6363,6 +6464,7 @@ msgid "Heading changed"
 msgstr "הכותרת השתנתה"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Headline"
 msgstr "כותרת עליונה"
 
@@ -6687,9 +6789,17 @@ msgstr "התקדמות הייבוא"
 msgid "Import steps"
 msgstr "שלבי ייבוא"
 
+#: src/features/documents/documents-page.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
 msgstr "ייבא קובץ זה לקובץ Reactive Resume בחינם. כל גיליון מחכה לך בצ'ק."
+
+#: src/features/documents/documents-page.tsx
+msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a PDF, Word or JSON file."
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
@@ -6922,6 +7032,10 @@ msgstr "בעיות והתאמת עבודה עדיין פועלות ללא AI."
 msgid "It has entries but isn't placed on a page."
 msgstr "יש לו ערכים אבל הוא לא ממוקם בדף."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "ייתכן שהוא נמחק. בחר סיפור אחר או הוסף סיפור חדש."
@@ -7070,6 +7184,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "השאר כתובת אחת בלבד, כדי שתוכנה לא תצטרך לנחש באיזו להשתמש."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "שמור על גישה כאשר אינך משתמש באפליקציה."
 
@@ -7145,6 +7260,10 @@ msgstr "הישאר עם שתיים עד שלוש משפחות גופנים. כל
 msgid "Keep together"
 msgstr "להישאר יחד"
 
+#: src/features/settings/account/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Keeps the most specific parts"
 msgstr "שומר על החלקים הספציפיים ביותר"
@@ -7195,6 +7314,7 @@ msgstr "חמרית"
 msgid "Kind regards,"
 msgstr "בברכה,"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -7409,6 +7529,8 @@ msgid "letter"
 msgstr "מִכְתָב"
 
 #: src/features/assistant/document.ts
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7621,6 +7743,10 @@ msgstr "מְקַשֵׁר…"
 msgid "Links"
 msgstr "קישורים"
 
+#: src/features/settings/account/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
+
 #: src/features/homepage/hero.tsx
 msgid "Lisbon"
 msgstr "Lisbon"
@@ -7665,6 +7791,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "יש לטעון את השלבים שלך לפני ייבוא שלבים בעלי שם. נתוני ה־CSV שלך יישמרו."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "טוען"
 
@@ -8239,6 +8366,10 @@ msgstr "הועבר לשלב {label}"
 msgid "Moves the application from {0}."
 msgstr "מעביר את המועמדות מ-{0}."
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "העברת {item} בוטלה. שום דבר לא הוזז."
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "התפקיד שלי היה לגלות למה, בלי להוסיף עבודת תמיכה."
@@ -8377,6 +8508,8 @@ msgstr "מועמדות חדשה"
 msgid "New conversation"
 msgstr "שיחה חדשה"
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter"
 msgstr ""
@@ -8407,6 +8540,10 @@ msgstr "עמוד חדש"
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "סיסמה חדשה"
+
+#: src/features/documents/documents-page.tsx
+msgid "New resume"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "New roles from your search"
@@ -8498,6 +8635,9 @@ msgid "No applications yet"
 msgstr "עדיין אין מועמדות לעבודה"
 
 #: src/features/documents/document-actions.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "עדיין אין מועמדות לעבודה. הוסף תחילה אחד במועמדות לעבודה."
@@ -8516,7 +8656,7 @@ msgid "No commands match that search."
 msgstr "אין פקודות שתואמות את החיפוש הזה."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+msgid "No connected applications. Apps you allow appear here."
 msgstr "אין עדיין אפליקציות מחוברות. אפליקציות שתאפשר להן גישה לחשבון שלך יופיעו כאן."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -8538,6 +8678,10 @@ msgstr "אין תיקונים"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "No country matches."
 msgstr "לא נמצאו מדינות."
+
+#: src/features/documents/documents-page.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -8678,6 +8822,10 @@ msgstr "לא נמצאו תוצאות."
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "אין קורות חיים"
+
+#: src/features/documents/documents-page.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
@@ -9043,6 +9191,7 @@ msgstr "הצעת העבודה נשמרה"
 msgid "Offer type"
 msgstr "סוג הצעת העבודה"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
 msgstr "הצעות"
@@ -9429,6 +9578,16 @@ msgstr "עמוד"
 msgid "Page {0}"
 msgstr "עמוד {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "עמוד {0}, סרגל צד"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "עמוד {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9481,6 +9640,10 @@ msgstr "Parcel & Co."
 #: src/features/homepage/write.tsx
 msgid "Parcel & Co. · Porto"
 msgstr "Parcel & Co. · Porto"
+
+#: src/features/settings/account/profile.tsx
+msgid "Part of every public link. Old links keep working for 30 days after a change."
+msgstr ""
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
@@ -9681,10 +9844,12 @@ msgid "Photo hidden"
 msgstr "תמונה מוסתרת"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "תמונה מוסתרת מהעמוד."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "תמונה בעמוד."
 
@@ -9715,6 +9880,10 @@ msgstr "בחר תבנית אחת והשתמש בה בכל מקום."
 #: src/features/career/workspace/prepare.tsx
 msgid "Pick two examples"
 msgstr "בחר שתי דוגמאות"
+
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} נבחר להזזה."
 
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
@@ -9790,6 +9959,16 @@ msgstr "פורטוגזית (פורטוגל)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "תפקיד"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "מיקום {position} מתוך {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "מיקום {position} מתוך {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -10343,16 +10522,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "קרא את כתובת הדוא\"ל שלך."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "קרא את פרטי הפרופיל שלך."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "קרא את כל הנתונים בחשבון שלך, כולל ייצוא נתונים מלא: הפרופיל וכתובת הדוא\"ל שלך, מסמכים, מועמדות לעבודה, נתוני קריירה ושיחות אימון."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -10980,6 +11169,7 @@ msgstr "קוֹרוֹת חַיִים"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
@@ -11215,14 +11405,6 @@ msgstr "לְבַטֵל"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "בטל את {0}"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "בטל גישה"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "בטל את הגישה של אפליקציה לחשבון שלך."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -12080,6 +12262,10 @@ msgstr "שתף קטעים"
 msgid "Share via…"
 msgstr "שתפו באמצעות…"
 
+#: src/features/documents/document-actions.tsx
+msgid "Share…"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
@@ -12194,6 +12380,7 @@ msgid "Show password"
 msgstr "הצג סיסמה"
 
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Show photo"
 msgstr "הצגת תמונה"
 
@@ -12243,6 +12430,7 @@ msgstr "סרגלי צד נקראים לרוב אחרונים, או מעורבב�
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 msgid "Sign in"
@@ -13925,6 +14113,8 @@ msgstr "הדקו לדף אחד"
 msgid "Tightening"
 msgstr "מצמצם"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "שעה"
@@ -13968,7 +14158,17 @@ msgstr "כותרת"
 msgid "To"
 msgstr "אֶל"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/document-card.tsx
+msgid "To {recipient}"
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "כדי להרים אותו, הקישו רווח או Enter. השתמשו במקשי החצים כדי להזיז אותו, ברווח או ב-Enter כדי לשחרר, או ב-Escape כדי לבטל."
+
 #: src/features/applications/components/calendar-view.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
@@ -14051,6 +14251,7 @@ msgid "Translations"
 msgstr "תרגומים"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 msgid "Trash"
@@ -14348,6 +14549,10 @@ msgstr "מפתח גישה ללא שם"
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ללא כותרת"
+
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "פריט ללא כותרת"
 
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
@@ -14881,6 +15086,7 @@ msgid "Web searches look for work here, up to three countries."
 msgstr "חיפושים באינטרנט מחפשים משרות במדינות אלו. בחר עד שלוש מדינות."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Website"
 msgstr "אתר אינטרנט"
 
@@ -15242,6 +15448,10 @@ msgstr "כתוב מספרים בספרות"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "יש לכתוב סיפור בחמישה חלקים על משהו שעשית. יש להשאיר את „תוצאה” ו„רפלקציה” ריקים עד שאפשר יהיה לבסס אותם."
 
+#: src/features/documents/documents-page.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "כתוב את הכתובת המלאה כדי שתזוהה כקישור."
@@ -15557,6 +15767,14 @@ msgstr "הקובץ שלך"
 msgid "Your focus"
 msgstr "המיקוד שלך"
 
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest documents and applications are in this account."
+msgstr ""
+
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "הכותרות שלך נראות כמו טקסט הגוף שלך."
@@ -15636,6 +15854,10 @@ msgstr "ההעדפות שלך"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "הספק שלך"
+
+#: src/features/settings/account/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #. placeholder {0}: voice.settings.transcribe.label
 #: src/features/career/workspace/practise.tsx

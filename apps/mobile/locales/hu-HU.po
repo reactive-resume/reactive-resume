@@ -662,6 +662,10 @@ msgstr "{pairing} típus"
 msgid "{pending, plural, one {# proposed edit on this page · nothing changes until you accept} other {# proposed edits on this page · nothing changes until you accept}}"
 msgstr "{pending, plural, one {# javasolt módosítás ezen az oldalon · semmi sem változik, amíg el nem fogadod} other {# javasolt módosítás ezen az oldalon · semmi sem változik, amíg el nem fogadod}}"
 
+#: src/features/settings/profile.tsx
+msgid "{publicLinks, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "{purgeCount, plural, one {Delete # selected document forever?} other {Delete # selected documents forever?}}"
 msgstr ""
@@ -969,6 +973,11 @@ msgstr "Adjon hozzá egy országot"
 msgid "Add a fact"
 msgstr "Tény hozzáadása"
 
+#: src/features/documents/document-sheets.tsx
+#: src/features/documents/new-document.tsx
+msgid "Add a job…"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Add a link"
 msgstr "Adjon hozzá egy hivatkozást"
@@ -1145,7 +1154,7 @@ msgstr "Állásajánlat hozzáadása"
 
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgstr "Add meg kézzel az állásajánlat feltételeit, beleértve az elfogadott ajánlatokat, vagy használd az Üzenetek lapon az opcionális MI-alapú adatkinyerést. Az elfogadott állapotra váltás nem rögzít feltételeket."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -1795,6 +1804,10 @@ msgstr "Emelkedő"
 msgid "Ask"
 msgstr "Kérdez"
 
+#: src/features/search/search-screen.tsx
+msgid "Ask about “{name}”: {question}"
+msgstr ""
+
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask about this application…"
 msgstr "Kérdezz erről a jelentkezésről…"
@@ -2196,6 +2209,7 @@ msgstr "Törölje a kérést"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Career"
 msgstr "Karrier"
 
@@ -2252,6 +2266,10 @@ msgstr "Téma módosítása erre:…"
 #: src/features/career/preferences.tsx
 msgid "Change timezone"
 msgstr "Időzóna módosítása"
+
+#: src/features/settings/profile.tsx
+msgid "Change username"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Changed the resume directly (an earlier conversation)"
@@ -2621,6 +2639,7 @@ msgstr "Zárva: {closed}"
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/coach-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/workspace/coach-sheet.tsx
 msgid "Coach"
 msgstr "Coach"
@@ -2760,6 +2779,10 @@ msgstr "Csatlakoztasson egy AI-szolgáltatót"
 msgid "Connect an AI provider in Settings to refresh it automatically."
 msgstr "Csatlakoztass egy AI-szolgáltatót a Beállításokban az automatikus frissítéshez."
 
+#: src/features/search/search-screen.tsx
+msgid "Connect an AI provider to ask “{question}”"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Connect an AI provider to read details from pasted text. Manual entry works without AI."
 msgstr "Csatlakozzon egy AI-szolgáltatóhoz, hogy részleteket olvashasson be a beillesztett szövegből. A kézi bevitel AI nélkül is működik."
@@ -2783,6 +2806,10 @@ msgstr "Csatlakoztassa az íráshoz, álláskereséshez és munkához használt 
 #: src/features/ai/provider-list.tsx
 msgid "Connected · {milliseconds} ms"
 msgstr "Csatlakoztatva · {milliseconds} ms"
+
+#: app/(tabs)/settings/ai.tsx
+msgid "Connected applications"
+msgstr "Csatlakoztatott alkalmazások"
 
 #: src/features/share/custom-domain.tsx
 msgid "Connected. Your domain opens your primary resume."
@@ -3166,6 +3193,7 @@ msgid "Couldn't mark it as applied. Try again."
 msgstr "Nem sikerült beadottként megjelölni. Próbáld újra."
 
 #: app/(tabs)/settings/account.tsx
+#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/settings/api-keys.tsx
@@ -3417,7 +3445,11 @@ msgstr "Nem sikerült feltölteni a fényképet."
 
 #: src/features/write/picture-screen.tsx
 msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
-msgstr ""
+msgstr "Nem sikerült feltölteni a fotót. Válassz olvasható PNG-, JPEG-, WebP- vagy GIF-fotót, legfeljebb 10 MB méretben, majd próbáld újra."
+
+#: src/features/write/picture-screen.tsx
+msgid "Couldn't upload the photo. Try again."
+msgstr "Nem sikerült feltölteni a fotót. Próbáld újra."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Count by source"
@@ -4048,6 +4080,7 @@ msgstr "A letöltés megnyitja a rendszer megosztási menüjét. A fájl mentés
 msgid "Download opens the system share sheet. Choose a storage provider to save the file. A linked letter opens as a second file."
 msgstr "A letöltés megnyitja a rendszermegosztási lapot. Válasszon tárhelyszolgáltatót a fájl mentéséhez. A hivatkozott motivációs levél második fájlként nyílik meg."
 
+#: src/features/documents/document-sheets.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Download PDF"
 msgstr "PDF letöltése"
@@ -4969,6 +5002,7 @@ msgstr "Címsor 3"
 msgid "Heading changed"
 msgstr "A címsor megváltozott"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
 msgstr "Főcím"
@@ -5247,6 +5281,10 @@ msgstr "Fájl importálása"
 #: src/features/write/outline.tsx
 msgid "Import it"
 msgstr "Importálja"
+
+#: src/features/documents/library.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Import your current resume, or start fresh with your name."
@@ -5567,6 +5605,10 @@ msgstr "Maradj két-három betűcsaládnál. Minden további betűtípus újabb 
 msgid "Keep together"
 msgstr "Tartsuk együtt"
 
+#: src/features/settings/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 msgid "Keeps the most specific parts"
 msgstr "Megtartja a legspecifikusabb részeket"
@@ -5607,6 +5649,7 @@ msgstr "Üdvözlettel,"
 #: app/(tabs)/career/_layout.tsx
 #: src/features/assistant/messages.tsx
 #: src/features/career/knowledge.tsx
+#: src/features/search/search-screen.tsx
 msgid "Knowledge"
 msgstr "Tudástár"
 
@@ -5960,6 +6003,10 @@ msgstr "Összekapcsolva. Név, e-mail, telefonszám és város frissítése az �
 #: src/features/settings/application-profile.tsx
 msgid "Links"
 msgstr "Linkek"
+
+#: src/features/settings/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "List"
@@ -6358,6 +6405,7 @@ msgstr "Többet"
 msgid "More details"
 msgstr "További részletek"
 
+#: src/features/career/offer-entry.tsx
 #: src/features/write/entry-fields.tsx
 msgid "More options"
 msgstr "További lehetőségek"
@@ -6737,6 +6785,9 @@ msgid "No application"
 msgstr "Nincs álláspályázat"
 
 #: src/features/documents/document-sheets.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Még nincs álláspályázat. Először adjon hozzá egyet az álláspályázatokhoz."
@@ -6765,6 +6816,10 @@ msgstr "Nem található megszokott szakaszcím."
 #: src/features/assistant/threads.tsx
 msgid "No conversations about this document yet."
 msgstr "Még nincsenek beszélgetések erről a dokumentumról."
+
+#: src/features/documents/library.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -6916,6 +6971,10 @@ msgstr "Nincs eredmény"
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Nincs önéletrajz"
+
+#: src/features/documents/library.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No skills section was found."
@@ -7186,6 +7245,7 @@ msgid "Offer type"
 msgstr "Állásajánlat típusa"
 
 #: app/(tabs)/career/_layout.tsx
+#: src/features/search/search-screen.tsx
 msgid "Offers"
 msgstr "Ajánlatok"
 
@@ -7743,10 +7803,12 @@ msgstr "Fotó"
 msgid "Photo hidden"
 msgstr "A fotó elrejtve"
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo hidden from the page."
 msgstr "A fotó elrejtve az oldalról."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Photo on the page."
 msgstr "Fotó az oldalon."
@@ -9009,6 +9071,10 @@ msgstr "Válaszom értékelése"
 msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
 msgstr "A Válaszom értékelése elküldi a kérdést, az elmondottakat, ezt a hirdetést és a Tudástáradat ide: {providerName}."
 
+#: app/(tabs)/settings/ai.tsx
+msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
+msgstr "Tekintsd át az engedélyeket, és válaszd le az alkalmazásokat a böngésződben. Előfordulhat, hogy ott be kell jelentkezned."
+
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -9904,6 +9970,7 @@ msgstr "Mutass többet"
 msgid "Show on page"
 msgstr "Megjelenítés az oldalon"
 
+#: src/features/letters/write.tsx
 #: src/features/write/picture-screen.tsx
 msgid "Show photo"
 msgstr "Fotó megjelenítése"
@@ -11358,6 +11425,7 @@ msgstr "Húzza meg egy oldalra"
 msgid "Tightening"
 msgstr "Tömörítés"
 
+#: src/features/application-detail/sheets.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Időpont"
@@ -11405,6 +11473,11 @@ msgstr "Cím"
 msgid "To"
 msgstr "Címzett"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/library.tsx
+msgid "To {recipient}"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "To check"
 msgstr "Ellenőrizni"
@@ -11415,6 +11488,7 @@ msgstr "Ha emlékeztetőt szeretne kapni, engedélyezze az értesítéseket az e
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
 msgstr "Ma"
@@ -11654,6 +11728,7 @@ msgstr "A hivatkozások aláhúzása"
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/write/basics-screen.tsx
 #: src/features/write/hooks.ts
 #: src/features/write/picture-screen.tsx
 #: src/preview/page.tsx
@@ -12170,6 +12245,7 @@ msgstr "A webes keresés sikertelen: {0}"
 msgid "Web searches look for work here, up to three countries."
 msgstr "Az internetes keresések ezekben az országokban keresnek állást. Válasszon legfeljebb három országot."
 
+#: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Website"
 msgstr "Weboldal"
@@ -12423,6 +12499,10 @@ msgstr "Számokat számjegyekkel írj"
 #: src/features/career/stories.tsx
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Írj egy ötrészes történetet valamiről, amit tettél. Az Eredmény és Tanulság mezőt hagyd üresen, amíg nem tudod alátámasztani a tartalmukat."
+
+#: src/features/documents/library.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
@@ -12694,6 +12774,10 @@ msgstr "a szolgáltatód"
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
 msgstr "Nyilvános linkjei a következővel kezdődnek: {server}/"
+
+#: src/features/settings/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your recording goes to {transcriberName} after you stop, to be transcribed. Your provider may charge. The server keeps transcripts, never recordings."

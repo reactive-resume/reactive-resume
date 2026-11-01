@@ -348,10 +348,30 @@ const ApplicationRow = memo(function ApplicationRow({
 				application.resumeFileUrl ||
 				application.coverLetterUrl ? (
 					<span className="flex items-center gap-1 text-ink-2">
-						{application.resumeFileUrl && <Icon name="file-pdf" size={18} aria-label={t`Resume file`} />}
-						{application.coverLetterUrl && <Icon name="file-pdf" size={18} aria-label={t`Cover letter file`} />}
-						{application.resumeId && <Icon name="file-text" size={18} aria-label={t`Resume`} />}
-						{application.coverLetterId && <Icon name="envelope-simple" size={18} aria-label={t`Cover letter`} />}
+						{application.resumeFileUrl && (
+							<>
+								<Icon name="file-pdf" size={18} />
+								<span className="sr-only">{t`Resume file`}</span>
+							</>
+						)}
+						{application.coverLetterUrl && (
+							<>
+								<Icon name="file-pdf" size={18} />
+								<span className="sr-only">{t`Cover letter file`}</span>
+							</>
+						)}
+						{application.resumeId && (
+							<>
+								<Icon name="file-text" size={18} />
+								<span className="sr-only">{t`Resume`}</span>
+							</>
+						)}
+						{application.coverLetterId && (
+							<>
+								<Icon name="envelope-simple" size={18} />
+								<span className="sr-only">{t`Cover letter`}</span>
+							</>
+						)}
 					</span>
 				) : (
 					<span className={cn("text-xs", sent ? "text-warn-text" : "text-ink-3")}>

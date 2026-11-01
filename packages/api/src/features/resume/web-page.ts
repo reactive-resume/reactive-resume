@@ -26,8 +26,8 @@ export type PublicWebPage =
 	| { status: "unavailable" }
 	/** Locked behind a password; `locale` is the resume's language, for the form. */
 	| { status: "password"; locale: string }
-	/** A previous slug: the page lives at `username`/`slug` now. */
-	| { status: "moved"; username: string; slug: string }
+	/** A previous slug, or a username the owner changed in the last 30 days: the page lives at `username`/`slug` now. */
+	| { status: "moved"; username: string; slug: string; isPrimary: boolean; movedBy: "username" | "slug" }
 	| {
 			status: "ok";
 			username: string;
@@ -96,8 +96,18 @@ export async function loadPublicWebPage(input: {
 	// The owner's preview link: the page as visitors will see it, published or not, without counting or indexing.
 	if (previewToken)
 		return isValidPreviewToken(previewToken, resume.id) ? page({ preview: true }) : { status: "unavailable" };
-	if ("slug" in match && resume.slug !== match.slug)
-		return { status: "moved", username: resume.username, slug: resume.slug };
+	// A previous slug, or a username the owner changed in the last 30 days: send visitors to the current address.
+	// Only a slug move is a stable address; an old username expires and can later belong to someone else, so it must
+	// not be cached as a permanent redirect. When both moved, the username is the one that can be reclaimed.
+	const movedUsername = "username" in match && resume.username !== match.username.toLowerCase();
+	if (("slug" in match && resume.slug !== match.slug) || movedUsername)
+		return {
+			status: "moved",
+			username: resume.username,
+			slug: resume.slug,
+			isPrimary: "primary" in match,
+			movedBy: movedUsername ? "username" : "slug",
+		};
 
 	const viewer = await resolveViewer(input.requestHeaders);
 	if (requiresPassword(resume, viewer) && !hasResumeAccess(input.requestHeaders, resume.id, resume.passwordHash))

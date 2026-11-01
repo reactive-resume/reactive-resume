@@ -55,6 +55,7 @@ const emptyForm = () => ({
 	stageEnteredAt: todayInputValue(),
 	jobDescription: "",
 	followUpAt: "",
+	followUpTime: "09:00",
 	followUpNote: "",
 	notes: "",
 	resumeFile: null as FileAttachment | File | null,
@@ -80,6 +81,11 @@ function toForm(app: Application, timeZone: string): FormState {
 		stageEnteredAt: "",
 		jobDescription: app.jobDescription ?? "",
 		followUpAt: app.followUpAt ? dayKey(followUpInstant(app, timeZone) ?? new Date(app.followUpAt), timeZone) : "",
+		followUpTime: app.followUpAt
+			? new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(
+					followUpInstant(app, timeZone) ?? new Date(app.followUpAt),
+				)
+			: "09:00",
 		followUpNote: app.followUpNote ?? "",
 		notes: app.notes ?? "",
 		resumeFile: toAttachment(app.resumeFileUrl, app.resumeFileName),
@@ -89,12 +95,13 @@ function toForm(app: Application, timeZone: string): FormState {
 
 function toPayload(form: FormState, timeZone: string, application: Application | null) {
 	const original = application ? followUpInstant(application, timeZone) : null;
-	const unchanged = !!original && form.followUpAt === dayKey(original, timeZone);
-	const time = original
+	const originalTime = original
 		? new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(
 				original,
 			)
 		: "09:00";
+	const unchanged = !!original && form.followUpAt === dayKey(original, timeZone) && form.followUpTime === originalTime;
+
 	return {
 		company: form.company.trim(),
 		role: form.role.trim(),
@@ -111,7 +118,7 @@ function toPayload(form: FormState, timeZone: string, application: Application |
 		followUpAt: form.followUpAt
 			? unchanged && application?.followUpAt
 				? new Date(application.followUpAt)
-				: fromZonedDateTime(form.followUpAt, time, timeZone)
+				: fromZonedDateTime(form.followUpAt, form.followUpTime, timeZone)
 			: null,
 		resumeFileUrl: form.resumeFile instanceof File ? null : (form.resumeFile?.url ?? null),
 		...(form.resumeFile instanceof File ? { resumeFile: form.resumeFile } : {}),
@@ -496,6 +503,16 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 									type="date"
 									value={form.followUpAt}
 									onChange={(event) => set("followUpAt", event.target.value)}
+								/>
+							)}
+						</Field>
+						<Field label={t`Time`}>
+							{(id) => (
+								<Input
+									id={id}
+									type="time"
+									value={form.followUpTime}
+									onChange={(event) => set("followUpTime", event.target.value)}
 								/>
 							)}
 						</Field>

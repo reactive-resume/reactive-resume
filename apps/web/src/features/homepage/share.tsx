@@ -80,7 +80,7 @@ export function Share() {
 			data-scene={SCENE.share}
 			data-pin
 			aria-labelledby="share-title"
-			className="relative h-[240vh] motion-reduce:h-svh motion-reduce:[--nt:1] min-[900px]:h-[300vh]"
+			className="relative h-[240vh] motion-reduce:[--nt:1] min-[900px]:h-[300vh]"
 		>
 			{/* --nt, the night, comes from the scroll engine (shareNight), which also hands it to the header. */}
 			<div

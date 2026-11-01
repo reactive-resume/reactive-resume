@@ -145,6 +145,165 @@ describe.skipIf(!databaseUrl)("durable career scheduling", () => {
 		});
 	});
 
+	it("creates an inactive follow-up when the deployment has no career runner", async () => {
+		vi.stubEnv("VERCEL", "1");
+		const { applicationService } = await import("../applications/service");
+		const id = await applicationService.create({
+			userId: "alice",
+			company: "No runner",
+			role: "Engineer",
+			followUpAt: due(),
+		});
+		expect(await jobs.list("alice")).toMatchObject([{ applicationId: id, enabled: false }]);
+	});
+
+	it("enforces the account schedule cap atomically for application follow-ups", async () => {
+		await getDb()
+			.insert(tables.careerSchedule)
+			.values(
+				Array.from({ length: 99 }, (_, index) => ({
+					userId: "alice",
+					kind: "discovery" as const,
+					query: `Search ${index}`,
+					timezone: "UTC",
+					nextRunAt: due(),
+					enabled: false,
+				})),
+			);
+		const { applicationService } = await import("../applications/service");
+		const attempts = await Promise.allSettled(
+			["One", "Two"].map((company) =>
+				applicationService.create({ userId: "alice", company, role: "Engineer", followUpAt: due() }),
+			),
+		);
+		expect(attempts.filter((attempt) => attempt.status === "fulfilled")).toHaveLength(1);
+		expect(attempts.find((attempt) => attempt.status === "rejected")).toMatchObject({
+			reason: { code: "BAD_REQUEST" },
+		});
+		expect(await jobs.list("alice")).toHaveLength(100);
+		expect(await getDb().select().from(tables.application)).toHaveLength(1);
+	});
+
+	it.each(["failed", "canceled"] as const)(
+		"owner migration retains older completed logical-day delivery behind newer %s history",
+		async (status) => {
+			const { applicationService } = await import("../applications/service");
+			const day = new Date("2026-10-30T00:00:00Z");
+			const id = await applicationService.create({
+				userId: "alice",
+				company: "Completed history",
+				role: "Engineer",
+				followUpAt: day,
+				followUpDateOnly: true,
+			});
+			const [schedule] = await jobs.list("alice");
+			if (!schedule) throw new Error("Missing follow-up");
+			await getDb()
+				.update(tables.careerSchedule)
+				.set({ nextRunAt: new Date("2026-10-30T08:00:00Z"), lastQueuedAt: new Date("2026-10-30T08:00:00Z") })
+				.where(eq(tables.careerSchedule.id, schedule.id));
+			await getDb()
+				.insert(tables.careerJob)
+				.values([
+					{
+						id: "older-completed",
+						userId: "alice",
+						scheduleId: schedule.id,
+						dueAt: new Date("2026-10-30T08:00:00Z"),
+						status: "completed",
+						createdAt: new Date("2026-10-30T08:00:00Z"),
+					},
+					{
+						id: "newer-history",
+						userId: "alice",
+						scheduleId: schedule.id,
+						dueAt: new Date("2026-10-30T09:00:00Z"),
+						status,
+						createdAt: new Date("2026-10-30T09:00:00Z"),
+					},
+				]);
+			const history = await getDb().select().from(tables.careerJob).orderBy(tables.careerJob.id);
+			const sql = await readFile(
+				new URL("../../../../../migrations/20261031160926_rx106_follow_up_owner/migration.sql", import.meta.url),
+				"utf8",
+			);
+			await pool.query(sql.slice(sql.indexOf("--> statement-breakpoint") + "--> statement-breakpoint".length));
+			expect(await jobs.list("alice")).toMatchObject([
+				{ applicationId: id, lastQueuedAt: new Date("2026-10-30T09:00:00Z") },
+			]);
+			expect(await getDb().select().from(tables.careerJob).orderBy(tables.careerJob.id)).toEqual(history);
+			await run();
+			expect(await getDb().select().from(tables.careerJob).orderBy(tables.careerJob.id)).toEqual(history);
+		},
+	);
+
+	it("recovery cancels pending duplicates behind completed history while preserving a distinct explicit time", async () => {
+		const { applicationService } = await import("../applications/service");
+		for (const dateOnly of [true, false]) {
+			const at = new Date(dateOnly ? "2026-10-30T00:00:00Z" : "2026-10-30T16:00:00Z");
+			const id = await applicationService.create({
+				userId: "alice",
+				company: String(dateOnly),
+				role: "Engineer",
+				followUpAt: at,
+				followUpDateOnly: dateOnly,
+			});
+			const schedule = (await jobs.list("alice")).find((row) => row.applicationId === id);
+			if (!schedule) throw new Error("Missing follow-up");
+			await getDb()
+				.update(tables.careerSchedule)
+				.set({ lastQueuedAt: dateOnly ? null : at })
+				.where(eq(tables.careerSchedule.id, schedule.id));
+			await getDb()
+				.insert(tables.careerJob)
+				.values([
+					{
+						id: `done-${dateOnly}`,
+						userId: "alice",
+						scheduleId: schedule.id,
+						dueAt: new Date("2026-10-30T08:00:00Z"),
+						status: "completed",
+						createdAt: new Date("2026-10-30T08:00:00Z"),
+					},
+					{
+						id: `queued-${dateOnly}`,
+						userId: "alice",
+						scheduleId: schedule.id,
+						dueAt: schedule.nextRunAt,
+						status: "queued",
+						createdAt: new Date("2026-10-30T09:00:00Z"),
+					},
+				]);
+		}
+		const sql = await readFile(
+			new URL(
+				"../../../../../migrations/20261101090000_rx106_follow_up_watermark_recovery/migration.sql",
+				import.meta.url,
+			),
+			"utf8",
+		);
+		await pool.query(sql);
+		expect(
+			await getDb()
+				.select({ id: tables.careerJob.id, status: tables.careerJob.status })
+				.from(tables.careerJob)
+				.orderBy(tables.careerJob.id),
+		).toEqual([
+			{ id: "done-false", status: "completed" },
+			{ id: "done-true", status: "completed" },
+			{ id: "queued-false", status: "queued" },
+			{ id: "queued-true", status: "canceled" },
+		]);
+		const rows = await jobs.list("alice");
+		expect(rows.find((row) => row.nextRunAt.getUTCHours() === 9)?.lastQueuedAt).toEqual(
+			new Date("2026-10-30T09:00:00Z"),
+		);
+		expect(rows.find((row) => row.nextRunAt.getUTCHours() === 16)?.lastQueuedAt).toBeNull();
+		const snapshot = await getDb().select().from(tables.careerJob).orderBy(tables.careerJob.id);
+		await pool.query(sql);
+		expect(await getDb().select().from(tables.careerJob).orderBy(tables.careerJob.id)).toEqual(snapshot);
+	});
+
 	it("note-only edits preserve completed follow-up occurrence, email and job history", async () => {
 		fixture.smtp = true;
 		const { applicationService } = await import("../applications/service");

@@ -10,6 +10,7 @@ import { ActivityIndicator, BackHandler, Platform, Pressable, ScrollView, TextIn
 import { rank } from "./rank";
 import { orpc } from "@/api/client";
 import { useSession } from "@/auth/session";
+import { useHasAIProvider } from "@/features/ai/providers";
 import { useApplications } from "@/features/applications/queries";
 import { useDocuments } from "@/features/documents/queries";
 import { routes } from "@/routes";
@@ -51,6 +52,7 @@ export function SearchScreen() {
 
 	const documents = useDocuments();
 	const applications = useApplications();
+	const ai = useHasAIProvider();
 	const threads = useThreads(typing || page === "threads");
 
 	// Search is a modal: leave it for the destination, back to an open tab when the destination is one.
@@ -106,7 +108,7 @@ export function SearchScreen() {
 		...document,
 		title: document.name,
 		keywords: [document.slug, ...document.tags, document.application?.company, document.application?.role],
-		time: document.updatedAt.getTime(),
+		time: document.editedAt.getTime(),
 	}));
 	const resumes = live.filter((document) => document.type === "resume");
 	const letters = live.filter((document) => document.type === "letter");
@@ -150,6 +152,15 @@ export function SearchScreen() {
 			keywords: [t`Check a PDF`],
 			root: true,
 			onPress: () => go(routes.atsChecker()),
+		},
+		{
+			key: "career",
+			icon: "compass",
+			title: t`Career`,
+			keywords: [t`Coach`, t`Knowledge`, t`Offers`, t`Today`],
+			account: true,
+			root: true,
+			onPress: () => go(routes.career()),
 		},
 		{
 			key: "new-application",
@@ -229,15 +240,25 @@ export function SearchScreen() {
 	];
 	const available = actions.filter((action) => signedIn || !action.account);
 
+	// A question goes to the document edited last (content edits, not tags, sharing or locks), which the row names.
+	const latest = live.toSorted((a, b) => b.time - a.time)[0];
+	const name = latest?.title;
+	// A failed or pending lookup isn't "no provider": the assistant itself explains what's wrong.
+	const needsProvider = !ai.isUnavailable && !ai.hasAIProvider;
 	const ask = (question: string) => {
-		// The mobile assistant lives in the resume editor, so a question goes to the resume edited last.
-		const latest = resumes.toSorted((a, b) => b.time - a.time)[0];
+		if (needsProvider) {
+			go(routes.settings("ai"));
+			return;
+		}
 		if (!latest) {
 			showToast({ message: t`Create a resume first, then ask about it.` });
 			return;
 		}
-		// M6-T3's assistant route: `?ask=` sends the question in a new conversation.
-		go({ pathname: routes.assistant(latest.id), params: { ask: question } });
+		// The assistant routes' `?ask=` sends the question in a new conversation.
+		go({
+			pathname: latest.type === "letter" ? routes.letterAssistant(latest.id) : routes.assistant(latest.id),
+			params: { ask: question },
+		});
 	};
 
 	const setTheme = (value: ThemePreference) => {
@@ -437,7 +458,17 @@ export function SearchScreen() {
 						<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s4, paddingBottom: space.s1 }}>
 							{t`Ask`}
 						</Text>
-						<ListRow leading="sparkle" title={t`Ask the assistant “${question}”`} onPress={() => ask(question)} />
+						<ListRow
+							leading="sparkle"
+							title={
+								needsProvider
+									? t`Connect an AI provider to ask “${question}”`
+									: name
+										? t`Ask about “${name}”: ${question}`
+										: t`Ask the assistant “${question}”`
+							}
+							onPress={() => ask(question)}
+						/>
 					</View>
 				) : null}
 			</ScrollView>
