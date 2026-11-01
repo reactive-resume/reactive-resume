@@ -17,7 +17,7 @@ The production image runs a single Node.js process on port 3000 that serves the 
 
 - **PostgreSQL** for accounts, documents and applications. Database migrations run automatically when the server starts.
 - **File storage** for photos and uploads: a local folder, any S3-compatible service, or Vercel Blob.
-- **SMTP** for account emails. Without it, emails are written to the server log, which is fine for testing.
+- **SMTP** for account emails. Without it, no email is sent, so password reset, email verification and email changes don't work (the server logs only each email's recipient and subject). That's fine for testing.
 - **Optional: Redis and an encryption secret.** Both are needed for saved AI providers and the assistant. Core resume features work without them.
 - **Optional: single sign-on** through Google, GitHub, LinkedIn or a custom OpenID Connect provider.
 

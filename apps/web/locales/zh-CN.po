@@ -1451,6 +1451,10 @@ msgstr "添加地点"
 msgid "Add a newer offer"
 msgstr ""
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
 msgstr "添加人员"
@@ -2699,6 +2703,10 @@ msgstr "备份代码"
 msgid "Backup codes copied"
 msgstr "备份码已复制"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "平衡"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2885,6 +2893,10 @@ msgstr "列表条目 {n}"
 msgid "Bulleted list"
 msgstr "项目符号列表"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "酒红色"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -2937,6 +2949,7 @@ msgstr "软件可以读取您的简历吗？"
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -3038,6 +3051,15 @@ msgstr "更改此时间线条目。"
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "更改时区"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3264,6 +3286,10 @@ msgstr "选择一个文件"
 msgid "Choose a file to import"
 msgstr "选择要导入的文件"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "请选择与当前密码不同的密码。"
@@ -3358,12 +3384,17 @@ msgid "Clarify"
 msgstr "澄清"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "经典的"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "简洁"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -3416,6 +3447,7 @@ msgstr "客户端 ID"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -4486,9 +4518,17 @@ msgstr "无法设置密码。请重试。"
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "无法设置两步验证。请重试。"
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "无法显示 PDF 预览。请重新上传文件。"
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -5907,10 +5947,6 @@ msgstr "请输入完整金额，例如 95000。您之前的金额未更改。"
 msgid "Enter a name, up to 64 characters."
 msgstr "输入名称，最多 64 个字符。"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "为你的账户输入新密码。"
-
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
@@ -6763,6 +6799,10 @@ msgstr "谷歌"
 msgid "Grade"
 msgstr "成绩"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "石墨"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "灰色"
@@ -7111,10 +7151,6 @@ msgstr "如果该应用程序未打开，请在安装该应用程序的设备上
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
-#: src/features/auth/email-text.ts
-msgid "If this was not you, you can ignore this message and your password will remain unchanged."
-msgstr ""
-
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -7130,6 +7166,10 @@ msgstr ""
 
 #: src/features/auth/email-text.ts
 msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr ""
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -7266,6 +7306,10 @@ msgstr "印尼语"
 #: src/features/career/workspace/fit.tsx
 msgid "Inferred"
 msgstr "推断"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "墨蓝色"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
@@ -7618,6 +7662,14 @@ msgstr "在你未使用该应用时保持访问权限。"
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "保留账户"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "保留连接"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "保留域名"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8311,6 +8363,11 @@ msgstr "正在加载关联的文档…"
 msgid "Loading providers…"
 msgstr "正在加载提供商…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "正在加载简历第 {pageNumber} 页，共 {pageCount} 页"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "正在加载简历…"
@@ -8751,6 +8808,10 @@ msgstr "出现了不止一个电子邮件地址。"
 msgid "Morning of"
 msgstr "当天早上"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "苔绿色"
+
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
 msgstr "大多数要点都以无意义的填充词开头，而不是你做过的具体事情。"
@@ -9049,6 +9110,7 @@ msgstr "新页面"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "新密码"
@@ -9158,6 +9220,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "还没有工作申请。首先在工作申请中添加一个。"
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -9704,6 +9770,10 @@ msgstr "编号列表"
 msgid "Observation"
 msgstr "观察"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "赭色"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "奥里亚语"
@@ -10155,11 +10225,13 @@ msgid "Page"
 msgstr "页面"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "第 {0} 页"
@@ -10178,6 +10250,16 @@ msgstr "第 {page} 页，{column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "页码 {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "第 {pageNumber} 页（共 {pageCount}）"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "第 {pageNumber} 页（共 {totalPages}）"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10248,6 +10330,10 @@ msgstr "通行密钥"
 msgid "Passkeys"
 msgstr "通行密钥"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -10268,17 +10354,21 @@ msgstr "密码"
 msgid "Password changed"
 msgstr "密码已更改"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "密码已删除"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "密码已重置。请使用新密码登录。"
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "密码已设置"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -10522,6 +10612,10 @@ msgstr "正在规划您的一周"
 #: src/features/homepage/sections.tsx
 msgid "Play the list of languages"
 msgstr "播放语言列表"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "梅子紫"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -10815,6 +10909,10 @@ msgstr "产品设计师"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "产品设计师，拥有九年为 B2B 团队构建<0>设计系统</0>和研究驱动产品的经验。"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "专业"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11543,6 +11641,10 @@ msgstr "删除 {value}"
 msgid "Remove connection"
 msgstr "删除连接"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "移除域名"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "删除字段"
@@ -11595,9 +11697,17 @@ msgstr "移除阶段"
 msgid "Remove tag"
 msgstr "移除标签"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "移除自定义域名？"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "删除密码？"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "移除网页连接？"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11718,6 +11828,10 @@ msgstr "要求"
 msgid "Requirements and your evidence"
 msgstr "要求与您的证据"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "全大写只用于简短的标题。它会拖慢阅读速度，还可能让区分大小写的搜索失效。"
@@ -11741,6 +11855,10 @@ msgstr ""
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "重置密码"
+
+#: src/features/auth/email-text.ts
+msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
+msgstr ""
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
@@ -11887,6 +12005,11 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Resume page"
 msgstr "简历页"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "简历第 {pageNumber} 页，共 {totalPages} 页"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -12180,6 +12303,10 @@ msgstr "运行到页面 {next}"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "俄语"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "铁锈棕色"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -12775,6 +12902,10 @@ msgstr "发送"
 msgid "Send reset link"
 msgstr "发送重置链接"
 
+#: src/features/settings/account/profile.tsx
+msgid "Send the approval link again"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "直接发送简历本身，而不是包在作品集外层的文件。"
@@ -12899,10 +13030,13 @@ msgstr "塞尔维亚语"
 msgid "Set a follow-up…"
 msgstr "设置后续..."
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "设置密码"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "设置密码"
@@ -12937,6 +13071,10 @@ msgstr "设置你的验证器应用"
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -14000,6 +14138,10 @@ msgstr "目标职位"
 msgid "Task"
 msgstr "任务"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "蓝绿色"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "技术面试"
@@ -14168,6 +14310,11 @@ msgstr ""
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "谢谢 Sam。举个例子：在 Northwind Labs，我主导了新手引导改版，从 14 次客户访谈到更短的设置流程。"
+
+#. placeholder {0}: still.user.email
+#: src/features/auth/pages/reset-password.tsx
+msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -14907,6 +15054,14 @@ msgstr "无法加载此已保存版本。"
 msgid "This saved version is no longer available."
 msgstr "此已保存版本已不可用。"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
@@ -15080,6 +15235,10 @@ msgstr "追踪你的第一份工作"
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "追踪"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "传统"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -15526,6 +15685,7 @@ msgstr "使用 3 到 64 个小写字母、数字、点、连字符和下划线�
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15569,6 +15729,7 @@ msgid "Use at least 3 characters."
 msgstr "至少使用 3 个字符。"
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15811,6 +15972,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "请先在设置中验证您的邮箱"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -16540,6 +16705,10 @@ msgstr "您无需登录即可登录"
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "您总能在“今天”中看到它。邮件取决于服务器的邮件配置。"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "重新连接时需要再次输入密钥。内置阅读器仍可使用。"
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "你将负责我们的<0>设计系统</0>，与客户开展<1>用户研究</1>，并在<3>跨职能</3>团队中工作，保持<2>无障碍设计</2>的高标准。"
@@ -16563,6 +16732,10 @@ msgstr "你正在使用访客账户"
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "您已达到{MAX_APPLICATION_LANES}个阶段的上限。请移除一个后再添加。"
+
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -16668,6 +16841,10 @@ msgstr "您的简历上的详细信息发生了变化。这封信也更新了。
 msgid "Your domain"
 msgstr "您的域名"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "你的域名将不再打开你的主要简历。你可以稍后重新连接。"
+
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."
 msgstr ""
@@ -16722,7 +16899,7 @@ msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has and the guest's Career profile if it has its own. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

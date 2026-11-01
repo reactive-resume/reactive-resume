@@ -1451,6 +1451,10 @@ msgstr "ଏକ ଅବସ୍ଥାନ ଯୋଡନ୍ତୁ |"
 msgid "Add a newer offer"
 msgstr ""
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Add a password as another way to sign in. Your other sign-in methods and devices stay as they are."
+msgstr ""
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
 msgstr "ଜଣେ ବ୍ୟକ୍ତିଙ୍କୁ ଯୋଡ଼ନ୍ତୁ"
@@ -2699,6 +2703,10 @@ msgstr "ବ୍ୟାକଅପ୍ କୋଡ୍"
 msgid "Backup codes copied"
 msgstr "ବ୍ୟାକଅପ୍ କୋଡ୍ କପି ହେଲା"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Balanced"
+msgstr "ସନ୍ତୁଳିତ।"
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgctxt "Entry header accent: a tinted background behind the header"
 msgid "Band"
@@ -2885,6 +2893,10 @@ msgstr "ତାଲିକା ପ୍ରବେଶ {n} |"
 msgid "Bulleted list"
 msgstr "ବୁଲେଟେଡ୍ ତାଲିକା |"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Burgundy"
+msgstr "ଗାଢ଼ ଲାଲ୍"
+
 #. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
 #: src/features/applications/next-step.ts
 msgid "By {0}"
@@ -2937,6 +2949,7 @@ msgstr "ସଫ୍ଟୱେର୍ ତୁମର ରେଜୁମ୍ ପ read ି �
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/profile.tsx
@@ -3038,6 +3051,15 @@ msgstr "ଏହି ଟାଇମଲାଇନ୍ ଏଣ୍ଟ୍ରି ପରିବ
 #: src/features/career/knowledge/preferences.tsx
 msgid "Change timezone"
 msgstr "ସମୟ ଅଞ୍ଚଳ ବଦଳାନ୍ତୁ"
+
+#. placeholder {0}: user.email
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting for approval from {0}. The link works for an hour."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Change to {pendingEmail} is waiting: open the link we sent there. The link works for an hour."
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Change username"
@@ -3264,6 +3286,10 @@ msgstr "ଏକ ଫାଇଲ୍ ବାଛନ୍ତୁ |"
 msgid "Choose a file to import"
 msgstr "ଆମଦାନି କରିବାକୁ ଏକ ଫାଇଲ୍ ବାଛନ୍ତୁ |"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Choose a new password. This signs you out everywhere and removes your passkeys, API keys and connected apps."
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "ଆପଣଙ୍କ ବର୍ତ୍ତମାନର ପାସୱାର୍ଡଠାରୁ ଭିନ୍ନ ଏକ ପାସୱାର୍ଡ ବାଛନ୍ତୁ।"
@@ -3358,12 +3384,17 @@ msgid "Clarify"
 msgstr "ସ୍ପଷ୍ଟ କରନ୍ତୁ"
 
 #: src/features/homepage/sheet.tsx
+#: src/features/resume/editor/design/presets.ts
 msgid "Classic"
 msgstr "କ୍ଲାସିକ୍ |"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Claude Desktop"
 msgstr "Claude Desktop"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Clean"
+msgstr "ସରଳ"
 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/editor/check/job-match.tsx
@@ -3416,6 +3447,7 @@ msgstr "କ୍ଲାଏଣ୍ଟ ID"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/career/coach.tsx
@@ -4486,9 +4518,17 @@ msgstr "ପାସୱାର୍ଡ ସେଟ୍ କରିହେଲା ନାହି
 msgid "Couldn't set up two-step verification. Try again."
 msgstr "ଦୁଇ ସୋପାନ ଯାଞ୍ଚ ସେଟ୍ ଅପ୍ କରିହେଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
 
+#: src/dialogs/auth/set-password.tsx
+msgid "Couldn't set your password. Try again."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "Couldn't share that fact. Try again."
 msgstr ""
+
+#: src/features/ats-checker/pdf-viewer.tsx
+msgid "Couldn't show the PDF preview. Upload the file again."
+msgstr "PDF ପୂର୍ବଦୃଶ୍ୟ ଦେଖାଇ ହେଲା ନାହିଁ। ଫାଇଲ୍ ପୁଣି ଅପଲୋଡ୍ କରନ୍ତୁ।"
 
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Couldn't show the preview."
@@ -5907,10 +5947,6 @@ msgstr "95000 ପରି ଏକ ପୂର୍ଣ୍ଣ ରାଶି ଲେଖନ�
 msgid "Enter a name, up to 64 characters."
 msgstr "64 ଅକ୍ଷର ପର୍ଯ୍ୟନ୍ତ ଏକ ନାମ ପ୍ରବେଶ କରନ୍ତୁ |"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Enter a new password for your account."
-msgstr "ଆପଣଙ୍କ ଆକାଉଣ୍ଟ ପାଇଁ ଏକ ନୂଆ ପାସୱାର୍ଡ ପ୍ରବେଶ କରନ୍ତୁ।"
-
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Enter a readable date or clear the text to use date fields."
 msgstr ""
@@ -6763,6 +6799,10 @@ msgstr "Google"
 msgid "Grade"
 msgstr "ଗ୍ରେଡ୍"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Graphite"
+msgstr "ଗ୍ରାଫାଇଟ୍।"
+
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Gray"
 msgstr "ଧୂସର"
@@ -7112,10 +7152,6 @@ msgstr "|\n"
 msgid "If the button does not work, copy and paste this link into your browser:"
 msgstr ""
 
-#: src/features/auth/email-text.ts
-msgid "If this was not you, you can ignore this message and your password will remain unchanged."
-msgstr ""
-
 #. Email change approval. newEmail is an email address
 #: src/features/auth/email-text.ts
 msgid "If you approve, we'll send a link to {newEmail} to finish the change."
@@ -7131,6 +7167,10 @@ msgstr ""
 
 #: src/features/auth/email-text.ts
 msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgstr ""
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -7267,6 +7307,10 @@ msgstr "ଇଣ୍ଡୋନେସିଆନ୍"
 #: src/features/career/workspace/fit.tsx
 msgid "Inferred"
 msgstr "ଅନୁମାନିତ"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Ink blue"
+msgstr "ଇଙ୍କି ନୀଳ।"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Inline"
@@ -7619,6 +7663,14 @@ msgstr "ଯେତେବେଳେ ଆପଣ ଅନୁପ୍ରୟୋଗ ବ୍ୟ
 #: src/features/settings/account/data.tsx
 msgid "Keep account"
 msgstr "ଖାତା ରଖନ୍ତୁ |"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Keep connection"
+msgstr "ସଂଯୋଗ ରଖନ୍ତୁ"
+
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Keep domain"
+msgstr "ଡୋମେନ୍ ରଖନ୍ତୁ"
 
 #: src/features/career/schedule-sheet.tsx
 #: src/hooks/use-form-blocker.tsx
@@ -8312,6 +8364,11 @@ msgstr "ଲିଙ୍କ୍ ହୋଇଥିବା ଡକ୍ୟୁମେଣ୍ଟ 
 msgid "Loading providers…"
 msgstr "ପ୍ରଦାନକାରୀମାନଙ୍କୁ ଲୋଡ୍ କରାଯାଉଛି…"
 
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Loading resume page {pageNumber} of {pageCount}"
+msgstr "ରେଜ୍ୟୁମେ ପୃଷ୍ଠା {pageNumber} ଲୋଡ୍ ହେଉଛି, ମୋଟ {pageCount}"
+
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading resumes…"
 msgstr "ରିଜ୍ୟୁମ୍ ଲୋଡ୍ ହେଉଛି…"
@@ -8752,6 +8809,10 @@ msgstr "ଏକରୁ ଅଧିକ ଇମେଲ୍ ଠିକଣା ଦେଖା�
 msgid "Morning of"
 msgstr "ସେହି ଦିନ ସକାଳେ"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Moss"
+msgstr "ଶିଉଳି ସବୁଜ"
+
 #: src/features/ats-checker/messages.ts
 msgid "Most bullets open with filler rather than something you did."
 msgstr "ଅଧିକାଂଶ ବୁଲେଟ୍ ଆପଣ କରିଥିବା କାର୍ଯ୍ୟ ପରିବର୍ତ୍ତେ ଅନାବଶ୍ୟକ ଶବ୍ଦରେ ଆରମ୍ଭ ହୁଏ।"
@@ -9050,6 +9111,7 @@ msgstr "ନୂତନ ପୃଷ୍ଠା |"
 
 #. Label for new password input on reset-password form
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "New password"
 msgstr "ନୂତନ ପାସୱାର୍ଡ"
@@ -9159,6 +9221,10 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ଚାକିରି ଆବେଦନ ନାହିଁ। ପ୍ରଥମେ ଆବେଦନଗୁଡ଼ିକରେ ଗୋଟିଏ ଯୋଡ଼ନ୍ତୁ।"
+
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "No backup codes either?"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -9705,6 +9771,10 @@ msgstr "ସଂଖ୍ୟାଯୁକ୍ତ ତାଲିକା |"
 msgid "Observation"
 msgstr "ପର୍ଯ୍ୟବେକ୍ଷଣ"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Ochre"
+msgstr "ଗେରୁଆ"
+
 #: src/libs/locale.ts
 msgid "Odia"
 msgstr "ଓଡ଼ିଆ"
@@ -10157,11 +10227,13 @@ msgid "Page"
 msgstr "ପେଜ୍"
 
 #. Layout editor page label with 1-based page number
+#. placeholder {0}: evidence.page
 #. placeholder {0}: pageIndex + 1
 #. placeholder {0}: row.page + 1
-#. placeholder {0}: targetPageIndex + 1
+#: src/features/ats-checker/report/finding-row.tsx
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/outline.tsx
+#: src/features/resume/preview/localization.test.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
 msgstr "ପେଜ୍ {0}"
@@ -10180,6 +10252,16 @@ msgstr "ପେଜ୍ {page}, {column}"
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
 msgstr "ପୃଷ୍ଠା {pageNumber} |"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/preview.shared.tsx
+msgid "Page {pageNumber} of {pageCount}"
+msgstr "{pageCount}ରୁ ପେଜ୍ {pageNumber}"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Page {pageNumber} of {totalPages}"
+msgstr "{totalPages}ରୁ ପେଜ୍ {pageNumber}"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Page 1"
@@ -10250,6 +10332,10 @@ msgstr "ପାସକି"
 msgid "Passkeys"
 msgstr "ପାସକିଗୁଡିକ"
 
+#: src/features/settings/account/security.tsx
+msgid "Passkeys need a verified email, which this server can't send."
+msgstr ""
+
 #. Authentication provider display name in account settings
 #. Label for password input on login form
 #. Label for password input on registration form
@@ -10270,17 +10356,21 @@ msgstr "ପାସୱାର୍ଡ"
 msgid "Password changed"
 msgstr "ପାସୱାର୍ଡ ବଦଳାଗଲା"
 
+#: src/features/auth/pages/reset-password.tsx
+msgid "Password changed. You're signed out everywhere; sign in, then add any passkeys or API keys again."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Password removed"
 msgstr "ପାସୱାର୍ଡ ଅପସାରିତ ହୋଇଛି |"
 
-#: src/features/auth/pages/reset-password.tsx
-msgid "Password reset. Sign in with your new password."
-msgstr "ପାସୱାର୍ଡ ରିସେଟ୍ ହେଲା। ଆପଣଙ୍କ ନୂଆ ପାସୱାର୍ଡ ସହ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।"
-
 #: src/features/resume/share/share-panel.tsx
 msgid "Password set"
 msgstr "ପାସୱାର୍ଡ ସେଟ୍ |"
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Password set. You can now sign in with it too."
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Past conversations"
@@ -10524,6 +10614,10 @@ msgstr "ଆପଣଙ୍କ ସପ୍ତାହର ଯୋଜନା କରୁଛି
 #: src/features/homepage/sections.tsx
 msgid "Play the list of languages"
 msgstr "ଭାଷାଗୁଡ଼ିକର ତାଲିକା ଚଲାନ୍ତୁ |"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Plum"
+msgstr "ବାଇଗଣୀ"
 
 #: src/libs/locale.ts
 msgid "Polish"
@@ -10817,6 +10911,10 @@ msgstr "ଉତ୍ପାଦ ଡିଜାଇନର୍ |"
 #: src/features/homepage/sheet.tsx
 msgid "Product designer with nine years of experience building <0>design systems</0> and research-led products for B2B teams."
 msgstr "B2B ଦଳଗୁଡ଼ିକ ପାଇଁ <0>ଡିଜାଇନ୍ ପ୍ରଣାଳୀ</0> ଏବଂ ଗବେଷଣାଭିତ୍ତିକ ଉତ୍ପାଦ ତିଆରି କରିବାରେ ନଅ ବର୍ଷର ଅଭିଜ୍ଞତା ଥିବା ଉତ୍ପାଦ ଡିଜାଇନର୍।"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Professional"
+msgstr "ପେସାଦାର"
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Proficiency"
@@ -11545,6 +11643,10 @@ msgstr "{value} ଅପସାରଣ କରନ୍ତୁ |"
 msgid "Remove connection"
 msgstr "ସଂଯୋଗ ଅପସାରଣ କରନ୍ତୁ |"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove domain"
+msgstr "ଡୋମେନ୍ ହଟାନ୍ତୁ"
+
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Remove field"
 msgstr "କ୍ଷେତ୍ର ଅପସାରଣ କରନ୍ତୁ |"
@@ -11597,9 +11699,17 @@ msgstr "ପର୍ଯ୍ୟାୟ କାଢ଼ନ୍ତୁ"
 msgid "Remove tag"
 msgstr "ଟ୍ୟାଗ୍ ହଟାନ୍ତୁ"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Remove the custom domain?"
+msgstr "ନିଜସ୍ୱ ଡୋମେନ୍ ହଟାଇବେ କି?"
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Remove the password?"
 msgstr "ପାସୱାର୍ଡ ହଟାନ୍ତୁ?"
+
+#: src/features/settings/ai/web-access.tsx
+msgid "Remove the web connection?"
+msgstr "ୱେବ୍ ସଂଯୋଗ ହଟାଇବେ କି?"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Remove unavailable fact reference"
@@ -11720,6 +11830,10 @@ msgstr "ଆବଶ୍ୟକତା"
 msgid "Requirements and your evidence"
 msgstr "ଆବଶ୍ୟକତା ଓ ଆପଣଙ୍କ ପ୍ରମାଣ"
 
+#: src/features/settings/account/profile.tsx
+msgid "Resend"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Reserve capitals for short headings. They slow reading and can defeat case-sensitive search."
 msgstr "ଛୋଟ ଶୀର୍ଷକ ପାଇଁ ବଡ଼ ଅକ୍ଷର ସଂରକ୍ଷିତ ରଖନ୍ତୁ। ସେଗୁଡ଼ିକ ପଠନକୁ ମନ୍ଥର କରନ୍ତି ଏବଂ କେସ୍-ସେନ୍ସିଟିଭ୍ ସନ୍ଧାନକୁ ବିଫଳ କରିପାରନ୍ତି।"
@@ -11743,6 +11857,10 @@ msgstr ""
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "ଆପଣଙ୍କ ପାସୱାର୍ଡ ରିସେଟ୍ କରନ୍ତୁ"
+
+#: src/features/auth/email-text.ts
+msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
+msgstr ""
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
@@ -11889,6 +12007,11 @@ msgstr ""
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "Resume page"
 msgstr "ରେଜୁମ୍ ପୃଷ୍ଠା |"
+
+#: src/features/resume/preview/localization.test.tsx
+#: src/features/resume/preview/pdf-canvas.tsx
+msgid "Resume page {pageNumber} of {totalPages}"
+msgstr "ରେଜ୍ୟୁମେ ପୃଷ୍ଠା {pageNumber}, ମୋଟ {totalPages}"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -12182,6 +12305,10 @@ msgstr "{next} ପୃଷ୍ଠାରେ ଚାଲିଥାଏ |"
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "ରୁଷିଆନ୍"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Rust"
+msgstr "କଳଙ୍କି ବାଦାମୀ"
 
 #: src/features/homepage/remember.tsx
 msgid "S"
@@ -12777,6 +12904,10 @@ msgstr "ପଠାନ୍ତୁ |"
 msgid "Send reset link"
 msgstr "ରିସେଟ୍ ଲିଙ୍କ୍ ପଠାନ୍ତୁ"
 
+#: src/features/settings/account/profile.tsx
+msgid "Send the approval link again"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Send the resume itself rather than a portfolio wrapper."
 msgstr "ଏକ ପୋର୍ଟଫୋଲିଓ ରାପର୍ ପରିବର୍ତ୍ତେ ରେଜ୍ୟୁମେ ନିଜେ ପଠାନ୍ତୁ।"
@@ -12901,10 +13032,13 @@ msgstr "ସର୍ବିଆନ୍"
 msgid "Set a follow-up…"
 msgstr "ଏକ ଅନୁସରଣ ସେଟ୍ କରନ୍ତୁ…"
 
+#: src/dialogs/auth/set-password.tsx
 #: src/features/settings/account/security.tsx
 msgid "Set a password"
 msgstr "ଏକ ପାସୱାର୍ଡ ସେଟ୍ କରନ୍ତୁ |"
 
+#. Primary action button to add a password to an account without one
+#: src/dialogs/auth/set-password.tsx
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Set password"
 msgstr "ପାସୱାର୍ଡ ସେଟ୍ କରନ୍ତୁ"
@@ -12939,6 +13073,10 @@ msgstr "ଆପଣଙ୍କ ଅଥେଣ୍ଟିକେଟର ଆପ୍ ସେଟ
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
+msgstr ""
+
+#: src/dialogs/auth/set-password.tsx
+msgid "Setting your password…"
 msgstr ""
 
 #: src/features/command-palette/pages/navigation.tsx
@@ -14002,6 +14140,10 @@ msgstr "ଲକ୍ଷ୍ୟ ଭୂମିକା"
 msgid "Task"
 msgstr "କାର୍ଯ୍ୟ"
 
+#: src/features/resume/editor/design/presets.ts
+msgid "Teal"
+msgstr "ନୀଳସବୁଜ"
+
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Technical"
 msgstr "ଟେକ୍ନିକାଲ୍"
@@ -14170,6 +14312,11 @@ msgstr ""
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "ଧନ୍ୟବାଦ, Sam। ଏଠାରେ ଗୋଟିଏ: Northwind Labsରେ ମୁଁ ଅନବୋର୍ଡିଂ ରିଡିଜାଇନ୍‌ର ନେତୃତ୍ୱ ନେଇଥିଲି, 14ଟି ଗ୍ରାହକ ସାକ୍ଷାତକାରରୁ ଏକ ଛୋଟ ସେଟଅପ୍ ପର୍ଯ୍ୟନ୍ତ।"
+
+#. placeholder {0}: still.user.email
+#: src/features/auth/pages/reset-password.tsx
+msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
@@ -14909,6 +15056,14 @@ msgstr "ଏହି ସେଭ୍ ହୋଇଥିବା ସଂସ୍କରଣ ଲ�
 msgid "This saved version is no longer available."
 msgstr "ଏହି ସେଭ୍ ହୋଇଥିବା ସଂସ୍କରଣ ଆଉ ଉପଲବ୍ଧ ନାହିଁ।"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "This server can't send email, so password reset isn't available. Ask the person who runs it to reset your password."
+msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "This server can't send email, so the address can't be changed here. Ask the person who runs it."
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "This server cannot confirm reading without AI. Save the posting manually or update the server."
 msgstr ""
@@ -15082,6 +15237,10 @@ msgstr "ତୁମର ପ୍ରଥମ କାମ ଟ୍ରାକ୍ କର |"
 #: src/features/homepage/sections.tsx
 msgid "Tracking"
 msgstr "ଟ୍ରାକିଂ"
+
+#: src/features/resume/editor/design/presets.ts
+msgid "Traditional"
+msgstr "ପାରମ୍ପରିକ"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Transcribe answers with"
@@ -15529,6 +15688,7 @@ msgstr "3 ରୁ 64 ଲୋୟର କେସ୍ ଅକ୍ଷର, ସଂଖ୍ୟ�
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
@@ -15572,6 +15732,7 @@ msgid "Use at least 3 characters."
 msgstr "ଅତି କମରେ 3 ଅକ୍ଷର ବ୍ୟବହାର କରନ୍ତୁ।"
 
 #: src/dialogs/auth/change-password.tsx
+#: src/dialogs/auth/set-password.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Use at least 8 characters."
@@ -15814,6 +15975,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Verify your email in Settings first"
 msgstr "ପ୍ରଥମେ ସେଟିଂସ୍‌ରେ ଆପଣଙ୍କ ଇମେଲ୍ ଯାଞ୍ଚ କରନ୍ତୁ"
+
+#: src/features/settings/account/security.tsx
+msgid "Verify your email to add a passkey. The link is in Account details above."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
@@ -16543,6 +16708,10 @@ msgstr "ଆପଣ ବିନା ସାଇନ୍ ଇନ୍ କରନ୍ତୁ |"
 msgid "You'll always see it in Today. Email depends on your server's mail setup."
 msgstr "ଆପଣ ଏହାକୁ ସର୍ବଦା “ଆଜି”ରେ ଦେଖିବେ। ଇମେଲ୍ ଆପଣଙ୍କ ସର୍ଭରର ମେଲ୍ ସେଟଅପ୍ ଉପରେ ନିର୍ଭର କରେ।"
 
+#: src/features/settings/ai/web-access.tsx
+msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
+msgstr "ପୁଣି ସଂଯୋଗ କରିବାକୁ ଆପଣଙ୍କୁ ଚାବି ପୁଣି ଦେବାକୁ ପଡ଼ିବ। ଅନ୍ତର୍ନିହିତ ରିଡର୍ ସକ୍ରିୟ ରହିବ।"
+
 #: src/features/homepage/tailor.tsx
 msgid "You’ll own our <0>design systems</0>, run <1>user research</1> with customers and hold a high bar for <2>accessibility</2>, working in a <3>cross-functional</3> team."
 msgstr "ଆପଣ ଆମର <0>ଡିଜାଇନ୍ ପ୍ରଣାଳୀର</0> ଦାୟିତ୍ୱ ନେବେ, ଗ୍ରାହକଙ୍କ ସହ <1>ବ୍ୟବହାରକାରୀ ଗବେଷଣା</1> କରିବେ ଏବଂ <3>ବିଭିନ୍ନ ବିଭାଗର ମିଳିତ</3> ଦଳରେ କାମ କରି <2>ସୁଗମତାର</2> ଉଚ୍ଚ ମାନ ରଖିବେ।"
@@ -16566,6 +16735,10 @@ msgstr "ଆପଣ ଏକ ଅତିଥି ଆକାଉଣ୍ଟ ବ୍ୟବହ�
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "ଆପଣ {MAX_APPLICATION_LANES} ପର୍ଯ୍ୟାୟର ସୀମାରେ ପହଞ୍ଚିଛନ୍ତି। ଆଉ ଏକ ଯୋଡ଼ିବାକୁ ଗୋଟିଏ କାଢ଼ନ୍ତୁ।"
+
+#: src/features/auth/pages/register.tsx
+msgid "Your account is ready"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
@@ -16671,6 +16844,10 @@ msgstr "ରେଜୁମାରେ ତୁମର ବିବରଣୀ ବଦଳିଗ
 msgid "Your domain"
 msgstr "ଆପଣଙ୍କ ଡୋମେନ୍"
 
+#: src/features/resume/share/custom-domain-field.tsx
+msgid "Your domain will stop opening your primary resume. You can reconnect it later."
+msgstr "ଆପଣଙ୍କ ଡୋମେନ୍ ଆଉ ଆପଣଙ୍କ ମୁଖ୍ୟ ରେଜ୍ୟୁମେ ଖୋଲିବ ନାହିଁ। ପରେ ଏହାକୁ ପୁଣି ସଂଯୋଗ କରିପାରିବେ।"
+
 #: src/features/career/coach-chat.tsx
 msgid "Your edited story is saved to Knowledge."
 msgstr ""
@@ -16725,7 +16902,7 @@ msgid "Your guest documents and applications are in this account."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
-msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgid "Your guest resumes, cover letters, applications and Career knowledge move to this account, except facts it already has and the guest's Career profile if it has its own. Assistant conversations don't."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts

@@ -12,6 +12,7 @@ import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 import { useHasUsableAiProvider } from "../integrations/hooks/use-has-usable-ai-provider";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
+import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
@@ -29,6 +30,7 @@ export function testFailureMessage(error: string | undefined) {
 }
 
 export function WebAccessSection() {
+	const confirm = useConfirm();
 	const id = useId();
 	const queryClient = useQueryClient();
 	const [apiKey, setApiKey] = useState("");
@@ -222,7 +224,16 @@ export function WebAccessSection() {
 												className="text-danger-text hover:bg-danger-soft"
 												disabled={pending}
 												loading={remove.isPending}
-												onClick={() => remove.mutate()}
+												onClick={async () => {
+													if (
+														await confirm(t`Remove the web connection?`, {
+															description: t`You'll need to enter the key again to reconnect. The built-in reader remains active.`,
+															confirmText: t`Remove connection`,
+															cancelText: t`Keep connection`,
+														})
+													)
+														remove.mutate();
+												}}
 											>
 												<Trans>Remove connection</Trans>
 											</Button>

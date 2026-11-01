@@ -1,5 +1,6 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { WritableDraft } from "immer";
+import { msg } from "@lingui/core/macro";
 import { contrastOnWhite } from "@reactive-resume/utils/color";
 
 type Data = ResumeData | WritableDraft<ResumeData>;
@@ -11,11 +12,11 @@ type Metadata = Pick<Data["metadata"], "typography" | "design" | "page">;
  * selection; any other font is chosen in Advanced.
  */
 export const FONT_PAIRINGS = [
-	{ id: "classic", label: "Classic", heading: "EB Garamond", body: "EB Garamond", headingWeight: "600" },
-	{ id: "traditional", label: "Traditional", heading: "Tinos", body: "Tinos", headingWeight: "700" },
-	{ id: "balanced", label: "Balanced", heading: "Source Serif 4", body: "Source Sans 3", headingWeight: "600" },
-	{ id: "professional", label: "Professional", heading: "Carlito", body: "Carlito", headingWeight: "700" },
-	{ id: "clean", label: "Clean", heading: "Lato", body: "Lato", headingWeight: "700" },
+	{ id: "classic", label: msg`Classic`, heading: "EB Garamond", body: "EB Garamond", headingWeight: "600" },
+	{ id: "traditional", label: msg`Traditional`, heading: "Tinos", body: "Tinos", headingWeight: "700" },
+	{ id: "balanced", label: msg`Balanced`, heading: "Source Serif 4", body: "Source Sans 3", headingWeight: "600" },
+	{ id: "professional", label: msg`Professional`, heading: "Carlito", body: "Carlito", headingWeight: "700" },
+	{ id: "clean", label: msg`Clean`, heading: "Lato", body: "Lato", headingWeight: "700" },
 ] as const;
 
 export type FontPairingId = (typeof FONT_PAIRINGS)[number]["id"];
@@ -93,14 +94,14 @@ export function applyTextSize(metadata: WritableDraft<Metadata>, size: number) {
 
 /** Eight accents, all readable on white. */
 export const ACCENTS = [
-	{ label: "Moss", hex: "#3E6B4F" },
-	{ label: "Ink blue", hex: "#2F5A8A" },
-	{ label: "Teal", hex: "#1F6E73" },
-	{ label: "Plum", hex: "#6B3E6E" },
-	{ label: "Rust", hex: "#A0442A" },
-	{ label: "Burgundy", hex: "#8A2C3F" },
-	{ label: "Ochre", hex: "#7A5A12" },
-	{ label: "Graphite", hex: "#3B3F45" },
+	{ label: msg`Moss`, hex: "#3E6B4F" },
+	{ label: msg`Ink blue`, hex: "#2F5A8A" },
+	{ label: msg`Teal`, hex: "#1F6E73" },
+	{ label: msg`Plum`, hex: "#6B3E6E" },
+	{ label: msg`Rust`, hex: "#A0442A" },
+	{ label: msg`Burgundy`, hex: "#8A2C3F" },
+	{ label: msg`Ochre`, hex: "#7A5A12" },
+	{ label: msg`Graphite`, hex: "#3B3F45" },
 ] as const;
 
 const HEX = /^#?([0-9a-f]{6})$/i;

@@ -35415,6 +35415,84 @@
 				]
 			}
 		},
+		"/auth/password": {
+			"post": {
+				"operationId": "setPassword",
+				"summary": "Set a password",
+				"description": "Adds a password to an account that signs in another way (a social account or passkey). Unlike a password reset, it keeps other devices signed in and keeps API keys, passkeys and connected apps. Requires a recent browser session.",
+				"tags": [
+					"Authentication"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"newPassword": {
+										"type": "string",
+										"minLength": 8,
+										"maxLength": 64
+									}
+								},
+								"required": [
+									"newPassword"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK"
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/auth/password\" --cookie \"<session-cookie>\" --header \"Content-Type: application/json\" --data '{\n  \"newPassword\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
 		"/auth/account/export": {
 			"get": {
 				"operationId": "exportAccountData",
