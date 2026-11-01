@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vite-plus/test";
 import { slugify } from "./slug";
-import { filterOptions, toUsername, rewriteSummary } from "./string";
+import { filterOptions, isolate, toUsername, rewriteSummary } from "./string";
 
 describe("slugify", () => {
 	it("falls back to a non-empty slug for CJK input", () => {
@@ -61,4 +61,12 @@ it("reports a rewrite's shorter length, the user's changed sentences and the new
 	const after = "I have used Figma daily since 2016. I'd be excited to bring that to the team.";
 	expect(rewriteSummary(before, after)).toEqual({ words: 4, removed: 1, added: 1 });
 	expect(rewriteSummary(before, "I have used Figma daily since 2016.")).toEqual({ words: -5, removed: 1, added: 0 });
+});
+
+describe("isolate", () => {
+	it("wraps user text in first-strong isolate marks, so its direction stops at the text", () => {
+		expect(isolate("Lebenslauf (DE)")).toBe("\u2068Lebenslauf (DE)\u2069");
+		// The marks are invisible: a reader sees the text itself.
+		expect(isolate("Lebenslauf (DE)").replaceAll(/[\u2068\u2069]/g, "")).toBe("Lebenslauf (DE)");
+	});
 });

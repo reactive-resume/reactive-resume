@@ -49,8 +49,11 @@ function OpenLink({
 	label,
 	onSelect,
 	disabled,
+	dir,
 }: Pick<DocumentItemProps, "document" | "disabled"> & {
 	className?: string;
+	/** "auto" when the link's text is the document's name, so the name keeps its own direction. */
+	dir?: "auto";
 	children: React.ReactNode;
 	label?: string;
 	/** While selecting, a click toggles the document instead of opening it. */
@@ -59,7 +62,7 @@ function OpenLink({
 	const markOpened = useNewDocumentsStore((state) => state.markOpened);
 	if (document.trashedAt || disabled)
 		return (
-			<span aria-disabled={disabled} className={className}>
+			<span aria-disabled={disabled} className={className} dir={dir}>
 				{children}
 			</span>
 		);
@@ -68,7 +71,7 @@ function OpenLink({
 		event.preventDefault();
 		onSelect();
 	};
-	const common = { "aria-label": label, className, onClick };
+	const common = { "aria-label": label, className, onClick, dir };
 
 	return document.type === "resume" ? (
 		<Link to="/builder/$resumeId" params={{ resumeId: document.id }} {...common}>
@@ -232,13 +235,17 @@ export function DocumentCard({
 						{renaming && !disabled ? (
 							<RenameInput document={document} onDone={() => setRenaming(false)} />
 						) : (
-							<h3 className="truncate text-sm leading-5 font-semibold">{document.name}</h3>
+							<h3 dir="auto" className="truncate text-sm leading-5 font-semibold">
+								{document.name}
+							</h3>
 						)}
 						<span className="truncate text-xs text-ink-3">{meta}</span>
 						{document.application ? (
 							<span className="flex min-w-0 items-center gap-1 text-xs text-ink-2">
 								<Icon name="briefcase" size={14} />
-								<span className="truncate">{document.application.company}</span>
+								<span dir="auto" className="truncate">
+									{document.application.company}
+								</span>
 							</span>
 						) : (
 							recipient && (
@@ -329,6 +336,7 @@ export function DocumentRow({
 							<OpenLink
 								document={document}
 								disabled={disabled}
+								dir="auto"
 								className="min-w-0 truncate text-start text-sm font-semibold hover:underline"
 							>
 								{document.name}
@@ -353,7 +361,9 @@ export function DocumentRow({
 				<td className="px-2 text-sm text-ink-2 max-sm:hidden">
 					{document.type === "resume" ? <Trans>Resume</Trans> : <Trans>Letter</Trans>}
 				</td>
-				<td className="truncate px-2 text-sm text-ink-2 max-sm:hidden">{document.application?.company ?? "—"}</td>
+				<td dir="auto" className="truncate px-2 text-sm text-ink-2 max-sm:hidden">
+					{document.application?.company ?? "—"}
+				</td>
 				<td className="px-2 text-sm whitespace-nowrap text-ink-3">
 					{document.trashedAt ? (
 						<Plural value={daysLeftInTrash(document.trashedAt)} one="# day left" other="# days left" />

@@ -13,7 +13,7 @@ msgstr ""
 msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
 msgstr "تم حذف \"{0} · {1}\" والمخطط الزمني الخاص به نهائيًا. لا يمكن التراجع عن هذا."
 
-#. placeholder {0}: open.label
+#. placeholder {0}: isolate(open.label)
 #: src/features/check/job-match.tsx
 msgid "“{0}” added to Skills"
 msgstr "أُضيفت «{0}» إلى المهارات"
@@ -23,7 +23,7 @@ msgstr "أُضيفت «{0}» إلى المهارات"
 msgid "“{0}” hidden"
 msgstr "\"{0}\" مخفي"
 
-#. placeholder {0}: resume.name
+#. placeholder {0}: isolate(resume.name)
 #: src/features/document-menu/index.tsx
 msgid "“{0}” moved to Trash"
 msgstr "تم نقل \"{0}\" إلى سلة المهملات"
@@ -475,7 +475,7 @@ msgstr "{0} أكثر"
 #. placeholder {1}: TEMPLATES.length
 #: src/features/design/template-group.tsx
 msgid "{0} of {1} shown"
-msgstr "تم عرض {0} لـ {1}"
+msgstr "عرض {0} من {1}"
 
 #. placeholder {0}: outcomes.tailored.replied
 #. placeholder {1}: outcomes.tailored.sent
@@ -535,7 +535,7 @@ msgstr ""
 #. placeholder {2}: row.count
 #: src/features/write/outline.tsx
 msgid "{0}, entry {1} of {2}"
-msgstr "{0}، إدخال {1} لـ {2}"
+msgstr "{0}، الإدخال {1} من {2}"
 
 #. placeholder {0}: Math.round(zoom * 100)
 #: src/features/letters/page.tsx
@@ -674,11 +674,11 @@ msgstr "{interviews, plural, one {# مقابلة} other {# مقابلة} zero {#
 
 #: src/features/ats-checker/checker.tsx
 msgid "{issues, plural, one {# issue could cost you a match.} other {# issues could cost you a match.}}"
-msgstr "{issues, plural, one {قد تكلفك مشكلة # مباراة.} other {قد تكلفك مشكلات # مباراة.}}"
+msgstr "{issues, plural, one {قد تُفقدك # مشكلة فرصة المطابقة.} other {قد تُفقدك # مشكلات فرصة المطابقة.}}"
 
 #: src/features/share/download.tsx
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
-msgstr "{issues, plural, one {يحتوي الشيك على شيء # للمراجعة. لا يزال بإمكانك التنزيل.} other {يحتوي الشيك على أشياء # للمراجعة. لا يزال بإمكانك التنزيل.}}"
+msgstr "{issues, plural, one {في الفحص # أمر للمراجعة. لا يزال بإمكانك التنزيل.} other {في الفحص # أمور للمراجعة. لا يزال بإمكانك التنزيل.}}"
 
 #: src/features/applications/stage-actions.ts
 msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
@@ -1012,7 +1012,7 @@ msgstr "يُستخدم اللون المميز للعناوين والأيقون
 #: src/features/check/writing.tsx
 #: src/features/workspace/tabs/apply.tsx
 msgid "Accept"
-msgstr "يقبل"
+msgstr "قبول"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept all"
@@ -1046,6 +1046,10 @@ msgstr "الحساب"
 msgid "Account details"
 msgstr ""
 
+#: app/(tabs)/settings/preferences.tsx
+msgid "Account emails use it too."
+msgstr "وتُستخدم أيضًا في رسائل البريد الخاصة بحسابك."
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Action"
@@ -1068,7 +1072,7 @@ msgstr "نشيط"
 #: src/features/application-detail/sections.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Add"
-msgstr "يضيف"
+msgstr "إضافة"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -2387,7 +2391,7 @@ msgstr "الشهادات"
 #: app/(auth)/sign-in.tsx
 #: src/features/letters/write.tsx
 msgid "Change"
-msgstr "يتغير"
+msgstr "تغيير"
 
 #: src/features/ai/web-access.tsx
 msgid "Change connection"
@@ -2747,7 +2751,7 @@ msgstr ""
 
 #: src/features/application-detail/date-field.tsx
 msgid "Clear date"
-msgstr "تاريخ واضح"
+msgstr "مسح التاريخ"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -2802,7 +2806,7 @@ msgstr "أغلق المساعد"
 
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
-msgstr "يغلق…"
+msgstr "إغلاق…"
 
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
@@ -4095,7 +4099,7 @@ msgstr "حذف الإصدار"
 
 #: src/features/applications/list-screen.tsx
 msgid "Delete…"
-msgstr "يمسح…"
+msgstr "حذف…"
 
 #: src/features/search/search-screen.tsx
 msgid "Deleted"
@@ -4291,7 +4295,7 @@ msgstr "تبرّع عبر Open Collective"
 #: src/features/write/pickers.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Done"
-msgstr "منتهي"
+msgstr "تم"
 
 #: src/features/applications/list-screen.tsx
 msgid "Done selecting"
@@ -4502,7 +4506,7 @@ msgstr "الرسائل السابقة في هذه المحادثة"
 #: src/features/career/today.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Edit"
-msgstr "يحرر"
+msgstr "تعديل"
 
 #. placeholder {0}: index + 1
 #. placeholder {1}: proposal.location
@@ -4763,7 +4767,7 @@ msgstr "تم حذف الإدخال"
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/outline.tsx
 msgid "Entry options"
-msgstr "خيارات الدخول"
+msgstr "خيارات الإدخال"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -5307,7 +5311,7 @@ msgstr "تم تغيير العنوان"
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Headline"
-msgstr "العنوان"
+msgstr "المسمّى الوظيفي"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Hear it"
@@ -5554,7 +5558,7 @@ msgstr "في حالة استخدام الوصول إلى الويب، تنتقل
 
 #: src/features/check/screen.tsx
 msgid "Ignore"
-msgstr "يتجاهل"
+msgstr "تجاهل"
 
 #: src/features/check/screen.tsx
 msgid "Ignored issues are back"
@@ -5739,14 +5743,14 @@ msgstr "هل هناك مكافأة، وعلامَ تعتمد؟"
 #. placeholder {1}: issues.length
 #: src/features/check/page.tsx
 msgid "Issue {0} of {1}"
-msgstr "إصدار {0} من {1}"
+msgstr "المشكلة {0} من {1}"
 
 #. placeholder {0}: issue.number
 #. placeholder {1}: issue.title
 #: src/features/check/page.tsx
 #: src/features/check/parser.tsx
 msgid "Issue {0}: {1}"
-msgstr "الإصدار {0}: {1}"
+msgstr "المشكلة {0}: {1}"
 
 #: src/features/check/screen.tsx
 msgid "Issue ignored"
@@ -5808,11 +5812,11 @@ msgstr "وصف الوظيفة"
 
 #: src/features/check/screen.tsx
 msgid "Job match"
-msgstr "مباراة الوظيفة"
+msgstr "المطابقة مع الوظيفة"
 
 #: src/features/check/job-match.tsx
 msgid "Job match isn't part of the readability score."
-msgstr "مباراة الوظيفة ليس جزءًا من درجة سهولة القراءة."
+msgstr "المطابقة مع الوظيفة ليست جزءًا من درجة سهولة القراءة."
 
 #: src/features/ats-checker/checker.tsx
 msgid "Job posting · optional, adds a keyword match"
@@ -5862,7 +5866,7 @@ msgstr "الكانادا"
 #: src/features/check/screen.tsx
 #: src/features/letters/write.tsx
 msgid "Keep"
-msgstr "يحفظ"
+msgstr "إبقاء"
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
@@ -6242,7 +6246,7 @@ msgstr "يمكن للأسطر القريبة من هذا أن تعمل معًا 
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
-msgstr "وصلة"
+msgstr "الرابط"
 
 #. placeholder {0}: index + 1
 #: src/features/settings/application-profile.tsx
@@ -6362,7 +6366,7 @@ msgstr "مباشر · التحديثات أثناء التحرير"
 
 #: src/features/share/link.tsx
 msgid "Live at {url}"
-msgstr "نشرت في {url}"
+msgstr "منشورة على {url}"
 
 #: src/features/design/design-pane.tsx
 msgid "Loading"
@@ -7546,7 +7550,7 @@ msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Nothing here should cost you a match."
-msgstr "لا شيء هنا يجب أن يكلفك مباراة."
+msgstr "لا شيء هنا يُفترض أن يُفقدك فرصة المطابقة."
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "Nothing in your library yet"
@@ -8454,7 +8458,7 @@ msgstr "قم بإعداد السيرة الذاتية"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare application"
-msgstr "تحضير التطبيق"
+msgstr "تحضير الطلب"
 
 #: src/features/application-detail/sections.tsx
 msgid "Prepare for interview"
@@ -8990,7 +8994,7 @@ msgstr "تمرّن بصوت عالٍ"
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
 msgid "Reject"
-msgstr "يرفض"
+msgstr "رفض"
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -9079,7 +9083,7 @@ msgstr "عن بُعد"
 #: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
 msgid "Remove"
-msgstr "يزيل"
+msgstr "إزالة"
 
 #. placeholder {0}: contact.name
 #. placeholder {0}: countryName(row.countryCode, i18n.locale)
@@ -9208,7 +9212,7 @@ msgstr ""
 
 #: src/features/write/improve.tsx
 msgid "Replace"
-msgstr "يستبدل"
+msgstr "استبدال"
 
 #: src/features/ats-checker/messages.ts
 msgid "Replace icon fonts with plain text, then re-export."
@@ -9316,7 +9320,7 @@ msgstr "أعد التشغيل لتغيير اتجاه النص"
 
 #: src/features/documents/library.tsx
 msgid "Restore"
-msgstr "يعيد"
+msgstr "استعادة"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -10023,7 +10027,7 @@ msgstr "مقابلة فرز أولي"
 #: src/features/design/picker.tsx
 #: src/ui/fields.tsx
 msgid "Search"
-msgstr "يبحث"
+msgstr "بحث"
 
 #: src/features/ai/web-access.tsx
 msgid "Search and enhanced reading"
@@ -10200,7 +10204,7 @@ msgstr "ورقة أنماط CSS الدلالية"
 #: src/features/assistant/chat-view.tsx
 #: src/features/assistant/messages.tsx
 msgid "Send"
-msgstr "يرسل"
+msgstr "إرسال"
 
 #: src/features/ai/report-content.tsx
 msgid "Send report"
@@ -10378,7 +10382,7 @@ msgstr "عرض الظل"
 #: app/builder/[id]/_layout.tsx
 #: app/builder/[id]/share.tsx
 msgid "Share"
-msgstr "يشارك"
+msgstr "مشاركة"
 
 #: src/features/application-detail/sheets.tsx
 msgid "Share calendar event (.ics)"
@@ -10600,7 +10604,7 @@ msgstr "غالبًا ما تتم قراءة الأشرطة الجانبية أخ
 #: src/features/documents/new-document.tsx
 #: src/linking/open.ts
 msgid "Sign in"
-msgstr "تسجّل الدخول"
+msgstr "تسجيل الدخول"
 
 #: src/auth/session-gate.tsx
 #: src/features/check/screen.tsx
@@ -10908,7 +10912,7 @@ msgstr "تبقى المرحلة {stage}"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
-msgstr "يبدأ"
+msgstr "البداية"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
@@ -11093,7 +11097,7 @@ msgstr "الملخّص"
 
 #: app/(tabs)/settings/index.tsx
 msgid "Support"
-msgstr "يدعم"
+msgstr "ادعمنا"
 
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/debrief.tsx
@@ -11148,7 +11152,7 @@ msgstr "تحولت إلى عمود واحد"
 #: app/(tabs)/settings/index.tsx
 #: app/(tabs)/settings/preferences.tsx
 msgid "System"
-msgstr "نظام التشغيل"
+msgstr "النظام"
 
 #: src/features/check/issues.ts
 msgid "Systems file you under the name at the top of the page."
@@ -11312,7 +11316,7 @@ msgstr "لون النص"
 
 #: src/features/check/issues.ts
 msgid "Text comes out in the order a person reads it, at a size and spacing that survive."
-msgstr "يخرج النص بالترتيب الذي يقرأه به الشخص، بحجم ومسافة تبقى على قيد الحياة."
+msgstr "يخرج النص بالترتيب الذي يقرؤه به الشخص، بحجم وتباعد يبقيان سليمين."
 
 #: src/features/ats-checker/messages.ts
 msgid "Text is written one character at a time."
@@ -11413,7 +11417,7 @@ msgstr "يظل القارئ المدمج نشطًا."
 
 #: src/features/check/writing.tsx
 msgid "The checks are mechanical. This asks a language model how a reader might react to your bullets and suggests rewrites. It isn't part of the score."
-msgstr "الشيكات ميكانيكية. يسأل هذا نموذج اللغة عن كيفية تفاعل القارئ مع إدخالات القائمة ويقترح إعادة الكتابة. انها ليست جزءا من النتيجة."
+msgstr "الفحوص آلية. أما هذا فيسأل نموذجًا لغويًا عن ردّ فعل القارئ المحتمل تجاه نقاطك ويقترح إعادة صياغتها. وهو ليس جزءًا من النتيجة."
 
 #: src/features/assistant/provider.tsx
 msgid "The coach asks before remembering facts you state."
@@ -13266,7 +13270,7 @@ msgstr "أنت غير متصل. يتطلب السجل اتصالًا. يعمل �
 
 #: src/features/check/screen.tsx
 msgid "You're offline. Issues and Job match still work; reconnect for Writing and PDF checks."
-msgstr "أنت غير متصل. لا تزال المشكلات و«مباراة الوظيفة» تعمل. أعد الاتصال لإجراء عمليات فحص «الكتابة» وPDF."
+msgstr "أنت غير متصل. لا تزال «المشكلات» و«المطابقة مع الوظيفة» تعمل؛ أعد الاتصال لإجراء فحوص «الكتابة» وPDF."
 
 #: src/features/share/pane.tsx
 msgid "You're offline. Sharing needs a connection."

@@ -64,10 +64,10 @@ export function BasicsCard({ locked }: { locked: boolean }) {
 					{getInitials(basics.name || "?")}
 				</span>
 				<span className="min-w-0 flex-1">
-					<span className={cn("block truncate text-sm font-semibold", !basics.name && "text-ink-3")}>
+					<span dir="auto" className={cn("block truncate text-sm font-semibold", !basics.name && "text-ink-3")}>
 						{basics.name || <Trans>Your name</Trans>}
 					</span>
-					<span className="block truncate text-xs text-ink-3">
+					<span dir="auto" className="block truncate text-xs text-ink-3">
 						{[basics.headline, basics.location].filter((part) => part.trim()).join(" · ")}
 					</span>
 				</span>

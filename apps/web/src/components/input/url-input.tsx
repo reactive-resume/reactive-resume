@@ -48,6 +48,7 @@ export function URLInput<TValue extends Website>({ value, onChange, hideLabelBut
 	const urlValue = stripPrefix(value.url);
 
 	return (
+		// A web address reads left to right in every language, "https://" first.
 		<InputGroup dir="ltr">
 			<InputGroupAddon align="inline-start">
 				<InputGroupText>{prefix}</InputGroupText>

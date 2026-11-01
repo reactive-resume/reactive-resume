@@ -116,3 +116,11 @@ export function rewriteSummary(before: string, after: string) {
 		added: now.filter((sentence) => !was.includes(sentence)).length,
 	};
 }
+
+/**
+ * User text inside an interface sentence, isolated (FSI…PDI, the plain-text `<bdi>`): it keeps its own direction, and
+ * punctuation around it stays with the sentence, wherever the two scripts differ ("“Lebenslauf (DE)” moved to Trash").
+ */
+export function isolate(text: string): string {
+	return `⁨${text}⁩`;
+}

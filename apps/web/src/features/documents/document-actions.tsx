@@ -24,6 +24,7 @@ import {
 } from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { isolate } from "@reactive-resume/utils/string";
 import { useNewDocumentsStore } from "./new-documents";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
@@ -108,7 +109,7 @@ export function useDocumentActions() {
 			try {
 				await trash.mutateAsync(ref(document));
 				toast.add({
-					description: t`“${document.name}” moved to Trash`,
+					description: t`“${isolate(document.name)}” moved to Trash`,
 					actionProps: {
 						children: t`Undo`,
 						// The trashed card has gone, and a mutation's own callbacks with it: catch the promise.

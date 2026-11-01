@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { EnrichedTextInput } from "react-native-enriched-html";
 import { isValidSlug, MAX_SLUG_LENGTH, normalizeSlug } from "@reactive-resume/resume/sharing";
+import { isolate } from "@reactive-resume/utils/string";
 import { client } from "@/api/client";
 import { resumeFieldFocus, useResumeStore } from "@/draft";
 import { resume as draftResume } from "@/draft/runtime";
@@ -141,7 +142,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 											await useResumeStore.getState().close();
 											router.replace(routes.documents());
 											showToast({
-												message: t`“${resume.name}” moved to Trash`,
+												message: t`“${isolate(resume.name)}” moved to Trash`,
 												action: {
 													label: t`Undo`,
 													onPress: () => {
