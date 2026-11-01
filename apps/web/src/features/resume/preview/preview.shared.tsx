@@ -24,7 +24,7 @@ export type ResumePreviewProps = {
 	onRender?: (render: { pageCount: number; pageMap: PageMap | undefined; file: Blob }) => void;
 };
 
-type ResumePreviewLoaderProps = Pick<ResumePreviewProps, "pageClassName" | "showPageNumbers"> & {
+type ResumePreviewLoaderProps = Pick<ResumePreviewProps, "pageClassName" | "showPageNumbers" | "data"> & {
 	pageCount?: number;
 	pageGap?: CSSProperties["gap"];
 	pageLayout?: "horizontal" | "vertical";
@@ -34,6 +34,7 @@ type ResumePreviewLoaderProps = Pick<ResumePreviewProps, "pageClassName" | "show
 };
 
 export function ResumePreviewLoader({
+	data,
 	pageCount = 1,
 	pageClassName,
 	pageGap = 16,
@@ -42,7 +43,8 @@ export function ResumePreviewLoader({
 	showPageNumbers = false,
 	failure,
 }: ResumePreviewLoaderProps) {
-	const pageSize = getScaledPreviewPageSize(DEFAULT_PDF_PAGE_SIZE, pageScale);
+	const baseSize = data?.metadata.page.format === "letter" ? { width: 612, height: 792 } : DEFAULT_PDF_PAGE_SIZE;
+	const pageSize = getScaledPreviewPageSize(baseSize, pageScale);
 	const resolvedPageGap = getResumePreviewGapValue(pageGap);
 
 	return (

@@ -1,9 +1,12 @@
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
+import type { QueryClient } from "@tanstack/react-query";
+import type { KeyboardEvent } from "react";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { useEffect, useId, useRef, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -27,11 +30,13 @@ import { cn } from "@reactive-resume/utils/style";
 import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
 import { LibraryError } from "./library-error";
+import { useNewDocumentsStore } from "./new-documents";
 import { PageNavigation } from "./page-navigation";
-import { useStartDocument } from "./use-start-document";
+import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { PageHeader } from "@/components/layout/page-header";
 import { useDialogStore } from "@/dialogs/store";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
+import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
 
 export type DocumentsSearch = {
@@ -56,20 +61,46 @@ type DocumentsPageProps = {
 export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const searchRef = useRef<HTMLInputElement>(null);
+	const resultsRef = useRef<HTMLTableElement & HTMLDivElement>(null);
+	const queryClient = useQueryClient();
+	const openOnResults = useRef<{ request: string; client: QueryClient } | null>(null);
+	const router = useRouter();
+	useEffect(
+		() =>
+			router.subscribe("onBeforeNavigate", ({ pathChanged }) => {
+				if (pathChanged) openOnResults.current = null;
+			}),
+		[router],
+	);
+	const searchHintId = useId();
+	const navigate = useNavigate();
+	const markOpened = useNewDocumentsStore((state) => state.markOpened);
 	const [tagsFor, setTagsFor] = useState<DocumentSummary[] | null>(null);
 	const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
 	const [linkFor, setLinkFor] = useState<DocumentSummary | null>(null);
 	// Grid and list animate in only after a switch, never on the page's first render.
 	const [viewSwitched, setViewSwitched] = useState(false);
 	const searchText = search.q.slice(0, 500);
-	const [query] = useDebounceValue(searchText, 300);
-	const filterKey = JSON.stringify([search.type, searchText, search.tags, search.public, search.sort]);
+	const [query, setQuery] = useDebounceValue(searchText, 300);
+	const filterKey = JSON.stringify([search.type, searchText, search.tags, search.public ?? false, search.sort]);
 	const [page, setPage] = useState({ filterKey, offset: 0, total: 0 });
 	const offset = page.filterKey === filterKey ? page.offset : 0;
 	const changePage = (next: number) => {
 		setSelected(new Set());
 		setPage({ filterKey, offset: next, total: pageData?.total ?? page.total });
 	};
+	const input = {
+		type: search.type,
+		q: searchText,
+		tags: search.tags,
+		sort: search.sort,
+		public: search.public ?? false,
+		trashed: false,
+		limit: 100,
+		offset,
+	};
+	// Bind Enter to its intended request, including text not yet released by the debounce.
+	const request = JSON.stringify(input);
 	const {
 		data: pageData,
 		isPending,
@@ -81,16 +112,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		gcTime: 0,
 		placeholderData: (previous) => previous,
 		...orpc.documents.page.queryOptions({
-			input: {
-				type: search.type,
-				q: query,
-				tags: search.tags,
-				sort: search.sort,
-				public: search.public ?? false,
-				trashed: false,
-				limit: 100,
-				offset,
-			},
+			input: { ...input, q: query },
 		}),
 	});
 	const [lastPage, setLastPage] = useState({ data: pageData, offset });
@@ -144,6 +166,16 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		letter: displayed?.counts.letter ?? 0,
 	};
 	const hasPublic = displayed?.hasPublic ?? false;
+	// A type tab with nothing of its kind is empty, not filtered: it offers to make one.
+	const emptyType =
+		search.type !== "all" &&
+		search.q.trim() === "" &&
+		search.tags.length === 0 &&
+		search.public !== true &&
+		offset === 0 &&
+		counts[search.type] === 0
+			? search.type
+			: null;
 	// Actions apply to the selected documents the filters show.
 	const selection = rowsCurrent ? shown.filter((document) => selected.has(documentKey(document))) : [];
 	const selecting = selection.length > 0;
@@ -179,6 +211,55 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		selectAll(false);
 	});
 
+	const openDocument = (document: DocumentSummary) => {
+		markOpened(document.id);
+		if (document.type === "resume") void navigate({ to: "/builder/$resumeId", params: { resumeId: document.id } });
+		else void navigate({ to: "/builder/letter/$coverLetterId", params: { coverLetterId: document.id } });
+	};
+
+	// Replacement requests cannot inherit an earlier Enter, even when their search text is identical.
+	useEffect(() => {
+		const pending = openOnResults.current;
+		if (pending === null) return;
+		if (pending.request !== request || pending.client !== queryClient || isError) {
+			openOnResults.current = null;
+			return;
+		}
+		if (!rowsCurrent) return;
+		openOnResults.current = null;
+		const first = shown[0];
+		if (first) openDocument(first);
+	});
+
+	// The search field is keyboard-complete: Enter opens the top result, ↓ moves into the results, Esc clears, then leaves.
+	const onSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+		if (isImeComposing(event) || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+		if (event.key === "Enter") {
+			event.preventDefault();
+			openOnResults.current = null;
+			if (!searchText.trim() || (isError && query === searchText)) return;
+			const first = shown[0];
+			if (rowsCurrent) {
+				if (first) openDocument(first);
+				return;
+			}
+			openOnResults.current = { request, client: queryClient };
+			// Skip the typing delay: search for what's in the field now.
+			setQuery.flush();
+		} else if (event.key === "ArrowDown") {
+			openOnResults.current = null;
+			const first = resultsRef.current?.querySelector<HTMLElement>("a[href]");
+			if (!first) return;
+			event.preventDefault();
+			first.focus();
+		} else if (event.key === "Escape") {
+			event.preventDefault();
+			openOnResults.current = null;
+			if (searchText) onSearchChange({ q: "" });
+			else event.currentTarget.blur();
+		}
+	};
+
 	return (
 		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5">
 			<PageHeader title={<Trans>Documents</Trans>}>
@@ -212,9 +293,15 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 									value={searchText}
 									maxLength={500}
 									aria-label={t`Search documents`}
+									aria-describedby={searchHintId}
+									enterKeyHint="go"
 									placeholder={t`Search`}
 									onChange={(event) => onSearchChange({ q: event.target.value.slice(0, 500) })}
+									onKeyDown={onSearchKeyDown}
 								/>
+								<span id={searchHintId} className="sr-only">
+									<Trans>Enter opens the first result. Down arrow moves to the results. Escape clears.</Trans>
+								</span>
 								<InputGroupAddon align="inline-end" className="max-sm:hidden pointer-coarse:hidden">
 									<Kbd>/</Kbd>
 								</InputGroupAddon>
@@ -259,7 +346,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			)}
 
 			{failed ? null : firstRun ? (
-				<FirstRun onChooseFile={() => openDialog("document.new", undefined)} />
+				<FirstRun onFile={(file) => openDialog("document.new", { file })} />
 			) : (
 				<>
 					{(tags.length > 0 || hasPublic) && (
@@ -276,7 +363,9 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 					{isPending || (!rowsCurrent && !isError && shown.length === 0) ? (
 						<LibrarySkeleton view={view} />
 					) : shown.length === 0 ? (
-						isError ? null : (
+						isError ? null : emptyType ? (
+							<TypeEmpty type={emptyType} />
+						) : (
 							<div className="grid justify-items-center gap-2 py-16 text-center">
 								<Icon name="magnifying-glass" size={28} className="text-ink-3" />
 								<p className="font-semibold">
@@ -301,7 +390,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 							</div>
 						)
 					) : view === "list" ? (
-						<table className={cn("w-full table-fixed border-collapse", viewEnter)}>
+						<table ref={resultsRef} className={cn("w-full table-fixed border-collapse", viewEnter)}>
 							<caption className="sr-only">
 								<Trans>Documents</Trans>
 							</caption>
@@ -348,6 +437,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 						</table>
 					) : (
 						<div
+							ref={resultsRef}
 							className={cn(
 								"grid grid-cols-[repeat(auto-fill,minmax(180px,204px))] gap-x-7 gap-y-[22px] max-sm:grid-cols-2 max-sm:gap-4",
 								viewEnter,
@@ -366,6 +456,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				</>
 			)}
 
+			<TrashLink />
 			<PageNavigation
 				offset={displayedOffset}
 				total={displayed?.total ?? page.total}
@@ -418,22 +509,48 @@ function storeView(view: "grid" | "list") {
 	}
 }
 
-/** The first visit: import is the filled button here, and only here. */
-function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
+type FirstRunProps = { onFile: (file: File) => void };
+
+/** The first visit: import is the filled button here, and only here. Choose a file opens the file picker itself. */
+function FirstRun({ onFile }: FirstRunProps) {
 	const { startBlank, trySample, creating } = useStartDocument();
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	return (
 		<section className="max-w-xl pt-4 transition-[opacity,translate] duration-emphasized ease-enter starting:translate-y-2 starting:opacity-0">
+			<input
+				ref={inputRef}
+				type="file"
+				accept={IMPORT_ACCEPT}
+				className="hidden"
+				aria-label={t`Choose a file to import`}
+				onChange={(event) => {
+					const file = event.target.files?.[0];
+					event.target.value = "";
+					if (file) onFile(file);
+				}}
+			/>
 			<EmptyState
 				title={<Trans>Let's start with what you have</Trans>}
 				description={
-					<Trans>
-						Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF,
-						Word or JSON file anywhere here.
-					</Trans>
+					// Touch can't drop files, so it reads "Choose" there.
+					<>
+						<span className="pointer-coarse:hidden">
+							<Trans>
+								Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a
+								PDF, Word or JSON file anywhere here.
+							</Trans>
+						</span>
+						<span className="hidden pointer-coarse:inline">
+							<Trans>
+								Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a
+								PDF, Word or JSON file.
+							</Trans>
+						</span>
+					</>
 				}
 				action={
-					<Button onClick={onChooseFile}>
+					<Button onClick={() => inputRef.current?.click()}>
 						<Icon name="file-arrow-up" size={18} />
 						<Trans>Choose a file</Trans>
 					</Button>
@@ -460,6 +577,63 @@ function FirstRun({ onChooseFile }: { onChooseFile: () => void }) {
 				}
 			/>
 		</section>
+	);
+}
+
+/** Phones have no sidebar, so Trash is a row at the end of the library while it holds anything, as in the app. */
+function TrashLink() {
+	const { data: counts } = useQuery(orpc.documents.counts.queryOptions());
+	const trashCount = counts?.trash ?? 0;
+	if (!trashCount) return null;
+
+	return (
+		<Link
+			to="/dashboard/trash"
+			className="flex h-14 items-center gap-3 rounded-lg border border-line bg-surface px-3.5 transition-colors duration-quick ease-enter active:bg-press sm:hidden"
+		>
+			<Icon name="trash" size={22} className="text-ink-2" />
+			<span className="grid flex-1">
+				<span className="font-medium">
+					<Trans>Trash</Trans>
+				</span>
+				<span className="text-xs text-ink-3">
+					<Plural value={trashCount} one="# document" other="# documents" />
+				</span>
+			</span>
+			<Icon name="caret-right" size={22} className="text-ink-3" />
+		</Link>
+	);
+}
+
+/** Resumes or Letters with none of that kind yet: the way to make the first one. */
+function TypeEmpty({ type }: { type: "resume" | "letter" }) {
+	const openDialog = useDialogStore((state) => state.openDialog);
+	const { newLetter, creating } = useStartDocument();
+
+	return type === "letter" ? (
+		<EmptyState
+			className="mt-4"
+			title={<Trans>No cover letters yet</Trans>}
+			description={<Trans>Write one for a job, or start from your latest resume.</Trans>}
+			action={
+				<Button disabled={creating} onClick={() => void newLetter()}>
+					<Icon name="envelope-simple" size={18} />
+					<Trans>New cover letter</Trans>
+				</Button>
+			}
+		/>
+	) : (
+		<EmptyState
+			className="mt-4"
+			title={<Trans>No resumes yet</Trans>}
+			description={<Trans>Import the one you have, or start blank.</Trans>}
+			action={
+				<Button onClick={() => openDialog("document.new", undefined)}>
+					<Icon name="plus" size={18} />
+					<Trans>New resume</Trans>
+				</Button>
+			}
+		/>
 	);
 }
 
@@ -522,7 +696,10 @@ type SelectionBarProps = {
 	onTags: () => void;
 };
 
-/** Floats over the library while documents are selected: tags, visibility, locking and Trash for all of them. */
+/**
+ * Floats over the library while documents are selected: tags, visibility, locking and Trash for all of them. On phones
+ * it sits above the tab bar, as the Applications list's bar does.
+ */
 function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: SelectionBarProps) {
 	const batch = useBatchActions();
 	const [busy, setBusy] = useState(false);
@@ -545,7 +722,7 @@ function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: 
 			aria-hidden={count === 0}
 			inert={count === 0}
 			className={cn(
-				"fixed inset-x-0 bottom-6 z-30 mx-auto flex w-fit max-w-[calc(100vw-32px)] items-center gap-1 rounded-xl border border-line bg-raised p-1.5 shadow-e3 transition-[opacity,translate] duration-standard ease-enter max-sm:bottom-4",
+				"fixed inset-x-0 bottom-6 z-30 mx-auto flex w-fit max-w-[calc(100vw-32px)] items-center gap-1 rounded-xl border border-line bg-raised p-1.5 shadow-e3 transition-[opacity,translate] duration-standard ease-enter max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]",
 				count === 0 && "pointer-events-none translate-y-2 opacity-0",
 			)}
 		>

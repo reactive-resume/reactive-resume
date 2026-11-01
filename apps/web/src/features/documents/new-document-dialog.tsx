@@ -12,13 +12,16 @@ import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@re
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
+import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { formatFileSize } from "@reactive-resume/utils/file";
+import { pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { defaultCopySource } from "./filter";
 import { useNewDocumentsStore } from "./new-documents";
-import { useStartDocument } from "./use-start-document";
+import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { useDialogStore } from "@/dialogs/store";
-import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { applicationsListQueryKey, applicationsListQueryOptions } from "@/features/applications/queries";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { detectImportKind, ImportError, readResumeFile, summarizeImport } from "@/features/resume/import/read-file";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -52,8 +55,6 @@ type Step =
 	| { name: "copy" };
 
 type OpenResumeOptions = { withAssistant?: boolean; importedFrom?: string };
-
-const ACCEPT = ".pdf,.docx,.json,.zip,application/pdf,application/json,application/zip";
 
 function requireImportKind(kind: ImportKind | null): ImportKind {
 	if (!kind) {
@@ -231,7 +232,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 			<input
 				ref={inputRef}
 				type="file"
-				accept={ACCEPT}
+				accept={IMPORT_ACCEPT}
 				className="hidden"
 				aria-label={t`Choose a file to import`}
 				onChange={(event) => {
@@ -247,6 +248,8 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						initialSourceId={data?.sourceResumeId}
 						initialJobId={data?.applicationId}
 						onBack={() => setStep({ name: "choose" })}
+						// Opened straight on this step (a card's Copy for a job…): there's no choice to go back to.
+						onCancel={data?.step === "copy" ? closeDialog : undefined}
 						onCreated={(resumeId, forJob) => {
 							markNew(resumeId);
 							void refreshDocuments();
@@ -594,43 +597,90 @@ type CopyForJobProps = {
 	initialSourceId?: string | undefined;
 	initialJobId?: string | undefined;
 	onBack: () => void;
+	/** Replaces Back when the dialog opened on this step. */
+	onCancel?: (() => void) | undefined;
 	/** The new resume, and whether it was made for a job. */
 	onCreated: (resumeId: string, forJob: boolean) => void;
 };
 
-/** Pick a resume and a job; the copy is named from both and linked to the application. */
-function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyForJobProps) {
+/** The posting cap Applications uses for a saved job's description. */
+const MAX_POSTING_CHARS = 20_000;
+
+/**
+ * Pick a resume and a job; the copy is named from both and linked to the application. The source starts on the base
+ * resume (not a copy made for another job), each source shows the job it was made for, and a job not saved yet can
+ * be added here.
+ */
+function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated }: CopyForJobProps) {
 	const { i18n } = useLingui();
 	const nameId = useId();
+	const queryClient = useQueryClient();
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
-	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const applications = useQuery(applicationsListQueryOptions());
 	const resumes = (documents ?? []).filter((document) => document.type === "resume");
-	const jobs = (applications ?? []).filter((application) => application.status !== "closed");
+	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
 	const [sourceId, setSourceId] = useState(initialSourceId);
+	const [changingSource, setChangingSource] = useState(!initialSourceId);
 	const [jobId, setJobId] = useState<string | null>(initialJobId ?? null);
+	const [adding, setAdding] = useState(false);
+	const [newJob, setNewJob] = useState({ company: "", role: "", posting: "" });
 	const [name, setName] = useState<string | null>(null);
 	const { mutateAsync: copyForJob, isPending } = useMutation(orpc.documents.copyForJob.mutationOptions());
 
-	const source = resumes.find((resume) => resume.id === sourceId) ?? resumes[0];
-	const job = jobs.find((application) => application.id === jobId);
+	const source = resumes.find((resume) => resume.id === sourceId) ?? defaultCopySource(resumes);
+	const job = adding ? null : jobs.find((application) => application.id === jobId);
+	const waitingForJob = !adding && Boolean(jobId) && !job && applications.isFetching;
+	const company = adding ? newJob.company.trim() : job?.company;
 	const base = (source?.name ?? "").split(" — ")[0] ?? "";
-	const suggested = job ? `${base} — ${job.company}` : t`${base} (copy)`;
+	const suggested = (company ? `${base} — ${company}` : t`${base} (copy)`).slice(0, 100);
 	const finalName = (name ?? suggested).trim();
+	const newJobReady = !adding || (newJob.company.trim().length > 0 && newJob.role.trim().length > 0);
 
 	const create = async () => {
-		if (!source) return;
+		if (!source || !newJobReady || waitingForJob) return;
+		const pasted = newJob.posting.trim();
+		const truncated = pasted.length > MAX_POSTING_CHARS;
 		const input = {
 			resumeId: source.id,
-			...(job ? { applicationId: job.id } : {}),
+			...(adding
+				? {
+						// The job and its copy are saved together, or neither is.
+						application: {
+							company: newJob.company.trim(),
+							role: newJob.role.trim(),
+							...(pasted
+								? {
+										jobDescription: pasted.slice(0, MAX_POSTING_CHARS),
+										postingSource: {
+											method: "paste" as const,
+											format: "text" as const,
+											truncated,
+											completeness: truncated ? ("incomplete" as const) : ("unknown" as const),
+										},
+									}
+								: {}),
+						},
+					}
+				: jobId
+					? { applicationId: jobId }
+					: {}),
 			...(finalName ? { name: finalName } : {}),
 		};
-		const message = job ? t`Created and linked to ${job.company}` : t`Created “${finalName}”`;
+		const linked = adding || Boolean(jobId);
+		const message = company ? t`Created and linked to ${company}` : t`Created “${finalName}”`;
+		// A retry of the same copy (a lost response, a second press) sends the same ID, so it's made once.
+		const key = `copy-for-job:${JSON.stringify(input)}`;
 		try {
-			const resumeId = await copyForJob(input);
+			const resumeId = await copyForJob({ ...input, newId: pendingRequestId(key) });
+			settleRequestId(key);
+			if (adding) void queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });
 			toast.add({ description: message });
-			onCreated(resumeId, Boolean(job));
+			onCreated(resumeId, linked);
 		} catch (error) {
-			toastError(error, t`Couldn't copy the resume. Try again.`);
+			toastError(
+				error,
+				adding ? t`Couldn't save the job and its copy. Try again.` : t`Couldn't copy the resume. Try again.`,
+			);
 		}
 	};
 
@@ -653,33 +703,60 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 						</Trans>
 					</p>
 				)}
-				<div className="grid max-h-56 gap-1 overflow-y-auto">
-					{resumes.map((resume) => (
-						<label
-							key={resume.id}
-							className={cn(
-								"relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors duration-quick",
-								resume.id === source?.id ? "border-accent bg-accent-soft" : "border-line hover:bg-hover",
-							)}
-						>
-							<input
-								type="radio"
-								name="copy-source"
-								className="sr-only"
-								checked={resume.id === source?.id}
-								onChange={() => {
-									setSourceId(resume.id);
-									setName(null);
-								}}
-							/>
-							<Icon name="file-text" className="text-ink-2" />
-							<span className="grid min-w-0 flex-1">
-								<span className="truncate text-sm font-medium">{resume.name}</span>
-								<span className="text-xs text-ink-3">{formatRelativeTime(resume.updatedAt, i18n.locale)}</span>
-							</span>
-						</label>
-					))}
-				</div>
+				{!changingSource && source ? (
+					<div className="flex items-center gap-3 rounded-lg border border-accent bg-accent-soft px-3 py-2.5">
+						<Icon name="file-text" className="text-ink-2" />
+						<span className="grid min-w-0 flex-1">
+							<span className="truncate text-sm font-medium">{source.name}</span>
+							<span className="text-xs text-ink-3">{formatRelativeTime(source.editedAt, i18n.locale)}</span>
+						</span>
+						<Button variant="ghost" size="sm" onClick={() => setChangingSource(true)}>
+							<Trans>Change</Trans>
+						</Button>
+					</div>
+				) : (
+					<div className="grid max-h-56 gap-1 overflow-y-auto">
+						{resumes.map((resume) => (
+							<label
+								key={resume.id}
+								className={cn(
+									"relative flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors duration-quick",
+									resume.id === source?.id ? "border-accent bg-accent-soft" : "border-line hover:bg-hover",
+								)}
+							>
+								<input
+									type="radio"
+									name="copy-source"
+									className="sr-only"
+									checked={resume.id === source?.id}
+									onChange={() => {
+										setSourceId(resume.id);
+										setName(null);
+									}}
+								/>
+								<Icon name="file-text" className="text-ink-2" />
+								<span className="grid min-w-0 flex-1 gap-0.5">
+									<span className="truncate text-sm font-medium">{resume.name}</span>
+									<span className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-ink-3">
+										{resume.application ? (
+											<span className="inline-flex max-w-full items-center gap-1 truncate rounded-sm bg-sunken px-1.5 py-0.5 text-ink-2">
+												<Icon name="briefcase" size={12} />
+												<span className="truncate">
+													<Trans>Copy for {resume.application.company}</Trans>
+												</span>
+											</span>
+										) : (
+											<span className="rounded-sm bg-sunken px-1.5 py-0.5 text-ink-2">
+												<Trans>Not linked to a job</Trans>
+											</span>
+										)}
+										<span>{formatRelativeTime(resume.editedAt, i18n.locale)}</span>
+									</span>
+								</span>
+							</label>
+						))}
+					</div>
+				)}
 			</fieldset>
 
 			<fieldset className="grid gap-1.5">
@@ -688,33 +765,102 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 				</legend>
 				<div className="flex flex-wrap gap-1.5">
 					{[
-						...jobs.map((application) => ({ id: application.id, label: application.company })),
+						// Two roles at one company stay apart.
+						...jobs.map((application) => ({
+							id: application.id,
+							label: application.role.trim() ? `${application.role} · ${application.company}` : application.company,
+						})),
 						{ id: null, label: t`No job yet` },
-					].map((option) => (
-						<button
-							key={option.id ?? "none"}
-							type="button"
-							aria-pressed={jobId === option.id}
-							onClick={() => {
-								setJobId(option.id);
-								setName(null);
-							}}
-							className={cn(
-								"flex h-8 items-center gap-1.5 rounded-sm border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
-								jobId === option.id
-									? "border-accent bg-accent-soft text-accent-text"
-									: "border-line-2 text-ink-2 hover:bg-hover",
-							)}
-						>
-							{option.id && <Icon name="briefcase" size={16} />}
-							{option.label}
-						</button>
-					))}
+					].map((option) => {
+						const selected = !adding && jobId === option.id;
+						return (
+							<button
+								key={option.id ?? "none"}
+								type="button"
+								aria-pressed={selected}
+								onClick={() => {
+									setAdding(false);
+									setJobId(option.id);
+									setName(null);
+								}}
+								className={cn(
+									"flex h-8 items-center gap-1.5 rounded-sm border px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
+									selected
+										? "border-accent bg-accent-soft text-accent-text"
+										: "border-line-2 text-ink-2 hover:bg-hover",
+								)}
+							>
+								{option.id && <Icon name="briefcase" size={16} />}
+								{option.label}
+							</button>
+						);
+					})}
+					<button
+						type="button"
+						aria-pressed={adding}
+						onClick={() => {
+							setAdding(true);
+							setName(null);
+						}}
+						className={cn(
+							"flex h-8 items-center gap-1.5 rounded-sm border border-dashed px-3 text-[13px] transition-[background-color,border-color,color,scale] duration-quick ease-enter active:scale-[0.97]",
+							adding ? "border-accent bg-accent-soft text-accent-text" : "border-line-2 text-ink-2 hover:bg-hover",
+						)}
+					>
+						<Icon name="plus" size={16} />
+						<Trans>Add a job</Trans>
+					</button>
 				</div>
-				{job && (
-					<span className="text-xs text-ink-3">
-						<Trans>The copy is linked to the application, so Check and the assistant use its posting.</Trans>
-					</span>
+				{adding ? (
+					<div className={cn(ENTER_CLASS, "grid gap-2 rounded-lg border border-line p-3")}>
+						<div className="grid gap-2 sm:grid-cols-2">
+							<div className="grid gap-1">
+								<label htmlFor={`${nameId}-company`} className="text-xs font-medium text-ink-2">
+									<Trans>Company</Trans>
+								</label>
+								<Input
+									id={`${nameId}-company`}
+									value={newJob.company}
+									maxLength={200}
+									required
+									onChange={(event) => setNewJob((current) => ({ ...current, company: event.target.value }))}
+								/>
+							</div>
+							<div className="grid gap-1">
+								<label htmlFor={`${nameId}-role`} className="text-xs font-medium text-ink-2">
+									<Trans>Role</Trans>
+								</label>
+								<Input
+									id={`${nameId}-role`}
+									value={newJob.role}
+									maxLength={200}
+									required
+									onChange={(event) => setNewJob((current) => ({ ...current, role: event.target.value }))}
+								/>
+							</div>
+						</div>
+						<div className="grid gap-1">
+							<label htmlFor={`${nameId}-posting`} className="text-xs font-medium text-ink-2">
+								<Trans>Job posting (optional)</Trans>
+							</label>
+							<Textarea
+								id={`${nameId}-posting`}
+								rows={3}
+								maxLength={100_000}
+								value={newJob.posting}
+								onChange={(event) => setNewJob((current) => ({ ...current, posting: event.target.value }))}
+							/>
+						</div>
+						<span className="text-xs text-ink-3">
+							<Trans>Saved to Applications as a saved job, then linked to the copy. No AI request is made.</Trans>
+						</span>
+					</div>
+				) : (
+					job && (
+						<span className="text-xs text-ink-3">
+							<Trans>The copy is linked to the application, so Check and the assistant use its posting.</Trans>
+						</span>
+					)
 				)}
 			</fieldset>
 
@@ -734,11 +880,20 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCreated }: CopyFo
 			</div>
 
 			<div className="flex flex-wrap justify-end gap-2">
-				<Button variant="ghost" onClick={onBack}>
-					{documents && resumes.length === 0 ? <Trans>Import or create a resume</Trans> : <Trans>Back</Trans>}
+				<Button variant="ghost" onClick={documents && resumes.length === 0 ? onBack : (onCancel ?? onBack)}>
+					{documents && resumes.length === 0 ? (
+						<Trans>Import or create a resume</Trans>
+					) : onCancel ? (
+						<Trans>Cancel</Trans>
+					) : (
+						<Trans>Back</Trans>
+					)}
 				</Button>
-				<Button disabled={!source || !finalName || isPending} onClick={() => void create()}>
-					<Trans>Create and open</Trans>
+				<Button
+					disabled={!source || !finalName || finalName.length > 100 || !newJobReady || waitingForJob || isPending}
+					onClick={() => void create()}
+				>
+					{adding ? <Trans>Save job, create and open</Trans> : <Trans>Create and open</Trans>}
 				</Button>
 			</div>
 		</>

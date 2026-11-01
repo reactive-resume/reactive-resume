@@ -80,6 +80,12 @@ const applicationSchema = createSelectSchema(schema.application, {
 	coverLetterName: z.string().nullable(),
 	followUpAt: z.date().nullable(),
 	followUpNote: z.string().trim().nullable(),
+	followUpDateOnly: z
+		.boolean()
+		.optional()
+		.describe(
+			"True for a legacy date-only follow-up. False preserves an exact reminder instant, including UTC midnight.",
+		),
 	tags: z.array(z.string()),
 	contacts: z.array(contactSchema),
 	activity: z.array(applicationTimelineEntrySchema),
@@ -87,6 +93,17 @@ const applicationSchema = createSelectSchema(schema.application, {
 	createdAt: z.date(),
 	updatedAt: z.date(),
 });
+
+/** An application's stage as a write left it, with the ID of its latest stage change: what a later move expects. */
+export const savedStagesSchema = z.array(
+	z.object({
+		id: z.string(),
+		status: applicationStatusSchema,
+		laneId: z.string().nullable(),
+		closedReason: applicationClosedReasonSchema.nullable(),
+		stageEntryId: z.string().nullable(),
+	}),
+);
 
 const applicationSummarySchema = applicationSchema.pick({
 	id: true,
@@ -99,12 +116,15 @@ const applicationSummarySchema = applicationSchema.pick({
 	closedReason: true,
 	resumeId: true,
 	coverLetterId: true,
+	resumeFileUrl: true,
+	coverLetterUrl: true,
 	source: true,
 	tags: true,
 	sourceUrl: true,
 	matchScore: true,
 	followUpAt: true,
 	followUpNote: true,
+	followUpDateOnly: true,
 	contacts: true,
 	activity: true,
 	appliedAt: true,
@@ -136,6 +156,7 @@ const editableSchema = applicationSchema.pick({
 	coverLetterName: true,
 	followUpAt: true,
 	followUpNote: true,
+	followUpDateOnly: true,
 	contacts: true,
 	resumeId: true,
 	coverLetterId: true,
@@ -189,7 +210,15 @@ export const applicationDto = {
 	},
 
 	create: {
-		input: createInputSchema.extend(documentFilesShape),
+		input: createInputSchema.extend({
+			...documentFilesShape,
+			newId: z
+				.uuid()
+				.optional()
+				.describe(
+					"A UUID the client chose for the new application. A retry of the same request with the same ID (after a lost response, say) returns the application already saved instead of saving another. The ID with any other request, one already used by a resume or application, or one whose application has since been deleted is refused with CONFLICT and nothing changes.",
+				),
+		}),
 		output: z.string().describe("The ID of the created application."),
 	},
 
@@ -294,8 +323,32 @@ export const applicationDto = {
 			laneId: z.string().min(1).optional(),
 			closedReason: applicationClosedReasonSchema.nullable().optional(),
 			addTags: z.array(z.string()).optional(),
+			expectedStages: z
+				.array(
+					z.object({
+						id: z.string(),
+						status: applicationStatusSchema,
+						laneId: z.string().nullable().optional(),
+						closedReason: applicationClosedReasonSchema.nullable(),
+						stageEntryId: z
+							.string()
+							.nullable()
+							.optional()
+							.describe("The ID of its latest stage change in `activity` then, so a move away and back counts too."),
+					}),
+				)
+				.max(200)
+				.optional()
+				.describe(
+					"The stage each application had when the move was chosen. An application whose stage has changed since is left as it is, so a later move wins over a deferred one.",
+				),
 		}),
-		output: z.object({ updated: z.number() }),
+		output: z.object({
+			updated: z.number(),
+			stages: savedStagesSchema.describe(
+				"Each counted application's stage as saved, with the ID of its latest stage change: what a later move of it expects.",
+			),
+		}),
 	},
 
 	bulkDelete: {

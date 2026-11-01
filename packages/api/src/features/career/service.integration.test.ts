@@ -195,8 +195,8 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 					id,
 					name: id,
 					email: `${id}@example.test`,
-					username: id,
-					displayUsername: id,
+					username: `${schemaName}-${id}`,
+					displayUsername: `${schemaName}-${id}`,
 				})),
 			);
 		await getDb()
@@ -1350,7 +1350,9 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		const answers = [{ id: "why", question: "Why ACME?", answer: "Submitted text", factIds: [] }];
 		await service.submitApplication("alice", "alice-app", answers, []);
 		await getDb().update(tables.resume).set({ trashedAt: new Date() }).where(eq(tables.resume.id, "shared-resume"));
-		await expect(service.submitApplication("alice", "alice-app", answers, [])).resolves.toBeUndefined();
+		const beforeRetry = await applications.getById({ userId: "alice", id: "alice-app" });
+		await expect(service.submitApplication("alice", "alice-app", answers, [])).resolves.toEqual({ stages: [] });
+		expect(await applications.getById({ userId: "alice", id: "alice-app" })).toEqual(beforeRetry);
 		const [snapshot] = await service.savedItems({ userId: "alice", applicationId: "alice-app", kind: "answers" });
 		if (!snapshot) throw new Error("Expected a submitted answer snapshot.");
 		await service.deleteSavedItem("alice", snapshot.id);

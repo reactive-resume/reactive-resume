@@ -4,6 +4,9 @@ const port = Number.parseInt(process.env.PORT ?? "3000", 10);
 const baseURL = process.env.APP_URL ?? `http://localhost:${port}`;
 const isCI = process.env.CI === "true" || process.env.CI === "1";
 
+// Share a fixed public cron fixture between the disposable Playwright server and its worker tests.
+process.env.CRON_SECRET ||= "isolated-ci-cron-secret-32-characters";
+
 export default defineConfig({
 	testDir: "./tests/e2e/specs",
 	fullyParallel: true,

@@ -520,6 +520,7 @@ let documentInput;
 let documentPlaceholder;
 let pendingDocuments = [];
 const documentPage = (input) => ({ queryKey: ["document-page", input] });
+let libraryParams = {};
 const { DocumentsLibrary } = load("features/documents/library.tsx", {
 	"@legendapp/list/reanimated": { AnimatedLegendList: "FlatList" },
 	"./document-sheets": { DocumentSheets: "DocumentSheets" },
@@ -551,7 +552,17 @@ const { DocumentsLibrary } = load("features/documents/library.tsx", {
 		},
 	},
 	"expo-haptics": {},
-	"expo-router": { ...mocks["expo-router"], useFocusEffect() {} },
+	"expo-router": {
+		...mocks["expo-router"],
+		useFocusEffect() {},
+		useLocalSearchParams: () => libraryParams,
+		useRouter: () => ({
+			...mocks["expo-router"].useRouter(),
+			setParams: (next) => {
+				libraryParams = { ...libraryParams, ...next };
+			},
+		}),
+	},
 	"@lingui/core/macro": { plural: (count, options) => options[count === 1 ? "one" : "other"].replace("#", count) },
 	"react-native-gesture-handler/ReanimatedSwipeable": {},
 	"react-native-reanimated": { ...animation, FlatList: "FlatList" },
@@ -566,6 +577,35 @@ const { DocumentsLibrary } = load("features/documents/library.tsx", {
 		useFirstAppearance: () => false,
 	},
 });
+// A search continuation updates the already-mounted tab, clears its one-shot params, and preserves library paging ownership.
+hooks.length = 0;
+render(DocumentsLibrary);
+libraryParams = { q: "rx112overflow", type: "letter" };
+render(DocumentsLibrary);
+render(DocumentsLibrary);
+assert.equal(documentInput.q, "rx112overflow");
+assert.equal(documentInput.type, "letter");
+assert.equal(documentInput.offset, 0);
+assert.equal(documentInput.limit, 100);
+let continued = nodes(render(DocumentsLibrary)).find((node) => node.type === "FlatList");
+nodes(continued.props.ListHeaderComponent)
+	.find((node) => node.type === "CollectionHeader")
+	.props.onChangeText("changed locally");
+render(DocumentsLibrary);
+await new Promise((resolve) => setTimeout(resolve, 350));
+render(DocumentsLibrary);
+assert.equal(documentInput.q, "changed locally");
+libraryParams = { q: "rx112overflow", type: "letter" };
+render(DocumentsLibrary);
+render(DocumentsLibrary);
+await new Promise((resolve) => setTimeout(resolve, 350));
+render(DocumentsLibrary);
+assert.equal(documentInput.q, "rx112overflow");
+assert.equal(documentInput.type, "letter");
+assert.equal(libraryParams.q, undefined);
+assert.equal(libraryParams.type, undefined);
+console.log("PASS native repeatable query/type continuation into an already-mounted paginated library");
+
 // Changing library columns remounts its header; an active filter must remain visible and clearable.
 hooks.length = 0;
 let restoredSearch = "Fold QA duplicate";

@@ -5,6 +5,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { ORPCError } from "@orpc/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const api = vi.hoisted(() => ({
@@ -19,6 +20,7 @@ const api = vi.hoisted(() => ({
 	remove: vi.fn(),
 	invalidate: vi.fn(),
 	confirm: vi.fn(),
+	moveWithUndo: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
 vi.mock("@/libs/orpc/client", () => ({
@@ -44,6 +46,7 @@ vi.mock("@/libs/orpc/client", () => ({
 				searchPostings: { mutationOptions: () => ({ mutationFn: async () => [] }) },
 			},
 		},
+		career: { savedItems: { queryOptions: () => ({ queryKey: ["offers"], queryFn: async () => [] }) } },
 		webAccess: {
 			status: { queryOptions: () => ({ queryKey: ["web-access"], queryFn: async () => ({ search: false }) }) },
 		},
@@ -53,6 +56,7 @@ vi.mock("@/libs/orpc/client", () => ({
 vi.mock("../use-application-actions", () => ({
 	useInvalidateApplications: () => api.invalidate,
 	useApplicationActions: () => ({ moveTo: api.moveTo, close: api.close, remove: { mutate: api.remove } }),
+	useMoveWithUndo: () => api.moveWithUndo,
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => api.confirm }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => "desktop" }));
@@ -247,6 +251,72 @@ it("never dispatches a no-AI parse to a server that cannot confirm support, whil
 			{ input: "https://example.test/role", useAI: true },
 			expect.anything(),
 		),
+	);
+});
+
+it("shows pasted text once when AI couldn't read it, and saves that text (J2-20)", async () => {
+	const posting = "VP of Engineering\nFieldnote · Remote\nRun budget and vendor relationships.";
+	api.parsePosting.mockResolvedValue({
+		role: "",
+		company: "",
+		location: "",
+		salary: "",
+		requirements: [],
+		jobDescription: posting,
+		filledBy: "none",
+		enrichmentWarning: true,
+		postingSource: { method: "paste", format: "text", truncated: false, completeness: "unknown" },
+	});
+	api.create.mockResolvedValue("saved");
+	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
+		target: { value: posting },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	await screen.findByText(/AI couldn't fill the details/);
+	expect(screen.queryByRole("textbox", { name: "Saved description" })).toBeNull();
+	fireEvent.change(screen.getByRole("textbox", { name: "Role" }), { target: { value: "VP of Engineering" } });
+	fireEvent.change(screen.getByRole("textbox", { name: "Company" }), { target: { value: "Fieldnote" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save job" }));
+	await waitFor(() => expect(api.create.mock.calls[0]?.[0]).toMatchObject({ jobDescription: posting }));
+});
+
+it("shows the posting once when a link couldn't be read, its text was pasted and AI couldn't read that either (J2-20)", async () => {
+	const posting = "VP of Engineering\nFieldnote · Remote\nRun budget and vendor relationships.";
+	api.parsePosting
+		.mockRejectedValueOnce(new ORPCError("POSTING_UNREADABLE", { status: 422, message: "That link couldn't be read." }))
+		.mockResolvedValue({
+			role: "",
+			company: "",
+			location: "",
+			salary: "",
+			requirements: [],
+			jobDescription: posting,
+			filledBy: "none",
+			enrichmentWarning: true,
+			postingSource: { method: "paste", format: "text", truncated: false, completeness: "unknown" },
+		});
+	api.create.mockResolvedValue("saved");
+	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
+		target: { value: "https://jobs.example.test/vp" },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Read posting" }));
+	fireEvent.change(await screen.findByRole("textbox", { name: "Pasted description" }), { target: { value: posting } });
+	fireEvent.click(screen.getByRole("button", { name: "Read with AI" }));
+	await screen.findByText(/AI couldn't fill the details/);
+
+	expect(screen.getAllByRole("textbox").filter((box) => (box as HTMLTextAreaElement).value === posting)).toHaveLength(
+		1,
+	);
+	fireEvent.change(screen.getByRole("textbox", { name: "Role" }), { target: { value: "VP of Engineering" } });
+	fireEvent.change(screen.getByRole("textbox", { name: "Company" }), { target: { value: "Fieldnote" } });
+	fireEvent.click(screen.getByRole("button", { name: "Save job" }));
+	await waitFor(() =>
+		expect(api.create.mock.calls[0]?.[0]).toMatchObject({
+			jobDescription: posting,
+			sourceUrl: "https://jobs.example.test/vp",
+		}),
 	);
 });
 

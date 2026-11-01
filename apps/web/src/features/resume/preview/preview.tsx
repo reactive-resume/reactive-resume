@@ -15,7 +15,9 @@ export function ResumePreview(props: ResumePreviewProps) {
 	const pageCount = getResumePreviewPageCount(props.data ?? builderResumeData);
 
 	return (
-		<Suspense fallback={<ResumePreviewLoader {...props} pageCount={pageCount} />}>
+		<Suspense
+			fallback={<ResumePreviewLoader {...props} data={props.data ?? builderResumeData} pageCount={pageCount} />}
+		>
 			<ResumePreviewClient {...props} />
 		</Suspense>
 	);

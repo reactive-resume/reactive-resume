@@ -118,10 +118,25 @@ msgstr "{0, plural, one {# candidatura activa} other {# candidatures actives}}"
 msgid "{0, plural, one {# answer} other {# answers}}"
 msgstr "{0, plural, one {# resposta} other {# respostes}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {# application closed as Accepted another offer} other {# applications closed as Accepted another offer}}"
+msgstr ""
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application closed} other {# applications closed}}"
+msgstr ""
+
 #. placeholder {0}: result.deleted
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {# application deleted} other {# applications deleted}}"
 msgstr "{0, plural, one {S'ha suprimit # candidatura} other {S'han suprimit # candidatures}}"
+
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {# application moved to {label}} other {# applications moved to {label}}}"
+msgstr ""
 
 #. placeholder {0}: importable.length
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -264,6 +279,16 @@ msgstr "{0, plural, one {Enviada fa # dia} other {Enviada fa # dies}}"
 msgid "{0, plural, one {Backs # story} other {Backs # stories}}"
 msgstr "{0, plural, one {Avala # història} other {Avala # històries}}"
 
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {Close it} other {Close all #}}"
+msgstr ""
+
+#. placeholder {0}: others.length
+#: src/features/applications/use-application-actions.ts
+msgid "{0, plural, one {Closed as Accepted offer. Close your other open application as Accepted another offer?} other {Closed as Accepted offer. Close your # other open applications as Accepted another offer?}}"
+msgstr ""
+
 #. placeholder {0}: ids.length
 #: src/features/applications/components/list-view.tsx
 msgid "{0, plural, one {Delete # application?} other {Delete # applications?}}"
@@ -318,6 +343,11 @@ msgstr "{0, plural, one {Llegint el fragment # del teu currículum...} other {Ll
 #: src/features/career/coach-chat.tsx
 msgid "{0, plural, one {Remember # fact?} other {Remember # facts?}}"
 msgstr "{0, plural, one {Voleu recordar # fet?} other {Voleu recordar # fets?}}"
+
+#. placeholder {0}: filtered.length
+#: src/routes/dashboard/applications/index.tsx
+msgid "{0, plural, one {Showing # application that needs a follow-up.} other {Showing # applications that need a follow-up.}}"
+msgstr ""
 
 #. placeholder {0}: -minutes
 #: src/features/career/workspace/prepare.tsx
@@ -547,6 +577,10 @@ msgstr "{column, plural, one {Columna #} other {Columnes #}}"
 msgid "{company} only"
 msgstr "Només {company}"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "{company}: a follow-up is due."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} no ha respost."
@@ -558,6 +592,10 @@ msgstr "{cost} l'any"
 #: src/features/resume/share/cv-domain-card.tsx
 msgid "{cost} the first year"
 msgstr "{cost} el primer any"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{count, plural, one {# application needs a follow-up.} other {# applications need a follow-up.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{count, plural, one {# entry} other {# entries}}"
@@ -604,6 +642,10 @@ msgstr "{days, plural, one {# dia d'oficina, el vostre límit} other {# dies d'o
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
 msgstr ""
 
+#: src/features/career/offers.tsx
+msgid "{delta} vs {version}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "{done, plural, one {# document updated} other {# documents updated}}"
 msgstr "{done, plural, one {# document actualitzat} other {# documents actualitzats}}"
@@ -632,6 +674,10 @@ msgstr "{entries, plural, one {Entrada #} other {# entrades}}"
 #: src/features/resume/editor/check/issues.ts
 msgid "{entry} doesn't say when. Dates place it on your timeline."
 msgstr "{entry} no diu quan. Les dates el col·loquen a la vostra línia de temps."
+
+#: src/features/resume/editor/check/issues.ts
+msgid "{entry} has no dates and reads like a sentence cut off the entry above it, which happens when a PDF import splits a bullet. Adding dates would make it look like a separate job."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "{entry} names the role but not what you did, so it adds no keywords."
@@ -664,6 +710,34 @@ msgstr "{issues, plural, one {El problema de # us pot costar un partit.} other {
 #: src/features/resume/share/download-tab.tsx
 msgid "{issues, plural, one {Check has # thing to review. You can still download.} other {Check has # things to review. You can still download.}}"
 msgstr "{issues, plural, one {El xec té # cosa per revisar. Encara us podeu descarregar.} other {Check té # coses per revisar. Encara us podeu descarregar.}}"
+
+#: src/libs/dnd.ts
+msgid "{item} is back where it started."
+msgstr "{item} ha tornat a la posició inicial."
+
+#: src/libs/dnd.ts
+msgid "{item} is not over a place it can go."
+msgstr "{item} no és sobre cap lloc on es pugui deixar."
+
+#: src/libs/dnd.ts
+msgid "{item} is over {place}."
+msgstr "{item} és sobre {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped on {place}."
+msgstr "{item} s'ha deixat a {place}."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it can't go. Nothing moved."
+msgstr "{item} s'ha deixat on no pot anar. No s'ha mogut res."
+
+#: src/libs/dnd.ts
+msgid "{item} was dropped where it started. Nothing moved."
+msgstr "{item} s'ha deixat a la posició inicial. No s'ha mogut res."
+
+#: src/features/applications/use-application-actions.ts
+msgid "{kept, plural, one {# application changed in the meantime, so it keeps its newer stage} other {# applications changed in the meantime, so they keep their newer stage}}"
+msgstr ""
 
 #: src/features/applications/next-step.ts
 #: src/features/career/today.tsx
@@ -860,7 +934,15 @@ msgstr "{toCheck, plural, one {El camp # necessita una ullada.} other {Els camps
 msgid "{toCheck, plural, one {# to check} other {# to check}}"
 msgstr "{toCheck, plural, one {# per comprovar} other {# per comprovar}}"
 
-#. placeholder {0}: formatRelativeTime(document.updatedAt, i18n.locale)
+#: src/features/settings/account/profile.tsx
+msgid "{total, plural, one {# public link will change} other {# public links will change}}"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {# document} other {# documents}}"
+msgstr ""
+
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr "{type} · Editat {0}"
@@ -919,8 +1001,8 @@ msgid "<0>Posting asks for:</0> {requirement}"
 msgstr ""
 
 #: src/features/career/offers.tsx
-msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain for both. Read the original offer documents before comparing totals."
-msgstr "<0>Els totals no se sumen expressament.</0> La prima i les accions depenen de condicions, i el valor de les accions és incert en totes dues ofertes. Llegiu els documents originals de les ofertes abans de comparar totals."
+msgid "<0>Totals aren't added up on purpose.</0> Bonus and equity depend on conditions, and equity value is uncertain. Read the original offer documents before comparing totals."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -1091,6 +1173,10 @@ msgstr "Un enllaç apunta a un lloc diferent de l'adreça que mostra."
 msgid "A model's opinion, not a verdict. It can be wrong."
 msgstr "L'opinió d'un model, no un veredicte. Pot estar malament."
 
+#: src/features/career/offer-entry.tsx
+msgid "a month"
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "A name helps you tell passkeys apart, like “Work laptop”."
 msgstr "Un nom us ajuda a distingir les claus d'accés, com ara «Portàtil de la feina»."
@@ -1151,6 +1237,10 @@ msgstr "Un pla cronometrat, la vostra presentació inicial, les històries que c
 msgid "A web address is written without https://."
 msgstr "Una adreça web està escrita sense https://."
 
+#: src/features/career/offer-entry.tsx
+msgid "a year"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "About"
 msgstr "Sobre aquesta aplicació"
@@ -1181,6 +1271,8 @@ msgstr "Acceptar"
 msgid "Accept all"
 msgstr "Acceptar-ho tot"
 
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/homepage/write.tsx
 msgid "Accepted"
 msgstr "Acceptat"
@@ -1284,6 +1376,14 @@ msgstr "Afegeix un país"
 msgid "Add a fact, for example “I mentored two associate PMs in 2025”"
 msgstr "Afegiu un fet, per exemple «El 2025 vaig fer mentoria a dos PM júnior»"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Add a job"
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "Add a job…"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Add a keyword..."
 msgstr "Afegeix una paraula clau..."
@@ -1300,6 +1400,10 @@ msgstr "Afegeix un enllaç"
 #: src/features/resume/editor/check/issues.ts
 msgid "Add a location"
 msgstr "Afegeix una ubicació"
+
+#: src/features/career/offer-entry.tsx
+msgid "Add a newer offer"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Add a note"
@@ -1432,6 +1536,10 @@ msgstr "Afegeix una carta de presentació"
 msgid "Add dates"
 msgstr "Afegeix dates"
 
+#: src/features/career/offers.tsx
+msgid "Add each offer's terms to compare it. Nothing is filled in for you."
+msgstr ""
+
 #: src/features/resume/editor/write/outline.tsx
 msgid "Add education"
 msgstr "Afegeix educació"
@@ -1490,8 +1598,8 @@ msgid "Add offer"
 msgstr "Afegeix una oferta laboral"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, or use optional AI extraction in Messages."
-msgstr "Afegeix les condicions d'una oferta laboral manualment o utilitza l'extracció opcional amb IA a Missatges."
+msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -1570,6 +1678,10 @@ msgstr "Afegeix una etiqueta"
 msgid "Add text"
 msgstr "Afegeix text"
 
+#: src/features/applications/next-step.ts
+msgid "Add the date when you have it"
+msgstr ""
+
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain after the @, like {name}@example.com"
 msgstr "Afegiu el domini després de @, com ara {name}@example.com"
@@ -1577,6 +1689,12 @@ msgstr "Afegiu el domini després de @, com ara {name}@example.com"
 #: src/features/resume/editor/write/fields.tsx
 msgid "Add the domain ending, like {domain}.com"
 msgstr "Afegeix el final del domini, com ara {domain}.com"
+
+#: src/features/applications/components/detail/next-step-card.tsx
+#: src/features/applications/next-step.ts
+#: src/features/applications/use-application-actions.ts
+msgid "Add the offer's terms"
+msgstr ""
 
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
@@ -1936,9 +2054,9 @@ msgstr "Una entrada no té dates"
 msgid "an error"
 msgstr "un error"
 
-#: src/components/layout/error-screen.tsx
-msgid "An unexpected error stopped this page from loading. Try again, or go to the dashboard."
-msgstr "Un error inesperat ha impedit carregar aquesta pàgina. Torneu-ho a provar o aneu al tauler."
+#: src/features/career/offer-entry.tsx
+msgid "an hour"
+msgstr ""
 
 #. Hero headline, line 3 of 4: A free, open-source / resume builder / and / career manager.
 #: src/features/homepage/hero.tsx
@@ -2370,12 +2488,12 @@ msgid "ATS-safe"
 msgstr "ATS-segur"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Attach a cover letter (PDF)"
-msgstr "Adjunta una carta de presentació (PDF)"
+msgid "Attach a cover letter (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a cover letter file (PDF)"
-msgstr "Adjunteu un fitxer de carta de presentació (PDF)"
+msgid "Attach a cover letter file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
@@ -2387,8 +2505,8 @@ msgid "Attach a file instead"
 msgstr "En lloc d'això, adjunteu un fitxer"
 
 #: src/features/applications/components/detail/sent-documents.tsx
-msgid "Attach a resume file (PDF)"
-msgstr "Adjunta un fitxer de currículum (PDF)"
+msgid "Attach a resume file (PDF, up to 10 MB)"
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
@@ -2601,10 +2719,6 @@ msgstr "Radi de la vora"
 msgid "Border width"
 msgstr "Amplada de la vora"
 
-#: src/features/career/offers.tsx
-msgid "Both offers cover everything compared here."
-msgstr "Totes dues ofertes cobreixen tot el que es compara aquí."
-
 #: src/features/ats-checker/messages.ts
 msgid "Break the resume into the usual sections so it can be segmented."
 msgstr "Divideix el currículum en les seccions habituals perquè es pugui segmentar."
@@ -2685,6 +2799,11 @@ msgstr "entrada de llista {n}"
 msgid "Bulleted list"
 msgstr "Llista amb pics"
 
+#. placeholder {0}: formatWhen(step.respondBy, locale, timeZone, true)
+#: src/features/applications/next-step.ts
+msgid "By {0}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "By the community, for the community."
 msgstr "De la comunitat i per a la comunitat."
@@ -2737,6 +2856,10 @@ msgstr "El programari pot llegir el vostre currículum?"
 msgid "Cancel"
 msgstr "Cancel·la"
 
+#: src/features/auth/pages/consent.tsx
+msgid "Cancel connection"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Capture a posting from your browser with the helper, or paste its URL/text below."
 msgstr ""
@@ -2745,6 +2868,7 @@ msgstr ""
 msgid "Capture does not use AI. Review every field before saving."
 msgstr ""
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Career"
@@ -2767,6 +2891,7 @@ msgstr "Català"
 msgid "Certifications"
 msgstr "Certificacions"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/check/writing-tab.tsx
 #: src/features/settings/account/security.tsx
@@ -2821,6 +2946,10 @@ msgstr "Canvia aquesta entrada de cronologia."
 msgid "Change timezone"
 msgstr "Canvia el fus horari"
 
+#: src/features/settings/account/profile.tsx
+msgid "Change username"
+msgstr ""
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Change your password"
 msgstr "Canvieu la contrasenya"
@@ -2840,6 +2969,11 @@ msgstr "Canvi de registre"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Canvia només els títols de les seccions i les paraules de la data, no el contingut."
+
+#. placeholder {0}: versionLabel(earlier)
+#: src/features/career/offers.tsx
+msgid "Changes since {0}"
+msgstr ""
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3020,6 +3154,7 @@ msgstr ""
 msgid "Choose a file"
 msgstr "Trieu un fitxer"
 
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose a file to import"
 msgstr "Trieu un fitxer per importar"
@@ -3203,6 +3338,8 @@ msgstr "Tancar…"
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 msgid "Closed"
 msgstr "Tancat"
 
@@ -3210,8 +3347,13 @@ msgstr "Tancat"
 msgid "Closed as {label}"
 msgstr "Tancada com a {label}"
 
+#: src/features/applications/use-application-actions.ts
+msgid "Closed as Accepted offer"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/career/workspace/coach-sheet.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/coach.{-$conversationId}.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Coach"
@@ -3276,6 +3418,7 @@ msgstr "Compacte"
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/design/entries-group.tsx
 #: src/features/resume/editor/write/entries.tsx
@@ -3284,11 +3427,20 @@ msgstr "Compacte"
 msgid "Company"
 msgstr "Empresa"
 
+#: src/features/career/offer-entry.tsx
+msgid "Compare"
+msgstr ""
+
 #. placeholder {0}: application.company
 #: src/features/career/workspace/practise.tsx
 msgid "Compare attempts to see what improved. Practice questions are simulated, not from {0}."
 msgstr "Compareu els intents per veure què ha millorat. Les preguntes d'assaig són simulades, no provenen de {0}."
 
+#: src/features/applications/next-step.ts
+msgid "Compare it with your other offers"
+msgstr ""
+
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Compare offers"
 msgstr "Compara ofertes"
@@ -3415,6 +3567,11 @@ msgstr "Connecteu el vostre propi proveïdor d'IA perquè un model d'idioma lleg
 msgid "Connected"
 msgstr "Connectat"
 
+#. placeholder {0}: i18n.date(new Date(connection.createdAt), { dateStyle: "medium" })
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Aplicacions connectades"
@@ -3483,6 +3640,7 @@ msgstr "Contactes"
 msgid "Contain"
 msgstr "Encabir"
 
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
 msgid "Content"
 msgstr "Contingut"
@@ -3585,6 +3743,11 @@ msgstr "Copia els codis"
 msgid "Copy conversation"
 msgstr "Copia la conversa"
 
+#. placeholder {0}: resume.application.company
+#: src/features/documents/new-document-dialog.tsx
+msgid "Copy for {0}"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Copy for a job…"
 msgstr "Còpia per a una feina..."
@@ -3600,6 +3763,10 @@ msgstr "Copia-ho ara. Per la vostra seguretat, no es tornarà a mostrar."
 #: src/features/homepage/share.tsx
 msgid "Copy link"
 msgstr "Copia l'enllaç"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Copy made for {company}. This resume is unchanged."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "Copy public link"
@@ -3727,6 +3894,7 @@ msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "No s'han pogut copiar les preguntes. Seleccioneu el text i copieu-lo manualment."
 
 #: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't copy the resume. Try again."
 msgstr "No s'ha pogut copiar el currículum. Torneu-ho a provar."
 
@@ -3757,6 +3925,10 @@ msgstr "No s'ha pogut crear la carta. Torneu-ho a provar."
 #: src/features/auth/pages/register.tsx
 msgid "Couldn't create your account. Try again."
 msgstr "No s'ha pogut crear el vostre compte. Torneu-ho a provar."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't crop the photo. Try a different photo."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't delete that story. Try again."
@@ -3891,6 +4063,10 @@ msgstr ""
 msgid "Couldn't load interviews. Retry"
 msgstr "No s'han pogut carregar les entrevistes. Torna-ho a provar"
 
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Couldn't load letters. Try again."
+msgstr "No s'han pogut carregar les cartes de presentació. Torna-ho a provar."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "No s'ha pogut carregar ni desar la configuració de l'accés web. Torneu-ho a provar."
@@ -3970,6 +4146,10 @@ msgstr "No s'ha pogut llegir aquest fitxer. Torneu-ho a provar."
 msgid "Couldn't read the dates on {entries}, so they stay at the end. Fix their dates and sort again."
 msgstr "No s'han pogut llegir les dates de {entries}, de manera que queden al final. Corregiu-ne les dates i torneu a ordenar."
 
+#: src/features/resume/import/pdf-text.ts
+msgid "Couldn't read the whole PDF. Split it into smaller files and try again."
+msgstr ""
+
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
 msgid "Couldn't read this page: {0}"
@@ -4047,10 +4227,6 @@ msgstr "No s'ha pogut desar aquest canvi. Torna-ho a provar."
 msgid "Couldn't save that to Knowledge. Try again."
 msgstr "No s'ha pogut desar a Coneixements. Torneu-ho a provar."
 
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Couldn't save the application. Try again."
-msgstr "No s'ha pogut desar la candidatura. Torneu-ho a provar."
-
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "Couldn't save the change. Try again."
 msgstr "No s'ha pogut desar el canvi. Torneu-ho a provar."
@@ -4062,6 +4238,15 @@ msgstr "No s'han pogut desar els documents. Torneu-ho a provar."
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Couldn't save the follow-up. Try again."
 msgstr "No s'ha pogut desar el seguiment. Torneu-ho a provar."
+
+#: src/features/documents/new-document-dialog.tsx
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the job and its copy. Try again."
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Couldn't save the job. Try again."
+msgstr ""
 
 #: src/features/applications/components/application-notes.tsx
 msgid "Couldn't save the notes. Try again."
@@ -4241,6 +4426,7 @@ msgid "Couldn't update the application. Try again."
 msgstr "No s'ha pogut actualitzar la candidatura. Torneu-ho a provar."
 
 #: src/features/applications/components/list-view.tsx
+#: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "No s'han pogut actualitzar les sol·licituds de feina. Torna-ho a provar."
 
@@ -4268,8 +4454,10 @@ msgstr "No s'ha pogut actualitzar la cronologia. Torna-ho a provar."
 msgid "Couldn't update this letter's versions. Try again."
 msgstr "No s'han pogut actualitzar les versions d'aquesta carta. Torneu-ho a provar."
 
-#. Fallback toast when uploading profile picture for resume fails
 #: src/features/resume/editor/write/picture-settings.tsx
+msgid "Couldn't upload the photo. Choose a readable PNG, JPEG, WebP or GIF photo up to 10 MB, then try again."
+msgstr ""
+
 #: src/features/settings/account/profile.tsx
 msgid "Couldn't upload the photo. Try again."
 msgstr "No s'ha pogut pujar la fotografia. Torneu-ho a provar."
@@ -4325,6 +4513,7 @@ msgstr "Cobrir"
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
+#: src/features/command-palette/pages/navigation.tsx
 msgid "Cover letter"
 msgstr "Carta de presentació"
 
@@ -4343,6 +4532,7 @@ msgid "Cover letter · Fieldnote"
 msgstr "Carta de presentació · Fieldnote"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Cover letter file"
 msgstr "Fitxa carta de presentació"
@@ -4383,9 +4573,18 @@ msgid "Create a resume or letter first."
 msgstr ""
 
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/routes/auth/register.tsx
 msgid "Create account"
 msgstr "Crea un compte"
+
+#: src/features/auth/pages/consent.tsx
+msgid "Create an account to connect apps. Guest accounts are temporary."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "Create and change your documents and job applications, seeing each one it changes in full, and change your profile and username."
@@ -4415,10 +4614,9 @@ msgstr "Creat"
 msgid "Created “{finalName}”"
 msgstr "S'ha creat \"{finalName}\""
 
-#. placeholder {0}: job.company
 #: src/features/documents/new-document-dialog.tsx
-msgid "Created and linked to {0}"
-msgstr "Creat i enllaçat a {0}"
+msgid "Created and linked to {company}"
+msgstr "Creat i enllaçat a {company}"
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Crop and upload"
@@ -4587,6 +4785,10 @@ msgstr "Benvolgut equip de contractació,"
 msgid "Debrief"
 msgstr "Balanç"
 
+#: src/features/applications/next-step.ts
+msgid "Decide on the offer"
+msgstr ""
+
 #: src/features/homepage/prepare.tsx
 msgid "Deep breath."
 msgstr "Respireu fondo."
@@ -4647,6 +4849,10 @@ msgstr "Suprimeix la candidatura"
 #: src/features/assistant/assistant-panel.tsx
 msgid "Delete conversation"
 msgstr "Suprimeix la conversa"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/resume/editor/write/entry-card.tsx
@@ -4875,8 +5081,26 @@ msgid "Discard unsaved changes?"
 msgstr "Voleu descartar els canvis no desats?"
 
 #: src/features/settings/account/security.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Disconnect"
 msgstr "Desconnecta"
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect “{name}”?"
+msgstr ""
+
+#. placeholder {0}: connection.clientName
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect {0}"
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/settings/account/auth-hooks.ts
 msgid "Disconnecting your {providerName} account…"
@@ -5020,6 +5244,7 @@ msgid "Download failed. Try again."
 msgstr "La baixada ha fallat. Torneu-ho a provar."
 
 #: src/features/career/workspace/preparation.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Download PDF"
@@ -5139,6 +5364,10 @@ msgstr "arrossegar · ⌥↑↓"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Arrossega i deixa anar seccions aquí per moure-les entre columnes"
+
+#: src/libs/dnd.ts
+msgid "Drag it with a pointer to move it, or use its menu."
+msgstr "Arrossegueu-lo amb el punter per moure'l o feu servir el seu menú."
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Drag to reposition and use the slider to zoom before uploading."
@@ -5502,6 +5731,10 @@ msgstr "Introduïu una adreça web, com ara .com"
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Introduïu un dels codis de seguretat desats per accedir al vostre compte."
+
+#: src/features/documents/documents-page.tsx
+msgid "Enter opens the first result. Down arrow moves to the results. Escape clears."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5937,6 +6170,7 @@ msgid "Follow-up date"
 msgstr "Data de seguiment"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/career/schedule-sheet.tsx
 msgid "Follow-up note"
 msgstr "Nota de seguiment"
 
@@ -6283,6 +6517,10 @@ msgstr "Ves al tauler"
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Go to Reactive Resume"
+msgstr "Ves a Reactive Resume"
+
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Go to…"
 msgstr "Ves a…"
@@ -6365,6 +6603,7 @@ msgid "Heading changed"
 msgstr "El títol ha canviat"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Headline"
 msgstr "Titular"
 
@@ -6689,9 +6928,17 @@ msgstr "Progrés de la importació"
 msgid "Import steps"
 msgstr "Passos d'importació"
 
+#: src/features/documents/documents-page.tsx
+msgid "Import the one you have, or start blank."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
 msgstr "Importeu aquest fitxer a un Reactive Resume gratuït. Cada problema us està esperant a Check."
+
+#: src/features/documents/documents-page.tsx
+msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Choose a PDF, Word or JSON file."
+msgstr ""
 
 #: src/features/documents/documents-page.tsx
 msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
@@ -6729,6 +6976,15 @@ msgstr "S'està millorant…"
 #: src/features/homepage/sections.tsx
 msgid "In good company"
 msgstr "En bona companyia"
+
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
+msgid "In progress"
+msgstr ""
+
+#: src/features/career/offers.tsx
+msgid "In the Offer stage, terms not added"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Increase line spacing so two lines are not merged into one."
@@ -6919,6 +7175,10 @@ msgstr "Els problemes i la concordança de treball encara funcionen sense IA."
 msgid "It has entries but isn't placed on a page."
 msgstr "Té entrades però no es col·loca en una pàgina."
 
+#: src/features/settings/ai/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "Potser s'ha suprimit. Trieu una altra història o afegiu-ne una de nova."
@@ -6998,6 +7258,10 @@ msgstr "Coincidència de feina"
 msgid "Job posting"
 msgstr "Oferta de feina"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Job posting (optional)"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Job posting <0>· optional, adds a keyword match</0>"
 msgstr "Oferta de feina <0>· opcional, afegeix una comparació de paraules clau</0>"
@@ -7075,6 +7339,7 @@ msgid "Keep a single address, so software does not have to guess which one to us
 msgstr "Fes servir una sola adreça, perquè el programari no hagi d'endevinar quina ha de fer servir."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Keep access when you are not using the application."
 msgstr "Mantenir l'accés quan no estiguis utilitzant l'aplicació."
 
@@ -7150,6 +7415,10 @@ msgstr "Limita't a dues o tres famílies. Cada tipus de lletra addicional és un
 msgid "Keep together"
 msgstr "Mantingueu-vos junts"
 
+#: src/features/settings/account/profile.tsx
+msgid "Keep username"
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "Keeps the most specific parts"
 msgstr "Manté les parts més específiques"
@@ -7200,6 +7469,7 @@ msgstr "Khmer"
 msgid "Kind regards,"
 msgstr "Salutacions cordials,"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/homepage/remember.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/routes/dashboard/career/knowledge/route.tsx
@@ -7293,6 +7563,7 @@ msgstr "Últim ús"
 
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-chat.tsx
+#: src/features/career/offers.tsx
 msgid "Latest"
 msgstr "Més recent"
 
@@ -7413,6 +7684,7 @@ msgid "letter"
 msgstr "carta"
 
 #: src/features/assistant/document.ts
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/documents/document-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter"
@@ -7450,6 +7722,7 @@ msgstr "S'ha duplicat la carta"
 msgid "Letter page"
 msgstr "Pàgina de carta"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/documents-page.tsx
 msgid "Letters"
 msgstr "Cartes"
@@ -7556,6 +7829,10 @@ msgstr "Enllaça una sol·licitud de feina..."
 msgid "Link copied"
 msgstr "S'ha copiat l'enllaç"
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Link this resume"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Link to application"
 msgstr "Enllaç a la sol·licitud de feina"
@@ -7616,14 +7893,14 @@ msgstr "LinkedIn"
 msgid "LinkedIn, Referral…"
 msgstr "LinkedIn, Recomanació…"
 
-#: src/features/resume/editor/check/job-match.tsx
-msgid "Linking…"
-msgstr "S'està enllaçant..."
-
 #: src/features/resume/editor/check/parser-view.tsx
 #: src/features/settings/profile.tsx
 msgid "Links"
 msgstr "Enllaços"
+
+#: src/features/settings/account/profile.tsx
+msgid "Links you've already shared keep working for 30 days, then stop. Share the new ones before then."
+msgstr ""
 
 #: src/features/homepage/hero.tsx
 msgid "Lisbon"
@@ -7669,6 +7946,7 @@ msgid "Load your stages before importing named stages. Your CSV data is kept."
 msgstr "Carregueu les vostres etapes abans d'importar etapes amb nom. Es conserven les dades CSV."
 
 #: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/editor-pending.tsx
 msgid "Loading"
 msgstr "S'està carregant"
 
@@ -7792,6 +8070,10 @@ msgstr "Què cercar"
 msgid "Looks exactly like the page. Use it for applications and email."
 msgstr "Sembla exactament a la pàgina. Utilitzeu-lo per a sol·licituds de feina i correu electrònic."
 
+#: src/features/resume/editor/check/issues.ts
+msgid "Looks like part of the entry above"
+msgstr ""
+
 #. Link to backup-code verification flow when authenticator app is unavailable
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Lost access to your authenticator?"
@@ -7817,6 +8099,10 @@ msgstr "Principal"
 #: src/routes/_home/-sections/header.tsx
 msgid "Main navigation"
 msgstr "Navegació principal"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Make a copy for this job"
+msgstr ""
 
 #: src/features/homepage/design.tsx
 msgid "Make any of them yours."
@@ -8014,6 +8300,14 @@ msgstr "Mitjana"
 #: src/features/homepage/prepare.tsx
 msgid "Mentor other designers"
 msgstr "Fer mentoria a altres dissenyadors"
+
+#: src/features/resume/editor/check/issues.ts
+msgid "Merge into previous entry"
+msgstr ""
+
+#: src/features/resume/editor/check/issues.ts
+msgid "Merged into the entry above"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Message saved with this application"
@@ -8243,6 +8537,10 @@ msgstr "S'ha mogut a {label}"
 msgid "Moves the application from {0}."
 msgstr "Mou la candidatura des de l'etapa {0}."
 
+#: src/libs/dnd.ts
+msgid "Moving {item} was cancelled. Nothing moved."
+msgstr "S'ha cancel·lat el moviment de {item}. No s'ha mogut res."
+
 #: src/features/homepage/remember.tsx
 msgid "My job was to find out why, without adding support work."
 msgstr "La meva feina era esbrinar-ne el motiu sense afegir feina de suport."
@@ -8381,6 +8679,8 @@ msgstr "Candidatura nova"
 msgid "New conversation"
 msgstr "Nova conversa"
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/new-document-dialog.tsx
 msgid "New cover letter"
 msgstr ""
@@ -8412,6 +8712,10 @@ msgstr "Pàgina nova"
 msgid "New password"
 msgstr "Contrasenya nova"
 
+#: src/features/documents/documents-page.tsx
+msgid "New resume"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "New roles from your search"
 msgstr "Llocs nous de la vostra cerca"
@@ -8436,6 +8740,7 @@ msgstr "Color de l'etapa nova"
 msgid "New teams at Northwind were stalling in setup; most never got through."
 msgstr "Els equips nous de Northwind s'encallaven en la configuració; la majoria no l'acabaven mai."
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Next"
 msgstr ""
@@ -8502,6 +8807,9 @@ msgid "No applications yet"
 msgstr "Encara no hi ha cap sol·licitud de feina"
 
 #: src/features/documents/document-actions.tsx
+msgid "No applications yet."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No applications yet. Add one in Applications first."
 msgstr "Encara no hi ha cap sol·licitud de feina. Afegiu-ne un a les sol·licituds de feina primer."
@@ -8520,7 +8828,7 @@ msgid "No commands match that search."
 msgstr "Cap ordre no coincideix amb aquesta cerca."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "No connected applications yet. Apps you allow to access your account appear here."
+msgid "No connected applications. Apps you allow appear here."
 msgstr "Encara no hi ha aplicacions connectades. Aquí apareixeran les aplicacions a les quals permeteu accedir al vostre compte."
 
 #: src/features/applications/components/detail/contacts.tsx
@@ -8547,6 +8855,10 @@ msgstr "No s'han trobat països."
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "No cover letter selected"
 msgstr "No s'ha seleccionat cap carta de presentació"
+
+#: src/features/documents/documents-page.tsx
+msgid "No cover letters yet"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "No current target-role or location phrase matches."
@@ -8600,6 +8912,10 @@ msgstr "Encara no hi ha fets per enllaçar. Afegiu-los a Fets."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "No facts yet"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "No interview scheduled"
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -8668,6 +8984,10 @@ msgstr "Cap foto. La majoria de ATS ignoren les fotos; algunes regions n'esperen
 msgid "No postings found. Try different keywords."
 msgstr "No s'han trobat ofertes de feina. Proveu diferents paraules clau."
 
+#: src/features/career/offers.tsx
+msgid "No questions to ask before deciding."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "No recorded answers are available."
 msgstr ""
@@ -8692,6 +9012,10 @@ msgstr "Sense currículum"
 #: src/features/applications/components/application-detail-sheet.tsx
 msgid "No resume selected"
 msgstr "No s'ha seleccionat cap currículum"
+
+#: src/features/documents/documents-page.tsx
+msgid "No resumes yet"
+msgstr ""
 
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "No resumes yet."
@@ -8852,9 +9176,17 @@ msgstr "No és al teu currículum"
 msgid "Not in your resume · add only if true"
 msgstr "No al teu currículum · Afegeix només si és cert"
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "Not linked to a job"
+msgstr ""
+
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "Ara no"
+
+#: src/features/career/offers.tsx
+msgid "Not recorded"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Not recorded yet. Leave it blank until you can support it."
@@ -9034,6 +9366,8 @@ msgid "Off. Let recruiters find you on Google by turning this on."
 msgstr "Desactivat. Activeu-ho perquè els reclutadors us trobin a Google."
 
 #: src/features/applications/stages.ts
+#: src/features/career/offer-entry.tsx
+#: src/features/career/offers.tsx
 #: src/features/career/workspace/saved.tsx
 #: src/features/homepage/sections.tsx
 #: src/features/homepage/tailor.tsx
@@ -9044,10 +9378,16 @@ msgstr "Oferta"
 msgid "Offer saved"
 msgstr "Oferta laboral desada"
 
+#. placeholder {0}: target.company
+#: src/features/career/offer-entry.tsx
+msgid "Offer saved. {0} moved to Offer."
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "Offer type"
 msgstr "Tipus d'oferta laboral"
 
+#: src/features/command-palette/pages/navigation.tsx
 #: src/routes/dashboard/career/offers.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Offers"
@@ -9226,6 +9566,10 @@ msgstr "Obre a Ofertes"
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "Obre les preferències"
+
+#: src/features/career/offers.tsx
+msgid "Open questions"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
@@ -9431,6 +9775,16 @@ msgstr "Pàgina"
 msgid "Page {0}"
 msgstr "Pàgina {0}"
 
+#. placeholder {0}: row.page + 1
+#: src/features/resume/editor/write/outline.tsx
+msgid "Page {0}, sidebar"
+msgstr "Pàgina {0}, barra lateral"
+
+#. Layout editor: a page and its column, read while dragging
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Page {page}, {column}"
+msgstr "Pàgina {page}, {column}"
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 #: src/routes/builder/letter/-components/letter-page.tsx
 msgid "Page {pageNumber}"
@@ -9483,6 +9837,10 @@ msgstr "Parcel & Co."
 #: src/features/homepage/write.tsx
 msgid "Parcel & Co. · Porto"
 msgstr "Parcel & Co. · Porto"
+
+#: src/features/settings/account/profile.tsx
+msgid "Part of every public link. Old links keep working for 30 days after a change."
+msgstr ""
 
 #: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
@@ -9625,6 +9983,10 @@ msgstr "Les programacions en pausa conserven la seva configuració."
 msgid "Pay period"
 msgstr "Període de pagament"
 
+#: src/features/applications/next-step.ts
+msgid "Pay, deadline and conditions, so you can compare and decide"
+msgstr ""
+
 #: src/features/resume/stylesheet/editor.tsx
 msgid "PDF styles support a subset of CSS. Rotation, dashed and dotted borders, and some layout properties are ignored."
 msgstr "Els estils PDF admeten un subconjunt de CSS. S'ignoren la rotació, les vores guionades i puntejades i algunes propietats de disseny."
@@ -9683,10 +10045,12 @@ msgid "Photo hidden"
 msgstr "Foto oculta"
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo hidden from the page."
 msgstr "Foto oculta de la pàgina."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Photo on the page."
 msgstr "Foto a la pàgina."
 
@@ -9717,6 +10081,10 @@ msgstr "Tria un format i utilitza'l a tot arreu."
 #: src/features/career/workspace/prepare.tsx
 msgid "Pick two examples"
 msgstr "Trieu dos exemples"
+
+#: src/libs/dnd.ts
+msgid "Picked up {item}."
+msgstr "{item} agafat."
 
 #: src/features/career/shared.tsx
 msgid "Picking your stories"
@@ -9792,6 +10160,16 @@ msgstr "Portuguès (Portugal)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Position"
 msgstr "Càrrec"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}"
+msgstr "la posició {position} de {total}"
+
+#. Drag and drop: where an item is
+#: src/libs/dnd.ts
+msgid "position {position} of {total}, {group}"
+msgstr "la posició {position} de {total}, {group}"
 
 #: src/features/settings/profile.tsx
 msgid "Postal code"
@@ -9972,6 +10350,7 @@ msgstr "Mida de la previsualització"
 msgid "Previewing {0} · click to apply"
 msgstr "Vista prèvia de {0} · feu clic per aplicar"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/features/documents/page-navigation.tsx
 msgid "Previous"
 msgstr ""
@@ -10347,16 +10726,26 @@ msgid "Read with AI"
 msgstr ""
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your email address."
 msgstr "Llegir la teva adreça de correu electrònic."
 
 #: src/features/auth/pages/consent.tsx
+#: src/features/settings/ai/connected-apps.tsx
 msgid "Read your profile information."
 msgstr "Llegir la informació del teu perfil."
 
 #: src/features/auth/pages/consent.tsx
 msgid "Read your whole account, including a full data export: your profile and email, documents, job applications, career data and coaching conversations."
 msgstr "Llegiu totes les dades del vostre compte, inclosa una exportació de dades completa: el vostre perfil i adreça de correu electrònic, documents, sol·licituds de feina, dades de carrera i converses d'entrenament."
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/ai/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Read, write and delete"
@@ -10510,6 +10899,10 @@ msgstr "Temps de gravació"
 msgid "Records {0} as sent. You submit on the employer's site yourself."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "Recovered an unsaved draft. Review it before saving over the current version."
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 msgid "Recruiter"
 msgstr "Reclutador"
@@ -10606,6 +10999,7 @@ msgstr "Rebutjat"
 msgid "Relationship"
 msgstr ""
 
+#: src/components/layout/error-screen.tsx
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload"
@@ -10618,6 +11012,10 @@ msgstr ""
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Reload the saved version?"
+msgstr ""
+
+#: src/components/layout/error-screen.tsx
+msgid "Reload to try again."
 msgstr ""
 
 #: src/features/settings/profile.tsx
@@ -10859,6 +11257,10 @@ msgstr "Resposta"
 msgid "Reply copied"
 msgstr "S'ha copiat la resposta"
 
+#: src/features/applications/next-step.ts
+msgid "Reply to the offer"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
 #: src/routes/dashboard/settings/route.tsx
@@ -10920,6 +11322,11 @@ msgstr "Recursos"
 #: src/features/career/offers.tsx
 msgid "Respond by"
 msgstr "Termini de resposta"
+
+#. placeholder {0}: day(data.respondBy)
+#: src/features/career/offer-entry.tsx
+msgid "respond by {0}"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Responsibility"
@@ -11029,6 +11436,7 @@ msgid "Resume details"
 msgstr "detalls del currículum"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "Fitxer de currículum"
@@ -11220,14 +11628,6 @@ msgstr "Revocar"
 msgid "Revoke {0}"
 msgstr "Revocar {0}"
 
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke access"
-msgstr "Revoca l'accés"
-
-#: src/features/settings/ai/connected-apps.tsx
-msgid "Revoke an application's access to your account."
-msgstr "Revoca l'accés d'una aplicació al teu compte."
-
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
 msgstr "S'ha revocat \"{name}\". Les aplicacions que l'utilitzen ara deixen de funcionar."
@@ -11244,6 +11644,7 @@ msgstr "Ara mateix"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Role"
 msgstr "Lloc de treball"
@@ -11380,8 +11781,8 @@ msgid "Save an unprotected copy, with no password and no permissions restriction
 msgstr "Desa una còpia sense protegir, sense contrasenya ni restriccions de permisos."
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Save and link"
-msgstr "Desa i enllaça"
+msgid "Save and link this resume"
+msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Save and prepare resume"
@@ -11396,8 +11797,8 @@ msgid "Save another offer to compare"
 msgstr "Deseu una altra oferta per comparar"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Save as application…"
-msgstr "Desa com a sol·licitud de feina..."
+msgid "Save as a job…"
+msgstr ""
 
 #: src/dialogs/resume/index.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -11432,6 +11833,14 @@ msgstr "Desa l'entrevista"
 msgid "Save job"
 msgstr "Guarda feina"
 
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Save job and make a copy"
+msgstr ""
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Save job, create and open"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Save message without AI"
 msgstr ""
@@ -11446,6 +11855,10 @@ msgstr "Desa l'oferta laboral"
 
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
+msgstr ""
+
+#: src/features/career/draft-recovery.tsx
+msgid "Save recovered draft"
 msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
@@ -11476,6 +11889,10 @@ msgstr ""
 #: src/features/career/workspace/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Deseu aquestes condicions de l'oferta per comparar-les"
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Save this resume's changes before copying it."
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -11535,8 +11952,8 @@ msgid "Saved a story: {0}"
 msgstr "S'ha desat una història: {0}"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "Saved as an application and linked"
-msgstr "Desat com a sol·licitud de feina i enllaçat"
+msgid "Saved as a job and linked to this resume"
+msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "Saved as written. Automated date checks and sorting are unavailable for this text."
@@ -11561,6 +11978,10 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Saved to Applications"
 msgstr "S'ha desat a Candidatures"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Saved to Applications as a saved job, then linked to the copy. No AI request is made."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Saved to Applications with the posting"
@@ -12081,6 +12502,10 @@ msgstr "Comparteix seccions"
 msgid "Share via…"
 msgstr "Comparteix a través de…"
 
+#: src/features/documents/document-actions.tsx
+msgid "Share…"
+msgstr ""
+
 #: src/features/documents/documents-page.tsx
 #: src/libs/resume/section.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
@@ -12124,6 +12549,7 @@ msgid "Shorter"
 msgstr "Més curt"
 
 #: src/features/resume/editor/check/check-panel.tsx
+#: src/routes/dashboard/applications/index.tsx
 msgid "Show"
 msgstr "Mostra"
 
@@ -12150,6 +12576,26 @@ msgstr "Mostra {title} a la pàgina"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Show again"
 msgstr "Mostra de nou"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show all"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all applications"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all conversations"
+msgstr ""
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all letters"
+msgstr "Mostra totes les cartes de presentació"
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Show all resumes"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Show all types"
@@ -12195,6 +12641,7 @@ msgid "Show password"
 msgstr "Mostra la contrasenya"
 
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Show photo"
 msgstr "Mostra la fotografia"
 
@@ -12244,6 +12691,7 @@ msgstr "Les barres laterals es llegeixen sovint per últim o es barregen a la co
 
 #. Primary action button label on login form
 #: src/features/auth/components/guest-banner.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/features/auth/pages/login.tsx
 #: src/features/homepage/footer.tsx
 #: src/routes/auth/login.tsx
@@ -13001,6 +13449,11 @@ msgstr "Etiquetes…"
 msgid "Tailor"
 msgstr "Adaptar-se a la descripció de la feina"
 
+#. placeholder {0}: application.company
+#: src/features/resume/editor/check/job-match.tsx
+msgid "Tailor a copy for {0} so this resume stays as it is for other jobs, or link this resume itself."
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Tailor and review your resume"
 msgstr ""
@@ -13305,6 +13758,10 @@ msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#: src/features/resume/editor/check/job-match.tsx
+msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
@@ -13633,6 +14090,10 @@ msgstr "Aquest navegador no pot gravar aquí. Trieu un fitxer d'àudio o escrivi
 msgid "This browser can't take dictation, and none of your AI connections can transcribe speech (OpenAI, Google Gemini, Mistral, xAI, Groq or Vercel AI Gateway can). <0/>, or type your answer."
 msgstr ""
 
+#: src/features/career/draft-recovery.tsx
+msgid "This browser could not keep a recovery copy. Wait for saving to finish before leaving."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "Aquesta sol·licitud de connexió no és vàlida o ha caducat. Torneu a iniciar la connexió des del vostre client."
@@ -13653,6 +14114,11 @@ msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "This date hasn't been saved. Use a month and year, like Mar 2022, or just a year. The resume keeps the last valid date. Turn on Custom date text to save other wording."
+msgstr ""
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
+msgid "This date or time does not exist in your timezone. Choose another time."
 msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
@@ -13710,6 +14176,10 @@ msgstr "Aquest fitxer és gran per a un currículum."
 #: src/features/ats-checker/messages.ts
 msgid "This file is larger than many application forms accept."
 msgstr "Aquest fitxer és més gran del que accepten molts formularis de sol·licitud."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This file isn't a readable image. Choose a PNG, JPEG, WebP or GIF photo."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip)."
@@ -13779,9 +14249,17 @@ msgstr "Aquest PDF no té cap capa de text, de manera que un analitzador no en l
 msgid "This PDF is a scanned image. There's no text to read. Try the Word version, or start blank and paste sections in."
 msgstr "Aquesta PDF és una imatge escanejada. No hi ha text per llegir. Proveu la versió Word o comenceu en blanc i enganxeu-hi seccions."
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "This PDF is larger than 10 MB. Compress it or export a smaller PDF, then attach it again."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Aquest PDF està protegit amb contrasenya. Desa'n una còpia sense protegir i torna-ho a provar."
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
@@ -13816,8 +14294,8 @@ msgid "This resume is password-protected"
 msgstr "Aquest currículum està protegit amb contrasenya"
 
 #: src/features/resume/editor/check/job-match.tsx
-msgid "This resume isn't linked to an application yet."
-msgstr "Aquest currículum encara no està vinculat a una sol·licitud de feina."
+msgid "This resume isn't linked to an application yet. Pick one to make a copy for it."
+msgstr ""
 
 #: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
@@ -13907,6 +14385,8 @@ msgstr "Apretar a una pàgina"
 msgid "Tightening"
 msgstr "Condensant"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/career/offer-entry.tsx
 msgid "Time"
 msgstr "Hora"
@@ -13950,7 +14430,17 @@ msgstr "Títol"
 msgid "To"
 msgstr "A"
 
+#. A letter's recipient under its name in the library
+#: src/features/documents/document-card.tsx
+msgid "To {recipient}"
+msgstr ""
+
+#: src/libs/dnd.ts
+msgid "To pick it up, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel."
+msgstr "Per agafar-lo, premeu Espai o Retorn. Feu servir les fletxes per moure'l, Espai o Retorn per deixar-lo o Esc per cancel·lar."
+
 #: src/features/applications/components/calendar-view.tsx
+#: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
 #: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
@@ -14034,6 +14524,7 @@ msgid "Translations"
 msgstr "Traduccions"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
 #: src/routes/dashboard/-components/app-shell.tsx
 #: src/routes/dashboard/trash.tsx
@@ -14065,7 +14556,6 @@ msgstr "Proveu {0}"
 msgid "Try a sample"
 msgstr "Proveu una mostra"
 
-#: src/components/layout/error-screen.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -14337,6 +14827,10 @@ msgstr "Clau d'accés sense nom"
 msgid "Untitled"
 msgstr "Sense títol"
 
+#: src/libs/dnd.ts
+msgid "Untitled item"
+msgstr "Element sense títol"
+
 #: src/features/documents/use-start-document.ts
 msgid "Untitled letter"
 msgstr "Carta sense títol"
@@ -14549,6 +15043,14 @@ msgstr ""
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Use sample"
 msgstr "Utilitza la mostra"
+
+#: src/features/career/draft-recovery.tsx
+msgid "Use saved version"
+msgstr ""
+
+#: src/features/resume/editor/check/actions.ts
+msgid "Use the builder's Undo to undo earlier changes."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"
@@ -14796,6 +15298,10 @@ msgstr "Configuració de veu"
 msgid "Volunteer"
 msgstr "Voluntariat"
 
+#: src/features/applications/next-step.ts
+msgid "Waiting for interview feedback"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Waiting for you"
 msgstr "Us espera"
@@ -14865,6 +15371,7 @@ msgid "Web searches look for work here, up to three countries."
 msgstr "Les cerques web busquen feina en aquests països. Trieu fins a tres països."
 
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Website"
 msgstr "Lloc web"
 
@@ -15226,6 +15733,10 @@ msgstr "Escriu els números amb xifres"
 msgid "Write one about something you did, in five parts. Leave Result and Reflection blank until you can support them."
 msgstr "Escriu una història en cinc parts sobre alguna cosa que hagis fet. Deixa Resultat i Reflexió en blanc fins que els puguis justificar."
 
+#: src/features/documents/documents-page.tsx
+msgid "Write one for a job, or start from your latest resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "Escriviu l'adreça completa perquè es reconegui com a enllaç."
@@ -15541,6 +16052,14 @@ msgstr "El teu fitxer"
 msgid "Your focus"
 msgstr "El vostre focus"
 
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest documents and applications are in this account."
+msgstr ""
+
+#: src/features/auth/components/guest-banner.tsx
+msgid "Your guest resumes, cover letters and applications move to this account. Assistant conversations and Career knowledge don't."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Els teus encapçalaments semblen iguals que el text del cos."
@@ -15620,6 +16139,10 @@ msgstr "les vostres preferències"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "el vostre proveïdor"
+
+#: src/features/settings/account/profile.tsx
+msgid "Your public links will change"
+msgstr ""
 
 #. placeholder {0}: voice.settings.transcribe.label
 #: src/features/career/workspace/practise.tsx

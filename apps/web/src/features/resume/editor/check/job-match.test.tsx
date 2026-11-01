@@ -23,7 +23,10 @@ vi.mock("@/libs/orpc/client", () => ({
 					queryFn: async () => api.application,
 				}),
 			},
-			listSummary: { queryKey: () => ["applications", "summary"] },
+			listSummary: {
+				queryKey: () => ["applications", "summary"],
+				queryOptions: () => ({ queryKey: ["applications", "summary"], queryFn: async () => [] }),
+			},
 			update: { mutationOptions: () => ({ mutationFn: api.update }) },
 		},
 		documents: { linkApplication: { mutationOptions: () => ({ mutationFn: vi.fn() }) } },

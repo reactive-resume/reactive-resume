@@ -20,6 +20,8 @@ export const applicationsListQueryOptions = (server = getServer(), scope = getAc
 	return { ...options, queryKey: [...options.queryKey, server] };
 };
 export const applicationsListQueryKey = (server = getServer()) => applicationsListQueryOptions(server).queryKey;
+/** The server and account a stage baseline belongs to (moves and single writes use the same one). */
+export const stageScope = () => `${getServer()}:${getAccountScope() ?? ""}`;
 export const applicationDetailQueryOptions = (id: string, server = getServer()) => {
 	const options = orpc.applications.getById.queryOptions({
 		input: { id },

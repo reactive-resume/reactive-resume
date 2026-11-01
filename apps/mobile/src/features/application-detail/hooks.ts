@@ -8,6 +8,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { File } from "expo-file-system";
 import { useEffect, useState } from "react";
+import { followUpInstant } from "@reactive-resume/schema/applications/follow-up";
 import { orpc, rest } from "@/api/client";
 import { useSession } from "@/auth/session";
 import { useInvalidateApplications } from "@/features/applications/queries";
@@ -67,13 +68,14 @@ export const interviewReminder = (
 
 /** The notification for the follow-up; it fires at the follow-up itself (09:00 that day). */
 export const followUpReminder = (
-	application: Pick<Application, "id" | "company" | "role" | "followUpAt" | "followUpNote">,
+	application: Pick<Application, "id" | "company" | "role" | "followUpAt" | "followUpDateOnly" | "followUpNote">,
+	timeZone = "UTC",
 ): ReminderTarget | null =>
 	application.followUpAt
 		? {
 				kind: "follow-up",
 				applicationId: application.id,
-				start: new Date(application.followUpAt),
+				start: followUpInstant(application, timeZone) ?? new Date(application.followUpAt),
 				title: application.followUpNote || t`Follow up`,
 				body: `${application.role} · ${application.company}`,
 			}
@@ -81,10 +83,14 @@ export const followUpReminder = (
 
 /** Everything that may have a reminder; a closed application has none. */
 export function reminderTargets(
-	application: Pick<Application, "id" | "status" | "activity" | "company" | "role" | "followUpAt" | "followUpNote">,
+	application: Pick<
+		Application,
+		"id" | "status" | "activity" | "company" | "role" | "followUpAt" | "followUpDateOnly" | "followUpNote"
+	>,
+	timeZone = "UTC",
 ): ReminderTarget[] {
 	if (application.status === "closed") return [];
-	const followUp = followUpReminder(application);
+	const followUp = followUpReminder(application, timeZone);
 	return [
 		...application.activity.filter(isInterview).map((entry) => interviewReminder(application, entry)),
 		...(followUp ? [followUp] : []),

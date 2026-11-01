@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
 import z from "zod";
+import { EditorPending } from "./-components/editor-pending";
 import { EditorShell } from "./-components/editor-shell";
 import { useBuilderResumeUpdateSubscription, useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
 import { EDITOR_MODES } from "@/features/resume/editor/store";
@@ -25,6 +26,7 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/builder/$resumeId")({
 	component: RouteComponent,
+	pendingComponent: EditorPending,
 	validateSearch: searchSchema,
 	beforeLoad: ({ context, location }) => {
 		if (!context.session) throw redirect({ to: "/auth/login", search: { callbackURL: location.href }, replace: true });
@@ -89,7 +91,7 @@ function RouteComponent() {
 		resume,
 	]);
 
-	if (!isInitialized) return null;
+	if (!isInitialized) return <EditorPending />;
 
 	return <EditorShell />;
 }

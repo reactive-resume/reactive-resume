@@ -8,11 +8,15 @@ Use the details sheet to manage one application, and its workspace to work on fi
 <Frame caption="An application's details sheet">
   <img
     src="/images/guides/career/application-detail.png"
-    alt="Current fictional Northwind Games application detail sheet with next step, linked resume, notes and Open workspace"
+    alt="Details for an Applied Product engineer application at fictional Lumen Health, with follow-up note, attached resume PDF, Notes and Open workspace"
   />
 </Frame>
 
 At the top you see the role, the company and location, and **View posting** when a posting was saved. **View posting** shows the saved posting text and what the job asks for, or opens the job link if only a link was saved.
+
+Attached resume and cover-letter PDFs must be at most **10 MB each**. Oversized files are rejected before upload with guidance to compress or export a smaller PDF. The list's **Sent** column includes attached files as well as linked documents; the native list names the available files too.
+
+Application Notes keep an unsaved local draft before their autosave delay. After interruption, review recovered notes before retrying the save. A **Remind me** schedule and an application's follow-up refer to one date and note: editing either updates the other. Deleting the reminder clears the follow-up; Undo keeps both until deletion commits. Pausing stops delivery but retains the follow-up date. Times use the account/schedule timezone.
 
 ## Open the application workspace
 
@@ -48,7 +52,9 @@ Each move is added to the activity history. **Mark as applied** uses the date yo
 
 1. The next interview that hasn't finished yet.
 2. Otherwise, the follow-up you set.
-3. Otherwise, for **Applied**, how long ago you applied, turning into "No reply in _n_ days" after 10 days; for later stages, how long you've been waiting to hear back.
+3. Otherwise, what the stage is waiting on. For **Applied**, how long ago you applied, turning into "No reply in _n_ days" after 10 days. For **Screening**, how long you've been waiting to hear back. For **Interview**, "Waiting for interview feedback" once every interview is behind you, or "No interview scheduled" before you've added one. For **Offer**, "Decide on the offer".
+
+At **Offer**, the offer leads instead: **Reply to the offer** by the deadline saved with its terms (amber once it has passed), **Decide on the offer** with **Compare offers** when terms are saved without a deadline, or **Add the offer's terms** when none are saved yet. When no deadline is saved, a follow-up you set comes first. Interviews booked before the offer stay in **Activity** and the calendar.
 
 A **Saved** application shows "Not applied yet", and a closed one shows its reason. Overdue follow-ups and long waits are highlighted in amber.
 
@@ -59,7 +65,9 @@ A **Saved** application shows "Not applied yet", and a closed one shows its reas
   />
 </Frame>
 
-Select **Edit** to **Schedule an interview…**, **Edit this interview…**, or **Set a follow-up…** (**Change the follow-up…** when one is set). When the next step has a date, **Add to calendar** downloads it as an `.ics` file. See [Scheduling interviews](/guides/scheduling-interviews).
+Select **Edit** to **Schedule an interview…**, **Edit this interview…**, or **Set a follow-up…** (**Change the follow-up…** when one is set). When the next step has a date, including an offer's reply deadline, **Add to calendar** downloads it as an `.ics` file. See [Scheduling interviews](/guides/scheduling-interviews).
+
+Moving an application to **Offer** shows **Moved to Offer** with **Add the offer's terms**, which opens the offer form on the workspace's **Messages** tab. See [Comparing job offers](/guides/comparing-job-offers).
 
 ## Seeing what you sent
 
@@ -130,7 +138,7 @@ Dates matter: Insights uses stage dates to work out how quickly people reply. If
 
 ## Editing all details
 
-Open **⋯** at the top of the sheet and select **Edit details…** to edit everything in one form: **Company**, **Role / title**, **Location**, **Salary range**, **Source**, **Stage**, **Job posting link**, the linked **Resume** or an uploaded resume PDF, a **Cover letter** PDF, **Tags**, **Follow-up date**, **Follow-up note** and **Notes**. Select **Save changes** when you're done.
+Open **⋯** at the top of the sheet and select **Edit details…** to edit everything in one form: **Company**, **Role / title**, **Location**, **Salary range**, **Source**, **Stage**, **Job posting link**, the linked **Resume** or an uploaded resume PDF, a **Cover letter** PDF, **Tags**, **Follow-up date**, **Time**, **Follow-up note** and **Notes**. Follow-up times use your account timezone. Select **Save changes** when you're done.
 
 If you've [connected an AI provider](/guides/using-ai), the form also has a **Job description** section at the top. Select it to expand it, then paste the full posting there and Reactive Resume fills in the company, role, location and salary; select **Fill fields** to run it again.
 
@@ -148,7 +156,8 @@ When an application ends, close it rather than deleting it, so its history still
 <Steps>
   <Step title="Select Mark as closed…">It's at the bottom of the details sheet.</Step>
   <Step title="Choose a reason">
-    Pick **Not selected**, **I withdrew**, **Accepted another offer** or **No response**. If you've added your own
+    Pick **Accepted offer**, **Not selected**, **I withdrew**, **Accepted another offer** or **No response**. From
+    **Offer**, **Accepted offer** is chosen for you; earlier stages start on **Not selected**. If you've added your own
     Closed stages, choose one under **Stage**; a stage with a preset outcome, such as **Ghosted**, doesn't ask for a
     reason.
   </Step>
@@ -158,9 +167,11 @@ When an application ends, close it rather than deleting it, so its history still
 <Frame caption="Record why an application ended">
   <img
     src="/images/guides/managing-an-application/close-this-application-dialog.webp"
-    alt="Mark as closed dialog with outcome reasons and a confirmation action"
+    alt="Mark as closed dialog for an application at Offer, with the reasons Accepted offer, Not selected, I withdrew, Accepted another offer and No response, Accepted offer chosen, and Cancel and Mark as closed buttons"
   />
 </Frame>
+
+An accepted offer reads as a win: the sheet keeps the stepper filled through **Offer** and shows **Accepted offer** with a check in the Offer colour. When you have other open applications, a message asks whether to close them as **Accepted another offer**. Nothing else closes unless you choose **Close all _n_**, and that close has **Undo**.
 
 You can also close applications from a board card's **⋯** menu, or several at once from the List view. To bring a closed application back, turn on **Show closed applications**, open it and select **Reopen**. It returns to **Applied** (your standard Applied stage, whatever you've named it).
 
@@ -175,3 +186,5 @@ Open **⋯** at the top of the sheet, select **Delete…** and confirm. The appl
 - [Undoing changes and version history](/guides/undoing-changes-and-version-history): how sent versions appear in a document's history.
 
 Reviewed answers saved through **Apply → Save for other applications** live in a separate library. Editing or deleting a library entry never rewrites your recorded answers. See [saving and reusing answers](/guides/writing-application-answers#save-and-reuse-a-reviewed-answer).
+
+Date-only follow-ups from earlier app versions stay on the selected day at 09:00 in your current account timezone. Changing **Settings → Preferences → Timezone** moves pending date-only reminders with that clock. Reminders with an exact time keep their instant. Editing a note or changing timezone does not send an already delivered follow-up again.

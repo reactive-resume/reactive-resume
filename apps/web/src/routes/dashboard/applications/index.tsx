@@ -31,7 +31,7 @@ import { ImportApplicationsSheet } from "@/features/applications/components/impo
 import { ApplicationInsights, InsightsSkeleton } from "@/features/applications/components/insights-view";
 import { ApplicationList } from "@/features/applications/components/list-view";
 import { ManageLanesSheet } from "@/features/applications/components/manage-lanes-sheet";
-import { getNextStep } from "@/features/applications/next-step";
+import { getNextStep, needsFollowUp } from "@/features/applications/next-step";
 import {
 	applicationDetailQueryOptions,
 	applicationsFullListQueryOptions,
@@ -39,6 +39,7 @@ import {
 	hydrateApplicationDetail,
 } from "@/features/applications/queries";
 import { useApplicationLanes } from "@/features/applications/use-application-lanes";
+import { useCareerTime, useNow } from "@/features/career/shared";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { getPageTitle } from "@/libs/seo";
@@ -50,12 +51,14 @@ const searchSchema = z.object({
 	q: z.string().default("").catch(""),
 	view: z.enum(VIEWS).default("list").catch("list"),
 	closed: z.boolean().default(false).catch(false),
+	// Only applications that owe a follow-up (the banner's Show).
+	followUp: z.boolean().default(false).catch(false),
 	// Deep links: open Add, or one application.
 	create: z.boolean().default(false).catch(false),
 	applicationId: z.string().optional().catch(undefined),
 });
 type Search = z.output<typeof searchSchema>;
-const defaultSearch: Search = { q: "", view: "list", closed: false, create: false };
+const defaultSearch: Search = { q: "", view: "list", closed: false, followUp: false, create: false };
 
 export const Route = createFileRoute("/dashboard/applications/")({
 	head: () => ({ meta: [{ title: getPageTitle(t`Applications`) }] }),
@@ -80,7 +83,7 @@ function matches(application: ApplicationSummary, query: string) {
 }
 
 function RouteComponent() {
-	const { q, view, closed, create, applicationId } = Route.useSearch();
+	const { q, view, closed, followUp, create, applicationId } = Route.useSearch();
 	const navigate = useNavigate({ from: Route.fullPath });
 	const phone = useBreakpoint() === "mobile";
 	// Typing filters at once; the URL only seeds the search.
@@ -183,7 +186,12 @@ function RouteComponent() {
 
 	// The input updates at once; the list filters in a deferred render that typing can interrupt.
 	const text = useDeferredValue(query).trim().toLowerCase();
-	const filtered = (applications ?? []).filter((application) => matches(application, text));
+	const now = useNow();
+	const { timeZone } = useCareerTime();
+	const filtered = (applications ?? []).filter(
+		(application) =>
+			matches(application, text) && (!followUp || needsFollowUp(getNextStep(application, now, timeZone), now)),
+	);
 	const selected = applications?.find((application) => application.id === selectedId) ?? null;
 	// The board needs room to drag: phones get the list instead.
 	const shown: View = phone && view === "board" ? "list" : view;
@@ -310,7 +318,28 @@ function RouteComponent() {
 				)}
 			</PageHeader>
 
-			{applications && <FollowUpNudge applications={applications} onOpen={setSelectedId} />}
+			{applications &&
+				(followUp ? (
+					<div role="status" className="flex flex-wrap items-center gap-2 text-sm text-ink-2">
+						<Icon name="clock" size={18} className="text-warn-text" />
+						<span>
+							<Plural
+								value={filtered.length}
+								one="Showing # application that needs a follow-up."
+								other="Showing # applications that need a follow-up."
+							/>
+						</span>
+						<Button size="sm" variant="secondary" onClick={() => setSearch({ followUp: false })}>
+							<Trans>Show all</Trans>
+						</Button>
+					</div>
+				) : (
+					<FollowUpNudge
+						applications={applications}
+						onOpen={setSelectedId}
+						onShowAll={() => setSearch({ followUp: true, closed: false })}
+					/>
+				))}
 
 			{isError && (
 				<div
@@ -455,27 +484,36 @@ function readDismissed(): string[] {
 	}
 }
 
-type FollowUpNudgeProps = { applications: ApplicationSummary[]; onOpen: (id: string) => void };
+type FollowUpNudgeProps = {
+	applications: ApplicationSummary[];
+	onOpen: (id: string) => void;
+	onShowAll: () => void;
+};
 
 /**
- * The follow-up nudge: the application waiting longest without a reply (10+ days since applying). Dismissing it is
- * remembered on this device; it doesn't come back for that application.
+ * The follow-up nudge: applications that owe a follow-up (a due follow-up date, or 10+ days without a reply), from the
+ * same next-step rules Career → Today reads. One is named; several are counted with Show to filter the list.
+ * Dismissing is remembered on this device; dismissed applications don't come back here.
  */
-function FollowUpNudge({ applications, onOpen }: FollowUpNudgeProps) {
+function FollowUpNudge({ applications, onOpen, onShowAll }: FollowUpNudgeProps) {
+	const { timeZone } = useCareerTime();
+	const now = useNow();
 	const [dismissed, setDismissed] = useState(readDismissed);
 
 	const dismissedIds = new Set(dismissed);
-	const waiting = applications
+	const owed = applications
 		.filter((application) => !dismissedIds.has(application.id))
 		.flatMap((application) => {
-			const step = getNextStep(application);
-			return step.kind === "no-reply" ? [{ application, days: step.days }] : [];
+			const step = getNextStep(application, now, timeZone);
+			return needsFollowUp(step, now) ? [{ application, step }] : [];
 		})
-		.sort((a, b) => b.days - a.days)[0];
-	if (!waiting) return null;
+		// The longest silence first; dated follow-ups after it.
+		.sort((a, b) => (b.step.kind === "no-reply" ? b.step.days : -1) - (a.step.kind === "no-reply" ? a.step.days : -1));
+	const first = owed[0];
+	if (!first) return null;
 
 	const dismiss = () => {
-		const next = [...dismissed, waiting.application.id].slice(-200);
+		const next = [...dismissed, ...owed.map(({ application }) => application.id)].slice(-1000);
 		setDismissed(next);
 		try {
 			window.localStorage.setItem(NUDGE_STORAGE_KEY, JSON.stringify(next));
@@ -484,13 +522,14 @@ function FollowUpNudge({ applications, onOpen }: FollowUpNudgeProps) {
 		}
 	};
 
-	const { company } = waiting.application;
-	const { days } = waiting;
+	const { company } = first.application;
+	const count = owed.length;
+	const days = first.step.kind === "no-reply" ? first.step.days : 0;
 
 	return (
 		<div
-			key={waiting.application.id}
-			data-application-id={waiting.application.id}
+			key={owed.length === 1 ? first.application.id : "several"}
+			data-application-id={owed.length === 1 ? first.application.id : undefined}
 			role="status"
 			className={cn(
 				ENTER_CLASS,
@@ -499,15 +538,27 @@ function FollowUpNudge({ applications, onOpen }: FollowUpNudgeProps) {
 		>
 			<Icon name="clock" size={20} />
 			<span className="min-w-0 flex-1">
-				<Plural
-					value={days}
-					one={`${company}: no reply for # day. A short follow-up is usually fine now.`}
-					other={`${company}: no reply for # days. A short follow-up is usually fine now.`}
-				/>
+				{owed.length > 1 ? (
+					<Plural value={count} one="# application needs a follow-up." other="# applications need a follow-up." />
+				) : first.step.kind === "no-reply" ? (
+					<Plural
+						value={days}
+						one={`${company}: no reply for # day. A short follow-up is usually fine now.`}
+						other={`${company}: no reply for # days. A short follow-up is usually fine now.`}
+					/>
+				) : (
+					<Trans>{company}: a follow-up is due.</Trans>
+				)}
 			</span>
-			<Button size="sm" variant="secondary" data-application-open onClick={() => onOpen(waiting.application.id)}>
-				<Trans>Open</Trans>
-			</Button>
+			{owed.length > 1 ? (
+				<Button size="sm" variant="secondary" onClick={onShowAll}>
+					<Trans>Show</Trans>
+				</Button>
+			) : (
+				<Button size="sm" variant="secondary" data-application-open onClick={() => onOpen(first.application.id)}>
+					<Trans>Open</Trans>
+				</Button>
+			)}
 			<Button size="icon-sm" variant="ghost" aria-label={t`Dismiss`} onClick={dismiss} className="text-warn-text">
 				<Icon name="x" size={18} />
 			</Button>

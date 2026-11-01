@@ -11,6 +11,7 @@ import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { GuestTransferNote } from "../components/guest-banner";
 import { SocialAuth } from "../components/social-auth";
 import { getAuthRedirectOptions, getOAuthPasskeyOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { PasswordInput } from "@/components/input/password-input";
@@ -31,6 +32,8 @@ type Props = {
 	disableEmailAuth: boolean;
 	disableSignups: boolean;
 	allowGuestLogin: boolean;
+	/** Signing in from a guest session moves the guest's work into that account. */
+	isGuest?: boolean;
 };
 
 type SubmitLoginOptions = {
@@ -96,7 +99,7 @@ async function submitLogin({ value, callbackURL, reauthenticate, navigate, query
 	}
 }
 
-export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin }: Props) {
+export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin, isGuest = false }: Props) {
 	const router = useRouter();
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const navigate = useNavigate();
@@ -180,6 +183,8 @@ export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin }:
 				)}
 			</div>
 
+			{isGuest && <GuestTransferNote />}
+
 			{!disableEmailAuth && (
 				<form
 					className="space-y-6"
@@ -262,7 +267,7 @@ export function LoginPage({ disableEmailAuth, disableSignups, allowGuestLogin }:
 
 			<SocialAuth />
 
-			{allowGuestLogin && (
+			{allowGuestLogin && !getOAuthSignInOptions(callbackURL).oauth_query && (
 				<Button
 					type="button"
 					variant="secondary"

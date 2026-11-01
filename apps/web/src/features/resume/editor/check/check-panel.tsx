@@ -7,7 +7,7 @@ import type { CSSProperties } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useState } from "react";
-import { ATS_CATEGORIES } from "@reactive-resume/resume/ats";
+import { ATS_CATEGORIES, atsVerdict } from "@reactive-resume/resume/ats";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import {
@@ -86,8 +86,8 @@ export function CheckPanel() {
 	);
 }
 
-const getVerdict = (score: number) =>
-	score >= 80 ? t`Reads cleanly` : score >= 50 ? t`Mostly readable` : t`Hard for software to read`;
+const getVerdict = (report: AtsReport) =>
+	({ clean: t`Reads cleanly`, mostly: t`Mostly readable`, hard: t`Hard for software to read` })[atsVerdict(report)];
 
 /** The 84px ring (accent, or warn below 80), the verdict and what the score counts. */
 function ScoreSummary({ report }: { report: AtsReport }) {
@@ -103,7 +103,7 @@ function ScoreSummary({ report }: { report: AtsReport }) {
 				style={
 					{
 						"--ring-value": `${score}%`,
-						"--ring-color": score >= 80 ? "var(--accent)" : "var(--warn)",
+						"--ring-color": atsVerdict(report) === "clean" ? "var(--accent)" : "var(--warn)",
 					} as CSSProperties
 				}
 			>
@@ -113,7 +113,7 @@ function ScoreSummary({ report }: { report: AtsReport }) {
 			</div>
 
 			<div className="grid min-w-0 gap-1">
-				<strong className="text-[15px] font-semibold">{getVerdict(score)}</strong>
+				<strong className="text-[15px] font-semibold">{getVerdict(report)}</strong>
 				<span className="text-[13px] leading-[19px] text-ink-2">
 					<Trans>
 						{passedRules} of {totalRules} checks pass.

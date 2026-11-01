@@ -37,7 +37,7 @@ import {
 	saveProposalApplications,
 } from "../agent/proposal-applications";
 import { adoptEmbeddedLetters } from "../cover-letters/embedded";
-import { lockUser } from "../documents/ownership";
+import { idInUse, lockUser } from "../documents/ownership";
 import { enqueueStorageCleanup, reportStorageCleanupSummary, runStorageCleanup } from "../storage/cleanup";
 import { grantResumeAccess, hasResumeAccess } from "./access";
 import {
@@ -670,6 +670,8 @@ export const resumeService = {
 		origin?: "created" | "import";
 		/** The name follows the headline until someone renames the resume. */
 		autoName?: boolean;
+		/** More writes that must land with the resume or not at all, in its transaction. */
+		inTransaction?: (tx: DbOrTx, id: string) => Promise<void>;
 	}) => {
 		const id = input.id ?? generateId();
 		const data = parseWritableResumeData(structuredClone(input.data ?? defaultResumeData));
@@ -699,6 +701,7 @@ export const resumeService = {
 					data: stored,
 				});
 				await adoptEmbeddedLetters(tx, { userId: input.userId, resumeId: id, resumeName: input.name, data });
+				await input.inTransaction?.(tx, id);
 			});
 
 			// History is never empty: its first entry is where the document came from (best effort).
@@ -723,6 +726,9 @@ export const resumeService = {
 			if (constraint === "resume_slug_user_id_unique") {
 				throw new ORPCError("RESUME_SLUG_ALREADY_EXISTS", { status: 400 });
 			}
+			// Only a client-chosen ID can collide: another press of the same request got there first, or the ID is taken.
+			// Expected, so it's answered, not logged with the resume's contents.
+			if (input.id && constraint === "resume_pkey") throw idInUse();
 
 			console.error("Couldn't create the resume. Try again.:", error);
 			throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Couldn't create the resume. Try again." });

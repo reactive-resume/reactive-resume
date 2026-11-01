@@ -81,7 +81,24 @@ export const matchResume = protectedProcedure
 		description:
 			"Runs the editor's deterministic term matching and respects terms hidden on this resume. No AI provider is needed.",
 	})
-	.input(z.object({ id: z.string().min(1), jobDescription: z.string().trim().min(1).max(20_000) }))
+	.input(
+		z.object({
+			id: z.string().min(1),
+			jobDescription: z.string().trim().min(1).max(20_000),
+			company: z
+				.string()
+				.trim()
+				.max(200)
+				.optional()
+				.describe("The employer, so its name is never reported as a missing term."),
+			location: z
+				.string()
+				.trim()
+				.max(200)
+				.optional()
+				.describe("Where the job is, so the place is never reported as a missing term."),
+		}),
+	)
 	.output(
 		z.object({
 			found: z.array(jobTermSchema.extend({ label: z.string() })),
@@ -92,7 +109,12 @@ export const matchResume = protectedProcedure
 	.handler(async ({ input, context }) => {
 		const { data } = await resumeService.getById({ id: input.id, userId: context.user.id });
 		const hidden = new Set(data.metadata.check?.hiddenTerms ?? []);
-		const terms = matchJobDescription({ jobDescription: input.jobDescription, resumeText: buildMarkdown(data) })
+		const terms = matchJobDescription({
+			jobDescription: input.jobDescription,
+			resumeText: buildMarkdown(data),
+			company: input.company,
+			location: input.location,
+		})
 			.terms.filter((term) => !hidden.has(term.term))
 			.map((term) => ({
 				...term,

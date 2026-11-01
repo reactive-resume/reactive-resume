@@ -26,6 +26,8 @@ const mocks = vi.hoisted(() => ({
 	handleLlms: vi.fn(),
 	serveWebDistStatic: vi.fn(),
 	handleWebApp: vi.fn(),
+	isProfilePath: vi.fn((_path: string) => false),
+	serveResumePage: vi.fn(),
 }));
 
 vi.mock("@reactive-resume/env/server", async (original) => {
@@ -76,7 +78,11 @@ vi.mock("../static/web", () => ({
 	serveWebDistStatic: mocks.serveWebDistStatic,
 	handleWebApp: mocks.handleWebApp,
 	isPublicResumePath: () => false,
-	isProfilePath: () => false,
+	isProfilePath: mocks.isProfilePath,
+}));
+
+vi.mock("../static/resume-page", () => ({
+	serveResumePage: mocks.serveResumePage,
 }));
 
 vi.mock("../mcp/handler", () => ({
@@ -296,4 +302,49 @@ it.each([
 	expect(await response.json()).toMatchObject({ code: "PAYLOAD_TOO_LARGE", status: 413 });
 	expect(response.headers.get("cache-control")).toBe("no-store");
 	expect(handler).not.toHaveBeenCalled();
+});
+
+describe("sign-in addresses", () => {
+	const page = (status: number) => new Response(status === 200 ? "resume" : "unavailable", { status });
+
+	beforeEach(() => {
+		// No file of that name: the request moves on past the static files.
+		mocks.serveWebDistStatic.mockImplementation(async (_context: unknown, next: () => Promise<void>) => next());
+	});
+
+	it.each([
+		["/login", "/auth/login"],
+		["/Sign-In?redirect=%2Fdashboard", "/auth/login?redirect=%2Fdashboard"],
+		["/signup", "/auth/register"],
+		["/register", "/auth/register"],
+	])("sends %s to %s when no shared resume lives there", async (path, location) => {
+		const { createApp } = await import("./app");
+		mocks.isProfilePath.mockReturnValue(true);
+		mocks.serveResumePage.mockResolvedValue(page(404));
+
+		const response = await createApp().request(`http://localhost:3000${path}`);
+
+		expect(response.status).toBe(302);
+		expect(response.headers.get("location")).toBe(location);
+	});
+
+	it("keeps the page of an account that took the name before, and its password form", async () => {
+		const { createApp } = await import("./app");
+		mocks.isProfilePath.mockReturnValue(true);
+		mocks.serveResumePage.mockResolvedValueOnce(page(200)).mockResolvedValueOnce(page(401));
+
+		expect(await (await createApp().request("http://localhost:3000/login")).text()).toBe("resume");
+		expect((await createApp().request("http://localhost:3000/login")).status).toBe(401);
+	});
+
+	it("leaves other usernames and a password submission on the resume page", async () => {
+		const { createApp } = await import("./app");
+		mocks.isProfilePath.mockReturnValue(true);
+		mocks.serveResumePage.mockImplementation(async () => page(404));
+
+		expect((await createApp().request("http://localhost:3000/career")).status).toBe(404);
+		expect((await createApp().request("http://localhost:3000/constructor")).status).toBe(404);
+		expect((await createApp().request("http://localhost:3000/__proto__")).status).toBe(404);
+		expect((await createApp().request("http://localhost:3000/login", { method: "POST" })).status).toBe(404);
+	});
 });

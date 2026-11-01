@@ -120,8 +120,8 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 			id: userId,
 			name: "Alice Example",
 			email: "alice@example.test",
-			username: "alice",
-			displayUsername: "alice",
+			username: `${schemaName}-alice`,
+			displayUsername: `${schemaName}-alice`,
 		});
 		await db.insert(tables.resume).values({ id: "base", userId, name: "Base", slug: "base", data });
 		await db.insert(tables.application).values({

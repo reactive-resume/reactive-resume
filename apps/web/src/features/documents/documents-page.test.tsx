@@ -10,9 +10,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { DocumentsPage } from "./documents-page";
 import { TrashPage } from "./trash-page";
+import { useDialogStore } from "@/dialogs/store";
 import { orpc } from "@/libs/orpc/client";
 
-const requests = vi.hoisted(() => ({ load: vi.fn(), trash: vi.fn(), restore: vi.fn(), purge: vi.fn() }));
+const requests = vi.hoisted(() => ({
+	load: vi.fn(),
+	trash: vi.fn(),
+	restore: vi.fn(),
+	purge: vi.fn(),
+	navigate: vi.fn(),
+	newLetter: vi.fn(),
+}));
 vi.mock("@/libs/orpc/client", async (importOriginal) => {
 	const actual = await importOriginal<typeof import("@/libs/orpc/client")>();
 	return {
@@ -39,9 +47,14 @@ vi.mock("@/libs/orpc/client", async (importOriginal) => {
 
 vi.mock("@tanstack/react-router", () => ({
 	Link: ({ children }: { children: React.ReactNode }) => <a href="/dashboard">{children}</a>,
+	useNavigate: () => requests.navigate,
+	useRouter: () => ({ subscribe: () => () => {} }),
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
-vi.mock("./use-start-document", () => ({ useStartDocument: () => ({}) }));
+vi.mock("./use-start-document", () => ({
+	IMPORT_ACCEPT: ".pdf,.docx,.json",
+	useStartDocument: () => ({ newLetter: requests.newLetter, creating: false }),
+}));
 vi.mock("./document-actions", () => ({
 	TagsDialog: () => null,
 	LinkApplicationDialog: () => null,
@@ -59,7 +72,9 @@ vi.mock("./document-card", () => ({
 					onChange={(event) => onSelectedChange?.(event.target.checked)}
 				/>
 			</td>
-			<td>{document.name}</td>
+			<td>
+				<a href={`/builder/${document.id}`}>{document.name}</a>
+			</td>
 		</tr>
 	),
 	DocumentCard: ({ document, selected, onSelectedChange, disabled }: DocumentItemProps) => (
@@ -92,6 +107,8 @@ function page(offset: number, total = 19500): Page {
 			trashedAt: null,
 			createdAt: new Date(),
 			updatedAt: new Date(),
+			editedAt: new Date(),
+			recipient: null,
 			application: null,
 		})),
 		total,
@@ -324,4 +341,189 @@ it("bounds tag selection to twenty while allowing selected tags to be removed", 
 	await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toHaveLength(19));
 	fireEvent.click(screen.getByRole("button", { name: "#tag20" }));
 	await waitFor(() => expect(requests.load.mock.lastCall?.[0].tags).toContain("tag20"));
+});
+
+it("opens the top match with Enter, even before the typed search returns, then ↓ and Esc work from the field", async () => {
+	let finish!: (value: Page) => void;
+	requests.navigate.mockReset();
+	requests.load.mockReset().mockReturnValue(
+		new Promise<Page>((resolve) => {
+			finish = resolve;
+		}),
+	);
+	setup();
+	const search = screen.getByRole("searchbox", { name: "Search documents" });
+	search.focus();
+	fireEvent.change(search, { target: { value: "riot" } });
+	// An IME confirming its conversion and modified Enter keep their own meaning.
+	fireEvent.keyDown(search, { key: "Enter", keyCode: 229 });
+	fireEvent.keyDown(search, { key: "Enter", metaKey: true });
+	expect(requests.load).not.toHaveBeenCalled();
+	// Enter skips the typing delay and waits for the result instead of opening a stale row.
+	fireEvent.keyDown(search, { key: "Enter" });
+	await waitFor(() => expect(requests.load).toHaveBeenCalledWith(expect.objectContaining({ q: "riot", offset: 0 })));
+	expect(requests.navigate).not.toHaveBeenCalled();
+	await act(async () => {
+		finish({ ...page(0, 1), items: page(0, 1).items.map((row) => ({ ...row, id: "riot", name: "Riot — Gameplay" })) });
+	});
+	await waitFor(() =>
+		expect(requests.navigate).toHaveBeenCalledWith({
+			to: "/builder/letter/$coverLetterId",
+			params: { coverLetterId: "riot" },
+		}),
+	);
+	expect(requests.navigate).toHaveBeenCalledOnce();
+
+	fireEvent.keyDown(search, { key: "ArrowDown" });
+	expect(screen.getByRole("link", { name: "Riot — Gameplay" })).toHaveFocus();
+	search.focus();
+	fireEvent.keyDown(search, { key: "Escape" });
+	expect(search).toHaveValue("");
+	expect(search).toHaveFocus();
+	fireEvent.keyDown(search, { key: "Escape" });
+	expect(search).not.toHaveFocus();
+	expect(requests.navigate).toHaveBeenCalledOnce();
+});
+
+it("does not carry queued navigation into a replacement query client", async () => {
+	let finish!: (value: Page) => void;
+	requests.navigate.mockReset();
+	requests.load.mockReset().mockReturnValue(
+		new Promise<Page>((resolve) => {
+			finish = resolve;
+		}),
+	);
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	const first = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+	const second = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+	const tree = (client: QueryClient) => (
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={client}>
+				<DocumentsPage
+					search={{ type: "all", q: "Shared", tags: [], sort: "edited", view: "list" }}
+					onSearchChange={vi.fn()}
+				/>
+			</QueryClientProvider>
+		</I18nProvider>
+	);
+	const view = render(tree(first));
+	await waitFor(() => expect(requests.load).toHaveBeenCalled());
+	fireEvent.keyDown(screen.getByRole("searchbox", { name: "Search documents" }), { key: "Enter" });
+	view.rerender(tree(second));
+	await act(async () => finish(page(0, 1)));
+	await screen.findByText("Document 0");
+	expect(requests.navigate).not.toHaveBeenCalled();
+	view.unmount();
+	first.clear();
+	second.clear();
+});
+
+it.each(["empty", "error"])(
+	"a completed %s request cannot lend its Enter to later same-request data",
+	async (completion) => {
+		let finish!: (value: Page) => void;
+		let fail!: (error: Error) => void;
+		requests.navigate.mockReset();
+		requests.load.mockReset().mockReturnValue(
+			new Promise<Page>((resolve, reject) => {
+				finish = resolve;
+				fail = reject;
+			}),
+		);
+		const { client, input } = setup(false, "list", false, "Shared");
+		await waitFor(() => expect(requests.load).toHaveBeenCalled());
+		const search = screen.getByRole("searchbox", { name: "Search documents" });
+		fireEvent.keyDown(search, { key: "Enter" });
+		await act(async () => {
+			if (completion === "empty") finish(page(0, 0));
+			else fail(new Error("Owned search failure"));
+		});
+		if (completion === "error") {
+			await screen.findByRole("alert");
+			fireEvent.keyDown(search, { key: "Enter" });
+		} else await screen.findByText("Nothing matches “Shared”");
+		act(() =>
+			client.setQueryData(orpc.documents.page.queryKey({ input: { ...input, q: "Shared", offset: 0 } }), page(0, 1)),
+		);
+		await screen.findByText("Document 0");
+		expect(requests.navigate).not.toHaveBeenCalled();
+	},
+);
+it.each([
+	{ type: "letter", title: "No cover letters yet", action: "New cover letter" },
+	{ type: "resume", title: "No resumes yet", action: "New resume" },
+] as const)("an empty $type tab offers to make one instead of clearing filters", async ({ type, title, action }) => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
+	const input = {
+		trashed: false,
+		type,
+		q: "",
+		tags: [],
+		sort: "edited" as const,
+		public: false,
+		limit: 100,
+		offset: 0,
+	};
+	const counts = type === "letter" ? { resume: 3, letter: 0 } : { resume: 0, letter: 2 };
+	client.setQueryData(orpc.documents.page.queryKey({ input }), {
+		items: [],
+		total: 0,
+		counts,
+		tags: [],
+		hasPublic: false,
+	});
+	render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={client}>
+				<DocumentsPage search={{ type, q: "", tags: [], sort: "edited", view: "grid" }} onSearchChange={vi.fn()} />
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+
+	expect(await screen.findByRole("heading", { name: title })).toBeVisible();
+	expect(screen.queryByText("Nothing matches these filters")).toBeNull();
+	expect(screen.queryByRole("button", { name: "Clear search and filters" })).toBeNull();
+	if (type === "letter") {
+		fireEvent.click(screen.getByRole("button", { name: action }));
+		expect(requests.newLetter).toHaveBeenCalledOnce();
+	} else expect(screen.getByRole("button", { name: action })).toBeEnabled();
+});
+
+it("first run's Choose a file opens the file picker, then imports the chosen file", async () => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } });
+	const input = {
+		trashed: false,
+		type: "all" as const,
+		q: "",
+		tags: [],
+		sort: "edited" as const,
+		public: false,
+		limit: 100,
+		offset: 0,
+	};
+	const empty = { items: [], total: 0, counts: { resume: 0, letter: 0 }, tags: [], hasPublic: false };
+	client.setQueryData(orpc.documents.page.queryKey({ input }), empty);
+	const pick = vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
+	render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={client}>
+				<DocumentsPage
+					search={{ type: "all", q: "", tags: [], sort: "edited", view: "grid" }}
+					onSearchChange={vi.fn()}
+				/>
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+
+	fireEvent.click(await screen.findByRole("button", { name: "Choose a file" }));
+	expect(pick).toHaveBeenCalledOnce();
+	expect(useDialogStore.getState().open).toBe(false);
+
+	const file = new File(["{}"], "resume.json", { type: "application/json" });
+	fireEvent.change(screen.getByLabelText("Choose a file to import"), { target: { files: [file] } });
+	expect(useDialogStore.getState().activeDialog).toEqual({ type: "document.new", data: { file } });
+	pick.mockRestore();
+	act(() => useDialogStore.getState().closeDialog());
 });

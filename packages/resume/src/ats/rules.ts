@@ -12,6 +12,7 @@ import {
 import { templateLayouts } from "@reactive-resume/schema/templates";
 import { stripHtml } from "@reactive-resume/utils/string";
 import { atsRuleSeverity } from "./catalog";
+import { carriesUnmergedFields } from "./merge";
 import { SECTION_TITLE_ALIASES } from "./section-aliases";
 import { isRenderedSection } from "./walk";
 
@@ -153,13 +154,130 @@ function singleDateFindings(raw: unknown, dates: unknown, pointer: string, conte
 	return readable ? [] : [finding("UNPARSEABLE_DATE", pointer, { value })];
 }
 
+/** The heading fields an import can split, each judged on its own: employer and title; school, degree and field. */
+const HEADING_FIELDS: Partial<Record<CustomSectionType, readonly string[]>> = {
+	experience: ["company", "position"],
+	education: ["school", "degree", "area"],
+};
+
+/**
+ * Words a sentence can't end on: conjunctions, articles, possessives and prepositions, in lower case and on their own
+ * (not "sign-on", "Vipps AS" or "Series A"). Particles a phrasal verb ends on ("logged in", "took over") are left out.
+ */
+const DANGLING_WORD =
+	/(?:^|\s)(?:and|or|but|nor|by|of|to|the|for|with|from|as|into|onto|than|that|which|while|across|per|via|through|using|including|during|within|between|without|among|toward|towards|against|a|an|our|their|its|my|your|whose)$/;
+/** Words that continue a sentence: a heading that opens on one was cut from the text above. */
+const CONTINUING_WORD = /^(?:and|or|but|which|while|then|so|to|with|by|of|for|including|plus)\s/;
+const MAX_HEADING_WORDS = 10;
+/** How a sentence or bullet closes. A line without one is still open, unless the writer never closes lines. */
+const CLOSING_PUNCTUATION = /[.!?…"”)]$/;
+
+const textOf = (value: unknown) =>
+	typeof value === "string"
+		? stripHtml(value)
+				.replace(/&nbsp;/g, " ")
+				.trim()
+		: "";
+
+/** The description's lines: its paragraphs, bullets and line breaks. */
+const linesOf = (value: unknown) =>
+	typeof value === "string"
+		? value
+				.split(/<\/(?:p|li|h\d)>|<br\s*\/?>/i)
+				.map(textOf)
+				.filter(Boolean)
+		: [];
+
+/** Text that stops on a comma, dash or dangling word: the sentence goes on somewhere else. */
+const endsMidSentence = (text: string) => /[,;:\u2013\u2014-]$/.test(text) || DANGLING_WORD.test(text);
+
+/** A field cut out of a sentence: it ends mid-sentence, or opens on a continuing word. */
+const isCutMidSentence = (text: string) => endsMidSentence(text) || CONTINUING_WORD.test(text);
+
+/** How the text above ends: cut on a dangling word or comma, or only open (its last line has no closing punctuation). */
+type AboveEnding = { cut: boolean; open: boolean };
+
+function aboveEnding(value: Readonly<Record<string, unknown>>): AboveEnding {
+	const lines = linesOf(value.description);
+	const last = lines.at(-1) ?? "";
+	// Bullets written without full stops aren't open sentences: only a line left open among closed ones, or a lone
+	// line, says the sentence went on.
+	const closesLines = lines.length === 1 || lines.slice(0, -1).some((line) => CLOSING_PUNCTUATION.test(line));
+	return { cut: endsMidSentence(last), open: last.length > 0 && !CLOSING_PUNCTUATION.test(last) && closesLines };
+}
+
+/**
+ * A heading that is the rest of a sentence from the entry above: it ends or opens like a cut ("…time by", "and kept…");
+ * or the text above was cut and it runs on for more than 10 words; or the text above is open and it reads as prose,
+ * opening on an ordinary lower-case word ("uptime above target…", "team by 40%…", "25% across…"). "Senior Vice
+ * President of Global Engineering Operations", "eBay Marketplace" and "iOS platform lead" are real headings.
+ */
+function readsAsSentence(text: string, above: AboveEnding): boolean {
+	if ((above.cut || above.open) && isCutMidSentence(text)) return true;
+	const words = text.split(/\s+/).filter(Boolean);
+	if (
+		words.length > MAX_HEADING_WORDS &&
+		(above.cut ||
+			(isCutMidSentence(text) && /\b(?:built|shipped|reduced|led|delivered|managed|improved|mentored)\b/i.test(text)))
+	)
+		return true;
+	const prose = /^(?:[\d•·*-]|\p{Ll}[^\p{Lu}]*$)/u.test(words[0] ?? "");
+	return (above.cut || above.open) && words.length >= 4 && prose;
+}
+
+const isDated = (value: Readonly<Record<string, unknown>>) =>
+	textOf(value.period).length > 0 || (readItemDates(value.dates)?.start ?? null) !== null;
+
+/**
+ * Entries a PDF import split off the entry above: nothing a merge would lose (no dates, link or roles of their own),
+ * and a heading field that is a sentence fragment (or no heading at all, only text), directly after a dated entry or
+ * another such fragment. Adding dates would make them look like real jobs, so they're reported as part of the entry
+ * above instead. A real entry without dates still gets "Add dates".
+ */
+const fragmentsBySections = new WeakMap<readonly WalkedSection[], ReadonlySet<string>>();
+
+function fragmentPointers(sections: readonly WalkedSection[]): ReadonlySet<string> {
+	const cached = fragmentsBySections.get(sections);
+	if (cached) return cached;
+
+	const fragments = new Set<string>();
+	for (const section of sections) {
+		const fields = HEADING_FIELDS[section.type];
+		if (!fields || !isRenderedSection(section)) continue;
+
+		section.items.forEach((item, index) => {
+			const previous = section.items[index - 1];
+			if (!previous || !(isDated(previous.value) || fragments.has(previous.pointer))) return;
+			if (carriesUnmergedFields(item.value)) return;
+
+			const headings = fields.map((field) => textOf(item.value[field])).filter(Boolean);
+			const above = aboveEnding(previous.value);
+			if (fragments.has(previous.pointer)) above.open = true;
+			const fragment =
+				headings.length > 0
+					? headings.some((heading) => readsAsSentence(heading, above))
+					: !textOf(item.value.location) && textOf(item.value.description).length > 0;
+			if (fragment) fragments.add(item.pointer);
+		});
+	}
+
+	fragmentsBySections.set(sections, fragments);
+	return fragments;
+}
+
+const fragmentRules: AtsRule = (context) =>
+	[...fragmentPointers(context.sections)].map((pointer) => finding("FRAGMENTED_ENTRY", pointer));
+
 const dateRules: AtsRule = (context) => {
 	const findings: AtsRuleFinding[] = [];
+	const fragments = fragmentPointers(context.sections);
 
 	for (const section of context.sections) {
 		if (isCoverLetter(section) || !isRenderedSection(section)) continue;
 
 		for (const item of section.items) {
+			// A fragment is reported as part of the entry above; asking for its dates would make it look real.
+			if (fragments.has(item.pointer)) continue;
 			findings.push(
 				...periodFindings(item.value.period, item.value.dates, `${item.pointer}/period`, section.type, context),
 			);
@@ -321,6 +439,7 @@ export const ATS_RULES: readonly AtsRule[] = [
 	urlRules,
 	dateRules,
 	structureRules,
+	fragmentRules,
 	titleRules,
 	layoutRules,
 	twoColumnRules,

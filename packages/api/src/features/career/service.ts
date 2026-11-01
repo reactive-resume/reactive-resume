@@ -24,7 +24,8 @@ import { generateId } from "@reactive-resume/utils/string";
 import { requestRunCancellation } from "../agent/cancellation";
 import { aiProvidersService } from "../ai-providers/service";
 import { findTrackedPosting } from "../applications/duplicates";
-import { applicationTransitionValues, ensureApplicationPipeline } from "../applications/lanes";
+import { syncFollowUp } from "../applications/follow-up";
+import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "../applications/lanes";
 import { applicationService, assertApplicationVersion, recordSentResume } from "../applications/service";
 import { assertSharedDocument, lockUser } from "../documents/ownership";
 import { matchPosting } from "./matching";
@@ -689,6 +690,8 @@ export const careerService = {
 				company: tables.application.company,
 				role: tables.application.role,
 				activity: tables.application.activity,
+				status: tables.application.status,
+				closedReason: tables.application.closedReason,
 			})
 			.from(tables.careerArtifact)
 			.leftJoin(tables.application, eq(tables.application.id, tables.careerArtifact.applicationId))
@@ -699,8 +702,8 @@ export const careerService = {
 					input.kind ? sql`${tables.careerArtifact.data}->>'kind' = ${input.kind}` : undefined,
 				),
 			)
-			.orderBy(desc(tables.careerArtifact.createdAt));
-		return rows.map(({ item, company, role, activity }) => {
+			.orderBy(desc(tables.careerArtifact.createdAt), desc(tables.careerArtifact.id));
+		return rows.map(({ item, company, role, activity, status, closedReason }) => {
 			// Restore schema key order before hashing: JSONB reorders object keys on disk.
 			const parsed =
 				item.data.kind === "answers" ? careerWorkspaceSchema.shape.answers.safeParse(item.data.answers) : null;
@@ -718,7 +721,7 @@ export const careerService = {
 								entry.canonicalTransition !== false &&
 								item.inputVersion === hash(JSON.stringify([item.applicationId, entry.at, answers])),
 						)),
-				application: company === null ? null : { company, role: role ?? "" },
+				application: company === null ? null : { company, role: role ?? "", status, closedReason },
 				// Knowledge, the posting or documents changed since it was written.
 				outdated: item.data.kind !== "answers" && context !== null && item.inputVersion !== context.version,
 			};
@@ -936,17 +939,21 @@ export const careerService = {
 			.delete(tables.careerArtifact)
 			.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)));
 	},
-	/** Applies the ticked changes of a read employer message. Reaching Applied goes through Mark as applied. */
+	/**
+	 * Applies the ticked changes of a read employer message. Reaching Applied goes through Mark as applied. Returns the
+	 * application's stage only when this call writes it, so a repeat cannot acknowledge another device's move.
+	 */
 	applyReply: async (userId: string, id: string, selected: number[]) => {
 		const [saved] = await db
 			.select()
 			.from(tables.careerArtifact)
 			.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)));
 		if (!saved?.applicationId || saved.data.kind !== "reply") throw new ORPCError("NOT_FOUND");
-		if (saved.data.applied) return;
 		const applicationId = saved.applicationId;
+		// A repeat saved no stage; acknowledging the current row could adopt another device's later move.
+		if (saved.data.applied) return { stages: [] };
 		const context = await careerService.context({ userId, applicationId });
-		await db.transaction(async (tx) => {
+		return db.transaction(async (tx) => {
 			await lockUser(tx, userId);
 			const [application] = await tx
 				.select()
@@ -961,7 +968,7 @@ export const careerService = {
 				.for("update");
 			if (!item?.applicationId || item.data.kind !== "reply") throw new ORPCError("NOT_FOUND");
 			const data = item.data;
-			if (data.applied) return;
+			if (data.applied) return { stages: [] };
 
 			if (
 				selected.some((index) => !Number.isInteger(index) || index < 0 || index >= data.changes.length) ||
@@ -1010,14 +1017,21 @@ export const careerService = {
 			const { values, transition } = await applicationTransitionValues(tx, userId, { status }, application, now);
 			const [updated] = await tx
 				.update(tables.application)
-				.set({ ...values, followUpAt, followUpNote })
+				.set({
+					...values,
+					followUpAt,
+					followUpNote,
+					...(changes.some((change) => change.type === "follow-up") ? { followUpDateOnly: false } : {}),
+				})
 				.where(and(eq(tables.application.id, application.id), eq(tables.application.userId, userId)))
 				.returning();
 			if (updated && transition.canonicalTransition) await recordSentResume(updated, tx);
+			if (updated && changes.some((change) => change.type === "follow-up")) await syncFollowUp(tx, updated);
 			await tx
 				.update(tables.careerArtifact)
 				.set({ data: { ...data, applied: { at: now.toISOString(), changes: selected } } })
 				.where(eq(tables.careerArtifact.id, id));
+			return { stages: updated && transition.changed ? [savedStageOf(updated)] : [] };
 		});
 	},
 	workspace: async (userId: string, applicationId: string) => {
@@ -1081,7 +1095,7 @@ export const careerService = {
 		expectedDocuments?: { resumeId: string | null; coverLetterId: string | null },
 	) => {
 		const parsed = careerWorkspaceSchema.shape.answers.parse(answers);
-		await db.transaction(async (tx) => {
+		return await db.transaction(async (tx) => {
 			await lockUser(tx, userId);
 			const [application] = await tx
 				.select()
@@ -1156,7 +1170,7 @@ export const careerService = {
 						);
 					if (!version) throw conflict();
 				}
-				return;
+				return { stages: [] };
 			}
 			if (!isDeepStrictEqual(current.answers, expectedAnswers) && !isDeepStrictEqual(current.answers, parsed))
 				throw new ORPCError("CONFLICT", {
@@ -1189,6 +1203,7 @@ export const careerService = {
 					evidence: { factIds: await ownedFactIds(tx, userId, sent), storyIds: [] },
 					inputVersion: hash(JSON.stringify([applicationId, at, sent])),
 				});
+			return { stages: [savedStageOf(submitted)] };
 		});
 	},
 	/** Copies the workspace's answers into Saved when the application is marked as applied: what was sent. */

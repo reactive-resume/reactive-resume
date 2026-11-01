@@ -251,7 +251,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 								? { url: application.resumeFileUrl, name: application.resumeFileName || t`Resume file` }
 								: null
 						}
-						attachLabel={t`Attach a resume file (PDF)`}
+						attachLabel={t`Attach a resume file (PDF, up to 10 MB)`}
 						disabled={disabled || update.isPending}
 						onChange={(value) =>
 							update.mutate({
@@ -266,7 +266,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 								? { url: application.coverLetterUrl, name: application.coverLetterName || t`Cover letter file` }
 								: null
 						}
-						attachLabel={t`Attach a cover letter file (PDF)`}
+						attachLabel={t`Attach a cover letter file (PDF, up to 10 MB)`}
 						disabled={disabled || update.isPending}
 						onChange={(value) =>
 							update.mutate({

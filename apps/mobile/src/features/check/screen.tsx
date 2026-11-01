@@ -21,8 +21,8 @@ import { routes } from "@/routes";
 import { Banner, Button, Card, EmptyState, ListRow, Segmented, Skeleton, Text, useTheme } from "@/ui";
 import { usePullRefresh } from "@/ui/use-pull-refresh";
 
-type CheckScreenProps = { id: string };
-export function CheckScreen({ id }: CheckScreenProps) {
+type CheckScreenProps = { id: string; initialTab?: "issues" | "match" | "writing" | undefined };
+export function CheckScreen({ id, initialTab = "issues" }: CheckScreenProps) {
 	const router = useRouter();
 	const { t } = useLingui();
 	const { colors, space, motion } = useTheme();
@@ -46,7 +46,7 @@ export function CheckScreen({ id }: CheckScreenProps) {
 	// One obvious next step: only the highest-ranked open fix that applies gets the filled button.
 	const leadingFix = check?.issues.find((issue) => issue.fix.kind === "apply")?.key ?? null;
 	const [writingReview, setWritingReview] = useState<WritingReview | null>(null);
-	const [tab, setTab] = useState<"issues" | "match" | "writing">("issues");
+	const [tab, setTab] = useState<"issues" | "match" | "writing">(initialTab);
 	const [selected, setSelected] = useState<string | null>(null);
 	const [showPage, setShowPage] = useState(false);
 	const [highlightTerm, setHighlightTerm] = useState<string | null>(null);

@@ -17,9 +17,17 @@ export function checkStateOf(draft: ResumeData) {
 	return draft.metadata.check;
 }
 
-export function matchPosting(data: ResumeData, posting: string) {
+/** The employer and place of a linked application: their names are never a term to add. */
+type PostingOwner = { company?: string | undefined; location?: string | null | undefined };
+
+export function matchPosting(data: ResumeData, posting: string, owner: PostingOwner = {}) {
 	const hidden = new Set(data.metadata.check?.hiddenTerms ?? []);
-	const terms = matchJobDescription({ jobDescription: posting, resumeText: buildMarkdown(data) })
+	const terms = matchJobDescription({
+		jobDescription: posting,
+		resumeText: buildMarkdown(data),
+		company: owner.company,
+		location: owner.location ?? undefined,
+	})
 		.terms.filter((term) => !hidden.has(term.term))
 		.map((term) => ({
 			...term,

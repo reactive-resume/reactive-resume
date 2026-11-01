@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
+import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { parseDateOnly } from "./date";
 import { applicationError } from "./error";
 import { LaneNotice } from "./lane-notice";
@@ -20,6 +21,7 @@ import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { WebAccessAttention } from "@/features/ai/web-access";
 import { WallClockField } from "@/features/application-detail/date-field";
+import { useUserTime } from "@/features/application-detail/hooks";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -37,7 +39,12 @@ import {
 } from "@/ui";
 
 type ParsedPosting = RouterOutput["applications"]["ai"]["parsePosting"];
-type AddApplicationSheetProps = { onClose: () => void; initialCapture?: PostingCapture | undefined };
+type AddApplicationSheetProps = {
+	onClose: () => void;
+	initialCapture?: PostingCapture | undefined;
+	/** Opened to pick a job inside another flow (Copy for a job, Link to application): returns the new job there. */
+	onAdded?: ((id: string) => void) | undefined;
+};
 const isLink = (value: string) => {
 	try {
 		const url = new URL(value.trim());
@@ -52,9 +59,10 @@ const today = () => {
 };
 
 /** Mounted until an explicit close/discard; unmounting cancels transient posting requests. */
-export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationSheetProps) {
+export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApplicationSheetProps) {
 	const router = useRouter();
 	const { t } = useLingui();
+	const { timeZone } = useUserTime();
 	const { space } = useTheme();
 	const session = useSession();
 	const accountScope = getAccountScope();
@@ -212,6 +220,9 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 		void run("save", async (signal) => {
 			if (!ready || duplicate.data) return;
 			const text = description.slice(0, 20_000);
+			const followUpAt = followUpDate ? fromZonedDateTime(followUpDate, "09:00", timeZone) : null;
+			if (followUpDate && !followUpAt)
+				throw new Error(t`This date or time does not exist in your timezone. Choose another time.`);
 			const id = await create.mutateAsync({
 				company: company.trim(),
 				role: role.trim(),
@@ -229,12 +240,14 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 				coverLetterId: stage !== "saved" ? letterId || null : null,
 				tags,
 				notes: notes || null,
-				followUpAt: followUpDate ? new Date(`${followUpDate}T12:00:00`) : null,
+				followUpAt,
+				followUpDateOnly: false,
 				followUpNote: followUpNote.trim() || null,
 			});
 			if (!current(signal)) return;
 			onClose();
-			router.push(routes.applicationDetails(id));
+			if (onAdded) onAdded(id);
+			else router.push(routes.applicationDetails(id));
 		});
 	const dirty = !!(
 		input ||
@@ -334,7 +347,8 @@ export function AddApplicationSheet({ onClose, initialCapture }: AddApplicationS
 											...(description.trim() ? { jobDescription: description.slice(0, 20_000), postingSource } : {}),
 										});
 										onClose();
-										router.push(routes.applicationDetails(duplicate.data.id));
+										if (onAdded) onAdded(duplicate.data.id);
+										else router.push(routes.applicationDetails(duplicate.data.id));
 									})
 								}
 							/>

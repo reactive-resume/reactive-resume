@@ -1,43 +1,149 @@
+import type { SavedData } from "@/features/workspace/hooks";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import type { OfferTerms } from "@reactive-resume/schema/career";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
-import { parseOfferEntry } from "@reactive-resume/schema/career-offer";
-import { client, useCareerAction, useCareerTime } from "./hooks";
+import { offerApplications, parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
+import { client, useCareerAction, useCareerTime, useOffers } from "./hooks";
+import { formatMoney } from "./offer-compare";
 import { EditorSheet, LoadState } from "./shared";
 import { WallClockField } from "@/features/application-detail/date-field";
+import { useApplicationLanes } from "@/features/applications/lane-queries";
+import { resolveLane } from "@/features/applications/lanes";
 import { useApplications } from "@/features/applications/queries";
+import { useMoveWithUndo } from "@/features/applications/stage-actions";
 import { routes } from "@/routes";
-import { Banner, Button, SelectSheet, Text, TextField, showToast, useTheme } from "@/ui";
+import { Banner, Button, Card, SelectSheet, Text, TextField, showToast, useTheme } from "@/ui";
 
-type Application = { id: string; company: string; role: string };
-type OfferEntryProps = { application?: Application; primary?: boolean };
-export function OfferEntry({ application, primary = false }: OfferEntryProps) {
+type Application = { id: string; company: string; role: string; status?: ApplicationStatus | undefined };
+type OfferEntryProps = {
+	application?: Application | undefined;
+	primary?: boolean;
+	/** Open the form at once ("Add the offer's terms" from a move to Offer). */
+	initialOpen?: boolean | undefined;
+	/** Called when the form closes, saved or not. */
+	onDone?: (() => void) | undefined;
+};
+type OfferTermsSaved = SavedData<"offer">;
+type OfferSaved = { id: string; data: OfferTermsSaved };
+
+/** Stages before Offer: saving an offer for an application still at one of these moves it to Offer, with Undo. */
+const BEFORE_OFFER: readonly ApplicationStatus[] = ["saved", "applied", "screening", "interview"];
+
+/**
+ * Add offer, and the offer saved last for this application in view as a one-line summary, so saving doesn't make the
+ * terms disappear into Saved.
+ */
+export function OfferEntry(props: OfferEntryProps) {
+	return <ScopedOfferEntry key={props.application?.id ?? "global"} {...props} />;
+}
+function ScopedOfferEntry({ application, primary = false, initialOpen = false, onDone }: OfferEntryProps) {
 	const { t } = useLingui();
-	const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(initialOpen);
+	const [requested, setRequested] = useState(initialOpen);
+	if (initialOpen !== requested) {
+		setRequested(initialOpen);
+		if (initialOpen) setOpen(true);
+	}
+	const applications = useApplications();
+	const router = useRouter();
+	const offers = useOffers();
+	const [justSaved, setJustSaved] = useState<OfferSaved | null>(null);
+	const latest =
+		justSaved ??
+		(application
+			? (offers.data ?? [])
+					.filter((item) => item.data.kind === "offer" && item.applicationId === application.id)
+					.toSorted((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
+			: undefined);
+	const close = () => {
+		setOpen(false);
+		onDone?.();
+	};
+	if (!open && !application && (!applications.data || (applications.isError && !applications.data.length)))
+		return <LoadState query={applications} />;
+	if (!open && !application && applications.data?.length === 0)
+		return (
+			<Button
+				variant={primary ? "primary" : "secondary"}
+				label={t`Add an application first`}
+				onPress={() => router.push(routes.newJob())}
+			/>
+		);
 	return (
 		<>
-			<Button variant={primary ? "primary" : "secondary"} label={t`Add offer`} onPress={() => setOpen(true)} />
-			{open ? <OfferForm {...(application ? { application } : {})} onClose={() => setOpen(false)} /> : null}
+			{latest?.data.kind === "offer" ? <OfferSummary offer={latest.data} id={latest.id} /> : null}
+			<Button
+				variant={primary ? "primary" : "secondary"}
+				label={latest && application ? t`Add a newer offer` : t`Add offer`}
+				onPress={() => setOpen(true)}
+			/>
+			{open ? <OfferForm {...(application ? { application } : {})} onClose={close} onSaved={setJustSaved} /> : null}
 		</>
 	);
 }
 
-type OfferFormProps = OfferEntryProps & { onClose: () => void };
-function OfferForm({ application, onClose }: OfferFormProps) {
+/** "Written offer · €182,000 a year · respond by 12 Nov 2026 · Compare" */
+type OfferSummaryProps = { offer: OfferTermsSaved; id: string };
+function OfferSummary({ offer, id }: OfferSummaryProps) {
+	const { t } = useLingui();
+	const { space } = useTheme();
+	const router = useRouter();
+	const { locale, timeZone } = useCareerTime();
+	const period = { year: t`a year`, month: t`a month`, hour: t`an hour` }[offer.period];
+	const respondBy = offer.respondBy
+		? new Intl.DateTimeFormat(locale, { timeZone, dateStyle: "medium" }).format(new Date(offer.respondBy))
+		: null;
+	const parts = [
+		offer.version === "verbal" ? t`Verbal offer` : t`Written offer`,
+		offer.base === null ? null : `${formatMoney(locale, offer.currency, offer.base)} ${period}`,
+		respondBy ? t`respond by ${respondBy}` : null,
+	].filter(Boolean);
+	return (
+		<Card style={{ gap: space.s2 }}>
+			<Text accessibilityLiveRegion="polite">{parts.join(" · ")}</Text>
+			<Button
+				variant="ghost"
+				size="sm"
+				label={t`Compare`}
+				onPress={() => router.push({ pathname: routes.career("offers"), params: { a: id } })}
+			/>
+		</Card>
+	);
+}
+
+type OfferFormProps = {
+	application?: Application | undefined;
+	onClose: () => void;
+	onSaved: (offer: OfferSaved) => void;
+};
+function OfferForm({ application, onClose, onSaved }: OfferFormProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { locale, timeZone, profile } = useCareerTime();
 	const router = useRouter();
 	const applications = useApplications();
 	const action = useCareerAction();
+	const lanes = useApplicationLanes();
+	const moveWithUndo = useMoveWithUndo();
 	const [applicationId, setApplicationId] = useState(application?.id ?? "");
-	const [terms, setTerms] = useState(() => ({
+	const savedOffers = useOffers();
+	const [draft, setTerms] = useState(() => ({
 		...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }),
 		currency: "",
 	}));
+	// Until the currency is typed, it's the one the last offer was in, so the two compare.
+	const [currencyTyped, setCurrencyTyped] = useState(false);
+	const [previousCurrency, setPreviousCurrency] = useState<string>();
+	if (previousCurrency === undefined && savedOffers.data) {
+		const currency = previousOfferCurrency(savedOffers.data);
+		if (currency) setPreviousCurrency(currency);
+	}
+	const terms = currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
+	const [more, setMore] = useState(false);
 	const [amounts, setAmounts] = useState({ base: "", variable: "", learning: "" });
 	const [date, setDate] = useState("");
 	const [time, setTime] = useState("17:00");
@@ -55,7 +161,7 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 		timeZone: profile.isSuccess ? timeZone : null,
 	});
 	const dirty = !!(
-		terms.currency ||
+		(currencyTyped && terms.currency) ||
 		amounts.base ||
 		amounts.variable ||
 		amounts.learning ||
@@ -76,6 +182,21 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 		{ key: "leave", label: t`Leave`, max: 500 },
 		{ key: "other", label: t`Other benefits`, max: 1000 },
 	] as const;
+	const amountField = (key: "base" | "variable" | "learning", label: string) => (
+		<TextField
+			key={key}
+			label={label}
+			keyboardType="decimal-pad"
+			value={amounts[key]}
+			onBlur={() => touch(key)}
+			onChangeText={(value) => setAmounts((current) => ({ ...current, [key]: value }))}
+			error={
+				(submitted || touched[key]) && amountErrors[key]
+					? t`Enter a full amount, such as 95000, or leave blank.`
+					: undefined
+			}
+		/>
+	);
 	return (
 		<EditorSheet title={t`Add offer`} dirty={dirty} pending={action.pending} onClose={onClose}>
 			<View style={{ padding: space.s4, gap: space.s4 }}>
@@ -90,9 +211,9 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						<SelectSheet
 							label={t`Application`}
 							value={applicationId}
-							options={(applications.data ?? []).map((row) => ({
+							options={offerApplications(applications.data ?? []).map((row) => ({
 								value: row.id,
-								label: `${row.company} · ${row.role}`,
+								label: `${row.company} · ${row.role} · ${row.closedReason === "accepted" ? t`Accepted` : row.status === "offer" ? t`Offer` : row.status === "closed" ? t`Closed` : t`In progress`}`,
 							}))}
 							onChange={setApplicationId}
 						/>
@@ -102,29 +223,24 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 								label={t`Add an application first`}
 								onPress={() => {
 									onClose();
-									router.push(routes.applications());
+									router.push(routes.newJob());
 								}}
 							/>
 						) : null}
 					</>
 				)}
-				<SelectSheet
-					label={t`Offer type`}
-					value={terms.version}
-					onChange={(version) => change({ version })}
-					options={[
-						{ value: "written", label: t`Written offer` },
-						{ value: "verbal", label: t`Verbal offer` },
-					]}
-				/>
 				<TextField
 					label={t`Currency`}
 					value={terms.currency}
 					onBlur={() => touch("currency")}
 					autoCapitalize="characters"
 					maxLength={3}
-					placeholder="EUR"
-					onChangeText={(currency) => change({ currency: currency.toUpperCase() })}
+					// A hint, not a placeholder: a placeholder "EUR" reads as a currency already chosen.
+					helper={t`Enter a three-letter currency code.`}
+					onChangeText={(currency) => {
+						setCurrencyTyped(true);
+						change({ currency: currency.toUpperCase() });
+					}}
 					error={
 						(submitted || touched.currency) && !/^[A-Z]{3}$/.test(terms.currency)
 							? t`Enter a three-letter currency code.`
@@ -141,48 +257,50 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 						{ value: "hour", label: t`Per hour` },
 					]}
 				/>
-				{(
-					[
-						{ key: "base", label: t`Base salary` },
-						{ key: "variable", label: t`Bonus` },
-						{ key: "learning", label: t`Learning budget` },
-					] as const
-				).map(({ key, label }) => (
-					<TextField
-						key={key}
-						label={label}
-						keyboardType="decimal-pad"
-						value={amounts[key]}
-						onBlur={() => touch(key)}
-						onChangeText={(value) => setAmounts((current) => ({ ...current, [key]: value }))}
-						error={
-							(submitted || touched[key]) && amountErrors[key]
-								? t`Enter a full amount, such as 95000, or leave blank.`
-								: undefined
-						}
-					/>
-				))}
-				<SelectSheet
-					label={t`Office days per week`}
-					value={terms.officeDays === null ? "" : String(terms.officeDays)}
-					onChange={(value) => change({ officeDays: value === "" ? null : Number(value) })}
-					options={[
-						{ value: "", label: t`Unknown` },
-						...[0, 1, 2, 3, 4, 5].map((days) => ({ value: String(days), label: String(days) })),
-					]}
-				/>
-				{textFields.map(({ key, label, max }) => (
-					<TextField
-						key={key}
-						label={label}
-						value={terms[key]}
-						maxLength={max}
-						onChangeText={(value) => change({ [key]: value })}
-					/>
-				))}
+				{amountField("base", t`Base salary`)}
 				<WallClockField label={t`Respond by`} mode="date" value={date} onChange={setDate} clearable />
 				{date ? <WallClockField label={t`Time`} mode="time" value={time} onChange={setTime} /> : null}
-				{profile.isSuccess ? <Text color="ink3">{t`Times are shown in ${timeZone}.`}</Text> : null}
+				{date && profile.isSuccess ? <Text color="ink3">{t`Times are shown in ${timeZone}.`}</Text> : null}
+				<Button
+					variant="ghost"
+					icon={more ? "caret-down" : "caret-right"}
+					label={t`More options`}
+					expanded={more}
+					onPress={() => setMore(!more)}
+				/>
+				{more ? (
+					<>
+						<SelectSheet
+							label={t`Offer type`}
+							value={terms.version}
+							onChange={(version) => change({ version })}
+							options={[
+								{ value: "written", label: t`Written offer` },
+								{ value: "verbal", label: t`Verbal offer` },
+							]}
+						/>
+						{amountField("variable", t`Bonus`)}
+						{amountField("learning", t`Learning budget`)}
+						<SelectSheet
+							label={t`Office days per week`}
+							value={terms.officeDays === null ? "" : String(terms.officeDays)}
+							onChange={(value) => change({ officeDays: value === "" ? null : Number(value) })}
+							options={[
+								{ value: "", label: t`Unknown` },
+								...[0, 1, 2, 3, 4, 5].map((days) => ({ value: String(days), label: String(days) })),
+							]}
+						/>
+						{textFields.map(({ key, label, max }) => (
+							<TextField
+								key={key}
+								label={label}
+								value={terms[key]}
+								maxLength={max}
+								onChangeText={(value) => change({ [key]: value })}
+							/>
+						))}
+					</>
+				) : null}
 				{date ? <LoadState query={profile} /> : null}
 				{submitted && deadlineError ? (
 					<Banner
@@ -203,11 +321,25 @@ function OfferForm({ application, onClose }: OfferFormProps) {
 					loading={action.pending}
 					onPress={() => {
 						setSubmitted(true);
+						if (amountErrors.variable || amountErrors.learning) setMore(true);
 						if (payload.success)
 							void action.run(
 								() => client.career.createOffer(payload.data),
-								() => {
-									showToast({ message: t`Offer saved` });
+								(result) => {
+									if (!application && result) router.setParams({ a: result.id });
+									if (result?.data.kind === "offer") onSaved({ id: result.id, data: result.data });
+									const row = applications.data?.find((item) => item.id === payload.data.applicationId);
+									const target = application ?? row;
+									const status = application?.status ?? row?.status;
+									if (target && status && BEFORE_OFFER.includes(status))
+										// An offer means the application is at Offer; Undo keeps the offer and leaves the stage.
+										moveWithUndo({
+											applications: [{ id: payload.data.applicationId }],
+											lane: resolveLane(lanes.lanes, { status: "offer" }),
+											supported: lanes.supported,
+											message: t`Offer saved. ${target.company} moved to Offer.`,
+										});
+									else showToast({ message: t`Offer saved` });
 									onClose();
 								},
 							);

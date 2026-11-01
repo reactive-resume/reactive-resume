@@ -3,7 +3,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { readLegacyDates } from "@reactive-resume/schema/resume/dates";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
-import { lintResumeForAts } from "./index";
+import { atsVerdict, lintResumeForAts, mergeIntoPreviousEntry } from "./index";
 
 const NOW = new Date("2024-06-15T00:00:00Z");
 
@@ -420,4 +420,340 @@ describe("sample resume", () => {
 	it("raises no errors on the resume the product ships as its example", () => {
 		expect(lint(sampleResumeData).findings.filter((item) => item.severity === "error")).toEqual([]);
 	});
+});
+
+describe("entries that are part of the one above (J2-02)", () => {
+	const fragment = (id: string, company: string, description = "") =>
+		experienceItem({ id, company, position: "", location: "", period: "", description });
+
+	const imported = () =>
+		makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({ id: "studio", company: "Synthetic Studio 1", period: "2020 - Present" }),
+				fragment(
+					"f1",
+					"Project 1.3: Built accessible services for global customers, mentored four engineers, and reduced processing time by",
+					"<p>25%. Tracked reliability and customer feedback.</p>",
+				),
+				fragment("f2", "and kept the on-call rotation healthy,", "<p>Cut pages by half.</p>"),
+			];
+		});
+
+	it("reports a sentence split off a dated entry as part of it, not as an entry missing dates", () => {
+		const findings = lint(imported()).findings;
+
+		expect(findings.filter((item) => item.code === "FRAGMENTED_ENTRY").map((item) => item.pointer)).toEqual([
+			"/sections/experience/items/1",
+			"/sections/experience/items/2",
+		]);
+		expect(findings.map((item) => item.code)).not.toContain("EMPTY_PERIOD");
+	});
+
+	it("still asks for dates on a real entry that has none", () => {
+		const data = makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({ id: "a" }),
+				experienceItem({ id: "b", company: "Freelance", position: "Consultant", period: "" }),
+			];
+		});
+
+		expect(codesOf(data)).toContain("EMPTY_PERIOD");
+		expect(codesOf(data)).not.toContain("FRAGMENTED_ENTRY");
+	});
+
+	it("never calls the resume clean while a fragment is open", () => {
+		const report = lint(imported());
+
+		expect(report.score).toBeGreaterThanOrEqual(80);
+		expect(atsVerdict(report)).toBe("mostly");
+		expect(atsVerdict(lint(makeResume()))).toBe("clean");
+	});
+
+	it("merges a fragment into the entry above, keeping its words in order", () => {
+		const data = imported();
+		mergeIntoPreviousEntry(data, "/sections/experience/items/1");
+
+		expect(data.sections.experience.items.map((item) => item.id)).toEqual(["studio", "f2"]);
+		expect(data.sections.experience.items[0]?.description).toBe(
+			"<p>Designed and shipped the difference engine.</p><p>Project 1.3: Built accessible services for global customers, mentored four engineers, and reduced processing time by 25%. Tracked reliability and customer feedback.</p>",
+		);
+	});
+
+	it("escapes the heading text it moves into the description", () => {
+		const data = makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({ id: "a", description: "" }),
+				fragment("b", "Shipped <script> & more to customers in twelve markets across the region by"),
+			];
+		});
+		mergeIntoPreviousEntry(data, "/sections/experience/items/1");
+
+		expect(data.sections.experience.items[0]?.description).toBe(
+			"<p>Shipped &lt;script&gt; &amp; more to customers in twelve markets across the region by</p>",
+		);
+	});
+
+	it.each([
+		["eBay", { company: "eBay", position: "Senior Product Manager", location: "" }],
+		[
+			"a long senior title",
+			{
+				company: "Contoso",
+				position: "Senior Vice President of Global Engineering Operations",
+				location: "New York, NY",
+			},
+		],
+		[
+			"a board seat",
+			{
+				company: "Northwind Children's Hospital Foundation",
+				position: "Advisory Board Member and Treasurer",
+				location: "Seattle, WA",
+			},
+		],
+	])("treats %s without dates as a real entry that needs dates", (_name, heading) => {
+		const data = makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({ id: "a" }),
+				experienceItem({ id: "b", ...heading, period: "", description: "<p>Ran the marketplace roadmap</p>" }),
+			];
+		});
+
+		expect(codesOf(data)).toContain("EMPTY_PERIOD");
+		expect(codesOf(data)).not.toContain("FRAGMENTED_ENTRY");
+	});
+
+	it("treats an undated degree as a real entry that needs dates", () => {
+		const data = makeResume((resume) => {
+			const school = { hidden: false, website: { url: "", label: "", inlineLink: false }, description: "", grade: "" };
+			resume.sections.education.items = [
+				{
+					...school,
+					id: "e1",
+					school: "Stanford University",
+					degree: "Executive Program",
+					area: "Leadership",
+					location: "",
+					period: "2021",
+				},
+				{
+					...school,
+					id: "e2",
+					school: "Massachusetts Institute of Technology",
+					degree: "Master of Science",
+					area: "Electrical Engineering and Computer Science",
+					location: "Cambridge, MA",
+					period: "",
+				},
+			];
+			resume.metadata.layout.pages = [{ fullWidth: false, main: ["experience", "education"], sidebar: [] }];
+		});
+
+		expect(lint(data).findings.map((item) => `${item.code} ${item.pointer}`)).toContain(
+			"EMPTY_PERIOD /sections/education/items/1/period",
+		);
+		expect(codesOf(data)).not.toContain("FRAGMENTED_ENTRY");
+	});
+
+	it("reads a long heading as the rest of a sentence when the entry above stops mid-sentence", () => {
+		const data = makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({ id: "a", description: "<p>Reduced processing time by 25% while keeping</p>" }),
+				fragment("b", "uptime above target for every regional customer team across the whole platform group"),
+			];
+		});
+
+		expect(codesOf(data)).toContain("FRAGMENTED_ENTRY");
+	});
+
+	const unpunctuatedBullets =
+		"<ul><li>Led the platform migration to Kubernetes</li><li>Grew the team from 8 to 40 engineers</li></ul>";
+	const elevenWordTitle = "Senior Vice President of Global Engineering and Product Operations for EMEA";
+
+	it.each([
+		["an 11-word title", { company: "Contoso", position: elevenWordTitle }],
+		["a lower-case brand", { company: "eBay Marketplace Platform Group", position: "Senior Product Manager" }],
+		["a lower-case title", { company: "Contoso", position: "iOS platform engineering lead" }],
+	])("treats %s after bullets without full stops as a real entry that needs dates", (_name, heading) => {
+		const data = makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({ id: "a", description: unpunctuatedBullets }),
+				experienceItem({ id: "b", ...heading, location: "", period: "", description: "<p>Ran the roadmap</p>" }),
+			];
+		});
+
+		expect(codesOf(data)).toContain("EMPTY_PERIOD");
+		expect(codesOf(data)).not.toContain("FRAGMENTED_ENTRY");
+		expect(atsVerdict(lint(data))).toBe("clean");
+	});
+
+	it.each([
+		["a dangling word", "<ul><li>Led the migration</li><li>Reduced processing time by</li></ul>"],
+		["a comma", "<ul><li>Led the migration</li><li>Cut costs, grew the team,</li></ul>"],
+		["a dash", "<p>Rebuilt the billing platform \u2014</p>"],
+	])("still reads a long or lower-case heading as the rest of a bullet that stops on %s", (_name, description) => {
+		const data = makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({ id: "a", description }),
+				fragment("b", "uptime above target for every regional customer team"),
+			];
+		});
+
+		expect(codesOf(data)).toContain("FRAGMENTED_ENTRY");
+		expect(codesOf(data)).not.toContain("EMPTY_PERIOD");
+	});
+
+	it("keeps a title of up to 10 words after a cut bullet, and reads 11 as the rest of it", () => {
+		const after = (position: string) =>
+			makeResume((resume) => {
+				resume.sections.experience.items = [
+					experienceItem({ id: "a", description: "<ul><li>Reduced processing time by</li></ul>" }),
+					experienceItem({ id: "b", company: "Contoso", position, location: "", period: "", description: "" }),
+				];
+			});
+
+		expect(codesOf(after(elevenWordTitle.replace(" for EMEA", " EMEA")))).not.toContain("FRAGMENTED_ENTRY");
+		expect(codesOf(after(elevenWordTitle))).toContain("FRAGMENTED_ENTRY");
+		expect(codesOf(after("Senior Platform Engineer"))).not.toContain("FRAGMENTED_ENTRY");
+		expect(codesOf(after("platform engineer for payments"))).toContain("FRAGMENTED_ENTRY");
+	});
+
+	it.each([
+		["a link", { website: { url: "https://example.com/case-study", label: "Case study", inlineLink: false } }],
+		["an end date", { dates: { start: null, end: "2019-05", present: false } }],
+		["date text", { dates: { start: null, end: null, present: false, raw: "Summer" } }],
+	])("never offers to merge a fragment carrying %s, and merging it changes nothing", (_name, extra) => {
+		const data = makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({ id: "a" }),
+				{ ...fragment("b", "and kept the on-call rotation healthy,", "<p>Cut pages.</p>"), ...extra },
+			];
+		});
+		const before = structuredClone(data);
+
+		expect(codesOf(data)).not.toContain("FRAGMENTED_ENTRY");
+		expect(mergeIntoPreviousEntry(data, "/sections/experience/items/1")).toBe(false);
+		expect(data).toEqual(before);
+	});
+});
+
+describe("split entries are read by grammar, not by a list of company or title words (J2-02)", () => {
+	const entryAfter = (above: string, heading: Partial<ExperienceItem>) =>
+		makeResume((resume) => {
+			resume.sections.experience.items = [
+				experienceItem({ id: "a", description: above }),
+				experienceItem({ id: "b", company: "", position: "", location: "", period: "", description: "", ...heading }),
+			];
+		});
+	const elevenWordTitle = "Senior Vice President of Global Engineering and Product Operations for EMEA";
+
+	it.each([
+		[
+			"a sign-on bullet",
+			"<ul><li>Shipped SAML single sign-on</li></ul>",
+			{ company: "Contoso", position: elevenWordTitle },
+		],
+		[
+			"a logged-in bullet",
+			"<ul><li>Cut the time it took users to get logged in</li></ul>",
+			{ company: "Contoso", position: elevenWordTitle },
+		],
+		[
+			"a Series A bullet",
+			"<ul><li>Helped raise a Series A</li></ul>",
+			{ company: "Contoso", position: elevenWordTitle },
+		],
+		[
+			"a walk-through bullet",
+			"<ul><li>Led the quarterly security walk-through</li></ul>",
+			{ company: "Contoso", position: elevenWordTitle },
+		],
+		["a closed line", "<p>Shipped the app.</p>", { company: "Vipps AS", position: "Senior Engineer" }],
+		["a closed line", "<p>Shipped the app.</p>", { company: "Via", position: "Senior Engineer" }],
+		[
+			"a closed line",
+			"<p>Shipped the app.</p>",
+			{ company: "Fabrikam Ventures", position: "Investment Analyst, Series A" },
+		],
+		[
+			"an open line",
+			"<ul><li>Shipped SAML single sign-on</li></ul>",
+			{ company: "Contoso", position: "iOS platform engineering lead" },
+		],
+		[
+			"bullets that never close",
+			"<ul><li>Led the platform migration</li><li>Grew the team from 8 to 40</li></ul>",
+			{ company: "Contoso", position: "senior platform engineering lead" },
+		],
+	])("treats a real undated entry after %s as one that needs dates", (_name, above, heading) => {
+		const data = entryAfter(above, heading);
+
+		expect(codesOf(data)).toContain("EMPTY_PERIOD");
+		expect(codesOf(data)).not.toContain("FRAGMENTED_ENTRY");
+		expect(atsVerdict(lint(data))).toBe("clean");
+	});
+
+	it.each([
+		[
+			"through",
+			"<ul><li>Reduced processing time 40% through</li></ul>",
+			"automated reconciliation for every regional desk",
+		],
+		["using", "<ul><li>Rebuilt the billing pipeline using</li></ul>", "event sourcing and idempotent consumers"],
+		["including", "<ul><li>Hired 12 engineers including</li></ul>", "two staff engineers and a manager"],
+		["a noun phrase", "<ul><li>Reduced processing time for the payments</li></ul>", "team by 40% across all regions"],
+		[
+			"an open last bullet among closed ones",
+			"<ul><li>Led the platform migration.</li><li>Grew the team from 8 to 40 while keeping</li></ul>",
+			"senior engineers on call across every region",
+		],
+		[
+			"during",
+			"<ul><li>Kept checkout up during</li></ul>",
+			"Black Friday Cyber Monday Peak Season Traffic Across All Twelve Regional Markets",
+		],
+	])("reads the rest of a sentence cut at %s as part of the entry above", (_name, above, company) => {
+		const data = entryAfter(above, { company });
+
+		expect(codesOf(data)).toContain("FRAGMENTED_ENTRY");
+		expect(codesOf(data)).not.toContain("EMPTY_PERIOD");
+		expect(atsVerdict(lint(data))).toBe("mostly");
+	});
+});
+
+it("rejoins a cut sentence in its original paragraph", () => {
+	const data = makeResume((resume) => {
+		resume.sections.experience.items = [
+			experienceItem({ id: "a", description: "<p>Reduced processing time by</p>" }),
+			experienceItem({
+				id: "b",
+				company: "25% across the region",
+				position: "",
+				location: "",
+				period: "",
+				description: "",
+			}),
+		];
+	});
+	expect(mergeIntoPreviousEntry(data, "/sections/experience/items/1")).toBe(true);
+	expect(data.sections.experience.items[0]?.description).toBe(
+		"<p>Reduced processing time by 25% across the region</p>",
+	);
+});
+it("keeps an undated company ending in a dangling word after a closed sentence", () => {
+	const data = makeResume((resume) => {
+		resume.sections.experience.items = [
+			experienceItem({ id: "a", description: "<p>Delivered reliable services.</p>" }),
+			experienceItem({
+				id: "b",
+				company: "Design With",
+				position: "Director",
+				location: "",
+				period: "",
+				description: "<p>Led design.</p>",
+			}),
+		];
+	});
+	expect(codesOf(data)).not.toContain("FRAGMENTED_ENTRY");
+	expect(codesOf(data)).toContain("EMPTY_PERIOD");
 });

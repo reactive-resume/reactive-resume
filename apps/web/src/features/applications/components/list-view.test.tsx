@@ -1,6 +1,6 @@
 import type { Application } from "../types";
 // @vitest-environment happy-dom
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
@@ -8,8 +8,15 @@ import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ApplicationList } from "./list-view";
 
-const mocks = vi.hoisted(() => ({ breakpoint: "desktop", invalidate: vi.fn() }));
-vi.mock("@tanstack/react-router", () => ({ useRouteContext: () => ({ session: { user: { timezone: "UTC" } } }) }));
+const mocks = vi.hoisted(() => ({
+	breakpoint: "desktop",
+	timeZone: "UTC",
+	invalidate: vi.fn(),
+	moveWithUndo: vi.fn(),
+}));
+vi.mock("@tanstack/react-router", () => ({
+	useRouteContext: () => ({ session: { user: { timezone: mocks.timeZone } } }),
+}));
 vi.mock("@/libs/orpc/client", () => ({
 	orpc: {
 		applications: {
@@ -23,9 +30,13 @@ vi.mock("@/libs/orpc/client", () => ({
 			bulkUpdate: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			bulkDelete: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 		},
+		career: { savedItems: { queryOptions: () => ({ queryKey: ["offers"], queryFn: async () => [] }) } },
 	},
 }));
-vi.mock("../use-application-actions", () => ({ useInvalidateApplications: () => mocks.invalidate }));
+vi.mock("../use-application-actions", () => ({
+	useInvalidateApplications: () => mocks.invalidate,
+	useMoveWithUndo: () => mocks.moveWithUndo,
+}));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => mocks.breakpoint }));
 
@@ -68,6 +79,44 @@ function renderList(applications: Application[], breakpoint = "desktop", onOpen 
 const headers = (container: HTMLElement) => Array.from(container.querySelectorAll("thead th"));
 const header = (container: HTMLElement, label: string) =>
 	headers(container).find((th) => th.textContent === label) as HTMLElement;
+
+it("reorders Next step when an interview ends without any application update", () => {
+	vi.useFakeTimers();
+	const now = new Date("2030-01-03T12:00:00Z");
+	vi.setSystemTime(now);
+	try {
+		const { container, unmount } = renderList([
+			application({
+				id: "interview",
+				company: "Interview",
+				location: null,
+				activity: [
+					{
+						id: "interview",
+						type: "interview",
+						at: new Date(now.getTime() - 270_000),
+						durationMinutes: 5,
+					} as Application["activity"][number],
+				],
+			}),
+			application({
+				id: "followup",
+				company: "Follow-up",
+				location: null,
+				followUpAt: new Date(now.getTime() + 300_000),
+				followUpDateOnly: false,
+			}),
+		]);
+		const order = () =>
+			Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
+		expect(order()).toEqual(["Interview", "Follow-up"]);
+		act(() => vi.advanceTimersByTime(60_000));
+		expect(order()).toEqual(["Follow-up", "Interview"]);
+		unmount();
+	} finally {
+		vi.useRealTimers();
+	}
+});
 
 it("fixes the table layout so a long follow-up note cannot starve Role", () => {
 	const { container } = renderList([
@@ -186,4 +235,81 @@ it("sorts by role with company as the tiebreak, and by soonest next step with no
 	expect(order()).toEqual(["Mid", "Acme", "Zeta"]);
 	fireEvent.click(screen.getByRole("button", { name: "Next step" }));
 	expect(order()).toEqual(["Zeta", "Acme", "Mid"]);
+});
+
+it("moves and closes the checked rows with Undo instead of writing at once (J2-18)", async () => {
+	mocks.moveWithUndo.mockClear();
+	renderList(twoApplications());
+	fireEvent.click(screen.getByRole("checkbox", { name: "Select Product Designer at Initech" }));
+
+	await userEvent.click(screen.getByRole("button", { name: "Move to…" }));
+	await userEvent.click(await screen.findByRole("menuitem", { name: "Interview" }));
+	expect(mocks.moveWithUndo).toHaveBeenLastCalledWith(
+		expect.objectContaining({
+			applications: [{ id: "app-2" }],
+			lane: expect.objectContaining({ category: "interview" }),
+			description: "1 application moved to Interview",
+		}),
+	);
+
+	fireEvent.click(screen.getByRole("checkbox", { name: "Select Product Designer at Initech" }));
+	await userEvent.click(screen.getByRole("button", { name: "Close…" }));
+	await userEvent.click(await screen.findByRole("menuitem", { name: "Accepted another offer" }));
+	expect(mocks.moveWithUndo).toHaveBeenLastCalledWith(
+		expect.objectContaining({
+			applications: [{ id: "app-2" }],
+			lane: expect.objectContaining({ category: "closed" }),
+			closedReason: "accepted-other",
+		}),
+	);
+});
+
+it("orders a stage by its own stage dates, longest wait first, when every row was imported at once", () => {
+	const importedAt = new Date("2026-10-19T00:00:00.000Z");
+	const appliedDaysAgo = (id: string, company: string, days: number) =>
+		application({
+			id,
+			company,
+			location: null,
+			updatedAt: importedAt,
+			appliedAt: new Date(Date.now() - days * 86_400_000),
+			activity: [{ id: `${id}-stage`, type: "stage", stage: "applied", at: new Date(Date.now() - days * 86_400_000) }],
+		});
+	const { container } = renderList([
+		appliedDaysAgo("a", "Niantic", 9),
+		appliedDaysAgo("b", "Bethesda", 35),
+		appliedDaysAgo("c", "Sucker Punch", 21),
+	]);
+	const order = Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent);
+
+	expect(order).toEqual(["Bethesda", "Sucker Punch", "Niantic"]);
+	expect(header(container, "Next step").getAttribute("aria-sort")).toBe("ascending");
+});
+
+it("sorts legacy date-only follow-ups by their account-clock delivery time", () => {
+	mocks.timeZone = "Pacific/Honolulu";
+	try {
+		const { container } = renderList([
+			application({
+				id: "legacy",
+				location: null,
+				company: "Legacy",
+				followUpAt: new Date("2030-01-03T00:00:00Z"),
+				followUpDateOnly: true,
+			}),
+			application({
+				id: "exact",
+				location: null,
+				company: "Exact",
+				followUpAt: new Date("2030-01-03T12:00:00Z"),
+				followUpDateOnly: false,
+			}),
+		]);
+		expect(header(container, "Next step").getAttribute("aria-sort")).toBe("ascending");
+		expect(
+			Array.from(container.querySelectorAll("tbody td button span:last-child"), (span) => span.textContent),
+		).toEqual(["Exact", "Legacy"]);
+	} finally {
+		mocks.timeZone = "UTC";
+	}
 });

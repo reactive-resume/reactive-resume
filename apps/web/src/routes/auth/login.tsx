@@ -23,6 +23,7 @@ function RouteComponent() {
 			disableEmailAuth={flags.disableEmailAuth}
 			disableSignups={flags.disableSignups}
 			allowGuestLogin={flags.allowGuestLogin && !isGuest}
+			isGuest={isGuest}
 		/>
 	);
 }

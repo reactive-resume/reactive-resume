@@ -8,6 +8,26 @@ export function generateId() {
 	return uuidv7();
 }
 
+const pendingRequestIds = new Map<string, string>();
+
+/**
+ * The ID a create request sends, the same one each time until it succeeds: a retry after a lost response, a second
+ * press or a remounted screen then returns what the first attempt saved instead of saving it again. `key` names the
+ * request by what it saves, so changing the input starts a new one. Call `settleRequestId` once it has succeeded.
+ */
+export function pendingRequestId(key: string) {
+	let id = pendingRequestIds.get(key);
+	if (!id) {
+		id = generateId();
+		pendingRequestIds.set(key, id);
+	}
+	return id;
+}
+
+export function settleRequestId(key: string) {
+	pendingRequestIds.delete(key);
+}
+
 /**
  * Generates initials from a name.
  * @param name - The name to generate initials from.

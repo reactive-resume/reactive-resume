@@ -12,6 +12,7 @@ import {
 	roleSuggestionsOutputSchema,
 } from "@reactive-resume/schema/career";
 import { protectedProcedure } from "../../context";
+import { savedStagesSchema } from "../../dto/application";
 import {
 	careerFactSchema,
 	careerNotificationSchema,
@@ -32,7 +33,14 @@ import { careerVoiceRouter } from "./voice";
 const id = z.object({ id: z.string().min(1) });
 const applicationInput = z.object({ applicationId: z.string().min(1) });
 const savedItemOutput = savedItemSchema.extend({
-	application: z.object({ company: z.string(), role: z.string() }).nullable(),
+	application: z
+		.object({
+			company: z.string(),
+			role: z.string(),
+			status: z.string().nullable().optional(),
+			closedReason: z.string().nullable().optional(),
+		})
+		.nullable(),
 	outdated: z.boolean(),
 	submission: z
 		.boolean()
@@ -330,7 +338,13 @@ export const careerRouter = {
 			summary: "Apply suggested changes from a message",
 		})
 		.input(id.extend({ changes: z.array(z.number().int().min(0)).max(4) }))
-		.output(z.void())
+		.output(
+			z.object({
+				stages: savedStagesSchema.describe(
+					"The stage this call saved, with its stage-write ID. Empty on repeats or when no stage changed.",
+				),
+			}),
+		)
 		.handler(({ context, input }) => careerService.applyReply(context.user.id, input.id, input.changes)),
 	fitEvidence: protectedProcedure
 		.route({
@@ -390,7 +404,13 @@ export const careerRouter = {
 					.optional(),
 			}),
 		)
-		.output(z.void())
+		.output(
+			z.object({
+				stages: savedStagesSchema.describe(
+					"The stage this call saved on submission, with its stage-write ID. Empty on accepted retries.",
+				),
+			}),
+		)
 		.handler(({ context, input }) =>
 			careerService.submitApplication(
 				context.user.id,

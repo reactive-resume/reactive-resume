@@ -23,6 +23,8 @@ const { documents, confirm, batch, server } = vi.hoisted(() => ({
 			trashedAt: new Date(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
+			editedAt: new Date(),
+			recipient: null,
 			application: null,
 		},
 		{
@@ -36,6 +38,8 @@ const { documents, confirm, batch, server } = vi.hoisted(() => ({
 			trashedAt: new Date(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
+			editedAt: new Date(),
+			recipient: null,
 			application: null,
 		},
 	] satisfies DocumentSummary[],

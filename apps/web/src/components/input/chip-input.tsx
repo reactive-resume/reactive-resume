@@ -1,3 +1,4 @@
+import type { DndLabel } from "@/libs/dnd";
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import {
 	closestCenter,
@@ -28,6 +29,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Kbd } from "@reactive-resume/ui/components/kbd";
 import { cn } from "@reactive-resume/utils/style";
 import { useControlledState } from "@/hooks/use-controlled-state";
+import { dndContextProps } from "@/libs/dnd";
 import { isImeComposing } from "@/libs/keyboard";
 import { DRAG_SETTLE } from "@/libs/motion";
 
@@ -77,6 +79,7 @@ function ChipDragOverlay({ activeChip }: ChipDragOverlayProps) {
 function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProps) {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id,
+		data: { label: chip } satisfies DndLabel,
 		transition: DRAG_SETTLE,
 	});
 
@@ -301,6 +304,7 @@ export function ChipInput({
 	return (
 		<div className={cn("space-y-1.5", className)} {...props}>
 			<DndContext
+				{...dndContextProps(true)}
 				id={dndContextId}
 				sensors={sensors}
 				collisionDetection={closestCenter}

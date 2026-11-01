@@ -19,6 +19,8 @@ export const Route = createFileRoute("/dashboard/applications/$applicationId/{-$
 		// Practise opens with Speak selected ("Rehearse one answer aloud").
 		speak: z.boolean().optional().catch(undefined),
 		story: z.string().min(1).optional().catch(undefined),
+		// "Add the offer's terms": Messages opens with the offer form.
+		offer: z.literal("new").optional().catch(undefined),
 	}),
 	component: RouteComponent,
 });

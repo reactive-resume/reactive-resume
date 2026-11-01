@@ -32,6 +32,7 @@ type NavItem = {
 };
 
 function useNavItems() {
+	const matchRoute = useMatchRoute();
 	const { data: counts } = useQuery(orpc.documents.counts.queryOptions());
 	const { data: applicationStats } = useQuery(orpc.applications.stats.queryOptions({}));
 	const { data: notifications } = useQuery(orpc.career.notifications.queryOptions({ input: {} }));
@@ -60,9 +61,12 @@ function useNavItems() {
 	// Career counts what's waiting for the user (unread notifications), so nothing shows at zero.
 	items.push({ to: "/dashboard/career", icon: "compass", label: t`Career`, ...(unread ? { count: unread } : {}) });
 	const settings: NavItem = { to: "/dashboard/settings", icon: "gear-six", label: t`Settings` };
-	const trash: NavItem | null = counts?.trash
-		? { to: "/dashboard/trash", icon: "trash", label: t`Trash`, count: counts.trash }
-		: null;
+	// Trash shows while it holds something, and stays while it's open, even once its last document is restored.
+	const inTrash = Boolean(matchRoute({ to: "/dashboard/trash" }));
+	const trash: NavItem | null =
+		counts?.trash || inTrash
+			? { to: "/dashboard/trash", icon: "trash", label: t`Trash`, ...(counts?.trash ? { count: counts.trash } : {}) }
+			: null;
 
 	return { items, settings, trash };
 }

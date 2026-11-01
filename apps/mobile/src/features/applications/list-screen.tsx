@@ -3,15 +3,17 @@ import type { ApplicationClosedReason } from "@reactive-resume/schema/applicatio
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
+import Storage from "expo-sqlite/kv-store";
 import { useRef, useState } from "react";
 import { RefreshControl, Pressable, SectionList, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { applicationError } from "./error";
 import { useApplicationLanes } from "./lane-queries";
-import { getLaneLabel, laneInput, resolveLane } from "./lanes";
+import { getLaneLabel, resolveLane } from "./lanes";
 import { filterApplications, groupApplications, visibleSelection } from "./list";
-import { describeNextStep, getNextStep } from "./next-step";
+import { describeNextStep, getNextStep, needsFollowUp } from "./next-step";
 import { useApplicationDetailPrefetch, useApplicationMutations, useApplications } from "./queries";
+import { offerHintFor, useMoveWithUndo, useOfferHints } from "./stage-actions";
 import { CLOSED_REASONS, getClosedReasonLabel } from "./stages";
 import { useSession } from "@/auth/session";
 import { useNow, useUserTime } from "@/features/application-detail/hooks";
@@ -40,6 +42,18 @@ import { usePullRefresh } from "@/ui/use-pull-refresh";
 
 const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 30 };
 
+// Dismissed follow-up nudges, remembered on this device as on web.
+const NUDGE_STORAGE_KEY = "applications-follow-up-dismissed";
+
+function readDismissed(): string[] {
+	try {
+		const parsed: unknown = JSON.parse(Storage.getItemSync(NUDGE_STORAGE_KEY) ?? "[]");
+		return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+	} catch {
+		return [];
+	}
+}
+
 export function ApplicationsListScreen() {
 	const session = useSession();
 	const { space } = useTheme();
@@ -66,11 +80,14 @@ function ApplicationsList() {
 	const firstAppearance = useFirstAppearance(!query.isPending);
 	const { timeZone } = useUserTime();
 	const { bulkUpdate, bulkDelete } = useApplicationMutations();
+	const offerHints = useOfferHints();
+	const moveWithUndo = useMoveWithUndo();
 	const { search, setSearch } = useApplicationSearch();
 	const [tag, setTag] = useState("");
 	const [showClosed, setShowClosed] = useState(false);
-	const [sort, setSort] = useState<ApplicationSort>("updated");
-	const [direction, setDirection] = useState<"asc" | "desc">("desc");
+	// Next step first, as on web: what's dated soonest, then whatever has waited longest in its stage.
+	const [sort, setSort] = useState<ApplicationSort>("next");
+	const [direction, setDirection] = useState<"asc" | "desc">("asc");
 	const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [selecting, setSelecting] = useState(false);
@@ -87,9 +104,36 @@ function ApplicationsList() {
 	const [result, setResult] = useState<string | null>(null);
 	const lock = useRef(false);
 	const applications = query.data ?? [];
-	const filtered = filterApplications(applications, { search, tag, showClosed });
-	const filtersActive = Boolean(search.trim() || tag || showClosed);
-	const groups = groupApplications(filtered, sort, direction, now, lanes.supported ? lanes.lanes : undefined);
+	const laneList = lanes.supported ? lanes.lanes : undefined;
+	const [followUpOnly, setFollowUpOnly] = useState(false);
+	const [dismissed, setDismissed] = useState(readDismissed);
+	// Same rule as web and Career → Today: a due follow-up, or ten days without a reply.
+	const owesFollowUp = (application: (typeof applications)[number]) =>
+		needsFollowUp(getNextStep(application, now, laneList, timeZone, offerHintFor(offerHints, application.id)), now);
+	const owed = applications
+		.filter((application) => !dismissed.includes(application.id) && owesFollowUp(application))
+		.map((application) => ({
+			application,
+			step: getNextStep(application, now, laneList, timeZone, offerHintFor(offerHints, application.id)),
+		}))
+		.sort((a, b) => (b.step.kind === "no-reply" ? b.step.days : -1) - (a.step.kind === "no-reply" ? a.step.days : -1));
+	const company = owed[0]?.application.company ?? "";
+	const count = owed.length;
+	const days = owed[0]?.step.kind === "no-reply" ? owed[0].step.days : 0;
+	const dismissOwed = () => {
+		const next = [...new Set([...dismissed, ...owed.map(({ application }) => application.id)])];
+		setDismissed(next);
+		try {
+			Storage.setItemSync(NUDGE_STORAGE_KEY, JSON.stringify(next));
+		} catch {
+			// Without storage the nudge is dismissed for this visit only.
+		}
+	};
+	const filtered = filterApplications(applications, { search, tag, showClosed }).filter(
+		(application) => !followUpOnly || owesFollowUp(application),
+	);
+	const filtersActive = Boolean(search.trim() || tag || showClosed || followUpOnly);
+	const groups = groupApplications(filtered, sort, direction, now, laneList, timeZone, offerHints);
 	const selectedIds = visibleSelection(groups, collapsed, selected);
 	const onViewableItemsChanged = useApplicationDetailPrefetch();
 	const tags = [...new Set(applications.flatMap((item) => item.tags))].sort();
@@ -115,27 +159,36 @@ function ApplicationsList() {
 			(bulk === "tag" && !newTag.trim())
 		)
 			return;
+		const ids = selectedIds;
+		// Moves and closes show at once with Undo; the server gets them when the toast ends.
+		if (bulk === "move" || bulk === "close") {
+			const lane = bulk === "close" ? resolveLane(lanes.lanes, { status: "closed" }) : moveLane;
+			moveWithUndo({
+				applications: ids.map((id) => ({ id })),
+				lane,
+				supported: lanes.supported,
+				...(lane.category === "closed" && !lane.closedReason ? { closedReason: reason } : {}),
+				message:
+					lane.category === "closed"
+						? plural(ids.length, { one: "# application closed", other: "# applications closed" })
+						: plural(ids.length, {
+								one: `# application moved to ${getLaneLabel(lane)}`,
+								other: `# applications moved to ${getLaneLabel(lane)}`,
+							}),
+			});
+			setBulk(null);
+			setSelected(new Set());
+			setSelecting(false);
+			return;
+		}
 		lock.current = true;
 		setBusy(true);
 		setFailure(null);
-		const ids = selectedIds;
 		try {
 			const count =
 				bulk === "delete"
 					? (await bulkDelete.mutateAsync({ ids })).deleted
-					: (
-							await bulkUpdate.mutateAsync({
-								ids,
-								...(bulk === "tag"
-									? { addTags: [newTag.trim()] }
-									: bulk === "close"
-										? { status: "closed" as const }
-										: laneInput(moveLane, lanes.supported)),
-								...(bulk === "close" || (bulk === "move" && moveLane.category === "closed" && !moveLane.closedReason)
-									? { closedReason: reason }
-									: {}),
-							})
-						).updated;
+					: (await bulkUpdate.mutateAsync({ ids, addTags: [newTag.trim()] })).updated;
 			setResult(
 				plural(ids.length, { one: `${count} of # application changed.`, other: `${count} of # applications changed.` }),
 			);
@@ -179,6 +232,48 @@ function ApplicationsList() {
 					{showClosed ? ` · ${t`Including closed`}` : ""}
 				</Text>
 			)}
+			{followUpOnly ? (
+				<Banner
+					tone="info"
+					icon="clock"
+					message={plural(filtered.length, {
+						one: "Showing # application that needs a follow-up.",
+						other: "Showing # applications that need a follow-up.",
+					})}
+					action={{ label: t`Show all`, onPress: () => changeFilters(() => setFollowUpOnly(false)) }}
+				/>
+			) : owed[0] ? (
+				<Banner
+					tone="warn"
+					icon="clock"
+					message={
+						owed.length > 1
+							? plural(count, {
+									one: "# application needs a follow-up.",
+									other: "# applications need a follow-up.",
+								})
+							: owed[0].step.kind === "no-reply"
+								? plural(days, {
+										one: `${company}: no reply for # day. A short follow-up is usually fine now.`,
+										other: `${company}: no reply for # days. A short follow-up is usually fine now.`,
+									})
+								: t`${company}: a follow-up is due.`
+					}
+					action={
+						owed.length > 1
+							? {
+									label: t`Show`,
+									onPress: () =>
+										changeFilters(() => {
+											setShowClosed(false);
+											setFollowUpOnly(true);
+										}),
+								}
+							: { label: t`Open`, onPress: () => router.push(routes.applicationDetails(owed[0]?.application.id ?? "")) }
+					}
+					onDismiss={dismissOwed}
+				/>
+			) : null}
 			{failure && bulk === null && <Banner tone="danger" message={failure} onDismiss={() => setFailure(null)} />}
 			{result && <Banner tone="info" message={result} onDismiss={() => setResult(null)} />}
 			{query.isError && (
@@ -315,6 +410,7 @@ function ApplicationsList() {
 														setSearch("");
 														setTag("");
 														setShowClosed(false);
+														setFollowUpOnly(false);
 													})
 											: router.setParams({ create: "1" }),
 								}}
@@ -367,7 +463,20 @@ function ApplicationsList() {
 						</Pressable>
 					)}
 					renderItem={({ item, index }) => {
-						const next = describeNextStep(getNextStep(item, now, lanes.lanes), item, i18n.locale, timeZone);
+						const next = describeNextStep(
+							getNextStep(item, now, lanes.lanes, timeZone, offerHintFor(offerHints, item.id)),
+							item,
+							i18n.locale,
+							timeZone,
+						);
+						const sentDocuments = [
+							item.resumeId ? t`Resume` : null,
+							item.coverLetterId ? t`Cover letter` : null,
+							item.resumeFileUrl ? t`Resume file` : null,
+							item.coverLetterUrl ? t`Cover letter file` : null,
+						]
+							.filter(Boolean)
+							.join(" · ");
 						return (
 							<Animated.View
 								{...listItemMotion(index, firstAppearance)}
@@ -381,7 +490,7 @@ function ApplicationsList() {
 								<View style={{ flex: 1 }}>
 									<ListRow
 										title={item.role}
-										subtitle={`${item.company}${item.location ? ` · ${item.location}` : ""}\n${next.title}${next.sub ? ` · ${next.sub}` : ""}`}
+										subtitle={`${item.company}${item.location ? ` · ${item.location}` : ""}\n${next.title}${next.sub ? ` · ${next.sub}` : ""}${sentDocuments ? `\n${sentDocuments}` : ""}`}
 										selected={selectedIds.includes(item.id)}
 										leading={selecting ? (selectedIds.includes(item.id) ? "check-square" : "square") : undefined}
 										accessibilityHint={selecting ? t`Toggle selection` : t`Open application`}

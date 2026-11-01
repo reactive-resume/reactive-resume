@@ -13,7 +13,7 @@ import { useApplication, useApplicationMutations } from "@/features/applications
 import { getClosedReasonLabel } from "@/features/applications/stages";
 import { syncReminders } from "@/features/reminders";
 import { routes } from "@/routes";
-import { Banner, Button, Card, ConfirmDialog, EmptyState, Screen, showToast, Text, useTheme } from "@/ui";
+import { Banner, Button, Card, ConfirmDialog, EmptyState, Icon, Screen, showToast, Text, useTheme } from "@/ui";
 
 type ApplicationDetailProps = { id: string };
 
@@ -28,12 +28,12 @@ type Overlay =
 /** One application: stage stepper, next step, what was sent, facts, contacts, notes, timeline and attachments. */
 export function ApplicationDetail({ id }: ApplicationDetailProps) {
 	const { t } = useLingui();
-	const { space, size } = useTheme();
+	const { colors, space, size } = useTheme();
 	const router = useRouter();
 	const session = useSession();
 	const query = useApplication(id);
 	const { update, remove } = useApplicationMutations();
-	const { date } = useUserTime();
+	const { date, timeZone } = useUserTime();
 	const [overlay, setOverlay] = useState<Overlay>(null);
 	const application = query.data;
 	const close = () => setOverlay(null);
@@ -41,8 +41,8 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 	// Interviews moved or deleted elsewhere (the web, another device) move or cancel this device's reminders.
 	// Query results keep their identity while unchanged, so this runs once per stored version.
 	useEffect(() => {
-		if (application) void syncReminders(application.id, reminderTargets(application)).catch(() => undefined);
-	}, [application]);
+		if (application) void syncReminders(application.id, reminderTargets(application, timeZone)).catch(() => undefined);
+	}, [application, timeZone]);
 
 	if (session.status !== "signed-in") return <EmptyState icon="briefcase" title={t`Sign in to view applications`} />;
 	if (query.isPending)
@@ -101,12 +101,17 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 				<Card>
 					<View style={{ gap: space.s2 }}>
 						<Text variant="label">{t`Outcome`}</Text>
-						<Text>
-							{[
-								application.closedReason ? getClosedReasonLabel(application.closedReason) : t`Closed`,
-								date(application.updatedAt),
-							].join(" · ")}
-						</Text>
+						<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
+							{application.closedReason === "accepted" ? (
+								<Icon name="check" size={16} color={colors.accentText} />
+							) : null}
+							<Text style={{ flexShrink: 1 }}>
+								{[
+									application.closedReason ? getClosedReasonLabel(application.closedReason) : t`Closed`,
+									date(application.updatedAt),
+								].join(" · ")}
+							</Text>
+						</View>
 						<Button
 							label={t`Reopen`}
 							loading={update.isPending}

@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import type { Application } from "@/features/applications/types";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
@@ -12,7 +12,15 @@ import { applicationsListQueryKey } from "@/features/applications/queries";
 import { orpc } from "@/libs/orpc/client";
 
 const navigate = vi.hoisted(() => vi.fn());
+const loadJobs = vi.hoisted(() => vi.fn());
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => navigate }));
+vi.mock("@/features/applications/queries", async (importOriginal) => {
+	const queries = await importOriginal<typeof import("@/features/applications/queries")>();
+	return {
+		...queries,
+		applicationsListQueryOptions: () => ({ ...queries.applicationsListQueryOptions(), queryFn: loadJobs }),
+	};
+});
 
 function mountDialog(context: "documents" | "letters" | "applications" | "career") {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
@@ -36,7 +44,7 @@ it("explains a missing source resume and offers import or creation when copying 
 	queryClient.setQueryData(orpc.documents.list.queryKey({ input: { trashed: false } }), []);
 	queryClient.setQueryData(orpc.aiProviders.list.queryKey(), []);
 	queryClient.setQueryData(applicationsListQueryKey(), [
-		{ id: "application-1", company: "ABOUT YOU", status: "saved" } as Application,
+		{ id: "application-1", company: "ABOUT YOU", role: "", status: "saved" } as Application,
 	]);
 
 	render(
@@ -65,6 +73,47 @@ it("leads the Letters tab with a new letter", () => {
 	const letter = screen.getByRole("button", { name: /^New cover letter/ });
 	expect(letter).toHaveAccessibleName(/Start a letter for a job/);
 	expect(screen.queryByRole("button", { name: "New cover letter instead" })).toBeNull();
+});
+
+it("waits for a newly selected job to load before offering an unlinked copy", async () => {
+	i18n.loadAndActivate({ locale: "en-US", messages: {} });
+	const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } });
+	queryClient.setQueryData(orpc.documents.list.queryKey({ input: { trashed: false } }), [
+		{
+			id: "source",
+			type: "resume",
+			name: "Resume",
+			tags: [],
+			isLocked: false,
+			isPublic: false,
+			slug: "resume",
+			trashedAt: null,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			editedAt: new Date(),
+			recipient: null,
+			application: null,
+		},
+	]);
+	queryClient.setQueryData(orpc.aiProviders.list.queryKey(), []);
+	let finish = (_jobs: Application[]) => {};
+	loadJobs.mockImplementation(() => new Promise<Application[]>((resolve) => (finish = resolve)));
+	render(
+		<I18nProvider i18n={i18n}>
+			<QueryClientProvider client={queryClient}>
+				<Dialog open>
+					<NewDocumentDialog data={{ step: "copy", applicationId: "new-job" }} />
+				</Dialog>
+			</QueryClientProvider>
+		</I18nProvider>,
+	);
+	expect(screen.getByRole("button", { name: "Create and open" })).toBeDisabled();
+	await act(async () =>
+		finish([{ id: "new-job", company: "Example", role: "Engineer", status: "saved" } as Application]),
+	);
+	expect(await screen.findByRole("button", { name: "Engineer · Example" })).toHaveAttribute("aria-pressed", "true");
+	expect(screen.getByRole("button", { name: "Create and open" })).toBeEnabled();
+	queryClient.clear();
 });
 
 it("routes Save a job from New through Applications' own dialog", () => {

@@ -181,6 +181,8 @@ const ALIASES: Readonly<Record<string, string>> = {
 	"go to market": "go-to-market",
 	gtm: "go-to-market",
 	cro: "conversion-rate-optimization",
+	"lead generation": "lead-generation",
+	"lead gen": "lead-generation",
 
 	// Tools
 	vscode: "vs-code",

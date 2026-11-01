@@ -4,19 +4,22 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { useId, useRef, useState } from "react";
+import { careerProfileDataSchema } from "@reactive-resume/schema/career";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { parseAmount } from "@reactive-resume/utils/amount";
 import { cn } from "@reactive-resume/utils/style";
-import { useDebouncedSave } from "../hooks";
+import { DraftRecovery } from "../draft-recovery";
+import { useDebouncedSave, useSessionDraft } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
 import { RoleSuggestions } from "../role-suggestions";
 import { useCareerTime, useNow } from "../shared";
 import { SearchRegionsField } from "./search-regions-field";
+import { getAccountGeneration } from "@/libs/auth/clear-account-data";
 import { toastError } from "@/libs/error-message";
 import { D2, EASE } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -26,11 +29,15 @@ const saveFailed = (error: unknown) => toastError(error, t`Couldn't save your pr
 /** The Preferences profile, saved whole. The cache updates at once; a failed save puts the server copy back. */
 export function useProfile() {
 	const queryClient = useQueryClient();
+	const { session } = useRouteContext({ strict: false });
+	// The page belongs to the account it rendered for. Binding the write here keeps a profile read before a session
+	// swap from being re-labelled as the new account's, even if the transport's global scope moved on.
+	const [owner] = useState(() => session?.user.id ?? null);
 	const queryKey = orpc.career.profile.queryKey();
 	const query = useQuery(orpc.career.profile.queryOptions());
 	const profile = query.data;
 	const mutation = useMutation({
-		...orpc.career.saveProfile.mutationOptions(),
+		...orpc.career.saveProfile.mutationOptions({ context: owner ? { accountId: owner } : {} }),
 		onError: (error) => {
 			void queryClient.invalidateQueries({ queryKey });
 			saveFailed(error);
@@ -57,8 +64,18 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 	const { i18n } = useLingui();
 	const queryClient = useQueryClient();
 	const now = useNow();
-	const [draft, setDraft] = useState(initial);
+	const kept = useSessionDraft(
+		"preferences",
+		initial,
+		(value) => {
+			const parsed = careerProfileDataSchema.safeParse(value);
+			return parsed.success ? parsed.data : undefined;
+		},
+		true,
+	);
+	const { value: draft, setValue: setDraft } = kept;
 	const [saved, setSaved] = useState(initial);
+	const generation = useRef(getAccountGeneration());
 	const saves = useRef<Promise<unknown>>(Promise.resolve());
 	const [status, setStatus] = useState<{ saving: boolean; failed: boolean; at: number | null }>({
 		saving: false,
@@ -74,30 +91,37 @@ function PreferencesForm({ initial }: PreferencesFormProps) {
 	};
 
 	// Called directly (not through a mutation hook) so the flush on unmount still saves.
-	const flush = useDebouncedSave(JSON.stringify(draft), JSON.stringify(saved), (json) => {
+	const flush = useDebouncedSave(JSON.stringify(kept.restored ? saved : draft), JSON.stringify(saved), (json) => {
 		const next = JSON.parse(json) as CareerProfileData;
 		setStatus((current) => ({ ...current, saving: true, failed: false }));
-		const operation = saves.current.then(() => client.career.saveProfile(next));
+		const operation = saves.current.then(() => {
+			if (generation.current !== getAccountGeneration()) throw new Error("Account changed");
+			return client.career.saveProfile(next);
+		});
 		saves.current = operation.catch(() => undefined);
 		operation
 			.then(() => {
+				if (generation.current !== getAccountGeneration()) return;
 				queryClient.setQueryData(orpc.career.profile.queryKey(), next);
 				setSaved(next);
+				kept.clear(next);
 				setStatus({ saving: false, failed: false, at: Date.now() });
 			})
 			.catch((error: unknown) => {
+				if (generation.current !== getAccountGeneration()) return;
 				setStatus((current) => ({ ...current, saving: false, failed: true }));
 				void queryClient.invalidateQueries({ queryKey: orpc.career.profile.queryKey() });
 				saveFailed(error);
 			});
 	});
 
-	const failed = status.failed && !status.saving;
+	const failed = kept.restored || (status.failed && !status.saving);
 	const dirty = !failed && (status.saving || JSON.stringify(draft) !== JSON.stringify(saved));
 	const justNow = status.at !== null && now.getTime() - status.at < 60_000;
 
 	return (
 		<div className="grid max-w-[820px] gap-[18px]" onBlur={() => flush()}>
+			<DraftRecovery {...kept} />
 			<div className="flex items-center gap-2">
 				<h2 className="flex-1 text-[17px] font-semibold">
 					<Trans>What you're looking for</Trans>

@@ -12,7 +12,7 @@ import { useRouter } from "expo-router";
 import Storage from "expo-sqlite/kv-store";
 import { openBrowserAsync } from "expo-web-browser";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pressable, View } from "react-native";
+import { AppState, Pressable, View } from "react-native";
 import { attachmentProblem } from "./attachment";
 import {
 	followUpReminder,
@@ -41,6 +41,7 @@ import {
 } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { useApplicationMutations } from "@/features/applications/queries";
+import { acceptedStage, offerHintFor, useOfferHints, useStageMovedToast } from "@/features/applications/stage-actions";
 import { PIPELINE } from "@/features/applications/stages";
 import { followUpEvent, icsFileName, interviewEvent, shareIcs, zonedParts } from "@/features/reminders";
 import { shareDocumentPdf } from "@/features/share/files";
@@ -88,7 +89,7 @@ type StageStepperProps = SectionProps & {
 /** Lane identity is independent of canonical progress; the picker accommodates any lane count and label length. */
 export function StageStepper({ application, onMarkApplied, onCloseLane }: StageStepperProps) {
 	const { t } = useLingui();
-	const { radius, space } = useTheme();
+	const { colors, radius, space } = useTheme();
 	const { update } = useApplicationMutations();
 	const lanes = useApplicationLanes();
 	const current = resolveLane(lanes.lanes, application);
@@ -101,6 +102,8 @@ export function StageStepper({ application, onMarkApplied, onCloseLane }: StageS
 	const now = useNow();
 	const days = Math.max(0, Math.floor((now.getTime() - laneSince(application, lanes.lanes).getTime()) / 86_400_000));
 	const next = nextActiveLane(lanes.lanes, application);
+	const stageMoved = useStageMovedToast();
+	const accepted = acceptedStage(lanes.lanes, application);
 	const move = (id: string) => {
 		const target = lanes.active.find((item) => item.id === id);
 		if (!lanes.ready || !target || id === lane.id) return;
@@ -109,7 +112,7 @@ export function StageStepper({ application, onMarkApplied, onCloseLane }: StageS
 		update.mutate(
 			{ id: application.id, ...laneInput(target, lanes.supported) },
 			{
-				onSuccess: () => showToast({ message: t`Moved to ${getLaneLabel(target)}` }),
+				onSuccess: () => stageMoved(application, target),
 				onError: (error) => showToast({ message: applicationError(error) }),
 			},
 		);
@@ -118,9 +121,12 @@ export function StageStepper({ application, onMarkApplied, onCloseLane }: StageS
 		<View style={{ gap: space.s3 }}>
 			<LaneNotice />
 			<View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: space.s2 }}>
-				<View style={{ width: 8, height: 8, borderRadius: radius.rSm, backgroundColor: lane.color }} />
+				<View
+					style={{ width: 8, height: 8, borderRadius: radius.rSm, backgroundColor: accepted?.color ?? lane.color }}
+				/>
+				{accepted ? <Icon name="check" size={16} color={colors.accentText} /> : null}
 				<Text variant="label" style={{ flexShrink: 1 }}>
-					{getLaneLabel(lane)}
+					{accepted?.label ?? getLaneLabel(lane)}
 				</Text>
 				<Text color="ink3">
 					{application.status === "closed"
@@ -159,23 +165,29 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 	const [followUpOpen, setFollowUpOpen] = useState(false);
 	const [reminderOpen, setReminderOpen] = useState(false);
 	const lanes = useApplicationLanes();
-	const step = getNextStep(application, undefined, lanes.lanes);
+	const hints = useOfferHints();
+	const step = getNextStep(application, undefined, lanes.lanes, timeZone, offerHintFor(hints, application.id));
 	const text = describeNextStep(step, application, locale, timeZone);
 	const followUpDue = step.kind === "no-reply" || (step.kind === "follow-up" && step.overdue);
 	const tab = step.kind === "interview" ? "prepare" : followUpDue ? "messages" : workspaceTabFor(application);
 	const actionLabel = followUpDue
 		? t`Draft a follow-up`
-		: {
-				fit: t`Prepare application`,
-				apply: application.status === "saved" ? t`Prepare application` : t`Review application`,
-				prepare: t`Prepare for interview`,
-				debrief: t`Debrief interview`,
-				messages: t`Prepare a reply`,
-				saved: t`View saved work`,
-			}[tab];
+		: step.kind === "offer"
+			? step.terms
+				? t`Compare offers`
+				: t`Add the offer's terms`
+			: {
+					fit: t`Prepare application`,
+					apply: application.status === "saved" ? t`Prepare application` : t`Review application`,
+					prepare: t`Prepare for interview`,
+					debrief: t`Debrief interview`,
+					messages: t`Prepare a reply`,
+					saved: t`View saved work`,
+				}[tab];
 	const interview = step.kind === "interview" ? step.interview : null;
 	const dated = step.kind === "interview" || step.kind === "follow-up";
-	const target = interview ? interviewReminder(application, interview) : followUpReminder(application);
+	const calendarAt = dated ? step.at : step.kind === "offer" ? step.respondBy : null;
+	const target = interview ? interviewReminder(application, interview) : followUpReminder(application, timeZone);
 	const zone = interview?.timezone && interview.timezone !== timeZone ? interview.timezone : null;
 	const subtitle = interview
 		? `${when(interview.at)}–${time(new Date(new Date(interview.at).getTime() + interview.durationMinutes * 60_000))} · ${timeZone}`
@@ -184,11 +196,16 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 			: "";
 
 	const addToCalendar = () => {
-		if (!dated) return;
+		if (!calendarAt) return;
 		const title = `${text.title} · ${application.role}, ${application.company}`;
 		void shareIcs(
-			interview ? interviewEvent(interview, title) : followUpEvent(application.id, step.at, title),
-			icsFileName(application.company, zonedParts(step.at, timeZone).date),
+			interview
+				? interviewEvent(interview, title)
+				: {
+						...followUpEvent(application.id, calendarAt, title),
+						...(step.kind === "offer" ? { uid: `offer-${application.id}` } : {}),
+					},
+			icsFileName(application.company, zonedParts(calendarAt, timeZone).date),
 		).catch(() => showToast({ message: t`Couldn't share the calendar event. Try again.` }));
 	};
 
@@ -219,7 +236,13 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 						fullWidth
 						icon="arrow-right"
 						label={actionLabel}
-						onPress={() => router.push(routes.application(application.id, tab))}
+						onPress={() =>
+							step.kind === "offer"
+								? step.terms
+									? router.push(routes.career("offers"))
+									: router.push({ pathname: routes.application(application.id, "messages"), params: { offer: "new" } })
+								: router.push(routes.application(application.id, tab))
+						}
 					/>
 					{step.kind !== "closed" ? (
 						<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
@@ -250,6 +273,15 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 										onPress={addToCalendar}
 									/>
 								</>
+							) : null}
+							{step.kind === "offer" && calendarAt ? (
+								<Button
+									size="sm"
+									variant="ghost"
+									icon="calendar-plus"
+									label={t`Add to calendar`}
+									onPress={addToCalendar}
+								/>
 							) : null}
 							<Button
 								size="sm"
@@ -622,6 +654,8 @@ export function Notes({ application }: SectionProps) {
 	const [key, setKey] = useState<string | null>(null);
 	const [notes, setNotes] = useState(application.notes ?? "");
 	const [failed, setFailed] = useState(false);
+	const recovered = useRef(false);
+	const [hasRecovered, setHasRecovered] = useState(false);
 	// Typed but not handed to the queue yet.
 	const unsent = useRef<string | null>(null);
 
@@ -632,6 +666,9 @@ export function Notes({ application }: SectionProps) {
 			const kept = notesQueue.kept(resolved);
 			if (kept !== null && unsent.current === null) {
 				unsent.current = kept;
+				recovered.current = kept !== (application.notes ?? "");
+				setFailed(recovered.current);
+				setHasRecovered(recovered.current);
 				setNotes(kept);
 			} else if (unsent.current !== null) notesQueue.keep(resolved, unsent.current);
 			setKey(resolved);
@@ -639,15 +676,16 @@ export function Notes({ application }: SectionProps) {
 		return () => {
 			live = false;
 		};
-	}, [id]);
+	}, [id, application.notes]);
 
 	const flush = useCallback(() => {
 		const value = unsent.current;
-		if (key === null || value === null) return;
+		if (key === null || value === null || recovered.current) return;
 		unsent.current = null;
 		setFailed(false);
 		notesQueue
 			.save(key, value, async (text) => {
+				if ((await notesKey(id)) !== key) throw new Error("Account changed");
 				await client.applications.update({ id, notes: text.trim() ? text : null });
 				void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
 			})
@@ -663,7 +701,15 @@ export function Notes({ application }: SectionProps) {
 		return () => clearTimeout(timeout);
 	}, [notes, flush]);
 	// Leaving mid-sentence still saves what was typed; the queue outlives this screen.
-	useEffect(() => () => flush(), [flush]);
+	useEffect(() => {
+		const listener = AppState.addEventListener("change", (state) => {
+			if (state !== "active") flush();
+		});
+		return () => {
+			listener.remove();
+			flush();
+		};
+	}, [flush]);
 
 	return (
 		<Section title={t`Notes`}>
@@ -678,15 +724,44 @@ export function Notes({ application }: SectionProps) {
 				}}
 				onBlur={flush}
 			/>
+			{failed && hasRecovered && (
+				<Text color="warnText">{t`Recovered an unsaved draft. Review it before saving over the current version.`}</Text>
+			)}
 			{failed ? (
-				<Button
-					variant="link"
-					label={t`Retry save`}
-					onPress={() => {
-						unsent.current = notes;
-						flush();
-					}}
-				/>
+				<>
+					<Button
+						variant="link"
+						label={t`Retry save`}
+						onPress={() => {
+							recovered.current = false;
+							setHasRecovered(false);
+							unsent.current = notes;
+							flush();
+						}}
+					/>
+					{hasRecovered && (
+						<Button
+							variant="ghost"
+							label={t`Use saved version`}
+							onPress={() => {
+								void client.applications
+									.getById({ id })
+									.then(async (server) => {
+										if (key === null || (await notesKey(id)) !== key) return;
+										notesQueue.discard(key);
+										unsent.current = null;
+										recovered.current = false;
+										setHasRecovered(false);
+										setNotes(server.notes ?? "");
+										setFailed(false);
+									})
+									.catch(() =>
+										showToast({ message: t`The server version couldn't be loaded. Your text is kept; try again.` }),
+									);
+							}}
+						/>
+					)}
+				</>
 			) : null}
 		</Section>
 	);

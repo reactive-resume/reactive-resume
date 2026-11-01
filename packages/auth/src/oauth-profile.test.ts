@@ -33,7 +33,7 @@ vi.mock("@reactive-resume/db/client", () => ({
 	},
 }));
 
-const { createGithubProfileMapper, createProfileMapper } = await import("./oauth-profile");
+const { createGithubProfileMapper, createProfileMapper, isUsernameReserved } = await import("./oauth-profile");
 
 beforeEach(() => {
 	dbMock.selectQueue.length = 0;
@@ -121,5 +121,27 @@ describe("createProfileMapper", () => {
 			username: "legacy.user",
 			displayUsername: "legacy.user",
 		});
+	});
+});
+
+describe("isUsernameReserved", () => {
+	it("keeps the app's addresses from new accounts but lets an account that already has one keep it", async () => {
+		expect(await isUsernameReserved("Login")).toBe(true);
+		expect(await isUsernameReserved("api", "user-2")).toBe(true);
+
+		dbMock.selectQueue.push([{ id: "user-1" }]);
+		expect(await isUsernameReserved("login", "user-1")).toBe(false);
+		// Only a claimant is looked up: "Login" with no account is turned down at once.
+		expect(dbMock.select).toHaveBeenCalledTimes(2);
+	});
+
+	it("gives a new account named after a sign-in address a free name instead", async () => {
+		const mapper = createProfileMapper({ providerName: "Google" });
+
+		const result = await mapper({ email: "login@example.com", name: "Login Person" });
+
+		// The email lookup, then "login-1" (a release, then an account); "login" itself is turned down without one.
+		expect(dbMock.select).toHaveBeenCalledTimes(3);
+		expect(result).toMatchObject({ username: "login-1", displayUsername: "login-1" });
 	});
 });
