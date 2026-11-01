@@ -17,12 +17,32 @@ function decodeEntities(text: string) {
 	});
 }
 
+const RELS_PATH = "word/_rels/document.xml.rels";
+
+/**
+ * The header and footer parts the body's sections use, from their `headerReference`/`footerReference` ids and the
+ * document's relationships: a header left in the file but used by no section isn't part of what prints.
+ */
+function referencedParts(body: string, rels: string | undefined) {
+	if (rels === undefined) return null;
+	const ids = new Set(
+		[...body.matchAll(/<w:(?:header|footer)Reference\b[^<>]*\br:id="([^"]+)"/g)].map((match) => match[1]),
+	);
+	const targets = new Set<string>();
+	for (const [relationship] of rels.matchAll(/<Relationship\b[^<>]*>/g)) {
+		const id = /\bId="([^"]+)"/.exec(relationship)?.[1];
+		const target = /\bTarget="([^"]+)"/.exec(relationship)?.[1];
+		if (id && target && ids.has(id)) targets.add(`word/${target.replace(/^\.?\//, "")}`);
+	}
+	return targets;
+}
+
 function readParts(data: Uint8Array) {
 	let entries: Record<string, Uint8Array>;
 	try {
 		entries = unzipEntries(
 			data,
-			(name) => name === DOCUMENT_XML_PATH || HEADER_FOOTER_PATH.test(name),
+			(name) => name === DOCUMENT_XML_PATH || name === RELS_PATH || HEADER_FOOTER_PATH.test(name),
 			MAX_PART_BYTES,
 			MAX_TOTAL_BYTES,
 		);
@@ -30,23 +50,63 @@ function readParts(data: Uint8Array) {
 		if (error instanceof ZipEntryTooLargeError) throw new Error("DOCX document content is too large.");
 		throw new Error("Invalid DOCX archive.");
 	}
-	const body = entries[DOCUMENT_XML_PATH];
-	if (!body) throw new Error("DOCX document content not found.");
+	const bodyBytes = entries[DOCUMENT_XML_PATH];
+	if (!bodyBytes) throw new Error("DOCX document content not found.");
 	const decoder = new TextDecoder();
+	const body = decoder.decode(bodyBytes);
+	const relsBytes = entries[RELS_PATH];
+	// Without the relationships part, every header and footer is read, as before.
+	const used = referencedParts(body, relsBytes ? decoder.decode(relsBytes) : undefined);
 	const part = (kind: "header" | "footer") =>
 		Object.keys(entries)
-			.filter((name) => HEADER_FOOTER_PATH.exec(name)?.[1] === kind)
+			.filter((name) => HEADER_FOOTER_PATH.exec(name)?.[1] === kind && (!used || used.has(name)))
 			.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
 			.map((name) => decoder.decode(entries[name]));
-	return { body: decoder.decode(body), headers: part("header"), footers: part("footer") };
+	return { body, headers: part("header"), footers: part("footer") };
 }
+
+/**
+ * `xml` without each `<tag …>…</tag>` element that `drop` picks. A self-closing tag (a deleted paragraph mark,
+ * `<w:del …/>`) stays. One pass of `indexOf`, so a part with many unclosed tags still costs linear time.
+ */
+function dropElements(xml: string, tag: string, drop: (element: string) => boolean = () => true) {
+	const open = `<${tag}`;
+	const close = `</${tag}>`;
+	let out = "";
+	let at = 0;
+	for (;;) {
+		let start = xml.indexOf(open, at);
+		// `<w:del` must not match `<w:delText`, nor `<w:r` match `<w:rPr`.
+		while (start !== -1 && !/[\s/>]/.test(xml[start + open.length] ?? "")) start = xml.indexOf(open, start + 1);
+		if (start === -1) break;
+		const tagEnd = xml.indexOf(">", start);
+		if (tagEnd === -1) break;
+		if (xml[tagEnd - 1] === "/") {
+			out += xml.slice(at, tagEnd + 1);
+			at = tagEnd + 1;
+			continue;
+		}
+		const end = xml.indexOf(close, tagEnd);
+		if (end === -1) break;
+		const element = xml.slice(start, end + close.length);
+		out += xml.slice(at, start) + (drop(element) ? "" : element);
+		at = end + close.length;
+	}
+	return out + xml.slice(at);
+}
+
+const HIDDEN_RUN = /<w:vanish\b(?![^<>]*w:val="(?:0|false|off)")[^<>]*\/>/;
+
+/** What prints: tracked deletions and hidden runs taken out. */
+const visibleXml = (xml: string) =>
+	dropElements(dropElements(dropElements(xml, "w:del"), "w:delText"), "w:r", (run) => HIDDEN_RUN.test(run));
 
 /** The visible text of one OOXML part: paragraphs on their own lines, tabs and line breaks kept. */
 function partText(xml: string) {
-	// ponytail: minimal OOXML text extraction; add a DOCX parser dependency if tracked changes matter.
+	// ponytail: minimal OOXML text extraction (deletions and hidden runs dropped); add a DOCX parser if fields matter.
 	return decodeEntities(
 		// `[^<>]` keeps each match from scanning past the next tag, so malformed markup costs linear time.
-		xml
+		visibleXml(xml)
 			.replace(/<w:tab\b[^<>]*\/>/g, "\t")
 			.replace(/<w:br\b[^<>]*\/>/g, "\n")
 			.replace(/<\/w:p>/g, "\n")

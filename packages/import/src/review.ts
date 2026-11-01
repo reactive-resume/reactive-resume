@@ -21,26 +21,35 @@ const normalize = (text: string) =>
 		.replace(/[^\p{L}\p{N}@+]+/gu, " ")
 		.trim();
 
-/** Every string the resume holds, as one comparable text. */
-function resumeText(data: ResumeData) {
-	const strings: string[] = [];
-	const visit = (value: unknown) => {
-		if (typeof value === "string") strings.push(value);
-		else if (Array.isArray(value)) value.forEach(visit);
-		else if (value && typeof value === "object") Object.values(value).forEach(visit);
-	};
-	visit([data.basics, data.summary, data.sections, data.customSections]);
-	return normalize(strings.join("\n"));
+const stringsOf = (value: unknown, into: string[] = []) => {
+	if (typeof value === "string") into.push(value);
+	else if (Array.isArray(value)) for (const item of value) stringsOf(item, into);
+	else if (value && typeof value === "object") for (const item of Object.values(value)) stringsOf(item, into);
+	return into;
+};
+
+/**
+ * The resume's text in the groups a source line would land in: the basics, the summary, and each entry on its own. A
+ * line's words and numbers must all be in one group, so a bullet isn't counted as imported because its words turn up
+ * scattered across other entries.
+ */
+function resumeGroups(data: ResumeData) {
+	const groups = [normalize(stringsOf(data.basics).join("\n")), normalize(data.summary.content)];
+	for (const section of [...Object.values(data.sections), ...data.customSections])
+		for (const item of section.items) groups.push(normalize(stringsOf(item).join("\n")));
+	return groups.filter(Boolean).map((text) => ({ text, words: new Set(text.split(" ")) }));
 }
 
 /**
  * Lines of the source that the imported resume doesn't hold. A line counts as imported when its text is there, or
- * when every number in it and most of its words are (the reader may join, split or tidy lines, but a lost "18%" is a
- * loss). Headings and other short lines are skipped: what matters is the content under them.
+ * when one entry holds every number in it and most of its words (the reader may join, split or tidy lines, but a lost
+ * "18%" is a loss). Headings and other short lines are skipped unless they carry a number the resume lacks, such as
+ * a date range: what matters is the content under them.
  */
 export function notImportedLines(data: ResumeData, lines: readonly string[]) {
-	const text = resumeText(data);
-	const words = new Set(text.split(" "));
+	const groups = resumeGroups(data);
+	const all = groups.map((group) => group.text).join("\n");
+	const allWords = new Set(all.split(/\s+/));
 	const leftovers: string[] = [];
 	const seen = new Set<string>();
 	for (const line of lines) {
@@ -48,9 +57,14 @@ export function notImportedLines(data: ResumeData, lines: readonly string[]) {
 		const tokens = normalized.split(" ");
 		const content = tokens.filter((word) => word.length >= 3 && /\p{L}/u.test(word));
 		const numbers = tokens.filter((word) => /\p{N}/u.test(word));
-		if (content.length < 2 || seen.has(normalized) || text.includes(normalized)) continue;
-		const found = content.filter((word) => words.has(word)).length;
-		if (numbers.every((number) => words.has(number)) && found / content.length >= 0.6) continue;
+		if (!normalized || seen.has(normalized) || all.includes(normalized)) continue;
+		if (content.length < 2 && numbers.every((number) => allWords.has(number))) continue;
+		const placed = groups.some(
+			(group) =>
+				numbers.every((number) => group.words.has(number)) &&
+				content.filter((word) => group.words.has(word)).length / Math.max(1, content.length) >= 0.6,
+		);
+		if (placed) continue;
 		seen.add(normalized);
 		leftovers.push(line.trim());
 	}
@@ -126,6 +140,17 @@ const NETWORK_HOSTS: Record<string, RegExp> = {
 	bluesky: /(^|\.)bsky\.app$/,
 };
 
+const pathSegments = (url: string) => {
+	try {
+		return new URL(url).pathname
+			.split("/")
+			.filter(Boolean)
+			.map((segment) => decodeURIComponent(segment).replace(/^@/, "").toLowerCase());
+	} catch {
+		return [];
+	}
+};
+
 const hostOf = (url: string) => {
 	try {
 		return new URL(url).hostname.toLowerCase();
@@ -152,8 +177,9 @@ export function withLinkTargets(data: ResumeData, links: readonly string[]): Res
 			const host = hostOf(link);
 			return !!host && (pattern ? pattern.test(host) : !!key && host.replace(/\./g, "").includes(key));
 		});
-		const username = item.username.trim().toLowerCase();
-		const named = username ? candidates.filter((link) => link.toLowerCase().includes(username)) : [];
+		const username = item.username.trim().replace(/^@/, "").toLowerCase();
+		// The username is the account's own path segment ("/in/priya-raman", "/@priya"), not any part of the address.
+		const named = username ? candidates.filter((link) => pathSegments(link).includes(username)) : [];
 		const url = named.length === 1 ? named[0] : !username && candidates.length === 1 ? candidates[0] : undefined;
 		if (!url) return item;
 		used.add(url);

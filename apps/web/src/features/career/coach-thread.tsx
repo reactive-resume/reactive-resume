@@ -453,7 +453,7 @@ export function Composer(props: ComposerProps) {
 						</div>
 						<IconButton
 							icon="paperclip"
-							label={t`Attach a PDF, Word, text or image file`}
+							label={t`Attach a file`}
 							size="icon-sm"
 							disabled={props.disabled || uploading}
 							loading={uploading}

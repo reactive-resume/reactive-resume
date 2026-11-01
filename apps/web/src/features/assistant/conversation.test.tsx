@@ -92,7 +92,7 @@ it("uploads a file in the initial composer before sending its first message", as
 			/>
 		</I18nProvider>,
 	);
-	expect(screen.getByRole("button", { name: "Attach a PDF, Word, text or image file" })).toBeDefined();
+	expect(screen.getByRole("button", { name: "Attach a file" })).toBeDefined();
 	const input = container.querySelector('input[type="file"]');
 	if (!input) throw new Error("File picker missing");
 	fireEvent.change(input, { target: { files: [new File(["foo"], "posting.txt", { type: "text/plain" })] } });

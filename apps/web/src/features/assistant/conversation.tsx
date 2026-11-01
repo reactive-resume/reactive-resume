@@ -200,27 +200,25 @@ export function Conversation(props: ConversationProps) {
 			),
 		)
 		.join(" ");
-	const statuses = useMemo(
-		() =>
-			new Map<string, Receipt>([
-				...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
-					message.parts.flatMap((part) =>
-						isProposeEdits(part)
-							? toProposals(part, new Map(), document).map(
-									({ id, status, after, unsupported, edited }) =>
-										[id, edited ? { status, after, unsupported, edited } : { status }] as const,
-								)
-							: [],
-					),
+	const statuses = useMemo(() => {
+		const map = new Map<string, Receipt>([
+			...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
+				message.parts.flatMap((part) =>
+					isProposeEdits(part)
+						? toProposals(part, new Map(), document).map(
+								({ id, status, after, unsupported, edited }) =>
+									[id, edited ? { status, after, unsupported, edited } : { status }] as const,
+							)
+						: [],
 				),
-				...[...rejections].map(([id, status]) => [id, { status }] as const),
-				...superseded
-					.split(" ")
-					.filter(Boolean)
-					.map((id) => [id, { status: "rejected" as const, superseded: true }] as const),
-			]),
-		[receipts.data, rejections, superseded, document],
-	);
+			),
+			...[...rejections].map(([id, status]) => [id, { status }] as const),
+		]);
+		// Only an undecided edit reads as replaced: one accepted or rejected (here or on another device) keeps its outcome.
+		for (const id of superseded.split(" ").filter(Boolean))
+			if ((map.get(id)?.status ?? "pending") === "pending") map.set(id, { status: "rejected", superseded: true });
+		return map;
+	}, [receipts.data, rejections, superseded, document]);
 
 	// Every proposed edit in the conversation, with what the user did with it: marked on the page while pending.
 	const proposals = useMemo(
@@ -1090,7 +1088,7 @@ export function Composer(props: ComposerProps) {
 					<>
 						<IconButton
 							icon="paperclip"
-							label={t`Attach a PDF, Word, text or image file`}
+							label={t`Attach a file`}
 							size="icon-sm"
 							disabled={disabled || uploading}
 							className="text-ink-2"
@@ -1140,6 +1138,7 @@ const attachmentErrorMessages = () => ({
 	AGENT_ATTACHMENT_LIMIT: t`Attach up to 10 files per message.`,
 	AGENT_ATTACHMENT_TOO_LARGE: t`Files can be up to 25 MB.`,
 	AGENT_THREAD_ATTACHMENTS_FULL: t`A conversation's files can total up to 100 MB. Start a new conversation.`,
+	AGENT_ACCOUNT_ATTACHMENTS_FULL: t`Your assistant files can total up to 1 GB. Delete conversations you no longer need.`,
 });
 
 type RemovableChipProps = {

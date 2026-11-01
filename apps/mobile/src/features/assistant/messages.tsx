@@ -555,10 +555,10 @@ function ChangeSet({
 	const checked = pending.filter((proposal) => !needsConfirmation(proposal));
 	const toConfirm = pending.length - checked.length;
 	const accepted = states.filter((state) => state === "accepted").length;
-	const count =
-		pending.length > 0
-			? plural(proposals.length, { one: "# proposed edit", other: "# proposed edits" })
-			: t`${accepted} of ${proposals.length} applied`;
+	// Worded from the undecided edits, as on the web: a locked set or one being rewritten still has edits to decide.
+	const count = states.some((state) => state === "pending")
+		? plural(proposals.length, { one: "# proposed edit", other: "# proposed edits" })
+		: t`${accepted} of ${proposals.length} applied`;
 
 	return (
 		<View style={{ borderWidth: 1, borderColor: colors.line, borderRadius: radius.rLg, overflow: "hidden" }}>

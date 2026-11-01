@@ -2058,7 +2058,8 @@ export const agentService = {
 						.from(schema.agentAttachment)
 						.where(eq(schema.agentAttachment.userId, input.userId));
 					if (Number(account?.totalBytes ?? 0) + input.data.byteLength > MAX_ACCOUNT_ATTACHMENT_BYTES)
-						throw new ORPCError("BAD_REQUEST", {
+						throw new ORPCError("AGENT_ACCOUNT_ATTACHMENTS_FULL", {
+							status: 400,
 							message: "Your assistant attachments use all their storage. Delete conversations you no longer need.",
 						});
 

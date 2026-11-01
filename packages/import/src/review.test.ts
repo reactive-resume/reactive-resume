@@ -48,6 +48,43 @@ describe("notImportedLines", () => {
 	});
 });
 
+describe("notImportedLines across entries", () => {
+	it("lists a date range or number line the resume lacks", () => {
+		expect(notImportedLines(resume(), ["2016 – 2019", "2021 – Present"])).toEqual(["2016 – 2019"]);
+	});
+
+	it("doesn't count a bullet as imported because its words are scattered over other entries", () => {
+		const data = resume();
+		data.sections.projects.items = [
+			{
+				id: "2",
+				hidden: false,
+				name: "Team of 18",
+				period: "",
+				website: { url: "", label: "", inlineLink: false },
+				description: "<p>Managed designers across Berlin teams.</p>",
+			} as never,
+		];
+		expect(notImportedLines(data, ["Managed 18 designers across Berlin teams"])).toEqual([]);
+		data.sections.projects.items = [
+			{
+				id: "2",
+				hidden: false,
+				name: "Team of 18",
+				period: "",
+				website: { url: "", label: "", inlineLink: false },
+				description: "",
+			} as never,
+		];
+		data.sections.awards.items = [
+			{ id: "3", hidden: false, title: "Managed designers across teams", awarder: "", date: "" } as never,
+		];
+		expect(notImportedLines(data, ["Managed 18 designers across Berlin teams"])).toEqual([
+			"Managed 18 designers across Berlin teams",
+		]);
+	});
+});
+
 describe("reviewImport", () => {
 	it("counts sections with content and notices missing contact details", () => {
 		const data = resume();
@@ -102,6 +139,14 @@ describe("withLinkTargets", () => {
 		data.sections.profiles.items = [profile("priya-raman")];
 		expect(withLinkTargets(data, links).sections.profiles.items[0]?.website.url).toBe(links[1]);
 	});
+
+	it("matches the username as the account's own path segment, not part of another address", () => {
+		const data = resume();
+		const links = ["https://github.com/priya-fan-club", "https://github.com/priya"];
+		data.sections.profiles.items = [{ ...(profile("priya") as object), network: "GitHub" } as never];
+		expect(withLinkTargets(data, links).sections.profiles.items[0]?.website.url).toBe(links[1]);
+		expect(withLinkTargets(data, [links[0] as string]).sections.profiles.items[0]?.website.url).toBe("");
+	});
 });
 
 describe("extractDocxText", () => {
@@ -113,5 +158,39 @@ describe("extractDocxText", () => {
 				zipSync({ "word/document.xml": part("document", "Body"), "word/header1.xml": part("hdr", "Name") }),
 			),
 		).toBe("Name\n\nBody");
+	});
+
+	const encode = (text: string) => new TextEncoder().encode(text);
+	const paragraph = (runs: string) => `<w:p>${runs}</w:p>`;
+	const run = (text: string, properties = "") => `<w:r>${properties}<w:t>${text}</w:t></w:r>`;
+
+	it("reads only the headers a section uses", () => {
+		const body = `<w:document><w:body>${paragraph(run("Body"))}<w:sectPr><w:headerReference w:type="default" r:id="rId8"/></w:sectPr></w:body></w:document>`;
+		const rels =
+			'<Relationships><Relationship Id="rId8" Type="http://schemas/header" Target="header2.xml"/><Relationship Id="rId9" Type="http://schemas/header" Target="header1.xml"/></Relationships>';
+		expect(
+			extractDocxText(
+				zipSync({
+					"word/document.xml": encode(body),
+					"word/_rels/document.xml.rels": encode(rels),
+					"word/header1.xml": encode(`<w:hdr>${paragraph(run("Old address"))}</w:hdr>`),
+					"word/header2.xml": encode(`<w:hdr>${paragraph(run("Priya Raman"))}</w:hdr>`),
+				}),
+			),
+		).toBe("Priya Raman\n\nBody");
+	});
+
+	it("leaves out tracked deletions and hidden text, keeping a paragraph whose mark was deleted", () => {
+		const body = `<w:document><w:body>${[
+			paragraph(
+				`${run("Led ")}<w:del w:id="1"><w:r><w:delText>twelve </w:delText></w:r></w:del>${run("eight designers")}`,
+			),
+			paragraph(run("Secret note", "<w:rPr><w:vanish/></w:rPr>") + run("Shown")),
+			`<w:p><w:pPr><w:rPr><w:del w:id="2" w:author="A"/></w:rPr></w:pPr>${run("Kept line")}</w:p>`,
+			paragraph(run("Also kept", '<w:rPr><w:vanish w:val="0"/></w:rPr>')),
+		].join("")}</w:body></w:document>`;
+		expect(extractDocxText(zipSync({ "word/document.xml": encode(body) }))).toBe(
+			"Led eight designers\nShown\nKept line\nAlso kept",
+		);
 	});
 });

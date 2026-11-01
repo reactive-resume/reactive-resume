@@ -503,27 +503,25 @@ function Conversation(props: ConversationProps) {
 		!error &&
 		(stopped || (lastReply !== undefined && (history.data?.interrupted ?? []).includes(lastReply.id)));
 	const saidSomething = lastReply?.parts.some((part) => part.type === "text" && part.text.trim() !== "") === true;
-	const statuses = useMemo(
-		() =>
-			new Map<string, Receipt>([
-				...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
-					message.parts.flatMap((part) =>
-						isProposeEdits(part)
-							? toProposals(part, new Map()).map(
-									({ id, status, after, unsupported, edited }) =>
-										[id, edited ? { status, after, unsupported, edited } : { status }] as const,
-								)
-							: [],
-					),
+	const statuses = useMemo(() => {
+		const map = new Map<string, Receipt>([
+			...((receipts.data?.messages ?? []) as UIMessage[]).flatMap((message) =>
+				message.parts.flatMap((part) =>
+					isProposeEdits(part)
+						? toProposals(part, new Map()).map(
+								({ id, status, after, unsupported, edited }) =>
+									[id, edited ? { status, after, unsupported, edited } : { status }] as const,
+							)
+						: [],
 				),
-				...[...rejections].map(([id, status]) => [id, { status }] as const),
-				...supersededIds
-					.split(" ")
-					.filter(Boolean)
-					.map((id) => [id, { status: "rejected" as const, superseded: true }] as const),
-			]),
-		[receipts.data, rejections, supersededIds],
-	);
+			),
+			...[...rejections].map(([id, status]) => [id, { status }] as const),
+		]);
+		// Only an undecided edit reads as replaced: one accepted or rejected (here or on another device) keeps its outcome.
+		for (const id of supersededIds.split(" ").filter(Boolean))
+			if ((map.get(id)?.status ?? "pending") === "pending") map.set(id, { status: "rejected", superseded: true });
+		return map;
+	}, [receipts.data, rejections, supersededIds]);
 
 	// ---- Proposed edits ----
 
@@ -1023,7 +1021,7 @@ function Composer(props: ComposerProps) {
 			>
 				<Pressable
 					accessibilityRole="button"
-					accessibilityLabel={t`Attach a PDF, Word, text or image file`}
+					accessibilityLabel={t`Attach a file`}
 					accessibilityState={{ disabled: props.disabled || uploading }}
 					disabled={props.disabled || uploading}
 					onPress={() => void attach()}
