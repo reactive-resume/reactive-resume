@@ -75,7 +75,7 @@ export function Preparation({ application, disabled }: PreparationProps) {
 				...(resumeId ? { resumeId } : {}),
 			});
 			void invalidate();
-			router.push(routes.letter(letter.id));
+			router.push(routes.letter(letter.id, "write", undefined, application.id));
 		} catch (error) {
 			showToast({ message: workspaceError(error, t`Couldn't create the letter. Try again.`) });
 		}
@@ -126,7 +126,13 @@ export function Preparation({ application, disabled }: PreparationProps) {
 			<Button
 				fullWidth
 				label={t`Tailor the resume`}
-				onPress={() => router.push(connection.hasAIProvider ? routes.assistant(resumeId) : routes.builder(resumeId))}
+				onPress={() =>
+					router.push(
+						connection.hasAIProvider
+							? routes.assistant(resumeId, application.id)
+							: routes.builder(resumeId, "write", application.id),
+					)
+				}
 			/>
 		)
 	) : next === "letter" ? (
@@ -276,7 +282,11 @@ export function Preparation({ application, disabled }: PreparationProps) {
 											label={kind === "resume" ? t`Edit resume` : t`Edit cover letter`}
 											disabled={busy || !document}
 											onPress={() =>
-												router.push(kind === "resume" ? routes.builder(selected) : routes.letter(selected))
+												router.push(
+													kind === "resume"
+														? routes.builder(selected, "write", application.id)
+														: routes.letter(selected, "write", undefined, application.id),
+												)
 											}
 										/>
 									) : null}

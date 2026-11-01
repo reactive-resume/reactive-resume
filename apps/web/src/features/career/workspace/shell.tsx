@@ -427,7 +427,15 @@ function WorkspaceHeader({ application, onAskCoach }: WorkspaceHeaderProps) {
 						)}
 					</p>
 				</div>
-				<div className="flex items-center gap-4">
+				<div className="flex flex-wrap items-center gap-4">
+					<Link
+						to="/dashboard/applications"
+						search={{ applicationId: application.id }}
+						className={buttonVariants({ variant: "secondary" })}
+					>
+						<Icon name="briefcase" size={18} />
+						<Trans>Stage, details and timeline</Trans>
+					</Link>
 					{application.status !== "closed" && (
 						<div aria-hidden="true" className="hidden gap-1 lg:flex">
 							{steps.map((step, index) => (
@@ -621,7 +629,10 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 						<Link
 							to="/builder/$resumeId"
 							params={{ resumeId: application.resumeId }}
-							search={application.sentResumeVersionId ? { version: application.sentResumeVersionId } : {}}
+							search={{
+								applicationId: application.id,
+								...(application.sentResumeVersionId ? { version: application.sentResumeVersionId } : {}),
+							}}
 							className="flex items-center gap-2.5 rounded-xl border border-line p-3 transition-colors duration-quick hover:bg-hover"
 						>
 							<Icon name="file-text" className="shrink-0 text-ink-2" />
@@ -641,7 +652,10 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 						<Link
 							to="/builder/letter/$coverLetterId"
 							params={{ coverLetterId: application.coverLetterId }}
-							search={application.sentCoverLetterVersionId ? { version: application.sentCoverLetterVersionId } : {}}
+							search={{
+								applicationId: application.id,
+								...(application.sentCoverLetterVersionId ? { version: application.sentCoverLetterVersionId } : {}),
+							}}
 							className="flex items-center gap-2.5 rounded-xl border border-line p-3 transition-colors duration-quick hover:bg-hover"
 						>
 							<Icon name="envelope-simple" className="shrink-0 text-ink-2" />

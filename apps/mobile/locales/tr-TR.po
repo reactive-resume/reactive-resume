@@ -1065,7 +1065,6 @@ msgstr "{1} saatinde {0} için işlemler"
 msgid "Active"
 msgstr "Aktif"
 
-#: src/features/application-detail/sections.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Add"
 msgstr "Ekle"
@@ -1101,14 +1100,6 @@ msgstr "Konum ekle"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note"
-msgstr "Not ekle"
-
-#: src/features/application-detail/sections.tsx
-msgid "Add a note…"
-msgstr "Not ekleyin…"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Add a person"
@@ -2102,6 +2093,10 @@ msgstr "Azerice"
 #: src/features/write/entry-sheet.tsx
 msgid "Back"
 msgstr "Geri"
+
+#: src/shell/builder-chrome.tsx
+msgid "Back to application"
+msgstr ""
 
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
@@ -3745,6 +3740,10 @@ msgstr "Ön Yazı"
 msgid "Cover letter — {0}"
 msgstr "Kapak mektubu — {0}"
 
+#: src/features/applications/add-sheet.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/workspace/tabs/apply.tsx
@@ -3909,6 +3908,10 @@ msgstr "Oluşturulma tarihi"
 #: src/features/design/advanced.tsx
 msgid "Date format"
 msgstr "Tarih formatı"
+
+#: src/features/application-detail/sections.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -6183,6 +6186,11 @@ msgctxt "US Letter paper size (8.5 × 11 in), shown beside A4"
 msgid "Letter"
 msgstr "Letter"
 
+#: src/features/documents/document-sheets.tsx
+#: src/features/letters/write.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/features/letters/write.tsx
 msgid "Letter body"
 msgstr "Mektup gövdesi"
@@ -6499,6 +6507,18 @@ msgstr "Kilitli belgeler atlandı. Önce bunların kilidini açın."
 #: src/features/write/outline.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Kilitli. Düzenlemek için kilidini açın."
+
+#: src/features/application-detail/sections.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/documents/library.tsx
 msgid "Long press to select"
@@ -7366,6 +7386,7 @@ msgstr "Yanıt yok"
 msgid "No results"
 msgstr "Sonuç yok"
 
+#: src/features/documents/new-document.tsx
 #: src/features/letters/write.tsx
 msgid "No resume"
 msgstr "Özgeçmiş yok"
@@ -8218,8 +8239,8 @@ msgid "PDF check canceled. Retry when ready."
 msgstr "PDF çeki iptal edildi. Hazır olduğunuzda yeniden deneyin."
 
 #: src/features/application-detail/sections.tsx
-msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables AI match scoring and tailoring."
-msgstr "Yalnızca PDF · her biri en fazla 10 MB. Reactive Resume bağlamak AI ile eşleşme puanlaması ve ilana göre uyarlama sağlar."
+msgid "PDF only · up to 10 MB each. Linking a Reactive Resume enables a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "PDF reads its text layer on your server by default, without AI. Turn on the AI switch to send it to your provider. Word (.docx) needs an AI provider. Current and v4 Reactive Resume JSON, cover letters, JSON Resume and LinkedIn exports (.zip) are supported. Up to 10 MB."
@@ -9399,6 +9420,10 @@ msgstr "Özgeçmiş geri bildirimi, ürün yardımı ve topluluk fikirleri."
 #: src/features/workspace/tabs/apply.tsx
 msgid "Resume file"
 msgstr "Özgeçmiş dosyası"
+
+#: src/features/documents/new-document.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
@@ -10925,6 +10950,10 @@ msgstr "Alt alta"
 msgid "Stage stays {stage}"
 msgstr "Aşama {stage} olarak kalır"
 
+#: src/features/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "Start"
 msgstr "Başlangıç"
@@ -11739,6 +11768,11 @@ msgid "This application has no posting yet. Add one in Applications."
 msgstr "Bu başvuruda henüz iş ilanı bulunmamaktadır. Başvurular'a bir tane ekleyin."
 
 #: src/features/applications/error.ts
+#: src/features/documents/queries.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
+#: src/features/applications/error.ts
 msgid "This changed elsewhere. Reload and try again."
 msgstr "Bu, başka bir yerde değiştirildi. Yeniden yükleyip tekrar deneyin."
 
@@ -11901,6 +11935,10 @@ msgstr "Bu mektup başka yerde değişti"
 #: src/features/letters/write.tsx
 msgid "This letter is locked. Unlock it in Documents to edit."
 msgstr "Bu ön yazı kilitli. Düzenlemek için Belgeler’de kilidini açın."
+
+#: src/features/documents/document-sheets.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "This letter keeps its recipient as written."
@@ -12543,6 +12581,10 @@ msgstr "Düzenin yeniden oluşturulduğunda bozulmaması için A4 veya US Letter
 msgid "Use AI for PDF imports"
 msgstr "PDF içe aktarma işlemi için AI kullanın"
 
+#: src/features/application-detail/sections.tsx
+msgid "Use an existing letter"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Use an http or https job posting link before saving."
 msgstr "Kaydetmeden önce bir http veya https iş ilanı bağlantısı kullanın."
@@ -13146,6 +13188,10 @@ msgstr ""
 #: src/features/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "Bir mektup yaz"
+
+#: src/features/documents/document-sheets.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"

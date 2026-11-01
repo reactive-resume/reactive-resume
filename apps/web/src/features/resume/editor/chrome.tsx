@@ -3,7 +3,8 @@ import type { ComponentProps, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
-import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useParams, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -12,6 +13,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore, ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./store";
+import { applicationsListQueryOptions } from "@/features/applications/queries";
+import { useLetterEditorStore } from "@/features/letters/store";
+import { useResumeStore } from "@/features/resume/builder/draft";
 
 // The editor chrome resumes and letters share: the back link and drawer controls in the bar, the canvas width
 // and the zoom bar.
@@ -101,14 +105,30 @@ export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTr
 
 /** Leaving the editor is navigation, so it's a link styled as an icon button. */
 export function BackLink() {
-	const label = t`Back to documents`;
+	const params = useParams({ strict: false });
+	const search = useSearch({ strict: false });
+	const letterApplicationId = useLetterEditorStore((state) =>
+		state.letter?.id === params.coverLetterId ? state.letter?.sourceApplicationId : null,
+	);
+	const resumeApplicationId = useResumeStore((state) =>
+		state.resume?.id === params.resumeId ? state.resume?.applicationId : null,
+	);
+	const { data: applications } = useQuery(applicationsListQueryOptions());
+	const applicationId = search.applicationId ?? letterApplicationId ?? resumeApplicationId;
+	const application =
+		applications?.find((item) => item.id === applicationId) ??
+		applications?.find((item) =>
+			params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId,
+		);
+	const label = application ? t`Back to ${application.company}` : t`Back to documents`;
 
 	return (
 		<Tooltip>
 			<TooltipTrigger
 				render={
 					<Link
-						to="/dashboard"
+						to={application ? "/dashboard/applications" : "/dashboard"}
+						search={application ? { applicationId: application.id } : {}}
 						aria-label={label}
 						className={buttonVariants({ variant: "ghost", size: "icon", className: "text-ink-2" })}
 					/>

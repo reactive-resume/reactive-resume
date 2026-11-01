@@ -350,7 +350,7 @@ const nextSteps = load("features/applications/next-step.ts", {
 });
 const time = { locale: "en-US", timeZone: "UTC", when: String, time: String, day: String, utcDay: String };
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
-	"@tanstack/react-query": {},
+	"@tanstack/react-query": { useQueryClient: () => ({ invalidateQueries: async () => {} }) },
 	"expo-document-picker": {},
 	"expo-file-system": {},
 	"expo-sqlite/kv-store": {},

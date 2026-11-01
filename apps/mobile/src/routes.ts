@@ -37,27 +37,29 @@ export const routes = {
 	publicResume: (username: string, slug: string) => `/r/${segment(username)}/${segment(slug)}` as const,
 
 	// Resume builder
-	builder: (id: string, pane: BuilderPane = "write") => `/builder/${segment(id)}/${pane}` as const,
+	builder: (id: string, pane: BuilderPane = "write", applicationId?: string) =>
+		`/builder/${segment(id)}/${pane}${applicationId ? `?applicationId=${segment(applicationId)}` : ""}` as const,
 	/** `section` is a built-in section key or a custom section id; `item` is the entry id. */
 	entry: (id: string, section: string, item: string) =>
 		`/builder/${segment(id)}/entry/${segment(section)}/${segment(item)}` as const,
 	/** Download & history, over the builder. */
 	export: (id: string) => `/builder/${segment(id)}/export` as const,
 	/** `version` opens History on that version, read-only (Applications' "What you sent"). */
-	history: (id: string, version?: string) =>
+	history: (id: string, version?: string, applicationId?: string) =>
 		version
-			? (`/builder/${segment(id)}/history?version=${segment(version)}` as const)
-			: (`/builder/${segment(id)}/history` as const),
-	assistant: (id: string) => `/builder/${segment(id)}/assistant` as const,
+			? (`/builder/${segment(id)}/history?version=${segment(version)}${applicationId ? `&applicationId=${segment(applicationId)}` : ""}` as const)
+			: (`/builder/${segment(id)}/history${applicationId ? `?applicationId=${segment(applicationId)}` : ""}` as const),
+	assistant: (id: string, applicationId?: string) =>
+		`/builder/${segment(id)}/assistant${applicationId ? `?applicationId=${segment(applicationId)}` : ""}` as const,
 
 	letterAssistant: (id: string) => `/letter/${segment(id)}/assistant` as const,
 
 	// Cover letter editor
 	/** `version` opens Download & history's History on that version, read-only (Applications' "What you sent"). */
-	letter: (id: string, pane: LetterPane = "write", version?: string) =>
+	letter: (id: string, pane: LetterPane = "write", version?: string, applicationId?: string) =>
 		version
-			? (`/letter/${segment(id)}/${pane}?version=${segment(version)}` as const)
-			: (`/letter/${segment(id)}/${pane}` as const),
+			? (`/letter/${segment(id)}/${pane}?version=${segment(version)}${applicationId ? `&applicationId=${segment(applicationId)}` : ""}` as const)
+			: (`/letter/${segment(id)}/${pane}${applicationId ? `?applicationId=${segment(applicationId)}` : ""}` as const),
 };
 
 export type AppHref = ReturnType<(typeof routes)[keyof typeof routes]>;

@@ -1396,7 +1396,6 @@ msgstr "نشيط"
 msgid "Activity"
 msgstr "نشاط"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1451,14 +1450,6 @@ msgstr "أضف موقعًا"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr "إضافة عرض أحدث"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "أضف ملاحظة"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "أضف ملاحظة…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2649,6 +2640,11 @@ msgstr "بكالوريوس، تصميم الاتصالات"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "خلف"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3925,8 +3921,8 @@ msgid "Copy stylesheet"
 msgstr "انسخ ورقة الأنماط"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "انسخ وصف الوظيفة كاملاً من الإعلان والصقه أدناه. سنملأ الحقول نيابةً عنك ونحتفظ بالنص مع هذا الطلب من أجل تقييم مدى التطابق وتخصيص السيرة الذاتية."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4695,6 +4691,10 @@ msgstr "خطاب تعريفي - {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "خطاب تعريفي · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4912,6 +4912,10 @@ msgstr "عمود التاريخ"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "تنسيق التاريخ"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7518,7 +7522,6 @@ msgstr "وصف الوظيفة"
 msgid "Job link or posting text"
 msgstr "رابط الوظيفة أو نص إعلان الوظيفة"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "المطابقة مع الوظيفة"
@@ -8005,6 +8008,11 @@ msgstr "الخطاب · لم يُرسَل بعد"
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "جسم الرسالة"
@@ -8109,8 +8117,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "ربط Reactive Resume (موصى به)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "اربط سيرة ذاتية من Reactive Resume لاستخدام تقييم التطابق والتخصيص بالذكاء الاصطناعي."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8125,6 +8133,10 @@ msgstr "ربط طلب الوظيفة"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "ربط طلب التوظيف..."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8361,6 +8373,18 @@ msgstr "مقفل"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "مغلق. فتح للتحرير."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9247,6 +9271,10 @@ msgstr "لا يوجد وظيفة بعد"
 msgid "No keys yet."
 msgstr "لا يوجد مفاتيح بعد."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "لا يوجد سطر يبدو كمسمى وظيفي مقترن بجهة عمل."
@@ -9325,6 +9353,7 @@ msgstr "لا يوجد رد"
 msgid "No results found."
 msgstr "لم نعثر على نتائج."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "لا السيرة الذاتية"
@@ -10268,8 +10297,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "الصق رابط الوظيفة. سنقوم بحفظ إعلان الوظيفة حتى يتمكن Check والمساعد وخطابك من استخدامه."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "الصق إعلان وظيفة مرة واحدة. يغذّي نسخة مكيّفة من سيرتك الذاتية، ودرجة تطابق، ومسودة خطاب تقديم، ومكانًا لتتبع الوظيفة."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11845,6 +11874,10 @@ msgstr "تفاصيل السيرة الذاتية"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "ملف السيرة الذاتية"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13506,6 +13539,10 @@ msgstr "نتيجة المرحلة"
 msgid "Stage stays {stage}"
 msgstr "تبقى المرحلة {stage}"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13796,6 +13833,7 @@ msgstr "ادعمنا"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "مدعوم"
 
@@ -14216,8 +14254,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "أرسل التطبيق الذي أحالك إلى هنا طلب تفويض غير صالح. ارجع إلى التطبيق وحاول مرة أخرى."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "طلب الوظيفة المخصص لهذه الرسالة."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14601,6 +14639,10 @@ msgstr "تعذّر فتح هذا الطلب."
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "لا يحتوي هذا الطلب على إعلان وظيفة محفوظ حتى الآن. الصقه للمقارنة به."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "لا يستطيع هذا المتصفح التسجيل هنا. اختر ملفًا صوتيًا، أو اكتب إجابتك."
@@ -14737,8 +14779,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "هذه الرسالة و\"{resumeName}\" هما PDFs، تم تسميتهما للمطابقة."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "هذه الرسالة مقفلة. افتحه من القائمة الخاصة به للتعديل."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15500,6 +15551,14 @@ msgstr "استخدم عمودًا واحدًا لأي محتوى يجب قراء
 #: src/features/ats-checker/messages.ts
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "استخدم مقاس A4 أو US Letter حتى يصمد التخطيط عند إعادة العرض."
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
 
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
@@ -16277,6 +16336,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "اكتب رسالة"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."

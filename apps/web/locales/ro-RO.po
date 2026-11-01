@@ -1396,7 +1396,6 @@ msgstr "Activ"
 msgid "Activity"
 msgstr "Activitate"
 
-#: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/knowledge/facts.tsx
@@ -1451,14 +1450,6 @@ msgstr "Adăugați o locație"
 #: src/features/career/offer-entry.tsx
 msgid "Add a newer offer"
 msgstr ""
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note"
-msgstr "Adăugați o notă"
-
-#: src/features/applications/components/detail/activity.tsx
-msgid "Add a note…"
-msgstr "Adăugați o notă…"
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Add a person"
@@ -2649,6 +2640,11 @@ msgstr "BA, Design de comunicare"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Back"
 msgstr "Spate"
+
+#. placeholder {0}: application.company
+#: src/features/resume/editor/chrome.tsx
+msgid "Back to {0}"
+msgstr ""
 
 #: src/features/career/workspace/shell.tsx
 msgid "Back to applications"
@@ -3925,8 +3921,8 @@ msgid "Copy stylesheet"
 msgstr "Copiați foaia de stil"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
-msgstr "Copiați întreaga descriere a postului din postare și lipiți-o mai jos. Vom completa câmpurile în locul dumneavoastră și vom păstra textul alături de această candidatură pentru scorul de potrivire și personalizare."
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for a fit check and tailoring."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Copy the text out of the exported file and read it through; fix anything that arrives in the wrong place."
@@ -4695,6 +4691,10 @@ msgstr "Scrisoarea de intenție — {0}"
 msgid "Cover letter · Fieldnote"
 msgstr "Scrisoare de intenție · Fieldnote"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Cover letter (optional)"
+msgstr ""
+
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/apply.tsx
@@ -4912,6 +4912,10 @@ msgstr "Coloană pentru date"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "Formatul datei"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Dated updates. For things to remember and share with the coach, use Notes."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/issues.ts
@@ -7518,7 +7522,6 @@ msgstr "Descrierea postului"
 msgid "Job link or posting text"
 msgstr "Link pentru locuri de muncă sau text pentru postarea unui loc de muncă"
 
-#: src/features/homepage/tailor.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Job match"
 msgstr "Potrivire de locuri de muncă"
@@ -8005,6 +8008,11 @@ msgstr "Scrisoare · netrimisă încă"
 msgid "Letter · version sent {0}"
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Letter already sent"
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Letter body"
 msgstr "Corpul literei"
@@ -8109,8 +8117,8 @@ msgid "Link a Reactive Resume (recommended)"
 msgstr "Asociază un Reactive Resume (recomandat)"
 
 #: src/features/applications/components/application-form-sheet.tsx
-msgid "Link a Reactive Resume to use AI match scoring and tailoring."
-msgstr "Atașați un CV Reactive Resume pentru a folosi scorul de potrivire și adaptarea cu AI."
+msgid "Link a Reactive Resume to use a fit check against each requirement and tailoring."
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
@@ -8125,6 +8133,10 @@ msgstr "Conectați o cerere de angajare"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link an application…"
 msgstr "Conectați o cerere de angajare..."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link an existing letter"
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/share/copy-link-button.tsx
@@ -8361,6 +8373,18 @@ msgstr "Blocat"
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Blocat. Deblocați pentru a edita."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update"
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Log an update…"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Long stretches are set in capitals."
@@ -9247,6 +9271,10 @@ msgstr "Nicio slujbă încă"
 msgid "No keys yet."
 msgstr "Încă nu există chei."
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No letter"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "No lines look like a job title paired with an employer."
 msgstr "Niciun rând nu pare a fi un titlu de post asociat cu un angajator."
@@ -9325,6 +9353,7 @@ msgstr "Nici un răspuns"
 msgid "No results found."
 msgstr "Nu s-a găsit niciun rezultat."
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "No resume"
 msgstr "Fără CV"
@@ -10268,8 +10297,8 @@ msgid "Paste a job link. We'll save the posting so Check, the assistant and your
 msgstr "Lipiți un link de job. Vom salva anunțul de locuri de muncă, astfel încât Check, asistentul și scrisoarea dvs. să o poată folosi."
 
 #: src/features/homepage/tailor.tsx
-msgid "Paste a job posting once. It feeds a tailored copy of your resume, a match score, a cover letter draft and a place to track the role."
-msgstr "Lipiți o singură dată un anunț de angajare. Acesta alimentează o copie adaptată a CV-ului, un scor de potrivire, o ciornă de scrisoare de intenție și un loc pentru urmărirea postului."
+msgid "Paste a job posting once. It feeds a tailored copy of your resume, a fit check against each requirement, a cover letter draft and a place to track the role."
+msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Paste a job posting…"
@@ -11845,6 +11874,10 @@ msgstr "detalii CV-ul"
 #: src/features/career/workspace/apply.tsx
 msgid "Resume file"
 msgstr "Fișier CV"
+
+#: src/features/documents/new-document-dialog.tsx
+msgid "Resume for a new letter"
+msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
@@ -13506,6 +13539,10 @@ msgstr "Rezultatul etapei"
 msgid "Stage stays {stage}"
 msgstr "Etapa rămâne {stage}"
 
+#: src/features/career/workspace/shell.tsx
+msgid "Stage, details and timeline"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -13796,6 +13833,7 @@ msgstr "Sprijin"
 #: src/features/career/shared.tsx
 #: src/features/career/workspace/debrief.tsx
 #: src/features/homepage/prepare.tsx
+#: src/features/homepage/tailor.tsx
 msgid "Supported"
 msgstr "Susținut"
 
@@ -14216,8 +14254,8 @@ msgid "The application that sent you here made an invalid authorization request.
 msgstr "Aplicația care te-a trimis aici a făcut o cerere de autorizare nevalidă. Revino în aplicație și încearcă din nou."
 
 #: src/features/documents/document-actions.tsx
-msgid "The application this letter is for."
-msgstr "Cererea de angajare pentru această scrisoare."
+msgid "The application this document is for."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "The assistant can search facts and stories you share with all applications. It can't change them."
@@ -14601,6 +14639,10 @@ msgstr "Această candidatură nu a putut fi deschisă."
 msgid "This application has no posting saved yet. Paste it to match against it."
 msgstr "Această candidatură nu are încă un anunț salvat. Lipiți-l pentru a compara CV-ul cu el."
 
+#: src/libs/error-message.ts
+msgid "This application keeps the documents you submitted. Choose an application without a submitted letter, or duplicate the letter for another job."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "This browser can't record here. Choose an audio file, or type your answer."
 msgstr "Acest browser nu poate înregistra aici. Alegeți un fișier audio sau scrieți răspunsul."
@@ -14737,8 +14779,17 @@ msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Această literă și „{resumeName}” ca două PDFs, numite pentru a se potrivi."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "Această scrisoare este blocată. Deblocați-l din meniul său pentru a edita."
+
+#: src/features/documents/document-actions.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "This letter is recorded as sent. Its application link stays with that submission."
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
@@ -15500,6 +15551,14 @@ msgstr "Folosiți o singură coloană pentru orice trebuie citit în ordine."
 #: src/features/ats-checker/messages.ts
 msgid "Use A4 or US Letter so the layout survives being re-rendered."
 msgstr "Folosiți A4 sau US Letter, astfel încât aspectul să reziste unei noi randări."
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use an existing letter…"
+msgstr ""
 
 #: src/features/auth/pages/register.tsx
 msgid "Use at least 3 characters."
@@ -16277,6 +16336,10 @@ msgstr ""
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
 msgstr "Scrie o scrisoare"
+
+#: src/features/documents/document-actions.tsx
+msgid "Write a letter…"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
