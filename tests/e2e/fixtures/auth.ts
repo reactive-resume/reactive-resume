@@ -20,7 +20,7 @@ export async function registerViaUi(page: Page, account: E2EAccount, callbackURL
 
 export async function loginViaUi(page: Page, account: E2EAccount, path = "/auth/login") {
 	await page.goto(path);
-	await page.getByLabel("Email address", { exact: true }).fill(account.email);
+	await page.getByLabel("Email or username", { exact: true }).fill(account.email);
 	await page.getByLabel("Password", { exact: true }).fill(account.password);
 	await page.getByRole("button", { name: "Sign in" }).click();
 	await page.waitForURL(/\/dashboard/);
@@ -33,7 +33,7 @@ export async function logoutViaUi(page: Page, account: E2EAccount) {
 		.getByRole("button", { name: new RegExp(account.name) })
 		.click();
 	await page.getByRole("menuitem", { name: "Sign out" }).click();
-	await page.waitForURL(/\/auth\/login/);
+	await page.waitForURL((url) => url.pathname === "/");
 }
 
 async function registerViaApi(request: APIRequestContext, account: E2EAccount, baseURL: string) {

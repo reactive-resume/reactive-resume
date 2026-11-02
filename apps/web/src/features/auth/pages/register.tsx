@@ -156,6 +156,7 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 
 			{!disableEmailAuth && (
 				<form
+					noValidate
 					className="space-y-6"
 					onSubmit={(event) => {
 						event.preventDefault();
@@ -206,7 +207,6 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 											// Usernames are Latin letters a–z: a transliterated example would invite other scripts.
 											placeholder="john.doe"
 											dir="ltr"
-											className="lowercase"
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
@@ -284,7 +284,7 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 				</form>
 			)}
 
-			<SocialAuth />
+			<SocialAuth signUp />
 		</>
 	);
 }
