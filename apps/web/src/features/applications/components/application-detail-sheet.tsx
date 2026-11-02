@@ -8,6 +8,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
+import { postingReadReceipt } from "@reactive-resume/schema/applications/posting-source";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -29,7 +30,6 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-res
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
-import { formatReadTime } from "@reactive-resume/utils/timezone";
 import { getCategoryLane, getDisplayLane, getLaneLabel, getNextLane, getStageDisplay, laneMoveInput } from "../lanes";
 import { daysInLane } from "../next-step";
 import { applicationDetailQueryOptions, getInitialApplicationDetail } from "../queries";
@@ -44,6 +44,7 @@ import { NextStepCard } from "./detail/next-step-card";
 import { SentDocuments } from "./detail/sent-documents";
 import { InterviewDialog } from "./interview-dialog";
 import { PriorNoResponseNotice } from "./prior-no-response-notice";
+import { useNow } from "@/features/career/shared";
 import { useClosingValue } from "@/hooks/use-closing-value";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -667,9 +668,11 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 
 /** The saved posting: its link, what it asks for, and its text. */
 function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) {
+	useNow();
 	const { i18n } = useLingui();
-	const retrievedAt = application.postingSource?.retrievedAt;
-	const readAt = retrievedAt ? (formatReadTime(retrievedAt, i18n.locale) ?? retrievedAt) : "";
+	const receipt = postingReadReceipt(application.postingSource, i18n.locale);
+	const readAt = receipt?.readAt;
+	const sourceHost = receipt?.sourceHost ?? t`the posting page`;
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto sm:max-w-xl">
@@ -696,8 +699,12 @@ function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) 
 					<p className="text-xs text-ink-3">
 						{application.postingSource.method === "paste" ? (
 							<Trans>Pasted description</Trans>
+						) : readAt ? (
+							<Trans>
+								Read {readAt} from {sourceHost}. The employer may have changed it since.
+							</Trans>
 						) : (
-							<Trans>Read on {readAt}. The employer may have changed it since.</Trans>
+							<Trans>The employer may have changed it since.</Trans>
 						)}
 					</p>
 				)}

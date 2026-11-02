@@ -8,6 +8,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import { readPastedPostingHeader } from "@reactive-resume/import/job-posting";
+import { postingReadReceipt } from "@reactive-resume/schema/applications/posting-source";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { parseDateOnly } from "./date";
 import { applicationError } from "./error";
@@ -22,7 +23,7 @@ import { getAccountScope, getServer, useSession } from "@/auth/session";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { WebAccessAttention } from "@/features/ai/web-access";
 import { WallClockField } from "@/features/application-detail/date-field";
-import { useUserTime } from "@/features/application-detail/hooks";
+import { useNow, useUserTime } from "@/features/application-detail/hooks";
 import { defaultCopySource } from "@/features/documents/filter";
 import { routes } from "@/routes";
 import {
@@ -62,6 +63,7 @@ const today = () => {
 
 /** Mounted until an explicit close/discard; unmounting cancels transient posting requests. */
 export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApplicationSheetProps) {
+	useNow();
 	const router = useRouter();
 	const { t, i18n } = useLingui();
 	const { timeZone } = useUserTime();
@@ -222,6 +224,9 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 		laneAvailable &&
 		!busy &&
 		(!sourceUrl.trim() || !duplicate.isPending);
+	const receipt = postingReadReceipt(parsed?.postingSource, i18n.locale);
+	const readAt = receipt?.readAt;
+	const sourceHost = receipt?.sourceHost ?? t`the posting page`;
 	const clipped = !!initialCapture?.truncated || !!parsed?.postingSource.truncated || description.length > 20_000;
 	const postingSource: ParsedPosting["postingSource"] | null = description
 		? {
@@ -533,6 +538,11 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 						</>
 					) : (
 						<>
+							{readAt && (
+								<Text variant="caption" color="ink3">
+									{t`Read ${readAt} from ${sourceHost}. The employer may have changed it since.`}
+								</Text>
+							)}
 							{parsed && (
 								<Banner
 									tone={parsed.enrichmentWarning || parsed.filledBy === "none" ? "warn" : "info"}

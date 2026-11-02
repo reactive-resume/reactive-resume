@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { readPastedPostingHeader } from "@reactive-resume/import/job-posting";
+import { postingReadReceipt } from "@reactive-resume/schema/applications/posting-source";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -27,7 +28,6 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { isolate, pendingRequestId, settleRequestId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
-import { formatReadTime } from "@reactive-resume/utils/timezone";
 import { getCategoryLane, getLaneLabel, laneMoveInput } from "../lanes";
 import { useInvalidateApplications } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
@@ -35,6 +35,7 @@ import { PriorNoResponseNotice } from "./prior-no-response-notice";
 import { useDialogStore } from "@/dialogs/store";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { useSessionDraft } from "@/features/career/hooks";
+import { useNow } from "@/features/career/shared";
 import { defaultCopySource } from "@/features/documents/filter";
 import { useNewDocumentsStore } from "@/features/documents/new-documents";
 import { SetUpWebAccess, testFailureMessage } from "@/features/settings/ai/web-access";
@@ -162,6 +163,7 @@ type AddApplicationFormProps = {
 };
 
 function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: AddApplicationFormProps) {
+	useNow();
 	const id = useId();
 	const { data: webAccess } = useQuery(orpc.webAccess.status.queryOptions());
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
@@ -261,8 +263,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const postingDescription = (description ?? (!link ? text : "")).slice(0, MAX_POSTING_CHARS);
 	const readable = text.length > 8 && (link || hasUsableProvider);
 	const parsed = reading?.text === text ? reading.result : null;
-	const retrievedAt = parsed?.postingSource.retrievedAt;
-	const readAt = retrievedAt ? (formatReadTime(retrievedAt, i18n.locale) ?? retrievedAt) : null;
+	const receipt = postingReadReceipt(parsed?.postingSource, i18n.locale);
+	const readAt = receipt?.readAt;
+	const sourceHost = receipt?.sourceHost ?? t`the posting page`;
 	const clipped = Boolean(
 		initialCapture?.truncated || parsed?.postingSource.truncated || (!link && text.length > MAX_POSTING_CHARS),
 	);
@@ -651,7 +654,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						/>
 						{readAt && (
 							<p className="text-xs text-ink-3">
-								<Trans>Read from the posting page on {readAt}.</Trans>
+								<Trans>
+									Read {readAt} from {sourceHost}. The employer may have changed it since.
+								</Trans>
 							</p>
 						)}
 					</div>
