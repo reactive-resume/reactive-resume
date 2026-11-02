@@ -10,6 +10,7 @@ import { Dialog } from "@reactive-resume/ui/components/dialog";
 const api = vi.hoisted(() => ({
 	providers: vi.fn(),
 	importResume: vi.fn(),
+	createResume: vi.fn(),
 	parsePdf: vi.fn(),
 	parseDocx: vi.fn(),
 	readPdfResume: vi.fn(),
@@ -34,7 +35,7 @@ vi.mock("@/libs/orpc/client", () => ({
 		},
 		documents: { key: () => ["documents"], list: { queryKey: () => ["documents", "list"] } },
 		resume: {
-			create: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			create: { mutationOptions: () => ({ mutationFn: api.createResume }) },
 			list: { queryOptions: () => ({ queryKey: ["resume", "list"], queryFn: async () => [] }) },
 		},
 		coverLetters: { create: { mutationOptions: () => ({ mutationFn: api.createLetter }) } },
@@ -157,4 +158,5 @@ it("keeps lookup failure recovery available on New and retries without creating 
 	expect(screen.getByRole("button", { name: /Start blank/ })).toBeEnabled();
 	expect(api.importResume).not.toHaveBeenCalled();
 	expect(api.createLetter).not.toHaveBeenCalled();
+	expect(api.createResume).not.toHaveBeenCalled();
 });

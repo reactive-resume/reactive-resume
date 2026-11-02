@@ -288,9 +288,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 
 	return (
 		<DialogContent closeLabel={t`Close`} className="sm:max-w-[640px]">
-			{(step.name !== "choose" || (!providerState.isLoading && !!providerState.error)) && (
-				<AiProviderLoadState state={providerState} />
-			)}
+			{step.name !== "choose" && <AiProviderLoadState state={providerState} />}
 			<input
 				ref={inputRef}
 				type="file"
@@ -494,6 +492,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 							<Trans>Try with a sample resume</Trans>
 						</button>
 					</div>
+					<AiProviderLoadState state={providerState} reserveErrorSpace />
 				</div>
 			)}
 		</DialogContent>
