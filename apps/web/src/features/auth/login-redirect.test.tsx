@@ -32,6 +32,7 @@ vi.mock("@tanstack/react-router", () => ({
 	useSearch: () => ({ callbackURL: mocks.callbackURL }),
 	useRouter: () => ({ navigate: mocks.navigate, invalidate: mocks.invalidate }),
 	useNavigate: () => mocks.navigate,
+	useRouteContext: () => ({ flags: { smtpEnabled: true } }),
 	Link: ({ to, search: _search, ...props }: ComponentProps<"a"> & { to: string; search?: unknown }) => (
 		// oxlint-disable-next-line jsx-a11y/anchor-has-content -- The Link mock forwards children through props.
 		<a href={to} {...props} />
@@ -282,5 +283,29 @@ describe("OAuth account creation", () => {
 		);
 		expect(mocks.signup.mock.calls[0]?.[0]).not.toHaveProperty("oauth_query");
 		expect(mocks.signup).toHaveBeenCalledWith(expect.objectContaining({ name: "A" }));
+	});
+	it("signs up without a username and goes straight to the page that sent them", async () => {
+		mocks.signup.mockResolvedValueOnce({ data: { token: "session" }, error: null });
+		const { container } = render(
+			<I18nProvider i18n={i18n}>
+				<RegisterPage disableEmailAuth={false} />
+			</I18nProvider>,
+		);
+		for (const [name, value] of Object.entries({
+			name: "New User",
+			email: "new@example.com",
+			password: "password123",
+		})) {
+			const input = container.querySelector(`input[name="${name}"]`);
+			if (!input) throw new Error(`Missing ${name} field`);
+			fireEvent.change(input, { target: { value } });
+		}
+		const form = container.querySelector("form");
+		if (!form) throw new Error("Missing registration form");
+		fireEvent.submit(form);
+		await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith(expect.objectContaining({ replace: true })));
+		// Empty asks the server to make the username from the email address.
+		expect(mocks.signup).toHaveBeenCalledWith(expect.objectContaining({ username: "", email: "new@example.com" }));
+		expect(screen.queryByText("Your account is ready")).toBeNull();
 	});
 });

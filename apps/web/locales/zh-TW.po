@@ -2511,10 +2511,6 @@ msgstr "已存檔（關閉）"
 msgid "Area of study"
 msgstr "研究領域"
 
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "當軟體讀取時"
-
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -2624,6 +2620,11 @@ msgstr "助理對話"
 #: src/features/settings/ai/web-access.tsx
 msgid "Assistant."
 msgstr "助手。"
+
+#. Password rule shown under the password field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "At least 8 characters."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "At Northwind Labs I led research for our onboarding redesign. I interviewed 14 customers, found three drop-off points, and we shipped a shorter setup. Activation rose from 31% to 44%."
@@ -3308,10 +3309,6 @@ msgstr "請查看您的電子郵件"
 msgid "Check your email for a link to reset your password."
 msgstr "請到電子郵件收件匣查看重設密碼的連結。"
 
-#: src/features/auth/pages/register.tsx
-msgid "Check your email for a link to verify your account."
-msgstr "請到電子郵件收件匣查看用於驗證帳戶的連結。"
-
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
 msgid "Check your resume’s ATS readability"
@@ -3912,12 +3909,10 @@ msgstr "內容以網格形式排列。"
 msgid "Content revision: {0}"
 msgstr ""
 
-#. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/assistant/conversation.tsx
-#: src/features/auth/pages/register.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Continue"
 msgstr "繼續"
@@ -4170,6 +4165,7 @@ msgid "Couldn't connect. Check the key and try again."
 msgstr "無法連接。檢查密鑰並重試。"
 
 #: src/features/auth/pages/login.tsx
+#: src/features/homepage/hero.tsx
 msgid "Couldn't continue as a guest. Try again."
 msgstr "無法以訪客身分繼續。請再試一次。"
 
@@ -4889,10 +4885,6 @@ msgstr "求職信"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Create"
 msgstr "建立"
-
-#: src/features/templates/gallery.tsx
-msgid "Create a free account, then choose your template in Design. Switch layouts anytime without rewriting your content."
-msgstr "建立免費帳戶，然後在 設計 中選擇您的範本。隨時切換版面，無需重寫內容。"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Create a new resume"
@@ -7331,6 +7323,10 @@ msgstr "導入履歷"
 msgid "Import a resume, start a letter, save a job, copy one for a job, or start blank."
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
+msgid "Import a Word file instead"
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Import failed. Check the CSV and try again."
 msgstr "匯入失敗。請檢查 CSV 後再試一次。"
@@ -7365,8 +7361,8 @@ msgid "Import the one you have, or start blank."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
-msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
-msgstr "將此檔案匯入免費的 Reactive Resume 中。每一個問題都在 Check 中等著您。"
+msgid "Import this file into a free Reactive Resume, then keep checking it in Check as you edit. Check reads the resume you're editing, so its findings can differ from this file's."
+msgstr ""
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Import this file into the browser helper, review the destination and fill report. Unsupported forms use exact PDF downloads and copyable answers below. Native browser integration requires its own verified build."
@@ -10297,6 +10293,11 @@ msgstr ""
 msgid "Optional for local Ollama"
 msgstr "本地選配 Ollama"
 
+#. Hint under the optional username field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "Optional. Leave it empty and we'll make one from your email. You can change it in Settings."
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
@@ -10351,10 +10352,6 @@ msgstr "組織"
 #: src/features/resume/editor/write/improve.tsx
 msgid "Original"
 msgstr ""
-
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "原頁"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
@@ -10753,6 +10750,10 @@ msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Pick a template below to start with it, or choose later in Design. Switch layouts anytime without rewriting your content."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -13948,6 +13949,14 @@ msgstr "GitHub 星星"
 msgid "Start"
 msgstr "開始"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume"
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version from Documents."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Start a debrief"
 msgstr "開始回顧"
@@ -15036,6 +15045,10 @@ msgstr "沒有指向個人檔案、作品集或程式碼庫的連結。"
 msgid "There is no summary paragraph."
 msgstr "沒有個人簡介段落。"
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -15404,10 +15417,6 @@ msgstr "此伺服器使用標準階段，因此不會保留檔案中的階段名
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "這次登入嘗試已過期或已被使用。請再試一次。"
 
-#: src/features/auth/pages/register.tsx
-msgid "This step is optional, but recommended."
-msgstr "此步驟為選填，但建議您完成。"
-
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
 msgstr ""
@@ -15666,6 +15675,10 @@ msgstr "用這個再試一次"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
+msgstr ""
+
+#: src/features/homepage/hero.tsx
+msgid "Try it without an account"
 msgstr ""
 
 #: src/routes/auth/native-callback.tsx
@@ -16143,6 +16156,10 @@ msgstr "使用範例"
 msgid "Use saved version"
 msgstr ""
 
+#: src/features/templates/gallery.tsx
+msgid "Use the {name} template"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"
 msgstr "使用標準標題"
@@ -16169,6 +16186,10 @@ msgstr "使用該提供者"
 
 #: src/features/career/workspace/fit.tsx
 msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Use this template"
 msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
@@ -16318,10 +16339,6 @@ msgstr "正在驗證代碼…"
 msgid "Verifying code…"
 msgstr "驗證碼…"
 
-#: src/features/auth/pages/register.tsx
-msgid "Verifying your email confirms that you own this address."
-msgstr "驗證您的電子郵件確認您擁有該地址。"
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date}"
 msgstr "版本已發送 {date}"
@@ -16459,6 +16476,10 @@ msgstr "我們向 {email} 發送了確認連結。打開它以完成更改。"
 msgid "We sent a link to {currentEmail} to approve the change. Then open the link we send to {email}."
 msgstr "我們已向 {currentEmail} 傳送連結以核准此變更。然後請開啟我們傳送到 {email} 的連結。"
 
+#: src/features/auth/pages/register.tsx
+msgid "We sent a link to verify your account. It's optional, and you can resend it from Settings."
+msgstr ""
+
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
 msgid "We sent a new verification link to {0}."
@@ -16529,10 +16550,12 @@ msgstr "正在權衡每項條件"
 msgid "Went well"
 msgstr "順利"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a parser reads"
 msgstr "解析器讀到的內容"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a person sees"
 msgstr "人看到的內容"
@@ -17081,10 +17104,6 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "您已達到{MAX_APPLICATION_LANES}個階段的上限。請先移除一個再新增。"
-
-#: src/features/auth/pages/register.tsx
-msgid "Your account is ready"
-msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

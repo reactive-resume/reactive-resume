@@ -65,6 +65,13 @@ test("keeps long auth pages reachable without horizontal overflow", async ({ pag
 	}
 });
 
+test("signs up without a username and lands on the dashboard", async ({ page, account }) => {
+	await registerViaUi(page, { ...account, username: "" });
+	await expect(page.getByRole("heading", { name: "Documents", level: 1 })).toBeVisible();
+	const session = await page.request.get("/api/auth/get-session");
+	expect((await session.json()).user.username).toBe(account.email.split("@")[0]);
+});
+
 test("registers and logs in with email credentials", async ({ page, account }) => {
 	let documentRequests = 0;
 	page.on("request", (request) => {
