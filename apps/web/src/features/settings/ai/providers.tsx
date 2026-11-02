@@ -23,6 +23,7 @@ import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
 import { SettingsSection } from "../section";
 import { describeTest, keyEnding, providerDefaults, providerLabel, providerOptions } from "./catalog";
+import { NextSteps } from "./next-steps";
 import { ProviderFieldsForm } from "./provider-fields";
 import { providerTestError } from "./test-error";
 import { Combobox } from "@/components/ui/combobox";
@@ -38,6 +39,7 @@ const isConfigError = (error: unknown) => error instanceof ORPCError && error.co
 export function ProvidersSection() {
 	const { data: providers, isLoading, error } = useQuery(orpc.aiProviders.list.queryOptions());
 	const [adding, setAdding] = useState(false);
+	const [connectedId, setConnectedId] = useState<string | null>(null);
 	const [editing, setEditing] = useState<SavedProvider | null>(null);
 	const managed = providers?.find((provider) => provider.managed);
 	// The server lists the default first, so the first usable provider is the one every automatic choice uses.
@@ -56,6 +58,7 @@ export function ProvidersSection() {
 			}
 		>
 			<div className="grid gap-4">
+				{usable.some((provider) => provider.id === connectedId) && <NextSteps onDismiss={() => setConnectedId(null)} />}
 				{managed ? (
 					<div className="flex items-center gap-3">
 						<ProviderLogo provider={managed.provider} className="size-10 rounded-lg bg-sunken" />
@@ -127,7 +130,17 @@ export function ProvidersSection() {
 				)}
 			</div>
 
-			<AddProviderDialog open={adding} onOpenChange={setAdding} />
+			<AddProviderDialog
+				open={adding}
+				onOpenChange={setAdding}
+				onConnected={(provider) => {
+					if (
+						provider.enabled &&
+						!providers?.some((other) => other.id !== provider.id && other.testStatus === "success")
+					)
+						setConnectedId(provider.id);
+				}}
+			/>
 			<EditProviderDialog
 				provider={providers?.find((item) => item.id === editing?.id) ?? editing}
 				onClose={() => setEditing(null)}
@@ -279,10 +292,14 @@ function ProviderRow({ provider, isDefault, onMakeDefault, makingDefault, onEdit
 	);
 }
 
-type AddProviderDialogProps = { open: boolean; onOpenChange: (open: boolean) => void };
+type AddProviderDialogProps = {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	onConnected: (provider: SavedProvider) => void;
+};
 
 /** Every supported provider; saving tests the connection at once. */
-function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
+function AddProviderDialog({ open, onOpenChange, onConnected }: AddProviderDialogProps) {
 	const id = useId();
 	const queryClient = useQueryClient();
 	const [provider, setProvider] = useState<AIProvider>("openai");
@@ -334,6 +351,7 @@ function AddProviderDialog({ open, onOpenChange }: AddProviderDialogProps) {
 		void queryClient.invalidateQueries({ queryKey: orpc.aiProviders.list.key() });
 		if (!tested) return;
 		if (tested.testStatus === "success") {
+			onConnected(tested);
 			onOpenChange(false);
 		} else {
 			// The provider is saved either way; its row keeps the error and a Test button.

@@ -1615,6 +1615,10 @@ msgstr ""
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
 msgstr ""
 
+#: src/features/ai/next-steps.tsx
+msgid "AI is ready"
+msgstr "AI พร้อมใช้งานแล้ว"
+
 #: src/features/check/writing.tsx
 msgid "AI provider"
 msgstr "ผู้ให้บริการ AI"
@@ -2082,6 +2086,7 @@ msgstr "ถามผู้ช่วย “{question}”"
 msgid "Ask the assistant to work it in"
 msgstr "ขอให้ผู้ช่วยทำงาน"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/career/today.tsx
 #: src/features/workspace/shell.tsx
 msgid "Ask the coach"
@@ -2622,6 +2627,7 @@ msgstr ""
 msgid "Check every claim, date and result against your experience."
 msgstr "ตรวจสอบทุกข้อกล่าวอ้าง วันที่ และผลลัพธ์กับประสบการณ์ของคุณ"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Check fit"
@@ -2765,6 +2771,10 @@ msgstr "เลือกรูปภาพที่มีขนาดเล็ก
 msgid "Choose a replacement"
 msgstr "เลือกขั้นตอนทดแทน"
 
+#: src/features/ai/next-steps.tsx
+msgid "Choose a resume"
+msgstr "เลือกเรซูเม่"
+
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "เลือกเรซูเม่ใน Write เพื่อให้ตรงกับดีไซน์ จนกระทั่งถึงตอนนั้นจดหมายก็มีเป็นของตัวเอง"
@@ -2797,6 +2807,7 @@ msgstr ""
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
 msgstr "เลือกไฟล์ WebM, MP4, MP3, WAV หรือ Ogg ขนาดไม่เกิน 2 MB"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "เลือกใบสมัคร"
@@ -3470,6 +3481,14 @@ msgstr "ไม่สามารถโหลดคีย์ API"
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load applications."
 msgstr "ไม่สามารถโหลดใบสมัครได้"
+
+#: src/features/ai/next-steps.tsx
+msgid "Couldn't load applications. Try again."
+msgstr "โหลดใบสมัครไม่ได้ ลองอีกครั้ง"
+
+#: src/features/ai/next-steps.tsx
+msgid "Couldn't load documents. Try again."
+msgstr "โหลดเอกสารไม่ได้ โปรดลองอีกครั้ง"
 
 #: src/features/documents/thumbnail.tsx
 msgid "Couldn't load letter"
@@ -4390,6 +4409,7 @@ msgstr "ละทิ้งการแก้ไขออฟไลน์ของ
 msgid "Discard your offline edits?"
 msgstr "ยกเลิกการแก้ไขแบบออฟไลน์ของคุณใช่ไหม"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
 #: src/ui/layout.tsx
 msgid "Dismiss"
@@ -5847,6 +5867,10 @@ msgstr "นำเข้าไฟล์"
 msgid "Import it"
 msgstr "นำเข้า"
 
+#: src/features/ai/next-steps.tsx
+msgid "Import or create a resume"
+msgstr "นำเข้าหรือสร้างเรซูเม่"
+
 #: src/features/documents/library.tsx
 msgid "Import the one you have, or start blank."
 msgstr ""
@@ -5871,6 +5895,7 @@ msgstr "กำลังนำเข้าสู่เรซูเม่ใหม
 msgid "Improve needs an AI provider. Connect one to continue."
 msgstr "การปรับปรุงต้องใช้ผู้ให้บริการ AI เชื่อมต่อเพื่อดำเนินการต่อ"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Improve selected line"
@@ -6722,6 +6747,7 @@ msgstr "กำลังโหลดที่อยู่สาธารณะข
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/ai/next-steps.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7395,6 +7421,11 @@ msgstr "ใบสมัครใหม่"
 msgid "New conversation"
 msgstr "บทสนทนาใหม่"
 
+#: src/features/ai/next-steps.tsx
+#: src/features/documents/new-document.tsx
+msgid "New cover letter"
+msgstr "จดหมายสมัครงานใหม่"
+
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "จดหมายปะหน้าใหม่แทน"
@@ -7504,9 +7535,10 @@ msgstr "ยังไม่มีผู้ให้บริการ AI"
 msgid "No application"
 msgstr "ไม่มีการสมัครงาน"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "No applications yet."
-msgstr ""
+msgstr "ยังไม่มีใบสมัครงาน"
 
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
@@ -7712,9 +7744,10 @@ msgstr "ไม่มีเรซูเม่"
 msgid "No resume selected"
 msgstr "ยังไม่ได้เลือกเรซูเม่"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
-msgstr ""
+msgstr "ยังไม่มีเรซูเม่"
 
 #: src/features/documents/new-document.tsx
 msgid "No sections were found in this file."
@@ -10078,6 +10111,7 @@ msgstr ""
 msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
 msgstr ""
 
+#: src/features/ai/next-steps.tsx
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "การเขียนรีวิว"
@@ -10226,6 +10260,7 @@ msgstr "ตัวอย่างประวัติย่อ"
 msgid "Save"
 msgstr "บันทึก"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications-board/views.tsx
 #: src/features/applications/add-sheet.tsx
@@ -12814,6 +12849,7 @@ msgstr "ลอง {suggestion}"
 #: app/(auth)/server.tsx
 #: app/(tabs)/settings/account.tsx
 #: app/(tabs)/settings/preferences.tsx
+#: src/features/ai/next-steps.tsx
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx

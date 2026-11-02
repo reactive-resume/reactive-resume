@@ -27,7 +27,7 @@ export const routes = {
 	settings: (pane?: SettingsPane) => (pane ? (`/settings/${pane}` as const) : ("/settings" as const)),
 
 	// Modals and full-screen flows
-	new: (context: "documents" | "applications" | "career" = "documents") =>
+	new: (context: "documents" | "letters" | "applications" | "career" = "documents") =>
 		(context === "documents" ? "/new" : `/new?context=${context}`) as "/new" | `/new?context=${string}`,
 	newJob: () => "/applications?create=1" as const,
 	search: () => "/search" as const,
