@@ -192,12 +192,13 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 								</Trans>
 							</li>
 						)}
-						{scopes.has("profile") && (
+						{/* Reading the whole account already covers the profile and email address. */}
+						{scopes.has("profile") && !scopes.has("api:read") && (
 							<li>
 								<Trans>Read your profile information.</Trans>
 							</li>
 						)}
-						{scopes.has("email") && (
+						{scopes.has("email") && !scopes.has("api:read") && (
 							<li>
 								<Trans>Read your email address.</Trans>
 							</li>
@@ -208,6 +209,9 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 							</li>
 						)}
 					</ul>
+					<p className="text-xs text-ink-3">
+						<Trans>You can disconnect it anytime in Settings → AI & developer.</Trans>
+					</p>
 					{error && (
 						<p role="alert" className={cn(ENTER_CLASS, "text-sm text-danger-text")}>
 							{error}

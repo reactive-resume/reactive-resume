@@ -153,7 +153,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 	return (
 		<>
 			<div className="min-h-0 flex-1 overflow-y-auto">
-				<header className="grid gap-4 border-b border-line px-5 pt-5 pb-4">
+				<header className="sticky top-0 z-10 grid gap-4 border-b border-line bg-raised px-5 pt-5 pb-4">
 					<div className="flex items-start gap-3 pe-8">
 						<span
 							aria-hidden="true"

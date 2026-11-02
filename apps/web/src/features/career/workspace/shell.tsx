@@ -124,6 +124,8 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 	const breakpoint = useBreakpoint();
 	const query = useQuery(orpc.applications.getById.queryOptions({ input: { id: applicationId } }));
 	const saved = useSavedItems(applicationId);
+	// Items being deleted (Undo still offered) are already gone from the list: leave them out of the badge too.
+	const savedCount = saved.data?.length ?? 0;
 	const workspace = useQuery(orpc.career.workspace.queryOptions({ input: { applicationId } }));
 	const overlay = useOverlayHistory();
 	const application = query.data;
@@ -258,9 +260,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 									</TabBadge>
 								)}
 								{value === "messages" && unreadMessages > 0 && <TabBadge tone="info">{unreadMessages}</TabBadge>}
-								{value === "saved" && (saved.data?.length ?? 0) > 0 && (
-									<TabBadge tone="plain">{saved.data?.length}</TabBadge>
-								)}
+								{value === "saved" && savedCount > 0 && <TabBadge tone="plain">{savedCount}</TabBadge>}
 							</TabsTrigger>
 						))}
 					</TabsList>
@@ -529,6 +529,7 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 			end: new Date(start.getTime() + upcoming.durationMinutes * 60_000),
 			...(upcoming.location ? { location: upcoming.location } : {}),
 			description: [people.join("\n"), upcoming.notes].filter(Boolean).join("\n\n"),
+			alarmMinutes: 60,
 		});
 		downloadWithAnchor(
 			new Blob([ics], { type: "text/calendar" }),

@@ -779,6 +779,10 @@ msgstr "{minutes} min"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {Sem entrevistas} one {# entrevista} other {# entrevistas}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} adicionado à página 1"
@@ -1942,6 +1946,10 @@ msgstr "data do pedido de emprego"
 msgid "Application deleted"
 msgstr "pedido de emprego excluído"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "As aplicações que utilizam “{0}” deixarão de funcionar. Esta ação não pode ser anulada."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -2316,6 +2328,11 @@ msgstr "Antes da entrevista"
 #: src/features/letters/share.tsx
 msgid "Before restore"
 msgstr "Antes de restaurar"
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Before restoring “{0}”"
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -3163,7 +3180,14 @@ msgstr "Ligue as ferramentas que utiliza para escrever, procurar emprego e traba
 msgid "Connected · {milliseconds} ms"
 msgstr "Ligado · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Aplicações ligadas"
 
@@ -3490,6 +3514,10 @@ msgstr "Não foi possível carregar os candidaturas."
 msgid "Couldn't load applications. Try again."
 msgstr "Não foi possível carregar as candidaturas. Tente novamente."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "Não foi possível carregar os documentos. Tente novamente."
@@ -3582,7 +3610,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3679,6 +3706,10 @@ msgstr "Não foi possível renderizar este currículo."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Não foi possível revogar a chave. Tente novamente."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Não foi possível revogar esta ligação. Tente novamente."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3974,6 +4005,10 @@ msgstr "Criar um currículo"
 msgid "Create a resume first, then ask about it."
 msgstr "Crie primeiro um currículo e depois pergunte sobre ele."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "Criar cópia"
@@ -4212,6 +4247,10 @@ msgstr "Eliminar candidatura…"
 msgid "Delete conversation"
 msgstr "Eliminar conversa"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "Apagar entrada"
@@ -4226,6 +4265,7 @@ msgid "Delete forever…"
 msgstr "Eliminar definitivamente…"
 
 #: src/features/application-detail/interview-sheet.tsx
+#: src/features/application-detail/sections.tsx
 msgid "Delete interview"
 msgstr "Apagar entrevista"
 
@@ -4273,6 +4313,12 @@ msgstr "Apagar seção"
 #: src/features/career/stories.tsx
 msgid "Delete story"
 msgstr "Apagar história"
+
+#. placeholder {0}: interviewTypeLabel(deleting.kind)
+#. placeholder {1}: day(new Date(deleting.at))
+#: src/features/application-detail/sections.tsx
+msgid "Delete the {0} interview on {1}?"
+msgstr ""
 
 #: src/features/application-detail/detail-screen.tsx
 msgid "Delete this application?"
@@ -4409,6 +4455,27 @@ msgstr "Elimine as suas edições offline e carregue a versão guardada."
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "Descartar as suas edições offline?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "Desligar"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -4703,6 +4770,11 @@ msgstr "mensagens anteriores deste chat"
 msgid "Edit"
 msgstr "Editar"
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Edit {0}"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
@@ -4720,6 +4792,10 @@ msgstr ""
 #. placeholder {0}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {number}: {0}"
+msgstr ""
+
+#: src/features/application-detail/sheets.tsx
+msgid "Edit contact"
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -5419,6 +5495,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "Com base no seu fuso horário"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6053,6 +6133,14 @@ msgstr "Problemas"
 msgid "It has entries but isn't placed on a page."
 msgstr "Possui entradas, mas não é colocado numa página."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from the timeline and the calendar for good."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Foi removido da linha do tempo para sempre."
@@ -6159,6 +6247,10 @@ msgstr "Manter"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "Mantenha um único endereço, para que o software não tenha de adivinhar qual usar."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "Manter o acesso quando não estiver a utilizar a aplicação."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6690,6 +6782,10 @@ msgstr "Carregamento de chaves API…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "A carregar candidaturas…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "Carregando ligações..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7560,6 +7656,10 @@ msgstr "Não é necessária nenhuma alteração. Já está em {stage}."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "Nenhum comando corresponde a essa pesquisa."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "Ainda não há aplicações ligadas. As aplicações a que permitir acesso à sua conta aparecem aqui."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9229,6 +9329,10 @@ msgstr "Ler licença"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "Acesso somente leitura"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9264,6 +9368,22 @@ msgstr "Leu o currículo"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "Ler o seu endereço de email."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "Ler as informações do seu perfil."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9653,6 +9773,11 @@ msgstr ""
 msgid "Remove unavailable story reference"
 msgstr ""
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Removed {0}"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Rename"
@@ -9841,6 +9966,17 @@ msgstr "Restaurar versão"
 
 #: src/lib/undone.ts
 msgid "Restored"
+msgstr ""
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”"
+msgstr "“{0}” restaurado"
+
+#. placeholder {0}: selected.name
+#. placeholder {1}: selected.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
 #. placeholder {0}: done.length
@@ -10093,10 +10229,6 @@ msgstr "Rever a minha resposta"
 msgid "Review packet"
 msgstr ""
 
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr "Reveja as permissões e desligue aplicações no navegador. Poderá ter de iniciar sessão aí."
-
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -10314,6 +10446,10 @@ msgstr "Guardar alterações"
 #: src/features/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Guardar conexão"
+
+#: src/features/application-detail/sheets.tsx
+msgid "Save contact"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
@@ -12391,6 +12527,10 @@ msgstr "Foi alterado noutro local e não foi guardado. O seu texto continua aqui
 msgid "This connection is managed by your server."
 msgstr "Esta ligação é gerida pelo seu servidor."
 
+#: src/features/application-detail/sheets.tsx
+msgid "This contact changed somewhere else. Cancel and edit it again."
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 msgid "This conversation couldn't be opened."
@@ -12878,6 +13018,7 @@ msgstr "Experimente {suggestion}"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

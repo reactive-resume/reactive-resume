@@ -7,7 +7,7 @@ import { useMemo } from "react";
 import z from "zod";
 import { resumePatchOperationsSchema } from "@reactive-resume/ai/tools/resume-tool-contracts";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
-import { applyResumePatches, ResumePatchError } from "@reactive-resume/resume/patch";
+import { applyResumePatches, describeResumePatchError, ResumePatchError } from "@reactive-resume/resume/patch";
 import { createResumeDataJsonSchema } from "@reactive-resume/schema/resume/json-schema";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { buildIssues } from "./check/issues";
@@ -46,11 +46,7 @@ export function assignChanged(target: Container, before: Container, next: Contai
 }
 
 function describePatchError(error: unknown): string {
-	// Named by op and path: fast-json-patch reports index 0 for some failures, whichever operation it was.
-	if (error instanceof ResumePatchError) {
-		const { op, path } = error.operation;
-		return `The ${op} operation at ${path} failed: ${error.message} Nothing was changed.`;
-	}
+	if (error instanceof ResumePatchError) return `${describeResumePatchError(error)} Nothing was changed.`;
 	const message = error instanceof Error ? error.message : String(error);
 	return `${message} Nothing was changed.`;
 }

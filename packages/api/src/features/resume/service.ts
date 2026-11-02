@@ -26,7 +26,7 @@ import { match } from "ts-pattern";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { detachEmbeddedLetters } from "@reactive-resume/resume/cover-letter";
-import { applyResumePatches, ResumePatchError } from "@reactive-resume/resume/patch";
+import { applyResumePatches, describeResumePatchError, ResumePatchError } from "@reactive-resume/resume/patch";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { isValidSlug } from "@reactive-resume/schema/resume/slug";
 import { generateId } from "@reactive-resume/utils/string";
@@ -240,7 +240,7 @@ async function applyResumePatchTx(
 		if (error instanceof ResumePatchError) {
 			throw new ORPCError("INVALID_PATCH_OPERATIONS", {
 				status: 400,
-				message: error.message,
+				message: describeResumePatchError(error),
 				data: { code: error.code, index: error.index, operation: error.operation },
 			});
 		}
@@ -565,11 +565,14 @@ export const resumeService = {
 			const version = await getVersion(input);
 
 			// Capture the pre-restore state first so the restore itself is undoable.
+			// A named version's name goes with both snapshots, so History says which version was restored.
+			const restoredName = version.name || undefined;
 			await writeVersion(db, {
 				resumeId: input.resumeId,
 				userId: input.userId,
 				data: current.data,
 				kind: "before-restore",
+				...(restoredName ? { name: restoredName } : {}),
 			});
 
 			const updated = await resumeService.update({
@@ -585,6 +588,7 @@ export const resumeService = {
 				userId: input.userId,
 				data: updated.data,
 				kind: "restored",
+				...(restoredName ? { name: restoredName } : {}),
 			});
 
 			return updated;

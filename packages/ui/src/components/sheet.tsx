@@ -82,7 +82,7 @@ function SheetContent({
 				<SheetPrimitive.Close
 					data-slot="sheet-close"
 					aria-label={closeLabel}
-					render={<Button variant="ghost" className="absolute inset-e-3 top-3 text-ink-2" size="icon" />}
+					render={<Button variant="ghost" className="absolute inset-e-3 top-3 z-20 text-ink-2" size="icon" />}
 				>
 					<Icon name="x" />
 				</SheetPrimitive.Close>

@@ -64,7 +64,7 @@ export function handleAgentCatalog() {
 }
 
 export function handleMcpServerCard() {
-	const card = buildMcpServerCard(appVersion);
+	const card = buildMcpServerCard(appVersion, appUrl());
 
 	return Response.json(
 		{
@@ -115,8 +115,8 @@ function buildIntegrations() {
 				label: "Reactive Resume API key",
 				generateUrl: `${baseUrl}/dashboard/settings/ai`,
 				setup: [
-					"Open **Settings → AI & developer**, select **New key** in the **API keys** section, name it, choose when it expires, then copy it.",
-					"The key is shown only once and acts as you: anyone holding it can read and edit your documents. Revoke it from the same table when you no longer need it.",
+					"Open **Settings → AI & developer**, select **New key** in the **API keys** section and name it. Under **Access**, choose **Read only** unless the tool needs to change your documents. Choose when it expires, then copy it.",
+					"The key is shown only once and acts as you with the access you chose: anyone holding a read-only key can read your account, and a full-access key can also change and delete it. Revoke it from the same table when you no longer need it.",
 					"Send it in the `x-api-key` header.",
 				].join("\n\n"),
 			},

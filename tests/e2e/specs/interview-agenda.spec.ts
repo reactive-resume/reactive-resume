@@ -68,8 +68,6 @@ for (const scenario of [
 		browserZone: "Europe/Berlin",
 		now: "2026-10-31T23:15:00Z",
 		at: ["2026-10-31T23:30:00Z", "2026-11-01T00:30:00Z"],
-		month: "October 2026",
-		count: "1 interview",
 		days: ["Today", "Tomorrow"],
 		times: ["23:30 – 00:30", "00:30 – 01:30"],
 		nextMonth: "November 2026",
@@ -80,8 +78,6 @@ for (const scenario of [
 		browserZone: "UTC",
 		now: "2026-10-31T23:15:00Z",
 		at: ["2026-10-31T23:30:00Z", "2026-11-01T00:30:00Z"],
-		month: "November 2026",
-		count: "2 interviews",
 		days: ["Today"],
 		times: ["00:30 – 01:30", "01:30 – 02:30"],
 		nextMonth: "December 2026",
@@ -92,8 +88,6 @@ for (const scenario of [
 		browserZone: "UTC",
 		now: "2026-03-28T23:15:00Z",
 		at: ["2026-03-29T00:30:00Z", "2026-03-29T22:30:00Z"],
-		month: "March 2026",
-		count: "2 interviews",
 		days: ["Today", "Tomorrow"],
 		times: ["01:30 – 03:30", "00:30 – 01:30"],
 		nextMonth: "April 2026",
@@ -104,8 +98,6 @@ for (const scenario of [
 		browserZone: "Europe/Berlin",
 		now: "2026-10-24T22:15:00Z",
 		at: ["2026-10-25T00:30:00Z", "2026-10-25T01:30:00Z"],
-		month: "October 2026",
-		count: "2 interviews",
 		days: ["Tomorrow"],
 		times: ["00:30 – 01:30", "01:30 – 02:30"],
 		nextMonth: "November 2026",
@@ -140,8 +132,9 @@ for (const scenario of [
 		await page.goto("/dashboard/applications?view=calendar");
 		const calendar = page.getByTestId("interview-calendar");
 		const agenda = page.getByTestId("interview-agenda");
-		await expect(calendar.getByRole("heading", { name: scenario.month, exact: true })).toBeVisible();
-		await expect(calendar.getByText(scenario.count, { exact: true })).toBeVisible();
+		// Until a month is picked, phones list every upcoming interview under "Upcoming", not a month title.
+		await expect(calendar.getByRole("heading", { name: "Upcoming", exact: true })).toBeVisible();
+		await expect(calendar.getByText("2 interviews", { exact: true })).toBeVisible();
 		await expect(agenda.getByRole("heading", { level: 4 })).toHaveText(scenario.days);
 		const cards = agenda.locator("[data-upcoming-interview]");
 		await expect(cards).toHaveCount(2);

@@ -779,6 +779,10 @@ msgstr "{minutes} min"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {Nav interviju} one {# intervija} other {# intervijas} zero {# interviju}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} pievienots 1. lapai"
@@ -1942,6 +1946,10 @@ msgstr "darba pieteikuma datums"
 msgid "Application deleted"
 msgstr "darba pieteikums dzēsts"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "Lietotnes, kas izmanto “{0}”, pārstās darboties. To nevar atsaukt."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -2316,6 +2328,11 @@ msgstr "Pirms intervijas"
 #: src/features/letters/share.tsx
 msgid "Before restore"
 msgstr "Pirms atjaunošanas"
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Before restoring “{0}”"
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -3163,7 +3180,14 @@ msgstr "Savienojiet rīkus, kurus izmantojat rakstīšanai, darba meklēšanai u
 msgid "Connected · {milliseconds} ms"
 msgstr "Savienots · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Saistītās lietojumprogrammas"
 
@@ -3490,6 +3514,10 @@ msgstr "Nevarēja ielādēt darba pieteikumus."
 msgid "Couldn't load applications. Try again."
 msgstr "Nevarēja ielādēt pieteikumus. Mēģiniet vēlreiz."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "Neizdevās ielādēt dokumentus. Mēģiniet vēlreiz."
@@ -3582,7 +3610,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3679,6 +3706,10 @@ msgstr "Nevarēja renderēt šo CV."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Nevarēja atsaukt atslēgu. Mēģiniet vēlreiz."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Nevarēja atsaukt šo savienojumu. Mēģiniet vēlreiz."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3974,6 +4005,10 @@ msgstr "Izveidot jaunu CV"
 msgid "Create a resume first, then ask about it."
 msgstr "Vispirms izveidojiet CV, pēc tam jautājiet par to."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "Izveidot kopiju"
@@ -4212,6 +4247,10 @@ msgstr "Dzēst pieteikumu…"
 msgid "Delete conversation"
 msgstr "Dzēst sarunu"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "Dzēst ierakstu"
@@ -4226,6 +4265,7 @@ msgid "Delete forever…"
 msgstr "Dzēst uz visiem laikiem…"
 
 #: src/features/application-detail/interview-sheet.tsx
+#: src/features/application-detail/sections.tsx
 msgid "Delete interview"
 msgstr "Dzēst interviju"
 
@@ -4273,6 +4313,12 @@ msgstr "Dzēst sadaļu"
 #: src/features/career/stories.tsx
 msgid "Delete story"
 msgstr "Dzēst stāstu"
+
+#. placeholder {0}: interviewTypeLabel(deleting.kind)
+#. placeholder {1}: day(new Date(deleting.at))
+#: src/features/application-detail/sections.tsx
+msgid "Delete the {0} interview on {1}?"
+msgstr ""
 
 #: src/features/application-detail/detail-screen.tsx
 msgid "Delete this application?"
@@ -4409,6 +4455,27 @@ msgstr "Atmetiet bezsaistes labojumus un ielādējiet saglabāto versiju."
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "Vai atmest bezsaistes labojumus?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "Atvienot"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -4703,6 +4770,11 @@ msgstr "iepriekšējie ziņojumi šajā sarunā"
 msgid "Edit"
 msgstr "Rediģēt"
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Edit {0}"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
@@ -4720,6 +4792,10 @@ msgstr ""
 #. placeholder {0}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {number}: {0}"
+msgstr ""
+
+#: src/features/application-detail/sheets.tsx
+msgid "Edit contact"
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -5419,6 +5495,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "Pēc jūsu laika joslas"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6053,6 +6133,14 @@ msgstr "problēmas"
 msgid "It has entries but isn't placed on a page."
 msgstr "Tajā ir ieraksti, bet tas nav ievietots lapā."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from the timeline and the calendar for good."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Tas uz visiem laikiem ir noņemts no laika skalas."
@@ -6159,6 +6247,10 @@ msgstr "Saglabāt"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "Izmantojiet vienu vienīgu adresi, lai programmatūrai nebūtu jāmin, kuru lietot."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "Saglabājiet piekļuvi, kad neizmantojat lietojumprogrammu."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6690,6 +6782,10 @@ msgstr "Notiek API atslēgu ielāde…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "Notiek pieteikumu ielāde…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "Notiek savienojumu ielāde..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7560,6 +7656,10 @@ msgstr "Izmaiņas nav vajadzīgas. Tas jau ir posmā “{stage}”."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "Šai meklēšanai neatbilst neviena komanda."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "Vēl nav pievienotu lietotņu. Šeit parādās lietotnes, kurām atļaujat piekļūt jūsu kontam."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9229,6 +9329,10 @@ msgstr "Lasīt licenci"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "Tikai lasīšanas piekļuve"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9264,6 +9368,22 @@ msgstr "Izlasīja CV"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "Izlasiet savu e-pasta adresi."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "Izlasiet sava profila informāciju."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9653,6 +9773,11 @@ msgstr ""
 msgid "Remove unavailable story reference"
 msgstr ""
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Removed {0}"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Rename"
@@ -9841,6 +9966,17 @@ msgstr "Atjaunot versiju"
 
 #: src/lib/undone.ts
 msgid "Restored"
+msgstr ""
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”"
+msgstr "Atjaunots “{0}”"
+
+#. placeholder {0}: selected.name
+#. placeholder {1}: selected.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
 #. placeholder {0}: done.length
@@ -10093,10 +10229,6 @@ msgstr "Izvērtēt manu atbildi"
 msgid "Review packet"
 msgstr ""
 
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr ""
-
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -10314,6 +10446,10 @@ msgstr "Saglabāt izmaiņas"
 #: src/features/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Saglabājiet savienojumu"
+
+#: src/features/application-detail/sheets.tsx
+msgid "Save contact"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
@@ -12391,6 +12527,10 @@ msgstr "Tas mainīts citur, tāpēc netika saglabāts. Jūsu teksts ir paturēts
 msgid "This connection is managed by your server."
 msgstr "Šo savienojumu pārvalda jūsu serveris."
 
+#: src/features/application-detail/sheets.tsx
+msgid "This contact changed somewhere else. Cancel and edit it again."
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 msgid "This conversation couldn't be opened."
@@ -12878,6 +13018,7 @@ msgstr "Izmēģiniet {suggestion}"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

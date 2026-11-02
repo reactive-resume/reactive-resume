@@ -26,6 +26,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { useCoachKnowledge } from "../coach-thread";
 import { useSessionDraft } from "../hooks";
 import { CareerLoadError, CareerLoading } from "../load-state";
+import { useRemoving } from "../removing";
 import { CollapseRow, Eyebrow, Swap, useCareerTime, useNow, withUndo } from "../shared";
 import { collectInterviews, upcomingInterviews } from "@/features/applications/interviews";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -70,7 +71,8 @@ export function StoriesPage({ storyId, edit, start: planStart }: StoriesPageProp
 	const factQuery = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: null, all: true } }));
 	const stories = storyQuery.data;
 	const facts = factQuery.data;
-	const [hidden, setHidden] = useState<string[]>([]);
+	const removing = useRemoving((state) => state.ids);
+	const { add: hide, drop: unhide } = useRemoving.getState();
 
 	if ((!stories && storyQuery.isError) || (!facts && factQuery.isError))
 		return (
@@ -84,7 +86,7 @@ export function StoriesPage({ storyId, edit, start: planStart }: StoriesPageProp
 	if (!stories || !facts) return <CareerLoading />;
 
 	const factsById = new Map((facts ?? []).map((fact) => [fact.id, fact]));
-	const list = stories.filter((story) => !hidden.includes(story.id));
+	const list = stories.filter((story) => !removing.has(story.id));
 	const selected = storyId ? list.find((story) => story.id === storyId) : edit ? undefined : list[0];
 	const editing = edit && (selected !== undefined || !storyId);
 
@@ -96,21 +98,23 @@ export function StoriesPage({ storyId, edit, start: planStart }: StoriesPageProp
 		});
 
 	const remove = (story: Story) => {
-		setHidden((current) => [...current, story.id]);
+		hide(story.id);
 		open(undefined);
 		withUndo({
 			description: t`Story deleted`,
-			onUndo: () => setHidden((current) => current.filter((id) => id !== story.id)),
+			onUndo: () => unhide(story.id),
 			commit: () =>
 				client.career
 					.deleteStory({ id: story.id })
 					.catch((error: unknown) => {
-						setHidden((current) => current.filter((id) => id !== story.id));
 						toastError(error, t`Couldn't delete that story. Try again.`);
 					})
-					.finally(() => {
-						void queryClient.invalidateQueries({ queryKey: orpc.career.stories.key() });
-						void queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() });
+					.finally(async () => {
+						await Promise.all([
+							queryClient.invalidateQueries({ queryKey: orpc.career.stories.key() }),
+							queryClient.invalidateQueries({ queryKey: orpc.career.facts.key() }),
+						]);
+						unhide(story.id);
 					}),
 		});
 	};

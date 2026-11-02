@@ -3,6 +3,7 @@ import type { RequestAuthentication } from "@reactive-resume/api/context";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { onError } from "@orpc/client";
 import { createRouterClient } from "@orpc/server";
+import { env } from "@reactive-resume/env/server";
 import {
 	buildMcpServerInfo,
 	MCP_TOOL_NAME,
@@ -53,7 +54,7 @@ export function createMcpServer(
 	trustedClient: string,
 	resHeaders: Headers,
 ) {
-	const server = new McpServer(buildMcpServerInfo(appVersion), {
+	const server = new McpServer(buildMcpServerInfo(appVersion, env.APP_URL), {
 		instructions: [
 			"Reactive Resume holds the user's resumes, cover letters and job applications.",
 			`Find resume IDs with \`${MCP_TOOL_NAME.listResumes}\` and read one with \`${MCP_TOOL_NAME.getResume}\`; the resume JSON Schema is the \`resume://_meta/schema\` resource.`,
@@ -77,7 +78,7 @@ export function createMcpServer(
 		signal: request.signal,
 	});
 	registerPrompts(server, client);
-	registerToolDiscovery(server);
+	registerToolDiscovery(server, { canWrite: authentication.permissions.includes("write") });
 
 	return server;
 }

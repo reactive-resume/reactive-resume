@@ -85,12 +85,13 @@ export const interviewKindSchema = z.enum(["screening", "technical", "behavioral
 
 export type InterviewKind = z.infer<typeof interviewKindSchema>;
 
+// Colours are the design system's stage tokens (CSS custom properties), not a palette of their own.
 export const INTERVIEW_KINDS = [
-	{ value: "screening", label: "Screening", color: "oklch(0.45 0.08 195)" },
-	{ value: "technical", label: "Technical", color: "oklch(0.52 0.19 285)" },
-	{ value: "behavioral", label: "Behavioral", color: "oklch(0.5 0.1 70)" },
-	{ value: "onsite", label: "Onsite", color: "oklch(0.55 0.15 152)" },
-	{ value: "other", label: "Other", color: "oklch(0.62 0 0)" },
+	{ value: "screening", label: "Screening", color: "var(--stage-screening)" },
+	{ value: "technical", label: "Technical", color: "var(--stage-applied)" },
+	{ value: "behavioral", label: "Behavioral", color: "var(--stage-interview)" },
+	{ value: "onsite", label: "Onsite", color: "var(--stage-offer)" },
+	{ value: "other", label: "Other", color: "var(--ink-3)" },
 ] as const satisfies ReadonlyArray<{ value: InterviewKind; label: string; color: string }>;
 
 export const interviewParticipantSchema = z.object({

@@ -815,7 +815,7 @@ type DatedEntry = Exclude<ApplicationTimelineEntry, { type: "interview" }>;
 export function Timeline({ application, onOpenInterview }: SectionProps & InterviewOpener) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
-	const { when, utcDay } = useUserTime();
+	const { when, utcDay, day } = useUserTime();
 	const { addNote, updateEntry, deleteEntry } = useDetailMutations(application.id);
 	const [note, setNote] = useState("");
 	const [editing, setEditing] = useState<DatedEntry | null>(null);
@@ -910,11 +910,20 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 						: undefined
 				}
 			/>
+			{/* An interview is named, and leaving the calendar too (web activity.tsx). */}
 			<ConfirmDialog
 				open={deleting !== null}
-				title={t`Delete this entry?`}
-				message={t`It's removed from the timeline for good.`}
-				confirmLabel={t`Delete entry`}
+				title={
+					deleting?.type === "interview"
+						? t`Delete the ${interviewTypeLabel(deleting.kind)} interview on ${day(new Date(deleting.at))}?`
+						: t`Delete this entry?`
+				}
+				message={
+					deleting?.type === "interview"
+						? t`It's removed from the timeline and the calendar for good.`
+						: t`It's removed from the timeline for good.`
+				}
+				confirmLabel={deleting?.type === "interview" ? t`Delete interview` : t`Delete entry`}
 				destructive
 				onCancel={() => setDeleting(null)}
 				onConfirm={() => {

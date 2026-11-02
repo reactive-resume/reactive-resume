@@ -161,6 +161,52 @@ export const authRouter = {
 			.handler(({ context, input }) => accountAuth.deleteApiKey(context.user, input.keyId)),
 	},
 
+	connections: {
+		list: accountProcedure
+			.route({
+				method: "GET",
+				path: "/auth/connections",
+				tags: ["Authentication"],
+				operationId: "listConnectedApplications",
+				summary: "List connected applications",
+				description:
+					"Lists the applications you allowed through OAuth, newest first, with their registered names and granted scopes.",
+			})
+			.input(z.object({}).optional())
+			.output(
+				z.object({
+					connections: z.array(
+						z.object({
+							id: z.string(),
+							clientId: z.string(),
+							clientName: z.string().nullable(),
+							scopes: z.array(z.string()),
+							createdAt: z.date().nullable(),
+						}),
+					),
+				}),
+			)
+			.handler(async ({ context }) => ({ connections: await accountAuth.listConnections(context.user) })),
+
+		delete: accountProcedure
+			.route({
+				method: "DELETE",
+				path: "/auth/connections/{id}",
+				tags: ["Authentication"],
+				operationId: "deleteConnectedApplication",
+				summary: "Disconnect an application",
+				description:
+					"Disconnects an application you allowed through OAuth. Its tokens stop working at once; to use it again, connect it from the application.",
+			})
+			.input(z.object({ id: z.string().min(1) }))
+			.output(z.object({ success: z.boolean() }))
+			.handler(async ({ context, input }) => {
+				if (!(await accountAuth.revokeConnection(context.user, input.id)))
+					throw new ORPCError("NOT_FOUND", { message: "No connected application with that ID." });
+				return { success: true };
+			}),
+	},
+
 	providers: {
 		list: publicProcedure
 			.route({
