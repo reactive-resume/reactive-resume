@@ -85,6 +85,11 @@ msgstr "(không có tiêu đề)"
 msgid "(optional)"
 msgstr "(không bắt buộc)"
 
+#. placeholder {0}: upcoming.length
+#: src/features/applications/components/calendar-view.tsx
+msgid "{0, plural, =0 {No interviews} one {# interview} other {# interviews}}"
+msgstr ""
+
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2900,7 +2905,12 @@ msgstr "Cơ bản"
 msgid "Before restore"
 msgstr "Trước khi khôi phục"
 
-#: src/features/applications/components/interview-dialog.tsx
+#. placeholder {0}: version.name
+#: src/features/resume/share/format.ts
+msgid "Before restoring “{0}”"
+msgstr ""
+
+#: src/features/applications/interviews.ts
 msgid "Behavioral"
 msgstr "Hành vi"
 
@@ -5362,6 +5372,10 @@ msgstr ""
 msgid "Delete entry"
 msgstr "Xóa mục nhập"
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Delete interview"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game the search."
 msgstr "Xóa nó đi. Từ khóa ẩn bị coi là hành vi cố ý gian lận trong tìm kiếm."
@@ -5406,6 +5420,10 @@ msgstr "Xóa phần"
 #: src/features/career/knowledge/stories.tsx
 msgid "Delete story"
 msgstr "Xóa câu chuyện"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Delete the {kind} interview on {date}?"
+msgstr ""
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -5978,6 +5996,11 @@ msgstr "các tin nhắn trước trong cuộc trò chuyện này"
 msgid "Edit"
 msgstr "Biên tập"
 
+#. placeholder {0}: contact.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Edit {0}"
+msgstr ""
+
 #. Screen reader label for button that edits a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
 msgid "Edit {chip}"
@@ -6104,6 +6127,7 @@ msgstr "Đã chỉnh sửa"
 msgid "Edited by you"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/page-overlay.tsx
 msgid "Editing"
 msgstr "Chỉnh sửa"
@@ -7878,6 +7902,10 @@ msgstr "Nó sẽ hiển thị trên dòng thời gian của đơn xin việc và
 #: src/components/ui/donation-toast.tsx
 msgid "It's free and open source, kept going by donations from the people who use it. If it has helped you, consider chipping in."
 msgstr "Ứng dụng miễn phí và mã nguồn mở, được duy trì nhờ quyên góp từ chính người dùng. Nếu nó đã giúp ích cho bạn, hãy cân nhắc ủng hộ."
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "It's removed from the timeline and the calendar for good."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -10438,7 +10466,7 @@ msgstr "Chỉ có bạn, cho đến khi bạn chia sẻ nó. Sơ yếu lý lịc
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "Trực tiếp"
 
@@ -10648,7 +10676,7 @@ msgstr ""
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "Định dạng bảng gốc được giữ nguyên. Nội dung này ở chế độ chỉ đọc vì không thể chỉnh sửa một cách an toàn."
 
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 msgid "Other"
 msgstr "Khác"
 
@@ -12287,6 +12315,11 @@ msgstr ""
 msgid "Remove unavailable story reference"
 msgstr ""
 
+#. placeholder {0}: contact.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Removed {0}"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/settings/account/security.tsx
@@ -12476,9 +12509,17 @@ msgid "Restored"
 msgstr ""
 
 #. placeholder {0}: document.name
+#. placeholder {0}: version.name
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/share/format.ts
 msgid "Restored “{0}”"
 msgstr "Đã khôi phục “{0}”"
+
+#. placeholder {0}: version.name
+#. placeholder {1}: version.name
+#: src/features/resume/share/history-tab.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
+msgstr ""
 
 #. placeholder {0}: done.length
 #: src/features/documents/document-actions.tsx
@@ -12915,6 +12956,7 @@ msgid "Sample resume added. Delete it anytime."
 msgstr "Sơ yếu lý lịch mẫu đã được thêm vào. Xóa nó bất cứ lúc nào."
 
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/profile.tsx
@@ -13229,7 +13271,7 @@ msgid "School"
 msgstr "Trường"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "Sàng lọc"
@@ -14839,7 +14881,7 @@ msgstr "Nhiệm vụ"
 msgid "Teal"
 msgstr "Màu xanh mòng két"
 
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "Kỹ thuật"
 
@@ -15162,6 +15204,11 @@ msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#. placeholder {0}: contact.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "The contacts changed somewhere else, so {0} wasn't removed. Remove it again."
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
@@ -15561,6 +15608,10 @@ msgstr ""
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "Yêu cầu kết nối này không hợp lệ hoặc đã hết hạn. Hãy bắt đầu lại kết nối từ máy khách của bạn."
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "This contact changed somewhere else. Cancel and edit it again."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "This conversation couldn't be opened."
@@ -16397,6 +16448,10 @@ msgstr "Tối đa 2 phút. Lời bạn nói sẽ hiện ra khi bạn nói."
 #: src/features/ats-checker/checker.tsx
 msgid "Up to 25 MB · checked in your browser, never uploaded"
 msgstr "Lên đến 25 MB · đã được kiểm tra trong trình duyệt của bạn, chưa bao giờ tải lên"
+
+#: src/features/applications/components/calendar-view.tsx
+msgid "Upcoming"
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
@@ -17619,6 +17674,10 @@ msgstr "Bạn đã xem hết"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "Bạn đang dùng tài khoản khách"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "You're viewing an earlier version. Go back to now in History to edit."
+msgstr ""
 
 #: src/features/resume/builder/undo-toast.ts
 msgid "You've made changes since. Use Undo to step back through them."

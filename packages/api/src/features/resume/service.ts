@@ -565,11 +565,14 @@ export const resumeService = {
 			const version = await getVersion(input);
 
 			// Capture the pre-restore state first so the restore itself is undoable.
+			// A named version's name goes with both snapshots, so History says which version was restored.
+			const restoredName = version.name || undefined;
 			await writeVersion(db, {
 				resumeId: input.resumeId,
 				userId: input.userId,
 				data: current.data,
 				kind: "before-restore",
+				...(restoredName ? { name: restoredName } : {}),
 			});
 
 			const updated = await resumeService.update({
@@ -585,6 +588,7 @@ export const resumeService = {
 				userId: input.userId,
 				data: updated.data,
 				kind: "restored",
+				...(restoredName ? { name: restoredName } : {}),
 			});
 
 			return updated;

@@ -218,7 +218,7 @@ it("uses the calendar-selected civil day in the real interview editor", async ()
 });
 
 it.each([
-	["UTC", "October 2026", "November 2026", "23:30", "00:30", "Today", "Tomorrow", "1 interview", "2 interviews"],
+	["UTC", "October 2026", "November 2026", "23:30", "00:30", "Today", "Tomorrow", "3 interviews", "2 interviews"],
 	[
 		"Europe/Berlin",
 		"November 2026",
@@ -248,8 +248,10 @@ it.each([
 		show(<ApplicationCalendar compact applications={rows} allApplications={rows} onOpen={onOpen} />);
 		const agenda = screen.getByTestId("interview-agenda");
 		expect(screen.queryByTestId("interview-month-grid")).toBeNull();
-		expect(screen.getByRole("heading", { name: month })).toBeDefined();
+		// Until a month is picked, the phone header titles the upcoming list rather than a month (G1B-17).
+		expect(screen.getByRole("heading", { name: "Upcoming" })).toBeDefined();
 		expect(screen.getByText(count, { exact: true })).toBeDefined();
+		expect(screen.queryByRole("heading", { name: month })).toBeNull();
 		expect(within(agenda).getAllByRole("heading", { level: 4 })).toHaveLength(timeZone === "UTC" ? 3 : 2);
 		for (const [index, time, day] of [
 			[0, firstTime, firstDay],
@@ -286,20 +288,22 @@ it.each([false, true])("follows account-local month rollover until browsing (com
 		return row;
 	});
 	show(<ApplicationCalendar compact={compact} applications={rows} allApplications={rows} onOpen={vi.fn()} />);
-	expect(screen.getByRole("heading", { name: "October 2026" })).toBeDefined();
-	expect(screen.getByText("1 interview", { exact: true })).toBeDefined();
+	// Phones title the unbrowsed view "Upcoming"; a browsed month is named on both.
+	const current = (month: string) => (compact ? "Upcoming" : month);
+	expect(screen.getByRole("heading", { name: current("October 2026") })).toBeDefined();
+	if (!compact) expect(screen.getByText("1 interview", { exact: true })).toBeDefined();
 	act(() => vi.advanceTimersByTime(60_000));
-	expect(screen.getByRole("heading", { name: "November 2026" })).toBeDefined();
-	expect(screen.getByText("2 interviews", { exact: true })).toBeDefined();
+	expect(screen.getByRole("heading", { name: current("November 2026") })).toBeDefined();
+	if (!compact) expect(screen.getByText("2 interviews", { exact: true })).toBeDefined();
 	fireEvent.click(screen.getByRole("button", { name: "Previous month" }));
 	vi.setSystemTime(new Date("2026-11-30T22:59:30Z"));
 	act(() => vi.advanceTimersByTime(60_000));
 	expect(screen.getByRole("heading", { name: "October 2026" })).toBeDefined();
 	fireEvent.click(screen.getByRole("button", { name: "This month" }));
-	expect(screen.getByRole("heading", { name: "December 2026" })).toBeDefined();
+	expect(screen.getByRole("heading", { name: current("December 2026") })).toBeDefined();
 	vi.setSystemTime(new Date("2026-12-31T22:59:30Z"));
 	act(() => vi.advanceTimersByTime(60_000));
-	expect(screen.getByRole("heading", { name: "January 2027" })).toBeDefined();
+	expect(screen.getByRole("heading", { name: current("January 2027") })).toBeDefined();
 });
 
 it("uses neutral empty-state wording under the browsed month heading", () => {

@@ -735,6 +735,8 @@ function requirementsFor(offer: Offer, profile: CareerProfileData, locale: strin
 
 type OpenQuestionsProps = { offers: Offer[] };
 
+const sentence = (text: string) => (/[.!?…。！？]$/u.test(text.trim()) ? text.trim() : `${text.trim()}.`);
+
 /** What neither offer says yet, as questions to ask, led by what the user said matters. */
 function OpenQuestions({ offers }: OpenQuestionsProps) {
 	const { locale } = useCareerTime();
@@ -772,7 +774,9 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 
 	const priorities = profile?.priorities.trim() ?? "";
 	// The first sentence keeps the lead-in short; the full text is in Preferences.
-	const said = priorities.length > 160 ? (priorities.split(/(?<=[.!?])\s/)[0] ?? priorities) : priorities;
+	const firstPriority = priorities.length > 160 ? (priorities.split(/(?<=[.!?])\s/)[0] ?? priorities) : priorities;
+	// The quote ends its own sentence: a full stop inside it unless it already has one. Named `said` for translators.
+	const said = firstPriority ? sentence(firstPriority) : "";
 
 	const copy = async () => {
 		try {

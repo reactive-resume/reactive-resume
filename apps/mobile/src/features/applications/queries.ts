@@ -131,10 +131,9 @@ export function useInvalidateApplications() {
 export function useApplicationMutations() {
 	const invalidate = useInvalidateApplications();
 	const queryClient = useQueryClient();
-	// Settlement refetches authoritative state, including after a lost reply or optimistic rollback.
-	const onSettled = () => {
-		void invalidate();
-	};
+	// Settlement refetches authoritative state, including after a lost reply or optimistic rollback. Returned, so a
+	// mutation stays pending until that state is back: controls disabled while pending never act on a stale list.
+	const onSettled = () => invalidate();
 	// Deleted or closed applications need nothing, so their reminders on this device go (syncing to no targets).
 	const cancelReminders = (ids: string[]) => {
 		for (const id of ids) void syncReminders(id, []).catch(() => {});

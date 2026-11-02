@@ -132,7 +132,9 @@ export function HistoryTimeline({ source }: { source: HistorySource }) {
 			await source.restore(version.id);
 			useEditorStore.setState({ historyVersionId: null });
 			toast.add({
-				description: t`Restored the version from ${formatVersionMoment(version.createdAt, i18n.locale)}. Your previous state is saved as “Before restore”.`,
+				description: version.name
+					? t`Restored “${version.name}”. Your previous state is saved as “Before restoring “${version.name}””.`
+					: t`Restored the version from ${formatVersionMoment(version.createdAt, i18n.locale)}. Your previous state is saved as “Before restore”.`,
 			});
 		});
 

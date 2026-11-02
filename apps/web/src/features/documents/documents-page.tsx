@@ -722,6 +722,7 @@ type SelectionBarProps = {
  * it sits above the tab bar, as the Applications list's bar does.
  */
 function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTags }: SelectionBarProps) {
+	const lettersOnly = selection.length > 0 && selection.every((document) => document.type === "letter");
 	const batch = useBatchActions();
 	const [busy, setBusy] = useState(false);
 	const count = selection.length;
@@ -766,24 +767,27 @@ function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTag
 				<DropdownMenuTrigger
 					render={
 						<Button variant="ghost" size="sm" disabled={busy}>
-							<Icon name="globe" />
-							<span className="max-sm:sr-only">
-								<Trans>Sharing</Trans>
-							</span>
+							<Icon name={lettersOnly ? "lock" : "globe"} />
+							<span className="max-sm:sr-only">{lettersOnly ? <Trans>Editing</Trans> : <Trans>Sharing</Trans>}</span>
 							<Icon name="caret-down" size={14} />
 						</Button>
 					}
 				/>
 				<DropdownMenuContent side="top" align="center" className="w-48">
-					<DropdownMenuItem onClick={() => void run(() => batch.setPublic(selection, true))}>
-						<Icon name="globe" />
-						<Trans>Make public</Trans>
-					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => void run(() => batch.setPublic(selection, false))}>
-						<Icon name="eye-slash" />
-						<Trans>Make private</Trans>
-					</DropdownMenuItem>
-					<DropdownMenuSeparator />
+					{/* Letters have no public link, so a letters-only selection is offered locking alone. */}
+					{lettersOnly ? null : (
+						<>
+							<DropdownMenuItem onClick={() => void run(() => batch.setPublic(selection, true))}>
+								<Icon name="globe" />
+								<Trans>Make public</Trans>
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => void run(() => batch.setPublic(selection, false))}>
+								<Icon name="eye-slash" />
+								<Trans>Make private</Trans>
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+						</>
+					)}
 					<DropdownMenuItem onClick={() => void run(() => batch.setLocked(selection, true))}>
 						<Icon name="lock" />
 						<Trans>Lock editing</Trans>

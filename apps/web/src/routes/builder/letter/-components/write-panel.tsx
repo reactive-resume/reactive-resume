@@ -42,6 +42,7 @@ import {
 } from "@/features/letters/store";
 import { useLetterMode } from "@/features/letters/use-letter-mode";
 import { ACCENTS, FONT_PAIRINGS, matchFontPairing, rgbaToHex } from "@/features/resume/editor/design/presets";
+import { useEditorStore } from "@/features/resume/editor/store";
 import { CustomFields } from "@/features/resume/editor/write/basics-card";
 import { TextField, validateEmail, WebsiteField } from "@/features/resume/editor/write/fields";
 import { RichTextEditor } from "@/features/resume/editor/write/rich-text-editor";
@@ -99,15 +100,23 @@ export function LetterWritePanel() {
 	const draft = useLetterEditorStore((state) => state.draft);
 	const status = useLetterEditorStore((state) => state.status);
 	const { data: applications } = useQuery(applicationsListQueryOptions());
+	// While History shows an older version on the page, Write would edit the current letter beside it: hold it.
+	const viewingVersion = useEditorStore((state) => state.historyVersionId !== null);
 	if (!letter) return null;
 
 	const application = applications?.find((item) => item.id === letter.sourceApplicationId) ?? null;
 	// While the letter changed elsewhere, typing would only pile onto edits that can't save. Reload first.
 	const conflict = status === "conflict";
-	const disabled = letter.isLocked || conflict;
+	const disabled = letter.isLocked || conflict || viewingVersion;
 
 	return (
 		<div className="divide-y divide-line">
+			{viewingVersion && !letter.isLocked && (
+				<p className="flex items-center gap-2 bg-info-soft px-4 py-2.5 text-sm text-info-text">
+					<Icon name="clock-counter-clockwise" size={18} />
+					<Trans>You're viewing an earlier version. Go back to now in History to edit.</Trans>
+				</p>
+			)}
 			{letter.isLocked && (
 				<p className="flex items-center gap-2 bg-sunken px-4 py-2.5 text-sm text-ink-2">
 					<Icon name="lock" size={18} />

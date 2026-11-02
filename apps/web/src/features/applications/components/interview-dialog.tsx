@@ -18,7 +18,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { generateId } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
-import { dayKey } from "../interviews";
+import { dayKey, interviewTypeLabel } from "../interviews";
 import { applicationsListQueryKey } from "../queries";
 import { Combobox } from "@/components/ui/combobox";
 import { useCareerTime, withUndo } from "@/features/career/shared";
@@ -26,15 +26,7 @@ import { useClosingValue } from "@/hooks/use-closing-value";
 import { D2, EASE } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
-/** "Screening", "Behavioral": interview types in the interface language. */
-export const interviewTypeLabel = (kind: InterviewKind) =>
-	({
-		screening: t`Screening`,
-		technical: t`Technical`,
-		behavioral: t`Behavioral`,
-		onsite: t`Onsite`,
-		other: t`Other`,
-	})[kind];
+export { interviewTypeLabel } from "../interviews";
 
 const KINDS: InterviewKind[] = ["screening", "technical", "behavioral", "onsite", "other"];
 const LENGTHS = [30, 45, 60, 90];
