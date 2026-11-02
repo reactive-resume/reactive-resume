@@ -612,6 +612,14 @@ msgstr "{0}-இல் {accepted} பயன்படுத்தப்பட்�
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/career/coach.tsx
+msgid "{attached, plural, one {# attached file} other {# attached files}}"
+msgstr ""
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "{attached, plural, one {The attached file goes too.} other {The # attached files go too.}}"
+msgstr ""
+
 #: src/features/resume/editor/design/fit.ts
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
 msgstr ""
@@ -1699,6 +1707,7 @@ msgstr "சான்று சேர்"
 msgid "Add experience"
 msgstr "அனுபவத்தைச் சேர்க்கவும்"
 
+#: src/features/career/today.tsx
 #: src/features/career/workspace/fit.tsx
 msgid "Add facts"
 msgstr ""
@@ -1742,10 +1751,6 @@ msgstr "வேலைவாய்ப்புச் சலுகையைச் �
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 msgstr "ஏற்றுக்கொண்ட வேலைவாய்ப்புகள் உட்பட அவற்றின் நிபந்தனைகளை நீங்களே சேர்க்கலாம். அல்லது விண்ணப்பத்தின் «செய்திகள்» தாவலில் வேலைவாய்ப்பு மின்னஞ்சலை ஒட்டி, AI பயன்படுத்த «எனக்காகப் படி» என்பதைத் தேர்ந்தெடுக்கலாம். விண்ணப்பத்தை ஏற்றுக்கொண்டதாக மூடுவது நிபந்தனைகளைப் பதிவு செய்யாது."
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add one above."
-msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -1854,6 +1859,10 @@ msgstr ""
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "டொமைனை நீங்கள் நிர்வகிக்கும் இடத்தில் இந்தப் பதிவுகளைச் சேர்த்து, பின்னர் சரிபார்க்கவும். மாற்றங்கள் அனைவரையும் சென்றடைய சில மணிநேரம் ஆகலாம்."
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
@@ -2577,8 +2586,8 @@ msgid "Ask about your next career step…"
 msgstr "உங்கள் அடுத்த தொழில் படி பற்றிக் கேளுங்கள்…"
 
 #: src/features/career/coach.tsx
-msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
-msgstr "உங்கள் தேடல் பற்றிக் கேளுங்கள், அல்லது இன்னும் தெளிவாக விளக்க விரும்பும் ஒரு சாதனையைக் கொண்டு வாருங்கள். பதில்கள் கீழே இயக்கப்பட்டவற்றைப் பயன்படுத்தும், எதைச் சார்ந்திருந்தன என்பதையும் சொல்லும்."
+msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
+msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
@@ -2612,6 +2621,7 @@ msgstr "உதவியாளரிடம் “{question}” கேளுங்
 msgid "Ask the assistant to work it in"
 msgstr "உதவியாளரிடம் வேலை செய்யச் சொல்லுங்கள்"
 
+#: src/features/career/today.tsx
 #: src/features/career/workspace/shell.tsx
 msgid "Ask the coach"
 msgstr "ஆலோசகரிடம் கேள்"
@@ -2900,6 +2910,10 @@ msgstr "பெங்காலி"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr "விண்ணப்பிக்க சிறந்தது"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "blank"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -5595,6 +5609,10 @@ msgstr "நீங்கள் இங்கு நகர்த்தும் ஆ
 msgid "Does it use AI?"
 msgstr "இது AI ஐப் பயன்படுத்துகிறதா?"
 
+#: src/features/career/coach.tsx
+msgid "Does this offer meet what I want?"
+msgstr ""
+
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "டொமைன் இணைக்கப்பட்டது"
@@ -6895,6 +6913,11 @@ msgstr "உங்கள் கவர் கடிதத்திலிருந�
 #: src/features/assistant/assistant-panel.tsx
 msgid "From your experience entries"
 msgstr "உங்கள் அனுபவ பதிவுகளிலிருந்து"
+
+#. placeholder {0}: plan.note
+#: src/features/career/knowledge/stories.tsx
+msgid "From your interview plan: {0}"
+msgstr ""
 
 #: src/features/career/knowledge/facts.tsx
 msgid "From your message"
@@ -11546,6 +11569,11 @@ msgstr "R"
 msgid "Raise the design sheet"
 msgstr "வடிவமைப்பு தாளை உயர்த்தவும்"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Ran {0} · done for this interview"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
 msgstr "ஒற்றை நெடுவரிசை தளவமைப்பிலிருந்து மீண்டும் ஏற்றுமதி செய்து, உரையை நகலெடுத்து அது மேலிருந்து கீழாகப் படிக்கப்படுகிறதா எனச் சரிபார்க்கவும்."
@@ -13077,6 +13105,10 @@ msgstr "சேமிப்பு…"
 msgid "Say it aloud"
 msgstr "சத்தமாகச் சொல்லுங்கள்"
 
+#: src/features/career/today.tsx
+msgid "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+msgstr ""
+
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Scan the QR code with your authenticator app, or copy the secret and paste it into the app."
 msgstr "உங்கள் அங்கீகாரச் செயலியால் QR குறியீட்டை ஸ்கேன் செய்யவும், அல்லது ரகசியத்தை நகலெடுத்து செயலியில் ஒட்டவும்."
@@ -13493,11 +13525,11 @@ msgid "Sends your message, earlier messages here and this application (posting, 
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
 msgstr ""
 
 #. placeholder {0}: provider?.label
@@ -13516,6 +13548,11 @@ msgstr "மூத்த தயாரிப்பு வடிவமைப்ப�
 #: src/features/resume/share/format.ts
 msgid "Sent"
 msgstr "அனுப்பப்பட்டது"
+
+#: src/features/career/coach-chat.tsx
+msgctxt "What went to the AI provider with a message"
+msgid "Sent"
+msgstr ""
 
 #. placeholder {0}: version.name
 #: src/features/resume/share/format.ts
@@ -13572,6 +13609,10 @@ msgstr ""
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
 msgstr "உங்கள் அங்கீகாரச் செயலியை அமைக்கவும்"
+
+#: src/features/career/today.tsx
+msgid "Set your preferences"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -13713,6 +13754,7 @@ msgstr "பக்கத்தில் {title} ஐக் காட்டு"
 msgid "Show again"
 msgstr "மீண்டும் காட்டு"
 
+#: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
 msgstr ""
@@ -13767,6 +13809,7 @@ msgid "Show in search engines"
 msgstr "தேடுபொறிகளில் காட்டு"
 
 #: src/features/assistant/conversation.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Show less"
 msgstr ""
 
@@ -16281,6 +16324,11 @@ msgstr "வரவிருக்கும் நேர்காணல்கள�
 msgid "Update"
 msgstr ""
 
+#. placeholder {0}: previous.data.title
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update “{0}” in Knowledge?"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
@@ -16289,12 +16337,20 @@ msgstr ""
 msgid "Update resume"
 msgstr "ரெஸ்யூமைப் புதுப்பி"
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update story"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."
 msgstr "இந்த பயன்பாட்டின் விவரங்களைப் புதுப்பிக்கவும்."
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Update this server before approving an AI destination."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update this story in Knowledge?"
 msgstr ""
 
 #: src/features/applications/components/list-view.tsx
@@ -16527,7 +16583,6 @@ msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sen
 msgstr "பிசகான எழுத்துருக் குறியீடுகள் வாக்கியத்தின் நடுவில் வராமல் இருக்க, உங்கள் எடிட்டரின் வழக்கமான புல்லட் பட்டியலைப் பயன்படுத்தவும்."
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-chat.tsx
 msgid "Used"
 msgstr "பயன்படுத்தியவை"
 
@@ -16785,6 +16840,15 @@ msgstr ""
 msgid "Warning"
 msgstr "எச்சரிக்கை"
 
+#: src/features/career/workspace/apply.tsx
+msgid "was {was}"
+msgstr ""
+
+#. placeholder {0}: part.was.trim() || t`blank`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Was: {0}"
+msgstr ""
+
 #: src/features/homepage/hero.tsx
 msgid "WCAG 2.1 AA"
 msgstr "WCAG 2.1 AA"
@@ -16963,6 +17027,14 @@ msgstr "உங்களுக்கு முக்கியமானவை"
 msgid "What should change?"
 msgstr "எதை மாற்ற வேண்டும்?"
 
+#: src/features/career/coach.tsx
+msgid "What should I ask before deciding on this offer?"
+msgstr ""
+
+#: src/features/career/coach.tsx
+msgid "What should I ask before deciding?"
+msgstr ""
+
 #: src/features/career/workspace/coach-starters.ts
 msgid "What should I ask them?"
 msgstr ""
@@ -17007,6 +17079,10 @@ msgstr "என்ன செய்வது"
 msgid "What was happening before you started?"
 msgstr "நீங்கள் தொடங்குவதற்கு முன் என்ன நடந்துகொண்டிருந்தது?"
 
+#: src/features/career/coach-chat.tsx
+msgid "What was sent"
+msgstr ""
+
 #: src/features/career/knowledge/stories.tsx
 msgid "What were you responsible for?"
 msgstr "நீங்கள் எதற்குப் பொறுப்பாக இருந்தீர்கள்?"
@@ -17036,6 +17112,14 @@ msgstr "நீங்கள் தேடுவது"
 #: src/features/settings/ai/api-keys.tsx
 msgid "What's it for?"
 msgstr "அது எதற்கு?"
+
+#: src/features/career/coach.tsx
+msgid "What's missing from these offers that I should get in writing?"
+msgstr ""
+
+#: src/features/career/coach.tsx
+msgid "What's missing from this offer that I should get in writing?"
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "What's working"
@@ -17102,6 +17186,10 @@ msgstr "உங்கள் காலவரிசையை மீண்டும�
 #: src/features/homepage/faq.tsx
 msgid "Which languages does it speak?"
 msgstr "எந்த மொழிகள் பேசுகிறது?"
+
+#: src/features/career/coach.tsx
+msgid "Which offer fits my requirements better?"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "Which opportunities best match my priorities?"
@@ -17647,6 +17735,10 @@ msgstr "உங்கள் தலைப்புகள் உங்கள் உ
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your headline changed on the resume. The letter updated too."
 msgstr "ரெஸ்யூமில் உங்கள் தலைப்பு மாறிவிட்டது. கடிதமும் புதுப்பிக்கப்பட்டது."
+
+#: src/features/career/today.tsx
+msgid "Your job search starts here"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "your Knowledge"

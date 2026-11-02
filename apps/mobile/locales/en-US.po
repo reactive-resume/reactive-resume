@@ -209,8 +209,10 @@ msgstr "{0, plural, one {# entry} other {# entries}}"
 
 #. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
+#. placeholder {0}: sent.facts.length
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# fact} other {# facts}}"
 
@@ -257,7 +259,9 @@ msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr "{0, plural, one {# role updated.} other {# roles updated.}}"
 
 #. placeholder {0}: offerIds.length
+#. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, one {# saved offer} other {# saved offers}}"
 
@@ -272,7 +276,9 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# selected} other {# selected}}"
 
 #. placeholder {0}: knowledge.stories.length
+#. placeholder {0}: sent.stories.length
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {# story} other {# stories}}"
 
@@ -1342,10 +1348,6 @@ msgstr "Add offer"
 msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 msgstr "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 
-#: src/features/career/facts.tsx
-msgid "Add one above."
-msgstr "Add one above."
-
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "Add one link that shows your work."
@@ -1441,6 +1443,10 @@ msgstr "Add them as a section called “More from your file” to sort later"
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
+
+#: src/features/career/facts.tsx
+msgid "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
+msgstr "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
 
 #: src/features/assistant/messages.tsx
 msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
@@ -1933,6 +1939,7 @@ msgid "Application phone"
 msgstr "Application phone"
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "application summaries"
 
@@ -2048,8 +2055,8 @@ msgid "Ask about your next career step…"
 msgstr "Ask about your next career step…"
 
 #: src/features/assistant/coach-screen.tsx
-msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
-msgstr "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
+msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
+msgstr "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
@@ -2071,6 +2078,7 @@ msgstr "Ask the assistant “{question}”"
 msgid "Ask the assistant to work it in"
 msgstr "Ask the assistant to work it in"
 
+#: src/features/career/today.tsx
 #: src/features/workspace/shell.tsx
 msgid "Ask the coach"
 msgstr "Ask the coach"
@@ -2312,6 +2320,10 @@ msgstr "Below your minimum base salary."
 #: src/features/settings/locale-names.ts
 msgid "Bengali"
 msgstr "Bengali"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "blank"
+msgstr "blank"
 
 #: src/features/applications-board/views.tsx
 msgid "Board"
@@ -4422,6 +4434,10 @@ msgstr "Documents for this job"
 msgid "Documents you move here stay for 30 days."
 msgstr "Documents you move here stay for 30 days."
 
+#: src/features/assistant/coach-screen.tsx
+msgid "Does this offer meet what I want?"
+msgstr "Does this offer meet what I want?"
+
 #: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "Domain connected"
@@ -5368,6 +5384,11 @@ msgstr "From Fit"
 #: src/features/assistant/assistant-screen.tsx
 msgid "From your experience entries"
 msgstr "From your experience entries"
+
+#. placeholder {0}: start.note
+#: src/features/career/stories.tsx
+msgid "From your interview plan: {0}"
+msgstr "From your interview plan: {0}"
 
 #: src/features/career/search-regions-field.tsx
 msgid "From your timezone"
@@ -10414,6 +10435,10 @@ msgstr "Saving the job. Wait for confirmation before making another change."
 msgid "Saving…"
 msgstr "Saving…"
 
+#: src/features/career/today.tsx
+msgid "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+msgstr "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -10742,6 +10767,11 @@ msgstr "Sent"
 msgid "Sent to {0}"
 msgstr "Sent to {0}"
 
+#. placeholder {0}: sent.summary
+#: src/features/assistant/messages.tsx
+msgid "Sent: {0}"
+msgstr "Sent: {0}"
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "Serbian"
@@ -10801,6 +10831,10 @@ msgstr "Set up web search in Settings before enabling discovery. AI is not requi
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
 msgstr "Set up web search in Settings to find roles."
+
+#: src/features/career/today.tsx
+msgid "Set your preferences"
+msgstr "Set your preferences"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -13007,13 +13041,26 @@ msgstr "Up to 25 MB · checked on the server and not stored"
 msgid "Update"
 msgstr "Update"
 
+#. placeholder {0}: previous.data.title
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update “{0}” in Knowledge?"
+msgstr "Update “{0}” in Knowledge?"
+
 #: src/features/applications/add-sheet.tsx
 msgid "Update posting details"
 msgstr "Update posting details"
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update story"
+msgstr "Update story"
+
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."
 msgstr "Update this server before approving an AI destination."
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update this story in Knowledge?"
+msgstr "Update this story in Knowledge?"
 
 #: src/features/applications/queries.ts
 msgid "Update your server before moving applications to a custom lane."
@@ -13447,6 +13494,15 @@ msgstr "Waiting for you"
 msgid "Waiting to hear back"
 msgstr "Waiting to hear back"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "was {was}"
+msgstr "was {was}"
+
+#. placeholder {0}: part.was.trim() || t`blank`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Was: {0}"
+msgstr "Was: {0}"
+
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
 #: src/features/ai/web-access.tsx
@@ -13565,6 +13621,14 @@ msgstr "What matters to you"
 msgid "What should change?"
 msgstr "What should change?"
 
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding on this offer?"
+msgstr "What should I ask before deciding on this offer?"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding?"
+msgstr "What should I ask before deciding?"
+
 #: src/features/workspace/coach-starters.ts
 msgid "What should I ask them?"
 msgstr "What should I ask them?"
@@ -13593,6 +13657,10 @@ msgstr "What they asked you to prepare"
 msgid "What to do"
 msgstr "What to do"
 
+#: src/features/assistant/messages.tsx
+msgid "What was sent"
+msgstr "What was sent"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "What works"
 msgstr "What works"
@@ -13608,6 +13676,14 @@ msgstr "What you sent"
 #: src/features/career/preferences.tsx
 msgid "What you're looking for"
 msgstr "What you're looking for"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from these offers that I should get in writing?"
+msgstr "What's missing from these offers that I should get in writing?"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from this offer that I should get in writing?"
+msgstr "What's missing from this offer that I should get in writing?"
 
 #: src/features/check/writing.tsx
 msgid "What's working"
@@ -13654,6 +13730,10 @@ msgstr "Where you're looking for work"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Where your applications went"
 msgstr "Where your applications went"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Which offer fits my requirements better?"
+msgstr "Which offer fits my requirements better?"
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
@@ -14038,6 +14118,10 @@ msgstr "your form answers"
 msgid "Your headings look the same as your body text."
 msgstr "Your headings look the same as your body text."
 
+#: src/features/career/today.tsx
+msgid "Your job search starts here"
+msgstr "Your job search starts here"
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"
 msgstr "your Knowledge"
@@ -14092,6 +14176,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "Your phone number is written in an unusual shape."
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 #: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "your preferences"
