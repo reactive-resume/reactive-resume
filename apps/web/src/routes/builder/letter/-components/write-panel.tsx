@@ -515,6 +515,7 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 					value={letter.content}
 					disabled={disabled}
 					heightClassName="min-h-[240px]"
+					improve={{ letter: true, applicationId: application?.id }}
 					onChange={(content) => edit({ content })}
 				/>
 			) : (

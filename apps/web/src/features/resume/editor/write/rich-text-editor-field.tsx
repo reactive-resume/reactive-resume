@@ -1,4 +1,5 @@
 import type { ImproveLine } from "./improve";
+import type { ImproveKind } from "./improve";
 import type { Menu } from "@base-ui/react/menu";
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { Editor } from "@tiptap/react";
@@ -180,6 +181,8 @@ export type RichTextEditorProps = {
 	id?: string;
 	/** Replaces the text area's default height (88px to 360px). */
 	heightClassName?: string;
+	/** Improve's presets for a cover letter's body, instead of the resume ones. */
+	improve?: ImproveKind | undefined;
 };
 
 /**
@@ -198,6 +201,7 @@ export function RichTextEditor({
 	id,
 	heightClassName = "max-h-[360px] min-h-[88px]",
 	focusRequest,
+	improve,
 }: RichTextEditorProps & { focusRequest?: FocusRequest }) {
 	const [focused, setFocused] = useState(false);
 	const toolbar = useRef<HTMLDivElement>(null);
@@ -418,6 +422,7 @@ export function RichTextEditor({
 					where={label}
 					onClose={() => setImproving(null)}
 					onAccept={(text) => acceptImprove(improving, text)}
+					kind={improve}
 				/>
 			)}
 

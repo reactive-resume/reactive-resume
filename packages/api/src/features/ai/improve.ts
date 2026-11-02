@@ -8,21 +8,25 @@ const REQUESTS = {
 	verb: "Stronger verb",
 	result: "Add a result",
 	shorter: "Make it shorter",
+	posting: "Tie to the posting",
+	warmer: "Warmer",
 } as const;
 
 export const improveInputSchema = z.object({
 	aiProviderId: z.string().optional(),
 	line: z.string().trim().min(1).max(2_000),
-	action: z.enum(["verb", "result", "shorter", "custom"]),
+	action: z.enum(["verb", "result", "shorter", "posting", "warmer", "custom"]),
 	/** The user's own words: what to change for "Ask for something else…", or the result itself for "Add a result". */
 	request: z.string().trim().max(500).optional(),
 	/** Where the line sits, e.g. "Description · Fieldnote". */
 	where: z.string().trim().max(200).default(""),
 	/** The rest of the field, for tone and what's already said; its results belong to their own lines. */
 	context: z.string().max(10_000).default(""),
+	/** The application whose job posting "Tie to the posting" works from (a cover letter's linked application). */
+	applicationId: z.string().optional(),
 });
 
-type ImproveInput = z.infer<typeof improveInputSchema>;
+type ImproveInput = z.infer<typeof improveInputSchema> & { posting?: string | undefined };
 
 export const improveOutputSchema = z.object({
 	text: z
@@ -55,6 +59,7 @@ export function buildUserPrompt(input: ImproveInput): string {
 		WHERE: input.where || "Not given",
 		LINE: inertMarkers(input.line),
 		CONTEXT: inertMarkers(input.context || "None"),
+		POSTING: inertMarkers(input.posting || "None"),
 	};
 
 	// One pass, so text in the line that looks like a placeholder stays as it is.
