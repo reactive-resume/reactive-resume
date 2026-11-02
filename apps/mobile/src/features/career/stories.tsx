@@ -117,8 +117,10 @@ type StoryEditorProps = {
 	 * typed (so closing keeps them for the review card), and `onSaved` follows a successful save.
 	 */
 	proposal?: { story: CareerStoryData; onChange: (story: CareerStoryData) => void; onSaved: () => void };
+	/** A new story from an interview plan's "Draft story" step: its title, and the step's detail shown as a note. */
+	start?: { title: string; note: string } | undefined;
 };
-export function StoryEditor({ story, facts, onClose, proposal }: StoryEditorProps) {
+export function StoryEditor({ story, facts, onClose, proposal, start }: StoryEditorProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const [draft, setDraft] = useState<CareerStoryData>(
@@ -126,7 +128,7 @@ export function StoryEditor({ story, facts, onClose, proposal }: StoryEditorProp
 			proposal?.story ??
 			story?.data ?? {
 				applicationId: null,
-				title: "",
+				title: start?.title ?? "",
 				situation: "",
 				task: "",
 				action: "",
@@ -162,7 +164,7 @@ export function StoryEditor({ story, facts, onClose, proposal }: StoryEditorProp
 		JSON.stringify(
 			story?.data ?? {
 				applicationId: null,
-				title: "",
+				title: start?.title ?? "",
 				situation: "",
 				task: "",
 				action: "",
@@ -181,6 +183,7 @@ export function StoryEditor({ story, facts, onClose, proposal }: StoryEditorProp
 			title={proposal ? t`Edit the proposed story` : story ? t`Edit STARR story` : t`New STARR story`}
 		>
 			<View style={{ padding: space.s4, gap: space.s4 }}>
+				{start?.note ? <Banner tone="info" message={t`From your interview plan: ${start.note}`} /> : null}
 				<Text color="ink3">{t`Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them.`}</Text>
 				<TextField
 					label={t`Title`}
