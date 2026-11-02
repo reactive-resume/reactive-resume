@@ -506,6 +506,18 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 				{pages.map((page, targetPageIndex) => {
 					// Full-width pages hide their sidebar, so never offer it as a target.
 					const sidebarHidden = sidebarCollapsed || page.fullWidth;
+					// With only the main column to choose, the page itself is the target: no third level.
+					if (sidebarHidden)
+						return (
+							<DropdownMenuItem
+								key={`page-${targetPageIndex}`}
+								disabled={targetPageIndex === pageIndex && columnId === "main"}
+								onClick={() => moveTo(targetPageIndex, "main")}
+							>
+								<Icon name="file" size={16} />
+								<Trans>Page {targetPageIndex + 1}</Trans>
+							</DropdownMenuItem>
+						);
 
 					return (
 						<DropdownMenuSub key={`page-${targetPageIndex}`}>
@@ -593,7 +605,9 @@ function SectionBreakItems({ id }: SectionBreakItemsProps) {
 				onSelect={(event) => event.preventDefault()}
 				onCheckedChange={() => toggle("keepTogether")}
 			>
-				<Trans comment="Layout editor toggle that prevents a section from splitting across pages">Keep together</Trans>
+				<Trans comment="Layout editor toggle that prevents a section from splitting across pages">
+					Keep on one page
+				</Trans>
 			</DropdownMenuCheckboxItem>
 
 			<p className="px-2 pb-1 text-xs text-ink-3">
@@ -607,7 +621,7 @@ function SectionBreakItems({ id }: SectionBreakItemsProps) {
 				onSelect={(event) => event.preventDefault()}
 				onCheckedChange={() => toggle("startOnNewPage")}
 			>
-				<Trans comment="Layout editor toggle that forces a section to begin on a new page">Start on new page</Trans>
+				<Trans comment="Layout editor toggle that forces a section to begin on a new page">Start on a new page</Trans>
 			</DropdownMenuCheckboxItem>
 		</>
 	);

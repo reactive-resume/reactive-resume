@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/compone
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Kbd } from "@reactive-resume/ui/components/kbd";
+import { ariaShortcut, formatShortcut, Kbd } from "@reactive-resume/ui/components/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { getInitials } from "@reactive-resume/utils/string";
@@ -195,7 +195,7 @@ function Sidebar() {
 			<button
 				type="button"
 				aria-label={t`Search or run a command…`}
-				aria-keyshortcuts="Meta+K"
+				aria-keyshortcuts={ariaShortcut("⌘K")}
 				onClick={() => openPalette(true)}
 				className="flex h-[34px] items-center gap-2 rounded-lg border border-line bg-bg px-2.5 text-sm text-ink-3 transition-colors duration-quick hover:text-ink-2"
 			>
@@ -203,7 +203,7 @@ function Sidebar() {
 				<span className="flex-1 text-start">
 					<Trans>Search or run a command…</Trans>
 				</span>
-				<Kbd>⌘K</Kbd>
+				<Kbd>{formatShortcut("⌘K")}</Kbd>
 			</button>
 
 			<nav aria-label={t`App`} className="grid gap-0.5">

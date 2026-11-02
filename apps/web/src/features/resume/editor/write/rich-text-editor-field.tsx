@@ -46,6 +46,11 @@ type ToolbarAction = {
  * Bold, Italic, Underline, Link, then lists; alignment and the rarer formatting (strikethrough, code, highlight,
  * headings, colour, indent, a rule and Clear formatting) sit in two menus so the toolbar fits a narrow column.
  */
+
+/** An address as typed, with `https://` when it names no scheme ("priya.dev"); mailto:, tel: and the rest stay. */
+const withLinkScheme = (address: string) =>
+	/^[a-z][a-z\d+.-]*:/i.test(address) || address.startsWith("#") ? address : `https://${address}`;
+
 function useToolbarActions(): ToolbarAction[] {
 	const prompt = usePrompt();
 
@@ -77,11 +82,14 @@ function useToolbarActions(): ToolbarAction[] {
 				const href = await prompt(t`Link address`, {
 					defaultValue: current || "https://",
 					description: t`Leave it empty to remove the link.`,
+					confirmText: current ? t`Save link` : t`Add link`,
 				});
 				if (href === null) return editor.commands.focus();
 				const chain = editor.chain().focus().extendMarkRange("link");
-				if (!href.trim() || href.trim() === "https://") chain.unsetLink().run();
-				else chain.setLink({ href: href.trim() }).run();
+				const address = href.trim();
+				if (!address || address === "https://") chain.unsetLink().run();
+				// "priya.dev" would be a relative link, broken in the PDF: an address without a scheme is a web address.
+				else chain.setLink({ href: withLinkScheme(address) }).run();
 			},
 		},
 		{
@@ -214,6 +222,8 @@ export function RichTextEditor({
 	const readOnlyTable = useMemo(() => hasUnsupportedTableMarkup(value), [value]);
 	const editorValue = useMemo(() => (readOnlyTable ? toPreviewHtml(value) : value), [readOnlyTable, value]);
 
+	// ⌘K / Ctrl+K adds a link here, as in most writing tools, instead of opening the command palette.
+	const linkShortcut = useRef<(() => void) | null>(null);
 	const editor = useEditor({
 		extensions: richTextExtensions,
 		content: editorValue,
@@ -221,6 +231,15 @@ export function RichTextEditor({
 		immediatelyRender: false,
 		shouldRerenderOnTransaction: false,
 		editorProps: {
+			handleKeyDown: (_view, event) => {
+				const mod = event.metaKey || event.ctrlKey;
+				if (!mod || event.altKey || event.shiftKey || event.key.toLowerCase() !== "k" || !linkShortcut.current)
+					return false;
+				event.preventDefault();
+				event.stopPropagation();
+				linkShortcut.current();
+				return true;
+			},
 			transformPastedHTML: (pasted) => {
 				const html = cleanPastedHtml(pasted);
 				return hasUnsupportedTableMarkup(html) ? toPreviewHtml(html) : html;
@@ -258,6 +277,15 @@ export function RichTextEditor({
 				: { characters: 0, active: [] as boolean[], canImprove: false, formatting: DEFAULT_FORMATTING },
 	});
 	const menus = useToolbarMenus(editor, () => setFocused(false));
+	useEffect(() => {
+		const link = actions.find((action) => action.icon === "link-simple-horizontal");
+		linkShortcut.current =
+			editor && link
+				? () => {
+						if (editor.isEditable) link.run(editor);
+					}
+				: null;
+	}, [actions, editor]);
 
 	// Undo, the page and the assistant change the text from outside; keep the editor in step.
 	useEffect(() => {
@@ -280,6 +308,10 @@ export function RichTextEditor({
 	}, [editor, focusRequest]);
 
 	const editing = focused || improving !== null || menus.open;
+	// Phones dock the toolbar above the keyboard. Inside a sheet it renders in that sheet, so Tab reaches it after the
+	// text (the sheet keeps focus within itself) instead of skipping it.
+	const [fieldElement, setFieldElement] = useState<HTMLDivElement | null>(null);
+	const toolbarHost = fieldElement?.closest<HTMLElement>('[role="dialog"]') ?? null;
 
 	const acceptImprove = (line: ImproveLine, text: string) => {
 		if (!editor) return;
@@ -348,6 +380,7 @@ export function RichTextEditor({
 
 	return (
 		<div
+			ref={setFieldElement}
 			onFocus={() => setFocused(true)}
 			onBlur={(event) => {
 				const next = event.relatedTarget;
@@ -388,7 +421,7 @@ export function RichTextEditor({
 							<Trans>Done</Trans>
 						</button>
 					</div>,
-					document.body,
+					toolbarHost ?? document.body,
 				)}
 
 			{readOnlyTable && (
@@ -401,6 +434,8 @@ export function RichTextEditor({
 
 			<EditorContent editor={editor} />
 			{editing && <AiProviderLoadState state={ai} />}
+			{/* Room for the docked toolbar, so the end of the text and its hints can scroll clear of it. */}
+			{editing && !readOnlyTable && mobile && <div aria-hidden="true" className="h-11" />}
 
 			{/* Under the text, so focusing the field never moves the line you clicked. */}
 			{editing && !readOnlyTable && !mobile && (

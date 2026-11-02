@@ -22,6 +22,7 @@ import { ColorGroup, PageGroup, TypeGroup } from "@/features/resume/editor/desig
 import { TemplateGroup } from "@/features/resume/editor/design/template-group";
 import { OfflineBanner } from "@/features/resume/editor/save-status";
 import { getScrollBehavior } from "@/features/resume/editor/write/reveal";
+import { LockedNote } from "@/features/resume/editor/write/write-panel";
 import { D2 } from "@/libs/motion";
 import { getSectionTitle } from "@/libs/resume/section";
 
@@ -93,6 +94,12 @@ export function DesignPanel() {
 				))}
 			</nav>
 
+			{/* Outside the disabled controls, so Unlock stays usable. */}
+			{locked && (
+				<div className="px-4 pt-4">
+					<LockedNote />
+				</div>
+			)}
 			<fieldset disabled={locked} className="m-0 min-w-0 divide-y divide-line border-0 p-0">
 				<Group id="template" title={<Trans>Template</Trans>}>
 					<TemplateGroup />
@@ -156,6 +163,11 @@ export function DesignSheet() {
 					))}
 				</TabsList>
 
+				{locked && (
+					<div className="shrink-0 px-4 pt-3">
+						<LockedNote />
+					</div>
+				)}
 				<fieldset disabled={locked} className="m-0 min-h-0 min-w-0 flex-1 overflow-y-auto border-0 p-4">
 					<OfflineBanner className="mb-4" />
 					{tab === "template" && <TemplateGroup layout="strip" />}

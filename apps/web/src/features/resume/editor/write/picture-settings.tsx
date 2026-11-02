@@ -205,41 +205,6 @@ function PictureGeometryFields({ form, onAutoSave }: PictureFieldProps) {
 				)}
 			</form.Field>
 
-			<form.Field name="rotation">
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Rotation</Trans>
-						</FormLabel>
-						<InputGroup>
-							<FormControl
-								render={
-									<NumberInput
-										disabled
-										name={field.name}
-										value={field.state.value}
-										min={0}
-										max={360}
-										step={5}
-										onBlur={field.handleBlur}
-										onValueChange={(value) => {
-											field.handleChange(value);
-											onAutoSave();
-										}}
-									/>
-								}
-							/>
-							<InputGroupAddon align="inline-end">
-								<InputGroupText>°</InputGroupText>
-							</InputGroupAddon>
-						</InputGroup>
-						<p className="text-xs text-ink-3">
-							<Trans>Rotation isn't supported by PDF rendering.</Trans>
-						</p>
-					</FormItem>
-				)}
-			</form.Field>
-
 			<form.Field name="aspectRatio">
 				{(field) => (
 					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
@@ -679,7 +644,7 @@ function ColorWidthFields(props: ColorWidthFieldsProps) {
 	);
 }
 
-/** Every photo option: upload with crop, address, show or hide, delete, fit, size, rotation, shape, border and shadow. */
+/** Every photo option: upload with crop, address, show or hide, delete, fit, size, shape, border and shadow. */
 export function PictureSettings() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const appOrigin = window.location.origin;
@@ -831,30 +796,39 @@ export function PictureSettings() {
 					onUploadPicture={onUploadPicture}
 				/>
 
-				<PictureFitField form={form} onAutoSave={handleAutoSave} />
+				{/* The look of a photo is set once there is one: before that, the choice is only which photo. */}
+				{picture.url ? (
+					<>
+						<PictureFitField form={form} onAutoSave={handleAutoSave} />
 
-				<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
-					<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
+						<div className="grid grid-cols-1 gap-4 @md:grid-cols-2">
+							<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
 
-					<ColorWidthFields
-						form={form}
-						colorName="borderColor"
-						widthName="borderWidth"
-						colorLabel={t`Border color`}
-						widthLabel={t`Border width`}
-						step={1}
-						onAutoSave={handleAutoSave}
-					/>
-					<ColorWidthFields
-						form={form}
-						colorName="shadowColor"
-						widthName="shadowWidth"
-						colorLabel={t`Shadow color`}
-						widthLabel={t`Shadow width`}
-						step={0.5}
-						onAutoSave={handleAutoSave}
-					/>
-				</div>
+							<ColorWidthFields
+								form={form}
+								colorName="borderColor"
+								widthName="borderWidth"
+								colorLabel={t`Border color`}
+								widthLabel={t`Border width`}
+								step={1}
+								onAutoSave={handleAutoSave}
+							/>
+							<ColorWidthFields
+								form={form}
+								colorName="shadowColor"
+								widthName="shadowWidth"
+								colorLabel={t`Shadow color`}
+								widthLabel={t`Shadow width`}
+								step={0.5}
+								onAutoSave={handleAutoSave}
+							/>
+						</div>
+					</>
+				) : (
+					<p className="text-xs leading-4 text-ink-3">
+						<Trans>Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added.</Trans>
+					</p>
+				)}
 			</form>
 		</>
 	);

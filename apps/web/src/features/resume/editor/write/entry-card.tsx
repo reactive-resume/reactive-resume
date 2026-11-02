@@ -267,6 +267,14 @@ function deleteEntry(section: WriteSection, entryId: string) {
 		{ newStep: true },
 	);
 	useEditorStore.setState({ selection: null });
+	// Keyboard and screen-reader users keep their place: the entry before (or after) it, else the section's Add.
+	const neighbour = entries[index - 1] ?? entries[index + 1];
+	requestAnimationFrame(() => {
+		const target = neighbour
+			? document.getElementById(entryElementId(neighbour.id))?.querySelector<HTMLElement>("button[aria-expanded]")
+			: document.querySelector<HTMLElement>(`[data-add-entry="${globalThis.CSS.escape(section.id)}"]`);
+		target?.focus();
+	});
 	undoToast(t`Entry deleted`, {
 		// Later edits came after the delete: put the entry back where it was.
 		restore: () => {

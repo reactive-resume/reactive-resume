@@ -32,6 +32,9 @@ const NONE: readonly never[] = [];
 const WebPagePreview = lazyRouteComponent(() => import("@/features/resume/share/web-page-preview"), "WebPagePreview");
 
 /** Share shows the web page; every other mode, the PDF's pages. */
+
+/** The Download & history sheet's width on desktop (the Sheet's `sm:max-w-[440px]`). */
+const SHEET_WIDTH = 440;
 export function PageCanvas() {
 	const [mode] = useEditorMode();
 	if (mode !== "share") return <ResumePageCanvas />;
@@ -61,7 +64,9 @@ function ResumePageCanvas() {
 	const setRendered = useEditorStore((state) => state.setRendered);
 	const breakpoint = useBreakpoint();
 	const [mode] = useEditorMode();
-	const { canvasRef, fitScale, pageScale } = usePageScale(format);
+	// Desktop: the Download & history sheet covers the canvas's end; the page fits, and centres in, what's left.
+	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
+	const { canvasRef, fitScale, pageScale } = usePageScale(format, shifted ? SHEET_WIDTH : 0);
 	const isPhone = breakpoint === "mobile";
 
 	// History: the picked version is drawn on the page, read-only, until the user restores it or goes back to now.
@@ -102,8 +107,6 @@ function ResumePageCanvas() {
 		[setRendered],
 	);
 	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, fitRendered) : null;
-	// Desktop: the page moves 120px aside so it stays visible beside the Download & history sheet.
-	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
 
 	const onSelect = (selection: EditorSelection) => {
 		useEditorStore.setState({ selection });
@@ -142,7 +145,7 @@ function ResumePageCanvas() {
 					pageScale={pageScale}
 					className={cn(
 						"mx-auto w-fit transition-transform duration-emphasized ease-enter",
-						shifted && "-translate-x-[120px] rtl:translate-x-[120px]",
+						shifted && "-translate-x-[220px] rtl:translate-x-[220px]",
 						parser && "hidden",
 					)}
 					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}

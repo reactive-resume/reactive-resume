@@ -126,7 +126,7 @@ test("tablet drawer leaves canvas and zoom controls visible, closes on Escape, a
 	await expect(website).toHaveAttribute("dir", "ltr");
 	await expect(website).toHaveCSS("direction", "ltr");
 	await expect(page.locator('input[type="email"]').first()).toHaveCSS("direction", "ltr");
-	await expect(page.locator("bdi").filter({ hasText: "⌥↑↓" })).toHaveAttribute("dir", "ltr");
+	await expect(page.locator("bdi").filter({ hasText: /⌥↑↓|Alt\+↑↓/ })).toHaveAttribute("dir", "ltr");
 	await expect(page.locator('[data-resume-preview-template][aria-hidden="false"] canvas').first()).toBeVisible();
 	await expect.poll(pageFits).toBe(true);
 	await page.screenshot({ animations: "disabled", path: info.outputPath("tablet-rtl.png") });

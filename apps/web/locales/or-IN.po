@@ -424,6 +424,13 @@ msgstr "{0, plural, one {ଆପଣ ଚୟନ କରିଥିବା ଫଣ୍ଟ 
 msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{0} · {providerLabel}। ଏହି ଆବେଦନ ଓ ଆପଣଙ୍କ ଜ୍ଞାନ ପଠାଏ; ଆପଣଙ୍କ ପ୍ରଦାନକାରୀ ଶୁଳ୍କ ନେଇପାରନ୍ତି।"
 
+#. Mode tab tooltip: the mode, then the key that opens it
+#. placeholder {0}: labels[mode]
+#. placeholder {1}: index + 1
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{0} · key {1}"
+msgstr ""
+
 #. placeholder {0}: current.name
 #. placeholder {0}: letter.name
 #: src/features/letters/store.ts
@@ -1035,9 +1042,20 @@ msgstr "{title} ବିଲୋପ ହେଲା |"
 msgid "{title} is on · next {0}"
 msgstr "{title} ଚାଲୁ ଅଛି · ପରବର୍ତ୍ତୀ {0}"
 
+#. placeholder {0}: rows.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title} moved to position {position} of {0}"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "{title} paused"
 msgstr "{title} ବିରତ"
+
+#. placeholder {0}: to + 1
+#. placeholder {1}: entryIds.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title}, entry {0} of {1}"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "{toCheck, plural, one {# field needs a look.} other {# fields need a look.}}"
@@ -1767,6 +1785,7 @@ msgstr "କୀୱାର୍ଡ ଯୋଡନ୍ତୁ"
 msgid "Add language"
 msgstr "ଭାଷା ଯୋଡନ୍ତୁ |"
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
@@ -3282,10 +3301,6 @@ msgstr "ଆପଣଙ୍କ ପାସୱାର୍ଡ ବଦଳାନ୍ତୁ"
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr "ରେଜୁମକୁ ସିଧାସଳଖ ବଦଳାଇଲେ (ପୂର୍ବ ବାର୍ତ୍ତାଳାପ)"
 
-#: src/dialogs/resume/index.tsx
-msgid "Changed your mind? Rename your resume to something more descriptive."
-msgstr "ମତ ପରିବର୍ତ୍ତନ କଲେ କି? ଆପଣଙ୍କ ରେଜ୍ୟୁମେକୁ ଅଧିକ ବିବରଣା ନାମକୁ ପୁନଃନାମକରଣ କରନ୍ତୁ।"
-
 #: src/features/homepage/footer.tsx
 msgid "Changelog"
 msgstr "ଚେଞ୍ଜଲଗ୍‍ (Changelog)"
@@ -3515,6 +3530,10 @@ msgstr ""
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
 msgstr "ଏକ PDF ଫାଇଲ୍ ବାଛନ୍ତୁ।"
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
@@ -5955,8 +5974,8 @@ msgid "Drafting…"
 msgstr "ଡ୍ରାଫ୍ଟ…"
 
 #: src/features/resume/editor/write/write-panel.tsx
-msgid "drag · ⌥↑↓"
-msgstr "ଡ୍ରାଗ୍ · ⌥↑↓"
+msgid "drag · {reorderKeys}"
+msgstr "ଡ୍ରାଗ୍ · {reorderKeys}"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
@@ -6149,6 +6168,7 @@ msgstr ""
 msgid "Edit question"
 msgstr "ପ୍ରଶ୍ନ ସମ୍ପାଦନ କରନ୍ତୁ"
 
+#: src/dialogs/resume/index.tsx
 #: src/features/career/workspace/preparation.tsx
 msgid "Edit resume"
 msgstr ""
@@ -7105,10 +7125,6 @@ msgstr "ପୂର୍ଣ୍ଣ ନାମ"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Full width"
 msgstr "ପୁରା ପ୍ରସ୍ଥ"
-
-#: src/dialogs/resume/index.tsx
-msgid "Generate a random name"
-msgstr "ଏକ ଯାଦୃଚ୍ଛିକ ନାମ ତିଆରି କରନ୍ତୁ"
 
 #: src/features/settings/account/backup-codes.tsx
 msgid "Generate new codes"
@@ -8193,7 +8209,9 @@ msgstr "ମୋର ରଖ |"
 msgid "Keep my codes"
 msgstr ""
 
+#. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr "ଗୋଟିଏ ପୃଷ୍ଠାରେ ରଖ |"
 
@@ -8236,11 +8254,6 @@ msgstr "ସେଗୁଡ଼ିକୁ ପ୍ରାୟ ଦୁଇ ଧାଡ଼ିର
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
 msgstr "ଦୁଇ କିମ୍ବା ତିନି ପରିବାରକୁ ସୀମିତ ରଖନ୍ତୁ। ପ୍ରତ୍ୟେକ ଅତିରିକ୍ତ ଫଣ୍ଟ ଖରାପ ଭାବରେ ମେଳ ହେବାର ଆଉ ଏକ ସୁଯୋଗ ଅଟେ।"
-
-#. Layout editor toggle that prevents a section from splitting across pages
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Keep together"
-msgstr "ଏକାଠି ରୁହନ୍ତୁ"
 
 #: src/features/settings/account/profile.tsx
 msgid "Keep username"
@@ -10207,6 +10220,10 @@ msgstr ""
 #: src/features/career/shared.tsx
 msgid "Not now"
 msgstr "ଏବେ ନୁହେଁ"
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Not on the page"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
@@ -12471,6 +12488,8 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/account/security.tsx
 msgid "Rename"
 msgstr "ନାମ ପରିବର୍ତ୍ତନ କରନ୍ତୁ |"
@@ -13022,14 +13041,6 @@ msgstr "ରୋମାନିଆନ୍"
 msgid "Roomy"
 msgstr "ରୁମି"
 
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation"
-msgstr "ଘୁର୍ଣ୍ଣନ"
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr "PDF ରେଣ୍ଡରିଂ ଦ୍ୱାରା ଘୂର୍ଣ୍ଣନ ସମର୍ଥିତ ନୁହେଁ |"
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Row {row}, {0}: “{value}” is invalid."
@@ -13189,6 +13200,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Save job, create and open"
+msgstr ""
+
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Save link"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
@@ -13613,6 +13628,10 @@ msgstr "ବିଭାଗଗୁଡିକ · ମୁଦ୍ରଣ କ୍ରମ |"
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Sections found"
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Sections most resumes also have:"
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -14644,14 +14663,11 @@ msgstr "ଆପଣଙ୍କ ପାଖରେ ଥିବା ଗୋଟିଏରୁ �
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
 msgstr "ଶୂନରୁ ଆରମ୍ଭ କରନ୍ତୁ କିମ୍ବା ଆପଣଙ୍କ ପାଖରେ ଥିବା ଜିନିଷ ଇମ୍ପୋର୍ଟ କରନ୍ତୁ। ଏଥିରେ କିଛି ମିନିଟ୍ ଲାଗେ, ଏବଂ ଆପଣ ଯେକୌଣସି ସମୟରେ ଫେରି ଆସିପାରିବେ।"
 
+#. Layout editor toggle that forces a section to begin on a new page
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Start on a new page"
 msgstr "ଏକ ନୂତନ ପୃଷ୍ଠାରେ ଆରମ୍ଭ କରନ୍ତୁ |"
-
-#. Layout editor toggle that forces a section to begin on a new page
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Start on new page"
-msgstr "ନୂଆ ପୃଷ୍ଠାରେ ଆରମ୍ଭ କରନ୍ତୁ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Start the resume with your name on its own line."
@@ -14921,10 +14937,6 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "Swap"
 msgstr "ଅଦଳବଦଳ କରନ୍ତୁ"
-
-#: src/features/resume/editor/page-overlay.tsx
-msgid "Swap rows"
-msgstr "ଧାଡ଼ିଗୁଡ଼ିକ ଅଦଳବଦଳ କରନ୍ତୁ"
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Swap rows: lead with company"
@@ -15442,8 +15454,8 @@ msgid "the employer's message"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
-msgid "The end is before the start."
-msgstr "ଶେଷ ଆରମ୍ଭ ପୂର୍ବରୁ |"
+msgid "The end date is before the start date. Check both dates."
+msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "The exported PDF"
@@ -16652,6 +16664,7 @@ msgid "Until then, Interview prep has your plan, your opening and the questions 
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr "ଆଖ୍ୟାବିହୀନ |"
@@ -16700,10 +16713,6 @@ msgstr ""
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Update resume"
-msgstr "ରେଜ୍ୟୁମେ ଅଦ୍ୟତନ କରନ୍ତୁ"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Update story"

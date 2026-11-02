@@ -419,6 +419,13 @@ msgstr ""
 msgid "{0} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr ""
 
+#. Mode tab tooltip: the mode, then the key that opens it
+#. placeholder {0}: labels[mode]
+#. placeholder {1}: index + 1
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "{0} · key {1}"
+msgstr ""
+
 #. placeholder {0}: current.name
 #. placeholder {0}: letter.name
 #: src/features/letters/store.ts
@@ -1030,8 +1037,19 @@ msgstr ""
 msgid "{title} is on · next {0}"
 msgstr ""
 
+#. placeholder {0}: rows.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title} moved to position {position} of {0}"
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "{title} paused"
+msgstr ""
+
+#. placeholder {0}: to + 1
+#. placeholder {1}: entryIds.length
+#: src/features/resume/editor/write/outline.tsx
+msgid "{title}, entry {0} of {1}"
 msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
@@ -1762,6 +1780,7 @@ msgstr ""
 msgid "Add language"
 msgstr ""
 
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/settings/profile.tsx
 msgid "Add link"
 msgstr ""
@@ -3277,10 +3296,6 @@ msgstr ""
 msgid "Changed the resume directly (an earlier conversation)"
 msgstr ""
 
-#: src/dialogs/resume/index.tsx
-msgid "Changed your mind? Rename your resume to something more descriptive."
-msgstr ""
-
 #: src/features/homepage/footer.tsx
 msgid "Changelog"
 msgstr ""
@@ -3509,6 +3524,10 @@ msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
+msgstr ""
+
+#: src/features/resume/editor/write/picture-settings.tsx
+msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
 msgstr ""
 
 #: src/features/career/workspace/fit.tsx
@@ -5950,7 +5969,7 @@ msgid "Drafting…"
 msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
-msgid "drag · ⌥↑↓"
+msgid "drag · {reorderKeys}"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -6144,6 +6163,7 @@ msgstr ""
 msgid "Edit question"
 msgstr ""
 
+#: src/dialogs/resume/index.tsx
 #: src/features/career/workspace/preparation.tsx
 msgid "Edit resume"
 msgstr ""
@@ -7099,10 +7119,6 @@ msgstr ""
 #. Layout editor toggle label that makes a page single-column
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Full width"
-msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Generate a random name"
 msgstr ""
 
 #: src/features/settings/account/backup-codes.tsx
@@ -8187,7 +8203,9 @@ msgstr ""
 msgid "Keep my codes"
 msgstr ""
 
+#. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr ""
 
@@ -8229,11 +8247,6 @@ msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep to two or three families. Each extra font is another chance for one to map badly."
-msgstr ""
-
-#. Layout editor toggle that prevents a section from splitting across pages
-#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Keep together"
 msgstr ""
 
 #: src/features/settings/account/profile.tsx
@@ -10200,6 +10213,10 @@ msgstr ""
 
 #: src/features/career/shared.tsx
 msgid "Not now"
+msgstr ""
+
+#: src/features/resume/editor/write/section-row.tsx
+msgid "Not on the page"
 msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -12464,6 +12481,8 @@ msgstr ""
 
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/editor/write/section-row.tsx
+#: src/features/resume/share/history-tab.tsx
 #: src/features/settings/account/security.tsx
 msgid "Rename"
 msgstr ""
@@ -13015,14 +13034,6 @@ msgstr ""
 msgid "Roomy"
 msgstr ""
 
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation"
-msgstr ""
-
-#: src/features/resume/editor/write/picture-settings.tsx
-msgid "Rotation isn't supported by PDF rendering."
-msgstr ""
-
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Row {row}, {0}: “{value}” is invalid."
@@ -13182,6 +13193,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Save job, create and open"
+msgstr ""
+
+#: src/features/resume/editor/write/rich-text-editor-field.tsx
+msgid "Save link"
 msgstr ""
 
 #: src/features/career/workspace/messages.tsx
@@ -13606,6 +13621,10 @@ msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Sections found"
+msgstr ""
+
+#: src/features/resume/editor/write/add-section.tsx
+msgid "Sections most resumes also have:"
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -14637,13 +14656,10 @@ msgstr ""
 msgid "Start from scratch or import what you have. It takes a few minutes, and you can come back to it anytime."
 msgstr ""
 
-#: src/features/resume/editor/write/section-row.tsx
-msgid "Start on a new page"
-msgstr ""
-
 #. Layout editor toggle that forces a section to begin on a new page
+#: src/features/resume/editor/write/section-row.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
-msgid "Start on new page"
+msgid "Start on a new page"
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -14913,10 +14929,6 @@ msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Swap"
-msgstr ""
-
-#: src/features/resume/editor/page-overlay.tsx
-msgid "Swap rows"
 msgstr ""
 
 #: src/features/resume/editor/design/entries-group.tsx
@@ -15435,7 +15447,7 @@ msgid "the employer's message"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
-msgid "The end is before the start."
+msgid "The end date is before the start date. Check both dates."
 msgstr ""
 
 #: src/features/resume/editor/check/check-panel.tsx
@@ -16644,6 +16656,7 @@ msgid "Until then, Interview prep has your plan, your opening and the questions 
 msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
+#: src/features/resume/editor/write/outline.tsx
 #: src/features/resume/stylesheet/targets.ts
 msgid "Untitled"
 msgstr ""
@@ -16691,10 +16704,6 @@ msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
-msgstr ""
-
-#: src/dialogs/resume/index.tsx
-msgid "Update resume"
 msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx

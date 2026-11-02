@@ -8,6 +8,7 @@ import {
 	inferDateFormat,
 	readLegacyDates,
 	syncResumeDates,
+	resumeDatesToPeriod,
 } from "./dates";
 import { defaultResumeData } from "./default";
 
@@ -318,5 +319,18 @@ describe("reading an expected end date back", () => {
 		const dates = { start: "2023-09", end: "2027-05", present: false, expected: true };
 		const text = formatResumeDates(dates, { locale: "en-US" });
 		expect(readLegacyDates(text, { locale: "en-US", single: false })).toEqual(dates);
+	});
+});
+
+describe("resumeDatesToPeriod", () => {
+	it("leaves out an end date kept while Present is on", () => {
+		expect(resumeDatesToPeriod({ start: "2023-09", end: "2020-01", present: true })).toEqual({
+			start: { year: 2023, month: 9 },
+			ongoing: true,
+		});
+		expect(resumeDatesToPeriod({ start: "2023-09", end: "2025-01", present: false })?.end).toEqual({
+			year: 2025,
+			month: 1,
+		});
 	});
 });

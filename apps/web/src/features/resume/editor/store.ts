@@ -33,14 +33,16 @@ type WritingReview = { summary: string; strengths: readonly string[]; notes: rea
 export type EditorSelection = PageMapTarget;
 
 export const ZOOM_MIN = 0.6;
-export const ZOOM_MAX = 1.5;
+export const ZOOM_MAX = 3;
+/** Fit never draws the page larger than this, however wide the canvas: zooming in goes past it, up to ZOOM_MAX. */
+export const FIT_MAX = 1.5;
 export const ZOOM_STEP = 0.1;
 
 type EditorStore = {
 	/** The mode just picked, shown while `?mode=` catches up (every navigation refetches the session first). */
 	pendingMode: EditorMode | null;
 	selection: EditorSelection | null;
-	/** "fit" fits the page width to the canvas; otherwise an explicit scale between 60% and 150%. */
+	/** "fit" fits the page width to the canvas; otherwise an explicit scale between 60% and 300%. */
 	zoom: number | "fit";
 	/** Tablet only: the panel is a drawer over the page. */
 	drawerOpen: boolean;
