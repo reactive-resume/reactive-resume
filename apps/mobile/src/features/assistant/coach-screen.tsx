@@ -6,11 +6,12 @@ import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { coachStarters } from "@reactive-resume/schema/career-starters";
 import { formatList } from "@reactive-resume/utils/locale";
 import { refreshThreads, useThreads } from "./chat";
 import { ChatView, ContextChip, type ChatHistory } from "./chat-view";
+import { ChatWelcome } from "./chat-welcome";
 import {
 	ConnectionNotice,
 	ModelButton,
@@ -181,10 +182,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 				>
 					<Icon name="sparkle" size={18} color={colors.accent} />
 					<View style={{ flex: 1 }}>
-						<ModelButton
-							label={provider ? `${provider.label} · ${provider.model}` : label}
-							onPress={() => setModelOpen(true)}
-						/>
+						<ModelButton current={provider} label={label} onPress={() => setModelOpen(true)} />
 					</View>
 					{chips.memory && knowledge.isError ? (
 						<Button variant="link" size="sm" label={t`Retry`} onPress={knowledge.retry} />
@@ -327,7 +325,6 @@ type StartersProps = { disabled: boolean; offers: number; onPick: (text: string)
 
 function Starters({ disabled, offers, onPick }: StartersProps) {
 	const { t } = useLingui();
-	const { colors, radius, space } = useTheme();
 	const applications = useApplications();
 	const opportunities = useOpportunities();
 	const now = useNow();
@@ -372,42 +369,22 @@ function Starters({ disabled, offers, onPick }: StartersProps) {
 					]
 				: accountStarters;
 	return (
-		<View style={{ gap: space.s4, paddingTop: space.s4 }}>
-			<View style={{ gap: space.s2 }}>
-				<Text variant="heading" accessibilityRole="header">
-					<Trans>What are you working on?</Trans>
-				</Text>
-				<Text color="ink2">
+		<ChatWelcome
+			description={
+				<>
 					<Trans>
 						Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on
 						below, and each shows what was sent with it.
 					</Trans>
-				</Text>
-			</View>
-			{starters.map((starter) => (
-				<Pressable
-					key={starter.text}
-					accessibilityRole="button"
-					disabled={disabled}
-					onPress={() => onPick(starter.text)}
-					style={({ pressed }) => ({
-						flexDirection: "row",
-						alignItems: "center",
-						gap: space.s3,
-						minHeight: 52,
-						padding: space.s3,
-						borderWidth: 1,
-						borderColor: colors.line,
-						borderRadius: radius.rLg,
-						backgroundColor: pressed ? colors.press : colors.raised,
-						opacity: disabled ? 0.6 : 1,
-					})}
-				>
-					<Icon name={starter.icon} size={22} color={colors.accentText} />
-					<Text style={{ flex: 1 }}>{starter.text}</Text>
-				</Pressable>
-			))}
-		</View>
+				</>
+			}
+			starters={starters.map((starter) => ({
+				icon: starter.icon,
+				label: starter.text,
+				disabled,
+				onPick: () => onPick(starter.text),
+			}))}
+		/>
 	);
 }
 

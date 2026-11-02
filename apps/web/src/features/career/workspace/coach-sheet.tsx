@@ -5,6 +5,7 @@ import type { WorkspaceTab } from "@reactive-resume/schema/career";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -23,7 +24,6 @@ import {
 	connectionName,
 	deleteConversation,
 	MemoryNote,
-	ModelChip,
 	titleFor,
 	useConversationDate,
 	WebResearchChip,
@@ -31,6 +31,7 @@ import {
 } from "../coach-thread";
 import { ContextChip, PrivacyLine, tabLabel } from "../shared";
 import { coachStarters } from "./coach-starters";
+import { ChatWelcome, ModelMenu } from "@/features/assistant/chat-chrome";
 import { ConnectionNotice } from "@/features/assistant/connection-notice";
 import { ProviderSetup } from "@/features/assistant/provider-setup";
 import { SetUpAi } from "@/features/assistant/provider-setup";
@@ -120,6 +121,7 @@ function CoachSheetBody({
 	onConversationChange,
 	onDelete,
 }: CoachSheetBodyProps) {
+	const navigate = useNavigate();
 	const [choosingModel, setChoosingModel] = useState(false);
 	const queryClient = useQueryClient();
 	const providers = useHasUsableAiProvider();
@@ -200,9 +202,10 @@ function CoachSheetBody({
 				</SheetDescription>
 			</div>
 			{(usable.length > 0 || summary) && (
-				<ModelChip
+				<ModelMenu
 					open={modelMenuOpen}
 					onOpenChange={setModelMenuOpen}
+					onConnect={() => void navigate({ to: "/dashboard/settings/ai" })}
 					providers={usable}
 					current={provider}
 					label={label}
@@ -300,22 +303,20 @@ function CoachSheetBody({
 				onChangeConnection={() => setModelMenuOpen(true)}
 				header={() => null}
 				empty={(send) => (
-					<div className="grid gap-3">
-						<p className="text-sm text-ink-2">
+					<ChatWelcome
+						description={
 							<Trans>
 								Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see
 								you're on the {tabName} tab.
 							</Trans>
-						</p>
-						{/* A first question for where the application stands; each sends at once. */}
-						<div className="flex flex-wrap gap-1.5">
-							{coachStarters(application.status).map((starter) => (
-								<Button key={starter} size="sm" variant="secondary" onClick={() => send(starter)}>
-									{starter}
-								</Button>
-							))}
-						</div>
-					</div>
+						}
+						starters={coachStarters(application.status).map((starter) => ({
+							icon: "chat-text",
+							label: starter,
+							disabled: !provider,
+							onPick: () => send(starter),
+						}))}
+					/>
 				)}
 				chips={
 					<>

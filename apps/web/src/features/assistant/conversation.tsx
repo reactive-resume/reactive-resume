@@ -38,6 +38,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { Trace, TraceIcon, TraceLine, TraceTitle } from "@reactive-resume/ui/components/trace";
 import { cn } from "@reactive-resume/utils/style";
 import { attachmentPart, fileToBase64, transcriptOf } from "./chat";
+import { ChatComposer } from "./chat-chrome";
 import { AssistantMarkdown } from "./markdown";
 import { QuestionCard } from "./question-card";
 import { ToolApprovals } from "./tool-approvals";
@@ -50,7 +51,6 @@ import { runFit } from "@/features/resume/editor/design/fit";
 import { ChangeSet, Coverage } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage, isProviderFailure, toastError } from "@/libs/error-message";
-import { isImeComposing } from "@/libs/keyboard";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
@@ -1006,7 +1006,6 @@ type ComposerProps = {
 export function Composer(props: ComposerProps) {
 	const { document, context, onContextChange, streaming, disabled } = props;
 	const openDialog = useDialogStore((state) => state.openDialog);
-	const id = useId();
 	const [text, setText] = useState(props.initialText ?? "");
 	const [attachments, setAttachments] = useState<ChatAttachment[]>([]);
 	const [uploading, setUploading] = useState(false);
@@ -1124,109 +1123,89 @@ export function Composer(props: ComposerProps) {
 				</p>
 			)}
 			{/* The Knowledge switch is always here, so the row is too. */}
-			<div className="flex flex-wrap gap-1.5">
-				<ContextChip
-					pressed={context.memory === true}
-					onPressedChange={(memory) => onContextChange({ ...context, memory })}
-					label={t`Knowledge`}
-					tooltip={
-						context.memory
-							? t`The assistant can search facts and stories you share with all applications. It can't change them.`
-							: t`Let the assistant search facts and stories you share with all applications, read-only`
-					}
-				/>
-				{chips.map((chip) =>
-					context[chip.key] ? (
-						<RemovableChip
-							key={chip.key}
-							icon={chip.icon}
-							label={chip.label}
-							maxWidth="max-w-[160px]"
-							removeLabel={t`Don't send ${chip.label}`}
-							onRemove={() => onContextChange({ ...context, [chip.key]: false })}
-						/>
-					) : (
-						// A chip that's off stays as a dashed outline, so it can be sent again.
-						<button
-							key={chip.key}
-							type="button"
-							aria-label={t`Send ${chip.label} again`}
-							onClick={() => onContextChange({ ...context, [chip.key]: true })}
-							className="touch-target relative flex h-[26px] items-center gap-1 rounded-md border border-dashed border-line-2 px-2 text-xs text-ink-3 transition-colors hover:bg-hover hover:text-ink"
-						>
-							<Icon name="plus" size={14} />
-							<span className="max-w-[160px] truncate">{chip.label}</span>
-						</button>
-					),
-				)}
-				{attachments.map((attachment) => (
-					<RemovableChip
-						key={attachment.id}
-						icon="paperclip"
-						label={attachment.filename}
-						maxWidth="max-w-[140px]"
-						removeLabel={t`Remove ${attachment.filename}`}
-						onRemove={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
-					/>
-				))}
-			</div>
-
-			<div className="flex items-end gap-1.5 rounded-xl border border-control-border bg-raised p-1.5 transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-3 focus-within:ring-accent-soft">
-				<label htmlFor={id} className="sr-only">
-					<Trans>Message the assistant</Trans>
-				</label>
-				<textarea
-					id={id}
-					rows={2}
-					value={text}
-					disabled={disabled}
-					placeholder={t`Ask, or describe a change…`}
-					onChange={(event) => setText(event.target.value)}
-					onKeyDown={(event) => {
-						if (event.key === "Enter" && !event.shiftKey && !isImeComposing(event)) {
-							event.preventDefault();
-							submit();
-						}
-						if (event.key === "Escape" && streaming) {
-							event.preventDefault();
-							props.onStop();
-						}
-					}}
-					className="field-sizing-content max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-1.5 py-1 text-sm outline-none placeholder:text-ink-3 pointer-coarse:text-base"
-				/>
-				{(props.threadId || props.ensureThread) && (
+			<ChatComposer
+				label={t`Message the assistant`}
+				placeholder={t`Ask, or describe a change…`}
+				value={text}
+				onValueChange={setText}
+				disabled={disabled}
+				sendDisabled={!hasText || disabled || uploading}
+				streaming={streaming}
+				onSend={submit}
+				onStop={props.onStop}
+				chips={
 					<>
-						<IconButton
-							icon="paperclip"
-							label={t`Attach a file`}
-							size="icon-sm"
-							disabled={disabled || uploading}
-							className="text-ink-2"
-							onClick={() => fileInput.current?.click()}
+						<ContextChip
+							pressed={context.memory === true}
+							onPressedChange={(memory) => onContextChange({ ...context, memory })}
+							label={t`Knowledge`}
+							tooltip={
+								context.memory
+									? t`The assistant can search facts and stories you share with all applications. It can't change them.`
+									: t`Let the assistant search facts and stories you share with all applications, read-only`
+							}
 						/>
-						<input
-							ref={fileInput}
-							type="file"
-							multiple
-							accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
-							className="hidden"
-							onChange={(event) => void upload(event.target.files)}
-						/>
+						{chips.map((chip) =>
+							context[chip.key] ? (
+								<RemovableChip
+									key={chip.key}
+									icon={chip.icon}
+									label={chip.label}
+									maxWidth="max-w-[160px]"
+									removeLabel={t`Don't send ${chip.label}`}
+									onRemove={() => onContextChange({ ...context, [chip.key]: false })}
+								/>
+							) : (
+								// A chip that's off stays as a dashed outline, so it can be sent again.
+								<button
+									key={chip.key}
+									type="button"
+									aria-label={t`Send ${chip.label} again`}
+									onClick={() => onContextChange({ ...context, [chip.key]: true })}
+									className="touch-target relative flex h-[26px] items-center gap-1 rounded-md border border-dashed border-line-2 px-2 text-xs text-ink-3 transition-colors hover:bg-hover hover:text-ink"
+								>
+									<Icon name="plus" size={14} />
+									<span className="max-w-[160px] truncate">{chip.label}</span>
+								</button>
+							),
+						)}
+						{attachments.map((attachment) => (
+							<RemovableChip
+								key={attachment.id}
+								icon="paperclip"
+								label={attachment.filename}
+								maxWidth="max-w-[140px]"
+								removeLabel={t`Remove ${attachment.filename}`}
+								onRemove={() => setAttachments((current) => current.filter((item) => item.id !== attachment.id))}
+							/>
+						))}
 					</>
-				)}
-				<button
-					type="button"
-					aria-label={streaming ? t`Stop` : t`Send`}
-					disabled={!streaming && (!hasText || disabled || uploading)}
-					onClick={streaming ? props.onStop : submit}
-					className={cn(
-						"touch-target relative grid size-[34px] shrink-0 place-items-center rounded-lg transition-[background-color,color,scale] duration-quick ease-enter enabled:active:scale-[0.97]",
-						streaming ? "bg-ink text-bg" : hasText ? "bg-accent text-on-accent" : "bg-sunken text-ink-3",
-					)}
-				>
-					<Icon name={streaming ? "stop" : "arrow-up"} size={20} />
-				</button>
-			</div>
+				}
+				actions={
+					<>
+						{(props.threadId || props.ensureThread) && (
+							<>
+								<IconButton
+									icon="paperclip"
+									label={t`Attach a file`}
+									size="icon-sm"
+									disabled={disabled || uploading}
+									className="text-ink-2"
+									onClick={() => fileInput.current?.click()}
+								/>
+								<input
+									ref={fileInput}
+									type="file"
+									multiple
+									accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
+									className="hidden"
+									onChange={(event) => void upload(event.target.files)}
+								/>
+							</>
+						)}
+					</>
+				}
+			/>
 
 			<p className="text-xs leading-4 text-ink-3">
 				{disclosure}

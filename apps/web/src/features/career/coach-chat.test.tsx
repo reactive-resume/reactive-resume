@@ -57,6 +57,7 @@ vi.mock("@/libs/orpc/client", () => ({
 }));
 
 import { ChatView } from "./coach-chat";
+import { Composer } from "./coach-thread";
 import { QuestionCard } from "@/features/assistant/question-card";
 import { useAssistantChat } from "@/features/assistant/use-assistant-chat";
 
@@ -460,4 +461,36 @@ it("names a lost connection and offers another AI connection only for provider f
 	fireEvent.keyDown(view, { key: "Enter" });
 	await screen.findByText("Couldn't reach Reactive Resume. Check your internet connection, then try again.");
 	expect(screen.queryByRole("button", { name: "Change connection" })).toBeNull();
+});
+
+it("keeps the coach draft when sending is declined, and clears only after successful send", async () => {
+	const send = vi.fn().mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+	render(
+		<I18nProvider i18n={i18n}>
+			<Composer
+				variant="page"
+				placeholder="Ask about your next career step…"
+				draftKey="shared-chrome"
+				chips={<span>Applications context</span>}
+				privacy={() => <p>Coach privacy stays here</p>}
+				streaming={false}
+				disabled={false}
+				ensureThread={async () => "thread"}
+				onSend={send}
+				onStop={() => {}}
+			/>
+		</I18nProvider>,
+	);
+	const input = screen.getByRole("textbox", { name: "Message the coach" });
+	fireEvent.change(input, { target: { value: "My career draft" } });
+	fireEvent.keyDown(input, { key: "Enter", isComposing: true });
+	expect(send).not.toHaveBeenCalled();
+	fireEvent.keyDown(input, { key: "Enter" });
+	await waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+	expect(input).toHaveValue("My career draft");
+	expect(screen.getByText("Applications context")).toBeVisible();
+	expect(screen.getByText("Coach privacy stays here")).toBeVisible();
+	fireEvent.click(screen.getByRole("button", { name: "Send" }));
+	await waitFor(() => expect(input).toHaveValue(""));
+	expect(send).toHaveBeenLastCalledWith("My career draft", []);
 });
