@@ -282,3 +282,20 @@ describe("syncResumeDates", () => {
 		expect(data).toEqual(once);
 	});
 });
+
+describe("expected end dates", () => {
+	it("prints an end date still to come as Expected", () => {
+		expect(
+			formatResumeDates({ start: "2023-09", end: "2027-05", present: false, expected: true }, { locale: "en-US" }),
+		).toBe("Sep 2023 – Expected May 2027");
+	});
+
+	it("leaves Expected out while the entry is ongoing or has no end date", () => {
+		expect(formatResumeDates({ start: "2023", end: null, present: true, expected: true }, { locale: "en-US" })).toBe(
+			"2023 – Present",
+		);
+		expect(formatResumeDates({ start: "2023", end: null, present: false, expected: true }, { locale: "en-US" })).toBe(
+			"2023",
+		);
+	});
+});

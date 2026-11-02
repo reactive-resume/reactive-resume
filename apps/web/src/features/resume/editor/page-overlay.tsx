@@ -6,6 +6,7 @@ import { entryHeaderOf } from "@reactive-resume/schema/resume/data";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { isSameSelection, useEditorStore } from "./store";
+import { useEditorMode } from "./use-editor-mode";
 import { getSectionType } from "./write/model";
 import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 
@@ -37,6 +38,8 @@ const readSelection = (element: HTMLElement): EditorSelection | null => {
 export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) {
 	const selection = useEditorStore((state) => state.selection);
 	const styleHighlight = useEditorStore((state) => state.styleHighlight);
+	// Only Write edits the entry: Design and Check keep the outline but say nothing about editing.
+	const [mode] = useEditorMode();
 	const updateResumeData = useUpdateResumeData();
 	const swappable = useCurrentBuilderResumeSelector((resume) => {
 		if (resume.isLocked || selection?.kind !== "item") return false;
@@ -113,31 +116,33 @@ export function PageOverlay({ pageIndex, pageMap, onSelect }: PageOverlayProps) 
 				))}
 			</div>
 			{/* The tag sits outside the hidden layer so its button is reachable; clicks elsewhere on it fall through. */}
-			{selected.map((node) => (
-				<div
-					key={`tag:${node.key}:${node.y}`}
-					className="pointer-events-none absolute max-sm:hidden"
-					style={boxOf(node)}
-				>
-					<div className="absolute start-1 -top-2 flex gap-1 text-[8px] leading-3 font-semibold">
-						<span aria-hidden="true" className="rounded-md bg-accent px-1 text-on-accent">
-							<Trans>Editing</Trans>
-						</span>
-						{swappable && (
-							<button
-								type="button"
-								onClick={swapRows}
-								// The canvas reads a press outside an entry as "tapped the page" and closes the tablet drawer.
-								onPointerDown={(event) => event.stopPropagation()}
-								className="pointer-events-auto flex cursor-pointer items-center gap-0.5 rounded-md bg-raised px-1 text-accent-text ring-1 ring-accent transition-colors duration-quick ring-inset hover:bg-accent-soft"
-							>
-								<Icon name="arrows-down-up" size={9} />
-								<Trans>Swap rows</Trans>
-							</button>
-						)}
+			{mode === "write" &&
+				selected.map((node) => (
+					<div
+						key={`tag:${node.key}:${node.y}`}
+						className="pointer-events-none absolute max-sm:hidden"
+						style={boxOf(node)}
+					>
+						{/* On the outline's lower end, clear of the section heading that sits right above an entry. */}
+						<div className="absolute end-1 -bottom-2 flex gap-1 text-[8px] leading-3 font-semibold">
+							<span aria-hidden="true" className="rounded-md bg-accent px-1 text-on-accent">
+								<Trans>Editing</Trans>
+							</span>
+							{swappable && (
+								<button
+									type="button"
+									onClick={swapRows}
+									// The canvas reads a press outside an entry as "tapped the page" and closes the tablet drawer.
+									onPointerDown={(event) => event.stopPropagation()}
+									className="pointer-events-auto flex cursor-pointer items-center gap-0.5 rounded-md bg-raised px-1 text-accent-text ring-1 ring-accent transition-colors duration-quick ring-inset hover:bg-accent-soft"
+								>
+									<Icon name="arrows-down-up" size={9} />
+									<Trans>Swap rows</Trans>
+								</button>
+							)}
+						</div>
 					</div>
-				</div>
-			))}
+				))}
 		</>
 	);
 }

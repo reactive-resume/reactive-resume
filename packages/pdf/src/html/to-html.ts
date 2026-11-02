@@ -307,11 +307,16 @@ function convertNode(node: HostNode, parent: Context): string {
 			const isRow = direction === "row" || direction === "row-reverse";
 			const inHeader = region === "header" || parent.inHeader === true;
 			const fold = isRow && !split && (tag === "section" || (inHeader && holdsBlocks(node)));
+			// A box that paints its own band (Pikachu's coloured header) spans a folded row instead of hugging its text.
+			const fill =
+				typeof flat.backgroundColor === "string" &&
+				!/^(transparent|none|rgba\([^)]*,\s*0\))$/i.test(flat.backgroundColor);
 			const extra = [
 				semantic?.attributes ?? "",
 				region ? ` data-region="${region}"` : "",
 				split ? " data-split" : "",
 				fold ? " data-fold" : "",
+				fill ? " data-fill" : "",
 				props.fixed === true ? " data-fixed" : "",
 			].join("");
 			const inner = { ...context, inHeader };
@@ -438,6 +443,8 @@ const BASE_CSS = `
 .rr [data-fold]{flex-direction:column!important;align-items:flex-start!important;row-gap:8px}
 .rr:dir(rtl) [data-fold]{align-items:flex-end!important}
 .rr [data-fold]>*{width:auto!important;max-width:100%!important;flex:none!important}
+.rr [data-fold]>[data-fill]{align-self:stretch!important}
+.rr [data-region][data-fill]{flex-grow:1!important}
 .rr [data-fixed]{display:none!important}
 }
 `;

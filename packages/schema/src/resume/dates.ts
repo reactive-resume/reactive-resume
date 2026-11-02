@@ -1,6 +1,7 @@
 import type { ResumeData } from "./data";
 import type { EndpointReading, ParsedPeriod, PeriodEndpoint } from "./period";
 import z from "zod";
+import expectedLabels from "./expected-labels.json";
 import { ONGOING_TOKENS_BY_LANGUAGE, readPeriod, readSingleDate } from "./period";
 import presentLabels from "./present-labels.json";
 
@@ -20,6 +21,13 @@ export const resumeDatesSchema = z
 			.describe("When it started, or the date itself for single-date entries (awards, certifications, publications)."),
 		end: yearMonthSchema.nullable().catch(null).describe("When it ended. Null while ongoing or for single dates."),
 		present: z.boolean().catch(false).describe("Whether it's ongoing, printed as 'Present'."),
+		expected: z
+			.boolean()
+			.optional()
+			.catch(undefined)
+			.describe(
+				"Whether the end date is still to come, such as a degree in progress: printed as 'Expected May 2027'. Ignored while present is true.",
+			),
 		raw: z
 			.string()
 			.optional()
@@ -47,6 +55,12 @@ export const DEFAULT_DATE_FORMAT: DateFormat = "short";
 export const EMPTY_RESUME_DATES: ResumeDates = { start: null, end: null, present: false };
 
 const labels: Record<string, string> = presentLabels;
+const expected: Record<string, string> = expectedLabels;
+
+/** "Expected" in a resume's locale, before an end date still to come; English until a locale translates it. */
+export function getExpectedLabel(locale: string): string {
+	return expected[locale] || "Expected";
+}
 
 /**
  * "Present" in a resume's locale, as dates print it. Locales without a translation yet fall back to the
@@ -188,6 +202,8 @@ export type DateFormatOptions = {
 	format?: DateFormat | undefined;
 	/** Defaults to "Present" in the locale. */
 	presentLabel?: string | undefined;
+	/** Defaults to "Expected" in the locale. */
+	expectedLabel?: string | undefined;
 };
 
 const monthFormatters = new Map<string, Intl.DateTimeFormat>();
@@ -252,11 +268,12 @@ export function formatResumeDates(dates: ResumeDates, options: DateFormatOptions
 	if (dates.raw !== undefined) return dates.raw;
 
 	const start = dates.start ? formatYearMonth(dates.start, options) : "";
+	const endDate = dates.end ? formatYearMonth(dates.end, options) : "";
 	const end = dates.present
 		? (options.presentLabel ?? getPresentLabel(options.locale))
-		: dates.end
-			? formatYearMonth(dates.end, options)
-			: "";
+		: endDate && dates.expected
+			? `${options.expectedLabel ?? getExpectedLabel(options.locale)} ${endDate}`
+			: endDate;
 
 	return start && end ? `${start} – ${end}` : start || end;
 }
@@ -270,7 +287,12 @@ export function formatResumeDates(dates: ResumeDates, options: DateFormatOptions
  */
 export function syncResumeDates(data: ResumeData) {
 	const { locale, dateFormat } = data.metadata.page;
-	const options: DateFormatOptions = { locale, format: dateFormat, presentLabel: getPresentLabel(locale) };
+	const options: DateFormatOptions = {
+		locale,
+		format: dateFormat,
+		presentLabel: getPresentLabel(locale),
+		expectedLabel: getExpectedLabel(locale),
+	};
 
 	forEachDatedEntry(data, (entry, field) => {
 		const text = getLegacyDateText(entry, field);

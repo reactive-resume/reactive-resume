@@ -151,6 +151,14 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 	const { data: thumbnail } = useTemplateThumbnail(id, data, isInView);
 	const metadata = templates[id];
 	const hold = useRef<{ timer?: number; previewing: boolean }>({ previewing: false });
+	// Where the pointer was when it came onto the card. Scrolling slides cards under a still pointer, which fires
+	// enter and move events at the same spot: only a pointer that has moved previews.
+	const entered = useRef<{ x: number; y: number } | null>(null);
+	// The picker opens on the template in use, not at the top of the list.
+	const initiallySelected = useRef(selected);
+	useEffect(() => {
+		if (initiallySelected.current) ref.current?.scrollIntoView({ block: "center", inline: "center" });
+	}, []);
 
 	const endHold = () => {
 		window.clearTimeout(hold.current.timer);
@@ -163,7 +171,14 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 			type="button"
 			aria-pressed={selected}
 			onPointerEnter={(event: PointerEvent) => {
-				if (event.pointerType !== "touch") onPreview();
+				if (event.pointerType !== "touch") entered.current = { x: event.screenX, y: event.screenY };
+			}}
+			onPointerMove={(event: PointerEvent) => {
+				const from = entered.current;
+				if (event.pointerType === "touch" || !from) return;
+				if (event.screenX === from.x && event.screenY === from.y) return;
+				entered.current = null;
+				onPreview();
 			}}
 			onPointerDown={(event: PointerEvent) => {
 				if (event.pointerType !== "touch") return;

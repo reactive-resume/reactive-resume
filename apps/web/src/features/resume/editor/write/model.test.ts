@@ -4,6 +4,7 @@ import { produce } from "immer";
 import { customSectionItemDefinitionByType } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import {
+	addBuiltinSection,
 	CUSTOM_SECTION_TYPES,
 	countEntriesToCheck,
 	createEntry,
@@ -100,5 +101,25 @@ describe("date review badges", () => {
 			{ id: "role", position: "Lead", description: "", period: "During university", dates: unreadable.dates },
 		];
 		expect(countEntriesToCheck(data.sections.experience.items)).toBe(2);
+	});
+});
+
+describe("addBuiltinSection", () => {
+	const blank = () => {
+		const data = structuredClone(defaultResumeData);
+		data.metadata.layout.pages = [{ fullWidth: false, main: ["experience", "education"], sidebar: [] }];
+		return data;
+	};
+	const mainOf = (data: ResumeData) => data.metadata.layout.pages[0]?.main;
+
+	it("prints Education above Experience when a student starts with it", () => {
+		const data = produce(blank(), (draft) => void addBuiltinSection(draft, "education"));
+		expect(mainOf(data)).toEqual(["education", "experience"]);
+	});
+
+	it("leaves the order alone once the other section has entries", () => {
+		const started = produce(blank(), (draft) => void addBuiltinSection(draft, "experience"));
+		const data = produce(started, (draft) => void addBuiltinSection(draft, "education"));
+		expect(mainOf(data)).toEqual(["experience", "education"]);
 	});
 });

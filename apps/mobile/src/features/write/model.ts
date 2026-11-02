@@ -286,8 +286,27 @@ function ensurePlaced(draft: WritableDraft<ResumeData>, id: string) {
 }
 
 /** Add section: shows and places the section and gives it one draft entry. Returns that entry's id. */
+/**
+ * Experience and Education print in the order the person starts them: the first one added goes above the other while
+ * that one is still empty (a student starts with Education; someone with a job, with Experience).
+ */
+function placeFirstStarted(draft: WritableDraft<ResumeData>, type: "summary" | SectionType) {
+	if (type !== "experience" && type !== "education") return;
+	const other = type === "experience" ? "education" : "experience";
+	const started = draft.sections[other].items.length > 0 && !draft.sections[other].hidden;
+	if (started) return;
+	for (const page of draft.metadata.layout.pages) {
+		const at = page.main.indexOf(type);
+		const before = page.main.indexOf(other);
+		if (at === -1 || before === -1 || at < before) continue;
+		page.main.splice(at, 1);
+		page.main.splice(before, 0, type);
+	}
+}
+
 export function addBuiltinSection(draft: WritableDraft<ResumeData>, type: "summary" | SectionType): string | null {
 	ensurePlaced(draft, type);
+	placeFirstStarted(draft, type);
 	if (type === "summary") {
 		draft.summary.hidden = false;
 		return null;

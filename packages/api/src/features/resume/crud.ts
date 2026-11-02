@@ -91,6 +91,8 @@ export const crudRouter = {
 				data: createResumeData({
 					withSampleData: input.withSampleData,
 					name: context.user.name,
+					// A guest's address is a placeholder on the guest domain (see the auth anonymous plugin), not one to print.
+					email: context.user.email.endsWith("@reactive-resume.local") ? undefined : context.user.email,
 					locale: context.locale,
 					template: input.template,
 				}),
