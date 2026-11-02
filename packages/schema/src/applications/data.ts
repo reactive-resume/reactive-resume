@@ -166,6 +166,8 @@ export const applicationTimelineEntrySchema = z.discriminatedUnion("type", [
 	timelineBaseSchema.extend({
 		type: z.literal("note"),
 		text: z.string().trim().min(1),
+		/** Structured contact, scoped to this canonical stage visit; text remains readable by older clients. */
+		followedUp: z.object({ stageEntryId: z.string().min(1).nullable() }).optional(),
 	}),
 	timelineBaseSchema.extend({
 		type: z.literal("interview"),

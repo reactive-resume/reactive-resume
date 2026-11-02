@@ -30,6 +30,7 @@ vi.mock("@/libs/orpc/client", () => ({
 				}),
 			},
 			delete: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			logFollowUp: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
 			stats: { queryKey: () => ["stats"] },
 			tags: { queryKey: () => ["tags"] },
 			getById: { queryKey: () => ["application"] },

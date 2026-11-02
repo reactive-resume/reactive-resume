@@ -53,6 +53,10 @@ const lanes = load("features/applications/lanes.ts", {
 });
 const domainNextStep = load("../../../packages/schema/src/applications/next-step.ts", {
 	"./follow-up": followUpDomain,
+	"./data": load("../../../packages/schema/src/applications/data.ts", {
+		zod,
+		"@reactive-resume/utils/timezone": timeParser,
+	}),
 });
 const history = load("features/applications/history.ts", {
 	"@reactive-resume/schema/applications/next-step": domainNextStep,
@@ -268,6 +272,7 @@ const orpc = {
 		bulkUpdate: { mutationOptions: () => ({}) },
 		bulkDelete: { mutationOptions: () => ({}) },
 		import: { mutationOptions: () => ({}) },
+		logFollowUp: { mutationOptions: () => ({}) },
 		stats: { queryKey: () => ["applications", "stats"] },
 		tags: { queryKey: () => ["applications", "tags"] },
 		key: () => ["applications"],
@@ -290,7 +295,7 @@ let laneEndpoint = async () => ({ revision: 1, lanes: schemaLanes.createDefaultA
 const writes = [];
 const client = {
 	applications: Object.fromEntries(
-		["create", "update", "bulkUpdate"].map((name) => [
+		["create", "update", "bulkUpdate", "logFollowUp"].map((name) => [
 			name,
 			async (input) => {
 				writes.push(input);
@@ -400,6 +405,29 @@ resolveOld(oldDetail);
 await oldRequest.catch(() => undefined);
 assert.equal(queryClient.getQueryData(detailKey).notes, "newer");
 const mutations = queries.useApplicationMutations();
+{
+	const remindersBefore = [...reminderCancellations];
+	const writesBefore = writes.length;
+	const toastsBefore = toasts.length;
+	await new MutationObserver(queryClient, mutations.logFollowUp).mutate({ id: "app-a" });
+	assert.equal(writes.length, writesBefore + 1);
+	assert.deepEqual(writes.at(-1), { id: "app-a" });
+	assert.deepEqual(reminderCancellations, remindersBefore, "Logging contact must not cancel authored reminders");
+	assert.equal(toasts.at(-1).message, "Followed up");
+	const original = client.applications.logFollowUp;
+	client.applications.logFollowUp = async () => {
+		throw new Error("old server or lost reply");
+	};
+	const invalidated = invalidations.length;
+	await assert.rejects(
+		new MutationObserver(queryClient, queries.useApplicationMutations().logFollowUp).mutate({ id: "app-a" }),
+	);
+	assert.ok(invalidations.length > invalidated, "Even failed contact requests refresh authoritative state");
+	assert.equal(toasts.at(-1).message, "Couldn't log the follow-up. Check the timeline before trying again.");
+	client.applications.logFollowUp = original;
+	writes.splice(writesBefore);
+	toasts.splice(toastsBefore);
+}
 mutations.update.onSettled(undefined, undefined, { id: "app-a" });
 assert.ok(invalidations.some((key) => key[0] === "applications"));
 assert.ok(invalidations.some((key) => key[0] === "career" && key[1] === "workspace"));

@@ -1,4 +1,5 @@
 import type { ApplicationStatus, ApplicationTimelineEntry, InterviewTimelineEntry } from "./data";
+import { latestStageEntryId } from "./data";
 import { followUpInstant } from "./follow-up";
 
 const DAY_MS = 86_400_000;
@@ -91,15 +92,33 @@ export function getNextStep(
 	if (application.status === "saved") return { kind: "not-applied" };
 
 	const days = daysInStage(application, now);
+	const since = applicationStageSince(application)?.getTime();
+	const stageEntryId = latestStageEntryId(
+		application.activity.filter((entry) => entry.type === "stage" && entry.canonicalTransition !== false),
+	);
+	const contacted = Math.max(
+		-Infinity,
+		...application.activity.flatMap((entry) => {
+			const at = new Date(entry.at).getTime();
+			// Whole-day stage dates use noon UTC; contact earlier that day still has its exact instant.
+			return entry.type === "note" &&
+				entry.followedUp?.stageEntryId === stageEntryId &&
+				at <= now.getTime() &&
+				(since === undefined || Math.floor(at / DAY_MS) >= Math.floor(since / DAY_MS))
+				? [at]
+				: [];
+		}),
+	);
+	const replySince = Number.isFinite(contacted) ? contacted : (since ?? -Infinity);
+	const quietDays = Number.isFinite(replySince) ? daysBetween(new Date(replySince), now) : null;
 	// Going quiet after a screen is as common as after applying: both get the same nudge.
 	if (
 		(application.status === "applied" || application.status === "screening") &&
-		days !== null &&
-		days >= FOLLOW_UP_AFTER_DAYS
+		quietDays !== null &&
+		quietDays >= FOLLOW_UP_AFTER_DAYS
 	)
-		return { kind: "no-reply", days };
+		return { kind: "no-reply", days: quietDays };
 	if (application.status === "interview") {
-		const since = applicationStageSince(application)?.getTime();
 		// Interviews of this stage, by when they ended (one that began before the stage still counts if it ended after).
 		const ended =
 			since === undefined
@@ -110,7 +129,7 @@ export function getNextStep(
 						.filter((end) => end >= since);
 		if (ended.length === 0) return { kind: "no-interview", days };
 		// No word since the last interview ended, counted from then.
-		const quiet = daysBetween(new Date(Math.max(...ended)), now);
+		const quiet = daysBetween(new Date(Math.max(...ended, contacted)), now);
 		return quiet >= FOLLOW_UP_AFTER_DAYS
 			? { kind: "no-reply", days: quiet, after: "interview" }
 			: { kind: "interview-feedback", days };

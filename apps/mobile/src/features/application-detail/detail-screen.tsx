@@ -32,7 +32,7 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 	const router = useRouter();
 	const session = useSession();
 	const query = useApplication(id);
-	const { update, remove } = useApplicationMutations();
+	const { update, remove, logFollowUp } = useApplicationMutations();
 	const { date, timeZone } = useUserTime();
 	const [overlay, setOverlay] = useState<Overlay>(null);
 	const application = query.data;
@@ -133,6 +133,14 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 			/>
 
 			<NextStepCard application={application} onOpenInterview={openInterview} />
+			{!closed && application.status !== "saved" ? (
+				<Button
+					variant="secondary"
+					label={t`Followed up`}
+					loading={logFollowUp.isPending}
+					onPress={() => logFollowUp.mutate({ id: application.id })}
+				/>
+			) : null}
 			<WhatYouSent application={application} />
 			<Facts application={application} />
 			<Contacts application={application} />

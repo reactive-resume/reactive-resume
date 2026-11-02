@@ -284,10 +284,17 @@ export function useApplicationActions() {
 		},
 		onError: (error) => toastError(error, t`Couldn't delete the application. Try again.`),
 	});
+	const logFollowUp = useMutation({
+		...orpc.applications.logFollowUp.mutationOptions(),
+		onSuccess: () => toast.add({ description: t`Followed up` }),
+		onError: (error) => toastError(error, t`Couldn't log the follow-up. Check the timeline before trying again.`),
+		onSettled: (_data, _error, input) => invalidate(input.id),
+	});
 
 	return {
 		update,
 		remove,
+		logFollowUp,
 		/** Moves to a lane; a Closed lane without a preset needs the outcome. */
 		moveTo: (
 			application: Pick<ApplicationSummary, "id">,

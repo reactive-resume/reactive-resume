@@ -101,7 +101,15 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 				text: entry.dateUnknown ? `${t`Imported`} · ${label}` : t`Moved to ${label}`,
 			};
 		}
-		if (entry.type === "note") return { dot: "var(--ink-3)", text: entry.text };
+		if (entry.type === "note")
+			return {
+				dot: "var(--ink-3)",
+				text: entry.followedUp
+					? entry.text === "Followed up"
+						? t`Followed up`
+						: `${t`Followed up`} · ${entry.text}`
+					: entry.text,
+			};
 		const kind = interviewKindOf(entry.kind);
 		return { dot: kind?.color ?? "var(--ink-3)", text: t`${kind?.label ?? entry.kind} interview` };
 	};
@@ -160,7 +168,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 							<span className="shrink-0 text-xs leading-5 text-ink-3">
 								{entry.type === "stage" && entry.dateUnknown
 									? t`Not recorded`
-									: formatDate(entry.at, entry.type === "interview")}
+									: formatDate(entry.at, entry.type === "interview" || (entry.type === "note" && !!entry.followedUp))}
 							</span>
 							<DropdownMenu>
 								<DropdownMenuTrigger

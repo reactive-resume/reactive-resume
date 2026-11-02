@@ -243,5 +243,18 @@ export function useApplicationMutations() {
 		onSettled,
 	});
 	const importCsv = useMutation({ ...orpc.applications.import.mutationOptions(), onSettled });
-	return { create, update, remove, bulkUpdate, bulkDelete, importCsv };
+	const logFollowUp = useMutation({
+		...orpc.applications.logFollowUp.mutationOptions(),
+		mutationFn: (input: RouterInput["applications"]["logFollowUp"]) =>
+			client.applications.logFollowUp(input, { context: { scope: scope ?? undefined } }),
+		onSuccess: () => {
+			if (scope === getAccountScope()) showToast({ message: t`Followed up` });
+		},
+		onError: () => {
+			if (scope === getAccountScope())
+				showToast({ message: t`Couldn't log the follow-up. Check the timeline before trying again.` });
+		},
+		onSettled,
+	});
+	return { create, update, remove, bulkUpdate, bulkDelete, importCsv, logFollowUp };
 }

@@ -330,6 +330,10 @@ const followUpDomain = load("../../../packages/schema/src/applications/follow-up
 mocks["@reactive-resume/schema/applications/follow-up"] = followUpDomain;
 const domainNextStep = load("../../../packages/schema/src/applications/next-step.ts", {
 	"./follow-up": followUpDomain,
+	"./data": load("../../../packages/schema/src/applications/data.ts", {
+		zod,
+		"@reactive-resume/utils/timezone": timeParser,
+	}),
 });
 const history = load("features/applications/history.ts", {
 	"@reactive-resume/schema/applications/next-step": domainNextStep,
@@ -2839,3 +2843,45 @@ csvPickerResult = { canceled: true, assets: [] };
 console.log(
 	"PASS native CSV review-first upload, skipped-row export, explicit import, mapping correction, busy state, stage retry and account-bound dispatch",
 );
+
+// Completed contact is a separate action from moving stage or scheduling a reminder.
+{
+	let job = { ...application, id: "contact-job", status: "applied" };
+	let contactPending = false;
+	const { ApplicationDetail } = load("features/application-detail/detail-screen.tsx", {
+		react: { ...react, useEffect() {} },
+		"./hooks": { reminderTargets: () => [], useUserTime: () => ({ date: String, timeZone: "UTC" }) },
+		"./interview-sheet": { InterviewSheet: "InterviewSheet" },
+		"./sections": Object.fromEntries(
+			["Attachments", "Contacts", "Facts", "NextStepCard", "Notes", "StageStepper", "Timeline", "WhatYouSent"].map(
+				(name) => [name, name],
+			),
+		),
+		"./sheets": { CloseSheet: "CloseSheet", MarkAppliedSheet: "MarkAppliedSheet", PostingSheet: "PostingSheet" },
+		"@/auth/session": { useSession: () => ({ status: "signed-in" }) },
+		"@/features/applications/error": { applicationError: String },
+		"@/features/applications/stages": stages,
+		"@/features/applications/queries": {
+			useApplication: () => ({ data: job }),
+			useApplicationMutations: () => ({
+				update: {},
+				remove: {},
+				logFollowUp: { isPending: contactPending, mutate: (input) => calls.push({ contact: input }) },
+			}),
+		},
+		"@/features/reminders": {},
+	});
+	reset();
+	tree = render(ApplicationDetail, { id: job.id });
+	control(tree, "Followed up").onPress();
+	assert.deepEqual(calls.at(-1), { contact: { id: "contact-job" } });
+	contactPending = true;
+	assert.equal(control(render(ApplicationDetail, { id: job.id }), "Followed up").loading, true);
+	for (const status of ["saved", "closed"]) {
+		job = { ...job, status };
+		assert.equal(
+			nodes(render(ApplicationDetail, { id: job.id })).some((node) => node.props.label === "Followed up"),
+			false,
+		);
+	}
+}

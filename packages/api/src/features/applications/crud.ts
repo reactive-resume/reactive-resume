@@ -94,7 +94,7 @@ export const crudRouter = {
 			operationId: "listApplicationSummaries",
 			summary: "List application summaries",
 			description:
-				"Returns lightweight application summaries for list views. Full descriptions, notes, documents and timeline notes are omitted; use the application endpoint for full detail. When includeInitialDetails is N, up to 2N full details may be attached as initialDetail: the union of the first N candidates under web and mobile ordering, with closed applications excluded unless status is provided.",
+				"Returns lightweight application summaries for list views. Full descriptions, notes, documents and timeline note text are omitted; structured followed-up events keep their contact timestamp and stage identity. Use the application endpoint for full detail. When includeInitialDetails is N, up to 2N full details may be attached as initialDetail: the union of the first N candidates under web and mobile ordering, with closed applications excluded unless status is provided.",
 			successDescription: "A list of lightweight application summaries.",
 		})
 		.input(applicationDto.listSummary.input)
@@ -262,6 +262,22 @@ export const crudRouter = {
 				date: input.date,
 			}),
 		),
+
+	logFollowUp: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/applications/{id}/follow-ups",
+			tags: ["Applications"],
+			operationId: "logApplicationFollowUp",
+			summary: "Log a completed follow-up",
+			description:
+				"Records contact now and restarts the no-reply clock for the current stage visit. Keeps stage dates and scheduled reminders. Requires authentication.",
+			successDescription: "The updated application.",
+		})
+		.input(applicationDto.logFollowUp.input)
+		.use(resumeMutationRateLimit)
+		.output(applicationDto.logFollowUp.output)
+		.handler(({ input, context }) => applicationService.logFollowUp({ id: input.id, userId: context.user.id })),
 
 	addInterview: protectedProcedure
 		.route({

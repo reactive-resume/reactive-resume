@@ -273,6 +273,11 @@ export const applicationDto = {
 		output: applicationSchema.omit({ userId: true }),
 	},
 
+	logFollowUp: {
+		input: z.object({ id: z.string() }),
+		output: applicationSchema.omit({ userId: true }),
+	},
+
 	updateTimelineEntry: {
 		input: z
 			.object({
