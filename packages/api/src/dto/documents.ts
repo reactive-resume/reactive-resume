@@ -25,7 +25,9 @@ const documentSchema = z.object({
 	isPublic: z.boolean().describe("Whether a resume's public link is on; always false for letters."),
 	hasPassword: z
 		.boolean()
-		.describe("Whether a resume's public link asks visitors for a password; always false for letters."),
+		.describe(
+			"Whether a resume has a password set. Visitors need it while the resume is public (isPublic); always false for letters.",
+		),
 	slug: z.string().nullable().describe("A resume's public address, /{username}/{slug}; null for letters."),
 	trashedAt: z.date().nullable().describe("When the document moved to Trash; null while it's live."),
 	createdAt: z.date(),
