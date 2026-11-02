@@ -21,6 +21,7 @@ import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
+import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
 import { cn } from "@reactive-resume/utils/style";
 import { getStageDisplay } from "../lanes";
 import { getCategoryLane, getDisplayLane, getLaneLabel } from "../lanes";
@@ -81,17 +82,14 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 	// Next step first: what's dated soonest, then whatever has waited longest in its stage.
 	const [sort, setSort] = useState<Sort>({ key: "next", direction: "asc" });
 	const [checked, setChecked] = useState<ReadonlySet<string>>(new Set());
+	const { ref: selectionBarRef, space: selectionBarSpace } = useFloatingToolbarSpace();
 
 	const laneOf = (application: ApplicationSummary) => getDisplayLane(lanes, application);
 	// Selections only cover what's on screen.
-	const checkedIds = applications
-		.filter(
-			(application) =>
-				checked.has(application.id) &&
-				(application.status !== "closed" || showClosed) &&
-				!collapsed.has(laneOf(application).id),
-		)
-		.map((application) => application.id);
+	const visible = applications.filter(
+		(application) => (application.status !== "closed" || showClosed) && !collapsed.has(laneOf(application).id),
+	);
+	const checkedIds = visible.filter((application) => checked.has(application.id)).map((application) => application.id);
 	if (checkedIds.length !== checked.size) setChecked(new Set(checkedIds));
 
 	const groups = useMemo(() => {
@@ -165,7 +163,10 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 	);
 
 	return (
-		<div className="grid min-w-0 content-start gap-3">
+		<div
+			className="grid min-w-0 content-start gap-3"
+			style={{ paddingBottom: checkedIds.length ? selectionBarSpace : undefined }}
+		>
 			<table className={cn("w-full border-collapse text-sm", !phone && "table-fixed")}>
 				{!phone && (
 					<thead>
@@ -244,13 +245,19 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 				{checkedIds.length > 0 && (
 					<m.div
 						key="bulk-bar"
+						ref={selectionBarRef}
 						initial={{ opacity: 0, transform: "translateY(100%)" }}
 						animate={{ opacity: 1, transform: "translateY(0%)" }}
 						exit={{ opacity: 0, transform: "translateY(100%)", transition: { duration: D2 * EXIT, ease: EASE } }}
 						transition={{ duration: D2, ease: EASE }}
 						className="fixed inset-x-0 bottom-6 z-30 mx-auto w-fit max-w-[calc(100vw-32px)] max-sm:bottom-[calc(69px+env(safe-area-inset-bottom))]"
 					>
-						<BulkBar ids={checkedIds} onDone={() => setChecked(new Set())} />
+						<BulkBar
+							ids={checkedIds}
+							allSelected={checkedIds.length === visible.length}
+							onSelectAll={() => setChecked(new Set(visible.map((application) => application.id)))}
+							onDone={() => setChecked(new Set())}
+						/>
 					</m.div>
 				)}
 			</AnimatePresence>
@@ -419,10 +426,15 @@ const ApplicationRow = memo(function ApplicationRow({
 	);
 });
 
-type BulkBarProps = { ids: string[]; onDone: () => void };
+type BulkBarProps = {
+	ids: string[];
+	allSelected: boolean;
+	onSelectAll: () => void;
+	onDone: () => void;
+};
 
 /** For the checked rows: move them or close them (with Undo), tag them, or delete them (after asking). */
-function BulkBar({ ids, onDone }: BulkBarProps) {
+function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 	const invalidate = useInvalidateApplications();
 	const moveWithUndo = useMoveWithUndo();
 	const rows = ids.map((id) => ({ id }));
@@ -452,6 +464,7 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 		},
 		onError: () => toast.add({ type: "error", description: t`Couldn't delete the applications. Try again.` }),
 	});
+	const disabled = ids.length > 200 || bulkUpdate.isPending || bulkDelete.isPending;
 
 	return (
 		<div
@@ -462,9 +475,42 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 			<span className="px-2 text-sm font-semibold whitespace-nowrap" aria-live="polite">
 				<Plural value={ids.length} one="# selected" other="# selected" />
 			</span>
+			{!allSelected && (
+				<Button size="sm" variant="ghost" disabled={disabled} onClick={onSelectAll}>
+					<Trans>Select all</Trans>
+				</Button>
+			)}
+			{ids.length > 200 && (
+				<p role="status" className="w-full px-2 text-sm text-warn-text">
+					<Trans>Choose up to 200 applications per bulk action.</Trans>
+				</p>
+			)}
+
+			<Popover>
+				<PopoverTrigger render={<Button size="sm" variant="ghost" disabled={disabled} />}>
+					<Icon name="tag" />
+					<Trans>Tags…</Trans>
+				</PopoverTrigger>
+				<PopoverContent align="start" className="w-60 p-2">
+					<form
+						className="flex gap-1.5"
+						onSubmit={(event) => {
+							event.preventDefault();
+							if (disabled || !tag.trim()) return;
+							bulkUpdate.mutate({ ids, addTags: [tag.trim()] });
+							setTag("");
+						}}
+					>
+						<Input aria-label={t`Tag`} value={tag} onChange={(event) => setTag(event.target.value)} autoFocus />
+						<Button size="sm" type="submit" disabled={disabled || !tag.trim()}>
+							<Trans>Add</Trans>
+						</Button>
+					</form>
+				</PopoverContent>
+			</Popover>
 
 			<DropdownMenu>
-				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" />}>
+				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" disabled={disabled} />}>
 					<Icon name="arrow-right" />
 					<Trans>Move to…</Trans>
 				</DropdownMenuTrigger>
@@ -494,31 +540,8 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			<Popover>
-				<PopoverTrigger render={<Button size="sm" variant="ghost" />}>
-					<Icon name="tag" />
-					<Trans>Add tag</Trans>
-				</PopoverTrigger>
-				<PopoverContent align="start" className="w-60 p-2">
-					<form
-						className="flex gap-1.5"
-						onSubmit={(event) => {
-							event.preventDefault();
-							if (!tag.trim()) return;
-							bulkUpdate.mutate({ ids, addTags: [tag.trim()] });
-							setTag("");
-						}}
-					>
-						<Input aria-label={t`Tag`} value={tag} onChange={(event) => setTag(event.target.value)} autoFocus />
-						<Button size="sm" type="submit" disabled={!tag.trim()}>
-							<Trans>Add</Trans>
-						</Button>
-					</form>
-				</PopoverContent>
-			</Popover>
-
 			<DropdownMenu>
-				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" />}>
+				<DropdownMenuTrigger render={<Button size="sm" variant="ghost" disabled={disabled} />}>
 					<Trans>Close…</Trans>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start">
@@ -537,9 +560,11 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 
+			<IconButton icon="x" size="icon-sm" label={t`Clear selection`} className="text-ink-2" onClick={onDone} />
 			<Button
 				size="sm"
 				variant="ghost"
+				disabled={disabled}
 				className="text-danger-text hover:bg-danger-soft"
 				onClick={async () => {
 					const confirmed = await confirm(
@@ -553,10 +578,8 @@ function BulkBar({ ids, onDone }: BulkBarProps) {
 				}}
 			>
 				<Icon name="trash" />
-				<Trans>Delete…</Trans>
+				<Trans>Delete permanently…</Trans>
 			</Button>
-
-			<IconButton icon="x" size="icon-sm" label={t`Clear selection`} className="text-ink-2" onClick={onDone} />
 		</div>
 	);
 }

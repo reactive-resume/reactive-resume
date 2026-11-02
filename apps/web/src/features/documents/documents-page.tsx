@@ -1,6 +1,6 @@
 import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter";
 import type { QueryClient } from "@tanstack/react-query";
-import type { KeyboardEvent } from "react";
+import type { KeyboardEvent, Ref } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
@@ -26,6 +26,7 @@ import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tabs, TabsCount, TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
+import { useFloatingToolbarSpace } from "@reactive-resume/ui/hooks/use-floating-toolbar-space";
 import { cn } from "@reactive-resume/utils/style";
 import { LinkApplicationDialog, TagsDialog, useBatchActions } from "./document-actions";
 import { DocumentCard, DocumentRow } from "./document-card";
@@ -77,6 +78,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const markOpened = useNewDocumentsStore((state) => state.markOpened);
 	const [tagsFor, setTagsFor] = useState<DocumentSummary[] | null>(null);
 	const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
+	const { ref: selectionBarRef, space: selectionBarSpace } = useFloatingToolbarSpace();
 	const [linkFor, setLinkFor] = useState<DocumentSummary | null>(null);
 	// Grid and list animate in only after a switch, never on the page's first render.
 	const [viewSwitched, setViewSwitched] = useState(false);
@@ -263,7 +265,10 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	};
 
 	return (
-		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5">
+		<div
+			className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5"
+			style={{ paddingBottom: selecting ? selectionBarSpace : undefined }}
+		>
 			<PageHeader title={<Trans>Documents</Trans>}>
 				{!firstRun && (
 					<>
@@ -466,6 +471,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				onChange={changePage}
 			/>
 			<SelectionBar
+				ref={selectionBarRef}
 				key={`selection:${filterKey}:${offset}`}
 				selection={selection}
 				allSelected={allSelected}
@@ -703,6 +709,7 @@ function TagFilter({ tags, active, onChange, showPublic, publicOnly, onPublicCha
 }
 
 type SelectionBarProps = {
+	ref: Ref<HTMLDivElement>;
 	selection: DocumentSummary[];
 	allSelected: boolean;
 	onSelectAll: () => void;
@@ -714,7 +721,7 @@ type SelectionBarProps = {
  * Floats over the library while documents are selected: tags, visibility, locking and Trash for all of them. On phones
  * it sits above the tab bar, as the Applications list's bar does.
  */
-function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: SelectionBarProps) {
+function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTags }: SelectionBarProps) {
 	const lettersOnly = selection.length > 0 && selection.every((document) => document.type === "letter");
 	const batch = useBatchActions();
 	const [busy, setBusy] = useState(false);
@@ -732,6 +739,7 @@ function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: 
 
 	return (
 		<div
+			ref={ref}
 			role="toolbar"
 			aria-label={t`Selected documents`}
 			aria-hidden={count === 0}
@@ -752,7 +760,7 @@ function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: 
 			<Button variant="ghost" size="sm" disabled={busy} onClick={onTags}>
 				<Icon name="tag" />
 				<span className="max-sm:sr-only">
-					<Trans>Tags</Trans>
+					<Trans>Tags…</Trans>
 				</span>
 			</Button>
 			<DropdownMenu>
@@ -790,6 +798,7 @@ function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: 
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
+			<IconButton icon="x" size="icon-sm" label={t`Clear selection`} className="text-ink-2" onClick={onClear} />
 			<Button
 				variant="ghost"
 				size="sm"
@@ -802,7 +811,6 @@ function SelectionBar({ selection, allSelected, onSelectAll, onClear, onTags }: 
 					<Trans>Move to Trash</Trans>
 				</span>
 			</Button>
-			<IconButton icon="x" size="icon-sm" label={t`Clear selection`} className="text-ink-2" onClick={onClear} />
 		</div>
 	);
 }

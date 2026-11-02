@@ -294,7 +294,7 @@ function ApplicationsList() {
 					<Text variant="title">{t`${selectedIds.length} selected`}</Text>
 					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 						<Button
-							label={t`Select visible`}
+							label={t`Select all`}
 							variant="secondary"
 							disabled={busy}
 							onPress={() =>
@@ -307,7 +307,15 @@ function ApplicationsList() {
 								)
 							}
 						/>
-						<Button label={t`Clear selection`} variant="ghost" disabled={busy} onPress={() => setSelected(new Set())} />
+						<Button
+							label={t`Tags…`}
+							variant="secondary"
+							disabled={busy || !lanes.ready || !selectedIds.length}
+							onPress={() => {
+								setFailure(null);
+								setBulk("tag");
+							}}
+						/>
 						<Button
 							label={t`Move to…`}
 							variant="secondary"
@@ -315,15 +323,6 @@ function ApplicationsList() {
 							onPress={() => {
 								setFailure(null);
 								setBulk("move");
-							}}
-						/>
-						<Button
-							label={t`Add tag`}
-							variant="secondary"
-							disabled={busy || !lanes.ready || !selectedIds.length}
-							onPress={() => {
-								setFailure(null);
-								setBulk("tag");
 							}}
 						/>
 						<Button
@@ -335,8 +334,9 @@ function ApplicationsList() {
 								setBulk("close");
 							}}
 						/>
+						<Button label={t`Clear selection`} variant="ghost" disabled={busy} onPress={() => setSelected(new Set())} />
 						<Button
-							label={t`Delete…`}
+							label={t`Delete permanently…`}
 							variant="danger"
 							disabled={busy || !lanes.ready || !selectedIds.length}
 							onPress={() => {
