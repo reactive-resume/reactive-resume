@@ -3,13 +3,15 @@ import type { RouterInput } from "@/api/client";
 import type { FactCategory } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
 import { AnimatedLegendList } from "@legendapp/list/reanimated";
-import { plural, t } from "@lingui/core/macro";
+import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import * as Crypto from "expo-crypto";
 import { memo, useCallback, useDeferredValue, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { categoryLabel, factCategories } from "./fact-categories";
 import { client, useCareerAction, useCareerQueries, useCareerTime, useUndoRows } from "./hooks";
+import { ResumeFacts } from "./resume-facts";
 import { Actions, EditorSheet, LoadState, SwitchRow } from "./shared";
 import { getServer, useSession } from "@/auth/session";
 import {
@@ -30,15 +32,6 @@ import {
 } from "@/ui";
 import { usePullRefresh } from "@/ui/use-pull-refresh";
 
-const categoryLabel = (category: string) =>
-	({ accomplishment: t`Accomplishment`, experience: t`Experience`, skill: t`Skill`, preference: t`Preference` })[
-		category
-	] ?? t`Experience`;
-export const factCategories = (): { value: FactCategory; label: string }[] =>
-	["accomplishment", "experience", "skill", "preference"].map((value) => ({
-		value: value as FactCategory,
-		label: categoryLabel(value),
-	}));
 type FactsProps = {
 	/** The Knowledge intro and tab switch, scrolled with the list as its header. */
 	children?: ReactNode;
@@ -145,6 +138,7 @@ export function Facts({ children, onRefresh }: FactsProps) {
 				onChange={setCategory}
 				options={[{ value: "all", label: t`All` }, ...factCategories()]}
 			/>
+			<ResumeFacts />
 			<Button label={t`Add a fact`} onPress={() => setEditor({ fact: null })} />
 			<LoadState query={facts} />
 			{failed ? (

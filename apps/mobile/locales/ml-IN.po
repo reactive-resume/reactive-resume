@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-02 23:04+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: ml-IN\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -1181,7 +1175,7 @@ msgstr "മറ്റൊരു ഓഫർ സ്വീകരിച്ചു"
 msgid "Accepted offer"
 msgstr "ഓഫർ സ്വീകരിച്ചു"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "നേട്ടം"
 
@@ -2863,12 +2857,17 @@ msgid "Choose a replacement"
 msgstr "പകരം ഘട്ടം തിരഞ്ഞെടുക്കുക"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "ഒരു റെസ്യൂമെ തിരഞ്ഞെടുക്കുക"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "അതിൻ്റെ ഡിസൈനുമായി പൊരുത്തപ്പെടുന്നതിന് റൈറ്റിൽ ഒരു റെസ്യൂമെ തിരഞ്ഞെടുക്കുക. അതുവരെ കത്തിന് സ്വന്തം."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "ഒരു റെസ്യൂമെ തിരഞ്ഞെടുത്ത് ഉദ്ധരണികൾ പരിശോധിക്കുക. AI ദാതാവിന് ഒന്നും അയയ്ക്കില്ല. തിരഞ്ഞെടുത്ത വസ്തുതകൾ മാത്രം എല്ലാ അപേക്ഷകൾക്കുമായി അറിവിൽ സംരക്ഷിക്കും."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3656,6 +3655,10 @@ msgstr "രേഖകൾ ലോഡ് ചെയ്യാനായില്ല. �
 msgid "Couldn't load letter"
 msgstr "കവർ ലെറ്റർ ലോഡ് ചെയ്യാനായില്ല"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "റെസ്യൂമെ വസ്തുതകൾ ലോഡ് ചെയ്യാനോ സംരക്ഷിക്കാനോ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "ഒരു പുതിയ കവർ ലെറ്ററിന് റെസ്യൂമെകൾ ലോഡ് ചെയ്യാനായില്ല."
@@ -4182,6 +4185,10 @@ msgstr "പകർപ്പ് സൃഷ്ടിക്കുക"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "ആദ്യം ഒരു റെസ്യൂമെ സൃഷ്‌ടിക്കുക അല്ലെങ്കിൽ ഇറക്കുമതി ചെയ്യുക. ഈ ജോലിക്കായി അത് പകർത്താൻ ഇങ്ങോട്ട് മടങ്ങുക."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "ആദ്യം രേഖകളിൽ ഒരു റെസ്യൂമെ സൃഷ്ടിക്കുകയോ ഇറക്കുമതി ചെയ്യുകയോ ചെയ്യുക."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5307,7 +5314,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "അനുഭവം"
@@ -5355,6 +5362,7 @@ msgid "Eyebrow"
 msgstr "മുകളിലെ ലേബൽ"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "വസ്തുത"
 
@@ -8170,6 +8178,10 @@ msgstr "ആ ജോലി വിവരണത്തിൽ നിന്ന് പ�
 msgid "No stories yet"
 msgstr "ഇതുവരെ കഥകളില്ല"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "പിന്തുണയ്ക്കുന്ന ഉദ്ധരണികൾ കണ്ടെത്തിയില്ല. വസ്തുത സ്വയം ചേർക്കുക അല്ലെങ്കിൽ മറ്റൊരു റെസ്യൂമെ തിരഞ്ഞെടുക്കുക."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9298,7 +9310,7 @@ msgstr "നിങ്ങളുടെ കഥ പരിശീലിക്കുന�
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "ഒറ്റ കോളം ഇഷ്ടപ്പെടുക, അല്ലെങ്കിൽ സൈഡ് കോളം ചെറിയ, സ്വയംപൂർണ്ണമായ ലിസ്റ്റുകൾക്ക് മാത്രമായി പരിമിതപ്പെടുത്തുക."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "പ്രിഫറൻസ്"
 
@@ -9569,6 +9581,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "പ്രസാധകൻ"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "എന്റെ റെസ്യൂമെയിൽ നിന്ന് വസ്തുതകൾ എടുക്കുക"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10355,6 +10371,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10585,6 +10602,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "ആവശ്യമായ ഫോം ഉത്തരങ്ങൾ പരിശോധിച്ച് പിന്തുണയില്ലാത്ത അവകാശവാദങ്ങൾ നീക്കം ചെയ്യുക."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "റെസ്യൂമെ വസ്തുതകൾ പരിശോധിക്കുക"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10859,6 +10880,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "ഷെഡ്യൂൾ സേവ് ചെയ്യുക"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "തിരഞ്ഞെടുത്ത വസ്തുതകൾ സംരക്ഷിക്കുക"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10883,6 +10908,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "താരതമ്യം ചെയ്യാൻ ഈ ഓഫർ വ്യവസ്ഥകൾ സേവ് ചെയ്യുക"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "ഈ വസ്തുത സംരക്ഷിക്കുക"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -10961,6 +10990,12 @@ msgstr "ഈ അപേക്ഷയ്ക്ക് മാത്രമായി അ
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "സംരക്ഷിച്ചത്: {0}. ഒഴിവാക്കിയത്: {1}. നിലവിലുള്ളതോ തിരുത്തിയതോ ഓഫാക്കിയതോ ആയ വസ്തുതകൾ മാറില്ല."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11794,7 +11829,7 @@ msgid "Size"
 msgstr "സൈസ്"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "സ്കിൽ"
 
@@ -11860,6 +11895,10 @@ msgstr "ചില ഗ്ലിഫുകൾക്ക് ഈ ഫയലിന് �
 msgid "Some lines are stored out of reading order."
 msgstr "ചില വരികൾ വായനാ ക്രമത്തിന് പുറത്താണ് സംഭരിച്ചിരിക്കുന്നത്."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "റെസ്യൂമെയിലെ ചില വാചകങ്ങൾ ഒഴിവാക്കി. മറ്റു വസ്തുതകൾ സ്വയം ചേർക്കുക."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "ചില സിസ്റ്റങ്ങൾ ചിത്രങ്ങൾ തെറ്റായി കൈകാര്യം ചെയ്യുന്നു, ചില രാജ്യങ്ങളിൽ ഫോട്ടോകൾ നിരുത്സാഹപ്പെടുത്തുന്നു."
@@ -11918,6 +11957,10 @@ msgstr "GitHub-ലെ സോഴ്‌സ് കോഡ്"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "ഉറവിട ഉദ്ധരണി"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13560,6 +13603,7 @@ msgstr "രണ്ട്-ഘട്ട പരിശോധന"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

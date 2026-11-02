@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-02 23:04+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: te-IN\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -1181,7 +1175,7 @@ msgstr "మరో ఆఫర్‌ని అంగీకరించారు"
 msgid "Accepted offer"
 msgstr "అంగీకరించిన ఆఫర్"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "విజయం"
 
@@ -2863,12 +2857,17 @@ msgid "Choose a replacement"
 msgstr "ప్రత్యామ్నాయాన్ని ఎంచుకోండి"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "రెజ్యూమెను ఎంచుకోండి"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "దాని డిజైన్‌తో సరిపోలడానికి రైట్‌లో రెజ్యూమేని ఎంచుకోండి. అప్పటి వరకు, లేఖ తన సొంతం."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "ఒక రెజ్యూమెను ఎంచుకుని దాని భాగాలను సమీక్షించండి. AI ప్రదాతకు ఏదీ పంపబడదు. ఎంచుకున్న వాస్తవాలు మాత్రమే అన్ని దరఖాస్తుల కోసం జ్ఞానంలో సేవ్ అవుతాయి."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3656,6 +3655,10 @@ msgstr "పత్రాలను లోడ్ చేయలేకపోయామ�
 msgid "Couldn't load letter"
 msgstr "కవర్ లెటర్‌ను లోడ్ చేయడం సాధ్యపడలేదు"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "రెజ్యూమె వాస్తవాలను లోడ్ చేయడం లేదా సేవ్ చేయడం సాధ్యపడలేదు. మళ్లీ ప్రయత్నించండి."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "కొత్త కవర్ లెటర్ కోసం రెజ్యూమ్‌లను లోడ్ చేయడం సాధ్యపడలేదు."
@@ -4182,6 +4185,10 @@ msgstr "కాపీని సృష్టించండి"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "ముందుగా రెజ్యూమ్‌ని సృష్టించండి లేదా దిగుమతి చేయండి, ఆపై ఈ ఉద్యోగం కోసం దాన్ని కాపీ చేయడానికి తిరిగి వెళ్లండి."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "ముందుగా పత్రాల్లో రెజ్యూమెను సృష్టించండి లేదా దిగుమతి చేయండి."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5307,7 +5314,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "అనుభవం"
@@ -5355,6 +5362,7 @@ msgid "Eyebrow"
 msgstr "పై శీర్షిక"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "వాస్తవం"
 
@@ -8170,6 +8178,10 @@ msgstr "ఆ ఉద్యోగ వివరణ నుండి నిర్ద�
 msgid "No stories yet"
 msgstr "ఇంకా కథలు లేవు"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "మద్దతు ఉన్న భాగాలు కనుగొనబడలేదు. వాస్తవాన్ని చేతితో జోడించండి లేదా మరో రెజ్యూమెను ఎంచుకోండి."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9298,7 +9310,7 @@ msgstr "మీ కథను సాధన చేస్తున్నారు: {
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "సింగిల్ కాలమ్‌కు ప్రాధాన్యత ఇవ్వండి, లేదా సైడ్ కాలమ్‌ను చిన్న, స్వతంత్ర జాబితాలకే పరిమితం చేయండి."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "ప్రాధాన్యత"
 
@@ -9569,6 +9581,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "పబ్లిషర్"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "నా రెజ్యూమె నుండి వాస్తవాలను పొందు"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10355,6 +10371,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10585,6 +10602,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "తప్పనిసరి ఫారమ్ సమాధానాలను సమీక్షించి, ఆధారం లేని వాదనలను తీసివేయండి."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "రెజ్యూమె వాస్తవాలను సమీక్షించు"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10859,6 +10880,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "షెడ్యూల్‌ను సేవ్ చేయి"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "ఎంచుకున్న వాస్తవాలను సేవ్ చేయి"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10883,6 +10908,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "పోల్చడానికి ఈ ఆఫర్ నిబంధనలను సేవ్ చేయండి"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "ఈ వాస్తవాన్ని సేవ్ చేయి"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -10961,6 +10990,12 @@ msgstr "నాలెడ్జ్‌లో సేవ్ చేయబడింద�
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "సేవ్ చేసినవి: {0}. దాటవేసినవి: {1}. ఉన్న, సరిదిద్దిన లేదా ఆపివేసిన వాస్తవాలు మారవు."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11794,7 +11829,7 @@ msgid "Size"
 msgstr "సైజు"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "స్కిల్"
 
@@ -11860,6 +11895,10 @@ msgstr "కొన్ని గ్లిఫ్‌లకు ఈ ఫైల్ వ�
 msgid "Some lines are stored out of reading order."
 msgstr "కొన్ని లైన్లు చదివే క్రమంలో కాకుండా నిల్వ చేయబడ్డాయి."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "కొంత రెజ్యూమె వచనం వదిలివేయబడింది. ఇతర వాస్తవాలను చేతితో జోడించండి."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "కొన్ని సిస్టమ్‌లు చిత్రాలను తప్పుగా నిర్వహిస్తాయి మరియు కొన్ని దేశాల్లో ఫోటోలు నిరుత్సాహపరుస్తాయి."
@@ -11918,6 +11957,10 @@ msgstr "GitHubలో సోర్స్ కోడ్"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "మూల ఉల్లేఖనం"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13560,6 +13603,7 @@ msgstr "రెండు-దశల ధృవీకరణ"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

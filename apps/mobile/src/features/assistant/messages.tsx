@@ -29,7 +29,7 @@ import { isProposeEdits, requirementsOf, skippedCount, titleOf, toProposals } fr
 import { client, orpc } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
 import { ReportAiContent } from "@/features/ai/report-content";
-import { factCategories } from "@/features/career/facts";
+import { factCategories } from "@/features/career/fact-categories";
 import { useDocuments } from "@/features/documents/queries";
 import { routes } from "@/routes";
 import { Button, Icon, ListRow, SelectSheet, Sheet, Switch, Text, TextArea, showToast, useTheme } from "@/ui";

@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-02 23:04+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: or-IN\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -1181,7 +1175,7 @@ msgstr "ଅନ୍ୟ ଏକ ଅଫର ଗ୍ରହଣ କଲେ |"
 msgid "Accepted offer"
 msgstr "ଅଫର୍ ଗ୍ରହଣ କରାଯାଇଛି"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "ସଫଳତା"
 
@@ -2865,12 +2859,17 @@ msgid "Choose a replacement"
 msgstr "ଏକ ବିକଳ୍ପ ବାଛନ୍ତୁ"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "ଏକ ଜୀବନବୃତ୍ତାନ୍ତ ବାଛନ୍ତୁ"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "ଏହାର ଡିଜାଇନ୍ ସହିତ ମେଳ କରିବା ପାଇଁ ଲେଖିବା ପାଇଁ ଏକ ରେଜୁମ୍ ବାଛନ୍ତୁ | ସେପର୍ଯ୍ୟନ୍ତ, ଚିଠିର ନିଜସ୍ୱ ଅଛି |"
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "ଏକ ଜୀବନବୃତ୍ତାନ୍ତ ବାଛି ତାହାର ଅଂଶଗୁଡ଼ିକୁ ସମୀକ୍ଷା କରନ୍ତୁ। AI ପ୍ରଦାନକାରୀଙ୍କୁ କିଛି ପଠାଯାଏ ନାହିଁ। କେବଳ ବଛାଯାଇଥିବା ତଥ୍ୟଗୁଡ଼ିକ ସମସ୍ତ ଆବେଦନ ପାଇଁ ଜ୍ଞାନରେ ସଞ୍ଚୟ ହୁଏ।"
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3663,6 +3662,10 @@ msgstr "ଦଲିଲଗୁଡ଼ିକ ଲୋଡ୍ ହୋଇପାରିଲା 
 msgid "Couldn't load letter"
 msgstr "କଭର୍ ଲେଟର୍ ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ।"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "ଜୀବନବୃତ୍ତାନ୍ତର ତଥ୍ୟ ଲୋଡ୍ କିମ୍ବା ସଞ୍ଚୟ ହୋଇପାରିଲା ନାହିଁ। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "ଏକ ନୂତନ କଭର୍ ଅକ୍ଷର ପାଇଁ ରେଜ୍ୟୁମେ ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ।"
@@ -4190,6 +4193,10 @@ msgstr "କପି ସୃଷ୍ଟି କରନ୍ତୁ।"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "ପ୍ରଥମେ ଏକ ରେଜ୍ୟୁମେ ସୃଷ୍ଟି କିମ୍ବା ଆମଦାନୀ କରନ୍ତୁ, ତାପରେ ଏହି କାର୍ଯ୍ୟ ପାଇଁ ଏହାକୁ କପି କରିବାକୁ ଫେରନ୍ତୁ।"
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "ପ୍ରଥମେ ଦଲିଲରେ ଜୀବନବୃତ୍ତାନ୍ତ ତିଆରି କିମ୍ବା ଆମଦାନୀ କରନ୍ତୁ।"
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5320,7 +5327,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "ଅନୁଭବ"
@@ -5368,6 +5375,7 @@ msgid "Eyebrow"
 msgstr "ଉପର ଲେବଲ୍"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "ତଥ୍ୟ"
 
@@ -8189,6 +8197,10 @@ msgstr "ସେହି ଚାକିରି ବିବରଣୀରୁ ନିର୍ଦ
 msgid "No stories yet"
 msgstr "ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି କାହାଣୀ ନାହିଁ"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "ସମର୍ଥିତ ଅଂଶ ମିଳିଲା ନାହିଁ। ନିଜେ ତଥ୍ୟ ଯୋଡ଼ନ୍ତୁ କିମ୍ବା ଅନ୍ୟ ଜୀବନବୃତ୍ତାନ୍ତ ବାଛନ୍ତୁ।"
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9319,7 +9331,7 @@ msgstr "ଆପଣଙ୍କ କାହାଣୀ ଅଭ୍ୟାସ କରୁଛନ
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "ଏକକ କଲମ୍‌କୁ ପସନ୍ଦ କରନ୍ତୁ, କିମ୍ବା ପାର୍ଶ୍ୱ କଲମ୍‌କୁ ଛୋଟ, ସ୍ୱୟଂସମ୍ପୂର୍ଣ୍ଣ ତାଲିକାରେ ସୀମିତ ରଖନ୍ତୁ।"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "ପସନ୍ଦ"
 
@@ -9595,6 +9607,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "ପ୍ରକାଶକ"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "ମୋ ଜୀବନବୃତ୍ତାନ୍ତରୁ ତଥ୍ୟ ନିଅନ୍ତୁ"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10383,6 +10399,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10614,6 +10631,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "ଆବଶ୍ୟକ ଫର୍ମ ଉତ୍ତର ସମୀକ୍ଷା କରନ୍ତୁ ଏବଂ ସମର୍ଥନହୀନ ଦାବି ହଟାନ୍ତୁ।"
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "ଜୀବନବୃତ୍ତାନ୍ତର ତଥ୍ୟ ସମୀକ୍ଷା କରନ୍ତୁ"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10888,6 +10909,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "ସମୟସୂଚୀ ସେଭ୍ କରନ୍ତୁ"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "ବଛାଯାଇଥିବା ତଥ୍ୟ ସଞ୍ଚୟ କରନ୍ତୁ"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10912,6 +10937,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "ତୁଳନା କରିବାକୁ ଏହି ଅଫର୍ ସର୍ତ୍ତାବଳୀ ସେଭ୍ କରନ୍ତୁ"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "ଏହି ତଥ୍ୟ ସଞ୍ଚୟ କରନ୍ତୁ"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -10990,6 +11019,12 @@ msgstr "ଜ୍ଞାନରେ ସେଭ୍ ହେଲା, କେବଳ ଏହି 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "ସଞ୍ଚିତ: {0}। ବାଦ୍ ଦିଆଯାଇଛି: {1}। ପୂର୍ବରୁ ଥିବା, ସଂଶୋଧିତ କିମ୍ବା ବନ୍ଦ ତଥ୍ୟ ଅପରିବର୍ତ୍ତିତ ରହେ।"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11831,7 +11866,7 @@ msgid "Size"
 msgstr "ଆକାର"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "କୌଶଳ"
 
@@ -11897,6 +11932,10 @@ msgstr "କିଛି ଗ୍ଲିଫ୍ ଏହି ଫାଇଲ ବାହାର�
 msgid "Some lines are stored out of reading order."
 msgstr "କିଛି ଧାଡ଼ି ପଠନ କ୍ରମ ବାହାରେ ସଂରକ୍ଷିତ ଅଛି।"
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "ଜୀବନବୃତ୍ତାନ୍ତର କିଛି ପାଠ୍ୟ ବାଦ୍ ଦିଆଯାଇଛି। ଅନ୍ୟ ତଥ୍ୟ ନିଜେ ଯୋଡ଼ନ୍ତୁ।"
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "କିଛି ସିଷ୍ଟମ୍ ଚିତ୍ରକୁ ଭୁଲ୍ କରିଥାଏ, ଏବଂ ଫଟୋ କେତେକ ଦେଶରେ ନିରୁତ୍ସାହିତ ହୋଇଥାଏ |"
@@ -11955,6 +11994,10 @@ msgstr "GitHub ରେ ସୋର୍ସ କୋଡ୍"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "ଉତ୍ସର ଉଦ୍ଧୃତି"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13598,6 +13641,7 @@ msgstr "ଦୁଇ ସୋପାନ ଯାଞ୍ଚ |"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

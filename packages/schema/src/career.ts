@@ -62,6 +62,15 @@ export const careerFactInputSchema = careerScopeSchema.extend({
 	source: careerSourceSchema,
 });
 
+export const resumeFactProposalSchema = careerFactInputSchema.pick({ text: true, category: true }).extend({
+	quote: z.string().trim().min(1).max(2000),
+});
+export const resumeFactsReviewSchema = z.object({
+	resumeId: z.string().min(1),
+	updatedAt: z.coerce.date(),
+	proposals: z.array(resumeFactProposalSchema).min(1).max(50),
+});
+
 export const careerStoryInputSchema = careerScopeSchema.extend({
 	title: z.string().trim().min(1).max(200),
 	situation: z.string().trim().min(1).max(4000),

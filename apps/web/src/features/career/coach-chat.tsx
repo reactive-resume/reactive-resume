@@ -38,7 +38,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { TraceIcon, TraceLine, TraceTitle } from "@reactive-resume/ui/components/trace";
 import { cn } from "@reactive-resume/utils/style";
 import { Composer, contentClass, copyToClipboard, usedFor, usedSchema } from "./coach-thread";
-import { CATEGORIES, categoryLabel } from "./knowledge/facts";
+import { CATEGORIES, categoryLabel } from "./knowledge/fact-categories";
 import { StoryEditor } from "./knowledge/stories";
 import { MemoryProposal, useCareerTime, Working, workingSteps } from "./shared";
 import { attachmentPart } from "@/features/assistant/chat";

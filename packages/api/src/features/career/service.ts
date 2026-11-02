@@ -7,7 +7,7 @@ import { ORPCError } from "@orpc/client";
 import { and, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as tables from "@reactive-resume/db/schema";
-import { buildMarkdown } from "@reactive-resume/resume/markdown";
+import { buildMarkdown, resumeFactProposals } from "@reactive-resume/resume/markdown";
 import {
 	careerProfileDataSchema,
 	careerWorkspaceSchema,
@@ -15,6 +15,7 @@ import {
 	type CareerProfileData,
 	type CareerWorkspace,
 	type careerFactInputSchema,
+	type resumeFactsReviewSchema,
 	type careerOfferInputSchema,
 	type careerStoryInputSchema,
 	offerTermsSchema,
@@ -30,6 +31,7 @@ import { syncFollowUp } from "../applications/follow-up";
 import { applicationTransitionValues, ensureApplicationPipeline, savedStageOf } from "../applications/lanes";
 import { applicationService, assertApplicationVersion, hasSubmitted, recordSentResume } from "../applications/service";
 import { assertSharedDocument, lockUser } from "../documents/ownership";
+import { parseStoredResumeData } from "../resume/resume-data-validation";
 import { matchPosting } from "./matching";
 import { noticeText } from "./notices";
 
@@ -447,6 +449,50 @@ async function submitAnswerSnapshot(
 	return { application: submitted, stages: [savedStageOf(submitted)] };
 }
 
+/** Called under the account lock; all fact entry points share suppression and deduplication. */
+async function storeFact(tx: DbOrTx, userId: string, fact: FactInput) {
+	const { source } = fact;
+	const sourceKey = hash(`${source.kind}:${source.id}:${source.quote.trim().toLocaleLowerCase()}`);
+	const [suppressed] = await tx
+		.select({ id: tables.careerFact.id })
+		.from(tables.careerFact)
+		.where(
+			and(
+				eq(tables.careerFact.userId, userId),
+				sql`${tables.careerFact.source}->>'kind' = ${source.kind}`,
+				sql`${tables.careerFact.source}->>'id' = ${source.id}`,
+				or(
+					eq(tables.careerFact.status, "forgotten"),
+					eq(tables.careerFact.status, "excluded"),
+					sql`jsonb_array_length(${tables.careerFact.revisions}) > 0`,
+				),
+			),
+		)
+		.limit(1);
+	if (suppressed) return null;
+	// A forgotten source key remains a content-free tombstone; retries cannot recreate the fact.
+	const [row] = await tx
+		.insert(tables.careerFact)
+		.values({ userId, ...fact, sourceKey })
+		.onConflictDoNothing()
+		.returning();
+	return row ?? null;
+}
+
+async function resumeForFacts(userId: string, resumeId: string, reader: DbOrTx = db) {
+	const [row] = await reader
+		.select({
+			id: tables.resume.id,
+			name: tables.resume.name,
+			data: tables.resume.data,
+			updatedAt: tables.resume.updatedAt,
+		})
+		.from(tables.resume)
+		.where(and(eq(tables.resume.id, resumeId), eq(tables.resume.userId, userId), isNull(tables.resume.trashedAt)));
+	if (!row) throw new ORPCError("NOT_FOUND");
+	return { ...row, ...resumeFactProposals(parseStoredResumeData(row.data)) };
+}
+
 const QUOTE_NOT_IN_SOURCE = "The source does not contain that quotation.";
 
 /** The application fields applying an employer's message owns, as stored on the reply for Undo. */
@@ -544,6 +590,32 @@ export const careerService = {
 			usedBy: { stories, savedItems },
 		}));
 	},
+	proposeResumeFacts: async (userId: string, resumeId: string) => {
+		const { data: _data, ...review } = await resumeForFacts(userId, resumeId);
+		return review;
+	},
+	saveResumeFacts: (userId: string, input: z.infer<typeof resumeFactsReviewSchema>) =>
+		db.transaction(async (tx) => {
+			await lockUser(tx, userId);
+			await assertSharedDocument(tx, userId, {
+				source: { kind: "resume", id: input.resumeId },
+				version: input.updatedAt.toISOString(),
+			});
+			const resume = await resumeForFacts(userId, input.resumeId, tx);
+			const quotes = new Set(resume.proposals.map((proposal) => proposal.quote));
+			if (input.proposals.some((proposal) => !quotes.has(proposal.quote)))
+				throw new ORPCError("BAD_REQUEST", { message: QUOTE_NOT_IN_SOURCE });
+			let saved = 0;
+			for (const { quote, ...fact } of input.proposals) {
+				const row = await storeFact(tx, userId, {
+					...fact,
+					applicationId: null,
+					source: { kind: "resume", id: resume.id, quote },
+				});
+				if (row) saved++;
+			}
+			return { saved, skipped: input.proposals.length - saved };
+		}),
 	saveFact: async (userId: string, input: FactInput, automatic = false) => {
 		await requireCareerApplication({ userId, applicationId: input.applicationId });
 		if (automatic && (input.source.kind !== "user-message" || input.text !== input.source.quote))
@@ -551,39 +623,13 @@ export const careerService = {
 		if (automatic && (await careerService.profile(userId)).memoryMode !== "auto") return null;
 		const source = await careerService.quotedSource(userId, input.source, input.applicationId);
 		if (!source) throw new ORPCError("BAD_REQUEST", { message: QUOTE_NOT_IN_SOURCE });
-		// One key per stored source, so a message remembered from the chat and by the coach is the same fact.
-		const fact = { ...input, source };
-		const sourceKey = hash(`${source.kind}:${source.id}:${source.quote.trim().toLocaleLowerCase()}`);
 		return db.transaction(async (tx) => {
 			await lockUser(tx, userId);
 			if (automatic) {
 				const [profile] = await tx.select().from(tables.careerProfile).where(eq(tables.careerProfile.userId, userId));
 				if (careerProfileDataSchema.parse(profile?.data ?? {}).memoryMode !== "auto") return null;
 			}
-			const [suppressed] = await tx
-				.select({ id: tables.careerFact.id })
-				.from(tables.careerFact)
-				.where(
-					and(
-						eq(tables.careerFact.userId, userId),
-						sql`${tables.careerFact.source}->>'kind' = ${source.kind}`,
-						sql`${tables.careerFact.source}->>'id' = ${source.id}`,
-						or(
-							eq(tables.careerFact.status, "forgotten"),
-							eq(tables.careerFact.status, "excluded"),
-							sql`jsonb_array_length(${tables.careerFact.revisions}) > 0`,
-						),
-					),
-				)
-				.limit(1);
-			if (suppressed) return null;
-			// A forgotten source key remains a content-free tombstone; retries cannot recreate the fact.
-			const [row] = await tx
-				.insert(tables.careerFact)
-				.values({ userId, ...fact, sourceKey })
-				.onConflictDoNothing()
-				.returning();
-			return row ?? null;
+			return storeFact(tx, userId, { ...input, source });
 		});
 	},
 	updateFact: async (

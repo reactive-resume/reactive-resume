@@ -1,22 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-11-04 23:14+0100\n"
+"POT-Creation-Date: 2026-11-02 23:04+0100\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: ko\n"
-"Project-Id-Version: reactive-resume\n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-28 05:40\n"
-"Last-Translator: \n"
-"Language-Team: Korean\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Crowdin-Project: reactive-resume\n"
-"X-Crowdin-Project-ID: 503410\n"
-"X-Crowdin-Language: ko\n"
-"X-Crowdin-File: /apps/web/locales/en-US.po\n"
-"X-Crowdin-File-ID: 545\n"
+"Language: ko-KR\n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -1526,7 +1515,7 @@ msgstr "문서 및 입사 지원서 읽기, 변경 및 삭제를 포함하여 AP
 msgid "Accessibility"
 msgstr "접근성"
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 msgid "Accomplishment"
 msgstr "성과"
 
@@ -3212,6 +3201,7 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
@@ -3590,6 +3580,7 @@ msgstr "PDF 파일을 선택하세요."
 msgid "Choose a photo, or paste its address. Fit, shape, border and shadow appear once it's added."
 msgstr ""
 
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/fit.tsx
 #: src/features/settings/ai/next-steps.tsx
 msgid "Choose a resume"
@@ -3598,6 +3589,10 @@ msgstr "이력서 선택"
 #: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "디자인에 어울리는 이력서를 Write에서 선택하세요. 그때까지는 편지 자체가 있습니다."
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "이력서를 선택하고 발췌문을 검토하세요. AI 제공업체에는 아무것도 전송되지 않습니다. 선택한 사실만 모든 지원에 사용할 수 있는 지식에 저장됩니다."
 
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
@@ -4664,6 +4659,10 @@ msgstr "면접을 불러올 수 없습니다. 다시 시도"
 msgid "Couldn't load letters. Try again."
 msgstr "커버 레터를 불러올 수 없습니다. 다시 시도해 주세요."
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "이력서 사실을 불러오거나 저장하지 못했습니다. 다시 시도하세요."
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Couldn't load or save web access settings. Try again."
 msgstr "웹 접속 설정을 불러오거나 저장할 수 없습니다. 다시 시도해 보세요."
@@ -5311,6 +5310,10 @@ msgstr ""
 #: src/features/auth/pages/login.tsx
 msgid "Create one now"
 msgstr "지금 만들기"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "먼저 문서에서 이력서를 만들거나 가져오세요."
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Create resume"
@@ -6693,7 +6696,7 @@ msgstr "포커스 모드 종료"
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
 #: src/features/homepage/write.tsx
@@ -6797,6 +6800,10 @@ msgstr "해당 페이지의 PDF에서 발췌 · 읽는 순서"
 msgctxt "Entry header layout"
 msgid "Eyebrow"
 msgstr "상단 라벨"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Fact"
+msgstr "사실"
 
 #: src/features/homepage/remember.tsx
 msgid "Fact · Accomplishment"
@@ -10330,6 +10337,10 @@ msgstr "해당 채용 공고에서 구체적인 용어를 추출할 수 없어 �
 msgid "No stories yet"
 msgstr "아직 스토리가 없습니다"
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "지원되는 발췌문이 없습니다. 사실을 직접 추가하거나 다른 이력서를 선택하세요."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -11758,7 +11769,7 @@ msgstr "이야기 연습 중: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "단일 열을 사용하거나, 사이드 열은 짧고 독립적인 목록으로만 유지하세요."
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 msgid "Preference"
 msgstr "선호 사항"
 
@@ -12069,6 +12080,10 @@ msgstr ""
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
 msgstr "발행인"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "내 이력서에서 사실 가져오기"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Purple"
@@ -13052,6 +13067,7 @@ msgstr "재개하다"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
 #: src/features/feedback/review-page.tsx
@@ -13101,6 +13117,10 @@ msgstr "이력서 내용"
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "Resume details"
 msgstr "이력서 세부정보"
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Resume fact proposals"
+msgstr "이력서 사실 제안"
 
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
@@ -13176,6 +13196,7 @@ msgstr "다시 해 보다"
 msgid "Retry AI connections"
 msgstr ""
 
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/role-suggestions.tsx
 msgid "Retry documents"
 msgstr ""
@@ -13254,6 +13275,10 @@ msgstr ""
 #: src/features/career/workspace/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "필수 양식 답변을 검토하고 근거 없는 주장을 삭제하세요."
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "이력서 사실 검토"
 
 #: src/features/resume/editor/save-status.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -13566,6 +13591,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "스케줄 저장"
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "선택한 사실 저장"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
 msgid "Save story"
@@ -13595,6 +13624,10 @@ msgstr "비교할 수 있도록 이 오퍼 조건 저장"
 #: src/features/settings/account/backup-codes.tsx
 msgid "Save these somewhere safe. Each works once, and they won't be shown again."
 msgstr ""
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Save this fact"
+msgstr "이 사실 저장"
 
 #: src/features/resume/editor/check/job-match.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -13710,6 +13743,12 @@ msgstr "이 지원 건 전용으로 지식에 저장했습니다."
 #: src/features/career/workspace/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "저장됨: {0}. 건너뜀: {1}. 기존 사실, 수정된 사실 또는 비활성화된 사실은 변경되지 않습니다."
 
 #. placeholder {0}: new URL(url).host
 #: src/features/resume/share/address-field.tsx
@@ -14708,7 +14747,7 @@ msgstr "6개 제품팀"
 msgid "Size"
 msgstr "크기"
 
-#: src/features/career/knowledge/facts.tsx
+#: src/features/career/knowledge/fact-categories.ts
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Skill"
 msgstr "기술"
@@ -14788,6 +14827,10 @@ msgstr "일부 채용 정보를 읽을 수 없습니다. 직무와 회사를 입
 msgid "Some lines are stored out of reading order."
 msgstr "일부 줄이 읽는 순서와 다르게 저장되어 있습니다."
 
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "일부 이력서 텍스트가 생략되었습니다. 다른 사실은 직접 추가하세요."
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "일부 시스템에서는 이미지를 잘못 처리하고 일부 국가에서는 사진을 사용하지 않는 것이 좋습니다."
@@ -14832,6 +14875,10 @@ msgstr "소스 코드"
 #: src/features/career/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/knowledge/resume-facts.tsx
+msgid "Source quotation"
+msgstr "출처 인용문"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -16947,6 +16994,7 @@ msgid "Two-step verification turned on"
 msgstr "2단계 인증이 켜졌습니다"
 
 #: src/features/applications/components/interview-dialog.tsx
+#: src/features/career/knowledge/resume-facts.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx

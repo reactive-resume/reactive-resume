@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-02 23:04+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: ar-SA\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -1181,7 +1175,7 @@ msgstr "قبلت عرضا آخر"
 msgid "Accepted offer"
 msgstr "قبلت العرض"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "إنجاز"
 
@@ -2863,12 +2857,17 @@ msgid "Choose a replacement"
 msgstr "اختيار بديل"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "اختيار سيرة ذاتية"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "اختر سيرة ذاتية في تطبيق Write لتتناسب مع تصميمها. وحتى ذلك الحين، فإن الرسالة لها طابعها الخاص."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "اختر سيرة ذاتية وراجع مقتطفاتها. لا يُرسل شيء إلى مزوّد ذكاء اصطناعي. تُحفظ الحقائق المحددة فقط في المعرفة لجميع طلبات التوظيف."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3656,6 +3655,10 @@ msgstr "تعذّر تحميل المستندات. حاول مجددًا."
 msgid "Couldn't load letter"
 msgstr "تعذر تحميل الرسالة التعريفية"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "تعذّر تحميل حقائق السيرة الذاتية أو حفظها. حاول مجددًا."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "تعذر تحميل السير الذاتية لخطاب تعريفي جديد."
@@ -4182,6 +4185,10 @@ msgstr "إنشاء نسخة"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "قم بإنشاء سيرة ذاتية أو استيرادها أولاً، ثم قم بالعودة لنسخها لهذه الوظيفة."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "أنشئ سيرة ذاتية أو استوردها في المستندات أولًا."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5307,7 +5314,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "الخبرة"
@@ -5355,6 +5362,7 @@ msgid "Eyebrow"
 msgstr "عنوان تمهيدي"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "حقيقة"
 
@@ -8170,6 +8178,10 @@ msgstr "لا يمكن سحب أي مصطلحات محددة من هذا الوص
 msgid "No stories yet"
 msgstr "لا توجد قصص بعد"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "لم يُعثر على مقتطفات مدعومة. أضف حقيقة يدويًا أو اختر سيرة ذاتية أخرى."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9298,7 +9310,7 @@ msgstr "التمرّن على قصتك: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "يُفضَّل عمود واحد، أو إبقاء العمود الجانبي لقوائم قصيرة ومكتفية بذاتها."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "تفضيل"
 
@@ -9569,6 +9581,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "الناشر"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "استخراج حقائق من سيرتي الذاتية"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10355,6 +10371,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10585,6 +10602,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "راجع إجابات النموذج المطلوبة وأزل الادعاءات غير المدعومة."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "مراجعة حقائق السيرة الذاتية"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10859,6 +10880,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "احفظ الجدول"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "حفظ الحقائق المحددة"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10883,6 +10908,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "احفظ شروط هذا العرض للمقارنة"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "حفظ هذه الحقيقة"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -10961,6 +10990,12 @@ msgstr "تم الحفظ في المعرفة، خاصة بهذا الطلب."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "المحفوظة: {0}. المتخطاة: {1}. تبقى الحقائق الحالية أو المصححة أو المعطلة دون تغيير."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11794,7 +11829,7 @@ msgid "Size"
 msgstr "الحجم"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "مهارة"
 
@@ -11860,6 +11895,10 @@ msgstr "بعض الرموز (glyphs) ليس لها معنى خارج هذا ال
 msgid "Some lines are stored out of reading order."
 msgstr "بعض الأسطر مُخزَّنة خارج ترتيب القراءة."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "تم استبعاد بعض نص السيرة الذاتية. أضف الحقائق الأخرى يدويًا."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "تسيء بعض الأنظمة التعامل مع الصور، ولا يُنصح باستخدام الصور في بعض البلدان."
@@ -11918,6 +11957,10 @@ msgstr "الكود المصدري على GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "اقتباس المصدر"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13560,6 +13603,7 @@ msgstr "التحقق من خطوتين"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

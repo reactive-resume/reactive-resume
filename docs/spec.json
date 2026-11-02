@@ -50394,6 +50394,301 @@
 				]
 			}
 		},
+		"/career/facts/resume/preview": {
+			"post": {
+				"operationId": "proposeResumeFacts",
+				"summary": "Review facts from an owned resume",
+				"description": "Returns visible resume excerpts without saving facts or contacting an AI provider.",
+				"tags": [
+					"Career"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"resumeId": {
+										"type": "string",
+										"minLength": 1
+									}
+								},
+								"required": [
+									"resumeId"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"updatedAt": {
+											"type": "string",
+											"format": "date-time",
+											"x-native-type": "date"
+										},
+										"proposals": {
+											"type": "array",
+											"maxItems": 50,
+											"items": {
+												"type": "object",
+												"properties": {
+													"text": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 2000
+													},
+													"category": {
+														"enum": [
+															"accomplishment",
+															"experience",
+															"skill",
+															"preference"
+														],
+														"type": "string"
+													},
+													"quote": {
+														"type": "string",
+														"minLength": 1,
+														"maxLength": 2000
+													}
+												},
+												"required": [
+													"text",
+													"category",
+													"quote"
+												]
+											}
+										},
+										"omitted": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										}
+									},
+									"required": [
+										"id",
+										"name",
+										"updatedAt",
+										"proposals",
+										"omitted"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/facts/resume/preview\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"resumeId\": \"<string>\"\n}'"
+					}
+				]
+			}
+		},
+		"/career/facts/resume/import": {
+			"post": {
+				"operationId": "saveResumeFacts",
+				"summary": "Save reviewed resume facts",
+				"description": "Atomically saves only selected facts as shared Knowledge, retaining their exact resume quotations. Rejects a changed or trashed source. Existing, corrected and switched-off Knowledge is preserved.",
+				"tags": [
+					"Career"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"resumeId": {
+										"type": "string",
+										"minLength": 1
+									},
+									"updatedAt": {
+										"type": "string",
+										"format": "date-time",
+										"x-native-type": "date"
+									},
+									"proposals": {
+										"type": "array",
+										"minItems": 1,
+										"maxItems": 50,
+										"items": {
+											"type": "object",
+											"properties": {
+												"text": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 2000
+												},
+												"category": {
+													"enum": [
+														"accomplishment",
+														"experience",
+														"skill",
+														"preference"
+													],
+													"type": "string"
+												},
+												"quote": {
+													"type": "string",
+													"minLength": 1,
+													"maxLength": 2000
+												}
+											},
+											"required": [
+												"text",
+												"category",
+												"quote"
+											]
+										}
+									}
+								},
+								"required": [
+									"resumeId",
+									"updatedAt",
+									"proposals"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"saved": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										},
+										"skipped": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										}
+									},
+									"required": [
+										"saved",
+										"skipped"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request POST \"https://rxresu.me/api/openapi/career/facts/resume/import\" --header \"x-api-key: <api-key>\" --header \"Content-Type: application/json\" --data '{\n  \"resumeId\": \"<string>\",\n  \"updatedAt\": \"<string>\",\n  \"proposals\": [\n    {\n      \"text\": \"<string>\",\n      \"category\": \"accomplishment\",\n      \"quote\": \"<string>\"\n    }\n  ]\n}'"
+					}
+				]
+			}
+		},
 		"/career/facts/{id}": {
 			"patch": {
 				"operationId": "updateCareerFact",

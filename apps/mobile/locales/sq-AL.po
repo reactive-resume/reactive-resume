@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-02 23:04+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: sq-AL\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -1181,7 +1175,7 @@ msgstr "Pranova një ofertë tjetër"
 msgid "Accepted offer"
 msgstr "Ofertë e pranuar"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Arritje"
 
@@ -2863,12 +2857,17 @@ msgid "Choose a replacement"
 msgstr "Zgjidhni një zëvendësim"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "Zgjidhni një CV"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Zgjidhni një CV në Shkruaj që të përputhet me dizajnin e saj. Deri atëherë, letra ka të vetën."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Zgjidhni një CV dhe shqyrtoni fragmentet. Asgjë nuk i dërgohet një ofruesi të IA-së. Vetëm faktet e zgjedhura ruhen te Njohuritë për të gjitha aplikimet."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3656,6 +3655,10 @@ msgstr "Dokumentet nuk mund të ngarkoheshin. Provoni përsëri."
 msgid "Couldn't load letter"
 msgstr "Letra nuk mund të ngarkohej"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Faktet e CV-së nuk u ngarkuan ose ruajtën. Provoni përsëri."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "CV-të nuk mund të ngarkohej për një letër të re."
@@ -4182,6 +4185,10 @@ msgstr "Krijo kopje"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Krijoni ose importoni fillimisht një CV dhe më pas kthehuni për ta kopjuar për këtë punë."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Së pari krijoni ose importoni një CV te Dokumentet."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5307,7 +5314,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "Eksperienca"
@@ -5355,6 +5362,7 @@ msgid "Eyebrow"
 msgstr "Mbititull"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fakt"
 
@@ -8170,6 +8178,10 @@ msgstr "Asnjë kusht specifik nuk mund të nxirret nga ai përshkrim i punës."
 msgid "No stories yet"
 msgstr "Ende nuk ka histori"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Nuk u gjetën fragmente të përshtatshme. Shtoni një fakt manualisht ose zgjidhni një CV tjetër."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9298,7 +9310,7 @@ msgstr "Po ushtroni historinë tuaj: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Preferoni një kolonë të vetme, ose mbani kolonën anësore me lista të shkurtra e të vetëpërmbajtura."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "Preferencë"
 
@@ -9569,6 +9581,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "Botues"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Merr fakte nga CV-ja ime"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10355,6 +10371,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10585,6 +10602,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Rishikoni përgjigjet e detyrueshme të formularit dhe hiqni pretendimet e pambështetura."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Shqyrto faktet e CV-së"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10859,6 +10880,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Ruaj orarin"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Ruaj faktet e zgjedhura"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10883,6 +10908,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Ruaj këto kushte oferte për krahasim"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Ruaj këtë fakt"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -10961,6 +10990,12 @@ msgstr "U ruajt te Njohuritë, private për këtë aplikim."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Të ruajtura: {0}. Të anashkaluara: {1}. Faktet ekzistuese, të korrigjuara ose të çaktivizuara mbeten të pandryshuara."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11794,7 +11829,7 @@ msgid "Size"
 msgstr "Madhësia"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "Aftësi"
 
@@ -11860,6 +11895,10 @@ msgstr "Disa shenja nuk kanë kuptim jashtë këtij skedari."
 msgid "Some lines are stored out of reading order."
 msgstr "Disa rreshta janë ruajtur jashtë renditjes së leximit."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "Një pjesë e tekstit të CV-së u la jashtë. Shtoni faktet e tjera manualisht."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Disa sisteme keqpërdorin imazhet dhe fotot dekurajohen në disa vende."
@@ -11918,6 +11957,10 @@ msgstr "Kodi burimor në GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Citim nga burimi"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13560,6 +13603,7 @@ msgstr "Verifikimi me dy hapa"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-02 23:04+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: nl-NL\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -1181,7 +1175,7 @@ msgstr "Nog een bod geaccepteerd"
 msgid "Accepted offer"
 msgstr "Aanbod geaccepteerd"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Prestatie"
 
@@ -2863,12 +2857,17 @@ msgid "Choose a replacement"
 msgstr "Kies een vervanging"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "Kies een cv"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Kies een cv in Write dat bij het ontwerp past. Tot die tijd heeft de brief zijn eigen brief."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Kies een cv en bekijk de fragmenten. Er gaat niets naar een AI-aanbieder. Alleen geselecteerde feiten worden in Kennis opgeslagen voor alle sollicitaties."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3656,6 +3655,10 @@ msgstr "Documenten konden niet worden geladen. Probeer het opnieuw."
 msgid "Couldn't load letter"
 msgstr "Kan sollicitatiebrief niet laden"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "Cv-feiten konden niet worden geladen of opgeslagen. Probeer opnieuw."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "Kan cv's voor een nieuwe sollicitatiebrief niet laden."
@@ -4182,6 +4185,10 @@ msgstr "Kopie maken"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Maak of importeer eerst een cv en keer vervolgens terug om het voor deze functie te kopiëren."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Maak of importeer eerst een cv in Documenten."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5307,7 +5314,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "Ervaring"
@@ -5355,6 +5362,7 @@ msgid "Eyebrow"
 msgstr "Bovenlabel"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Feit"
 
@@ -8170,6 +8178,10 @@ msgstr "Er konden geen specifieke termen uit die functiebeschrijving worden geha
 msgid "No stories yet"
 msgstr "Nog geen verhalen"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "Geen geschikte fragmenten gevonden. Voeg handmatig een feit toe of kies een ander cv."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9298,7 +9310,7 @@ msgstr "Uw verhaal oefenen: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Geef de voorkeur aan één kolom, of beperk de zijkolom tot korte, op zichzelf staande lijsten."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "Voorkeur"
 
@@ -9569,6 +9581,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "Uitgever"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Feiten uit mijn cv halen"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10355,6 +10371,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10585,6 +10602,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Controleer verplichte formulierantwoorden en verwijder ononderbouwde beweringen."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Cv-feiten controleren"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10859,6 +10880,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Planning opslaan"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Geselecteerde feiten opslaan"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10883,6 +10908,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Sla deze aanbodsvoorwaarden op om te vergelijken"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Dit feit opslaan"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -10961,6 +10990,12 @@ msgstr "Opgeslagen in Kennis, privé voor deze sollicitatie."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Opgeslagen: {0}. Overgeslagen: {1}. Bestaande, gecorrigeerde of uitgeschakelde feiten blijven ongewijzigd."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11794,7 +11829,7 @@ msgid "Size"
 msgstr "Grootte"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "Vaardigheid"
 
@@ -11860,6 +11895,10 @@ msgstr "Sommige glyphs hebben geen betekenis buiten dit bestand."
 msgid "Some lines are stored out of reading order."
 msgstr "Sommige regels zijn opgeslagen in een andere volgorde dan de leesvolgorde."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "Een deel van de cv-tekst is weggelaten. Voeg andere feiten handmatig toe."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Sommige systemen gaan verkeerd om met afbeeldingen en in sommige landen worden foto's afgeraden."
@@ -11918,6 +11957,10 @@ msgstr "Broncode op GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Broncitaat"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13560,6 +13603,7 @@ msgstr "Tweestapsverificatie"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx

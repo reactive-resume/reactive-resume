@@ -1,17 +1,11 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-10-17 06:47+0200\n"
+"POT-Creation-Date: 2026-11-02 23:04+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: ca-ES\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -1181,7 +1175,7 @@ msgstr "S'ha acceptat una altra oferta"
 msgid "Accepted offer"
 msgstr "Oferta acceptada"
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Accomplishment"
 msgstr "Assoliment"
 
@@ -2863,12 +2857,17 @@ msgid "Choose a replacement"
 msgstr "Trieu una substitució"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Choose a resume"
 msgstr "Tria un currículum"
 
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Trieu un currículum a Write que coincideixi amb el seu disseny. Fins aleshores, la carta té la seva."
+
+#: src/features/career/resume-facts.tsx
+msgid "Choose a resume, then review its excerpts. Nothing goes to an AI provider. Only selected facts are saved to Knowledge for all applications."
+msgstr "Tria un currículum i revisa els fragments. No s'envia res a cap proveïdor d'IA. Només els fets seleccionats es desen a Coneixement per a totes les candidatures."
 
 #: src/features/applications/import-sheet.tsx
 msgid "Choose a stage"
@@ -3656,6 +3655,10 @@ msgstr "No s'han pogut carregar els documents. Torna-ho a provar."
 msgid "Couldn't load letter"
 msgstr "No s'ha pogut carregar la carta de presentació"
 
+#: src/features/career/resume-facts.tsx
+msgid "Couldn't load or save resume facts. Try again."
+msgstr "No s'han pogut carregar o desar els fets del currículum. Torna-ho a provar."
+
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load resumes for a new letter."
 msgstr "No s'han pogut carregar els currículums vitae d'una carta de presentació nova."
@@ -4182,6 +4185,10 @@ msgstr "Crea una còpia"
 #: src/features/documents/new-document.tsx
 msgid "Create or import a resume first, then return to copy it for this job."
 msgstr "Creeu o importeu primer un currículum vitae i, a continuació, torneu a copiar-lo per a aquesta feina."
+
+#: src/features/career/resume-facts.tsx
+msgid "Create or import a resume in Documents first."
+msgstr "Primer crea o importa un currículum a Documents."
 
 #: src/features/documents/new-document.tsx
 msgid "Create resume"
@@ -5307,7 +5314,7 @@ msgstr ""
 msgid "Expected"
 msgstr ""
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 #: src/features/write/fields.ts
 msgid "Experience"
 msgstr "Experiència"
@@ -5355,6 +5362,7 @@ msgid "Eyebrow"
 msgstr "Avanttítol"
 
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 msgid "Fact"
 msgstr "Fet"
 
@@ -8170,6 +8178,10 @@ msgstr "No s'han pogut extreure termes específics d'aquesta descripció de fein
 msgid "No stories yet"
 msgstr "Encara no hi ha històries"
 
+#: src/features/career/resume-facts.tsx
+msgid "No supported excerpts found. Add a fact manually or choose another resume."
+msgstr "No s'han trobat fragments compatibles. Afegeix un fet manualment o tria un altre currículum."
+
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr ""
@@ -9298,7 +9310,7 @@ msgstr "Assajant la vostra història: {storyTitle}"
 msgid "Prefer a single column, or keep the side column to short, self-contained lists."
 msgstr "Prefereix una sola columna, o limita la columna lateral a llistes curtes i autònomes."
 
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Preference"
 msgstr "Preferència"
 
@@ -9569,6 +9581,10 @@ msgstr ""
 #: src/features/write/fields.ts
 msgid "Publisher"
 msgstr "Editor"
+
+#: src/features/career/resume-facts.tsx
+msgid "Pull facts from my resume"
+msgstr "Extreu fets del meu currículum"
 
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
@@ -10355,6 +10371,7 @@ msgstr ""
 #: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/write.tsx
 #: src/features/workspace/preparation.tsx
@@ -10585,6 +10602,10 @@ msgstr ""
 #: src/features/workspace/tabs/apply.tsx
 msgid "Review required form answers and remove unsupported claims."
 msgstr "Reviseu les respostes obligatòries del formulari i elimineu les afirmacions sense aval."
+
+#: src/features/career/resume-facts.tsx
+msgid "Review resume facts"
+msgstr "Revisa els fets del currículum"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Review target roles, one per line"
@@ -10859,6 +10880,10 @@ msgstr ""
 msgid "Save schedule"
 msgstr "Desa la programació"
 
+#: src/features/career/resume-facts.tsx
+msgid "Save selected facts"
+msgstr "Desa els fets seleccionats"
+
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
 msgid "Save story"
@@ -10883,6 +10908,10 @@ msgstr ""
 #: src/features/workspace/tabs/messages.tsx
 msgid "Save these offer terms to compare"
 msgstr "Deseu aquestes condicions de l'oferta per comparar-les"
+
+#: src/features/career/resume-facts.tsx
+msgid "Save this fact"
+msgstr "Desa aquest fet"
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Save this story to Knowledge?"
@@ -10961,6 +10990,12 @@ msgstr "S'ha desat a Coneixements, privat per a aquesta candidatura."
 #: src/features/workspace/tabs/practise.tsx
 msgid "Saved to Library · Practice"
 msgstr ""
+
+#. placeholder {0}: result.saved
+#. placeholder {1}: result.skipped
+#: src/features/career/resume-facts.tsx
+msgid "Saved: {0}. Skipped: {1}. Existing, corrected or switched-off facts stay unchanged."
+msgstr "Desats: {0}. Omesos: {1}. Els fets existents, corregits o desactivats no canvien."
 
 #: src/features/applications/add-sheet.tsx
 msgid "Saving the job. Wait for confirmation before making another change."
@@ -11794,7 +11829,7 @@ msgid "Size"
 msgstr "Mida"
 
 #: src/features/assistant/messages.tsx
-#: src/features/career/facts.tsx
+#: src/features/career/fact-categories.ts
 msgid "Skill"
 msgstr "Habilitat"
 
@@ -11860,6 +11895,10 @@ msgstr "Alguns glifs no tenen cap significat fora d'aquest fitxer."
 msgid "Some lines are stored out of reading order."
 msgstr "Algunes línies s'emmagatzemen fora de l'ordre de lectura."
 
+#: src/features/career/resume-facts.tsx
+msgid "Some resume text was left out. Add other facts manually."
+msgstr "S'ha omès part del text del currículum. Afegeix altres fets manualment."
+
 #: src/features/check/issues.ts
 msgid "Some systems mishandle images, and photos are discouraged in some countries."
 msgstr "Alguns sistemes gestionen malament les imatges i en alguns països es desaconsellen les fotos."
@@ -11918,6 +11957,10 @@ msgstr "Codi font a GitHub"
 #: src/features/workspace/answer-library.tsx
 msgid "Source employer"
 msgstr ""
+
+#: src/features/career/resume-facts.tsx
+msgid "Source quotation"
+msgstr "Citació de la font"
 
 #. placeholder {0}: new URL(row.url).hostname
 #: src/features/career/today.tsx
@@ -13560,6 +13603,7 @@ msgstr "Verificació en dos passos"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/career/facts.tsx
+#: src/features/career/resume-facts.tsx
 #: src/features/design/advanced.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/letters/design.tsx
