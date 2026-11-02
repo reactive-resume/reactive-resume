@@ -59,8 +59,6 @@ To add a **Ghosted** stage in one step, select **Add Ghosted (closed, no respons
 
 You can have up to 40 stages.
 
-Combining a guest account with an existing account must also fit this limit. If it would exceed 40 stages, sign-in stops and keeps your guest session and data available. Remove unused custom stages before trying again.
-
 ## Remove a stage
 
 Select **Remove** (the trash icon) on a stage you added, choose where its applications go, and select **Remove stage**. Only stages that count the same, with the same preset outcome, can take them. If there isn't one, add it first. Standard stages can't be removed.
@@ -77,7 +75,7 @@ Removing a stage doesn't delete applications or their history; earlier activity 
 
 Moving between two stages that count the same, such as **Interview** and **Take-home assignment**, is added to the activity history. It doesn't reset the "No reply" reminder or change your applied date.
 
-Closing an application pauses its Career schedules and pending notifications. Reopening resumes them; an overdue schedule can run on the next scheduler tick. Review or pause schedules before reopening if you don't want them to resume. An email already being sent cannot be recalled.
+Closing an application pauses its Career schedules and pending notifications. Reopening resumes them. Review or pause schedules before reopening if you don't want them to resume; overdue work may run as soon as it resumes. An email already being sent cannot be recalled.
 
 <Frame caption="A fictional application in the custom Take-home assignment column between Interview and Offer">
   <img
@@ -90,11 +88,18 @@ Closing an application pauses its Career schedules and pending notifications. Re
 
 When you save a job or mark it as applied, Reactive Resume checks your earlier applications to the same company that ended with **No response**. If it finds any, it lists them so you can decide whether to apply again. It's only advice: nothing is blocked. Company names are matched as written, ignoring capitals and extra spaces, so a differently named branch of the same company isn't recognized.
 
-Recorded No response outcomes remain available for this warning after you reopen an application. Outcomes cleared before outcome history was introduced cannot be recovered.
+Recorded No response outcomes remain available for this warning after you reopen an application.
 
 ## Older servers
 
 If your self-hosted server doesn't support custom stages yet, the Applications page uses the six standard stages and the **Manage stages** button is hidden. Update the server to use custom stages.
+
+<Accordion title="Older data and guest accounts">
+  Combining a guest account with an existing account must fit the 40-stage limit. If it would exceed the limit, sign-in stops and keeps your guest session and data available. Remove unused custom stages before trying again.
+
+Outcomes cleared before outcome history was introduced cannot be recovered.
+
+</Accordion>
 
 ## Related guides
 
