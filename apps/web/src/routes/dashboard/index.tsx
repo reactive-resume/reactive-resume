@@ -31,7 +31,9 @@ export const Route = createFileRoute("/dashboard/")({
 		view: z.enum(["grid", "list"]).optional().catch(undefined),
 		// Older links opened letters here; they open in the letter editor now.
 		letter: z.string().optional().catch(undefined),
-		// "Use this template" in the gallery: a blank resume in that template, once signed in.
+		// A blank resume to start once signed in: "Use this template" in the gallery (with its template) and the ATS
+		// checker's "Start a blank resume".
+		new: z.literal("resume").optional().catch(undefined),
 		template: templateSchema.optional().catch(undefined),
 	}),
 	search: { middlewares: [stripSearchParams(defaults)] },
@@ -48,15 +50,20 @@ function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const { startBlank } = useStartDocument();
 	const started = useRef(false);
-	const startTemplate = useEffectEvent((template: Template) => {
-		void navigate({ search: (previous: DocumentsSearch) => ({ ...previous, template: undefined }), replace: true });
-		void startBlank(template);
+	const requested = search.new === "resume" || search.template !== undefined;
+	const startRequested = useEffectEvent(async (template: Template | undefined) => {
+		// Off the address first, so Back from the new resume doesn't make another; back on it if creating failed,
+		// so reloading tries again.
+		const without = (previous: DocumentsSearch) => ({ ...previous, new: undefined, template: undefined });
+		void navigate({ search: without, replace: true });
+		if (await startBlank(template)) return;
+		void navigate({ search: (previous: DocumentsSearch) => ({ ...previous, new: "resume", template }), replace: true });
 	});
 	useEffect(() => {
-		if (!search.template || started.current) return;
+		if (!requested || started.current) return;
 		started.current = true;
-		startTemplate(search.template);
-	}, [search.template]);
+		void startRequested(search.template);
+	}, [requested, search.template]);
 
 	return (
 		<DocumentsPage

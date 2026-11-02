@@ -145,7 +145,8 @@ export async function allocateUniqueUsername(email: string, preferredUsername?: 
 	const emailLocalPart = getEmailLocalPart(email);
 	const preferred = preferredUsername ? toUsername(preferredUsername) : "";
 	const normalizedEmailLocalPart = toUsername(emailLocalPart);
-	const baseUsername = preferred || normalizedEmailLocalPart || "user";
+	// Usernames need at least three characters: a short one ("a@…") falls to the next candidate, then "user".
+	const baseUsername = [preferred, normalizedEmailLocalPart].find((candidate) => candidate.length >= 3) ?? "user";
 
 	if (!(await isUsernameTaken(baseUsername))) return baseUsername;
 

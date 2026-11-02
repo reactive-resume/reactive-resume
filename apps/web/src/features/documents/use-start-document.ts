@@ -41,14 +41,17 @@ export function useStartDocument(applicationId?: string) {
 		if (applicationId) void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
 		closeDialog();
 	};
+	/** Whether the document was created; a click while another create is in flight creates nothing. */
 	const start = async (task: () => Promise<void>) => {
-		if (starting) return;
+		if (starting) return false;
 		starting = true;
 		setCreating(true);
 		try {
 			await task();
+			return true;
 		} catch (error) {
 			toastError(error, t`Couldn't create the document. Try again.`);
+			return false;
 		} finally {
 			starting = false;
 			setCreating(false);
@@ -65,12 +68,8 @@ export function useStartDocument(applicationId?: string) {
 					tags: [],
 					autoName: true,
 					withSampleData: false,
+					...(template ? { template } : {}),
 				});
-				if (template)
-					await client.resume.patch({
-						id: resumeId,
-						operations: [{ op: "replace", path: "/metadata/template", value: template }],
-					});
 				await created(resumeId, "resume");
 				void navigate({ to: "/builder/$resumeId", params: { resumeId } });
 			}),

@@ -388,8 +388,9 @@ type ResultProps = {
 	onReset: () => void;
 };
 
-// A file with no text behind its pages has nothing to import: the editor would open empty.
-const UNREADABLE = new Set(["NO_TEXT_LAYER", "IMAGE_ONLY_DOCUMENT"]);
+// A file with no text behind its pages has nothing to import: the editor would open empty. A partly scanned one
+// (IMAGE_ONLY_DOCUMENT) still brings its readable pages.
+const UNREADABLE = new Set(["NO_TEXT_LAYER"]);
 
 function Result({ result, file, signedIn, importError, onFix, onReset }: ResultProps) {
 	const { report } = result;
@@ -583,16 +584,21 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 function StartInstead({ signedIn }: { signedIn: boolean }) {
 	const navigate = useNavigate();
 	const { creating, startBlank } = useStartDocument();
-	const signUp = () => void navigate({ to: "/auth/register", search: { callbackURL: "/dashboard" } });
+	// Signing up first carries the choice: Documents starts the blank resume once the account exists.
+	const signUp = (callbackURL: string) => void navigate({ to: "/auth/register", search: { callbackURL } });
 	return (
 		<div className="flex flex-wrap gap-2">
-			<Button className="h-10" loading={creating} onClick={() => (signedIn ? void startBlank() : signUp())}>
+			<Button
+				className="h-10"
+				loading={creating}
+				onClick={() => (signedIn ? void startBlank() : signUp("/dashboard?new=resume"))}
+			>
 				<Trans>Start a blank resume</Trans>
 			</Button>
 			<Button
 				variant="secondary"
 				className="h-10"
-				onClick={() => (signedIn ? void navigate({ to: "/dashboard" }) : signUp())}
+				onClick={() => (signedIn ? void navigate({ to: "/dashboard" }) : signUp("/dashboard"))}
 			>
 				<Trans>Import a Word file instead</Trans>
 			</Button>

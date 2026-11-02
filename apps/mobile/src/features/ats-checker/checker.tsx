@@ -333,8 +333,9 @@ type ResultProps = {
 	onBlank: () => void;
 };
 
-// A file with no text behind its pages has nothing to import: the editor would open empty.
-const UNREADABLE = new Set(["NO_TEXT_LAYER", "IMAGE_ONLY_DOCUMENT"]);
+// A file with no text behind its pages has nothing to import: the editor would open empty. A partly scanned one
+// (IMAGE_ONLY_DOCUMENT) still brings its readable pages.
+const UNREADABLE = new Set(["NO_TEXT_LAYER"]);
 
 function Result({ result, uri, size, importError, onFix, onReset, onBlank }: ResultProps) {
 	const { t } = useLingui();

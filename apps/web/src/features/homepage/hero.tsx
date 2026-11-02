@@ -5,6 +5,7 @@ import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { useIsClient } from "usehooks-ts";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
 import { prefersReducedMotion, SCENE } from "./scroll";
@@ -279,25 +280,34 @@ export function Hero() {
 
 /**
  * "Try it without an account", under the hero's call to action, where the server allows guests: a guest session opens
- * Documents, and signing up later keeps the work.
+ * Documents, and signing up later keeps the work. The build's prerendered page has no route to read flags from, so
+ * the link appears once the live page has loaded.
  */
 function GuestLink() {
+	return useIsClient() ? <GuestLinkButton /> : null;
+}
+
+function GuestLinkButton() {
 	const { flags, session } = useRouteContext({ strict: false });
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [pending, setPending] = useState(false);
 	if (!flags?.allowGuestLogin || session) return null;
 
+	const failed = (message?: string) => {
+		setPending(false);
+		toast.add({ type: "error", description: message || t`Couldn't continue as a guest. Try again.` });
+	};
 	const start = async () => {
 		setPending(true);
-		const { error } = await authClient.signIn.anonymous();
-		if (error) {
-			setPending(false);
-			toast.add({ type: "error", description: error.message || t`Couldn't continue as a guest. Try again.` });
-			return;
+		try {
+			const { error } = await authClient.signIn.anonymous();
+			if (error) return failed(error.message);
+			await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
+			void navigate({ to: "/dashboard" });
+		} catch {
+			failed();
 		}
-		await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
-		void navigate({ to: "/dashboard" });
 	};
 
 	return (
