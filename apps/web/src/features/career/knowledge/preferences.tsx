@@ -36,10 +36,14 @@ export function useProfile() {
 	const queryKey = orpc.career.profile.queryKey();
 	const query = useQuery(orpc.career.profile.queryOptions());
 	const profile = query.data;
+	const mutationKey = [...orpc.career.updateProfile.key(), owner];
 	const mutation = useMutation({
 		...orpc.career.updateProfile.mutationOptions({ context: owner ? { accountId: owner } : {} }),
+		mutationKey,
+		scope: { id: `career-memory:${owner}` },
 		onError: (error) => {
-			void queryClient.invalidateQueries({ queryKey });
+			// A failed earlier choice must not overwrite the next queued choice's optimistic cache.
+			if (queryClient.isMutating({ mutationKey }) === 1) void queryClient.invalidateQueries({ queryKey });
 			saveFailed(error);
 		},
 	});

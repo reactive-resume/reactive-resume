@@ -69,6 +69,40 @@ function findImpossibleRequestSchemas(spec: GeneratedSpecView) {
 }
 
 describe("generateOpenApiSpec", () => {
+	it("documents guaranteed profile response fields without adding request defaults", async () => {
+		const spec = await generateSpec();
+		for (const method of ["get", "put", "patch"] as const) {
+			expect(spec.paths?.["/career/profile"]?.[method]?.responses?.["200"]).toMatchObject({
+				content: {
+					"application/json": {
+						schema: {
+							required: [
+								"targetRoles",
+								"locations",
+								"priorities",
+								"minBase",
+								"maxOfficeDays",
+								"noticeWeeks",
+								"memoryMode",
+							],
+						},
+					},
+				},
+			});
+		}
+		const view = spec as GeneratedSpecView;
+		const input = getRequestSchema(view, "/career/profile", "patch");
+		expect(input).not.toHaveProperty("required");
+		expect(getRequestSchema(view, "/career/profile", "put")).not.toHaveProperty("required");
+		for (const field of ["targetRoles", "locations"]) {
+			expect(input).toHaveProperty(
+				`properties.${field}.items.description`,
+				expect.stringContaining("whitespace-only values are rejected"),
+			);
+			expect(input).not.toHaveProperty(`properties.${field}.default`);
+		}
+	});
+
 	it("documents distinct search countries in every occurrence", async () => {
 		let count = 0;
 		const visit = (value: unknown) => {

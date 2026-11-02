@@ -8,6 +8,12 @@ describe("career profile updates", () => {
 		expect(careerProfileUpdateSchema.parse({})).toEqual({});
 		expect(careerProfileDataSchema.parse({}).memoryMode).toBe("ask");
 	});
+	it.each(["targetRoles", "locations"])("trims %s and rejects whitespace-only entries", (field) => {
+		expect(careerProfileUpdateSchema.parse({ [field]: ["  Platform engineer  "] })).toEqual({
+			[field]: ["Platform engineer"],
+		});
+		expect(careerProfileUpdateSchema.safeParse({ [field]: [" \t "] }).success).toBe(false);
+	});
 });
 
 describe("careerProfileDataSchema searchRegions", () => {

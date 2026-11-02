@@ -38,8 +38,26 @@ const payPeriodSchema = z.enum(["hour", "month", "year"]);
 /** Independent Facts and Preferences writes have no defaults: an omitted field must stay omitted. */
 export const careerProfileUpdateSchema = z
 	.object({
-		targetRoles: z.array(z.string().trim().min(1).max(200)).max(20),
-		locations: z.array(z.string().trim().min(1).max(200)).max(20),
+		targetRoles: z
+			.array(
+				z
+					.string()
+					.trim()
+					.min(1)
+					.max(200)
+					.describe("Leading and trailing whitespace is removed; whitespace-only values are rejected."),
+			)
+			.max(20),
+		locations: z
+			.array(
+				z
+					.string()
+					.trim()
+					.min(1)
+					.max(200)
+					.describe("Leading and trailing whitespace is removed; whitespace-only values are rejected."),
+			)
+			.max(20),
 		/** "What matters to you", in the user's own words. */
 		priorities: z.string().max(4000),
 		minBase: z.object({

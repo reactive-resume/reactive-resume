@@ -663,7 +663,7 @@ test("a root preload cannot relabel a stale Facts profile write as the new accou
 		);
 		await page.getByRole("link", { name: "Settings", exact: true }).hover();
 		await refreshed;
-		const write = page.waitForResponse((response) => response.url().includes("/api/rpc/career/saveProfile"));
+		const write = page.waitForResponse((response) => response.url().includes("/api/rpc/career/updateProfile"));
 		await page.getByRole("radio", { name: "Never", exact: true }).click();
 		const response = await write;
 		const after = await profileRows(switched.second.id);
