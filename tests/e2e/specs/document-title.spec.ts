@@ -40,8 +40,6 @@ test("builder rename stays inline and tags persist without changing the resume b
 	await page.getByRole("menuitem", { name: "Tags…", exact: true }).click();
 	const tags = page.getByRole("dialog", { name: "Tags", exact: true });
 	await tags.getByPlaceholder("Add a tag…", { exact: true }).fill("portfolio");
-	await tags.getByPlaceholder("Add a tag…", { exact: true }).press("Enter");
-	await expect(tags.getByText("portfolio", { exact: true })).toBeVisible();
 	await tags.screenshot({ path: testInfo.outputPath("builder-tags.png"), animations: "disabled" });
 	await tags.getByRole("button", { name: "Save tags", exact: true }).click();
 	await expect(tags).not.toBeVisible();
@@ -205,4 +203,55 @@ test("resume metadata timeout cancels the request and releases stream updates an
 		release();
 		if (!page.isClosed()) await page.unroute(updateUrl);
 	}
+});
+
+test("bulk library Save includes unfinished tags and retries partial failures without changing locked or unique tags", async ({
+	authPage: page,
+}) => {
+	const ids: string[] = [];
+	for (const name of ["Alpha", "Beta", "Locked"]) {
+		const created = await page.request.post("/api/openapi/resumes", {
+			data: { name, tags: ["base", name.toLowerCase()] },
+		});
+		await expect(created).toBeOK();
+		ids.push(await created.json());
+	}
+	const locked = await page.request.post("/api/rpc/documents/setLocked", {
+		data: { json: { type: "resume", id: ids[2], isLocked: true } },
+	});
+	await expect(locked).toBeOK();
+	await page.goto("/dashboard?view=list");
+	await page.getByRole("checkbox", { name: "Select this page", exact: true }).check();
+	await page.getByRole("toolbar").getByRole("button", { name: "Tags…", exact: true }).click();
+	const dialog = page.getByRole("dialog", { name: "Tags for 3 documents", exact: true });
+	await dialog.getByPlaceholder("Add a tag…", { exact: true }).fill(" portfolio ");
+	// Another session locks Beta after this dialog captured its selection: only that write must fail.
+	const changed = await page.request.post("/api/rpc/documents/setLocked", {
+		data: { json: { type: "resume", id: ids[1], isLocked: true } },
+	});
+	await expect(changed).toBeOK();
+	await dialog.getByRole("button", { name: "Save tags", exact: true }).click();
+	await expect(page.locator('[data-slot="toast"]')).toBeVisible();
+	await expect(dialog).toBeVisible();
+	await expect(dialog.getByText("portfolio", { exact: true })).toBeVisible();
+	const partial = await page.request.get(`/api/openapi/resumes/${ids[0]}`);
+	await expect(partial).toBeOK();
+	expect((await partial.json()).tags).toEqual(["base", "alpha", "portfolio"]);
+	const unlocked = await page.request.post("/api/rpc/documents/setLocked", {
+		data: { json: { type: "resume", id: ids[1], isLocked: false } },
+	});
+	await expect(unlocked).toBeOK();
+	await dialog.getByRole("button", { name: "Save tags", exact: true }).click();
+	await expect(dialog).not.toBeVisible();
+	for (const [index, name] of ["alpha", "beta", "locked"].entries()) {
+		const read = await page.request.get(`/api/openapi/resumes/${ids[index]}`);
+		await expect(read).toBeOK();
+		expect((await read.json()).tags).toEqual(index === 2 ? ["base", name] : ["base", name, "portfolio"]);
+	}
+	await page.reload();
+	await page.getByRole("button", { name: "Options for Alpha", exact: true }).click();
+	await page.getByRole("menuitem", { name: "Tags…", exact: true }).click();
+	await expect(
+		page.getByRole("dialog", { name: "Tags", exact: true }).getByText("portfolio", { exact: true }),
+	).toBeVisible();
 });

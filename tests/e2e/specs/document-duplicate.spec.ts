@@ -71,12 +71,15 @@ for (const kind of ["resume", "letter"] as const) {
 		await expect(input).toHaveValue(`${sourceName.trim()} 2`);
 		const copyName = "Fictional renamed portfolio ".repeat(4).slice(0, 100).trim();
 		await input.fill(copyName);
+		if (kind === "resume") await dialog.getByRole("textbox", { name: "Tags", exact: true }).fill("unfinished copy tag");
 		await dialog.getByRole("button", { name: "Duplicate", exact: true }).click();
 		await expect(page).toHaveTitle(`${copyName} | Reactive Resume`);
 		const copyId = page.url().split("/").at(-1);
 		if (!copyId) throw new Error("Duplicate editor has no document ID");
 		expect(copyId).not.toBe(id);
-		expect((await read(page.request, kind, copyId)).name).toBe(copyName);
+		const copy = await read(page.request, kind, copyId);
+		expect(copy.name).toBe(copyName);
+		if (kind === "resume") expect(copy.tags).toEqual(["portfolio", "unfinished copy tag"]);
 		expect((await read(page.request, kind, id)).name).toBe(sourceName.trim());
 	});
 
