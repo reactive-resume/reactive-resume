@@ -35,4 +35,12 @@ function formatShortcut(shortcut: string, apple = isApple()): string {
 	return [...named, key].join("+");
 }
 
-export { formatShortcut, Kbd };
+/** The same shortcut as `aria-keyshortcuts` names keys ("⌘K" is "Meta+K" on Apple devices, "Control+K" elsewhere). */
+function ariaShortcut(shortcut: string, apple = isApple()): string {
+	const names: Record<string, string> = { "⌘": apple ? "Meta" : "Control", "⌃": "Control", "⇧": "Shift", "⌥": "Alt" };
+	const chars = [...shortcut];
+	const key = chars.filter((char) => !(char in names)).join("");
+	return [...new Set(chars.filter((char) => char in names).map((char) => names[char] ?? ""))].concat(key).join("+");
+}
+
+export { ariaShortcut, formatShortcut, Kbd };

@@ -13,6 +13,7 @@ import { LetterBar, useDownloadLetter } from "./letter-bar";
 import { LetterPage } from "./letter-page";
 import { LetterWritePanel } from "./write-panel";
 import { LetterAssistant } from "@/features/assistant/dock";
+import { useMarkDocumentOpened } from "@/features/documents/new-documents";
 import { useLetterEditorStore } from "@/features/letters/store";
 import {
 	useLetterMode,
@@ -43,6 +44,7 @@ export function LetterShell() {
 	useLinkedUpdateNotice();
 	useUnsavedGuard();
 	useLetterWebMcpTools(routeApi.useParams().coverLetterId);
+	useMarkDocumentOpened(routeApi.useParams().coverLetterId);
 
 	return (
 		<Tabs value={mode} onValueChange={(value) => setMode(value as LetterMode)} className="contents">

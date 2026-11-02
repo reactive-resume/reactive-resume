@@ -44,7 +44,7 @@ function extractPhones(text: string): string[] {
 
 function hostOf(value: string): string | null {
 	try {
-		const url = new URL(value.startsWith("http") ? value : `https://${value}`);
+		const url = new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`);
 		return url.hostname.replace(/^www\./, "").toLowerCase();
 	} catch {
 		return null;
@@ -167,11 +167,18 @@ export function analyzeContact(raw: RawExtraction, document: ExtractedDocument):
 	};
 }
 
+/**
+ * A link that shows work: a known profile (LinkedIn, GitHub…) or any web address of its own, such as a portfolio. Only
+ * the email address's own domain doesn't count, and neither do mail or phone links.
+ */
 export function hasProfessionalLink(contact: ContactEntities): boolean {
 	const all = [...contact.textUrls, ...contact.annotationUrls];
+	const emailDomains = new Set(contact.emails.map((email) => email.split("@")[1]?.toLowerCase() ?? ""));
 	return all.some((url) => {
+		if (/^[a-z][a-z\d+.-]*:/i.test(url) && !/^https?:/i.test(url)) return false;
 		const host = hostOf(url);
-		return host !== null && PROFESSIONAL_HOSTS.some((known) => host === known || host.endsWith(`.${known}`));
+		if (!host?.includes(".")) return false;
+		return PROFESSIONAL_HOSTS.some((known) => host === known || host.endsWith(`.${known}`)) || !emailDomains.has(host);
 	});
 }
 

@@ -90,11 +90,27 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 									title={t`Duplicate`}
 									leading="copy"
 									disabled={operations.busy || printing}
-									onPress={() => {
-										setName(t`${resume.name} (copy)`.slice(0, 100));
-										setSlug("");
-										setPanel("duplicate");
-									}}
+									onPress={() =>
+										void operations.run(async () => {
+											setName(await client.documents.suggestDuplicateName({ type: "resume", id }));
+											setSlug("");
+											setPanel("duplicate");
+										})
+									}
+								/>
+								{/* The library's job copy, from inside the editor (web's builder menu has it too). */}
+								<ListRow
+									title={t`Copy for a job…`}
+									leading="briefcase"
+									disabled={operations.busy || printing}
+									onPress={() =>
+										void run(async () => {
+											// The copy is made from the saved resume: save the open draft first, as Duplicate does.
+											await flushResume(id);
+											setPanel(null);
+											router.push({ pathname: "/new", params: { step: "copy", sourceResumeId: id } });
+										})
+									}
 								/>
 								<ListRow
 									title={resume.isLocked ? t`Unlock editing` : t`Lock editing`}

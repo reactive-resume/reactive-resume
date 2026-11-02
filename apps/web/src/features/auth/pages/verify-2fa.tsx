@@ -113,6 +113,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 			</div>
 
 			<form
+				noValidate
 				className="grid gap-6"
 				onSubmit={(event) => {
 					event.preventDefault();
@@ -144,6 +145,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 										/>
 									) : (
 										<OTPField
+											digitLabel={(position, total) => t`Digit ${position} of ${total}`}
 											length={6}
 											autoSubmit
 											name={field.name}

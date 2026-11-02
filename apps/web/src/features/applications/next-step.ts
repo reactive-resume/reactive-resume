@@ -41,7 +41,7 @@ const formatWhen = (date: Date, locale: string, timeZone: string, withTime: bool
 		day: "numeric",
 		month: "short",
 		timeZone,
-		...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
+		...(withTime ? { hour: "2-digit", minute: "2-digit", hourCycle: "h23" } : {}),
 	});
 
 /** How a next step reads in the list, on cards and in the detail sheet. */

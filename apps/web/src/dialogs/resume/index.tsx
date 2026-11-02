@@ -26,7 +26,7 @@ import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
 	id: z.string(),
-	name: z.string().min(1).max(64),
+	name: z.string().trim().min(1).max(100),
 	tags: z.array(z.string()),
 });
 
@@ -53,7 +53,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 	const form = useAppForm({
 		defaultValues: {
 			id: data.id,
-			name: isUpdate ? data.name : `${data.name} (Copy)`,
+			name: data.name,
 			tags: data.tags,
 		},
 		validators: { onSubmit: formSchema },
@@ -96,7 +96,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 			<DialogHeader>
 				<DialogTitle className="flex items-center gap-x-2">
 					<Icon name="pencil-simple" size={16} />
-					{isUpdate ? <Trans>Rename resume</Trans> : <Trans>Duplicate resume</Trans>}
+					{isUpdate ? <Trans>Edit resume</Trans> : <Trans>Duplicate resume</Trans>}
 				</DialogTitle>
 				{!isUpdate && (
 					<DialogDescription>
@@ -123,7 +123,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 								render={
 									<Input
 										minLength={1}
-										maxLength={64}
+										maxLength={100}
 										name={field.name}
 										value={field.state.value}
 										onBlur={field.handleBlur}

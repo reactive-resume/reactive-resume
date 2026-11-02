@@ -12,6 +12,7 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Circle } from "react-native-svg";
+import { pdfVerdict } from "@reactive-resume/resume/ats-pdf/verdict";
 import { AtsCheckError, MAX_IMPORT_BYTES, runAtsCheck } from "./check";
 import { getPdfCategoryLabel, getPdfFindingMessage } from "./messages";
 import { OriginalPage } from "./original-page";
@@ -346,8 +347,11 @@ function Result({ result, uri, size, importError, onFix, onReset, onBlank }: Res
 	const [lens, setLens] = useState<"report" | "page" | "text">("report");
 	const issues = report.findings.length;
 	const toneColor = { danger: colors.dangerText, warn: colors.warnText, accent: colors.accentText };
+	// The same headline rule as the web checker: "Reads cleanly" only with nothing to fix.
+	const { verdict: level, tone } = pdfVerdict(report);
 	const verdict =
-		report.score >= 80 ? t`Reads cleanly` : report.score >= 50 ? t`Mostly readable` : t`Hard for software to read`;
+		level === "clean" ? t`Reads cleanly` : level === "mostly" ? t`Mostly readable` : t`Hard for software to read`;
+	const tips = report.tips.length;
 	const tooLarge = size > MAX_IMPORT_BYTES;
 	const unreadable = report.findings.some((finding) => UNREADABLE.has(finding.code));
 	const megabytes = Math.ceil(size / 1_000_000);
@@ -394,13 +398,17 @@ function Result({ result, uri, size, importError, onFix, onReset, onBlank }: Res
 				contentContainerStyle={{ padding: space.s4, gap: space.s4 }}
 			>
 				<View style={{ flexDirection: "row", alignItems: "center", gap: space.s4 }}>
-					<ScoreRing score={report.score} color={report.score >= 80 ? colors.accent : colors.warn} />
+					<ScoreRing
+						score={report.score}
+						color={tone === "accent" ? colors.accent : tone === "warn" ? colors.warn : colors.danger}
+					/>
 					<View style={{ flex: 1, gap: space.s1 }}>
 						<Text variant="title">{verdict}</Text>
 						<Text variant="callout" color="ink2">
 							{issues > 0
 								? plural(issues, { one: "# issue could cost you a match.", other: "# issues could cost you a match." })
 								: t`Nothing here should cost you a match.`}{" "}
+							{tips > 0 ? `${plural(tips, { one: "Plus # tip.", other: "Plus # tips." })} ` : ""}
 							{t`The score reflects how reliably text is extracted, not your chances.`}
 						</Text>
 					</View>
@@ -567,7 +575,13 @@ function Result({ result, uri, size, importError, onFix, onReset, onBlank }: Res
 						</View>
 					</>
 				) : (
-					<Button label={t`Fix these in the editor`} onPress={onFix} fullWidth />
+					// With nothing to fix, editing is the offer, not fixing (web says the same).
+					<Button
+						label={issues === 0 ? t`Edit it in Reactive Resume` : t`Fix these in the editor`}
+						variant={issues === 0 ? "secondary" : "primary"}
+						onPress={onFix}
+						fullWidth
+					/>
 				)}
 			</View>
 		</View>

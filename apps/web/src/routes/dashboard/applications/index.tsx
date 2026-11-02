@@ -219,6 +219,14 @@ function RouteComponent() {
 		setSelectedId(application.id);
 	};
 	const noMatches = !!applications && !empty && text && filtered.length === 0;
+	// Every application is closed and closed ones are hidden: say so, as the phone app does, instead of a bare header.
+	const allClosed =
+		!!applications &&
+		!empty &&
+		!closed &&
+		!text &&
+		filtered.length > 0 &&
+		filtered.every((application) => application.status === "closed");
 	const filteredIds = new Set(filtered.map((application) => application.id));
 	const filteredFullApplications = fullApplications?.filter((application) => filteredIds.has(application.id)) ?? [];
 	const openExport = async () => {
@@ -402,6 +410,22 @@ function RouteComponent() {
 				<>
 					{isPending ? (
 						<ViewSkeleton view={shown} />
+					) : allClosed && (shown === "list" || shown === "board") ? (
+						<EmptyState
+							title={<Trans>All your applications are closed</Trans>}
+							description={<Trans>Show closed applications to see your past job searches.</Trans>}
+							action={
+								<Button onClick={() => setSearch({ closed: true })}>
+									<Trans>Show closed applications</Trans>
+								</Button>
+							}
+							secondary={
+								<Button variant="secondary" onClick={() => setAdding(true)}>
+									<Icon name="plus" />
+									<Trans>Save job</Trans>
+								</Button>
+							}
+						/>
 					) : noMatches ? (
 						<div className="grid justify-items-center gap-2 py-16 text-center">
 							<p className="text-sm font-medium">

@@ -80,6 +80,7 @@ export function SetPasswordDialog(_: DialogProps<"auth.set-password">) {
 			</DialogHeader>
 
 			<form
+				noValidate
 				className="space-y-4"
 				onSubmit={(event) => {
 					event.preventDefault();

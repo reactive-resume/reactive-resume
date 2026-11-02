@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { formatShortcut } from "./kbd";
+import { ariaShortcut, formatShortcut } from "./kbd";
 
 describe("formatShortcut", () => {
 	it("keeps Mac glyphs on Apple devices", () => {
@@ -11,5 +11,13 @@ describe("formatShortcut", () => {
 		expect(formatShortcut("⇧⌘Z", false)).toBe("Ctrl+Shift+Z");
 		expect(formatShortcut("⌥↑", false)).toBe("Alt+↑");
 		expect(formatShortcut("N", false)).toBe("N");
+	});
+});
+
+describe("ariaShortcut", () => {
+	it("names the keys that actually work on each platform", () => {
+		expect(ariaShortcut("⌘K", true)).toBe("Meta+K");
+		expect(ariaShortcut("⌘K", false)).toBe("Control+K");
+		expect(ariaShortcut("⇧⌘Z", false)).toBe("Shift+Control+Z");
 	});
 });

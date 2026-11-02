@@ -440,12 +440,7 @@ msgstr "{0} · Ei pisteytetty"
 msgid "{0} · Value uncertain"
 msgstr "{0} · Epävarma arvo"
 
-#. placeholder {0}: document.name
-#. placeholder {0}: first.name
-#. placeholder {0}: resume.name
-#: src/features/document-menu/index.tsx
-#: src/features/documents/document-sheets.tsx
-#: src/features/documents/library.tsx
+#. placeholder {0}: source?.name ?? ""
 #: src/features/documents/new-document.tsx
 msgid "{0} (copy)"
 msgstr "{0} (kopio)"
@@ -866,6 +861,10 @@ msgstr "{supported} todisteilla tuettu, {partial} osittain tuettu, {missing} ilm
 #: src/features/letters/design.tsx
 msgid "{textSize} pt"
 msgstr "{textSize} pt"
+
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{title} cleared"
@@ -3306,6 +3305,7 @@ msgid "Copy code"
 msgstr "Kopioi koodi"
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
 msgid "Copy created"
 msgstr "Kopio luotu"
 
@@ -3315,6 +3315,7 @@ msgstr "Kopio luotu"
 msgid "Copy for {0}"
 msgstr ""
 
+#: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Copy for a job…"
 msgstr "Kopioi työhön…"
@@ -4825,6 +4826,10 @@ msgstr ""
 msgid "Edit interview"
 msgstr "Muokkaa haastattelua"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Edit link"
 msgstr "Muokkaa linkkiä"
@@ -6289,6 +6294,10 @@ msgstr "Pysy yhdellä sivulla"
 #: src/features/document-menu/index.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "Pidä täällä yksityisiä muistiinpanoja tästä ansioluettelosta. Kukaan muu ei näe niitä."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Keep provider"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep resume content as real text rather than as pictures of text."
@@ -10641,6 +10650,10 @@ msgstr "Ajastus poistettu"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Schedule interview"
 msgstr "Aikataulu haastattelu"
+
+#: src/features/applications/stage-actions.ts
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Scheduled work is not available on this server. Ask your server administrator to configure it."

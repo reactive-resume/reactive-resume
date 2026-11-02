@@ -194,6 +194,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 			{match(step)
 				.with("enable", () => (
 					<form
+						noValidate
 						className="space-y-4"
 						onSubmit={(event) => {
 							event.preventDefault();
@@ -269,6 +270,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 							</p>
 
 							<form
+								noValidate
 								className="space-y-4"
 								onSubmit={(event) => {
 									event.preventDefault();
@@ -285,6 +287,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 											<FormControl
 												render={
 													<OTPField
+														digitLabel={(position, total) => t`Digit ${position} of ${total}`}
 														length={6}
 														autoSubmit
 														name={field.name}

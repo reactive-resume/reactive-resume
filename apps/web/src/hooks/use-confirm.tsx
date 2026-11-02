@@ -22,6 +22,7 @@ type AskOptions = {
 	cancelText?: string;
 	/** Prompts only: the text the field starts with. */
 	defaultValue?: string;
+	maxLength?: number;
 	/** An aborted request dismisses its pending confirmation. */
 	signal?: AbortSignal;
 	/** Confirmations only: the confirm button must be held, for actions that can't be undone. */
@@ -104,6 +105,7 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 					{state.withInput && (
 						<Input
 							value={value}
+							maxLength={state.maxLength}
 							aria-label={state.title}
 							onChange={(event) => setValue(event.target.value)}
 							onKeyDown={(event) => {

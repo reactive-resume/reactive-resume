@@ -47,6 +47,16 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 
 			const { error } = await authClient.twoFactor.disable({ password: value.password });
 
+			// A wrong password belongs under the field, in the app's words, not in a toast with the library's.
+			if (error?.code === "INVALID_PASSWORD") {
+				toast.close(toastId);
+				form.setFieldMeta("password", (meta) => ({
+					...meta,
+					errorMap: { ...meta.errorMap, onSubmit: t`That password isn't right. Try again or reset it.` },
+				}));
+				return;
+			}
+
 			if (error) {
 				toast.add({
 					type: "error",
@@ -93,6 +103,7 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 			</DialogHeader>
 
 			<form
+				noValidate
 				className="space-y-4"
 				onSubmit={(event) => {
 					event.preventDefault();

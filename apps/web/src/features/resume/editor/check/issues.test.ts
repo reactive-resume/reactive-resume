@@ -74,6 +74,20 @@ describe("buildIssues", () => {
 		expect(issues[1]?.fix).toMatchObject({ kind: "write", target: issues[1]?.target });
 	});
 
+	it("lists findings in page order, the eleventh entry after the second", () => {
+		const ids = Array.from({ length: 11 }, (_, index) => `entry-${index}`);
+		const data = makeResume((resume) => {
+			const [first] = resume.sections.experience.items;
+			if (!first) return;
+			resume.sections.experience.items = ids.map((id) => ({ ...first, id, period: "a while back" }));
+		});
+
+		const targets = issuesOf(data)
+			.filter((issue) => issue.finding.code === "UNPARSEABLE_PERIOD")
+			.map((issue) => (issue.target?.kind === "item" ? issue.target.itemId : null));
+		expect(targets).toEqual(ids);
+	});
+
 	it("adds https:// to a link in one step, and sends links with another scheme to Write", () => {
 		const bare = makeResume((resume) => (resume.basics.website.url = "reyes.design"));
 		const fixed = applyFix(bare, only(bare, "MALFORMED_URL"));

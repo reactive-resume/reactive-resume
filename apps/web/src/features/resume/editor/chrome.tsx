@@ -199,6 +199,14 @@ export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 	const current = zoom === "fit" ? fitScale : zoom;
 
 	useHotkey("Mod+0", () => setZoom("fit"));
+	// Toasts sit bottom center, where this bar is: lift them above it while it's on screen.
+	useEffect(() => {
+		const root = document.documentElement;
+		root.style.setProperty("--toast-bottom", "4.5rem");
+		return () => {
+			root.style.removeProperty("--toast-bottom");
+		};
+	}, []);
 
 	const buttonClassName =
 		"flex size-8 items-center justify-center rounded-lg text-ink-2 transition-colors duration-quick hover:bg-hover disabled:text-ink-3 disabled:hover:bg-transparent";

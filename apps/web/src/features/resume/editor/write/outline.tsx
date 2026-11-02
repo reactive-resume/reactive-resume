@@ -91,10 +91,13 @@ export function Outline({ locked, page }: OutlineProps) {
 
 	const move = (id: string, target: OutlineRow | undefined, direction: "up" | "down", announced = false) => {
 		if (!target) return;
+		const before = useResumeStore.getState().resume?.data;
 		updateResumeData((draft) => moveSection(draft, id, target, direction), { newStep: true });
 		if (!announced) return;
-		// A keyboard move: say where the section is now (a drag has dnd-kit's own announcements).
+		// A keyboard move: say where the section is now (a drag has dnd-kit's own announcements). A move that didn't
+		// apply (a locked resume) leaves the data as it was, and says nothing.
 		const data = useResumeStore.getState().resume?.data;
+		if (data === before) return;
 		const section = data ? resolveSection(data, id) : null;
 		if (!data || !section) return;
 		const rows = getOutlineRows(data, new Set(added)).filter((row) => !row.hidden);
@@ -224,21 +227,21 @@ function EntryList({ section, locked, page }: EntryListProps) {
 
 	const move = (entryId: string, to: number, announced = false) => {
 		if (to < 0 || to >= entryIds.length) return;
-		if (announced) {
-			const data = useResumeStore.getState().resume?.data;
-			const entry = data ? getEntries(data, section).find((item) => item.id === entryId) : undefined;
-			const title = entry ? describeEntry(section.type, entry).title || t`Untitled` : t`Untitled`;
-			announce(t`${title}, entry ${to + 1} of ${entryIds.length}`);
-		}
+		const before = useResumeStore.getState().resume?.data;
+		const entry = before ? getEntries(before, section).find((item) => item.id === entryId) : undefined;
 		updateResumeData(
 			(draft) => {
 				const entries = getEntries(draft, section);
-				const from = entries.findIndex((entry) => entry.id === entryId);
-				const [entry] = entries.splice(from, 1);
-				if (entry) entries.splice(to, 0, entry);
+				const from = entries.findIndex((item) => item.id === entryId);
+				const [moved] = entries.splice(from, 1);
+				if (moved) entries.splice(to, 0, moved);
 			},
 			{ newStep: true },
 		);
+		// Said only when the move applied: a locked resume leaves the data as it was.
+		if (!announced || useResumeStore.getState().resume?.data === before) return;
+		const title = entry ? describeEntry(section.type, entry).title || t`Untitled` : t`Untitled`;
+		announce(t`${title}, entry ${to + 1} of ${entryIds.length}`);
 	};
 
 	const onDragEnd = ({ active, over }: DragEndEvent) => {

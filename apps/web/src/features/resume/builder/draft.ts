@@ -1115,22 +1115,41 @@ export function useResumeUpdateSubscription({ resumeId, onUpdate, onError }: Res
 	}, [onError, onUpdate, resumeId, retryNonce]);
 }
 
-/** Resumes this tab is changing on the server itself (a version restore): their stream echo isn't "another tab". */
-const ownServerWrites = new Map<string, number>();
+/**
+ * Server writes this tab started on a resume (a version restore), each resolving to the `updatedAt` it produced: the
+ * stream's echo of exactly that write isn't "changes made in another tab", while any other update still is.
+ */
+const ownServerWrites = new Map<string, Set<Promise<number | null>>>();
 
-/** Runs a server-side write this tab started; while it runs (and briefly after), its update event isn't announced. */
-export async function withOwnServerWrite<T>(resumeId: string, run: () => Promise<T>): Promise<T> {
-	ownServerWrites.set(resumeId, (ownServerWrites.get(resumeId) ?? 0) + 1);
+const timeOf = (value: Date | string) => new Date(value).getTime();
+
+/** Runs a server-side write this tab started; its own update event, when it arrives, isn't announced. */
+export async function withOwnServerWrite<T extends { updatedAt: Date | string }>(
+	resumeId: string,
+	run: () => Promise<T>,
+): Promise<T> {
+	const result = run();
+	const written = result.then(
+		(value) => timeOf(value.updatedAt),
+		() => null,
+	);
+	const writes = ownServerWrites.get(resumeId) ?? new Set();
+	writes.add(written);
+	ownServerWrites.set(resumeId, writes);
 	try {
-		return await run();
+		return await result;
 	} finally {
-		// The stream can deliver the echo just after the response: keep the mark a moment longer.
-		setTimeout(() => {
-			const count = (ownServerWrites.get(resumeId) ?? 1) - 1;
-			if (count > 0) ownServerWrites.set(resumeId, count);
-			else ownServerWrites.delete(resumeId);
-		}, 2_000);
+		writes.delete(written);
+		if (writes.size === 0) ownServerWrites.delete(resumeId);
 	}
+}
+
+/** Whether `updatedAt` is the result of a write this tab has in flight on the resume. */
+async function isOwnServerWrite(resumeId: string, updatedAt: Date | string) {
+	const writes = [...(ownServerWrites.get(resumeId) ?? [])];
+	if (writes.length === 0) return false;
+	const times = await Promise.all(writes);
+	return times.includes(timeOf(updatedAt));
 }
 
 export function useBuilderResumeUpdateSubscription() {
@@ -1182,7 +1201,7 @@ export function useBuilderResumeUpdateSubscription() {
 
 			// #53: attribute cross-tab / AI-agent edits instead of silently swapping the document.
 			replaceResumeFromServer(resume);
-			if (!ownServerWrites.has(resumeId)) notifyExternalUpdate(event.mutation);
+			if (!(await isOwnServerWrite(resumeId, resume.updatedAt))) notifyExternalUpdate(event.mutation);
 		},
 		[queryClient, replaceResumeFromServer, resumeId],
 	);

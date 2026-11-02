@@ -80,28 +80,34 @@ describe("resume write route validation", () => {
 		expect(codes).toContain("RESUME_PRIMARY_CONFLICT");
 	});
 
-	it.each([false, true])("puts the account holder's name on a new resume (sample data: %s)", async (withSampleData) => {
-		const client = createRouterClient(crudRouter, {
-			context: {
-				locale: "en-US",
-				reqHeaders: new Headers(),
-				user: { id: "user-id", name: "Sam Taylor", email: "sam@example.test" },
-			} as never,
-		});
+	it.each([false, true])(
+		"names a new resume's person: the account holder, or the sample's own (sample data: %s)",
+		async (withSampleData) => {
+			const client = createRouterClient(crudRouter, {
+				context: {
+					locale: "en-US",
+					reqHeaders: new Headers(),
+					user: { id: "user-id", name: "Sam Taylor", email: "sam@example.test" },
+				} as never,
+			});
 
-		await client.create({ name: "Outstanding Blue Whale", tags: [], withSampleData });
+			await client.create({ name: "Outstanding Blue Whale", tags: [], withSampleData });
 
-		expect(mocks.create).toHaveBeenCalledWith(
-			expect.objectContaining({
-				name: "Outstanding Blue Whale",
-				data: expect.objectContaining({ basics: expect.objectContaining({ name: "Sam Taylor" }) }),
-			}),
-		);
-		// A blank resume also starts with the account's email; a sample keeps its own.
-		const created = mocks.create.mock.calls.at(-1)?.[0] as { data: { basics: { email: string } } };
-		if (!withSampleData) expect(created.data.basics.email).toBe("sam@example.test");
-		else expect(created.data.basics.email).toBe(sampleResumeData.basics.email);
-	});
+			// A sample keeps its fictional person: someone else's career under the account's name would mislead.
+			expect(mocks.create).toHaveBeenCalledWith(
+				expect.objectContaining({
+					name: "Outstanding Blue Whale",
+					data: expect.objectContaining({
+						basics: expect.objectContaining({ name: withSampleData ? sampleResumeData.basics.name : "Sam Taylor" }),
+					}),
+				}),
+			);
+			// A blank resume also starts with the account's email; a sample keeps its own.
+			const created = mocks.create.mock.calls.at(-1)?.[0] as { data: { basics: { email: string } } };
+			if (!withSampleData) expect(created.data.basics.email).toBe("sam@example.test");
+			else expect(created.data.basics.email).toBe(sampleResumeData.basics.email);
+		},
+	);
 
 	it("leaves a guest's placeholder address off a new resume", async () => {
 		const client = createRouterClient(crudRouter, {
@@ -175,7 +181,7 @@ describe("resume write route validation", () => {
 			operation === "create"
 				? client.create({ name: "Resume", tags: [], slug })
 				: operation === "duplicate"
-					? client.duplicate({ id: "resume-id", slug })
+					? client.duplicate({ id: "resume-id", name: "Resume", slug })
 					: client.update({ id: "resume-id", slug });
 
 		await expect(result).rejects.toMatchObject({ code: "INVALID_SLUG", status: 400 });

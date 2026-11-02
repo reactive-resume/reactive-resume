@@ -87,7 +87,8 @@ export const resumeDatesToPeriod = (dates: ResumeDates): ParsedPeriod | null =>
 	dates.start
 		? {
 				start: toEndpoint(dates.start),
-				...(dates.end ? { end: toEndpoint(dates.end) } : {}),
+				// An end kept while Present is on (so switching it off restores the date) isn't part of the period.
+				...(dates.end && !dates.present ? { end: toEndpoint(dates.end) } : {}),
 				ongoing: dates.present,
 			}
 		: null;

@@ -70101,6 +70101,108 @@
 				]
 			}
 		},
+		"/documents/duplicate-name": {
+			"get": {
+				"operationId": "suggestDuplicateDocumentName",
+				"summary": "Suggest a duplicate name",
+				"description": "Suggests an available numbered name across this account’s documents, including Trash. Reads names only; does not create or reserve a document. Requires authentication.",
+				"tags": [
+					"Documents"
+				],
+				"parameters": [
+					{
+						"name": "type",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"enum": [
+								"resume",
+								"letter"
+							],
+							"type": "string",
+							"description": "resume, or letter (a saved cover letter)."
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "id",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1,
+							"description": "The ID of the resume or cover letter."
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 100
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/documents/duplicate-name?type=<type>&id=<id>\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
 		"/documents/rename": {
 			"post": {
 				"operationId": "renameDocument",
@@ -114788,7 +114890,7 @@
 			"post": {
 				"operationId": "duplicateResume",
 				"summary": "Duplicate a resume",
-				"description": "Creates a copy of an existing resume with the same data, and the given name and tags. The slug is optional: when omitted it is generated from the name, made unique across the user's resumes, and follows the name until the copy is published. Returns the ID of the duplicated resume. Requires authentication.",
+				"description": "Creates a copy of an existing resume with the same data and tags. When name is omitted, suggests an available numbered name across the account’s documents. The slug is optional: when omitted it is generated from the name, made unique across the user's resumes, and follows the name until the copy is published. Returns the ID of the duplicated resume. Requires authentication.",
 				"deprecated": true,
 				"tags": [
 					"Resumes"
@@ -132366,7 +132468,7 @@
 			"post": {
 				"operationId": "createResumeCopy",
 				"summary": "Duplicate a resume",
-				"description": "Creates a copy of an existing resume with the same data, and the given name and tags. The slug is optional: when omitted it is generated from the name, made unique across the user's resumes, and follows the name until the copy is published. Returns the ID of the duplicated resume. Requires authentication.",
+				"description": "Creates a copy of an existing resume with the same data and tags. When name is omitted, suggests an available numbered name across the account’s documents. The slug is optional: when omitted it is generated from the name, made unique across the user's resumes, and follows the name until the copy is published. Returns the ID of the duplicated resume. Requires authentication.",
 				"tags": [
 					"Resumes"
 				],

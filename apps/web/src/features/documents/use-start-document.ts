@@ -75,9 +75,13 @@ export function useStartDocument(applicationId?: string) {
 			}),
 		trySample: () =>
 			start(async () => {
-				// The name generator is large; only a sample needs it.
-				const { generateRandomName } = await import("@reactive-resume/utils/slug");
-				const resumeId = await createResume({ name: generateRandomName(), tags: [], withSampleData: true });
+				// Named as what it is, not a random slug, so it's never mistaken for the person's own resume.
+				const resumes = await client.documents.list({ type: "resume", q: t`Sample resume` });
+				const name = freeName(
+					t`Sample resume`,
+					resumes.map((resume) => resume.name),
+				);
+				const resumeId = await createResume({ name, tags: [], withSampleData: true });
 				await created(resumeId, "resume");
 				toast.add({ description: t`Sample resume added. Delete it anytime.` });
 				void navigate({ to: "/builder/$resumeId", params: { resumeId } });

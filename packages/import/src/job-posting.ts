@@ -139,3 +139,48 @@ export function readJobPosting(html: string, htmlToText: (html: string) => strin
 	const page = toPagePosting(postings[0], htmlToText);
 	return page.language ? page : { ...page, language: pageLanguage(html) };
 }
+
+export type PastedPostingHeader = { role: string; company: string; location: string; salary: string };
+
+const LABELLED = (labels: string) => new RegExp(`^\\s*(?:${labels})\\s*[:：]\\s*(.+?)\\s*$`, "im");
+const SALARY_LINE = LABELLED("salary|compensation|package|pay|base salary|salary range");
+const LOCATION_LINE = LABELLED("location|based in|office");
+// "Role — Company", "Role – Company", "Role - Company", "Role · Company", "Role | Company", "Role at Company".
+const SEPARATORS = [/\s+[—–]\s+/, /\s+[·|]\s+/, /\s+-\s+/, /\s+at\s+/i];
+
+/**
+ * A best guess at role, company, location and salary from pasted posting text, without AI: the first line split on a
+ * separator ("Director of Engineering — Northwind Labs (Berlin, hybrid)"), with a trailing parenthesis as the location,
+ * and labelled "Salary:" or "Location:" lines. Fields it can't find are empty; null when the first line isn't a header.
+ */
+export function readPastedPostingHeader(text: string): PastedPostingHeader | null {
+	const first = text
+		.split(/\r?\n/)
+		.map((line) => line.trim())
+		.find(Boolean);
+	if (!first || first.length > 160) return null;
+
+	let role = "";
+	let company = "";
+	for (const separator of SEPARATORS) {
+		const parts = first.split(separator);
+		if (parts.length !== 2) continue;
+		const [left = "", right = ""] = parts.map((part) => part.trim());
+		if (!left || !right) continue;
+		role = left;
+		company = right;
+		break;
+	}
+	if (!role || !company) return null;
+
+	let location = "";
+	const trailing = /^(.*?)\s*\(([^()]+)\)\s*$/.exec(company);
+	if (trailing?.[1]) {
+		company = trailing[1].trim();
+		location = trailing[2]?.trim() ?? "";
+	}
+	location = LOCATION_LINE.exec(text)?.[1] ?? location;
+	const salary = SALARY_LINE.exec(text)?.[1] ?? "";
+
+	return { role, company, location, salary };
+}

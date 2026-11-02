@@ -11,6 +11,7 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { cn } from "@reactive-resume/utils/style";
 import { useBatchActions } from "./document-actions";
 import { DocumentRow } from "./document-card";
+import { LibrarySkeleton } from "./documents-page";
 import { LibraryError } from "./library-error";
 import { PageNavigation } from "./page-navigation";
 import { PageHeader } from "@/components/layout/page-header";
@@ -156,10 +157,13 @@ export function TrashPage() {
 
 			{isError && <LibraryError retrying={isFetching} onRetry={() => void refetch()} />}
 
-			{isError && !documents ? null : !isPending && documents?.length === 0 ? (
+			{isError && !documents ? null : isPending ? (
+				// Rows to come, not a bare table header, while Trash loads.
+				<LibrarySkeleton view="list" />
+			) : documents?.length === 0 ? (
 				<div className="grid justify-items-center gap-2 py-16 text-center">
 					<Icon name="trash" size={28} className="text-ink-3" />
-					<p className="font-semibold">
+					<p className="font-display text-[22px] leading-7">
 						<Trans>Trash is empty</Trans>
 					</p>
 					<p className="text-sm text-ink-2">

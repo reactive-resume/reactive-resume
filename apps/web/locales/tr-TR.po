@@ -189,8 +189,10 @@ msgstr "{0, plural, one {# kişisinin geçersiz bir e-posta adresi var veya adı
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {# gün kaldı} other {# gün kaldı}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# günü} other {# gün sayısı}}"
 
@@ -429,11 +431,6 @@ msgstr "{0} · {providerLabel}. Bu başvuruyu ve Bilgi Bankanızı gönderir; sa
 msgid "{0} · key {1}"
 msgstr ""
 
-#. placeholder {0}: document.name
-#: src/features/documents/document-actions.tsx
-msgid "{0} (copy)"
-msgstr "{0} (kopya)"
-
 #. placeholder {0}: current.name
 #. placeholder {0}: letter.name
 #: src/features/letters/store.ts
@@ -651,6 +648,10 @@ msgstr "{authored, plural, =1 {Bir sayfaya sığıyor: {details}} other {# sayfa
 #: src/features/documents/new-document-dialog.tsx
 msgid "{base} (copy)"
 msgstr "{base} (kopya)"
+
+#: src/features/settings/account/sessions.tsx
+msgid "{browser} on {system}"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "{characters, plural, one {# character} other {# characters}}"
@@ -895,6 +896,10 @@ msgstr "{minutes} dk"
 msgid "{monthCount, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthCount, plural, =0 {Görüşme yok} one {# görüşme} other {# görüşme}}"
 
+#: src/features/settings/account/sessions.tsx
+msgid "{name} · this device"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} sayfa 1'e eklendi"
@@ -1020,6 +1025,10 @@ msgstr "{templateCount} ücretsiz CV şablonu."
 msgid "{time} · Video call · 45 min"
 msgstr "{time} · Görüntülü görüşme · 45 dk"
 
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
 msgstr "{title} temizlendi"
@@ -1072,7 +1081,7 @@ msgstr ""
 msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
 msgstr ""
 
-#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
+#. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale, "short")
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
 msgstr "{type} · Düzenlendi {0}"
@@ -1416,6 +1425,10 @@ msgstr "Bu uygulama hakkında"
 msgid "About 90 seconds when spoken"
 msgstr "Sesli söylendiğinde yaklaşık 90 saniye"
 
+#: src/features/settings/root.tsx
+msgid "About Reactive Resume"
+msgstr ""
+
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Accent"
 msgstr "Vurgu"
@@ -1645,6 +1658,10 @@ msgstr "Etiket ekle"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Add a tag and press Enter…"
 msgstr "Bir etiket ekleyin ve Enter'a basın…"
+
+#: src/features/documents/document-actions.tsx
+msgid "Add a tag…"
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Add AI provider"
@@ -2173,6 +2190,10 @@ msgstr ""
 #: src/features/settings/ai/provider-model.tsx
 msgid "All models"
 msgstr "Tüm modeller"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -2841,6 +2862,7 @@ msgstr "Şimdi geri dön"
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
+#: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Back to sign in"
 msgstr "Oturum açmaya dön"
@@ -2869,7 +2891,12 @@ msgstr "Arka plan rengi"
 msgid "Backup code"
 msgstr "Yedekleme kodu"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Backup codes"
+msgstr ""
+
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Backup codes copied"
 msgstr "Yedek kodlar kopyalandı"
 
@@ -3287,12 +3314,12 @@ msgid "Changes since {0}"
 msgstr ""
 
 #: src/features/settings/account/profile.tsx
-msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
-msgstr "Bunu değiştirdiğinizde önce mevcut adresinizden onay istenir, ardından yeni adres doğrulanır. Kullanıcı adınız her genel bağlantının bir parçasıdır."
+msgid "Changing it asks your current address to approve, then confirms the new one."
+msgstr "Bunu değiştirdiğinizde önce mevcut adresinizden onay istenir, ardından yeni adres doğrulanır."
 
 #: src/features/settings/account/profile.tsx
-msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
-msgstr "Bunu değiştirdiğinizde yeni adrese bir onay gönderilir. Kullanıcı adınız her genel bağlantının bir parçasıdır."
+msgid "Changing it sends a confirmation to the new address."
+msgstr "Bunu değiştirdiğinizde yeni adrese bir onay gönderilir."
 
 #: src/features/settings/ai/providers.tsx
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
@@ -3319,10 +3346,6 @@ msgstr "Kontrol"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Check a PDF"
 msgstr "PDF'yu kontrol edin"
-
-#: src/features/ats-checker/checker.tsx
-msgid "Check a sample file"
-msgstr "Örnek dosyayı kontrol edin"
 
 #: src/features/career/workspace/fit.tsx
 msgid "Check again"
@@ -3411,10 +3434,6 @@ msgstr "Bağlantınızı kontrol edip tekrar deneyin."
 #: src/features/auth/pages/register.tsx
 msgid "Check your email"
 msgstr "E-postanızı kontrol edin"
-
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Check your email for a link to reset your password."
-msgstr "Şifrenizi sıfırlamak için bağlantı içeren e-postanızı kontrol edin."
 
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
@@ -3506,6 +3525,10 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "Mevcut şifrenizden farklı bir şifre seçin."
+
+#: src/features/ats-checker/checker.tsx
+msgid "Choose a PDF"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
@@ -3640,6 +3663,7 @@ msgstr "Biçimlendirmeyi temizle"
 msgid "Clear resume"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Clear search"
 msgstr "Aramayı temizle"
@@ -3705,6 +3729,7 @@ msgstr "Müşteri Kimliği"
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
 #: src/features/resume/stylesheet/editor.tsx
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/ai/providers.tsx
@@ -4178,6 +4203,7 @@ msgstr "Cevapları kopyala"
 
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Copy codes"
 msgstr "Kodları kopyala"
 
@@ -4191,6 +4217,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Bir iş için kopyalayın…"
 
@@ -4486,10 +4513,6 @@ msgstr "İçe aktarılamadı"
 msgid "Couldn't import the file. Try again from Documents."
 msgstr "Dosya içe aktarılamadı. Belgeler'den tekrar deneyin."
 
-#: src/features/documents/new-document-dialog.tsx
-msgid "Couldn't import the file. Try again, or start blank."
-msgstr "Dosya içe aktarılamadı. Tekrar deneyin veya boş başlayın."
-
 #: src/features/auth/pages/error.tsx
 msgid "Couldn't link that provider account. Try again."
 msgstr "Bu sağlayıcı hesabı bağlanamadı. Tekrar deneyin."
@@ -4570,6 +4593,10 @@ msgstr ""
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't lock the document. Try again."
 msgstr "Belge kilitlenemedi. Tekrar deneyin."
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Couldn't make new codes. Try again."
+msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't make this provider the default. Try again."
@@ -4798,6 +4825,7 @@ msgid "Couldn't save your changes. Try again before continuing."
 msgstr "Değişiklikleriniz kaydedilemedi. Devam etmeden önce tekrar deneyin."
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/libs/error-message.ts
 msgid "Couldn't save your changes. Try again."
 msgstr "Değişiklikleriniz kaydedilemedi. Tekrar deneyin."
 
@@ -4864,6 +4892,10 @@ msgstr "Önizleme gösterilemedi."
 #: src/features/auth/pages/login.tsx
 msgid "Couldn't sign in. Try again."
 msgstr "Giriş yapılamadı. Tekrar deneyin."
+
+#: src/features/settings/account/sessions.tsx
+msgid "Couldn't sign out of that device. Try again."
+msgstr ""
 
 #. Fallback toast when signing out fails
 #: src/features/settings/account/page.tsx
@@ -5608,6 +5640,10 @@ msgstr "Sesle yazma başladı"
 msgid "Dictation stopped at the 2-minute limit."
 msgstr "Sesle yazma 2 dakikalık sınırda durdu."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Didn't get it?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Didn't land"
 msgstr "Etkili olmadı"
@@ -5623,6 +5659,11 @@ msgstr "Farklı para birimi, karşılaştırılmadı"
 #: src/features/career/offers.tsx
 msgid "Different pay period, not compared"
 msgstr "Farklı ödeme dönemi, karşılaştırılmadı"
+
+#: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
+msgid "Digit {position} of {total}"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Discard"
@@ -5682,7 +5723,7 @@ msgstr ""
 msgid "Do not share a resume"
 msgstr ""
 
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Docs"
 msgstr "Belgeler"
 
@@ -5749,11 +5790,12 @@ msgstr ""
 
 #: src/components/ui/donation-toast.tsx
 #: src/features/resume/share/download-tab.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Donate"
 msgstr "Bağış yapmak"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
 msgstr "Tamamlamak"
@@ -5798,6 +5840,7 @@ msgstr ""
 
 #. Action button to download two-factor backup codes as a text file
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
 msgid "Download codes"
 msgstr "Kodları indir"
 
@@ -5949,12 +5992,8 @@ msgid "Drag to reposition and use the slider to zoom before uploading."
 msgstr "Yüklemeden önce sürükleyerek yeniden konumlandırın ve kaydırıcıyı kullanarak yakınlaştırın."
 
 #: src/features/documents/new-document-dialog.tsx
-msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
+msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume, JSON Resume or a LinkedIn export (.zip). Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
-
-#: src/features/ats-checker/checker.tsx
-msgid "Drop a PDF here or choose a file"
-msgstr "Buraya bir PDF bırakın veya bir dosya seçin"
 
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
@@ -6095,6 +6134,10 @@ msgstr "Röportajı düzenle"
 msgid "Edit interview…"
 msgstr "Röportajı düzenle…"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "Anahtar kelimeyi düzenle"
@@ -6123,6 +6166,7 @@ msgstr ""
 msgid "Edit question"
 msgstr "Soruyu düzenle"
 
+#: src/dialogs/resume/index.tsx
 #: src/features/career/workspace/preparation.tsx
 msgid "Edit resume"
 msgstr ""
@@ -6218,9 +6262,7 @@ msgstr "E-posta (isteğe bağlı)"
 
 #. Label for email input on forgot-password form
 #. Label for email input on registration form
-#. Label for login identifier input that accepts email or username
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Email address"
 msgstr "E-Posta adresi"
@@ -6236,6 +6278,11 @@ msgstr ""
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
 msgstr "Bu sunucuda e-posta dağıtımı ayarlanmadığından adres doğrulanmadı."
+
+#. Label for login identifier input that accepts email or username
+#: src/features/auth/pages/login.tsx
+msgid "Email or username"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Email the recruiter"
@@ -6393,6 +6440,10 @@ msgstr "Aşağıya bilgilerinizi girin. Özgeçmiş seçerseniz bu bilgiler özg
 #: src/features/auth/pages/register.tsx
 msgid "Enter your name."
 msgstr "Adınızı girin."
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Enter your password to replace your backup codes. Codes you saved before stop working."
+msgstr ""
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enter your password to set up two-step verification. Once it's on, you need a code from your authenticator app every time you sign in."
@@ -6700,6 +6751,10 @@ msgstr "İş başvurusundan doldurulmuştur. Selamlama ismin ardından gelir."
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Filled in what we could from the posting."
 msgstr "İlandan doldurabildiğimiz alanları doldurduk."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
@@ -7069,6 +7124,10 @@ msgstr "Ad Soyad"
 msgid "Full width"
 msgstr "Tam genişlik"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Generate new codes"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Generate role suggestions"
 msgstr ""
@@ -7163,6 +7222,7 @@ msgstr "Eve git"
 
 #: src/components/layout/error-screen.tsx
 #: src/components/layout/not-found-screen.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Gösterge Paneline Git"
@@ -7277,10 +7337,6 @@ msgstr "geri duydum"
 #: src/libs/locale.ts
 msgid "Hebrew"
 msgstr "İbranice"
-
-#: src/features/settings/root.tsx
-msgid "Help & docs"
-msgstr "Yardım ve dokümanlar"
 
 #: src/features/career/workspace/coach-starters.ts
 msgid "Help me prepare for a first call"
@@ -7536,6 +7592,10 @@ msgstr "Simge…"
 msgid "Icons in contact line"
 msgstr "İletişim hattındaki simgeler"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account uses that address, a reset link is on its way."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "If another resume holds Primary, turn it on for this one instead."
 msgstr ""
@@ -7645,6 +7705,10 @@ msgstr "Adımları içe aktar"
 
 #: src/features/documents/documents-page.tsx
 msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Import this file into a free Reactive Resume to keep editing it, with Check reading it as you go."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -8118,6 +8182,10 @@ msgstr "<0>Ücretsiz kalmasına</0> yardımcı olun."
 msgid "Keep it honest"
 msgstr "Dürüst kalın"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Keep it this way"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
 msgstr "Genellikle görselleri kaldırarak veya küçülterek 2,5 MB'ın altında tutun."
@@ -8126,6 +8194,10 @@ msgstr "Genellikle görselleri kaldırarak veya küçülterek 2,5 MB'ın altınd
 #: src/features/resume/editor/write/improve.tsx
 msgid "Keep mine"
 msgstr "Benimkini sakla"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Keep my codes"
+msgstr ""
 
 #. Layout editor toggle that prevents a section from splitting across pages
 #: src/features/resume/editor/write/section-row.tsx
@@ -8136,6 +8208,10 @@ msgstr "Tek sayfada devam et"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "Bu özgeçmişle ilgili özel notlarınızı burada tutun. Başka kimse göremez."
+
+#: src/features/settings/ai/providers.tsx
+msgid "Keep provider"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep resume content as real text rather than as pictures of text."
@@ -8291,6 +8367,10 @@ msgstr "Dil"
 #: src/libs/resume/section.tsx
 msgid "Languages"
 msgstr "Diller"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Last active {active}"
+msgstr ""
 
 #. placeholder {0}: monthYear(new Date(password.updatedAt))
 #: src/features/settings/account/security.tsx
@@ -8648,6 +8728,7 @@ msgid "Link updated"
 msgstr "Bağlantı güncellendi"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Bağlantı verildi · henüz gönderilmedi"
 
@@ -8868,6 +8949,10 @@ msgstr ""
 msgid "Locked. I can answer questions; unlock to get edits."
 msgstr ""
 
+#: src/features/documents/document-actions.tsx
+msgid "Locked. Unlock it to rename, tag or move it to Trash."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Kilitli. Düzenlemek için kilidini açın."
@@ -8928,6 +9013,10 @@ msgstr "Ana gezinme"
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Make a copy for this job"
+msgstr ""
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "Make a new set if you've used them up or lost them. The old ones stop working."
 msgstr ""
 
 #: src/features/homepage/design.tsx
@@ -9389,6 +9478,11 @@ msgstr "E-posta ve telefon numaranızı birinci sayfanın en üstüne taşıyın
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1} belgeden {0} tanesi Çöp Kutusu'na taşındı. Kilitli belgeler atlandı."
 
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
+
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
 msgid "Moved to {label}"
@@ -9545,6 +9639,10 @@ msgstr "Yeni API anahtarı"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "New application"
 msgstr "Yeni başvuru"
+
+#: src/features/settings/account/backup-codes.tsx
+msgid "New backup codes"
+msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 #: src/features/career/coach-thread.tsx
@@ -10523,11 +10621,6 @@ msgstr "{title}'yu açın"
 msgid "Open briefing"
 msgstr "Brifingi aç"
 
-#. Button label to open the user's default email app
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Open email app"
-msgstr "E-posta uygulamasını aç"
-
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
 msgstr "Odak modunu aç"
@@ -10688,6 +10781,10 @@ msgstr "veya"
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "veya şununla devam et"
+
+#: src/features/ats-checker/checker.tsx
+msgid "or drop it here · up to 25 MB · checked in your browser, never uploaded"
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "Or in your own words…"
@@ -10897,6 +10994,7 @@ msgstr ""
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/share/web-page-text.ts
 #: src/features/settings/account/auth-hooks.ts
+#: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/account/security.tsx
 msgid "Password"
 msgstr "Şifre"
@@ -11748,6 +11846,7 @@ msgstr "Ynt: Kıdemli Ürün Tasarımcısı"
 msgid "Reactive Resume - Go to homepage"
 msgstr "Reactive Resume - Ana sayfaya git"
 
+#: src/features/settings/root.tsx
 #: src/routes/dashboard/settings/route.tsx
 msgid "Reactive Resume {__APP_VERSION__} · MIT"
 msgstr "Reactive Resume {__APP_VERSION__} · MIT"
@@ -12374,10 +12473,6 @@ msgstr "Yeniden isimlendirmek"
 msgid "Rename letter"
 msgstr "Mektubu yeniden adlandır"
 
-#: src/dialogs/resume/index.tsx
-msgid "Rename resume"
-msgstr ""
-
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Rename section"
 msgstr "Bölümü yeniden adlandır"
@@ -12454,7 +12549,7 @@ msgstr ""
 
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/sections.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Report a bug"
 msgstr "Bir hata bildir"
 
@@ -12992,6 +13087,10 @@ msgid "Same you. Less starting over."
 msgstr "Aynı siz. Daha az baştan başlamak."
 
 #: src/features/documents/use-start-document.ts
+msgid "Sample resume"
+msgstr ""
+
+#: src/features/documents/use-start-document.ts
 msgid "Sample resume added. Delete it anytime."
 msgstr "Örnek özgeçmiş eklendi. İstediğiniz zaman silin."
 
@@ -13131,7 +13230,12 @@ msgstr ""
 msgid "Save these offer terms to compare"
 msgstr "Karşılaştırmak için bu teklif koşullarını kaydedin"
 
+#: src/features/settings/account/backup-codes.tsx
+msgid "Save these somewhere safe. Each works once, and they won't be shown again."
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13293,6 +13397,10 @@ msgstr "Zamanlama silindi"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "Röportaj planla"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13574,6 +13682,10 @@ msgstr "Göndermek"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Send again"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Send it in the <0>x-api-key</0> header."
 msgstr ""
@@ -13727,6 +13839,10 @@ msgctxt "What went to the AI provider with a message"
 msgid "Sent"
 msgstr ""
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Sent again. It can take a minute to arrive."
+msgstr ""
+
 #. placeholder {0}: version.name
 #: src/features/resume/share/format.ts
 msgid "Sent to {0}"
@@ -13760,6 +13876,7 @@ msgid "Set the document language when exporting."
 msgstr "Dışa aktarırken belge dilini ayarlayın."
 
 #: src/features/assistant/provider-setup.tsx
+#: src/features/documents/new-document-dialog.tsx
 msgid "Set up AI"
 msgstr "Yapay zekâyı ayarla"
 
@@ -13961,6 +14078,10 @@ msgstr "Tüm türleri göster"
 msgid "Show closed applications"
 msgstr "Kapatılan iş başvurularını göster"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
+
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
 msgstr "DNS kayıtlarını göster"
@@ -14097,9 +14218,14 @@ msgstr "Parmak iziniz, yüzünüz veya cihaz PIN'inizle oturum açın"
 
 #. User menu action to sign out of current account
 #: src/features/settings/account/page.tsx
+#: src/features/settings/account/sessions.tsx
 #: src/features/user/dropdown-menu.tsx
 msgid "Sign out"
 msgstr "Çıkış yap"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Sign out of {name}"
+msgstr ""
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Sign out of all other devices"
@@ -14126,6 +14252,10 @@ msgstr "Kapanış ifadesi"
 #: src/features/auth/pages/consent.tsx
 msgid "Signed in as {email}"
 msgstr "{email} olarak oturum açıldı"
+
+#: src/features/settings/account/sessions.tsx
+msgid "Signed out of that device."
+msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
@@ -14299,10 +14429,6 @@ msgstr "Bazı metinler döndürülmüş."
 msgid "Someone asked to change your {appName} email from {previousEmail} to {newEmail}."
 msgstr ""
 
-#: src/libs/error-message.ts
-msgid "Something went wrong. Please try again."
-msgstr "Bir şeyler ters gitti. Lütfen tekrar deneyin."
-
 #: src/features/documents/documents-page.tsx
 msgid "Sort"
 msgstr "Düzenlemek"
@@ -14315,7 +14441,7 @@ msgstr "Tarihe göre sırala"
 #: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/facts.tsx
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Source"
 msgstr "Kaynak"
 
@@ -15127,6 +15253,11 @@ msgstr "Bu dosya kontrol edilemeyecek kadar büyük. PDFs 25'e kadar MB çalış
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "Bu şifre doğru değil. Özgeçmiş sahibiyle kontrol edip tekrar deneyin."
 
+#: src/dialogs/auth/disable-two-factor.tsx
+#: src/features/settings/account/backup-codes.tsx
+msgid "That password isn't right. Try again or reset it."
+msgstr ""
+
 #: src/features/auth/pages/error.tsx
 msgid "That provider account is already linked to another account. Use a different provider account."
 msgstr "Bu sağlayıcı hesabı zaten başka bir hesaba bağlı. Farklı bir sağlayıcı hesabı kullanın."
@@ -15781,6 +15912,10 @@ msgstr "Bu bir XFA formu, bu nedenle çoğu yazılım yalnızca boş kabuğu oku
 msgid "This is not a common resume page size."
 msgstr "Bu, yaygın bir özgeçmiş sayfa boyutu değil."
 
+#: src/features/documents/new-document-dialog.tsx
+msgid "This JSON isn't a Reactive Resume or JSON Resume file."
+msgstr ""
+
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "This letter and “{resumeName}” as two PDFs, named to match."
 msgstr "Bu mektup ve “{resumeName}”, adları eşleşen iki PDF."
@@ -15845,6 +15980,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Bu PDF parola korumalı. Korumasız bir kopya kaydedip tekrar deneyin."
+
+#: src/features/ats-checker/checker.tsx
+msgid "This PDF looks damaged. Export it again from your editor and choose the new file."
+msgstr ""
 
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
@@ -16145,7 +16284,7 @@ msgstr "{model} ile yazıya dökülüyor…"
 msgid "Transcript copied"
 msgstr "Transkript kopyalandı"
 
-#: src/routes/dashboard/settings/route.tsx
+#: src/features/settings/project-links.ts
 msgid "Translate"
 msgstr "Çevir"
 
@@ -16193,6 +16332,10 @@ msgstr "{0}'yu deneyin"
 #: src/features/documents/documents-page.tsx
 msgid "Try a sample"
 msgstr "Bir örnek deneyin"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Try a sample file"
+msgstr ""
 
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
@@ -16434,6 +16577,10 @@ msgstr "University of Porto"
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
+#: src/features/settings/account/sessions.tsx
+msgid "Unknown device"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Unlink"
 msgstr "Bağlantıyı kaldır"
@@ -16456,10 +16603,6 @@ msgstr "Kilidi aç"
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Unlock editing"
 msgstr "Düzenlemenin kilidini açın"
-
-#: src/features/documents/document-actions.tsx
-msgid "Unlock it first"
-msgstr "İlk önce kilidini aç"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "unnamed key"
@@ -16498,10 +16641,6 @@ msgstr "En fazla 2 dakika. Ya da en fazla 2 MB boyutunda <0>bir ses dosyası se�
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "En fazla 2 dakika. Siz konuştukça sözleriniz görünür."
-
-#: src/features/ats-checker/checker.tsx
-msgid "Up to 25 MB · checked in your browser, never uploaded"
-msgstr "En fazla 25 MB · tarayıcınızda kontrol edildi, hiç yüklenmedi"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
@@ -17645,10 +17784,6 @@ msgstr "Cevap verdiniz: {answer}"
 msgid "You applied to {0} before and didn't hear back."
 msgstr "Daha önce {0} şirketine başvurdunuz ve yanıt alamadınız."
 
-#: src/features/auth/pages/login.tsx
-msgid "You can also sign in with your username."
-msgstr "Kullanıcı adınızla da giriş yapabilirsiniz."
-
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
 msgstr ""
@@ -17740,6 +17875,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "{MAX_APPLICATION_LANES} aşama sınırına ulaştınız. Yeni bir aşama eklemek için birini kaldırın."
+
+#: src/features/auth/pages/login.tsx
+msgid "you@example.com or your username"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

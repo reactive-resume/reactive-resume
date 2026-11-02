@@ -440,12 +440,7 @@ msgstr "{0} · স্কোর করা হয়নি"
 msgid "{0} · Value uncertain"
 msgstr "{0} · মান অনিশ্চিত"
 
-#. placeholder {0}: document.name
-#. placeholder {0}: first.name
-#. placeholder {0}: resume.name
-#: src/features/document-menu/index.tsx
-#: src/features/documents/document-sheets.tsx
-#: src/features/documents/library.tsx
+#. placeholder {0}: source?.name ?? ""
 #: src/features/documents/new-document.tsx
 msgid "{0} (copy)"
 msgstr "{0} (কপি)"
@@ -866,6 +861,10 @@ msgstr "{supported}টির পক্ষে প্রমাণ আছে, {part
 #: src/features/letters/design.tsx
 msgid "{textSize} pt"
 msgstr "{textSize} pt"
+
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{title} cleared"
@@ -3306,6 +3305,7 @@ msgid "Copy code"
 msgstr "কোড কপি করুন"
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
 msgid "Copy created"
 msgstr "কপি তৈরি করা হয়েছে"
 
@@ -3315,6 +3315,7 @@ msgstr "কপি তৈরি করা হয়েছে"
 msgid "Copy for {0}"
 msgstr ""
 
+#: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Copy for a job…"
 msgstr "একটি কাজের জন্য অনুলিপি..."
@@ -4825,6 +4826,10 @@ msgstr ""
 msgid "Edit interview"
 msgstr "সাক্ষাৎকার সম্পাদনা করুন"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Edit link"
 msgstr "লিঙ্ক সম্পাদনা করুন"
@@ -6289,6 +6294,10 @@ msgstr "এক পৃষ্ঠায় রাখুন"
 #: src/features/document-menu/index.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "এই জীবনবৃত্তান্ত সম্পর্কে ব্যক্তিগত নোট এখানে রাখুন। অন্য কেউ সেগুলো দেখতে পাবে না।"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Keep provider"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep resume content as real text rather than as pictures of text."
@@ -10641,6 +10650,10 @@ msgstr "সময়সূচি মুছে ফেলা হয়েছে"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Schedule interview"
 msgstr "সাক্ষাৎকারের সময়সূচী"
+
+#: src/features/applications/stage-actions.ts
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Scheduled work is not available on this server. Ask your server administrator to configure it."

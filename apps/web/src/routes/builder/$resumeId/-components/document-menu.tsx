@@ -17,6 +17,7 @@ import { isolate } from "@reactive-resume/utils/string";
 import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
 import { DocumentDetails } from "./document-details";
 import { useDialogStore } from "@/dialogs/store";
+import { savePendingChanges } from "@/features/resume/builder/draft";
 import {
 	useCurrentBuilderResumeSelector,
 	useCurrentResume,
@@ -138,9 +139,30 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 				<Icon name="pencil-simple" />
 				<Trans>Rename…</Trans>
 			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => openDialog("resume.duplicate", { id, name, slug, tags })}>
+			<DropdownMenuItem
+				onClick={() =>
+					void orpc.documents.suggestDuplicateName
+						.call({ type: "resume", id })
+						.then((suggested) => openDialog("resume.duplicate", { id, name: suggested, slug, tags }))
+						.catch((error: unknown) => toast.add({ type: "error", description: getResumeErrorMessage(error) }))
+				}
+			>
 				<Icon name="copy" />
 				<Trans>Duplicate</Trans>
+			</DropdownMenuItem>
+			{/* The library card's job copy, from inside the editor: a copy of this resume linked to a job. */}
+			<DropdownMenuItem
+				onClick={async () => {
+					// The copy is made from the saved resume: save what's on screen first, as History does.
+					if (!(await savePendingChanges(id))) {
+						toast.add({ type: "error", description: t`Save this resume's changes before copying it.` });
+						return;
+					}
+					openDialog("document.new", { step: "copy", sourceResumeId: id });
+				}}
+			>
+				<Icon name="briefcase" />
+				<Trans>Copy for a job…</Trans>
 			</DropdownMenuItem>
 			<DropdownMenuItem onClick={handleToggleLock}>
 				<Icon name={isLocked ? "lock-open" : "lock"} />

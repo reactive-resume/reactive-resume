@@ -7,7 +7,7 @@ import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
 import { reviewImport, withLeftoverSection, withLinkTargets } from "@reactive-resume/import/review";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -75,8 +75,11 @@ type Step =
 
 type OpenResumeOptions = { withAssistant?: boolean; importedFrom?: string };
 
-function requireImportKind(kind: ImportKind | null): ImportKind {
+function requireImportKind(kind: ImportKind | null, file: File): ImportKind {
 	if (!kind) {
+		// JSON is a supported type: say what's wrong with this JSON, not that the type is.
+		if (file.name.toLowerCase().endsWith(".json"))
+			throw new ImportError(t`This JSON isn't a Reactive Resume or JSON Resume file.`);
 		throw new ImportError(
 			t`This file type can't be imported. Use a PDF, Word, Reactive Resume or JSON Resume file, or a LinkedIn export (.zip).`,
 		);
@@ -122,7 +125,7 @@ function useResumeImport(
 
 		setStep({ name: "importing", file, stage: 0, notes: [] });
 		try {
-			const kind = requireImportKind(await detectImportKind(file));
+			const kind = requireImportKind(await detectImportKind(file), file);
 			if (!current()) return;
 			if ((kind === "pdf" || kind === "docx") && !mode) {
 				setStep({ name: "import-choice", file, kind });
@@ -186,10 +189,11 @@ function useResumeImport(
 				? error.message
 				: getOrpcErrorMessage(error, {
 						byCode: {
-							BAD_REQUEST: t`The file couldn't be read as a resume.`,
 							BAD_GATEWAY: t`Couldn't reach the AI provider. Try again in a moment.`,
 						},
-						fallback: t`Couldn't import the file. Try again, or start blank.`,
+						// The server says why a file couldn't be read ("The AI returned resume data in the wrong format…").
+						allowServerMessage: true,
+						fallback: t`The file couldn't be read as a resume.`,
 					});
 		setStep({ name: "failed", file, message });
 	};
@@ -374,7 +378,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 			) : (
 				<div key="choose" className={cn(ENTER_CLASS, "grid gap-4")}>
 					<DialogHeader>
-						<DialogTitle className="font-display text-[22px] font-medium">
+						<DialogTitle className="font-display text-[22px]">
 							<Trans>New</Trans>
 						</DialogTitle>
 						<DialogDescription className="sr-only">
@@ -441,9 +445,9 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 							</span>
 							<span id={importDescriptionId} className="text-[13px] leading-[19px] text-ink-2">
 								<Trans>
-									Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in
-									ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create
-									the resume.
+									Drop a file here or browse. PDF, Word (needs AI), Reactive Resume, JSON Resume or a LinkedIn export
+									(.zip). Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is
+									listed before you create the resume.
 								</Trans>
 							</span>
 						</span>
@@ -513,7 +517,7 @@ function ReviewStep({ step, onCreate, onChooseFile }: ReviewStepProps) {
 	return (
 		<div className={cn(ENTER_CLASS, "grid gap-4")}>
 			<DialogHeader>
-				<DialogTitle className="font-display text-[22px] font-medium">
+				<DialogTitle className="font-display text-[22px]">
 					<Trans>Check what was found</Trans>
 				</DialogTitle>
 				<DialogDescription>{step.file.name}</DialogDescription>
@@ -615,11 +619,12 @@ type ImportStepProps = {
 
 /** The import's progress, then its outcome: found counts with Open in editor, or the error with a way forward. */
 function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onClose, onOpen }: ImportStepProps) {
+	const { hasUsableProvider } = useHasUsableAiProvider();
 	const { i18n } = useLingui();
 	return (
 		<div className={cn(ENTER_CLASS, "grid gap-4")}>
 			<DialogHeader>
-				<DialogTitle className="font-display text-[22px] font-medium">
+				<DialogTitle className="font-display text-[22px]">
 					{step.name === "failed" ? (
 						<Trans>Couldn't import</Trans>
 					) : step.name === "imported" ? (
@@ -671,6 +676,12 @@ function ImportStep({ step, creating, onCancel, onStartBlank, onChooseFile, onCl
 						<span>{step.message}</span>
 					</div>
 					<div className={cn(ENTER_CLASS, "flex flex-wrap justify-end gap-2")}>
+						{/* A Word file needs AI: offer the way to set it up, not only a way around it. */}
+						{/\.docx?$/i.test(step.file.name) && !hasUsableProvider && (
+							<Button variant="ghost" nativeButton={false} render={<Link to="/dashboard/settings/ai" />}>
+								<Trans>Set up AI</Trans>
+							</Button>
+						)}
 						<Button variant="secondary" onClick={onStartBlank} disabled={creating}>
 							<Trans>Start blank</Trans>
 						</Button>
@@ -821,7 +832,8 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 	const [name, setName] = useState<string | null>(null);
 	const { mutateAsync: copyForJob, isPending } = useMutation(orpc.documents.copyForJob.mutationOptions());
 
-	const source = resumes.find((resume) => resume.id === sourceId) ?? defaultCopySource(resumes);
+	// A named resume (the builder's Copy for a job) is the only source until the list has it: never another resume.
+	const source = sourceId ? resumes.find((resume) => resume.id === sourceId) : defaultCopySource(resumes);
 	const job = adding ? null : jobs.find((application) => application.id === jobId);
 	const waitingForJob = !adding && Boolean(jobId) && !job && applications.isFetching;
 	const company = adding ? newJob.company.trim() : job?.company;
@@ -881,7 +893,7 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 	return (
 		<>
 			<DialogHeader>
-				<DialogTitle className="font-display text-[22px] font-medium">
+				<DialogTitle className="font-display text-[22px]">
 					<Trans>Copy a resume for a job</Trans>
 				</DialogTitle>
 			</DialogHeader>

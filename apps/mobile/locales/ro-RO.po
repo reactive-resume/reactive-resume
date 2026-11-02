@@ -440,12 +440,7 @@ msgstr "{0} · Nu a fost punctat"
 msgid "{0} · Value uncertain"
 msgstr "{0} · Valoare incertă"
 
-#. placeholder {0}: document.name
-#. placeholder {0}: first.name
-#. placeholder {0}: resume.name
-#: src/features/document-menu/index.tsx
-#: src/features/documents/document-sheets.tsx
-#: src/features/documents/library.tsx
+#. placeholder {0}: source?.name ?? ""
 #: src/features/documents/new-document.tsx
 msgid "{0} (copy)"
 msgstr "{0} (copie)"
@@ -866,6 +861,10 @@ msgstr "{supported} acceptat, {partial} parțial acceptat, {missing} fără dove
 #: src/features/letters/design.tsx
 msgid "{textSize} pt"
 msgstr "{textSize} pt"
+
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
 
 #: src/features/write/section-sheet.tsx
 msgid "{title} cleared"
@@ -3306,6 +3305,7 @@ msgid "Copy code"
 msgstr "Copiază codul"
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
 msgid "Copy created"
 msgstr "Copie creată"
 
@@ -3315,6 +3315,7 @@ msgstr "Copie creată"
 msgid "Copy for {0}"
 msgstr ""
 
+#: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Copy for a job…"
 msgstr "Copie pentru un job..."
@@ -4825,6 +4826,10 @@ msgstr ""
 msgid "Edit interview"
 msgstr "Editați interviul"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/features/write/basics-screen.tsx
 msgid "Edit link"
 msgstr "Editați linkul"
@@ -6289,6 +6294,10 @@ msgstr "Rămâneți pe o singură pagină"
 #: src/features/document-menu/index.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
 msgstr "Păstrați aici notițe private despre acest CV. Nimeni altcineva nu le poate vedea."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Keep provider"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep resume content as real text rather than as pictures of text."
@@ -10641,6 +10650,10 @@ msgstr "Programare ștearsă"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Schedule interview"
 msgstr "Programează interviul"
+
+#: src/features/applications/stage-actions.ts
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Scheduled work is not available on this server. Ask your server administrator to configure it."

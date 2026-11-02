@@ -82,8 +82,9 @@ test("registers and logs in with email credentials", async ({ page, account }) =
 	await expect(page).toHaveURL(/\/dashboard\?from=signup#documents$/);
 	expect(documentRequests).toBe(1);
 
+	// Signing out lands on the site's homepage.
 	await logoutViaUi(page, account);
-	await expect(page.getByRole("heading", { name: "Sign in to your account" })).toBeVisible();
+	await expect(page).toHaveURL((url) => url.pathname === "/");
 
 	const beforeLogin = documentRequests;
 	await loginViaUi(page, account, "/dashboard?from=login#documents");
