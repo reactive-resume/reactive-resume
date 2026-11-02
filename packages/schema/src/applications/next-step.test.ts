@@ -207,6 +207,46 @@ it("uses the contact instant even before a whole-day stage's noon marker, but no
 	expect(getNextStep(application, new Date("2026-10-30T08:00:00Z"))).toEqual({ kind: "no-reply", days: 10 });
 });
 
+it.each(["applied", "interview"] as const)(
+	"uses the written %s visit for silence after a backdated re-entry",
+	(status) => {
+		const application = app("A", status, "2026-10-20", "2026-10-30");
+		application.activity[0] = { ...event(status, "2026-10-20"), writeSequence: 1 };
+		application.activity.push(
+			{ ...event("screening", "2026-10-01"), id: "between", writeSequence: 2 },
+			{ ...event(status, "2026-10-05"), id: "current-visit", writeSequence: 3 },
+		);
+		if (status === "interview")
+			application.activity.push({
+				id: "current-round",
+				type: "interview",
+				at: new Date("2026-10-06T11:00:00Z"),
+				durationMinutes: 60,
+				kind: "technical",
+				location: "",
+				notes: "",
+				participants: [],
+				audience: "other",
+				timezone: "UTC",
+			});
+		expect(getNextStep(application, now)).toMatchObject({ kind: "no-reply", days: status === "interview" ? 25 : 26 });
+		application.activity.push(contact("2026-10-10T12:00:00Z", "current-visit"));
+		expect(getNextStep(application, now)).toMatchObject({ kind: "no-reply", days: 21 });
+		expect(applicationStageSince(application)).toEqual(new Date("2026-10-20"));
+	},
+);
+
+it("keeps the latest contact without a function-argument limit on long histories", () => {
+	const application = app("A", "applied", "2026-10-01", "2026-10-30");
+	const older = contact("2026-10-05T12:00:00Z", "2026-10-01");
+	application.activity = [
+		...application.activity,
+		contact("2026-10-25T12:00:00Z", "2026-10-01"),
+		...Array.from({ length: 500_000 }, (_, index) => ({ ...older, id: `old-contact-${index}` })),
+	];
+	expect(getNextStep(application, now)).toEqual({ kind: "waiting", days: 30 });
+});
+
 it("counts interview silence from the later of its end and contact in this visit", () => {
 	const application = app("A", "interview", "2026-10-01", "2026-10-30");
 	application.activity.push({

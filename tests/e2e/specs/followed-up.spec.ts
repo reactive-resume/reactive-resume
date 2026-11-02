@@ -107,6 +107,31 @@ test("Followed up persists contact, refreshes attention summaries and survives r
 	const contacted = await read(page.request, id);
 	expect(step(contacted).kind).toBe("waiting");
 	expect(contacted.activity).toContainEqual(expect.objectContaining({ followedUp: { stageEntryId: screen.id } }));
+	await expect(
+		await page.request.put(`/api/openapi/applications/${id}`, {
+			data: { status: "applied", stageEnteredAt: new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10) },
+		}),
+	).toBeOK();
+	await expect(await page.request.post(`/api/openapi/applications/${id}/follow-ups`)).toBeOK();
+	const revisited = await read(page.request, id);
+	const reentryContact = revisited.activity
+		.map((entry) => applicationTimelineEntrySchema.parse(entry))
+		.find(
+			(entry) =>
+				entry.type === "note" &&
+				entry.followedUp &&
+				entry.followedUp.stageEntryId !== screen.id &&
+				entry.followedUp.stageEntryId !== contact.followedUp?.stageEntryId,
+		);
+	if (!reentryContact) throw new Error("Missing re-entry contact");
+	await expect(
+		await page.request.put(`/api/openapi/applications/${id}/timeline/${reentryContact.id}`, {
+			data: { date: new Date(reentryContact.at.getTime() - 20 * 86_400_000).toISOString().slice(0, 10) },
+		}),
+	).toBeOK();
+	const corrected = await read(page.request, id);
+	expect(step(corrected)).toEqual({ kind: "no-reply", days: 20 });
+	expect(corrected.appliedAt).toBe(revisited.appliedAt);
 });
 
 test("legacy contact writes preserve concurrent history, authored reminders and summary privacy", async ({

@@ -96,20 +96,19 @@ export function getNextStep(
 	const stageEntryId = latestStageEntryId(
 		application.activity.filter((entry) => entry.type === "stage" && entry.canonicalTransition !== false),
 	);
-	const contacted = Math.max(
-		-Infinity,
-		...application.activity.flatMap((entry) => {
-			const at = new Date(entry.at).getTime();
-			// Whole-day stage dates use noon UTC; contact earlier that day still has its exact instant.
-			return entry.type === "note" &&
-				entry.followedUp?.stageEntryId === stageEntryId &&
-				at <= now.getTime() &&
-				(since === undefined || Math.floor(at / DAY_MS) >= Math.floor(since / DAY_MS))
-				? [at]
-				: [];
-		}),
-	);
-	const replySince = Number.isFinite(contacted) ? contacted : (since ?? -Infinity);
+	// Write order identifies a visit even when its display date is backdated.
+	const visit = application.activity.find((entry) => entry.id === stageEntryId);
+	const visitSince = visit?.type === "stage" ? (visit.dateUnknown ? undefined : new Date(visit.at).getTime()) : since;
+	const contacted = application.activity.reduce((latest, entry) => {
+		if (entry.type !== "note" || entry.followedUp?.stageEntryId !== stageEntryId) return latest;
+		const at = new Date(entry.at).getTime();
+		// Whole-day stage dates use noon UTC; contact earlier that day still has its exact instant.
+		return at <= now.getTime() &&
+			(visitSince === undefined || Math.floor(at / DAY_MS) >= Math.floor(visitSince / DAY_MS))
+			? Math.max(latest, at)
+			: latest;
+	}, -Infinity);
+	const replySince = Number.isFinite(contacted) ? contacted : (visitSince ?? -Infinity);
 	const quietDays = Number.isFinite(replySince) ? daysBetween(new Date(replySince), now) : null;
 	// Going quiet after a screen is as common as after applying: both get the same nudge.
 	if (
@@ -121,12 +120,12 @@ export function getNextStep(
 	if (application.status === "interview") {
 		// Interviews of this stage, by when they ended (one that began before the stage still counts if it ended after).
 		const ended =
-			since === undefined
+			visitSince === undefined
 				? []
 				: application.activity
 						.filter((entry): entry is InterviewTimelineEntry => entry.type === "interview")
 						.map((entry) => new Date(entry.at).getTime() + entry.durationMinutes * 60_000)
-						.filter((end) => end >= since);
+						.filter((end) => end >= visitSince);
 		if (ended.length === 0) return { kind: "no-interview", days };
 		// No word since the last interview ended, counted from then.
 		const quiet = daysBetween(new Date(Math.max(...ended, contacted)), now);

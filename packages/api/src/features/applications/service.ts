@@ -1050,6 +1050,7 @@ export const applicationService = {
 		return stripUserId(updated);
 	},
 
+	/** Records contact within the locked current visit, preserving stage dates and authored reminders. */
 	logFollowUp: (input: { id: string; userId: string }) =>
 		db.transaction(async (tx) => {
 			const [existing] = await tx
