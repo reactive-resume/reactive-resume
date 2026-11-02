@@ -2,7 +2,7 @@ import type { DocumentSummary } from "./filter";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { View } from "react-native";
 import { changedTags, documentRef, sharedTags } from "./filter";
 import { useNewDocuments } from "./new-documents";
@@ -36,6 +36,7 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 	const [name, setName] = useState(value.kind === "duplicate" ? value.name : (first?.name ?? ""));
 	const shared = sharedTags(value.documents);
 	const [tags, setTags] = useState(shared);
+	const commitTags = useRef<(() => string[]) | null>(null);
 	const [addingJob, setAddingJob] = useState(false);
 	const options = orpc.applications.listSummary.queryOptions({ input: {} });
 	const applications = useQuery({
@@ -256,7 +257,7 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 					<>
 						<Text color="ink2">{t`Shows shared tags. Add or remove tags without changing each document's other tags.`}</Text>
 						<View pointerEvents={operations.busy ? "none" : "auto"}>
-							<ChipInput label={t`Tags`} values={tags} onChange={setTags} />
+							<ChipInput commitRef={commitTags} label={t`Tags`} values={tags} onChange={setTags} />
 						</View>
 						<Button
 							label={t`Save`}
@@ -267,16 +268,24 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 								tags.some((tag) => tag.length > 40) ||
 								targets.some((document) => changedTags(document, shared, tags).length > 20)
 							}
-							onPress={() =>
+							onPress={() => {
+								if (operations.busy || !targets.length) return;
+								const next = commitTags.current?.() ?? tags;
+								if (
+									next.length > 20 ||
+									next.some((tag) => tag.length > 40) ||
+									targets.some((document) => changedTags(document, shared, next).length > 20)
+								)
+									return;
 								void execute(() =>
 									operations.batch(
 										value.documents,
 										(document) =>
-											client.documents.setTags({ ...documentRef(document), tags: changedTags(document, shared, tags) }),
+											client.documents.setTags({ ...documentRef(document), tags: changedTags(document, shared, next) }),
 										{ applies: (document) => !document.isLocked },
 									),
-								)
-							}
+								);
+							}}
 						/>
 						<Text variant="caption" color="ink3">{t`Up to 20 tags per document, 40 characters per tag.`}</Text>
 					</>

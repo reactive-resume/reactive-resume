@@ -155,6 +155,8 @@ type Props = Omit<React.ComponentProps<"div">, "value" | "onChange"> & {
 	defaultValue?: string[];
 	onChange?: (value: string[]) => void;
 	allowCommas?: boolean;
+	/** Explicit document saves include unfinished text without changing blur/autosave behavior. */
+	commitRef?: React.Ref<() => string[]>;
 	/** The empty field's hint; keywords by default. Document tags say "Add a tag…". */
 	placeholder?: string;
 };
@@ -165,6 +167,7 @@ export function ChipInput({
 	onChange,
 	className,
 	allowCommas = false,
+	commitRef,
 	placeholder,
 	id: idProp,
 	"aria-describedby": ariaDescribedByProp,
@@ -196,22 +199,32 @@ export function ChipInput({
 			const trimmed = chip.trim();
 			return trimmed ? [trimmed] : [];
 		});
-		if (nextValues.length === 0) return;
+		if (nextValues.length === 0) return chips;
 
-		setChips([...new Set([...chips, ...nextValues])]);
+		const next = [...new Set([...chips, ...nextValues])];
+		setChips(next);
+		return next;
 	};
 
 	const updateChip = (index: number, newValue: string) => {
 		const trimmed = newValue.trim();
-		if (!trimmed || index < 0 || index >= chips.length) return;
+		if (!trimmed || index < 0 || index >= chips.length) return chips;
 
 		const existingIndex = chips.findIndex((c, i) => c === trimmed && i !== index);
-		if (existingIndex !== -1) return;
+		if (existingIndex !== -1) return chips;
 
 		const newChips = [...chips];
 		newChips[index] = trimmed;
 		setChips(newChips);
+		return newChips;
 	};
+
+	React.useImperativeHandle(commitRef, () => () => {
+		const next = editingIndex === null ? addChips([input]) : updateChip(editingIndex, input);
+		setInput("");
+		setEditingIndex(null);
+		return next;
+	});
 
 	const removeChip = (index: number) => {
 		if (index < 0 || index >= chips.length) return;

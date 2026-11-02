@@ -3,6 +3,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { useRef } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -37,6 +38,7 @@ type ResumeDialogProps = {
 
 export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 	const isUpdate = mode === "update";
+	const commitTags = useRef<(() => string[]) | null>(null);
 	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 
@@ -110,6 +112,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 				onSubmit={(event) => {
 					event.preventDefault();
 					event.stopPropagation();
+					commitTags.current?.();
 					void form.handleSubmit();
 				}}
 			>
@@ -148,6 +151,7 @@ export function ResumeDialog({ mode, data }: ResumeDialogProps) {
 							<FormControl
 								render={
 									<ChipInput
+										commitRef={commitTags}
 										value={field.state.value}
 										onChange={(value) => {
 											field.handleChange(value);

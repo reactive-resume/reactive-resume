@@ -16,11 +16,15 @@ let cursor = 0;
 const react = {
 	createElement: element,
 	useCallback: (fn) => fn,
+	useImperativeHandle(ref, make) {
+		if (ref) ref.current = make();
+	},
 	useEffect() {},
 	useState(initial) {
 		const index = cursor++;
 		if (!(index in hooks)) hooks[index] = typeof initial === "function" ? initial() : initial;
-		return [hooks[index], (value) => (hooks[index] = typeof value === "function" ? value(hooks[index]) : value)];
+		const owner = hooks;
+		return [owner[index], (value) => (owner[index] = typeof value === "function" ? value(owner[index]) : value)];
 	},
 	useRef(initial) {
 		const [value] = react.useState(() => ({ current: initial }));
@@ -2586,13 +2590,37 @@ const { DocumentMenu: BuilderDocumentMenu } = load("features/document-menu/index
 	"@/shell/key-commands": { useKeyCommands() {} },
 	"@/ui": { ...ui, IconButton: "IconButton", Sheet: "Sheet" },
 });
+const { ChipInput: NativeTagInput } = load("ui/fields.tsx", {
+	"./theme": { useTheme: () => theme },
+	"./icon": {},
+	"./layout": {},
+	"./motion": {},
+	"./overlays": {},
+	"./switch": {},
+	"./text": {},
+	"@reactive-resume/utils/string": {},
+});
+let tagInputHooks = [];
 const menuView = () => render(BuilderDocumentMenu, { id: "menu-tags" });
+const menuTagInput = () => {
+	const props = control(menuView(), "Tags");
+	const parentHooks = hooks;
+	hooks = tagInputHooks;
+	try {
+		const tree = render(NativeTagInput, props);
+		tagInputHooks = hooks;
+		return tree;
+	} finally {
+		hooks = parentHooks;
+	}
+};
 const tagsAction = () =>
 	nodes(menuView()).find((node) => node.type === "ListRow" && node.props.title === "Tags…").props;
 control(menuView(), "Document options").onPress();
 assert.equal(tagsAction().disabled, false);
 tagsAction().onPress();
-control(menuView(), "Tags").onChange(["base", "portfolio"]);
+control(menuTagInput(), "Tags").onChangeText("portfolio");
+menuTagInput();
 control(menuView(), "Save").onPress();
 await settle();
 assert.deepEqual(
@@ -2602,8 +2630,14 @@ assert.deepEqual(
 assert.equal(tagSaves.at(-1).data.basics.headline, "Portfolio designer");
 control(menuView(), "Document options").onPress();
 tagsAction().onPress();
-control(menuView(), "Tags").onChange(["x".repeat(41)]);
+tagInputHooks = [];
+control(menuTagInput(), "Tags").onChangeText("x".repeat(41));
+menuTagInput();
+const beforeInvalidSave = tagSaves.length;
+control(menuView(), "Save").onPress();
+await settle();
 assert.equal(control(menuView(), "Save").disabled, true);
+assert.equal(tagSaves.length, beforeInvalidSave, "unfinished overlong tag cannot reach the draft");
 control(menuView(), "Tags").onChange(Array.from({ length: 21 }, (_, index) => `tag-${index}`));
 assert.equal(control(menuView(), "Save").disabled, true);
 state.document.isLocked = true;
