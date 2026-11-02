@@ -1,12 +1,14 @@
 import type { ApplicationLane } from "../lanes";
 import type { OfferHint } from "../next-step";
 import type { ApplicationSummary } from "../types";
+import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
+import { HotkeysProvider, useHotkeys } from "@tanstack/react-hotkeys";
 import { useMutation } from "@tanstack/react-query";
 import { AnimatePresence, m } from "motion/react";
-import { memo, useMemo, useState } from "react";
+import { memo, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import {
@@ -27,8 +29,8 @@ import { getStageDisplay } from "../lanes";
 import { getCategoryLane, getDisplayLane, getLaneLabel } from "../lanes";
 import { compareNextStepSortKeys, describeNextStep, getNextStep, nextStepSortKey } from "../next-step";
 import { offerHintFor, useOfferHints } from "../queries";
-import { LIST_ORDER } from "../stages";
-import { useInvalidateApplications, useMoveWithUndo } from "../use-application-actions";
+import { getStageLabel, LIST_ORDER, PIPELINE } from "../stages";
+import { useApplicationActions, useInvalidateApplications, useMoveWithUndo } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { ClosedLaneItems } from "./application-actions-menu";
 import { TagChips } from "./tag-chips";
@@ -76,7 +78,11 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 	const breakpoint = useBreakpoint();
 	const { timeZone } = useCareerTime();
 	const phone = breakpoint === "mobile";
-	const { lanes, active } = useApplicationLanes();
+	const { lanes, active, isPending: lanesPending, error: lanesError } = useApplicationLanes();
+	const moveWithUndo = useMoveWithUndo();
+	const { logFollowUp } = useApplicationActions();
+	const rowButtons = useRef(new Map<string, HTMLButtonElement>());
+	const restoreFocus = useRef<string | null>(null);
 	const now = useNow();
 	const hints = useOfferHints();
 	const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
@@ -122,6 +128,38 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 			}))
 			.filter((group) => group.rows.length > 0);
 	}, [applications, showClosed, sort, lanes, active, timeZone, now, hints]);
+
+	const ordered = groups.flatMap(({ lane, rows }) => (collapsed.has(lane.id) ? [] : rows));
+	const rowRef = (id: string, node: HTMLButtonElement | null) => {
+		const previous = rowButtons.current.get(id);
+		if (!node && previous === document.activeElement) restoreFocus.current = id;
+		if (node) rowButtons.current.set(id, node);
+		else rowButtons.current.delete(id);
+	};
+	useLayoutEffect(() => {
+		const id = restoreFocus.current;
+		restoreFocus.current = null;
+		if (id && document.activeElement === document.body) rowButtons.current.get(id)?.focus();
+	});
+	const step = (id: string, direction: number) => {
+		const index = ordered.findIndex((row) => row.id === id);
+		if (index < 0) return;
+		const next = ordered[Math.max(0, Math.min(ordered.length - 1, index + direction))];
+		if (next) rowButtons.current.get(next.id)?.focus();
+	};
+	const move = (id: string, status: ApplicationStatus) => {
+		const application = ordered.find((row) => row.id === id);
+		if (!application || lanesPending || lanesError) return;
+		const lane = getCategoryLane(lanes, status);
+		if (getDisplayLane(lanes, application).id === lane.id) return;
+		moveWithUndo({ applications: [application], lane, description: t`Moved to ${getLaneLabel(lane)}` });
+	};
+	const followedUp = (id: string) => {
+		const application = ordered.find((row) => row.id === id);
+		if (!application || application.status === "saved" || application.status === "closed" || logFollowUp.isPending)
+			return;
+		logFollowUp.mutate({ id });
+	};
 
 	const toggleGroup = (status: string) =>
 		setCollapsed((current) => {
@@ -234,6 +272,10 @@ export function ApplicationList({ applications, showClosed, selectedId, onOpen }
 										checked={checked.has(application.id)}
 										onCheck={toggleRow}
 										onOpen={onOpen}
+										rowRef={rowRef}
+										onStep={step}
+										onMove={move}
+										onFollowUp={followedUp}
 									/>
 								))}
 						</tbody>
@@ -272,6 +314,10 @@ type ApplicationRowProps = {
 	phone: boolean;
 	selected: boolean;
 	checked: boolean;
+	rowRef: (id: string, node: HTMLButtonElement | null) => void;
+	onStep: (id: string, direction: number) => void;
+	onMove: (id: string, status: ApplicationStatus) => void;
+	onFollowUp: (id: string) => void;
 	onCheck: (id: string) => void;
 	onOpen: (application: ApplicationSummary) => void;
 };
@@ -283,9 +329,43 @@ const ApplicationRow = memo(function ApplicationRow({
 	phone,
 	selected,
 	checked,
+	rowRef,
+	onStep,
+	onMove,
+	onFollowUp,
 	onCheck,
 	onOpen,
 }: ApplicationRowProps) {
+	const openRef = useRef<HTMLButtonElement>(null);
+	useHotkeys(
+		[
+			{ hotkey: "J" as const, callback: () => onStep(application.id, 1), meta: { name: t`Next application` } },
+			{ hotkey: "K" as const, callback: () => onStep(application.id, -1), meta: { name: t`Previous application` } },
+			{ hotkey: "Enter" as const, callback: () => onOpen(application), meta: { name: t`Open application` } },
+			{ hotkey: "X" as const, callback: () => onCheck(application.id), meta: { name: t`Toggle selection` } },
+			{ hotkey: "F" as const, callback: () => onFollowUp(application.id), meta: { name: t`Followed up` } },
+			...PIPELINE.map((status, index) => ({
+				hotkey: `${index + 1}` as "1" | "2" | "3" | "4" | "5",
+				callback: () => onMove(application.id, status),
+				meta: { name: t`Moved to ${getStageLabel(status)}` },
+			})),
+		].map(({ callback, ...binding }) => ({
+			...binding,
+			callback: (event: KeyboardEvent) => {
+				if (
+					!event.repeat &&
+					!event.isComposing &&
+					event.keyCode !== 229 &&
+					!event.ctrlKey &&
+					!event.metaKey &&
+					!event.altKey &&
+					!event.shiftKey
+				)
+					callback();
+			},
+		})),
+		{ target: openRef, requireReset: true, ignoreInputs: true },
+	);
 	const { i18n } = useLingui();
 	const { timeZone } = useCareerTime();
 	const hints = useOfferHints(application.status === "offer");
@@ -313,7 +393,16 @@ const ApplicationRow = memo(function ApplicationRow({
 	);
 
 	const openButton = (
-		<button type="button" data-application-open className="grid min-w-0 cursor-pointer text-start">
+		<button
+			type="button"
+			ref={(node) => {
+				openRef.current = node;
+				rowRef(application.id, node);
+			}}
+			data-application-open
+			aria-keyshortcuts="j k Enter 1 2 3 4 5 x f"
+			className="focus-visible:outline-focus grid min-w-0 cursor-pointer rounded-sm text-start focus-visible:outline-2 focus-visible:outline-offset-4"
+		>
 			<span dir="auto" className="truncate font-medium">
 				{application.role}
 			</span>
@@ -442,6 +531,7 @@ type BulkBarProps = {
 
 /** For the checked rows: move them or close them (with Undo), tag them, or delete them (after asking). */
 function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
+	const scope = `applications-bulk-${useId()}`;
 	const invalidate = useInvalidateApplications();
 	const moveWithUndo = useMoveWithUndo();
 	const rows = ids.map((id) => ({ id }));
@@ -499,20 +589,22 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 					<Trans>Tags…</Trans>
 				</PopoverTrigger>
 				<PopoverContent align="start" className="w-60 p-2">
-					<form
-						className="flex gap-1.5"
-						onSubmit={(event) => {
-							event.preventDefault();
-							if (disabled || !tag.trim()) return;
-							bulkUpdate.mutate({ ids, addTags: [tag.trim()] });
-							setTag("");
-						}}
-					>
-						<Input aria-label={t`Tag`} value={tag} onChange={(event) => setTag(event.target.value)} autoFocus />
-						<Button size="sm" type="submit" disabled={disabled || !tag.trim()}>
-							<Trans>Add</Trans>
-						</Button>
-					</form>
+					<HotkeysProvider scope={`${scope}-tags`} exclusive>
+						<form
+							className="flex gap-1.5"
+							onSubmit={(event) => {
+								event.preventDefault();
+								if (disabled || !tag.trim()) return;
+								bulkUpdate.mutate({ ids, addTags: [tag.trim()] });
+								setTag("");
+							}}
+						>
+							<Input aria-label={t`Tag`} value={tag} onChange={(event) => setTag(event.target.value)} autoFocus />
+							<Button size="sm" type="submit" disabled={disabled || !tag.trim()}>
+								<Trans>Add</Trans>
+							</Button>
+						</form>
+					</HotkeysProvider>
 				</PopoverContent>
 			</Popover>
 
@@ -522,28 +614,30 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 					<Trans>Move to…</Trans>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start">
-					{active
-						.filter((lane) => lane.category !== "closed")
-						.map((lane) => (
-							<DropdownMenuItem
-								key={lane.id}
-								onClick={() => {
-									const label = getLaneLabel(lane);
-									moveWithUndo({
-										applications: rows,
-										lane,
-										description: plural(ids.length, {
-											one: `# application moved to ${label}`,
-											other: `# applications moved to ${label}`,
-										}),
-									});
-									onDone();
-								}}
-							>
-								<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: lane.color }} />
-								<span className="truncate">{getLaneLabel(lane)}</span>
-							</DropdownMenuItem>
-						))}
+					<HotkeysProvider scope={`${scope}-0`} exclusive>
+						{active
+							.filter((lane) => lane.category !== "closed")
+							.map((lane) => (
+								<DropdownMenuItem
+									key={lane.id}
+									onClick={() => {
+										const label = getLaneLabel(lane);
+										moveWithUndo({
+											applications: rows,
+											lane,
+											description: plural(ids.length, {
+												one: `# application moved to ${label}`,
+												other: `# applications moved to ${label}`,
+											}),
+										});
+										onDone();
+									}}
+								>
+									<span aria-hidden="true" className="size-2 shrink-0 rounded-sm" style={{ background: lane.color }} />
+									<span className="truncate">{getLaneLabel(lane)}</span>
+								</DropdownMenuItem>
+							))}
+					</HotkeysProvider>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
@@ -552,18 +646,20 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 					<Trans>Close…</Trans>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start">
-					<ClosedLaneItems
-						lanes={active}
-						onPick={(lane, reason) => {
-							moveWithUndo({
-								applications: rows,
-								lane: lane ?? getCategoryLane(lanes, "closed"),
-								closedReason: lane ? reason : (reason ?? null),
-								description: plural(ids.length, { one: "# application closed", other: "# applications closed" }),
-							});
-							onDone();
-						}}
-					/>
+					<HotkeysProvider scope={`${scope}-1`} exclusive>
+						<ClosedLaneItems
+							lanes={active}
+							onPick={(lane, reason) => {
+								moveWithUndo({
+									applications: rows,
+									lane: lane ?? getCategoryLane(lanes, "closed"),
+									closedReason: lane ? reason : (reason ?? null),
+									description: plural(ids.length, { one: "# application closed", other: "# applications closed" }),
+								});
+								onDone();
+							}}
+						/>
+					</HotkeysProvider>
 				</DropdownMenuContent>
 			</DropdownMenu>
 

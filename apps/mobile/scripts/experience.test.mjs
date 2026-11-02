@@ -16,6 +16,7 @@ let cursor = 0;
 const react = {
 	createElement: element,
 	useCallback: (fn) => fn,
+	useEffect() {},
 	useState(initial) {
 		const index = cursor++;
 		if (!(index in hooks)) hooks[index] = typeof initial === "function" ? initial() : initial;
@@ -27,6 +28,8 @@ const react = {
 	},
 };
 const calls = [];
+let triageBindings = [];
+let triageEligible = true;
 const routes = {
 	builder: (id, tab) => `/builder/${id}/${tab}`,
 	application: (id, tab) => `/applications/${id}/${tab}`,
@@ -78,6 +81,13 @@ const mocks = {
 	"@/routes": { routes },
 	"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
 	"@/ui": ui,
+	"@/shell/key-commands": {
+		supportsUnmodifiedCommands: true,
+		useKeyCommands: (bindings) => {
+			triageBindings = bindings;
+		},
+		useRegisteredKeyCommands: () => (triageEligible ? triageBindings : []),
+	},
 	"@/lib/undone": { confirmUndone: () => calls.push({ message: "Restored", duration: 1500 }) },
 	"@/ui/use-pull-refresh": { usePullRefresh: () => ({ refreshing: false, onRefresh: () => undefined }) },
 	"react-native-reanimated": {
@@ -592,7 +602,7 @@ let applicationNeedsYou = false;
 let needsFollowUpFixture = false;
 const listLogic = load("features/applications/list.ts", {
 	"@reactive-resume/schema/applications/next-step": domainNextStep,
-	"./stages": { LIST_ORDER: ["saved", "applied", "closed"] },
+	"./stages": { LIST_ORDER: ["interview", "offer", "screening", "applied", "saved", "closed"] },
 	"./lanes": lanes,
 });
 const { ApplicationsListScreen } = load("features/applications/list-screen.tsx", {
@@ -615,11 +625,21 @@ const { ApplicationsListScreen } = load("features/applications/list-screen.tsx",
 	"expo-sqlite/kv-store": { getItemSync: () => null, setItemSync: () => {} },
 	"./queries": {
 		useApplications: () => ({ data: applications }),
-		useApplicationMutations: () => ({}),
+		useApplicationMutations: () => ({
+			logFollowUp: { isPending: false, mutate: (input) => calls.push({ logFollowUp: input }) },
+		}),
 		useApplicationDetailPrefetch: () => () => {},
 	},
-	"./stages": { PIPELINE: [], CLOSED_REASONS: [], getStageColor: () => "gray", getStageLabel: (value) => value },
-	"@/auth/session": { useSession: () => ({ status: "signed-in", server: "fixture" }) },
+	"./stages": {
+		PIPELINE: ["saved", "applied", "screening", "interview", "offer"],
+		CLOSED_REASONS: [],
+		getStageColor: () => "gray",
+		getStageLabel: (value) => value,
+	},
+	"@/auth/session": {
+		useSession: () => ({ status: "signed-in", server: "fixture" }),
+		getAccountScope: () => "fixture-account",
+	},
 	"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => ({ timeZone: "UTC" }) },
 	"@/features/applications-board/views": { ApplicationsViewFrame: "ApplicationsViewFrame" },
 	"@/features/applications-board/search": {
@@ -2885,3 +2905,78 @@ console.log(
 		);
 	}
 }
+
+reset();
+applicationSearch = "";
+applicationNeedsYou = false;
+needsFollowUpFixture = false;
+applications = [
+	{ ...job, id: "alpha", role: "Alpha", status: "applied", closedReason: null, updatedAt: new Date(), tags: [] },
+	{ ...job, id: "beta", role: "Beta", status: "saved", closedReason: null, updatedAt: new Date(), tags: [] },
+];
+let keyboardTree = listView();
+assert.deepEqual(triageBindings, [], "Bare triage starts off");
+control(
+	nodes(keyboardTree).find((node) => node.type === "SectionList").props.ListHeaderComponent,
+	"Keyboard triage",
+).onPress();
+keyboardTree = listView();
+const runTriage = (input) => {
+	const command = triageBindings.find((binding) => binding.input === input);
+	assert.ok(command, `Missing triage command ${input}`);
+	command.run();
+	keyboardTree = listView();
+};
+runTriage("x");
+let triageList = nodes(keyboardTree).find((node) => node.type === "SectionList");
+assert.equal(triageList.props.extraData.focusedId, "alpha");
+assert.deepEqual(triageList.props.extraData.selectedIds, ["alpha"]);
+assert.equal(triageList.props.renderItem({ item: applications[0], index: 0 }).props.style.borderWidth, 2);
+triageEligible = false;
+keyboardTree = listView();
+triageList = nodes(keyboardTree).find((node) => node.type === "SectionList");
+assert.equal(
+	triageList.props.renderItem({ item: applications[0], index: 0 }).props.style.borderWidth,
+	0,
+	"Suspended registry removes the keyboard focus indicator",
+);
+triageEligible = true;
+keyboardTree = listView();
+triageList = nodes(keyboardTree).find((node) => node.type === "SectionList");
+assert.equal(
+	triageList.props.renderItem({ item: applications[0], index: 0 }).props.style.borderWidth,
+	2,
+	"Eligibility restoration preserves row identity",
+);
+
+runTriage("f");
+assert.deepEqual(calls.at(-1), { logFollowUp: { id: "alpha" } });
+runTriage("j");
+triageList = nodes(keyboardTree).find((node) => node.type === "SectionList");
+assert.equal(triageList.props.extraData.focusedId, "beta");
+runTriage("f");
+assert.equal(calls.filter((call) => call.logFollowUp).length, 1, "Saved rows cannot log contact");
+runTriage("4");
+assert.equal(calls.at(-1).moveWithUndo.lane.category, "interview");
+assert.equal(calls.at(-1).moveWithUndo.applications[0].id, "beta");
+runTriage("enter");
+assert.equal(calls.at(-1), "/applications/beta");
+applications = [applications[0]];
+keyboardTree = listView();
+const callCount = calls.length;
+runTriage("4");
+runTriage("f");
+runTriage("x");
+assert.equal(calls.length, callCount, "A hidden focused row cannot receive a write");
+runTriage("j");
+triageList = nodes(keyboardTree).find((node) => node.type === "SectionList");
+assert.equal(triageList.props.extraData.focusedId, "alpha", "Navigation recovers from a removed identity");
+control(
+	nodes(keyboardTree).find((node) => node.type === "SectionList").props.ListHeaderComponent,
+	"Stop keyboard triage",
+).onPress();
+listView();
+assert.deepEqual(triageBindings, []);
+console.log(
+	"PASS native triage explicit mode, displayed rows, identity, selection, shared stage/contact owners and hidden-row protection (host)",
+);

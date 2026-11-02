@@ -63,7 +63,12 @@ vi.mock("@/libs/orpc/client", () => ({
 }));
 vi.mock("../use-application-actions", () => ({
 	useInvalidateApplications: () => api.invalidate,
-	useApplicationActions: () => ({ moveTo: api.moveTo, close: api.close, remove: { mutate: api.remove } }),
+	useApplicationActions: () => ({
+		moveTo: api.moveTo,
+		close: api.close,
+		remove: { mutate: api.remove },
+		logFollowUp: { isPending: false, mutate: vi.fn() },
+	}),
 	useMoveWithUndo: () => api.moveWithUndo,
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => api.confirm }));

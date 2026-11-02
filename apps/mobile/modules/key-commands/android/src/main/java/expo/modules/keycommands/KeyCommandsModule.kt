@@ -12,7 +12,8 @@ internal class KeyCommandRecord(
   @Field var id: String = "",
   @Field var input: String = "",
   @Field var shift: Boolean = false,
-  @Field var title: String = ""
+  @Field var title: String = "",
+  @Field var modifier: String = "primary"
 ) : Record
 
 // Hardware keyboard shortcuts: Ctrl (or Meta) plus a key, caught in the activity window before the views. A focused
@@ -22,6 +23,8 @@ class KeyCommandsModule : Module() {
 
   override fun definition() = ModuleDefinition {
     Name("KeyCommands")
+
+    Constant("supportsUnmodifiedCommands") { true }
 
     Events("onKeyCommand")
 
@@ -54,13 +57,21 @@ class KeyCommandsModule : Module() {
 
   private inner class Shortcuts(private val wrapped: Window.Callback) : Window.Callback by wrapped {
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-      if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0 && exactModifiers(event)) {
+      if (event.action == KeyEvent.ACTION_DOWN) {
         val char = event.getUnicodeChar(0)
-        val input = if (char == 0) null else char.toChar().lowercase()
-        val match = commands.firstOrNull { it.input == input && it.shift == event.isShiftPressed }
-        val editing = appContext.currentActivity?.currentFocus is EditText
+        val input = if (event.keyCode == KeyEvent.KEYCODE_ENTER) "enter" else if (char == 0) null else char.toChar().lowercase()
+        val focus = appContext.currentActivity?.currentFocus
+        val editing = focus is EditText || focus?.onCheckIsTextEditor() == true
+        val bareInput = if (event.keyCode == KeyEvent.KEYCODE_ENTER) "enter" else event.unicodeChar.toChar().lowercase()
+        val match = commands.firstOrNull {
+          if (it.modifier == "none") {
+            val shift = it.shift || it.input == "?" && event.isShiftPressed
+            it.input == bareInput && !editing &&
+              (if (shift) event.hasModifiers(KeyEvent.META_SHIFT_ON) else event.hasNoModifiers())
+          } else it.input == input && it.shift == event.isShiftPressed && exactModifiers(event)
+        }
         if (match != null && !(editing && match.input == "z")) {
-          sendEvent("onKeyCommand", mapOf("id" to match.id))
+          if (event.repeatCount == 0) sendEvent("onKeyCommand", mapOf("id" to match.id))
           return true
         }
       }

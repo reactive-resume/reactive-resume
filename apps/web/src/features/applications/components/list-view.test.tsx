@@ -6,6 +6,7 @@ import { expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createDefaultApplicationLanes } from "@reactive-resume/schema/applications/lanes";
 import { ApplicationList } from "./list-view";
 
 const mocks = vi.hoisted(() => ({
@@ -13,6 +14,7 @@ const mocks = vi.hoisted(() => ({
 	timeZone: "UTC",
 	invalidate: vi.fn(),
 	moveWithUndo: vi.fn(),
+	logFollowUp: vi.fn(),
 }));
 vi.mock("@tanstack/react-router", () => ({
 	useRouteContext: () => ({ session: { user: { timezone: mocks.timeZone } } }),
@@ -36,6 +38,7 @@ vi.mock("@/libs/orpc/client", () => ({
 vi.mock("../use-application-actions", () => ({
 	useInvalidateApplications: () => mocks.invalidate,
 	useMoveWithUndo: () => mocks.moveWithUndo,
+	useApplicationActions: () => ({ logFollowUp: { isPending: false, mutate: mocks.logFollowUp } }),
 }));
 vi.mock("@/hooks/use-confirm", () => ({ useConfirm: () => vi.fn() }));
 vi.mock("@reactive-resume/ui/hooks/use-breakpoint", () => ({ useBreakpoint: () => mocks.breakpoint }));
@@ -67,13 +70,17 @@ function renderList(applications: Application[], breakpoint = "desktop", onOpen 
 	mocks.breakpoint = breakpoint;
 	i18n.load("en", {});
 	i18n.activate("en");
-	return render(
-		<QueryClientProvider client={new QueryClient()}>
+	const client = new QueryClient();
+	client.setQueryData(["lanes"], { lanes: createDefaultApplicationLanes(), revision: 1 });
+	const tree = (rows: Application[]) => (
+		<QueryClientProvider client={client}>
 			<I18nProvider i18n={i18n}>
-				<ApplicationList applications={applications} showClosed selectedId={null} onOpen={onOpen} />
+				<ApplicationList applications={rows} showClosed selectedId={null} onOpen={onOpen} />
 			</I18nProvider>
-		</QueryClientProvider>,
+		</QueryClientProvider>
 	);
+	const view = render(tree(applications));
+	return { ...view, update: (rows: Application[]) => view.rerender(tree(rows)) };
 }
 
 const headers = (container: HTMLElement) => Array.from(container.querySelectorAll("thead th"));
@@ -314,4 +321,76 @@ it("sorts legacy date-only follow-ups by their account-clock delivery time", () 
 	} finally {
 		mocks.timeZone = "UTC";
 	}
+});
+
+it("triages only focused rows in displayed order, preserving identity across lane moves and hiding", async () => {
+	mocks.moveWithUndo.mockClear();
+	mocks.logFollowUp.mockClear();
+	const user = userEvent.setup();
+	const onOpen = vi.fn();
+	const first = application({ id: "a", role: "Alpha", status: "applied" });
+	const second = application({ id: "b", role: "Beta", status: "interview" });
+	const rows = [first, second];
+	const view = renderList(rows, "desktop", onOpen);
+	const alpha = () => screen.getByRole("button", { name: /Alpha/ });
+	const beta = () => screen.getByRole("button", { name: /Beta/ });
+	await user.keyboard("x");
+	expect(screen.queryByText("1 selected")).toBeNull();
+	beta().focus();
+	await user.keyboard("j");
+	expect(alpha()).toHaveFocus();
+	await user.keyboard("j");
+	expect(alpha()).toHaveFocus();
+	await user.keyboard("k");
+	expect(beta()).toHaveFocus();
+	await user.keyboard("x");
+	expect(screen.getByRole("checkbox", { name: "Select Beta at Globex" })).toHaveAttribute("aria-checked", "true");
+	await user.keyboard("2");
+	expect(mocks.moveWithUndo).toHaveBeenCalledExactlyOnceWith(
+		expect.objectContaining({ applications: [second], lane: expect.objectContaining({ systemKey: "applied" }) }),
+	);
+	view.update([first, { ...second, status: "applied" }]);
+	expect(beta()).toHaveFocus();
+	await user.keyboard("f");
+	expect(mocks.logFollowUp).toHaveBeenCalledExactlyOnceWith({ id: "b" });
+	await user.keyboard("{Enter}");
+	expect(onOpen).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ id: "b" }));
+	view.update([first]);
+	await user.keyboard("1");
+	expect(mocks.moveWithUndo).toHaveBeenCalledTimes(1);
+});
+
+it("ignores repeated, composing and modified row commands and follows changed sorting/collapses", async () => {
+	mocks.moveWithUndo.mockClear();
+	mocks.logFollowUp.mockClear();
+	const user = userEvent.setup();
+	renderList([
+		application({ id: "a", role: "Alpha" }),
+		application({ id: "b", role: "Beta" }),
+		application({ id: "c", role: "Gamma", status: "saved" }),
+	]);
+	await user.click(screen.getByRole("button", { name: "Role" }));
+	const alpha = screen.getByRole("button", { name: /Alpha/ });
+	alpha.focus();
+	for (const extra of [
+		{ repeat: true },
+		{ isComposing: true },
+		{ keyCode: 229 },
+		{ ctrlKey: true },
+		{ altKey: true },
+		{ metaKey: true },
+		{ shiftKey: true },
+	]) {
+		fireEvent.keyDown(alpha, { key: "4", code: "Digit4", ...extra });
+		fireEvent.keyUp(alpha, { key: "4", code: "Digit4", ...extra });
+	}
+	expect(mocks.moveWithUndo).not.toHaveBeenCalled();
+	await user.keyboard("j");
+	expect(screen.getByRole("button", { name: /Beta/ })).toHaveFocus();
+	await user.click(screen.getByRole("button", { name: "Saved 1" }));
+	alpha.focus();
+	await user.keyboard("jj");
+	expect(screen.getByRole("button", { name: /Beta/ })).toHaveFocus();
+	fireEvent.keyDown(screen.getByRole("button", { name: /Beta/ }), { key: "f", repeat: true });
+	expect(mocks.logFollowUp).not.toHaveBeenCalled();
 });
