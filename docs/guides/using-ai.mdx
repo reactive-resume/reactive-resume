@@ -24,10 +24,12 @@ without entering your own key. The steps below apply when personal providers are
     Under **AI providers**, select **Add AI provider** (the dashed button below your saved providers).
   </Step>
   <Step title="Choose the provider and fill in the fields">
-    Pick your provider from the **Provider** list. Reactive Resume fills in that provider's usual **Model** and **Base URL** for you. Paste your key into **API key**, and change the model if you want a different one.
+    Pick your provider from the **Provider** list. Reactive Resume suggests its usual **Model**. Use **Get an API key** to open that provider's key settings, then paste your key into **API key**. Switching providers clears the typed key. Change the model if you want a different one.
+
+    For a named provider, expand **Advanced** only when you want a custom **Name** or **Base URL**. An existing custom address is shown when you edit the connection. For **OpenAI-compatible**, **Base URL (required)** stays visible. Enter an `http://` or `https://` address; an invalid or missing address gets an inline explanation and cannot be saved. The server separately checks which addresses it allows.
 
     <Frame caption="Connect a provider from AI and developer settings">
-      <img src="/images/guides/using-ai/add-provider-dialog.webp" alt="Add provider dialog with provider choice, API key, Model, Name, Base URL and Save and test" />
+      <img src="/images/guides/using-ai/add-provider-dialog.webp" alt="Add provider dialog with Provider, API key and key-settings link, Model, collapsed Advanced settings and Save and test" />
     </Frame>
 
   </Step>
@@ -40,13 +42,13 @@ If the test fails, the dialog explains the cause and recovery in your language. 
 
 ### The fields
 
-| Field        | What to enter                                                                                                                                            |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Provider** | The company or service that runs the model.                                                                                                              |
-| **API key**  | The key from your provider's dashboard. Required except for Ollama, where you can leave it empty for a local server that doesn't require authentication. |
-| **Model**    | The model name exactly as your provider writes it. Required.                                                                                             |
-| **Name**     | A label you'll recognize, such as "Work OpenAI". If you leave it empty, the provider's name is used.                                                     |
-| **Base URL** | The address requests go to. Leave the default unless you use a gateway, a proxy or an OpenAI-compatible service. Changing it needs the API key again.    |
+| Field        | What to enter                                                                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Provider** | The company or service that runs the model.                                                                                                                   |
+| **API key**  | The key from your provider's dashboard. Required except for Ollama, where you can leave it empty for a local server that doesn't require authentication.      |
+| **Model**    | The model name exactly as your provider writes it. Required.                                                                                                  |
+| **Name**     | A label you'll recognize, such as "Work OpenAI". Under **Advanced** for named providers. If you leave it empty, the provider's name is used.                  |
+| **Base URL** | The address requests go to. Under **Advanced** for named providers; required and visible for OpenAI-compatible services. Changing it needs the API key again. |
 
 ### Supported providers
 
@@ -97,7 +99,7 @@ Select **Edit** on a provider's row.
 <Frame caption="Edit a saved provider without exposing its key">
   <img
     src="/images/guides/using-ai/edit-provider-dialog.webp"
-    alt="Edit provider dialog for the local example connection, with model, base URL and use controls; saved key is not shown"
+    alt="Edit provider dialog for Fictional custom OpenAI with expanded Advanced fields, a custom local Base URL and the saved key left blank"
   />
 </Frame>
 
