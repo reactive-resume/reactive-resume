@@ -79,7 +79,8 @@ function Section({ id, title, aside, children }: SectionProps) {
 	return (
 		<section aria-labelledby={id} className="grid gap-3 px-4 py-5">
 			<div className="flex items-center justify-between gap-3">
-				<h2 id={id} className="text-xs font-semibold text-ink-3">
+				{/* A section heading, a level above the 12px field labels under it (the resume builder's card titles). */}
+				<h2 id={id} className="text-[15px] font-semibold text-ink">
 					{title}
 				</h2>
 				{aside}

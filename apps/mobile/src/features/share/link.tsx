@@ -169,7 +169,7 @@ export function LinkTab({ resume, offline }: LinkProps) {
 				error={resume.isPublic ? addressError : undefined}
 				helper={
 					!resume.isPublic
-						? t`Turn on the link to choose an address.`
+						? t`Publish to choose an address.`
 						: changed
 							? t`Checking… Copy is available after saving.`
 							: url

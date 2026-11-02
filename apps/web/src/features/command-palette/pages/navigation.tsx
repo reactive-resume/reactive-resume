@@ -112,6 +112,37 @@ export function NavigationCommandGroup() {
 					<Trans>Career</Trans>
 				</CommandItem>
 
+				{/* Career's own places, so ⌘K reaches them by name. */}
+				<CommandItem
+					disabled={!session}
+					keywords={[t`Coach`, t`Career coach`, t`Chat`]}
+					value="navigation.career.coach"
+					onSelect={() => onNavigate("/dashboard/career/coach")}
+				>
+					<Icon name="chat-text" size={16} />
+					<Trans>Coach</Trans>
+				</CommandItem>
+
+				<CommandItem
+					disabled={!session}
+					keywords={[t`Knowledge`, t`Facts`, t`Stories`]}
+					value="navigation.career.knowledge"
+					onSelect={() => onNavigate("/dashboard/career/knowledge/facts")}
+				>
+					<Icon name="brain" size={16} />
+					<Trans>Knowledge</Trans>
+				</CommandItem>
+
+				<CommandItem
+					disabled={!session}
+					keywords={[t`Offers`, t`Compare offers`, t`Salary`]}
+					value="navigation.career.offers"
+					onSelect={() => onNavigate("/dashboard/career/offers")}
+				>
+					<Icon name="scales" size={16} />
+					<Trans>Offers</Trans>
+				</CommandItem>
+
 				<CommandItem
 					disabled={!session}
 					keywords={[t`Save job`, t`New application`, t`Add application`, t`Job`]}
