@@ -9,11 +9,11 @@ export default function McpScreen() {
 	return (
 		<Screen>
 			<Stack.Screen options={{ title: t`MCP server` }} />
-			<Text color="ink2">{t`Let AI clients like Claude or Cursor read and edit your resumes, using an API key.`}</Text>
+			<Text color="ink2">{t`Sign in from your AI client, or use an API key.`}</Text>
 			<Card>
 				<Text selectable variant="mono">{`${server}/mcp`}</Text>
 			</Card>
-			<Text color="ink2">{t`Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents.`}</Text>
+			<Text color="ink2">{t`New keys start read-only. Create keys in your browser account settings.`}</Text>
 			<Text variant="title">{t`Setup guide`}</Text>
 			<Text selectable variant="mono">
 				https://docs.rxresu.me/guides/using-the-mcp-server

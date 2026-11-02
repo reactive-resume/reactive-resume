@@ -48,7 +48,7 @@ export function ApiKeys({ userId }: ApiKeysProps) {
 	return (
 		<SettingsGroup
 			title={t`API keys`}
-			note={t`Keys act as you and can access your documents. New keys are created in your browser account settings.`}
+			note={t`New keys start read-only. Create keys in your browser account settings.`}
 		>
 			<ListRow
 				title={t`New API key`}
