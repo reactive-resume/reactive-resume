@@ -64,6 +64,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const prompt = useEditorStore((state) => state.assistantPrompt);
 	const draft = useEditorStore((state) => state.assistantDraft);
 	const [view, setView] = useState<"thread" | "history">("thread");
+	const [connecting, setConnecting] = useState(false);
 	const [providerId, setProviderId] = useState<string | null>(null);
 	const [modelMenuOpen, setModelMenuOpen] = useState(false);
 	const [starting, setStarting] = useState(false);
@@ -148,7 +149,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 	const notSetUp = threads.error instanceof ORPCError && threads.error.code === "PRECONDITION_FAILED";
 
 	return (
-		<section aria-label={t`Assistant`} className="flex h-full min-h-0 flex-col bg-surface">
+		<section aria-label={t`Assistant`} className="relative flex h-full min-h-0 flex-col bg-surface">
 			<header className="flex h-[52px] shrink-0 items-center gap-1 border-b border-line ps-4 pe-2">
 				<Icon name="sparkle" size={20} className="text-accent-text" />
 				<h2 className="me-auto text-[15px] font-semibold">
@@ -163,6 +164,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						current={provider}
 						label={providerLabel}
 						onChoose={(id) => void chooseProvider(id)}
+						onConnect={() => setConnecting(true)}
 					/>
 				)}
 
@@ -189,6 +191,19 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 				/>
 				<IconButton icon="x" label={t`Close the assistant`} shortcut="⌘J" className="text-ink-2" onClick={onClose} />
 			</header>
+
+			{connecting && (
+				// Over the conversation, which stays mounted underneath: the message being typed is still there on Back.
+				<div className="absolute inset-x-0 top-[52px] bottom-0 z-10 overflow-y-auto bg-surface">
+					<div className="px-4 pt-3">
+						<Button size="sm" variant="ghost" onClick={() => setConnecting(false)}>
+							<Icon name="arrow-left" size={16} className="rtl:rotate-180" />
+							<Trans>Back to the conversation</Trans>
+						</Button>
+					</div>
+					<ProviderSetup connectOnly />
+				</div>
+			)}
 
 			{document.kind === "resume" && (
 				<div className="grid gap-2 border-b border-line p-4 text-xs text-ink-2">
@@ -371,11 +386,11 @@ type ModelMenuProps = {
 	current: UsableProvider | undefined;
 	label: string;
 	onChoose: (id: string) => void;
+	/** Connect another…: opens the provider setup over the conversation. */
+	onConnect: () => void;
 };
 
-function ModelMenu({ open, onOpenChange, providers, current, label, onChoose }: ModelMenuProps) {
-	const navigate = useNavigate();
-
+function ModelMenu({ open, onOpenChange, providers, current, label, onChoose, onConnect }: ModelMenuProps) {
 	return (
 		<DropdownMenu open={open} onOpenChange={onOpenChange}>
 			<DropdownMenuTrigger
@@ -401,7 +416,8 @@ function ModelMenu({ open, onOpenChange, providers, current, label, onChoose }: 
 					</DropdownMenuItem>
 				))}
 				<DropdownMenuSeparator />
-				<DropdownMenuItem onClick={() => void navigate({ to: "/dashboard/settings/ai" })}>
+				{/* Set up here, so the assistant and the message being typed stay as they are. */}
+				<DropdownMenuItem onClick={onConnect}>
 					<Trans>Connect another…</Trans>
 				</DropdownMenuItem>
 			</DropdownMenuContent>

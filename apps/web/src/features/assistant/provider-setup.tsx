@@ -31,11 +31,16 @@ const CHOICES: Choice[] = [
  * D1: connecting a provider in place. The key is stored encrypted and tested at once; the assistant is ready as soon
  * as the test passes. Settings keep every other provider and option.
  */
-export function ProviderSetup() {
+type ProviderSetupProps = {
+	/** Connect another one, even when providers are saved (the assistant's model menu). */
+	connectOnly?: boolean;
+};
+
+export function ProviderSetup({ connectOnly = false }: ProviderSetupProps) {
 	const [open, setOpen] = useState<AIProvider | null>(null);
 	const state = useHasUsableAiProvider();
 	if (state.isUnavailable) return <AiProviderLoadState state={state} />;
-	if (state.providers.length > 0)
+	if (state.providers.length > 0 && !connectOnly)
 		return (
 			<div className="grid gap-3 p-4">
 				<p role="status" className="text-sm text-warn-text">

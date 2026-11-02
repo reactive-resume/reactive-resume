@@ -721,9 +721,13 @@ function messageText(message: UIMessage) {
 
 /** The first message names the conversation: up to 57 characters, or 44 in the career coach's list. */
 function buildThreadTitle(message: UIMessage, fallback: string, max = 60) {
-	const text = messageText(message);
+	const text = messageText(message).replace(/\s+/g, " ").trim();
 	if (!text) return fallback;
-	return text.length > max ? `${text.slice(0, max - 3)}...` : text;
+	if (text.length <= max) return text;
+	// Cut at a word, with one ellipsis character, so the list doesn't add a second.
+	const cut = text.slice(0, max - 1);
+	const space = cut.lastIndexOf(" ");
+	return `${(space > max / 2 ? cut.slice(0, space) : cut).trimEnd()}…`;
 }
 
 /**
@@ -824,10 +828,18 @@ async function proposeEdits(input: {
 		posting: input.posting,
 	});
 	if (output.edits.length > 0) {
+		// The first set of edits names the conversation by its task ("Tailor summary to payments roles"), in place of
+		// its first message cut short.
+		const title = output.title.trim().slice(0, 80);
 		await db
 			.update(schema.agentThread)
 			.set({
 				editsProposed: sql`${schema.agentThread.editsProposed} + ${output.edits.length}`,
+				...(title
+					? {
+							title: sql`CASE WHEN ${schema.agentThread.editsProposed} = 0 THEN ${title} ELSE ${schema.agentThread.title} END`,
+						}
+					: {}),
 			})
 			.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
 		const supersedes = await supersedeEarlierEdits(input, output.edits, loaded);
