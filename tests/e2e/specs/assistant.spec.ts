@@ -55,13 +55,28 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 	test.setTimeout(90_000);
 	await createSampleResumeFromDashboard(page, testInfo);
 	const resumeId = resumeIdOf(page);
+	const template = await page.request.patch(`/api/openapi/resumes/${resumeId}`, {
+		data: { operations: [{ op: "replace", path: "/metadata/template", value: "onyx" }] },
+	});
+	expect(template.ok()).toBe(true);
+	await page.reload();
+	await expect(page.locator("figcaption")).toHaveCount(5);
+	await expect(page.locator("figcaption").first()).toContainText(/Page 1 runs over by about \d+ lines/);
 
 	await page.getByRole("button", { name: "Assistant", exact: true }).click();
 	await connectStub(page);
 
-	await send(page, "Tighten my resume");
+	const before = stub.requests.length;
+	await page.getByRole("button", { name: /Tighten to one page/ }).click();
 	const edits = page.getByRole("list", { name: "Proposed edits" });
 	await expect(edits).toBeVisible({ timeout: 20_000 });
+	await expect
+		.poll(() =>
+			JSON.stringify(
+				stub.requests.slice(before).flatMap((request) => request.messages.filter((m) => m.role === "user")),
+			),
+		)
+		.toMatch(/Tighten to one page\. Page 1 runs over by about \d+ lines\./);
 	await expect(page.getByText("1 proposed", { exact: true })).toBeVisible();
 	// The page caption appears once the in-browser preview has fetched its fonts and rendered.
 	const activePreview = page.locator('[data-resume-preview-template][aria-hidden="false"]');
@@ -72,6 +87,7 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 	await expect(edits.getByText("Applied")).toBeVisible();
 	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).toContain("(tightened by the stub)");
 	await expect(page.getByText("1 proposed", { exact: true })).toBeHidden();
+	await expect(page.getByText(/Page 1 still runs over by about \d+ lines\./)).toBeVisible();
 
 	// A clarifying question: the answer continues the reply.
 	await send(page, "Ask me a question first");

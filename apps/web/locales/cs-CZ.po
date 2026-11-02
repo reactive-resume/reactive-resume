@@ -379,9 +379,9 @@ msgstr ""
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {Začalo před # minutou} few {Začalo před # minutami} many {Začalo před # minuty} other {Začalo před # minutami}}"
 
-#. placeholder {0}: overflow.lines
+#. placeholder {0}: overflow.pageCount
 #: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
+msgid "{0, plural, one {Still runs to # page.} other {Still runs to # pages.}}"
 msgstr ""
 
 #. placeholder {0}: documents.length
@@ -806,8 +806,12 @@ msgid "{length}m"
 msgstr "{length} min"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "{lines, plural, one {Runs onto page {next} by about # line} other {Runs onto page {next} by about # lines}}"
-msgstr "{lines, plural, one {Přechází na stránku {next} přibližně po řádku #} other {Přechází na stránku {next} přibližně po řádcích #}}"
+msgid "{lines, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "{lines, plural, one {Page {page} still runs over by about # line.} other {Page {page} still runs over by about # lines.}}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "{minimum} minimum"
@@ -881,6 +885,10 @@ msgstr "{open, plural, one {# věc ke kontrole.} other {# věci ke kontrole.}}"
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {Stránka #} other {Stránky #}}"
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{pageCount, plural, one {Runs to # page} other {Runs to # pages}}"
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
@@ -12415,10 +12423,6 @@ msgstr "Vést výzkum se zákazníky"
 msgid "Running · {0}"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "Runs onto page {next}"
-msgstr "Přechází na stránku {next}"
-
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "Ruština"
@@ -13940,10 +13944,6 @@ msgstr "Zůstaň tady"
 msgid "Step {0} of {1}"
 msgstr ""
 
-#: src/features/assistant/conversation.tsx
-msgid "Still runs onto page {next}."
-msgstr ""
-
 #: src/features/resume/builder/draft.ts
 msgid "Still saving your latest changes. They're kept on this device if you leave now."
 msgstr ""
@@ -15278,16 +15278,15 @@ msgid "Tighten to one page"
 msgstr "Utáhněte na jednu stránku"
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It already fits on one page, so only cut what's weak."
-msgstr ""
-
-#. placeholder {0}: overflow.lines
-#: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It runs onto page {next} by about {0} lines."
+msgid "Tighten to one page. It currently runs to {count} pages."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It runs onto page {next}."
+msgid "Tighten to one page. It fits within the planned pages, so only cut what's weak."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. Page {page} runs over by about {lines} lines."
 msgstr ""
 
 #: src/features/career/shared.tsx

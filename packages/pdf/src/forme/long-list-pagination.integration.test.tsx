@@ -126,6 +126,14 @@ it.each(cases)(
 					(await page.getTextContent()).items.flatMap((item) => ("str" in item && item.str.trim() ? [item.str] : [])),
 				);
 			}
+			for (let index = 0; index < roles && !lines; index++) {
+				const headerPage = pages.findIndex((page) =>
+					new RegExp(`Synthetic Studio ${index + 1}(?![0-9])`).test(page.join("")),
+				);
+				expect(headerPage).toBeGreaterThanOrEqual(0);
+				const bulletPage = pages.findIndex((page) => page.join("").includes(`Project ${index + 1}.1:`));
+				expect(headerPage, `entry ${index + 1} header stays with first bullet`).toBe(bulletPage);
+			}
 			// Lapras repeats its section heading inside split content in the PDF text stream.
 			const text = pages
 				.flat()

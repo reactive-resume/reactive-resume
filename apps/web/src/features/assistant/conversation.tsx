@@ -18,6 +18,7 @@ import {
 	readPageOutputSchema,
 	tailoringAllows,
 } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { withEditedText } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -44,7 +45,7 @@ import { UsedChip } from "./used-chip";
 import { useDialogStore } from "@/dialogs/store";
 import { ContextChip } from "@/features/career/shared";
 import { useResumeStore } from "@/features/resume/builder/draft";
-import { measureOverflow, runFit } from "@/features/resume/editor/design/fit";
+import { runFit } from "@/features/resume/editor/design/fit";
 import { ChangeSet, Coverage } from "@/features/resume/editor/proposals/proposal-list";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage, isProviderFailure, toastError } from "@/libs/error-message";
@@ -853,18 +854,20 @@ function StillOverflows() {
 	const [fitting, setFitting] = useState(false);
 	const overflow = data && rendered.pageCount > 0 ? measureOverflow(data, rendered) : null;
 	if (!overflow) return null;
-	const next = overflow.authored + 1;
+	const first = overflow.spills[0];
+	const page = first?.authoredPage;
+	const lines = first?.lines;
 	return (
 		<p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg bg-warn-soft px-3 py-2 text-xs text-warn-text">
 			<span className="flex-1">
-				{overflow.lines ? (
+				{first && first.pages.length === 1 && lines ? (
 					<Plural
-						value={overflow.lines}
-						one={`Still runs onto page ${next} by about # line.`}
-						other={`Still runs onto page ${next} by about # lines.`}
+						value={lines}
+						one={`Page ${page} still runs over by about # line.`}
+						other={`Page ${page} still runs over by about # lines.`}
 					/>
 				) : (
-					<Trans>Still runs onto page {next}.</Trans>
+					<Plural value={overflow.pageCount} one="Still runs to # page." other="Still runs to # pages." />
 				)}
 			</span>
 			<Button
