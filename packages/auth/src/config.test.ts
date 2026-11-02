@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { env } from "@reactive-resume/env/server";
-import { auth } from "./config";
+import { auth, isEmailChangeToken } from "./config";
 
 describe("social provider signup policy", () => {
 	it.each(["google", "github", "linkedin"] as const)(
@@ -90,4 +90,11 @@ it("publishes the configured native authentication HTTP contract", async () => {
 	expect(spec.paths).toHaveProperty("/sign-in/email");
 	expect(spec.paths).toHaveProperty("/get-session");
 	expect(spec.paths).toHaveProperty("/api-key/create");
+});
+
+it("tells an email-change token from a sign-up token by its updateTo claim", () => {
+	const token = (claims: object) => `header.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.signature`;
+	expect(isEmailChangeToken(token({ email: "old@example.test", updateTo: "new@example.test" }))).toBe(true);
+	expect(isEmailChangeToken(token({ email: "new@example.test" }))).toBe(false);
+	expect(isEmailChangeToken("not-a-token")).toBe(false);
 });

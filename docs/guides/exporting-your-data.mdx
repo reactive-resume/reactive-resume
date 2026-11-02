@@ -35,6 +35,10 @@ You can download a copy of everything you have stored in Reactive Resume in one 
 | `resumes/`                 | One JSON file per resume, including those in the trash. Each holds the resume's name, public address, tags, sharing settings and the full resume content. |
 | `document-versions.json`   | Saved resume and letter histories, including named employer-form packet versions. These are records, not automatic history imports.                       |
 | `letters/`                 | One JSON file per cover letter.                                                                                                                           |
+| `career.json`              | Your Career data: preferences, facts, stories, answers, saved results, schedules, notifications, roles and coach conversations (details below).           |
+| `ai-content-reports.json`  | AI replies you reported.                                                                                                                                  |
+
+In `applications.json`, `appliedAt` is filled in even for a job you only saved: it starts as the date you saved it. To tell whether you applied, read `status` and `submittedAt`, which is set the first time a job reaches a sent stage.
 
 `career.json` contains your preferences, facts and their source/correction history, stories, reviewed reusable answers with scope, source and evidence revision references, workspace answers and checklist state, saved results, schedules, notifications, discovered roles, voice transcripts, and career conversations with attachment metadata. It does not include raw voice recordings or the attachments' binary files.
 
