@@ -11,7 +11,7 @@ async function importResume(page: Page, name = "Maya Example") {
 	const data = structuredClone(defaultResumeData);
 	data.basics.name = name;
 	data.basics.email = "contact-only@example.test";
-	data.summary.content = `<p>${original}</p>`;
+	data.summary.content = `<p>${name === "Maya Example" ? original : "Unselected confidential career detail."}</p>`;
 	data.sections.skills.items = [
 		{
 			id: "typescript",
@@ -51,6 +51,7 @@ test("selected resume excerpts stay drafts until reviewed save, then retain edit
 			).toBeOK();
 		}
 		const resumeId = await importResume(page);
+		const sourceBefore = await (await page.request.get(`/api/openapi/resumes/${resumeId}`)).json();
 		await importResume(page, "Other unselected resume");
 		await page.setViewportSize({ width: 1280, height: 1400 });
 		await page.goto("/dashboard/career/knowledge/facts");
@@ -101,6 +102,9 @@ test("selected resume excerpts stay drafts until reviewed save, then retain edit
 			},
 		]);
 		expect(stub.requests).toEqual([]);
+		const sourceAfter = await (await page.request.get(`/api/openapi/resumes/${resumeId}`)).json();
+		expect(sourceAfter.data).toEqual(sourceBefore.data);
+		expect(sourceAfter.updatedAt).toEqual(sourceBefore.updatedAt);
 		await page.setViewportSize({ width: 1280, height: 760 });
 		await page.getByRole("heading", { name: "Career", exact: true }).evaluate((element) => element.blur());
 		await page.screenshot({ path: info.outputPath("resume-facts-saved.png"), animations: "disabled" });
