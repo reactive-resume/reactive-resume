@@ -44,7 +44,8 @@ test("pending local edit remains actionable with provider Off", async ({ authPag
 		await page.request.patch(`/api/openapi/ai-providers/${first.id}`, { data: { enabled: false } }),
 	).toBeOK();
 	await page.reload();
-	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	// The open conversation is in the URL, so a reload brings the assistant back on it.
+	await expect(page.getByRole("region", { name: "Assistant" })).toBeVisible();
 	await expect(edits).toBeVisible();
 	await page.screenshot({ path: info.outputPath("pending-off.png") });
 	await expect(page.getByLabel("Message the assistant")).toBeDisabled();
