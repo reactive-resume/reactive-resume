@@ -42,7 +42,7 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 		stagingUnavailable = true;
 		return sendDirect();
 	}
-	if (!prepared.ok) throw new Error(`Could not prepare upload (${prepared.status}). Please retry.`);
+	if (!prepared.ok) throw new Error(`Couldn't prepare the upload (${prepared.status}). Try again.`);
 	const stage = (await prepared.json()) as { id: string; url: string };
 	const uploaded = await fetch(stage.url, {
 		method: "PUT",
@@ -50,7 +50,7 @@ export async function rpcFetch(input: RequestInfo | URL, init?: RequestInit): Pr
 		headers: { "content-type": "application/octet-stream" },
 		signal: request.signal,
 	});
-	if (!uploaded.ok) throw new Error(`Upload failed (${uploaded.status}). Please retry.`);
+	if (!uploaded.ok) throw new Error(`The upload didn't finish (${uploaded.status}). Try again.`);
 	const headers = new Headers(request.headers);
 	headers.set("x-resume-staged-body", stage.id);
 	headers.delete("content-length");

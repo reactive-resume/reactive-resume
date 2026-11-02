@@ -100,6 +100,7 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 			</DialogHeader>
 
 			<form
+				noValidate
 				className="space-y-4"
 				onSubmit={(event) => {
 					event.preventDefault();

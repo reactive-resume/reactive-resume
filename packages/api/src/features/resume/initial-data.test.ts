@@ -8,8 +8,9 @@ describe("createResumeData", () => {
 		expect(data.basics).toMatchObject({ name: "Sam Lee", email: "sam@example.test" });
 	});
 
-	it("keeps a sample's own contact details", () => {
-		const data = createResumeData({ withSampleData: true, email: "sam@example.test" });
+	it("keeps a sample's own contact details and person", () => {
+		const data = createResumeData({ withSampleData: true, email: "sam@example.test", name: "Guest" });
 		expect(data.basics.email).toBe(sampleResumeData.basics.email);
+		expect(data.basics.name).toBe(sampleResumeData.basics.name);
 	});
 });

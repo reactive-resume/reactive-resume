@@ -240,6 +240,12 @@ function describeTestConnectionFailure(input: TestConnectionInput, error: unknow
 
 	if (APICallError.isInstance(error)) {
 		const status = error.statusCode;
+		// No status: the request never got an answer ("Cannot connect to API: bad port"), so the provider didn't reject
+		// anything. Say it couldn't be reached, as for a network error.
+		if (status === undefined)
+			return endpoint
+				? `Could not reach ${endpoint}. Check that the base URL is correct and the service is running.`
+				: `${provider} could not be reached. Check that the base URL is correct and the service is running.`;
 
 		if (status === 401 || status === 403) return `${provider} rejected the API key. Check the key and test again.`;
 		if (status === 404)
@@ -249,7 +255,7 @@ function describeTestConnectionFailure(input: TestConnectionInput, error: unknow
 			return `${provider} reported a server error (${status}). This is a problem on the provider's side. Try again later.`;
 		}
 
-		return `${provider} rejected the test request${status === undefined ? "" : ` (${status})`}: ${redactApiKey(error.message, input.apiKey)}`;
+		return `${provider} rejected the test request (${status}): ${redactApiKey(error.message, input.apiKey)}`;
 	}
 
 	if (error instanceof Error && error.message) {

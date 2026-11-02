@@ -447,15 +447,16 @@ export function DocumentMenuContent({
 
 	return (
 		<Content align="end" className="w-60">
+			{/* Visible, not a tooltip: keyboard and touch users never see a title. */}
+			{entries.some((entry) => entry.disabled) && (
+				<p className="px-2 pt-1 pb-1.5 text-xs text-ink-3">
+					<Trans>Locked. Unlock it to rename, tag or move it to Trash.</Trans>
+				</p>
+			)}
 			{entries.map((entry) => (
 				<div key={entry.label} className="contents">
 					{entry.danger && <Separator />}
-					<Item
-						variant={entry.danger ? "destructive" : "default"}
-						disabled={entry.disabled}
-						onClick={entry.onSelect}
-						title={entry.disabled ? t`Unlock it first` : undefined}
-					>
+					<Item variant={entry.danger ? "destructive" : "default"} disabled={entry.disabled} onClick={entry.onSelect}>
 						<Icon name={entry.icon} />
 						{entry.label}
 					</Item>
@@ -538,7 +539,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 						)}
 					</DialogDescription>
 				</DialogHeader>
-				<ChipInput value={tags ?? shared} onChange={setTags} />
+				<ChipInput value={tags ?? shared} onChange={setTags} placeholder={t`Add a tag…`} />
 				<DialogFooter>
 					<Button onClick={() => void save()} disabled={setDocumentTags.isPending}>
 						<Trans>Save tags</Trans>
