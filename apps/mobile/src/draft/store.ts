@@ -562,12 +562,15 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		try {
 			const written = await run;
 			const owner = await currentOwner();
+			// A revision a refresh set aside while the write ran is newer than this answer: its lock state stands.
+			const newer = deferred && adapter.version(deferred) > adapter.version(written) ? deferred : null;
 			// The lock state is the server's whether or not the answer becomes the base: an unchecked unlock whose data
 			// is unseen here still unlocks, and the next save then meets that data's version check.
 			if (
 				owner &&
 				record === active &&
 				visit === generation &&
+				!newer &&
 				// An answer older than a revision the draft already took (a refresh during the write) says nothing new.
 				adapter.version(written) >= adapter.version(active.baseline)
 			)
@@ -586,6 +589,7 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 				// Local fields changed since the saved revision stay; the rest is the server's answer.
 				active.document = adapter.merge(written, before, active.document);
 				publish(active.document);
+				if (newer) store.setState({ locked: newer.isLocked });
 				if (dirty) persist();
 				else settleStored();
 			}

@@ -664,3 +664,34 @@ test("resume: an unchecked unlock clears the lock on a dirty draft even when its
 	assert.equal(s().locked, false);
 	assert.equal(s().data.basics.headline, "Typed offline");
 });
+
+test("resume: a Share answer older than a lock the stream reported keeps a dirty draft locked (RX-160)", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	online = false;
+	s().update((d) => void (d.basics.headline = "Typed offline"), { newStep: true });
+	online = true;
+	let release;
+	const pending = new Promise((resolve) => {
+		release = resolve;
+	});
+	const writing = o.writeMetadata(async (baseline) => {
+		await pending;
+		return { ...baseline, isPublic: true, updatedAt: new Date(baseline.updatedAt.getTime() + 1) };
+	});
+	for (let i = 0; i < 10; i++) await Promise.resolve();
+	// Locked elsewhere after the Share change: the stream reports it while the answer is still on its way.
+	const remote = structuredClone(documents.resume);
+	remote.isPublic = true;
+	remote.isLocked = true;
+	remote.updatedAt = new Date(remote.updatedAt.getTime() + 5);
+	documents.resume = remote;
+	await o.refresh();
+	assert.equal(s().locked, true, "A dirty draft learns of the lock");
+	release();
+	await writing;
+	assert.equal(s().locked, true, "The older answer doesn't unlock the draft");
+	assert.equal(s().data.basics.headline, "Typed offline");
+});
