@@ -38,7 +38,7 @@ import {
 	applicationsListQueryOptions,
 	hydrateApplicationDetail,
 } from "@/features/applications/queries";
-import { useApplicationLanes } from "@/features/applications/use-application-lanes";
+import { applicationLanesQueryOptions, useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { useCareerTime, useNow } from "@/features/career/shared";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
@@ -60,11 +60,28 @@ const searchSchema = z.object({
 type Search = z.output<typeof searchSchema>;
 const defaultSearch: Search = { q: "", view: "list", closed: false, followUp: false, create: false };
 
+// How long the page waits for the list and lanes before drawing anyway (a skeleton, or rows in the default order).
+const LOADER_WAIT_MS = 1000;
+
 export const Route = createFileRoute("/dashboard/applications/")({
 	head: () => ({ meta: [{ title: getPageTitle(t`Applications`) }] }),
 	component: RouteComponent,
 	validateSearch: searchSchema,
 	search: { middlewares: [stripSearchParams(defaultSearch)] },
+	// Arrive with the list, as Documents does: a new account sees "Track your first job" at once, not a toolbar and a
+	// skeleton that then vanish. The lanes come with it when they're quick, so rows first draw in the owner's lane order;
+	// slow or failing requests never hold the page (it shows the defaults and the lanes' own error). A failed list still
+	// renders the page, which shows its error and retry.
+	// The two requests can share one batch, so one bound covers both.
+	loader: async ({ context }) => {
+		await Promise.race([
+			Promise.allSettled([
+				context.queryClient.ensureQueryData(applicationsListQueryOptions()),
+				context.queryClient.ensureQueryData(applicationLanesQueryOptions()),
+			]),
+			new Promise((resolve) => setTimeout(resolve, LOADER_WAIT_MS)),
+		]);
+	},
 });
 
 /** Search reads role, company, location, contacts and tags. */
@@ -256,7 +273,7 @@ function RouteComponent() {
 					</>
 				}
 			>
-				{!(isError && !applications) && !empty && (
+				{applications !== undefined && !empty && (
 					<>
 						<Tabs
 							value={shown}

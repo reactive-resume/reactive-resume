@@ -17,6 +17,8 @@ export function DonationToast() {
 	const titleId = useId();
 	const pathname = useRouterState({ select: (state) => state.location.pathname });
 	const [open, setOpen] = useState(false);
+	// Only inside the app: on the homepage and other public pages it would sit over the story being read.
+	const inApp = pathname.startsWith("/dashboard") || pathname.startsWith("/builder");
 
 	// Never closes by itself: "Maybe later", or donating, is what records the 1-week cookie.
 	useTimeout(() => setOpen(true), Cookies.get(DISMISSED_COOKIE_NAME) === "true" ? null : SHOW_DELAY_MS);
@@ -28,7 +30,7 @@ export function DonationToast() {
 
 	return (
 		<AnimatePresence>
-			{open && (
+			{open && inApp && (
 				<m.aside
 					aria-labelledby={titleId}
 					initial={{ opacity: 0, y: 8 }}

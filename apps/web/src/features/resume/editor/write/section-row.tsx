@@ -169,7 +169,11 @@ export function SectionRow({ section, locked, dragGroup, onMove, children }: Sec
 					icon="caret-down"
 					label={open ? t`Close ${title}` : t`Open ${title}`}
 					size="icon-sm"
-					className={cn("text-ink-2 transition-transform duration-standard ease-enter", open && "rotate-180")}
+					// Closing turns back as fast as the panel collapses (70% of the standard duration), not after it.
+					className={cn(
+						"text-ink-2 transition-transform duration-standard ease-enter",
+						open ? "rotate-180" : "duration-[calc(var(--d2)*0.7)]",
+					)}
 					onClick={() => setOpen(section.id, !open)}
 				/>
 				{!locked && <SectionMenu section={section} title={title} onMove={onMove} />}

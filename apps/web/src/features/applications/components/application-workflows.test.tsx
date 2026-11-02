@@ -375,7 +375,7 @@ it("replaces prior posting autofill while preserving authored fields, including 
 	expect(screen.getByRole("textbox", { name: "Salary" })).toHaveValue("");
 });
 
-it("keeps the link's failure above the paste fallback instead of claiming it read the page", async () => {
+it("keeps the link's failure above paste recovery instead of replacing it with idle guidance", async () => {
 	api.parsePosting.mockRejectedValue(
 		new ORPCError("POSTING_UNREADABLE", {
 			status: 422,
@@ -390,7 +390,7 @@ it("keeps the link's failure above the paste fallback instead of claiming it rea
 	await screen.findByRole("textbox", { name: "Pasted description" });
 	const error = await screen.findByRole("alert");
 	expect(error.textContent).toContain("That link is a list of jobs");
-	expect(screen.queryByText(/We read the page and save the posting/)).toBeNull();
+	expect(screen.queryByText(/Fill in the role and company, or use Set up AI/)).toBeNull();
 	// Changing the pasted text is an intentional new attempt; it clears the old reason.
 	fireEvent.change(screen.getByRole("textbox", { name: "Pasted description" }), {
 		target: { value: "A full posting" },

@@ -19,6 +19,11 @@ Saving a job and preparing a resume manually work without an AI connection or an
     text. Select **Read posting** to retrieve a link's text and any available job details. Reading starts only when you
     select the button; you can also save the link without reading it. If you close the dialog before saving, what you
     pasted and what was read are still there when you open it again in the same tab.
+
+    Before reading a link, the guidance says **Read posting to fill the role and company.** This is an invitation to
+    read, not a result. An empty form shows manual-entry guidance instead. After reading, review the details found or
+    follow the warning if the page was empty or could not be read.
+
   </Step>
   <Step title="Check the role and company">
     Reading may fill **Role**, **Company**, **Location** and **Salary**. Correct anything that was found, and fill
@@ -44,6 +49,20 @@ Saving a job and preparing a resume manually work without an AI connection or an
   <img
     src="/images/guides/adding-an-application/add-an-application-dialog.webp"
     alt="Save a job dialog with posting text, Role and Company fields, stage choices, Location, Salary, a resume selector, and Save job and Save and prepare resume buttons"
+  />
+</Frame>
+
+<Frame caption="An unread link offers Read posting; it does not claim the page has already been checked.">
+  <img
+    src="/images/guides/adding-an-application/save-job-unread.png"
+    alt="Save a job dialog with an unread fictional posting link, Read posting button, empty role and company fields, and guidance to read the posting to fill them"
+  />
+</Frame>
+
+<Frame caption="The same unread-link guidance at phone width in the web app.">
+  <img
+    src="/images/guides/adding-an-application/save-job-unread-phone.png"
+    alt="Phone-width web Save a job dialog with Read posting guidance before a link has been read"
   />
 </Frame>
 
@@ -150,4 +169,4 @@ The Add dialog keeps things short on purpose. Once the application is saved, its
 
 ## Re-read a posting
 
-Reading a different posting replaces values filled by the previous read. Fields you typed or deliberately cleared stay yours, including edits made while the read runs. **Read posting** asks you to approve the named AI destination. With no provider, save the role and company manually; **Set up AI** keeps your input in place. A rejected web key shows **Needs attention** and repair controls. Public links can still use the built-in reader; pasting the posting stays available.
+Reading a different posting replaces values filled by the previous read. Fields you typed or deliberately cleared stay yours, including edits made while the read runs. **Read posting** asks you to approve the named web reader and uses no AI. Optional **Read with AI** names the AI connection receiving the posting. Without an AI provider, public links can still use the built-in reader, or you can save the role and company manually. **Set up AI** keeps your input in place. A rejected web key shows **Needs attention** and repair controls; pasting the posting stays available.

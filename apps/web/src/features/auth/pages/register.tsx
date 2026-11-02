@@ -36,7 +36,7 @@ const formSchema = z.object({
 					.min(3, { error: () => t`Use at least 3 characters.` })
 					.max(64, { error: () => t`Use 64 characters or fewer.` })
 					.regex(/^[a-z0-9._-]+$/, {
-						error: () => t`Use only lowercase letters, numbers, dots, hyphens and underscores.`,
+						error: () => t`Use only Latin letters a–z, numbers, dots, hyphens and underscores.`,
 					}),
 			]),
 		),
@@ -203,10 +203,9 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 											minLength={3}
 											maxLength={64}
 											autoComplete="section-register username"
-											placeholder={t({
-												comment: "Example username placeholder on registration form",
-												message: "john.doe",
-											})}
+											// Usernames are Latin letters a–z: a transliterated example would invite other scripts.
+											placeholder="john.doe"
+											dir="ltr"
 											className="lowercase"
 											name={field.name}
 											value={field.state.value}

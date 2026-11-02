@@ -126,7 +126,7 @@ export function LinkTab({ resume, offline }: LinkProps) {
 			: changed && slug.length > MAX_SLUG_LENGTH
 				? t`Use at most 64 characters.`
 				: changed && !isValidSlug(slug)
-					? t`Use lowercase letters, numbers and single dashes.`
+					? t`Use Latin letters a–z, numbers and single dashes.`
 					: slugState === "taken"
 						? takenBy
 							? t`You already use this for “${takenBy}”.`
@@ -162,6 +162,7 @@ export function LinkTab({ resume, offline }: LinkProps) {
 				label={t`Address`}
 				value={slug}
 				onChangeText={(value) => setSlug(normalizeSlug(value))}
+				ltr
 				autoCapitalize="none"
 				autoCorrect={false}
 				editable={resume.isPublic && !disabled && slugState !== "saving"}

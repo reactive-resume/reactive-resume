@@ -68,9 +68,11 @@ type ExportFileOptions = {
 	format: ExportFormat;
 	data?: ResumeData;
 	letter?: boolean;
+	/** The letter's page language, when the caller already read the letter: saves reading it again. */
+	letterLocale?: string;
 };
 
-export async function exportFile({ directory, id, name, format, data, letter }: ExportFileOptions) {
+export async function exportFile({ directory, id, name, format, data, letter, letterLocale }: ExportFileOptions) {
 	let bytes: Uint8Array;
 	if (format === "pdf" && data) {
 		const result = await localPdf(data, letter);
@@ -79,8 +81,8 @@ export async function exportFile({ directory, id, name, format, data, letter }: 
 	} else {
 		let query = "";
 		if (letter && format !== "json") {
-			const document = await client.coverLetters.getById({ id });
-			const words = await letterWords(document.style.metadata.page.locale);
+			const locale = letterLocale ?? (await client.coverLetters.getById({ id })).style.metadata.page.locale;
+			const words = await letterWords(locale);
 			query = `?${new URLSearchParams({
 				"words[greeting]": words.greeting("{name}"),
 				"words[teamGreeting]": words.teamGreeting,

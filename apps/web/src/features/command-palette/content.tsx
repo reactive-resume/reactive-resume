@@ -94,6 +94,7 @@ export default function CommandPaletteContent() {
 			</DialogHeader>
 
 			<DialogContent
+				closeLabel={t`Close`}
 				instant
 				className="overflow-hidden p-0"
 				aria-label={

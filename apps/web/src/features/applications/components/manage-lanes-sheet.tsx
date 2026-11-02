@@ -83,7 +83,7 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 
 	return (
 		<Sheet open={open} onOpenChange={onOpenChange}>
-			<SheetContent side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
+			<SheetContent closeLabel={t`Close`} side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
 				<SheetHeader>
 					<SheetTitle>
 						<Trans>Stages</Trans>
@@ -454,7 +454,7 @@ function RetireLaneDialog({ lane, lanes, disabled, onCancel, onRetire }: RetireL
 
 	return (
 		<Dialog open onOpenChange={(next) => !next && onCancel()}>
-			<DialogContent className="sm:max-w-sm">
+			<DialogContent closeLabel={t`Close`} className="sm:max-w-sm">
 				<form
 					className="grid gap-4"
 					onSubmit={(event) => {

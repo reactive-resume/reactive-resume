@@ -76,7 +76,7 @@ describe("getResumeErrorMessage", () => {
 	it("maps INVALID_SLUG to the expected message", () => {
 		const error = new ORPCError("INVALID_SLUG");
 		expect(getResumeErrorMessage(error)).toBe(
-			"Use at most 64 characters. The address must contain only lowercase letters and numbers, separated by single dashes.",
+			"Use at most 64 characters. The address must contain only Latin letters a–z and numbers, separated by single dashes.",
 		);
 	});
 

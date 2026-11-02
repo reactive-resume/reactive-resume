@@ -130,7 +130,7 @@ export function AddApplicationDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-[560px]">
+			<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto sm:max-w-[560px]">
 				<AddApplicationForm
 					initialCapture={initialCapture}
 					key={instance}
@@ -349,6 +349,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			openDialog("document.new", { step: "copy", applicationId, sourceResumeId: source.id });
 		}
 	};
+
+	// Already applied with the resume that was sent: recording it is the next step, not preparing another one.
+	const logsSentResume = stage !== "saved" && resumeId !== "";
 
 	return (
 		<form
@@ -609,7 +612,6 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					<AiProviderLoadState state={providerState} />
 				) : (
 					<ReadStatus
-						text={text}
 						link={link}
 						readable={readable}
 						pending={read.isPending}
@@ -848,7 +850,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			<DialogFooter>
 				<Button
 					type="button"
-					variant={forPicker ? "primary" : "secondary"}
+					variant={forPicker || logsSentResume ? "primary" : "secondary"}
 					disabled={!ready || !!duplicate.data}
 					onClick={() => void add(false)}
 				>
@@ -857,6 +859,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 				{!forPicker && (
 					<Button
 						type="button"
+						variant={logsSentResume ? "secondary" : "primary"}
 						disabled={!ready || !!duplicate.data}
 						loading={copyForJob.isPending}
 						onClick={() => void add(true)}
@@ -870,7 +873,6 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 }
 
 type ReadStatusProps = {
-	text: string;
 	link: boolean;
 	readable: boolean;
 	pending: boolean;
@@ -880,10 +882,10 @@ type ReadStatusProps = {
 };
 
 /** What reading the posting found, or why the fields need filling in by hand. */
-function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadStatusProps) {
+function ReadStatus({ link, readable, pending, error, parsed, ai }: ReadStatusProps) {
 	const base = "flex items-start gap-1.5 text-xs leading-[17px]";
 
-	// A failure stays above the paste fallback: opening paste must not turn it back into idle "we read it" text.
+	// Keep the failure visible when opening paste recovery.
 	if (pending) {
 		return (
 			<p className={cn(base, "text-ink-2")} role="status">
@@ -899,13 +901,6 @@ function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadSt
 					allowServerMessage: true,
 					fallback: t`The posting couldn't be read. Fill in the role and company.`,
 				})}
-			</p>
-		);
-	}
-	if (!text) {
-		return (
-			<p className={cn(base, "text-ink-3")}>
-				<Trans>We read the page and save the posting for Check, the assistant and your letter.</Trans>
 			</p>
 		);
 	}
@@ -957,7 +952,7 @@ function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadSt
 	return (
 		<p className={cn(base, "text-ink-3")}>
 			{link && readable ? (
-				<Trans>The page had no job details to read. Fill in the role and company.</Trans>
+				<Trans>Read posting to fill the role and company.</Trans>
 			) : ai ? (
 				<Trans>Fill in the role and company. The posting is saved with the application.</Trans>
 			) : (

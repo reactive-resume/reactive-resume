@@ -25,7 +25,7 @@ it.each(["dialog", "alertdialog"] as const)("retains initial %s focus when its r
 				</main>
 				{role === "dialog" ? (
 					<Dialog open>
-						<DialogContent>
+						<DialogContent closeLabel="Close">
 							<DialogTitle>Save a job</DialogTitle>
 							<input aria-label="Posting" />
 						</DialogContent>

@@ -88,12 +88,15 @@ function ToastList({ closeLabel, timeout }: { closeLabel: string; timeout: numbe
 type ToasterProps = ToastPrimitive.Provider.Props & {
 	/** Accessible name of the close button on toasts that stay until dismissed; pass a translated string. */
 	closeLabel?: string;
+	/** Accessible name of the region screen readers announce toasts in; pass a translated string. */
+	regionLabel?: string;
 };
 
 function Toaster({
 	children,
 	toastManager = toast,
 	closeLabel = "Close notification",
+	regionLabel = "Notifications",
 	limit = 1,
 	timeout = DEFAULT_TIMEOUT,
 	...props
@@ -104,6 +107,7 @@ function Toaster({
 			<ToastPrimitive.Portal data-slot="toast-portal">
 				<ToastPrimitive.Viewport
 					data-slot="toast-viewport"
+					aria-label={regionLabel}
 					className="pointer-events-none fixed inset-x-4 bottom-7 z-200 grid justify-items-center outline-none"
 				>
 					<ToastList closeLabel={closeLabel} timeout={timeout} />

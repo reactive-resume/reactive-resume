@@ -140,7 +140,7 @@ assert.equal(addressProps.error, "Use at most 64 characters.");
 addressProps.onChangeText("Invalid Slug!");
 tree = render(LinkTab, { resume: legacyResume, offline: false });
 addressProps = control(tree, "Address");
-assert.equal(addressProps.error, "Use lowercase letters, numbers and single dashes.");
+assert.equal(addressProps.error, "Use Latin letters a–z, numbers and single dashes.");
 
 // When user clears the slug to empty, it shows "Add an address."
 addressProps.onChangeText("");

@@ -8,6 +8,7 @@ import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/
 import { documentRef } from "./filter";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
+import { confirmUndone } from "@/lib/undone";
 import { showToast } from "@/ui";
 
 type BatchOptions = {
@@ -37,7 +38,7 @@ export function documentError(error: unknown) {
 			return t`Another resume already uses this address. Choose a different one.`;
 		if (error.code === "RESUME_LOCKED") return t`This resume is locked. Unlock it to make changes.`;
 		if (error.code === "INVALID_SLUG")
-			return `${t`Use at most 64 characters.`} ${t`The address must contain only lowercase letters and numbers, separated by single dashes.`}`;
+			return `${t`Use at most 64 characters.`} ${t`The address must contain only Latin letters a–z and numbers, separated by single dashes.`}`;
 	}
 	return t`Couldn't complete this action. Try again.`;
 }
@@ -160,9 +161,31 @@ export function useDocumentOperations(enabled = true) {
 					? {
 							label: t`Undo`,
 							onPress: () => {
-								void idle.current.then(() =>
-									run(() => batch(done, (document) => client.documents.restore(documentRef(document)))),
-								);
+								// The server counts only documents it restored: one already back (another device) or deleted
+								// since isn't counted (web document-actions).
+								let restored = 0;
+								let started = false;
+								void idle.current
+									.then(() =>
+										run(async () => {
+											started = true;
+											for (const group of chunks(done)) {
+												if (getServer() !== session.server) break;
+												try {
+													restored += (await client.documents.restoreMany({ documents: group.map(documentRef) }))
+														.restored;
+												} catch {
+													/* The remaining groups can still succeed. */
+												}
+											}
+										}),
+									)
+									.then(() => {
+										// A run that couldn't start (offline, signed out) already said why.
+										if (!started) return;
+										if (restored === done.length) return confirmUndone();
+										showToast({ message: t`Restored ${restored} of ${done.length}.` });
+									});
 							},
 						}
 					: undefined,

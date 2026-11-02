@@ -569,7 +569,11 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 		<div>
 			{!focusOpen && editorChrome}
 			<Sheet open={focusOpen} onOpenChange={setFocusOpen}>
-				<SheetContent side="right" className="w-full max-w-full gap-3 overflow-hidden p-4 sm:max-w-full">
+				<SheetContent
+					closeLabel={t`Close`}
+					side="right"
+					className="w-full max-w-full gap-3 overflow-hidden p-4 sm:max-w-full"
+				>
 					<SheetTitle>
 						<Trans>Semantic CSS stylesheet</Trans>
 					</SheetTitle>
