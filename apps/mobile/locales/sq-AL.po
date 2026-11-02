@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# aplikim gati për import} other {# aplikime gati për import}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# kolonë} other {# kolona}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# kontakt ka një email të pavlefshëm ose nuk ka emër; aplikimi i tij importohet gjithsesi.} other {# kontakte kanë një email të pavlefshëm ose nuk kanë emër; aplikimet e tyre importohen gjithsesi.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {Rreshti # nuk ka kompani apo rol dhe do të anashkalohet.} other {Rreshtat # nuk kanë kompani apo rol dhe do të anashkalohen.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {Çdo ditë} other {Çdo # ditë}}"
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {Për ditën #} other {Për # ditë}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {Importo # aplikim} other {Importo # aplikime}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {U importua # aplikim.} other {U importuan # aplikime.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-Letër-motivuese"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# rresht nuk kishte kompani ose rol dhe u anashkalua.} other {# rreshta nuk kishin kompani ose rol dhe u anashkaluan.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# histori} other {# histori}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {# për të kontrolluar} other {# për të kontrol
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {Zgjidhni ku shkon # fazë para importimit.} other {Zgjidhni ku shkojnë # faza para importimit.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "Aktiviteti"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Shtoni"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "Shto “{0}” si fazë të re"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "data e aplikimit për punë"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "Arabisht"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "Arkivuar (e mbyll)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "A mund ta lexojë softueri rezymenë tuaj?"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "Zgjidhni një CV"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Zgjidhni një CV në Shkruaj që të përputhet me dizajnin e saj. Deri atëherë, letra ka të vetën."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "Zgjidhni një fazë"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "Zgjidhni një ofrues të testuar të AI përpara se të ndani të dhëna."
@@ -2906,6 +2954,10 @@ msgstr "Zgjidhni kohën"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "Zgjidhni deri në 200 aplikimet për veprim me shumicë."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "Zgjidhni ku shkon secila fazë e emërtuar në skedar, ose shtojeni si fazë të re."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "Ngjyra (#RRGGBB)"
 msgid "Colors and level"
 msgstr "Ngjyrat dhe niveli"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "Kolona {header} shkon te"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "Kolonat"
@@ -3081,6 +3138,7 @@ msgstr "Kompakte"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "Lidhja u ruajt"
 msgid "Contact details"
 msgstr "Detajet e kontaktit"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "Email kontakti"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "Etiketa e kontaktit"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "Emri i kontaktit"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "Telefoni i kontaktit"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "Roli i kontaktit"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "Kontaktet"
 
@@ -3716,6 +3795,10 @@ msgstr "Nuk mund të kontaktohej me ofruesin tënd të AI. Provo sërish ose kon
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "Ai skedar nuk mund të lexohej. Zgjidhni një skedar .csv dhe provoni përsëri."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "Ngjarja e kalendarit nuk mund të ndahej. Provoni përsëri."
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Skedari i kalendarit nuk mund të ndahej. Provoni përsëri."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "Skedari nuk u nda dot. Provo sërish."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "Po krijohet dokumenti…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "Të dhënat CSV"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "Shkarko PDF në vend"
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "Shkarkoni ato"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "Rregulloni datat"
 msgid "Fix these in the editor"
 msgstr "Rregullojini këto në redaktues"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "Para importimit, korrigjo këto vlera në CSV ose përjashto kolonat përkatëse."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "Sheshoni formularin që teksti të bëhet pjesë e faqes."
@@ -6039,9 +6138,18 @@ msgstr "Importi u anulua."
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "Importi u anulua. Rifreskoni Dokumentet përpara se të provoni përsëri nëse ngarkimi kishte përfunduar."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "Importi dështoi. Kontrollo CSV-në dhe provo sërish."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "Importo skedarin"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "Importo nga CSV"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "Job"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "Përshkrimi i punës"
@@ -6619,6 +6728,10 @@ msgstr "Lëreni bosh për ta rikthyer titullin në origjinal."
 msgid "Leave it empty to remove the link."
 msgstr "Lëreni bosh për të hequr lidhjen."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "Lëreni jashtë"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "Rreshtat kaq afër mund të bashkohen kur lexohen. Përdorni të paktën
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "Përditësime të drejtpërdrejta ndërsa redaktoni"
 msgid "Live at {url}"
 msgstr "Publikuar te {url}"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "Ngarkoni fazat tuaja para se të importoni faza me emër. Të dhënat CSV ruhen."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "Po ngarkohet"
@@ -6984,6 +7102,7 @@ msgstr "Po ngarkohet…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "Informacion"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "Shënime"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "Vetëm faqet e para {0} u kontrolluan."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "Vetëm {MAX_IMPORT} rreshtat e parë importohen njëherësh, duke lënë jashtë {overflow}. Ndajeni skedarin për të importuar pjesën tjetër."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "I vjetëruar: teksti ka ndryshuar që atëherë."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "Rezultati"
 
@@ -8851,6 +8976,10 @@ msgstr "Ngjit një postim pune"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "Ngjit një mesazh nga {company}"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "Ngjitni rreshtat ose ngarkoni një .csv. Kolonat përputhen automatikisht dhe ju kontrolloni përputhjen përpara se të ruhet ndonjë gjë."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "Shpallje pune"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "burimi i shpalljes së punës"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "Hiq fazën nga përdorimi"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "E drejta"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "Rrotullimi"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "Rrotullimi nuk mbështetet nga interpretimi PDF."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "Rreshti {row}, {0}: nuk u lexua dot “{value}”."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "Renditja e rreshtave"
@@ -10563,6 +10703,7 @@ msgstr "Ndryshk"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "Paga"
 
@@ -11736,6 +11877,7 @@ msgstr "Rendit sipas datës"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "Burimi"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "Njëri poshtë tjetrit"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "Skena"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "Faza {0} shkon te"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "Faza llogaritet si"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "Data e fazës"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "Emri i fazës"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "Rezultati i fazës"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "Faza mbetet {stage}"
@@ -11817,6 +11984,10 @@ msgstr "Faza mbetet {stage}"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "Fazat"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "Etiketoni aplikimet e zgjedhura"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "Ky server raporton një adresë të ndryshme nga ajo që keni futur. Fut
 msgid "This server uses http. The app needs https."
 msgstr "Ky server përdor http. Aplikacioni ka nevojë për https."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "Ky server përdor fazat standarde, ndaj emrat e fazave në skedar nuk ruhen."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "Kjo përpjekje hyrjeje ka skaduar ose është përdorur tashmë. Hyni përsëri."
@@ -13525,6 +13701,10 @@ msgstr "U përditësuan {completed} nga {0}. Dokumentet e kyçura dhe letrat pë
 msgid "Updating preview…"
 msgstr "Po përditëson pamjen paraprake…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "Ngarko .csv"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "Ngarko një PDF dhe shiko tekstin që nxjerr një sistem gjurmues i aplikantit: çfarë mungon, çfarë nuk funksionon dhe si ta rregullosh atë. Falas, nuk nevojitet llogari."
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "Përdorni mostrën"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

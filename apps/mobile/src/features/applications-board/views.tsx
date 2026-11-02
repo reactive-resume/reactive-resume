@@ -8,6 +8,7 @@ import { SafeAreaInsetsContext, SafeAreaView, useSafeAreaInsets } from "react-na
 import { useApplicationSearch } from "./search";
 import { CollectionHeader } from "@/components/collection-header";
 import { AddApplicationSheet } from "@/features/applications/add-sheet";
+import { ImportApplicationsSheet } from "@/features/applications/import-sheet";
 import { LaneNotice } from "@/features/applications/lane-notice";
 import { LaneSettings } from "@/features/applications/lane-settings";
 import { routes } from "@/routes";
@@ -31,6 +32,7 @@ export function ApplicationsViewFrame({ current, children, search, addDisabled }
 	const { create } = useLocalSearchParams<{ create?: string }>();
 	const [adding, setAdding] = useState(false);
 	const [managing, setManaging] = useState(false);
+	const [importing, setImporting] = useState(false);
 	// The one-shot ?create link opens Save job; closing it clears the link so it can't reopen.
 	const addingOpen = adding || create === "1";
 	const closeAdding = () => {
@@ -54,6 +56,12 @@ export function ApplicationsViewFrame({ current, children, search, addDisabled }
 					{...(search ?? { value: shared.search, onChangeText: shared.setSearch })}
 					actions={
 						<View style={{ flexDirection: "row" }}>
+							<IconButton
+								icon="file-arrow-up"
+								label={t`Import from CSV`}
+								disabled={addDisabled}
+								onPress={() => setImporting(true)}
+							/>
 							<IconButton icon="sliders-horizontal" label={t`Manage lanes`} onPress={() => setManaging(true)} />
 							<IconButton icon="plus" label={t`Save a job`} disabled={addDisabled} onPress={() => setAdding(true)} />
 						</View>
@@ -78,6 +86,7 @@ export function ApplicationsViewFrame({ current, children, search, addDisabled }
 				<View style={{ flex: 1 }}>{children}</View>
 			</SafeAreaInsetsContext>
 			<LaneSettings open={managing} onClose={() => setManaging(false)} />
+			<ImportApplicationsSheet open={importing} onClose={() => setImporting(false)} />
 			{addingOpen && <AddApplicationSheet onClose={closeAdding} />}
 		</SafeAreaView>
 	);

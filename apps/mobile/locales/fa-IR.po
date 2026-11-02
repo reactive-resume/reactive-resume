@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# درخواست آماده وارد کردن است} other {# درخواست آماده وارد کردن هستند}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# ستون} other {# ستون}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# مخاطب ایمیل نامعتبر دارد یا نام ندارد؛ درخواست آن همچنان وارد می‌شود.} other {# مخاطب ایمیل نامعتبر دارند یا نام ندارند؛ درخواست‌هایشان همچنان وارد می‌شوند.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {ردیف # هیچ شرکت یا نقشی ندارد و از آن صرفنظر خواهد شد.} other {ردیف های # هیچ شرکت یا نقشی ندارند و از آنها صرفنظر می شود.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {هر روز} other {هر # روز}}"
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {برای روز #} other {برای روز #}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {وارد کردن # درخواست} other {وارد کردن # درخواست}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {# درخواست وارد شد.} other {# درخواست وارد شد.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-نامهٔ-پوششی"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# ردیف شرکت یا نقش نداشت و رد شد.} other {# ردیف شرکت یا نقش نداشتند و رد شدند.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# داستان} other {# داستان}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {# برای بررسی} other {# برای بررس
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {پیش از وارد کردن، مشخص کنید # مرحله به کجا منتقل شود.} other {پیش از وارد کردن، مشخص کنید # مرحله به کجا منتقل شوند.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "فعالیت"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "افزودن"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "افزودن «{0}» به‌عنوان مرحله‌ای جدید"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "تاریخ درخواست شغل"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "عربی"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "بایگانی شد (آن را می بندد)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "آیا نرم افزار می تواند رزومه شما را بخوا
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "یک رزومه انتخاب کنید"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "یک رزومه را در Write انتخاب کنید تا با طراحی آن مطابقت داشته باشد. تا آن زمان، نامه خاص خود را دارد."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "مرحله‌ای انتخاب کنید"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "قبل از به اشتراک گذاری داده ها، یک ارائه دهنده هوش مصنوعی آزمایش شده را انتخاب کنید."
@@ -2906,6 +2954,10 @@ msgstr "زمان را انتخاب کنید"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "در هر اقدام انبوه تا 200 درخواست شغلی را انتخاب کنید."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "مشخص کنید هر مرحلهٔ نام‌برده در فایل به کجا منتقل شود، یا آن را به‌عنوان مرحله‌ای جدید اضافه کنید."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "رنگ (#RRGGBB)"
 msgid "Colors and level"
 msgstr "رنگ‌ها و سطح"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "ستون {header} به"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "ستون‌ها"
@@ -3081,6 +3138,7 @@ msgstr "فشرده"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "اتصال ذخیره شد"
 msgid "Contact details"
 msgstr "اطلاعات تماس"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "ایمیل تماس"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "برچسب تماس"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "نام تماس"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "تلفن تماس"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "نقش تماس"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "مخاطبان"
 
@@ -3716,6 +3795,10 @@ msgstr "دسترسی به ارائه‌دهنده AI شما امکان‌پذی�
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "خواندن آن فایل ممکن نشد. یک فایل .csv انتخاب کنید و دوباره امتحان کنید."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "رویداد تقویم به اشتراک گذاشته نشد. دوبا�
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "فایل تقویم به اشتراک گذاشته نشد. دوباره امتحان کنید."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "اشتراک‌گذاری فایل ممکن نشد. دوباره تلاش کنید."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "در حال ایجاد سند…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "داده‌های CSV"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "در عوض PDF را دانلود کنید"
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "آنها را دانلود کنید"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "تاریخ ها را درست کنید"
 msgid "Fix these in the editor"
 msgstr "اینها را در ویرایشگر برطرف کنید"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "پیش از وارد کردن، این مقادیر را در CSV اصلاح کنید یا ستون‌های مربوط به آن‌ها را کنار بگذارید."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "فرم را مسطح کنید تا متن بخشی از صفحه شود."
@@ -6039,9 +6138,18 @@ msgstr "وارد کردن لغو شد."
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "وارد کردن لغو شد. اگر بارگذاری تمام شده بود، پیش از امتحان دوباره، اسناد را تازه‌سازی کنید."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "وارد کردن ناموفق بود. CSV را بررسی کنید و دوباره تلاش کنید."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "وارد کردن فایل"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "وارد کردن از CSV"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "شغل"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "شرح شغل"
@@ -6619,6 +6728,10 @@ msgstr "برای بازگرداندن عنوان به مقدار اصلی، آن
 msgid "Leave it empty to remove the link."
 msgstr "برای حذف لینک آن را خالی بگذارید."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "کنار گذاشتن"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "خطوط به این نزدیکی می توانند هنگام خوان�
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "زنده · به روز رسانی در هنگام ویرایش"
 msgid "Live at {url}"
 msgstr "در دسترس در {url}"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "پیش از وارد کردن مرحله‌های نام‌گذاری‌شده، مرحله‌های خود را بارگیری کنید. داده‌های CSV شما حفظ می‌شوند."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "در حال بارگذاری"
@@ -6984,6 +7102,7 @@ msgstr "در حال بارگیری…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "اطلاعات"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "یادداشت‌ها"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "فقط اولین صفحات {0} بررسی شدند."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "فقط {MAX_IMPORT} ردیف نخست در هر بار وارد می‌شود و {overflow} ردیف کنار گذاشته می‌شود. برای وارد کردن بقیه، فایل را تقسیم کنید."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "تاریخ گذشته: متن تغییر کرده است."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "نتیجه"
 
@@ -8851,6 +8976,10 @@ msgstr "یک آگهی شغلی را بچسبانید"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "جای‌گذاری پیامی از {company}"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "ردیف‌ها را جای‌گذاری کنید یا یک .csv آپلود کنید. ستون‌ها به‌طور خودکار مطابقت داده می‌شوند، و قبل از اینکه هر چیزی ذخیره شود، مطابقت را بررسی می‌کنید."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "آگهی شغلی"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "منبع آگهی استخدام"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "توقف استفاده از مرحله"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "درسته"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "چرخش"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "چرخش توسط رندر PDF پشتیبانی نمی‌شود."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "ردیف {row}، {0}: خواندن «{value}» ممکن نشد."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "ترتیب ردیف‌ها"
@@ -10563,6 +10703,7 @@ msgstr "قهوه‌ای زنگاری"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "حقوق"
 
@@ -11736,6 +11877,7 @@ msgstr "مرتب سازی بر اساس تاریخ"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "منبع"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "زیر هم"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "مرحله"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "مرحلهٔ {0} منتقل می‌شود به"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "مرحله محسوب می‌شود به‌عنوان"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "تاریخ مرحله"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "نام مرحله"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "نتیجهٔ مرحله"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "مرحله {stage} می‌ماند"
@@ -11817,6 +11984,10 @@ msgstr "مرحله {stage} می‌ماند"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "مراحل"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "درخواست‌های شغلی انتخاب شده را تگ کنید"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "این سرور آدرسی متفاوت از آدرسی که شما وا
 msgid "This server uses http. The app needs https."
 msgstr "این سرور از http استفاده می کند. برنامه به https نیاز دارد."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "این سرور از مرحله‌های استاندارد استفاده می‌کند، بنابراین نام مرحله‌های موجود در فایل حفظ نمی‌شود."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "این تلاش برای ورود منقضی شده یا قبلاً استفاده شده است. دوباره وارد شوید."
@@ -13525,6 +13701,10 @@ msgstr "{completed} از {0} به روز شد. اسناد قفل شده، و ن�
 msgid "Updating preview…"
 msgstr "در حال به‌روزرسانی پیش‌نمایش…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "بارگذاری .csv"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "یک PDF را آپلود کنید و متنی را که یک سیستم ردیابی متقاضی استخراج می‌کند، ببینید: چه چیزی کم است، چه چیزی نامرتب است، و چگونه آن را تعمیر کنیم. رایگان، بدون نیاز به حساب کاربری"
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "استفاده از نمونه"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

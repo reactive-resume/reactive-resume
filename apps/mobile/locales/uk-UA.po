@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# заявка на роботу готова до імпорту} other {# заявки на роботу, готові до імпорту}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# стовпець} few {# стовпці} many {# стовпців} other {# стовпця}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# контакт має недійсну електронну адресу або не має імені; його заявка на роботу все ще імпортується.} other {Контакти # мають недійсну електронну адресу або не мають імені; їхні заявки на роботу все ще імпортуються.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {Рядок # не має компанії чи ролі, тому його буде пропущено.} other {Рядки # не мають компанії чи ролі, і їх буде пропущено.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, =1 {Щодня} one {Кожен # день} few {Кожні 
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {На день #} other {На # днів}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {Імпортувати заявку на роботу #} other {Імпорт заявок на роботу #}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {Імпортовано # заявку.} few {Імпортовано # заявки.} many {Імпортовано # заявок.} other {Імпортовано # заявки.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-Супровідний-лист"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# рядок не мав компанії чи посади, тому його пропущено.} few {# рядки не мали компанії чи посади, тому їх пропущено.} many {# рядків не мали компанії чи посади, тому їх пропущено.} other {# рядка не мали компанії чи посади, тому їх пропущено.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# розповідь} few {# розповіді} many {# розповідей} other {# розповіді}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {# перевірити} other {# перевіри
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {Перед імпортом виберіть, куди перемістити # етап.} few {Перед імпортом виберіть, куди перемістити # етапи.} many {Перед імпортом виберіть, куди перемістити # етапів.} other {Перед імпортом виберіть, куди перемістити # етапу.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "діяльність"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Додати"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "Додати «{0}» як новий етап"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "Дата подання заявки"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "Арабська"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "Архівовано (закриває)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "Чи може програмне забезпечення прочита
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "Виберіть резюме"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Виберіть резюме в Write відповідно до його дизайну. До того часу лист має своє."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "Виберіть етап"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "Перш ніж ділитися даними, виберіть перевіреного постачальника штучного інтелекту."
@@ -2906,6 +2954,10 @@ msgstr "Виберіть час"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "Виберіть до 200 заявок для масової дії."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "Виберіть, куди перемістити кожен названий у файлі етап, або додайте його як новий."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "Колір (#RRGGBB)"
 msgid "Colors and level"
 msgstr "Кольори та рівень"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "Стовпець {header} переходить до"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "Стовпці"
@@ -3081,6 +3138,7 @@ msgstr "Компактно"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "Підключення збережено"
 msgid "Contact details"
 msgstr "Контактні дані"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "Контактна електронна адреса"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "Мітка контакту"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "Ім'я контакту"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "Контактний телефон"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "Контактна роль"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "Контакти"
 
@@ -3716,6 +3795,10 @@ msgstr "Не вдалося зв’язатися з вашим постачал
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "Не вдалося прочитати цей файл. Виберіть файл .csv і спробуйте ще раз."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "Не вдалося поділитися подією календаря
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Не вдалося поділитися файлом календаря. Спробуйте ще раз."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "Не вдалося поділитися файлом. Спробуйте ще раз."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "Створення документа…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "Дані CSV"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "Натомість завантажте PDF"
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "Завантажте їх"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "Виправте дати"
 msgid "Fix these in the editor"
 msgstr "Виправте їх у редакторі"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "Перед імпортом виправте ці значення в CSV або виключіть відповідні стовпці."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "Сплющіть форму, щоб текст став частиною сторінки."
@@ -6039,9 +6138,18 @@ msgstr "Імпорт скасовано."
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "Імпорт скасовано. Оновіть Документи перед повторною спробою, якщо завантаження завершилося."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "Імпорт не вдався. Перевірте CSV і спробуйте ще раз."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "Імпорт файлу"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "Імпортувати з CSV"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "Робота"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "Опис вакансії"
@@ -6619,6 +6728,10 @@ msgstr "Залиште порожнім, щоб повернути початк�
 msgid "Leave it empty to remove the link."
 msgstr "Залиште поле пустим, щоб видалити посилання."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "Виключити"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "Рядки так близько можуть збігатися під 
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "Живі · оновлення під час редагування"
 msgid "Live at {url}"
 msgstr "Наживо {url}"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "Завантажте свої етапи перед імпортом іменованих етапів. Ваші дані CSV збережуться."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "Завантаження"
@@ -6984,6 +7102,7 @@ msgstr "Завантаження…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "Інформація"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "Нотатки"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "Було перевірено лише перші сторінки {0}."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "За один раз імпортуються лише перші {MAX_IMPORT} рядків, а {overflow} лишаються осторонь. Розділіть файл, щоб імпортувати решту."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "Застарілий: текст змінився з тих пір."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "Результат"
 
@@ -8851,6 +8976,10 @@ msgstr "Вставте оголошення про роботу"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "Вставте повідомлення від {company}"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "Вставте рядки або завантажте .csv. Стовпці зіставляються автоматично, і ви перевіряєте збіг перед тим, як щось зберегти."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "Оголошення про вакансію"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "джерело оголошення про роботу"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "Вивести етап з використання"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "правильно"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "Обертання"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "Обертання не підтримується рендерингом PDF."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "Рядок {row}, {0}: не вдалося прочитати «{value}»."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "Порядок рядків"
@@ -10563,6 +10703,7 @@ msgstr "Іржавий"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "Зарплата"
 
@@ -11736,6 +11877,7 @@ msgstr "Сортувати за датою"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "Джерело"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "Один під одним"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "Етап"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "Етап {0} переходить до"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "Етап зараховується як"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "Дата етапу"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "Назва етапу"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "Результат етапу"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "Етап залишається «{stage}»"
@@ -11817,6 +11984,10 @@ msgstr "Етап залишається «{stage}»"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "Етапи"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "Позначте вибрані заявки"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "Цей сервер повідомляє іншу адресу, ніж �
 msgid "This server uses http. The app needs https."
 msgstr "Цей сервер використовує http. Додатку потрібен https."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "Цей сервер використовує стандартні етапи, тому назви етапів із файлу не зберігаються."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "Термін дії цієї спроби входу минув або її вже використано. Увійдіть знову."
@@ -13525,6 +13701,10 @@ msgstr "Оновлено {completed} із {0}. Заблоковані докум
 msgid "Updating preview…"
 msgstr "Оновлення попереднього перегляду…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "Завантажити .csv"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "Завантажте PDF і перегляньте текст, який витягує система відстеження заявника: чого не вистачає, що не в порядку та як це виправити. Безкоштовно, обліковий запис не потрібен."
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "Використати зразок"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# cerere de job gata de import} other {# cereri de locuri de muncă gata de import}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# coloană} few {# coloane} other {# de coloane}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# contact are un e-mail nevalid sau nu are nume; candidatura sa se importă totuși.} few {# contacte au un e-mail nevalid sau nu au nume; candidaturile lor se importă totuși.} other {# de contacte au un e-mail nevalid sau nu au nume; candidaturile lor se importă totuși.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {Rândul # nu are companie sau rol și va fi omis.} other {Rândurile # nu au companie sau rol și vor fi omise.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {În fiecare zi} few {La fiecare # zile} other {La fieca
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {Pentru ziua #} other {Pentru zilele #}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {Importați # candidatură} few {Importați # candidaturi} other {Importați # de candidaturi}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {S-a importat # candidatură.} few {S-au importat # candidaturi.} other {S-au importat # de candidaturi.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-Scrisoare-de-intenție"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# rând nu avea companie sau rol și a fost omis.} few {# rânduri nu aveau companie sau rol și au fost omise.} other {# de rânduri nu aveau companie sau rol și au fost omise.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# poveste} few {# povești} other {# de povești}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {# de verificat} other {# de verificat}}"
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {Alegeți destinația pentru # etapă înainte de import.} few {Alegeți destinația pentru # etape înainte de import.} other {Alegeți destinația pentru # de etape înainte de import.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "Activitate"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Adăuga"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "Adăugați „{0}” ca etapă nouă"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "data cererii de angajare"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "Arabă"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "Arhivat (o închide)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "Poate software-ul să vă citească CV-ul?"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "Alege un CV"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Alegeți un CV în Write care să se potrivească cu designul său. Până atunci, scrisoarea are a ei."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "Alegeți o etapă"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "Alegeți un furnizor de AI testat înainte de a partaja date."
@@ -2906,6 +2954,10 @@ msgstr "Alege timpul"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "Alegeți până la 200 de candidaturi pentru fiecare acțiune în bloc."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "Alegeți destinația fiecărei etape numite în fișier sau adăugați-o ca etapă nouă."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "Culoare (#RRGGBB)"
 msgid "Colors and level"
 msgstr "Culori și nivel"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "Coloana {header} merge la"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "Coloane"
@@ -3081,6 +3138,7 @@ msgstr "Compact"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "Conexiunea a fost salvată"
 msgid "Contact details"
 msgstr "Date de contact"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "E-mail de contact"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "Eticheta de contact"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "Nume de contact"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "Telefon de contact"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "Rolul de contact"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "Contacte"
 
@@ -3716,6 +3795,10 @@ msgstr "Nu s-a putut contacta furnizorul dvs. AI. Încercați din nou sau verifi
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "Nu s-a putut citi fișierul. Alege un fișier .csv și încearcă din nou."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "Evenimentul din calendar nu a putut fi partajat. Încearcă din nou."
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Nu s-a putut partaja fișierul calendar. Încearcă din nou."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "Fișierul nu a putut fi partajat. Încercați din nou."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "Se creează documentul..."
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "date CSV"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "În schimb, descărcați PDF"
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "Descărcați-le"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "Fixează datele"
 msgid "Fix these in the editor"
 msgstr "Remediați-le în editor"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "Înainte de import, corectați aceste valori în CSV sau omiteți coloanele corespunzătoare."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "Aplatizați formularul astfel încât textul să facă parte din pagină."
@@ -6039,9 +6138,18 @@ msgstr "Import anulat."
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "Import anulat. Actualizează Documente înainte de a reîncerca dacă încărcarea s-a terminat."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "Importul nu a reușit. Verificați CSV și încercați din nou."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "Importați fișierul"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "Importă din CSV"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "Post"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "Descrierea postului"
@@ -6619,6 +6728,10 @@ msgstr "Lăsați necompletat pentru a reseta titlul la cel original."
 msgid "Leave it empty to remove the link."
 msgstr "Lăsați-l gol pentru a elimina linkul."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "Lasă afară"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "Rândurile atât de apropiate pot rula împreună când sunt citite. Uti
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "Actualizări live · pe măsură ce editați"
 msgid "Live at {url}"
 msgstr "Disponibil la {url}"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "Încărcați etapele înainte de a importa etape cu nume. Datele CSV sunt păstrate."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "Încărcare"
@@ -6984,6 +7102,7 @@ msgstr "Se încarcă…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "Informaţii"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "Notițe"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "Au fost verificate doar primele pagini {0}."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "Se importă odată doar primele {MAX_IMPORT} rânduri, lăsând pe dinafară {overflow}. Împărțiți fișierul ca să importați restul."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "Învechit: textul s-a schimbat de atunci."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "Rezultatul"
 
@@ -8851,6 +8976,10 @@ msgstr "Lipiți o postare de locuri de muncă"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "Inserați un mesaj de la {company}"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "Lipiți rânduri sau încărcați un .csv. Coloanele sunt potrivite automat și verificați potrivirea înainte de a salva ceva."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "Anunț de angajare"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "sursa postării de locuri de muncă"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "Retrageți etapa"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "Corect"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "Rotire"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "Rotația nu este acceptată de redarea PDF."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "Rândul {row}, {0}: nu s-a putut citi „{value}”."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "Ordinea rândurilor"
@@ -10563,6 +10703,7 @@ msgstr "Ruginiu"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "Salariu"
 
@@ -11736,6 +11877,7 @@ msgstr "Sortează după dată"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "Sursă"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "Pe rânduri separate"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "Etapă"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "Etapa {0} este mutată în"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "Etapa este considerată"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "Data etapei"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "Numele etapei"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "Rezultatul etapei"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "Etapa rămâne {stage}"
@@ -11817,6 +11984,10 @@ msgstr "Etapa rămâne {stage}"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "Etape"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "Etichetați aplicațiile de locuri de muncă selectate"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "Acest server raportează o adresă diferită de cea pe care ați introdu
 msgid "This server uses http. The app needs https."
 msgstr "Acest server folosește http. Aplicația are nevoie de https."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "Acest server folosește etapele standard, așa că numele etapelor din fișier nu sunt păstrate."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "Această încercare de conectare a expirat sau a fost deja folosită. Autentifică-te din nou."
@@ -13525,6 +13701,10 @@ msgstr "Actualizat {completed} pentru {0}. Documentele blocate și scrisorile de
 msgid "Updating preview…"
 msgstr "Se actualizează previzualizarea…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "Încărcați .csv"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "Încărcați un PDF și vedeți textul extras de un sistem de urmărire a solicitantului: ce lipsește, ce este în neregulă și cum să îl remediați. Gratuit, nu este nevoie de cont."
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "Utilizați eșantion"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

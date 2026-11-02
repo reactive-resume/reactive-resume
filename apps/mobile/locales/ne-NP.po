@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# रोजगार आवेदन आयात गर्न तयार छ} other {# रोजगार आवेदनहरू आयात गर्न तयार छन्}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# स्तम्भ} other {# स्तम्भहरू}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# सम्पर्कमा अमान्य इमेल वा कुनै नाम छैन; यसको रोजगार आवेदन अझै आयात गर्दछ।} other {# सम्पर्कहरूको अमान्य इमेल वा कुनै नाम छैन; तिनीहरूको रोजगारीका आवेदनहरू अझै आयात हुन्छन्।}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {# पङ्क्तिमा कुनै कम्पनी वा भूमिका छैन र छोडिनेछ।} other {# पङ्क्तिहरूमा कुनै कम्पनी वा भूमिका छैन र छोडिनेछ।}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {हरेक दिन} other {हरेक # दिन
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {# दिनको लागि} other {# दिनहरूको लागि}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {# रोजगार आवेदन आयात गर्नुहोस्} other {# रोजगार आवेदनहरू आयात गर्नुहोस्}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {# आवेदन आयात गरियो।} other {# आवेदनहरू आयात गरिए।}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-आवरण-पत्र"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# पङ्क्तिमा कम्पनी वा भूमिका नभएकाले छोडियो।} other {# पङ्क्तिहरूमा कम्पनी वा भूमिका नभएकाले छोडिए।}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# कथा} other {# कथाहरू}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {# जाँच गर्न} other {# जाँ�
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {आयात गर्नुअघि # चरण कहाँ राख्ने भनेर छान्नुहोस्।} other {आयात गर्नुअघि # चरणहरू कहाँ राख्ने भनेर छान्नुहोस्।}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "गतिविधि"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "थप्नुहोस्"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "“{0}” लाई नयाँ चरणका रूपमा थप्नुहोस्"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "काम आवेदन मिति"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "अरबी"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "अभिलेख (यसलाई बन्द गर्दछ)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "के सफ्टवेयरले तपाइँको रिजु
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "एउटा बायोडाटा छान्नुहोस्"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "यसको डिजाइन मिलाउन Write मा रिज्युम छान्नुहोस्। त्यतिन्जेल, पत्रको आफ्नै हुन्छ।"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "चरण छान्नुहोस्"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "डाटा साझेदारी गर्नु अघि परीक्षण गरिएको एआई प्रदायक छनौट गर्नुहोस्।"
@@ -2906,6 +2954,10 @@ msgstr "समय छान्नुहोस्"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "एकमुष्ट कार्यमा 200 वटासम्म आवेदनहरू छान्नुहोस्।"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "फाइलमा नाम दिइएको प्रत्येक चरण कहाँ राख्ने भनेर छान्नुहोस् वा त्यसलाई नयाँ चरणका रूपमा थप्नुहोस्।"
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "रङ (#RRGGBB)"
 msgid "Colors and level"
 msgstr "रंग र स्तर"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "स्तम्भ {header} मा जान्छ"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "स्तम्भहरू"
@@ -3081,6 +3138,7 @@ msgstr "संक्षिप्त"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "जडान सुरक्षित गरियो"
 msgid "Contact details"
 msgstr "सम्पर्क विवरण"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "सम्पर्क इमेल"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "सम्पर्क लेबल"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "सम्पर्क नाम"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "सम्पर्क फोन"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "सम्पर्क भूमिका"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "सम्पर्कहरू"
 
@@ -3716,6 +3795,10 @@ msgstr "तपाईंको AI प्रदायकमा पुग्न स
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "त्यो फाइल पढ्न सकिएन। .csv फाइल छानेर पुन: प्रयास गर्नुहोस्।"
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "क्यालेन्डर कार्यक्रम साझा 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "क्यालेन्डर फाइल साझा गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "फाइल साझा गर्न सकिएन। फेरि प्रयास गर्नुहोस्।"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "कागजात सिर्जना गर्दै…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "CSV डाटा"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "यसको सट्टा PDF डाउनलोड गर्नु�
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "तिनीहरूलाई डाउनलोड गर्नुहोस्"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "मितिहरू ठीक गर्नुहोस्"
 msgid "Fix these in the editor"
 msgstr "सम्पादकमा यी ठीक गर्नुहोस्"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "आयात गर्नुअघि CSV मा यी मानहरू सच्याउनुहोस् वा सम्बन्धित स्तम्भहरू छोड्नुहोस्।"
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "फारामलाई फ्ल्याट गर्नुहोस् ताकि पाठ पृष्ठकै अंश बनोस्।"
@@ -6039,9 +6138,18 @@ msgstr "आयात रद्द गरियो।"
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "आयात रद्द गरियो। यदि अपलोड समाप्त भयो भने पुन: प्रयास गर्नु अघि कागजातहरू रिफ्रेस गर्नुहोस्।"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "failed आयात गर्नुहोस्। CSV जाँच गर्नुहोस् र again प्रयास गर्नुहोस्।"
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "फाइल आयात गर्नुहोस्"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "CSV बाट आयात गर्नुहोस्"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "काम"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "काम विवरण"
@@ -6619,6 +6728,10 @@ msgstr "शीर्षकलाई मौलिक अवस्थामा फ
 msgid "Leave it empty to remove the link."
 msgstr "लिङ्क हटाउन यसलाई खाली छोड्नुहोस्।"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "छोड्नुहोस्"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "यो बन्द रेखाहरू पढ्दा सँगै �
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "लाइभ · तपाईंले सम्पादन गर्द
 msgid "Live at {url}"
 msgstr "{url} मा लाइभ"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "नाम दिइएका चरणहरू आयात गर्नुअघि आफ्ना चरणहरू लोड गर्नुहोस्। तपाईंको CSV डेटा सुरक्षित रहन्छ।"
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "लोड गर्दै"
@@ -6984,6 +7102,7 @@ msgstr "लोड हुँदै…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "जानकारी"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "नोटहरू"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "केवल पहिलो {0} पृष्ठहरू जाँच गरियो।"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "एकपटकमा पहिलो {MAX_IMPORT} हरफ मात्र आयात हुन्छन्, {overflow} छुट्छन्। बाँकी आयात गर्न फाइललाई टुक्र्याउनुहोस्।"
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "म्याद सकियो: पाठ पछि परिवर्तन भएको छ।"
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "नतिजा"
 
@@ -8851,6 +8976,10 @@ msgstr "जागिरको विज्ञापन टाँस्नुह�
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "{company} बाट सन्देश टाँस्नुहोस्"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "पङ्क्तिहरू टाँस्नुहोस् वा .csv अपलोड गर्नुहोस्। स्तम्भहरू स्वचालित रूपमा मेल खान्छ, र तपाईंले केहि बचत गर्नु अघि मिलान जाँच गर्नुहोस्।"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "जागिर पोस्टिङ"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "रोजगार पोस्टिंग स्रोत"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "चरणको प्रयोग बन्द गर्नुहोस
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "सहि"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "घुमाउने कोण (Rotation)"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "PDF रेन्डरिङद्वारा रोटेशन समर्थित छैन।"
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "पङ्क्ति {row}, {0}: “{value}” पढ्न सकिएन।"
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "पङ्क्तिहरूको क्रम"
@@ -10563,6 +10703,7 @@ msgstr "खिया रङ"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "तलब"
 
@@ -11736,6 +11877,7 @@ msgstr "मिति अनुसार क्रमबद्ध गर्नु
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "स्रोत"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "एकमुनि अर्को"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "स्टेज"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "{0} चरण यहाँ जान्छ"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "चरणका रूपमा गनिन्छ"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "चरण मिति"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "चरणको नाम"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "चरणको नतिजा"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "स्टेज {stage} नै रहन्छ"
@@ -11817,6 +11984,10 @@ msgstr "स्टेज {stage} नै रहन्छ"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "चरणहरू"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "चयन गरिएका आवेदनहरू ट्याग �
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "यो सर्भरले तपाईंले प्रविष्
 msgid "This server uses http. The app needs https."
 msgstr "यो सर्भरले http प्रयोग गर्दछ। एपलाई https चाहिन्छ।"
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "यो सर्भरले मानक चरणहरू प्रयोग गर्छ, त्यसैले फाइलमा भएका चरणका नामहरू राखिँदैनन्।"
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "यो साइन-इन प्रयासको म्याद सकियो वा पहिल्यै प्रयोग भइसक्यो। फेरि साइन इन गर्नुहोस्।"
@@ -13525,6 +13701,10 @@ msgstr "{0} मध्ये {completed} अद्यावधिक गरिय
 msgid "Updating preview…"
 msgstr "पूर्वावलोकन अद्यावधिक गर्दै…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "csv अपलोड गर्नुहोस्"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "PDF अपलोड गर्नुहोस् र एक आवेदक ट्र्याकिङ प्रणाली निकाल्ने पाठ हेर्नुहोस्: के हराइरहेको छ, के क्रम बाहिर छ, र यसलाई कसरी समाधान गर्ने। नि: शुल्क, कुनै खाता आवश्यक छैन।"
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "नमूना प्रयोग गर्नुहोस्"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

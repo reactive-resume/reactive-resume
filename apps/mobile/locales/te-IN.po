@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# జాబ్ అప్లికేషన్ దిగుమతికి సిద్ధంగా ఉంది} other {# జాబ్ అప్లికేషన్‌లు దిగుమతి చేసుకోవడానికి సిద్ధంగా ఉన్నాయి}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# నిలువు వరుస} other {# నిలువు వరుసలు}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# పరిచయం చెల్లని ఇమెయిల్ లేదా పేరు లేదు; దాని జాబ్ అప్లికేషన్ ఇప్పటికీ దిగుమతి అవుతుంది.} other {# పరిచయాలకు చెల్లని ఇమెయిల్ లేదా పేరు లేదు; వారి ఉద్యోగ దరఖాస్తులు ఇప్పటికీ దిగుమతి అవుతున్నాయి.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {# అడ్డు వరుసలో కంపెనీ లేదా పాత్ర లేదు మరియు దాటవేయబడుతుంది.} other {# అడ్డు వరుసలకు కంపెనీ లేదా పాత్ర లేదు మరియు దాటవేయబడతాయి.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {ప్రతి రోజు} other {ప్రతి # 
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {# రోజు కోసం} other {# రోజులకు}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {# జాబ్ అప్లికేషన్‌ని దిగుమతి చేయండి} other {# జాబ్ అప్లికేషన్‌లను దిగుమతి చేయండి}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {# దరఖాస్తు దిగుమతి చేయబడింది.} other {# దరఖాస్తులు దిగుమతి చేయబడ్డాయి.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-కవర్-లెటర్"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# అడ్డువరుసలో కంపెనీ లేదా పాత్ర లేనందున దాటవేయబడింది.} other {# అడ్డువరుసలలో కంపెనీ లేదా పాత్ర లేనందున దాటవేయబడ్డాయి.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# కథ} other {# కథలు}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {తనిఖీ చేయడానికి #} ot
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {దిగుమతి చేసే ముందు # దశ ఎక్కడికి వెళ్లాలో ఎంచుకోండి.} other {దిగుమతి చేసే ముందు # దశలు ఎక్కడికి వెళ్లాలో ఎంచుకోండి.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "కార్యాచరణ"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "జోడించు"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "“{0}”ను కొత్త దశగా జోడించండి"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "ఉద్యోగ దరఖాస్తు తేదీ"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "అరబిక్"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "ఆర్కైవ్ చేయబడింది (దానిని మూసివేస్తుంది)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "సాఫ్ట్‌వేర్ మీ రెజ్యూమెను 
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "రెజ్యూమెను ఎంచుకోండి"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "దాని డిజైన్‌తో సరిపోలడానికి రైట్‌లో రెజ్యూమేని ఎంచుకోండి. అప్పటి వరకు, లేఖ తన సొంతం."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "ఒక దశను ఎంచుకోండి"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "డేటాను షేర్ చేయడానికి ముందు పరీక్షించిన AI ప్రొవైడర్‌ను ఎంచుకోండి."
@@ -2906,6 +2954,10 @@ msgstr "సమయాన్ని ఎంచుకోండి"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "ఒక్కో బల్క్ యాక్షన్‌కి గరిష్టంగా 200 ఉద్యోగ దరఖాస్తు‌లను ఎంచుకోండి."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "ఫైల్‌లో పేరు ఉన్న ప్రతి దశ ఎక్కడికి వెళ్లాలో ఎంచుకోండి లేదా దానిని కొత్త దశగా జోడించండి."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "రంగు (#RRGGBB)"
 msgid "Colors and level"
 msgstr "రంగులు మరియు స్థాయి"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "కాలమ్ {header}కి వెళుతుంది"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "నిలువు వరుసలు"
@@ -3081,6 +3138,7 @@ msgstr "కుదించిన"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "కనెక్షన్ సేవ్ చేయబడింది"
 msgid "Contact details"
 msgstr "సంప్రదింపు వివరాలు"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "సంప్రదింపు ఇమెయిల్"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "సంప్రదింపు లేబుల్"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "సంప్రదింపు పేరు"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "ఫోన్‌ను సంప్రదించండి"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "సంప్రదింపు పాత్ర"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "పరిచయాలు"
 
@@ -3716,6 +3795,10 @@ msgstr "మీ AI ప్రొవైడర్‌ని చేరుకోవడ�
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "ఆ ఫైల్‌ను చదవడం సాధ్యపడలేదు. .csv ఫైల్‌ను ఎంచుకుని మళ్ళీ ప్రయత్నించండి."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "క్యాలెండర్ ఈవెంట్‌ను షేర్ 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "క్యాలెండర్ ఫైల్‌ను షేర్ చేయడం సాధ్యపడలేదు. మళ్ళీ ప్రయత్నించండి."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "ఫైల్‌ను పంచుకోలేకపోయాం. మళ్లీ ప్రయత్నించండి."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "పత్రాన్ని సృష్టిస్తోంది..."
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "CSV డేటా"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "బదులుగా PDFని డౌన్‌లోడ్ చేయం
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "వాటిని డౌన్‌లోడ్ చేసుకోండి"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "తేదీలను ఫిక్స్ చేయండి"
 msgid "Fix these in the editor"
 msgstr "వీటిని ఎడిటర్‌లో పరిష్కరించండి"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "దిగుమతి చేసే ముందు CSVలో ఈ విలువలను సరిచేయండి లేదా సంబంధిత నిలువు వరుసలను మినహాయించండి."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "టెక్స్ట్ పేజీలో భాగంగా ఉండేలా ఫారమ్‌ను ఫ్లాటన్ చేయండి."
@@ -6039,9 +6138,18 @@ msgstr "దిగుమతి రద్దు చేయబడింది."
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "దిగుమతి రద్దు చేయబడింది. అప్‌లోడ్ పూర్తయినట్లయితే మళ్లీ ప్రయత్నించే ముందు పత్రాలుని రిఫ్రెష్ చేయండి."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "దిగుమతి విఫలమైంది. CSVని తనిఖీ చేసి మళ్లీ ప్రయత్నించండి."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "దిగుమతి ఫైల్"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "CSV నుండి దిగుమతి చేయండి"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "ఉద్యోగం"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "ఉద్యోగ వివరణ"
@@ -6619,6 +6728,10 @@ msgstr "ప్రధాన శీర్షికను పునఃస్థా�
 msgid "Leave it empty to remove the link."
 msgstr "లింక్‌ను తీసివేయడానికి దాన్ని ఖాళీగా వదిలేయండి."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "వదిలేయండి"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "చదివినప్పుడు ఈ దగ్గరగా ఉన్
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "ప్రత్యక్ష ప్రసారం · మీరు సవ
 msgid "Live at {url}"
 msgstr "{url}లో అందుబాటులో ఉంది"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "పేరున్న దశలను దిగుమతి చేసే ముందు మీ దశలను లోడ్ చేయండి. మీ CSV డేటా అలాగే ఉంటుంది."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "లోడ్ అవుతోంది"
@@ -6984,6 +7102,7 @@ msgstr "లోడ్ అవుతోంది..."
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "సమాచారం"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "నోట్స్"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "మొదటి {0} పేజీలు మాత్రమే తనిఖీ చేయబడ్డాయి."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "ఒకేసారి మొదటి {MAX_IMPORT} వరుసలు మాత్రమే దిగుమతి అవుతాయి, {overflow} మిగిలిపోతాయి. మిగిలినవి దిగుమతి చేయడానికి ఫైల్‌ను విడగొట్టండి."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "గడువు ముగిసింది: అప్పటి నుండి వచనం మార్చబడింది."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "ఫలితం"
 
@@ -8851,6 +8976,10 @@ msgstr "ఉద్యోగ పోస్టింగ్‌ను అతికి�
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "{company} నుండి సందేశాన్ని అతికించండి"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "అడ్డు వరుసలను అతికించండి లేదా .csvని అప్‌లోడ్ చేయండి. నిలువు వరుసలు స్వయంచాలకంగా సరిపోలాయి మరియు ఏదైనా సేవ్ చేయబడే ముందు మీరు సరిపోలికను తనిఖీ చేయండి."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "ఉద్యోగ ప్రకటన"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "ఉద్యోగ పోస్టింగ్ మూలం"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "దశ వినియోగాన్ని నిలిపివేయ�
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "కుడి"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "రోటేషన్"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "PDF రెండరింగ్ ద్వారా భ్రమణానికి మద్దతు లేదు."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "వరుస {row}, {0}: “{value}”ను చదవలేకపోయాం."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "అడ్డు వరుసల క్రమం"
@@ -10563,6 +10703,7 @@ msgstr "రస్ట్ బ్రౌన్"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "జీతం"
 
@@ -11736,6 +11877,7 @@ msgstr "తేదీ ప్రకారం అమర్చండి"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "మూలం"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "ఒకదాని కింద మరొకటి"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "దశ"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "దశ {0} వెళ్లే చోటు"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "దశ ఇలా పరిగణించబడుతుంది"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "దశ తేదీ"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "దశ పేరు"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "దశ ఫలితం"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "దశ {stage}గానే ఉంటుంది"
@@ -11817,6 +11984,10 @@ msgstr "దశ {stage}గానే ఉంటుంది"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "దశలు"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "ఎంచుకున్న ఉద్యోగ దరఖాస్తు�
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "ఈ సర్వర్ మీరు నమోదు చేసిన చ�
 msgid "This server uses http. The app needs https."
 msgstr "ఈ సర్వర్ http ఉపయోగిస్తుంది. యాప్‌కి https అవసరం."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "ఈ సర్వర్ ప్రామాణిక దశలను ఉపయోగిస్తుంది కాబట్టి ఫైల్‌లోని దశల పేర్లు అలాగే ఉండవు."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "ఈ సైన్-ఇన్ ప్రయత్నం గడువు ముగిసింది లేదా ఇప్పటికే ఉపయోగించబడింది. మళ్ళీ సైన్ ఇన్ చేయండి."
@@ -13525,6 +13701,10 @@ msgstr "{0}లో {completed} నవీకరించబడ్డాయి. ల
 msgid "Updating preview…"
 msgstr "ప్రివ్యూని నవీకరిస్తోంది…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr ".csv అప్‌లోడ్ చేయండి"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "PDFని అప్‌లోడ్ చేయండి మరియు దరఖాస్తుదారు ట్రాకింగ్ సిస్టమ్ ఎక్స్‌ట్రాక్ట్ చేసే టెక్స్ట్‌ను చూడండి: ఏమి లేదు, ఏది ఆర్డర్‌లో లేదు మరియు దాన్ని ఎలా పరిష్కరించాలి. ఉచితం, ఖాతా అవసరం లేదు."
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "నమూనాను ఉపయోగించండి"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

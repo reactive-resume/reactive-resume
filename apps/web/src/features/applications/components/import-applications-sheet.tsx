@@ -1,8 +1,20 @@
-import type { CsvField } from "../csv";
+import type { CsvField } from "@reactive-resume/schema/applications/csv";
 import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
+import {
+	applyLaneMapping,
+	autoMapHeaders,
+	collectCsvLanes,
+	compatibleLanes,
+	CSV_FIELDS,
+	CSV_SAMPLE,
+	mapCsvToApplications,
+	parseCsv,
+	rowsToCsv,
+	suggestLane,
+} from "@reactive-resume/schema/applications/csv";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Label } from "@reactive-resume/ui/components/label";
@@ -18,17 +30,6 @@ import {
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
-import {
-	applyLaneMapping,
-	autoMapHeaders,
-	collectCsvLanes,
-	compatibleLanes,
-	CSV_FIELDS,
-	mapCsvToApplications,
-	parseCsv,
-	rowsToCsv,
-	suggestLane,
-} from "../csv";
 import { getLaneLabel, LANE_COLORS } from "../lanes";
 import { getClosedReasonLabel, getStageLabel } from "../stages";
 import { useInvalidateApplications } from "../use-application-actions";
@@ -39,8 +40,6 @@ import { client } from "@/libs/orpc/client";
 const NEW_LANE = "new";
 
 const MAX_IMPORT = 500;
-const SAMPLE =
-	"Company,Role,Stage,Application Date,Stage Date,Location,Salary,Source,Tags,Contact Name,Contact Email,Contact Phone\nStripe,Frontend Engineer,applied,2026-07-01,2026-07-01,Remote,$180k,LinkedIn,remote;react,Jane Doe,jane@example.com,+1 555 0100";
 
 const fieldLabel = (field: CsvField) =>
 	({
@@ -106,6 +105,12 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	const refreshStages = async () => {
 		const result = await refetch();
 		if (result.isSuccess) setNeedsStageRefresh(false);
+	};
+
+	const changeText = (value: string) => {
+		setOverrides({});
+		setLaneChoices({});
+		setText(value);
 	};
 
 	const reset = () => {
@@ -186,7 +191,9 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 	return (
 		<Sheet
 			open={open}
-			onOpenChange={onOpenChange}
+			onOpenChange={(next) => {
+				if (!importMutation.isPending) onOpenChange(next);
+			}}
 			// After an import, the rows clear once the sheet has slid away; closing without importing keeps them.
 			onOpenChangeComplete={(next) => {
 				if (next || !importMutation.isSuccess) return;
@@ -209,25 +216,34 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 
 				<div className="-mt-1 flex flex-1 flex-col gap-4 overflow-y-auto px-6 pt-1 pb-4">
 					<div className="flex items-center gap-2">
-						<Button size="sm" variant="secondary" onClick={() => fileRef.current?.click()}>
+						<Button
+							size="sm"
+							variant="secondary"
+							disabled={importMutation.isPending}
+							onClick={() => fileRef.current?.click()}
+						>
 							<Icon name="file-arrow-up" size={16} />
 							<Trans>Upload .csv</Trans>
 						</Button>
-						<Button size="sm" variant="ghost" onClick={() => setText(SAMPLE)}>
+						<Button
+							size="sm"
+							variant="ghost"
+							disabled={importMutation.isPending}
+							onClick={() => changeText(CSV_SAMPLE)}
+						>
 							<Trans>Use sample</Trans>
 						</Button>
 						<input
 							ref={fileRef}
 							type="file"
+							disabled={importMutation.isPending}
 							accept=".csv,text/csv"
 							className="hidden"
 							onChange={(event) =>
 								void event.target.files?.[0]
 									?.text()
 									.then((value) => {
-										setOverrides({});
-										setLaneChoices({});
-										setText(value);
+										changeText(value);
 									})
 									.catch(() =>
 										toast.add({
@@ -239,30 +255,17 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 						/>
 					</div>
 
-					<div className="grid gap-1.5">
-						<Label htmlFor="import-csv-text">
-							<Trans>CSV data</Trans>
-						</Label>
-						<Textarea
-							id="import-csv-text"
-							value={text}
-							rows={6}
-							placeholder="Company,Role,Stage,…"
-							className="font-mono text-xs"
-							onChange={(event) => {
-								setOverrides({});
-								setLaneChoices({});
-								setText(event.target.value);
-							}}
-						/>
-					</div>
-
 					{stagesUnresolved && (
 						<div role="alert" className="grid gap-2 rounded-lg border border-line p-3 text-sm">
 							<p>
 								<Trans>Load your stages before importing named stages. Your CSV data is kept.</Trans>
 							</p>
-							<Button size="sm" variant="secondary" onClick={() => void refreshStages()}>
+							<Button
+								size="sm"
+								variant="secondary"
+								disabled={importMutation.isPending}
+								onClick={() => void refreshStages()}
+							>
 								<Trans>Retry</Trans>
 							</Button>
 						</div>
@@ -282,6 +285,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 										<span className="truncate font-mono text-xs">{header || t`(no header)`}</span>
 										<Icon name="arrow-right" size={16} className="text-ink-3" />
 										<NativeSelect
+											disabled={importMutation.isPending}
 											aria-label={t`Column ${header} goes to`}
 											value={mapping[index] ?? ""}
 											onChange={(event) =>
@@ -327,6 +331,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 													</span>
 													<Icon name="arrow-right" size={16} className="text-ink-3" />
 													<NativeSelect
+														disabled={importMutation.isPending}
 														aria-label={t`Stage ${lane.label} goes to`}
 														value={choiceFor(lane)}
 														onChange={(event) =>
@@ -436,10 +441,27 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 							</div>
 						</section>
 					)}
+
+					<div className="grid gap-1.5">
+						<Label htmlFor="import-csv-text">
+							<Trans>CSV data</Trans>
+						</Label>
+						<Textarea
+							id="import-csv-text"
+							value={text}
+							rows={text ? 4 : 6}
+							disabled={importMutation.isPending}
+							placeholder="Company,Role,Stage,…"
+							className="font-mono text-xs"
+							onChange={(event) => {
+								changeText(event.target.value);
+							}}
+						/>
+					</div>
 				</div>
 
 				<SheetFooter className="flex-row justify-end gap-2">
-					<Button variant="secondary" onClick={() => onOpenChange(false)}>
+					<Button variant="secondary" disabled={importMutation.isPending} onClick={() => onOpenChange(false)}>
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button

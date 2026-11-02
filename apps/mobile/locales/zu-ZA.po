@@ -156,6 +156,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr ""
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -179,6 +184,11 @@ msgstr ""
 #. placeholder {0}: Number(columns)
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
+msgstr ""
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
 msgstr ""
 
 #. placeholder {0}: daysLeftInTrash(trashed)
@@ -264,6 +274,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr ""
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -343,6 +358,16 @@ msgstr ""
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
+msgstr ""
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr ""
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
 msgstr ""
 
 #. placeholder {0}: knowledge.facts
@@ -860,6 +885,10 @@ msgstr ""
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr ""
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr ""
@@ -898,6 +927,10 @@ msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
 msgstr ""
 
 #: src/features/assistant/messages.tsx
@@ -1191,6 +1224,11 @@ msgstr ""
 #: src/features/write/basics-screen.tsx
 #: src/features/write/improve.tsx
 msgid "Add"
+msgstr ""
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
 msgstr ""
 
 #: src/features/applications/lane-settings.tsx
@@ -1972,6 +2010,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr ""
 
@@ -2080,6 +2119,10 @@ msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
 msgstr ""
 
 #: src/features/write/fields.ts
@@ -2510,6 +2553,7 @@ msgstr ""
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2824,6 +2868,10 @@ msgstr "Choose a resume"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr ""
@@ -2899,6 +2947,10 @@ msgstr ""
 
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
 msgstr ""
 
 #: src/features/assistant/provider.tsx
@@ -3043,6 +3095,11 @@ msgstr ""
 msgid "Colors and level"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr ""
@@ -3075,6 +3132,7 @@ msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3241,8 +3299,29 @@ msgstr ""
 msgid "Contact details"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr ""
 
@@ -3710,6 +3789,10 @@ msgstr ""
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr ""
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3882,6 +3965,10 @@ msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
 msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
@@ -4111,6 +4198,10 @@ msgstr ""
 
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -4694,6 +4785,10 @@ msgstr ""
 
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
 msgstr ""
 
 #: src/features/share/link.tsx
@@ -5407,6 +5502,10 @@ msgstr ""
 msgid "Fix these in the editor"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr ""
@@ -6033,8 +6132,17 @@ msgstr ""
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
+msgstr ""
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
 msgstr ""
 
 #: src/features/write/outline.tsx
@@ -6281,6 +6389,7 @@ msgid "Job"
 msgstr ""
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr ""
@@ -6613,6 +6722,10 @@ msgstr ""
 msgid "Leave it empty to remove the link."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr ""
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6752,6 +6865,7 @@ msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6890,6 +7004,10 @@ msgstr ""
 msgid "Live at {url}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr ""
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr ""
@@ -6978,6 +7096,7 @@ msgstr ""
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8200,6 +8319,7 @@ msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr ""
@@ -8443,6 +8563,10 @@ msgstr ""
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
 msgstr ""
 
 #: src/features/check/parser.tsx
@@ -8712,6 +8836,7 @@ msgid "Out of date: the text has changed since."
 msgstr ""
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr ""
 
@@ -8844,6 +8969,10 @@ msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
 msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
@@ -9096,6 +9225,10 @@ msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
 msgstr ""
 
 #: src/features/career/today.tsx
@@ -10273,6 +10406,7 @@ msgstr ""
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10481,6 +10615,7 @@ msgstr ""
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10524,6 +10659,11 @@ msgstr ""
 msgid "Rotation isn't supported by PDF rendering."
 msgstr ""
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr ""
@@ -10557,6 +10697,7 @@ msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr ""
 
@@ -11730,6 +11871,7 @@ msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr ""
 
@@ -11804,12 +11946,41 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr ""
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr ""
 
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
 msgstr ""
 
 #: src/features/write/date-field.tsx
@@ -12112,6 +12283,7 @@ msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13025,6 +13197,10 @@ msgstr ""
 msgid "This server uses http. The app needs https."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr ""
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr ""
@@ -13519,6 +13695,10 @@ msgstr ""
 msgid "Updating preview…"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr ""
@@ -13672,6 +13852,10 @@ msgstr ""
 
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
+msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
 msgstr ""
 
 #: src/draft/conflict-sheet.tsx

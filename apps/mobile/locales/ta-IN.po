@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# வேலை விண்ணப்பம் இறக்குமதி செய்ய தயாராக உள்ளது} other {# வேலை விண்ணப்பங்கள் இறக்குமதி செய்ய தயாராக உள்ளன}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# நெடுவரிசை} other {# நெடுவரிசைகள்}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# தொடர்பில் தவறான மின்னஞ்சல் உள்ளது அல்லது பெயர் இல்லை; அதன் வேலை விண்ணப்பம் இன்னும் இறக்குமதி செய்யப்படுகிறது.} other {# தொடர்புகள் தவறான மின்னஞ்சல் அல்லது பெயர் இல்லை; அவர்களின் வேலை விண்ணப்பங்கள் இன்னும் இறக்குமதி செய்யப்படுகின்றன.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {# வரிசையில் நிறுவனம் அல்லது பங்கு இல்லை மற்றும் தவிர்க்கப்படும்.} other {# வரிசைகளுக்கு நிறுவனம் அல்லது பங்கு இல்லை, அவை தவிர்க்கப்படும்.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {தினமும்} other {# நாட்களு�
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {# நாளுக்கு} other {# நாட்களுக்கு}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {# வேலை விண்ணப்பத்தை இறக்குமதி செய்யவும்} other {# வேலை விண்ணப்பங்களை இறக்குமதி செய்யவும்}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {# விண்ணப்பம் இறக்குமதி செய்யப்பட்டது.} other {# விண்ணப்பங்கள் இறக்குமதி செய்யப்பட்டன.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-கவர்-கடிதம்"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# வரிசையில் நிறுவனம் அல்லது பணி இல்லாததால் தவிர்க்கப்பட்டது.} other {# வரிசைகளில் நிறுவனம் அல்லது பணி இல்லாததால் தவிர்க்கப்பட்டன.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# கதை} other {# கதைகள்}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {சரிபார்க்க #} other {சர�
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {இறக்குமதிக்கு முன் # நிலை எங்கு செல்ல வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்.} other {இறக்குமதிக்கு முன் # நிலைகள் எங்கு செல்ல வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "செயல்பாடு"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "சேர்"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "“{0}” என்பதைப் புதிய நிலையாகச் சேர்க்கவும்"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "வேலை விண்ணப்ப தேதி"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "அரபிக்"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "காப்பகப்படுத்தப்பட்டது (அதை மூடுகிறது)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "மென்பொருள் உங்கள் விண்ணப்�
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "ஒரு சுயவிவரத்தைத் தேர்ந்த�
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "அதன் வடிவமைப்புடன் பொருந்த, எழுதுதலில் ஒரு ரெஸ்யூமே தேர்வு செய்யவும். அதுவரை, கடிதம் சொந்தமாக உள்ளது."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "ஒரு நிலையைத் தேர்ந்தெடுக்கவும்"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "தரவைப் பகிர்வதற்கு முன் சோதிக்கப்பட்ட AI வழங்குநரைத் தேர்வு செய்யவும்."
@@ -2906,6 +2954,10 @@ msgstr "நேரத்தை தேர்வு செய்யவும்"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "ஒரு மொத்த நடவடிக்கைக்கு 200 வேலை விண்ணப்பங்கள் வரை தேர்வு செய்யவும்."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "கோப்பில் பெயரிடப்பட்ட ஒவ்வொரு நிலையும் எங்கு செல்ல வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும் அல்லது அதைப் புதிய நிலையாகச் சேர்க்கவும்."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "நிறம் (#RRGGBB)"
 msgid "Colors and level"
 msgstr "நிறங்கள் மற்றும் நிலை"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "நெடுவரிசை {header} செல்கிறது"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "நெடுவரிசைகள்"
@@ -3081,6 +3138,7 @@ msgstr "கச்சிதம்"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "இணைப்பு சேமிக்கப்பட்டது"
 msgid "Contact details"
 msgstr "தொடர்பு விவரங்கள்"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "தொடர்பு மின்னஞ்சல்"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "தொடர்பு லேபிள்"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "தொடர்பு பெயர்"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "தொடர்பு தொலைபேசி"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "தொடர்பு பங்கு"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "தொடர்புகள்"
 
@@ -3716,6 +3795,10 @@ msgstr "உங்கள் AI வழங்குநரை அணுக முட
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "அந்தக் கோப்பைப் படிக்க முடியவில்லை. .csv கோப்பைத் தேர்வுசெய்து மீண்டும் முயற்சிக்கவும்."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "நாட்காட்டி நிகழ்வைப் பகிர 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "நாட்காட்டிக் கோப்பைப் பகிர முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "கோப்பைப் பகிர முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "ஆவணத்தை உருவாக்குகிறது…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "CSV தரவு"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "பதிலாக PDF ஐப் பதிவிறக்கவும்
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "அவற்றைப் பதிவிறக்கவும்"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "தேதிகளை சரிசெய்யவும்"
 msgid "Fix these in the editor"
 msgstr "எடிட்டரில் இவற்றை சரிசெய்யவும்"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "இறக்குமதி செய்வதற்கு முன் CSV-யில் இந்த மதிப்புகளைத் திருத்தவும் அல்லது தொடர்புடைய நெடுவரிசைகளைத் தவிர்க்கவும்."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "உரை பக்கத்தின் ஒரு பகுதியாக இருக்கும் வகையில் படிவத்தை தட்டையாக்கவும்."
@@ -6039,9 +6138,18 @@ msgstr "இறக்குமதி ரத்துசெய்யப்பட�
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "இறக்குமதி ரத்துசெய்யப்பட்டது. பதிவேற்றம் முடிந்திருந்தால், மீண்டும் முயற்சிக்கும் முன் ஆவணங்களைப் புதுப்பிக்கவும்."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "இறக்குமதி தோல்வியடைந்தது. CSVஐச் சரிபார்த்து மீண்டும் முயலவும்."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "கோப்பை இறக்குமதி செய்"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "CSV இலிருந்து இறக்குமதி செய்யவும்"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "வேலை"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "வேலை விளக்கம்"
@@ -6619,6 +6728,10 @@ msgstr "தலைப்பை அசல் நிலைக்குத் தி
 msgid "Leave it empty to remove the link."
 msgstr "இணைப்பை அகற்ற அதை காலியாக விடவும்."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "வெளியே விடுங்கள்"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "படிக்கும் போது இந்த நெருக்
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "நேரலை · நீங்கள் திருத்தும்�
 msgid "Live at {url}"
 msgstr "{url} இல் வெளியிடப்பட்டது"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "பெயரிடப்பட்ட நிலைகளை இறக்குமதி செய்யும் முன் உங்கள் நிலைகளை ஏற்றவும். உங்கள் CSV தரவு பாதுகாக்கப்படும்."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "ஏற்றுகிறது"
@@ -6984,6 +7102,7 @@ msgstr "ஏற்றுகிறது…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "தகவல்"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "குறிப்புகள்"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "முதல் {0} பக்கங்கள் மட்டுமே சரிபார்க்கப்பட்டன."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "ஒரே நேரத்தில் முதல் {MAX_IMPORT} வரிசைகள் மட்டுமே இறக்குமதியாகும், {overflow} விடுபடும். மீதியை இறக்குமதி செய்ய கோப்பைப் பிரிக்கவும்."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "காலாவதியானது: உரை மாற்றப்பட்டது."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "விளைவு"
 
@@ -8851,6 +8976,10 @@ msgstr "வேலை இடுகையை ஒட்டவும்"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "{company} இலிருந்து ஒரு செய்தியை ஒட்டவும்"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "வரிசைகளை ஒட்டவும் அல்லது .csv ஐப் பதிவேற்றவும். நெடுவரிசைகள் தானாகவே பொருந்துகின்றன, மேலும் எதையும் சேமிக்கும் முன் பொருத்தத்தை சரிபார்க்கவும்."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "வேலை அறிவிப்பு"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "வேலை இடுகை ஆதாரம்"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "நிலையைப் பயன்பாட்டிலிருந�
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "சரி"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "சுழற்சி"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "PDF ரெண்டரிங் மூலம் சுழற்சி ஆதரிக்கப்படவில்லை."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "வரிசை {row}, {0}: “{value}” என்பதைப் படிக்க முடியவில்லை."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "வரிசைகளின் ஒழுங்கு"
@@ -10563,6 +10703,7 @@ msgstr "துருச் சிவப்பு"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "சம்பளம்"
 
@@ -11736,6 +11877,7 @@ msgstr "தேதியின்படி வரிசைப்படுத்�
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "ஆதாரம்"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "ஒன்றின் கீழ் ஒன்று"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "நிலை"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "நிலை {0} செல்லும் இடம்"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "நிலை இவ்வாறு கணக்கிடப்படும்"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "நிலை தேதி"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "நிலையின் பெயர்"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "நிலையின் முடிவு"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "நிலை {stage}-ஆகவே இருக்கும்"
@@ -11817,6 +11984,10 @@ msgstr "நிலை {stage}-ஆகவே இருக்கும்"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "நிலைகள்"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "தேர்ந்தெடுத்த விண்ணப்பங்�
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "இந்த சேவையகம் நீங்கள் உள்ள
 msgid "This server uses http. The app needs https."
 msgstr "இந்த சர்வர் http ஐப் பயன்படுத்துகிறது. பயன்பாட்டிற்கு https தேவை."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "இந்த சேவையகம் வழக்கமான நிலைகளைப் பயன்படுத்துவதால் கோப்பிலுள்ள நிலைப் பெயர்கள் பாதுகாக்கப்படாது."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "இந்த உள்நுழைவு முயற்சி காலாவதியானது அல்லது ஏற்கனவே பயன்படுத்தப்பட்டது. மீண்டும் உள்நுழையவும்."
@@ -13525,6 +13701,10 @@ msgstr "{0}இல் {completed} புதுப்பிக்கப்பட�
 msgid "Updating preview…"
 msgstr "முன்னோட்டத்தைப் புதுப்பிக்கிறது…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "பதிவேற்ற .csv"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "PDF ஐப் பதிவேற்றி, விண்ணப்பதாரர் கண்காணிப்பு அமைப்பு பிரித்தெடுக்கும் உரையைப் பார்க்கவும்: என்ன காணவில்லை, எது ஒழுங்கற்றது மற்றும் அதை எவ்வாறு சரிசெய்வது. இலவசம், கணக்கு தேவையில்லை."
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "மாதிரியைப் பயன்படுத்தவும்"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

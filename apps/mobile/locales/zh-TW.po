@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# 工作申請已準備好導入} other {# 工作申請已準備好導入}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# 欄} other {# 欄}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, other {# 位聯絡人的電子郵件無效或沒有姓名；其應徵紀錄仍會匯入。}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {# 行沒有公司或角色，將被跳過。} other {# 行沒有公司或角色，將被跳過。}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {每天} other {每 # 天}}"
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {對於 # 日} other {# 天}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {導入 # 職位申請} other {導入 # 職位申請}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, other {已匯入 # 筆應徵紀錄。}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-求職信"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, other {# 列沒有公司或職位，已略過。}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {# 個故事}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {#檢查} other {#檢查}}"
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, other {匯入前，請選擇這 # 個階段的對應階段。}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "活動"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "新增"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "將「{0}」新增為新階段"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "工作申請日期"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "阿拉伯文"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "已存檔（關閉）"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "軟體可以讀取您的履歷嗎？"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "選擇履歷"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "在 Write 中選擇一份與其設計相符的履歷。到那時，這封信就有了它自己的。"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "選擇階段"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "在共享資料之前選擇經過測試的人工智慧提供者。"
@@ -2906,6 +2954,10 @@ msgstr "選擇時間"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "每次批次操作最多可選 200 筆應徵紀錄。"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "為檔案中每個具名階段選擇對應階段，或將其新增為新階段。"
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "顏色 (#RRGGBB)"
 msgid "Colors and level"
 msgstr "顏色與級別"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "{header} 欄位轉到"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "欄"
@@ -3081,6 +3138,7 @@ msgstr "精簡"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "連線已儲存"
 msgid "Contact details"
 msgstr "聯絡資訊"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "聯絡信箱"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "接觸標籤"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "聯絡人姓名"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "聯絡電話"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "聯繫角色"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "聯絡人"
 
@@ -3716,6 +3795,10 @@ msgstr "無法聯絡您的 AI 供應商。請重試或檢查 AI 設定中的金�
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "無法讀取該檔案。請選擇 .csv 檔案後再試一次。"
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "無法共用行事曆事件。請再試一次。"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "無法共用行事曆檔案。請再試一次。"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "無法分享檔案，請重試。"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "建立文件…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "CSV 資料"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "下載 PDF 代替"
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "下載它們"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "修正日期"
 msgid "Fix these in the editor"
 msgstr "在編輯器中修復這些問題"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "匯入前，請修正 CSV 中的這些值，或排除對應的欄位。"
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "將表單平面化，使文字成為頁面的一部分。"
@@ -6039,9 +6138,18 @@ msgstr "匯入已取消。"
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "匯入已取消。如果上傳已完成，請先重新整理「文件」，然後再試一次。"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "匯入失敗。請檢查 CSV 後再試一次。"
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "匯入文件"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "從 CSV 匯入"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "工作"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "職缺描述"
@@ -6619,6 +6728,10 @@ msgstr "留空則會將標題重設為原始值。"
 msgid "Leave it empty to remove the link."
 msgstr "將其留空以刪除連結。"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "省略"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "如此接近的行在閱讀時可以連在一起。至少使用 {minimum
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "編輯時即時更新"
 msgid "Live at {url}"
 msgstr "已發布於 {url}"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "匯入具名階段前，請先載入您的階段。您的 CSV 資料會保留。"
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "載入中"
@@ -6984,6 +7102,7 @@ msgstr "載入中…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "資訊"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "備註"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "僅檢查前 {0} 頁。"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "一次只會匯入前 {MAX_IMPORT} 列，其餘 {overflow} 列不會匯入。請將檔案拆開，再匯入剩下的部分。"
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "已過時：此後文字已更改。"
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "成果"
 
@@ -8851,6 +8976,10 @@ msgstr "貼上職缺說明"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "貼上 {company} 的訊息"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "貼上行或上傳 .csv。列會自動匹配，您可以在儲存任何內容之前檢查匹配情況。"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "職缺公告"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "職缺發布來源"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "停用階段"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "正確的"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "旋轉"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "PDF 渲染不支援旋轉。"
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "第 {row} 列，{0}：無法讀取「{value}」。"
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "列順序"
@@ -10563,6 +10703,7 @@ msgstr "鐵鏽紅"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "薪資"
 
@@ -11736,6 +11877,7 @@ msgstr "依日期排序"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "來源"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "上下堆疊"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "階段"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "階段{0}對應至"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "階段歸類為"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "階段日期"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "階段名稱"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "階段結果"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "階段維持為「{stage}」"
@@ -11817,6 +11984,10 @@ msgstr "階段維持為「{stage}」"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "階段"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "為所選應徵紀錄加上標籤"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "伺服器回報的地址與您輸入的不同。請輸入其使用的地
 msgid "This server uses http. The app needs https."
 msgstr "此伺服器使用 http。應用程式需要 https。"
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "此伺服器使用標準階段，因此不會保留檔案中的階段名稱。"
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "這次登入嘗試已過期或已被使用。請重新登入。"
@@ -13525,6 +13701,10 @@ msgstr "已更新 {completed} 份，共 {0} 份。已略過鎖定的文件及用
 msgid "Updating preview…"
 msgstr "正在更新預覽…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "上傳 .csv"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "上傳 PDF 並查看申請人追蹤系統提取的文字：缺少什麼、有什麼問題以及如何修復。免費，無需帳戶。"
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "使用範例"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

@@ -704,6 +704,7 @@ const { ApplicationsViewFrame } = load("features/applications-board/views.tsx", 
 	"@/components/collection-header": { CollectionHeader: "CollectionHeader" },
 	"./search": { useApplicationSearch: () => ({ search: "", setSearch() {} }) },
 	"@/features/applications/add-sheet": { AddApplicationSheet: "AddApplicationSheet" },
+	"@/features/applications/import-sheet": { ImportApplicationsSheet: "ImportApplicationsSheet" },
 	"@/features/applications/lane-notice": { LaneNotice: "LaneNotice" },
 	"@/features/applications/lane-settings": { LaneSettings: "LaneSettings" },
 });
@@ -718,6 +719,13 @@ for (const view of ["list", "board", "calendar", "insights"]) {
 	reset();
 	createParam = "1";
 	let tree = render(ApplicationsViewFrame, { current: view, children: "View" });
+	const header = nodes(tree).find((node) => node.type === "CollectionHeader");
+	control(header.props.actions, "Import from CSV").onPress();
+	tree = render(ApplicationsViewFrame, { current: view, children: "View" });
+	assert.equal(nodes(tree).find((node) => node.type === "ImportApplicationsSheet").props.open, true);
+	nodes(tree)
+		.find((node) => node.type === "ImportApplicationsSheet")
+		.props.onClose();
 	let sheet = nodes(tree).find((node) => node.type === "AddApplicationSheet");
 	assert.ok(sheet, `${view}: ?create opens Save job in place`);
 	sheet.props.onClose();
@@ -2411,3 +2419,341 @@ assert.equal(control(menuView(), "Save").disabled, true);
 control(menuView(), "Back").onPress();
 assert.equal(tagsAction().disabled, true);
 console.log("PASS native builder tags use draft flush, retain body, and respect tag limits and locks");
+
+// Native CSV executes the shared parser; only picker, RPC and sharing cross platform boundaries here.
+const csvDomain = load("../../../packages/schema/src/applications/csv.ts", { "./data": applicationData });
+let csvScope = "csv-account-a";
+let csvPickerResult = { canceled: false, assets: [{ uri: "cache://fictional.csv" }] };
+let csvPickedText = "Company,Role\nFictional Cedar,Engineer\n=2,";
+let csvPipeline = { revision: 1, lanes: defaultLanes };
+let csvServerPipeline = csvPipeline;
+let csvRejectImport = false;
+let csvImportBarrier = null;
+let csvPickerBarrier = null;
+let csvMetadataFailure = null;
+let csvRefetchFailure = false;
+let csvSupported = true;
+let csvStageFailure = null;
+let csvStageFailed = false;
+let csvCleanup;
+const csvQuery = () => ({
+	isSuccess: !csvMetadataFailure,
+	data: csvMetadataFailure ? undefined : { supported: csvSupported, pipeline: csvPipeline },
+	lanes: csvPipeline.lanes,
+	refetch: async () => {
+		if (!csvRefetchFailure) {
+			csvMetadataFailure = null;
+			csvPipeline = csvServerPipeline;
+		}
+		return { isSuccess: !csvRefetchFailure };
+	},
+});
+const csvReact = {
+	...react,
+	useEffect(effect) {
+		const mounted = react.useRef(false);
+		if (!mounted.current) {
+			mounted.current = true;
+			csvCleanup = effect();
+		}
+	},
+};
+const { ImportApplicationsSheet: NativeCsvImport } = load("features/applications/import-sheet.tsx", {
+	react: csvReact,
+	"@lingui/core/macro": {
+		plural: (value, forms) => (value === 1 ? forms.one : forms.other).replaceAll("#", String(value)),
+	},
+	"@reactive-resume/schema/applications/csv": csvDomain,
+	"@tanstack/react-query": {
+		useQueryClient: () => ({
+			setQueryData: (_key, value) => {
+				csvPipeline = value.pipeline;
+			},
+		}),
+	},
+	"expo-document-picker": {
+		getDocumentAsync: async () => {
+			if (csvPickerBarrier) await csvPickerBarrier;
+			return csvPickerResult;
+		},
+	},
+	"expo-file-system": {
+		File: class {
+			async text() {
+				return csvPickedText;
+			}
+			delete() {
+				calls.push("csv-cache-deleted");
+			}
+		},
+	},
+	"./lane-queries": {
+		useApplicationLanes: csvQuery,
+		applicationLanesQueryOptions: () => ({ queryKey: ["csv-lanes"] }),
+	},
+	"./lanes": lanes,
+	"./queries": { useInvalidateApplications: () => async () => calls.push("csv-invalidated") },
+	"./stages": stages,
+	"@/auth/session": {
+		useSession: () => ({ status: "signed-in", server: "csv-server" }),
+		getServer: () => "csv-server",
+		getAccountScope: () => csvScope,
+	},
+	"@/api/client": {
+		client: {
+			applications: {
+				lanes: {
+					create: async (input, options) => {
+						calls.push({ csvStage: input, scope: options.context.scope });
+						if (input.expectedRevision !== csvServerPipeline.revision) throw new Error("Stage revision changed");
+						if (!csvStageFailed && csvStageFailure === "second-create" && input.label === "Portfolio review") {
+							csvStageFailed = true;
+							throw new Error("Second stage unavailable");
+						}
+						const created = {
+							...input,
+							id: `csv-created-stage-${csvServerPipeline.revision + 1}`,
+							position: 7,
+							systemKey: null,
+							retiredAt: null,
+						};
+						csvServerPipeline = {
+							revision: csvServerPipeline.revision + 1,
+							lanes: [...csvServerPipeline.lanes, created],
+						};
+						if (!csvStageFailed && csvStageFailure === "lost-create-response") {
+							csvStageFailed = true;
+							throw new Error("Stage committed but reply was lost");
+						}
+						return csvServerPipeline;
+					},
+				},
+				import: async (input, options) => {
+					calls.push({ csvImport: input, scope: options.context.scope, signal: options.signal });
+					if (csvImportBarrier) await csvImportBarrier;
+					if (csvRejectImport) throw new Error("Import unavailable");
+					return { imported: input.items.length };
+				},
+			},
+		},
+	},
+	"@/features/workspace/share": {
+		shareText: async (file, body) => calls.push({ csvShare: { file, body } }),
+	},
+	"@/ui": { ...ui, Sheet: "Sheet" },
+});
+reset();
+let csvChild = NativeCsvImport({ open: true, onClose: () => calls.push("csv-closed") });
+const csvView = () => {
+	const sheet = render(csvChild.type, csvChild.props);
+	return element("csv-test", {}, sheet, sheet.props.footer);
+};
+let csvTree = csvView();
+control(csvTree, "Upload .csv").onPress();
+await settle();
+csvTree = csvView();
+const csvEditor = control(csvTree, "CSV data");
+assert.equal(csvEditor.value, csvPickedText);
+assert.equal(csvEditor.minLines, 4);
+assert.ok(calls.includes("csv-cache-deleted"));
+assert.equal(
+	calls.filter((call) => call?.csvImport || call?.csvStage).length,
+	0,
+	"Review never writes applications or stages",
+);
+const csvNodes = nodes(csvTree);
+assert.ok(
+	csvNodes.findIndex((node) => node.type === "Text" && node.props.children.flat().includes("Columns")) <
+		csvNodes.findIndex((node) => node.props.label === "CSV data"),
+);
+control(csvTree, "Download them").onPress();
+await settle();
+assert.equal(csvDomain.parseCsv(calls.find((call) => call?.csvShare).csvShare.body)[1][0], "'=2");
+let csvRelease;
+csvImportBarrier = new Promise((resolve) => {
+	csvRelease = resolve;
+});
+control(csvView(), "Import 1 application").onPress();
+await settle();
+assert.equal(control(csvView(), "Upload .csv").disabled, true);
+assert.equal(control(csvView(), "CSV data").editable, false);
+csvRelease();
+csvImportBarrier = null;
+await settle();
+assert.deepEqual(calls.find((call) => call?.csvImport).csvImport.items, [
+	{ company: "Fictional Cedar", role: "Engineer" },
+]);
+assert.equal(calls.find((call) => call?.csvImport).scope, "csv-account-a");
+assert.ok(calls.includes("csv-closed"));
+
+// Invalid values block saving; leaving that column out uses the corrected shared mapping.
+reset();
+csvChild = NativeCsvImport({ open: true, onClose() {} });
+control(csvView(), "CSV data").onChangeText("Company,Role,Stage\nFictional Elm,Designer,bogus");
+assert.equal(control(csvView(), "Import 0 applications").disabled, true);
+control(csvView(), "Import 0 applications").onPress();
+await settle();
+assert.equal(calls.filter((call) => call?.csvImport).length, 0);
+control(csvView(), "Column Stage goes to").onChange("");
+assert.equal(control(csvView(), "Import 1 application").disabled, false);
+
+// Missing metadata blocks named stages through a failed refresh, preserving the CSV for an explicit retry.
+reset();
+csvMetadataFailure = "pending";
+csvChild = NativeCsvImport({ open: true, onClose() {} });
+const csvWithLane = "Company,Role,Lane,Lane Category\nFictional Elm,Designer,Interview,interview";
+control(csvView(), "CSV data").onChangeText(csvWithLane);
+assert.equal(control(csvView(), "Import 1 application").disabled, true);
+csvMetadataFailure = "error";
+csvRefetchFailure = true;
+control(csvView(), "Retry").onPress();
+await settle();
+assert.equal(control(csvView(), "CSV data").value, csvWithLane);
+assert.equal(control(csvView(), "Import 1 application").disabled, true);
+csvRefetchFailure = false;
+control(csvView(), "Retry").onPress();
+await settle();
+assert.equal(control(csvView(), "Import 1 application").disabled, false);
+assert.equal(calls.filter((call) => call?.csvImport || call?.csvStage).length, 0);
+
+// A created stage survives an import failure; retry links it instead of creating it again.
+reset();
+csvChild = NativeCsvImport({ open: true, onClose() {} });
+control(csvView(), "CSV data").onChangeText(
+	"Company,Role,Lane,Lane Category\nFictional Elm,Designer,Pairing session,interview",
+);
+assert.equal(control(csvView(), "Import 1 application").disabled, true);
+control(csvView(), "Stage Pairing session goes to").onChange("new");
+csvRejectImport = true;
+control(csvView(), "Import 1 application").onPress();
+await settle();
+assert.equal(control(csvView(), "Stage Pairing session goes to").value, "csv-created-stage-2");
+assert.ok(nodes(csvView()).some((node) => node.props.message === "Import failed. Check the CSV and try again."));
+csvRejectImport = false;
+control(csvView(), "Import 1 application").onPress();
+await settle();
+assert.equal(calls.filter((call) => call?.csvStage).length, 1);
+assert.equal(calls.filter((call) => call?.csvImport).length, 2);
+assert.equal(calls.filter((call) => call?.csvImport).at(-1).csvImport.items[0].laneId, "csv-created-stage-2");
+
+for (const failure of ["second-create", "lost-create-response"]) {
+	reset();
+	csvPipeline = { revision: 1, lanes: defaultLanes };
+	csvServerPipeline = csvPipeline;
+	csvStageFailure = failure;
+	csvStageFailed = false;
+	csvChild = NativeCsvImport({ open: true, onClose() {} });
+	const value =
+		"Company,Role,Lane,Lane Category\nFictional Elm,Designer I,Pairing session,interview\nFictional Elm,Designer II,Portfolio review,interview";
+	control(csvView(), "CSV data").onChangeText(value);
+	for (const label of ["Pairing session", "Portfolio review"])
+		control(csvView(), `Stage ${label} goes to`).onChange("new");
+	control(csvView(), "Import 2 applications").onPress();
+	await settle();
+	assert.equal(calls.filter((call) => call?.csvImport).length, 0);
+	assert.equal(control(csvView(), "CSV data").value, value);
+	assert.equal(control(csvView(), "Import 2 applications").disabled, true);
+	for (const label of ["Pairing session", "Portfolio review"]) {
+		const existing = csvPipeline.lanes.find((lane) => lane.label === label);
+		control(csvView(), `Stage ${label} goes to`).onChange(existing?.id ?? "new");
+	}
+	csvStageFailure = null;
+	control(csvView(), "Import 2 applications").onPress();
+	await settle();
+	for (const label of ["Pairing session", "Portfolio review"])
+		assert.equal(csvPipeline.lanes.filter((lane) => lane.label === label).length, 1);
+	assert.deepEqual(
+		calls.filter((call) => call?.csvStage).map((call) => call.csvStage.expectedRevision),
+		failure === "second-create" ? [1, 2, 2] : [1, 2],
+	);
+	assert.equal(calls.find((call) => call?.csvImport).csvImport.items.length, 2);
+}
+
+reset();
+csvSupported = false;
+csvChild = NativeCsvImport({ open: true, onClose() {} });
+control(csvView(), "CSV data").onChangeText(
+	"Company,Role,Lane,Lane Category\nFictional Elm,Designer,Custom interview,interview",
+);
+control(csvView(), "Import 1 application").onPress();
+await settle();
+assert.deepEqual(calls.find((call) => call?.csvImport).csvImport.items, [
+	{ company: "Fictional Elm", role: "Designer", status: "interview" },
+]);
+assert.equal(
+	calls.filter((call) => call?.csvStage).length,
+	0,
+	"Old servers receive canonical stages without synthetic lane IDs",
+);
+csvSupported = true;
+
+reset();
+csvChild = NativeCsvImport({ open: true, onClose() {} });
+control(csvView(), "CSV data").onChangeText(
+	"Company,Role\n" + Array.from({ length: 501 }, (_, index) => `Fictional Elm,Role ${index}`).join("\n"),
+);
+assert.ok(
+	nodes(csvView()).some(
+		(node) =>
+			node.type === "Text" &&
+			node.props.children.flat().join("").includes("Only the first 500 rows import at once, leaving out 1."),
+	),
+);
+control(csvView(), "Import 500 applications").onPress();
+await settle();
+assert.equal(calls.find((call) => call?.csvImport).csvImport.items.length, 500);
+
+reset();
+csvChild = NativeCsvImport({ open: true, onClose() {} });
+control(csvView(), "CSV data").onChangeText("Company,Role\nPrivate Fictional Job,Engineer");
+csvScope = "csv-account-b";
+control(csvView(), "Import 1 application").onPress();
+await settle();
+assert.equal(
+	calls.filter((call) => call?.csvImport || call?.csvStage).length,
+	0,
+	"An account change blocks dispatch of the previous account's CSV",
+);
+csvCleanup();
+csvScope = "csv-account-a";
+
+reset();
+csvChild = NativeCsvImport({ open: true, onClose() {} });
+let releasePicker;
+csvPickerBarrier = new Promise((resolve) => {
+	releasePicker = resolve;
+});
+control(csvView(), "Upload .csv").onPress();
+csvScope = "csv-account-b";
+releasePicker();
+csvPickerBarrier = null;
+await settle();
+assert.equal(control(csvView(), "CSV data").value, "", "A late picker result cannot publish another account's rows");
+assert.ok(calls.includes("csv-cache-deleted"));
+csvCleanup();
+csvScope = "csv-account-a";
+
+reset();
+csvChild = NativeCsvImport({ open: true, onClose: () => calls.push("csv-closed") });
+control(csvView(), "CSV data").onChangeText("Company,Role\nFictional Cedar,Engineer");
+csvImportBarrier = new Promise((resolve) => {
+	csvRelease = resolve;
+});
+control(csvView(), "Import 1 application").onPress();
+await settle();
+const departedRequest = calls.find((call) => call?.csvImport);
+csvCleanup();
+assert.equal(departedRequest.signal.aborted, true);
+csvScope = "csv-account-b";
+csvRelease();
+csvImportBarrier = null;
+await settle();
+assert.ok(
+	!calls.includes("csv-closed") && !calls.includes("csv-invalidated"),
+	"A late import response stays with its departed account",
+);
+csvScope = "csv-account-a";
+csvPickerResult = { canceled: true, assets: [] };
+console.log(
+	"PASS native CSV review-first upload, skipped-row export, explicit import, mapping correction, busy state, stage retry and account-bound dispatch",
+);

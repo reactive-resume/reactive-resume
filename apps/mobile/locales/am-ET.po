@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {ለማስመጣት ዝግጁ # የስራ ማመልከቻ} other {ለማስመጣት ዝግጁ የሆኑ # የስራ ማመልከቻዎች}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# ዓምድ} other {# ዓምዶች}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# እውቂያ ልክ ያልሆነ ኢሜይል አለው ወይም ስም የለውም፤ ቢሆንም ማመልከቻው ይመጣል።} other {# እውቂያዎች ልክ ያልሆነ ኢሜይል አላቸው ወይም ስም የላቸውም፤ ቢሆንም ማመልከቻዎቻቸው ይመጣሉ።}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {# ረድፍ ኩባንያ ወይም ሚና የለውም እና ይዘለላል።} other {# ረድፎች ኩባንያ ወይም ሚና የላቸውም እና ይዘለላሉ።}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {በየቀኑ} other {በየ# ቀናት}}"
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {ለ # ቀን} other {ለ # ቀናት}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {# የስራ ማመልከቻ አስመጣ} other {# የስራ ማመልከቻዎችን አስመጣ}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {# ማመልከቻ ገብቷል።} other {# ማመልከቻዎች ገብተዋል።}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-የሽፋን-ደብዳቤ"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# ረድፍ ኩባንያ ወይም ሚና ስላልነበረው ተዘሏል።} other {# ረድፎች ኩባንያ ወይም ሚና ስላልነበራቸው ተዘለዋል።}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# ታሪክ} other {# ታሪኮች}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {ለመፈተሽ #} other {ለመፈተሽ #}}"
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {ከማስመጣትዎ በፊት # ደረጃ የሚሄድበትን ይምረጡ።} other {ከማስመጣትዎ በፊት # ደረጃዎች የሚሄዱበትን ይምረጡ።}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "እንቅስቃሴ"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "ያክሉ"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "“{0}”ን እንደ አዲስ ደረጃ ያክሉ"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "የሥራ ማመልከቻ ቀን"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "ዓረብኛ"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "በማህደር የተቀመጠ (ይዘጋዋል)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "ሶፍትዌር የእርስዎን የስራ ልምድ ማንበብ ይ�
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "የሥራ ማመልከቻ ታሪክ ይምረጡ"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "ከዲዛይኑ ጋር ለማዛመድ በጻፍ ውስጥ የመማሪያ መጽሐፍ ምረጥ። እስከዚያ ድረስ ደብዳቤው የራሱ አለው."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "ደረጃ ይምረጡ"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "ውሂብ ከማጋራትዎ በፊት የተፈተነ AI አቅራቢ ይምረጡ።"
@@ -2906,6 +2954,10 @@ msgstr "ጊዜ ይምረጡ"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "በጅምላ እርምጃ እስከ 200 የሚደርሱ የስራ ማመልከቻዎችን ይምረጡ።"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "በፋይሉ ውስጥ የተሰየመው እያንዳንዱ ደረጃ የሚሄድበትን ይምረጡ፣ ወይም እንደ አዲስ ደረጃ ያክሉት።"
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "ቀለም (#RRGGBB)"
 msgid "Colors and level"
 msgstr "ቀለሞች እና ደረጃ"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "አምድ {header} ይሄዳል"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "አምዶች"
@@ -3081,6 +3138,7 @@ msgstr "የታመቀ"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "ግንኙነት ተቀምጧል"
 msgid "Contact details"
 msgstr "የመገኛ ዝርዝሮች"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "የእውቂያ ኢሜይል"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "የእውቂያ መለያ"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "የእውቂያ ስም"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "የእውቂያ ስልክ"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "የግንኙነት ሚና"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "እውቂያዎች"
 
@@ -3716,6 +3795,10 @@ msgstr "የእርስዎን AI አቅራቢ ማግኘት አልተቻለም። �
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "ያንን ፋይል ማንበብ አልተቻለም። የ.csv ፋይል ይምረጡ እና እንደገና ይሞክሩ።"
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "የቀን መቁጠሪያውን ክስተት ማጋራት አልተቻ�
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "የቀን መቁጠሪያ ፋይሉን ማጋራት አልተቻለም። እንደገና ይሞክሩ።"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "ፋይሉን ማጋራት አልተቻለም። እንደገና ይሞክሩ።"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "ሰነድ በመፍጠር ላይ…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "የCSV ውሂብ"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "በምትኩ PDF አውርድ"
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "አውርዳቸው"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "ቀኖቹን አስተካክል"
 msgid "Fix these in the editor"
 msgstr "እነዚህን በአርታዒው ውስጥ ያስተካክሉ"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "ከማስመጣትዎ በፊት በCSV ውስጥ እነዚህን እሴቶች ያስተካክሉ፣ ወይም ተዛማጅ ዓምዶቻቸውን ይተዉ።"
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "ጽሁፉ የገጹ አካል እንዲሆን ቅጹን ጠፍጣፋ ያድርጉት።"
@@ -6039,9 +6138,18 @@ msgstr "ማስመጣት ተሰርዟል።"
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "ማስመጣት ተሰርዟል። ሰቀላው ካለቀ እንደገና ከመሞከርዎ በፊት ሰነዶችን ያድሱ።"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "ማስመጣት አልተሳካም። CSV ን ያረጋግጡ እና እንደገና ይሞክሩ።"
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "ፋይል አስመጣ"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "ከCSV አስመጣ"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "ሥራ"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "የሥራ መግለጫ"
@@ -6619,6 +6728,10 @@ msgstr "ነጥሉን ባዶ ትተው ርዕሱን ወደ መጀመሪያው ሁ
 msgid "Leave it empty to remove the link."
 msgstr "አገናኙን ለማስወገድ ባዶውን ይተዉት።"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "ተውት።"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "ይህ የተጠጋ መስመሮች ሲነበቡ አብረው ሊሄዱ 
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "ቀጥታ · ሲያርትዑ ይዘምናል።"
 msgid "Live at {url}"
 msgstr "በ{url} ይገኛል"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "በስም የተሰየሙ ደረጃዎችን ከማስመጣትዎ በፊት ደረጃዎችዎን ይጫኑ። የCSV ውሂብዎ ይጠበቃል።"
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "በመጫን ላይ"
@@ -6984,6 +7102,7 @@ msgstr "በመጫን ላይ…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "መረጃ"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "ማስታወሻዎች"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "የመጀመሪያዎቹ {0} ገጾች ብቻ ተረጋግጠዋል።"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "በአንድ ጊዜ የመጀመሪያዎቹ {MAX_IMPORT} ረድፎች ብቻ ይገባሉ፣ {overflow} ደግሞ ይቀራሉ። የቀሩትን ለማስመጣት ፋይሉን ይክፈሉት።"
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "ጊዜው ያለፈበት፡ ጽሑፉ ከዚያ ጊዜ ጀምሮ ተቀይሯል።"
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "ውጤት"
 
@@ -8851,6 +8976,10 @@ msgstr "የስራ ማስታወቂያን ለጥፍ"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "ከ{company} መልእክት ለጥፍ"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "ረድፎችን ለጥፍ ወይም .csv ይስቀሉ። አምዶች በራስ-ሰር ይዛመዳሉ፣ እና ምንም ነገር ከመቀመጡ በፊት ግጥሚያውን ይፈትሹ።"
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "የሥራ ማስታወቂያ"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "የሥራ ማስታወቂያ ምንጭ"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "ደረጃውን ከአገልግሎት ያውጡ"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "ቀኝ"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "ማሽከርከር"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "ማሽከርከር በPDF አተረጓጎም አይደገፍም።"
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "ረድፍ {row}፣ {0}፦ “{value}” ማንበብ አልተቻለም።"
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "የረድፎች ቅደም ተከተል"
@@ -10563,6 +10703,7 @@ msgstr "የዝገት ቡናማ"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "ደመወዝ"
 
@@ -11736,6 +11877,7 @@ msgstr "በቀን ደርድር"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "ምንጭ"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "በተደራራቢ ረድፎች"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "ደረጃ"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "ደረጃ {0} ወደዚህ ይሄዳል"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "ደረጃው የሚቆጠረው እንደ"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "የደረጃ ቀን"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "የደረጃ ስም"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "የደረጃ ውጤት"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "ደረጃው {stage} ሆኖ ይቆያል"
@@ -11817,6 +11984,10 @@ msgstr "ደረጃው {stage} ሆኖ ይቆያል"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "ደረጃዎች"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "ለተመረጡት የሥራ ማመልከቻዎች መለያ ይስጡ"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "ይህ አገልጋይ እርስዎ ካስገቡት የተለየ አድ�
 msgid "This server uses http. The app needs https."
 msgstr "ይህ አገልጋይ http ይጠቀማል። መተግበሪያው https ያስፈልገዋል."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "ይህ አገልጋይ መደበኛ ደረጃዎችን ይጠቀማል፣ ስለዚህ በፋይሉ ውስጥ ያሉ የደረጃ ስሞች አይጠበቁም።"
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "ይህ የመግቢያ ሙከራ ጊዜው አልፎበታል ወይም አስቀድሞ ጥቅም ላይ ውሏል። እንደገና ይግቡ።"
@@ -13525,6 +13701,10 @@ msgstr "የዘመነው {completed} ከ{0}። የተቆለፉ ሰነዶች እ�
 msgid "Updating preview…"
 msgstr "ቅድመ እይታን በማዘመን ላይ…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr ".csv ስቀል"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "PDF ይስቀሉ እና አመልካች የሚከታተል ስርዓት ያወጣውን ጽሁፍ ይመልከቱ፡ ምን ይጎድላል፣ ያልተስተካከለው እና እንዴት እንደሚስተካከል ይመልከቱ። ነፃ፣ ምንም መለያ አያስፈልግም።"
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "ናሙና ይጠቀሙ"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

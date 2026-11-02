@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# Prošnja za zaposlitev pripravljena za uvoz} other {# Prošnje za delo, pripravljene za uvoz}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# stolpec} two {# stolpca} few {# stolpci} other {# stolpcev}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# stik ima neveljaven e-poštni naslov ali nima imena; njegova prijava se vseeno uvozi.} two {# stika imata neveljaven e-poštni naslov ali nimata imena; njuni prijavi se vseeno uvozita.} few {# stiki imajo neveljaven e-poštni naslov ali nimajo imena; njihove prijave se vseeno uvozijo.} other {# stikov ima neveljaven e-poštni naslov ali nima imena; njihove prijave se vseeno uvozijo.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {Vrstica # nima podjetja ali vloge in bo preskočena.} other {Vrstice # nimajo podjetja ali vloge in bodo preskočene.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {Vsak dan} other {Vsakih # dni}}"
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {Za dan #} other {Za # dni}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {Uvoz prošnje za zaposlitev #} other {Uvozite prošnje za zaposlitev #}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {Uvožena # prijava.} two {Uvoženi # prijavi.} few {Uvožene # prijave.} other {Uvoženih # prijav.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-Spremno-pismo"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# vrstica ni imela podjetja ali vloge in je bila preskočena.} two {# vrstici nista imeli podjetja ali vloge in sta bili preskočeni.} few {# vrstice niso imele podjetja ali vloge in so bile preskočene.} other {# vrstic ni imelo podjetja ali vloge in so bile preskočene.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# zgodba} two {# zgodbi} few {# zgodbe} other {# zgodb}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {# preveriti} other {# preveriti}}"
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {Pred uvozom izberite, kam spada # stopnja.} two {Pred uvozom izberite, kam spadata # stopnji.} few {Pred uvozom izberite, kam spadajo # stopnje.} other {Pred uvozom izberite, kam spada # stopenj.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "dejavnost"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Dodaj"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "Dodaj »{0}« kot novo stopnjo"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "datum prijave na delo"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "Arabščina"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "Arhivirano (zapre)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "Ali lahko programska oprema prebere vaš življenjepis?"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "Izberite življenjepis"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "V aplikaciji Write izberite življenjepis, ki bo ustrezal njegovemu dizajnu. Do takrat pa ima pismo svoje."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "Izberite stopnjo"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "Pred deljenjem podatkov izberite preizkušenega ponudnika AI."
@@ -2906,6 +2954,10 @@ msgstr "Izberite čas"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "Izberite do 200 prijav na skupno akcijo."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "Izberite, kam spada vsaka poimenovana stopnja v datoteki, ali jo dodajte kot novo stopnjo."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "Barva (#RRGGBB)"
 msgid "Colors and level"
 msgstr "Barve in raven"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "Stolpec {header} gre v"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "Stolpci"
@@ -3081,6 +3138,7 @@ msgstr "Strnjeno"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "Povezava shranjena"
 msgid "Contact details"
 msgstr "Kontaktni podatki"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "Kontaktni email"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "Oznaka stika"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "Ime kontakta"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "Kontaktni telefon"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "Kontaktna vloga"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "Kontakti"
 
@@ -3716,6 +3795,10 @@ msgstr "Vašega ponudnika AI ni bilo mogoče doseči. Poskusite znova ali prever
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "Te datoteke ni bilo mogoče prebrati. Izberite datoteko .csv in poskusite znova."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "Koledarskega dogodka ni bilo mogoče deliti. Poskusite znova."
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Koledarske datoteke ni bilo mogoče deliti. Poskusite znova."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "Datoteke ni bilo mogoče deliti. Poskusite znova."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "Ustvarjanje dokumenta …"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "podatki CSV"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "Namesto tega prenesite PDF"
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "Prenesite jih"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "Popravite datume"
 msgid "Fix these in the editor"
 msgstr "Popravite jih v urejevalniku"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "Pred uvozom popravite te vrednosti v CSV ali izpustite ustrezne stolpce."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "Sploščite obrazec, da besedilo postane del strani."
@@ -6039,9 +6138,18 @@ msgstr "Uvoz preklican."
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "Uvoz preklican. Če je bilo nalaganje končano, pred ponovnim poskusom osvežite Dokumente."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "Uvoz ni uspel. Preverite CSV in poskusite znova."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "Uvozi datoteko"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "Uvoz iz CSV"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "Delo"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "Opis delovnega mesta"
@@ -6619,6 +6728,10 @@ msgstr "Pustite prazno, da ponastavite naslov na izvirnega."
 msgid "Leave it empty to remove the link."
 msgstr "Pustite prazno, da odstranite povezavo."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "Pusti ven"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "Vrstice tako blizu lahko tečejo skupaj, ko jih berete. Uporabite vsaj {
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "V živo · se posodablja med urejanjem"
 msgid "Live at {url}"
 msgstr "Objavljeno na {url}"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "Pred uvozom poimenovanih stopenj naložite svoje stopnje. Vaši podatki CSV se ohranijo."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "Nalaganje"
@@ -6984,6 +7102,7 @@ msgstr "Nalaganje …"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "Informacije"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "Opombe"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "Preverjene so bile samo prve strani {0}."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "Naenkrat se uvozi samo prvih {MAX_IMPORT} vrstic, {overflow} pa ostane zunaj. Razdelite datoteko, da uvozite še preostale."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "Zastarelo: besedilo se je od takrat spremenilo."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "Rezultat"
 
@@ -8851,6 +8976,10 @@ msgstr "Prilepite objavo za delo"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "Prilepite sporočilo od {company}"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "Prilepite vrstice ali naložite .csv. Stolpci se ujemajo samodejno in preverite ujemanje, preden kar koli shranite."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "Oglas za delo"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "vir objave zaposlitve"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "Umakni stopnjo"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "prav"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "Rotacija"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "Upodabljanje PDF ne podpira rotacije."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "Vrstica {row}, {0}: ni bilo mogoče prebrati »{value}«."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "Vrstni red vrstic"
@@ -10563,6 +10703,7 @@ msgstr "Rja"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "Plača"
 
@@ -11736,6 +11877,7 @@ msgstr "Razvrsti po datumu"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "Vir"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "Eno pod drugim"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "Stopnja"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "Stopnja {0} spada v"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "Stopnja šteje kot"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "Datum stopnje"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "Ime stopnje"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "Izid stopnje"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "Stopnja ostane {stage}"
@@ -11817,6 +11984,10 @@ msgstr "Stopnja ostane {stage}"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "Faze"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "Označite izbrane prijave"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "Ta strežnik poroča o drugačnem naslovu od tistega, ki ste ga vnesli. 
 msgid "This server uses http. The app needs https."
 msgstr "Ta strežnik uporablja http. Aplikacija potrebuje https."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "Ta strežnik uporablja standardne stopnje, zato se imena stopenj iz datoteke ne ohranijo."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "Ta poskus prijave je potekel ali je bil že uporabljen. Znova se prijavite."
@@ -13525,6 +13701,10 @@ msgstr "Posodobljeno: {completed} od {0}. Zaklenjeni dokumenti in pisma za javne
 msgid "Updating preview…"
 msgstr "Posodabljanje predogleda …"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "Naložite .csv"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "Naložite PDF in si oglejte besedilo, ki ga izvleče sistem za sledenje prosilcem: kaj manjka, kaj ni v redu in kako to popraviti. Brezplačno, račun ni potreben."
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "Uporabi vzorec"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

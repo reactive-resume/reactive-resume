@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# žádost připravena k importu} few {# žádosti připraveny k importu} many {# žádosti připraveno k importu} other {# žádostí připraveno k importu}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# sloupec} few {# sloupce} other {# sloupců}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# kontakt má neplatný e-mail nebo nemá jméno; jeho žádost se přesto importuje.} few {# kontakty mají neplatný e-mail nebo nemají jméno; jejich žádosti se přesto importují.} many {# kontaktu má neplatný e-mail nebo nemá jméno; jejich žádosti se přesto importují.} other {# kontaktů má neplatný e-mail nebo nemá jméno; jejich žádosti se přesto importují.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {Řádek # nemá žádnou společnost ani roli a bude přeskočen.} other {Řádky # nemají žádnou společnost ani roli a budou přeskočeny.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {Každý den} few {Každé # dny} other {Každých # dn�
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {Za den #} other {Za # dní}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {Importovat # žádost} few {Importovat # žádosti} many {Importovat # žádosti} other {Importovat # žádostí}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {Importována # žádost.} few {Importovány # žádosti.} other {Importováno # žádostí.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-Motivační-dopis"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {# řádek neměl společnost ani pozici a byl přeskočen.} few {# řádky neměly společnost ani pozici a byly přeskočeny.} other {# řádků nemělo společnost ani pozici a bylo přeskočeno.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# příběh} few {# příběhy} many {# příběhu} other {# příběhů}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {# ke kontrole} other {# ke kontrole}}"
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {Před importem vyberte, kam se má zařadit # fáze.} few {Před importem vyberte, kam se mají zařadit # fáze.} other {Před importem vyberte, kam se má zařadit # fází.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "Aktivita"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Přidat"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "Přidat „{0}“ jako novou fázi"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "Datum žádosti"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "Arabština"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "Archivováno (zavře se)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "Může software číst váš životopis?"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "Vyberte životopis"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "Vyberte si životopis v Write tak, aby odpovídal jeho designu. Do té doby má dopis vlastní."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "Vyberte fázi"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "Před sdílením dat vyberte testovaného poskytovatele AI."
@@ -2906,6 +2954,10 @@ msgstr "Vyberte čas"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "Vyberte si až 200 žádostí o zaměstnání na hromadnou akci."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "Vyberte, kam se má zařadit každá fáze uvedená v souboru, nebo ji přidejte jako novou."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "Barva (#RRGGBB)"
 msgid "Colors and level"
 msgstr "Barvy a úroveň"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "Sloupec {header} přejde na"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "Sloupce"
@@ -3081,6 +3138,7 @@ msgstr "Kompaktní"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "Připojení uloženo"
 msgid "Contact details"
 msgstr "Kontaktní údaje"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "Kontaktní email"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "Kontaktní štítek"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "Jméno kontaktu"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "Kontaktní telefon"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "Kontaktní role"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "Kontakty"
 
@@ -3716,6 +3795,10 @@ msgstr "Nepodařilo se spojit s vaším poskytovatelem AI. Zkuste to znovu nebo 
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "Tento soubor se nepodařilo přečíst. Vyberte soubor .csv a zkuste to znovu."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "Událost kalendáře se nepodařilo sdílet. Zkuste to znovu."
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "Soubor kalendáře se nepodařilo sdílet. Zkuste to znovu."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "Soubor se nepodařilo sdílet. Zkuste to znovu."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "Vytváření dokumentu…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "Data CSV"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "Místo toho si stáhněte PDF"
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "Stáhněte si je"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "Opravte data"
 msgid "Fix these in the editor"
 msgstr "Opravte je v editoru"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "Před importem opravte tyto hodnoty v CSV nebo vynechte příslušné sloupce."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "Zploštěte formulář, aby byl text součástí stránky."
@@ -6039,9 +6138,18 @@ msgstr "Import zrušen."
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "Import zrušen. Pokud bylo nahrávání dokončeno, obnovte Dokumenty, než to zkusíte znovu."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "Import se nezdařil. Zkontrolujte soubor CSV a zkuste to znovu."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "Importovat soubor"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "Importovat z CSV"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "Práce"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "Popis práce"
@@ -6619,6 +6728,10 @@ msgstr "Ponechte prázdné pro resetování názvu na původní."
 msgid "Leave it empty to remove the link."
 msgstr "Chcete-li odkaz odstranit, nechte pole prázdné."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "Vynechat"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "Takto blízké řádky mohou při čtení běžet společně. Použijte 
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "Živě · aktualizace při úpravách"
 msgid "Live at {url}"
 msgstr "Dostupné na {url}"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "Před importem pojmenovaných fází načtěte své fáze. Data CSV zůstanou zachována."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "Načítání"
@@ -6984,6 +7102,7 @@ msgstr "Načítání…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "Informace"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "Poznámky"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "Kontrolovány byly pouze první stránky {0}."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "Najednou se importuje jen prvních {MAX_IMPORT} řádků, {overflow} zůstane stranou. Rozdělte soubor, abyste naimportovali zbytek."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "Neaktuální: text se od té doby změnil."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "Výsledek"
 
@@ -8851,6 +8976,10 @@ msgstr "Vložte pracovní nabídku"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "Vložte zprávu od {company}"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "Vložte řádky nebo nahrajte .csv. Sloupce jsou spárovány automaticky a před uložením cokoli zkontrolujete shodu."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "Inzerát"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "Zdroj inzerátu"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "Vyřadit fázi"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "Právo"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "Otočení"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "Otáčení není podporováno vykreslováním PDF."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "Řádek {row}, {0}: hodnotu „{value}“ se nepodařilo přečíst."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "Pořadí řádků"
@@ -10563,6 +10703,7 @@ msgstr "Rezavá"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "Plat"
 
@@ -11736,6 +11877,7 @@ msgstr "Seřadit podle data"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "Zdroj"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "Pod sebou"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "Fáze"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "Fáze {0} se zařadí do"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "Fáze se počítá jako"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "Datum fáze"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "Název fáze"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "Výsledek fáze"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "Fáze zůstává {stage}"
@@ -11817,6 +11984,10 @@ msgstr "Fáze zůstává {stage}"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "Etapy"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "Označte vybrané žádosti o zaměstnání"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "Tento server hlásí jinou adresu, než jste zadali. Zadejte adresu, kte
 msgid "This server uses http. The app needs https."
 msgstr "Tento server používá http. Aplikace potřebuje https."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "Tento server používá standardní fáze, proto se názvy fází ze souboru nezachovají."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "Tento pokus o přihlášení vypršel nebo už byl použit. Přihlaste se znovu."
@@ -13525,6 +13701,10 @@ msgstr "Aktualizováno {completed} z {0}. Zamčené dokumenty a motivační dopi
 msgid "Updating preview…"
 msgstr "Aktualizace náhledu…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "Nahrát soubor .csv"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "Nahrajte PDF a prohlédněte si text, který systém sledování žadatelů extrahuje: co chybí, co je mimo provoz a jak to opravit. Zdarma, není potřeba žádný účet."
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "Použít vzorek"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

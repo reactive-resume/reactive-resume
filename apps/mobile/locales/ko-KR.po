@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {# 입사 지원서 가져오기 준비 완료} other {가져올 준비가 된 # 직무 지원서}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {#열} other {#열}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {# 연락처의 이메일이 잘못되었거나 이름이 없습니다. 해당 작업 지원서는 여전히 가져옵니다.} other {# 연락처에 잘못된 이메일이 있거나 이름이 없습니다. 그들의 입사 지원서는 여전히 가져옵니다.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {# 행에는 회사나 역할이 없으므로 건너뜁니다.} other {# 행에는 회사나 역할이 없으므로 건너뜁니다.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {매일} other {#일마다}}"
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {# 데이용} other {#일 동안}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {# 채용 지원서 가져오기} other {# 직무 지원서 가져오기}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {지원 #건을 가져왔습니다.} other {지원 #건을 가져왔습니다.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-커버레터"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {회사나 직무가 없는 행 #개를 건너뛰었습니다.} other {회사나 직무가 없는 행 #개를 건너뛰었습니다.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, other {스토리 #개}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {확인하려면 #} other {확인하려면 #}}"
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {가져오기 전에 #개 단계의 이동 위치를 선택하세요.} other {가져오기 전에 #개 단계의 이동 위치를 선택하세요.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "활동"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "추가"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "“{0}”을 새 단계로 추가"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "입사지원일"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "아랍어"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "보관됨(닫음)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "소프트웨어가 이력서를 읽을 수 있나요?"
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "이력서 선택"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "디자인에 어울리는 이력서를 Write에서 선택하세요. 그때까지는 편지 자체가 있습니다."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "단계 선택"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "데이터를 공유하기 전에 테스트된 AI 제공업체를 선택하세요."
@@ -2906,6 +2954,10 @@ msgstr "시간을 선택하세요"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "일괄 작업당 최대 200개의 지원 내역을 선택하세요."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "파일에 있는 각 단계의 이동 위치를 선택하거나 새 단계로 추가하세요."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "색상(#RRGGBB)"
 msgid "Colors and level"
 msgstr "색상 및 수준"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "{header} 열은 다음으로 이동합니다."
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "열"
@@ -3081,6 +3138,7 @@ msgstr "간결하게"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "연결이 저장되었습니다."
 msgid "Contact details"
 msgstr "연락처 정보"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "연락처 이메일"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "연락처 라벨"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "담당자 이름"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "전화번호로 연락하기"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "연락 역할"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "연락처"
 
@@ -3716,6 +3795,10 @@ msgstr "AI 제공업체에 연결할 수 없습니다. 다시 시도하거나 AI
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "해당 파일을 읽을 수 없습니다. .csv 파일을 선택하고 다시 시도해 보세요."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "캘린더 일정을 공유할 수 없습니다. 다시 시도해 보세�
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "캘린더 파일을 공유할 수 없습니다. 다시 시도해 보세요."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "파일을 공유할 수 없습니다. 다시 시도하세요."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "문서 생성 중…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "CSV 데이터"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "대신 PDF를 다운로드하세요."
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "다운로드하세요"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "날짜를 수정하세요"
 msgid "Fix these in the editor"
 msgstr "편집기에서 이 문제를 수정하세요."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "가져오기 전에 CSV에서 이 값을 수정하거나 해당 열을 제외하세요."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "양식을 평면화하여 텍스트가 페이지의 일부가 되게 하세요."
@@ -6039,9 +6138,18 @@ msgstr "가져오기가 취소되었습니다."
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "가져오기가 취소되었습니다. 업로드가 완료되었다면 다시 시도하기 전에 서류를 새로고침하세요."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "가져오기에 실패했습니다. CSV를 확인하고 다시 시도하세요."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "파일 가져오기"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "CSV에서 가져오기"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "직업"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "직무 설명"
@@ -6619,6 +6728,10 @@ msgstr "원래 제목으로 되돌리려면 비워 두세요."
 msgid "Leave it empty to remove the link."
 msgstr "링크를 제거하려면 비워 두세요."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "나가다"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "이렇게 가까운 줄은 읽을 때 함께 실행될 수 있습니다.
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "실시간 · 편집 시 업데이트"
 msgid "Live at {url}"
 msgstr "{url}에서 라이브"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "이름이 있는 단계를 가져오기 전에 내 단계를 불러오세요. CSV 데이터는 유지됩니다."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "로드 중"
@@ -6984,6 +7102,7 @@ msgstr "로드 중…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "정보"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "노트"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "첫 번째 {0} 페이지만 확인되었습니다."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "한 번에 처음 {MAX_IMPORT}개 행만 가져오며 {overflow}개는 제외됩니다. 나머지를 가져오려면 파일을 나누세요."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "오래됨: 이후 텍스트가 변경되었습니다."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "결과"
 
@@ -8851,6 +8976,10 @@ msgstr "채용 공고 붙여넣기"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "{company}에서 보낸 메시지를 붙여넣으세요."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "행을 붙여넣거나 .csv를 업로드하세요. 열은 자동으로 일치하며, 항목을 저장하기 전에 일치 여부를 확인합니다."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "채용 공고"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "채용 공고 출처"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "단계 사용 중지"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "오른쪽"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "회전"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "PDF 렌더링에서는 회전이 지원되지 않습니다."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "{row}행, {0}: “{value}”을(를) 읽을 수 없습니다."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "행 순서"
@@ -10563,6 +10703,7 @@ msgstr "녹슨 갈색"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "급여"
 
@@ -11736,6 +11877,7 @@ msgstr "날짜순 정렬"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "출처"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "세로 배열"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "단계"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "{0} 단계의 이동 위치"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "해당 기본 단계"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "단계 날짜"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "단계 이름"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "단계 결과"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "단계 유지: {stage}"
@@ -11817,6 +11984,10 @@ msgstr "단계 유지: {stage}"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "스테이지"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "선택한 지원 내역에 태그 지정"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "이 서버는 입력한 주소와 다른 주소를 보고합니다. 사�
 msgid "This server uses http. The app needs https."
 msgstr "이 서버는 http를 사용합니다. 앱에 https가 필요합니다."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "이 서버는 기본 단계를 사용하므로 파일의 단계 이름은 유지되지 않습니다."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "이 로그인 시도는 만료되었거나 이미 사용되었습니다. 다시 로그인하세요."
@@ -13525,6 +13701,10 @@ msgstr "{0}개 중 {completed}개를 업데이트했습니다. 잠긴 문서와 
 msgid "Updating preview…"
 msgstr "미리보기 업데이트 중…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr ".csv 업로드"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "PDF를 업로드하고 지원자 추적 시스템에서 추출한 텍스트(누락된 내용, 잘못된 내용 및 수정 방법)를 확인하세요. 무료이며 계정이 필요하지 않습니다."
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "샘플 사용"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx
