@@ -63,7 +63,9 @@ export function TemplateGallery() {
 						</section>
 					</div>
 
-					<div className="mt-16 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+					{/* Two side by side even on phones, so the page compares layouts; the description and the sample PDF link
+					    join from sm up. */}
+					<div className="mt-16 grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-8 sm:gap-y-14 lg:grid-cols-3">
 						{templateSchema.options.map((id, index) => {
 							const template = templates[id];
 							const name = template.name;
@@ -78,7 +80,7 @@ export function TemplateGallery() {
 										<img
 											src={`/templates/thumb/${id}.webp`}
 											srcSet={`/templates/thumb/${id}-small.webp 300w, /templates/thumb/${id}.webp 596w`}
-											sizes="298px"
+											sizes="(min-width: 640px) 298px, 45vw"
 											alt={t`${name} resume template preview`}
 											width={298}
 											height={420}
@@ -89,11 +91,13 @@ export function TemplateGallery() {
 											className="aspect-[298/420] w-full rounded-sm bg-paper object-contain shadow-paper dark:brightness-[.93]"
 										/>
 									</a>
-									<h2 className="font-anybody mt-6 text-[32px] leading-tight font-light tracking-[-.02em]">{name}</h2>
+									<h2 className="font-anybody mt-4 text-[22px] leading-tight font-light tracking-[-.02em] sm:mt-6 sm:text-[32px]">
+										{name}
+									</h2>
 									<p className={cn(labelClass, "mt-1 text-ink-3")}>
 										{layout.columns === 1 ? t`One column` : t`Two columns`}
 									</p>
-									<p className="mt-3 font-display text-[17px] leading-[1.45] text-pretty text-ink-2">
+									<p className="mt-3 hidden font-display text-[17px] leading-[1.45] text-pretty text-ink-2 sm:block">
 										{i18n._(template.description)}
 									</p>
 									<div className="mt-2 flex flex-wrap items-center gap-x-5">
@@ -109,7 +113,7 @@ export function TemplateGallery() {
 										<a
 											href={`/templates/pdf/${id}.pdf`}
 											download={`${name}-resume-example.pdf`}
-											className={cn(linkClass, "inline-flex min-h-11 items-center text-sm font-semibold")}
+											className={cn(linkClass, "hidden min-h-11 items-center text-sm font-semibold sm:inline-flex")}
 											aria-label={t`Download ${name} sample PDF`}
 										>
 											{t`Download sample PDF`}
