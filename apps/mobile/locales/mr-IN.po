@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# कथा} other {# कथा}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {पुनरावलोकनासाठी # बाब.} other {पुनरावलोकनासाठी # बाबी.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "वेब पत्ता https:// शिवाय लिहिला �
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "बोलताना सुमारे 90 सेकंद"
@@ -1058,6 +1069,10 @@ msgstr "सर्व स्वीकारा"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "सक्रिय"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "ॲड"
 
@@ -3544,6 +3560,10 @@ msgstr "मुद्रित करू शकलो नाही. पुन्�
 msgid "Couldn't propose these edits: {0}"
 msgstr "ही संपादने प्रस्तावित करू शकलो नाही: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "तुमच्या AI प्रदात्यापर्यंत पोहोचू शकलो नाही. पुन्हा प्रयत्न करा किंवा AI सेटिंग्जमध्ये त्याची की तपासा."
@@ -3617,6 +3637,10 @@ msgstr "तो बदल जतन करता आला नाही. आय�
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "तो बदल जतन करू शकलो नाही. पुन्हा प्रयत्न करा."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "रेझ्युमे अनलॉक करता आला नाही. पुन्हा प्रयत्न करा."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "हा रेझ्युमे अनलॉक करता आला नाही. पुन्हा प्रयत्न करा."
 
@@ -4627,6 +4651,19 @@ msgstr "संपादन करा"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "{0} संपादित करा: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "लपलेले विभाग त्यांची सामग्
 msgid "Hidden terms are back"
 msgstr "लपलेल्या अटी परत आहेत"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "पृष्ठावरून {title} लपवा"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "कुलूपबंद"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "लॉक केलेले दस्तऐवज वगळले. आधी ते अनलॉक करा."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "सामान्य"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "नॉर्वेजियन"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8880,6 +8938,10 @@ msgstr "प्रगती पट्टी"
 msgid "Projects"
 msgstr "प्रोजेक्ट्स"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "प्रस्तावित बदल"
@@ -8947,6 +9009,10 @@ msgstr "प्रकाशक"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "पहिल्या पानाच्या वरच्या भागाजवळ साधा ईमेल पत्ता ठेवा. बहुतांश प्रणाली याखालीच तुम्हाला फाइल करतात."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9269,6 +9335,14 @@ msgstr "मोठ्याने उजळणी करा"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "नकार द्या"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10767,6 +10841,11 @@ msgstr "लहान"
 msgid "Show"
 msgstr "दाखवा"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ने बनवले” दाखवा"
@@ -10784,6 +10863,11 @@ msgstr "पेजवर {title} दाखवा"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "सर्व दाखवा"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10809,6 +10893,10 @@ msgstr "तपशील दाखवा"
 msgid "Show DNS records"
 msgstr "DNS रेकॉर्ड दाखवा"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "शीर्षक दाखवा"
@@ -10828,6 +10916,10 @@ msgstr "सर्च इंजिनमध्ये दाखवा"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "की दाखवा"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12147,10 +12239,6 @@ msgstr "हा दस्तऐवज"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "हा दस्तऐवज लॉक आहे. बदल इथे ठेवण्यापूर्वी अनलॉक करा किंवा दोन्ही आवृत्त्या ठेवा."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "हा दस्तऐवज लॉक केलेला आहे. सूचना मिळवण्यासाठी ते अनलॉक करा."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "हा दस्तऐवज लॉक आहे. आवृत्त्या डाउनलोड करता येतात आणि त्यांना नावे देता येतात. संपादन किंवा पुनर्संचयित करण्यासाठी अनलॉक करा."
@@ -12626,6 +12714,10 @@ msgstr "हे घेऊन पुन्हा प्रयत्न करा"
 msgid "Try again, or restart the app."
 msgstr "पुन्हा प्रयत्न करा, किंवा अॅप रीस्टार्ट करा."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "दुसरा शोध घ्या किंवा फिल्टर साफ करा."
@@ -12749,6 +12841,11 @@ msgstr "दुवे अधोरेखित करा"
 msgid "Undo"
 msgstr "पूर्ववत करा"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12758,6 +12855,7 @@ msgstr "अज्ञात"
 msgid "Unlink"
 msgstr "अनलिंक करा"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12772,6 +12870,7 @@ msgstr "संपादन अनलॉक करा"
 msgid "Unlock it first, then try again."
 msgstr "आधी अनलॉक करा, मग पुन्हा प्रयत्न करा."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "अनलॉक करत आहे…"
@@ -12959,10 +13058,6 @@ msgstr "रेझ्युमेमधील तपशील वापरा"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "सर्व अर्जांसाठी वापरा"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13322,6 +13417,10 @@ msgstr "व्यक्ती काय पाहते"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "तुम्ही कशावर काम करत आहात?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

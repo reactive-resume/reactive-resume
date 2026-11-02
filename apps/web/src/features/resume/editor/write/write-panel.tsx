@@ -1,25 +1,17 @@
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { useEditorStore } from "../store";
 import { AddSectionMenu, StartSuggestions } from "./add-section";
 import { BasicsCard } from "./basics-card";
 import { getOutlineRows, summarizeContent } from "./model";
 import { Outline } from "./outline";
 import { useDialogStore } from "@/dialogs/store";
-import {
-	useCurrentBuilderResumeSelector,
-	useCurrentResume,
-	useIsResumeLocked,
-	usePatchResume,
-} from "@/features/resume/builder/draft";
-import { setResumeLocked } from "@/features/resume/builder/lock";
-import { getResumeErrorMessage } from "@/libs/error-message";
+import { useCurrentBuilderResumeSelector, useIsResumeLocked } from "@/features/resume/builder/draft";
+import { useUnlockResume } from "@/features/resume/builder/use-unlock-resume";
 
 /**
  * Write: the Basics card, then the outline of sections in print order with their entries, then Add
@@ -117,21 +109,7 @@ function ImportedNote() {
 
 /** Locked resumes read as they print; Unlock is one click and reversible. */
 function LockedNote() {
-	const resume = useCurrentResume();
-	const patchResume = usePatchResume();
-	const { mutate: setLocked, isPending } = useMutation({
-		// The next autosave builds on the unlocked revision instead of conflicting with it.
-		mutationFn: (id: string) => setResumeLocked(id, false),
-	});
-
-	const unlock = () =>
-		setLocked(resume.id, {
-			onSuccess: () =>
-				patchResume((draft) => {
-					draft.isLocked = false;
-				}),
-			onError: (error) => toast.add({ type: "error", description: getResumeErrorMessage(error) }),
-		});
+	const { unlock, isPending } = useUnlockResume();
 
 	return (
 		<Alert variant="info" className="items-center">

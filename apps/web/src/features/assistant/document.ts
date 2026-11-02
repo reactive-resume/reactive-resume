@@ -40,24 +40,39 @@ export type AssistantDocument = {
 	/** Applies proposals as one undo step, with Undo in the toast. */
 	accept: (proposals: readonly Proposal[]) => ProposalApplicationResult;
 	/** Where a proposal lands, in the app's language, when its passage is still there. */
-	locationOf: (proposal: Pick<Proposal, "before" | "target">) => string | undefined;
+	locationOf: (proposal: Pick<Proposal, "before" | "target"> & { location?: string }) => string | undefined;
 };
 
 const bullet = (n: number) => t`bullet ${n}`;
 const paragraph = (n: number) => t`paragraph ${n}`;
 
-/** Finds the passage a proposal replaces, or the one an addition follows. */
-function locate(passages: readonly Passage[], { before, target }: Pick<Proposal, "before" | "target">) {
-	const matches = passages.filter(
+/**
+ * Where a proposal lands: the passage it replaces, or the one an addition follows. Once that text is gone (the edit
+ * was applied), the entry is still named as the outline names it, with the bullet or paragraph the edit recorded, so
+ * one set doesn't call one job by its company and another by its title.
+ */
+function locate(
+	passages: readonly Passage[],
+	{ before, target, location }: Pick<Proposal, "before" | "target"> & { location?: string },
+) {
+	const sameField = passages.filter(
 		(passage) =>
 			passage.target.sectionId === target.sectionId &&
 			passage.target.itemId === target.itemId &&
 			passage.target.roleId === target.roleId &&
-			passage.target.field === target.field &&
-			passage.html &&
-			(before === passage.html || before.startsWith(passage.html)),
+			passage.target.field === target.field,
 	);
-	return matches.length === 1 ? matches[0]?.location : undefined;
+	const matches = sameField.filter(
+		(passage) => passage.html && (before === passage.html || before.startsWith(passage.html)),
+	);
+	if (matches.length === 1) return matches[0]?.location;
+	const entry = sameField[0];
+	if (!entry || matches.length > 1) return undefined;
+	// Every passage of a field shares its section and entry; only the last part (its place) differs.
+	const where = entry.html ? entry.location.split(" · ").slice(0, -1) : entry.location.split(" · ");
+	const place = /(bullet|paragraph) (\d+)$/.exec(location ?? "");
+	if (!place) return where.join(" · ") || undefined;
+	return [...where, place[1] === "bullet" ? bullet(Number(place[2])) : paragraph(Number(place[2]))].join(" · ");
 }
 
 export function useResumeAssistantDocument(): AssistantDocument {

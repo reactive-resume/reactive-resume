@@ -285,6 +285,13 @@ msgstr "{0, plural, one {# történet} other {# történet}}"
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {# tény hozzáadva a Tudástárhoz.} other {# tény hozzáadva a Tudástárhoz.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1336,6 +1343,10 @@ msgstr "Egy webcím https:// nélkül van megadva."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "About"
 msgstr "Erről az alkalmazásról"
@@ -1368,6 +1379,10 @@ msgstr "Elfogadja az összeset"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1458,6 +1473,7 @@ msgstr "Tevékenység"
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/improve.tsx
 msgid "Add"
 msgstr "Hozzáadás"
 
@@ -2770,6 +2786,10 @@ msgstr "Vissza a bejelentkezéshez"
 #: src/features/career/knowledge/stories.tsx
 msgid "Back to stories"
 msgstr "Vissza a történetekhez"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Back to the conversation"
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -4526,6 +4546,10 @@ msgstr "Nem sikerült menteni a módosítást. Ellenőrizd a kapcsolatot, és pr
 msgid "Couldn't save that change. Try again."
 msgstr "Nem sikerült menteni a módosítást. Próbáld újra."
 
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/fit.tsx
 msgid "Couldn't save that to Knowledge. Try again."
@@ -5813,6 +5837,14 @@ msgstr "Szerkesztés"
 #: src/components/input/chip-input.tsx
 msgid "Edit {chip}"
 msgstr "Szerkesztés {chip}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit {number}:"
@@ -7102,6 +7134,11 @@ msgstr "A rejtett kifejezések visszatértek"
 msgid "Hidden: {hiddenList}"
 msgstr "Rejtett: {hiddenList}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
 msgstr "{title} elrejtése az oldalról"
@@ -7243,11 +7280,20 @@ msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind}. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -8608,6 +8654,10 @@ msgstr "Zárolva"
 msgid "Locked · unlock to save"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Bezárt. A szerkesztéshez oldja fel a zárolást."
@@ -9761,6 +9811,10 @@ msgstr "Northwind Labs · Lisbon"
 #: src/libs/locale.ts
 msgid "Norwegian"
 msgstr "norvég"
+
+#: src/features/assistant/question-card.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Not applied"
@@ -11221,6 +11275,10 @@ msgstr "Projektek"
 msgid "Promoted to lead, 2021"
 msgstr "Vezetővé léptették elő, 2021"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Proposed changes"
 msgstr "Javasolt módosítások"
@@ -11316,6 +11374,10 @@ msgstr "Tedd fel mindezt <0>egy oldalra</0>"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "Tegye egy sorba a karót, hogy javítsa"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "QR code"
@@ -11774,6 +11836,14 @@ msgstr "Gyakorolj hangosan egy nézeteltérést a fejlesztőkkel, és azt, hogya
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "Elutasít"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Rejected"
@@ -13167,6 +13237,11 @@ msgstr "Szemantikus CSS stíluslap"
 msgid "Send"
 msgstr "Elküld"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Send {0} again"
+msgstr ""
+
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send reset link"
@@ -13465,6 +13540,11 @@ msgstr "Rövidebb"
 msgid "Show"
 msgstr "Megmutat"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "„Reactive Resume-val készült” megjelenítése"
@@ -13491,6 +13571,11 @@ msgstr "Mutasd újra"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
+msgstr ""
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/conversation.tsx
+msgid "Show all ({0} characters)"
 msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
@@ -13521,6 +13606,10 @@ msgstr "Lezárt álláspályázatok megjelenítése"
 msgid "Show DNS records"
 msgstr "DNS-rekordok megjelenítése"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Címsor megjelenítése"
@@ -13532,6 +13621,10 @@ msgstr "Ikonok megjelenítése"
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
 msgstr "Megjelenítés a keresőmotorokban"
+
+#: src/features/assistant/conversation.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -14627,6 +14720,14 @@ msgstr "Köszönöm, Sam. Íme egy: a Northwind Labsnél én vezettem az onboard
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/routes/agent/$threadId.tsx
+msgid "That conversation isn't available. It may have been deleted."
+msgstr ""
+
+#: src/routes/agent/$threadId.tsx
+msgid "That conversation's document was deleted."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
 msgstr "Ezt a fájlt nem sikerült PDF-ként beolvasni. Válassz egy PDF-fájlt, és próbáld újra."
@@ -15204,10 +15305,6 @@ msgstr "Ez a leírás kivágott vagy hiányos. Tekintse át, vagy illessze be a 
 msgid "This document"
 msgstr "Ez a dokumentum"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Ez a dokumentum zárolva van. Oldja fel, hogy javaslatokat kapjon."
-
 #: src/features/career/workspace/answer-library.tsx
 msgid "This employer"
 msgstr ""
@@ -15717,6 +15814,10 @@ msgstr "Próbáld újra"
 msgid "Try again with this"
 msgstr "Próbáld újra ezzel"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
 msgstr ""
@@ -15914,6 +16015,11 @@ msgstr "A hivatkozások aláhúzása"
 msgid "Undo"
 msgstr "Visszavonás"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Undo resume change"
 msgstr "Az önéletrajz módosításának visszavonása"
@@ -15937,6 +16043,7 @@ msgstr "Leválasztás"
 msgid "Unlink this application"
 msgstr "Az álláspályázat összekapcsolásának megszüntetése"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
@@ -15944,6 +16051,7 @@ msgstr "Az álláspályázat összekapcsolásának megszüntetése"
 msgid "Unlock"
 msgstr "Feloldás"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16607,6 +16715,10 @@ msgstr "Amit egy ember lát"
 #: src/features/career/coach.tsx
 msgid "What are you working on?"
 msgstr "Min dolgozol?"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "What changed? Leave blank if you can’t support it."

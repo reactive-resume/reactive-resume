@@ -2,7 +2,6 @@ import type { FlatRow, OutlineRow, WriteSection } from "./model";
 import type { CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
@@ -36,9 +35,9 @@ import { resolvePictureUrl } from "./picture-screen";
 import { SectionSheet } from "./section-sheet";
 import { useSession } from "@/auth/session";
 import { useIsResumeLocked } from "@/draft";
-import { setResumeLocked } from "@/features/share/revision";
+import { useUnlockResume } from "@/features/write/unlock";
 import { routes } from "@/routes";
-import { Banner, Button, Chip, Icon, IconButton, ListRow, Sheet, SortableList, Text, showToast, useTheme } from "@/ui";
+import { Banner, Button, Chip, Icon, IconButton, ListRow, Sheet, SortableList, Text, useTheme } from "@/ui";
 
 type OutlineProps = { resumeId: string; imported?: string | undefined; initialSection?: string | undefined };
 
@@ -517,11 +516,7 @@ function BasicsCard({ resumeId, data }: { resumeId: string; data: ResumeData }) 
 /** Locked resumes read as they print; Unlock is one tap and reversible. */
 function LockedBanner({ resumeId }: { resumeId: string }) {
 	const { t } = useLingui();
-	const unlock = useMutation({
-		mutationKey: ["write", "unlock", resumeId],
-		mutationFn: () => setResumeLocked(resumeId, false),
-		onError: () => showToast({ message: t`Couldn't unlock this resume. Try again.` }),
-	});
+	const unlock = useUnlockResume(resumeId);
 	return (
 		<Banner
 			tone="info"

@@ -232,6 +232,52 @@ function normalizeResumeDataForSchema(data: Record<string, unknown>, diagnostics
 	return { ...data, sections: normalizedSections };
 }
 
+// The usual English heading of each section; a heading that says only this leaves the title to the template.
+const usualSectionTitles: Record<string, string> = {
+	summary: "summary",
+	profiles: "profiles",
+	experience: "experience",
+	education: "education",
+	projects: "projects",
+	skills: "skills",
+	languages: "languages",
+	interests: "interests",
+	awards: "awards",
+	certifications: "certifications",
+	publications: "publications",
+	volunteer: "volunteer",
+	references: "references",
+};
+
+const isAllCaps = (value: string) => value !== value.toLowerCase() && value === value.toUpperCase();
+
+/**
+ * Imported headings keep the template's case: one that only names its section ("EXPERIENCE") shows the localized
+ * default, and other wording styled in capitals becomes sentence case ("SELECTED PROJECTS" → "Selected projects").
+ */
+export function normalizeImportedSectionTitle(sectionId: string, title: string) {
+	const trimmed = title.trim();
+	if (!trimmed) return "";
+	if (trimmed.toLowerCase() === usualSectionTitles[sectionId]) return "";
+	if (!isAllCaps(trimmed)) return trimmed;
+	const lower = trimmed.toLowerCase();
+	return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
+function normalizeSectionTitles(data: ResumeData): ResumeData {
+	const sections = Object.fromEntries(
+		Object.entries(data.sections).map(([id, section]) => [
+			id,
+			{ ...section, title: normalizeImportedSectionTitle(id, section.title) },
+		]),
+	) as ResumeData["sections"];
+	return {
+		...data,
+		summary: { ...data.summary, title: normalizeImportedSectionTitle("summary", data.summary.title) },
+		sections,
+	};
+}
+
 export function sanitizeAndParseResumeJson(resultText: string): ResumeSanitizationResult {
 	let jsonString = resultText;
 	const { first, last } = getJsonBoundaryIndices(jsonString);
@@ -259,7 +305,7 @@ export function sanitizeAndParseResumeJson(resultText: string): ResumeSanitizati
 			metadata: defaultResumeData.metadata,
 		});
 
-		return { data, diagnostics };
+		return { data: normalizeSectionTitles(data), diagnostics };
 	} catch (error: unknown) {
 		if (error instanceof ZodError) {
 			console.error("Zod validation failed during resume parsing:", flattenError(error));

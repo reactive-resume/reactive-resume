@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# histori} other {# histori}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# gjë për t'u rishikuar.} other {# gjëra për të rishikuar.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Një adresë web është shkruar pa https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Rreth 90 sekonda kur thuhet me zë"
@@ -1058,6 +1069,10 @@ msgstr "Prano të gjitha"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Aktiv"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Shtoni"
 
@@ -3544,6 +3560,10 @@ msgstr "Nuk mund të printohej. Provo sërish."
 msgid "Couldn't propose these edits: {0}"
 msgstr "Nuk mund të propozoja këto modifikime: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Nuk mund të kontaktohej me ofruesin tënd të AI. Provo sërish ose kontrollo çelësin e tij te cilësimet e AI."
@@ -3617,6 +3637,10 @@ msgstr "Ai ndryshim nuk mund të ruhej. Artikulli u rikthye; provoni përsëri."
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Ai ndryshim nuk mund të ruhej. Provo sërish."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "CV-ja nuk mund të zhbllokohej. Provoni përsëri."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Kjo CV nuk mund të zhbllokohej. Provo sërish."
 
@@ -4627,6 +4651,19 @@ msgstr "Modifiko"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "Redakto {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "Seksionet e fshehura ruajnë përmbajtjen e tyre, por nuk printohen ose 
 msgid "Hidden terms are back"
 msgstr "Kushtet e fshehura janë kthyer"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Fshih {title} nga faqja"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "E mbyllur"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Dokumentet e kyçura u anashkaluan. Zhbllokoni ato së pari."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "Normale"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norvegjisht"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8880,6 +8938,10 @@ msgstr "Shiriti i progresit"
 msgid "Projects"
 msgstr "Projekte"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Ndryshimet e propozuara"
@@ -8947,6 +9009,10 @@ msgstr "Botues"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Vendosni një adresë email të thjeshtë pranë krerit të faqes së parë. Kjo është ajo nën të cilën ju regjistrojnë shumica e sistemeve."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9269,6 +9335,14 @@ msgstr "Ushtrohuni me zë"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Refuzo"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10767,6 +10841,11 @@ msgstr "Më e shkurtër"
 msgid "Show"
 msgstr "Shfaq"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Shfaq “Bërë me Reactive Resume”"
@@ -10784,6 +10863,11 @@ msgstr "Shfaq {title} në faqe"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Trego të gjitha"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10809,6 +10893,10 @@ msgstr "Trego detajet"
 msgid "Show DNS records"
 msgstr "Shfaq regjistrimet DNS"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Shfaq titullin"
@@ -10828,6 +10916,10 @@ msgstr "Shfaq në motorët e kërkimit"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Shfaq tastin"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12147,10 +12239,6 @@ msgstr "Ky dokument"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Ky dokument është i kyçur. Zhbllokoni atë përpara se të mbani modifikimet tuaja këtu ose mbajini të dyja."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Ky dokument është i kyçur. Zhbllokoje për të marrë sugjerime."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Ky dokument është i kyçur. Ju ende mund të shkarkoni dhe emërtoni versionet. Zhbllokoni për të modifikuar ose rivendosur."
@@ -12626,6 +12714,10 @@ msgstr "Provo përsëri me këtë"
 msgid "Try again, or restart the app."
 msgstr "Provoni përsëri ose rinisni aplikacionin."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Provoni një kërkim tjetër ose pastroni filtrat tuaj."
@@ -12749,6 +12841,11 @@ msgstr "Nënvizoni lidhjet"
 msgid "Undo"
 msgstr "Anulo"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12758,6 +12855,7 @@ msgstr "E panjohur"
 msgid "Unlink"
 msgstr "Shkëpute"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12772,6 +12870,7 @@ msgstr "Zhblloko redaktimin"
 msgid "Unlock it first, then try again."
 msgstr "Zhbllokoje fillimisht dhe më pas provo sërish."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Po zhbllokohet…"
@@ -12959,10 +13058,6 @@ msgstr "Përdor të dhënat nga CV-ja"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Përdore për të gjitha aplikimet"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13322,6 +13417,10 @@ msgstr "Çfarë sheh një person"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Në çfarë po punoni?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

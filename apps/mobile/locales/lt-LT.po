@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# istorija} few {# istorijos} many {# istorijos} other 
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# dalykas peržiūrai.} few {# dalykai peržiūrai.} other {# dalykų peržiūrai.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Interneto adresas užrašytas be https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Apie 90 sekundžių sakant garsiai"
@@ -1058,6 +1069,10 @@ msgstr "Priimti visus"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Aktyvus"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Pridėti"
 
@@ -3544,6 +3560,10 @@ msgstr "Nepavyko atspausdinti. Bandykite dar kartą."
 msgid "Couldn't propose these edits: {0}"
 msgstr "Nepavyko pasiūlyti šių pakeitimų: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Nepavyko susisiekti su jūsų AI teikėju. Bandykite dar kartą arba patikrinkite jo raktą AI nustatymuose."
@@ -3617,6 +3637,10 @@ msgstr "Nepavyko išsaugoti šio pakeitimo. Elementas atkurtas; bandykite dar ka
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Nepavyko išsaugoti šio pakeitimo. Bandykite dar kartą."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Nepavyko atrakinti gyvenimo aprašymo. Bandykite dar kartą."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Nepavyko atrakinti šio gyvenimo aprašymo. Bandykite dar kartą."
 
@@ -4627,6 +4651,19 @@ msgstr "Redaguoti"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "Redaguoti {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "Paslėptų skilčių turinys išsaugomas, bet nėra spausdinamas ar bend
 msgid "Hidden terms are back"
 msgstr "Paslėpti terminai grįžta"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Paslėpti {title} puslapyje"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "Užrakinta"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Užrakinti dokumentai buvo praleisti. Pirmiausia juos atrakinkite."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "Normalus"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norvegų"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8880,6 +8938,10 @@ msgstr "Progreso juosta"
 msgid "Projects"
 msgstr "Projektai"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Siūlomi pakeitimai"
@@ -8947,6 +9009,10 @@ msgstr "Leidėjas"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Įrašykite paprastą el. pašto adresą arti pirmo puslapio viršaus. Būtent pagal jį dauguma sistemų jus identifikuoja."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9269,6 +9335,14 @@ msgstr "Repetuoti garsiai"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Atmesti"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10767,6 +10841,11 @@ msgstr "Trumpesnis"
 msgid "Show"
 msgstr "Rodyti"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Rodyti „Sukurta su Reactive Resume“"
@@ -10784,6 +10863,11 @@ msgstr "Puslapyje parodykite {title}"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Rodyti viską"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10809,6 +10893,10 @@ msgstr "Rodyti išsamią informaciją"
 msgid "Show DNS records"
 msgstr "Rodyti DNS įrašus"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Rodyti antraštę"
@@ -10828,6 +10916,10 @@ msgstr "Rodyti paieškos sistemose"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Rodyti raktą"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12147,10 +12239,6 @@ msgstr "Šis dokumentas"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Šis dokumentas užrakintas. Atrakinkite jį prieš palikdami pakeitimus čia arba palikite abu."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Šis dokumentas užrakintas. Atrakinkite, kad gautumėte pasiūlymų."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Šis dokumentas užrakintas. Vis tiek galite atsisiųsti ir pavadinti versijas. Atrakinkite, kad galėtumėte redaguoti arba atkurti."
@@ -12626,6 +12714,10 @@ msgstr "Bandyti dar kartą su šiuo"
 msgid "Try again, or restart the app."
 msgstr "Bandykite dar kartą arba paleiskite programėlę iš naujo."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Išbandykite kitą paiešką arba išvalykite filtrus."
@@ -12749,6 +12841,11 @@ msgstr "Pabraukite nuorodas"
 msgid "Undo"
 msgstr "Atšaukti"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12758,6 +12855,7 @@ msgstr "Nežinoma"
 msgid "Unlink"
 msgstr "Atsieti"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12772,6 +12870,7 @@ msgstr "Atrakinti redagavimą"
 msgid "Unlock it first, then try again."
 msgstr "Pirmiausia atrakinkite, tada bandykite dar kartą."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Atrakinama…"
@@ -12959,10 +13058,6 @@ msgstr "Naudoti informaciją iš gyvenimo aprašymo"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Naudoti visoms paraiškoms"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13322,6 +13417,10 @@ msgstr "Ką mato žmogus"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Prie ko dirbate?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

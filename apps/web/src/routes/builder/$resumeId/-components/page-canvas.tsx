@@ -6,7 +6,7 @@ import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { lazyRouteComponent } from "@tanstack/react-router";
-import { Suspense, useState } from "react";
+import { Suspense, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { spillingSections } from "@reactive-resume/resume/spill";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -84,10 +84,24 @@ function ResumePageCanvas() {
 		? viewing.data
 		: data && previewTemplate
 			? { ...data, metadata: { ...data.metadata, template: previewTemplate } }
-			: data && marked.length > 0
+			: // Only undecided edits change the page: once every one is decided, it draws (and measures) as it is.
+				data && pendingProposals(data, marked, undefined, applications).length > 0
 				? markProposals(data, marked, applications)
 				: undefined;
-	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, rendered) : null;
+	// Fit is the resume's as it is: a render with edits marked (old and new text both shown) doesn't count. The callback
+	// keeps one identity (the preview re-reports on every new one), reading whether this render is marked from a ref.
+	const fitRendered = useEditorStore((state) => state.fitRendered);
+	const markedRender = useRef(false);
+	const marking = previewData !== undefined;
+	// A layout effect, so it's current before the preview's own effect reports the render.
+	useLayoutEffect(() => {
+		markedRender.current = marking;
+	}, [marking]);
+	const onRender = useCallback(
+		(render: Parameters<typeof setRendered>[0]) => setRendered(render, markedRender.current),
+		[setRendered],
+	);
+	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, fitRendered) : null;
 	// Desktop: the page moves 120px aside so it stays visible beside the Download & history sheet.
 	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
 
@@ -132,7 +146,7 @@ function ResumePageCanvas() {
 						parser && "hidden",
 					)}
 					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}
-					onRender={setRendered}
+					onRender={onRender}
 					renderPageCaption={({ pageNumber }) => (
 						<ResumePageCaption
 							pageNumber={pageNumber}
