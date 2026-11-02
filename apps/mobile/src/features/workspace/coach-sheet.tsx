@@ -67,6 +67,7 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 	const [chips, setChips] = useState({ memory: true, web: false });
 	const memory = useMemoryNote(chips.memory);
 	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
+	const stories = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: application.id } }));
 	const title = useThreadTitle();
 	const time = useThreadTime();
 	const open = (id: string) => {
@@ -182,6 +183,20 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 							void threads.refetch();
 						}}
 						context={context}
+						// Recorded on each question as web does (coach-thread.tsx usedFor), for the Sent line on both.
+						sent={() => ({
+							facts: chips.memory
+								? (facts.data ?? [])
+										.filter((fact) => fact.status === "active")
+										.slice(0, 30)
+										.map((fact) => fact.id)
+								: [],
+							stories: chips.memory ? (stories.data ?? []).slice(0, 8).map((story) => story.id) : [],
+							preferences: chips.memory,
+							applications: false,
+							offers: [],
+							web: context.web === true,
+						})}
 						document={null}
 						disabled={!providers.hasAIProvider || stranded}
 						connection={label}

@@ -72,6 +72,8 @@ function useCoachKnowledge() {
 		},
 		facts: active.length,
 		stories: usable.length,
+		factIds: active.map((fact) => fact.id),
+		storyIds: usable.map((story) => story.id),
 	};
 }
 
@@ -211,6 +213,15 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 						void threads.refetch();
 					}}
 					context={context}
+					// Recorded on each question as web does (coach-thread.tsx usedFor), for the Sent line on both.
+					sent={() => ({
+						facts: chips.memory ? knowledge.factIds.slice(0, 30) : [],
+						stories: chips.memory ? knowledge.storyIds.slice(0, 8) : [],
+						preferences: chips.memory,
+						applications: chips.application,
+						offers: context.offerIds ?? [],
+						web: context.web === true,
+					})}
 					document={null}
 					onRefresh={() =>
 						Promise.allSettled([

@@ -67,6 +67,8 @@ type MessageViewProps = {
 	onAnswer: ((toolCallId: string, answer: string) => void) | null;
 	/** The coach: the user's messages can be remembered in Knowledge, in this application's scope or all. */
 	remember?: { applicationId: string | null } | null;
+	/** The coach: what went with the question; a repeat of the answer before sits behind What was sent. */
+	sent?: { summary: string; repeats: boolean } | null;
 };
 
 /** Memoized: while a reply streams, only its own message re-renders; the ones above keep their props. */
@@ -78,9 +80,11 @@ export const MessageView = memo(function MessageView({
 	proposals,
 	onAnswer,
 	remember,
+	sent,
 }: MessageViewProps) {
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
+	const [showSent, setShowSent] = useState(false);
 
 	if (message.role === "user") {
 		const text = message.parts.flatMap((part) => (part.type === "text" ? [part.text] : [])).join("\n");
@@ -130,6 +134,15 @@ export const MessageView = memo(function MessageView({
 				);
 			})}
 			{!streaming && proposals ? <UsedReads message={message} /> : null}
+			{!streaming && sent && reportText ? (
+				sent.repeats && !showSent ? (
+					<Button variant="link" size="sm" label={t`What was sent`} onPress={() => setShowSent(true)} />
+				) : (
+					<Text variant="caption" color="ink3">
+						{t`Sent: ${sent.summary}`}
+					</Text>
+				)
+			) : null}
 			{!streaming && remember && reportText ? (
 				<AddToResume text={reportText} applicationId={remember.applicationId} />
 			) : null}

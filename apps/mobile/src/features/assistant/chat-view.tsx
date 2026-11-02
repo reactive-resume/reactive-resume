@@ -36,6 +36,7 @@ import { attachmentPart, refreshThreads, transcriptOf, useAssistantChat } from "
 import { FileChip, MessageView, Status } from "./messages";
 import { isProposeEdits, publishProposals, supersededIn, toProposals } from "./proposals";
 import { createRequestLane, recoverRun } from "./recovery";
+import { sentLines, type SentContext } from "./sent";
 import { ToolApprovals, type StoryEditorRender } from "./tool-approvals";
 import { client, orpc, SessionChangedError } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
@@ -86,6 +87,8 @@ export type ChatViewProps = {
 	onSwitchModel?: () => void;
 	/** After each reply, for example to refresh Knowledge. */
 	onFinish?: () => void;
+	/** The coach: what this message sends, recorded on it and shown as "Sent" under the answer. */
+	sent?: (() => SentContext) | undefined;
 };
 
 type Prompt = { threadId: string; text: string; attachments: ChatAttachment[] };
@@ -339,9 +342,16 @@ function Conversation(props: ConversationProps) {
 	const deliver = (text: string, attachments: ChatAttachment[]) => {
 		const files = attachments.map(attachmentPart);
 		void lane.run(() =>
-			sendMessage(files.length > 0 ? { text, files } : { text }, {
-				body: { attachmentIds: attachments.map((attachment) => attachment.id) },
-			}),
+			sendMessage(
+				{
+					text,
+					...(files.length > 0 ? { files } : {}),
+					...(props.sent ? { metadata: { context: props.sent() } } : {}),
+				},
+				{
+					body: { attachmentIds: attachments.map((attachment) => attachment.id) },
+				},
+			),
 		);
 		// The server titles the conversation from its first message.
 		setTimeout(() => refreshThreads(queryClient), 1500);
@@ -693,6 +703,7 @@ function Conversation(props: ConversationProps) {
 		}
 	};
 
+	const sent = sentLines(messages);
 	return (
 		<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
 			<View style={{ flex: 1 }}>
@@ -728,6 +739,7 @@ function Conversation(props: ConversationProps) {
 						<View>
 							<MessageView
 								message={message}
+								sent={props.sent ? (sent[index] ?? null) : null}
 								streaming={busy && index === messages.length - 1}
 								readOnly={readOnly}
 								answerable={index === messages.length - 1}
