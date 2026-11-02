@@ -200,6 +200,9 @@ catalogs:
     '@formatjs/intl-displaynames':
       specifier: ^7.3.15
       version: 7.3.15
+    '@formatjs/intl-relativetimeformat':
+      specifier: ^13.0.1
+      version: 13.0.1
     '@legendapp/list':
       specifier: 3.6.0
       version: 3.6.0
@@ -458,6 +461,9 @@ importers:
       '@formatjs/intl-pluralrules':
         specifier: ^6.3.16
         version: 6.3.16
+      '@formatjs/intl-relativetimeformat':
+        specifier: 'catalog:'
+        version: 13.0.1
       '@legendapp/list':
         specifier: 'catalog:'
         version: 3.6.0(react-dom@19.3.1(react@19.3.1))(react-native@0.88.1(@babel/core@7.29.7(supports-color@7.2.0))(@react-native/metro-config@0.88.1(@babel/core@7.29.7(supports-color@7.2.0))(supports-color@7.2.0))(@types/react@19.3.0)(react@19.3.1)(supports-color@7.2.0))(react@19.3.1)
@@ -3727,11 +3733,17 @@ packages:
   '@formatjs/intl-locale@5.3.12':
     resolution: {integrity: sha512-bI5CrvuC6A5PMOIiHX+6ETTHXzUofHw1U/fkI59sQJ+BFbkglxIVVncFPxHf4IHmAqAs/Rlp2bdzTEcLaq2tQw==}
 
+  '@formatjs/intl-localematcher@0.10.1':
+    resolution: {integrity: sha512-gBqglQK9rXuHsLmM8wzTMBy4Xo4d0jamirIVKuEL8F1rwbskWdpMA1kZarSkny+uvr5q/K6GSzE0Rcq1wZLl3g==}
+
   '@formatjs/intl-localematcher@0.9.0':
     resolution: {integrity: sha512-Z7TD3ssNry1Av1dVDoq/mzpxGyxqWwU0ClWEo+BB3k0JQTeQvUGmeK9WZGYvlqStS0UqkaKXk3dfjsb6NaHAxw==}
 
   '@formatjs/intl-pluralrules@6.3.16':
     resolution: {integrity: sha512-iOqCpBM2fo7bbbWqno+yN9WioepV01N2q3KawFZhRYADzijpzmIIA6cbFXrriCI1Mt2q5c7mceiKHoQkEFf0/Q==}
+
+  '@formatjs/intl-relativetimeformat@13.0.1':
+    resolution: {integrity: sha512-Gl5dCHb7elEC19tTzxIyllWLHaHnN+HpQYEaA9xxAt9rKgRLwC3vGty1w8bVGG7p2YcGSPIg5c4qn4KdkGcTqg==}
 
   '@formatjs/intl-supportedvaluesof@2.3.11':
     resolution: {integrity: sha512-oRzzAbJA08psr6AO0jgXAdx4HZ2vGNeja1fgaio2R2ne8DLtGPV+fa3gxI/t8J2dNPOndrwVAZVVfbH6GDFDwA==}
@@ -14084,6 +14096,10 @@ snapshots:
       '@formatjs/intl-getcanonicallocales': 3.2.12
       '@formatjs/intl-supportedvaluesof': 2.3.11
 
+  '@formatjs/intl-localematcher@0.10.1':
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.7
+
   '@formatjs/intl-localematcher@0.9.0':
     dependencies:
       '@formatjs/fast-memoize': 3.1.7
@@ -14092,6 +14108,10 @@ snapshots:
     dependencies:
       '@formatjs/bigdecimal': 0.2.7
       '@formatjs/intl-localematcher': 0.9.0
+
+  '@formatjs/intl-relativetimeformat@13.0.1':
+    dependencies:
+      '@formatjs/intl-localematcher': 0.10.1
 
   '@formatjs/intl-supportedvaluesof@2.3.11':
     dependencies:

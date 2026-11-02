@@ -75,7 +75,7 @@ const ui = Object.fromEntries(
 ui.useTheme = () => ({ space: {} });
 const defaults = {
 	react,
-	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },
+	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-US" } }) },
 	"@lingui/core/macro": { t: tag },
 	"react-native": { View: "View", Platform: { OS: "ios" } },
 };
@@ -200,10 +200,12 @@ let hasProvider = false;
 const parseRequests = [];
 const lanes = [{ id: "saved", category: "saved", label: "Saved" }];
 const timezoneHelpers = load(new URL("../../../packages/utils/src/timezone.ts", import.meta.url).pathname, { zod });
+const postingSource = load(schema("posting-source.ts"), { "@reactive-resume/utils/timezone": timezoneHelpers });
 const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx"), {
 	"@reactive-resume/utils/timezone": timezoneHelpers,
+	"@reactive-resume/schema/applications/posting-source": postingSource,
 	"@reactive-resume/import/job-posting": { readPastedPostingHeader: () => null },
-	"@/features/application-detail/hooks": { useUserTime: () => ({ timeZone: "UTC" }) },
+	"@/features/application-detail/hooks": { useNow: () => new Date(), useUserTime: () => ({ timeZone: "UTC" }) },
 	"@orpc/client": { ORPCError },
 	"@tanstack/react-query": {
 		useQuery: (options) =>
@@ -243,12 +245,21 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 						parseRequests.push(input);
 						return {
 							company: "Fictional",
+							requirements: [],
 							role: "Engineer",
 							location: "",
 							salary: "",
 							sourceUrl: input.input,
 							jobDescription: "Visible posting",
-							postingSource: { method: "fetch", format: "text", truncated: false, completeness: "unknown" },
+							postingSource: {
+								method: "builtin",
+								format: "text",
+								truncated: false,
+								completeness: "unknown",
+								retrievedAt: new Date(Date.now() - 180_000).toISOString(),
+								requestedUrl: input.input,
+								resolvedUrl: "https://resolved.example.test/job",
+							},
 						};
 					},
 				},
@@ -327,10 +338,27 @@ assert.equal(
 );
 reset();
 const supportedForm = () => render(AddApplicationSheet, { onClose() {} });
+assert.ok(
+	!nodes(supportedForm()).some((n) => n.type === "Text" && String(n.props.children).includes("Read 3 minutes ago")),
+);
 control(supportedForm(), "Job posting link").onChangeText("https://jobs.example.test/role");
 control(supportedForm(), "Read posting").onPress();
 await settle();
 assert.equal(parseRequests.at(-1).useAI, false, "Supported server receives explicit no-AI flag");
+assert.ok(
+	nodes(supportedForm()).some(
+		(n) =>
+			n.type === "Text" &&
+			String(n.props.children) ===
+				"Read 3 minutes ago from resolved.example.test. The employer may have changed it since.",
+	),
+);
+control(supportedForm(), "More details").onPress();
+control(supportedForm(), "Saved description").onChangeText("Reviewed posting");
+control(nodes(supportedForm()).find((n) => n.type === "EditorSheet").props.footer, "Save job").onPress();
+await settle();
+assert.equal(saved.postingSource.resolvedUrl, "https://resolved.example.test/job");
+assert.equal(saved.jobDescription, "Reviewed posting");
 for (const failure of [new ORPCError("NOT_FOUND"), new TypeError("Private connection diagnostic")]) {
 	reset();
 	supportFailure = failure;

@@ -61,12 +61,21 @@ export function formatDateOnly(value: string, locale: string): string {
 	}).format(date);
 }
 
-/** When something was read, for a note under it: "Oct 30, 1:21 PM" in the reader's language, or null when unreadable. */
-export function formatReadTime(value: string | Date, locale: string): string | null {
+/** Elapsed read time, never a claim about the source's freshness. Future clock skew keeps an absolute date. */
+export function formatReadTime(value: string | Date, locale: string, now = Date.now()): string | null {
 	const date = value instanceof Date ? value : new Date(value);
-	if (Number.isNaN(date.getTime())) return null;
+	if (!Number.isFinite(date.getTime()) || !Number.isFinite(now)) return null;
 	try {
+		const seconds = (now - date.getTime()) / 1_000;
+		if (seconds >= 0) {
+			const relative = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+			if (seconds < 60) return relative.format(0, "second");
+			if (seconds < 3_600) return relative.format(-Math.floor(seconds / 60), "minute");
+			if (seconds < 86_400) return relative.format(-Math.floor(seconds / 3_600), "hour");
+			return relative.format(-Math.floor(seconds / 86_400), "day");
+		}
 		return new Intl.DateTimeFormat(locale, {
+			year: "numeric",
 			month: "short",
 			day: "numeric",
 			hour: "numeric",

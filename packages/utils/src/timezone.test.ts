@@ -33,8 +33,23 @@ describe("formatDateOnly", () => {
 });
 
 describe("formatReadTime", () => {
-	it("reads as a short date and time, and gives up on nonsense", () => {
-		expect(formatReadTime("2026-10-30T13:21:54.883Z", "en-US")).toMatch(/^Oct 30, \d{1,2}:21\s?(AM|PM)$/);
+	const now = Date.parse("2026-11-02T13:30:00Z");
+	it.each([
+		[0, "now"],
+		[59, "now"],
+		[60, "1 minute ago"],
+		[3_599, "59 minutes ago"],
+		[3_600, "1 hour ago"],
+		[86_399, "23 hours ago"],
+		[86_400, "yesterday"],
+		[259_200, "3 days ago"],
+	])("shows elapsed time without rounding up (%s seconds)", (age, expected) => {
+		expect(formatReadTime(new Date(now - age * 1_000), "en-US", now)).toBe(expected);
+	});
+	it("localizes relative time and keeps future clock skew absolute", () => {
+		expect(formatReadTime(new Date(now - 180_000), "de-DE", now)).toBe("vor 3 Minuten");
+		expect(formatReadTime(new Date(now + 60_000), "en-US", now)).toMatch(/^Nov 2, 2026, /);
 		expect(formatReadTime("not a date", "en-US")).toBeNull();
+		expect(formatReadTime(new Date(now), "en-US", Number.NaN)).toBeNull();
 	});
 });
