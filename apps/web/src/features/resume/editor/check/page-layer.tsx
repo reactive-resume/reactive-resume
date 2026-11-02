@@ -7,6 +7,7 @@ import { Trans } from "@lingui/react/macro";
 import { getProposalState } from "@reactive-resume/resume/proposals";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
 import { isSameSelection, useEditorStore } from "../store";
@@ -231,27 +232,21 @@ export function PageViewToggle() {
 		{ value: "parser", label: t`What a parser reads`, icon: "brackets-curly" },
 	] as const;
 
+	// The product's one in-canvas switcher (Share's Computer / Phone uses it too), floating over the page.
 	return (
-		<fieldset className="absolute top-3.5 left-1/2 z-10 flex -translate-x-1/2 gap-0.5 rounded-lg border border-line bg-raised p-[3px] shadow-e1">
-			<legend className="sr-only">
-				<Trans>Page view</Trans>
-			</legend>
+		<SegmentedControl
+			aria-label={t`Page view`}
+			value={view}
+			onValueChange={(value) => useEditorStore.setState({ pageView: value as typeof view })}
+			className="absolute top-3.5 left-1/2 z-10 -translate-x-1/2 border border-line shadow-e1"
+		>
 			{options.map((option) => (
-				<button
-					key={option.value}
-					type="button"
-					aria-pressed={view === option.value}
-					onClick={() => useEditorStore.setState({ pageView: option.value })}
-					className={cn(
-						"flex h-[30px] items-center gap-1.5 rounded-lg px-3 text-[13px] font-medium whitespace-nowrap max-sm:px-2",
-						view === option.value ? "bg-ink text-bg" : "text-ink-2 hover:bg-hover",
-					)}
-				>
+				<SegmentedControlItem key={option.value} value={option.value}>
 					<Icon name={option.icon} size={18} />
 					<span className="max-sm:sr-only">{option.label}</span>
-				</button>
+				</SegmentedControlItem>
 			))}
-		</fieldset>
+		</SegmentedControl>
 	);
 }
 

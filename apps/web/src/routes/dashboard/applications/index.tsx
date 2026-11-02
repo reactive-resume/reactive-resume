@@ -240,32 +240,25 @@ function RouteComponent() {
 				title={<Trans>Applications</Trans>}
 				actions={
 					<>
+						{/* One More menu beside the one primary action: icon-only buttons are for back, close and more. */}
 						<DropdownMenu>
-							<DropdownMenuTrigger
-								render={<Button size="icon" variant="secondary" aria-label={t`Import or export CSV`} />}
-							>
-								<Icon name="arrows-down-up" />
+							<DropdownMenuTrigger render={<Button size="icon" variant="secondary" aria-label={t`More`} />}>
+								<Icon name="dots-three" />
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align="end">
 								<DropdownMenuItem onClick={() => setImporting(true)}>
-									<Trans>Import from CSV…</Trans>
+									<Trans>Import CSV…</Trans>
 								</DropdownMenuItem>
 								<DropdownMenuItem disabled={empty || !applications || exportLoading} onClick={() => void openExport()}>
-									<Trans>Export to CSV…</Trans>
+									<Trans>Export CSV…</Trans>
 								</DropdownMenuItem>
+								{!lanes.unsupported && (
+									<DropdownMenuItem onClick={() => setManagingLanes(true)}>
+										<Trans>Manage stages…</Trans>
+									</DropdownMenuItem>
+								)}
 							</DropdownMenuContent>
 						</DropdownMenu>
-						{!lanes.unsupported && (
-							<Button
-								size="icon"
-								variant="secondary"
-								aria-label={t`Manage stages`}
-								title={t`Manage stages`}
-								onClick={() => setManagingLanes(true)}
-							>
-								<Icon name="sliders-horizontal" />
-							</Button>
-						)}
 						<Button onClick={() => setAdding(true)}>
 							<Icon name="plus" />
 							<Trans>Save job</Trans>
@@ -282,7 +275,7 @@ function RouteComponent() {
 								setSearch({ view: value as View });
 							}}
 						>
-							<TabsList aria-label={t`View`}>
+							<TabsList variant="line" aria-label={t`View`}>
 								<TabsTrigger value="list">
 									<Icon name="rows" size={18} />
 									<Trans>List</Trans>
