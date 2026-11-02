@@ -30,7 +30,10 @@ vi.mock("@/libs/orpc/client", () => ({
 		},
 		documents: {
 			key: () => ["documents"],
-			linkApplication: { mutationOptions: () => ({ mutationFn: api.link }) },
+			linkApplication: {
+				mutationOptions: () => ({ mutationFn: api.link }),
+				call: (input: unknown) => api.link(input),
+			},
 			copyForJob: { mutationOptions: () => ({ mutationFn: api.copyForJob }) },
 		},
 	},
@@ -42,6 +45,9 @@ vi.mock("@/features/resume/builder/draft", () => ({
 	useIsResumeLocked: () => false,
 	usePatchResume: () => vi.fn(),
 	savePendingChanges: api.save,
+	// The autosave owner hands the write the revision it builds on.
+	saveResumeMetadata: (_id: string, write: (expectedUpdatedAt: Date | undefined) => Promise<unknown>) =>
+		write(undefined),
 }));
 vi.mock("@/features/assistant/open", () => ({ openAssistantFrom: vi.fn() }));
 vi.mock("./actions", () => ({ checkStateOf: vi.fn(), editWithUndo: vi.fn() }));
@@ -110,7 +116,7 @@ it("still links the base resume itself when that's chosen", async () => {
 	useEditorStore.setState({ pastedPosting: "Head of Engineering at Parcel & Co." });
 	api.create.mockReset().mockResolvedValue("job-parcel");
 	api.copyForJob.mockReset();
-	api.link.mockReset().mockResolvedValue(undefined);
+	api.link.mockReset().mockResolvedValue({ id: "base-resume" });
 	mount();
 
 	fireEvent.click(await screen.findByRole("button", { name: "Save as a job…" }));
@@ -119,7 +125,12 @@ it("still links the base resume itself when that's chosen", async () => {
 	fireEvent.click(screen.getByRole("button", { name: "Save and link this resume" }));
 
 	await waitFor(() => expect(api.link).toHaveBeenCalled());
-	expect(api.link.mock.calls[0]?.[0]).toEqual({ type: "resume", id: "base-resume", applicationId: "job-parcel" });
+	expect(api.link.mock.calls[0]?.[0]).toEqual({
+		type: "resume",
+		id: "base-resume",
+		applicationId: "job-parcel",
+		expectedUpdatedAt: undefined,
+	});
 	expect(api.copyForJob).not.toHaveBeenCalled();
 });
 
@@ -180,7 +191,7 @@ it("keeps saved-job choices visible when copying or linking fails", async () => 
 	api.applications = [{ id: "job-retry", company: "Retry Co", role: "Engineer", status: "saved" }];
 	api.save.mockResolvedValue(true);
 	api.copyForJob.mockReset().mockRejectedValue(new Error("Network error"));
-	api.link.mockReset().mockRejectedValueOnce(new Error("Network error")).mockResolvedValue(undefined);
+	api.link.mockReset().mockRejectedValueOnce(new Error("Network error")).mockResolvedValue({ id: "base-resume" });
 	mount();
 	const picker = await screen.findByRole("combobox", { name: "Link an application" });
 	await screen.findByRole("option", { name: "Engineer · Retry Co" });
@@ -200,7 +211,7 @@ it("reuses the created job ID when saving succeeds but linking fails", async () 
 	useEditorStore.setState({ pastedPosting: "Build reliable systems." });
 	api.applications = [];
 	api.create.mockReset().mockResolvedValue("saved-job");
-	api.link.mockReset().mockRejectedValueOnce(new Error("Offline")).mockResolvedValue(undefined);
+	api.link.mockReset().mockRejectedValueOnce(new Error("Offline")).mockResolvedValue({ id: "base-resume" });
 	mount();
 	fireEvent.click(await screen.findByRole("button", { name: "Save as a job…" }));
 	fireEvent.change(screen.getByLabelText("Company"), { target: { value: "Retry Co" } });
