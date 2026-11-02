@@ -82,14 +82,14 @@ test("keeps a ready letter draft after reload without asking the provider again"
 	await page.goto(`/builder/letter/${letter.id}`);
 	await page.getByRole("button", { name: "Draft from the posting" }).click();
 	await consent(page);
-	await expect(page.getByRole("button", { name: "Keep" })).toBeVisible({ timeout: 30_000 });
+	await expect(page.getByRole("button", { name: "Accept", exact: true })).toBeVisible({ timeout: 30_000 });
 	const before = stub.requests.filter((request) =>
 		request.messages.some((message) => String(message.content).includes("You write the body of a cover letter")),
 	).length;
 	const shown = await page.locator("[aria-live=polite]").first().textContent();
 
 	await page.reload();
-	await expect(page.getByRole("button", { name: "Keep" })).toBeVisible();
+	await expect(page.getByRole("button", { name: "Accept", exact: true })).toBeVisible();
 	await expect(page.locator("[aria-live=polite]").first()).toContainText(shown?.slice(0, 20) ?? "");
 	const after = stub.requests.filter((request) =>
 		request.messages.some((message) => String(message.content).includes("You write the body of a cover letter")),

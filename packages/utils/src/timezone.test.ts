@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { formatDateOnly, fromZonedDateTime } from "./timezone";
+import { formatDateOnly, fromZonedDateTime, formatReadTime } from "./timezone";
 
 describe("wall-clock timezone conversion", () => {
 	it.each([
@@ -29,5 +29,12 @@ describe("formatDateOnly", () => {
 	it("leaves an invalid or non-date value untouched", () => {
 		expect(formatDateOnly("2027-02-31", "en-US")).toBe("2027-02-31");
 		expect(formatDateOnly("", "en-US")).toBe("");
+	});
+});
+
+describe("formatReadTime", () => {
+	it("reads as a short date and time, and gives up on nonsense", () => {
+		expect(formatReadTime("2026-10-30T13:21:54.883Z", "en-US")).toMatch(/^Oct 30, \d{1,2}:21\s?(AM|PM)$/);
+		expect(formatReadTime("not a date", "en-US")).toBeNull();
 	});
 });

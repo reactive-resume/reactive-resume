@@ -596,7 +596,16 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 	return (
 		<div className="grid justify-items-start gap-3 rounded-xl border border-dashed border-line-2 p-4">
 			<p className="text-sm text-ink-2">
-				{company && hasResume ? (
+				{/* Without a provider, drafting isn't on offer yet: say what would make it so. */}
+				{canDraft && !providerState.isUnavailable && !hasUsableProvider ? (
+					company && hasResume ? (
+						<Trans>Start typing, or connect an AI provider to draft from the {company} posting and your resume.</Trans>
+					) : company ? (
+						<Trans>Start typing, or connect an AI provider to draft from the {company} posting.</Trans>
+					) : (
+						<Trans>Start typing, or connect an AI provider to draft from your resume.</Trans>
+					)
+				) : company && hasResume ? (
 					<Trans>Start typing, or draft from what we know: the {company} posting and your resume.</Trans>
 				) : company ? (
 					<Trans>Start typing, or draft from what we know: the {company} posting.</Trans>
@@ -733,9 +742,9 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 					<button
 						type="button"
 						onClick={() => onKeep(draft.text)}
-						className="h-8 rounded-lg bg-accent px-3 text-[13px] font-semibold text-on-accent hover:bg-accent-hover"
+						className="touch-target relative h-8 rounded-lg bg-accent px-3 text-[13px] font-semibold text-on-accent hover:bg-accent-hover"
 					>
-						<Trans>Keep</Trans>
+						<Trans>Accept</Trans>
 					</button>
 					{(
 						[
@@ -747,7 +756,7 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 							key={variant}
 							type="button"
 							onClick={() => run(variant, draft.text)}
-							className="h-8 rounded-lg px-2.5 text-[13px] hover:bg-[oklch(1_0_0/0.12)]"
+							className="touch-target relative h-8 rounded-lg px-2.5 text-[13px] hover:bg-[oklch(1_0_0/0.12)]"
 						>
 							{label}
 						</button>
@@ -755,9 +764,9 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 					<button
 						type="button"
 						onClick={discardLetterDraft}
-						className="h-8 rounded-lg px-2.5 text-[13px] hover:bg-[oklch(1_0_0/0.12)]"
+						className="touch-target relative h-8 rounded-lg px-2.5 text-[13px] hover:bg-[oklch(1_0_0/0.12)]"
 					>
-						<Trans>Discard</Trans>
+						<Trans>Reject</Trans>
 					</button>
 				</div>
 			)}

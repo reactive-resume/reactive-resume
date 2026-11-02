@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Linking, View } from "react-native";
 import { contactSchema } from "@reactive-resume/schema/applications/data";
 import { followUpInstant, isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
-import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
+import { formatReadTime, fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { WallClockField } from "./date-field";
 import { followUpReminder, leadLabel, useDocuments, useUserTime } from "./hooks";
 import { followUpDay } from "@/features/applications-board/calendar";
@@ -413,7 +413,7 @@ export function PostingSheet({ application, open, onClose }: ApplicationContentS
 }
 
 function PostingBody({ application, onClose }: Omit<ApplicationContentSheetProps, "open">) {
-	const { t } = useLingui();
+	const { t, i18n } = useLingui();
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();
 	const [text, setText] = useState(application.jobDescription ?? "");
@@ -427,7 +427,7 @@ function PostingBody({ application, onClose }: Omit<ApplicationContentSheetProps
 				<Text variant="callout" color="ink3">
 					{source.method === "paste"
 						? t`Pasted description`
-						: t`Retrieved ${source.retrievedAt} using ${source.method}. Retrieval time does not establish origin freshness.`}
+						: t`Read on ${(source.retrievedAt && formatReadTime(source.retrievedAt, i18n.locale)) || source.retrievedAt || ""}. The employer may have changed it since.`}
 				</Text>
 			) : null}
 			{source?.truncated || source?.completeness === "incomplete" ? (

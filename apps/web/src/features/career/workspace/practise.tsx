@@ -440,6 +440,8 @@ function Session({
 	const total = questions.length;
 	const answerField = (
 		<Textarea
+			// What people paste or write here can be in any language: its own text sets the direction.
+			dir="auto"
 			id={`${id}-answer`}
 			aria-labelledby={`${id}-heading`}
 			value={answer}

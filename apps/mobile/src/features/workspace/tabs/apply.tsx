@@ -494,7 +494,7 @@ function AnswerCard({
 							disabled={disabled || stale}
 							onPress={() => accept(proposal)}
 						/>
-						<Button variant="ghost" size="sm" label={t`Skip`} onPress={() => setProposal(null)} />
+						<Button variant="ghost" size="sm" label={t`Reject`} onPress={() => setProposal(null)} />
 						{limit ? (
 							<Text
 								variant="caption"

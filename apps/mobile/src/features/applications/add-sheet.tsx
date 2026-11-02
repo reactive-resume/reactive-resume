@@ -511,7 +511,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 									message={
 										parsed.enrichmentWarning
 											? t`AI enrichment was unavailable. Review the page details or fill them manually.`
-											: t`Review the details before saving. Retrieved content does not establish that the posting is still open.`
+											: t`Review the details before saving. The employer may have changed or closed the posting since it was read.`
 									}
 								/>
 							)}

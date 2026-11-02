@@ -128,6 +128,8 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 					{t`Paste a message from ${application.company}`}
 				</label>
 				<Textarea
+					// What people paste or write here can be in any language: its own text sets the direction.
+					dir="auto"
 					id={`${application.id}-message`}
 					value={message}
 					maxLength={20_000}
@@ -215,6 +217,8 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							<Trans>Suggested reply · edit before sending</Trans>
 						</label>
 						<Textarea
+							// What people paste or write here can be in any language: its own text sets the direction.
+							dir="auto"
 							id={`${reply.id}-reply`}
 							value={text}
 							readOnly={readOnly}
@@ -307,13 +311,16 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 			timeZone,
 		).title;
 
-	const describe = (change: (typeof changes)[number]) => {
+	const describe = (change: (typeof changes)[number], index: number) => {
 		switch (change.type) {
 			case "stage": {
 				// A proposed stage lands in that stage's default lane.
 				const stage = getLaneLabel(getCategoryLane(lanes, change.stage));
 				if (change.stage === application.status)
-					return { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
+					// Applied, the stage is now the one it moved to: say so, rather than "stays".
+					return applied?.changes.includes(index)
+						? { title: t`Moved to ${stage}`, detail: "" }
+						: { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
 				if (application.status === "saved")
 					return {
 						title: t`Mark as applied and move to ${stage}`,
@@ -357,7 +364,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				return {
 					title: t`Save these offer terms to compare`,
 					detail: terms.length
-						? t`${terms.join(" · ")}. Opens in Career → Offers.`
+						? t`${terms.join(" · ").replace(/[\s.。]+$/u, "")}. Opens in Career → Offers.`
 						: t`No terms were extracted. Opens in Career → Offers.`,
 				};
 			}
@@ -530,7 +537,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 
 			<ul className="grid gap-2">
 				{changes.map((change, index) => {
-					const { title, detail } = describe(change);
+					const { title, detail } = describe(change, index);
 					const isFixed = fixed(index);
 					const id = `${reply.id}-change-${index}`;
 					return (
@@ -546,7 +553,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 							/>
 							<label htmlFor={id} className="grid gap-0.5 text-[13px] leading-[19px]">
 								<span className="font-semibold">{title}</span>
-								<span className="text-ink-2">{detail}</span>
+								{detail && <span className="text-ink-2">{detail}</span>}
 							</label>
 						</li>
 					);

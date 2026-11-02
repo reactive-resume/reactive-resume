@@ -28,6 +28,7 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@reactive-res
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
+import { formatReadTime } from "@reactive-resume/utils/timezone";
 import { getCategoryLane, getDisplayLane, getLaneLabel, getNextLane, getStageDisplay, laneMoveInput } from "../lanes";
 import { daysInLane } from "../next-step";
 import { applicationDetailQueryOptions, getInitialApplicationDetail } from "../queries";
@@ -631,6 +632,9 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 
 /** The saved posting: its link, what it asks for, and its text. */
 function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) {
+	const { i18n } = useLingui();
+	const retrievedAt = application.postingSource?.retrievedAt;
+	const readAt = retrievedAt ? (formatReadTime(retrievedAt, i18n.locale) ?? retrievedAt) : "";
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-xl">
@@ -658,10 +662,7 @@ function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) 
 						{application.postingSource.method === "paste" ? (
 							<Trans>Pasted description</Trans>
 						) : (
-							<Trans>
-								Retrieved {application.postingSource.retrievedAt} using {application.postingSource.method}. Retrieval
-								time does not establish origin freshness.
-							</Trans>
+							<Trans>Read on {readAt}. The employer may have changed it since.</Trans>
 						)}
 					</p>
 				)}

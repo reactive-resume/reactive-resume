@@ -259,13 +259,16 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 		).title;
 	const from = getLaneLabel(resolveLane(lanes.lanes, application));
 
-	const describe = (change: (typeof changes)[number]) => {
+	const describe = (change: (typeof changes)[number], index: number) => {
 		switch (change.type) {
 			case "stage": {
 				const stage =
 					change.stage === application.status ? from : getLaneLabel(resolveLane(lanes.lanes, { status: change.stage }));
 				if (change.stage === application.status)
-					return { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
+					// Applied, the stage is now the one it moved to: say so, rather than "stays".
+					return applied?.changes.includes(index)
+						? { title: t`Moved to ${stage}`, detail: "" }
+						: { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
 				if (application.status === "saved")
 					return {
 						title: t`Mark as applied and move to ${stage}`,
@@ -307,7 +310,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				return {
 					title: t`Save these offer terms to compare`,
 					detail: terms.length
-						? t`${terms.join(" · ")}. Opens in Career → Offers.`
+						? t`${terms.join(" · ").replace(/[\s.。]+$/u, "")}. Opens in Career → Offers.`
 						: t`No terms were extracted. Opens in Career → Offers.`,
 				};
 			}
@@ -476,7 +479,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 			}
 		>
 			{changes.map((change, index) => {
-				const { title, detail } = describe(change);
+				const { title, detail } = describe(change, index);
 				const fixed = isFixedChange(change, application.status);
 				return (
 					<CheckRow

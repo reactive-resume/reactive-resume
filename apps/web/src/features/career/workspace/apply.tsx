@@ -426,6 +426,8 @@ function AnswerCard({
 			<div className="flex items-start gap-3">
 				{editingQuestion && !readOnly ? (
 					<Textarea
+						// What people paste or write here can be in any language: its own text sets the direction.
+						dir="auto"
 						// oxlint-disable-next-line jsx-a11y/no-autofocus -- opened by the user's click on Add a question or Edit question
 						autoFocus
 						ref={questionField}
@@ -463,7 +465,7 @@ function AnswerCard({
 							<button
 								type="button"
 								onClick={onToggleUnit}
-								className="shrink-0 rounded-sm font-mono text-xs leading-[22px] font-medium text-ink-2 transition-colors duration-quick hover:text-ink"
+								className="touch-target relative shrink-0 rounded-sm font-mono text-xs leading-[22px] font-medium text-ink-2 transition-colors duration-quick hover:text-ink"
 							/>
 						}
 					>
@@ -535,7 +537,7 @@ function AnswerCard({
 								<Trans>Accept</Trans>
 							</Button>
 							<Button size="sm" variant="ghost" onClick={() => setProposal(null)}>
-								<Trans>Skip</Trans>
+								<Trans>Reject</Trans>
 							</Button>
 							{limit && (
 								<span
@@ -566,6 +568,8 @@ function AnswerCard({
 					</p>
 				) : (
 					<Textarea
+						// What people paste or write here can be in any language: its own text sets the direction.
+						dir="auto"
 						value={text}
 						maxLength={6000}
 						disabled={disabled}

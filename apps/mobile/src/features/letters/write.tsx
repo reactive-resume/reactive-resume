@@ -692,13 +692,20 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 			}}
 		>
 			<Text color="ink2">
-				{company && hasResume
-					? t`Start typing, or draft from what we know: the ${company} posting and your resume.`
-					: company
-						? t`Start typing, or draft from what we know: the ${company} posting.`
-						: hasResume
-							? t`Start typing, or draft from what we know: your resume.`
-							: t`Start typing. To draft one, link a resume or an application first.`}
+				{/* Without a provider, drafting isn't on offer yet: say what would make it so (web write-panel). */}
+				{canDraft && !ai.isUnavailable && !ai.hasAIProvider
+					? company && hasResume
+						? t`Start typing, or connect an AI provider to draft from the ${company} posting and your resume.`
+						: company
+							? t`Start typing, or connect an AI provider to draft from the ${company} posting.`
+							: t`Start typing, or connect an AI provider to draft from your resume.`
+					: company && hasResume
+						? t`Start typing, or draft from what we know: the ${company} posting and your resume.`
+						: company
+							? t`Start typing, or draft from what we know: the ${company} posting.`
+							: hasResume
+								? t`Start typing, or draft from what we know: your resume.`
+								: t`Start typing. To draft one, link a resume or an application first.`}
 			</Text>
 			<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 				{canDraft && ai.hasAIProvider ? (
@@ -832,7 +839,7 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 			) : (
 				<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 					<ReportAiContent source="letter" text={draft.text} />
-					<Button size="sm" label={t`Keep`} onPress={() => onKeep(draft.text)} />
+					<Button size="sm" label={t`Accept`} onPress={() => onKeep(draft.text)} />
 					<Button
 						size="sm"
 						variant="secondary"
@@ -845,7 +852,7 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 						label={t`More personal`}
 						onPress={() => void startLetterDraft("personal", draft.text)}
 					/>
-					<Button size="sm" variant="dangerOutline" label={t`Discard`} onPress={discardLetterDraft} />
+					<Button size="sm" variant="dangerOutline" label={t`Reject`} onPress={discardLetterDraft} />
 				</View>
 			)}
 		</View>

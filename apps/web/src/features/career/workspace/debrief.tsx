@@ -185,6 +185,8 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 					<Trans>What did you say, as close as you remember?</Trans>
 				</Label>
 				<Textarea
+					// What people paste or write here can be in any language: its own text sets the direction.
+					dir="auto"
 					id={`${id}-answer`}
 					value={draft.answer}
 					readOnly={readOnly}

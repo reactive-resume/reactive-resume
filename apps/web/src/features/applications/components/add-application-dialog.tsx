@@ -1,5 +1,6 @@
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { PostingCapture } from "@reactive-resume/schema/applications/capture";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
@@ -22,6 +23,7 @@ import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { formatReadTime } from "@reactive-resume/utils/timezone";
 import { getCategoryLane, getLaneLabel, laneMoveInput } from "../lanes";
 import { useInvalidateApplications } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
@@ -162,6 +164,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const postingDescription = (description ?? (!link ? text : "")).slice(0, MAX_POSTING_CHARS);
 	const readable = text.length > 8 && (link || hasUsableProvider);
 	const parsed = reading?.text === text ? reading.result : null;
+	const retrievedAt = parsed?.postingSource.retrievedAt;
+	const readAt = retrievedAt ? (formatReadTime(retrievedAt, i18n.locale) ?? retrievedAt) : null;
 	const clipped = Boolean(
 		initialCapture?.truncated || parsed?.postingSource.truncated || (!link && text.length > MAX_POSTING_CHARS),
 	);
@@ -375,6 +379,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					<Trans>Job link or posting text</Trans>
 				</Label>
 				<Textarea
+					// What people paste or write here can be in any language: its own text sets the direction.
+					dir="auto"
 					id={`${id}-posting`}
 					rows={4}
 					value={input}
@@ -411,6 +417,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							<Trans>Pasted description</Trans>
 						</Label>
 						<Textarea
+							// What people paste or write here can be in any language: its own text sets the direction.
+							dir="auto"
 							id={`${id}-recovery`}
 							rows={5}
 							value={pastedText}
@@ -468,6 +476,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							<Trans>Saved description</Trans>
 						</Label>
 						<Textarea
+							// What people paste or write here can be in any language: its own text sets the direction.
+							dir="auto"
 							id={`${id}-description`}
 							rows={5}
 							maxLength={MAX_POSTING_CHARS}
@@ -475,11 +485,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							onChange={(event) => setDescription(event.target.value)}
 							className="max-h-72 overflow-y-auto"
 						/>
-						{parsed?.postingSource.retrievedAt && (
+						{readAt && (
 							<p className="text-xs text-ink-3">
-								<Trans>
-									Retrieved {parsed.postingSource.retrievedAt}. Origin freshness is unknown unless reported.
-								</Trans>
+								<Trans>Read from the posting page on {readAt}.</Trans>
 							</p>
 						)}
 					</div>
