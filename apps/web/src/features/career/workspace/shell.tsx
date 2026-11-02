@@ -4,7 +4,7 @@ import type { Application } from "@/features/applications/types";
 import type { InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
 import type { ReactNode } from "react";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -254,7 +254,12 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 								{tabLabel(value)}
 								{value === "prepare" && minutes !== null && minutes > 0 && minutes < 7 * 24 * 60 && (
 									<TabBadge tone={minutes <= 60 ? "warn" : "accent"}>
-										{minutes <= 60 ? t`${minutes} min` : t`${Math.round(minutes / 60)} h`}
+										{/* Past two days, days: "113 h" beside "In 5 days" reads as two different times. */}
+										{minutes <= 60
+											? t`${minutes} min`
+											: minutes < 48 * 60
+												? t`${Math.round(minutes / 60)} h`
+												: plural(Math.round(minutes / (24 * 60)), { one: "# day", other: "# days" })}
 									</TabBadge>
 								)}
 								{value === "messages" && unreadMessages > 0 && <TabBadge tone="info">{unreadMessages}</TabBadge>}

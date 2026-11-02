@@ -108,7 +108,7 @@ function Toaster({
 				<ToastPrimitive.Viewport
 					data-slot="toast-viewport"
 					aria-label={regionLabel}
-					className="pointer-events-none fixed inset-x-4 bottom-7 z-200 grid justify-items-center outline-none"
+					className="pointer-events-none fixed inset-x-4 bottom-[var(--toast-bottom,1.75rem)] z-200 grid justify-items-center outline-none"
 				>
 					<ToastList closeLabel={closeLabel} timeout={timeout} />
 				</ToastPrimitive.Viewport>
