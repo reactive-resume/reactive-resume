@@ -7,6 +7,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
+import { withUndo } from "@/features/career/shared";
 
 const EMPTY_CONTACT = { name: "", role: "", type: "", email: "", phone: "" };
 
@@ -35,18 +36,60 @@ export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
 function ContactList({ contacts, disabled, onChange }: ContactsProps) {
 	const id = useId();
 	const [adding, setAdding] = useState(false);
+	// The contact being corrected, by position; the same form opens prefilled.
+	const [editing, setEditing] = useState<number | null>(null);
 	const [draft, setDraft] = useState(EMPTY_CONTACT);
 	const [error, setError] = useState("");
+	// A removed contact hides at once and is saved away when its Undo toast closes.
+	const [removing, setRemoving] = useState<Contact | null>(null);
+	const shown = contacts.filter((contact) => contact !== removing);
+	const formOpen = adding || editing !== null;
 
-	const add = () => {
+	const close = () => {
+		setDraft(EMPTY_CONTACT);
+		setError("");
+		setAdding(false);
+		setEditing(null);
+	};
+
+	const save = () => {
 		if (!draft.name.trim()) return;
 		// Checked with the API's schema here, so a mistyped email is caught before the draft is thrown away.
 		const parsed = contactSchema.safeParse(draft);
 		if (!parsed.success) return setError(t`Enter a valid email address.`);
-		onChange([...contacts, parsed.data]);
-		setDraft(EMPTY_CONTACT);
+		onChange(
+			editing === null
+				? [...contacts, parsed.data]
+				: contacts.map((contact, index) => (index === editing ? parsed.data : contact)),
+		);
+		close();
+	};
+
+	const edit = (index: number) => {
+		const contact = contacts[index];
+		if (!contact) return;
+		setDraft({
+			name: contact.name,
+			role: contact.role ?? "",
+			type: contact.type ?? "",
+			email: contact.email ?? "",
+			phone: contact.phone ?? "",
+		});
 		setError("");
 		setAdding(false);
+		setEditing(index);
+	};
+
+	const remove = (contact: Contact) => {
+		setRemoving(contact);
+		withUndo({
+			description: t`Removed ${contact.name}`,
+			onUndo: () => setRemoving(null),
+			commit: () => {
+				onChange(contacts.filter((item) => item !== contact));
+				setRemoving(null);
+			},
+		});
 	};
 
 	const field = (key: keyof typeof EMPTY_CONTACT, label: string, type = "text") => (
@@ -64,52 +107,66 @@ function ContactList({ contacts, disabled, onChange }: ContactsProps) {
 
 	return (
 		<div className="grid gap-2">
-			{contacts.length === 0 && !adding && (
+			{shown.length === 0 && !formOpen && (
 				<p className="text-sm text-ink-3">
 					<Trans>No contacts yet.</Trans>
 				</p>
 			)}
-			{contacts.map((contact, index) => (
-				<div key={`${contact.name}-${index}`} className="flex items-start gap-2.5 text-sm">
-					<div className="grid min-w-0 flex-1">
-						<span className="truncate font-medium">
-							<bdi>{contact.name}</bdi>
-							{contact.type && <span className="font-normal text-ink-3"> · {contact.type}</span>}
-						</span>
-						{contact.role && (
-							<span dir="auto" className="truncate text-xs text-ink-3">
-								{contact.role}
+			{shown.map((contact) => {
+				const index = contacts.indexOf(contact);
+				return (
+					<div key={`${contact.name}-${index}`} className="flex items-start gap-2.5 text-sm">
+						<div className="grid min-w-0 flex-1">
+							<span className="truncate font-medium">
+								<bdi>{contact.name}</bdi>
+								{contact.type && <span className="font-normal text-ink-3"> · {contact.type}</span>}
 							</span>
-						)}
-						{contact.email && (
-							<a href={`mailto:${contact.email}`} className="truncate text-xs text-accent-text hover:underline">
-								{contact.email}
-							</a>
-						)}
-						{contact.phone && (
-							<a href={`tel:${contact.phone}`} className="truncate text-xs text-accent-text hover:underline">
-								{contact.phone}
-							</a>
-						)}
+							{contact.role && (
+								<span dir="auto" className="truncate text-xs text-ink-3">
+									{contact.role}
+								</span>
+							)}
+							{contact.email && (
+								<a href={`mailto:${contact.email}`} className="truncate text-xs text-accent-text hover:underline">
+									{contact.email}
+								</a>
+							)}
+							{contact.phone && (
+								<a href={`tel:${contact.phone}`} className="truncate text-xs text-accent-text hover:underline">
+									{contact.phone}
+								</a>
+							)}
+						</div>
+						<Button
+							size="icon-xs"
+							variant="ghost"
+							className="touch-target relative"
+							disabled={disabled || formOpen}
+							aria-label={t`Edit ${contact.name}`}
+							onClick={() => edit(index)}
+						>
+							<Icon name="pencil-simple" size={16} />
+						</Button>
+						<Button
+							size="icon-xs"
+							variant="ghost"
+							className="touch-target relative"
+							disabled={disabled || formOpen}
+							aria-label={t`Remove ${contact.name}`}
+							onClick={() => remove(contact)}
+						>
+							<Icon name="x" size={16} />
+						</Button>
 					</div>
-					<Button
-						size="icon-xs"
-						variant="ghost"
-						disabled={disabled}
-						aria-label={t`Remove ${contact.name}`}
-						onClick={() => onChange(contacts.filter((_, i) => i !== index))}
-					>
-						<Icon name="x" size={16} />
-					</Button>
-				</div>
-			))}
+				);
+			})}
 
-			{adding ? (
+			{formOpen ? (
 				<form
 					className="grid gap-2 rounded-lg border border-line p-2.5"
 					onSubmit={(event) => {
 						event.preventDefault();
-						add();
+						save();
 					}}
 				>
 					{field("name", t`Name`)}
@@ -135,11 +192,11 @@ function ContactList({ contacts, disabled, onChange }: ContactsProps) {
 					</datalist>
 					{error && <p className="text-xs text-danger-text">{error}</p>}
 					<div className="flex justify-end gap-1.5">
-						<Button type="button" size="sm" variant="ghost" onClick={() => setAdding(false)}>
+						<Button type="button" size="sm" variant="ghost" onClick={close}>
 							<Trans>Cancel</Trans>
 						</Button>
 						<Button type="submit" size="sm" disabled={!draft.name.trim() || disabled}>
-							<Trans>Add</Trans>
+							{editing === null ? <Trans>Add</Trans> : <Trans>Save</Trans>}
 						</Button>
 					</div>
 				</form>

@@ -476,6 +476,8 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 	const { update } = useApplicationMutations();
 	const [draft, setDraft] = useState(EMPTY_CONTACT);
 	const [error, setError] = useState("");
+	// The contact being corrected, by position; the form below fills with it (web contacts.tsx).
+	const [editing, setEditing] = useState<number | null>(null);
 	const save = (contacts: Contact[], onSuccess = () => {}) =>
 		update.mutate(
 			{ id: application.id, contacts },
@@ -488,7 +490,37 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 	const add = () => {
 		const parsed = contactSchema.safeParse(draft);
 		if (!parsed.success) return setError(t`Enter a valid email address.`);
-		save([...application.contacts, parsed.data], () => setDraft(EMPTY_CONTACT));
+		const next =
+			editing === null
+				? [...application.contacts, parsed.data]
+				: application.contacts.map((contact, index) => (index === editing ? parsed.data : contact));
+		save(next, () => {
+			setDraft(EMPTY_CONTACT);
+			setEditing(null);
+		});
+	};
+	const edit = (index: number) => {
+		const contact = application.contacts[index];
+		if (!contact) return;
+		setError("");
+		setEditing(index);
+		setDraft({
+			name: contact.name,
+			role: contact.role,
+			type: contact.type,
+			email: contact.email,
+			phone: contact.phone,
+		});
+	};
+	// Removing saves at once, with Undo putting the list back as it was.
+	const remove = (index: number) => {
+		const before = application.contacts;
+		const contact = before[index];
+		if (!contact) return;
+		save(
+			before.filter((_, i) => i !== index),
+			() => showToast({ message: t`Removed ${contact.name}`, undo: () => save(before) }),
+		);
 	};
 
 	return (
@@ -505,17 +537,25 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 					subtitle={[contact.role, contact.email, contact.phone].filter(Boolean).join(" · ") || undefined}
 					{...(contact.email ? { onPress: () => void Linking.openURL(`mailto:${contact.email}`) } : {})}
 					trailing={
-						<IconButton
-							icon="x"
-							label={t`Remove ${contact.name}`}
-							disabled={update.isPending}
-							onPress={() => save(application.contacts.filter((_, i) => i !== index))}
-						/>
+						<View style={{ flexDirection: "row" }}>
+							<IconButton
+								icon="pencil-simple"
+								label={t`Edit ${contact.name}`}
+								disabled={update.isPending}
+								onPress={() => edit(index)}
+							/>
+							<IconButton
+								icon="x"
+								label={t`Remove ${contact.name}`}
+								disabled={update.isPending}
+								onPress={() => remove(index)}
+							/>
+						</View>
 					}
 				/>
 			))}
 			<View style={{ gap: space.s3, paddingHorizontal: space.s4, paddingTop: space.s3 }}>
-				<Text variant="label">{t`Add contact`}</Text>
+				<Text variant="label">{editing === null ? t`Add contact` : t`Edit contact`}</Text>
 				<TextField label={t`Name`} value={draft.name} onChangeText={set("name")} />
 				<TextField label={t`Role (optional)`} value={draft.role} onChangeText={set("role")} />
 				<TextField label={t`Label`} value={draft.type} placeholder={t`Recruiter`} onChangeText={set("type")} />
@@ -542,11 +582,22 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 				<Button
 					fullWidth
 					size="lg"
-					label={t`Add contact`}
+					label={editing === null ? t`Add contact` : t`Save contact`}
 					loading={update.isPending}
 					disabled={!draft.name.trim()}
 					onPress={add}
 				/>
+				{editing !== null ? (
+					<Button
+						fullWidth
+						variant="ghost"
+						label={t`Cancel`}
+						onPress={() => {
+							setEditing(null);
+							setDraft(EMPTY_CONTACT);
+						}}
+					/>
+				) : null}
 			</View>
 		</Sheet>
 	);
