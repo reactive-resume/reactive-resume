@@ -204,8 +204,8 @@ export function OffersPage({ a, b }: OffersPageProps) {
 									title={<Trans>No offers to compare yet</Trans>}
 									description={
 										<Trans>
-											Add offer terms manually, including accepted offers, or use optional AI extraction in Messages.
-											Closing as accepted does not record terms.
+											Add offer terms manually, including accepted offers, or paste the offer email in an application's
+											Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms.
 										</Trans>
 									}
 									action={action}
@@ -371,8 +371,8 @@ function ComparisonTable({ offers, left, right, onChoose, onEdit, onDelete }: Co
 									</p>
 									<p className="text-[13px] text-ink-3">
 										<Trans>
-											Add offer terms manually, including accepted offers, or use optional AI extraction in Messages.
-											Closing as accepted does not record terms.
+											Add offer terms manually, including accepted offers, or paste the offer email in an application's
+											Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms.
 										</Trans>
 									</p>
 									{offers.length > 1 && (

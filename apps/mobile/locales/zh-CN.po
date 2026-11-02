@@ -287,6 +287,13 @@ msgstr "{0, plural, other {# 个故事}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {#项待检查。} other {#项待检查。}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1022,6 +1029,10 @@ msgstr "有一个网址没有写 https://。"
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "说出来大约 90 秒"
@@ -1054,6 +1065,10 @@ msgstr "全部接受"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1108,6 +1123,7 @@ msgid "Active"
 msgstr "积极的"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "添加"
 
@@ -1306,8 +1322,8 @@ msgid "Add offer"
 msgstr "添加录用通知"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "手动添加录用条件（包括已接受的录用），或将录用邮件粘贴到求职申请的“消息”选项卡，并选择“帮我读一下”以使用 AI。将申请标记为已接受并关闭，不会自动记录录用条件。"
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3542,6 +3558,10 @@ msgstr "无法打印。再试一次。"
 msgid "Couldn't propose these edits: {0}"
 msgstr "无法提出这些编辑：{0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "无法联系您的 AI 提供商。请重试或在 AI 设置中检查其密钥。"
@@ -3615,6 +3635,10 @@ msgstr "无法保存该更改。该项目已恢复，请重试。"
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "无法保存该更改。再试一次。"
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3761,7 +3785,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "无法解锁简历。请重试。"
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "无法解锁此简历。再试一次。"
 
@@ -4625,6 +4649,19 @@ msgstr "编辑"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "编辑{0}：{1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5526,6 +5563,11 @@ msgstr "隐藏部分保留其内容，但不会打印或共享。字段在您键
 msgid "Hidden terms are back"
 msgstr "隐藏条款又回来了"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "从页面中隐藏 {title}"
@@ -5654,11 +5696,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6664,6 +6714,10 @@ msgstr "锁定"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "锁定的文档被跳过。首先将它们解锁。"
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7690,6 +7744,10 @@ msgstr "普通的"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "挪威语"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8878,6 +8936,10 @@ msgstr "进度条"
 msgid "Projects"
 msgstr "项目"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "建议的更改"
@@ -8945,6 +9007,10 @@ msgstr "发布者"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "在第一页顶部附近放一个纯文本的电子邮件地址。大多数系统正是用它来归档你的资料。"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9267,6 +9333,14 @@ msgstr "大声排练"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "拒绝"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10771,6 +10845,11 @@ msgstr "较短"
 msgid "Show"
 msgstr "展示"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "显示“使用 Reactive Resume 制作”"
@@ -10788,6 +10867,11 @@ msgstr "页面显示{title}"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "显示全部"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10813,6 +10897,10 @@ msgstr "显示详情"
 msgid "Show DNS records"
 msgstr "显示 DNS 记录"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "显示标题"
@@ -10832,6 +10920,10 @@ msgstr "在搜索引擎中显示"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "显示密钥"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12151,10 +12243,6 @@ msgstr "本文件"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "该文档已被锁定。在将编辑保留在此处之前将其解锁，或同时保留两者。"
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "该文档已被锁定。解锁它以获得建议。"
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "该文档已被锁定。您仍然可以下载并命名版本。解锁以编辑或恢复。"
@@ -12630,6 +12718,10 @@ msgstr "用这个再试一次"
 msgid "Try again, or restart the app."
 msgstr "请重试，或重新启动应用。"
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "尝试其他搜索或清除过滤器。"
@@ -12753,6 +12845,11 @@ msgstr "下划线链接"
 msgid "Undo"
 msgstr "撤销"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12762,6 +12859,7 @@ msgstr "未知"
 msgid "Unlink"
 msgstr "取消链接"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12776,6 +12874,7 @@ msgstr "解锁编辑"
 msgid "Unlock it first, then try again."
 msgstr "请先解锁，然后重试。"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "解锁…"
@@ -12963,10 +13062,6 @@ msgstr "使用简历中的信息"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "用于所有申请"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13326,6 +13421,10 @@ msgstr "人看到的内容"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "您在忙什么？"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

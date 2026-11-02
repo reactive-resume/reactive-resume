@@ -1,6 +1,6 @@
 import { getRouteApi } from "@tanstack/react-router";
 import { useCallback, useEffect } from "react";
-import { openAssistantFrom } from "@/features/assistant/open";
+import { useAssistantInUrl } from "@/features/assistant/use-assistant-url";
 import { useEditorStore } from "@/features/resume/editor/store";
 
 export type LetterMode = "write" | "design";
@@ -50,17 +50,15 @@ export function useOpenLetterAssistantFromUrl() {
 	const { assistant, ask } = routeApi.useSearch();
 	const navigate = routeApi.useNavigate();
 
-	useEffect(() => {
-		if (!openAssistantFrom({ assistant, draft: ask })) return;
-		void navigate({
-			to: ".",
-			resetScroll: false,
-			search: (current: ReturnType<typeof routeApi.useSearch>) => ({
-				...current,
-				assistant: undefined,
-				ask: undefined,
+	const setSearch = useCallback(
+		(patch: { assistant?: string | undefined; ask?: string | undefined }) =>
+			void navigate({
+				to: ".",
+				resetScroll: false,
+				search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, ...patch }),
+				replace: true,
 			}),
-			replace: true,
-		});
-	}, [assistant, ask, navigate]);
+		[navigate],
+	);
+	useAssistantInUrl({ assistant, ask }, setSearch);
 }

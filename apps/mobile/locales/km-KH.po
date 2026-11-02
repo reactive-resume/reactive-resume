@@ -287,6 +287,13 @@ msgstr "{0, plural, other {រឿង #}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# ចំណុចត្រូវពិនិត្យ។} other {# ចំណុចត្រូវពិនិត្យ។}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1022,6 +1029,10 @@ msgstr "អាសយដ្ឋានវេបសាយត៍មួយត្រូ
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "ប្រហែល 90 វិនាទី ពេលនិយាយ"
@@ -1054,6 +1065,10 @@ msgstr "ទទួលយកទាំងអស់។"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1108,6 +1123,7 @@ msgid "Active"
 msgstr "សកម្ម"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "បន្ថែម"
 
@@ -1306,8 +1322,8 @@ msgid "Add offer"
 msgstr "បន្ថែមសំណើការងារ"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "បញ្ចូលលក្ខខណ្ឌសំណើការងារដោយដៃ រួមទាំងសំណើដែលបានទទួលយក ឬបិទភ្ជាប់អ៊ីមែលសំណើក្នុងផ្ទាំង «សារ» នៃពាក្យសុំការងារ ហើយជ្រើស «អានឱ្យខ្ញុំ» ដើម្បីប្រើ AI។ ការបិទពាក្យសុំថាបានទទួលយក មិនកត់ត្រាលក្ខខណ្ឌទេ។"
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3542,6 +3558,10 @@ msgstr "មិនអាចបោះពុម្ពបានទេ។ ព្យ�
 msgid "Couldn't propose these edits: {0}"
 msgstr "មិនអាចស្នើការកែសម្រួលទាំងនេះបានទេ៖ {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "មិនអាចទាក់ទងអ្នកផ្តល់សេវា AI របស់អ្នកបានទេ។ ព្យាយាមម្តងទៀត ឬពិនិត្យមើលសោរបស់វានៅក្នុងការកំណត់ AI។"
@@ -3615,6 +3635,10 @@ msgstr "មិនអាចរក្សាទុកការផ្លាស់ប
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "មិនអាចរក្សាទុកការផ្លាស់ប្តូរនោះបានទេ។ ព្យាយាមម្តងទៀត។"
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3761,7 +3785,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "មិនអាចដោះសោប្រវត្តិរូបសង្ខេបបានទេ។ ព្យាយាមម្តងទៀត។"
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "មិនអាចដោះសោ ប្រវត្តិរូបសង្ខេប នេះបានទេ។ ព្យាយាមម្តងទៀត។"
 
@@ -4625,6 +4649,19 @@ msgstr "កែសម្រួល"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "កែសម្រួល {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5526,6 +5563,11 @@ msgstr "ផ្នែកដែលបានលាក់ទុកមាតិកា
 msgid "Hidden terms are back"
 msgstr "ពាក្យ​ដែល​លាក់​បាន​ត្រឡប់​មក​វិញ។"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "លាក់ {title} ពីទំព័រ"
@@ -5654,11 +5696,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6664,6 +6714,10 @@ msgstr "ចាក់សោ"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "ឯកសារចាក់សោត្រូវបានរំលង។ ដោះសោពួកវាជាមុនសិន។"
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7690,6 +7744,10 @@ msgstr "ធម្មតា។"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norwegian"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8878,6 +8936,10 @@ msgstr "របារវឌ្ឍនភាព"
 msgid "Projects"
 msgstr "គម្រោង"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "ការផ្លាស់ប្តូរដែលបានស្នើ"
@@ -8945,6 +9007,10 @@ msgstr "អ្នកបោះពុម្ពផ្សាយ"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "ដាក់អាសយដ្ឋានអ៊ីមែលធម្មតានៅជិតផ្នែកខាងលើនៃទំព័រទីមួយ។ វាជាអ្វីដែលប្រព័ន្ធភាគច្រើនប្រើដើម្បីរៀបចំឯកសាររបស់អ្នក។"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9267,6 +9333,14 @@ msgstr "សាកល្បងនិយាយឮៗ"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "បដិសេធ"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10771,6 +10845,11 @@ msgstr "ខ្លីជាង"
 msgid "Show"
 msgstr "បង្ហាញ"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "បង្ហាញ “បង្កើតដោយ Reactive Resume”"
@@ -10788,6 +10867,11 @@ msgstr "បង្ហាញ {title} នៅលើទំព័រ"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "បង្ហាញទាំងអស់។"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10813,6 +10897,10 @@ msgstr "បង្ហាញព័ត៌មានលម្អិត"
 msgid "Show DNS records"
 msgstr "បង្ហាញកំណត់ត្រា DNS"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "បង្ហាញចំណងជើង"
@@ -10832,6 +10920,10 @@ msgstr "បង្ហាញក្នុងម៉ាស៊ីនស្វែងរ
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "បង្ហាញគន្លឹះ"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12151,10 +12243,6 @@ msgstr "ឯកសារនេះ។"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "ឯកសារនេះត្រូវបានចាក់សោ។ ដោះសោវាមុនពេលរក្សាទុកការកែសម្រួលរបស់អ្នកនៅទីនេះ ឬរក្សាទុកទាំងពីរ។"
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "ឯកសារនេះត្រូវបានចាក់សោ។ ដោះសោវាដើម្បីទទួលបានការណែនាំ។"
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "ឯកសារនេះត្រូវបានចាក់សោ។ អ្នកនៅតែអាចទាញយក និងដាក់ឈ្មោះកំណែ។ ដោះសោដើម្បីកែសម្រួល ឬស្ដារ។"
@@ -12630,6 +12718,10 @@ msgstr "សាកល្បងម្តងទៀតជាមួយនេះ"
 msgid "Try again, or restart the app."
 msgstr "ព្យាយាមម្តងទៀត ឬចាប់ផ្តើមកម្មវិធីឡើងវិញ។"
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "សាកល្បងស្វែងរកផ្សេងទៀត ឬសម្អាតតម្រងរបស់អ្នក។"
@@ -12753,6 +12845,11 @@ msgstr "គូសបន្ទាត់ក្រោមតំណ"
 msgid "Undo"
 msgstr "មិនធ្វើវិញ"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12762,6 +12859,7 @@ msgstr "មិនស្គាល់"
 msgid "Unlink"
 msgstr "ផ្ដាច់"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12776,6 +12874,7 @@ msgstr "ដោះសោការកែសម្រួល"
 msgid "Unlock it first, then try again."
 msgstr "ដោះសោវាជាមុនសិន បន្ទាប់មកព្យាយាមម្តងទៀត។"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "កំពុងដោះសោ…"
@@ -12963,10 +13062,6 @@ msgstr "ប្រើព័ត៌មានលម្អិតពីប្រវត
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "ប្រើសម្រាប់ពាក្យសុំទាំងអស់"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13326,6 +13421,10 @@ msgstr "អ្វីដែលមនុស្សម្នាក់មើលឃើ
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "តើអ្នកកំពុងធ្វើការលើអ្វី?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

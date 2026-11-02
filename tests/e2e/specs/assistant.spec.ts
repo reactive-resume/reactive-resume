@@ -143,7 +143,8 @@ test("Accept all preserves overlapping additions and reports the rewrite it cann
 		expect(saved.split(text)).toHaveLength(2);
 	expect(saved).not.toContain("A conflicting rewrite.");
 	await page.reload();
-	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	// The open conversation is in the URL, so a reload brings the assistant back on it.
+	await expect(page.getByRole("region", { name: "Assistant" })).toBeVisible();
 	await expect(page.getByText("3 of 4 applied", { exact: true })).toBeVisible({ timeout: 20_000 });
 	await expect(page.getByRole("list", { name: "Proposed edits" }).getByText("Applied", { exact: true })).toHaveCount(3);
 });

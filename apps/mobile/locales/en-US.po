@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# story} other {# stories}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# thing to review.} other {# things to review.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1016,6 +1023,10 @@ msgstr "A web address is written without https://."
 msgid "a year"
 msgstr "a year"
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr "A: {answer}"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "About 90 seconds when spoken"
@@ -1049,6 +1060,10 @@ msgstr "Accept all"
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
 msgstr "Accept the others"
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
+msgstr "accepted"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -1102,6 +1117,7 @@ msgid "Active"
 msgstr "Active"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Add"
 
@@ -1300,8 +1316,8 @@ msgid "Add offer"
 msgstr "Add offer"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3538,6 +3554,10 @@ msgstr "Couldn't print. Try again."
 msgid "Couldn't propose these edits: {0}"
 msgstr "Couldn't propose these edits: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3611,6 +3631,10 @@ msgstr "Couldn't save that change. The item is restored; try again."
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "Couldn't save that change. Try again."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr "Couldn't save that decision. Try again."
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3757,7 +3781,7 @@ msgstr "Couldn't undo the update. The application is unchanged."
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Couldn't unlock the resume. Try again."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Couldn't unlock this resume. Try again."
 
@@ -4621,6 +4645,19 @@ msgstr "Edit"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "Edit {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr "Edit {number} · {location}: added \"{after}\" ({outcome})"
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr "Edit {number}: {0}"
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5522,6 +5559,11 @@ msgstr "Hidden sections keep their content but aren't printed or shared. Fields 
 msgid "Hidden terms are back"
 msgstr "Hidden terms are back"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr "Hide"
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Hide {title} from the page"
@@ -5650,12 +5692,20 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr "I can see this letter. Suggestions come back as edits you can review before accepting."
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
 msgstr "I can see this resume. Suggestions come back as edits you can review before accepting."
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
+msgstr "I don't have one yet"
 
 #: src/features/workspace/answer-library.tsx
 msgid "I removed employer-specific wording and reviewed reuse across employers."
@@ -6660,6 +6710,10 @@ msgstr "Locked"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Locked documents were skipped. Unlock them first."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr "Locked. I can answer questions; unlock to get edits."
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7686,6 +7740,10 @@ msgstr "Normal"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norwegian"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr "Not answered. The conversation went on below."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8874,6 +8932,10 @@ msgstr "Progress bar"
 msgid "Projects"
 msgstr "Projects"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr "proposed"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Proposed changes"
@@ -8941,6 +9003,10 @@ msgstr "Publisher"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Put a plain email address near the top of the first page. It is what most systems file you under."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr "Q: {question}"
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9263,6 +9329,14 @@ msgstr "Rehearse aloud"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Reject"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr "Reject all"
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr "rejected"
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10767,6 +10841,11 @@ msgstr "Shorter"
 msgid "Show"
 msgstr "Show"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr "Show"
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Show “Made with Reactive Resume”"
@@ -10784,6 +10863,11 @@ msgstr "Show {title} on the page"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Show all"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr "Show all ({0} characters)"
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10809,6 +10893,10 @@ msgstr "Show details"
 msgid "Show DNS records"
 msgstr "Show DNS records"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr "Show edit {number}"
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Show heading"
@@ -10828,6 +10916,10 @@ msgstr "Show in search engines"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Show key"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr "Show less"
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12147,10 +12239,6 @@ msgstr "This document"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "This document is locked. Unlock it before keeping your edits here, or keep both."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "This document is locked. Unlock it to get suggestions."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "This document is locked. You can still download and name versions. Unlock to edit or restore."
@@ -12626,6 +12714,10 @@ msgstr "Try again with this"
 msgid "Try again, or restart the app."
 msgstr "Try again, or restart the app."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr "Try another"
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Try another search or clear your filters."
@@ -12749,6 +12841,11 @@ msgstr "Underline links"
 msgid "Undo"
 msgstr "Undo"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr "Undo"
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12758,6 +12855,7 @@ msgstr "Unknown"
 msgid "Unlink"
 msgstr "Unlink"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12772,6 +12870,7 @@ msgstr "Unlock editing"
 msgid "Unlock it first, then try again."
 msgstr "Unlock it first, then try again."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Unlocking…"
@@ -12959,10 +13058,6 @@ msgstr "Use details from the resume"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Use for all applications"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr "Use Knowledge"
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13322,6 +13417,10 @@ msgstr "What a person sees"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "What are you working on?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr "What changed because of this? A number, a time saved, who used it."
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

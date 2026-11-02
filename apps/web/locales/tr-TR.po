@@ -285,6 +285,13 @@ msgstr "{0, plural, one {# hikaye} other {# hikaye}}"
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {Bilgi Bankasına # bilgi eklendi.} other {Bilgi Bankasına # bilgi eklendi.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1336,6 +1343,10 @@ msgstr "Bir web adresi https:// olmadan yazılmış."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "About"
 msgstr "Bu uygulama hakkında"
@@ -1368,6 +1379,10 @@ msgstr "Tümünü kabul et"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1458,6 +1473,7 @@ msgstr "Etkinlik"
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/improve.tsx
 msgid "Add"
 msgstr "Ekle"
 
@@ -1697,8 +1713,8 @@ msgid "Add offer"
 msgstr "İş teklifi ekle"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr "Kabul edilen teklifler dahil, teklif koşullarını elle ekleyin veya Mesajlar bölümündeki isteğe bağlı yapay zekâ çıkarma özelliğini kullanın. Kabul edildi olarak kapatmak koşulları kaydetmez."
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "Kabul edilen teklifler de dahil olmak üzere teklif koşullarını elle ekleyin veya teklif e-postasını başvurunun «Mesajlar» sekmesine yapıştırıp AI kullanmak için «Benim için oku» seçeneğini seçin. Başvuruyu kabul edilmiş olarak kapatmak koşulları kaydetmez."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2770,6 +2786,10 @@ msgstr "Oturum açmaya dön"
 #: src/features/career/knowledge/stories.tsx
 msgid "Back to stories"
 msgstr "Hikayelere dön"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Back to the conversation"
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -4548,6 +4568,10 @@ msgstr "Bu değişiklik kaydedilemedi. İnternet bağlantınızı kontrol edip t
 msgid "Couldn't save that change. Try again."
 msgstr "Bu değişiklik kaydedilemedi. Tekrar deneyin."
 
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/fit.tsx
 msgid "Couldn't save that to Knowledge. Try again."
@@ -5835,6 +5859,14 @@ msgstr "Düzenlemek"
 #: src/components/input/chip-input.tsx
 msgid "Edit {chip}"
 msgstr "Düzenle {chip}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit {number}:"
@@ -7124,6 +7156,11 @@ msgstr "Gizli terimler geri döndü"
 msgid "Hidden: {hiddenList}"
 msgstr "Gizli: {hiddenList}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
 msgstr "{title}'yu sayfadan gizle"
@@ -7265,11 +7302,20 @@ msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind}. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -8625,6 +8671,10 @@ msgstr "Kilitli"
 msgid "Locked · unlock to save"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Kilitli. Düzenlemek için kilidini açın."
@@ -9778,6 +9828,10 @@ msgstr "Northwind Labs · Lisbon"
 #: src/libs/locale.ts
 msgid "Norwegian"
 msgstr "Norveççe"
+
+#: src/features/assistant/question-card.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Not applied"
@@ -11242,6 +11296,10 @@ msgstr "Projeler"
 msgid "Promoted to lead, 2021"
 msgstr "Liderliğe terfi, 2021"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Proposed changes"
 msgstr "Önerilen değişiklikler"
@@ -11337,6 +11395,10 @@ msgstr "Hepsini <0>tek sayfaya sığdırın.</0>"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "Düzeltmek için düzeltme işaretini bir sıraya koyun"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "QR code"
@@ -11795,6 +11857,14 @@ msgstr "Mühendislikle yaşadığınız bir anlaşmazlığı ve nasıl sonuçlan
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "Reddetmek"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Rejected"
@@ -13194,6 +13264,11 @@ msgstr "Anlamsal CSS stil sayfası"
 msgid "Send"
 msgstr "Göndermek"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Send {0} again"
+msgstr ""
+
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send reset link"
@@ -13492,6 +13567,11 @@ msgstr "Daha kısa"
 msgid "Show"
 msgstr "Göstermek"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ile yapıldı” yazısını göster"
@@ -13518,6 +13598,11 @@ msgstr "Tekrar göster"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
+msgstr ""
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/conversation.tsx
+msgid "Show all ({0} characters)"
 msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
@@ -13548,6 +13633,10 @@ msgstr "Kapatılan iş başvurularını göster"
 msgid "Show DNS records"
 msgstr "DNS kayıtlarını göster"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Başlığı göster"
@@ -13559,6 +13648,10 @@ msgstr "Simgeleri göster"
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
 msgstr "Arama motorlarında göster"
+
+#: src/features/assistant/conversation.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -14654,6 +14747,14 @@ msgstr "Teşekkürler Sam. İşte bir örnek: Northwind Labs'te onboarding yenid
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/routes/agent/$threadId.tsx
+msgid "That conversation isn't available. It may have been deleted."
+msgstr ""
+
+#: src/routes/agent/$threadId.tsx
+msgid "That conversation's document was deleted."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
 msgstr "Bu dosya PDF olarak okunamadı. Bir PDF dosyası seçip tekrar deneyin."
@@ -15231,10 +15332,6 @@ msgstr "Bu açıklama kısaltılmış veya eksik. Hazırlamadan önce inceleyin 
 msgid "This document"
 msgstr "Bu belge"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Bu belge kilitli. Öneri almak için kilidini açın."
-
 #: src/features/career/workspace/answer-library.tsx
 msgid "This employer"
 msgstr ""
@@ -15744,6 +15841,10 @@ msgstr "Tekrar deneyin"
 msgid "Try again with this"
 msgstr "Bununla tekrar dene"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
 msgstr ""
@@ -15941,6 +16042,11 @@ msgstr "Bağlantıların altını çizin"
 msgid "Undo"
 msgstr "Geri al"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Undo resume change"
 msgstr "Özgeçmiş değişikliğini geri al"
@@ -15964,6 +16070,7 @@ msgstr "Bağlantıyı kaldır"
 msgid "Unlink this application"
 msgstr "Bu iş başvurusunun bağlantısını kaldır"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
@@ -15971,6 +16078,7 @@ msgstr "Bu iş başvurusunun bağlantısını kaldır"
 msgid "Unlock"
 msgstr "Kilidi aç"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16634,6 +16742,10 @@ msgstr "Bir kişinin gördüğü"
 #: src/features/career/coach.tsx
 msgid "What are you working on?"
 msgstr "Ne üzerinde çalışıyorsunuz?"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "What changed? Leave blank if you can’t support it."

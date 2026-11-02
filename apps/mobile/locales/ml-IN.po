@@ -287,6 +287,13 @@ msgstr "{0, plural, one {# കഥ} other {# കഥകൾ}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {അവലോകനം ചെയ്യേണ്ട # കാര്യം.} other {അവലോകനം ചെയ്യേണ്ട # കാര്യങ്ങൾ.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1022,6 +1029,10 @@ msgstr "ഒരു വെബ് വിലാസം https:// ഇല്ലാതെ
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "ഉറക്കെ പറയുമ്പോൾ ഏകദേശം 90 സെക്കൻഡ്"
@@ -1054,6 +1065,10 @@ msgstr "എല്ലാം സ്വീകരിക്കുക"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1108,6 +1123,7 @@ msgid "Active"
 msgstr "സജീവമാണ്"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "ചേർക്കുക"
 
@@ -1306,8 +1322,8 @@ msgid "Add offer"
 msgstr "ജോലി ഓഫർ ചേർക്കുക"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "സ്വീകരിച്ച ഓഫറുകളുടേത് ഉൾപ്പെടെ ഓഫർ നിബന്ധനകൾ സ്വയം ചേർക്കുക. അല്ലെങ്കിൽ അപേക്ഷയുടെ «സന്ദേശങ്ങൾ» ടാബിൽ ഓഫർ ഇമെയിൽ ഒട്ടിച്ച് AI ഉപയോഗിക്കാൻ «എനിക്കുവേണ്ടി വായിക്കുക» തിരഞ്ഞെടുക്കുക. അപേക്ഷ സ്വീകരിച്ചതായി അടയ്ക്കുന്നത് നിബന്ധനകൾ രേഖപ്പെടുത്തില്ല."
 
 #: src/features/career/facts.tsx
 msgid "Add one above."
@@ -3542,6 +3558,10 @@ msgstr "പ്രിൻ്റ് ചെയ്യാനായില്ല. വീ
 msgid "Couldn't propose these edits: {0}"
 msgstr "ഈ എഡിറ്റുകൾ നിർദ്ദേശിക്കാൻ കഴിഞ്ഞില്ല: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "നിങ്ങളുടെ AI ദാതാവിനെ ബന്ധപ്പെടാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക അല്ലെങ്കിൽ AI ക്രമീകരണങ്ങളിൽ അതിൻ്റെ കീ പരിശോധിക്കുക."
@@ -3615,6 +3635,10 @@ msgstr "ആ മാറ്റം സേവ് ചെയ്യാനായില്
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "ആ മാറ്റം സംരക്ഷിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3761,7 +3785,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "റെസ്യൂമെ അൺലോക്ക് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "ഈ റെസ്യൂമെ അൺലോക്ക് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
 
@@ -4625,6 +4649,19 @@ msgstr "എഡിറ്റ് ചെയ്യുക"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "എഡിറ്റ് {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5526,6 +5563,11 @@ msgstr "മറഞ്ഞിരിക്കുന്ന വിഭാഗങ്ങ�
 msgid "Hidden terms are back"
 msgstr "മറഞ്ഞിരിക്കുന്ന നിബന്ധനകൾ തിരിച്ചെത്തി"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "പേജിൽ നിന്ന് {title} മറയ്ക്കുക"
@@ -5654,11 +5696,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6664,6 +6714,10 @@ msgstr "പൂട്ടി"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "പൂട്ടിയ രേഖകൾ ഒഴിവാക്കി. ആദ്യം അവ അൺലോക്ക് ചെയ്യുക."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7690,6 +7744,10 @@ msgstr "സാധാരണ"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "നോർവീജിയൻ"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8878,6 +8936,10 @@ msgstr "പ്രോഗ്രസ് ബാർ"
 msgid "Projects"
 msgstr "പ്രോജക്ടുകൾ"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "നിർദ്ദേശിച്ച മാറ്റങ്ങൾ"
@@ -8945,6 +9007,10 @@ msgstr "പ്രസാധകൻ"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "ആദ്യ പേജിന്റെ മുകൾഭാഗത്തിനടുത്ത് ലളിതമായ ഒരു ഇമെയിൽ വിലാസം ചേർക്കുക. മിക്ക സിസ്റ്റങ്ങളും നിങ്ങളെ ഫയൽ ചെയ്യുന്നത് ഇതനുസരിച്ചാണ്."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9267,6 +9333,14 @@ msgstr "ഉറക്കെ റിഹേഴ്സ് ചെയ്യുക"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "നിരസിക്കുക"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10771,6 +10845,11 @@ msgstr "ചെറുത്"
 msgid "Show"
 msgstr "കാണിക്കുക"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ഉപയോഗിച്ച് നിർമ്മിച്ചത്” കാണിക്കുക"
@@ -10788,6 +10867,11 @@ msgstr "പേജിൽ {title} കാണിക്കുക"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "എല്ലാം കാണിക്കുക"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10813,6 +10897,10 @@ msgstr "വിശദാംശങ്ങൾ കാണിക്കുക"
 msgid "Show DNS records"
 msgstr "DNS റെക്കോർഡുകൾ കാണിക്കുക"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "തലക്കെട്ട് കാണിക്കുക"
@@ -10832,6 +10920,10 @@ msgstr "തിരയൽ എഞ്ചിനുകളിൽ കാണിക്ക�
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "കീ കാണിക്കുക"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12151,10 +12243,6 @@ msgstr "ഈ പ്രമാണം"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "ഈ പ്രമാണം പൂട്ടിയിരിക്കുന്നു. നിങ്ങളുടെ എഡിറ്റുകൾ ഇവിടെ സൂക്ഷിക്കുന്നതിന് മുമ്പ് ഇത് അൺലോക്ക് ചെയ്യുക അല്ലെങ്കിൽ രണ്ടും സൂക്ഷിക്കുക."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "ഈ പ്രമാണം പൂട്ടിയിരിക്കുന്നു. നിർദ്ദേശങ്ങൾ ലഭിക്കാൻ ഇത് അൺലോക്ക് ചെയ്യുക."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "ഈ പ്രമാണം പൂട്ടിയിരിക്കുന്നു. നിങ്ങൾക്ക് ഇപ്പോഴും പതിപ്പുകൾ ഡൗൺലോഡ് ചെയ്യാനും പേര് നൽകാനും കഴിയും. എഡിറ്റ് ചെയ്യാനോ പുനഃസ്ഥാപിക്കാനോ അൺലോക്ക് ചെയ്യുക."
@@ -12630,6 +12718,10 @@ msgstr "ഇതുപയോഗിച്ച് വീണ്ടും ശ്രമ�
 msgid "Try again, or restart the app."
 msgstr "വീണ്ടും ശ്രമിക്കുക, അല്ലെങ്കിൽ ആപ്പ് പുനരാരംഭിക്കുക."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "മറ്റൊരു തിരയൽ പരീക്ഷിക്കുക അല്ലെങ്കിൽ നിങ്ങളുടെ ഫിൽട്ടറുകൾ മായ്‌ക്കുക."
@@ -12753,6 +12845,11 @@ msgstr "ലിങ്കുകൾക്ക് അടിവരയിടുക"
 msgid "Undo"
 msgstr "പഴയപടിയാക്കുക"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12762,6 +12859,7 @@ msgstr "അജ്ഞാതം"
 msgid "Unlink"
 msgstr "അൺലിങ്ക് ചെയ്യുക"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12776,6 +12874,7 @@ msgstr "എഡിറ്റിംഗ് അൺലോക്ക് ചെയ്യ�
 msgid "Unlock it first, then try again."
 msgstr "ആദ്യം ഇത് അൺലോക്ക് ചെയ്യുക, തുടർന്ന് വീണ്ടും ശ്രമിക്കുക."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "അൺലോക്ക് ചെയ്യുന്നു..."
@@ -12963,10 +13062,6 @@ msgstr "റെസ്യൂമെയിലെ വിശദാംശങ്ങൾ �
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "എല്ലാ അപേക്ഷകൾക്കും ഉപയോഗിക്കുക"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13326,6 +13421,10 @@ msgstr "ഒരാൾ കാണുന്നത്"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "നിങ്ങൾ എന്തിലാണ് പ്രവർത്തിക്കുന്നത്?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

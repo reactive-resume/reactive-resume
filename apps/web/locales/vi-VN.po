@@ -285,6 +285,13 @@ msgstr "{0, plural, other {# câu chuyện}}"
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, other {Đã thêm # dữ kiện vào Kiến thức.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1336,6 +1343,10 @@ msgstr "Một địa chỉ web được viết mà không có https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "About"
 msgstr "Giới thiệu về ứng dụng này"
@@ -1368,6 +1379,10 @@ msgstr "Chấp nhận tất cả"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1458,6 +1473,7 @@ msgstr "Hoạt động"
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/improve.tsx
 msgid "Add"
 msgstr "Thêm"
 
@@ -1697,8 +1713,8 @@ msgid "Add offer"
 msgstr "Thêm đề nghị tuyển dụng"
 
 #: src/features/career/offers.tsx
-msgid "Add offer terms manually, including accepted offers, or use optional AI extraction in Messages. Closing as accepted does not record terms."
-msgstr ""
+msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
+msgstr "Thêm điều khoản đề nghị theo cách thủ công, kể cả đề nghị đã chấp nhận, hoặc dán email đề nghị vào thẻ «Tin nhắn» của một hồ sơ ứng tuyển rồi chọn «Đọc giúp tôi» để dùng AI. Đóng hồ sơ với trạng thái đã chấp nhận không lưu các điều khoản."
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Add one above."
@@ -2770,6 +2786,10 @@ msgstr "Quay lại đăng nhập"
 #: src/features/career/knowledge/stories.tsx
 msgid "Back to stories"
 msgstr "Quay lại câu chuyện"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Back to the conversation"
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -4548,6 +4568,10 @@ msgstr "Không thể lưu thay đổi đó. Hãy kiểm tra kết nối của b�
 msgid "Couldn't save that change. Try again."
 msgstr "Không thể lưu thay đổi đó. Hãy thử lại."
 
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/fit.tsx
 msgid "Couldn't save that to Knowledge. Try again."
@@ -5835,6 +5859,14 @@ msgstr "Biên tập"
 #: src/components/input/chip-input.tsx
 msgid "Edit {chip}"
 msgstr "Chỉnh sửa {chip}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit {number}:"
@@ -7124,6 +7156,11 @@ msgstr "Điều khoản ẩn đã trở lại"
 msgid "Hidden: {hiddenList}"
 msgstr "Đã ẩn: {hiddenList}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
 msgstr "Ẩn {title} khỏi trang"
@@ -7265,11 +7302,20 @@ msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind}. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -8625,6 +8671,10 @@ msgstr "Đã khóa"
 msgid "Locked · unlock to save"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Đã khóa. Mở khóa để chỉnh sửa."
@@ -9778,6 +9828,10 @@ msgstr "Northwind Labs · Lisbon"
 #: src/libs/locale.ts
 msgid "Norwegian"
 msgstr "Na Uy"
+
+#: src/features/assistant/question-card.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Not applied"
@@ -11242,6 +11296,10 @@ msgstr "Dự án"
 msgid "Promoted to lead, 2021"
 msgstr "Thăng tiến lãnh đạo, 2021"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Proposed changes"
 msgstr "Thay đổi được đề xuất"
@@ -11337,6 +11395,10 @@ msgstr "Đưa tất cả vào <0>một trang.</0>"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "Đặt dấu mũ vào một dòng để cải thiện nó"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "QR code"
@@ -11795,6 +11857,14 @@ msgstr "Tập kể thành tiếng về một lần bất đồng với đội k�
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "Từ chối"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Rejected"
@@ -13194,6 +13264,11 @@ msgstr "Bảng định kiểu CSS ngữ nghĩa"
 msgid "Send"
 msgstr "Gửi"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Send {0} again"
+msgstr ""
+
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send reset link"
@@ -13492,6 +13567,11 @@ msgstr "ngắn hơn"
 msgid "Show"
 msgstr "Hiển thị"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Hiện “Được tạo bằng Reactive Resume”"
@@ -13518,6 +13598,11 @@ msgstr "Hiển thị lại"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
+msgstr ""
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/conversation.tsx
+msgid "Show all ({0} characters)"
 msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
@@ -13548,6 +13633,10 @@ msgstr "Hiển thị hồ sơ ứng tuyển đã đóng"
 msgid "Show DNS records"
 msgstr "Hiển thị bản ghi DNS"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Hiển thị tiêu đề"
@@ -13559,6 +13648,10 @@ msgstr "Hiển thị biểu tượng"
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
 msgstr "Hiện trên công cụ tìm kiếm"
+
+#: src/features/assistant/conversation.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -14654,6 +14747,14 @@ msgstr "Cảm ơn Sam. Đây là một ví dụ: tại Northwind Labs, tôi dẫ
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/routes/agent/$threadId.tsx
+msgid "That conversation isn't available. It may have been deleted."
+msgstr ""
+
+#: src/routes/agent/$threadId.tsx
+msgid "That conversation's document was deleted."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
 msgstr "Không thể đọc tệp đó dưới dạng PDF. Hãy chọn tệp PDF và thử lại."
@@ -15231,10 +15332,6 @@ msgstr "Mô tả này bị cắt bớt hoặc không đầy đủ. Xem lại ho�
 msgid "This document"
 msgstr "Tài liệu này"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Tài liệu này đã bị khóa. Mở khóa nó để nhận được đề xuất."
-
 #: src/features/career/workspace/answer-library.tsx
 msgid "This employer"
 msgstr ""
@@ -15744,6 +15841,10 @@ msgstr "Hãy thử lại"
 msgid "Try again with this"
 msgstr "Thử lại với bản này"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
 msgstr ""
@@ -15941,6 +16042,11 @@ msgstr "Gạch chân các liên kết"
 msgid "Undo"
 msgstr "Hoàn tác"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Undo resume change"
 msgstr "Hoàn tác thay đổi sơ yếu lý lịch"
@@ -15964,6 +16070,7 @@ msgstr "Hủy liên kết"
 msgid "Unlink this application"
 msgstr "Hủy liên kết đơn xin việc này"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
@@ -15971,6 +16078,7 @@ msgstr "Hủy liên kết đơn xin việc này"
 msgid "Unlock"
 msgstr "Mở khoá"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16634,6 +16742,10 @@ msgstr "Những gì con người nhìn thấy"
 #: src/features/career/coach.tsx
 msgid "What are you working on?"
 msgstr "Bạn đang làm gì?"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "What changed? Leave blank if you can’t support it."
