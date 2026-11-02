@@ -38,6 +38,7 @@ export function NewDocument() {
 		applicationId?: string;
 	}>();
 	const jobFirst = params.context === "career" || params.context === "applications";
+	const letterFirst = params.context === "letters";
 	const openSaveJob = () => router.replace(routes.newJob());
 	const session = useSession();
 	const documents = useDocuments();
@@ -296,7 +297,7 @@ export function NewDocument() {
 		<Screen>
 			<Stack.Screen
 				options={{
-					title: t`New`,
+					title: letterFirst ? t`New cover letter` : t`New`,
 					sheetGrabberVisible: !busy,
 					gestureEnabled: !busy,
 					headerBackVisible: !busy,
@@ -412,7 +413,7 @@ export function NewDocument() {
 						<>
 							{step === "choose" && (
 								<>
-									<Text variant="heading">{t`New`}</Text>
+									<Text variant="heading">{letterFirst ? t`New cover letter` : t`New`}</Text>
 									{jobFirst && (
 										<Card>
 											<ListRow
@@ -425,35 +426,39 @@ export function NewDocument() {
 											/>
 										</Card>
 									)}
-									<Card>
-										<ListRow
-											title={t`Import a resume`}
-											subtitle={t`PDF, Word, Reactive Resume, JSON Resume or LinkedIn export.`}
-											leading="file-arrow-up"
-											chevron
-											disabled={busy}
-											onPress={() => setStep("import")}
-										/>
-									</Card>
-									<Card>
-										<ListRow
-											title={t`Copy a resume for a job`}
-											subtitle={t`Start from one you have and link the application.`}
-											leading="copy"
-											chevron
-											disabled={busy}
-											onPress={() => setStep("copy")}
-										/>
-									</Card>
-									<Card>
-										<ListRow
-											title={t`Start blank`}
-											subtitle={t`Start with your name. Build from there.`}
-											leading="file-plus"
-											disabled={busy}
-											onPress={() => void create("blank")}
-										/>
-									</Card>
+									{!letterFirst && (
+										<>
+											<Card>
+												<ListRow
+													title={t`Import a resume`}
+													subtitle={t`PDF, Word, Reactive Resume, JSON Resume or LinkedIn export.`}
+													leading="file-arrow-up"
+													chevron
+													disabled={busy}
+													onPress={() => setStep("import")}
+												/>
+											</Card>
+											<Card>
+												<ListRow
+													title={t`Copy a resume for a job`}
+													subtitle={t`Start from one you have and link the application.`}
+													leading="copy"
+													chevron
+													disabled={busy}
+													onPress={() => setStep("copy")}
+												/>
+											</Card>
+											<Card>
+												<ListRow
+													title={t`Start blank`}
+													subtitle={t`Start with your name. Build from there.`}
+													leading="file-plus"
+													disabled={busy}
+													onPress={() => void create("blank")}
+												/>
+											</Card>
+										</>
+									)}
 									<SelectSheet
 										label={t`Resume for a new letter`}
 										value={letterResumeId}
@@ -465,35 +470,39 @@ export function NewDocument() {
 										disabled={busy}
 									/>
 									<Button
-										label={t`New cover letter instead`}
+										label={letterFirst ? t`New cover letter` : t`New cover letter instead`}
 										icon="envelope-simple"
-										variant="ghost"
+										variant={letterFirst ? "primary" : "ghost"}
 										disabled={busy || documents.isPending || documents.isError}
 										onPress={() => void create("letter")}
 									/>
-									<Button
-										label={t`Try with a sample resume`}
-										icon="sparkle"
-										variant="ghost"
-										disabled={busy}
-										onPress={() => void create("sample")}
-									/>
-									{!jobFirst && (
-										<Button
-											label={t`Save a job instead`}
-											icon="briefcase"
-											variant="ghost"
-											disabled={busy}
-											onPress={openSaveJob}
-										/>
+									{!letterFirst && (
+										<>
+											<Button
+												label={t`Try with a sample resume`}
+												icon="sparkle"
+												variant="ghost"
+												disabled={busy}
+												onPress={() => void create("sample")}
+											/>
+											{!jobFirst && (
+												<Button
+													label={t`Save a job instead`}
+													icon="briefcase"
+													variant="ghost"
+													disabled={busy}
+													onPress={openSaveJob}
+												/>
+											)}
+											<Button
+												label={t`Check a PDF with the ATS checker`}
+												icon="list-checks"
+												variant="ghost"
+												disabled={busy}
+												onPress={() => router.replace(routes.atsChecker())}
+											/>
+										</>
 									)}
-									<Button
-										label={t`Check a PDF with the ATS checker`}
-										icon="list-checks"
-										variant="ghost"
-										disabled={busy}
-										onPress={() => router.replace(routes.atsChecker())}
-									/>
 									{documents.isError && (
 										<Banner
 											tone="danger"

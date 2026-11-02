@@ -42,10 +42,13 @@ function getInitialApplicationDetail(summary: ApplicationSummary | undefined) {
 		: undefined;
 }
 
-export function useApplications() {
+export function useApplications(enabled = true) {
 	const session = useSession();
 	const queryClient = useQueryClient();
-	const query = useQuery({ ...applicationsListQueryOptions(session.server), enabled: session.status === "signed-in" });
+	const query = useQuery({
+		...applicationsListQueryOptions(session.server),
+		enabled: enabled && session.status === "signed-in",
+	});
 
 	useEffect(() => {
 		if (!query.data || session.status !== "signed-in") return;

@@ -26,6 +26,19 @@ async function saveProvider(page: Page, label: string) {
 	return provider;
 }
 
+async function connectProvider(page: Page) {
+	await page.getByRole("button", { name: /^Add AI provider/ }).click();
+	const dialog = page.getByRole("dialog");
+	await dialog.getByRole("combobox", { name: "Provider", exact: true }).click();
+	await page.getByRole("option", { name: "OpenAI-compatible", exact: true }).click();
+	await dialog.getByLabel("Base URL").fill(stub.baseURL);
+	await dialog.getByLabel("Model", { exact: true }).fill("stub");
+	await dialog.getByLabel("API key", { exact: true }).fill("stub-key");
+	await dialog.getByRole("button", { name: "Save and test", exact: true }).click();
+	await consent(page);
+	await expect(dialog).toBeHidden();
+}
+
 test("provider retries update one row, Test preserves Off, and no public catalog is requested", async ({
 	authPage: page,
 }, info) => {
@@ -40,6 +53,9 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 	});
 	await expect(billing).toBeVisible();
 	await page.getByRole("button", { name: /^Add AI provider/ }).click();
+	await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
+	await expect(page.getByRole("heading", { name: "AI is ready", exact: true })).toBeHidden();
+	await page.getByRole("button", { name: /^Add AI provider/ }).click();
 	const dialog = page.getByRole("dialog");
 	await dialog.getByRole("combobox", { name: "Provider", exact: true }).click();
 	await page.getByRole("option", { name: "OpenAI-compatible", exact: true }).click();
@@ -50,6 +66,7 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 		await dialog.getByRole("button", { name: "Save and test", exact: true }).click();
 		await consent(page);
 		await expect(dialog.getByText("The key was rejected. Check the key and test again.")).toBeVisible();
+		await expect(page.getByRole("heading", { name: "AI is ready", exact: true })).toBeHidden();
 	}
 	const listed = await page.request.get("/api/openapi/ai-providers");
 	expect(await listed.json()).toHaveLength(1);
@@ -57,6 +74,10 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 	await dialog.getByRole("button", { name: "Save and test", exact: true }).click();
 	await consent(page);
 	await expect(dialog).toBeHidden();
+	await expect(page.getByRole("heading", { name: "AI is ready", exact: true })).toBeVisible();
+	const ready = page.getByRole("region", { name: "AI is ready", exact: true });
+	for (const name of ["Improve selected line", "Review writing", "Check fit", "New cover letter", "Ask the coach"])
+		await expect(ready.getByRole("button", { name, exact: true })).toBeVisible();
 	await expect(billing).toBeVisible();
 	const providerSection = page
 		.locator("section")
@@ -86,6 +107,82 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 	await providerSection.screenshot({ path: info.outputPath("provider-off-390-light.png") });
 	await page.emulateMedia({ colorScheme: "dark" });
 	await providerSection.screenshot({ path: info.outputPath("provider-off-390-dark.png") });
+	await connectProvider(page);
+	await expect(ready).toBeHidden();
+});
+
+for (const action of ["Improve selected line", "Review writing", "Check fit", "New cover letter", "Ask the coach"]) {
+	test(`first connection opens the existing ${action} flow without generating`, async ({ authPage: page }, info) => {
+		test.setTimeout(90000);
+		let resumeId = "";
+		if (action === "Improve selected line" || action === "Review writing") {
+			await createSampleResumeFromDashboard(page, info);
+			resumeId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
+		}
+		let applicationId = "";
+		if (action === "Check fit") {
+			const created = await page.request.post("/api/openapi/applications", {
+				data: { company: "Fictional next steps", role: "Engineer", status: "saved" },
+			});
+			await expect(created).toBeOK();
+			applicationId = await created.json();
+		}
+		await page.goto("/dashboard/settings/ai");
+		await connectProvider(page);
+		const requests = stub.requests.length;
+		await page.getByRole("region", { name: "AI is ready", exact: true }).getByRole("button", { name: action }).click();
+		if (resumeId) {
+			await page.getByRole("dialog").getByRole("button", { name: /E2E/ }).click();
+			await expect(page).toHaveURL(
+				new RegExp(`/builder/${resumeId}\\?mode=${action === "Review writing" ? "check" : "write"}`),
+			);
+			if (action === "Review writing") {
+				await expect(page.getByRole("tab", { name: "Writing", exact: true })).toHaveAttribute("aria-selected", "true");
+				await expect(page.getByRole("button", { name: "Review writing", exact: true })).toBeVisible();
+			} else await expect(page.getByRole("tab", { name: /^Write/ })).toHaveAttribute("aria-selected", "true");
+		} else if (applicationId) {
+			await page.getByRole("dialog").getByRole("button", { name: "Engineer · Fictional next steps" }).click();
+			await expect(page).toHaveURL(new RegExp(`/dashboard/applications/${applicationId}/fit`));
+		} else if (action === "New cover letter") {
+			await expect(page.getByRole("dialog")).toContainText("New cover letter");
+			await page
+				.getByRole("dialog")
+				.getByRole("button", { name: /^New cover letter/ })
+				.click();
+			await expect(page).toHaveURL(/\/builder\/letter\//);
+		} else {
+			await expect(page).toHaveURL(/\/dashboard\/career\/coach/);
+			await expect(page.getByLabel("Message the coach")).toBeVisible();
+		}
+		expect(stub.requests.length).toBe(requests);
+	});
+}
+
+test("first connection offers real creation flows for empty accounts and dismisses", async ({
+	authPage: page,
+}, info) => {
+	await page.goto("/dashboard/settings/ai");
+	await connectProvider(page);
+	const ready = page.getByRole("region", { name: "AI is ready", exact: true });
+	const requests = stub.requests.length;
+	await ready.screenshot({ path: info.outputPath("first-connection-next-steps.png") });
+	await page.setViewportSize({ width: 390, height: 844 });
+	await ready.screenshot({ path: info.outputPath("first-connection-next-steps-390.png") });
+	await ready.getByRole("button", { name: "Improve selected line", exact: true }).click();
+	let dialog = page.getByRole("dialog");
+	await expect(dialog).toContainText("No resumes yet");
+	await dialog.getByRole("button", { name: "Import or create a resume", exact: true }).click();
+	dialog = page.getByRole("dialog");
+	await expect(dialog.getByRole("button", { name: /^Import a resume/ })).toBeVisible();
+	await dialog.getByRole("button", { name: "Close", exact: true }).click();
+	await ready.getByRole("button", { name: "Check fit", exact: true }).click();
+	await expect(page.getByRole("dialog")).toContainText("No applications yet.");
+	await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
+	await ready.getByRole("button", { name: "Dismiss", exact: true }).click();
+	await expect(ready).toBeHidden();
+	expect(stub.requests.length).toBe(requests);
+	await connectProvider(page);
+	await expect(ready).toBeHidden();
 });
 
 test("Writing review survives reload and remains readable without a provider", async ({ authPage: page }, info) => {
