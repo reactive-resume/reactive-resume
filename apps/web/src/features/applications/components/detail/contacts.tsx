@@ -1,4 +1,5 @@
 import type { Contact } from "@reactive-resume/schema/applications/data";
+import type { RefObject } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useEffect, useId, useRef, useState } from "react";
@@ -22,6 +23,11 @@ export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
 	// A removed contact hides at once, here and in the list, and is saved away when its Undo toast closes.
 	const [removing, setRemoving] = useState<Contact | null>(null);
 	const shown = removing ? contacts.filter((contact) => contact !== removing) : contacts;
+	// The removal saves against the latest list when its Undo closes, even after the popover (and the list) has closed.
+	const latest = useRef(contacts);
+	useEffect(() => {
+		latest.current = contacts;
+	}, [contacts]);
 	const [primary, ...others] = shown;
 
 	return (
@@ -40,6 +46,7 @@ export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
 					onChange={onChange}
 					removing={removing}
 					onRemoving={setRemoving}
+					latest={latest}
 				/>
 			</PopoverContent>
 		</Popover>
@@ -49,9 +56,10 @@ export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
 type ContactListProps = ContactsProps & {
 	removing: Contact | null;
 	onRemoving: (contact: Contact | null) => void;
+	latest: RefObject<Contact[]>;
 };
 
-function ContactList({ contacts, disabled, onChange, removing, onRemoving }: ContactListProps) {
+function ContactList({ contacts, disabled, onChange, removing, onRemoving, latest }: ContactListProps) {
 	const id = useId();
 	const [adding, setAdding] = useState(false);
 	// The contact being corrected: its position, and what it said when the form opened.
@@ -62,11 +70,6 @@ function ContactList({ contacts, disabled, onChange, removing, onRemoving }: Con
 	const formOpen = adding || editing !== null;
 	// Until a removal's Undo closes, the list it will save is fixed; changes made meanwhile would be overwritten.
 	const locked = disabled || removing !== null;
-	// The removal saves against the latest list, not the one it started from.
-	const latest = useRef(contacts);
-	useEffect(() => {
-		latest.current = contacts;
-	}, [contacts]);
 
 	const close = () => {
 		setDraft(EMPTY_CONTACT);

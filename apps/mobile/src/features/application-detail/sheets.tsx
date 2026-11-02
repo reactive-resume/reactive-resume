@@ -490,7 +490,14 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 	const save = (contacts: Contact[], onSuccess = () => {}) =>
 		update.mutate(
 			{ id: application.id, contacts },
-			{ onSuccess, onError: () => showToast({ message: t`Couldn't save the contacts. Try again.` }) },
+			{
+				onSuccess: () => {
+					// The saved list is current at once, before the detail refetch lands, so Undo builds on it.
+					latest.current = contacts;
+					onSuccess();
+				},
+				onError: () => showToast({ message: t`Couldn't save the contacts. Try again.` }),
+			},
 		);
 	const set = (key: keyof typeof EMPTY_CONTACT) => (value: string) => {
 		setError("");
