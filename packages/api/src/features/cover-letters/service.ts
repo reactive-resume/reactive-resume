@@ -26,6 +26,7 @@ import {
 	CurrentClientRequired,
 	saveProposalApplications,
 } from "../agent/proposal-applications";
+import { suggestDuplicateName } from "../documents/naming";
 import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { sanitizeCoverLetterHtml } from "./html";
@@ -390,6 +391,7 @@ async function insert(
 	input: {
 		userId: string;
 		name: string;
+		tags?: string[];
 		recipient: string;
 		content: string;
 		greeting?: string | null | undefined;
@@ -416,6 +418,7 @@ async function insert(
 		.insert(schema.coverLetter)
 		.values({
 			...content,
+			tags: input.tags ?? [],
 			userId: input.userId,
 			recipient: sanitizeCoverLetterHtml(content.recipient),
 			content: sanitizeCoverLetterHtml(content.content),
@@ -709,11 +712,17 @@ export const coverLetterService = {
 		return resolveLinks(await updateRevision(input, { style, sourceResumeId: input.resumeId }), input.userId);
 	},
 	duplicate: async (input: OwnedId & { name?: string | undefined }) => {
-		const letter = await getRow(input);
+		const [row] = await db
+			.select()
+			.from(schema.coverLetter)
+			.where(and(eq(schema.coverLetter.id, input.id), eq(schema.coverLetter.userId, input.userId)));
+		if (!row) throw new ORPCError("NOT_FOUND");
+		const letter = toLetter(row);
 		const copy = await insert({
 			...letter,
+			tags: row.tags,
 			userId: input.userId,
-			name: input.name ?? `${letter.name} (copy)`.slice(0, 100),
+			name: input.name ?? (await suggestDuplicateName({ ...input, type: "letter" })),
 			// A copy is a new document, not a second owner of the original's application.
 			sourceApplicationId: null,
 		});

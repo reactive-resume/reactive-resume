@@ -129,6 +129,28 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 		expect(await findFreeResumeName("naming", name)).toBe(`${stem} (4)`);
 	});
 
+	it("suggests numbered copies across types and Trash while protecting ownership", async () => {
+		await pool.query(`INSERT INTO resume (id,user_id,name) VALUES
+			('duplicate-source','duplicates','Portfolio'),('duplicate-three','stranger','Portfolio 3');
+			INSERT INTO cover_letter (id,user_id,name,trashed_at) VALUES ('duplicate-two','duplicates','PORTFOLIO 2',now());`);
+		const { documentsRouter } = await import("./router");
+		const client = createRouterClient(documentsRouter, {
+			context: { user: { id: "duplicates" }, resHeaders: new Headers() } as never,
+		});
+		expect(await client.suggestDuplicateName({ type: "resume", id: "duplicate-source" })).toBe("Portfolio 3");
+		await pool.query(`INSERT INTO resume (id,user_id,name) VALUES ('duplicate-copy','duplicates','Portfolio 3')`);
+		expect(await client.suggestDuplicateName({ type: "resume", id: "duplicate-copy" })).toBe("Portfolio 4");
+		await pool.query(`INSERT INTO resume (id,user_id,name) VALUES ('duplicate-year','duplicates','Resume 2026')`);
+		expect(await client.suggestDuplicateName({ type: "resume", id: "duplicate-year" })).toBe("Resume 2026 2");
+		for (const id of ["duplicate-three", "missing", "duplicate-two"]) {
+			await expect(
+				client.suggestDuplicateName({ type: id === "duplicate-two" ? "letter" : "resume", id }),
+			).rejects.toMatchObject({ code: "NOT_FOUND" });
+		}
+		const count = await pool.query(`SELECT count(*) AS count FROM resume WHERE user_id = 'duplicates'`);
+		expect(count.rows[0].count).toBe("3");
+	});
+
 	it("filters before paging/counting, uses every tag, searches each field and treats wildcard characters literally", async () => {
 		for (const q of ["orbital", "DESIGN LEAD", "design"]) {
 			const page = await api.page({ q, type: "resume", tags: ["design", "shared"], limit: 1, offset: 1 });

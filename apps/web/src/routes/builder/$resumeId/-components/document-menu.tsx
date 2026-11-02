@@ -138,7 +138,14 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 				<Icon name="pencil-simple" />
 				<Trans>Rename…</Trans>
 			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => openDialog("resume.duplicate", { id, name, slug, tags })}>
+			<DropdownMenuItem
+				onClick={() =>
+					void orpc.documents.suggestDuplicateName
+						.call({ type: "resume", id })
+						.then((suggested) => openDialog("resume.duplicate", { id, name: suggested, slug, tags }))
+						.catch((error: unknown) => toast.add({ type: "error", description: getResumeErrorMessage(error) }))
+				}
+			>
 				<Icon name="copy" />
 				<Trans>Duplicate</Trans>
 			</DropdownMenuItem>

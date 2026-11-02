@@ -333,15 +333,8 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 	};
 	const duplicate = (document: DocumentSummary) =>
 		operations.run(async () => {
-			const id =
-				document.type === "resume"
-					? await client.resume.duplicate({
-							id: document.id,
-							name: t`${document.name} (copy)`.slice(0, 100),
-							tags: document.tags,
-						})
-					: (await client.coverLetters.duplicate({ id: document.id })).id;
-			useNewDocuments.getState().markNew({ type: document.type, id });
+			const name = await client.documents.suggestDuplicateName(documentRef(document));
+			setSheet({ kind: "duplicate", documents: [document], name });
 		});
 	const clearFilters = () => {
 		changePage(0);

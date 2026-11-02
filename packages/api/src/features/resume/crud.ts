@@ -4,6 +4,7 @@ import { protectedProcedure } from "../../context";
 import { resumeDto } from "../../dto/resume";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
 import { paginate } from "../../pagination";
+import { suggestDuplicateName } from "../documents/naming";
 import { documentsService } from "../documents/service";
 import { createResumeData } from "./initial-data";
 import { parseStoredResumeData } from "./resume-data-validation";
@@ -255,7 +256,7 @@ export const crudRouter = {
 			operationId: "duplicateResume",
 			summary: "Duplicate a resume",
 			description:
-				"Creates a copy of an existing resume with the same data, and the given name and tags. The slug is optional: when omitted it is generated from the name, made unique across the user's resumes, and follows the name until the copy is published. Returns the ID of the duplicated resume. Requires authentication.",
+				"Creates a copy of an existing resume with the same data and tags. When name is omitted, suggests an available numbered name across the account’s documents. The slug is optional: when omitted it is generated from the name, made unique across the user's resumes, and follows the name until the copy is published. Returns the ID of the duplicated resume. Requires authentication.",
 			successDescription: "The ID of the duplicated resume.",
 		})
 		.input(resumeDto.duplicate.input)
@@ -271,7 +272,7 @@ export const crudRouter = {
 
 			return resumeService.create({
 				userId: context.user.id,
-				name: input.name ?? original.name,
+				name: input.name ?? (await suggestDuplicateName({ userId: context.user.id, type: "resume", id: input.id })),
 				...(input.slug ? { slug: input.slug } : {}),
 				tags: input.tags ?? original.tags,
 				locale: context.locale,

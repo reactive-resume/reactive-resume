@@ -8,14 +8,15 @@ import { changedTags, documentRef, sharedTags } from "./filter";
 import { useNewDocuments } from "./new-documents";
 import { useDocumentOperations } from "./queries";
 import { client, orpc } from "@/api/client";
-import { useSession } from "@/auth/session";
+import { getAccountScope, useSession } from "@/auth/session";
 import { AddApplicationSheet } from "@/features/applications/add-sheet";
 import { shareDocumentPdf } from "@/features/share/files";
 import { routes } from "@/routes";
-import { Banner, Button, ChipInput, ListRow, Sheet, Skeleton, Text, TextField, useTheme } from "@/ui";
+import { Banner, Button, ChipInput, ListRow, Sheet, Skeleton, Text, TextField, showToast, useTheme } from "@/ui";
 
 export type DocumentSheet =
 	| { kind: "menu" | "rename" | "link"; documents: [DocumentSummary] }
+	| { kind: "duplicate"; documents: [DocumentSummary]; name: string }
 	| { kind: "tags" | "sharing" | "lock"; documents: DocumentSummary[] };
 
 type DocumentSheetsProps = {
@@ -32,7 +33,7 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 	const session = useSession();
 	const operations = useDocumentOperations();
 	const first = value.documents[0];
-	const [name, setName] = useState(first?.name ?? "");
+	const [name, setName] = useState(value.kind === "duplicate" ? value.name : (first?.name ?? ""));
 	const shared = sharedTags(value.documents);
 	const [tags, setTags] = useState(shared);
 	const [addingJob, setAddingJob] = useState(false);
@@ -45,10 +46,37 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 	const execute = async (task: () => Promise<unknown>) => {
 		if (await operations.run(task)) onClose();
 	};
+	const duplicate = async () => {
+		if (!first) return;
+		const scope = getAccountScope();
+		const copyName = name.trim();
+		let copy: DocumentSummary | undefined;
+		const success = await operations.run(async () => {
+			const id =
+				first.type === "resume"
+					? await client.resume.duplicate({ id: first.id, name: copyName, tags: first.tags })
+					: (await client.coverLetters.duplicate({ id: first.id, name: copyName })).id;
+			useNewDocuments.getState().markNew({ id, type: first.type });
+			copy = { ...first, id, name: copyName, isLocked: false, isPublic: false, hasPassword: false, application: null };
+		});
+		if (!success || !copy || getAccountScope() !== scope) return;
+		const created = copy;
+		onClose();
+		showToast({
+			message: t`Copy created`,
+			action: {
+				label: t`Rename`,
+				onPress: () => {
+					if (getAccountScope() === scope) onChange({ kind: "rename", documents: [created] });
+				},
+			},
+		});
+	};
 	const targets = value.documents.filter((document) => !document.isLocked);
 	const titles = {
 		menu: t`Document options`,
 		rename: t`Rename`,
+		duplicate: t`Duplicate`,
 		tags: t`Tags`,
 		link: t`Link to application`,
 		sharing: t`Sharing`,
@@ -71,9 +99,12 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 		>
 			<View style={{ paddingHorizontal: space.s4, gap: space.s3 }}>
 				{operations.error && <Banner tone="danger" message={operations.error} />}
-				{value.documents.some((document) => document.isLocked) && value.kind !== "menu" && value.kind !== "lock" && (
-					<Banner tone="warn" message={t`Locked documents were skipped. Unlock them first.`} />
-				)}
+				{value.documents.some((document) => document.isLocked) &&
+					value.kind !== "menu" &&
+					value.kind !== "lock" &&
+					value.kind !== "duplicate" && (
+						<Banner tone="warn" message={t`Locked documents were skipped. Unlock them first.`} />
+					)}
 				{value.kind === "menu" && first && (
 					<>
 						<Text variant="title">{first.name}</Text>
@@ -113,16 +144,9 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 							leading="copy"
 							disabled={operations.busy}
 							onPress={() =>
-								void execute(async () => {
-									const id =
-										first.type === "resume"
-											? await client.resume.duplicate({
-													id: first.id,
-													name: t`${first.name} (copy)`.slice(0, 100),
-													tags: first.tags,
-												})
-											: (await client.coverLetters.duplicate({ id: first.id })).id;
-									useNewDocuments.getState().markNew({ id, type: first.type });
+								void operations.run(async () => {
+									const suggested = await client.documents.suggestDuplicateName(documentRef(first));
+									onChange({ kind: "duplicate", documents: [first], name: suggested });
 								})
 							}
 						/>
@@ -189,6 +213,24 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 									if (success) onClose();
 								})
 							}
+						/>
+					</>
+				)}
+				{value.kind === "duplicate" && first && (
+					<>
+						<TextField
+							label={t`Name`}
+							value={name}
+							onChangeText={setName}
+							maxLength={100}
+							editable={!operations.busy}
+							autoFocus
+						/>
+						<Button
+							label={t`Duplicate`}
+							loading={operations.busy}
+							disabled={!name.trim()}
+							onPress={() => void duplicate()}
 						/>
 					</>
 				)}

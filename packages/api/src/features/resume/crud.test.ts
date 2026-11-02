@@ -175,7 +175,7 @@ describe("resume write route validation", () => {
 			operation === "create"
 				? client.create({ name: "Resume", tags: [], slug })
 				: operation === "duplicate"
-					? client.duplicate({ id: "resume-id", slug })
+					? client.duplicate({ id: "resume-id", name: "Resume", slug })
 					: client.update({ id: "resume-id", slug });
 
 		await expect(result).rejects.toMatchObject({ code: "INVALID_SLUG", status: 400 });

@@ -86,6 +86,7 @@ export const documentsDto = {
 		input: z.void(),
 		output: z.object({ resume: z.number(), letter: z.number(), trash: z.number() }),
 	},
+	suggestDuplicateName: { input: documentRefSchema, output: z.string().min(1).max(100) },
 	rename: {
 		input: documentRefSchema.extend({ name: z.string().trim().min(1).max(100) }),
 		output: z.void(),

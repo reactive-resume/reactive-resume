@@ -160,7 +160,13 @@ export function DocumentCard({
 	disabled = false,
 }: DocumentItemProps) {
 	const openDocument = useOpenDocument();
-	const [renaming, setRenaming] = useState(false);
+	const requestedRename = useNewDocumentsStore((state) => state.renameId === document.id);
+	const [localRenaming, setLocalRenaming] = useState(false);
+	const renaming = localRenaming || requestedRename;
+	const setRenaming = (value: boolean) => {
+		setLocalRenaming(value);
+		if (!value && requestedRename) useNewDocumentsStore.getState().requestRename(null);
+	};
 	const isNew = useNewDocumentsStore((state) => state.ids.includes(document.id)) && !document.trashedAt;
 	const meta = useDocumentMeta(document);
 	const recipient = document.recipient;
@@ -300,7 +306,13 @@ export function DocumentRow({
 }: DocumentItemProps) {
 	const { i18n } = useLingui();
 	const openDocument = useOpenDocument();
-	const [renaming, setRenaming] = useState(false);
+	const requestedRename = useNewDocumentsStore((state) => state.renameId === document.id);
+	const [localRenaming, setLocalRenaming] = useState(false);
+	const renaming = localRenaming || requestedRename;
+	const setRenaming = (value: boolean) => {
+		setLocalRenaming(value);
+		if (!value && requestedRename) useNewDocumentsStore.getState().requestRename(null);
+	};
 	const isNew = useNewDocumentsStore((state) => state.ids.includes(document.id)) && !document.trashedAt;
 	const menuProps = {
 		document,
