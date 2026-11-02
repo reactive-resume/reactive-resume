@@ -28,8 +28,13 @@ export function GithubStarsButton() {
 					rel="noopener noreferrer"
 				>
 					<GithubLogoIcon aria-hidden="true" />
-					{starCount != null ? <RollingNumber value={starCount} className="font-bold" /> : null}
-					<StarIcon aria-hidden="true" />
+					{/* No count, no star: a lone star reads as a total that didn't load. */}
+					{starCount != null ? (
+						<>
+							<RollingNumber value={starCount} className="font-bold" />
+							<StarIcon aria-hidden="true" />
+						</>
+					) : null}
 				</a>
 			}
 		/>
