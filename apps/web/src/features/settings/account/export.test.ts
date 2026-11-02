@@ -4,7 +4,7 @@ import { strFromU8, unzipSync } from "fflate";
 import { copyCoverLetterStyle } from "@reactive-resume/resume/cover-letter";
 import { coverLetterDocumentSchema } from "@reactive-resume/schema/cover-letter/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { buildAccountZip } from "./export";
+import { buildAccountZip } from "@reactive-resume/utils/account-zip";
 import { detectImportKind, detectJsonImportKind, parseResumeJson } from "@/features/resume/import/read-file";
 import { getLocaleMessages } from "@/libs/locale";
 

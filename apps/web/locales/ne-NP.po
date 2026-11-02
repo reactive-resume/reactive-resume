@@ -2147,10 +2147,6 @@ msgstr "सबै आवेदनहरू"
 msgid "All applications (including closed)"
 msgstr "सबै रोजगार आवेदनहरू (बन्द सहित)"
 
-#: src/features/settings/account/data.tsx
-msgid "All documents and applications as JSON, in one zip"
-msgstr "JSON को रूपमा सबै कागजातहरू र जागिरका आवेदनहरू, एउटै जिपमा"
-
 #: src/features/documents/trash-page.tsx
 msgid "All documents in Trash will be deleted for good and can't be restored."
 msgstr ""
@@ -3106,6 +3102,10 @@ msgstr "के यसले मलाई अन्तर्वार्ताक
 msgid "Can software read your resume?"
 msgstr "के सफ्टवेयरले तपाइँको रिजुमे पढ्न सक्छ?"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Can't scan? Enter this key in the app:"
+msgstr ""
+
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3274,6 +3274,10 @@ msgstr "खण्ड शीर्षक र मिति शब्दहरू �
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
 msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
+msgstr "यसलाई परिवर्तन गर्दा पहिले तपाईंको हालको ठेगानाबाट स्वीकृति माग्छ, त्यसपछि नयाँ ठेगाना पुष्टि गर्छ। तपाईको प्रयोगकर्ता नाम प्रत्येक सार्वजनिक लिङ्कको अंश हो।"
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3858,6 +3862,10 @@ msgstr "यकिन गर्नुहोस्"
 msgid "Confirm applied"
 msgstr "आवेदन गरेको पुष्टि गर्नुहोस्"
 
+#: src/features/auth/email-text.ts
+msgid "Confirm email"
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Confirm password"
 msgstr "पासवर्ड पुष्टि गर्नुहोस्"
@@ -3877,6 +3885,29 @@ msgstr "नयाँ अन्तर्वार्ता थप्नुअघ�
 #: src/features/career/workspace/prepare.tsx
 msgid "Confirm the time, link and who you'll meet. Glance at the resume and letter you sent."
 msgstr "समय, लिङ्क र तपाईं कसलाई भेट्दै हुनुहुन्छ पुष्टि गर्नुहोस्। तपाईंले पठाएको बायोडाटा र पत्रमा एक नजर लगाउनुहोस्।"
+
+#. Email sent to a new address to finish an email change. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this address to finish changing your {appName} email. The link works for 1 hour."
+msgstr ""
+
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this is your email address for {appName}. The link works for 1 hour."
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm your new {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email address"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Confirms {time} today, by video."
@@ -5650,6 +5681,10 @@ msgstr "यस कामको लागि कागजातहरू"
 #: src/features/documents/trash-page.tsx
 msgid "Documents you move here stay for 30 days."
 msgstr "तपाईंले यहाँ सारेका कागजातहरू ३० दिनसम्म रहन्छन्।"
+
+#: src/features/settings/account/data.tsx
+msgid "Documents, applications and Career data as JSON, in one zip"
+msgstr ""
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -7503,11 +7538,15 @@ msgid "If you close this dialog, your changes are lost."
 msgstr "यदि तपाईंले यो संवाद बन्द गर्नुभयो भने, तपाईंका परिवर्तनहरू हराउनेछन्।"
 
 #: src/features/auth/email-text.ts
-msgid "If you did not create this account, you can safely ignore this email."
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 msgstr ""
 
 #: src/features/auth/email-text.ts
-msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgid "If you didn't ask for this, ignore this email; your account won't change."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, you can ignore this email."
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -12424,10 +12463,6 @@ msgstr ""
 msgid "Reset your password"
 msgstr "तपाईंको पासवर्ड रिसेट गर्नुहोस्"
 
-#: src/features/auth/email-text.ts
-msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
-msgstr ""
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "तपाईंको पासवर्ड रिसेट हुँदैछ..."
@@ -15005,11 +15040,6 @@ msgstr "थाइ"
 msgid "Thank you for keeping it free."
 msgstr "यसलाई मुक्त राख्नु भएकोमा धन्यवाद।"
 
-#. Verification email. appName: Reactive Resume
-#: src/features/auth/email-text.ts
-msgid "Thanks for signing up for {appName}. Verify your email address to continue."
-msgstr ""
-
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "धन्यवाद, Sam। यस्तो एउटा छ: Northwind Labs मा मैले अनबोर्डिङ पुनःडिजाइनको नेतृत्व गरेँ, 14 ग्राहक अन्तर्वार्तादेखि छोटो सेटअपसम्म।"
@@ -15242,6 +15272,10 @@ msgstr "पत्र पुन: रेजुमेको डिजाइनस�
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "तपाईंले सोध्नुभएपछि लाइन परिवर्तन भयो, त्यसैले यसलाई बदलिएको थिएन।"
+
+#: src/features/auth/email-text.ts
+msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "the linked cover letter"

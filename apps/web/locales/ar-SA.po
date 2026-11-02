@@ -2147,10 +2147,6 @@ msgstr "كل الطلبات"
 msgid "All applications (including closed)"
 msgstr "جميع طلبات العمل (بما في ذلك المغلقة)"
 
-#: src/features/settings/account/data.tsx
-msgid "All documents and applications as JSON, in one zip"
-msgstr "جميع المستندات وطلبات العمل بصيغة JSON، في ملف مضغوط واحد"
-
 #: src/features/documents/trash-page.tsx
 msgid "All documents in Trash will be deleted for good and can't be restored."
 msgstr ""
@@ -3106,6 +3102,10 @@ msgstr "هل يمكنه مساعدتي في التحضير للمقابلات؟"
 msgid "Can software read your resume?"
 msgstr "هل يستطيع البرنامج قراءة سيرتك الذاتية؟"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Can't scan? Enter this key in the app:"
+msgstr ""
+
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3274,6 +3274,10 @@ msgstr "يغير عناوين الأقسام وكلمات التاريخ فقط�
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
 msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
+msgstr "يطلب تغييره موافقة عنوانك الحالي أولاً، ثم يؤكد العنوان الجديد. اسم المستخدم الخاص بك هو جزء من كل رابط عام."
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3858,6 +3862,10 @@ msgstr "تأكيد"
 msgid "Confirm applied"
 msgstr "تأكيد التقديم"
 
+#: src/features/auth/email-text.ts
+msgid "Confirm email"
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Confirm password"
 msgstr "تأكيد كلمة المرور"
@@ -3877,6 +3885,29 @@ msgstr "أكّد الموعد مع {contact} قبل إضافة مقابلة جد
 #: src/features/career/workspace/prepare.tsx
 msgid "Confirm the time, link and who you'll meet. Glance at the resume and letter you sent."
 msgstr "أكّد الموعد والرابط ومن ستقابل. ألقِ نظرة على السيرة الذاتية والخطاب اللذين أرسلتهما."
+
+#. Email sent to a new address to finish an email change. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this address to finish changing your {appName} email. The link works for 1 hour."
+msgstr ""
+
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this is your email address for {appName}. The link works for 1 hour."
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm your new {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email address"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Confirms {time} today, by video."
@@ -5650,6 +5681,10 @@ msgstr "المستندات الخاصة بهذه الوظيفة"
 #: src/features/documents/trash-page.tsx
 msgid "Documents you move here stay for 30 days."
 msgstr "تبقى المستندات التي تنقلها إلى هنا لمدة 30 يومًا."
+
+#: src/features/settings/account/data.tsx
+msgid "Documents, applications and Career data as JSON, in one zip"
+msgstr ""
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -7503,12 +7538,16 @@ msgid "If you close this dialog, your changes are lost."
 msgstr "إذا أغلقت هذه النافذة، فستفقد تغييراتك."
 
 #: src/features/auth/email-text.ts
-msgid "If you did not create this account, you can safely ignore this email."
-msgstr "إن لم تُنشئ هذا الحساب، يمكنك تجاهل هذه الرسالة بأمان."
-
-#: src/features/auth/email-text.ts
 msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 msgstr "إن لم تطلب هذا التغيير، فتجاهل هذه الرسالة وغيّر كلمة مرورك. لن يتغيّر عنوان الحساب دون موافقتك."
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, ignore this email; your account won't change."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, you can ignore this email."
+msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "If you never verified your email address, a password reset turns two-step verification off. Otherwise a reset keeps it on, so ask the person who runs this Reactive Resume server to turn it off for your account. Then sign in with your password and turn it on again with a new authenticator."
@@ -12424,10 +12463,6 @@ msgstr "إعادة تعيين كلمة مرور {appName}"
 msgid "Reset your password"
 msgstr "إعادة تعيين كلمة المرور"
 
-#: src/features/auth/email-text.ts
-msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
-msgstr "إعادة التعيين تسجّل خروجك من جميع الأجهزة وتزيل مفاتيح المرور ومفاتيح API والتطبيقات المتصلة. إن لم تكن أنت من طلب ذلك، فتجاهل هذه الرسالة وستبقى كلمة مرورك كما هي."
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "جاري إعادة تعيين كلمة المرور..."
@@ -15005,11 +15040,6 @@ msgstr "التايلاندية"
 msgid "Thank you for keeping it free."
 msgstr "شكرا لك على إبقائها مجانية."
 
-#. Verification email. appName: Reactive Resume
-#: src/features/auth/email-text.ts
-msgid "Thanks for signing up for {appName}. Verify your email address to continue."
-msgstr "شكرًا لتسجيلك في {appName}. أكّد عنوان بريدك الإلكتروني للمتابعة."
-
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "شكرًا يا Sam. إليك مثالًا: في Northwind Labs قُدت إعادة تصميم التهيئة، من 14 مقابلة مع العملاء إلى إعداد أقصر."
@@ -15242,6 +15272,10 @@ msgstr "تتطابق الرسالة مع تصميم السيرة الذاتية 
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "لقد تغير الخط منذ أن طلبت ذلك، لذلك لم يتم استبداله."
+
+#: src/features/auth/email-text.ts
+msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "the linked cover letter"

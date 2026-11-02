@@ -16,9 +16,9 @@ import {
 import { Button } from "@reactive-resume/ui/components/button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { buildAccountZip } from "@reactive-resume/utils/account-zip";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { SettingsRow, SettingsSection } from "../section";
-import { buildAccountZip } from "./export";
 import { clearAccountData } from "@/libs/auth/clear-account-data";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
@@ -48,7 +48,7 @@ export function DataSection({ openDeletion = false }: DataSectionProps) {
 		<SettingsSection title={<Trans>Your data</Trans>}>
 			<SettingsRow
 				title={<Trans>Export everything</Trans>}
-				description={<Trans>All documents and applications as JSON, in one zip</Trans>}
+				description={<Trans>Documents, applications and Career data as JSON, in one zip</Trans>}
 			>
 				<Button size="sm" variant="secondary" loading={exportAll.isPending} onClick={() => exportAll.mutate()}>
 					<Trans>Export</Trans>
