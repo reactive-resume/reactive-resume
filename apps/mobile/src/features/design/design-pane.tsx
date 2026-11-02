@@ -20,10 +20,9 @@ import { Picker } from "./picker";
 import { TemplatePreviewCaption } from "./preview-caption";
 import { ColorGroup, EntriesGroup, PageGroup, TypeGroup } from "./style-groups";
 import { TemplateGroup, useSheetScroll } from "./template-group";
-import { client } from "@/api/client";
 import { useSession } from "@/auth/session";
-import { useResumeStore } from "@/draft";
 import { nativeEnvironment } from "@/draft/native";
+import { setResumeLocked } from "@/features/share/revision";
 import { ResumePage } from "@/preview/page";
 import { useIsTablet } from "@/shell/use-is-tablet";
 import { Banner, IconButton, Skeleton, Text, haptics, showToast, useReducedMotion, useTheme } from "@/ui";
@@ -71,10 +70,7 @@ export function DesignPane({ id }: { id: string }) {
 	};
 	const pop = () => setStack((value) => value.slice(0, -1));
 	const pick = (spec: PickerSpec) => push({ kind: "picker", spec });
-	const unlock = async () => {
-		await client.documents.setLocked({ type: "resume", id, isLocked: false });
-		await useResumeStore.getState().open(id);
-	};
+	const unlock = () => setResumeLocked(id, false);
 
 	const titles: Record<AdvancedId, string> = {
 		typography: t`Typography`,

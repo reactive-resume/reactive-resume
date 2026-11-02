@@ -8,11 +8,11 @@ import { isValidSlug, MAX_SLUG_LENGTH, normalizeSlug } from "@reactive-resume/re
 import { isolate } from "@reactive-resume/utils/string";
 import { client } from "@/api/client";
 import { resumeFieldFocus, useResumeStore } from "@/draft";
-import { resume as draftResume } from "@/draft/runtime";
 import { useNewDocuments } from "@/features/documents/new-documents";
 import { useDocumentOperations } from "@/features/documents/queries";
 import { flushResume } from "@/features/share/document";
 import { printResume } from "@/features/share/files";
+import { setResumeLocked } from "@/features/share/revision";
 import { routes } from "@/routes";
 import { useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
@@ -101,10 +101,8 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 									disabled={operations.busy || printing}
 									onPress={() =>
 										void run(async () => {
-											if (!resume.isLocked) await flushResume(id);
-											await client.documents.setLocked({ type: "resume", id, isLocked: !resume.isLocked });
-											// Metadata-only change: refresh keeps undo history and skips a draft that is no longer this resume.
-											await draftResume.refresh();
+											// Through the open draft's revision: Undo and the next autosave build on it.
+											await setResumeLocked(id, !resume.isLocked);
 										})
 									}
 								/>

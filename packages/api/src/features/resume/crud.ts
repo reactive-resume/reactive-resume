@@ -225,17 +225,21 @@ export const crudRouter = {
 			operationId: "setResumeLocked",
 			summary: "Set resume lock status",
 			description:
-				"Toggles the locked status of a resume. When locked, a resume cannot be updated, patched, or deleted. Useful for protecting finalized resumes from accidental edits. Requires authentication.",
-			successDescription: "The resume lock status was updated successfully.",
+				"Toggles the locked status of a resume. When locked, a resume cannot be updated, patched, or deleted. Useful for protecting finalized resumes from accidental edits. When expectedUpdatedAt is provided, a stale version returns RESUME_VERSION_CONFLICT (409). Returns the resume as the change left it. Requires authentication.",
+			successDescription: "The resume with its new lock status and updatedAt.",
 		})
 		.input(resumeDto.setLocked.input)
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.setLocked.output)
+		.errors({
+			RESUME_VERSION_CONFLICT: { status: 409, message: "The resume changed since it was read. Read it again." },
+		})
 		.handler(({ context, input }) =>
 			resumeService.setLocked({
 				id: input.id,
 				userId: context.user.id,
 				isLocked: input.isLocked,
+				expectedUpdatedAt: input.expectedUpdatedAt,
 			}),
 		),
 

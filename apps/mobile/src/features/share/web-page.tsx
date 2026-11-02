@@ -10,10 +10,9 @@ import { useState } from "react";
 import { View } from "react-native";
 import { publicResumeUrl, shareListState, shortLinkOpens } from "@reactive-resume/resume/sharing";
 import { CustomDomain } from "./custom-domain";
-import { flushResume } from "./document";
+import { setResumePassword } from "./revision";
 import { client, orpc } from "@/api/client";
 import { useResumeStore } from "@/draft";
-import { resume as draftResume } from "@/draft/runtime";
 import { Banner, Button, ConfirmDialog, ListGroup, ListRow, Sheet, Switch, TextField, showToast, useTheme } from "@/ui";
 
 type WebPageSettingsProps = {
@@ -68,10 +67,7 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 	const savePassword = async (remove = false) => {
 		if (!remove && (password.length < 6 || password.length > 64 || password !== confirmation)) return;
 		const success = await operations.run(async () => {
-			await flushResume(resume.id);
-			if (remove) await client.resume.removePassword({ id: resume.id });
-			else await client.resume.setPassword({ id: resume.id, password });
-			await draftResume.refresh();
+			await setResumePassword(resume.id, remove ? null : password);
 		});
 		if (success) closePassword();
 	};

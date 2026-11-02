@@ -291,6 +291,41 @@ describe("builder resume autosave", () => {
 		expect(store().undoStack).toHaveLength(1);
 	});
 
+	it("takes its own lock revision as the base, so the next edit after unlocking saves without a conflict (RX-160)", async () => {
+		const store = useResumeStore.getState;
+		const initial = makeResume("lock-write");
+		store().initialize(initial);
+		store().updateResumeData((draft) => {
+			draft.basics.name = "Before lock";
+		});
+		const saved = {
+			...withBasicsName(initial, "Before lock"),
+			updatedAt: new Date(initial.updatedAt.getTime() + 1000),
+		};
+		orpcMocks.updateResume.mockResolvedValueOnce(saved);
+		await vi.advanceTimersByTimeAsync(500);
+		// The lock endpoint answers with the resume as it left it, like resume.update.
+		const answer = (base: Resume, isLocked: boolean) => (expectedUpdatedAt?: Date) => {
+			if (expectedUpdatedAt?.getTime() !== base.updatedAt.getTime()) throw new ORPCError("RESUME_VERSION_CONFLICT");
+			return Promise.resolve({ ...base, isLocked, updatedAt: new Date(base.updatedAt.getTime() + 1000) });
+		};
+		const locked = await saveResumeMetadata(initial.id, answer(saved, true));
+		expect(store().resume?.isLocked).toBe(true);
+		const unlocked = await saveResumeMetadata(initial.id, answer(locked, false));
+		expect(store().resume?.isLocked).toBe(false);
+		store().updateResumeData((draft) => {
+			draft.basics.headline = "After unlock";
+		});
+		orpcMocks.updateResume.mockResolvedValueOnce({
+			...unlocked,
+			updatedAt: new Date(unlocked.updatedAt.getTime() + 1000),
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].expectedUpdatedAt).toEqual(unlocked.updatedAt);
+		expect(store().saveStatus).toBe("saved");
+		expect(store().undoStack.length).toBeGreaterThan(0);
+	});
+
 	it("finishes an in-flight body save before renaming, then saves from the rename revision", async () => {
 		const initial = makeResume("metadata-inflight");
 		useResumeStore.getState().initialize(initial);

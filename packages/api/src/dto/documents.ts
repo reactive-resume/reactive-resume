@@ -1,6 +1,7 @@
 import z from "zod";
 import { paginationShape } from "../pagination";
 import { applicationDto } from "./application";
+import { acceptedRevisionSchema, expectedRevisionSchema } from "./resume";
 
 const documentTypeSchema = z.enum(["resume", "letter"]).describe("resume, or letter (a saved cover letter).");
 const documentRefSchema = z.object({
@@ -95,8 +96,12 @@ export const documentsDto = {
 	linkApplication: {
 		input: documentRefSchema.extend({
 			applicationId: z.string().min(1).nullable().describe("The application to link, or null to unlink."),
+			expectedUpdatedAt: expectedRevisionSchema.describe(
+				"Resumes only. If provided, the link only changes when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409).",
+			),
 		}),
-		output: z.void(),
+		// A resume's answer is its new revision, for an open editor to build on; a letter's is null.
+		output: acceptedRevisionSchema.nullable(),
 	},
 	trash: { input: documentRefSchema, output: z.void() },
 	restore: { input: documentRefSchema, output: z.void() },

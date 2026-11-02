@@ -11,7 +11,8 @@ const resumeServiceMock = vi.hoisted(() => ({
 const applicationServiceMock = vi.hoisted(() => ({ update: vi.fn() }));
 const insertApplicationMock = vi.hoisted(() => vi.fn());
 vi.mock("@reactive-resume/db/client", () => ({ db: dbMock }));
-vi.mock("../resume/service", () => ({ resumeService: resumeServiceMock }));
+const writeResumeFieldsMock = vi.hoisted(() => vi.fn(async () => ({ id: "new", updatedAt: new Date() })));
+vi.mock("../resume/service", () => ({ resumeService: resumeServiceMock, writeResumeFields: writeResumeFieldsMock }));
 vi.mock("../cover-letters/service", () => ({ coverLetterService: { getById: vi.fn(), update: vi.fn() } }));
 vi.mock("../applications/service", () => ({
 	applicationService: applicationServiceMock,
@@ -152,10 +153,20 @@ describe("linkApplication", () => {
 	])("links manual preparation while preserving submission history: %j", async ({ selected, ...application }) => {
 		dbMock.select.mockReturnValueOnce(rows([{ isLocked: false, trashedAt: null }]));
 		dbMock.select.mockReturnValueOnce(rows([{ id: "a1", company: "Orbital", ...application }]));
-		const set = vi.fn(() => ({ where: () => ({ returning: async () => [{ id: "new" }] }) }));
-		dbMock.update.mockReturnValue({ set });
-		await documentsService.linkApplication({ userId: "u1", type: "resume", id: "new", applicationId: "a1" });
-		expect(set).toHaveBeenCalledWith({ applicationId: "a1" });
+		const expectedUpdatedAt = new Date("2026-01-01T00:00:00Z");
+		await expect(
+			documentsService.linkApplication({
+				userId: "u1",
+				type: "resume",
+				id: "new",
+				applicationId: "a1",
+				expectedUpdatedAt,
+			}),
+		).resolves.toMatchObject({ id: "new" });
+		// The resume's own revision answers, so the open editor's next autosave builds on it.
+		expect(writeResumeFieldsMock).toHaveBeenCalledWith(
+			expect.objectContaining({ id: "new", set: { applicationId: "a1" }, expectedUpdatedAt }),
+		);
 		if (selected)
 			expect(applicationServiceMock.update).toHaveBeenCalledWith({ userId: "u1", id: "a1", resumeId: "new" });
 		else expect(applicationServiceMock.update).not.toHaveBeenCalled();

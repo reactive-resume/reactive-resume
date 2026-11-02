@@ -63,6 +63,14 @@ function network(kind) {
 			documents[kind] = next;
 			return structuredClone(next);
 		},
+		// Like the server's lock: conditional only when the caller sends the revision it saw, answering with the new one.
+		setLocked: async ({ isLocked, expectedUpdatedAt }) => {
+			const old = documents[kind];
+			if (expectedUpdatedAt && expectedUpdatedAt.getTime() !== old.updatedAt.getTime())
+				throw new ORPCError("RESUME_VERSION_CONFLICT");
+			documents[kind] = { ...old, isLocked, updatedAt: new Date(old.updatedAt.getTime() + 1) };
+			return structuredClone(documents[kind]);
+		},
 	};
 }
 const adapters = evaluate(
@@ -507,4 +515,49 @@ test("resume: a Share write after a revision from elsewhere fails its version ch
 	await o.refresh();
 	assert.equal(s().canUndo, false);
 	assert.deepEqual(s().proposalApplications, {});
+});
+
+const lock = (o, isLocked) =>
+	o.writeMetadata(async (baseline) => ({
+		...baseline,
+		...(await network("resume").setLocked({ id: "resume", isLocked, expectedUpdatedAt: baseline.updatedAt })),
+	}));
+
+test("resume: lock and unlock as the draft's own revisions keep Undo, and the next edit saves without a conflict (RX-160)", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	accept(s, "resume");
+	await s().flush();
+	const confirmed = s().proposalApplications;
+	await lock(o, true);
+	assert.equal(s().locked, true);
+	assert.equal(s().document.isLocked, true);
+	await lock(o, false);
+	assert.equal(s().locked, false);
+	// The stream's echo of the unlock is this app's own revision.
+	await o.refresh();
+	assert.equal(s().canUndo, true);
+	assert.deepEqual(s().proposalApplications, confirmed);
+	s().update((d) => void (d.basics.headline = "After unlock"), { newStep: true });
+	await s().flush();
+	assert.equal(s().status, "saved");
+	assert.equal(s().conflict, null);
+	assert.equal(documents.resume.data.basics.headline, "After unlock");
+});
+
+test("resume: a lock after an edit from elsewhere is refused, and that edit still reaches the draft (RX-160)", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	const remote = structuredClone(documents.resume);
+	remote.data.basics.headline = "Edited elsewhere";
+	remote.updatedAt = new Date(remote.updatedAt.getTime() + 5);
+	documents.resume = remote;
+	await assert.rejects(lock(o, true));
+	assert.equal(documents.resume.isLocked, false);
+	await o.refresh();
+	assert.equal(s().data.basics.headline, "Edited elsewhere");
 });

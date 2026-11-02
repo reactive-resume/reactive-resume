@@ -13,6 +13,7 @@ import { getOutlineRows, summarizeContent } from "./model";
 import { Outline } from "./outline";
 import { useDialogStore } from "@/dialogs/store";
 import {
+	saveResumeMetadata,
 	useCurrentBuilderResumeSelector,
 	useCurrentResume,
 	useIsResumeLocked,
@@ -119,19 +120,22 @@ function ImportedNote() {
 function LockedNote() {
 	const resume = useCurrentResume();
 	const patchResume = usePatchResume();
-	const { mutate: setLocked, isPending } = useMutation(orpc.resume.setLocked.mutationOptions());
+	const { mutate: setLocked, isPending } = useMutation({
+		mutationFn: (id: string) =>
+			// The next autosave builds on the unlocked revision instead of conflicting with it.
+			saveResumeMetadata(id, (expectedUpdatedAt, options) =>
+				orpc.resume.setLocked.call({ id, isLocked: false, expectedUpdatedAt }, options),
+			),
+	});
 
 	const unlock = () =>
-		setLocked(
-			{ id: resume.id, isLocked: false },
-			{
-				onSuccess: () =>
-					patchResume((draft) => {
-						draft.isLocked = false;
-					}),
-				onError: (error) => toast.add({ type: "error", description: getResumeErrorMessage(error) }),
-			},
-		);
+		setLocked(resume.id, {
+			onSuccess: () =>
+				patchResume((draft) => {
+					draft.isLocked = false;
+				}),
+			onError: (error) => toast.add({ type: "error", description: getResumeErrorMessage(error) }),
+		});
 
 	return (
 		<Alert variant="info" className="items-center">

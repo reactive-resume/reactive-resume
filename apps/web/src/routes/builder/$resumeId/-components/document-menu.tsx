@@ -18,6 +18,7 @@ import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
 import { DocumentDetails } from "./document-details";
 import { useDialogStore } from "@/dialogs/store";
 import {
+	saveResumeMetadata,
 	useCurrentBuilderResumeSelector,
 	useCurrentResume,
 	usePatchResume,
@@ -86,23 +87,26 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 
 	const { mutate: trashResume } = useMutation(orpc.documents.trash.mutationOptions());
 	const { mutateAsync: restoreResume } = useMutation(orpc.documents.restore.mutationOptions());
-	const { mutate: setLockedResume } = useMutation(orpc.resume.setLocked.mutationOptions());
+	const { mutate: setLockedResume } = useMutation({
+		mutationFn: (next: boolean) =>
+			// Through the autosave owner: earlier edits save first, and the next autosave builds on this revision.
+			saveResumeMetadata(id, (expectedUpdatedAt, options) =>
+				orpc.resume.setLocked.call({ id, isLocked: next, expectedUpdatedAt }, options),
+			),
+	});
 
 	// Locking is reversible, so it doesn't ask for confirmation.
 	const handleToggleLock = () => {
-		setLockedResume(
-			{ id, isLocked: !isLocked },
-			{
-				onSuccess: () => {
-					patchResume((draft) => {
-						draft.isLocked = !isLocked;
-					});
-				},
-				onError: (error) => {
-					toast.add({ type: "error", description: getResumeErrorMessage(error) });
-				},
+		setLockedResume(!isLocked, {
+			onSuccess: () => {
+				patchResume((draft) => {
+					draft.isLocked = !isLocked;
+				});
 			},
-		);
+			onError: (error) => {
+				toast.add({ type: "error", description: getResumeErrorMessage(error) });
+			},
+		});
 	};
 
 	// Undoable, so it doesn't ask first: the resume waits in Trash for 30 days.
