@@ -942,6 +942,8 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 			const run = row.lastRun?.status;
 			if (run === "failed") return t`Failed · ${day(row.nextRunAt)} · open to check it`;
 			if (run === "queued" || run === "running") return t`Running · ${day(row.nextRunAt)}`;
+			// A briefing refresh belongs to one interview: once it ran, it's done for that round.
+			if (row.kind === "prepare") return t`Ran ${day(row.nextRunAt)} · done for this interview`;
 			return t`Done · ${day(row.nextRunAt)}`;
 		}
 		if (row.lastRun?.status === "failed") return t`Last run failed · open to check it`;
