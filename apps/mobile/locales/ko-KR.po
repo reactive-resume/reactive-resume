@@ -24,6 +24,12 @@ msgstr ""
 msgid "“{0}” added to Skills"
 msgstr "“{0}”가 기술에 추가되었습니다."
 
+#. placeholder {0}: link.resumeName
+#. placeholder {1}: date(link.createdAt)
+#: src/features/share/feedback.tsx
+msgid "“{0}” as saved {1}."
+msgstr ""
+
 #. placeholder {0}: open.label
 #: src/features/check/job-match.tsx
 msgid "“{0}” hidden"
@@ -507,6 +513,11 @@ msgstr "{0} 덜"
 msgid "{0} more"
 msgstr "{0} 더 높음"
 
+#. placeholder {0}: i18n.number(link.openCommentCount)
+#: src/features/share/feedback.tsx
+msgid "{0} new comments"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #. placeholder {1}: all.length
 #: src/features/letters/write.tsx
@@ -929,6 +940,10 @@ msgstr "1일"
 msgid "1 h"
 msgstr "1시간"
 
+#: src/features/share/feedback.tsx
+msgid "1 new comment"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "10-minute briefing"
 msgstr "10분 브리핑"
@@ -952,6 +967,18 @@ msgstr "2~3개의 문장이 가장 잘 읽힙니다."
 #: src/features/career/schedule-sheet.tsx
 msgid "24 hours before"
 msgstr "24시간 전"
+
+#: src/features/share/feedback.tsx
+msgid "30 days"
+msgstr "30일"
+
+#: src/features/share/feedback.tsx
+msgid "7 days"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "90 days"
+msgstr "90일"
 
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
@@ -1162,6 +1189,10 @@ msgstr "{1}에서 {0}에 대한 작업"
 #: src/features/ai/web-access.tsx
 msgid "Active"
 msgstr "활동적인"
+
+#: src/features/share/feedback.tsx
+msgid "Activity"
+msgstr "활동"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/improve.tsx
@@ -1719,6 +1750,10 @@ msgstr "모든 지원이 마감되었어요"
 #: src/features/settings/profile.tsx
 msgid "Allow camera access in your device settings to take a photo."
 msgstr "사진을 찍으려면 기기 설정에서 카메라 액세스를 허용하세요."
+
+#: src/features/share/feedback.tsx
+msgid "Allow comments"
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Allow microphone access in device settings, or type your answer."
@@ -3027,6 +3062,14 @@ msgstr "열은 텍스트를 읽는 순서를 뒤섞을 수 있습니다."
 msgid "Coming up"
 msgstr "예정"
 
+#: src/features/share/feedback.tsx
+msgid "Comment left"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Comments"
+msgstr ""
+
 #: src/features/design/style-groups.tsx
 msgid "Compact"
 msgstr "컴팩트"
@@ -3283,6 +3326,7 @@ msgstr "클립보드에 복사됨"
 msgid "Copies it"
 msgstr "텍스트를 복사합니다"
 
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 #: src/features/workspace/answer-library.tsx
 msgid "Copy"
@@ -3570,6 +3614,10 @@ msgstr "샘플 파일을 로드할 수 없습니다. 다시 시도해 보세요.
 msgid "Couldn't load the saved review."
 msgstr ""
 
+#: src/features/share/feedback.tsx
+msgid "Couldn't load this link."
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Couldn't load this version's page."
@@ -3585,6 +3633,10 @@ msgstr "로드할 수 없습니다. 연결을 확인하고 다시 시도하세�
 #: src/features/letters/share.tsx
 msgid "Couldn't load versions."
 msgstr "버전을 로드할 수 없습니다."
+
+#: src/features/share/feedback.tsx
+msgid "Couldn't load your feedback links."
+msgstr ""
 
 #: app/(tabs)/settings/account.tsx
 msgid "Couldn't load your profile."
@@ -3604,6 +3656,10 @@ msgstr "시간대를 로드할 수 없습니다."
 
 #: src/features/settings/application-profile.tsx
 msgid "Couldn't load. Try again."
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Couldn't make the link. Try again."
 msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
@@ -3871,6 +3927,10 @@ msgstr "모델을 전환할 수 없습니다. 다시 시도해 보세요."
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "텍스트로 변환할 수 없습니다. 녹음은 그대로 남아 있습니다."
 
+#: src/features/share/feedback.tsx
+msgid "Couldn't turn off the link. Try again."
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "Couldn't undo that. Try again."
 msgstr "실행 취소할 수 없습니다. 다시 시도해 보세요."
@@ -3898,6 +3958,10 @@ msgstr "지원을 업데이트할 수 없습니다. 변경된 내용이 없습�
 #: src/features/applications/stage-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "채용 지원서를 업데이트할 수 없습니다. 다시 시도해 보세요."
+
+#: src/features/share/feedback.tsx
+msgid "Couldn't update the comment. Try again."
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't update the interview. Try again."
@@ -4566,6 +4630,7 @@ msgstr "Open Collective에서 후원하기"
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/rich-text-field.tsx
+#: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
 #: src/features/write/rich-text-field.tsx
@@ -5146,6 +5211,11 @@ msgstr ""
 msgid "Experience"
 msgstr "경력"
 
+#. placeholder {0}: date(link.expiresAt)
+#: src/features/share/feedback.tsx
+msgid "expires {0}"
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "Export a smaller PDF and check it again, or start a blank resume and fix these there."
 msgstr "더 작은 PDF를 내보내고 다시 확인하거나 빈 이력서를 시작하고 거기에서 수정하세요."
@@ -5219,6 +5289,14 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
 msgstr "피드백"
+
+#: src/features/share/feedback.tsx
+msgid "Feedback link"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Feedback links"
+msgstr ""
 
 #. placeholder {0}: index + 1
 #: src/features/write/basics-screen.tsx
@@ -5408,6 +5486,10 @@ msgstr "응답 없음 단계에는 응답 없음 결과를 선택하세요."
 #: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "example.com 같은 루트 도메인에는 CNAME 대신 {0}의 주소로 A 및 AAAA 레코드를 사용하세요."
+
+#: src/features/share/feedback.tsx
+msgid "For example, Careers office"
+msgstr ""
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -6155,6 +6237,10 @@ msgstr "항목이 있지만 페이지에 배치되지 않습니다."
 msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
 msgstr ""
 
+#: src/features/share/feedback.tsx
+msgid "It stops opening at once. Comments already left are kept. You can make a new link anytime."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline and the calendar for good."
 msgstr ""
@@ -6699,10 +6785,19 @@ msgstr "입사 지원서 연결"
 msgid "Link an application or paste a posting to compare its terms."
 msgstr "지원 내역를 연결하거나 채용 공고를 붙여넣어 조건을 비교해 보세요."
 
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 #: src/features/share/web-page.tsx
 msgid "Link copied"
 msgstr "링크가 복사되었습니다"
+
+#: src/features/share/feedback.tsx
+msgid "Link expires"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Link made"
+msgstr ""
 
 #: src/features/check/job-match.tsx
 msgid "Link this resume"
@@ -6715,6 +6810,10 @@ msgstr "입사지원 바로가기"
 #: src/features/documents/document-sheets.tsx
 msgid "Link to application…"
 msgstr "입사지원서 링크…"
+
+#: src/features/share/feedback.tsx
+msgid "Link turned off"
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "Link updated"
@@ -6981,6 +7080,10 @@ msgstr "좀 더 구체적으로 작성하세요"
 #: src/features/write/improve.tsx
 msgid "Make it shorter"
 msgstr "더 짧게 만드세요"
+
+#: src/features/share/feedback.tsx
+msgid "Make link"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Make primary"
@@ -7518,6 +7621,7 @@ msgstr "네트워크"
 
 #: src/features/career/preferences.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/share/feedback.tsx
 msgid "Never"
 msgstr "절대"
 
@@ -7565,6 +7669,10 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "새 문서"
+
+#: src/features/share/feedback.tsx
+msgid "New feedback link"
+msgstr ""
 
 #: app/(tabs)/settings/ai-mcp.tsx
 #: src/features/settings/api-keys.tsx
@@ -7686,6 +7794,10 @@ msgstr "변경할 필요가 없습니다. 이미 {stage} 단계입니다."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "검색과 일치하는 명령이 없습니다."
+
+#: src/features/share/feedback.tsx
+msgid "No comments yet."
+msgstr ""
 
 #: src/features/settings/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
@@ -7829,6 +7941,10 @@ msgstr "새 채용 정보가 없습니다. {0}에 다시 검색합니다."
 #: src/features/career/offers.tsx
 msgid "No offers to compare yet"
 msgstr "아직 비교할 오퍼가 없습니다"
+
+#: src/features/share/feedback.tsx
+msgid "No open applications."
+msgstr ""
 
 #: src/features/check/issues.ts
 msgid "No phone number"
@@ -8032,6 +8148,10 @@ msgstr ""
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Not now"
 msgstr "나중에"
+
+#: src/features/share/feedback.tsx
+msgid "Not opened yet"
+msgstr ""
 
 #: src/features/application-detail/sections.tsx
 #: src/features/career/offers.tsx
@@ -8368,6 +8488,10 @@ msgstr "이 장치만 알림을 예약합니다. 시스템에서 요청할 때 �
 msgid "Only you see these"
 msgstr "이 내용은 나만 볼 수 있습니다."
 
+#: src/features/share/feedback.tsx
+msgid "Only you see this."
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
@@ -8485,6 +8609,15 @@ msgstr "OpenAI, Anthropic, Gemini, Ollama 등"
 #: src/features/share/download.tsx
 msgid "OpenDocument"
 msgstr "OpenDocument"
+
+#: src/features/share/feedback.tsx
+msgid "Opened"
+msgstr ""
+
+#. placeholder {0}: formatTimeSince(link.lastViewedAt, i18n.locale)
+#: src/features/share/feedback.tsx
+msgid "Opened {0} ago"
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 msgid "Opening the file"
@@ -10170,6 +10303,7 @@ msgstr "단계 사용 중지"
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
@@ -10907,6 +11041,10 @@ msgstr "시맨틱 CSS 스타일시트"
 msgid "Send"
 msgstr "보내다"
 
+#: src/features/share/feedback.tsx
+msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
+msgstr ""
+
 #: src/features/ai/report-content.tsx
 msgid "Send report"
 msgstr "보고서 보내기"
@@ -11115,6 +11253,10 @@ msgstr "그림자 너비"
 msgid "Share"
 msgstr "공유하다"
 
+#: src/features/share/feedback.tsx
+msgid "Share application progress (optional)"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Share calendar event (.ics)"
 msgstr "캘린더 이벤트 공유(.ics)"
@@ -11152,6 +11294,7 @@ msgstr "PNG 공유"
 msgid "Share recording"
 msgstr "녹음 공유"
 
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 msgid "Share via…"
 msgstr "다음을 통해 공유…"
@@ -12354,6 +12497,10 @@ msgstr "편지가 이력서의 디자인과 다시 일치합니다."
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "요청한 이후 줄이 변경되었으므로 교체되지 않았습니다."
 
+#: src/features/share/feedback.tsx
+msgid "The link opens the resume as it is now. Later edits aren't shared, so every comment is about this version."
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "the linked cover letter"
 msgstr ""
@@ -12428,6 +12575,10 @@ msgstr "이력서는 그대로"
 
 #: src/features/workspace/parts.tsx
 msgid "the resume for this job"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -13145,9 +13296,21 @@ msgstr "샘플 이력서를 사용해 보세요"
 msgid "Turkish"
 msgstr "터키어"
 
+#: src/features/share/feedback.tsx
+msgid "Turn off"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "내보낼 때 임의 합자(리게이처)를 비활성화하세요."
+
+#: src/features/share/feedback.tsx
+msgid "Turn off link…"
+msgstr ""
+
+#: src/features/share/feedback.tsx
+msgid "Turn off this link?"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Turn this on to open this resume at your short link and custom domain."
@@ -14012,6 +14175,10 @@ msgstr ""
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
 msgstr "내 우선순위에 가장 잘 맞는 기회는 무엇인가요?"
+
+#: src/features/share/feedback.tsx
+msgid "Who is it for?"
+msgstr ""
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Who you'll meet"

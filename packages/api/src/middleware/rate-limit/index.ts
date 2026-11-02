@@ -158,3 +158,17 @@ export const resumeUpdatesUserRateLimit = createRatelimitMiddleware<ContextWithH
 	limiter: productionLimiter(resumeUpdatesUserLimiter),
 	key: ({ context }) => `resume-updates-user:${getUserKey(context)}`,
 });
+
+// Feedback pages are public: each visitor gets a budget for reading them and a smaller one for leaving comments.
+const feedbackViewLimiter = createRateLimiter("feedbackViewLimiter", { maxRequests: 60, window: 60 * 1000 });
+const feedbackCommentLimiter = createRateLimiter("feedbackCommentLimiter", { maxRequests: 10, window: 10 * 60 * 1000 });
+
+export const feedbackViewRateLimit = createRatelimitMiddleware<ContextWithHeaders, unknown>({
+	limiter: productionLimiter(feedbackViewLimiter),
+	key: ({ context }) => `feedback-view:${getClientKey(context.trustedClient)}`,
+});
+
+export const feedbackCommentRateLimit = createRatelimitMiddleware<ContextWithHeaders, unknown>({
+	limiter: productionLimiter(feedbackCommentLimiter),
+	key: ({ context }) => `feedback-comment:${getClientKey(context.trustedClient)}`,
+});

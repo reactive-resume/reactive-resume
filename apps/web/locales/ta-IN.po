@@ -25,6 +25,14 @@ msgstr ""
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
+#. placeholder {0}: link.resumeName
+#. placeholder {1}: date(link.createdAt)
+#. placeholder {2}: statusLabel(link.status)
+#. placeholder {3}: link.expiresAt && link.status === "active" ? ` · ${t`expires ${date(link.expiresAt)}`}` : ""
+#: src/features/resume/share/feedback-links.tsx
+msgid "“{0}” as saved {1}. {2}{3}"
+msgstr ""
+
 #. placeholder {0}: term.label
 #: src/features/resume/editor/check/job-match.tsx
 msgid "“{0}” hidden"
@@ -239,6 +247,11 @@ msgstr "{0, plural, one {# சிக்கல் புறக்கணிக்�
 #. placeholder {0}: review.notImported.length
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
+
+#. placeholder {0}: link.openCommentCount
+#: src/features/resume/share/feedback-links.tsx
+msgid "{0, plural, one {# new comment} other {# new comments}}"
 msgstr ""
 
 #. placeholder {0}: proposals.length
@@ -961,6 +974,10 @@ msgstr "{now} · தட்டச்சு செய்தது"
 msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{open, plural, one {# மதிப்பாய்வு செய்ய வேண்டிய விஷயம்.} other {# மதிப்பாய்வு செய்ய வேண்டிய விஷயங்கள்.}}"
 
+#: src/features/feedback/review-page.tsx
+msgid "{owner} asked for your feedback"
+msgstr ""
+
 #: src/features/resume/editor/chrome.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
@@ -1556,11 +1573,13 @@ msgstr "ஒரே காலாண்டில் ஆக்டிவேஷன் 
 msgid "Activation rose from 31%…"
 msgstr "ஆக்டிவேஷன் 31%-இலிருந்து…"
 
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Active"
 msgstr "செயலில்"
 
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/resume/share/feedback-links.tsx
 msgid "Activity"
 msgstr "செயல்பாடு"
 
@@ -2225,6 +2244,10 @@ msgstr "உங்கள் ஆவணங்கள், வேலை விண்�
 msgid "Allow access"
 msgstr "அணுகலை அனுமதிக்கவும்"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Allow comments"
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "Allow scheduled sharing"
 msgstr ""
@@ -2516,6 +2539,10 @@ msgstr ""
 msgid "Application preparation"
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
+msgid "Application progress"
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "application summaries"
 msgstr "விண்ணப்பச் சுருக்கங்கள்"
@@ -2568,7 +2595,9 @@ msgid "Applied"
 msgstr "பயன்படுத்தப்பட்டது"
 
 #. placeholder {0}: date(application.appliedAt)
+#. placeholder {0}: i18n.date(application.appliedAt, { dateStyle: "medium" })
 #: src/features/career/workspace/shell.tsx
+#: src/features/feedback/review-page.tsx
 msgid "Applied {0}"
 msgstr "{0} அன்று விண்ணப்பிக்கப்பட்டது"
 
@@ -2698,6 +2727,10 @@ msgstr "ஆலோசகரிடம் கேள்"
 #: src/features/resume/share/download-tab.tsx
 msgid "Ask the community. Remove personal details before posting."
 msgstr "சமூகத்திடம் கேளுங்கள். பதிவிடும் முன் தனிப்பட்ட விவரங்களை அகற்றுங்கள்."
+
+#: src/features/feedback/review-page.tsx
+msgid "Ask the person who sent it for a new link. Comments you left are still with them."
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Ask your server administrator to enable credential encryption or configure a shared web connection."
@@ -3194,6 +3227,7 @@ msgstr ""
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
@@ -3418,6 +3452,10 @@ msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Check that these facts support what the story claims before saving."
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Check that you copied the whole link, or ask the person who sent it for a new one."
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -3746,6 +3784,7 @@ msgstr "வாடிக்கையாளர் ஐடி"
 #: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/resume/stylesheet/editor.tsx
 #: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3841,6 +3880,28 @@ msgstr "கட்டளைத் தட்டு"
 #: src/features/command-palette/content.tsx
 msgid "Command palette: {currentPage}"
 msgstr "கட்டளைத் தட்டு: {currentPage}"
+
+#: src/features/feedback/review-page.tsx
+msgid "Comment"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Comment left"
+msgstr ""
+
+#. placeholder {0}: view.ownerName
+#: src/features/feedback/review-page.tsx
+msgid "Comment sent to {0}"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+#: src/features/resume/share/feedback-links.tsx
+msgid "Comments"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Comments and progress"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Community"
@@ -4598,11 +4659,19 @@ msgstr "மாதிரி கோப்பை ஏற்ற முடியவி
 msgid "Couldn't load the saved review."
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't load this link."
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "இதை ஏற்ற முடியவில்லை. நீங்கள் சேமித்த தரவு மாறவில்லை."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't load your feedback links."
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load your stages, so the standard ones are shown. Try again."
@@ -4622,6 +4691,10 @@ msgstr "ஆவணத்தைப் பூட்ட முடியவில்�
 
 #: src/features/settings/account/backup-codes.tsx
 msgid "Couldn't make new codes. Try again."
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't make the link. Try again."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4893,6 +4966,10 @@ msgstr "மின்னஞ்சலை அனுப்ப முடியவி�
 msgid "Couldn't send the password reset email. Try again."
 msgstr "கடவுச்சொல் மீட்டமைப்பு மின்னஞ்சலை அனுப்ப முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 
+#: src/features/feedback/review-page.tsx
+msgid "Couldn't send your comment. Try again."
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Couldn't set the password. Try again."
 msgstr "கடவுச்சொல்லை அமைக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
@@ -4965,6 +5042,10 @@ msgstr "மாடல்களை மாற்ற முடியவில்ல�
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "எழுத்தாக்க முடியவில்லை. உங்கள் பதிவு இன்னும் இங்கே உள்ளது."
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't turn off the link. Try again."
+msgstr ""
+
 #. Fallback toast when disabling two-factor authentication fails
 #: src/dialogs/auth/disable-two-factor.tsx
 msgid "Couldn't turn off two-step verification. Check your password and try again."
@@ -5016,6 +5097,10 @@ msgstr "விண்ணப்பத்தைப் புதுப்பிக�
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "வேலை விண்ணப்பங்களை புதுப்பிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't update the comment. Try again."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Couldn't update the interview. Try again."
@@ -5351,6 +5436,10 @@ msgstr "தேதிகளுக்கான நெடுவரிசை"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "தேதி வடிவம்"
+
+#: src/features/feedback/review-page.tsx
+msgid "date unknown"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Dated updates. For things to remember and share with the coach, use Notes."
@@ -5830,6 +5919,7 @@ msgid "Donate"
 msgstr "நன்கொடை அளிக்கவும்"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
@@ -6590,9 +6680,18 @@ msgstr "அனுபவம்"
 msgid "Experience, Education and more"
 msgstr "அனுபவம், கல்வி மற்றும் பல"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Expired"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Expires"
 msgstr "காலாவதியாகிறது"
+
+#. placeholder {0}: date(link.expiresAt)
+#: src/features/resume/share/feedback-links.tsx
+msgid "expires {0}"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "explain one limit of the measurement clearly, without underselling the work."
@@ -6720,6 +6819,19 @@ msgstr "அம்சங்கள்"
 #: src/features/career/workspace/practise.tsx
 msgid "Feedback"
 msgstr "கருத்து"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Feedback link"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Feedback links"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+#: src/routes/feedback/$token.tsx
+msgid "Feedback request"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -6953,6 +7065,10 @@ msgstr "example.com போன்ற ரூட் டொமைனுக்கு,
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "ஒவ்வொன்றுக்கும்: சூழ்நிலை, பணி, உங்கள் செயல், முடிவு, பிரதிபலிப்பு. உறுதியாகத் தெரியாத எண்களை விட்டுவிடுங்கள்."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "For example, Careers office"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "For example, note which companies you sent this resume to, or links to the job descriptions."
@@ -7266,6 +7382,7 @@ msgstr "டாஷ்போர்டுக்கு செல்லவும்"
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Go to Reactive Resume"
 msgstr "Reactive Resume-க்குச் செல்லவும்"
@@ -7803,6 +7920,18 @@ msgstr ""
 msgid "Improving…"
 msgstr "மேம்படுத்துகிறது…"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 30 days"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 7 days"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 90 days"
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "In good company"
 msgstr "நல்ல நிறுவனத்தில்"
@@ -8032,6 +8161,10 @@ msgstr ""
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "அது நீக்கப்பட்டிருக்கலாம். வேறு கதையைத் தேர்ந்தெடுக்கவும் அல்லது புதியதைச் சேர்க்கவும்."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "It stops opening at once. Comments already left are kept. You can make a new link anytime."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "It will be deleted for good and can't be restored."
@@ -8763,6 +8896,14 @@ msgstr ""
 msgid "Link copied"
 msgstr "இணைப்பு நகலெடுக்கப்பட்டது"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link expires"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link made"
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link this resume"
 msgstr ""
@@ -8774,6 +8915,10 @@ msgstr "வேலை விண்ணப்பத்திற்கான இண�
 #: src/features/documents/document-actions.tsx
 msgid "Link to application…"
 msgstr "வேலை விண்ணப்பத்திற்கான இணைப்பு…"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link turned off"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
@@ -8965,6 +9110,7 @@ msgstr "பணியிடத்தை ஏற்றுகிறது…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/profile.tsx
 msgid "Loading…"
@@ -9095,6 +9241,10 @@ msgstr "அதை சுருக்கவும்"
 #: src/features/templates/gallery.tsx
 msgid "Make it yours, then take it with you."
 msgstr "அதை உங்களுடையதாக ஆக்குங்கள், பின்னர் அதை உங்களுடன் எடுத்துச் செல்லுங்கள்."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Make link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Make primary"
@@ -9678,6 +9828,7 @@ msgid "Network"
 msgstr "நெட்வொர்க்"
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Never"
 msgstr "ஒருபோதும் இல்லை"
@@ -9729,6 +9880,10 @@ msgstr "புதிய ஆவணம்"
 #: src/features/career/knowledge/facts.tsx
 msgid "New fact"
 msgstr "புதிய உண்மை"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "New feedback link"
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "New key"
@@ -9878,6 +10033,11 @@ msgstr "மாற்றம் தேவையில்லை. இது ஏற�
 msgid "No commands match that search."
 msgstr "அந்தத் தேடலுக்குப் பொருந்தும் கட்டளைகள் எதுவும் இல்லை."
 
+#: src/features/feedback/review-page.tsx
+#: src/features/resume/share/feedback-links.tsx
+msgid "No comments yet."
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
 msgstr "இன்னும் இணைக்கப்பட்ட பயன்பாடுகள் இல்லை. உங்கள் கணக்கை அணுக நீங்கள் அனுமதிக்கும் பயன்பாடுகள் இங்கே தோன்றும்."
@@ -10022,6 +10182,10 @@ msgstr "புதிய பதவிகள் இல்லை. வாய்ப�
 #: src/features/career/offers.tsx
 msgid "No offers to compare yet"
 msgstr "ஒப்பிட இன்னும் சலுகைகள் இல்லை"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "No open applications."
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
@@ -10275,6 +10439,10 @@ msgstr "இப்போது வேண்டாம்"
 msgid "Not on the page"
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Not opened yet"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/career/offers.tsx
@@ -10475,6 +10643,10 @@ msgstr "ஒடியா"
 msgid "Off"
 msgstr "ஆஃப்"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Off makes the link read-only."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Off: the coach won’t see it or claim it."
 msgstr "அணைக்கப்பட்டது: ஆலோசகர் இதைப் பார்க்காது, உங்கள் சார்பில் இதைக் கூறவும் செய்யாது."
@@ -10672,6 +10844,10 @@ msgstr ""
 msgid "Only you see these"
 msgstr "இவற்றை நீங்கள் மட்டுமே பார்க்கிறீர்கள்"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Only you see this."
+msgstr ""
+
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "நீங்கள் மட்டுமே, நீங்கள் பகிர்ந்து கொள்ளும் வரை. ஒரு ரெஸ்யூமே தனிப்பட்டதாக இருக்க முடியும், பொது இணைப்பில் நேரலையில் செல்லலாம் அல்லது கடவுச்சொல் மூலம் பாதுகாக்கப்படலாம், அதை நீங்கள் எந்த நேரத்திலும் மாற்றலாம். உங்கள் கணக்கை நீக்குவது அதனுடன் உங்கள் ரெஸ்யூம்களை நீக்குகிறது."
@@ -10796,6 +10972,15 @@ msgstr ""
 #: src/features/settings/ai/providers.tsx
 msgid "OpenAI, Anthropic, Gemini, Ollama and more"
 msgstr "OpenAI, Anthropic, Gemini, Ollama மற்றும் பல"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Opened"
+msgstr ""
+
+#. placeholder {0}: formatTimeSince(link.lastViewedAt, i18n.locale)
+#: src/features/resume/share/feedback-links.tsx
+msgid "Opened {0} ago"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Opening"
@@ -12816,6 +13001,7 @@ msgstr "ரெஸ்யூம்"
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
+#: src/features/feedback/review-page.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "ரெஸ்யூம்"
@@ -12854,6 +13040,7 @@ msgstr "ரெஸ்யூம் பில்டர்"
 msgid "Resume changed since this review. Review these suggestions as out of date or run again."
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "ரெஸ்யூம் உள்ளடக்கம்"
@@ -13062,6 +13249,10 @@ msgstr "திரும்பப் பெறு"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0} ஐ திரும்பப் பெறவும்"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Revoked"
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -13800,8 +13991,16 @@ msgstr "அனுப்பு"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
+msgstr ""
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Send comment"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -14068,6 +14267,10 @@ msgstr "பகிரவும்"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "பொது இணைப்பைப் பகிரவும், கடவுச்சொல்லைச் சேர்க்கவும் அல்லது தனிப்பட்டதாக வைக்கவும். 3 தெரிவுநிலை விருப்பங்களிலிருந்து தேர்வு செய்யவும். PDF அல்லது Word க்கு ஏற்றுமதி செய்யவும் அல்லது உங்கள் எல்லா தரவையும் JSON ஆக எடுத்துச் செல்லவும்."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Share application progress (optional)"
+msgstr ""
 
 #. placeholder {0}: provider.label
 #: src/libs/orpc/ai-consent.ts
@@ -14685,6 +14888,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Stages"
 msgstr "நிலைகள்"
+
+#: src/features/feedback/review-page.tsx
+msgid "Stages and dates only. Notes, contacts and pay stay private."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 msgid "Standard section headings"
@@ -15597,6 +15804,10 @@ msgstr "கடிதம் மீண்டும் ரெஸ்யூமே வ
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "நீங்கள் கேட்டதிலிருந்து வரி மாறிவிட்டது, அதனால் அது மாற்றப்படவில்லை."
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "The link opens the resume as it is now. Later edits aren't shared, so every comment is about this version."
+msgstr ""
+
 #: src/features/auth/email-text.ts
 msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
 msgstr ""
@@ -15733,6 +15944,10 @@ msgstr ""
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
 msgstr "மதிப்பாய்வை முடிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
@@ -16030,6 +16245,11 @@ msgstr "இந்தக் கோப்பு Type 3 எழுத்துரு
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr ""
 
+#. placeholder {0}: view.resumeName
+#: src/features/feedback/review-page.tsx
+msgid "This is “{0}” as they saved it on {sharedOn}. Your comments go only to them and don't change the resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "இது ஒரு PDF போர்ட்ஃபோலியோ: தெரியும் பக்கம் ஒரு அட்டை மட்டுமே."
@@ -16070,6 +16290,23 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
 msgstr "இந்த கடிதம் அதன் பெறுநரை எழுதப்பட்டபடி வைத்திருக்கிறது."
+
+#: src/features/feedback/review-page.tsx
+msgid "This link doesn't open"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "This link has expired"
+msgstr ""
+
+#. placeholder {0}: view.ownerName
+#: src/features/feedback/review-page.tsx
+msgid "This link is read-only. Reply to {0} directly with your thoughts."
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "This link was turned off"
+msgstr ""
 
 #: src/features/ats-checker/report/report-view.tsx
 msgid "This measures how faithfully software can extract this file's text. It does not predict whether an application will be rejected, and no tool can. Your file was read in this browser and never uploaded."
@@ -16480,6 +16717,7 @@ msgstr ""
 #: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/preview/preview.browser.tsx
 #: src/features/resume/share/download-tab.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
@@ -16523,9 +16761,21 @@ msgstr "மாதிரி ரெஸ்யூமுடன் முயற்ச�
 msgid "Turkish"
 msgstr "துருக்கி"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "ஏற்றுமதி செய்யும்போது விருப்ப லிகேச்சர்களை (இணை எழுத்துக்கள்) அணைக்கவும்."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off link…"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off this link?"
+msgstr ""
 
 #. Destructive action button to turn off two-factor authentication
 #: src/dialogs/auth/disable-two-factor.tsx
@@ -17665,6 +17915,10 @@ msgstr "ஓய்வூதியம் அல்லது படிகள் ப
 msgid "Who can see my resume?"
 msgstr "எனது ரெஸ்யூமேவை யார் பார்க்கலாம்?"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Who is it for?"
+msgstr ""
+
 #: src/features/homepage/prepare.tsx
 msgid "Who owns the design system today? What does success look like in 90 days?"
 msgstr "இன்று வடிவமைப்பு அமைப்புக்கு யார் பொறுப்பு? 90 நாட்களில் வெற்றி எப்படி இருக்கும்?"
@@ -18255,6 +18509,7 @@ msgstr "உங்கள் செய்தி"
 msgid "Your message is kept."
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"
 msgstr "உங்கள் பெயர்"

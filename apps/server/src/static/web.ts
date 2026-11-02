@@ -7,7 +7,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { env } from "@reactive-resume/env/server";
 import { jsonLdScript, socialMetaTags } from "@reactive-resume/pdf/web-page-document";
 import { templateSchema } from "@reactive-resume/schema/templates";
-import { isAppSectionPath, RESERVED_SEGMENTS } from "@reactive-resume/utils/app-paths";
+import { isAppSectionPath, isFeedbackPath, RESERVED_SEGMENTS } from "@reactive-resume/utils/app-paths";
 import { defaultLocale, getLocaleAlternates, languageTag, localizedUrl } from "@reactive-resume/utils/locale";
 import { escapeHtml } from "@reactive-resume/utils/string";
 import { getPageLocale } from "./locale";
@@ -52,7 +52,12 @@ export function isPublicResumePath(pathname: string): boolean {
 	const segments = getPathSegments(pathname);
 	const [firstSegment] = segments;
 
-	return segments.length === 2 && firstSegment !== undefined && !reservedPublicResumeSegments.has(firstSegment);
+	return (
+		segments.length === 2 &&
+		firstSegment !== undefined &&
+		!reservedPublicResumeSegments.has(firstSegment) &&
+		!isFeedbackPath(pathname)
+	);
 }
 
 // Single-segment addresses the app or the server answer themselves, so they can never be a username's page.
@@ -328,6 +333,15 @@ export const serveWebDistStatic = env.CLOUDFLARE
 function getFallbackResponseHeaders(pathname: string) {
 	if (pathname === "/" || indexableAppPaths.has(pathname)) {
 		return { "Content-Type": "text/html; charset=UTF-8", ...BASE_SECURITY_HEADERS };
+	}
+	// A feedback link's page is private to whoever holds the link: never indexed, never sent on as a referrer.
+	if (isFeedbackPath(pathname)) {
+		return {
+			"Content-Type": "text/html; charset=UTF-8",
+			"X-Robots-Tag": "noindex, nofollow",
+			...BASE_SECURITY_HEADERS,
+			"Referrer-Policy": "no-referrer",
+		};
 	}
 	if (isAppSectionPath(pathname)) {
 		return {

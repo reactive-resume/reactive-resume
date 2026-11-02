@@ -25,6 +25,14 @@ msgstr ""
 msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
 
+#. placeholder {0}: link.resumeName
+#. placeholder {1}: date(link.createdAt)
+#. placeholder {2}: statusLabel(link.status)
+#. placeholder {3}: link.expiresAt && link.status === "active" ? ` · ${t`expires ${date(link.expiresAt)}`}` : ""
+#: src/features/resume/share/feedback-links.tsx
+msgid "“{0}” as saved {1}. {2}{3}"
+msgstr ""
+
 #. placeholder {0}: term.label
 #: src/features/resume/editor/check/job-match.tsx
 msgid "“{0}” hidden"
@@ -239,6 +247,11 @@ msgstr "{0, plural, one {# 문제는 무시됩니다.} other {# 문제는 무시
 #. placeholder {0}: review.notImported.length
 #: src/features/documents/new-document-dialog.tsx
 msgid "{0, plural, one {# line wasn't placed in any section:} other {# lines weren't placed in any section:}}"
+msgstr ""
+
+#. placeholder {0}: link.openCommentCount
+#: src/features/resume/share/feedback-links.tsx
+msgid "{0, plural, one {# new comment} other {# new comments}}"
 msgstr ""
 
 #. placeholder {0}: proposals.length
@@ -961,6 +974,10 @@ msgstr "{now} · 입력"
 msgid "{open, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{open, plural, one {#를 검토하는 것입니다.} other {# 검토할 사항.}}"
 
+#: src/features/feedback/review-page.tsx
+msgid "{owner} asked for your feedback"
+msgstr ""
+
 #: src/features/resume/editor/chrome.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
@@ -1556,11 +1573,13 @@ msgstr "활성화율이 한 분기 만에 31%에서 44%로 올랐습니다."
 msgid "Activation rose from 31%…"
 msgstr "활성화율이 31%에서…"
 
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "Active"
 msgstr "활동적인"
 
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/resume/share/feedback-links.tsx
 msgid "Activity"
 msgstr "활동"
 
@@ -2225,6 +2244,10 @@ msgstr "모든 서류, 입사 지원 내역, API 키 및 공개 링크가 영구
 msgid "Allow access"
 msgstr "액세스 허용"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Allow comments"
+msgstr ""
+
 #: src/libs/orpc/ai-consent.ts
 msgid "Allow scheduled sharing"
 msgstr ""
@@ -2516,6 +2539,10 @@ msgstr ""
 msgid "Application preparation"
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
+msgid "Application progress"
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "application summaries"
 msgstr "지원 요약"
@@ -2568,7 +2595,9 @@ msgid "Applied"
 msgstr "적용됨"
 
 #. placeholder {0}: date(application.appliedAt)
+#. placeholder {0}: i18n.date(application.appliedAt, { dateStyle: "medium" })
 #: src/features/career/workspace/shell.tsx
+#: src/features/feedback/review-page.tsx
 msgid "Applied {0}"
 msgstr "{0} 지원"
 
@@ -2698,6 +2727,10 @@ msgstr "코치에게 묻기"
 #: src/features/resume/share/download-tab.tsx
 msgid "Ask the community. Remove personal details before posting."
 msgstr "커뮤니티에 물어보세요. 게시하기 전에 개인 정보를 지우세요."
+
+#: src/features/feedback/review-page.tsx
+msgid "Ask the person who sent it for a new link. Comments you left are still with them."
+msgstr ""
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Ask your server administrator to enable credential encryption or configure a shared web connection."
@@ -3194,6 +3227,7 @@ msgstr ""
 #: src/features/resume/editor/check/job-match.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
 #: src/features/settings/ai/web-access.tsx
@@ -3418,6 +3452,10 @@ msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 msgid "Check that these facts support what the story claims before saving."
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Check that you copied the whole link, or ask the person who sent it for a new one."
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -3746,6 +3784,7 @@ msgstr "클라이언트 ID"
 #: src/features/resume/editor/chrome/download-sheet.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/resume/stylesheet/editor.tsx
 #: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
@@ -3841,6 +3880,28 @@ msgstr "명령 팔레트"
 #: src/features/command-palette/content.tsx
 msgid "Command palette: {currentPage}"
 msgstr "명령 팔레트: {currentPage}"
+
+#: src/features/feedback/review-page.tsx
+msgid "Comment"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Comment left"
+msgstr ""
+
+#. placeholder {0}: view.ownerName
+#: src/features/feedback/review-page.tsx
+msgid "Comment sent to {0}"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+#: src/features/resume/share/feedback-links.tsx
+msgid "Comments"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Comments and progress"
+msgstr ""
 
 #: src/features/homepage/footer.tsx
 msgid "Community"
@@ -4598,11 +4659,19 @@ msgstr "샘플 파일을 로드할 수 없습니다. 다시 시도해 보세요.
 msgid "Couldn't load the saved review."
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't load this link."
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/load-state.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load this. Your saved data hasn't changed."
 msgstr "불러올 수 없습니다. 저장된 데이터는 변경되지 않았습니다."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't load your feedback links."
+msgstr ""
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Couldn't load your stages, so the standard ones are shown. Try again."
@@ -4622,6 +4691,10 @@ msgstr "서류를 잠글 수 없습니다. 다시 시도해 보세요."
 
 #: src/features/settings/account/backup-codes.tsx
 msgid "Couldn't make new codes. Try again."
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't make the link. Try again."
 msgstr ""
 
 #: src/features/settings/ai/providers.tsx
@@ -4893,6 +4966,10 @@ msgstr "이메일을 보낼 수 없습니다. 다시 시도해 보세요."
 msgid "Couldn't send the password reset email. Try again."
 msgstr "비밀번호 재설정 이메일을 보낼 수 없습니다. 다시 시도해 보세요."
 
+#: src/features/feedback/review-page.tsx
+msgid "Couldn't send your comment. Try again."
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Couldn't set the password. Try again."
 msgstr "비밀번호를 설정할 수 없습니다. 다시 시도해 보세요."
@@ -4965,6 +5042,10 @@ msgstr "모델을 전환할 수 없습니다. 다시 시도해 보세요."
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "텍스트로 변환할 수 없습니다. 녹음은 그대로 남아 있습니다."
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't turn off the link. Try again."
+msgstr ""
+
 #. Fallback toast when disabling two-factor authentication fails
 #: src/dialogs/auth/disable-two-factor.tsx
 msgid "Couldn't turn off two-step verification. Check your password and try again."
@@ -5016,6 +5097,10 @@ msgstr "지원을 업데이트할 수 없습니다. 다시 시도해 보세요."
 #: src/features/applications/use-application-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "채용 지원서를 업데이트할 수 없습니다. 다시 시도해 보세요."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Couldn't update the comment. Try again."
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Couldn't update the interview. Try again."
@@ -5351,6 +5436,10 @@ msgstr "날짜 열"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Date format"
 msgstr "날짜 형식"
+
+#: src/features/feedback/review-page.tsx
+msgid "date unknown"
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "Dated updates. For things to remember and share with the coach, use Notes."
@@ -5830,6 +5919,7 @@ msgid "Donate"
 msgstr "기부하세요"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/account/backup-codes.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Done"
@@ -6590,9 +6680,18 @@ msgstr "경력"
 msgid "Experience, Education and more"
 msgstr "경력, 학력 등"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Expired"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Expires"
 msgstr "만료"
+
+#. placeholder {0}: date(link.expiresAt)
+#: src/features/resume/share/feedback-links.tsx
+msgid "expires {0}"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "explain one limit of the measurement clearly, without underselling the work."
@@ -6720,6 +6819,19 @@ msgstr "기능"
 #: src/features/career/workspace/practise.tsx
 msgid "Feedback"
 msgstr "피드백"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Feedback link"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Feedback links"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+#: src/routes/feedback/$token.tsx
+msgid "Feedback request"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -6953,6 +7065,10 @@ msgstr "example.com 같은 루트 도메인에는 CNAME 대신 {0}의 주소로 
 #: src/features/career/workspace/prepare.tsx
 msgid "For each: situation, task, your action, result, reflection. Leave out numbers you're unsure of."
 msgstr "각각: 상황, 과제, 나의 행동, 결과, 성찰. 확실하지 않은 수치는 빼세요."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "For example, Careers office"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "For example, note which companies you sent this resume to, or links to the job descriptions."
@@ -7266,6 +7382,7 @@ msgstr "대시보드로 이동"
 msgid "Go to form answers"
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/share/web-page-text.ts
 msgid "Go to Reactive Resume"
 msgstr "Reactive Resume로 이동"
@@ -7803,6 +7920,18 @@ msgstr ""
 msgid "Improving…"
 msgstr "개선 중…"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 30 days"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 7 days"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "In 90 days"
+msgstr ""
+
 #: src/features/homepage/sections.tsx
 msgid "In good company"
 msgstr "좋은 회사에서"
@@ -8032,6 +8161,10 @@ msgstr ""
 #: src/features/career/knowledge/stories.tsx
 msgid "It may have been deleted. Choose another story or add a new one."
 msgstr "삭제되었을 수 있습니다. 다른 스토리를 선택하거나 새로 추가하세요."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "It stops opening at once. Comments already left are kept. You can make a new link anytime."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "It will be deleted for good and can't be restored."
@@ -8763,6 +8896,14 @@ msgstr ""
 msgid "Link copied"
 msgstr "링크가 복사되었습니다"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link expires"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link made"
+msgstr ""
+
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Link this resume"
 msgstr ""
@@ -8774,6 +8915,10 @@ msgstr "입사지원 바로가기"
 #: src/features/documents/document-actions.tsx
 msgid "Link to application…"
 msgstr "입사지원서 링크…"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Link turned off"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Link turned off. The address is kept"
@@ -8965,6 +9110,7 @@ msgstr "워크스페이스 불러오는 중…"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/command-palette/index.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/profile.tsx
 msgid "Loading…"
@@ -9095,6 +9241,10 @@ msgstr "더 짧게 만드세요"
 #: src/features/templates/gallery.tsx
 msgid "Make it yours, then take it with you."
 msgstr "그것을 당신의 것으로 만든 다음 가지고 가십시오."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Make link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Make primary"
@@ -9678,6 +9828,7 @@ msgid "Network"
 msgstr "네트워크"
 
 #: src/features/career/knowledge/facts.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/api-keys.tsx
 msgid "Never"
 msgstr "절대"
@@ -9729,6 +9880,10 @@ msgstr "새 문서"
 #: src/features/career/knowledge/facts.tsx
 msgid "New fact"
 msgstr "새 사실"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "New feedback link"
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "New key"
@@ -9878,6 +10033,11 @@ msgstr "변경할 필요가 없습니다. 이미 {stage} 단계입니다."
 msgid "No commands match that search."
 msgstr "검색과 일치하는 명령이 없습니다."
 
+#: src/features/feedback/review-page.tsx
+#: src/features/resume/share/feedback-links.tsx
+msgid "No comments yet."
+msgstr ""
+
 #: src/features/settings/ai/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
 msgstr "아직 연결된 애플리케이션이 없습니다. 계정 접근을 허용한 앱이 여기에 표시됩니다."
@@ -10022,6 +10182,10 @@ msgstr "새 직무가 없습니다. 탐색은 내일 {clock}에 다시 실행됩
 #: src/features/career/offers.tsx
 msgid "No offers to compare yet"
 msgstr "아직 비교할 오퍼가 없습니다"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "No open applications."
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "No open issues"
@@ -10275,6 +10439,10 @@ msgstr "나중에"
 msgid "Not on the page"
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Not opened yet"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/career/offers.tsx
@@ -10475,6 +10643,10 @@ msgstr "오디아어"
 msgid "Off"
 msgstr "끄다"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Off makes the link read-only."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Off: the coach won’t see it or claim it."
 msgstr "꺼짐: 코치가 이 내용을 보지 않으며 주장하지도 않습니다."
@@ -10672,6 +10844,10 @@ msgstr ""
 msgid "Only you see these"
 msgstr "이 내용은 나만 볼 수 있습니다."
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Only you see this."
+msgstr ""
+
 #: src/features/homepage/faq.tsx
 msgid "Only you, until you share it. A resume can stay private, go live at a public link, or be protected with a password, and you can change that at any time. Deleting your account deletes your resumes with it."
 msgstr "공유하기 전까지는 오직 당신뿐입니다. 이력서는 비공개로 유지되거나 공개 링크에 게시되거나 비밀번호로 보호될 수 있으며 언제든지 변경할 수 있습니다. 계정을 삭제하면 해당 계정에 포함된 이력서도 삭제됩니다."
@@ -10796,6 +10972,15 @@ msgstr ""
 #: src/features/settings/ai/providers.tsx
 msgid "OpenAI, Anthropic, Gemini, Ollama and more"
 msgstr "OpenAI, Anthropic, Gemini, Ollama 등"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Opened"
+msgstr ""
+
+#. placeholder {0}: formatTimeSince(link.lastViewedAt, i18n.locale)
+#: src/features/resume/share/feedback-links.tsx
+msgid "Opened {0} ago"
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Opening"
@@ -12816,6 +13001,7 @@ msgstr "재개하다"
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
+#: src/features/feedback/review-page.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Resume"
 msgstr "이력서"
@@ -12854,6 +13040,7 @@ msgstr "이력서 작성기"
 msgid "Resume changed since this review. Review these suggestions as out of date or run again."
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/preview/preview.browser.tsx
 msgid "Resume content"
 msgstr "이력서 내용"
@@ -13062,6 +13249,10 @@ msgstr "취소"
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoke {0}"
 msgstr "{0} 취소"
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Revoked"
+msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Revoked “{name}”. Apps using it stop working now."
@@ -13800,8 +13991,16 @@ msgstr "보내다"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
+msgstr ""
+
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "Send comment"
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -14068,6 +14267,10 @@ msgstr "공유하다"
 #: src/features/homepage/share.tsx
 msgid "Share a public link, add a password or keep it private. Choose from 3 visibility options. Export to PDF or Word, or take all your data with you as JSON."
 msgstr "공개 링크를 공유하고 비밀번호를 추가하거나 비공개로 유지하세요. 3가지 공개 옵션 중에서 선택하세요. PDF 또는 Word로 내보내거나 모든 데이터를 JSON로 가져가세요."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Share application progress (optional)"
+msgstr ""
 
 #. placeholder {0}: provider.label
 #: src/libs/orpc/ai-consent.ts
@@ -14685,6 +14888,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Stages"
 msgstr "스테이지"
+
+#: src/features/feedback/review-page.tsx
+msgid "Stages and dates only. Notes, contacts and pay stay private."
+msgstr ""
 
 #: src/features/homepage/check.tsx
 msgid "Standard section headings"
@@ -15597,6 +15804,10 @@ msgstr "편지가 이력서의 디자인과 다시 일치합니다."
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "요청한 이후 줄이 변경되었으므로 교체되지 않았습니다."
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "The link opens the resume as it is now. Later edits aren't shared, so every comment is about this version."
+msgstr ""
+
 #: src/features/auth/email-text.ts
 msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
 msgstr ""
@@ -15733,6 +15944,10 @@ msgstr ""
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
 msgstr "검토가 완료되지 못했습니다. 다시 시도해 보세요."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
@@ -16030,6 +16245,11 @@ msgstr "이 파일은 문자 대신 그림 정보를 담는 Type 3 폰트를 사
 msgid "This file's text couldn't be compared with what came in, so lines left out aren't listed. Check each section against your file in the editor."
 msgstr ""
 
+#. placeholder {0}: view.resumeName
+#: src/features/feedback/review-page.tsx
+msgid "This is “{0}” as they saved it on {sharedOn}. Your comments go only to them and don't change the resume."
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "This is a PDF Portfolio: the visible page is only a cover."
 msgstr "이 파일은 PDF 포트폴리오입니다. 보이는 페이지는 표지일 뿐입니다."
@@ -16070,6 +16290,23 @@ msgstr ""
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter keeps its recipient as written."
 msgstr "이 편지는 수신인을 서면 그대로 유지합니다."
+
+#: src/features/feedback/review-page.tsx
+msgid "This link doesn't open"
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "This link has expired"
+msgstr ""
+
+#. placeholder {0}: view.ownerName
+#: src/features/feedback/review-page.tsx
+msgid "This link is read-only. Reply to {0} directly with your thoughts."
+msgstr ""
+
+#: src/features/feedback/review-page.tsx
+msgid "This link was turned off"
+msgstr ""
 
 #: src/features/ats-checker/report/report-view.tsx
 msgid "This measures how faithfully software can extract this file's text. It does not predict whether an application will be rejected, and no tool can. Your file was read in this browser and never uploaded."
@@ -16480,6 +16717,7 @@ msgstr ""
 #: src/features/resume/editor/write/improve.tsx
 #: src/features/resume/preview/preview.browser.tsx
 #: src/features/resume/share/download-tab.tsx
+#: src/features/resume/share/feedback-links.tsx
 #: src/features/settings/ai/next-steps.tsx
 #: src/features/settings/ai/web-access.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
@@ -16523,9 +16761,21 @@ msgstr "샘플 이력서를 사용해 보세요"
 msgid "Turkish"
 msgstr "터키어"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "내보낼 때 임의 합자(리게이처)를 비활성화하세요."
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off link…"
+msgstr ""
+
+#: src/features/resume/share/feedback-links.tsx
+msgid "Turn off this link?"
+msgstr ""
 
 #. Destructive action button to turn off two-factor authentication
 #: src/dialogs/auth/disable-two-factor.tsx
@@ -17665,6 +17915,10 @@ msgstr "연금이나 수당 같은 다른 복리후생은 무엇이 있나요?"
 msgid "Who can see my resume?"
 msgstr "내 이력서를 누가 볼 수 있나요?"
 
+#: src/features/resume/share/feedback-links.tsx
+msgid "Who is it for?"
+msgstr ""
+
 #: src/features/homepage/prepare.tsx
 msgid "Who owns the design system today? What does success look like in 90 days?"
 msgstr "현재 디자인 시스템은 누가 담당하나요? 90일 후 성공은 어떤 모습인가요?"
@@ -18255,6 +18509,7 @@ msgstr "내 메시지"
 msgid "Your message is kept."
 msgstr ""
 
+#: src/features/feedback/review-page.tsx
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "Your name"
 msgstr "이름"

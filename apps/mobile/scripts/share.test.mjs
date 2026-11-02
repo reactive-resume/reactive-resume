@@ -78,6 +78,7 @@ const mocks = {
 	"@tanstack/react-query": { useQuery: () => ({ data: undefined }) },
 	"./document": { flushResume: async () => ({}) },
 	"./web-page": { WebPageSettings: "WebPageSettings" },
+	"./feedback": { FeedbackLinks: "FeedbackLinks" },
 	"@/api/flags": { useFlags: () => ({ data: {} }) },
 	"@/api/client": {
 		client: {},

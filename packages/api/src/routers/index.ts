@@ -8,6 +8,7 @@ import { careerRouter } from "../features/career/router";
 import { coverLettersRouter } from "../features/cover-letters/router";
 import { customDomainRouter } from "../features/custom-domain/router";
 import { documentsRouter } from "../features/documents/router";
+import { feedbackRouter } from "../features/feedback/router";
 import { flagsRouter } from "../features/flags/router";
 import { resumeRouter } from "../features/resume/router";
 import { statisticsRouter } from "../features/statistics/router";
@@ -25,6 +26,7 @@ export default {
 	coverLetters: coverLettersRouter,
 	customDomain: customDomainRouter,
 	documents: documentsRouter,
+	feedback: feedbackRouter,
 	flags: flagsRouter,
 	resume: resumeRouter,
 	statistics: statisticsRouter,

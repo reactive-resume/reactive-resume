@@ -18,6 +18,12 @@ msgstr "“{0} · {1}” and its timeline are deleted permanently. Linked resume
 msgid "“{0}” added to Skills"
 msgstr "“{0}” added to Skills"
 
+#. placeholder {0}: link.resumeName
+#. placeholder {1}: date(link.createdAt)
+#: src/features/share/feedback.tsx
+msgid "“{0}” as saved {1}."
+msgstr "“{0}” as saved {1}."
+
 #. placeholder {0}: open.label
 #: src/features/check/job-match.tsx
 msgid "“{0}” hidden"
@@ -501,6 +507,11 @@ msgstr "{0} less"
 msgid "{0} more"
 msgstr "{0} more"
 
+#. placeholder {0}: i18n.number(link.openCommentCount)
+#: src/features/share/feedback.tsx
+msgid "{0} new comments"
+msgstr "{0} new comments"
+
 #. placeholder {0}: index + 1
 #. placeholder {1}: all.length
 #: src/features/letters/write.tsx
@@ -923,6 +934,10 @@ msgstr "1 day"
 msgid "1 h"
 msgstr "1 h"
 
+#: src/features/share/feedback.tsx
+msgid "1 new comment"
+msgstr "1 new comment"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "10-minute briefing"
 msgstr "10-minute briefing"
@@ -946,6 +961,18 @@ msgstr "2–3 sentences reads best"
 #: src/features/career/schedule-sheet.tsx
 msgid "24 hours before"
 msgstr "24 hours before"
+
+#: src/features/share/feedback.tsx
+msgid "30 days"
+msgstr "30 days"
+
+#: src/features/share/feedback.tsx
+msgid "7 days"
+msgstr "7 days"
+
+#: src/features/share/feedback.tsx
+msgid "90 days"
+msgstr "90 days"
 
 #: src/features/letters/share.tsx
 msgid "A backup of this letter. Imports back into Reactive Resume as a letter."
@@ -1156,6 +1183,10 @@ msgstr "Actions for {0} at {1}"
 #: src/features/ai/web-access.tsx
 msgid "Active"
 msgstr "Active"
+
+#: src/features/share/feedback.tsx
+msgid "Activity"
+msgstr "Activity"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/improve.tsx
@@ -1715,6 +1746,10 @@ msgstr "All your applications are closed"
 #: src/features/settings/profile.tsx
 msgid "Allow camera access in your device settings to take a photo."
 msgstr "Allow camera access in your device settings to take a photo."
+
+#: src/features/share/feedback.tsx
+msgid "Allow comments"
+msgstr "Allow comments"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Allow microphone access in device settings, or type your answer."
@@ -3023,6 +3058,14 @@ msgstr "Columns can scramble the order text is read in."
 msgid "Coming up"
 msgstr "Coming up"
 
+#: src/features/share/feedback.tsx
+msgid "Comment left"
+msgstr "Comment left"
+
+#: src/features/share/feedback.tsx
+msgid "Comments"
+msgstr "Comments"
+
 #: src/features/design/style-groups.tsx
 msgid "Compact"
 msgstr "Compact"
@@ -3279,6 +3322,7 @@ msgstr "Copied to clipboard"
 msgid "Copies it"
 msgstr "Copies it"
 
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 #: src/features/workspace/answer-library.tsx
 msgid "Copy"
@@ -3566,6 +3610,10 @@ msgstr "Couldn't load the sample file. Try again."
 msgid "Couldn't load the saved review."
 msgstr "Couldn't load the saved review."
 
+#: src/features/share/feedback.tsx
+msgid "Couldn't load this link."
+msgstr "Couldn't load this link."
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "Couldn't load this version's page."
@@ -3581,6 +3629,10 @@ msgstr "Couldn't load this. Check your connection and try again."
 #: src/features/letters/share.tsx
 msgid "Couldn't load versions."
 msgstr "Couldn't load versions."
+
+#: src/features/share/feedback.tsx
+msgid "Couldn't load your feedback links."
+msgstr "Couldn't load your feedback links."
 
 #: app/(tabs)/settings/account.tsx
 msgid "Couldn't load your profile."
@@ -3601,6 +3653,10 @@ msgstr "Couldn't load your timezone."
 #: src/features/settings/application-profile.tsx
 msgid "Couldn't load. Try again."
 msgstr "Couldn't load. Try again."
+
+#: src/features/share/feedback.tsx
+msgid "Couldn't make the link. Try again."
+msgstr "Couldn't make the link. Try again."
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Couldn't mark it as applied. Try again."
@@ -3867,6 +3923,10 @@ msgstr "Couldn't switch models. Try again."
 msgid "Couldn't transcribe. Your recording is still here."
 msgstr "Couldn't transcribe. Your recording is still here."
 
+#: src/features/share/feedback.tsx
+msgid "Couldn't turn off the link. Try again."
+msgstr "Couldn't turn off the link. Try again."
+
 #: src/features/assistant/messages.tsx
 msgid "Couldn't undo that. Try again."
 msgstr "Couldn't undo that. Try again."
@@ -3894,6 +3954,10 @@ msgstr "Couldn't update the application. Nothing was changed; try again."
 #: src/features/applications/stage-actions.ts
 msgid "Couldn't update the applications. Try again."
 msgstr "Couldn't update the applications. Try again."
+
+#: src/features/share/feedback.tsx
+msgid "Couldn't update the comment. Try again."
+msgstr "Couldn't update the comment. Try again."
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Couldn't update the interview. Try again."
@@ -4562,6 +4626,7 @@ msgstr "Donate on Open Collective"
 #: src/features/career/today.tsx
 #: src/features/documents/library.tsx
 #: src/features/letters/rich-text-field.tsx
+#: src/features/share/feedback.tsx
 #: src/features/write/date-field.tsx
 #: src/features/write/pickers.tsx
 #: src/features/write/rich-text-field.tsx
@@ -5142,6 +5207,11 @@ msgstr "Expected"
 msgid "Experience"
 msgstr "Experience"
 
+#. placeholder {0}: date(link.expiresAt)
+#: src/features/share/feedback.tsx
+msgid "expires {0}"
+msgstr "expires {0}"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Export a smaller PDF and check it again, or start a blank resume and fix these there."
 msgstr "Export a smaller PDF and check it again, or start a blank resume and fix these there."
@@ -5215,6 +5285,14 @@ msgstr "Family name"
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
 msgstr "Feedback"
+
+#: src/features/share/feedback.tsx
+msgid "Feedback link"
+msgstr "Feedback link"
+
+#: src/features/share/feedback.tsx
+msgid "Feedback links"
+msgstr "Feedback links"
 
 #. placeholder {0}: index + 1
 #: src/features/write/basics-screen.tsx
@@ -5404,6 +5482,10 @@ msgstr "For a Ghosted lane, choose No response."
 #: src/features/share/custom-domain.tsx
 msgid "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
 msgstr "For a root domain such as example.com, use A and AAAA records with {0}'s addresses instead of the CNAME."
+
+#: src/features/share/feedback.tsx
+msgid "For example, Careers office"
+msgstr "For example, Careers office"
 
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
@@ -6151,6 +6233,10 @@ msgstr "It has entries but isn't placed on a page."
 msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
 msgstr "It loses access now. To use it again, connect it from the app. This cannot be undone."
 
+#: src/features/share/feedback.tsx
+msgid "It stops opening at once. Comments already left are kept. You can make a new link anytime."
+msgstr "It stops opening at once. Comments already left are kept. You can make a new link anytime."
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline and the calendar for good."
 msgstr "It's removed from the timeline and the calendar for good."
@@ -6695,10 +6781,19 @@ msgstr "Link an application"
 msgid "Link an application or paste a posting to compare its terms."
 msgstr "Link an application or paste a posting to compare its terms."
 
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 #: src/features/share/web-page.tsx
 msgid "Link copied"
 msgstr "Link copied"
+
+#: src/features/share/feedback.tsx
+msgid "Link expires"
+msgstr "Link expires"
+
+#: src/features/share/feedback.tsx
+msgid "Link made"
+msgstr "Link made"
 
 #: src/features/check/job-match.tsx
 msgid "Link this resume"
@@ -6711,6 +6806,10 @@ msgstr "Link to application"
 #: src/features/documents/document-sheets.tsx
 msgid "Link to application…"
 msgstr "Link to application…"
+
+#: src/features/share/feedback.tsx
+msgid "Link turned off"
+msgstr "Link turned off"
 
 #: src/features/check/issues.ts
 msgid "Link updated"
@@ -6977,6 +7076,10 @@ msgstr "Make it more specific"
 #: src/features/write/improve.tsx
 msgid "Make it shorter"
 msgstr "Make it shorter"
+
+#: src/features/share/feedback.tsx
+msgid "Make link"
+msgstr "Make link"
 
 #: src/features/share/web-page.tsx
 msgid "Make primary"
@@ -7514,6 +7617,7 @@ msgstr "Network"
 
 #: src/features/career/preferences.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/share/feedback.tsx
 msgid "Never"
 msgstr "Never"
 
@@ -7561,6 +7665,10 @@ msgstr "New detail: check it's true"
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "New document"
+
+#: src/features/share/feedback.tsx
+msgid "New feedback link"
+msgstr "New feedback link"
 
 #: app/(tabs)/settings/ai-mcp.tsx
 #: src/features/settings/api-keys.tsx
@@ -7682,6 +7790,10 @@ msgstr "No change needed. It's already at {stage}."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "No commands match that search."
+
+#: src/features/share/feedback.tsx
+msgid "No comments yet."
+msgstr "No comments yet."
 
 #: src/features/settings/connected-apps.tsx
 msgid "No connected applications. Apps you allow appear here."
@@ -7825,6 +7937,10 @@ msgstr "No new roles. Discovery runs again at {0}."
 #: src/features/career/offers.tsx
 msgid "No offers to compare yet"
 msgstr "No offers to compare yet"
+
+#: src/features/share/feedback.tsx
+msgid "No open applications."
+msgstr "No open applications."
 
 #: src/features/check/issues.ts
 msgid "No phone number"
@@ -8028,6 +8144,10 @@ msgstr "Not linked to a job"
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Not now"
 msgstr "Not now"
+
+#: src/features/share/feedback.tsx
+msgid "Not opened yet"
+msgstr "Not opened yet"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/career/offers.tsx
@@ -8364,6 +8484,10 @@ msgstr "Only this device schedules the notification. Allow notifications when th
 msgid "Only you see these"
 msgstr "Only you see these"
 
+#: src/features/share/feedback.tsx
+msgid "Only you see this."
+msgstr "Only you see this."
+
 #: src/api/ai-consent.ts
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
@@ -8481,6 +8605,15 @@ msgstr "OpenAI, Anthropic, Gemini, Ollama and more"
 #: src/features/share/download.tsx
 msgid "OpenDocument"
 msgstr "OpenDocument"
+
+#: src/features/share/feedback.tsx
+msgid "Opened"
+msgstr "Opened"
+
+#. placeholder {0}: formatTimeSince(link.lastViewedAt, i18n.locale)
+#: src/features/share/feedback.tsx
+msgid "Opened {0} ago"
+msgstr "Opened {0} ago"
 
 #: src/features/ats-checker/checker.tsx
 msgid "Opening the file"
@@ -10166,6 +10299,7 @@ msgstr "Retire lane"
 #: src/features/settings/application-profile.tsx
 #: src/features/share/download.tsx
 #: src/features/share/export-screen.tsx
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 #: src/features/workspace/answer-library.tsx
 #: src/features/workspace/coach-sheet.tsx
@@ -10903,6 +11037,10 @@ msgstr "Semantic CSS stylesheet"
 msgid "Send"
 msgstr "Send"
 
+#: src/features/share/feedback.tsx
+msgid "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
+msgstr "Send a coach or friend a private link to this version. They can comment, but can't change it or see anything else."
+
 #: src/features/ai/report-content.tsx
 msgid "Send report"
 msgstr "Send report"
@@ -11111,6 +11249,10 @@ msgstr "Shadow width"
 msgid "Share"
 msgstr "Share"
 
+#: src/features/share/feedback.tsx
+msgid "Share application progress (optional)"
+msgstr "Share application progress (optional)"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Share calendar event (.ics)"
 msgstr "Share calendar event (.ics)"
@@ -11148,6 +11290,7 @@ msgstr "Share PNG"
 msgid "Share recording"
 msgstr "Share recording"
 
+#: src/features/share/feedback.tsx
 #: src/features/share/link.tsx
 msgid "Share via…"
 msgstr "Share via…"
@@ -12350,6 +12493,10 @@ msgstr "The letter matches the resume's design again"
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "The line changed since you asked, so it wasn't replaced."
 
+#: src/features/share/feedback.tsx
+msgid "The link opens the resume as it is now. Later edits aren't shared, so every comment is about this version."
+msgstr "The link opens the resume as it is now. Later edits aren't shared, so every comment is about this version."
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "the linked cover letter"
 msgstr "the linked cover letter"
@@ -12425,6 +12572,10 @@ msgstr "The resume as it is"
 #: src/features/workspace/parts.tsx
 msgid "the resume for this job"
 msgstr "the resume for this job"
+
+#: src/features/share/feedback.tsx
+msgid "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
+msgstr "The reviewer sees each one's stage and dates. Notes, contacts and pay stay private."
 
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
@@ -13141,9 +13292,21 @@ msgstr "Try with a sample resume"
 msgid "Turkish"
 msgstr "Turkish"
 
+#: src/features/share/feedback.tsx
+msgid "Turn off"
+msgstr "Turn off"
+
 #: src/features/ats-checker/messages.ts
 msgid "Turn off discretionary ligatures when exporting."
 msgstr "Turn off discretionary ligatures when exporting."
+
+#: src/features/share/feedback.tsx
+msgid "Turn off link…"
+msgstr "Turn off link…"
+
+#: src/features/share/feedback.tsx
+msgid "Turn off this link?"
+msgstr "Turn off this link?"
 
 #: src/features/share/web-page.tsx
 msgid "Turn this on to open this resume at your short link and custom domain."
@@ -14008,6 +14171,10 @@ msgstr "Which offer fits my requirements better?"
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
 msgstr "Which opportunities best match my priorities?"
+
+#: src/features/share/feedback.tsx
+msgid "Who is it for?"
+msgstr "Who is it for?"
 
 #: src/features/application-detail/interview-sheet.tsx
 msgid "Who you'll meet"

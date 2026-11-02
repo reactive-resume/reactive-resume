@@ -297,7 +297,7 @@ export const authRouter = {
 			operationId: "exportAccountData",
 			summary: "Export user account data",
 			description:
-				"Returns a JSON-serializable export of the authenticated user's profile, documents, applications, career knowledge, preparation, schedules and coaching conversations. Images remain URL references; coaching attachments include storage references. Secrets such as password hashes, tokens, and API keys are never included. Requires authentication.",
+				"Returns a JSON-serializable export of the authenticated user's profile, documents, applications, career knowledge, preparation, schedules, coaching conversations and feedback links with their comments. Images remain URL references; coaching attachments include storage references. Secrets such as password hashes, tokens, and API keys are never included. Requires authentication.",
 			successDescription: "The user's exported account data.",
 		})
 		.input(z.object({}).optional())
@@ -361,6 +361,17 @@ export const authRouter = {
 					transcripts: z.array(createSelectSchema(schema.careerTranscript)),
 					workspaces: z.array(createSelectSchema(schema.careerWorkspace, { data: careerWorkspaceSchema })),
 				}),
+				feedback: z
+					.object({
+						links: z.array(
+							createSelectSchema(schema.feedbackLink, { snapshot: z.record(z.string(), z.unknown()) }).omit({
+								userId: true,
+							}),
+						),
+						comments: z.array(createSelectSchema(schema.feedbackComment).omit({ userId: true })),
+						events: z.array(createSelectSchema(schema.feedbackEvent).omit({ userId: true })),
+					})
+					.optional(),
 			}),
 		)
 		.handler(({ context }) => authService.exportData({ userId: context.user.id })),
