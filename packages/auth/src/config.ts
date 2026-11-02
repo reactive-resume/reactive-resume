@@ -39,6 +39,7 @@ import { rateLimitConfig } from "@reactive-resume/utils/rate-limit";
 import { generateId, toUsername } from "@reactive-resume/utils/string";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
+import { generateBackupCodes } from "./backup-codes";
 import {
 	allocateUniqueUsername,
 	createGithubProfileMapper,
@@ -1019,7 +1020,11 @@ const getAuthConfig = () => {
 			admin(),
 			passkey(),
 			genericOAuth({ config: authConfigs }),
-			twoFactor({ issuer: "Reactive Resume" }),
+			twoFactor({
+				issuer: "Reactive Resume",
+				// Capitals without look-alike characters; the sign-in form also tries what's typed in capitals.
+				backupCodeOptions: { customBackupCodesGenerate: () => generateBackupCodes() },
+			}),
 			apiKey({
 				enableSessionForAPIKeys: false,
 				rateLimit: {
