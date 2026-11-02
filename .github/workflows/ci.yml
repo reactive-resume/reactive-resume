@@ -114,6 +114,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Review documentation drift
+        if: matrix.suite == 'Unit'
+        env:
+          DOCS_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || 'HEAD^' }}
+        run: |
+          if git diff --quiet "$DOCS_BASE_REF" HEAD -- docs/ tooling/docs/; then
+            exit 0
+          fi
+          pnpm docs:check
+
       - name: Install PDF text extraction tools
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
 
