@@ -12,17 +12,23 @@ test.afterAll(async () => {
 	await stub?.close();
 });
 
-/** Wait for ancestor entrance motion once before measuring any of its targets. */
+/** Wait for finite ancestor motion, including replacement or cancelled transitions, before measuring targets. */
 async function settledBoxes(dialog: Locator, targets: Locator[]) {
-	await dialog.evaluate(async (element) => {
-		await document.fonts.ready;
-		await Promise.all(
-			element
-				.getAnimations({ subtree: true })
-				.filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity)
-				.map((animation) => animation.finished),
-		);
-	});
+	await dialog.evaluate(() => document.fonts.ready);
+	await expect
+		.poll(() =>
+			dialog.evaluate(
+				(element) =>
+					element
+						.getAnimations({ subtree: true })
+						.filter(
+							(animation) =>
+								animation.effect?.getComputedTiming().iterations !== Infinity &&
+								(animation.pending || animation.playState === "running"),
+						).length,
+			),
+		)
+		.toBe(0);
 	return Promise.all(
 		targets.map(async (target) => {
 			const box = await target.boundingBox();
