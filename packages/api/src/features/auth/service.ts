@@ -14,6 +14,7 @@ import { coverLetterService } from "../cover-letters/service";
 import { feedbackService } from "../feedback/service";
 import { reportStorageCleanupSummary, runStorageCleanup } from "../storage/cleanup";
 import { revokeAppleAuthorization } from "./apple-revocation";
+import { exportAccountUploads } from "./export-uploads";
 
 type ProviderList = Partial<Record<AuthProvider, string>>;
 
@@ -55,7 +56,12 @@ export const authService = {
 
 	// GDPR-style export of everything the user owns. Selects explicit columns so
 	// secrets (password hashes, tokens, api keys) never leak into the export.
-	exportData: async (input: { userId: string }) => {
+	exportData: async (input: {
+		userId: string;
+		includeUploads?: boolean | undefined;
+		signal?: AbortSignal | undefined;
+	}) => {
+		input.signal?.throwIfAborted();
 		const [userRecord] = await db
 			.select({
 				id: schema.user.id,
@@ -104,7 +110,7 @@ export const authService = {
 			.select()
 			.from(schema.coverLetterVersion)
 			.where(eq(schema.coverLetterVersion.userId, input.userId));
-		return {
+		const result = {
 			exportedAt: new Date().toISOString(),
 			user: userRecord,
 			resumes,
@@ -124,6 +130,10 @@ export const authService = {
 			career: await careerService.exportData(input.userId),
 			applicationProfile: await applicationProfileService.get(input.userId),
 			feedback: await feedbackService.exportData(input.userId),
+		};
+		return {
+			...result,
+			...(input.includeUploads ? { uploads: await exportAccountUploads(input.userId, result, input.signal) } : {}),
 		};
 	},
 
