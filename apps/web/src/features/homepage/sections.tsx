@@ -26,16 +26,14 @@ const smallestTotalShown = 100;
 /** 08 Numbers: the live community totals, side by side, each figure over what it counts. */
 export function Numbers() {
 	const inView = useLanding((state) => state.numbersInView);
-	const { data } = useQuery(orpc.statistics.getTotals.queryOptions({ staleTime: statisticsStaleTime }));
-	const { data: stars } = useQuery(
-		orpc.statistics.github.getStarCount.queryOptions({ staleTime: statisticsStaleTime }),
-	);
+	const totals = useQuery(orpc.statistics.getTotals.queryOptions({ staleTime: statisticsStaleTime }));
+	const stars = useQuery(orpc.statistics.github.getStarCount.queryOptions({ staleTime: statisticsStaleTime }));
 	const rows = [
-		{ label: t`People using it`, detail: t`writing, tailoring and sending`, value: data?.users },
-		{ label: t`Resumes created`, detail: t`and counting`, value: data?.resumes },
-		{ label: t`Stars on GitHub`, detail: t`from developers who back it`, value: stars },
-	].filter((row) => row.value == null || row.value >= smallestTotalShown);
-	if (rows.length === 0) return null;
+		{ label: t`People using it`, detail: t`writing, tailoring and sending`, value: totals.data?.users, query: totals },
+		{ label: t`Resumes created`, detail: t`and counting`, value: totals.data?.resumes, query: totals },
+		{ label: t`Stars on GitHub`, detail: t`from developers who back it`, value: stars.data, query: stars },
+	].filter((row) => !row.query.isError && (row.value == null ? row.query.isPending : row.value >= smallestTotalShown));
+	if (rows.length < 2) return null;
 
 	return (
 		<section
