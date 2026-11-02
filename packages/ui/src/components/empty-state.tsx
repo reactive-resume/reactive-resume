@@ -39,11 +39,7 @@ export function EmptyState({
 			)}
 		>
 			<div className={cn("grid gap-1", compact ? "min-w-0" : "justify-items-center")}>
-				<Title
-					className={cn(
-						compact ? "text-[13px] leading-[19px] text-ink" : "font-display text-[22px] leading-7 font-medium",
-					)}
-				>
+				<Title className={cn(compact ? "text-[13px] leading-[19px] text-ink" : "font-display text-[22px] leading-7")}>
 					{title}
 				</Title>
 				{description && (

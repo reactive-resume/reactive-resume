@@ -269,7 +269,7 @@ function StoryReader({ story, facts, onEdit }: StoryReaderProps) {
 		<div className="grid gap-[18px]">
 			<header className="flex flex-wrap items-start gap-3">
 				<div className="grid min-w-0 flex-1 basis-60 gap-1">
-					<h2 className="font-display text-[22px] leading-7 font-medium text-pretty">{story.data.title}</h2>
+					<h2 className="font-display text-[22px] leading-7 text-pretty">{story.data.title}</h2>
 					<p className="text-[13px] text-ink-3">{story.data.tags.join(" · ") || t`No tags yet`}</p>
 				</div>
 				<div className="flex gap-1.5">
@@ -583,7 +583,7 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 					onKeyDown={(event) => {
 						if (event.key === "Enter") event.preventDefault();
 					}}
-					className="min-h-0 resize-none py-1 font-display text-[22px] leading-7 font-medium"
+					className="min-h-0 resize-none py-1 font-display text-[22px] leading-7"
 				/>
 				{tried && missingTitle && (
 					<p id={`${errorId}-title`} role="alert" className="flex items-center gap-1.5 text-[13px] text-danger-text">

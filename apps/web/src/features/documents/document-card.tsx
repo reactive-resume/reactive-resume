@@ -116,7 +116,7 @@ type PaperBadgeProps = { icon: "globe" | "lock" | "password"; label: string };
 
 function PaperBadge({ icon, label }: PaperBadgeProps) {
 	return (
-		<span className="grid size-[22px] place-items-center rounded bg-black/75 text-white" title={label}>
+		<span className="grid size-[22px] place-items-center rounded-sm bg-ink text-bg" title={label}>
 			<Icon name={icon} size={14} />
 			<span className="sr-only">{label}</span>
 		</span>

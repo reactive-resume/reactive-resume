@@ -190,7 +190,7 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 	return (
 		<div className="mx-auto grid w-full max-w-[640px] gap-5.5 px-4 py-16 sm:py-18">
 			<div className="grid justify-items-center gap-2.5 text-center">
-				<h1 className="font-display text-[34px] leading-10 font-medium sm:text-[44px] sm:leading-[48px]">
+				<h1 className="font-display text-[34px] leading-10 sm:text-[44px] sm:leading-[48px]">
 					<Trans>Can software read your resume?</Trans>
 				</h1>
 				<p className="max-w-[520px] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
@@ -271,7 +271,7 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 
 			<section aria-labelledby={`${id}-checks`} className="mt-8 grid gap-4 border-t border-line pt-8">
 				<div className="grid gap-1.5">
-					<h2 id={`${id}-checks`} className="font-display text-[22px] leading-7 font-medium">
+					<h2 id={`${id}-checks`} className="font-display text-[22px] leading-7">
 						<Trans>What it checks</Trans>
 					</h2>
 					<p className="text-sm leading-[21px] text-ink-2">
@@ -421,7 +421,7 @@ function Result({ result, file, signedIn, importError, onFix, onReset }: ResultP
 							} as CSSProperties
 						}
 					>
-						<span className="grid size-[70px] place-items-center rounded-full bg-surface font-display text-[26px] font-medium">
+						<span className="grid size-[70px] place-items-center rounded-full bg-surface font-display text-[26px]">
 							<RollingNumber value={report.score} duration="480ms" />
 						</span>
 					</div>

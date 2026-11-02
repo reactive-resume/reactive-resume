@@ -307,7 +307,7 @@ test("keeps OAuth callbacks through registration while refusing guests and missi
 		await route.continue();
 	});
 	await page.goto(`/api/auth/oauth2/authorize?${query}`);
-	await expect(page.getByRole("status")).toHaveText("Loading connection request...");
+	await expect(page.getByRole("status")).toHaveText("Loading connection request…");
 	await expect(page.getByRole("link", { name: "Create account", exact: true })).toHaveCount(0);
 	await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveCount(0);
 	releaseLookup();

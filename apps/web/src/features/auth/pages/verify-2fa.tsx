@@ -46,7 +46,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 		onSubmit: async ({ value }) => {
 			const toastId = toast.add({
 				type: "loading",
-				description: backupCode ? t`Verifying backup code...` : t`Verifying code...`,
+				description: backupCode ? t`Verifying backup code…` : t`Verifying code…`,
 			});
 			const rawCode = value.code.trim().replaceAll("-", "");
 			const code = backupCode ? `${rawCode.slice(0, 5)}-${rawCode.slice(5)}` : value.code;

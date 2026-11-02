@@ -43,7 +43,7 @@ export function UserDropdownMenu({ children }: Props) {
 	};
 
 	const handleLogout = async () => {
-		const toastId = toast.add({ type: "loading", description: t`Signing out...` });
+		const toastId = toast.add({ type: "loading", description: t`Signing out…` });
 
 		await authClient.signOut({
 			fetchOptions: {

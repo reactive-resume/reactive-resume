@@ -66,7 +66,7 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 		defaultValues: { name: "", username: "", email: "", password: "" },
 		validators: { onSubmit: formSchema },
 		onSubmit: async ({ value }) => {
-			const toastId = toast.add({ type: "loading", description: t`Signing up...` });
+			const toastId = toast.add({ type: "loading", description: t`Signing up…` });
 
 			const oauthOptions = getOAuthSignInOptions(callbackURL);
 			const createPrompt = new URLSearchParams(oauthOptions.oauth_query).get("prompt")?.split(" ").includes("create");

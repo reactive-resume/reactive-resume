@@ -1479,8 +1479,8 @@ msgid "Access"
 msgstr "Dostop"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "Dostop je omogočen"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "Dostop je omogočen <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1579,8 +1579,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "Dodajte ključno besedo..."
+msgid "Add a keyword…"
+msgstr "Dodajte ključno besedo…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -6027,8 +6027,8 @@ msgid "Duplicated “{0}”"
 msgstr "Podvojeno »{0}«"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "Podvajam vaš življenjepis..."
+msgid "Duplicating your resume…"
+msgstr "Podvajam vaš življenjepis…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6215,8 +6215,8 @@ msgid "Editing"
 msgstr "Urejanje"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "Urejanje ključne besede..."
+msgid "Editing keyword…"
+msgstr "Urejanje ključne besede…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
@@ -6307,7 +6307,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -8852,16 +8852,16 @@ msgid "Loading applications…"
 msgstr "Nalaganje prijav…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
-msgstr "Nalaganje zahteve za povezavo ..."
+msgid "Loading connection request…"
+msgstr "Nalaganje zahteve za povezavo …"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Loading connection…"
 msgstr "Nalaganje povezave …"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "Nalaganje povezav ..."
+msgid "Loading connections…"
+msgstr "Nalaganje povezav …"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12630,8 +12630,8 @@ msgid "Reset your password"
 msgstr "Ponastavite svoje geslo"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "Ponastavljanje gesla..."
+msgid "Resetting your password…"
+msgstr "Ponastavljanje gesla…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -13562,11 +13562,8 @@ msgstr "Iskanje je bilo preizkušeno z iskanjem vašega strežnika. Povezave se 
 msgid "Search works"
 msgstr "Iskanje deluje"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "Iskanje ..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "Iskanje…"
@@ -13680,8 +13677,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "Izberi ..."
+msgid "Select…"
+msgstr "Izberi …"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -13744,8 +13741,8 @@ msgid "Sender details copied into the letter"
 msgstr "Podatki o pošiljatelju so kopirani v pismo"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "Pošiljanje e-pošte za ponastavitev gesla ..."
+msgid "Sending password reset email…"
+msgstr "Pošiljanje e-pošte za ponastavitev gesla …"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14296,16 +14293,16 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "Prijavljanje..."
+msgid "Signing in…"
+msgstr "Prijavljanje…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "Odjavljanje..."
+msgid "Signing out…"
+msgstr "Odjavljanje…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "Registriranje..."
+msgid "Signing up…"
+msgstr "Registriranje…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
@@ -16634,7 +16631,6 @@ msgid "Unlink this application"
 msgstr "Prekini povezavo te prijave za zaposlitev"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16642,6 +16638,7 @@ msgid "Unlock"
 msgstr "Odkleni"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16736,8 +16733,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "Posodobljeno: {done} od {total}. Preskočeni so bili zaklenjeni dokumenti in pri javnih povezavah pisma."
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "Posodabljanje vašega življenjepisa..."
+msgid "Updating your resume…"
+msgstr "Posodabljanje vašega življenjepisa…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17087,14 +17084,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "Preverjanje rezervne kode..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "Preverjanje kode..."
+msgid "Verifying backup code…"
+msgstr "Preverjanje rezervne kode…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "Potrditvena koda…"
 

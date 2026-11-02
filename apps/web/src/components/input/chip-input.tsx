@@ -354,7 +354,7 @@ export function ChipInput({
 								aria-labelledby={labelId}
 								aria-describedby={describedBy}
 								aria-invalid={invalid}
-								placeholder={isEditingKeyword ? t`Editing keyword...` : (placeholder ?? t`Add a keyword...`)}
+								placeholder={isEditingKeyword ? t`Editing keyword…` : (placeholder ?? t`Add a keyword…`)}
 								onKeyDown={handleKeyDown}
 								onChange={handleInputChange}
 								className="h-9 flex-1 border-none p-0 focus-visible:border-none focus-visible:ring-0 dark:bg-transparent"

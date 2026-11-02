@@ -1479,8 +1479,8 @@ msgid "Access"
 msgstr "Hozzáférés"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "A hozzáférés biztosított"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "A hozzáférés biztosított <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1579,8 +1579,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "Adj hozzá egy kulcsszót..."
+msgid "Add a keyword…"
+msgstr "Adj hozzá egy kulcsszót…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -6027,8 +6027,8 @@ msgid "Duplicated “{0}”"
 msgstr "„{0}” duplikálva"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "Önéletrajz duplikálása..."
+msgid "Duplicating your resume…"
+msgstr "Önéletrajz duplikálása…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6215,8 +6215,8 @@ msgid "Editing"
 msgstr "Szerkesztés"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "Kulcsszó szerkesztése..."
+msgid "Editing keyword…"
+msgstr "Kulcsszó szerkesztése…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
@@ -6307,7 +6307,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -8852,16 +8852,16 @@ msgid "Loading applications…"
 msgstr "Jelentkezések betöltése…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
-msgstr "Csatlakozási kérelem betöltése..."
+msgid "Loading connection request…"
+msgstr "Csatlakozási kérelem betöltése…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Loading connection…"
 msgstr "Kapcsolat betöltése…"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "Kapcsolatok betöltése..."
+msgid "Loading connections…"
+msgstr "Kapcsolatok betöltése…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12630,8 +12630,8 @@ msgid "Reset your password"
 msgstr "Jelszó visszaállítása"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "Jelszó visszaállítása..."
+msgid "Resetting your password…"
+msgstr "Jelszó visszaállítása…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -13562,11 +13562,8 @@ msgstr "A keresést a szerver keresésével teszteltük. A hivatkozásokat a be�
 msgid "Search works"
 msgstr "A keresés működik"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "Keresés..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "Keresés…"
@@ -13680,8 +13677,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "Kiválasztás..."
+msgid "Select…"
+msgstr "Kiválasztás…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -13744,8 +13741,8 @@ msgid "Sender details copied into the letter"
 msgstr "A feladó adatai a levélbe másolva"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "Jelszó‑visszaállító e‑mail küldése..."
+msgid "Sending password reset email…"
+msgstr "Jelszó‑visszaállító e‑mail küldése…"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14296,16 +14293,16 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "Bejelentkezés..."
+msgid "Signing in…"
+msgstr "Bejelentkezés…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "Kijelentkezés..."
+msgid "Signing out…"
+msgstr "Kijelentkezés…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "Regisztráció..."
+msgid "Signing up…"
+msgstr "Regisztráció…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
@@ -16634,7 +16631,6 @@ msgid "Unlink this application"
 msgstr "Az álláspályázat összekapcsolásának megszüntetése"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16642,6 +16638,7 @@ msgid "Unlock"
 msgstr "Feloldás"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16736,8 +16733,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "{total} dokumentumból {done} frissítve. A zárolt dokumentumokat, valamint nyilvános link esetén a motivációs leveleket kihagytuk."
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "Önéletrajz frissítése..."
+msgid "Updating your resume…"
+msgstr "Önéletrajz frissítése…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17087,14 +17084,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "Biztonsági kód ellenőrzése..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "Kód ellenőrzése..."
+msgid "Verifying backup code…"
+msgstr "Biztonsági kód ellenőrzése…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "Ellenőrző kód…"
 

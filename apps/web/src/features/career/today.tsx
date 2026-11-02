@@ -851,9 +851,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 					<span className="font-mono text-[11px] font-medium text-ink-3">
 						{format(start, { weekday: "short" }).toLocaleUpperCase(locale)}
 					</span>
-					<span className="font-display text-[22px] leading-[26px] font-medium">
-						{format(start, { day: "numeric" })}
-					</span>
+					<span className="font-display text-[22px] leading-[26px]">{format(start, { day: "numeric" })}</span>
 				</span>
 				<div className="grid min-w-0 gap-0.5">
 					<p className="flex items-center gap-1.5 text-sm font-semibold">

@@ -112,7 +112,7 @@ export function Tailor() {
 						<div className="flex items-center gap-[11px]">
 							<span
 								aria-hidden="true"
-								className="font-anybody flex size-9 shrink-0 items-center justify-center rounded-lg bg-ink text-[19px] leading-none font-medium text-bg font-stretch-[95%]"
+								className="font-anybody flex size-9 shrink-0 items-center justify-center rounded-lg bg-ink text-[19px] leading-none text-bg font-stretch-[95%]"
 							>
 								F
 							</span>
