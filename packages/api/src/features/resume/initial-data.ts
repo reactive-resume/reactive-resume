@@ -1,4 +1,5 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { Template } from "@reactive-resume/schema/templates";
 import type { Locale } from "@reactive-resume/utils/locale";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
@@ -9,6 +10,7 @@ type CreateResumeDataOptions = {
 	/** The person the resume is for, printed as its name: the account holder's name, not the document's. */
 	name?: string;
 	locale?: Locale;
+	template?: Template | undefined;
 };
 
 export function createResumeData(options: CreateResumeDataOptions): ResumeData {
@@ -17,6 +19,7 @@ export function createResumeData(options: CreateResumeDataOptions): ResumeData {
 	const name = options.name?.trim();
 	if (name) data.basics.name = name;
 	if (options.locale) data.metadata.page.locale = options.locale;
+	if (options.template) data.metadata.template = options.template;
 	data.metadata.stylesheet = {
 		mode: "semantic",
 		source: { languageVersion: 1, text: EMPTY_SEMANTIC_CSS_SOURCE },

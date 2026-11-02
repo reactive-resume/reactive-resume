@@ -1,4 +1,5 @@
 // Kept apart from ./new-document-dialog.tsx, so the library loads without the importers that dialog needs.
+import type { Template } from "@reactive-resume/schema/templates";
 import { t } from "@lingui/core/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -40,14 +41,17 @@ export function useStartDocument(applicationId?: string) {
 		if (applicationId) void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
 		closeDialog();
 	};
+	/** Whether the document was created; a click while another create is in flight creates nothing. */
 	const start = async (task: () => Promise<void>) => {
-		if (starting) return;
+		if (starting) return false;
 		starting = true;
 		setCreating(true);
 		try {
 			await task();
+			return true;
 		} catch (error) {
 			toastError(error, t`Couldn't create the document. Try again.`);
+			return false;
 		} finally {
 			starting = false;
 			setCreating(false);
@@ -56,13 +60,15 @@ export function useStartDocument(applicationId?: string) {
 
 	return {
 		creating,
-		startBlank: () =>
+		/** A blank resume; with `template`, in that template (chosen in the gallery before signing up). */
+		startBlank: (template?: Template) =>
 			start(async () => {
 				const resumeId = await createResume({
 					name: t`Untitled resume`,
 					tags: [],
 					autoName: true,
 					withSampleData: false,
+					...(template ? { template } : {}),
 				});
 				await created(resumeId, "resume");
 				void navigate({ to: "/builder/$resumeId", params: { resumeId } });

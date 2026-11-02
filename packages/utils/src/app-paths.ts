@@ -26,10 +26,18 @@ export const AUTH_PATH_ALIASES: Readonly<Record<string, "/auth/login" | "/auth/r
 	"sign-up": "/auth/register",
 };
 
+/** Pages of the site people guess at by name; like the sign-in aliases, they yield to an account's shared page. */
+export const SITE_PATH_ALIASES: Readonly<Record<string, string>> = {
+	...AUTH_PATH_ALIASES,
+	pricing: "/",
+	features: "/",
+	home: "/",
+};
+
 /** Names that can never be (or would shadow) an account's page, so no new account may take them. */
 export const isReservedUsername = (username: string) => {
 	const name = username.trim().toLowerCase();
-	return (RESERVED_SEGMENTS as readonly string[]).includes(name) || Object.hasOwn(AUTH_PATH_ALIASES, name);
+	return (RESERVED_SEGMENTS as readonly string[]).includes(name) || Object.hasOwn(SITE_PATH_ALIASES, name);
 };
 
 /** Whether `pathname` is in one of the signed-in app's sections. */

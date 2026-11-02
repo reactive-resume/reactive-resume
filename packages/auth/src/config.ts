@@ -39,7 +39,12 @@ import { rateLimitConfig } from "@reactive-resume/utils/rate-limit";
 import { generateId, toUsername } from "@reactive-resume/utils/string";
 import { timezoneSchema } from "@reactive-resume/utils/timezone";
 import { isAllowedOAuthRedirectUri } from "@reactive-resume/utils/url-security.node";
-import { createGithubProfileMapper, createProfileMapper, isUsernameReserved } from "./oauth-profile";
+import {
+	allocateUniqueUsername,
+	createGithubProfileMapper,
+	createProfileMapper,
+	isUsernameReserved,
+} from "./oauth-profile";
 import { authRateLimitStorage } from "./rate-limit";
 import { getTrustedOrigins } from "./trusted-origins";
 
@@ -691,6 +696,18 @@ const getAuthConfig = () => {
 							...(timezone.success ? { timezone: timezone.data } : {}),
 							...(locale ? { locale } : {}),
 						});
+				}
+
+				if (ctx.path === "/sign-up/email" && ctx.body && typeof ctx.body.email === "string") {
+					// The username is optional at sign-up: an empty one is made from the email address, changeable in Settings.
+					const chosen = [ctx.body.username, ctx.body.displayUsername].some(
+						(value: unknown) => typeof value === "string" && value.trim(),
+					);
+					if (!chosen) {
+						const username = await allocateUniqueUsername(ctx.body.email);
+						ctx.body.username = username;
+						ctx.body.displayUsername = username;
+					}
 				}
 
 				const user = accountUser.getStore();

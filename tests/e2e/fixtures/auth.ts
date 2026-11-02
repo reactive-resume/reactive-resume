@@ -10,11 +10,11 @@ async function assertAuthResponse(response: Awaited<ReturnType<APIRequestContext
 export async function registerViaUi(page: Page, account: E2EAccount, callbackURL?: string) {
 	await page.goto(`/auth/register${callbackURL ? `?callbackURL=${encodeURIComponent(callbackURL)}` : ""}`);
 	await page.getByRole("textbox", { name: "Name", exact: true }).fill(account.name);
-	await page.getByLabel("Username").fill(account.username);
+	// The username is optional; an empty one is made from the email address.
+	if (account.username) await page.getByLabel("Username").fill(account.username);
 	await page.getByLabel("Email address", { exact: true }).fill(account.email);
 	await page.getByLabel("Password", { exact: true }).fill(account.password);
 	await page.getByRole("button", { name: "Sign up" }).click();
-	await page.getByRole("button", { name: "Continue" }).click();
 	await page.waitForURL(/\/dashboard/);
 }
 

@@ -383,6 +383,10 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 		return new Response("Not Found", { status: 404 });
 	}
 
+	// The footer's "Templates" and old links: the gallery lives at /resume-templates. Old per-template previews stay gone.
+	if (pathname === "/templates" || pathname === "/templates/")
+		return new Response(null, { status: 301, headers: { Location: `/resume-templates${requestUrl.search}` } });
+
 	const headers = getFallbackResponseHeaders(pathname);
 	if (!headers)
 		return new Response("Not Found", {

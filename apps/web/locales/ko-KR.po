@@ -2511,10 +2511,6 @@ msgstr "보관됨(닫음)"
 msgid "Area of study"
 msgstr "연구분야"
 
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "소프트웨어가 그것을 읽으면"
-
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -2624,6 +2620,11 @@ msgstr "어시스턴트 대화"
 #: src/features/settings/ai/web-access.tsx
 msgid "Assistant."
 msgstr "어시스턴트."
+
+#. Password rule shown under the password field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "At least 8 characters."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "At Northwind Labs I led research for our onboarding redesign. I interviewed 14 customers, found three drop-off points, and we shipped a shorter setup. Activation rose from 31% to 44%."
@@ -3308,10 +3309,6 @@ msgstr "이메일을 확인하세요"
 msgid "Check your email for a link to reset your password."
 msgstr "비밀번호를 재설정할 수 있는 링크가 이메일로 전송되었습니다."
 
-#: src/features/auth/pages/register.tsx
-msgid "Check your email for a link to verify your account."
-msgstr "계정을 인증할 수 있는 링크가 이메일로 전송되었습니다."
-
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
 msgid "Check your resume’s ATS readability"
@@ -3912,12 +3909,10 @@ msgstr "내용이 격자 형태로 배치되어 있습니다."
 msgid "Content revision: {0}"
 msgstr ""
 
-#. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/assistant/conversation.tsx
-#: src/features/auth/pages/register.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Continue"
 msgstr "계속"
@@ -4170,6 +4165,7 @@ msgid "Couldn't connect. Check the key and try again."
 msgstr "연결할 수 없습니다. 키를 확인하고 다시 시도하세요."
 
 #: src/features/auth/pages/login.tsx
+#: src/features/homepage/hero.tsx
 msgid "Couldn't continue as a guest. Try again."
 msgstr "게스트로 계속할 수 없습니다. 다시 시도해 보세요."
 
@@ -4889,10 +4885,6 @@ msgstr "커버레터"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Create"
 msgstr "생성"
-
-#: src/features/templates/gallery.tsx
-msgid "Create a free account, then choose your template in Design. Switch layouts anytime without rewriting your content."
-msgstr "무료 계정을 만든 다음 디자인에서 템플릿을 선택하세요. 콘텐츠를 다시 작성하지 않고도 언제든지 레이아웃을 전환할 수 있습니다."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Create a new resume"
@@ -7331,6 +7323,10 @@ msgstr "이력서 가져오기"
 msgid "Import a resume, start a letter, save a job, copy one for a job, or start blank."
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
+msgid "Import a Word file instead"
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Import failed. Check the CSV and try again."
 msgstr "가져오기에 실패했습니다. CSV를 확인하고 다시 시도하세요."
@@ -7365,8 +7361,8 @@ msgid "Import the one you have, or start blank."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
-msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
-msgstr "이 파일을 무료 Reactive Resume로 가져옵니다. 모든 문제가 Check에서 여러분을 기다리고 있습니다."
+msgid "Import this file into a free Reactive Resume, then keep checking it in Check as you edit. Check reads the resume you're editing, so its findings can differ from this file's."
+msgstr ""
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Import this file into the browser helper, review the destination and fill report. Unsupported forms use exact PDF downloads and copyable answers below. Native browser integration requires its own verified build."
@@ -10297,6 +10293,11 @@ msgstr ""
 msgid "Optional for local Ollama"
 msgstr "로컬 Ollama의 경우 선택 사항"
 
+#. Hint under the optional username field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "Optional. Leave it empty and we'll make one from your email. You can change it in Settings."
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
@@ -10351,10 +10352,6 @@ msgstr "기관"
 #: src/features/resume/editor/write/improve.tsx
 msgid "Original"
 msgstr ""
-
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "원본 페이지"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
@@ -10753,6 +10750,10 @@ msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Pick a template below to start with it, or choose later in Design. Switch layouts anytime without rewriting your content."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -13947,6 +13948,14 @@ msgstr "GitHub 스타"
 msgid "Start"
 msgstr "시작"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume"
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version from Documents."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Start a debrief"
 msgstr "회고 시작"
@@ -15035,6 +15044,10 @@ msgstr "프로필, 포트폴리오 또는 저장소로 연결되는 링크가 �
 msgid "There is no summary paragraph."
 msgstr "요약 문단이 없습니다."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -15403,10 +15416,6 @@ msgstr "이 서버는 기본 단계를 사용하므로 파일의 단계 이름�
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "이 로그인 시도는 만료되었거나 이미 사용되었습니다. 다시 시도해 보세요."
 
-#: src/features/auth/pages/register.tsx
-msgid "This step is optional, but recommended."
-msgstr "이 단계는 선택 사항이지만 권장됩니다."
-
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
 msgstr ""
@@ -15665,6 +15674,10 @@ msgstr "이걸로 다시 시도"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
+msgstr ""
+
+#: src/features/homepage/hero.tsx
+msgid "Try it without an account"
 msgstr ""
 
 #: src/routes/auth/native-callback.tsx
@@ -16142,6 +16155,10 @@ msgstr "샘플 사용"
 msgid "Use saved version"
 msgstr ""
 
+#: src/features/templates/gallery.tsx
+msgid "Use the {name} template"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"
 msgstr "표준 제목을 사용하세요"
@@ -16168,6 +16185,10 @@ msgstr "이 제공업체를 이용하세요"
 
 #: src/features/career/workspace/fit.tsx
 msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Use this template"
 msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
@@ -16317,10 +16338,6 @@ msgstr "코드를 확인하는 중입니다..."
 msgid "Verifying code…"
 msgstr "코드… 확인 중"
 
-#: src/features/auth/pages/register.tsx
-msgid "Verifying your email confirms that you own this address."
-msgstr "이메일을 확인하면 귀하가 이 주소를 소유하고 있음이 확인됩니다."
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date}"
 msgstr "{date}로 전송된 버전"
@@ -16458,6 +16475,10 @@ msgstr "{email}로 확인 링크를 보냈습니다. 이를 열어 변경을 완
 msgid "We sent a link to {currentEmail} to approve the change. Then open the link we send to {email}."
 msgstr "변경을 승인할 수 있도록 {currentEmail}(으)로 링크를 보냈습니다. 그다음 {email}(으)로 보내는 링크를 여세요."
 
+#: src/features/auth/pages/register.tsx
+msgid "We sent a link to verify your account. It's optional, and you can resend it from Settings."
+msgstr ""
+
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
 msgid "We sent a new verification link to {0}."
@@ -16528,10 +16549,12 @@ msgstr "각 요건 따져 보는 중"
 msgid "Went well"
 msgstr "잘됨"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a parser reads"
 msgstr "파서가 읽는 내용"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a person sees"
 msgstr "사람이 보는 화면"
@@ -17080,10 +17103,6 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "단계가 최대 {MAX_APPLICATION_LANES}개에 도달했습니다. 새 단계를 추가하려면 하나를 삭제하세요."
-
-#: src/features/auth/pages/register.tsx
-msgid "Your account is ready"
-msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
