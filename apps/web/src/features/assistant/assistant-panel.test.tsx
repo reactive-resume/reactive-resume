@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 
 const mocks = vi.hoisted(() => ({
 	selected: null as string | null,
@@ -74,6 +75,39 @@ beforeEach(() => {
 	i18n.loadAndActivate({ locale: "en-US", messages: {} });
 });
 afterEach(cleanup);
+
+it("keeps task titles and shows the original message in history, with old-server fallback", () => {
+	mocks.selected = "new";
+	const thread = {
+		id: "history-thread",
+		workingResumeId: document.id,
+		coverLetterId: null,
+		aiProviderId: "provider-1",
+		title: "Tailor summary to payments roles",
+		firstMessage: "I'm applying for payments roles. Please tailor my summary.",
+		lastMessageAt: new Date("2026-11-02T12:00:00Z"),
+		editsProposed: 2,
+		editsAccepted: 1,
+	};
+	mocks.threads = [thread];
+	const panel = () => (
+		<I18nProvider i18n={i18n}>
+			<ConfirmDialogProvider>
+				<AssistantPanel document={document} onClose={() => {}} />
+			</ConfirmDialogProvider>
+		</I18nProvider>
+	);
+	const { rerender } = render(panel());
+	fireEvent.click(screen.getByRole("button", { name: "Past conversations" }));
+	const row = screen.getByRole("button", { name: /Tailor summary to payments roles.*I'm applying/ });
+	expect(row.textContent).toContain(thread.firstMessage);
+	expect(row.textContent).toContain("1 of 2 edits accepted");
+	expect(mocks.start).not.toHaveBeenCalled();
+	mocks.threads = [{ ...thread, firstMessage: undefined }];
+	rerender(panel());
+	expect(screen.queryByText(thread.firstMessage)).toBeNull();
+	expect(screen.getByText(thread.title)).toBeDefined();
+});
 
 it("states resume scope before sending and routes Open Write to this resume", () => {
 	const onClose = vi.fn();

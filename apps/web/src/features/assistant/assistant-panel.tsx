@@ -706,6 +706,7 @@ type ConversationRowProps = {
 	onDelete: () => void;
 };
 
+/** A request remains recognizable even when its proposed edits give the conversation a new title. */
 function ConversationRow({ thread, current, detail, index, onOpen, onDelete }: ConversationRowProps) {
 	return (
 		<li
@@ -727,6 +728,7 @@ function ConversationRow({ thread, current, detail, index, onOpen, onDelete }: C
 				)}
 			>
 				<span className="truncate text-sm font-medium">{thread.title}</span>
+				{thread.firstMessage && <span className="truncate text-sm text-ink-2">{thread.firstMessage}</span>}
 				<span className="truncate text-xs text-ink-3">{detail}</span>
 			</button>
 			<IconButton

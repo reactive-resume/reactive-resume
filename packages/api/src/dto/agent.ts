@@ -13,6 +13,8 @@ export const uiMessageSchema = z.object({
 export const agentThreadSchema = z.object({
 	id: z.string(),
 	title: z.string(),
+	/** Opening-message preview in history; older servers and non-list responses may omit it. */
+	firstMessage: z.string().nullable().optional(),
 	status: z.string(),
 	scope: z.enum(["document", "application", "career"]),
 	applicationId: z.string().nullable(),
