@@ -488,8 +488,11 @@ export async function writeResumeFields(input: {
 	unlockedOnly: boolean;
 	expectedUpdatedAt?: Date | undefined;
 	mutation: ResumeUpdatedEvent["mutation"];
+	/** Runs first in the same transaction, such as taking the account lock that keeps lock order with other writes. */
+	before?: (tx: DbOrTx) => Promise<unknown>;
 }) {
 	const write = async (tx: DbOrTx) => {
+		await input.before?.(tx);
 		const [existing] = await tx
 			.select({ isLocked: schema.resume.isLocked, updatedAt: schema.resume.updatedAt })
 			.from(schema.resume)

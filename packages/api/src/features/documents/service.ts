@@ -259,18 +259,20 @@ export const documentsService = {
 		await assertUnlocked(input);
 		const application = input.applicationId ? await assertOwnedApplication(input.userId, input.applicationId) : null;
 		if (input.type === "resume") {
-			// The application first: if it fails, the resume's revision hasn't moved, so a retry's version check still holds.
-			if (application && !application.sentResumeVersionId && (!application.resumeId || application.status === "saved"))
-				await applicationService.update({ userId: input.userId, id: application.id, resumeId: input.id });
-			// Answers with the resume's new revision, so the open editor's next autosave builds on it.
-			return writeResumeFields({
+			// Answers with the resume's new revision, so the open editor's next autosave builds on it. The account lock
+			// comes first, then the resume, then the application: the order every document and application write takes.
+			const resume = await writeResumeFields({
 				id: input.id,
 				userId: input.userId,
 				set: { applicationId: input.applicationId },
 				unlockedOnly: true,
 				expectedUpdatedAt: input.expectedUpdatedAt,
 				mutation: "update",
+				before: (tx) => lockUser(tx, input.userId),
 			});
+			if (application && !application.sentResumeVersionId && (!application.resumeId || application.status === "saved"))
+				await applicationService.update({ userId: input.userId, id: application.id, resumeId: input.id });
+			return resume;
 		}
 
 		const letter = await coverLetterService.getById({ id: input.id, userId: input.userId });
