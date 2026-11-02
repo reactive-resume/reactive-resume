@@ -1,6 +1,6 @@
 import type { Application, ApplicationSummary } from "@/features/applications/types";
 import { t } from "@lingui/core/macro";
-import { Plural, Trans } from "@lingui/react/macro";
+import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import { HotkeysProvider, useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, stripSearchParams, useNavigate } from "@tanstack/react-router";
@@ -43,6 +43,7 @@ import {
 } from "@/features/applications/queries";
 import { applicationLanesQueryOptions, useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { useCareerTime, useNow } from "@/features/career/shared";
+import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { getPageTitle } from "@/libs/seo";
@@ -104,6 +105,7 @@ function matches(application: ApplicationSummary, query: string) {
 }
 
 function RouteComponent() {
+	const { t } = useLingui();
 	const { q, view, closed, followUp, needsYou, create, applicationId } = Route.useSearch();
 	const navigate = useNavigate({ from: Route.fullPath });
 	const phone = useBreakpoint() === "mobile";
@@ -125,13 +127,18 @@ function RouteComponent() {
 	const [viewSwitched, setViewSwitched] = useState(false);
 
 	const { data: applications, isPending, isError, isFetching, refetch } = useQuery(applicationsListQueryOptions());
+	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	useHotkey(
 		"/",
 		(event) => {
 			if (event.keyCode === 229) return;
 			searchRef.current?.focus();
 		},
-		{ enabled: Boolean(applications?.length), target: pageRef },
+		{
+			enabled: characterShortcuts && Boolean(applications?.length),
+			target: pageRef,
+			meta: { name: t`Search applications` },
+		},
 	);
 	const queryClient = useQueryClient();
 	const { data: fullApplications } = useQuery({ ...applicationsFullListQueryOptions(), enabled: exporting });
@@ -351,7 +358,7 @@ function RouteComponent() {
 							<Input
 								ref={searchRef}
 								type="search"
-								aria-keyshortcuts="/"
+								aria-keyshortcuts={characterShortcuts ? "/" : undefined}
 								aria-label={t`Search applications`}
 								placeholder={t`Search role, company, contact or tag`}
 								value={query}

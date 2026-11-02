@@ -74,6 +74,11 @@ const routes = {
 	trash: () => "/documents/trash",
 };
 const common = {
+	"@/shell/shortcut-help": {
+		ShortcutHelpButton: "ShortcutHelpButton",
+		CharacterShortcutSetting: "CharacterShortcutSetting",
+		useShortcutHelp: { getState: () => ({ show() {} }) },
+	},
 	react,
 	"react-native": {
 		View: "View",

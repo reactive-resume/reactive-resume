@@ -27,6 +27,7 @@ import { NavigationFocus } from "@/components/layout/navigation-focus";
 import { DialogManager } from "@/dialogs/manager";
 import { CommandPalette } from "@/features/command-palette";
 import { useDocumentWebMcpTools } from "@/features/documents/webmcp";
+import { KeyboardShortcuts } from "@/features/keyboard-shortcuts";
 import { ThemeProvider } from "@/features/theme/provider";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 import { loadRootContext } from "@/libs/root-context";
@@ -111,6 +112,7 @@ function RootComponent() {
 													)}
 													<DialogManager />
 													<CommandPalette />
+													<KeyboardShortcuts />
 													<LocalizedToaster />
 
 													{import.meta.env.DEV && <BreakpointIndicator />}

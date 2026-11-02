@@ -1,6 +1,7 @@
 import type { LetterMode } from "@/features/letters/use-letter-mode";
 import type { CoverLetter } from "@reactive-resume/schema/cover-letter/data";
 import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { getRouteApi } from "@tanstack/react-router";
 import { useEffect } from "react";
@@ -14,6 +15,7 @@ import { LetterPage } from "./letter-page";
 import { LetterWritePanel } from "./write-panel";
 import { LetterAssistant } from "@/features/assistant/dock";
 import { useMarkDocumentOpened } from "@/features/documents/new-documents";
+import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { useLetterEditorStore } from "@/features/letters/store";
 import {
 	useLetterMode,
@@ -117,18 +119,32 @@ function MobileBody({ mode, onModeChange }: MobileBodyProps) {
 
 /** 1 and 2 switch modes outside fields, ⌘P downloads the PDF, ⌘⇧E opens Download. Saving is automatic. */
 function LetterHotkeys({ onModeChange }: { onModeChange: (mode: LetterMode) => void }) {
+	const { t } = useLingui();
+	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const download = useDownloadLetter();
 	const setSheetTab = useEditorStore((state) => state.setSheetTab);
 
-	useHotkey("1", () => switchModeInstantly(() => onModeChange("write")));
-	useHotkey("2", () => switchModeInstantly(() => onModeChange("design")));
-	useHotkey("Mod+P", () => void download.run());
-	useHotkey("Mod+Shift+E", () => setSheetTab("download"));
-	useHotkey("Mod+J", () => useEditorStore.getState().setAssistantOpen(!useEditorStore.getState().assistantOpen, true));
-	useHotkey("Mod+S", () => {
-		void useLetterEditorStore.getState().flush();
-		toast.add({ type: "info", description: t`Your changes are saved automatically.`, id: "auto-save" });
+	useHotkey("1", () => switchModeInstantly(() => onModeChange("write")), {
+		enabled: characterShortcuts,
+		meta: { name: t`Write` },
 	});
+	useHotkey("2", () => switchModeInstantly(() => onModeChange("design")), {
+		enabled: characterShortcuts,
+		meta: { name: t`Design` },
+	});
+	useHotkey("Mod+P", () => void download.run(), { meta: { name: t`Download PDF` } });
+	useHotkey("Mod+Shift+E", () => setSheetTab("download"), { meta: { name: t`Download & history` } });
+	useHotkey("Mod+J", () => useEditorStore.getState().setAssistantOpen(!useEditorStore.getState().assistantOpen, true), {
+		meta: { name: t`Assistant` },
+	});
+	useHotkey(
+		"Mod+S",
+		() => {
+			void useLetterEditorStore.getState().flush();
+			toast.add({ type: "info", description: t`Your changes are saved automatically.`, id: "auto-save" });
+		},
+		{ meta: { name: t`Save` } },
+	);
 
 	return null;
 }

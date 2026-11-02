@@ -13,6 +13,7 @@ import { getAccountScope, useSession } from "@/auth/session";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { useApplications } from "@/features/applications/queries";
 import { routes } from "@/routes";
+import { useShortcutHelp } from "@/shell/shortcut-help";
 import { useIsTablet } from "@/shell/use-is-tablet";
 import {
 	Banner,
@@ -179,6 +180,14 @@ export function SearchScreen() {
 		}));
 
 	const actions: (Row & { keywords: string[]; account?: boolean; root?: boolean })[] = [
+		{
+			key: "keyboard-shortcuts",
+			icon: "keyboard",
+			title: t`Keyboard shortcuts`,
+			keywords: [],
+			root: true,
+			onPress: () => useShortcutHelp.getState().show(),
+		},
 		{
 			key: "new",
 			icon: "plus",

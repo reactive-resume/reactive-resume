@@ -38,6 +38,12 @@ const routes = {
 	settings: (page) => `/settings/${page}`,
 };
 const mocks = {
+	"@/shell/shortcut-help": {
+		ShortcutHelpButton: "ShortcutHelpButton",
+		CharacterShortcutSetting: "CharacterShortcutSetting",
+		useShortcutHelp: { getState: () => ({ show() {} }) },
+	},
+	"./shortcut-help": { ShortcutHelpButton: "ShortcutHelpButton" },
 	react,
 	"@/shell/key-commands": { useKeyCommands() {} },
 	"react-native": native,

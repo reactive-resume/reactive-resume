@@ -5,6 +5,7 @@ import { useCommandPaletteStore } from "../../store";
 import { BaseCommandGroup } from "../base";
 import { LanguageCommandPage } from "./language";
 import { ThemeCommandPage } from "./theme";
+import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 
 export function PreferencesCommandGroup() {
 	const pushPage = useCommandPaletteStore((state) => state.pushPage);
@@ -12,6 +13,15 @@ export function PreferencesCommandGroup() {
 	return (
 		<>
 			<BaseCommandGroup heading={<Trans>Preferences</Trans>}>
+				<CommandItem
+					onSelect={() => {
+						useCommandPaletteStore.getState().setOpen(false);
+						requestAnimationFrame(() => showKeyboardShortcuts());
+					}}
+				>
+					<Icon name="keyboard" size={16} />
+					<Trans>Keyboard shortcuts</Trans>
+				</CommandItem>
 				<CommandItem onSelect={() => pushPage("theme")}>
 					<Icon name="palette" size={16} />
 					<Trans>Change theme to…</Trans>

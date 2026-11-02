@@ -349,8 +349,9 @@ const ApplicationRow = memo(function ApplicationRow({
 				callback: () => onMove(application.id, status),
 				meta: { name: t`Moved to ${getStageLabel(status)}` },
 			})),
-		].map(({ callback, ...binding }) => ({
+		].map(({ callback, meta, ...binding }) => ({
 			...binding,
+			options: { meta },
 			callback: (event: KeyboardEvent) => {
 				if (
 					!event.repeat &&

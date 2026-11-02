@@ -1,3 +1,4 @@
+import type { ComponentRef, Ref } from "react";
 import type { PressableProps } from "react-native";
 import { useState } from "react";
 import { Pressable } from "react-native";
@@ -6,6 +7,8 @@ import { useReducedMotion } from "./motion";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 const easeOut = cubicBezier(0.23, 1, 0.32, 1);
+
+type FeedbackPressableProps = PressableProps & { ref?: Ref<ComponentRef<typeof Pressable>> | undefined };
 
 /** Press-in feedback without changing layout or delaying the action on release. */
 export function FeedbackPressable({
@@ -17,7 +20,7 @@ export function FeedbackPressable({
 	disabled,
 	pressRetentionOffset = 16,
 	...props
-}: PressableProps) {
+}: FeedbackPressableProps) {
 	const [pressed, setPressed] = useState(false);
 	const [hovered, setHovered] = useState(false);
 	const reduced = useReducedMotion();

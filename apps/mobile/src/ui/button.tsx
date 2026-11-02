@@ -1,5 +1,7 @@
 import type { IconName } from "./icon";
 import type { ColorToken } from "./tokens";
+import type { ComponentRef, Ref } from "react";
+import type { Pressable } from "react-native";
 import { ActivityIndicator, Platform, View } from "react-native";
 import { Icon } from "./icon";
 import { FeedbackPressable } from "./pressable";
@@ -110,6 +112,7 @@ export function Button({
 }
 
 export type IconButtonProps = {
+	ref?: Ref<ComponentRef<typeof Pressable>> | undefined;
 	icon: IconName;
 	/** The accessible name; icons are decorative. */
 	label: string;
@@ -128,6 +131,7 @@ export type IconButtonProps = {
 };
 
 export function IconButton({
+	ref,
 	icon,
 	label,
 	onPress,
@@ -147,6 +151,7 @@ export function IconButton({
 
 	return (
 		<FeedbackPressable
+			ref={ref}
 			accessibilityRole="button"
 			accessibilityLabel={label}
 			accessibilityHint={accessibilityHint}

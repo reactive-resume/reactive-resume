@@ -2,7 +2,7 @@ import { ph, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -18,6 +18,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { isolate } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
+import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { createLetterFile, letterFileName } from "@/features/letters/export";
 import { useLetterEditorStore } from "@/features/letters/store";
 import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
@@ -106,6 +107,8 @@ const failed = (error: unknown) =>
 
 /** The name opens the letter's menu: rename, duplicate, lock and Move to Trash. The save state sits under it. */
 function LetterMenu() {
+	const helpRequested = useRef(false);
+	const menuTrigger = useRef<HTMLButtonElement>(null);
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const prompt = usePrompt();
@@ -173,8 +176,15 @@ function LetterMenu() {
 
 	return (
 		<>
-			<DropdownMenu>
-				<DropdownMenuTrigger render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
+			<DropdownMenu
+				onOpenChangeComplete={(open) => {
+					if (!open && helpRequested.current) {
+						helpRequested.current = false;
+						showKeyboardShortcuts(menuTrigger.current);
+					}
+				}}
+			>
+				<DropdownMenuTrigger ref={menuTrigger} render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
 				<DropdownMenuContent align="start" className="w-60">
 					<DropdownMenuItem disabled={isLocked} onClick={() => void rename()}>
 						<Icon name="pencil-simple" />
@@ -189,6 +199,14 @@ function LetterMenu() {
 						{isLocked ? <Trans>Unlock editing</Trans> : <Trans>Lock editing</Trans>}
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
+					<DropdownMenuItem
+						onClick={() => {
+							helpRequested.current = true;
+						}}
+					>
+						<Icon name="keyboard" />
+						<Trans>Keyboard shortcuts</Trans>
+					</DropdownMenuItem>
 					<DropdownMenuItem variant="destructive" disabled={isLocked} onClick={() => void trash()}>
 						<Icon name="trash" />
 						<Trans>Move to Trash</Trans>

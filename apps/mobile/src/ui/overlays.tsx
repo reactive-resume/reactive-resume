@@ -38,6 +38,8 @@ const android = Platform.OS === "android";
 export type SheetProps = {
 	open: boolean;
 	onClose: () => void;
+	/** Runs after native dismissal completes, for returning focus to the opener. */
+	onDismissed?: (() => void) | undefined;
 	/** Block incidental dismissal while an explicit save is in flight. */
 	dismissible?: boolean | undefined;
 	title?: string | undefined;
@@ -91,6 +93,7 @@ function SheetHeader({ title, headerStart, headerEnd }: SheetHeaderProps) {
 
 /** Native sheets share one lifecycle on phones, tablets and web. Form owners remain mounted after dismissal. */
 export function Sheet({
+	onDismissed,
 	open,
 	onClose,
 	title,
@@ -155,9 +158,12 @@ export function Sheet({
 		if (closing.current) {
 			closing.current = false;
 			if (wantsOpen.current) present();
+			else onDismissed?.();
 		} else if (wantsOpen.current) {
-			if (dismissible) onClose();
-			else present();
+			if (dismissible) {
+				onClose();
+				onDismissed?.();
+			} else present();
 		}
 	};
 

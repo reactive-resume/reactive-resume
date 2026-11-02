@@ -73,6 +73,11 @@ ui.listItemMotion = () => ({});
 ui.listLayout = {};
 ui.useFirstAppearance = () => false;
 const mocks = {
+	"@/shell/shortcut-help": {
+		ShortcutHelpButton: "ShortcutHelpButton",
+		CharacterShortcutSetting: "CharacterShortcutSetting",
+		useShortcutHelp: { getState: () => ({ show() {} }) },
+	},
 	react,
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", Platform: { OS: "android" } },
 	"expo-router": { useRouter: () => router, useLocalSearchParams: () => ({}), Stack: { Screen: "StackScreen" } },

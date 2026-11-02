@@ -3,6 +3,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useRef, useState } from "react";
 import { I18nManager, Keyboard, TextInput, View, useWindowDimensions } from "react-native";
 import { useKeyCommands } from "@/shell/key-commands";
+import { ShortcutHelpButton } from "@/shell/shortcut-help";
 import { Icon, IconButton, Text, useTheme } from "@/ui";
 
 type CollectionHeaderProps = {
@@ -129,6 +130,7 @@ export function CollectionHeader({
 						{searchLabel ? (
 							<IconButton icon="magnifying-glass" label={searchLabel} disabled={disabled} onPress={openSearch} />
 						) : null}
+						<ShortcutHelpButton />
 						{actions}
 					</View>
 				</>

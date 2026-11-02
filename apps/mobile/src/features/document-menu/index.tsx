@@ -1,8 +1,10 @@
+import type { ComponentRef } from "react";
+import type { Pressable } from "react-native";
 import type { EnrichedTextInputInstance } from "react-native-enriched-html";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { View } from "react-native";
+import { AccessibilityInfo, View } from "react-native";
 import { EnrichedTextInput } from "react-native-enriched-html";
 import { isValidSlug, MAX_SLUG_LENGTH, normalizeSlug } from "@reactive-resume/resume/sharing";
 import { isolate } from "@reactive-resume/utils/string";
@@ -17,6 +19,7 @@ import { confirmUndone } from "@/lib/undone";
 import { routes } from "@/routes";
 import { useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
+import { useShortcutHelp } from "@/shell/shortcut-help";
 import { Banner, Button, ChipInput, IconButton, ListRow, Sheet, Text, TextField, showToast, useTheme } from "@/ui";
 
 type DocumentMenuProps = {
@@ -36,6 +39,8 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 	const [name, setName] = useState("");
 	const [tags, setTags] = useState<string[]>([]);
 	const [slug, setSlug] = useState("");
+	const helpRequested = useRef(false);
+	const menuTrigger = useRef<ComponentRef<typeof Pressable>>(null);
 	const pending = useRef(Promise.resolve(false));
 	const [printing, setPrinting] = useState(false);
 	const printingRef = useRef(false);
@@ -62,7 +67,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 				setPrinting(false);
 			});
 	};
-	useBuilderChrome(inChrome ? { onMenu: resume ? openMenu : undefined } : {});
+	useBuilderChrome(inChrome ? { onMenu: resume ? openMenu : undefined, menuRef: menuTrigger } : {});
 	useKeyCommands(inChrome ? [{ id: "print", input: "p", title: t`Print`, run: print }] : []);
 	const titles = {
 		menu: t`Document options`,
@@ -74,8 +79,29 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 	};
 	return (
 		<>
-			{!inChrome && <IconButton icon="dots-three" label={t`Document options`} disabled={!resume} onPress={openMenu} />}
-			<Sheet open={!!panel} title={panel ? titles[panel] : undefined} onClose={close} detents={[0.5, 0.9]}>
+			{!inChrome && (
+				<IconButton
+					ref={menuTrigger}
+					icon="dots-three"
+					label={t`Document options`}
+					disabled={!resume}
+					onPress={openMenu}
+				/>
+			)}
+			<Sheet
+				onDismissed={() => {
+					if (helpRequested.current) {
+						helpRequested.current = false;
+						useShortcutHelp.getState().show(() => {
+							if (menuTrigger.current) AccessibilityInfo.sendAccessibilityEvent(menuTrigger.current, "focus");
+						});
+					}
+				}}
+				open={!!panel}
+				title={panel ? titles[panel] : undefined}
+				onClose={close}
+				detents={[0.5, 0.9]}
+			>
 				{resume && (
 					<View style={{ padding: space.s4, gap: space.s3 }}>
 						{operations.error && <Banner tone="danger" message={operations.error} />}
@@ -153,6 +179,14 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 									onPress={() => {
 										setPanel(null);
 										router.push(routes.history(id));
+									}}
+								/>
+								<ListRow
+									title={t`Keyboard shortcuts`}
+									leading="keyboard"
+									onPress={() => {
+										helpRequested.current = true;
+										setPanel(null);
 									}}
 								/>
 								<ListRow title={t`Print`} leading="printer" disabled={operations.busy || printing} onPress={print} />

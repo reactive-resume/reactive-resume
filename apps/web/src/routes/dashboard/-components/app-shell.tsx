@@ -2,7 +2,7 @@ import type { NewDocumentContext } from "@/features/documents/new-document-dialo
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useMatchRoute, useNavigate, useRouterState } from "@tanstack/react-router";
@@ -20,6 +20,8 @@ import { MobileTabIndicator } from "@/components/layout/mobile-tab-indicator";
 import { useDialogStore } from "@/dialogs/store";
 import { GuestBanner } from "@/features/auth/components/guest-banner";
 import { useCommandPaletteStore } from "@/features/command-palette/store";
+import { shortcutOverlayOpen } from "@/features/keyboard-shortcuts/blocking";
+import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
 import { UserDropdownMenu } from "@/features/user/dropdown-menu";
 import { orpc } from "@/libs/orpc/client";
@@ -118,16 +120,6 @@ function useNewAction() {
 	}, [context, location.pathname, navigate, openDialog]);
 }
 
-/** N stays a page shortcut: never while typing, and never over a dialog, sheet, menu or the palette. */
-function modalOrPaletteOpen() {
-	if (useDialogStore.getState().open || useCommandPaletteStore.getState().open) return true;
-	return Boolean(
-		document.querySelector(
-			'[data-slot="dialog-content"], [data-slot="sheet-content"], [data-slot="alert-dialog-content"], [data-slot="popover-content"], [data-slot="dropdown-menu-content"], [data-slot="context-menu-content"]',
-		),
-	);
-}
-
 /**
  * The app shell for Documents, Trash, Applications and Settings: a 240px sidebar at ≥1024, an icon rail at
  * 640–1023 and a bottom tab bar below 640. An application's workspace is full screen on phones, with its own back
@@ -136,16 +128,22 @@ function modalOrPaletteOpen() {
 type AppShellProps = { children: ReactNode };
 
 export function AppShell({ children }: AppShellProps) {
+	const { t } = useLingui();
 	const breakpoint = useBreakpoint();
 	const openNew = useNewAction();
+	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const matchRoute = useMatchRoute();
 	const tabs =
 		breakpoint === "mobile" && !matchRoute({ to: "/dashboard/applications/$applicationId/{-$tab}", fuzzy: true });
 
-	useHotkey("N", () => {
-		if (isEditableElementFocused() || modalOrPaletteOpen()) return;
-		openNew();
-	});
+	useHotkey(
+		"N",
+		() => {
+			if (isEditableElementFocused() || shortcutOverlayOpen()) return;
+			openNew();
+		},
+		{ enabled: characterShortcuts, meta: { name: t`New` } },
+	);
 
 	return (
 		<div
@@ -177,6 +175,7 @@ export function AppShell({ children }: AppShellProps) {
 }
 
 function Sidebar() {
+	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const { items, settings, trash } = useNavItems();
 	const isCurrent = useIsCurrent();
 	const openPalette = useCommandPaletteStore((state) => state.setOpen);
@@ -221,7 +220,7 @@ function Sidebar() {
 				<Button
 					variant="secondary"
 					aria-label={t`New`}
-					aria-keyshortcuts="N"
+					aria-keyshortcuts={characterShortcuts ? "N" : undefined}
 					className="h-9 justify-between"
 					onClick={openNew}
 				>
@@ -229,7 +228,7 @@ function Sidebar() {
 						<Icon name="plus" />
 						<Trans>New</Trans>
 					</span>
-					<Kbd>N</Kbd>
+					{characterShortcuts && <Kbd>N</Kbd>}
 				</Button>
 				<UserDropdownMenu>
 					{({ session }) => (
