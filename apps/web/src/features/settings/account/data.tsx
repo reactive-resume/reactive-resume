@@ -71,7 +71,7 @@ export function DataSection({ openDeletion = false }: DataSectionProps) {
 				type: "error",
 				description:
 					error instanceof AccountExportLimitError
-						? t`This account is too large for one archive. Export individual documents instead.`
+						? t`This account is too large for one archive. Individual exports omit other account records.`
 						: getReadableErrorMessage(error, t`Couldn't export your data. Try again.`),
 			}),
 	});

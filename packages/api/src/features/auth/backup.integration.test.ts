@@ -103,6 +103,16 @@ it.skipIf(!databaseUrl)(
 					.insert(tables.resumeVersion)
 					.values({ userId: ownerId, resumeId: resume.id, data: oldData, kind: "named", name: "Earlier copy" })
 					.returning();
+				const [secondResumeVersion] = await db
+					.insert(tables.resumeVersion)
+					.values({
+						userId: ownerId,
+						resumeId: resume.id,
+						data: { ...oldData, historicalField: "Second saved snapshot" },
+						kind: "named",
+						name: "Second copy",
+					})
+					.returning();
 				const letterData = {
 					name: "Earlier letter",
 					content: "<p>Earlier body</p>",
@@ -225,6 +235,9 @@ it.skipIf(!databaseUrl)(
 				expect(JSON.stringify(exported)).not.toContain("NEIGHBOR-DOCUMENT");
 				expect(JSON.stringify(exported)).not.toContain("NEIGHBOR-HISTORY");
 				expect(JSON.stringify(exported)).not.toContain("NEIGHBOR-LETTER");
+				expect(exported.documentVersions?.resumes.map((version) => version.id)).toEqual(
+					expect.arrayContaining([resumeVersion?.id, secondResumeVersion?.id]),
+				);
 				const archive = buildAccountZip(exported);
 				const full = new Uint8Array(accountBackupLimits.fileBytes);
 				const budgetFiles = ["budget-a.pdf", "budget-b.pdf"].map((name) => `uploads/${ownerId}/pictures/${name}`);
@@ -257,6 +270,9 @@ it.skipIf(!databaseUrl)(
 					[],
 				);
 				const files = unzipSync(archive);
+				expect(
+					strFromU8(files[`versions/resumes/${resume.id}/${secondResumeVersion?.id}.json`] ?? new Uint8Array()),
+				).toContain("Second saved snapshot");
 				for (const key of [photo, oldPhoto, attachment]) expect(files[key]).toEqual(bytes);
 				expect(files).not.toHaveProperty(foreign);
 				expect(files).not.toHaveProperty(erased);

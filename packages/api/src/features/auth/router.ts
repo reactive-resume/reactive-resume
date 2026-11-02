@@ -301,7 +301,7 @@ export const authRouter = {
 				"Returns the authenticated user's profile, documents and version histories, applications, Career records and feedback. Set includeUploads to include bounded base64 bytes for files referenced by exported records, with explicit omissions; external URLs are not fetched. Secrets such as password hashes, tokens and API keys are never included.",
 			successDescription: "The user's exported account data.",
 		})
-		.input(z.object({ includeUploads: z.boolean().optional() }).optional())
+		.input(z.object({ includeUploads: z.union([z.boolean(), z.literal("")]).optional() }).optional())
 		.output(
 			z.object({
 				exportedAt: z.string(),
@@ -389,7 +389,11 @@ export const authRouter = {
 			const bindings = [context.reqHeaders.get("x-account-id"), context.rpcItemAccountId];
 			if (bindings.some((id) => id && id !== context.user.id))
 				throw new ORPCError("CONFLICT", { message: "This export belongs to another account. Reload and try again." });
-			return authService.exportData({ userId: context.user.id, includeUploads: input?.includeUploads, signal });
+			return authService.exportData({
+				userId: context.user.id,
+				includeUploads: input?.includeUploads === true,
+				signal,
+			});
 		}),
 
 	deleteAccount: protectedProcedure

@@ -5,6 +5,7 @@ import { beforeEach, expect, it, vi } from "vite-plus/test";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AccountExportLimitError } from "@reactive-resume/utils/account-zip";
 
 const remove = vi.hoisted(() => vi.fn());
 const exported = vi.hoisted(() => ({ request: vi.fn(), download: vi.fn(), toast: vi.fn(), generation: 1 }));
@@ -115,4 +116,19 @@ it("opens the deletion deep link at confirmation, never deletes on navigation, a
 	fireEvent.click(screen.getByRole("button", { name: "Keep account" }));
 	await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull());
 	expect(remove).not.toHaveBeenCalled();
+});
+
+it("warns that individual exports omit other records when a complete archive fails", async () => {
+	exported.request.mockRejectedValue(new AccountExportLimitError());
+	renderData();
+	fireEvent.click(screen.getByRole("button", { name: "Export" }));
+	await waitFor(() =>
+		expect(exported.toast).toHaveBeenCalledWith(
+			expect.objectContaining({
+				type: "error",
+				description: expect.stringContaining("Individual exports omit other account records."),
+			}),
+		),
+	);
+	expect(exported.download).not.toHaveBeenCalled();
 });

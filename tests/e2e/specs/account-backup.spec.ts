@@ -38,6 +38,11 @@ test("account ZIP carries uploaded photo bytes and history after the source acco
 	await expect
 		.poll(async () => (await (await page.request.get(`/api/openapi/resumes/${id}`)).json()).data.picture.url)
 		.toBe(file.url);
+	const version = await page.request.post(`/api/openapi/resumes/${id}/versions`, {
+		data: { name: "Photo backup version" },
+	});
+	await expect(version).toBeOK();
+	const namedVersion = (await version.json()) as { id: string };
 	const stored = await page.request.get(file.url);
 	await expect(stored).toBeOK();
 	const originalBytes = new Uint8Array(await stored.body());
@@ -50,7 +55,12 @@ test("account ZIP carries uploaded photo bytes and history after the source acco
 	const archive = await readFile(path);
 	const files = unzipSync(archive);
 	expect(files[file.path]).toEqual(originalBytes);
-	expect(Object.keys(files).some((key) => key.startsWith(`versions/resumes/${id}/`))).toBe(true);
+	expect(Object.keys(files).filter((key) => key.startsWith(`versions/resumes/${id}/`)).length).toBeGreaterThanOrEqual(
+		2,
+	);
+	expect(
+		JSON.parse(strFromU8(files[`versions/resumes/${id}/${namedVersion.id}.json`] ?? new Uint8Array())),
+	).toMatchObject({ id: namedVersion.id, name: "Photo backup version", data: { picture: { url: file.url } } });
 	expect(JSON.parse(strFromU8(files["upload-manifest.json"] ?? new Uint8Array())).included).toContainEqual({
 		key: file.path,
 		path: file.path,
@@ -102,4 +112,16 @@ test("an account switch during export dispatch refuses the old page's request", 
 	).toBeVisible();
 	expect(downloads).toEqual([]);
 	await expect(await page.request.delete("/api/openapi/auth/account")).toBeOK();
+});
+
+test("empty optional upload query keeps the references-only export default", async ({ authPage: page }) => {
+	const result = await page.request.get("/api/openapi/auth/account/export?includeUploads");
+	await expect(result).toBeOK();
+	expect(await result.json()).not.toHaveProperty("uploads");
+	for (const value of ["true", "false"]) {
+		const response = await page.request.get(`/api/openapi/auth/account/export?includeUploads=${value}`);
+		await expect(response).toBeOK();
+		expect((await response.json()).uploads !== undefined).toBe(value === "true");
+	}
+	expect((await page.request.get("/api/openapi/auth/account/export?includeUploads=invalid")).status()).toBe(400);
 });

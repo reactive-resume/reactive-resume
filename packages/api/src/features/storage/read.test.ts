@@ -39,3 +39,17 @@ it("aborts a pending storage read and releases its reader", async () => {
 	expect(cancel).toHaveBeenCalledOnce();
 	expect(body.locked).toBe(false);
 });
+
+it("rejects an oversized stream without waiting for an uncooperative source cancellation", async () => {
+	const body = new ReadableStream<Uint8Array>(
+		{
+			start(controller) {
+				controller.enqueue(new Uint8Array([1, 2, 3, 4]));
+			},
+			cancel: () => new Promise<void>(() => {}),
+		},
+		{ highWaterMark: 0 },
+	);
+	await expect(readStorageBody(body, { maxBytes: 3 })).rejects.toBeInstanceOf(StorageReadLimitError);
+	expect(body.locked).toBe(false);
+});

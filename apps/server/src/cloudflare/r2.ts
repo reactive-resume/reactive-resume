@@ -33,6 +33,7 @@ export class R2StorageService implements StorageService {
 
 	async read(key: string, options?: StorageReadOptions) {
 		options?.signal?.throwIfAborted();
+		// R2 get has no AbortSignal: one pending lookup finishes before cancellation stops body reading.
 		const object = await this.bucket.get(this.path(key));
 		if (!object) return null;
 		// Cloudflare's stream declarations differ from DOM/Node; its body uses the same standard reader protocol.

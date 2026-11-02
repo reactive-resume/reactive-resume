@@ -36,6 +36,25 @@ describe("BlobStorageService", () => {
 		await expect(storage.read("uploads/owner/pictures/photo.png", { maxBytes: 3 })).rejects.toThrow("byte limit");
 		expect(cancel).toHaveBeenCalledOnce();
 	});
+	it("bounds actual Blob bytes when advertised size is understated", async () => {
+		const cancel = vi.fn();
+		mocks.get.mockResolvedValue({
+			statusCode: 200,
+			blob: { size: 0 },
+			stream: new ReadableStream<Uint8Array>(
+				{
+					start(controller) {
+						controller.enqueue(new Uint8Array([1, 2, 3, 4]));
+					},
+					cancel,
+				},
+				{ highWaterMark: 0 },
+			),
+		});
+		await expect(storage.read("uploads/owner/pictures/photo.png", { maxBytes: 3 })).rejects.toThrow("byte limit");
+		expect(cancel).toHaveBeenCalledOnce();
+	});
+
 	it.each([
 		"uploads/user/%2e%2e/other/file",
 		"uploads/user/%252e%252e/file",

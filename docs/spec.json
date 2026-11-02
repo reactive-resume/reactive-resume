@@ -37172,7 +37172,14 @@
 						"name": "includeUploads",
 						"in": "query",
 						"schema": {
-							"type": "boolean"
+							"anyOf": [
+								{
+									"type": "boolean"
+								},
+								{
+									"const": ""
+								}
+							]
 						},
 						"allowEmptyValue": true,
 						"allowReserved": true

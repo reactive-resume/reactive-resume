@@ -56,7 +56,7 @@ export function ExportDataRow() {
 			showToast({
 				message:
 					error instanceof AccountExportLimitError
-						? t`This account is too large for one archive. Export individual documents instead.`
+						? t`This account is too large for one archive. Individual exports omit other account records.`
 						: t`Couldn't export. Try again.`,
 			}),
 	});

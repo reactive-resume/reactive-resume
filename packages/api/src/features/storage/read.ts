@@ -38,7 +38,7 @@ export async function readStorageBody(
 		return data;
 	} finally {
 		options.signal?.removeEventListener("abort", cancel);
-		await reader.cancel().catch(() => {});
+		void reader.cancel().catch(() => {});
 		reader.releaseLock();
 	}
 }
