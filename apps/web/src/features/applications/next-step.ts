@@ -21,16 +21,11 @@ export {
 
 /** Whole days in the current lane, including lane-only moves. */
 export const daysInLane = (application: StageSource, now = new Date()) => {
-	const entries = application.activity
+	const entry = application.activity
 		.filter((entry) => isCurrentLaneEvent(entry, application))
-		.map((entry) => new Date(entry.at).getTime());
-	return Math.max(
-		0,
-		Math.floor(
-			(now.getTime() - (entries.length ? Math.max(...entries) : new Date(application.appliedAt).getTime())) /
-				86_400_000,
-		),
-	);
+		.toSorted((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())[0];
+	if (entry?.type === "stage" && entry.dateUnknown) return null;
+	return Math.max(0, Math.floor((now.getTime() - new Date(entry?.at ?? application.appliedAt).getTime()) / 86_400_000));
 };
 
 export type NextStepText = { icon: IconName; title: string; sub: string; tone: "normal" | "warn" | "muted" };
@@ -97,23 +92,25 @@ export function describeNextStep(
 				? {
 						icon: "hourglass",
 						title:
-							step.days === 0
-								? t`Applied today`
-								: plural(step.days, { one: "Applied # day ago", other: "Applied # days ago" }),
+							step.days === null
+								? t`Waiting to hear back`
+								: step.days === 0
+									? t`Applied today`
+									: plural(step.days, { one: "Applied # day ago", other: "Applied # days ago" }),
 						sub: "",
 						tone: "normal",
 					}
 				: {
 						icon: "hourglass",
 						title: t`Waiting to hear back`,
-						sub: plural(step.days, { one: "For # day", other: "For # days" }),
+						sub: step.days === null ? "" : plural(step.days, { one: "For # day", other: "For # days" }),
 						tone: "normal",
 					};
 		case "interview-feedback":
 			return {
 				icon: "hourglass",
 				title: t`Waiting for interview feedback`,
-				sub: plural(step.days, { one: "For # day", other: "For # days" }),
+				sub: step.days === null ? "" : plural(step.days, { one: "For # day", other: "For # days" }),
 				tone: "normal",
 			};
 		case "no-interview":

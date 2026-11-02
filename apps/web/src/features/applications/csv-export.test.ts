@@ -83,6 +83,7 @@ describe("application CSV export", () => {
 				role: "Engineer",
 				status: "interview",
 				stageEnteredAt: "2026-08-12",
+				applicationDate: "2026-08-03",
 				location: "Berlin",
 				salary: "€70,000",
 				source: "Referral",

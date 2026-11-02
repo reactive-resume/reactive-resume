@@ -7,6 +7,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useId, useState } from "react";
+import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -279,7 +280,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 								<span className="shrink-0 text-ink-3">
 									{stage.accepted ? null : closed && application.closedReason ? (
 										<>· {getClosedReasonLabel(application.closedReason)}</>
-									) : (
+									) : since === null ? null : (
 										<>
 											· <Plural value={since} _0="since today" one="for # day" other="for # days" />
 										</>
@@ -366,11 +367,13 @@ function Facts({ application, locale }: { application: Application; locale: stri
 		onSuccess: () => invalidate(application.id),
 		onError: () => toast.add({ type: "error", description: t`Couldn't save the change. Try again.` }),
 	});
-	const applied = new Date(application.appliedAt).toLocaleDateString(locale, {
-		month: "short",
-		day: "numeric",
-		year: "numeric",
-	});
+	const applied = applicationSentAt(application)
+		? new Date(application.appliedAt).toLocaleDateString(locale, {
+				month: "short",
+				day: "numeric",
+				year: "numeric",
+			})
+		: t`Not recorded`;
 
 	return (
 		<dl className="grid grid-cols-2 gap-x-4 gap-y-3">

@@ -156,8 +156,9 @@ function assertCurrentStageAnchorLatest(
 		throw new ORPCError("BAD_REQUEST", {
 			message: "This application's timeline is missing its current stage. Reload the application and try again.",
 		});
+	if (anchor.type === "stage" && anchor.dateUnknown) return;
 	const anchorDay = timelineDay(anchor.at);
-	if (activity.some((entry) => entry.type === "stage" && timelineDay(entry.at) > anchorDay)) {
+	if (activity.some((entry) => entry.type === "stage" && !entry.dateUnknown && timelineDay(entry.at) > anchorDay)) {
 		throw new ORPCError("BAD_REQUEST", { message: "Choose a current stage date on or after the other stage dates." });
 	}
 }
@@ -717,6 +718,7 @@ export const applicationService = {
 			laneId?: string | undefined;
 			closedReason?: ApplicationClosedReason | null | undefined;
 			stageEnteredAt?: string | undefined;
+			applicationDate?: string | undefined;
 		})[];
 	}) => {
 		if (!input.items.length) return { imported: 0 };
@@ -731,26 +733,56 @@ export const applicationService = {
 			const pipeline = await ensureApplicationPipeline(tx, input.userId);
 			const values = [];
 			const urls = new Set<string>();
-			for (const { status, laneId, closedReason, stageEnteredAt, ...fields } of input.items) {
+			for (const { status, laneId, closedReason, stageEnteredAt, applicationDate, ...fields } of input.items) {
 				await assertUntrackedPosting(tx, input.userId, fields.sourceUrl);
 				const url = fields.sourceUrl && canonicalOpportunityUrl(fields.sourceUrl);
 				if (url && urls.has(url))
 					throw new ORPCError("CONFLICT", { message: "Import contains the same posting twice." });
 				if (url) urls.add(url);
+				if (applicationDate && stageEnteredAt && stageEnteredAt < applicationDate)
+					throw new ORPCError("BAD_REQUEST", { message: "Stage date must be on or after the application date." });
+				const appliedDate = applicationDate ? atFromDateString(applicationDate) : undefined;
+				const enteredAt = stageEnteredAt
+					? atFromDateString(stageEnteredAt)
+					: status === "applied" && appliedDate
+						? appliedDate
+						: new Date();
 				const transition = await applicationTransitionValues(
 					tx,
 					input.userId,
 					{ status, laneId, closedReason },
 					undefined,
-					stageEnteredAt ? atFromDateString(stageEnteredAt) : new Date(),
+					enteredAt,
 					pipeline,
 				);
+				let activity = (transition.values.activity ?? []).map((entry) => ({
+					...entry,
+					...(!stageEnteredAt && transition.values.status === "applied" && appliedDate ? { at: appliedDate } : {}),
+					...(!stageEnteredAt && !(transition.values.status === "applied" && appliedDate) ? { dateUnknown: true } : {}),
+				}));
+				if (
+					appliedDate &&
+					(transition.values.status !== "applied" ||
+						(!!stageEnteredAt && enteredAt.getTime() !== appliedDate.getTime()))
+				) {
+					const sent = await applicationTransitionValues(
+						tx,
+						input.userId,
+						{ status: "applied" },
+						undefined,
+						appliedDate,
+						pipeline,
+					);
+					activity = [...(sent.values.activity ?? []), ...activity.map((entry) => ({ ...entry, writeSequence: 2 }))];
+				}
 				values.push({
 					id: generateId(),
 					userId: input.userId,
 					...fields,
 					followUpDateOnly: fields.followUpDateOnly ?? isDateOnlyFollowUp({ followUpAt: fields.followUpAt ?? null }),
 					...transition.values,
+					activity,
+					...(appliedDate ? { appliedAt: appliedDate } : {}),
 				});
 			}
 			const rows = await tx.insert(schema.application).values(values).returning();
@@ -1078,7 +1110,9 @@ export const applicationService = {
 
 				return {
 					...entry,
-					...(input.date !== undefined ? { at: atFromDateString(input.date, entry.at) } : {}),
+					...(input.date !== undefined
+						? { at: atFromDateString(input.date, entry.at), ...(entry.type === "stage" ? { dateUnknown: false } : {}) }
+						: {}),
 					...(entry.type === "note" && input.text !== undefined ? { text: input.text } : {}),
 				};
 			});

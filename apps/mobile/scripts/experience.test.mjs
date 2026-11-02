@@ -361,7 +361,9 @@ const nextSteps = load("features/applications/next-step.ts", {
 	"./history": history,
 });
 const time = { locale: "en-US", timeZone: "UTC", when: String, time: String, day: String, utcDay: String };
+const outcomesDomain = load("../../../packages/schema/src/applications/outcomes.ts");
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
+	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
 	"@tanstack/react-query": { useQueryClient: () => ({ invalidateQueries: async () => {} }) },
 	"expo-document-picker": {},
 	"expo-file-system": {},
