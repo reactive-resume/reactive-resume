@@ -60,3 +60,19 @@ export function formatDateOnly(value: string, locale: string): string {
 		day: "numeric",
 	}).format(date);
 }
+
+/** When something was read, for a note under it: "Oct 30, 1:21 PM" in the reader's language, or null when unreadable. */
+export function formatReadTime(value: string | Date, locale: string): string | null {
+	const date = value instanceof Date ? value : new Date(value);
+	if (Number.isNaN(date.getTime())) return null;
+	try {
+		return new Intl.DateTimeFormat(locale, {
+			month: "short",
+			day: "numeric",
+			hour: "numeric",
+			minute: "2-digit",
+		}).format(date);
+	} catch {
+		return date.toISOString();
+	}
+}

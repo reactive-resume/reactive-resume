@@ -16,9 +16,11 @@ import { useLetterWords } from "./compose";
 import { designSummary } from "./design-presets";
 import {
 	discardLetterDraft,
+	dismissLetterDraftFailure,
 	letterDraftOwner,
 	restoreLetterDraft,
 	startLetterDraft,
+	stopLetterDraftKeepingText,
 	useLetterDraftFor,
 	useLetterDraftLastFor,
 	useLetterDrafting,
@@ -41,6 +43,7 @@ import { routes } from "@/routes";
 import {
 	Banner,
 	Button,
+	IconButton,
 	ListRow,
 	SelectSheet,
 	Sheet,
@@ -692,13 +695,20 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 			}}
 		>
 			<Text color="ink2">
-				{company && hasResume
-					? t`Start typing, or draft from what we know: the ${company} posting and your resume.`
-					: company
-						? t`Start typing, or draft from what we know: the ${company} posting.`
-						: hasResume
-							? t`Start typing, or draft from what we know: your resume.`
-							: t`Start typing. To draft one, link a resume or an application first.`}
+				{/* Without a provider, drafting isn't on offer yet: say what would make it so (web write-panel). */}
+				{canDraft && !ai.isUnavailable && !ai.hasAIProvider
+					? company && hasResume
+						? t`Start typing, or connect an AI provider to draft from the ${company} posting and your resume.`
+						: company
+							? t`Start typing, or connect an AI provider to draft from the ${company} posting.`
+							: t`Start typing, or connect an AI provider to draft from your resume.`
+					: company && hasResume
+						? t`Start typing, or draft from what we know: the ${company} posting and your resume.`
+						: company
+							? t`Start typing, or draft from what we know: the ${company} posting.`
+							: hasResume
+								? t`Start typing, or draft from what we know: your resume.`
+								: t`Start typing. To draft one, link a resume or an application first.`}
 			</Text>
 			<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 				{canDraft && ai.hasAIProvider ? (
@@ -751,6 +761,7 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 	const reducedMotion = useReducedMotion();
 	const draft = useLetterDraftFor(letter.id);
 	const last = useLetterDraftLastFor(letter.id);
+	const [pick, setPick] = useState<{ operation: string; index: number } | null>(null);
 
 	if (draft.phase === "idle") return null;
 	if (draft.phase === "unsaved") {
@@ -791,13 +802,17 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 						label={t`Try again`}
 						onPress={() => void startLetterDraft(last.variant, last.previous)}
 					/>
-					<Button size="sm" variant="ghost" label={t`Dismiss`} onPress={discardLetterDraft} />
+					<Button size="sm" variant="ghost" label={t`Dismiss`} onPress={dismissLetterDraftFailure} />
 				</View>
 			</View>
 		);
 	}
 
 	const streaming = draft.phase === "streaming";
+	// Earlier versions stay side by side with the newest: "2 of 3", and Accept or a revision uses the one shown.
+	const all = streaming ? [draft.text] : [...draft.versions, draft.text];
+	const index = pick?.operation === draft.operation ? Math.min(pick.index, all.length - 1) : all.length - 1;
+	const shown = all[index] ?? draft.text;
 	const sources =
 		letter.sourceResumeId && application
 			? t`Draft · uses only your resume and the posting`
@@ -823,29 +838,53 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 			>
 				<Text>
 					{/* Reduced motion shows the whole draft at once. */}
-					{streaming && reducedMotion ? "" : draft.text}
+					{streaming && reducedMotion ? "" : shown}
 					{streaming ? <Text color="ink3">{reducedMotion ? t`Drafting…` : "▍"}</Text> : null}
 				</Text>
 			</View>
+			{!streaming && draft.stopped && index === all.length - 1 ? (
+				<Text variant="caption" color="ink3">
+					{t`Stopped before the end. Accept it and finish it yourself, or reject it.`}
+				</Text>
+			) : null}
+			{!streaming && all.length > 1 ? (
+				<View style={{ flexDirection: "row", alignItems: "center", gap: space.s1 }}>
+					<IconButton
+						icon="caret-left"
+						label={t`Previous version`}
+						disabled={index === 0}
+						onPress={() => setPick({ operation: draft.operation, index: index - 1 })}
+					/>
+					<Text variant="mono" color="ink2">
+						{t`${index + 1} of ${all.length}`}
+					</Text>
+					<IconButton
+						icon="caret-right"
+						label={t`Next version`}
+						disabled={index === all.length - 1}
+						onPress={() => setPick({ operation: draft.operation, index: index + 1 })}
+					/>
+				</View>
+			) : null}
 			{streaming ? (
-				<Button size="sm" variant="secondary" icon="stop" label={t`Stop`} onPress={discardLetterDraft} />
+				<Button size="sm" variant="secondary" icon="stop" label={t`Stop`} onPress={stopLetterDraftKeepingText} />
 			) : (
 				<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
-					<ReportAiContent source="letter" text={draft.text} />
-					<Button size="sm" label={t`Keep`} onPress={() => onKeep(draft.text)} />
+					<ReportAiContent source="letter" text={shown} />
+					<Button size="sm" label={t`Accept`} onPress={() => onKeep(shown)} />
 					<Button
 						size="sm"
 						variant="secondary"
 						label={t`Shorter`}
-						onPress={() => void startLetterDraft("shorter", draft.text)}
+						onPress={() => void startLetterDraft("shorter", shown)}
 					/>
 					<Button
 						size="sm"
 						variant="secondary"
 						label={t`More personal`}
-						onPress={() => void startLetterDraft("personal", draft.text)}
+						onPress={() => void startLetterDraft("personal", shown)}
 					/>
-					<Button size="sm" variant="dangerOutline" label={t`Discard`} onPress={discardLetterDraft} />
+					<Button size="sm" variant="dangerOutline" label={t`Reject`} onPress={discardLetterDraft} />
 				</View>
 			)}
 		</View>

@@ -5,6 +5,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { View, useWindowDimensions } from "react-native";
+import { coachStarters } from "./coach-starters";
 import { tabLabel } from "./parts";
 import { client, orpc } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
@@ -23,7 +24,7 @@ import {
 } from "@/features/assistant/provider";
 import { useDeleteThread, useThreadTime, useThreadTitle } from "@/features/assistant/threads";
 import { StoryEditor } from "@/features/career/stories";
-import { Banner, IconButton, ListRow, Sheet, Text, showToast, useTheme } from "@/ui";
+import { Banner, Button, IconButton, ListRow, Sheet, Text, showToast, useTheme } from "@/ui";
 
 type CoachSheetProps = { application: Application; tab: WorkspaceTab; open: boolean; onClose: () => void };
 
@@ -247,8 +248,16 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 						placeholder={t`Ask about this application…`}
 						assistantName={t`Coach`}
 						onSwitchModel={() => setModelOpen(true)}
-						empty={() => (
-							<Text color="ink2">{t`Ask anything about this job. The coach reads the posting, your notes and what you sent, and knows you're on ${tabName}.`}</Text>
+						empty={(send) => (
+							<View style={{ gap: space.s3 }}>
+								<Text color="ink2">{t`Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the ${tabName} tab.`}</Text>
+								{/* A first question for where the application stands; each sends at once (web coach-sheet). */}
+								<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
+									{coachStarters(application.status).map((starter) => (
+										<Button key={starter} size="sm" variant="secondary" label={starter} onPress={() => send(starter)} />
+									))}
+								</View>
+							</View>
 						)}
 					/>
 				)}

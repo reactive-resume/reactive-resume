@@ -159,7 +159,7 @@ function seedReady(f, text = "OLD A PRIVATE DRAFT") {
 	f.setDocument(current);
 	f.draft.useLetterDrafting.setState({
 		owner: f.draft.letterDraftOwner(current.id),
-		draft: { phase: "ready", text, revision: 1, operation: "op-seed" },
+		draft: { phase: "ready", text, revision: 1, operation: "op-seed", versions: [] },
 	});
 	return current;
 }

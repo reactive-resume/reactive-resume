@@ -480,6 +480,12 @@ msgstr "{0} នាទី"
 msgid "{0} more"
 msgstr "ច្រើនជាង {0}"
 
+#. placeholder {0}: index + 1
+#. placeholder {1}: all.length
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "{0} of {1}"
+msgstr ""
+
 #. placeholder {0}: report.passedChecks
 #. placeholder {1}: report.applicableChecks
 #: src/features/ats-checker/report/score-header.tsx
@@ -592,7 +598,7 @@ msgstr "{0} មិនមែនជាទីកន្លែងមួយរបស�
 msgid "{0}. Issue resolved."
 msgstr "{0} ។ បញ្ហាត្រូវបានដោះស្រាយ។"
 
-#. placeholder {0}: terms.join(" · ")
+#. placeholder {0}: terms.join(" · ").replace(/[\s.。]+$/u, "")
 #: src/features/career/workspace/messages.tsx
 msgid "{0}. Opens in Career → Offers."
 msgstr ""
@@ -629,6 +635,10 @@ msgstr "{base} (ចម្លង)"
 #: src/features/career/workspace/apply.tsx
 msgid "{characters, plural, one {# character} other {# characters}}"
 msgstr "{characters, plural, other {# តួអក្សរ}}"
+
+#: src/features/career/workspace/apply.tsx
+msgid "{characters} of {shownLimit} characters"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{column, plural, one {# column} other {# columns}}"
@@ -706,6 +716,10 @@ msgstr "{days, plural, other {# ថ្ងៃនៅការិយាល័យ �
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day, your limit} other {# office days, your limit}}"
 msgstr "{days, plural, other {# ថ្ងៃនៅការិយាល័យ ស្មើដែនកំណត់របស់អ្នក}}"
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice."
+msgstr ""
 
 #: src/features/documents/document-actions.tsx
 msgid "{deleted, plural, one {# document deleted forever} other {# documents deleted forever}}"
@@ -864,10 +878,6 @@ msgstr "{monthCount, plural, =0 {គ្មានការសម្ភាសន�
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} បានបន្ថែមទៅទំព័រ 1"
-
-#: src/features/career/hooks.ts
-msgid "{name} didn't respond. Nothing was changed; try again."
-msgstr "{name} មិនបានឆ្លើយតបទេ។ គ្មានអ្វីត្រូវបានផ្លាស់ប្តូរទេ; សូមព្យាយាមម្តងទៀត។"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "{name} is split into {columns} columns"
@@ -1056,10 +1066,18 @@ msgstr "{value} ក្នុងមួយឆ្នាំ"
 msgid "{value} an hour"
 msgstr "{value} ក្នុងមួយម៉ោង"
 
+#: src/features/career/hooks.ts
+msgid "{who} didn't respond. Nothing was changed; try again."
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{words, plural, one {# word} other {# words}}"
 msgstr "{words, plural, one {ពាក្យ #} other {# ពាក្យ}}"
+
+#: src/features/career/workspace/apply.tsx
+msgid "{words} of {shownLimit} words"
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "/ hour"
@@ -1282,6 +1300,10 @@ msgstr ""
 msgid "A name helps you tell passkeys apart, like “Work laptop”."
 msgstr "ឈ្មោះមួយជួយអ្នកបែងចែកកូនសោកំណត់អត្តសញ្ញាណពីគ្នា ដូចជា “កុំព្យូទ័រយួរដៃការងារ”។"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "A new version of the whole letter, as edits to accept"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "A numeric date reads differently in different countries."
 msgstr "កាលបរិច្ឆេទជាលេខអានខុសគ្នាទៅតាមប្រទេសនីមួយៗ។"
@@ -1374,6 +1396,7 @@ msgstr "ការសង្កត់សំឡេងត្រូវបានប្
 #: src/features/career/workspace/apply.tsx
 #: src/features/homepage/write.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Accept"
 msgstr "ទទួលយក"
 
@@ -2054,6 +2077,10 @@ msgstr "អ្នកផ្តល់សេវា AI មិនអាចផ្ទ�
 msgid "AI reading sends this file's content to {0} · {1}. Your provider may charge."
 msgstr ""
 
+#: src/features/career/shared.tsx
+msgid "AI settings"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "AI suggestions, not verified qualifications or hiring predictions. Sources below are your statements."
 msgstr ""
@@ -2554,8 +2581,8 @@ msgid "Ask about your search, or bring an accomplishment you want to explain bet
 msgstr "សួរអំពីការស្វែងរកការងាររបស់អ្នក ឬយកសមិទ្ធផលដែលអ្នកចង់ពន្យល់ឱ្យកាន់តែច្បាស់មក។ ចម្លើយប្រើអ្វីដែលបានបើកខាងក្រោម ហើយប្រាប់ថាវាពឹងផ្អែកលើអ្វីខ្លះ។"
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and knows you're on {tabName}."
-msgstr "សួរអ្វីក៏បានអំពីការងារនេះ។ គ្រូបង្វឹកអានការប្រកាសការងារ កំណត់ចំណាំរបស់អ្នក និងអ្វីដែលអ្នកបានផ្ញើ ហើយដឹងថាអ្នកកំពុងនៅលើ {tabName}។"
+msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "Ask before deciding."
@@ -4218,6 +4245,10 @@ msgstr "មិនអាចបន្តជាភ្ញៀវបានទេ។ �
 msgid "Couldn't copy the questions. Select the text and copy it manually."
 msgstr "មិនអាចចម្លងសំណួរបានទេ។ សូមជ្រើសរើសអត្ថបទ ហើយចម្លងដោយដៃ។"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Couldn't copy the resume. Choose it again to prepare it."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Couldn't copy the resume. Try again."
@@ -4475,6 +4506,10 @@ msgstr "មិនអាចទាក់ទងអ្នកផ្តល់សេវ
 msgid "Couldn't reach your AI provider. Its key may have expired."
 msgstr "មិនអាចទាក់ទងអ្នកផ្តល់សេវា AI របស់អ្នកបានទេ។ សោរបស់វាប្រហែលជាផុតកំណត់ហើយ។"
 
+#: src/features/career/hooks.ts
+msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Couldn't read that file. Choose a .csv file and try again."
 msgstr "មិនអាចអានឯកសារនោះបានទេ។ ជ្រើសរើសឯកសារ .csv ហើយព្យាយាមម្តងទៀត។"
@@ -4482,6 +4517,10 @@ msgstr "មិនអាចអានឯកសារនោះបានទេ។ �
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
 msgstr "មិនអាចអានឯកសារនោះបានទេ។ ព្យាយាមម្តងទៀត។"
+
+#: src/features/career/hooks.ts
+msgid "Couldn't read the AI's answer. Try again, or switch the default provider in AI settings."
+msgstr ""
 
 #. placeholder {0}: part.errorText
 #: src/features/assistant/conversation.tsx
@@ -5182,10 +5221,13 @@ msgid "Deep breath."
 msgstr "ដកដង្ហើមវែងៗ។"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
-#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "លំនាំដើម"
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Default · fast, low cost"
+msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Degree"
@@ -5457,7 +5499,6 @@ msgid "Different pay period, not compared"
 msgstr "រយៈពេលបើកប្រាក់ខុសគ្នា មិនបានប្រៀបធៀប"
 
 #: src/features/career/schedule-sheet.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Discard"
 msgstr "បោះបង់"
 
@@ -5499,6 +5540,7 @@ msgstr ""
 msgid "Disconnecting your {providerName} account…"
 msgstr "កំពុងផ្ដាច់គណនី {providerName} របស់អ្នក…"
 
+#: src/features/career/shared.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/applications/index.tsx
@@ -5585,10 +5627,6 @@ msgstr "រួចរាល់"
 #: src/features/career/today.tsx
 msgid "Done · {0}"
 msgstr "រួចរាល់ · {0}"
-
-#: src/features/career/shared.tsx
-msgid "Double-checking"
-msgstr "កំពុងពិនិត្យម្តងទៀត"
 
 #: src/features/career/workspace/apply.tsx
 #: src/features/career/workspace/practise.tsx
@@ -6447,10 +6485,6 @@ msgstr ""
 msgid "Family name"
 msgstr ""
 
-#: src/features/settings/ai/provider-model.tsx
-msgid "Fast, lower-cost default for everyday work."
-msgstr "ម៉ូដែលលំនាំដើមដែលលឿន និងចំណាយតិចសម្រាប់ការងារប្រចាំថ្ងៃ។"
-
 #: src/features/homepage/footer.tsx
 msgid "Features"
 msgstr "មុខងារ"
@@ -7109,6 +7143,10 @@ msgstr "Hebrew"
 msgid "Help & docs"
 msgstr "ជំនួយ និងឯកសារ"
 
+#: src/features/career/workspace/coach-starters.ts
+msgid "Help me prepare for a first call"
+msgstr ""
+
 #. placeholder {0}: starter.company
 #: src/features/career/coach.tsx
 msgid "Help me prepare for my {0} interview."
@@ -7511,6 +7549,10 @@ msgid "Improve selected line"
 msgstr "កែលម្អបន្ទាត់ដែលបានជ្រើសរើស"
 
 #: src/features/resume/editor/write/improve.tsx
+msgid "Improve this paragraph"
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
 msgid "Improving…"
 msgstr "កំពុងកែលម្អ…"
 
@@ -7676,6 +7718,10 @@ msgstr "តើមានប្រាក់រង្វាន់ទេ ហើយ�
 #: src/features/career/offers.tsx
 msgid "Is there a learning budget?"
 msgstr "តើមានថវិកាសម្រាប់ការសិក្សាទេ?"
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "Is this job worth applying for?"
+msgstr ""
 
 #. placeholder {0}: issue.number
 #: src/features/resume/editor/check/parser-view.tsx
@@ -7880,7 +7926,6 @@ msgid "Kannada"
 msgstr "Kannada"
 
 #: src/features/resume/editor/check/check-panel.tsx
-#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Keep"
 msgstr "រក្សា"
 
@@ -9201,6 +9246,10 @@ msgstr "បានផ្លាស់ទី {0} ក្នុងចំណោម {1}
 msgid "Moved to {label}"
 msgstr "បានផ្លាស់ទីទៅ {label}"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Moved to {stage}"
+msgstr ""
+
 #. placeholder {0}: getLaneLabel(getDisplayLane(lanes, application))
 #: src/features/career/workspace/messages.tsx
 msgid "Moves the application from {0}."
@@ -9458,6 +9507,10 @@ msgstr ""
 #: src/features/homepage/remember.tsx
 msgid "Next time, I’d agree how to measure success before the first prototype."
 msgstr "លើកក្រោយ ខ្ញុំនឹងព្រមព្រៀងពីរបៀបវាស់ភាពជោគជ័យ មុនគំរូដំបូង។"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Next version"
+msgstr ""
 
 #: src/features/settings/profile.tsx
 msgid "No"
@@ -10241,6 +10294,13 @@ msgstr "រហូតមកដល់ពេលនេះមានតែកំណែ
 msgid "Only providers that pass their test can be turned on."
 msgstr "មានតែអ្នកផ្តល់សេវាដែលឆ្លងកាត់ការធ្វើតេស្តរបស់ពួកគេប៉ុណ្ណោះដែលអាចបើកបាន។"
 
+#. placeholder {0}: i18n.number(MAX_INPUT)
+#. placeholder {0}: i18n.number(MAX_MESSAGE)
+#: src/features/applications/components/add-application-dialog.tsx
+#: src/features/career/workspace/messages.tsx
+msgid "Only the first {0} characters are kept."
+msgstr ""
+
 #. placeholder {0}: report.document.pageCount
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Only the first {0} pages were checked, so this report does not cover the whole file."
@@ -10326,6 +10386,10 @@ msgstr "បើកក្នុង “ការផ្តល់ការងារ�
 
 #: src/features/career/coach-chat.tsx
 msgid "Open in the resume's assistant"
+msgstr ""
+
+#: src/features/career/workspace/debrief.tsx
+msgid "Open Interview prep"
 msgstr ""
 
 #: src/features/career/coach-chat.tsx
@@ -10935,6 +10999,10 @@ msgstr "អត្ថបទធម្មតាដែលមានចំណងជើ
 msgid "Plan again"
 msgstr "រៀបចំផែនការម្តងទៀត"
 
+#: src/features/career/workspace/coach-starters.ts
+msgid "Plan my counter-offer"
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Plan my preparation"
 msgstr "រៀបចំផែនការត្រៀមរបស់ខ្ញុំ"
@@ -10962,10 +11030,6 @@ msgstr "ពណ៌ផ្លែព្រូន"
 #: src/libs/locale.ts
 msgid "Polish"
 msgstr "Polish"
-
-#: src/features/career/shared.tsx
-msgid "Polishing"
-msgstr "កំពុងកែលម្អ"
 
 #. Preset button for setting picture aspect ratio to portrait orientation
 #: src/features/resume/editor/write/picture-settings.tsx
@@ -11205,6 +11269,10 @@ msgstr "សារពីមុន រួមទាំងព័ត៌មានល�
 #: src/features/applications/components/calendar-view.tsx
 msgid "Previous month"
 msgstr "ខែមុន។"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Previous version"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Primary color"
@@ -11466,6 +11534,10 @@ msgstr "បានចម្លងសំណួរ"
 msgid "Questions to ask"
 msgstr "សំណួរដែលត្រូវសួរ"
 
+#: src/features/career/workspace/coach-starters.ts
+msgid "Quiz me on likely questions for this round"
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "R"
 msgstr "R"
@@ -11535,10 +11607,18 @@ msgstr ""
 msgid "Read from a message, edited by you"
 msgstr ""
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Read from the posting page on {readAt}."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 #: src/features/homepage/prepare.tsx
 msgid "Read it for me"
 msgstr "អានឱ្យខ្ញុំ"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Read on {readAt}. The employer may have changed it since."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Read on this device (free)"
@@ -11817,6 +11897,10 @@ msgstr ""
 msgid "Redo resume change"
 msgstr "ធ្វើការផ្លាស់ប្តូរប្រវត្តិរូបសង្ខេបឡើងវិញ"
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Redraft from the posting"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/features/settings/profile.tsx
 msgid "Reference {0}"
@@ -11874,7 +11958,9 @@ msgstr "សាកល្បងនិយាយចម្លើយមួយឮៗ"
 msgid "Rehearse one disagreement with engineering and how it ended."
 msgstr "សាកល្បងនិយាយឮៗអំពីការមិនយល់ស្របមួយជាមួយក្រុមវិស្វកម្ម និងរបៀបដែលវាបានបញ្ចប់។"
 
+#: src/features/career/workspace/apply.tsx
 #: src/features/resume/editor/proposals/proposal-list.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Reject"
 msgstr "បដិសេធ"
 
@@ -12440,17 +12526,6 @@ msgstr "ប្រវត្តិរូបសង្ខេបតែងតែបង
 #: src/features/homepage/sections.tsx
 msgid "Resumes created"
 msgstr "ប្រវត្តិរូបសង្ខេបត្រូវបានបង្កើតឡើង"
-
-#. placeholder {0}: application.postingSource.retrievedAt
-#. placeholder {1}: application.postingSource.method
-#: src/features/applications/components/application-detail-sheet.tsx
-msgid "Retrieved {0} using {1}. Retrieval time does not establish origin freshness."
-msgstr "បានទាញយក {0} ដោយប្រើ {1} ។ ពេលវេលាទាញយកមិនបង្កើតភាពស្រស់នៃប្រភពដើមទេ។"
-
-#. placeholder {0}: parsed.postingSource.retrievedAt
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Retrieved {0}. Origin freshness is unknown unless reported."
-msgstr "បានយក {0} ។ ដើម​កំណើត​ស្រស់​មិន​ត្រូវ​បាន​គេ​ដឹង​ទេ លុះត្រា​តែ​មាន​ការ​រាយការណ៍។"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -13377,6 +13452,18 @@ msgstr ""
 msgid "Sends this line, surrounding field text and your instructions to {0} · {1}."
 msgstr ""
 
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter and your instructions to {0} · {1}."
+msgstr ""
+
+#. placeholder {0}: provider.label
+#. placeholder {1}: provider.model
+#: src/features/resume/editor/write/improve.tsx
+msgid "Sends this paragraph, the rest of the letter, the linked job posting and your instructions to {0} · {1}."
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 msgid "Sends this resume and the posting to {provider} with your key, only when you press send."
 msgstr "ផ្ញើប្រវត្តិរូបសង្ខេបនេះ និងការប្រកាសការងារទៅ {provider} ដោយប្រើសោរបស់អ្នក លុះត្រាតែអ្នកចុចផ្ញើ។"
@@ -13394,7 +13481,7 @@ msgid "Sends your message and the posting to {provider} with your key, only when
 msgstr "ផ្ញើសាររបស់អ្នក និងការប្រកាសការងារទៅ {provider} ដោយប្រើសោរបស់អ្នក លុះត្រាតែអ្នកចុចផ្ញើ។"
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
+msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -13402,15 +13489,15 @@ msgid "Sends your message to {provider} with your key, only when you press send.
 msgstr "ផ្ញើសាររបស់អ្នកទៅ {provider} ដោយប្រើសោរបស់អ្នក លុះត្រាតែអ្នកចុចផ្ញើ។"
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
+msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
 msgstr ""
 
 #. placeholder {0}: provider?.label
@@ -13587,6 +13674,7 @@ msgstr "តំណខ្លី និងដែន"
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
 msgstr "បង្រួមសំណួរឱ្យនៅ 2,000 តួអក្សរ និងចម្លើយឱ្យនៅ 6,000 តួអក្សរ មុនពេលសម្គាល់ថាបានដាក់ពាក្យ។"
 
+#: src/features/resume/editor/write/improve.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Shorter"
 msgstr "ខ្លីជាង"
@@ -13717,6 +13805,10 @@ msgstr "បង្ហាញគំរូ"
 #: src/features/resume/editor/check/check-panel.tsx
 msgid "Show them again"
 msgstr "បង្ហាញពួកគេម្តងទៀត"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Show what it asks for"
+msgstr ""
 
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Shown in your timezone."
@@ -13894,7 +13986,6 @@ msgid "Skills"
 msgstr "ជំនាញ"
 
 #: src/features/assistant/tool-approvals.tsx
-#: src/features/career/workspace/apply.tsx
 msgid "Skip"
 msgstr "រំលង"
 
@@ -14197,6 +14288,18 @@ msgid "Start the resume with your name on its own line."
 msgstr "ចាប់ផ្តើមប្រវត្តិរូបសង្ខេបជាមួយឈ្មោះរបស់អ្នកនៅលើបន្ទាត់ដាច់ដោយឡែក។"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or connect an AI provider to draft from the {company} posting and your resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or connect an AI provider to draft from the {company} posting."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Start typing, or connect an AI provider to draft from your resume."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Start typing, or draft from what we know: the {company} posting and your resume."
 msgstr "ចាប់ផ្តើមវាយអត្ថបទ ឬព្រាងពីអ្វីដែលយើងដឹង៖ ការប្រកាសការងារ {company} និងប្រវត្តិរូបសង្ខេបរបស់អ្នក។"
 
@@ -14273,8 +14376,13 @@ msgstr ""
 msgid "Still saving your latest changes. They're kept on this device if you leave now."
 msgstr ""
 
+#: src/features/career/shared.tsx
+msgid "Still working"
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
+#: src/features/career/shared.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Stop"
@@ -14303,6 +14411,10 @@ msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Stopped before the answer finished."
+msgstr ""
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Stopped before the end. Accept it and finish it yourself, or reject it."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -15639,6 +15751,10 @@ msgstr "មិនអាចផ្ទុកផ្ទៃការងារនេះ
 msgid "Threads"
 msgstr "ខ្សែស្រឡាយ"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Tie to the posting"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "Tighten"
 msgstr "បង្រួម"
@@ -15849,6 +15965,7 @@ msgstr "សាកល្បងគំរូមួយ។"
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
+#: src/features/career/shared.tsx
 #: src/features/career/workspace/practise.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/career/workspace/shell.tsx
@@ -16122,6 +16239,10 @@ msgstr "សោគ្មានឈ្មោះ"
 #: src/features/settings/account/security.tsx
 msgid "Unnamed passkey"
 msgstr "Passkey គ្មានឈ្មោះ"
+
+#: src/features/career/workspace/debrief.tsx
+msgid "Until then, Interview prep has your plan, your opening and the questions to ask."
+msgstr ""
 
 #: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/stylesheet/targets.ts
@@ -16656,6 +16777,10 @@ msgstr "កំពុងរង់ចាំអ្នក"
 msgid "Waiting to hear back"
 msgstr "រង់ចាំស្តាប់ឡើងវិញ"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Warmer"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Warning"
 msgstr "ការព្រមាន"
@@ -16765,6 +16890,10 @@ msgstr "អ្វីដែលមនុស្សម្នាក់មើលឃើ
 msgid "What are you working on?"
 msgstr "តើអ្នកកំពុងធ្វើការលើអ្វី?"
 
+#: src/features/career/workspace/coach-starters.ts
+msgid "What can I learn from this application?"
+msgstr ""
+
 #: src/features/resume/editor/write/improve.tsx
 msgid "What changed because of this? A number, a time saved, who used it."
 msgstr ""
@@ -16833,6 +16962,18 @@ msgstr "អ្វីដែលសំខាន់សម្រាប់អ្នក
 #: src/features/resume/editor/write/improve.tsx
 msgid "What should change?"
 msgstr "តើគួរផ្លាស់ប្តូរអ្វី?"
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "What should I ask them?"
+msgstr ""
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "What should I check before accepting?"
+msgstr ""
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "What should my resume lead with for this job?"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "What should run"
@@ -16903,6 +17044,10 @@ msgstr "អ្វីដែលកំពុងដំណើរការ"
 #: src/features/career/offers.tsx
 msgid "When do they need your answer?"
 msgstr "តើពួកគេត្រូវការចម្លើយរបស់អ្នកនៅពេលណា?"
+
+#: src/features/career/workspace/coach-starters.ts
+msgid "When should I follow up, and what should I say?"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "When would you start?"
@@ -17126,6 +17271,11 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Write the full address so it is recognized as a link."
 msgstr "សរសេរអាសយដ្ឋានពេញលេញ ដើម្បីឱ្យវាត្រូវបានទទួលស្គាល់ជាតំណ។"
+
+#. placeholder {0}: time.day(upcoming.at)
+#: src/features/career/workspace/debrief.tsx
+msgid "Write this after your interview on {0}"
+msgstr ""
 
 #: src/features/career/workspace/fit.tsx
 msgid "Write what you did."

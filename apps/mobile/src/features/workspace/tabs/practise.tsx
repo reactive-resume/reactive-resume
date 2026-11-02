@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { Linking, Pressable, View } from "react-native";
 import { latest, useDraft, useGenerate, useSavedItems, useStories, workspaceError } from "../hooks";
 import { acceptedAudioType, clock, MAX_SECONDS, writeNumbersAsDigits } from "../logic";
-import { Actions, AiNotice, Block, PrivacyLine, Progress, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, PrivacyLine, Progress, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { afterTranscribed, createRequests, playLatest } from "../state";
 import { deleteQuietly, speak, transcribe, usePlayer, useRecorder, useVoiceSettings } from "../voice";
@@ -555,6 +555,7 @@ function Session({
 						loading={generate.isPending}
 						onPress={getFeedback}
 					/>
+					<GenerateNotice generate={generate} onRetry={getFeedback} />
 					<Text variant="caption" color="ink2">
 						{t`Compared with your stories and the posting.`}
 					</Text>

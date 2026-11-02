@@ -37,7 +37,7 @@ test("fresh account prepares a linked blank resume and selects only submitted at
 	expect(applied.sentResumeVersionId).toBeTruthy();
 });
 
-test("save, manually prepare a copy, and confirm submitted documents without services", async ({
+test("save and prepare a copy in one step, then confirm submitted documents without services", async ({
 	authPage: page,
 }, testInfo) => {
 	const baseName = await createSampleResumeFromDashboard(page, testInfo);
@@ -53,14 +53,14 @@ test("save, manually prepare a copy, and confirm submitted documents without ser
 	await save.getByLabel("Role", { exact: true }).fill("Engineer");
 	await save.getByLabel("Company", { exact: true }).fill("Example");
 	await save.getByLabel("Resume (optional)").selectOption(baseId);
+	// With a resume chosen, the copy is made and opened in one step (A3-11).
 	await save.getByRole("button", { name: "Save and prepare resume", exact: true }).click();
-	const copy = page.getByRole("dialog", { name: "Copy a resume for a job", exact: true });
-	await expect(copy.getByText(baseName, { exact: true })).toBeVisible();
-	await copy.getByRole("button", { name: "Create and open" }).click();
-	await page.waitForURL(/\/builder\//);
+	await page.waitForURL((url) => url.pathname.startsWith("/builder/") && !url.pathname.endsWith(baseId));
 	// oxlint-disable-next-line typescript/no-non-null-assertion -- waitForURL above verifies navigation to the new resume builder.
 	const copyId = new URL(page.url()).pathname.split("/").at(-1)!;
 	expect(copyId).not.toBe(baseId);
+	const copied = await (await page.request.get(`/api/openapi/resumes/${copyId}`)).json();
+	expect(copied.name).toBe(`${baseName.split(" — ")[0]} — Example`);
 	await expect(page.getByRole("textbox", { name: "Full name", exact: true })).toBeVisible();
 	expect(new URL(page.url()).searchParams.has("assistant")).toBe(false);
 	const jobs = await (await page.request.get("/api/openapi/applications")).json();

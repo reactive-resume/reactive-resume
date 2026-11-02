@@ -12,7 +12,9 @@ test("model choices stay available with a default and preserve custom IDs", asyn
 	const dialog = page.getByRole("dialog", { name: "Add provider" });
 	const model = dialog.getByRole("combobox", { name: "Model", exact: true });
 	await expect(model).toHaveValue("gpt-6-luna");
-	await expect(dialog.getByText("Fast, lower-cost default for everyday work.", { exact: false })).toBeVisible();
+	await expect(
+		dialog.getByText("gpt-6-luna is the fast, low-cost default for everyday work.", { exact: false }),
+	).toBeVisible();
 	await dialog.getByRole("button", { name: "Choose model", exact: true }).click();
 	await expect(page.getByRole("group", { name: "Recommended", exact: true })).toBeVisible();
 	await expect(page.getByRole("option", { name: /GPT-4\.1/ })).toBeVisible();

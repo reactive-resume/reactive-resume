@@ -30,6 +30,7 @@ import {
 	type ChatHistory,
 } from "../coach-thread";
 import { ContextChip, PrivacyLine, tabLabel } from "../shared";
+import { coachStarters } from "./coach-starters";
 import { ConnectionNotice } from "@/features/assistant/connection-notice";
 import { ProviderSetup } from "@/features/assistant/provider-setup";
 import { SetUpAi } from "@/features/assistant/provider-setup";
@@ -298,13 +299,23 @@ function CoachSheetBody({
 				connection={connection}
 				onChangeConnection={() => setModelMenuOpen(true)}
 				header={() => null}
-				empty={() => (
-					<p className="text-sm text-ink-2">
-						<Trans>
-							Ask anything about this job. The coach reads the posting, your notes and what you sent, and knows you're
-							on {tabName}.
-						</Trans>
-					</p>
+				empty={(send) => (
+					<div className="grid gap-3">
+						<p className="text-sm text-ink-2">
+							<Trans>
+								Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see
+								you're on the {tabName} tab.
+							</Trans>
+						</p>
+						{/* A first question for where the application stands; each sends at once. */}
+						<div className="flex flex-wrap gap-1.5">
+							{coachStarters(application.status).map((starter) => (
+								<Button key={starter} size="sm" variant="secondary" onClick={() => send(starter)}>
+									{starter}
+								</Button>
+							))}
+						</div>
+					</div>
 				)}
 				chips={
 					<>
@@ -341,11 +352,11 @@ function CoachSheetBody({
 							? t`Nothing is sent until you choose a connection for this conversation.`
 							: earlier > 0
 								? chips.memory
-									? t`Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to ${connection}.`
-									: t`Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${connection}.`
+									? t`Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to ${label}.`
+									: t`Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`
 								: chips.memory
-									? t`Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to ${connection}.`
-									: t`Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${connection}.`}
+									? t`Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to ${label}.`
+									: t`Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`}
 						{attached > 0 &&
 							` ${plural(attached, { one: "The attached file goes too.", other: "The # attached files go too." })}`}
 						{withheld > 0 && ` ${t`Messages from before Knowledge changed aren't sent.`}`}

@@ -35,7 +35,7 @@ import {
 } from "../hooks";
 import { formatMoney } from "../offer-compare";
 import { OfferEntry } from "../offer-entry";
-import { Swap, useCareerTime, Working, workingSteps } from "../shared";
+import { Swap, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import { getCategoryLane, getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
@@ -53,6 +53,9 @@ import { orpc } from "@/libs/orpc/client";
 type ReplyItem = SavedItem & { data: SavedData<"reply"> };
 
 /** A pay period as words, so an amount is never shown without what it covers. */
+// The longest message kept from a paste.
+const MAX_MESSAGE = 20_000;
+
 const periodLabel = (period: "year" | "month" | "hour") =>
 	({
 		year: t`per year`,
@@ -109,6 +112,7 @@ type PasteBoxProps = {
 
 /** W15: the employer's message, kept with the application, and "Read it for me". */
 function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
+	const { i18n } = useLingui();
 	const draft = useSessionDraft(
 		readOnly ? null : `message:${application.id}`,
 		initial,
@@ -119,6 +123,7 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 	const generate = useGenerate(application.id);
 	const { provider } = useDefaultProvider();
 	const flush = useDebouncedSave(readOnly || draft.restored ? initial : message, initial, onSave);
+	const read = () => void generate.run({ task: "reply", message: message.trim() }).catch(() => undefined);
 
 	return (
 		<div className="grid gap-3">
@@ -128,15 +133,23 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 					{t`Paste a message from ${application.company}`}
 				</label>
 				<Textarea
+					// What people paste or write here can be in any language: its own text sets the direction.
+					dir="auto"
 					id={`${application.id}-message`}
 					value={message}
-					maxLength={20_000}
+					maxLength={MAX_MESSAGE}
 					readOnly={readOnly}
 					placeholder={t`Paste the email or message, without the signature.`}
 					onChange={(event) => setMessage(event.target.value)}
 					onBlur={flush}
 					className="max-h-72 min-h-[92px] overflow-y-auto px-3.5 py-3 text-sm leading-[22px] pointer-coarse:text-base"
 				/>
+				{/* A longer paste is cut at the limit: say so, rather than drop the rest silently. */}
+				{message.length >= MAX_MESSAGE && (
+					<p role="status" className="text-xs text-warn-text">
+						<Trans>Only the first {i18n.number(MAX_MESSAGE)} characters are kept.</Trans>
+					</p>
+				)}
 			</div>
 			{!readOnly && (
 				<div className="grid justify-items-start gap-2">
@@ -154,16 +167,12 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 						<Trans>Save message without AI</Trans>
 					</Button>
 					{provider && (
-						<Button
-							variant="secondary"
-							loading={generate.isPending}
-							disabled={!message.trim()}
-							onClick={() => void generate.run({ task: "reply", message: message.trim() }).catch(() => undefined)}
-						>
+						<Button variant="secondary" loading={generate.isPending} disabled={!message.trim()} onClick={read}>
 							{!generate.isPending && <Icon name="sparkle" size={18} />}
 							{generate.isPending ? <Working steps={workingSteps("reply")} /> : <Trans>Read it for me</Trans>}
 						</Button>
 					)}
+					<GenerateNotice generate={generate} onRetry={read} />
 				</div>
 			)}
 		</div>
@@ -183,6 +192,9 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const text = readOnly ? reply.data.reply : draft.value;
 	// The employer's language is the default; this is the explicit way back to the words the user reads everything else in.
 	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
+
+	const rewrite = () =>
+		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
 	const copy = async () => {
 		await navigator.clipboard.writeText(text);
@@ -215,6 +227,8 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							<Trans>Suggested reply · edit before sending</Trans>
 						</label>
 						<Textarea
+							// What people paste or write here can be in any language: its own text sets the direction.
+							dir="auto"
 							id={`${reply.id}-reply`}
 							value={text}
 							readOnly={readOnly}
@@ -232,21 +246,12 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							<Trans>You send it from your own email.</Trans>
 						</span>
 						{!readOnly && provider && (
-							<Button
-								variant="ghost"
-								size="sm"
-								className="ms-auto"
-								loading={generate.isPending}
-								onClick={() =>
-									void generate
-										.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale })
-										.catch(() => undefined)
-								}
-							>
+							<Button variant="ghost" size="sm" className="ms-auto" loading={generate.isPending} onClick={rewrite}>
 								<Trans>Write a new reply in {languageName}</Trans>
 							</Button>
 						)}
 					</div>
+					{!readOnly && <GenerateNotice generate={generate} onRetry={rewrite} className="w-fit" />}
 				</>
 			)}
 		</section>
@@ -307,13 +312,16 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 			timeZone,
 		).title;
 
-	const describe = (change: (typeof changes)[number]) => {
+	const describe = (change: (typeof changes)[number], index: number) => {
 		switch (change.type) {
 			case "stage": {
 				// A proposed stage lands in that stage's default lane.
 				const stage = getLaneLabel(getCategoryLane(lanes, change.stage));
 				if (change.stage === application.status)
-					return { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
+					// Applied, the stage is now the one it moved to: say so, rather than "stays".
+					return applied?.changes.includes(index)
+						? { title: t`Moved to ${stage}`, detail: "" }
+						: { title: t`Stage stays ${stage}`, detail: t`No change needed. It's already at ${stage}.` };
 				if (application.status === "saved")
 					return {
 						title: t`Mark as applied and move to ${stage}`,
@@ -357,7 +365,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 				return {
 					title: t`Save these offer terms to compare`,
 					detail: terms.length
-						? t`${terms.join(" · ")}. Opens in Career → Offers.`
+						? t`${terms.join(" · ").replace(/[\s.。]+$/u, "")}. Opens in Career → Offers.`
 						: t`No terms were extracted. Opens in Career → Offers.`,
 				};
 			}
@@ -530,7 +538,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 
 			<ul className="grid gap-2">
 				{changes.map((change, index) => {
-					const { title, detail } = describe(change);
+					const { title, detail } = describe(change, index);
 					const isFixed = fixed(index);
 					const id = `${reply.id}-change-${index}`;
 					return (
@@ -546,7 +554,7 @@ function ProposalCard({ reply, application, now, readOnly }: ProposalCardProps) 
 							/>
 							<label htmlFor={id} className="grid gap-0.5 text-[13px] leading-[19px]">
 								<span className="font-semibold">{title}</span>
-								<span className="text-ink-2">{detail}</span>
+								{detail && <span className="text-ink-2">{detail}</span>}
 							</label>
 						</li>
 					);

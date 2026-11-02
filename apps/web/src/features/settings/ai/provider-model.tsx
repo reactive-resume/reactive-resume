@@ -58,7 +58,7 @@ export function ProviderModel({ id, provider, value, onChange }: ProviderModelPr
 								{model.recommendation === "capable"
 									? ` · ${t`More capable`}`
 									: model.id === defaultModel
-										? ` · ${t`Default`}`
+										? ` · ${t`Default · fast, low cost`}`
 										: ""}
 							</span>
 						</span>
@@ -114,14 +114,12 @@ export function ProviderModel({ id, provider, value, onChange }: ProviderModelPr
 				<Input {...inputProps} value={value} onChange={(event) => onChange(event.target.value)} />
 			)}
 			<div id={`${id}-hint`} className="grid gap-1 text-xs leading-5 text-ink-3">
-				{provider === "openai" && (
+				{defaultModel && (
 					<p>
-						<Trans>Fast, lower-cost default for everyday work.</Trans> {defaultModel}
-					</p>
-				)}
-				{provider !== "openai" && defaultModel && (
-					<p>
-						<Trans>Default</Trans>: {defaultModel}
+						<Trans>
+							{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts
+							and interview practice.
+						</Trans>
 					</p>
 				)}
 				{!models.length && (

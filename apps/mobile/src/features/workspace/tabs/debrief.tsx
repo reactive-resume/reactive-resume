@@ -12,14 +12,14 @@ import { useState } from "react";
 import { View } from "react-native";
 import { latest, useDraft, useFacts, useGenerate, useSavedItems, useTicks, workspaceError } from "../hooks";
 import { debriefRound, nextEvening } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, Pill, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, CheckRow, Pill, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { shareText } from "../share";
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
 import { useHasAIProvider } from "@/features/ai/providers";
 import { isInterview, useUserTime } from "@/features/application-detail/hooks";
 import { buildIcs } from "@/features/reminders";
-import { Banner, Button, Chip, Skeleton, Text, TextArea, TextField, showToast, useTheme } from "@/ui";
+import { Banner, Button, Chip, EmptyState, Skeleton, Text, TextArea, TextField, showToast, useTheme } from "@/ui";
 
 type Debrief = SavedData<"debrief">;
 type Review = Pick<SavedItem, "id" | "interviewId" | "evidence"> & { data: Debrief };
@@ -31,9 +31,10 @@ export function DebriefTab() {
 	return <WorkspaceScreen tab="debrief">{(props) => <DebriefBody {...props} />}</WorkspaceScreen>;
 }
 
-function DebriefBody({ application, version, now }: WorkspaceTabProps) {
+function DebriefBody({ application, version, now, go }: WorkspaceTabProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
+	const { day } = useUserTime();
 	const saved = useSavedItems(application.id);
 	const [fresh, setFresh] = useState<Review | null>(null);
 	const viewing = isDebrief(version) ? version : undefined;
@@ -43,6 +44,18 @@ function DebriefBody({ application, version, now }: WorkspaceTabProps) {
 	const forRound = latest(saved.data, "debrief", round?.id ?? null);
 	const review = viewing ?? fresh ?? forRound;
 	const plan = viewing ?? fresh ?? latest(saved.data, "debrief");
+	// A debrief is written after the round: before it starts, the form waits (web debrief).
+	const upcoming = !viewing && !forRound && round && +new Date(round.at) > +now ? round : undefined;
+	if (upcoming)
+		return (
+			<EmptyState
+				variant="card"
+				title={t`Write this after your interview on ${day(upcoming.at)}`}
+				message={t`Until then, Interview prep has your plan, your opening and the questions to ask.`}
+			>
+				<Button variant="secondary" icon="calendar-dot" label={t`Open Interview prep`} onPress={() => go("prepare")} />
+			</EmptyState>
+		);
 
 	return (
 		<View style={{ gap: space.s4 }}>
@@ -183,6 +196,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 			{!readOnly ? (
 				<View style={{ gap: space.s2 }}>
 					<Button label={reviewLabel} disabled={!ready || !provider} loading={generate.isPending} onPress={submit} />
+					<GenerateNotice generate={generate} onRetry={submit} />
 					<AiNotice task="debrief" application={application} interview={Boolean(round)} />
 				</View>
 			) : null}
