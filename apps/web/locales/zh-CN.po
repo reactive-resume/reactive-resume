@@ -289,6 +289,13 @@ msgstr "{0, plural, other {# 个故事}}"
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, other {已将 # 个事实添加到知识库。}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1340,6 +1347,10 @@ msgstr "有一个网址没有写 https://。"
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "About"
 msgstr "关于"
@@ -1372,6 +1383,10 @@ msgstr "全部接受"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1462,6 +1477,7 @@ msgstr "活动"
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/improve.tsx
 msgid "Add"
 msgstr "添加"
 
@@ -1921,6 +1937,7 @@ msgstr "在简历生成器中调整字体、颜色、间距和部分。将完成
 msgid "Ads"
 msgstr "广告"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "先进的"
@@ -2271,8 +2288,7 @@ msgstr "关于这份工作有什么需要记住的"
 msgid "Anywhere"
 msgstr "任何地方"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API钥匙"
@@ -2825,10 +2841,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "基本工资"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "基本 URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "基础 URL（必填）"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2994,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "内置阅读器"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -5810,6 +5829,14 @@ msgstr "编辑"
 msgid "Edit {chip}"
 msgstr "编辑 {chip}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit {number}:"
 msgstr "编辑{number}："
@@ -6065,6 +6092,10 @@ msgstr "请输入完整金额，例如 95000，或留空。"
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "请输入完整金额，例如 95000。您之前的金额未更改。"
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "请输入模型 ID。"
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "输入名称，最多 64 个字符。"
@@ -6087,6 +6118,14 @@ msgstr "请输入有效的电子邮箱地址。"
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "输入网址，例如示例.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "请输入此提供商的 API 密钥。"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "请输入以 http:// 或 https:// 开头的基础 URL。"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6657,6 @@ msgstr "适用于 LibreOffice 及其他开源编辑器。布局已简化。"
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "对于要求 Word 的门户网站或招聘人员。布局被简化。"
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "适用于脚本、扩展和 MCP 客户端。键充当您的角色，可以读取和编辑您的文档。"
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6863,14 @@ msgstr "在 <0>{0}</0> 获取密钥。它被加密存储并且仅用于您的请
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "根据职位公告和您自己的故事获取面试计划。大声练习，然后记录面试情况。"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "获取 API 密钥"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "请向端点运营方获取 API 密钥。"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7065,6 +7108,11 @@ msgstr "隐藏条款又回来了"
 msgid "Hidden: {hiddenList}"
 msgstr "已隐藏：{hiddenList}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
 msgstr "从页面中隐藏 {title}"
@@ -7206,11 +7254,20 @@ msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind}. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -7904,8 +7961,8 @@ msgid "Key stored encrypted"
 msgstr "密钥加密存储"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "键充当您的角色，可以读取和编辑您的文档。"
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "密钥以你选择的访问权限代表你操作。新密钥默认为只读权限。"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8157,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "页面四周至少留出半英寸的边距。"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "留空以保留保存的密钥"
 
@@ -8160,10 +8217,6 @@ msgstr "时长（分钟）"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "长度本身不是缺陷，也没有放之四海皆准的一页纸规则。保留那些真正有价值的内容页。"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "使用上面的 API 键，让 Claude 或 Cursor 等 AI 客户端读取和编辑您的简历。"
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8575,6 +8628,10 @@ msgstr "锁定"
 msgid "Locked · unlock to save"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "锁定。解锁即可编辑。"
@@ -8913,8 +8970,7 @@ msgstr "一般"
 msgid "mixed format"
 msgstr "混合格式"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "模型"
 
@@ -9122,7 +9178,7 @@ msgstr "我的任务是找出原因，同时不增加支持工作。"
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "姓名"
@@ -9722,6 +9778,10 @@ msgstr "Northwind Labs · Lisbon"
 msgid "Norwegian"
 msgstr "挪威语"
 
+#: src/features/assistant/question-card.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Not applied"
 msgstr "未应用"
@@ -10289,7 +10349,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "本地可选 Ollama"
 
@@ -11181,6 +11241,10 @@ msgstr "项目"
 msgid "Promoted to lead, 2021"
 msgstr "2021 年晋升领导"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Proposed changes"
 msgstr "建议的更改"
@@ -11276,6 +11340,10 @@ msgstr "把所有内容放在<0>一页纸上。</0>"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "将插入符排成一行以改进它"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "QR code"
@@ -11730,6 +11798,14 @@ msgstr "大声排练一次与工程团队意见不合的经历，以及最终结
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "拒绝"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Rejected"
@@ -13123,6 +13199,11 @@ msgstr "语义化 CSS 样式表"
 msgid "Send"
 msgstr "发送"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Send {0} again"
+msgstr ""
+
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send reset link"
@@ -13289,7 +13370,7 @@ msgstr "导出时设置文档语言。"
 
 #: src/features/assistant/provider-setup.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "设置 AI"
 
 #: src/features/career/today.tsx
 msgid "Set up discovery"
@@ -13421,6 +13502,11 @@ msgstr "较短"
 msgid "Show"
 msgstr "展示"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "显示“使用 Reactive Resume 制作”"
@@ -13447,6 +13533,11 @@ msgstr "再次显示"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
+msgstr ""
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/conversation.tsx
+msgid "Show all ({0} characters)"
 msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
@@ -13477,6 +13568,10 @@ msgstr "显示已关闭的求职申请"
 msgid "Show DNS records"
 msgstr "显示 DNS 记录"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "显示标题"
@@ -13488,6 +13583,10 @@ msgstr "显示图标"
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
 msgstr "在搜索引擎中显示"
+
+#: src/features/assistant/conversation.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -13565,6 +13664,10 @@ msgstr "侧边栏通常是最后阅读的，或者混合到主栏中。"
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "登录"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "从你的 AI 客户端登录，或使用 API 密钥。"
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -14940,11 +15043,11 @@ msgstr "审核无法完成。再试一次。"
 msgid "The same line repeats on every page."
 msgstr "同一行文字在每一页都重复出现。"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "保存的密钥不会发送到新的基本 URL。如果该服务器需要密钥，请再次输入密钥。"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "保存的密钥不会发送到新的基本 URL。再次输入密钥。"
 
@@ -15159,10 +15262,6 @@ msgstr "此描述被剪裁或不完整。在准备之前查看或粘贴完整的
 #: src/features/assistant/assistant-panel.tsx
 msgid "This document"
 msgstr "本文件"
-
-#: src/features/assistant/assistant-panel.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "该文档已被锁定。解锁它以获得建议。"
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "This employer"
@@ -15673,6 +15772,10 @@ msgstr "再试一次"
 msgid "Try again with this"
 msgstr "用这个再试一次"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
 msgstr ""
@@ -15870,6 +15973,11 @@ msgstr "下划线链接"
 msgid "Undo"
 msgstr "撤销"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Undo resume change"
 msgstr "撤消简历更改"
@@ -15893,6 +16001,7 @@ msgstr "取消链接"
 msgid "Unlink this application"
 msgstr "取消此职位申请的链接"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
@@ -15900,6 +16009,7 @@ msgstr "取消此职位申请的链接"
 msgid "Unlock"
 msgstr "解锁"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16563,6 +16673,10 @@ msgstr "人看到的内容"
 #: src/features/career/coach.tsx
 msgid "What are you working on?"
 msgstr "您在忙什么？"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "What changed? Leave blank if you can’t support it."
@@ -17518,35 +17632,3 @@ msgstr "缩小"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "祖鲁语"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "密钥以你选择的访问权限代表你操作。新密钥默认为只读权限。"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "从你的 AI 客户端登录，或使用 API 密钥。"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "基础 URL（必填）"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "请输入模型 ID。"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "请输入此提供商的 API 密钥。"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "请输入以 http:// 或 https:// 开头的基础 URL。"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "获取 API 密钥"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "请向端点运营方获取 API 密钥。"

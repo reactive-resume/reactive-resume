@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# poveste} few {# povești} other {# de povești}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# lucru de verificat.} few {# lucruri de verificat.} other {# de lucruri de verificat.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "O adresă web este scrisă fără https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Cam 90 de secunde, rostit"
@@ -1058,6 +1069,10 @@ msgstr "Acceptați totul"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Activ"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Adăuga"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Avansat"
@@ -2235,6 +2252,10 @@ msgstr "Salariu de bază"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "URL de bază"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "URL de bază (obligatoriu)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "Nu s-a putut imprima. Încearcă din nou."
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "Nu am putut propune aceste modificări: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "CV-ul nu a putut fi deblocat. Încearcă din nou."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Acest CV nu a putut fi deblocat. Încearcă din nou."
 
@@ -3879,10 +3905,6 @@ msgstr "Creați un nou CV"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Creați mai întâi un CV, apoi întrebați despre el."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Creează o cheie API din setările contului în browser. Cheile acționează în numele tău și îți pot citi și edita documentele."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "Edita"
 msgid "Edit {0}: {1}"
 msgstr "Editați {0}: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "Introduceți o sumă întreagă, de exemplu 95000. Suma anterioară nu s
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Introdu o culoare hex, de exemplu #1a1a1a, sau rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Introdu un ID de model."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Introduceți un nume, până la 64 de caractere."
@@ -4837,6 +4876,14 @@ msgstr "Introduceți un număr întreg de la 0 la 52 sau lăsați necompletat."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Introdu o adresă precum resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Introdu o cheie API pentru acest furnizor."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Introdu un URL de bază care începe cu http:// sau https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "Germană"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Obțineți o cheie la {0}. Este stocat criptat și folosit numai pentru solicitările dvs."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Obține o cheie API"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Obține o cheie API de la operatorul endpointului tău."
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Obțineți feedback"
@@ -5485,6 +5540,11 @@ msgstr "Secțiunile ascunse își păstrează conținutul, dar nu sunt tipărite
 msgid "Hidden terms are back"
 msgstr "Termenii ascunși au revenit"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Ascundeți {title} de pe pagină"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "Păstrată așa cum este"
 msgid "Key stored encrypted"
 msgstr "Cheie stocată criptată"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Cheile acționează ca dvs. și vă pot accesa documentele. Sunt create chei noi în setările contului de browser."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Aranjare cuvinte cheie"
@@ -6295,10 +6359,6 @@ msgstr "Mai puțin"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Au mai rămas mai puțin de 48 de ore."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Permiteți clienților AI precum Claude sau Cursor să vă citească și să vă editeze CV-urile, folosind o cheie API."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "Blocat"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Documentele blocate au fost omise. Deblochează-le mai întâi."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "Document nou"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Cheile noi pornesc cu acces doar pentru citire. Creează chei în setările contului din browser."
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "Normal"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norvegiană"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "Interviu la sediu"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Deschide"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "Deschideți setările AI"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "Bară de progres"
 msgid "Projects"
 msgstr "Proiecte"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Modificări propuse"
@@ -8902,6 +8975,10 @@ msgstr "Editor"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Puneți o adresă de e-mail simplă lângă partea de sus a primei pagini. Este ceea ce folosesc majoritatea sistemelor pentru a vă clasifica."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "Repetați cu voce tare"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Respinge"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "Configurați un furnizor"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "Configurează IA"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "Mai scurt"
 msgid "Show"
 msgstr "Afișează"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Afișează „Realizat cu Reactive Resume”"
@@ -10734,6 +10824,11 @@ msgstr "Afișați {title} pe pagină"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Arată tot"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "Afișați detalii"
 msgid "Show DNS records"
 msgstr "Arată înregistrările DNS"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Afișează titlul"
@@ -10778,6 +10877,10 @@ msgstr "Afișează în motoarele de căutare"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Afișați cheia"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "Conectați-vă din nou pentru a continua verificarea acestui CV."
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Conectați-vă din nou pentru a continua să lucrați. Editările pe care le-ați făcut sunt păstrate pe acest dispozitiv și se sincronizează după ce vă conectați."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Conectează-te din clientul tău AI sau folosește o cheie API."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "Acest document"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Acest document este blocat. Deblocați-l înainte de a vă păstra editările aici sau păstrați ambele."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Acest document este blocat. Deblocați-l pentru a primi sugestii."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Acest document este blocat. Puteți încă descărca și numi versiuni. Deblocați pentru a edita sau a restabili."
@@ -12576,6 +12679,10 @@ msgstr "Încercați din nou cu aceasta"
 msgid "Try again, or restart the app."
 msgstr "Încearcă din nou sau repornește aplicația."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Încercați o altă căutare sau ștergeți filtrele."
@@ -12699,6 +12806,11 @@ msgstr "Subliniați linkurile"
 msgid "Undo"
 msgstr "Anula"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "Necunoscut"
 msgid "Unlink"
 msgstr "Deconectați"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "Deblocați editarea"
 msgid "Unlock it first, then try again."
 msgstr "Deblocați-l mai întâi, apoi încercați din nou."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Se deblochează…"
@@ -12909,10 +13023,6 @@ msgstr "Folosiți detalii din CV"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Folosiți pentru toate candidaturile"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "Ce vede o persoană"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "La ce lucrați?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "Micșorează"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Cheile noi pornesc cu acces doar pentru citire. Creează chei în setările contului din browser."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Conectează-te din clientul tău AI sau folosește o cheie API."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "URL de bază (obligatoriu)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Introdu un ID de model."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Introdu o cheie API pentru acest furnizor."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Introdu un URL de bază care începe cu http:// sau https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Obține o cheie API"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Obține o cheie API de la operatorul endpointului tău."

@@ -289,6 +289,13 @@ msgstr "{0, plural, one {# داستان} other {# داستان}}"
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {# واقعیت به دانسته‌ها اضافه شد.} other {# واقعیت به دانسته‌ها اضافه شد.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1340,6 +1347,10 @@ msgstr "یک آدرس اینترنتی بدون https:// نوشته شده اس�
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "About"
 msgstr "درباره این برنامه"
@@ -1372,6 +1383,10 @@ msgstr "همه رو قبول کن"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1462,6 +1477,7 @@ msgstr "فعالیت"
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/improve.tsx
 msgid "Add"
 msgstr "افزودن"
 
@@ -1921,6 +1937,7 @@ msgstr "فونت ها، رنگ ها، فاصله ها و بخش ها را در �
 msgid "Ads"
 msgstr "تبلیغات"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "پیشرفته"
@@ -2271,8 +2288,7 @@ msgstr "هر چیزی که در مورد این شغل به یاد داشته ب
 msgid "Anywhere"
 msgstr "هر جا"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "کلید API"
@@ -2825,10 +2841,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "حقوق پایه"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "آدرس اینترنتی پایه"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "URL پایه (الزامی)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2994,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "خواننده داخلی"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -5810,6 +5829,14 @@ msgstr "ویرایش"
 msgid "Edit {chip}"
 msgstr "ویرایش {chip}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit {number}:"
 msgstr "ویرایش {number}:"
@@ -6065,6 +6092,10 @@ msgstr "مبلغ کامل، مانند 95000، را وارد کنید یا خا�
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "مبلغ کامل را وارد کنید، مثلاً 95000. مبلغ قبلی شما تغییری نکرده است."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "شناسهٔ مدل را وارد کنید."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "یک نام تا 64 کاراکتر وارد کنید."
@@ -6087,6 +6118,14 @@ msgstr "یک آدرس ایمیل معتبر وارد کنید."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "یک آدرس وب مانند مثال.com وارد کنید"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "یک کلید API برای این ارائه‌دهنده وارد کنید."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "یک URL پایه با http:// یا https:// وارد کنید."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6657,6 @@ msgstr "برای LibreOffice و سایر ویرایشگرهای متن‌باز.
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "برای پورتال ها یا استخدام کنندگانی که درخواست Word را دارند. طرح بندی ساده شده است."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "برای اسکریپت ها، برنامه های افزودنی و مشتریان MCP. کلیدها مانند شما عمل می کنند و می توانند اسناد شما را بخوانند و ویرایش کنند."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6863,14 @@ msgstr "یک کلید در <0>{0}</0> دریافت کنید. رمزگذاری ش
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "برای مصاحبه برنامه‌ای بگیرید که از آگهی شغلی و داستان‌های خودتان ساخته شده است. با صدای بلند تمرین کنید، سپس بنویسید چطور پیش رفت."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "دریافت کلید API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "از گردانندهٔ نقطهٔ پایانی خود یک کلید API بگیرید."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7065,6 +7108,11 @@ msgstr "اصطلاحات پنهان برگشته اند"
 msgid "Hidden: {hiddenList}"
 msgstr "پنهان: {hiddenList}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
 msgstr "{title} را از صفحه مخفی کنید"
@@ -7206,11 +7254,20 @@ msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind}. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -7904,8 +7961,8 @@ msgid "Key stored encrypted"
 msgstr "کلید رمزگذاری شده ذخیره می شود"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "کلیدها مانند شما عمل می کنند و می توانند اسناد شما را بخوانند و ویرایش کنند."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "کلیدها با سطح دسترسی انتخابی شما از طرف شما عمل می‌کنند. کلیدهای جدید در ابتدا فقط دسترسی خواندن دارند."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8157,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "حداقل نیم اینچ حاشیه دور صفحه بگذارید."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "برای نگه داشتن کلید ذخیره شده خالی بگذارید"
 
@@ -8160,10 +8217,6 @@ msgstr "مدت به دقیقه"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "طول رزومه نقص نیست و هیچ قانون همگانی تک‌صفحه‌ای وجود ندارد. صفحاتی را نگه دارید که ارزش جای خود را دارند."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "به مشتریان هوش مصنوعی مانند Claude یا Cursor اجازه دهید رزومه شما را با استفاده از کلید API در بالا بخوانند و ویرایش کنند."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8575,6 +8628,10 @@ msgstr "قفل شده است"
 msgid "Locked · unlock to save"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "قفل شده است. برای ویرایش قفل را باز کنید."
@@ -8913,8 +8970,7 @@ msgstr "بینابین"
 msgid "mixed format"
 msgstr "فرمت ترکیبی"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "مدل"
 
@@ -9122,7 +9178,7 @@ msgstr "کار من این بود که علت را پیدا کنم، بدون ا
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "نام"
@@ -9722,6 +9778,10 @@ msgstr "Northwind Labs · Lisbon"
 msgid "Norwegian"
 msgstr "نروژی"
 
+#: src/features/assistant/question-card.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Not applied"
 msgstr "اعمال نشد"
@@ -10289,7 +10349,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "اختیاری برای Ollama محلی"
 
@@ -11181,6 +11241,10 @@ msgstr "پروژه‌ها"
 msgid "Promoted to lead, 2021"
 msgstr "ارتقاء به رهبری، 2021"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Proposed changes"
 msgstr "تغییرات پیشنهادی"
@@ -11276,6 +11340,10 @@ msgstr "همه را در <0>یک صفحه جا دهید.</0>"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "کارت را در یک خط قرار دهید تا آن را بهبود بخشد"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "QR code"
@@ -11730,6 +11798,14 @@ msgstr "یک اختلاف‌نظر با تیم مهندسی و پایان آن �
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "رد کردن"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Rejected"
@@ -13123,6 +13199,11 @@ msgstr "شیوه‌نامه CSS معنایی"
 msgid "Send"
 msgstr "ارسال کنید"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Send {0} again"
+msgstr ""
+
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send reset link"
@@ -13289,7 +13370,7 @@ msgstr "هنگام خروجی گرفتن، زبان سند را تنظیم کن�
 
 #: src/features/assistant/provider-setup.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "راه‌اندازی هوش مصنوعی"
 
 #: src/features/career/today.tsx
 msgid "Set up discovery"
@@ -13421,6 +13502,11 @@ msgstr "کوتاه تر"
 msgid "Show"
 msgstr "نمایش دهید"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "نمایش «ساخته‌شده با Reactive Resume»"
@@ -13447,6 +13533,11 @@ msgstr "دوباره نمایش دهید"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
+msgstr ""
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/conversation.tsx
+msgid "Show all ({0} characters)"
 msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
@@ -13477,6 +13568,10 @@ msgstr "نمایش درخواست‌های شغلی بسته‌شده"
 msgid "Show DNS records"
 msgstr "نمایش رکوردهای DNS"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "نمایش عنوان"
@@ -13488,6 +13583,10 @@ msgstr "نمایش آیکون‌ها"
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
 msgstr "نمایش در موتورهای جستجو"
+
+#: src/features/assistant/conversation.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -13565,6 +13664,10 @@ msgstr "نوارهای کناری اغلب آخرین خوانده می شوند
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "ورود"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "از برنامهٔ هوش مصنوعی خود وارد شوید یا از یک کلید API استفاده کنید."
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -14940,11 +15043,11 @@ msgstr "بازبینی به پایان نرسید. دوباره امتحان ک�
 msgid "The same line repeats on every page."
 msgstr "همان خط در هر صفحه تکرار می‌شود."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "کلید ذخیره شده به URL پایه جدید ارسال نمی شود. اگر این سرور به کلید نیاز دارد، کلید را دوباره وارد کنید."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "کلید ذخیره شده به URL پایه جدید ارسال نمی شود. دوباره کلید را وارد کنید."
 
@@ -15159,10 +15262,6 @@ msgstr "این توضیحات بریده شده یا ناقص است. قبل ا�
 #: src/features/assistant/assistant-panel.tsx
 msgid "This document"
 msgstr "این سند"
-
-#: src/features/assistant/assistant-panel.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "این سند قفل شده است. برای دریافت پیشنهادات قفل آن را باز کنید."
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "This employer"
@@ -15673,6 +15772,10 @@ msgstr "دوباره امتحان کنید"
 msgid "Try again with this"
 msgstr "دوباره با این امتحان کنید"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
 msgstr ""
@@ -15870,6 +15973,11 @@ msgstr "زیر لینک ها خط بکشید"
 msgid "Undo"
 msgstr "لغو"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Undo resume change"
 msgstr "لغو تغییر رزومه"
@@ -15893,6 +16001,7 @@ msgstr "لغو پیوند"
 msgid "Unlink this application"
 msgstr "پیوند این درخواست شغلی را لغو کنید"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
@@ -15900,6 +16009,7 @@ msgstr "پیوند این درخواست شغلی را لغو کنید"
 msgid "Unlock"
 msgstr "باز کردن قفل"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16563,6 +16673,10 @@ msgstr "آنچه یک انسان می‌بیند"
 #: src/features/career/coach.tsx
 msgid "What are you working on?"
 msgstr "روی چه چیزی کار می‌کنید؟"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "What changed? Leave blank if you can’t support it."
@@ -17518,35 +17632,3 @@ msgstr "کوچک‌نمایی"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "زولو"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "کلیدها با سطح دسترسی انتخابی شما از طرف شما عمل می‌کنند. کلیدهای جدید در ابتدا فقط دسترسی خواندن دارند."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "از برنامهٔ هوش مصنوعی خود وارد شوید یا از یک کلید API استفاده کنید."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "URL پایه (الزامی)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "شناسهٔ مدل را وارد کنید."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "یک کلید API برای این ارائه‌دهنده وارد کنید."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "یک URL پایه با http:// یا https:// وارد کنید."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "دریافت کلید API"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "از گردانندهٔ نقطهٔ پایانی خود یک کلید API بگیرید."

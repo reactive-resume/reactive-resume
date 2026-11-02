@@ -289,6 +289,13 @@ msgstr "{0, plural, one {# కథ} other {# కథలు}}"
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {నాలెడ్జ్‌కు # వాస్తవం జోడించబడింది.} other {నాలెడ్జ్‌కు # వాస్తవాలు జోడించబడ్డాయి.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1340,6 +1347,10 @@ msgstr "వెబ్ చిరునామా https:// లేకుండా ర
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "About"
 msgstr "ఈ యాప్ గురించి"
@@ -1372,6 +1383,10 @@ msgstr "అన్నింటినీ అంగీకరించండి"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1462,6 +1477,7 @@ msgstr "కార్యాచరణ"
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/improve.tsx
 msgid "Add"
 msgstr "జోడించు"
 
@@ -1921,6 +1937,7 @@ msgstr "CV బిల్డర్‌లో ఫాంట్‌లు, రంగు
 msgid "Ads"
 msgstr "ప్రకటనలు"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "అధునాతన"
@@ -2271,8 +2288,7 @@ msgstr "ఈ ఉద్యోగం గురించి ఏదైనా గు�
 msgid "Anywhere"
 msgstr "ఎక్కడైనా"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API కీ"
@@ -2825,10 +2841,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "మూల వేతనం"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "బేస్ URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "బేస్ URL (అవసరం)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2994,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "అంతర్నిర్మిత రీడర్"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -5810,6 +5829,14 @@ msgstr "సవరించు"
 msgid "Edit {chip}"
 msgstr "సవరించు {chip}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit {number}:"
 msgstr "{number}ని సవరించండి:"
@@ -6065,6 +6092,10 @@ msgstr "95000 వంటి పూర్తి మొత్తాన్ని న
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "95000 వంటి పూర్తి మొత్తాన్ని నమోదు చేయండి. మీ మునుపటి మొత్తం మారలేదు."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "మోడల్ IDని నమోదు చేయండి."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 అక్షరాల వరకు పేరును నమోదు చేయండి."
@@ -6087,6 +6118,14 @@ msgstr "చెల్లుబాటు అయ్యే ఇమెయిల్ చ
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "ఉదాహరణకు.com వంటి వెబ్ చిరునామాను నమోదు చేయండి"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "ఈ ప్రొవైడర్ కోసం API కీని నమోదు చేయండి."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// లేదా https:// తో ప్రారంభమయ్యే బేస్ URLని నమోదు చేయండి."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6657,6 @@ msgstr "LibreOffice మరియు ఇతర ఓపెన్ సోర్స్
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Word కోసం అడిగే పోర్టల్‌లు లేదా రిక్రూటర్‌ల కోసం. లేఅవుట్ సరళీకృతం చేయబడింది."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "స్క్రిప్ట్‌లు, పొడిగింపులు మరియు MCP క్లయింట్‌ల కోసం. కీలు మీ వలె పని చేస్తాయి మరియు మీ పత్రాలను చదవగలవు మరియు సవరించగలవు."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6863,14 @@ msgstr "<0>{0}</0> వద్ద కీని పొందండి. ఇది �
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "ఉద్యోగ ప్రకటన, మీ సొంత కథల నుండి రూపొందిన ఇంటర్వ్యూ ప్రణాళికను పొందండి. బిగ్గరగా సాధన చేయండి, ఆపై అది ఎలా జరిగిందో రాయండి."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API కీని పొందండి"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "మీ ఎండ్‌పాయింట్ నిర్వాహకుని నుండి API కీని పొందండి."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7065,6 +7108,11 @@ msgstr "దాచిన నిబంధనలు తిరిగి వచ్చ
 msgid "Hidden: {hiddenList}"
 msgstr "దాచబడింది: {hiddenList}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
 msgstr "పేజీ నుండి {title}ని దాచండి"
@@ -7206,11 +7254,20 @@ msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind}. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -7904,8 +7961,8 @@ msgid "Key stored encrypted"
 msgstr "గుప్తీకరించిన కీ నిల్వ చేయబడింది"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "కీలు మీ వలె పని చేస్తాయి మరియు మీ పత్రాలను చదవగలవు మరియు సవరించగలవు."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "మీరు ఎంచుకున్న యాక్సెస్ అనుమతులతో కీలు మీ తరఫున పనిచేస్తాయి. కొత్త కీలకు మొదట చదవడానికి మాత్రమే అనుమతి ఉంటుంది."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8157,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "పేజీ చుట్టూ కనీసం అర అంగుళం వదిలివేయండి."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "సేవ్ చేసిన కీని ఉంచడానికి ఖాళీగా వదిలివేయండి"
 
@@ -8160,10 +8217,6 @@ msgstr "నిమిషాల్లో వ్యవధి"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "పొడవు లోపం కాదు, మరియు సార్వత్రిక ఒక-పేజీ నియమం లేదు. తమ స్థానాన్ని సంపాదించే పేజీలను ఉంచండి."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Claude లేదా Cursor వంటి AI క్లయింట్‌లు పైన ఉన్న API కీని ఉపయోగించి మీ రెజ్యూమ్‌లను చదవడానికి మరియు సవరించడానికి అనుమతించండి."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8575,6 +8628,10 @@ msgstr "లాక్ చేయబడింది"
 msgid "Locked · unlock to save"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "లాక్ చేయబడింది. సవరించడానికి అన్‌లాక్ చేయండి."
@@ -8913,8 +8970,7 @@ msgstr "మిశ్రమం"
 msgid "mixed format"
 msgstr "మిశ్రమ ఆకృతి"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "మోడల్"
 
@@ -9122,7 +9178,7 @@ msgstr "సపోర్ట్ పనిని పెంచకుండా, క�
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "పేరు"
@@ -9722,6 +9778,10 @@ msgstr "Northwind Labs · Lisbon"
 msgid "Norwegian"
 msgstr "నార్వేజియన్"
 
+#: src/features/assistant/question-card.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Not applied"
 msgstr "వర్తింపజేయలేదు"
@@ -10289,7 +10349,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "స్థానిక Ollama కోసం ఐచ్ఛికం"
 
@@ -11181,6 +11241,10 @@ msgstr "ప్రాజెక్ట్స్"
 msgid "Promoted to lead, 2021"
 msgstr "2021లో లీడ్‌గా ప్రమోట్ చేయబడింది"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Proposed changes"
 msgstr "ప్రతిపాదిత మార్పులు"
@@ -11276,6 +11340,10 @@ msgstr "అన్నింటినీ <0>ఒకే పేజీలో</0> ఉ�
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "దాన్ని మెరుగుపరచడానికి క్యారెట్‌ను ఒక లైన్‌లో ఉంచండి"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "QR code"
@@ -11730,6 +11798,14 @@ msgstr "ఇంజనీరింగ్‌తో ఒక అభిప్రాయ�
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "తిరస్కరించు"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Rejected"
@@ -13123,6 +13199,11 @@ msgstr "సెమాంటిక్ CSS స్టైల్‌షీట్"
 msgid "Send"
 msgstr "పంపండి"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Send {0} again"
+msgstr ""
+
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send reset link"
@@ -13289,7 +13370,7 @@ msgstr "ఎగుమతి చేసేటప్పుడు డాక్యు�
 
 #: src/features/assistant/provider-setup.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "AIని సెటప్ చేయండి"
 
 #: src/features/career/today.tsx
 msgid "Set up discovery"
@@ -13421,6 +13502,11 @@ msgstr "పొట్టి"
 msgid "Show"
 msgstr "చూపించు"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resumeతో తయారు చేయబడింది” చూపించు"
@@ -13447,6 +13533,11 @@ msgstr "మళ్లీ చూపించు"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
+msgstr ""
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/conversation.tsx
+msgid "Show all ({0} characters)"
 msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
@@ -13477,6 +13568,10 @@ msgstr "మూసిన ఉద్యోగ దరఖాస్తులను చ
 msgid "Show DNS records"
 msgstr "DNS రికార్డ్‌లను చూపించు"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "శీర్షికను చూపు"
@@ -13488,6 +13583,10 @@ msgstr "చిహ్నాలను చూపండి"
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
 msgstr "శోధన ఇంజిన్‌లలో చూపించు"
+
+#: src/features/assistant/conversation.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -13565,6 +13664,10 @@ msgstr "సైడ్‌బార్లు తరచుగా చివరిగ�
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "సైన్ ఇన్ చేయండి"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "మీ AI క్లయింట్ నుండి సైన్ ఇన్ చేయండి లేదా API కీని ఉపయోగించండి."
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -14940,11 +15043,11 @@ msgstr "సమీక్ష పూర్తి కాలేదు. మళ్ల�
 msgid "The same line repeats on every page."
 msgstr "అదే లైన్ ప్రతి పేజీలో పునరావృతమవుతుంది."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "సేవ్ చేయబడిన కీ కొత్త బేస్ URLకి పంపబడదు. ఈ సర్వర్‌కి కీ అవసరమైతే మళ్లీ కీని నమోదు చేయండి."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "సేవ్ చేయబడిన కీ కొత్త బేస్ URLకి పంపబడదు. కీని మళ్లీ నమోదు చేయండి."
 
@@ -15159,10 +15262,6 @@ msgstr "ఈ వివరణ క్లిప్ చేయబడింది ల�
 #: src/features/assistant/assistant-panel.tsx
 msgid "This document"
 msgstr "ఈ పత్రం"
-
-#: src/features/assistant/assistant-panel.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "ఈ పత్రం లాక్ చేయబడింది. సూచనలను పొందడానికి దాన్ని అన్‌లాక్ చేయండి."
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "This employer"
@@ -15673,6 +15772,10 @@ msgstr "మళ్ళీ ప్రయత్నించండి"
 msgid "Try again with this"
 msgstr "దీనితో మళ్లీ ప్రయత్నించు"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
 msgstr ""
@@ -15870,6 +15973,11 @@ msgstr "లింక్‌లను అండర్లైన్ చేయండ�
 msgid "Undo"
 msgstr "రద్దు చేయి"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Undo resume change"
 msgstr "రెజ్యూమ్ మార్పును అన్డు చేయండి"
@@ -15893,6 +16001,7 @@ msgstr "అన్‌లింక్ చేయండి"
 msgid "Unlink this application"
 msgstr "ఈ జాబ్ అప్లికేషన్‌ని అన్‌లింక్ చేయండి"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
@@ -15900,6 +16009,7 @@ msgstr "ఈ జాబ్ అప్లికేషన్‌ని అన్‌ల
 msgid "Unlock"
 msgstr "అన్‌లాక్"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16563,6 +16673,10 @@ msgstr "ఒక వ్యక్తి ఏమి చూస్తాడు"
 #: src/features/career/coach.tsx
 msgid "What are you working on?"
 msgstr "మీరు దేనిపై పని చేస్తున్నారు?"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "What changed? Leave blank if you can’t support it."
@@ -17518,35 +17632,3 @@ msgstr "జూమ్ అవుట్ చేయండి"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "జులు"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "మీరు ఎంచుకున్న యాక్సెస్ అనుమతులతో కీలు మీ తరఫున పనిచేస్తాయి. కొత్త కీలకు మొదట చదవడానికి మాత్రమే అనుమతి ఉంటుంది."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "మీ AI క్లయింట్ నుండి సైన్ ఇన్ చేయండి లేదా API కీని ఉపయోగించండి."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "బేస్ URL (అవసరం)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "మోడల్ IDని నమోదు చేయండి."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "ఈ ప్రొవైడర్ కోసం API కీని నమోదు చేయండి."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// లేదా https:// తో ప్రారంభమయ్యే బేస్ URLని నమోదు చేయండి."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "API కీని పొందండి"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "మీ ఎండ్‌పాయింట్ నిర్వాహకుని నుండి API కీని పొందండి."

@@ -281,6 +281,13 @@ msgstr "{0, plural, other {# 個故事}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# 個項目待檢視。} other {# 個項目待檢視。}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "有一個網址沒有寫 https://。"
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "說出來大約 90 秒"
@@ -1058,6 +1069,10 @@ msgstr "全部接受"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "積極的"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "新增"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "先進的"
@@ -2235,6 +2252,10 @@ msgstr "底薪"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "基本 URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "基礎 URL（必填）"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "無法打印。再試一次。"
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "無法提出這些編輯：{0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "無法解鎖履歷。請再試一次。"
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "無法解鎖此履歷。再試一次。"
 
@@ -3879,10 +3905,6 @@ msgstr "建立新履歷"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "首先創建一份簡歷，然後詢問。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "請在瀏覽器的帳戶設定中建立 API 金鑰。金鑰可代表您讀取和編輯文件。"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "編輯"
 msgid "Edit {0}: {1}"
 msgstr "編輯{0}：{1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "請輸入完整金額，例如 95000。您先前的金額未變更。"
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "輸入十六進位顏色，例如 #1a1a1a 或 rgba(…)。"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "請輸入模型 ID。"
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "輸入名稱，最多 64 個字元。"
@@ -4837,6 +4876,14 @@ msgstr "輸入0到52之間的整數，或留空。"
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "請輸入類似 resume.example.org 的地址。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "請輸入此供應商的 API 金鑰。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "請輸入以 http:// 或 https:// 開頭的基礎 URL。"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "德文"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "在{0}處取得鑰匙。它被加密存儲並且僅用於您的請求。"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "取得 API 金鑰"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "請向端點營運者取得 API 金鑰。"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "取得回饋"
@@ -5485,6 +5540,11 @@ msgstr "隱藏部分保留其內容，但不會列印或分享。欄位在您鍵
 msgid "Hidden terms are back"
 msgstr "隱藏條款又回來了"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "從頁面中隱藏 {title}"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "保持原樣"
 msgid "Key stored encrypted"
 msgstr "密鑰加密存儲"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "金鑰可代表您存取文件。請在瀏覽器的帳戶設定中建立新金鑰。"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "關鍵詞版面"
@@ -6295,10 +6359,6 @@ msgstr "少"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "還剩不到48小時。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "讓 AI 使用者端（如 Claude 或 Cursor）使用 API 金鑰來讀取和編輯您的履歷。"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "鎖定"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "鎖定的文件被跳過。首先將它們解鎖。"
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "新文件"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "新金鑰預設為唯讀權限。請在瀏覽器中的帳號設定裡建立金鑰。"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "普通的"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "挪威語"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "現場面試"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "開啟"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "開啟AI設定"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "進度條"
 msgid "Projects"
 msgstr "專案"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "建議的變更"
@@ -8902,6 +8975,10 @@ msgstr "出版者"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "在第一頁頂部附近放一個純文字的電子郵件地址。大多數系統正是用它來歸檔您的資料。"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "大聲演練"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "拒絕"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "設定供應商"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "設定 AI"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "較短"
 msgid "Show"
 msgstr "展示"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "顯示「使用 Reactive Resume 製作」"
@@ -10734,6 +10824,11 @@ msgstr "頁面顯示{title}"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "顯示全部"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "顯示詳情"
 msgid "Show DNS records"
 msgstr "顯示 DNS 記錄"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "顯示標題"
@@ -10778,6 +10877,10 @@ msgstr "在搜尋引擎中顯示"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "顯示金鑰"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "重新登入以繼續檢查此履歷。"
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "重新登入以繼續工作。變更保留在此裝置上，登入後會同步。"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "從你的 AI 用戶端登入，或使用 API 金鑰。"
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "本文件"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "此文件已鎖定。若要保留此處的修改，請先解鎖，或保留兩份。"
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "該文件已被鎖定。解鎖它以獲得建議。"
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "此文件已鎖定。仍可下載版本及為其命名。請解鎖以編輯或還原。"
@@ -12576,6 +12679,10 @@ msgstr "用這個再試一次"
 msgid "Try again, or restart the app."
 msgstr "請再試一次，或重新啟動 App。"
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "請嘗試其他搜尋或清除篩選條件。"
@@ -12699,6 +12806,11 @@ msgstr "底線連結"
 msgid "Undo"
 msgstr "撤銷"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "未知"
 msgid "Unlink"
 msgstr "取消連結"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "解鎖編輯"
 msgid "Unlock it first, then try again."
 msgstr "請先解鎖再重試。"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "正在解鎖…"
@@ -12909,10 +13023,6 @@ msgstr "使用履歷中的資料"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "用於所有應徵"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "人看到的內容"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "您在忙什麼？"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "縮小"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "祖魯語"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "新金鑰預設為唯讀權限。請在瀏覽器中的帳號設定裡建立金鑰。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "從你的 AI 用戶端登入，或使用 API 金鑰。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "基礎 URL（必填）"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "請輸入模型 ID。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "請輸入此供應商的 API 金鑰。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "請輸入以 http:// 或 https:// 開頭的基礎 URL。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "取得 API 金鑰"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "請向端點營運者取得 API 金鑰。"

@@ -289,6 +289,13 @@ msgstr "{0, plural, one {# historia} few {# historie} many {# historii} other {#
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, one {Dodano # fakt do Wiedzy.} few {Dodano # fakty do Wiedzy.} many {Dodano # faktów do Wiedzy.} other {Dodano # faktu do Wiedzy.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1340,6 +1347,10 @@ msgstr "Adres internetowy jest zapisany bez https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "About"
 msgstr "O tej aplikacji"
@@ -1372,6 +1383,10 @@ msgstr "Zaakceptuj wszystko"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1462,6 +1477,7 @@ msgstr "Działalność"
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/improve.tsx
 msgid "Add"
 msgstr "Dodaj"
 
@@ -1921,6 +1937,7 @@ msgstr "Dostosuj czcionki, kolory, odstępy i sekcje w kreatorze CV. Wyeksportuj
 msgid "Ads"
 msgstr "Reklamy"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Zaawansowany"
@@ -2271,8 +2288,7 @@ msgstr "Wszystko, co warto zapamiętać na temat tej pracy"
 msgid "Anywhere"
 msgstr "Gdziekolwiek"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "Klucz API"
@@ -2825,10 +2841,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Wynagrodzenie zasadnicze"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Podstawowy adres URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Bazowy URL (wymagany)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2994,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Wbudowany czytnik"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -5810,6 +5829,14 @@ msgstr "Redagować"
 msgid "Edit {chip}"
 msgstr "Proszę edytować {chip}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit {number}:"
 msgstr "Edytuj {number}:"
@@ -6065,6 +6092,10 @@ msgstr "Wpisz pełną kwotę, na przykład 95000, lub pozostaw puste pole."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Wpisz pełną kwotę, np. 95000. Poprzednia kwota się nie zmieniła."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Wpisz identyfikator modelu."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Wpisz nazwę, maksymalnie 64 znaki."
@@ -6087,6 +6118,14 @@ msgstr "Wpisz prawidłowy adres e-mail."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Wprowadź adres internetowy, na przykład .com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Wpisz klucz API dla tego dostawcy."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Wpisz bazowy URL zaczynający się od http:// lub https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6657,6 @@ msgstr "Dla LibreOffice i innych edytorów open source. Układ jest uproszczony.
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Dla portali lub rekruterów, którzy proszą o Word. Układ jest uproszczony."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "Dla skryptów, rozszerzeń i klientów MCP. Klucze działają jak Ty i mogą czytać i edytować Twoje dokumenty."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6863,14 @@ msgstr "Zdobądź klucz pod adresem <0>{0}</0>. Jest przechowywany w postaci zas
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Otrzymaj plan rozmowy przygotowany na podstawie ogłoszenia i Twoich historii. Poćwicz na głos, a potem zapisz, jak poszło."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Uzyskaj klucz API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Uzyskaj klucz API od operatora swojego punktu końcowego."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7065,6 +7108,11 @@ msgstr "Ukryte terminy powracają"
 msgid "Hidden: {hiddenList}"
 msgstr "Ukryte: {hiddenList}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
 msgstr "Ukryj {title} na stronie"
@@ -7206,11 +7254,20 @@ msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind}. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -7904,8 +7961,8 @@ msgid "Key stored encrypted"
 msgstr "Klucz przechowywany w postaci zaszyfrowanej"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Klucze działają jak Ty i mogą czytać i edytować Twoje dokumenty."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Klucze działają w Twoim imieniu z wybranym przez Ciebie dostępem. Nowe klucze początkowo mają dostęp tylko do odczytu."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8157,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Zostaw co najmniej pół cala marginesu wokół strony."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Pozostaw puste, aby zachować zapisany klucz"
 
@@ -8160,10 +8217,6 @@ msgstr "Długość w minutach"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Długość nie jest wadą i nie ma uniwersalnej zasady jednej strony. Zachowaj strony, które są tego warte."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Pozwól klientom AI, takim jak Claude lub Cursor, czytać i edytować Twoje CV, korzystając z powyższego klucza API."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8575,6 +8628,10 @@ msgstr "Zablokowany"
 msgid "Locked · unlock to save"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Zamknięty. Odblokuj, aby edytować."
@@ -8913,8 +8970,7 @@ msgstr "Różnie"
 msgid "mixed format"
 msgstr "formacie mieszanym"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -9122,7 +9178,7 @@ msgstr "Moim zadaniem było ustalić przyczynę, nie dokładając pracy działow
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Nazwa"
@@ -9722,6 +9778,10 @@ msgstr "Northwind Labs · Lisbon"
 msgid "Norwegian"
 msgstr "Norweski"
 
+#: src/features/assistant/question-card.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Not applied"
 msgstr "Nie zastosowano"
@@ -10289,7 +10349,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Opcjonalnie dla lokalnego Ollama"
 
@@ -11181,6 +11241,10 @@ msgstr "Projekty"
 msgid "Promoted to lead, 2021"
 msgstr "Awans na lidera, 2021"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Proposed changes"
 msgstr "Proponowane zmiany"
@@ -11276,6 +11340,10 @@ msgstr "Umieść to wszystko na <0>jednej stronie.</0>"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "Ustaw karetkę w kolejce, aby ją ulepszyć"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "QR code"
@@ -11730,6 +11798,14 @@ msgstr "Przećwicz jeden spór z inżynierami i to, jak się zakończył."
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "Odrzucić"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Rejected"
@@ -13123,6 +13199,11 @@ msgstr "Arkusz stylów CSS semantyczny"
 msgid "Send"
 msgstr "Wysłać"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Send {0} again"
+msgstr ""
+
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send reset link"
@@ -13289,7 +13370,7 @@ msgstr "Ustaw język dokumentu podczas eksportu."
 
 #: src/features/assistant/provider-setup.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "Skonfiguruj AI"
 
 #: src/features/career/today.tsx
 msgid "Set up discovery"
@@ -13421,6 +13502,11 @@ msgstr "Krótszy"
 msgid "Show"
 msgstr "Pokazywać"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Pokazuj „Utworzono w Reactive Resume”"
@@ -13447,6 +13533,11 @@ msgstr "Pokaż ponownie"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
+msgstr ""
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/conversation.tsx
+msgid "Show all ({0} characters)"
 msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
@@ -13477,6 +13568,10 @@ msgstr "Pokaż zamknięte aplikacje o pracę"
 msgid "Show DNS records"
 msgstr "Pokaż rekordy DNS"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Pokaż nagłówek"
@@ -13488,6 +13583,10 @@ msgstr "Pokaż ikony"
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
 msgstr "Pokazuj w wyszukiwarkach"
+
+#: src/features/assistant/conversation.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -13565,6 +13664,10 @@ msgstr "Paski boczne są często czytane jako ostatnie lub umieszczane w główn
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "Zaloguj"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Zaloguj się ze swojego klienta AI lub użyj klucza API."
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -14940,11 +15043,11 @@ msgstr "Recenzja nie mogła się zakończyć. Spróbuj ponownie."
 msgid "The same line repeats on every page."
 msgstr "Ten sam wiersz powtarza się na każdej stronie."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Zapisany klucz nie jest wysyłany na nowy bazowy adres URL. Wprowadź klucz ponownie, jeśli ten serwer wymaga klucza."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Zapisany klucz nie jest wysyłany na nowy bazowy adres URL. Wprowadź klucz ponownie."
 
@@ -15159,10 +15262,6 @@ msgstr "Ten opis jest przycięty lub niekompletny. Przejrzyj go lub wklej pełny
 #: src/features/assistant/assistant-panel.tsx
 msgid "This document"
 msgstr "Ten dokument"
-
-#: src/features/assistant/assistant-panel.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Ten dokument jest zablokowany. Odblokuj, aby uzyskać sugestie."
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "This employer"
@@ -15673,6 +15772,10 @@ msgstr "Spróbuj ponownie"
 msgid "Try again with this"
 msgstr "Spróbuj ponownie z tym"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
 msgstr ""
@@ -15870,6 +15973,11 @@ msgstr "Podkreśl linki"
 msgid "Undo"
 msgstr "Anulować"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Undo resume change"
 msgstr "Cofnij zmianę w CV"
@@ -15893,6 +16001,7 @@ msgstr "Odczepić"
 msgid "Unlink this application"
 msgstr "Odłącz tę aplikację o pracę"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
@@ -15900,6 +16009,7 @@ msgstr "Odłącz tę aplikację o pracę"
 msgid "Unlock"
 msgstr "Odblokuj"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16563,6 +16673,10 @@ msgstr "Co widzi człowiek"
 #: src/features/career/coach.tsx
 msgid "What are you working on?"
 msgstr "Nad czym pracujesz?"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "What changed? Leave blank if you can’t support it."
@@ -17518,35 +17632,3 @@ msgstr "Pomniejsz"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Klucze działają w Twoim imieniu z wybranym przez Ciebie dostępem. Nowe klucze początkowo mają dostęp tylko do odczytu."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Zaloguj się ze swojego klienta AI lub użyj klucza API."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "Bazowy URL (wymagany)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "Wpisz identyfikator modelu."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "Wpisz klucz API dla tego dostawcy."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Wpisz bazowy URL zaczynający się od http:// lub https://."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "Uzyskaj klucz API"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Uzyskaj klucz API od operatora swojego punktu końcowego."

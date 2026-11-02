@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# zgodba} two {# zgodbi} few {# zgodbe} other {# zgodb}
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# stvar za pregled.} two {# stvari za pregled.} few {# stvari za pregled.} other {# stvari za pregled.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Spletni naslov je zapisan brez https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Približno 90 sekund, ko ga izgovorite"
@@ -1058,6 +1069,10 @@ msgstr "Sprejmi vse"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Aktiven"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Dodaj"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Napredno"
@@ -2235,6 +2252,10 @@ msgstr "Osnovna plača"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Osnovni URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Osnovni URL (obvezno)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "Tiskati ni bilo mogoče. Poskusite znova."
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "Teh sprememb ni bilo mogoče predlagati: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Življenjepisa ni bilo mogoče odkleniti. Poskusite znova."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Tega življenjepisa ni bilo mogoče odkleniti. Poskusite znova."
 
@@ -3879,10 +3905,6 @@ msgstr "Ustvari nov življenjepis"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Najprej ustvarite življenjepis, nato pa vprašajte o njem."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Ustvarite ključ API v nastavitvah računa v brskalniku. Ključi delujejo v vašem imenu ter lahko berejo in urejajo vaše dokumente."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "Uredi"
 msgid "Edit {0}: {1}"
 msgstr "Uredi {0}: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "Vnesite celoten znesek, na primer 95000. Vaš prejšnji znesek ostaja ne
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Vnesite šestnajstiško barvo, na primer #1a1a1a, ali rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Vnesite ID modela."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Vnesite ime do 64 znakov."
@@ -4837,6 +4876,14 @@ msgstr "Vnesite celo število od 0 do 52 ali pustite prazno."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Vnesite naslov, kot je resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Vnesite ključ API za tega ponudnika."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Vnesite osnovni URL, ki se začne z http:// ali https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "Nemščina"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Dobite ključ pri {0}. Shranjen je šifriran in se uporablja samo za vaše zahteve."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Pridobi ključ API"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Pridobite ključ API od upravljavca svoje končne točke."
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Pridobi povratne informacije"
@@ -5485,6 +5540,11 @@ msgstr "Skriti razdelki ohranijo svojo vsebino, vendar niso natisnjeni ali delje
 msgid "Hidden terms are back"
 msgstr "Skriti izrazi so nazaj"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Skrij {title} s strani"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "Ohranjeno tako kot je"
 msgid "Key stored encrypted"
 msgstr "Ključ shranjen šifriran"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Ključi delujejo kot vi in lahko dostopajo do vaših dokumentov. Novi ključi se ustvarijo v nastavitvah računa vašega brskalnika."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Postavitev ključnih besed"
@@ -6295,10 +6359,6 @@ msgstr "Manj"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Še manj kot 48 ur."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Odjemalcem AI, kot sta Claude in Cursor, dovolite branje in urejanje življenjepisov s ključem API."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "Zaklenjeno"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Zaklenjeni dokumenti so bili preskočeni. Najprej jih odkleni."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "Nov dokument"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Novi ključi imajo na začetku dostop samo za branje. Ključe ustvarite v nastavitvah računa v brskalniku."
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "normalno"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "norveščina"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "Razgovor na lokaciji"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Odpri"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "Odprite nastavitve AI"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "Vrstica napredka"
 msgid "Projects"
 msgstr "Projekti"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Predlagane spremembe"
@@ -8902,6 +8975,10 @@ msgstr "Založnik"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Preprost e-poštni naslov postavite blizu vrha prve strani. Prav po njem vas večina sistemov razvršča."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "Vadite na glas"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Zavrni"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "Nastavite ponudnika"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "Nastavi umetno inteligenco"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "Krajši"
 msgid "Show"
 msgstr "Prikaži"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Prikaži „Narejeno z Reactive Resume“"
@@ -10734,6 +10824,11 @@ msgstr "Pokaži {title} na strani"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Prikaži vse"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "Pokaži podrobnosti"
 msgid "Show DNS records"
 msgstr "Pokaži zapise DNS"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Prikaži naslov"
@@ -10778,6 +10877,10 @@ msgstr "Prikaži v iskalnikih"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Pokaži ključ"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "Ponovno se prijavite, če želite nadaljevati s preverjanjem tega življ
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Če želite nadaljevati z delom, se znova prijavite. Spremembe, ki ste jih naredili, se hranijo v tej napravi in se sinhronizirajo, ko se prijavite."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Prijavite se iz svojega odjemalca UI ali uporabite ključ API."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "Ta dokument"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Ta dokument je zaklenjen. Odklenite ga, preden tukaj obdržite svoja urejanja, ali obdržite oboje."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Ta dokument je zaklenjen. Odklenite ga, če želite prejeti predloge."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Ta dokument je zaklenjen. Še vedno lahko prenesete in poimenujete različice. Odklenite za urejanje ali obnovitev."
@@ -12576,6 +12679,10 @@ msgstr "Poskusi znova s tem"
 msgid "Try again, or restart the app."
 msgstr "Poskusite znova ali znova zaženite aplikacijo."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Poskusite z drugim iskanjem ali počistite filtre."
@@ -12699,6 +12806,11 @@ msgstr "Podčrtaj povezave"
 msgid "Undo"
 msgstr "Razveljavi"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "Neznano"
 msgid "Unlink"
 msgstr "Prekini povezavo"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "Odkleni urejanje"
 msgid "Unlock it first, then try again."
 msgstr "Najprej ga odkleni, nato poskusi znova."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Odklepanje …"
@@ -12909,10 +13023,6 @@ msgstr "Uporabi podatke iz življenjepisa"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Uporabi za vse prijave"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "Kaj vidi človek"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Na čem delate?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "Oddalji"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zuluščina"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Novi ključi imajo na začetku dostop samo za branje. Ključe ustvarite v nastavitvah računa v brskalniku."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Prijavite se iz svojega odjemalca UI ali uporabite ključ API."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Osnovni URL (obvezno)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Vnesite ID modela."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Vnesite ključ API za tega ponudnika."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Vnesite osnovni URL, ki se začne z http:// ali https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Pridobi ključ API"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Pridobite ključ API od upravljavca svoje končne točke."

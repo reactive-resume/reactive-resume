@@ -281,6 +281,13 @@ msgstr "{0, plural, other {# câu chuyện}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# mục cần xem lại.} other {# mục cần xem lại.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Một địa chỉ web được viết mà không có https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Khoảng 90 giây khi nói"
@@ -1058,6 +1069,10 @@ msgstr "Chấp nhận tất cả"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Tích cực"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Thêm"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Trình độ cao"
@@ -2235,6 +2252,10 @@ msgstr "Lương cơ bản"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "URL cơ sở"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "URL cơ sở (bắt buộc)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "Không thể in. Hãy thử lại."
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "Không thể đề xuất những chỉnh sửa này: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Không thể mở khóa sơ yếu lý lịch. Hãy thử lại."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Không thể mở khóa sơ yếu lý lịch này. Hãy thử lại."
 
@@ -3879,10 +3905,6 @@ msgstr "Tạo sơ yếu lý lịch mới"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Trước tiên hãy tạo một bản lý lịch, sau đó hỏi về nó."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Tạo khóa API trong cài đặt tài khoản trình duyệt của bạn. Các khóa API thay mặt bạn và có thể đọc và chỉnh sửa tài liệu của bạn."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "Biên tập"
 msgid "Edit {0}: {1}"
 msgstr "Chỉnh sửa {0}: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "Nhập số tiền đầy đủ, ví dụ 95000. Số tiền trước đ
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Nhập màu hex như #1a1a1a hoặc rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Nhập ID mô hình."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Nhập tên, tối đa 64 ký tự."
@@ -4837,6 +4876,14 @@ msgstr "Nhập số nguyên từ 0 đến 52 hoặc để trống."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Nhập địa chỉ như resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Nhập khóa API cho nhà cung cấp này."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Nhập URL cơ sở bắt đầu bằng http:// hoặc https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "Tiếng Đức"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Nhận key tại {0}. Nó được lưu trữ được mã hóa và chỉ được sử dụng cho các yêu cầu của bạn."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Lấy khóa API"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Lấy khóa API từ đơn vị vận hành endpoint của bạn."
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Xin nhận xét"
@@ -5485,6 +5540,11 @@ msgstr "Các phần ẩn giữ lại nội dung của chúng nhưng không đư�
 msgid "Hidden terms are back"
 msgstr "Điều khoản ẩn đã trở lại"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Ẩn {title} khỏi trang"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "Giữ nguyên như cũ"
 msgid "Key stored encrypted"
 msgstr "Khóa được lưu trữ được mã hóa"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Khóa API thay mặt bạn và có thể truy cập tài liệu của bạn. Tạo khóa mới trong cài đặt tài khoản trình duyệt của bạn."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Bố cục từ khóa"
@@ -6295,10 +6359,6 @@ msgstr "Ít hơn"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Còn chưa đầy 48 giờ."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Cho phép các máy khách AI như Claude hoặc Cursor đọc và chỉnh sửa sơ yếu lý lịch của bạn bằng cách sử dụng khóa API."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "Đã khóa"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Tài liệu bị khóa bị bỏ qua. Mở khóa chúng trước."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "Tài liệu mới"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Khóa mới ban đầu chỉ có quyền đọc. Tạo khóa trong phần cài đặt tài khoản trên trình duyệt."
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "Bình thường"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Na Uy"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "Phỏng vấn trực tiếp"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Mở"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "Mở cài đặt AI"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "Thanh tiến trình"
 msgid "Projects"
 msgstr "Dự án"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Thay đổi được đề xuất"
@@ -8902,6 +8975,10 @@ msgstr "Nhà xuất bản"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Đặt một địa chỉ email đơn giản gần đầu trang một. Đây là thông tin mà hầu hết hệ thống dùng để lưu hồ sơ của bạn."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "Tập nói thành tiếng"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Từ chối"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "Thiết lập nhà cung cấp"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "Thiết lập AI"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "ngắn hơn"
 msgid "Show"
 msgstr "Hiển thị"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Hiện “Được tạo bằng Reactive Resume”"
@@ -10734,6 +10824,11 @@ msgstr "Hiển thị {title} trên trang"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Hiển thị tất cả"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "Hiển thị chi tiết"
 msgid "Show DNS records"
 msgstr "Hiển thị bản ghi DNS"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Hiển thị tiêu đề"
@@ -10778,6 +10877,10 @@ msgstr "Hiện trên công cụ tìm kiếm"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Hiển thị phím"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "Đăng nhập lại để tiếp tục kiểm tra sơ yếu lý lịch n
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Đăng nhập lại để tiếp tục làm việc. Các chỉnh sửa bạn thực hiện sẽ được lưu giữ trên thiết bị này và đồng bộ hóa sau khi bạn đăng nhập."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Đăng nhập từ ứng dụng AI của bạn hoặc dùng khóa API."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "Tài liệu này"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Tài liệu này đã bị khóa. Mở khóa nó trước khi giữ các chỉnh sửa của bạn ở đây hoặc giữ cả hai."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Tài liệu này đã bị khóa. Mở khóa nó để nhận được đề xuất."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Tài liệu này đã bị khóa. Bạn vẫn có thể tải xuống và đặt tên cho các phiên bản. Mở khóa để chỉnh sửa hoặc khôi phục."
@@ -12576,6 +12679,10 @@ msgstr "Thử lại với bản này"
 msgid "Try again, or restart the app."
 msgstr "Hãy thử lại hoặc khởi động lại ứng dụng."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Hãy thử tìm kiếm khác hoặc xóa bộ lọc của bạn."
@@ -12699,6 +12806,11 @@ msgstr "Gạch chân các liên kết"
 msgid "Undo"
 msgstr "Hoàn tác"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "Không rõ"
 msgid "Unlink"
 msgstr "Hủy liên kết"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "Mở khóa chỉnh sửa"
 msgid "Unlock it first, then try again."
 msgstr "Mở khóa trước rồi thử lại."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Đang mở khóa…"
@@ -12909,10 +13023,6 @@ msgstr "Dùng thông tin từ sơ yếu lý lịch"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Dùng cho mọi hồ sơ ứng tuyển"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "Những gì con người nhìn thấy"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Bạn đang làm gì?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "Thu nhỏ"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Khóa mới ban đầu chỉ có quyền đọc. Tạo khóa trong phần cài đặt tài khoản trên trình duyệt."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Đăng nhập từ ứng dụng AI của bạn hoặc dùng khóa API."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "URL cơ sở (bắt buộc)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Nhập ID mô hình."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Nhập khóa API cho nhà cung cấp này."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Nhập URL cơ sở bắt đầu bằng http:// hoặc https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Lấy khóa API"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Lấy khóa API từ đơn vị vận hành endpoint của bạn."

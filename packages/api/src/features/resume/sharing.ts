@@ -79,18 +79,22 @@ export const sharingRouter = {
 			operationId: "setResumePassword",
 			summary: "Set resume password",
 			description:
-				"Sets or updates a password on a resume. When a password is set, viewers of the public resume must enter the password before the resume data is revealed. The password must be between 6 and 64 characters. Locked resumes can't be changed; unlock the resume first. Requires authentication.",
-			successDescription: "The resume password was set successfully.",
+				"Sets or updates a password on a resume. When a password is set, viewers of the public resume must enter the password before the resume data is revealed. The password must be between 6 and 64 characters. Locked resumes can't be changed; unlock the resume first. When expectedUpdatedAt is provided, a stale version returns RESUME_VERSION_CONFLICT (409). Returns the resume as the change left it. Requires authentication.",
+			successDescription: "The resume with hasPassword set and its new updatedAt.",
 		})
 		.input(resumeDto.setPassword.input)
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.setPassword.output)
-		.errors({ RESUME_LOCKED: { status: 403, message: "Unlock the resume first." } })
+		.errors({
+			RESUME_LOCKED: { status: 403, message: "Unlock the resume first." },
+			RESUME_VERSION_CONFLICT: { status: 409, message: "The resume changed since it was read. Read it again." },
+		})
 		.handler(({ context, input }) =>
 			resumeService.setPassword({
 				id: input.id,
 				userId: context.user.id,
 				password: input.password,
+				expectedUpdatedAt: input.expectedUpdatedAt,
 			}),
 		),
 
@@ -131,17 +135,21 @@ export const sharingRouter = {
 			operationId: "removeResumePassword",
 			summary: "Remove resume password",
 			description:
-				"Removes password protection from a resume. After removal, the resume (if public) can be viewed without entering a password. Locked resumes can't be changed; unlock the resume first. Requires authentication.",
-			successDescription: "The resume password was removed successfully.",
+				"Removes password protection from a resume. After removal, the resume (if public) can be viewed without entering a password. Locked resumes can't be changed; unlock the resume first. When expectedUpdatedAt is provided, a stale version returns RESUME_VERSION_CONFLICT (409). Returns the resume as the change left it. Requires authentication.",
+			successDescription: "The resume with hasPassword cleared and its new updatedAt.",
 		})
 		.input(resumeDto.removePassword.input)
 		.use(resumeMutationRateLimit)
 		.output(resumeDto.removePassword.output)
-		.errors({ RESUME_LOCKED: { status: 403, message: "Unlock the resume first." } })
+		.errors({
+			RESUME_LOCKED: { status: 403, message: "Unlock the resume first." },
+			RESUME_VERSION_CONFLICT: { status: 409, message: "The resume changed since it was read. Read it again." },
+		})
 		.handler(({ context, input }) =>
 			resumeService.removePassword({
 				id: input.id,
 				userId: context.user.id,
+				expectedUpdatedAt: input.expectedUpdatedAt,
 			}),
 		),
 };

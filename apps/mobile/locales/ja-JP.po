@@ -281,6 +281,13 @@ msgstr "{0, plural, other {#件のストーリー}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {確認が必要な項目#件。} other {確認が必要な項目#件。}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "ウェブアドレスに https:// が付いていません。"
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "話すと約90秒"
@@ -1058,6 +1069,10 @@ msgstr "すべてを受け入れる"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "アクティブ"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "追加"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "高度な"
@@ -2235,6 +2252,10 @@ msgstr "基本給"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "ベースURL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "ベースURL（必須）"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "印刷できませんでした。もう一度やり直してください
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "これらの編集を提案できませんでした: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "レジュメのロックを解除できませんでした。もう一度お試しください。"
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "このレジュメのロックを解除できませんでした。もう一度やり直してください。"
 
@@ -3879,10 +3905,6 @@ msgstr "新しいレジュメを作成"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "まず履歴書を作成してから、それについて質問してください。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "ブラウザのアカウント設定から API キーを作成します。キーはユーザーとして機能し、書類を読み取ったり編集したりできます。"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "編集"
 msgid "Edit {0}: {1}"
 msgstr "{0} を編集: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "95000のように、金額を省略せずに入力してください。�
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a または rgba(…) のような 16 進数の色を入力してください。"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "モデルIDを入力してください。"
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "名前を 64 文字以内で入力します。"
@@ -4837,6 +4876,14 @@ msgstr "0 ～ 52 の整数を入力するか、空白のままにします。"
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org などのアドレスを入力します。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "このプロバイダーのAPIキーを入力してください。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// または https:// で始まるベースURLを入力してください。"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "ドイツ語"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Get a key at {0}.暗号化されて保存され、リクエストにのみ使用されます。"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "APIキーを取得"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "エンドポイントの運営者からAPIキーを取得してください。"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "フィードバックをもらう"
@@ -5485,6 +5540,11 @@ msgstr "非表示セクションにはコンテンツが保持されますが、
 msgid "Hidden terms are back"
 msgstr "隠された用語が戻ってきました"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "{title} をページから非表示にする"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "そのままにしておきます"
 msgid "Key stored encrypted"
 msgstr "キーは暗号化されて保存されます"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "キーはユーザーとして機能し、書類にアクセスできます。新しいキーはブラウザのアカウント設定で作成されます。"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "キーワードのレイアウト"
@@ -6295,10 +6359,6 @@ msgstr "少ない"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "残りは 48 時間未満です。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Claude や Cursor などの AI クライアントが API キーを使用してレジュメを読み取り、編集できるようにします。"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "ロックされています"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Locked documents were skipped.まずロックを解除してください。"
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "新しいドキュメント"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "新しいキーは読み取り専用で作成されます。ブラウザーのアカウント設定でキーを作成してください。"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "普通"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "ノルウェー語"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "対面面接"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "開く"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "AI設定を開く"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "プログレスバー"
 msgid "Projects"
 msgstr "プロジェクト"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "変更の提案"
@@ -8902,6 +8975,10 @@ msgstr "出版社"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "1ページ目の上部近くに、プレーンなメールアドレスを記載してください。多くのシステムがこれをもとに応募者を管理します。"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "声に出してリハーサル"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "拒否する"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "プロバイダーをセットアップする"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "AI を設定"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "短い"
 msgid "Show"
 msgstr "見せる"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "「Reactive Resume で作成」を表示"
@@ -10734,6 +10824,11 @@ msgstr "ページに{title}を表示"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "すべて表示"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "詳細を表示"
 msgid "Show DNS records"
 msgstr "DNS レコードを表示"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "見出しを表示"
@@ -10778,6 +10877,10 @@ msgstr "検索エンジンに表示"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "キーを表示"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "このレジュメの確認を続けるには、もう一度サインイ
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "作業を続けるには、再度サインインしてください。行った編集内容はこのデバイスに保存され、サインイン後に同期されます。"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "AIクライアントからログインするか、APIキーを使用してください。"
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "この文書"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "この文書はロックされています。編集内容をここに保存する前にロックを解除するか、両方を保存してください。"
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "この文書はロックされています。ロックを解除すると提案が表示されます。"
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "この文書はロックされています。引き続き、バージョンをダウンロードして名前を付けることができます。編集または復元するにはロックを解除します。"
@@ -12576,6 +12679,10 @@ msgstr "これでもう一度試す"
 msgid "Try again, or restart the app."
 msgstr "もう一度お試しいただくか、アプリを再起動してください。"
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "別の検索を試すか、フィルターをクリアしてください。"
@@ -12699,6 +12806,11 @@ msgstr "リンクに下線を引く"
 msgid "Undo"
 msgstr "元に戻す"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "不明"
 msgid "Unlink"
 msgstr "リンクを解除する"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "編集のロックを解除する"
 msgid "Unlock it first, then try again."
 msgstr "まずロックを解除してから、もう一度試してください。"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "ロックを解除中…"
@@ -12909,10 +13023,6 @@ msgstr "レジュメの詳細を使用"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "すべての応募で使用"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "人が見る内容"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "何に取り組んでいますか？"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "ズームアウト"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ズールー語"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "新しいキーは読み取り専用で作成されます。ブラウザーのアカウント設定でキーを作成してください。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "AIクライアントからログインするか、APIキーを使用してください。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "ベースURL（必須）"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "モデルIDを入力してください。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "このプロバイダーのAPIキーを入力してください。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// または https:// で始まるベースURLを入力してください。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "APIキーを取得"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "エンドポイントの運営者からAPIキーを取得してください。"

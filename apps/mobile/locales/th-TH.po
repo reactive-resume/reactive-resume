@@ -281,6 +281,13 @@ msgstr "{0, plural, other {# เรื่องราว}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {มี # รายการที่ต้องตรวจสอบ} other {มี # รายการที่ต้องตรวจสอบ}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "ที่อยู่เว็บเขียนโดยไม่มี
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "ประมาณ 90 วินาทีเมื่อพูด"
@@ -1058,6 +1069,10 @@ msgstr "ยอมรับทั้งหมด"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "คล่องแคล่ว"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "เพิ่ม"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "ขั้นสูง"
@@ -2235,6 +2252,10 @@ msgstr "เงินเดือนพื้นฐาน"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "URL พื้นฐาน"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "URL หลัก (จำเป็น)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "ไม่สามารถพิมพ์ได้ ลองอีก�
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "ไม่สามารถเสนอการแก้ไขเหล่านี้ได้: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "ปลดล็อกประวัติย่อไม่ได้ ลองอีกครั้ง"
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "ไม่สามารถปลดล็อค ประวัติย่อ นี้ ลองอีกครั้ง"
 
@@ -3879,10 +3905,6 @@ msgstr "สร้างเรซูเม่ใหม่"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "สร้างเรซูเม่ก่อนแล้วจึงถามเกี่ยวกับเรซูเม่"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "สร้างคีย์ API จากการตั้งค่าบัญชีในเบราว์เซอร์ของคุณ คีย์จะทำหน้าที่เป็นคุณและสามารถอ่านและแก้ไขเอกสารของคุณได้"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "แก้ไข"
 msgid "Edit {0}: {1}"
 msgstr "แก้ไข {0}: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "ป้อนจำนวนเต็ม เช่น 95000 จำนว�
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "ป้อนสีฐานสิบหก เช่น #1a1a1a หรือ rgba(…)"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "ป้อน ID โมเดล"
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "ป้อนชื่อ สูงสุด 64 อักขระ"
@@ -4837,6 +4876,14 @@ msgstr "ป้อนจำนวนเต็มตั้งแต่ 0 ถึง
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "ป้อนที่อยู่ เช่น resume.example.org"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "ป้อนคีย์ API สำหรับผู้ให้บริการนี้"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "ป้อน URL หลักที่ขึ้นต้นด้วย http:// หรือ https://"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "ภาษาเยอรมัน"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "รับกุญแจที่ {0} มันถูกจัดเก็บแบบเข้ารหัสและใช้สำหรับการร้องขอของคุณเท่านั้น"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "รับคีย์ API"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "รับคีย์ API จากผู้ดูแลเอนด์พอยต์ของคุณ"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "รับคำติชม"
@@ -5485,6 +5540,11 @@ msgstr "ส่วนที่ซ่อนจะเก็บเนื้อหา
 msgid "Hidden terms are back"
 msgstr "เงื่อนไขที่ซ่อนอยู่กลับมาแล้ว"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "ซ่อน {title} จากเพจ"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "เก็บไว้เหมือนเดิม"
 msgid "Key stored encrypted"
 msgstr "คีย์ที่เก็บไว้มีการเข้ารหัส"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "คีย์ทำหน้าที่เป็นคุณและสามารถเข้าถึงเอกสารของคุณได้ รหัสใหม่จะถูกสร้างขึ้นในการตั้งค่าบัญชีเบราว์เซอร์ของคุณ"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "เค้าโครงคำหลัก"
@@ -6295,10 +6359,6 @@ msgstr "น้อยลง"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "เหลือเวลาไม่ถึง 48 ชั่วโมง"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "ให้ไคลเอ็นต์ AI เช่น Claude หรือ Cursor อ่านและแก้ไข ประวัติย่อ ของคุณ โดยใช้คีย์ API"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "ล็อคแล้ว"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "เอกสารที่ล็อคถูกข้าม ปลดล็อคพวกมันก่อน"
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "เอกสารใหม่"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "คีย์ใหม่จะเริ่มต้นด้วยสิทธิ์อ่านอย่างเดียว สร้างคีย์ในการตั้งค่าบัญชีผ่านเบราว์เซอร์ของคุณ"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "ปกติ"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "นอร์เวย์"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "การสัมภาษณ์ ณ สถานที่"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "เปิด"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "เปิดการตั้งค่า AI"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "แถบความคืบหน้า"
 msgid "Projects"
 msgstr "โปรเจกต์"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "การเปลี่ยนแปลงที่เสนอ"
@@ -8902,6 +8975,10 @@ msgstr "สำนักพิมพ์"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "ใส่ที่อยู่อีเมลแบบข้อความล้วนไว้ใกล้ด้านบนของหน้าแรก เพราะระบบส่วนใหญ่ใช้จัดเก็บข้อมูลของคุณ"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "ซ้อมพูดออกเสียง"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "ปฏิเสธ"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "ตั้งค่าผู้ให้บริการ"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "ตั้งค่า AI"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "สั้นลง"
 msgid "Show"
 msgstr "แสดง"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "แสดง “สร้างด้วย Reactive Resume”"
@@ -10734,6 +10824,11 @@ msgstr "แสดง {title} บนหน้า"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "แสดงทั้งหมด"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "แสดงรายละเอียด"
 msgid "Show DNS records"
 msgstr "แสดงเรกคอร์ด DNS"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "แสดงหัวเรื่อง"
@@ -10778,6 +10877,10 @@ msgstr "แสดงในเครื่องมือค้นหา"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "แสดงปุ่ม"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "ลงชื่อเข้าใช้อีกครั้งเพื
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "ลงชื่อเข้าใช้อีกครั้งเพื่อทำงานต่อ การแก้ไขที่คุณทำจะถูกเก็บไว้ในอุปกรณ์นี้และซิงค์หลังจากที่คุณลงชื่อเข้าใช้"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "ลงชื่อเข้าใช้จากไคลเอนต์ AI ของคุณ หรือใช้คีย์ API"
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "เอกสารฉบับนี้"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "เอกสารนี้ถูกล็อค ปลดล็อกก่อนที่จะเก็บการแก้ไขไว้ที่นี่ หรือเก็บทั้งสองอย่าง"
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "เอกสารนี้ถูกล็อค ปลดล็อกเพื่อรับคำแนะนำ"
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "เอกสารนี้ถูกล็อค คุณยังคงสามารถดาวน์โหลดและตั้งชื่อเวอร์ชันได้ ปลดล็อคเพื่อแก้ไขหรือกู้คืน"
@@ -12576,6 +12679,10 @@ msgstr "ลองอีกครั้งด้วยแบบนี้"
 msgid "Try again, or restart the app."
 msgstr "ลองอีกครั้ง หรือรีสตาร์ทแอป"
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "ลองค้นหาอีกครั้งหรือล้างตัวกรองของคุณ"
@@ -12699,6 +12806,11 @@ msgstr "ขีดเส้นใต้ลิงก์"
 msgid "Undo"
 msgstr "เลิกทำ"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "ไม่ทราบ"
 msgid "Unlink"
 msgstr "ยกเลิกการเชื่อมโยง"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "ปลดล็อคการแก้ไข"
 msgid "Unlock it first, then try again."
 msgstr "ปลดล็อคก่อน จากนั้นลองอีกครั้ง"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "กำลังปลดล็อค…"
@@ -12909,10 +13023,6 @@ msgstr "ใช้รายละเอียดจากประวัติย
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "ใช้กับใบสมัครทั้งหมด"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "สิ่งที่คนมองเห็น"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "คุณกำลังทำอะไรอยู่?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "ซูมออก"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ซูลู"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "คีย์ใหม่จะเริ่มต้นด้วยสิทธิ์อ่านอย่างเดียว สร้างคีย์ในการตั้งค่าบัญชีผ่านเบราว์เซอร์ของคุณ"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "ลงชื่อเข้าใช้จากไคลเอนต์ AI ของคุณ หรือใช้คีย์ API"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "URL หลัก (จำเป็น)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "ป้อน ID โมเดล"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "ป้อนคีย์ API สำหรับผู้ให้บริการนี้"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "ป้อน URL หลักที่ขึ้นต้นด้วย http:// หรือ https://"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "รับคีย์ API"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "รับคีย์ API จากผู้ดูแลเอนด์พอยต์ของคุณ"

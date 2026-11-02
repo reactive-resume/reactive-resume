@@ -281,6 +281,13 @@ msgstr "{0, plural, zero {# stāsti} one {# stāsts} other {# stāsti}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# pārskatāma lieta.} other {# pārskatāmas lietas.} zero {# pārskatāmu lietu.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Interneta adrese ir rakstīta bez https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Apmēram 90 sekundes, runājot skaļi"
@@ -1058,6 +1069,10 @@ msgstr "Pieņemt visu"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Aktīvs"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Pievienot"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Paplašināts"
@@ -2235,6 +2252,10 @@ msgstr "Pamatalga"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Bāzes URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Pamata URL (obligāts)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "Nevarēja izdrukāt. Mēģiniet vēlreiz."
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "Nevarēja piedāvāt šos labojumus: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Nevarēja atbloķēt CV. Mēģiniet vēlreiz."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Nevarēja atbloķēt šo CV. Mēģiniet vēlreiz."
 
@@ -3879,10 +3905,6 @@ msgstr "Izveidot jaunu CV"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Vispirms izveidojiet CV, pēc tam jautājiet par to."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Pārlūkprogrammas konta iestatījumos izveidojiet atslēgu API. API atslēgas darbojas jūsu vārdā un var lasīt un rediģēt jūsu dokumentus."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "Rediģēt"
 msgid "Edit {0}: {1}"
 msgstr "Rediģēt {0}: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "Ievadiet pilnu summu, piemēram, 95000. Iepriekšējā summa nav mainīt
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Ievadiet hex krāsu, piemēram, #1a1a1a, vai rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Ievadiet modeļa ID."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Ievadiet nosaukumu, līdz 64 rakstzīmēm."
@@ -4837,6 +4876,14 @@ msgstr "Ievadiet veselu skaitli no 0 līdz 52 vai atstājiet tukšu."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Ievadiet adresi, piemēram, resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Ievadiet šī pakalpojumu sniedzēja API atslēgu."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Ievadiet pamata URL, kas sākas ar http:// vai https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "Vācu"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Iegūstiet atslēgu vietnē {0}. Tas tiek saglabāts šifrēts un tiek izmantots tikai jūsu pieprasījumiem."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Iegūt API atslēgu"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Iegūstiet API atslēgu no sava galapunkta operatora."
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Saņemt atsauksmi"
@@ -5485,6 +5540,11 @@ msgstr "Slēptajās sadaļās tiek saglabāts saturs, taču tās netiek drukāta
 msgid "Hidden terms are back"
 msgstr "Slēptie termini ir atgriezušies"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Paslēpt {title} no lapas"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "Saglabāts kā ir"
 msgid "Key stored encrypted"
 msgstr "Atslēga saglabāta šifrēta"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "API atslēgas darbojas jūsu vārdā un var piekļūt jūsu dokumentiem. Pārlūkprogrammas konta iestatījumos izveidojiet jaunas atslēgas."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Atslēgvārdu izkārtojums"
@@ -6295,10 +6359,6 @@ msgstr "Mazāk"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Atlikušas mazāk nekā 48 stundas."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Ļaujiet AI klientiem, piemēram, Claude vai Cursor, lasīt un rediģēt jūsu CV ar API atslēgu."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "Bloķēts"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Bloķētie dokumenti tika izlaisti. Vispirms atbloķējiet tos."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "Jauns dokuments"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Jaunām atslēgām sākotnēji ir tikai lasīšanas piekļuve. Izveidojiet atslēgas sava konta iestatījumos pārlūkprogrammā."
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "Normāls"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norvēģu"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "Intervija klātienē"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Atvērt"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "Atveriet AI iestatījumus"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "Progresa josla"
 msgid "Projects"
 msgstr "Projekti"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Ierosinātās izmaiņas"
@@ -8902,6 +8975,10 @@ msgstr "Izdevējs"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Ievietojiet vienkāršu e-pasta adresi pirmās lapas augšdaļas tuvumā. Pēc tās jūs klasificē lielākā daļa sistēmu."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "Izmēģināt skaļi"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Noraidīt"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "Iestatiet pakalpojumu sniedzēju"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "Iestatīt MI"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "Īsāks"
 msgid "Show"
 msgstr "Rādīt"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Rādīt “Izveidots ar Reactive Resume”"
@@ -10734,6 +10824,11 @@ msgstr "Lapā parādiet {title}"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Rādīt visu"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "Rādīt detaļas"
 msgid "Show DNS records"
 msgstr "Rādīt DNS ierakstus"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Rādīt virsrakstu"
@@ -10778,6 +10877,10 @@ msgstr "Rādīt meklētājprogrammās"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Rādīt atslēgu"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "Pierakstieties vēlreiz, lai turpinātu pārbaudīt šo CV."
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Pierakstieties vēlreiz, lai turpinātu strādāt. Jūsu veiktie labojumi tiek saglabāti šajā ierīcē un tiek sinhronizēti pēc pierakstīšanās."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Pierakstieties no sava MI klienta vai izmantojiet API atslēgu."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "Šis dokuments"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Šis dokuments ir bloķēts. Atbloķējiet to, pirms saglabājat savus labojumus šeit, vai paturiet abus."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Šis dokuments ir bloķēts. Atbloķējiet to, lai saņemtu ieteikumus."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Šis dokuments ir bloķēts. Jūs joprojām varat lejupielādēt un nosaukt versijas. Atbloķējiet, lai rediģētu vai atjaunotu."
@@ -12576,6 +12679,10 @@ msgstr "Mēģināt vēlreiz ar šo"
 msgid "Try again, or restart the app."
 msgstr "Mēģiniet vēlreiz vai restartējiet lietotni."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Izmēģiniet citu meklēšanu vai notīriet filtrus."
@@ -12699,6 +12806,11 @@ msgstr "Pasvītrot saites"
 msgid "Undo"
 msgstr "Atsaukt"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "Nezināms"
 msgid "Unlink"
 msgstr "Atsaistīt"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "Atbloķējiet rediģēšanu"
 msgid "Unlock it first, then try again."
 msgstr "Vispirms atbloķējiet to un pēc tam mēģiniet vēlreiz."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Notiek atbloķēšana…"
@@ -12909,10 +13023,6 @@ msgstr "Izmantot informāciju no CV"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Izmantot visiem pieteikumiem"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "Ko redz cilvēks"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Pie kā jūs strādājat?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "Tālināt"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Jaunām atslēgām sākotnēji ir tikai lasīšanas piekļuve. Izveidojiet atslēgas sava konta iestatījumos pārlūkprogrammā."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Pierakstieties no sava MI klienta vai izmantojiet API atslēgu."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Pamata URL (obligāts)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Ievadiet modeļa ID."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Ievadiet šī pakalpojumu sniedzēja API atslēgu."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Ievadiet pamata URL, kas sākas ar http:// vai https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Iegūt API atslēgu"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Iegūstiet API atslēgu no sava galapunkta operatora."

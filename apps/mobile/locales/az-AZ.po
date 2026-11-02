@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# hekayə} other {# hekayə}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {Baxılmalı # məqam.} other {Baxılmalı # məqam.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Veb ünvanı https:// olmadan yazılıb."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Səsli deyiləndə təxminən 90 saniyə"
@@ -1058,6 +1069,10 @@ msgstr "Hamısını qəbul et"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Aktiv"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Əlavə et"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Qabaqcıl"
@@ -2235,6 +2252,10 @@ msgstr "Əsas maaş"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Əsas URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Baza URL-i (tələb olunur)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "Çap etmək mümkün olmadı. Yenidən cəhd edin."
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "Bu redaktələri təklif etmək mümkün olmadı: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "CV-nin kilidini açmaq mümkün olmadı. Yenidən cəhd edin."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Bu CV-ni açmaq mümkün olmadı. Yenidən cəhd edin."
 
@@ -3879,10 +3905,6 @@ msgstr "Yeni özgeçmiş yaradın"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Əvvəlcə rezyume yaradın, sonra bu barədə soruşun."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Brauzerinizdə Hesab parametrlərindən API açarı yaradın. Açarlar sizin kimi fəaliyyət göstərir və sənədlərinizi oxuya və redaktə edə bilər."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "Redaktə edin"
 msgid "Edit {0}: {1}"
 msgstr "Redaktə edin {0}: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "Tam məbləği daxil edin, məsələn, 95000. Əvvəlki məbləğiniz d�
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a və ya rgba(…) kimi hex rəng daxil edin."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Model ID-sini daxil edin."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 simvola qədər ad daxil edin."
@@ -4837,6 +4876,14 @@ msgstr "0-dan 52-yə qədər tam ədəd daxil edin və ya boş buraxın."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org kimi bir ünvan daxil edin."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Bu provayder üçün API açarını daxil edin."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// və ya https:// ilə başlayan baza URL-i daxil edin."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "Alman"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "{0} ünvanında açar əldə edin. O, şifrələnmiş şəkildə saxlanılır və yalnız sorğularınız üçün istifadə olunur."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "API açarı əldə edin"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Son nöqtənizin operatorundan API açarı əldə edin."
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Rəy al"
@@ -5485,6 +5540,11 @@ msgstr "Gizli bölmələr məzmununu saxlayır, lakin çap edilmir və paylaşı
 msgid "Hidden terms are back"
 msgstr "Gizli şərtlər geri döndü"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "{title} səhifədən gizlədin"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "Olduğu kimi saxlanılır"
 msgid "Key stored encrypted"
 msgstr "Açar şifrələnmiş şəkildə saxlanılır"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Açarlar sizin kimi fəaliyyət göstərir və sənədlərinizə daxil ola bilər. Brauzer hesabınızın parametrlərində yeni açarlar yaradılır."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Açar söz düzümü"
@@ -6295,10 +6359,6 @@ msgstr "Daha az"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "48 saatdan az vaxt qalıb."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Claude və ya Cursor kimi AI müştərilərinə API açarından istifadə edərək CV-lərinizi oxumağa və redaktə etməyə icazə verin."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "Kilidlənib"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Kilidlənmiş sənədlər atlandı. Əvvəlcə onların kilidini açın."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "Yeni sənəd"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Yeni açarlar yalnız oxuma icazəsi ilə başlayır. Açarları brauzerinizdəki hesab parametrlərində yaradın."
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "Normal"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norveç"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "Yerində müsahibə"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Aç"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "AI parametrlərini açın"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "Proqres zolağı"
 msgid "Projects"
 msgstr "Layihələr"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Təklif olunan dəyişikliklər"
@@ -8902,6 +8975,10 @@ msgstr "Nəşriyyatçı"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Sadə e-poçt ünvanını birinci səhifənin yuxarı hissəsinə yaxın yerləşdirin. Əksər sistemlər sizi bununla qeydə alır."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "Səsli məşq et"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Rədd edin"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "Bir provayder qurun"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "Süni intellekti qur"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "Daha qısa"
 msgid "Show"
 msgstr "Göstər"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ilə hazırlanmış” yazısını göstər"
@@ -10734,6 +10824,11 @@ msgstr "Səhifədə {title} göstərin"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Hamısını göstər"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "Detalları göstərin"
 msgid "Show DNS records"
 msgstr "DNS qeydlərini göstərin"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Başlığı göstərin"
@@ -10778,6 +10877,10 @@ msgstr "Axtarış sistemlərində göstər"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Açarı göstər"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "Bu CV-ni yoxlamağa davam etmək üçün yenidən daxil olun."
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "İşə davam etmək üçün yenidən daxil olun. Etdiyiniz düzəlişlər bu cihazda saxlanılır və siz daxil olduqdan sonra sinxronizasiya olunur."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Süni intellekt tətbiqinizdən daxil olun və ya API açarından istifadə edin."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "Bu sənəd"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Bu sənəd kilidlidir. Redaktələrinizi burada saxlamazdan əvvəl onu kiliddən çıxarın və ya hər ikisini saxlayın."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Bu sənəd kilidlidir. Təkliflər almaq üçün kilidini açın."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Bu sənəd kilidlidir. Siz hələ də yükləyə və versiyaları adlandıra bilərsiniz. Redaktə etmək və ya bərpa etmək üçün kilidi açın."
@@ -12576,6 +12679,10 @@ msgstr "Bununla yenidən cəhd et"
 msgid "Try again, or restart the app."
 msgstr "Yenidən cəhd edin və ya tətbiqi yenidən başladın."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Başqa bir axtarışa cəhd edin və ya filtrlərinizi silin."
@@ -12699,6 +12806,11 @@ msgstr "Bağlantıların altını çəkin"
 msgid "Undo"
 msgstr "Geri al"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "Naməlum"
 msgid "Unlink"
 msgstr "Əlaqəni kəsin"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "Redaktəni kiliddən çıxarın"
 msgid "Unlock it first, then try again."
 msgstr "Əvvəlcə kilidini açın, sonra yenidən cəhd edin."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Kilid açılır..."
@@ -12909,10 +13023,6 @@ msgstr "CV-dəki məlumatlardan istifadə et"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Bütün müraciətlər üçün istifadə et"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "İnsanın gördüyü"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Nə üzərində işləyirsiniz?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "Uzaqlaşdır"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Yeni açarlar yalnız oxuma icazəsi ilə başlayır. Açarları brauzerinizdəki hesab parametrlərində yaradın."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Süni intellekt tətbiqinizdən daxil olun və ya API açarından istifadə edin."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Baza URL-i (tələb olunur)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Model ID-sini daxil edin."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Bu provayder üçün API açarını daxil edin."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// və ya https:// ilə başlayan baza URL-i daxil edin."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "API açarı əldə edin"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Son nöqtənizin operatorundan API açarı əldə edin."

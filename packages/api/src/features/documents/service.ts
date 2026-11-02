@@ -6,7 +6,7 @@ import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
 import { applicationService, insertApplication } from "../applications/service";
 import { coverLetterService } from "../cover-letters/service";
-import { resumeService } from "../resume/service";
+import { resumeService, writeResumeFields } from "../resume/service";
 import { followNameWithSlug } from "../resume/slugs";
 import { listDocumentPage, listDocuments } from "./listing";
 import { isRetriedCreate, lockUser, recordCreateRequest } from "./ownership";
@@ -247,19 +247,32 @@ export const documentsService = {
 		await update(input, { tags: [...new Set(input.tags)] });
 	},
 
-	setLocked: (input: DocumentRef & { isLocked: boolean }) =>
-		input.type === "resume"
-			? resumeService.setLocked({ id: input.id, userId: input.userId, isLocked: input.isLocked })
-			: update(input, { isLocked: input.isLocked }),
+	setLocked: async (input: DocumentRef & { isLocked: boolean }) => {
+		if (input.type === "resume")
+			await resumeService.setLocked({ id: input.id, userId: input.userId, isLocked: input.isLocked });
+		else await update(input, { isLocked: input.isLocked });
+	},
 
-	linkApplication: async (input: DocumentRef & { applicationId: string | null }) => {
+	linkApplication: async (
+		input: DocumentRef & { applicationId: string | null; expectedUpdatedAt?: Date | undefined },
+	) => {
 		await assertUnlocked(input);
 		const application = input.applicationId ? await assertOwnedApplication(input.userId, input.applicationId) : null;
 		if (input.type === "resume") {
-			await update(input, { applicationId: input.applicationId });
+			// Answers with the resume's new revision, so the open editor's next autosave builds on it. The account lock
+			// comes first, then the resume, then the application: the order every document and application write takes.
+			const resume = await writeResumeFields({
+				id: input.id,
+				userId: input.userId,
+				set: { applicationId: input.applicationId },
+				unlockedOnly: true,
+				expectedUpdatedAt: input.expectedUpdatedAt,
+				mutation: "update",
+				before: (tx) => lockUser(tx, input.userId),
+			});
 			if (application && !application.sentResumeVersionId && (!application.resumeId || application.status === "saved"))
 				await applicationService.update({ userId: input.userId, id: application.id, resumeId: input.id });
-			return;
+			return resume;
 		}
 
 		const letter = await coverLetterService.getById({ id: input.id, userId: input.userId });
@@ -269,6 +282,7 @@ export const documentsService = {
 			expectedRevision: letter.revision,
 			applicationId: input.applicationId,
 		});
+		return null;
 	},
 
 	/** Undoable: Trash hides the document and stops its public link; Restore brings it back intact. */

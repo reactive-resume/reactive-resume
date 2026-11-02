@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# hikaye} other {# hikaye}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {İncelenecek # şey.} other {İncelenecek # şey.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Bir web adresi https:// olmadan yazılmış."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Sesli söylendiğinde yaklaşık 90 saniye"
@@ -1058,6 +1069,10 @@ msgstr "Tümünü kabul et"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Aktif"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Ekle"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Gelişmiş"
@@ -2235,6 +2252,10 @@ msgstr "Temel maaş"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Temel URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Temel URL (zorunlu)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "Yazdırılamadı. Tekrar deneyin."
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "Bu düzenlemeler önerilemedi: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Özgeçmişin kilidi açılamadı. Tekrar deneyin."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Bu özgeçmişin kilidi açılamadı. Tekrar deneyin."
 
@@ -3879,10 +3905,6 @@ msgstr "Yeni bir özgeçmiş oluştur"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Önce bir özgeçmiş oluşturun, sonra sorun."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Tarayıcınızdaki Hesap ayarlarından bir API anahtarı oluşturun. Anahtarlar sizin gibi davranır ve belgelerinizi okuyabilir ve düzenleyebilir."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "Düzenlemek"
 msgid "Edit {0}: {1}"
 msgstr "{0}'ı düzenleyin: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "95000 gibi tam bir tutar girin. Önceki tutarınız değişmedi."
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a veya rgba(…) gibi onaltılık bir renk girin."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Bir model kimliği girin."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "En fazla 64 karakterden oluşan bir ad girin."
@@ -4837,6 +4876,14 @@ msgstr "0'dan 52'ye kadar bir tam sayı girin veya boş bırakın."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org gibi bir adres girin."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Bu sağlayıcı için bir API anahtarı girin."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// veya https:// ile başlayan bir temel URL girin."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "Almanca"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "{0} adresinden bir anahtar alın. Şifreli olarak saklanır ve yalnızca istekleriniz için kullanılır."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "API anahtarı alın"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Uç noktanızın işletmecisinden bir API anahtarı alın."
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Geri bildirim al"
@@ -5485,6 +5540,11 @@ msgstr "Gizli bölümler içeriklerini korur ancak yazdırılmaz veya paylaşıl
 msgid "Hidden terms are back"
 msgstr "Gizli terimler geri döndü"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "{title}'yu sayfadan gizle"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "Olduğu gibi tutuldu"
 msgid "Key stored encrypted"
 msgstr "Anahtar şifrelenmiş olarak saklandı"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Anahtarlar sizin gibi davranır ve belgelerinize erişebilir. Tarayıcı hesap ayarlarınızda yeni anahtarlar oluşturulur."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Anahtar kelime düzeni"
@@ -6295,10 +6359,6 @@ msgstr "Az"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "48 saatten az kaldı."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Claude veya Cursor gibi AI istemcilerinin API anahtarıyla özgeçmişlerinizi okuyup düzenlemesine izin verin."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "Kilitli"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Kilitli belgeler atlandı. Önce bunların kilidini açın."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "Yeni belge"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Yeni anahtarlar salt okunur erişimle başlar. Anahtarları tarayıcınızdaki hesap ayarlarından oluşturun."
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "Normal"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norveççe"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "Yerinde görüşme"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Aç"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "AI ayarlarını açın"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "İlerleme çubuğu"
 msgid "Projects"
 msgstr "Projeler"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Önerilen değişiklikler"
@@ -8902,6 +8975,10 @@ msgstr "Yayınlayıcı"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Sade bir e-posta adresini ilk sayfanın üst kısmına yerleştirin. Çoğu sistem sizi bununla kaydeder."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "Sesli prova yap"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Reddetmek"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "Bir sağlayıcı ayarlayın"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "Yapay zekâyı ayarla"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "Daha kısa"
 msgid "Show"
 msgstr "Göstermek"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ile yapıldı” yazısını göster"
@@ -10734,6 +10824,11 @@ msgstr "{title}'yu sayfada göster"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Tümünü göster"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "Ayrıntıları göster"
 msgid "Show DNS records"
 msgstr "DNS kayıtlarını göster"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Başlığı göster"
@@ -10778,6 +10877,10 @@ msgstr "Arama motorlarında göster"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Anahtarı göster"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "Bu özgeçmişi kontrol etmeye devam etmek için tekrar oturum açın."
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Çalışmaya devam etmek için tekrar oturum açın. Yaptığınız düzenlemeler bu cihazda saklanır ve oturum açtıktan sonra senkronize edilir."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Yapay zekâ istemcinizden giriş yapın veya bir API anahtarı kullanın."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "Bu belge"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Bu belge kilitli. Düzenlemelerinizi burada saklamadan önce kilidini açın veya her ikisini de saklayın."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Bu belge kilitli. Öneri almak için kilidini açın."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Bu belge kilitli. Sürümleri hâlâ indirebilir ve adlandırabilirsiniz. Düzenlemek veya geri yüklemek için kilidi açın."
@@ -12576,6 +12679,10 @@ msgstr "Bununla tekrar dene"
 msgid "Try again, or restart the app."
 msgstr "Tekrar deneyin veya uygulamayı yeniden başlatın."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Başka bir arama yapmayı deneyin veya filtrelerinizi temizleyin."
@@ -12699,6 +12806,11 @@ msgstr "Bağlantıların altını çizin"
 msgid "Undo"
 msgstr "Geri al"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "Bilinmiyor"
 msgid "Unlink"
 msgstr "Bağlantıyı kaldır"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "Düzenlemenin kilidini açın"
 msgid "Unlock it first, then try again."
 msgstr "Önce kilidini açın, sonra tekrar deneyin."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Kilit açılıyor…"
@@ -12909,10 +13023,6 @@ msgstr "Özgeçmişteki ayrıntıları kullan"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Tüm başvurularda kullan"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "Bir kişinin gördüğü"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Ne üzerinde çalışıyorsunuz?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "Uzaklaştır"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Yeni anahtarlar salt okunur erişimle başlar. Anahtarları tarayıcınızdaki hesap ayarlarından oluşturun."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Yapay zekâ istemcinizden giriş yapın veya bir API anahtarı kullanın."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Temel URL (zorunlu)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Bir model kimliği girin."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Bu sağlayıcı için bir API anahtarı girin."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// veya https:// ile başlayan bir temel URL girin."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "API anahtarı alın"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Uç noktanızın işletmecisinden bir API anahtarı alın."

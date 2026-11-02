@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# história} other {# histórias}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# elemento a rever.} other {# elementos a rever.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Um endereço da web está escrito sem https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Cerca de 90 segundos em voz alta"
@@ -1058,6 +1069,10 @@ msgstr "Aceitar tudo"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Ativo"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Adicionar"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Avançado"
@@ -2235,6 +2252,10 @@ msgstr "Salário base"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "URL base"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "URL base (obrigatório)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "Não foi possível imprimir. Tente novamente."
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "Não foi possível propor estas edições: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Não foi possível desbloquear o currículo. Tente novamente."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Não foi possível desbloquear este currículo. Tente novamente."
 
@@ -3879,10 +3905,6 @@ msgstr "Criar um currículo"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Crie primeiro um currículo e depois pergunte sobre ele."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Crie uma chave API nas definições da conta no seu browser. As chaves agem como você e podem ler e editar os seus documentos."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "Editar"
 msgid "Edit {0}: {1}"
 msgstr "Editar {0}: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "Introduza um valor completo, como 95000. O valor anterior não foi alter
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Introduza uma cor hexadecimal como #1a1a1a ou rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Introduza um ID de modelo."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Introduza um nome com até 64 caracteres."
@@ -4837,6 +4876,14 @@ msgstr "Introduza um número inteiro de 0 a 52 ou deixe em branco."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Introduza um endereço como resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Introduza uma chave API para este fornecedor."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Introduza um URL base que comece por http:// ou https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "Alemão"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Obtenha uma chave em {0}. É armazenado encriptado e usado apenas para as suas solicitações."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Obter uma chave API"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Obtenha uma chave API junto do operador do seu endpoint."
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Obter feedback"
@@ -5485,6 +5540,11 @@ msgstr "As secções ocultas mantêm o seu conteúdo, mas não são impressas ne
 msgid "Hidden terms are back"
 msgstr "Os termos escondidos estão de volta"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Ocultar {title} da página"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "Mantido como está"
 msgid "Key stored encrypted"
 msgstr "Chave armazenada encriptada"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "As chaves atuam como você e podem aceder aos seus documentos. As novas chaves são criadas nas definições da conta do seu navegador."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Layout das palavras-chave"
@@ -6295,10 +6359,6 @@ msgstr "Menos"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Faltam menos de 48 horas."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Permita que clientes de IA como Claude ou Cursor leiam e editem os seus currículos utilizando uma chave API."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "Bloqueado"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Os documentos bloqueados foram ignorados. Desbloqueie-os primeiro."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "Novo documento"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "As novas chaves começam com acesso apenas de leitura. Crie chaves nas definições da sua conta no navegador."
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "Normal"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Norueguês"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "Entrevista presencial"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Abrir"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "Abra as definições de IA"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "Barra de progresso"
 msgid "Projects"
 msgstr "Projetos"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Alterações propostas"
@@ -8902,6 +8975,10 @@ msgstr "Editora"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Coloque um endereço de email simples perto do topo da primeira página. É por ele que a maioria dos sistemas o classifica."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "Ensaiar em voz alta"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Rejeitar"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "Configurar um fornecedor"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "Configurar IA"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "Mais curto"
 msgid "Show"
 msgstr "Mostrar"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Mostrar «Feito com Reactive Resume»"
@@ -10734,6 +10824,11 @@ msgstr "Mostrar {title} na página"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Mostrar tudo"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "Mostrar detalhes"
 msgid "Show DNS records"
 msgstr "Mostrar registos DNS"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Mostrar cabeçalho"
@@ -10778,6 +10877,10 @@ msgstr "Mostrar nos motores de pesquisa"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Mostrar chave"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "Faça login novamente para continuar a verificar este currículo."
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Faça login novamente para continuar a trabalhar. As edições efetuadas são mantidas neste dispositivo e sincronizadas após efetuar o login."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Inicie sessão a partir do seu cliente de IA ou utilize uma chave API."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "Este documento"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Este documento está bloqueado. Desbloqueie-o antes de manter as suas edições aqui ou mantenha ambos."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Este documento está bloqueado. Desbloqueie-o para obter sugestões."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Este documento está bloqueado. Pode ainda baixar e nomear versões. Desbloqueie para editar ou restaurar."
@@ -12576,6 +12679,10 @@ msgstr "Tentar novamente com isto"
 msgid "Try again, or restart the app."
 msgstr "Tente novamente ou reinicie a aplicação."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Tente outra pesquisa ou limpe os seus filtros."
@@ -12699,6 +12806,11 @@ msgstr "Sublinhar ligações"
 msgid "Undo"
 msgstr "Desfazer"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "Desconhecido"
 msgid "Unlink"
 msgstr "Desvincular"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "Desbloquear edição"
 msgid "Unlock it first, then try again."
 msgstr "Desbloqueie-o primeiro e tente novamente."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Desbloqueando…"
@@ -12909,10 +13023,6 @@ msgstr "Usar dados do currículo"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Usar em todas as candidaturas"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "O que uma pessoa vê"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Em que está a trabalhar?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "Afastar"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "As novas chaves começam com acesso apenas de leitura. Crie chaves nas definições da sua conta no navegador."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Inicie sessão a partir do seu cliente de IA ou utilize uma chave API."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "URL base (obrigatório)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Introduza um ID de modelo."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Introduza uma chave API para este fornecedor."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Introduza um URL base que comece por http:// ou https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Obter uma chave API"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Obtenha uma chave API junto do operador do seu endpoint."

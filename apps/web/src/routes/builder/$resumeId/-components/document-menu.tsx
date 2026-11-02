@@ -23,6 +23,7 @@ import {
 	usePatchResume,
 	useResumeStore,
 } from "@/features/resume/builder/draft";
+import { setResumeLocked } from "@/features/resume/builder/lock";
 import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
 import { SaveStatus } from "@/features/resume/editor/save-status";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -86,23 +87,23 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 
 	const { mutate: trashResume } = useMutation(orpc.documents.trash.mutationOptions());
 	const { mutateAsync: restoreResume } = useMutation(orpc.documents.restore.mutationOptions());
-	const { mutate: setLockedResume } = useMutation(orpc.resume.setLocked.mutationOptions());
+	const { mutate: setLockedResume } = useMutation({
+		// Through the autosave owner, so the next autosave builds on this revision.
+		mutationFn: (next: boolean) => setResumeLocked(id, next),
+	});
 
 	// Locking is reversible, so it doesn't ask for confirmation.
 	const handleToggleLock = () => {
-		setLockedResume(
-			{ id, isLocked: !isLocked },
-			{
-				onSuccess: () => {
-					patchResume((draft) => {
-						draft.isLocked = !isLocked;
-					});
-				},
-				onError: (error) => {
-					toast.add({ type: "error", description: getResumeErrorMessage(error) });
-				},
+		setLockedResume(!isLocked, {
+			onSuccess: () => {
+				patchResume((draft) => {
+					draft.isLocked = !isLocked;
+				});
 			},
-		);
+			onError: (error) => {
+				toast.add({ type: "error", description: getResumeErrorMessage(error) });
+			},
+		});
 	};
 
 	// Undoable, so it doesn't ask first: the resume waits in Trash for 30 days.

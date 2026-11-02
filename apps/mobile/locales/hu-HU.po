@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# történet} other {# történet}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# átnézendő elem.} other {# átnézendő elem.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Egy webcím https:// nélkül van megadva."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Kimondva kb. 90 másodperc"
@@ -1058,6 +1069,10 @@ msgstr "Elfogadja az összeset"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Aktív"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Hozzáadás"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Fejlett"
@@ -2235,6 +2252,10 @@ msgstr "Alapfizetés"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Alap URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Alap-URL (kötelező)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "Nem sikerült kinyomtatni. Próbáld újra."
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "Nem sikerült javasolni ezeket a módosításokat: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "Nem sikerült feloldani az önéletrajz zárolását. Próbáld újra."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "Nem sikerült feloldani ezt az önéletrajzot. Próbáld újra."
 
@@ -3879,10 +3905,6 @@ msgstr "Új önéletrajz létrehozása"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Először készítsen önéletrajzot, majd kérdezzen rá."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Hozzon létre API-kulcsot a böngészőben, a fiókbeállításokban. A kulcsok az Ön nevében működnek, és olvashatják, szerkeszthetik a dokumentumait."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "Szerkesztés"
 msgid "Edit {0}: {1}"
 msgstr "Szerkesztés {0}: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "Adj meg teljes összeget, például 95000. A korábbi összeged nem vál
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Adj meg egy hex színkódot, például #1a1a1a, vagy rgba(…) értéket."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Adjon meg egy modellazonosítót."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Adjon meg egy nevet, legfeljebb 64 karakterből."
@@ -4837,6 +4876,14 @@ msgstr "Írjon be egy egész számot 0 és 52 között, vagy hagyja üresen."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Adjon meg egy címet, például resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Adjon meg egy API-kulcsot ehhez a szolgáltatóhoz."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Adjon meg egy http:// vagy https:// kezdetű alap-URL-t."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "Német"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Szerezzen kulcsot a következő címen: {0}. Titkosítva tárolja, és csak az Ön kéréseihez használja."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "API-kulcs beszerzése"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Kérjen API-kulcsot a végpontja üzemeltetőjétől."
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Visszajelzés kérése"
@@ -5485,6 +5540,11 @@ msgstr "A rejtett szakaszok megtartják a tartalmukat, de nem nyomtatják ki vag
 msgid "Hidden terms are back"
 msgstr "A rejtett kifejezések visszatértek"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "{title} elrejtése az oldalról"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "Megtartva, ahogy van"
 msgid "Key stored encrypted"
 msgstr "A kulcs titkosítva tárolva"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "A kulcsok az Ön nevében működnek, és hozzáférhetnek a dokumentumaihoz. Új kulcsot a böngészőben, a fiókbeállításokban hozhat létre."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Kulcsszó-elrendezés"
@@ -6295,10 +6359,6 @@ msgstr "Kevesebbet"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Kevesebb, mint 48 óra van hátra."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Hagyja, hogy az AI kliensek, például a Claude vagy a Cursor API-kulcs segítségével elolvassák és szerkeszthessék önéletrajzait."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "Zárolva"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "A zárolt dokumentumokat kihagyták. Először oldja fel őket."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "Új dokumentum"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Az új kulcsok kezdetben csak olvasási hozzáférést kapnak. A kulcsokat a böngészőben, a fiókbeállításokban hozhatja létre."
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "Normál"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "norvég"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "Helyszíni interjú"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "Megnyitás"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "Nyissa meg az AI beállításokat"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "Folyamatjelző sáv"
 msgid "Projects"
 msgstr "Projektek"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Javasolt módosítások"
@@ -8902,6 +8975,10 @@ msgstr "Kiadó"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Helyezz el egy egyszerű e-mail címet az első oldal teteje közelében. A legtöbb rendszer ez alapján azonosít."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "Gyakorlás hangosan"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Elutasít"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "Állítson be egy szolgáltatót"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "MI beállítása"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "Rövidebb"
 msgid "Show"
 msgstr "Megmutat"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "„Reactive Resume-val készült” megjelenítése"
@@ -10734,6 +10824,11 @@ msgstr "A {title} megjelenítése az oldalon"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Összes megjelenítése"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "Részletek megjelenítése"
 msgid "Show DNS records"
 msgstr "DNS-rekordok megjelenítése"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Címsor megjelenítése"
@@ -10778,6 +10877,10 @@ msgstr "Megjelenítés a keresőmotorokban"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Kulcs megjelenítése"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "Jelentkezzen be újra az önéletrajz ellenőrzésének folytatásához.
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "A munka folytatásához jelentkezzen be újra. Az Ön által végzett módosítások ezen az eszközön maradnak, és bejelentkezés után szinkronizálódnak."
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Jelentkezzen be az AI-klienséből, vagy használjon API-kulcsot."
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "Ez a dokumentum"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Ez a dokumentum zárolva van. Oldja fel a zárolást, mielőtt itt tartaná a módosításait, vagy tartsa meg mindkettőt."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Ez a dokumentum zárolva van. Oldja fel, hogy javaslatokat kapjon."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Ez a dokumentum zárolva van. Továbbra is letöltheti és elnevezheti a verziókat. Oldja fel a zárolást a szerkesztéshez vagy visszaállításhoz."
@@ -12576,6 +12679,10 @@ msgstr "Próbáld újra ezzel"
 msgid "Try again, or restart the app."
 msgstr "Próbáld újra, vagy indítsd újra az alkalmazást."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Próbálkozzon másik kereséssel, vagy törölje a szűrőket."
@@ -12699,6 +12806,11 @@ msgstr "A hivatkozások aláhúzása"
 msgid "Undo"
 msgstr "Visszavonás"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "Ismeretlen"
 msgid "Unlink"
 msgstr "Leválasztás"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "Szerkesztés feloldása"
 msgid "Unlock it first, then try again."
 msgstr "Először oldja fel, majd próbálja újra."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "Feloldás…"
@@ -12909,10 +13023,6 @@ msgstr "Adatok használata az önéletrajzból"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Használat minden jelentkezéshez"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "Amit egy ember lát"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "Min dolgozol?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "Kicsinyítés"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Az új kulcsok kezdetben csak olvasási hozzáférést kapnak. A kulcsokat a böngészőben, a fiókbeállításokban hozhatja létre."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Jelentkezzen be az AI-klienséből, vagy használjon API-kulcsot."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Alap-URL (kötelező)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Adjon meg egy modellazonosítót."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Adjon meg egy API-kulcsot ehhez a szolgáltatóhoz."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Adjon meg egy http:// vagy https:// kezdetű alap-URL-t."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "API-kulcs beszerzése"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Kérjen API-kulcsot a végpontja üzemeltetőjétől."

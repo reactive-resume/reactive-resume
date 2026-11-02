@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# कथा} other {# कथाहरू}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {समीक्षा गर्नुपर्ने # कुरा।} other {समीक्षा गर्नुपर्ने # कुराहरू।}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "वेब ठेगाना https:// बिना लेखिएको
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "बोल्दा करिब 90 सेकेन्ड"
@@ -1058,6 +1069,10 @@ msgstr "सबै स्वीकार गर्नुहोस्"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "सक्रिय"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "थप्नुहोस्"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "उन्नत"
@@ -2235,6 +2252,10 @@ msgstr "आधारभूत तलब"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "आधार URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "आधार URL (अनिवार्य)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "छाप्न सकिएन। पुन: प्रयास गर�
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "यी सम्पादनहरू प्रस्ताव गर्न सकिएन: {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "बायोडाटा अनलक गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "यो बायोडाटा अनलक गर्न सकिएन। पुन: प्रयास गर्नुहोस्।"
 
@@ -3879,10 +3905,6 @@ msgstr "नयाँ बायोडाटा बनाउनुहोस्"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "पहिले रिजुमे सिर्जना गर्नुहोस्, त्यसपछि यसको बारेमा सोध्नुहोस्।"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "तपाईंको ब्राउजरमा खाता सेटिङहरूबाट एपीआई कुञ्जी सिर्जना गर्नुहोस्। कुञ्जीहरूले तपाइँको रूपमा काम गर्दछ र तपाइँका कागजातहरू पढ्न र सम्पादन गर्न सक्छन्।"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "सम्पादन गर्नुहोस्"
 msgid "Edit {0}: {1}"
 msgstr "सम्पादन गर्नुहोस् {0}: {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "95000 जस्तो पूरा रकम लेख्नुहोस
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a, वा rgba(…) जस्ता हेक्स रङ प्रविष्ट गर्नुहोस्।"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "मोडेल ID प्रविष्ट गर्नुहोस्।"
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "६४ वर्ण सम्मको नाम प्रविष्ट गर्नुहोस्।"
@@ -4837,6 +4876,14 @@ msgstr "० देखि ५२ सम्मको पूर्ण संख्�
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org जस्तो ठेगाना लेख्नुहोस्।"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "यस प्रदायकको API कुञ्जी प्रविष्ट गर्नुहोस्।"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// वा https:// बाट सुरु हुने आधार URL प्रविष्ट गर्नुहोस्।"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "जर्मन"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "{0} मा एउटा साँचो पाउनुहोस्। यो ईन्क्रिप्टेड भण्डारण गरिएको छ र तपाईंको अनुरोधहरूको लागि मात्र प्रयोग गरिन्छ।"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "API कुञ्जी प्राप्त गर्नुहोस्"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "आफ्नो एन्डपोइन्ट सञ्चालकबाट API कुञ्जी प्राप्त गर्नुहोस्।"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "प्रतिक्रिया पाउनुहोस्"
@@ -5485,6 +5540,11 @@ msgstr "लुकेका खण्डहरूले तिनीहरूक�
 msgid "Hidden terms are back"
 msgstr "लुकेका सर्तहरू फिर्ता छन्"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "पृष्ठबाट {title} लुकाउनुहोस्"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "जस्तो छ त्यस्तै राखियो"
 msgid "Key stored encrypted"
 msgstr "कुञ्जी भण्डार गरिएको इन्क्रिप्टेड"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "कुञ्जीहरूले तपाइँको रूपमा काम गर्दछ र तपाइँको कागजातहरू पहुँच गर्न सक्छ। तपाईंको ब्राउजर खाता सेटिङहरूमा नयाँ कुञ्जीहरू सिर्जना गरिएका छन्।"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "कीवर्ड लेआउट"
@@ -6295,10 +6359,6 @@ msgstr "कम"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "४८ घण्टाभन्दा कम समय बाँकी छ।"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Claude वा Cursor जस्ता AI क्लाइन्टहरूलाई API कुञ्जी प्रयोग गरेर तपाईंको बायोडाटाहरू पढ्न र सम्पादन गर्न दिनुहोस्।"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "ताला लगाइएको"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "लक गरिएका कागजातहरू छोडियो। पहिले तिनीहरूलाई अनलक गर्नुहोस्।"
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "नयाँ कागजात"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "नयाँ कुञ्जीहरू सुरुमा पढ्न मात्र मिल्ने हुन्छन्। आफ्नो ब्राउजरको खाता सेटिङमा कुञ्जीहरू सिर्जना गर्नुहोस्।"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "सामान्य"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "नर्वेजियन"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "कार्यस्थलमा अन्तर्वार्ता"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "खोल्नुहोस्"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "AI सेटिंग्स खोल्नुहोस्"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "प्रगति बार (Progress Bar)"
 msgid "Projects"
 msgstr "परियोजनाहरू"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "प्रस्तावित परिवर्तनहरू"
@@ -8902,6 +8975,10 @@ msgstr "प्रकाशक"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "पहिलो पृष्ठको माथि नजिकै सादा इमेल ठेगाना राख्नुहोस्। धेरैजसो प्रणालीले यसैअनुसार तपाईंलाई फाइल गर्छन्।"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "ठूलो स्वरमा रिहर्सल गर्नुह
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "अस्वीकार गर्नुहोस्"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "एक प्रदायक सेट अप गर्नुहोस�
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "AI सेट अप गर्नुहोस्"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "छोटो"
 msgid "Show"
 msgstr "देखाउनुहोस्"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume बाट बनाइएको” देखाउनुहोस्"
@@ -10734,6 +10824,11 @@ msgstr "पृष्ठमा {title} देखाउनुहोस्"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "सबै देखाउनुहोस्"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "विवरण देखाउनुहोस्"
 msgid "Show DNS records"
 msgstr "DNS रेकर्डहरू देखाउनुहोस्"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "हेडिङ देखाउनुहोस्"
@@ -10778,6 +10877,10 @@ msgstr "सर्च इन्जिनमा देखाउनुहोस्"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "कुञ्जी देखाउनुहोस्"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "यो बायोडाटा जाँच जारी राख्�
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "काम जारी राख्न फेरि साइन इन गर्नुहोस्। तपाईंले गर्नुभएका सम्पादनहरू यस यन्त्रमा राखिन्छन् र तपाईंले साइन इन गरेपछि सिंक हुन्छन्।"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "आफ्नो AI क्लाइन्टबाट साइन इन गर्नुहोस् वा API कुञ्जी प्रयोग गर्नुहोस्।"
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "यो कागजात"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "यो कागजात बन्द छ। तपाइँका सम्पादनहरू यहाँ राख्नु अघि यसलाई अनलक गर्नुहोस्, वा दुवै राख्नुहोस्।"
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "यो कागजात बन्द छ। सुझावहरू प्राप्त गर्न यसलाई अनलक गर्नुहोस्।"
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "यो कागजात बन्द छ। तपाईं अझै पनि डाउनलोड र नाम संस्करण गर्न सक्नुहुन्छ। सम्पादन वा पुनर्स्थापना गर्न अनलक गर्नुहोस्।"
@@ -12576,6 +12679,10 @@ msgstr "यसलाई लिएर फेरि प्रयास गर्�
 msgid "Try again, or restart the app."
 msgstr "पुन: प्रयास गर्नुहोस्, वा एप पुनः सुरु गर्नुहोस्।"
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "अर्को खोज प्रयास गर्नुहोस् वा आफ्नो फिल्टर खाली गर्नुहोस्।"
@@ -12699,6 +12806,11 @@ msgstr "अधोरेखित लिङ्कहरू"
 msgid "Undo"
 msgstr "पूर्ववत गर्नुहोस्"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "अज्ञात"
 msgid "Unlink"
 msgstr "अनलिंक गर्नुहोस्"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "सम्पादन अनलक गर्नुहोस्"
 msgid "Unlock it first, then try again."
 msgstr "पहिले यसलाई अनलक गर्नुहोस्, त्यसपछि फेरि प्रयास गर्नुहोस्।"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "अनलक गर्दै…"
@@ -12909,10 +13023,6 @@ msgstr "बायोडाटाबाट विवरणहरू प्रय�
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "सबै आवेदनहरूका लागि प्रयोग गर्नुहोस्"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "मानिसले के देख्छ"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "तपाईं केमा काम गर्दै हुनुहुन्छ?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "जूम आउट"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "जुलु"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "नयाँ कुञ्जीहरू सुरुमा पढ्न मात्र मिल्ने हुन्छन्। आफ्नो ब्राउजरको खाता सेटिङमा कुञ्जीहरू सिर्जना गर्नुहोस्।"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "आफ्नो AI क्लाइन्टबाट साइन इन गर्नुहोस् वा API कुञ्जी प्रयोग गर्नुहोस्।"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "आधार URL (अनिवार्य)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "मोडेल ID प्रविष्ट गर्नुहोस्।"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "यस प्रदायकको API कुञ्जी प्रविष्ट गर्नुहोस्।"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// वा https:// बाट सुरु हुने आधार URL प्रविष्ट गर्नुहोस्।"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "API कुञ्जी प्राप्त गर्नुहोस्"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "आफ्नो एन्डपोइन्ट सञ्चालकबाट API कुञ्जी प्राप्त गर्नुहोस्।"

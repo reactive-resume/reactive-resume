@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# ታሪክ} other {# ታሪኮች}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {የሚገመገም # ነገር።} other {የሚገመገሙ # ነገሮች።}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "የድር አድራሻ ያለ https:// ተጽፏል።"
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "ሲነገር 90 ሰከንድ ገደማ"
@@ -1058,6 +1069,10 @@ msgstr "ሁሉንም ተቀበል"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "ንቁ"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "ያክሉ"
 
@@ -1487,6 +1503,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "የላቀ"
@@ -2235,6 +2252,10 @@ msgstr "መሠረታዊ ደመወዝ"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "የመሠረት ዩአርኤል"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "መሠረታዊ URL (ያስፈልጋል)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3529,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3533,6 +3555,10 @@ msgstr "ማተም አልተቻለም። እንደገና ይሞክሩ።"
 #: src/features/assistant/messages.tsx
 msgid "Couldn't propose these edits: {0}"
 msgstr "እነዚህን አርትዖቶች ማቅረብ አልተቻለም፡ {0}"
+
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
@@ -3753,7 +3779,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "የስራ ልምድ ማስረጃውን መክፈት አልተቻለም። እንደገና ይሞክሩ።"
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "ይህን የስራ ልምድ ማስረጃ መክፈት አልተቻለም። እንደገና ይሞክሩ።"
 
@@ -3879,10 +3905,6 @@ msgstr "አዲስ የየታሪክ ማቅረቢያ ፍጠር"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "መጀመሪያ የትምህርት ማስረጃ ይፍጠሩ፣ ከዚያ ስለሱ ይጠይቁ።"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "በአሳሽህ ውስጥ ከመለያ ቅንጅቶች የAPI ቁልፍ ፍጠር። ቁልፎች እንደ እርስዎ ይሰራሉ ​​እና ሰነዶችዎን ማንበብ እና ማርትዕ ይችላሉ።"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4621,6 +4643,19 @@ msgstr "አርትዕ"
 msgid "Edit {0}: {1}"
 msgstr "አርትዕ {0}፡ {1}"
 
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
 msgstr ""
@@ -4800,6 +4835,10 @@ msgstr "ሙሉ መጠን ያስገቡ፣ ለምሳሌ 95000። የቀድሞው �
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "እንደ #1a1a1a፣ ወይም rgba(…) ያለ ሄክስ ቀለም ያስገቡ።"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "የሞዴል መለያ ያስገቡ።"
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "ስም አስገባ፣ እስከ 64 ቁምፊዎች።"
@@ -4837,6 +4876,14 @@ msgstr "ሙሉ ቁጥር ከ 0 እስከ 52 ያስገቡ ወይም ባዶ ይተ
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "እንደ resume.example.org ያለ አድራሻ ያስገቡ።"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "ለዚህ አቅራቢ የAPI ቁልፍ ያስገቡ።"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "በhttp:// ወይም https:// የሚጀምር መሠረታዊ URL ያስገቡ።"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5321,6 +5368,14 @@ msgstr "ጀርመንኛ"
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "በ{0} ላይ ቁልፍ ያግኙ። የተመሰጠረ ነው የተከማቸ እና ለጥያቄዎችህ ብቻ ጥቅም ላይ የዋለ ነው።"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "የAPI ቁልፍ ያግኙ"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "ከመገናኛ ነጥብዎ አስተዳዳሪ የAPI ቁልፍ ያግኙ።"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "ግብረ መልስ አግኝ"
@@ -5485,6 +5540,11 @@ msgstr "የተደበቁ ክፍሎች ይዘታቸውን ያስቀምጣሉ ነ�
 msgid "Hidden terms are back"
 msgstr "የተደበቁ ውሎች ተመልሰዋል።"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "{title} ከገጹ ደብቅ"
@@ -5613,11 +5673,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6076,10 +6144,6 @@ msgstr "እንዳለ ተይዟል።"
 msgid "Key stored encrypted"
 msgstr "የተከማቸ ቁልፍ ተመስጥሯል።"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "ቁልፎች እንደ እርስዎ ይሰራሉ እና ሰነዶችዎን መድረስ ይችላሉ። በአሳሽ መለያ ቅንጅቶች ውስጥ አዲስ ቁልፎች ተፈጥረዋል።"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "ቁልፍ ቃል አቀማመጥ"
@@ -6295,10 +6359,6 @@ msgstr "ያነሰ"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "ከ48 ሰአታት ያነሰ ጊዜ ቀርቷል።"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "እንደ Claude ወይም Cursor ያሉ AI ደንበኞች የAPI ቁልፍ ተጠቅመው የስራ ልምድ ማስረጃዎችን እንዲያነቡ እና እንዲያርትዑ ያድርጉ።"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -6631,6 +6691,10 @@ msgstr "ተቆልፏል"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "የተቆለፉ ሰነዶች ተዘለዋል. መጀመሪያ ክፈትዋቸው።"
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7267,6 +7331,11 @@ msgstr ""
 msgid "New document"
 msgstr "አዲስ ሰነድ"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "አዲስ ቁልፎች ለማንበብ ብቻ በሚያስችል ፈቃድ ይጀምራሉ። ቁልፎችን በአሳሽዎ ውስጥ ባሉት የመለያ ቅንብሮች ይፍጠሩ።"
+
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
 #: src/features/write/section-sheet.tsx
@@ -7643,6 +7712,10 @@ msgstr "መደበኛ"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "ኖርዌጂያንኛ"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8025,10 +8098,6 @@ msgstr "በቦታው ላይ ቃለ መጠይቅ"
 #: src/features/documents/document-sheets.tsx
 msgid "Open"
 msgstr "ክፈት"
-
-#: src/features/assistant/provider.tsx
-msgid "Open AI settings"
-msgstr "የ AI ቅንብሮችን ይክፈቱ"
 
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
@@ -8835,6 +8904,10 @@ msgstr "የሂደት አሞሌ"
 msgid "Projects"
 msgstr "ፕሮጀክቶች"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "የቀረቡ ለውጦች"
@@ -8902,6 +8975,10 @@ msgstr "አታሚ"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "ቀላል የኢሜል አድራሻ ወደ መጀመሪያው ገጽ የላይኛው ክፍል ያስቀምጡ። አብዛኞቹ ስርዓቶች ከዚህ ስር ነው የሚያስቀምጡዎት።"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9220,6 +9297,14 @@ msgstr "ጮክ ብሎ መለማመድ"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "እምቢ"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10578,7 +10663,7 @@ msgstr "አቅራቢ ያዋቅሩ"
 #: src/features/assistant/provider.tsx
 #: src/features/letters/write.tsx
 msgid "Set up AI"
-msgstr ""
+msgstr "AI ያዋቅሩ"
 
 #: src/features/documents/new-document.tsx
 msgid "Set up AI provider"
@@ -10717,6 +10802,11 @@ msgstr "አጠር ያለ"
 msgid "Show"
 msgstr "አሳይ"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“በReactive Resume የተሰራ” አሳይ"
@@ -10734,6 +10824,11 @@ msgstr "{title} በገጹ ላይ አሳይ"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "ሁሉንም አሳይ"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10759,6 +10854,10 @@ msgstr "ዝርዝሮችን አሳይ"
 msgid "Show DNS records"
 msgstr "የDNS መዝገቦችን አሳይ"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "ርዕስ አሳይ"
@@ -10778,6 +10877,10 @@ msgstr "በፍለጋ ሞተሮች ውስጥ አሳይ"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "ቁልፍ አሳይ"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -10871,6 +10974,10 @@ msgstr "ይህንን የስራ ልምድ ማስረጃ መፈተሽ ለመቀጠ�
 #: src/auth/session-gate.tsx
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "መስራት ለመቀጠል እንደገና ይግቡ። ያደረጓቸው አርትዖቶች በዚህ መሣሪያ ላይ ይቀመጣሉ እና ከገቡ በኋላ ያመሳስሉ።"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "ከAI ደንበኛ መተግበሪያዎ ይግቡ፣ ወይም የAPI ቁልፍ ይጠቀሙ።"
 
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
@@ -12097,10 +12204,6 @@ msgstr "ይህ ሰነድ"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "ይህ ሰነድ ተቆልፏል። አርትዖቶችዎን እዚህ ከማቆየትዎ በፊት ይክፈቱት ወይም ሁለቱንም ያስቀምጡ።"
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "ይህ ሰነድ ተቆልፏል። የአስተያየት ጥቆማዎችን ለማግኘት ይክፈቱት።"
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "ይህ ሰነድ ተቆልፏል። አሁንም ማውረድ እና ስሪቶችን መሰየም ይችላሉ። ለማርትዕ ወይም ወደነበረበት ለመመለስ ይክፈቱ።"
@@ -12576,6 +12679,10 @@ msgstr "በዚህ እንደገና ሞክር"
 msgid "Try again, or restart the app."
 msgstr "እንደገና ይሞክሩ ወይም መተግበሪያውን እንደገና ያስጀምሩ።"
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "ሌላ ፍለጋ ይሞክሩ ወይም ማጣሪያዎችዎን ያጽዱ።"
@@ -12699,6 +12806,11 @@ msgstr "አገናኞችን አስምር"
 msgid "Undo"
 msgstr "ቀልብስ"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12708,6 +12820,7 @@ msgstr "ያልታወቀ"
 msgid "Unlink"
 msgstr "ግንኙነት አቋርጥ"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12722,6 +12835,7 @@ msgstr "አርትዖትን ይክፈቱ"
 msgid "Unlock it first, then try again."
 msgstr "መጀመሪያ ይክፈቱት፣ ከዚያ እንደገና ይሞክሩ።"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "በመክፈት ላይ…"
@@ -12909,10 +13023,6 @@ msgstr "ከየስራ ልምድ ማስረጃው ዝርዝሮችን ተጠቀም"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "ለሁሉም ማመልከቻዎች ተጠቀም"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13272,6 +13382,10 @@ msgstr "ሰው የሚያየው"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "በምን ላይ እየሠሩ ነው?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"
@@ -13958,36 +14072,3 @@ msgstr "አጉር"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ዙሉ"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "አዲስ ቁልፎች ለማንበብ ብቻ በሚያስችል ፈቃድ ይጀምራሉ። ቁልፎችን በአሳሽዎ ውስጥ ባሉት የመለያ ቅንብሮች ይፍጠሩ።"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "ከAI ደንበኛ መተግበሪያዎ ይግቡ፣ ወይም የAPI ቁልፍ ይጠቀሙ።"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "መሠረታዊ URL (ያስፈልጋል)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "የሞዴል መለያ ያስገቡ።"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "ለዚህ አቅራቢ የAPI ቁልፍ ያስገቡ።"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "በhttp:// ወይም https:// የሚጀምር መሠረታዊ URL ያስገቡ።"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "የAPI ቁልፍ ያግኙ"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "ከመገናኛ ነጥብዎ አስተዳዳሪ የAPI ቁልፍ ያግኙ።"
