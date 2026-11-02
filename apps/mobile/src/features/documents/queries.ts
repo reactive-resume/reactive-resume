@@ -8,6 +8,7 @@ import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/
 import { documentRef } from "./filter";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
+import { confirmUndone } from "@/lib/undone";
 import { showToast } from "@/ui";
 
 type BatchOptions = {
@@ -160,9 +161,31 @@ export function useDocumentOperations(enabled = true) {
 					? {
 							label: t`Undo`,
 							onPress: () => {
-								void idle.current.then(() =>
-									run(() => batch(done, (document) => client.documents.restore(documentRef(document)))),
-								);
+								// The server counts only documents it restored: one already back (another device) or deleted
+								// since isn't counted (web document-actions).
+								let restored = 0;
+								let started = false;
+								void idle.current
+									.then(() =>
+										run(async () => {
+											started = true;
+											for (const group of chunks(done)) {
+												if (getServer() !== session.server) break;
+												try {
+													restored += (await client.documents.restoreMany({ documents: group.map(documentRef) }))
+														.restored;
+												} catch {
+													/* The remaining groups can still succeed. */
+												}
+											}
+										}),
+									)
+									.then(() => {
+										// A run that couldn't start (offline, signed out) already said why.
+										if (!started) return;
+										if (restored === done.length) return confirmUndone();
+										showToast({ message: t`Restored ${restored} of ${done.length}.` });
+									});
 							},
 						}
 					: undefined,

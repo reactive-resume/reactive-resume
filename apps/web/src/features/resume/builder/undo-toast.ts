@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { useResumeStore } from "./draft";
+import { confirmUndone } from "@/libs/undone";
 
 type UndoToastOptions = Omit<NonNullable<Parameters<typeof toast.add>[0]>, "description" | "actionProps"> & {
 	/**
@@ -30,9 +31,21 @@ export function undoToast(description: string, { restore, ...options }: UndoToas
 				const current = useResumeStore.getState();
 				// The toast can outlive the resume it was about: another one open here is left alone.
 				if (!current.resume || current.resume.id !== resumeId) return;
-				if (changed && current.resume.data === changed && step && current.undoStack.at(-1) === step)
-					return current.undo();
-				if (restore && !current.resume.isLocked && restore()) return;
+				// Locked since: nothing can change until it's unlocked, so say that rather than "use Undo".
+				if (current.resume.isLocked)
+					return toast.add({ description: t`This resume is locked. Unlock it to make changes.` });
+				// A locked resume's Undo changes nothing, so it isn't confirmed.
+				if (
+					changed &&
+					current.resume.data === changed &&
+					step &&
+					current.undoStack.at(-1) === step &&
+					!current.resume.isLocked
+				) {
+					current.undo();
+					if (useResumeStore.getState().resume?.data !== changed) return confirmUndone();
+				}
+				if (restore && !current.resume.isLocked && restore()) return confirmUndone();
 				toast.add({ description: t`You've made changes since. Use Undo to step back through them.` });
 			},
 		},

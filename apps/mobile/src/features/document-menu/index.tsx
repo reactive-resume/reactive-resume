@@ -13,6 +13,7 @@ import { useDocumentOperations } from "@/features/documents/queries";
 import { flushResume } from "@/features/share/document";
 import { printResume } from "@/features/share/files";
 import { setResumeLocked } from "@/features/share/revision";
+import { confirmUndone } from "@/lib/undone";
 import { routes } from "@/routes";
 import { useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
@@ -144,9 +145,21 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 												action: {
 													label: t`Undo`,
 													onPress: () => {
-														void pending.current.then(() =>
-															operations.run(() => client.documents.restore({ type: "resume", id })),
-														);
+														// Counted by the server: one already restored elsewhere, or deleted, isn't confirmed.
+														let restored = 0;
+														void pending.current
+															.then(() =>
+																operations.run(async () => {
+																	restored = (
+																		await client.documents.restoreMany({ documents: [{ type: "resume", id }] })
+																	).restored;
+																}),
+															)
+															.then((done) => {
+																if (done && restored > 0) confirmUndone();
+																else if (done)
+																	showToast({ message: t`Nothing to undo: it was already restored or deleted.` });
+															});
 													},
 												},
 											});

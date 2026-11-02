@@ -159,6 +159,8 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const failed = isError && !displayed;
 	const filtered = search.type !== "all" || search.q.trim() !== "" || search.tags.length > 0 || search.public === true;
 	const firstRun = rowsCurrent && !filtered && offset === 0 && pageData?.total === 0;
+	const { data: libraryCounts } = useQuery(orpc.documents.counts.queryOptions());
+	const trashCount = libraryCounts?.trash ?? 0;
 	const tags = displayed?.tags ?? [];
 	const counts = {
 		all: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0),
@@ -346,7 +348,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 			)}
 
 			{failed ? null : firstRun ? (
-				<FirstRun onFile={(file) => openDialog("document.new", { file })} />
+				<FirstRun trashCount={trashCount} onFile={(file) => openDialog("document.new", { file })} />
 			) : (
 				<>
 					{(tags.length > 0 || hasPublic) && (
@@ -509,10 +511,14 @@ function storeView(view: "grid" | "list") {
 	}
 }
 
-type FirstRunProps = { onFile: (file: File) => void };
+type FirstRunProps = {
+	onFile: (file: File) => void;
+	/** Everything may be in Trash (often the last document, just moved there): the way back stays in sight. */
+	trashCount: number;
+};
 
 /** The first visit: import is the filled button here, and only here. Choose a file opens the file picker itself. */
-function FirstRun({ onFile }: FirstRunProps) {
+function FirstRun({ onFile, trashCount }: FirstRunProps) {
 	const { startBlank, trySample, creating } = useStartDocument();
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -576,6 +582,14 @@ function FirstRun({ onFile }: FirstRunProps) {
 					</>
 				}
 			/>
+			{trashCount > 0 && (
+				<p className="mt-4 flex flex-wrap items-center gap-x-2 text-sm text-ink-2">
+					<Plural value={trashCount} one="Trash has # document." other="Trash has # documents." />
+					<Link to="/dashboard/trash" className="font-medium underline underline-offset-2">
+						<Trans>Open Trash</Trans>
+					</Link>
+				</p>
+			)}
 		</section>
 	);
 }

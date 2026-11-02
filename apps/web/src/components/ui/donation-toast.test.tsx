@@ -7,7 +7,8 @@ import { i18n } from "@lingui/core";
 import Cookies from "js-cookie";
 import { DonationToast } from "./donation-toast";
 
-vi.mock("@tanstack/react-router", () => ({ useRouterState: () => "/" }));
+const route = vi.hoisted(() => ({ pathname: "/dashboard" }));
+vi.mock("@tanstack/react-router", () => ({ useRouterState: () => route.pathname }));
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 const DISMISSED_COOKIE = "donation-toast-dismissed";
@@ -32,4 +33,12 @@ it("asks after five minutes and remembers a dismissal", async () => {
 
 	fireEvent.click(screen.getByRole("button", { name: "Maybe later" }));
 	expect(Cookies.get(DISMISSED_COOKIE)).toBe("true");
+});
+
+it("never covers the homepage or other public pages", async () => {
+	route.pathname = "/";
+	render(<DonationToast />);
+	await act(() => vi.advanceTimersByTimeAsync(FIVE_MINUTES));
+	expect(screen.queryByText("Enjoying Reactive Resume?")).toBeNull();
+	route.pathname = "/dashboard";
 });
