@@ -103,7 +103,10 @@ export function DocumentMenuTrigger({ name, isLocked, ...props }: DocumentMenuTr
 	);
 }
 
-/** Leaving the editor is navigation, so it's a link styled as an icon button. */
+/**
+ * Leaving the editor is navigation, so it's a link styled as an icon button. Opened from an application, it returns
+ * there — after checking that application owns this document — instead of stranding the user in Documents.
+ */
 export function BackLink() {
 	const params = useParams({ strict: false });
 	const search = useSearch({ strict: false });
@@ -116,10 +119,16 @@ export function BackLink() {
 	const { data: applications } = useQuery(applicationsListQueryOptions());
 	const applicationId = search.applicationId ?? letterApplicationId ?? resumeApplicationId;
 	const application =
-		applications?.find((item) => item.id === applicationId) ??
-		applications?.find((item) =>
-			params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId,
-		);
+		applications?.find(
+			(item) =>
+				item.id === applicationId &&
+				(params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId),
+		) ??
+		(!search.applicationId
+			? applications?.find((item) =>
+					params.resumeId ? item.resumeId === params.resumeId : item.coverLetterId === params.coverLetterId,
+				)
+			: undefined);
 	const label = application ? t`Back to ${application.company}` : t`Back to documents`;
 
 	return (

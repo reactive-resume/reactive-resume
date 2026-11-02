@@ -8,13 +8,21 @@ import { useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Keyboard, View, useWindowDimensions } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { coverLetterTextToHtml, defaultCoverLetterSignOff, greetingName } from "@reactive-resume/resume/cover-letter";
 import { useLetterWords } from "./compose";
 import { designSummary } from "./design-presets";
-import { discardLetterDraft, startLetterDraft, useLetterDrafting } from "./drafting";
+import {
+	discardLetterDraft,
+	letterDraftOwner,
+	restoreLetterDraft,
+	startLetterDraft,
+	useLetterDraftFor,
+	useLetterDraftLastFor,
+	useLetterDrafting,
+} from "./drafting";
 import { LETTER_LENGTH, countWords, letterLength } from "./length";
 import { useResumes } from "./queries";
 import { LetterRichText, LetterRichTextToolbar } from "./rich-text-field";
@@ -83,10 +91,17 @@ export function LetterWrite({ id }: { id: string }) {
 	const { t } = useLingui();
 	const letter = useLetterStore((state) => (state.document?.id === id ? state.document : null));
 	const status = useLetterStore((state) => state.status);
-	const draft = useLetterDrafting((state) => state.draft);
+	const draft = useLetterDraftFor(id);
 	const applications = useApplications();
 	const { size, space } = useTheme();
 	const keyboardSpace = useKeyboardScrollSpace();
+
+	// A draft left unkept before closing the editor shows again, with Keep and Discard.
+	useEffect(() => {
+		void restoreLetterDraft(id);
+		// The document opens asynchronously: retry once the owned document and its revision are available. This only
+		// reads local/account storage and never starts a paid generation.
+	}, [id, letter?.id, letter?.revision]);
 
 	if (!letter) {
 		return status === "error" ? (
@@ -535,7 +550,8 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const words = useLetterWords(letter.style.metadata.page.locale);
-	const draft = useLetterDrafting((state) => state.draft);
+	const owner = letterDraftOwner(letter.id);
+	const draft = useLetterDraftFor(letter.id);
 	// Once the editor shows it stays, so clearing the text while typing never swaps it for the draft offer.
 	const [writing, setWriting] = useState(() => countWords(letter.content) > 0);
 	const structured = letter.layout === "structured";
@@ -548,6 +564,22 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 				letter={letter}
 				application={application}
 				onKeep={(text) => {
+					// A captured callback may run after another letter/account opened: it may only write its own letter,
+					// at the revision this ready draft came from.
+					const current = useLetterStore.getState().document;
+					const owned = useLetterDrafting.getState();
+					if (
+						!current ||
+						current.id !== letter.id ||
+						draft.phase !== "ready" ||
+						typeof draft.operation !== "string" ||
+						current.revision !== draft.revision ||
+						letterDraftOwner(letter.id) !== owner ||
+						owned.owner !== owner ||
+						owned.draft.phase !== "ready" ||
+						owned.draft.operation !== draft.operation
+					)
+						return;
 					useLetterStore.getState().update((value) => void (value.content = coverLetterTextToHtml(text)), {
 						newStep: true,
 					});
@@ -683,12 +715,15 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 				) : null}
 				<Button size="sm" variant="secondary" label={t`Write it myself`} disabled={disabled} onPress={onWrite} />
 			</View>
-			{canDraft && ai.defaultProvider && (
-				<Text
-					variant="caption"
-					color="ink3"
-				>{t`Sends the linked resume, posting and letter details to ${ai.defaultProvider.label} · ${ai.defaultProvider.model}. Your provider may charge.`}</Text>
-			)}
+			{canDraft && ai.defaultProvider ? (
+				<Text variant="caption" color="ink3">
+					{application && hasResume
+						? t`Sends this letter's resume and the ${application.company} posting to ${ai.defaultProvider.label} · ${ai.defaultProvider.model} to draft the body. Your provider may charge.`
+						: application
+							? t`Sends the ${application.company} posting to ${ai.defaultProvider.label} · ${ai.defaultProvider.model} to draft the body. Your provider may charge.`
+							: t`Sends this letter's resume to ${ai.defaultProvider.label} · ${ai.defaultProvider.model} to draft the body. Your provider may charge.`}
+				</Text>
+			) : null}
 			{canDraft && ai.error ? (
 				<Banner
 					tone="warn"
@@ -714,8 +749,8 @@ function DraftBox({ letter, application, onKeep }: DraftBoxProps) {
 	const { t } = useLingui();
 	const { colors, radius, size, space } = useTheme();
 	const reducedMotion = useReducedMotion();
-	const draft = useLetterDrafting((state) => state.draft);
-	const last = useLetterDrafting((state) => state.last);
+	const draft = useLetterDraftFor(letter.id);
+	const last = useLetterDraftLastFor(letter.id);
 
 	if (draft.phase === "idle") return null;
 	if (draft.phase === "unsaved") {

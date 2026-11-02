@@ -41,6 +41,7 @@ import { TextField, validateEmail, WebsiteField } from "@/features/resume/editor
 import { RichTextEditor } from "@/features/resume/editor/write/rich-text-editor";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
+import { getAccountGeneration } from "@/libs/auth/account-scope";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
@@ -462,6 +463,8 @@ function SenderPhoto({ picture, disabled }: SenderPhotoProps) {
  * shows on a green wash until it's kept: it never replaces typed text by itself.
  */
 function BodySection({ letter, application, disabled }: LetterSectionProps) {
+	const account = getAccountGeneration();
+	const sessionId = useLetterEditorStore.getState().sessionId;
 	const words = useLetterWords(letter.style.metadata.page.locale);
 	const edit = useLetterEditorStore((state) => state.edit);
 	const draft = useLetterEditorStore((state) => state.draft);
@@ -487,6 +490,17 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 					letter={letter}
 					application={application}
 					onKeep={(text) => {
+						const current = useLetterEditorStore.getState();
+						if (
+							getAccountGeneration() !== account ||
+							current.sessionId !== sessionId ||
+							current.letter?.id !== letter.id ||
+							current.letter.revision !== letter.revision ||
+							draft.phase !== "ready" ||
+							current.draft !== draft ||
+							current.letter.isLocked
+						)
+							return;
 						edit({ content: coverLetterTextToHtml(text) });
 						discardLetterDraft();
 						setWriting(true);
@@ -608,6 +622,15 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 					<Trans>Write it myself</Trans>
 				</Button>
 			</div>
+			{canDraft && hasUsableProvider && (
+				<p className="text-xs text-ink-3">
+					{application && hasResume
+						? t`Sends this letter's resume and the ${application.company} posting to ${providerState.usableProviders[0]?.label ?? t`your AI provider`} to draft the body.`
+						: application
+							? t`Sends the ${application.company} posting to ${providerState.usableProviders[0]?.label ?? t`your AI provider`} to draft the body.`
+							: t`Sends this letter's resume to ${providerState.usableProviders[0]?.label ?? t`your AI provider`} to draft the body.`}
+				</p>
+			)}
 			{canDraft && <AiProviderLoadState state={providerState} />}
 			{canDraft && hasUsableProvider && (
 				<p className="text-xs text-ink-3">

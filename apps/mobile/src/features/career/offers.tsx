@@ -7,6 +7,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { selectOfferPair } from "@reactive-resume/schema/career-offer";
+import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { useCareerQueries, useCareerTime, useNow, useOffers } from "./hooks";
 import { client } from "./hooks";
 import { formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
@@ -266,6 +267,10 @@ function OfferCard({ offer, other, profile, onEdit, onDelete }: OfferCardProps) 
 		{ label: t`Leave`, value: data.leave || unknown },
 		{ label: t`Learning budget`, value: money("learning") },
 		{ label: t`Other benefits`, value: data.other || t`Not recorded` },
+		{
+			label: t`Starts`,
+			value: data.startDate ? formatDateOnly(data.startDate, time.locale) : unknown,
+		},
 		{ label: t`Respond by`, value: data.respondBy ? time.when(data.respondBy) : unknown },
 	];
 	const questions = [
@@ -273,6 +278,7 @@ function OfferCard({ offer, other, profile, onEdit, onDelete }: OfferCardProps) 
 		data.variable === null && !data.variableConditions ? t`Is there a bonus, and what does it depend on?` : null,
 		!data.equity ? t`What equity is included, and on what terms?` : null,
 		data.officeDays === null ? t`How many office days are expected?` : null,
+		!data.startDate ? t`When would you start?` : null,
 		!data.respondBy ? t`When do you need a decision?` : null,
 	].filter(Boolean);
 	return (

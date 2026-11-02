@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
+import { firstFutureLead, PREPARE_LEADS } from "@reactive-resume/schema/career-schedule";
 import { formatList } from "@reactive-resume/utils/locale";
 import {
 	latest,
@@ -22,12 +23,12 @@ import {
 	workspaceError,
 } from "../hooks";
 import { minutesUntil, preparePhase } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, Pill, PrivacyLine, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, CheckRow, Pill, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
 import { useFlags } from "@/api/flags";
 import { useHasAIProvider } from "@/features/ai/providers";
-import { interviewTypeLabel, useUserTime } from "@/features/application-detail/hooks";
+import { interviewTypeLabel, useNow, useUserTime } from "@/features/application-detail/hooks";
 import { routes } from "@/routes";
 import { Banner, Button, EmptyState, ListRow, Sheet, Skeleton, Switch, Text, showToast, useTheme } from "@/ui";
 
@@ -88,7 +89,6 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 	const provider = useHasAIProvider().defaultProvider;
 	const generate = useGenerate(application.id);
 	const label = useWorking(generate.isPending, workingSteps("briefing"), t`Plan my preparation`);
-	const name = provider?.label ?? "";
 	return (
 		<EmptyState
 			variant="card"
@@ -96,19 +96,13 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 			message={t`A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call.`}
 		>
 			{provider ? (
-				<>
-					<Button
-						label={label}
-						loading={generate.isPending}
-						onPress={() => void generate.run({ task: "briefing", interviewId: interview.id }).catch(() => undefined)}
-					/>
-					<PrivacyLine centered>
-						{t`Sends this application (posting, notes, interview details) and Knowledge that's switched on to ${name}.`}
-					</PrivacyLine>
-				</>
-			) : (
-				<AiNotice centered />
-			)}
+				<Button
+					label={label}
+					loading={generate.isPending}
+					onPress={() => void generate.run({ task: "briefing", interviewId: interview.id }).catch(() => undefined)}
+				/>
+			) : null}
+			<AiNotice task="briefing" application={application} interview centered />
 		</EmptyState>
 	);
 }
@@ -246,8 +240,6 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 	);
 }
 
-const LEADS = ["24h", "2h", "morning"] as const;
-
 type RefreshSwitchProps = { application: Application; interview: InterviewTimelineEntry };
 
 /** The prepare schedule for this interview: switching it here changes it in Career → Today too. */
@@ -260,40 +252,46 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 	const flags = useFlags();
 	const schedules = useSchedules();
 	const schedule = schedules.data?.find((item) => item.kind === "prepare" && item.interviewId === interview.id);
-	const lead = LEADS.find((item) => item === schedule?.lead) ?? "24h";
+	const now = useNow();
+	const next = firstFutureLead(new Date(interview.at), timeZone, now);
+	const lead = schedule?.lead ?? next?.lead ?? PREPARE_LEADS[0];
 	// The schedule's own connection while it's switched on and tested; otherwise the default, as the run itself does.
 	const own = connection.usableProviders.find((item) => item.id === schedule?.aiProviderId);
 	const provider = own ?? connection.defaultProvider;
 	const providerId = provider?.id ?? null;
 	const providerLabel = provider?.label ?? "";
-	const runAt = schedule?.nextRunAt ?? new Date(new Date(interview.at).getTime() - 24 * 3_600_000);
+	const runAt = schedule?.nextRunAt ?? next?.runAt ?? null;
 	const scheduling = flags.data?.careerSchedulingEnabled !== false;
 
 	const save = useMutation({
 		...orpc.career.saveSchedule.mutationOptions(),
 		onSuccess: (row) => {
 			void queryClient.invalidateQueries({ queryKey: orpc.career.schedules.key() });
-			const next = when(row.nextRunAt);
-			showToast({ message: row.enabled ? t`Briefing refresh is on · ${next}` : t`Briefing refresh paused` });
+			const nextAt = when(row.nextRunAt);
+			showToast({ message: row.enabled ? t`Briefing refresh is on · ${nextAt}` : t`Briefing refresh paused` });
 		},
 		onError: (error) => showToast({ message: workspaceError(error, t`Couldn't change the schedule. Try again.`) }),
 	});
 
 	const enabled = (save.isPending ? save.variables.enabled : schedule?.enabled) ?? false;
 	const available = !connection.isUnavailable && scheduling && !!providerId;
-	const label = {
-		"24h": t`Refresh the briefing 24 hours before`,
-		"2h": t`Refresh the briefing 2 hours before`,
-		morning: t`Refresh the briefing on the morning of`,
-	}[lead];
-	const at = when(runAt);
+	const label = next
+		? {
+				"24h": t`Refresh the briefing 24 hours before`,
+				"2h": t`Refresh the briefing 2 hours before`,
+				morning: t`Refresh the briefing on the morning of`,
+			}[next.lead]
+		: t`Refresh the briefing`;
+	const at = runAt ? when(runAt) : "";
 	const description = !scheduling
 		? t`Scheduled work isn't available on this server.`
 		: connection.isUnavailable
 			? t`AI connections are unavailable.`
 			: !providerId
 				? t`Connect an AI provider in Settings to refresh it automatically.`
-				: t`${at} · ${providerLabel}. Sends this application and your Knowledge; your provider may charge.`;
+				: at
+					? t`${at} · ${providerLabel}. Sends this application and your Knowledge; your provider may charge.`
+					: t`Too close to the interview to schedule a refresh.`;
 
 	return (
 		<Block>
@@ -307,19 +305,19 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 				<Switch
 					label={label}
 					value={enabled}
-					disabled={save.isPending || (!available && !enabled)}
+					disabled={save.isPending || (!available && !enabled) || (!next && !enabled)}
 					onValueChange={(checked) =>
 						save.mutate({
 							...(schedule ? { id: schedule.id } : {}),
 							kind: "prepare",
 							applicationId: application.id,
 							interviewId: interview.id,
-							lead,
+							lead: (next?.lead ?? lead) as "24h" | "2h" | "morning",
 							enabled: checked,
 							email: schedule?.email ?? false,
 							timezone: timeZone,
 							locale: i18n.locale,
-							nextRunAt: new Date(runAt),
+							nextRunAt: next?.runAt ?? runAt ?? new Date(interview.at),
 							aiProviderId: providerId,
 							query: "",
 							intervalDays: null,

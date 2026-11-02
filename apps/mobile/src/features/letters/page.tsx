@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PixelRatio, View } from "react-native";
 import { coverLetterTextToHtml } from "@reactive-resume/resume/cover-letter";
 import { LETTER_RENDER_OPTIONS, letterPageData, useLetterWords } from "./compose";
-import { useLetterDrafting } from "./drafting";
+import { useLetterDraftFor } from "./drafting";
 import { useLetterStore } from "@/draft";
 import { nativeEnvironment } from "@/draft/native";
 import { PageImage } from "@/preview/page-image";
@@ -136,7 +136,7 @@ export function LetterPage({ id }: { id: string }) {
 	const { t } = useLingui();
 	const letter = useLetterStore((state) => (state.document?.id === id ? state.document : null));
 	const words = useLetterWords(letter?.style.metadata.page.locale);
-	const draft = useLetterDrafting((state) => state.draft);
+	const draft = useLetterDraftFor(id);
 	const reducedMotion = useReducedMotion();
 	// Reduced motion puts the whole draft on the page at once.
 	const draftText =

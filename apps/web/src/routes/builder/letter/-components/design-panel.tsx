@@ -5,15 +5,17 @@ import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { produce } from "immer";
-import { useEffect, useMemo } from "react";
+import { useEffect, useId, useMemo } from "react";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { SwitchRow } from "@reactive-resume/ui/components/switch";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { Combobox } from "@/components/ui/combobox";
 import { templates } from "@/dialogs/resume/template/data";
 import { useLetterEditorStore } from "@/features/letters/store";
+import { getLocaleOptions } from "@/features/locale/locale-options";
 import { ColorGroup, DesignSourceProvider, PageGroup, TypeGroup } from "@/features/resume/editor/design/style-groups";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { getOrpcErrorMessage } from "@/libs/error-message";
@@ -118,6 +120,19 @@ export function LetterDesignPanel() {
 				)}
 			</section>
 
+			<section aria-labelledby="letter-design-language" className="grid gap-3 px-4 py-5">
+				<h2 id="letter-design-language" className="text-[15px] font-semibold">
+					<Trans>Language</Trans>
+				</h2>
+				<LetterLanguageField disabled={disabled} />
+				<span className="text-xs text-ink-3">
+					<Trans>
+						Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote
+						them.
+					</Trans>
+				</span>
+			</section>
+
 			{!letter.designLinked && (
 				<section aria-labelledby="letter-design-template" className="grid gap-3 px-4 py-5">
 					<h2 id="letter-design-template" className="text-[15px] font-semibold">
@@ -196,10 +211,28 @@ export function LetterDesignPanel() {
 						<h2 id="letter-design-page" className="text-[15px] font-semibold">
 							<Trans>Page</Trans>
 						</h2>
-						<PageGroup />
+						<PageGroup showLanguage={false} />
 					</section>
 				</DesignSourceProvider>
 			)}
 		</div>
+	);
+}
+
+/** The letter's language, independent of whether its design follows the resume. */
+function LetterLanguageField({ disabled }: { disabled: boolean }) {
+	const id = useId();
+	const locale = useLetterEditorStore((state) => state.letter?.style.metadata.page.locale ?? "en-US");
+	const edit = useLetterEditorStore((state) => state.edit);
+	return (
+		<Combobox
+			id={id}
+			options={getLocaleOptions()}
+			value={locale}
+			disabled={disabled}
+			onValueChange={(value: string | null) => {
+				if (value && value !== locale) edit({ locale: value });
+			}}
+		/>
 	);
 }

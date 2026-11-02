@@ -15,6 +15,10 @@ type CareerToolsInput = {
 	shareMemory: boolean;
 	tab: WorkspaceTab | undefined;
 	sourceMessageId: string | undefined;
+	/** This application's saved work, newest first, when the user shares the application. */
+	items?: Awaited<ReturnType<typeof careerService.savedItems>>;
+	/** The answers typed in the Apply tab, when the user shares the application. */
+	answers?: { question: string; answer: string }[];
 };
 
 const TABS: Record<WorkspaceTab, string> = {
@@ -48,7 +52,7 @@ function boundedItems<T>(items: T[], budget: number) {
 }
 
 export function buildCareerInstructions(
-	input: Pick<CareerToolsInput, "context" | "shareApplication" | "shareMemory" | "tab"> & {
+	input: Pick<CareerToolsInput, "context" | "shareApplication" | "shareMemory" | "tab" | "items" | "answers"> & {
 		offers?: Array<{ application: { company: string; role: string } | null; data: unknown }>;
 	},
 ) {
@@ -61,9 +65,31 @@ export function buildCareerInstructions(
 	const task = context.application
 		? `Help with this one application${application}. ${input.tab ? `The user is ${TABS[input.tab]}.` : ""}`
 		: "Help with the whole search, across applications. Use list_opportunities to compare them.";
+	// Answers, the newest saved offer and the last replies belong to this application, as its tabs show them.
+	const saved = (input.items ?? []).filter((item) => item.applicationId === context.application?.id);
+	const offer = saved.find((item) => item.data.kind === "offer");
+	const replies = saved
+		.filter((item) => item.data.kind === "reply")
+		.slice(0, 2)
+		.map((item) => ({ data: item.data, at: item.createdAt }));
 	const selected = {
 		...(input.shareApplication
-			? { application: context.application, resume: context.resume, letter: context.letter }
+			? {
+					application: context.application,
+					resume: context.resume,
+					letter: context.letter,
+					answers: boundedItems(
+						(input.answers ?? [])
+							.filter((answer) => answer.answer.trim())
+							.map((answer) => ({
+								question: answer.question.slice(0, 500),
+								answer: answer.answer.slice(0, 4_000),
+							})),
+						8_000,
+					).items,
+					offer: offer?.data.kind === "offer" ? offer.data : null,
+					recentReplies: replies,
+				}
 			: {}),
 		...(input.shareMemory
 			? { preferences: context.profile, facts: context.facts.slice(0, 30), stories: context.stories.slice(0, 8) }

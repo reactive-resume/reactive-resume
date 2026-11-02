@@ -37,7 +37,7 @@ Use **Plan again** when you need a fresh plan. Earlier generated briefings remai
 4. Choose **Morning of**, check the **AI connection**, and leave **Turn this schedule on** enabled.
 5. Select **Save schedule**.
 
-For a 14:00 interview, Morning of schedules the briefing at **08:00 in the schedule's saved timezone**. New schedules start with your account timezone. Existing schedules retain their saved timezone when edited, even if account settings change. For an interview before 10:00, it schedules two hours before the start instead. If the scheduled time has passed when you save, the work becomes due now.
+For a 14:00 interview, Morning of schedules the briefing at **08:00 in the schedule's saved timezone**. New schedules start with your account timezone. Existing schedules retain their saved timezone when edited, even if account settings change. For an interview before 10:00, it schedules two hours before the start instead. The app never turns a past time into an immediate paid run: when every briefing lead has passed, the switch says **Too close to the interview to schedule a refresh** and stays off.
 
 <Frame caption="Choose Morning of for an interview-day briefing. Check the connection and what the scheduled action sends before saving.">
   <img
@@ -46,7 +46,14 @@ For a 14:00 interview, Morning of schedules the briefing at **08:00 in the sched
   />
 </Frame>
 
-You can choose **24 hours before** or **2 hours before** instead. The **Refresh the briefing 24 hours before** switch in Interview prep is a shortcut for a 24-hour schedule, not an 08:00 schedule.
+You can choose **24 hours before** or **2 hours before** instead. The switch in Prepare names the first lead still ahead of the interview (24 hours before, then 2 hours before, then the morning of), and the server rejects a briefing time that has already passed when it is saved.
+
+<Frame caption="With the interview an hour away, every lead has passed. The switch stays off and says why instead of starting an immediate paid run labelled as a future briefing.">
+  <img
+    src="/images/guides/career/prepare-too-close.png"
+    alt="Prepare tab for a Brightpath interview an hour away, with the briefing refresh switch off and the note Too close to the interview to schedule a refresh"
+  />
+</Frame>
 
 The browser can be closed. Delivery depends on the installation's scheduler and a working provider; a due time is not a guarantee of an exact arrival minute. When ready, the notification appears in **Today**. If it fails, check the notice and [schedule troubleshooting](/guides/career-workspace-reference#when-something-does-not-work).
 

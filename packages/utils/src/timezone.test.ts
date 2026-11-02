@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { fromZonedDateTime } from "./timezone";
+import { formatDateOnly, fromZonedDateTime } from "./timezone";
 
 describe("wall-clock timezone conversion", () => {
 	it.each([
@@ -18,5 +18,16 @@ describe("wall-clock timezone conversion", () => {
 		["2027-01-01", "09:00", "Invalid/Timezone"],
 	])("rejects nonexistent clock minutes: %s %s %s", (date, time, zone) => {
 		expect(fromZonedDateTime(date, time, zone)).toBeNull();
+	});
+});
+
+describe("formatDateOnly", () => {
+	it("keeps the calendar date and year regardless of the viewer's timezone", () => {
+		expect(formatDateOnly("2027-01-04", "en-US")).toBe("Jan 4, 2027");
+		expect(formatDateOnly("2027-01-04", "de-DE")).toBe("4. Jan. 2027");
+	});
+	it("leaves an invalid or non-date value untouched", () => {
+		expect(formatDateOnly("2027-02-31", "en-US")).toBe("2027-02-31");
+		expect(formatDateOnly("", "en-US")).toBe("");
 	});
 });

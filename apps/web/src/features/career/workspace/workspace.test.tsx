@@ -23,6 +23,7 @@ const api = vi.hoisted(() => ({
 	save: vi.fn(),
 	submit: vi.fn(),
 	generate: vi.fn(),
+	apply: vi.fn(),
 	invalidate: vi.fn(),
 	speak: vi.fn(),
 	userId: "workspace-user",
@@ -40,7 +41,13 @@ vi.mock("@/libs/orpc/client", () => {
 	return {
 		orpc: {
 			documents: { list: endpoint("documents") },
-			applications: { update: endpoint("updateApplication") },
+			applications: {
+				getById: endpoint("application"),
+				listSummary: endpoint("applications"),
+				list: endpoint("applications"),
+				update: endpoint("updateApplication"),
+				lanes: { get: endpoint("lanes") },
+			},
 			coverLetters: { create: endpoint("createLetter") },
 			career: {
 				answers: {
@@ -52,9 +59,12 @@ vi.mock("@/libs/orpc/client", () => {
 				stories: endpoint("stories"),
 				workspace: endpoint("workspace"),
 				savedItems: endpoint("savedItems"),
+				schedules: endpoint("schedules"),
 				facts: endpoint("facts"),
 				saveWorkspace: endpoint("saveWorkspace", api.save),
 				submitApplication: endpoint("submit", api.submit),
+				applyReply: endpoint("applyReply", api.apply),
+				undoReply: endpoint("undoReply"),
 				generate: endpoint("generate", api.generate),
 				deleteSavedItem: endpoint("delete"),
 				saveFact: endpoint("saveFact"),
@@ -74,7 +84,8 @@ vi.mock("@/features/settings/integrations/hooks/use-has-usable-ai-provider", () 
 		isLoading: false,
 	}),
 }));
-vi.mock("@/features/applications/use-application-actions", () => ({
+vi.mock("@/features/applications/use-application-actions", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@/features/applications/use-application-actions")>()),
 	useInvalidateApplications: () => api.invalidate,
 }));
 vi.mock("../coach-thread", () => ({
@@ -199,6 +210,8 @@ function mount(children: ReactNode) {
 beforeEach(() => {
 	vi.clearAllMocks();
 	api.data = {
+		stories: [],
+		lanes: [],
 		workspace: structuredClone(EMPTY_WORKSPACE),
 		savedItems: [],
 		facts: [],
@@ -504,6 +517,105 @@ it("keeps an unacknowledged message across pagehide and requires review after re
 	expect(screen.getByRole("textbox", { name: `Paste a message from ${props.application.company}` })).toHaveValue(
 		"Newer server text",
 	);
+});
+
+it("commits a typed question on Draft and measures the proposal against the question's limit", async () => {
+	const answer = { id: "answer", question: "", answer: "", factIds: [] as string[] };
+	api.data.workspace = { ...EMPTY_WORKSPACE, answers: [answer] };
+	api.generate.mockResolvedValue({
+		item: null,
+		answer: { text: "one two three", factIds: [], note: "Check the ownership claim." },
+	});
+	mount(<ApplyTab {...props} />);
+	fireEvent.change(screen.getByRole("textbox", { name: "Question from the form" }), {
+		target: { value: "Describe reliability (150 words max)" },
+	});
+	await act(async () => {
+		fireEvent.click(screen.getByRole("button", { name: "Draft" }));
+	});
+	expect(api.save.mock.calls.at(-1)?.[0]).toMatchObject({
+		answers: [expect.objectContaining({ question: "Describe reliability (150 words max)" })],
+	});
+	expect(api.generate).toHaveBeenCalledWith(
+		expect.objectContaining({
+			task: { task: "answer", question: "Describe reliability (150 words max)", answer: "" },
+		}),
+		expect.anything(),
+	);
+	expect(await screen.findByText("Check before accepting: Check the ownership claim.")).toBeTruthy();
+	expect(screen.getByText("3 of 150 words")).toBeTruthy();
+});
+
+it("confirms a Saved-to-Interview move as one change before anything is written", async () => {
+	api.data.savedItems = [
+		item("Invite", {
+			kind: "reply",
+			title: "They're inviting you to the next round",
+			message: "We'd like to invite you to the next round.",
+			asks: [],
+			unconfirmed: [],
+			reply: "",
+			changes: [{ type: "stage", stage: "interview" }],
+			offer: null,
+			applied: null,
+		}),
+	];
+	api.apply.mockResolvedValue(undefined);
+	mount(<MessagesTab {...props} />);
+	expect(await screen.findByText("Mark as applied and move to Interview")).toBeTruthy();
+	fireEvent.click(screen.getByRole("button", { name: "Apply 1 change" }));
+	// Nothing is sent until the receipt is confirmed.
+	expect(api.apply).not.toHaveBeenCalled();
+	expect(await screen.findByText("Mark as applied and move it?")).toBeTruthy();
+	fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+	expect(api.apply).not.toHaveBeenCalled();
+	fireEvent.click(screen.getByRole("button", { name: "Apply 1 change" }));
+	fireEvent.click(await screen.findByRole("button", { name: "Mark as applied and move" }));
+	await waitFor(() => expect(api.apply).toHaveBeenCalledTimes(1));
+	expect(api.apply.mock.calls[0]?.[0]).toMatchObject({
+		id: "Invite",
+		changes: [0],
+		submission: {
+			answers: [],
+			expectedAnswers: [],
+			expectedDocuments: { resumeId: null, coverLetterId: null },
+		},
+	});
+});
+
+it("shows every extracted offer term before applying, including deadline, bonus, equity and start", async () => {
+	api.data.savedItems = [
+		item("Offer", {
+			kind: "reply",
+			title: "They sent an offer",
+			message: "We are pleased to offer you the role. Let us know by 20 November.",
+			asks: [],
+			unconfirmed: [],
+			reply: "",
+			changes: [{ type: "offer" }],
+			offer: offerTermsSchema.parse({
+				version: "written",
+				currency: "EUR",
+				period: "year",
+				base: 82000,
+				variable: 8200,
+				variableConditions: "10% of base",
+				equity: "0.05% over four years",
+				location: "Berlin",
+				respondBy: "2026-11-20T16:00:00.000Z",
+				startDate: "2027-01-04",
+			}),
+			applied: null,
+		}),
+	];
+	mount(<MessagesTab {...props} />);
+	const details = await screen.findByText(/Opens in Career → Offers/);
+	expect(details.textContent).toContain("Base €82,000 per year");
+	expect(details.textContent).toContain("Bonus €8,200 (10% of base)");
+	expect(details.textContent).toContain("Equity 0.05% over four years");
+	expect(details.textContent).toContain("Starts");
+	expect(details.textContent).toContain("Jan");
+	expect(details.textContent).toContain("Respond by");
 });
 
 it.each(["answer", "factIds"] as const)(

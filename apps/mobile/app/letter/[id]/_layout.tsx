@@ -1,17 +1,19 @@
 import type { LetterPane } from "@/routes";
 import type { PaneTab } from "@/shell/builder-chrome";
 import { useLingui } from "@lingui/react/macro";
-import { useRouter, useGlobalSearchParams, useLocalSearchParams } from "expo-router";
+import { useNavigation, usePreventRemove, useRouter, useGlobalSearchParams, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import PageScreen from "./page";
 import { LetterConflictSheet, useLetterDraftOwner, useLetterStore } from "@/draft";
-import { discardLetterDraft } from "@/features/letters/drafting";
+import { stopLetterDraft, useLetterDraftFor } from "@/features/letters/drafting";
 import { nextLetterVisit } from "@/features/letters/save";
 import { LetterShareSheet } from "@/features/letters/share";
+import { draftNeedsLeaveGuard } from "@/features/workspace/logic";
 import { routes } from "@/routes";
 import { BuilderChrome, useBuilderChrome } from "@/shell/builder-chrome";
+import { useEditorApplicationOrigin } from "@/shell/editor-origin";
 import { useKeyCommands } from "@/shell/key-commands";
-import { IconButton } from "@/ui";
+import { ConfirmDialog, IconButton } from "@/ui";
 
 /** Fills the chrome from the draft once for every pane: name and save status. ⌘Z / ⇧⌘Z undo and redo. */
 type DraftChromeProps = { id: string; origin?: string | undefined };
@@ -52,15 +54,30 @@ export default function LetterLayout() {
 	const [sharing, setSharing] = useState(!!version);
 	// The one owner of the letter draft; panes and the tablet page subscribe with `useLetterStore()`.
 	useLetterDraftOwner(id);
-	// One editor visit: late server work from another visit never touches this draft, and leaving or switching letters
-	// stops an AI draft.
+	// Opened from an application, Back returns there after checking that it owns this letter.
+	const navigation = useNavigation();
+	const draft = useLetterDraftFor(id);
+	const blocked = draftNeedsLeaveGuard(draft.phase);
+	const [pendingAction, setPendingAction] = useState<Parameters<typeof navigation.dispatch>[0] | null>(null);
+	const [allowed, setAllowed] = useState(false);
+	usePreventRemove(!allowed && blocked, ({ data }) => setPendingAction(data.action));
+	useEffect(() => {
+		if (allowed && pendingAction) navigation.dispatch(pendingAction);
+	}, [allowed, pendingAction, navigation]);
+	// One editor visit: late server work from another visit never touches this draft. Leaving stops a stream but keeps
+	// a ready draft, so returning to it costs no second paid request.
 	useEffect(() => {
 		nextLetterVisit();
 		return () => {
 			nextLetterVisit();
-			discardLetterDraft();
+			stopLetterDraft();
 		};
 	}, [id]);
+
+	const linkedApplicationId = useLetterStore((state) =>
+		state.document?.id === id ? state.document.sourceApplicationId : null,
+	);
+	const back = useEditorApplicationOrigin("letter", id, origin.applicationId ?? linkedApplicationId);
 
 	const panes: PaneTab<LetterPane>[] = [
 		{
@@ -89,12 +106,22 @@ export default function LetterLayout() {
 			tabletPanes={["write", "design"]}
 			page={<PageScreen />}
 			title={t`Cover letter`}
+			back={back}
 			onExport={() => setSharing(true)}
 			modals={["assistant"]}
 		>
 			<DraftChrome id={id} origin={origin.applicationId} />
 			<LetterConflictSheet />
 			<LetterShareSheet id={id} open={sharing} onClose={() => setSharing(false)} version={version} />
+			<ConfirmDialog
+				open={pendingAction !== null}
+				title={t`Leave without keeping the draft?`}
+				message={t`Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place.`}
+				confirmLabel={t`Leave`}
+				cancelLabel={t`Stay`}
+				onConfirm={() => setAllowed(true)}
+				onCancel={() => setPendingAction(null)}
+			/>
 		</BuilderChrome>
 	);
 }

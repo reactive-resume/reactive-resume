@@ -64,7 +64,7 @@ Sent resume and letter versions are document snapshots shown under **What you se
 
 ## Coach context and AI actions
 
-**Ask the coach** opens application coaching beside a workspace tab. The coach receives the job and tab context selected for that conversation. You can start another conversation or reopen one from its history.
+**Ask the coach** opens application coaching beside a workspace tab. The coach receives the job and tab context selected for that conversation, including the application's form answers, its newest saved offer and its last messages when the application is shared. You can start another conversation or reopen one from its history.
 
 A new conversation suggests three starters drawn from what your account holds: preparing for your next interview when one is coming up, weighing an offer when an application is in the Offer stage, and reviewing found roles when discovery has some, before general ones such as turning an accomplishment into a story. A starter only fills in the question; nothing is sent until you choose it.
 
@@ -95,7 +95,7 @@ A reply you stop, or one cut short, stays marked after you reopen the conversati
 
 If the AI connection a conversation used is switched off or removed, the conversation says so and sends nothing until you choose the connection it uses next. This applies to the career coach, a job's coach and the editor assistant. A job's coach has the same **Knowledge** and **Web research** controls and connection menu as Career → Coach. **Change connection** appears only when the provider caused a failure, such as a rejected key or a rate limit; a lost internet connection says so instead.
 
-Workspace buttons such as **Check fit** and **Read it for me** are separate AI actions. Their privacy lines describe their own inputs; chat context choices do not turn those inputs off. They use the default usable AI connection. Scheduled preparation requires a selected connection and never falls back to the default. If you delete or switch off its connection, or change its key, model or address, review the paused schedule, choose a tested connection and approve it before enabling work again. [Provider selection](/guides/using-ai#which-provider-is-used) explains this further.
+Workspace buttons such as **Check fit** and **Read it for me** are separate AI actions. Each privacy line comes from the same list of inputs the server builds its request from, naming only the parts this application and your Knowledge actually have: preferences, posting, requirements, notes, contacts, resume, letter, Knowledge, and the action's own question, answer or message. **Read posting** and **Draft from the posting** name their provider before you click. Chat context choices do not turn those inputs off. They use the default usable AI connection. Scheduled preparation requires a selected connection and never falls back to the default. If you delete or switch off its connection, or change its key, model or address, review the paused schedule, choose a tested connection and approve it before enabling work again. [Provider selection](/guides/using-ai#which-provider-is-used) explains this further.
 
 ## Discovery review
 
@@ -113,7 +113,7 @@ Today separates **Preference phrase matches**, **Keyword overlap** and optional 
 
 Interview times and calendar day grouping in Applications, its workspace and Today use your account timezone. When that isn't the timezone of the device you're using, times show their zone, for example "16:56 UTC", and Today offers **Use this device's timezone** to switch in one step. Stage changes and notes keep their recorded whole-day dates.
 
-New schedules use the account timezone from **Settings → Preferences**; existing schedules retain their saved timezone when edited. Morning of means 08:00 on the interview day, or two hours before interviews starting before 10:00. Saving a preparation schedule whose run time has passed makes it due now, and the form says so. A new preparation schedule starts at **2 hours before** when the interview is less than 24 hours away.
+New schedules use the account timezone from **Settings → Preferences**; existing schedules retain their saved timezone when edited. Morning of means 08:00 on the interview day, or two hours before interviews starting before 10:00. Prepare never schedules an immediate run labelled as a future briefing: the switch picks the first lead still ahead of the interview, says **Too close to the interview to schedule a refresh** when none remains, and the server rejects a past briefing time when it is saved.
 
 Each schedule in Today shows how its latest run went. A one-time schedule reads **Running** while its run is queued or being retried, **Done** once it finished, and **Failed · open to check it** in red when its last try failed; a repeating schedule whose last run failed reads **Last run failed**. Open the schedule to check its application and AI connection. A one-time schedule runs again only for a new time: for a reminder, pick a later date or time; for interview prep, choose another lead.
 

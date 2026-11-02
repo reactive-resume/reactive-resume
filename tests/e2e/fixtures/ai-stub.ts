@@ -341,6 +341,8 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 			const asksForReply = parsed.messages.some((message) =>
 				text(message.content).includes("Read the employer's message."),
 			);
+			const everything = parsed.messages.map((message) => text(message.content)).join("\n");
+			const asksForAnswer = everything.includes("Write the user's answer to the application form question");
 			const content = asksForRoles
 				? JSON.stringify(roles)
 				: asksForFit
@@ -375,7 +377,13 @@ function handle(request: IncomingMessage, response: ServerResponse, requests: Ch
 										changes: [{ type: "stage", stage: "interview" }],
 										offer: null,
 									})
-								: "1";
+								: asksForAnswer
+									? JSON.stringify({
+											text: "I ran SLO burn reviews and cut noisy alerts.",
+											factIds: [],
+											note: "The 40% figure isn't in the supplied evidence; check it.",
+										})
+									: "1";
 			response.writeHead(200, { "content-type": "application/json" });
 			response.end(
 				JSON.stringify({

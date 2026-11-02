@@ -1,5 +1,7 @@
 import type { ElementInfo, LayoutInfo } from "@formepdf/core";
+import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { applyResumeProposals } from "@reactive-resume/resume/proposals";
 
 /**
  * Maps rendered PDF regions back to resume data, so the editor can outline the block a field
@@ -73,6 +75,36 @@ export function measureOverflow(data: ResumeData, rendered: { pageCount: number;
 			];
 		});
 	return { authored, pageCount: rendered.pageCount, spills };
+}
+
+/** Render the same private copies acceptance would write, without markings or persisted proposal decisions. */
+export async function measureProposalPageFit(
+	data: ResumeData,
+	proposals: readonly Proposal[],
+	render: (data: ResumeData) => Promise<PageMap>,
+) {
+	const before = structuredClone(data);
+	const after = structuredClone(data);
+	// Callers pass only currently acceptable edits; an undone receipt may override an older accepted status.
+	applyResumeProposals(
+		after,
+		proposals.map((proposal) => ({ ...proposal, status: "pending" })),
+	);
+	const beforeMap = await render(before);
+	const afterMap = await render(after);
+	const lines = (data: ResumeData, pageMap: PageMap) => {
+		const overflow = measureOverflow(data, { pageCount: pageMap.pages.length, pageMap });
+		if (!overflow) return 0;
+		if (!overflow.spills.length || overflow.spills.some((spill) => spill.lines === null)) return null;
+		return overflow.spills.reduce((sum, spill) => sum + (spill.lines ?? 0), 0);
+	};
+	const oldLines = lines(before, beforeMap);
+	const newLines = lines(after, afterMap);
+	return {
+		before: beforeMap.pages.length,
+		after: afterMap.pages.length,
+		lines: oldLines === null || newLines === null ? null : newLines - oldLines,
+	};
 }
 
 const decode = (value: string) => {
