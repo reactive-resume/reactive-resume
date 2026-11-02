@@ -120,6 +120,8 @@ async function sharedApplications(link: LinkRow) {
 			appliedAt: application.status === "saved" ? null : application.appliedAt,
 			stages: application.activity
 				.filter((entry): entry is Extract<ApplicationTimelineEntry, { type: "stage" }> => entry.type === "stage")
+				// Timeline entries come out of a JSON column, so their dates are ISO strings at run time.
+				.map((entry) => ({ ...entry, at: new Date(entry.at) }))
 				.toSorted((a, b) => a.at.getTime() - b.at.getTime())
 				.map((entry) => ({
 					status: entry.stage,

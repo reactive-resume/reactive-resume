@@ -87,6 +87,10 @@ describe.skipIf(!databaseUrl)("feedback links", () => {
 					company: "Lumen Labs",
 					role: "Platform Engineer",
 					status: "interview",
+					activity: [
+						{ id: "s1", type: "stage", stage: "applied", at: new Date("2026-10-01T09:00:00Z") },
+						{ id: "s2", type: "stage", stage: "interview", at: new Date("2026-10-08T09:00:00Z") },
+					],
 					notes: "Salary talk on Friday",
 					salary: "$180k",
 				},
@@ -117,6 +121,10 @@ describe.skipIf(!databaseUrl)("feedback links", () => {
 		expect(view.data.metadata.notes).toBe("");
 		expect(view.applications).toEqual([
 			expect.objectContaining({ company: "Lumen Labs", role: "Platform Engineer", status: "interview" }),
+		]);
+		expect(view.applications[0]?.stages.map((stage) => [stage.status, stage.at.toISOString()])).toEqual([
+			["applied", "2026-10-01T09:00:00.000Z"],
+			["interview", "2026-10-08T09:00:00.000Z"],
 		]);
 		expect(JSON.stringify(view)).not.toMatch(/Salary talk|180k|Orbit/);
 	});
