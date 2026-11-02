@@ -82,18 +82,25 @@ export function DownloadTab({ resume, offline }: DownloadProps) {
 					if (latest.conflict || !["saved", "idle"].includes(latest.status))
 						throw new Error(t`Save the cover letter before exporting it.`);
 				}
-				const savedLetter = chosen === "pdf" ? await client.coverLetters.getById({ id: linked.coverLetterId }) : null;
-				const composed = savedLetter
-					? composeCoverLetter(savedLetter, await letterWords(savedLetter.style.metadata.page.locale))
-					: null;
+				const savedLetter = await client.coverLetters.getById({ id: linked.coverLetterId });
+				const composed =
+					chosen === "pdf"
+						? composeCoverLetter(savedLetter, await letterWords(savedLetter.style.metadata.page.locale))
+						: null;
 
 				letterFile = await exportFile({
 					directory,
 					id: linked.coverLetterId,
-					name: t`${name}-Cover-Letter`,
+					// Named as web names it, in the letter's own language: "Layla-Haddad-Anschreiben".
+					name: safeFileName(
+						getDefaultFileName(
+							{ name: savedLetter.name, slug: "", data: createCoverLetterResumeData(savedLetter) },
+							"cover-letter",
+						),
+					),
 					format: chosen,
 					letter: true,
-					...(savedLetter && composed ? { data: createCoverLetterResumeData({ ...savedLetter, ...composed }) } : {}),
+					...(composed ? { data: createCoverLetterResumeData({ ...savedLetter, ...composed }) } : {}),
 				});
 			}
 			await shareExport(file, chosen);
