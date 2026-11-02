@@ -4,10 +4,11 @@ import type { IconName } from "@/ui";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useThreads } from "./chat";
 import { ChatView, ContextChip } from "./chat-view";
+import { ChatWelcome } from "./chat-welcome";
 import { useLetterAssistantDocument, useResumeAssistantDocument } from "./document";
 import { takeAssistantHandoff } from "./handoff";
 import { publishProposals } from "./proposals";
@@ -339,7 +340,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 							<Trans>Assistant</Trans>
 						</Text>
 						{providers.hasAIProvider ? (
-							<ModelButton label={provider?.model ?? label} onPress={() => setModelOpen(true)} />
+							<ModelButton current={provider} label={label} onPress={() => setModelOpen(true)} />
 						) : null}
 					</View>
 					<IconButton icon="note-pencil" label={t`New conversation`} onPress={newConversation} />
@@ -458,7 +459,6 @@ type SuggestionsProps = { document: AssistantDocument; prepare: boolean; onPick:
 /** "What should we work on?" with starters that send at once. */
 function Suggestions({ document, prepare, onPick }: SuggestionsProps) {
 	const { t } = useLingui();
-	const { colors, radius, space } = useTheme();
 	const company = document.posting?.company;
 	const tailor: Suggestion[] = company
 		? [{ icon: "briefcase", label: t`Tailor to the ${company} posting`, hint: t`Uses the linked application` }]
@@ -520,12 +520,9 @@ function Suggestions({ document, prepare, onPick }: SuggestionsProps) {
 		];
 
 	return (
-		<View style={{ gap: space.s4, paddingTop: space.s4 }}>
-			<View style={{ gap: space.s2 }}>
-				<Text variant="heading" accessibilityRole="header">
-					<Trans>What should we work on?</Trans>
-				</Text>
-				<Text color="ink2">
+		<ChatWelcome
+			description={
+				<>
 					{document.kind === "letter" ? (
 						company ? (
 							<Trans>
@@ -549,43 +546,13 @@ function Suggestions({ document, prepare, onPick }: SuggestionsProps) {
 					) : (
 						<Trans>I can see this resume. Suggestions come back as edits you can review before accepting.</Trans>
 					)}
-				</Text>
-			</View>
-			<View style={{ gap: space.s2 }}>
-				{suggestions.map((suggestion) => (
-					<Pressable
-						key={suggestion.label}
-						accessibilityRole="button"
-						accessibilityHint={suggestion.hint}
-						// On a locked document, only the tasks that answer rather than edit can start.
-						disabled={document.locked && suggestion.edits !== false}
-						onPress={() => onPick(suggestion.label)}
-						style={({ pressed }) => ({
-							flexDirection: "row",
-							alignItems: "center",
-							gap: space.s3,
-							minHeight: 52,
-							paddingHorizontal: space.s3,
-							paddingVertical: space.s2,
-							borderWidth: 1,
-							borderColor: colors.line,
-							borderRadius: radius.rLg,
-							backgroundColor: pressed ? colors.press : "transparent",
-							opacity: document.locked && suggestion.edits !== false ? 0.45 : 1,
-						})}
-					>
-						<Icon name={suggestion.icon} size={20} color={colors.ink2} />
-						<View style={{ flex: 1 }}>
-							<Text variant="label" numberOfLines={1}>
-								{suggestion.label}
-							</Text>
-							<Text variant="caption" color="ink3" numberOfLines={1}>
-								{suggestion.hint}
-							</Text>
-						</View>
-					</Pressable>
-				))}
-			</View>
-		</View>
+				</>
+			}
+			starters={suggestions.map((suggestion) => ({
+				...suggestion,
+				disabled: document.locked && suggestion.edits !== false,
+				onPick: () => onPick(suggestion.label),
+			}))}
+		/>
 	);
 }
