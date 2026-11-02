@@ -615,7 +615,7 @@ export function Prepare() {
 				</SceneCaption>
 
 				{/* The application's folder. Its sheets share one cell; the one in front is the tab in front. */}
-				<div className="@container absolute inset-x-(--gutter) top-[calc(10vh+16vw+44px)] bottom-[3vh] flex [transform:translateY(calc((1-var(--in))*12vh+var(--nw)*3vh))_scale(calc(1-var(--nw)*.03))] flex-col font-ui text-[13px] leading-[1.45] opacity-[calc((1-var(--nw))*clamp(0,var(--p)*20,1))] [transition:transform_.5s_var(--ease)] min-[900px]:start-auto min-[900px]:end-[4vw] min-[900px]:top-[14vh] min-[900px]:bottom-auto min-[900px]:h-[min(600px,74vh)] min-[900px]:w-[min(54vw,820px)] min-[900px]:text-[clamp(13px,1.06vw,16px)]">
+				<div className="@container absolute inset-x-(--gutter) top-[calc(10vh+16vw+44px)] bottom-[3vh] flex [transform:translateY(calc((1-var(--in))*12vh+var(--nw)*3vh))_scale(calc(1-var(--nw)*.03))] flex-col font-ui text-[13px] leading-[1.45] opacity-[calc(clamp(0,1-var(--nw)*2,1)*clamp(0,var(--p)*20,1))] [transition:transform_.5s_var(--ease)] min-[900px]:start-auto min-[900px]:end-[4vw] min-[900px]:top-[14vh] min-[900px]:bottom-auto min-[900px]:h-[min(600px,74vh)] min-[900px]:w-[min(54vw,820px)] min-[900px]:text-[clamp(13px,1.06vw,16px)]">
 					<div className="relative z-1 -mb-px flex shrink-0 items-end">
 						<div
 							ref={tabsRef}
@@ -713,10 +713,11 @@ export function Prepare() {
 					className="end-[21vw] top-[6vh] z-4 w-[9vw] [transform:translate(calc(var(--dir)*(1-var(--pl))*30vw),calc((1-var(--pl))*-30vh))_scaleX(calc(var(--dir)*-1))_rotate(calc(-18deg+var(--pl)*14deg))] opacity-[calc(.8*(1-clamp(0,(var(--p)-.12)*12,1)))]! [transition:transform_.4s_var(--ease)] max-[900px]:hidden"
 				/>
 
-				{/* The interview: the folder is put away and the line sits on the empty desk beside the clock. */}
+				{/* The interview: the folder is put away first (it fades in the first half), then the line sits on the empty desk
+				    beside the clock (the second half), so no frame shows both. */}
 				<div
 					aria-hidden={step !== STEP.interview}
-					className="pointer-events-none absolute inset-x-(--gutter) top-[calc(10vh+16vw+44px)] bottom-[3vh] flex flex-col items-center justify-center gap-4 text-center opacity-(--nw) min-[900px]:start-auto min-[900px]:end-[4vw] min-[900px]:top-[14vh] min-[900px]:bottom-auto min-[900px]:h-[min(600px,74vh)] min-[900px]:w-[min(54vw,820px)]"
+					className="pointer-events-none absolute inset-x-(--gutter) top-[calc(10vh+16vw+44px)] bottom-[3vh] flex flex-col items-center justify-center gap-4 text-center opacity-[clamp(0,var(--nw)*2-1,1)] min-[900px]:start-auto min-[900px]:end-[4vw] min-[900px]:top-[14vh] min-[900px]:bottom-auto min-[900px]:h-[min(600px,74vh)] min-[900px]:w-[min(54vw,820px)]"
 				>
 					<p className="[transform:scale(calc(.94+var(--nw)*.06))] font-display text-[clamp(44px,6vw,108px)] leading-none tracking-[-.02em] text-accent-text italic">
 						{t`Deep breath.`}

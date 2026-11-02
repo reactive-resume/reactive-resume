@@ -70,8 +70,12 @@ export function Write() {
 					id="write-title"
 					className="font-anybody absolute start-(--gutter) top-[10vh] max-w-[90vw] text-[10vw] leading-[.95] font-light tracking-[-.03em] text-balance text-ink min-[900px]:top-[11vh] min-[900px]:max-w-[34vw] min-[900px]:text-[clamp(48px,4.5vw,80px)]"
 				>
-					{t`Write your professional resume`}
-					<span className="text-accent">.</span>
+					{/* One display word like the other scenes; the keyword sentence stays in the heading for search. */}
+					<span className="sr-only">{t`Write your professional resume`}</span>
+					<span aria-hidden="true">
+						{t({ message: "Write", comment: "Homepage scene title, one word followed by a full stop" })}
+						<span className="text-accent">.</span>
+					</span>
 				</h2>
 
 				<SceneCaption
