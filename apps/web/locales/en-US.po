@@ -1022,6 +1022,10 @@ msgstr "{total, plural, one {# public link will change} other {# public links wi
 msgid "{trashCount, plural, one {# document} other {# documents}}"
 msgstr "{trashCount, plural, one {# document} other {# documents}}"
 
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+msgstr "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+
 #. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
@@ -4524,6 +4528,10 @@ msgstr "Couldn't restore the document. Try again."
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the selected documents. Try again."
 msgstr "Couldn't restore the selected documents. Try again."
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore them. Try again."
+msgstr "Couldn't restore them. Try again."
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
@@ -10021,6 +10029,10 @@ msgstr "Nothing to review."
 msgid "Nothing to suggest."
 msgstr "Nothing to suggest."
 
+#: src/features/documents/document-actions.tsx
+msgid "Nothing to undo: it was already restored or deleted."
+msgstr "Nothing to undo: it was already restored or deleted."
+
 #: src/features/career/workspace/practise.tsx
 msgid "Nothing was heard. Try again, or type your answer."
 msgstr "Nothing was heard. Try again, or type your answer."
@@ -10327,6 +10339,10 @@ msgstr "Open the schedule"
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Open tracked job"
 msgstr "Open tracked job"
+
+#: src/features/documents/documents-page.tsx
+msgid "Open Trash"
+msgstr "Open Trash"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Open web page"
@@ -12241,10 +12257,19 @@ msgstr "Restore"
 msgid "Restore this version"
 msgstr "Restore this version"
 
+#: src/libs/undone.ts
+msgid "Restored"
+msgstr "Restored"
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "Restored “{0}”"
+
+#. placeholder {0}: done.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}."
+msgstr "Restored {restored} of {0}."
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -15479,6 +15504,7 @@ msgstr "This reply used Knowledge that has since changed, so it's hidden."
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "This resume is locked. Unlock it from its menu to edit."
 
+#: src/features/resume/builder/undo-toast.ts
 #: src/libs/error-message.ts
 msgid "This resume is locked. Unlock it to make changes."
 msgstr "This resume is locked. Unlock it to make changes."

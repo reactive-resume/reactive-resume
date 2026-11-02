@@ -1027,6 +1027,10 @@ msgstr ""
 msgid "{trashCount, plural, one {# document} other {# documents}}"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+msgstr ""
+
 #. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
@@ -4526,6 +4530,10 @@ msgstr "書類を復元できませんでした。もう一度お試しくださ
 
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the selected documents. Try again."
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore them. Try again."
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -10024,6 +10032,10 @@ msgstr "レビューするものはありません。"
 msgid "Nothing to suggest."
 msgstr "提案はありません。"
 
+#: src/features/documents/document-actions.tsx
+msgid "Nothing to undo: it was already restored or deleted."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Nothing was heard. Try again, or type your answer."
 msgstr "何も聞き取れませんでした。もう一度試すか、回答を入力してください。"
@@ -10329,6 +10341,10 @@ msgstr "スケジュールを開く"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Open tracked job"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Open Trash"
 msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
@@ -12244,10 +12260,19 @@ msgstr "復元する"
 msgid "Restore this version"
 msgstr "このバージョンを復元する"
 
+#: src/libs/undone.ts
+msgid "Restored"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "「{0}」を復元"
+
+#. placeholder {0}: done.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}."
+msgstr ""
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -15482,6 +15507,7 @@ msgstr ""
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "このレジュメはロックされています。編集するには、メニューからロックを解除してください。"
 
+#: src/features/resume/builder/undo-toast.ts
 #: src/libs/error-message.ts
 msgid "This resume is locked. Unlock it to make changes."
 msgstr "このレジュメはロックされています。変更するにはロックを解除してください。"

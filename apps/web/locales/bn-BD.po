@@ -1027,6 +1027,10 @@ msgstr ""
 msgid "{trashCount, plural, one {# document} other {# documents}}"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+msgstr ""
+
 #. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
@@ -4526,6 +4530,10 @@ msgstr "নথিটি পুনরুদ্ধার করা যায়ন
 
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the selected documents. Try again."
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore them. Try again."
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -10024,6 +10032,10 @@ msgstr "পর্যালোচনা করার কিছুই নেই।
 msgid "Nothing to suggest."
 msgstr "পরামর্শ দেওয়ার কিছু নেই।"
 
+#: src/features/documents/document-actions.tsx
+msgid "Nothing to undo: it was already restored or deleted."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Nothing was heard. Try again, or type your answer."
 msgstr "কিছু শোনা যায়নি। আবার চেষ্টা করুন, অথবা আপনার উত্তর টাইপ করুন।"
@@ -10329,6 +10341,10 @@ msgstr "সময়সূচি খুলুন"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Open tracked job"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Open Trash"
 msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
@@ -12244,10 +12260,19 @@ msgstr "পুনরুদ্ধার করুন"
 msgid "Restore this version"
 msgstr "এই সংস্করণটি পুনরুদ্ধার করুন"
 
+#: src/libs/undone.ts
+msgid "Restored"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "\"{0}\" পুনরুদ্ধার করা হয়েছে"
+
+#. placeholder {0}: done.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}."
+msgstr ""
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -15482,6 +15507,7 @@ msgstr ""
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "এই জীবনবৃত্তান্তটি লক করা আছে। সম্পাদনা করতে এর মেনু থেকে আনলক করুন।"
 
+#: src/features/resume/builder/undo-toast.ts
 #: src/libs/error-message.ts
 msgid "This resume is locked. Unlock it to make changes."
 msgstr "এই জীবনবৃত্তান্তটি লক করা আছে। পরিবর্তন করতে এটি আনলক করুন।"

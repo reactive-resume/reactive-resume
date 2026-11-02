@@ -14,7 +14,7 @@ function isLanesUnsupported(error: unknown) {
 	return typeof data === "object" && data !== null && "body" in data;
 }
 
-const applicationLanesQueryOptions = () =>
+export const applicationLanesQueryOptions = () =>
 	orpc.applications.lanes.get.queryOptions({
 		staleTime: 60_000,
 		retry: (count, error) => !isLanesUnsupported(error) && count < 2,

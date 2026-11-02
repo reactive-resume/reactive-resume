@@ -1027,6 +1027,10 @@ msgstr ""
 msgid "{trashCount, plural, one {# document} other {# documents}}"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+msgstr ""
+
 #. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
@@ -4526,6 +4530,10 @@ msgstr "서류를 복원할 수 없습니다. 다시 시도해 보세요."
 
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't restore the selected documents. Try again."
+msgstr ""
+
+#: src/features/documents/document-actions.tsx
+msgid "Couldn't restore them. Try again."
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -10024,6 +10032,10 @@ msgstr "검토할 내용이 없습니다."
 msgid "Nothing to suggest."
 msgstr "제안할 항목이 없습니다."
 
+#: src/features/documents/document-actions.tsx
+msgid "Nothing to undo: it was already restored or deleted."
+msgstr ""
+
 #: src/features/career/workspace/practise.tsx
 msgid "Nothing was heard. Try again, or type your answer."
 msgstr "아무 소리도 들리지 않았습니다. 다시 시도하거나 답변을 입력하세요."
@@ -10329,6 +10341,10 @@ msgstr "스케줄 열기"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Open tracked job"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Open Trash"
 msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
@@ -12244,10 +12260,19 @@ msgstr "복원하다"
 msgid "Restore this version"
 msgstr "이 버전을 복원하세요"
 
+#: src/libs/undone.ts
+msgid "Restored"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
 msgstr "\"{0}\"를 복원했습니다."
+
+#. placeholder {0}: done.length
+#: src/features/documents/document-actions.tsx
+msgid "Restored {restored} of {0}."
+msgstr ""
 
 #. placeholder {0}: documents.length
 #: src/features/documents/document-actions.tsx
@@ -15482,6 +15507,7 @@ msgstr ""
 msgid "This resume is locked. Unlock it from its menu to edit."
 msgstr "이 이력서는 잠겨 있습니다. 편집하려면 메뉴에서 잠금을 해제하세요."
 
+#: src/features/resume/builder/undo-toast.ts
 #: src/libs/error-message.ts
 msgid "This resume is locked. Unlock it to make changes."
 msgstr "이 이력서는 잠겨 있습니다. 변경하려면 잠금을 해제하세요."
