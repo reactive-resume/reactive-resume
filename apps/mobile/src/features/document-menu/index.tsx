@@ -101,10 +101,14 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 									title={t`Copy for a job…`}
 									leading="briefcase"
 									disabled={operations.busy || printing}
-									onPress={() => {
-										setPanel(null);
-										router.push({ pathname: "/new", params: { step: "copy", sourceResumeId: id } });
-									}}
+									onPress={() =>
+										void run(async () => {
+											// The copy is made from the saved resume: save the open draft first, as Duplicate does.
+											await flushResume(id);
+											setPanel(null);
+											router.push({ pathname: "/new", params: { step: "copy", sourceResumeId: id } });
+										})
+									}
 								/>
 								<ListRow
 									title={resume.isLocked ? t`Unlock editing` : t`Lock editing`}

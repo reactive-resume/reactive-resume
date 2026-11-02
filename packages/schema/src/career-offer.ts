@@ -107,27 +107,36 @@ const CURRENCY_SYMBOLS: Readonly<Record<string, string>> = {
 };
 
 /**
- * What the job's own salary line says, to start an offer from: its currency (an ISO code, or a symbol such as € or £)
- * and the lower end of the range as the base, read as a whole amount ("€165,000 – €190,000", "$120k–140k"). Either is
- * null when the line doesn't say; the person edits both before saving.
+ * What the job's own salary line says, to start an offer from: its currency (an ISO code, or a symbol such as € or £),
+ * the lower end of the range as the base, read as a whole amount ("€165,000 – €190,000", "$120k–140k", "$120–140k"),
+ * and its pay period ("/hour", "per month"; a year when it names none). Each is null when the line doesn't say; the
+ * person edits them before saving.
  */
 export function offerHintFromSalary(salary: string | null | undefined): {
 	currency: string | null;
 	base: number | null;
+	period: "hour" | "month" | "year" | null;
 } {
 	const text = (salary ?? "").trim();
-	if (!text) return { currency: null, base: null };
+	if (!text) return { currency: null, base: null, period: null };
 	const code = /\b([A-Z]{3})\b/.exec(text)?.[1] ?? null;
 	const symbol = Object.keys(CURRENCY_SYMBOLS).find((key) => text.includes(key));
 	const currency = code ?? (symbol ? (CURRENCY_SYMBOLS[symbol] ?? null) : null);
-	const first = /(\d[\d.,\s]*)(\s*[kKmM])?/.exec(text);
-	if (!first?.[1]) return { currency, base: null };
-	const digits = first[1]
-		.replace(/[\s.,](?=\d{3}\b)/g, "")
-		.replace(/[\s]/g, "")
-		.replace(",", ".");
+	const period = /(?:\/|\bper\s+|\ban?\s+)(?:h|hr|hour)\b|\bhourly\b/i.test(text)
+		? "hour"
+		: /(?:\/|\bper\s+|\ba\s+)(?:mo|month)\b|\bmonthly\b/i.test(text)
+			? "month"
+			: /(?:\/|\bper\s+|\ba\s+)(?:yr|year|annum)\b|\bannual(?:ly)?\b|\byearly\b/i.test(text)
+				? "year"
+				: null;
+	// The first amount, and the unit after it or, in "120–140k", after the range's upper end.
+	const range = /(\d(?:[\d.,]*\d)?)\s*([kKmM])?\s*(?:[-–—]|to)\s*\D{0,4}\d(?:[\d.,]*\d)?\s*([kKmM])?/.exec(text);
+	const first = range ?? /(\d(?:[\d.,]*\d)?)\s*([kKmM])?(?![a-z])/i.exec(text);
+	if (!first?.[1]) return { currency, base: null, period };
+	const digits = first[1].replace(/[.,](?=\d{3}\b)/g, "").replace(",", ".");
 	const number = Number.parseFloat(digits);
-	const scale = /k/i.test(first[2] ?? "") ? 1_000 : /m/i.test(first[2] ?? "") ? 1_000_000 : 1;
+	const unit = first[2] ?? (range ? range[3] : undefined) ?? "";
+	const scale = /k/i.test(unit) ? 1_000 : /m/i.test(unit) ? 1_000_000 : 1;
 	const base = Number.isFinite(number) ? Math.round(number * scale) : null;
-	return { currency, base: base && base > 0 ? base : null };
+	return { currency, base: base && base > 0 ? base : null, period };
 }

@@ -279,7 +279,12 @@ export function useApplicationActions() {
 			application: Pick<ApplicationSummary, "id">,
 			lane: ApplicationLane,
 			closedReason?: ApplicationClosedReason | null,
-		) => update.mutate({ id: application.id, ...laneMoveInput(lane, mode, closedReason) }),
+			onMoved?: () => void,
+		) =>
+			update.mutate(
+				{ id: application.id, ...laneMoveInput(lane, mode, closedReason) },
+				onMoved ? { onSuccess: onMoved } : undefined,
+			),
 		/** Closes into the default Closed lane with an outcome. */
 		close: (application: Pick<ApplicationSummary, "id">, closedReason: ApplicationClosedReason) =>
 			update.mutate({ id: application.id, ...laneMoveInput(getCategoryLane(lanes, "closed"), mode, closedReason) }),

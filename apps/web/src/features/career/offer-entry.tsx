@@ -242,14 +242,18 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const { lanes } = useApplicationLanes();
 	const applications = useQuery({ ...applicationsListQueryOptions(), enabled: !application && !offer });
 	const [applicationId, setApplicationId] = useState(application?.id ?? offer?.applicationId ?? "");
+	// A new offer for a job starts from the job's own salary line: its currency, its pay period, and the low end as an
+	// editable base.
+	const hint = offer ? null : offerHintFromSalary(application?.salary);
 	const [draft, setTerms] = useState(() =>
 		offer
 			? offerTerms(offer.data)
-			: { ...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }), currency: "" },
+			: {
+					...offerTermsSchema.parse({ currency: "USD", period: hint?.period ?? "year", base: null, variable: null }),
+					currency: "",
+				},
 	);
 	const amount = (value: number | null | undefined) => (value === null || value === undefined ? "" : String(value));
-	// A new offer for a job starts from the job's own salary line: its currency, and the low end as an editable base.
-	const hint = offer ? null : offerHintFromSalary(application?.salary);
 	const [amounts, setAmounts] = useState(() => ({
 		base: amount(offer ? offer.data.base : hint?.base),
 		variable: amount(offer?.data.variable),

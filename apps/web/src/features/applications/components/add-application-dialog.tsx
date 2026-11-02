@@ -263,17 +263,34 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			}
 		: null;
 	// Without AI, a pasted posting's first line usually names the role and company ("Role — Company (City)"): fill what
-	// it gives, never over what the person typed. AI or a link still reads the rest.
-	const guess = !link && !hasUsableProvider && !parsed ? readPastedPostingHeader(text) : null;
-	const guessKey = guess ? JSON.stringify(guess) : "";
+	// it gives, never over what the person typed. AI or a link still reads the rest; a capture brings its own fields.
+	const header = !link && !initialCapture ? readPastedPostingHeader(text) : null;
+	const guess = !hasUsableProvider && !parsed ? header : null;
+	const headerKey = header ? JSON.stringify(header) : "";
+	const guessKey = guess ? headerKey : "";
+	// What the fields held before a guess filled them, so they go back if the pasted text stops having a header.
+	const beforeGuess = useRef<{ role: string; company: string; location: string; salary: string } | null>(null);
 	useEffect(() => {
-		if (!guess) return;
-		if (!authored.current.has("role")) setRole(guess.role);
-		if (!authored.current.has("company")) setCompany(guess.company);
-		if (guess.location && !authored.current.has("location")) setLocation(guess.location);
-		if (guess.salary && !authored.current.has("salary")) setSalary(guess.salary);
-		// oxlint-disable-next-line react/exhaustive-deps -- keyed by guessKey, the guess's content; the object is new each render
-	}, [guessKey]);
+		const fill = (key: "role" | "company" | "location" | "salary", value: string, apply: (value: string) => void) => {
+			if (!authored.current.has(key)) apply(value);
+		};
+		if (guess) {
+			beforeGuess.current ??= { role, company, location, salary };
+			const before = beforeGuess.current;
+			fill("role", guess.role, setRole);
+			fill("company", guess.company, setCompany);
+			fill("location", guess.location || before.location, setLocation);
+			fill("salary", guess.salary || before.salary, setSalary);
+		} else if (!header && beforeGuess.current) {
+			const before = beforeGuess.current;
+			beforeGuess.current = null;
+			fill("role", before.role, setRole);
+			fill("company", before.company, setCompany);
+			fill("location", before.location, setLocation);
+			fill("salary", before.salary, setSalary);
+		}
+		// oxlint-disable-next-line react/exhaustive-deps -- keyed by the header's content; the field values are read once
+	}, [guessKey, headerKey]);
 
 	const readPosting = (useAI = false) => {
 		if (!readable || read.isPending) return;

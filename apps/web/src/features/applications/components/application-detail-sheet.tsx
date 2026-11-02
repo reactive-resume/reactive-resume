@@ -139,19 +139,26 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 		if (lane.id === current.id) return;
 		if (application.status === "saved" && lane.category === "applied") setApplying(lane);
 		else {
-			moveTo(application, lane);
-			// Moving to Interview usually means one is being set up: offer to schedule it, unless one already is.
+			// Moving to Interview usually means one is being set up: once the move is saved, offer to schedule it, unless
+			// one already is.
 			const scheduled = application.activity.some(
 				(entry) => entry.type === "interview" && new Date(entry.at).getTime() > Date.now(),
 			);
-			if (lane.category === "interview" && !scheduled)
-				toast.add({
-					description: t`Moved to ${getLaneLabel(lane)}.`,
-					actionProps: {
-						children: t`Schedule it`,
-						onClick: () => setInterview({ open: true, entry: null }),
-					},
-				});
+			moveTo(
+				application,
+				lane,
+				undefined,
+				lane.category === "interview" && !scheduled
+					? () =>
+							toast.add({
+								description: t`Moved to ${getLaneLabel(lane)}.`,
+								actionProps: {
+									children: t`Schedule it`,
+									onClick: () => setInterview({ open: true, entry: null }),
+								},
+							})
+					: undefined,
+			);
 		}
 	};
 

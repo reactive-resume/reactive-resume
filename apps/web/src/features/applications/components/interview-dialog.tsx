@@ -345,7 +345,12 @@ export function InterviewDialog({
 									label: `${item.company} — ${item.role}`,
 									keywords: [item.company, item.role],
 								}))}
-								onValueChange={(value) => set("applicationId", value ?? "")}
+								onValueChange={(value) => {
+									set("applicationId", value ?? "");
+									// The likely next type for the job just picked, as the dialog would open with for it.
+									const picked = applications.find((item) => item.id === value);
+									if (picked) set("kind", suggestedKind(picked));
+								}}
 							/>
 						</Field>
 					)}
