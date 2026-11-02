@@ -1,7 +1,7 @@
 import type { IconName } from "@reactive-resume/ui/components/icon";
 import type { ComponentProps, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
-import { Plural, Trans } from "@lingui/react/macro";
+import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams, useSearch } from "@tanstack/react-router";
@@ -194,11 +194,12 @@ type ZoomBarProps = {
 
 /** − · Fit · + and the page count, floating 18px above the bottom of the canvas. Zoom runs from 60% to 150%. */
 export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
+	const { t } = useLingui();
 	const zoom = useEditorStore((state) => state.zoom);
 	const setZoom = useEditorStore((state) => state.setZoom);
 	const current = zoom === "fit" ? fitScale : zoom;
 
-	useHotkey("Mod+0", () => setZoom("fit"));
+	useHotkey("Mod+0", () => setZoom("fit"), { meta: { name: t`Fit page to width` } });
 	// Toasts sit bottom center, where this bar is: lift them above it while it's on screen.
 	useEffect(() => {
 		const root = document.documentElement;

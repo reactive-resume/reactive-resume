@@ -1,5 +1,5 @@
 import { plural, t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -26,6 +26,7 @@ const documentKey = (document: { type: string; id: string }) => `${document.type
  * trash is a separate server-side operation that covers every document in Trash, not only the loaded or selected IDs.
  */
 export function TrashPage() {
+	const { t } = useLingui();
 	const [offset, setOffset] = useState(0);
 	const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
 	const [busy, setBusy] = useState(false);
@@ -74,9 +75,13 @@ export function TrashPage() {
 		});
 	};
 
-	useHotkey("Escape", () => {
-		if (selecting && !busy) clearSelection();
-	});
+	useHotkey(
+		"Escape",
+		() => {
+			if (selecting && !busy) clearSelection();
+		},
+		{ meta: selecting && !busy ? { name: t`Clear selection` } : {} },
+	);
 
 	const run = async (action: () => Promise<boolean>) => {
 		if (!rowsCurrent) return;

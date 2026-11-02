@@ -2233,6 +2233,10 @@ msgstr "ପ୍ରବେଶ ଅନୁମତି ଦିଅନ୍ତୁ |"
 msgid "Allow comments"
 msgstr ""
 
+#: src/features/keyboard-shortcuts/character-shortcuts.tsx
+msgid "Allow keys such as ?, N, / and editor mode numbers outside text fields. Turn off when using speech input."
+msgstr "ପାଠ୍ୟ କ୍ଷେତ୍ର ବାହାରେ ?, N, / ଏବଂ ସମ୍ପାଦକ ମୋଡ୍ ସଂଖ୍ୟା ପରି କୀଗୁଡ଼ିକୁ ଅନୁମତି ଦିଅନ୍ତୁ। ଭଏସ୍ ଇନପୁଟ୍ ବ୍ୟବହାର କରିବା ସମୟରେ ବନ୍ଦ କରନ୍ତୁ।"
+
 #: src/libs/orpc/ai-consent.ts
 msgid "Allow scheduled sharing"
 msgstr ""
@@ -2746,6 +2750,8 @@ msgstr "ଆସ୍ପେକ୍ଟ ଅନୁପାତ"
 #: src/features/assistant/conversation.tsx
 #: src/features/command-palette/pages/resumes.tsx
 #: src/features/homepage/write.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Assistant"
 msgstr "ସହକାରୀ"
 
@@ -3378,6 +3384,7 @@ msgstr ""
 #: src/features/homepage/header.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Check"
 msgstr "ଯାଞ୍ଚ"
 
@@ -3733,6 +3740,7 @@ msgstr "ବିଭାଗ ସଫା କରନ୍ତୁ |"
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Clear selection"
 msgstr "ଚୟନ ଖାଲି କରନ୍ତୁ"
 
@@ -3775,6 +3783,7 @@ msgstr "କ୍ଲାଏଣ୍ଟ ID"
 #: src/features/command-palette/content.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/new-document-dialog.tsx
+#: src/features/keyboard-shortcuts/index.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 #: src/features/resume/editor/check/page-layer.tsx
@@ -3870,6 +3879,7 @@ msgstr "ଆଗାମୀ"
 #. Accessible label for the command palette dialog
 #. Screen-reader dialog title for the command palette
 #: src/features/command-palette/content.tsx
+#: src/features/command-palette/index.tsx
 msgid "Command palette"
 msgstr "କମାଣ୍ଡ ପ୍ୟାଲେଟ୍"
 
@@ -5742,6 +5752,7 @@ msgstr "ଭୂମିକା {0} ର ବର୍ଣ୍ଣନା |"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/letter-shell.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -5971,6 +5982,8 @@ msgid "Download {name} sample PDF"
 msgstr "{name} ନମୁନା PDF ଡାଉନଲୋଡ୍ କରନ୍ତୁ |"
 
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Download & history"
 msgstr "ଡାଉନଲୋଡ୍ ଓ ଇତିହାସ"
 
@@ -6010,6 +6023,8 @@ msgstr "ଡାଉନଲୋଡ୍ ବିଫଳ ହେଲା। ପୁଣି ଚ�
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Download PDF"
 msgstr "PDF ଡାଉନଲୋଡ୍ କରନ୍ତୁ"
 
@@ -8493,6 +8508,14 @@ msgstr "କି ପ୍ରତ୍ୟାହାର ହେଲା। ଏହାକୁ �
 #: src/features/settings/ai/web-access.tsx
 msgid "Key stored encrypted"
 msgstr "କି ଗଚ୍ଛିତ ଏନକ୍ରିପ୍ଟ ହୋଇଛି |"
+
+#: src/features/command-palette/pages/preferences/index.tsx
+#: src/features/keyboard-shortcuts/index.tsx
+#: src/features/settings/preferences.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Keyboard shortcuts"
+msgstr "କୀବୋର୍ଡ ସର୍ଟକଟ୍"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Keys act as you with the access you choose. New keys start read-only."
@@ -12520,6 +12543,7 @@ msgid "Red"
 msgstr "ଲାଲ୍"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Redo"
 msgstr ""
 
@@ -13479,6 +13503,8 @@ msgstr "ନମୁନା ରେଜୁମ୍ ଯୋଗ କରାଯାଇଛି | 
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/profile.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Save"
 msgstr "ସଞ୍ଚୟ କରନ୍ତୁ"
 
@@ -14352,6 +14378,7 @@ msgstr "ଛାୟା ପ୍ରସ୍ଥ"
 #: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Share"
 msgstr "ଅଂଶୀଦାର କରନ୍ତୁ |"
 
@@ -14421,6 +14448,10 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
 msgstr "ଛୋଟ ଲିଙ୍କ୍ ଏବଂ ଡୋମେନ୍"
+
+#: src/features/keyboard-shortcuts/index.tsx
+msgid "Shortcuts available on this page. List commands require focus inside their list."
+msgstr "ଏହି ପୃଷ୍ଠାରେ ଉପଲବ୍ଧ ସର୍ଟକଟ୍। ତାଲିକା ନିର୍ଦ୍ଦେଶ ପାଇଁ ସମ୍ପୃକ୍ତ ତାଲିକା ଭିତରେ ଫୋକସ୍ ଆବଶ୍ୟକ।"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
@@ -14694,6 +14725,10 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Since today"
 msgstr ""
+
+#: src/features/keyboard-shortcuts/character-shortcuts.tsx
+msgid "Single-character shortcuts"
+msgstr "ଏକକ-ଅକ୍ଷର ସର୍ଟକଟ୍"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -17063,6 +17098,7 @@ msgstr "ଲିଙ୍କଗୁଡିକ ଅଣ୍ଡରଲାଇନ୍ କରନ�
 #: src/features/settings/ai/api-keys.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "ପୂର୍ବବତ୍ କରନ୍ତୁ"
@@ -18129,6 +18165,7 @@ msgstr "{0}ଙ୍କୁ ପଚାରିବା ଯୋଗ୍ୟ"
 #: src/features/homepage/write.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Write"

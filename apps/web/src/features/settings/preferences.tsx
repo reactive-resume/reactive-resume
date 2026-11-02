@@ -12,6 +12,7 @@ import { SettingsSection } from "./section";
 import { deviceTimeZone, useSaveTimezone } from "./use-save-timezone";
 import { PageHeader } from "@/components/layout/page-header";
 import { Combobox } from "@/components/ui/combobox";
+import { CharacterShortcutSetting } from "@/features/keyboard-shortcuts/character-shortcuts";
 import { LocaleCombobox } from "@/features/locale/combobox";
 import { useTheme } from "@/features/theme/provider";
 import { themeMap } from "@/libs/theme";
@@ -55,6 +56,10 @@ export function PreferencesSettings() {
 						<Trans>Help translate</Trans>
 					</a>
 				</p>
+			</SettingsSection>
+
+			<SettingsSection title={<Trans>Keyboard shortcuts</Trans>}>
+				<CharacterShortcutSetting />
 			</SettingsSection>
 
 			<SettingsSection title={<Trans>Timezone</Trans>}>

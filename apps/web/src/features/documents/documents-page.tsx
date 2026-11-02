@@ -2,7 +2,7 @@ import type { DocumentSort, DocumentSummary, DocumentTypeFilter } from "./filter
 import type { QueryClient } from "@tanstack/react-query";
 import type { KeyboardEvent, Ref } from "react";
 import { t } from "@lingui/core/macro";
-import { Plural, Trans } from "@lingui/react/macro";
+import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
@@ -36,6 +36,7 @@ import { PageNavigation } from "./page-navigation";
 import { IMPORT_ACCEPT, useStartDocument } from "./use-start-document";
 import { PageHeader } from "@/components/layout/page-header";
 import { useDialogStore } from "@/dialogs/store";
+import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { isEditableElementFocused } from "@/features/resume/builder/draft";
 import { isImeComposing } from "@/libs/keyboard";
 import { orpc } from "@/libs/orpc/client";
@@ -60,6 +61,7 @@ type DocumentsPageProps = {
  * chips once tags exist. A file dropped anywhere on the page imports straight away.
  */
 export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
+	const { t } = useLingui();
 	const openDialog = useDialogStore((state) => state.openDialog);
 	const searchRef = useRef<HTMLInputElement>(null);
 	const resultsRef = useRef<HTMLTableElement & HTMLDivElement>(null);
@@ -140,11 +142,16 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		viewSwitched &&
 		"transition-[opacity,translate] duration-standard ease-enter starting:translate-y-1 starting:opacity-0";
 
-	useHotkey("/", (event) => {
-		if (isEditableElementFocused()) return;
-		event.preventDefault();
-		searchRef.current?.focus();
-	});
+	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
+	useHotkey(
+		"/",
+		(event) => {
+			if (isEditableElementFocused()) return;
+			event.preventDefault();
+			searchRef.current?.focus();
+		},
+		{ enabled: characterShortcuts, meta: { name: t`Search documents` } },
+	);
 
 	if (page.filterKey !== filterKey || (pageData && !isPlaceholderData && offset > 0 && offset >= pageData.total)) {
 		setPage({
@@ -210,10 +217,14 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 		selecting,
 	});
 
-	useHotkey("Escape", () => {
-		if (!selecting || tagsFor || linkFor || isEditableElementFocused()) return;
-		selectAll(false);
-	});
+	useHotkey(
+		"Escape",
+		() => {
+			if (!selecting || tagsFor || linkFor || isEditableElementFocused()) return;
+			selectAll(false);
+		},
+		{ meta: selecting ? { name: t`Clear selection` } : {} },
+	);
 
 	const openDocument = (document: DocumentSummary) => {
 		markOpened(document.id);
@@ -324,11 +335,11 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 											}}
 										/>
 									</InputGroupAddon>
-								) : (
+								) : characterShortcuts ? (
 									<InputGroupAddon align="inline-end" className="max-sm:hidden pointer-coarse:hidden">
 										<Kbd>/</Kbd>
 									</InputGroupAddon>
-								)}
+								) : null}
 							</InputGroup>
 							<div className="w-[150px]">
 								<NativeSelect

@@ -2233,6 +2233,10 @@ msgstr "Επιτρέψτε την πρόσβαση"
 msgid "Allow comments"
 msgstr ""
 
+#: src/features/keyboard-shortcuts/character-shortcuts.tsx
+msgid "Allow keys such as ?, N, / and editor mode numbers outside text fields. Turn off when using speech input."
+msgstr "Να επιτρέπονται πλήκτρα όπως ?, N, / και οι αριθμοί λειτουργιών του επεξεργαστή εκτός πεδίων κειμένου. Απενεργοποιήστε κατά τη φωνητική εισαγωγή."
+
 #: src/libs/orpc/ai-consent.ts
 msgid "Allow scheduled sharing"
 msgstr ""
@@ -2746,6 +2750,8 @@ msgstr "Αναλογία διαστάσεων"
 #: src/features/assistant/conversation.tsx
 #: src/features/command-palette/pages/resumes.tsx
 #: src/features/homepage/write.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Assistant"
 msgstr "Βοηθός"
 
@@ -3378,6 +3384,7 @@ msgstr ""
 #: src/features/homepage/header.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Check"
 msgstr "Έλεγχος"
 
@@ -3733,6 +3740,7 @@ msgstr "Καθαρίστε το τμήμα"
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Clear selection"
 msgstr "Εκκαθάριση επιλογής"
 
@@ -3775,6 +3783,7 @@ msgstr "Αναγνωριστικό πελάτη"
 #: src/features/command-palette/content.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/new-document-dialog.tsx
+#: src/features/keyboard-shortcuts/index.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 #: src/features/resume/editor/check/page-layer.tsx
@@ -3870,6 +3879,7 @@ msgstr "Επερχόμενα"
 #. Accessible label for the command palette dialog
 #. Screen-reader dialog title for the command palette
 #: src/features/command-palette/content.tsx
+#: src/features/command-palette/index.tsx
 msgid "Command palette"
 msgstr "Παλέτα εντολών"
 
@@ -5742,6 +5752,7 @@ msgstr "Περιγραφή του ρόλου {0}"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/letter-shell.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -5971,6 +5982,8 @@ msgid "Download {name} sample PDF"
 msgstr "Λήψη δείγματος PDF {name}"
 
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Download & history"
 msgstr "Λήψη και ιστορικό"
 
@@ -6010,6 +6023,8 @@ msgstr "Η λήψη απέτυχε. Προσπαθήστε ξανά."
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Download PDF"
 msgstr "Λήψη PDF"
 
@@ -8492,6 +8507,14 @@ msgstr "Το κλειδί ανακλήθηκε. Οι εφαρμογές που �
 #: src/features/settings/ai/web-access.tsx
 msgid "Key stored encrypted"
 msgstr "Το κλειδί αποθηκεύεται κρυπτογραφημένο"
+
+#: src/features/command-palette/pages/preferences/index.tsx
+#: src/features/keyboard-shortcuts/index.tsx
+#: src/features/settings/preferences.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Keyboard shortcuts"
+msgstr "Συντομεύσεις πληκτρολογίου"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Keys act as you with the access you choose. New keys start read-only."
@@ -12518,6 +12541,7 @@ msgid "Red"
 msgstr "Κόκκινο"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Redo"
 msgstr ""
 
@@ -13477,6 +13501,8 @@ msgstr "Προστέθηκε δείγμα βιογραφικού. Διαγράψ
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/profile.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Save"
 msgstr "Αποθήκευση"
 
@@ -14350,6 +14376,7 @@ msgstr "Πλάτος σκιάς"
 #: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Share"
 msgstr "Κοινοποίηση"
 
@@ -14419,6 +14446,10 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
 msgstr "Σύντομος σύνδεσμος και τομέας"
+
+#: src/features/keyboard-shortcuts/index.tsx
+msgid "Shortcuts available on this page. List commands require focus inside their list."
+msgstr "Διαθέσιμες συντομεύσεις σε αυτήν τη σελίδα. Οι εντολές λίστας απαιτούν εστίαση μέσα στη λίστα τους."
 
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
@@ -14692,6 +14723,10 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Since today"
 msgstr ""
+
+#: src/features/keyboard-shortcuts/character-shortcuts.tsx
+msgid "Single-character shortcuts"
+msgstr "Συντομεύσεις ενός χαρακτήρα"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -17060,6 +17095,7 @@ msgstr "Υπογράμμισε συνδέσμους"
 #: src/features/settings/ai/api-keys.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "Ξεκάνω"
@@ -18126,6 +18162,7 @@ msgstr "Αξίζει να ρωτήσετε: {0}"
 #: src/features/homepage/write.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Write"

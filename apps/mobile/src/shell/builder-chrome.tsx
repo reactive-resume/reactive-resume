@@ -1,7 +1,7 @@
 import type { SaveStatus } from "@/draft/types";
 import type { IconName } from "@/ui";
 import type { Href } from "expo-router";
-import type { ReactNode } from "react";
+import type { ComponentRef, ReactNode, Ref } from "react";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter, Stack, useNavigation, useSegments } from "expo-router";
 import { createContext, use, useEffect, useState } from "react";
@@ -36,6 +36,8 @@ export type BuilderChromeSlots = {
 	save?: SaveStatusSlot | undefined;
 	/** Opens the document menu (rename, duplicate, lock, notes, history, trash). Makes the name a button with a caret. */
 	onMenu?: (() => void) | undefined;
+	/** The document-menu trigger, for restoring accessibility focus after help. */
+	menuRef?: Ref<ComponentRef<typeof Pressable>> | undefined;
 	/** Replaces what the Download button does (resumes default to the Download & history route). */
 	onExport?: (() => void) | undefined;
 	/** Buttons before Download: Assistant on phone; History, Assistant and Download PDF on tablet. */
@@ -262,6 +264,7 @@ function ChromeTopBar() {
 				onBack={frame.leave}
 				title={slots.title ?? frame.title}
 				onTitlePress={slots.onMenu}
+				titleRef={slots.menuRef}
 				titleLabel={t`Document menu`}
 				subtitle={slots.save ? <SaveStatusLine {...slots.save} /> : null}
 				center={frame.modes}
