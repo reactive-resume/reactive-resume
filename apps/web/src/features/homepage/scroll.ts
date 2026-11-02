@@ -254,9 +254,9 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 			const stack = design?.querySelector<HTMLElement>("[data-stack]");
 			if (!design || !stack) return;
 			const pageWidth = stack.offsetWidth || 1;
-			// Six columns and three rows of pages, 0.12 of a page apart, kept clear of the closing line beneath.
+			// Seven columns and three rows of pages, 0.12 of a page apart, kept clear of the closing line beneath.
 			const scale = Math.min(
-				(window.innerWidth * 0.94) / (6.6 * pageWidth),
+				(window.innerWidth * 0.94) / (7.72 * pageWidth),
 				(window.innerHeight * 0.57) / (4.122 * pageWidth),
 			);
 			design.style.setProperty("--smin", scale.toFixed(4));

@@ -96,10 +96,13 @@ export function getPreferredLocale(languages: readonly string[]): Locale {
 	return defaultLocale;
 }
 
-/** hreflang alternates for a page: every real locale plus x-default. "sr-SP" isn't a valid region, so it's "sr". */
+/** A locale as a BCP 47 language tag for hreflang and `inLanguage`: "sr-SP" isn't a valid region, so it's "sr". */
+export const languageTag = (locale: Locale) => (locale === "sr-SP" ? "sr" : locale);
+
+/** hreflang alternates for a page: every real locale plus x-default. */
 export function getLocaleAlternates(pageUrl: string) {
 	const alternates = supportedLocales.map((locale) => ({
-		hreflang: locale === "sr-SP" ? "sr" : locale,
+		hreflang: languageTag(locale),
 		href: localizedUrl(pageUrl, locale),
 	}));
 	return [...alternates, { hreflang: "x-default", href: localizedUrl(pageUrl) }];

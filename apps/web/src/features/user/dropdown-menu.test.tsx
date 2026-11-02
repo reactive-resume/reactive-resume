@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 type SignOutOptions = { fetchOptions: { onSuccess: () => void } };
 
-const router = vi.hoisted(() => ({ invalidate: vi.fn(), navigate: vi.fn() }));
+const router = vi.hoisted(() => ({ invalidate: vi.fn(), navigate: vi.fn(async () => {}) }));
 const signOut = vi.hoisted(() =>
 	vi.fn(({ fetchOptions }: SignOutOptions) => {
 		fetchOptions.onSuccess();
@@ -63,6 +63,7 @@ describe("UserDropdownMenu", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Sign out" }));
 
 		await waitFor(() => expect(router.invalidate).toHaveBeenCalled());
+		expect(router.navigate).toHaveBeenCalledWith({ to: "/", replace: true });
 		expect(queryClient.getQueryCache().getAll()).toHaveLength(0);
 	});
 });

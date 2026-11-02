@@ -1,6 +1,7 @@
 import type { VariantProps } from "class-variance-authority";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva } from "class-variance-authority";
+import { isValidElement } from "react";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
 
@@ -55,10 +56,15 @@ function Button({
 	children,
 	...props
 }: ButtonProps) {
+	// Rendered as a link (an <a href> or a router <Link to>), it stays a link to assistive tech: Base UI would otherwise
+	// give it role="button", and screen readers would leave it out of their links list.
+	const renderProps = isValidElement<{ href?: unknown; to?: unknown }>(props.render) ? props.render.props : null;
+	const isLink = props.nativeButton === false && !!renderProps && (renderProps.href != null || renderProps.to != null);
 	return (
 		<ButtonPrimitive
 			data-slot="button"
 			type={type}
+			{...(isLink ? { role: "link" } : {})}
 			aria-busy={loading || undefined}
 			className={cn(buttonVariants({ variant, size, className }))}
 			onClick={loading ? (event) => event.preventDefault() : onClick}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { offerTermsSchema } from "./career";
-import { offerTermKeys, parseOfferEntry, previousOfferCurrency } from "./career-offer";
+import { offerHintFromSalary, offerTermKeys, parseOfferEntry, previousOfferCurrency } from "./career-offer";
 
 const entry = () => ({
 	applicationId: "owned-job",
@@ -122,5 +122,41 @@ describe("offerTermKeys", () => {
 		expect(
 			offerTermKeys(offerTermsSchema.parse({ currency: "EUR", period: "year", base: null, variable: null })),
 		).toEqual([]);
+	});
+});
+
+describe("offerHintFromSalary", () => {
+	it("reads the currency and the lower end of a range", () => {
+		expect(offerHintFromSalary("€165,000 – €190,000")).toEqual({ currency: "EUR", base: 165_000, period: null });
+		expect(offerHintFromSalary("$120k–140k")).toEqual({ currency: "USD", base: 120_000, period: null });
+		expect(offerHintFromSalary("$120–140k")).toEqual({ currency: "USD", base: 120_000, period: null });
+		expect(offerHintFromSalary("GBP 85–100k a year")).toEqual({ currency: "GBP", base: 85_000, period: "year" });
+		expect(offerHintFromSalary("GBP 85,000 + bonus")).toEqual({ currency: "GBP", base: 85_000, period: null });
+		expect(offerHintFromSalary("Competitive")).toEqual({ currency: null, base: null, period: null });
+		expect(offerHintFromSalary("")).toEqual({ currency: null, base: null, period: null });
+	});
+
+	it("reads the pay period", () => {
+		expect(offerHintFromSalary("$50/hour")).toEqual({ currency: "USD", base: 50, period: "hour" });
+		expect(offerHintFromSalary("€4,500 per month")).toEqual({ currency: "EUR", base: 4_500, period: "month" });
+	});
+
+	it("ignores words that only look like currency codes", () => {
+		expect(offerHintFromSalary("OTE $120k")).toEqual({ currency: "USD", base: 120_000, period: null });
+		expect(offerHintFromSalary("85,000 EUR a year")).toEqual({ currency: "EUR", base: 85_000, period: "year" });
+	});
+
+	it("prefers the amount written with a currency or unit", () => {
+		expect(offerHintFromSalary("2026 compensation: $120,000 per year")).toEqual({
+			currency: "USD",
+			base: 120_000,
+			period: "year",
+		});
+	});
+
+	it("reads written units", () => {
+		expect(offerHintFromSalary("$1.5 million per year")).toEqual({ currency: "USD", base: 1_500_000, period: "year" });
+		expect(offerHintFromSalary("$120 thousand")).toEqual({ currency: "USD", base: 120_000, period: null });
+		expect(offerHintFromSalary("$120 to 140 thousand")).toEqual({ currency: "USD", base: 120_000, period: null });
 	});
 });

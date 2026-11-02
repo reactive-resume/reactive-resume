@@ -55,7 +55,22 @@ export function ForgotPasswordPage() {
 
 	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
 
-	if (submitted) return <PostForgotPasswordScreen />;
+	if (submitted)
+		return (
+			<PostForgotPasswordScreen
+				onResend={async () => {
+					const { error } = await authClient.requestPasswordReset({
+						email: form.state.values.email,
+						redirectTo: "/auth/reset-password",
+					});
+					toast.add(
+						error
+							? { type: "error", description: t`Couldn't send the password reset email. Try again.` }
+							: { type: "success", description: t`Sent again. It can take a minute to arrive.` },
+					);
+				}}
+			/>
+		);
 
 	return (
 		<>
@@ -91,6 +106,7 @@ export function ForgotPasswordPage() {
 				</p>
 			) : (
 				<form
+					noValidate
 					className="space-y-6"
 					onSubmit={(event) => {
 						event.preventDefault();
@@ -131,7 +147,10 @@ export function ForgotPasswordPage() {
 	);
 }
 
-function PostForgotPasswordScreen() {
+type PostForgotPasswordScreenProps = { onResend: () => Promise<void> };
+
+function PostForgotPasswordScreen({ onResend }: PostForgotPasswordScreenProps) {
+	const [resending, setResending] = useState(false);
 	return (
 		// Replaces the form in place: fades up into the auth column, with the layout's 24px gap.
 		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
@@ -139,19 +158,29 @@ function PostForgotPasswordScreen() {
 				<h1 className="text-[30px] leading-9">
 					<Trans>Check your email</Trans>
 				</h1>
+				{/* Worded so it doesn't reveal whether an account uses the address. */}
 				<p className="text-ink-3">
-					<Trans>Check your email for a link to reset your password.</Trans>
+					<Trans>If an account uses that address, a reset link is on its way.</Trans>
 				</p>
 			</div>
 
-			<Button
-				nativeButton={false}
-				render={
-					<a href="mailto:">
-						<Trans comment="Button label to open the user's default email app">Open email app</Trans>
-					</a>
-				}
-			/>
+			<Button nativeButton={false} variant="secondary" render={<Link to="/auth/login" />}>
+				<Trans>Back to sign in</Trans>
+			</Button>
+			<p className="text-center text-sm text-ink-3">
+				<Trans>Didn't get it?</Trans>{" "}
+				<Button
+					variant="link"
+					className="h-auto px-1 py-0"
+					loading={resending}
+					onClick={() => {
+						setResending(true);
+						void onResend().finally(() => setResending(false));
+					}}
+				>
+					<Trans>Send again</Trans>
+				</Button>
+			</p>
 		</div>
 	);
 }

@@ -129,6 +129,7 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 				application={application}
 				onMarkApplied={(lane) => setOverlay({ kind: "applied", lane })}
 				onCloseLane={(lane) => setOverlay({ kind: "close", lane })}
+				onSchedule={() => openInterview(null)}
 			/>
 
 			<NextStepCard application={application} onOpenInterview={openInterview} />

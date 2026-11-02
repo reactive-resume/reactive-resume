@@ -207,14 +207,15 @@ export function Hero() {
 					eager
 					wipe="var(--ld, 0)"
 					sizes="12vw"
-					className="start-[74vw] top-[max(15vh,110px)] w-[12vw] [transform:translate(calc(var(--mx,0)*-22px),calc(var(--my,0)*-14px))_rotate(calc(-22deg+var(--mx,0)*3deg))_translateY(calc(var(--p)*-20px))] [transition:mask-position_1.8s_var(--ease)_.9s,transform_.9s_var(--ease)]"
+					// Physical, like the floating words (left: 50% plus an offset): mirrored, it would land on a word in RTL.
+					className="top-[max(15vh,110px)] left-[74vw] w-[12vw] [transform:translate(calc(var(--mx,0)*-22px),calc(var(--my,0)*-14px))_rotate(calc(-22deg+var(--mx,0)*3deg))_translateY(calc(var(--p)*-20px))] [transition:mask-position_1.8s_var(--ease)_.9s,transform_.9s_var(--ease)]"
 				/>
 				<Doodle
 					name="paperclip"
 					eager
 					wipe="var(--ld, 0)"
 					sizes="(min-width: 900px) 6vw, 1px"
-					className="start-[4vw] top-[61%] w-[6vw] [transform:translate(calc(var(--mx,0)*22px),calc(var(--my,0)*16px))_rotate(calc(16deg+var(--mx,0)*-4deg))_translateY(calc(var(--p)*-30px))] [transition:mask-position_1.4s_var(--ease)_1.3s,transform_1.1s_var(--ease)] max-[900px]:hidden"
+					className="top-[61%] left-[4vw] w-[6vw] [transform:translate(calc(var(--mx,0)*22px),calc(var(--my,0)*16px))_rotate(calc(16deg+var(--mx,0)*-4deg))_translateY(calc(var(--p)*-30px))] [transition:mask-position_1.4s_var(--ease)_1.3s,transform_1.1s_var(--ease)] max-[900px]:hidden"
 				/>
 
 				<div
@@ -224,6 +225,8 @@ export function Hero() {
 					{getFragments().map(({ text, at: [x, y, tx, ty, r, s, z], className }) => (
 						<span
 							key={text}
+							// Each word sets its own direction, so "Parcel & Co." keeps its full stop at the end in Arabic.
+							dir="auto"
 							className={cn("hero-fragment", className)}
 							style={{ "--x": x, "--y": y, "--tx": tx, "--ty": ty, "--r": r, "--s": s, "--z": z } as CSSProperties}
 						>

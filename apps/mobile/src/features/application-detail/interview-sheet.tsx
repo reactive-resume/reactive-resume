@@ -4,7 +4,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { Linking, View } from "react-native";
-import { interviewDetailsSchema } from "@reactive-resume/schema/applications/data";
+import { interviewDetailsSchema, nextInterviewKind } from "@reactive-resume/schema/applications/data";
 import { generateId } from "@reactive-resume/utils/string";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { WallClockField } from "./date-field";
@@ -66,14 +66,14 @@ type Draft = {
 const pad = (value: number) => String(value).padStart(2, "0");
 
 // New interviews default to tomorrow at 09:00 in the timezone, or the next full hour if that has passed.
-function emptyDraft(timezone: string): Draft {
+function emptyDraft(timezone: string, kind: InterviewKind = "screening"): Draft {
 	const now = new Date();
 	const tomorrow = new Date(now.getTime() + 86_400_000);
 	const day = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())}`;
 	let at = fromZonedDateTime(day, "09:00", timezone) ?? now;
 	if (at <= now) at = new Date(Math.ceil(now.getTime() / 3_600_000) * 3_600_000);
 	return {
-		kind: "screening",
+		kind,
 		...zonedParts(at, timezone),
 		durationMinutes: 60,
 		location: "",
@@ -126,7 +126,18 @@ function InterviewForm({ application, interview, onClose }: InterviewFormProps) 
 	const mutations = useDetailMutations(application.id);
 	const invalidate = useInvalidateApplications();
 	const reminders = useReminders(application.id);
-	const [initial] = useState(() => (interview ? draftFrom(interview, userZone) : emptyDraft(userZone)));
+	// A new interview starts as the likely next type: after a screening, a technical round, and so on (web too).
+	const [initial] = useState(() =>
+		interview
+			? draftFrom(interview, userZone)
+			: emptyDraft(
+					userZone,
+					nextInterviewKind(
+						application.activity.flatMap((entry) => (entry.type === "interview" ? [entry.kind] : [])),
+						application.status === "interview" || application.status === "offer",
+					),
+				),
+	);
 	const [draft, setDraft] = useState(initial);
 	const saving = useRef(false);
 	const [zonePicker, setZonePicker] = useState(false);

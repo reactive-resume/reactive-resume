@@ -101,9 +101,16 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 			</div>
 			{/* Settle the request before offering anything: sign-up links would only resume a dead request. */}
 			{!validRequest || isError ? (
-				<p key="invalid" role="alert" className={ENTER_CLASS}>
-					<Trans>This connection request is invalid or has expired. Start the connection again from your client.</Trans>
-				</p>
+				<div key="invalid" className={cn(ENTER_CLASS, "grid justify-items-center gap-4 text-center")}>
+					<p role="alert" className="rounded-lg bg-warn-soft px-3 py-2.5 text-sm text-warn-text">
+						<Trans>
+							This connection request is invalid or has expired. Start the connection again from your client.
+						</Trans>
+					</p>
+					<Button variant="secondary" nativeButton={false} render={<Link to="/dashboard" />}>
+						<Trans>Go to dashboard</Trans>
+					</Button>
+				</div>
 			) : isPending ? (
 				<p role="status">
 					<Trans>Loading connection request...</Trans>

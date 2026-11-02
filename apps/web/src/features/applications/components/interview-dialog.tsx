@@ -5,7 +5,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { m } from "motion/react";
 import { useId, useMemo, useState } from "react";
-import { interviewDetailsSchema } from "@reactive-resume/schema/applications/data";
+import { interviewDetailsSchema, nextInterviewKind } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -78,7 +78,19 @@ type Draft = {
 };
 
 // New interviews default to the given day (or tomorrow) at 09:00 in the timezone, or the next full hour if that's past.
-function emptyDraft(applicationId: string, timezone: string, day?: string | null): Draft {
+/** The likely next interview type for this application (see {@link nextInterviewKind}). */
+function suggestedKind(application: ApplicationSummary | null | undefined): InterviewKind {
+	if (!application) return "screening";
+	const kinds = application.activity.flatMap((entry) => (entry.type === "interview" ? [entry.kind] : []));
+	return nextInterviewKind(kinds, application.status === "interview" || application.status === "offer");
+}
+
+function emptyDraft(
+	applicationId: string,
+	timezone: string,
+	day?: string | null,
+	kind: InterviewKind = "screening",
+): Draft {
 	const now = new Date();
 	const today = new Date(`${dayKey(now, timezone)}T00:00:00Z`);
 	const date = day ?? dayKey(new Date(today.getTime() + 86_400_000), "UTC");
@@ -86,7 +98,7 @@ function emptyDraft(applicationId: string, timezone: string, day?: string | null
 	if (at <= now) at = new Date(Math.ceil(now.getTime() / 3_600_000) * 3_600_000);
 	return {
 		applicationId,
-		kind: "screening",
+		kind,
 		...zonedParts(at, timezone),
 		durationMinutes: 60,
 		location: "",
@@ -151,7 +163,7 @@ export function InterviewDialog({
 	const [draft, setDraft] = useState<Draft>(() =>
 		interview
 			? draftFrom(application?.id ?? "", interview, preferredZone)
-			: emptyDraft(application?.id ?? "", preferredZone, day),
+			: emptyDraft(application?.id ?? "", preferredZone, day, suggestedKind(application)),
 	);
 	const [otherZone, setOtherZone] = useState(false);
 
@@ -162,7 +174,9 @@ export function InterviewDialog({
 		if (open) {
 			const applicationId = application?.id ?? "";
 			setDraft(
-				interview ? draftFrom(applicationId, interview, preferredZone) : emptyDraft(applicationId, preferredZone, day),
+				interview
+					? draftFrom(applicationId, interview, preferredZone)
+					: emptyDraft(applicationId, preferredZone, day, suggestedKind(application)),
 			);
 			setOtherZone(false);
 		}
@@ -323,7 +337,12 @@ export function InterviewDialog({
 									label: `${item.company} — ${item.role}`,
 									keywords: [item.company, item.role],
 								}))}
-								onValueChange={(value) => set("applicationId", value ?? "")}
+								onValueChange={(value) => {
+									set("applicationId", value ?? "");
+									// The likely next type for the job just picked, as the dialog would open with for it.
+									const picked = applications.find((item) => item.id === value);
+									if (picked) set("kind", suggestedKind(picked));
+								}}
 							/>
 						</Field>
 					)}

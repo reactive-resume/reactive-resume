@@ -18,3 +18,13 @@ describe("Button", () => {
 		expect(onClick).not.toHaveBeenCalled();
 	});
 });
+
+it("stays a link when it renders one", () => {
+	render(
+		<Button nativeButton={false} render={<a href="/somewhere" />}>
+			Go somewhere
+		</Button>,
+	);
+	expect(screen.getByRole("link", { name: "Go somewhere" })).toBeTruthy();
+	expect(screen.queryByRole("button", { name: "Go somewhere" })).toBeNull();
+});

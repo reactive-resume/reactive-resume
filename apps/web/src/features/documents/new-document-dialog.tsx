@@ -248,6 +248,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	const markNew = useNewDocumentsStore((state) => state.markNew);
 	const [step, setStep] = useState<Step>({ name: data?.step ?? "choose" } as Step);
 	const inputRef = useRef<HTMLInputElement>(null);
+	const importDescriptionId = useId();
 
 	// A copy made for a job opens with the assistant ready to tailor it.
 	const openResume = (resumeId: string, { withAssistant = false, importedFrom }: OpenResumeOptions = {}) => {
@@ -291,7 +292,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 
 	return (
 		<DialogContent closeLabel={t`Close`} className="sm:max-w-[640px]">
-			<AiProviderLoadState state={providerState} />
+			{step.name !== "choose" && <AiProviderLoadState state={providerState} />}
 			<input
 				ref={inputRef}
 				type="file"
@@ -421,6 +422,8 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 					<button
 						type="button"
 						onClick={chooseFile}
+						aria-label={t`Import a resume`}
+						aria-describedby={importDescriptionId}
 						onDragOver={(event) => event.preventDefault()}
 						onDrop={(event) => {
 							event.preventDefault();
@@ -430,13 +433,17 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						className="flex items-start gap-4 rounded-xl border-[1.5px] border-dashed border-line-2 p-5 text-start transition-[background-color,border-color,scale] duration-quick ease-enter hover:border-accent hover:bg-accent-soft active:scale-[0.98]"
 					>
 						<span className="grid size-11 shrink-0 place-items-center rounded-lg bg-sunken text-ink-2">
-							<Icon name="file-arrow-up" size={24} />
+							{providerState.isLoading ? (
+								<Spinner className="size-6" aria-label={t`Loading AI connections…`} />
+							) : (
+								<Icon name="file-arrow-up" size={24} />
+							)}
 						</span>
 						<span className="grid gap-1">
 							<span className="text-[15px] font-semibold">
 								<Trans>Import a resume</Trans>
 							</span>
-							<span className="text-[13px] leading-[19px] text-ink-2">
+							<span id={importDescriptionId} className="text-[13px] leading-[19px] text-ink-2">
 								<Trans>
 									Drop a file here or browse. PDF, Word (needs AI), Reactive Resume, JSON Resume or a LinkedIn export
 									(.zip). Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is
@@ -489,6 +496,7 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 							<Trans>Try with a sample resume</Trans>
 						</button>
 					</div>
+					<AiProviderLoadState state={providerState} reserveErrorSpace />
 				</div>
 			)}
 		</DialogContent>
@@ -824,7 +832,8 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 	const [name, setName] = useState<string | null>(null);
 	const { mutateAsync: copyForJob, isPending } = useMutation(orpc.documents.copyForJob.mutationOptions());
 
-	const source = resumes.find((resume) => resume.id === sourceId) ?? defaultCopySource(resumes);
+	// A named resume (the builder's Copy for a job) is the only source until the list has it: never another resume.
+	const source = sourceId ? resumes.find((resume) => resume.id === sourceId) : defaultCopySource(resumes);
 	const job = adding ? null : jobs.find((application) => application.id === jobId);
 	const waitingForJob = !adding && Boolean(jobId) && !job && applications.isFetching;
 	const company = adding ? newJob.company.trim() : job?.company;

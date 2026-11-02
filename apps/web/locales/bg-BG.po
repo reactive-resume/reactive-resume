@@ -189,8 +189,10 @@ msgstr "{0, plural, one {# контактът има невалиден имей
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {остава # ден} other {остават # дни}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# ден} other {# дни}}"
 
@@ -1020,6 +1022,10 @@ msgstr "{templateCount} безплатни шаблони за CV."
 #: src/features/homepage/prepare.tsx
 msgid "{time} · Video call · 45 min"
 msgstr "{time} · Видеообаждане · 45 мин"
+
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -2171,6 +2177,10 @@ msgstr ""
 msgid "All models"
 msgstr "Всички модели"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Всички ваши документи, кандидатури за работа, API ключове и публични връзки се изтриват за постоянно. Това не може да бъде отменено."
@@ -2838,6 +2848,7 @@ msgstr "Обратно към сега"
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
+#: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Back to sign in"
 msgstr "Обратно към входа"
@@ -3326,10 +3337,6 @@ msgstr "Проверка"
 msgid "Check a PDF"
 msgstr "Проверете PDF"
 
-#: src/features/ats-checker/checker.tsx
-msgid "Check a sample file"
-msgstr "Проверете примерен файл"
-
 #: src/features/career/workspace/fit.tsx
 msgid "Check again"
 msgstr "Нова проверка"
@@ -3417,10 +3424,6 @@ msgstr "Проверете връзката си и опитайте отнов�
 #: src/features/auth/pages/register.tsx
 msgid "Check your email"
 msgstr "Проверете имейла си"
-
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Check your email for a link to reset your password."
-msgstr "Проверете имейла си за връзка за нулиране на паролата."
 
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
@@ -3512,6 +3515,10 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "Изберете парола, различна от текущата."
+
+#: src/features/ats-checker/checker.tsx
+msgid "Choose a PDF"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
@@ -4196,6 +4203,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Копие за работа..."
 
@@ -5618,6 +5626,10 @@ msgstr "Диктовката започна"
 msgid "Dictation stopped at the 2-minute limit."
 msgstr "Диктовката спря при лимита от 2 минути."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Didn't get it?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Didn't land"
 msgstr "Не се получи"
@@ -5969,10 +5981,6 @@ msgstr "Плъзнете, за да препозиционирате, и изп�
 msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume, JSON Resume or a LinkedIn export (.zip). Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Drop a PDF here or choose a file"
-msgstr "Пуснете PDF тук или изберете файл"
-
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
 msgstr "Пропуснете местоименията и започнете направо с глагола. Това е конвенцията на повечето пазари."
@@ -6112,6 +6120,10 @@ msgstr "Редактиране на интервю"
 msgid "Edit interview…"
 msgstr "Редактиране на интервю..."
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "Редактиране на ключова дума"
@@ -6235,9 +6247,7 @@ msgstr "Имейл (по избор)"
 
 #. Label for email input on forgot-password form
 #. Label for email input on registration form
-#. Label for login identifier input that accepts email or username
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Email address"
 msgstr "Имейл адрес"
@@ -6253,6 +6263,11 @@ msgstr ""
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
 msgstr "Доставката на имейл не е настроена на този сървър, така че адресът не е потвърден."
+
+#. Label for login identifier input that accepts email or username
+#: src/features/auth/pages/login.tsx
+msgid "Email or username"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Email the recruiter"
@@ -6721,6 +6736,10 @@ msgstr "Попълва се от заявлението за работа. По�
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Filled in what we could from the posting."
 msgstr "Попълнихме каквото можахме от обявата."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
@@ -7192,6 +7211,7 @@ msgstr "Върви си вкъщи"
 
 #: src/components/layout/error-screen.tsx
 #: src/components/layout/not-found-screen.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Отидете към таблото"
@@ -7561,6 +7581,10 @@ msgstr "Икона..."
 msgid "Icons in contact line"
 msgstr "Икони в контактната линия"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account uses that address, a reset link is on its way."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "If another resume holds Primary, turn it on for this one instead."
 msgstr ""
@@ -7670,6 +7694,10 @@ msgstr "Импортиране на стъпки"
 
 #: src/features/documents/documents-page.tsx
 msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Import this file into a free Reactive Resume to keep editing it, with Check reading it as you go."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -8142,6 +8170,10 @@ msgstr "Запазете го <0>безплатно.</0>"
 #: src/features/career/workspace/prepare.tsx
 msgid "Keep it honest"
 msgstr "Бъдете честни"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Keep it this way"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
@@ -8688,6 +8720,7 @@ msgid "Link updated"
 msgstr "Връзката е актуализирана"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Свързано · още не е изпратено"
 
@@ -8788,6 +8821,7 @@ msgstr "Заредете етапите си, преди да импортира
 msgid "Loading"
 msgstr "Зареждане"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "Зареждане на AI връзките…"
@@ -9435,6 +9469,11 @@ msgstr "Преместете имейла и телефонния си номе�
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{0} от {1} са преместени в кошчето. Заключените документи са пропуснати."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -10570,11 +10609,6 @@ msgstr "Отворете {title}"
 msgid "Open briefing"
 msgstr "Отваряне на брифинга"
 
-#. Button label to open the user's default email app
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Open email app"
-msgstr "Отваряне на имейл приложението"
-
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
 msgstr "Отвори режим на фокус"
@@ -10735,6 +10769,10 @@ msgstr "или"
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "или продължете с"
+
+#: src/features/ats-checker/checker.tsx
+msgid "or drop it here · up to 25 MB · checked in your browser, never uploaded"
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "Or in your own words…"
@@ -13187,6 +13225,7 @@ msgid "Save these somewhere safe. Each works once, and they won't be shown again
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13348,6 +13387,10 @@ msgstr "Графикът е изтрит"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "Насрочете интервю"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13625,6 +13668,10 @@ msgstr "Изпратете"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Send again"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Send it in the <0>x-api-key</0> header."
 msgstr ""
@@ -13776,6 +13823,10 @@ msgstr "Изпратено"
 #: src/features/career/coach-chat.tsx
 msgctxt "What went to the AI provider with a message"
 msgid "Sent"
+msgstr ""
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Sent again. It can take a minute to arrive."
 msgstr ""
 
 #. placeholder {0}: version.name
@@ -14012,6 +14063,10 @@ msgstr "Показване на всички видове"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Показване на приключените кандидатури"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -15919,6 +15974,10 @@ msgstr ""
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Този PDF е защитен с парола. Запазете незащитено копие и опитайте отново."
 
+#: src/features/ats-checker/checker.tsx
+msgid "This PDF looks damaged. Export it again from your editor and choose the new file."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr ""
@@ -16267,6 +16326,10 @@ msgstr "Опитайте {0}"
 msgid "Try a sample"
 msgstr "Опитайте проба"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Try a sample file"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -16570,10 +16633,6 @@ msgstr "До 2 минути. Или <0>изберете аудиофайл</0> �
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "До 2 минути. Думите ви се появяват, докато говорите."
-
-#: src/features/ats-checker/checker.tsx
-msgid "Up to 25 MB · checked in your browser, never uploaded"
-msgstr "До 25 MB · проверени във вашия браузър, никога не са качени"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
@@ -17721,10 +17780,6 @@ msgstr "Вие отговорихте: {answer}"
 msgid "You applied to {0} before and didn't hear back."
 msgstr "Вече сте кандидатствали в {0}, но не сте получили отговор."
 
-#: src/features/auth/pages/login.tsx
-msgid "You can also sign in with your username."
-msgstr "Можете да влезете и с потребителското си име."
-
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
 msgstr ""
@@ -17816,6 +17871,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "Достигнахте {MAX_APPLICATION_LANES} етапа. Премахнете един, за да добавите друг."
+
+#: src/features/auth/pages/login.tsx
+msgid "you@example.com or your username"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

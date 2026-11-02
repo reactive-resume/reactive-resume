@@ -189,8 +189,10 @@ msgstr "{0, plural, one {# संपर्क में अमान्य ई�
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {# दिन शेष} other {# दिन शेष}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# दिन} other {# दिन}}"
 
@@ -1020,6 +1022,10 @@ msgstr "{templateCount} निःशुल्क सीवी टेम्प्
 #: src/features/homepage/prepare.tsx
 msgid "{time} · Video call · 45 min"
 msgstr "{time} · वीडियो कॉल · 45 मिनट"
+
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -2171,6 +2177,10 @@ msgstr ""
 msgid "All models"
 msgstr "सभी मॉडल"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "आपके सभी दस्तावेज़, नौकरी के आवेदन, API कुंजियाँ और सार्वजनिक लिंक स्थायी रूप से हटा दिए जाएँगे। इसे पूर्ववत नहीं किया जा सकता।"
@@ -2838,6 +2848,7 @@ msgstr "अभी वापस जाएँ"
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
+#: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Back to sign in"
 msgstr "साइन इन पर वापस जाएँ"
@@ -3326,10 +3337,6 @@ msgstr "जाँच"
 msgid "Check a PDF"
 msgstr "एक PDF की जाँच करें"
 
-#: src/features/ats-checker/checker.tsx
-msgid "Check a sample file"
-msgstr "एक नमूना फ़ाइल की जाँच करें"
-
 #: src/features/career/workspace/fit.tsx
 msgid "Check again"
 msgstr "फिर से जाँचें"
@@ -3417,10 +3424,6 @@ msgstr "अपना कनेक्शन जांचें और पुन�
 #: src/features/auth/pages/register.tsx
 msgid "Check your email"
 msgstr "अपना ईमेल देखें"
-
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Check your email for a link to reset your password."
-msgstr "अपना पासवर्ड रीसेट करने के लिए लिंक के लिए अपना ईमेल जाँचें।"
 
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
@@ -3512,6 +3515,10 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "ऐसा पासवर्ड चुनें जो आपके वर्तमान पासवर्ड से अलग हो।"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Choose a PDF"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
@@ -4196,6 +4203,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "नौकरी के लिए कॉपी करें..."
 
@@ -5618,6 +5626,10 @@ msgstr "डिक्टेशन शुरू हुआ"
 msgid "Dictation stopped at the 2-minute limit."
 msgstr "2 मिनट की सीमा पर डिक्टेशन रुक गया।"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Didn't get it?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Didn't land"
 msgstr "असर नहीं हुआ"
@@ -5969,10 +5981,6 @@ msgstr "अपलोड करने से पहले स्थिति ब�
 msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume, JSON Resume or a LinkedIn export (.zip). Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Drop a PDF here or choose a file"
-msgstr "यहां एक PDF छोड़ें या एक फ़ाइल चुनें"
-
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
 msgstr "सर्वनाम हटाएँ और क्रिया से शुरू करें। अधिकतर बाज़ारों में यही चलन है।"
@@ -6112,6 +6120,10 @@ msgstr "साक्षात्कार संपादित करें"
 msgid "Edit interview…"
 msgstr "साक्षात्कार संपादित करें..."
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "संपादित कीवर्ड"
@@ -6235,9 +6247,7 @@ msgstr "ईमेल (वैकल्पिक)"
 
 #. Label for email input on forgot-password form
 #. Label for email input on registration form
-#. Label for login identifier input that accepts email or username
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Email address"
 msgstr "ईमेल पता"
@@ -6253,6 +6263,11 @@ msgstr ""
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
 msgstr "इस सर्वर पर ईमेल डिलीवरी सेट नहीं है, इसलिए पता सत्यापित नहीं है।"
+
+#. Label for login identifier input that accepts email or username
+#: src/features/auth/pages/login.tsx
+msgid "Email or username"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Email the recruiter"
@@ -6721,6 +6736,10 @@ msgstr "नौकरी हेतु आवेदन पत्र से भर�
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Filled in what we could from the posting."
 msgstr "पोस्टिंग से जितना संभव था भर दिया गया।"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
@@ -7192,6 +7211,7 @@ msgstr "घर जाओ"
 
 #: src/components/layout/error-screen.tsx
 #: src/components/layout/not-found-screen.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "डैशबोर्ड पर जाएँ"
@@ -7561,6 +7581,10 @@ msgstr "चिह्न..."
 msgid "Icons in contact line"
 msgstr "संपर्क पंक्ति में चिह्न"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account uses that address, a reset link is on its way."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "If another resume holds Primary, turn it on for this one instead."
 msgstr ""
@@ -7670,6 +7694,10 @@ msgstr "आयात चरण"
 
 #: src/features/documents/documents-page.tsx
 msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Import this file into a free Reactive Resume to keep editing it, with Check reading it as you go."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -8142,6 +8170,10 @@ msgstr "इसे <0>निःशुल्क</0> बनाए रखें।"
 #: src/features/career/workspace/prepare.tsx
 msgid "Keep it honest"
 msgstr "ईमानदार रहें"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Keep it this way"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
@@ -8688,6 +8720,7 @@ msgid "Link updated"
 msgstr "लिंक अपडेट किया गया"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "लिंक किया गया · अभी तक नहीं भेजा गया"
 
@@ -8788,6 +8821,7 @@ msgstr "नाम वाले चरण आयात करने से पह
 msgid "Loading"
 msgstr "लोड हो रहा है"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "AI कनेक्शन लोड हो रहे हैं…"
@@ -9435,6 +9469,11 @@ msgstr "अपना ईमेल और फ़ोन नंबर पहले 
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1} में से {0} ट्रैश में ले जाए गए। लॉक किए गए दस्तावेज़ छोड़ दिए गए।"
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -10570,11 +10609,6 @@ msgstr "{title} खोलें"
 msgid "Open briefing"
 msgstr "ब्रीफ़िंग खोलें"
 
-#. Button label to open the user's default email app
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Open email app"
-msgstr "ईमेल ऐप खोलें"
-
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
 msgstr "फोकस मोड खोलें"
@@ -10735,6 +10769,10 @@ msgstr "या"
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "या जारी रखें"
+
+#: src/features/ats-checker/checker.tsx
+msgid "or drop it here · up to 25 MB · checked in your browser, never uploaded"
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "Or in your own words…"
@@ -13187,6 +13225,7 @@ msgid "Save these somewhere safe. Each works once, and they won't be shown again
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13348,6 +13387,10 @@ msgstr "शेड्यूल हटाया गया"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "साक्षात्कार अनुसूची"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13625,6 +13668,10 @@ msgstr "भेजना"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Send again"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Send it in the <0>x-api-key</0> header."
 msgstr ""
@@ -13776,6 +13823,10 @@ msgstr "भेजा"
 #: src/features/career/coach-chat.tsx
 msgctxt "What went to the AI provider with a message"
 msgid "Sent"
+msgstr ""
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Sent again. It can take a minute to arrive."
 msgstr ""
 
 #. placeholder {0}: version.name
@@ -14012,6 +14063,10 @@ msgstr "सभी प्रकार दिखाएँ"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "बंद नौकरी के आवेदन दिखाएँ"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -15919,6 +15974,10 @@ msgstr ""
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "यह PDF पासवर्ड से सुरक्षित है। एक असुरक्षित प्रति सहेजें और फिर कोशिश करें।"
 
+#: src/features/ats-checker/checker.tsx
+msgid "This PDF looks damaged. Export it again from your editor and choose the new file."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr ""
@@ -16267,6 +16326,10 @@ msgstr "{0} आज़माएँ"
 msgid "Try a sample"
 msgstr "एक नमूना आज़माएँ"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Try a sample file"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -16570,10 +16633,6 @@ msgstr "2 मिनट तक। या 2 MB तक की <0>ऑडियो �
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "2 मिनट तक। आपके बोलते ही आपके शब्द दिखाई देते हैं।"
-
-#: src/features/ats-checker/checker.tsx
-msgid "Up to 25 MB · checked in your browser, never uploaded"
-msgstr "आपके ब्राउज़र में 25 MB · तक चेक किया गया, कभी अपलोड नहीं किया गया"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
@@ -17721,10 +17780,6 @@ msgstr "आपने उत्तर दिया: {answer}"
 msgid "You applied to {0} before and didn't hear back."
 msgstr "आपने पहले {0} में आवेदन किया था और कोई जवाब नहीं मिला।"
 
-#: src/features/auth/pages/login.tsx
-msgid "You can also sign in with your username."
-msgstr "आप अपने उपयोगकर्ता नाम से भी साइन इन कर सकते हैं।"
-
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
 msgstr ""
@@ -17816,6 +17871,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "आप {MAX_APPLICATION_LANES} चरणों की सीमा तक पहुँच गए हैं। दूसरा जोड़ने के लिए एक हटाएँ।"
+
+#: src/features/auth/pages/login.tsx
+msgid "you@example.com or your username"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

@@ -12,14 +12,6 @@ export type AtsLintOptions = {
 
 const SEVERITY_ORDER: Readonly<Record<AtsSeverity, number>> = { error: 0, warning: 1, info: 2 };
 
-function compareFindings(a: AtsFinding, b: AtsFinding): number {
-	const bySeverity = SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
-	if (bySeverity !== 0) return bySeverity;
-	if (a.pointer !== b.pointer) return a.pointer < b.pointer ? -1 : 1;
-	if (a.code === b.code) return 0;
-	return a.code < b.code ? -1 : 1;
-}
-
 const decodePointerToken = (token: string) => token.replace(/~1/g, "/").replace(/~0/g, "~");
 
 /** The finding's key: its code and pointer, with array indexes swapped for entry ids (see {@link AtsFinding.key}). */
@@ -44,6 +36,47 @@ export function atsFindingKey(finding: Pick<AtsFinding, "code" | "pointer">, dat
 	return `${finding.code}:/${tokens.join("/")}`;
 }
 
+/**
+ * Where a pointer sits on the printed page, as numbers to compare: the header first, then sections in layout order
+ * (each page's main column, then its sidebar), then each entry by its place, then anything not on the page.
+ */
+function pagePosition(pointer: string, data: ResumeData): number[] {
+	const tokens = pointer.split("/").slice(1).map(decodePointerToken);
+	const [head, next] = tokens;
+	if (head === "basics" || head === "picture") return [0];
+	const sectionId =
+		head === "summary"
+			? "summary"
+			: head === "sections"
+				? next
+				: head === "customSections"
+					? data.customSections[Number(next)]?.id
+					: undefined;
+	const layout = data.metadata.layout.pages.flatMap((page) => [...page.main, ...page.sidebar]);
+	const section = sectionId ? layout.indexOf(sectionId) : -1;
+	if (section === -1) return [Number.MAX_SAFE_INTEGER];
+	// Every array index after the section, so items/2/roles/10 sorts after items/2/roles/9.
+	const indexes = tokens.slice(2).flatMap((token) => (/^\d+$/.test(token) ? [Number(token)] : []));
+	return [1 + section, ...indexes];
+}
+
+/** Most severe first; then in page order, so "Show on page" walks down the document; then by rule. */
+function compareFindings(data: ResumeData) {
+	return (a: AtsFinding, b: AtsFinding): number => {
+		const bySeverity = SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
+		if (bySeverity !== 0) return bySeverity;
+		const pa = pagePosition(a.pointer, data);
+		const pb = pagePosition(b.pointer, data);
+		for (let index = 0; index < Math.max(pa.length, pb.length); index++) {
+			const difference = (pa[index] ?? -1) - (pb[index] ?? -1);
+			if (difference !== 0) return difference;
+		}
+		if (a.pointer !== b.pointer) return a.pointer < b.pointer ? -1 : 1;
+		if (a.code === b.code) return 0;
+		return a.code < b.code ? -1 : 1;
+	};
+}
+
 export function lintResumeForAts(data: ResumeData, options: AtsLintOptions = {}): AtsReport {
 	const context: RuleContext = {
 		data,
@@ -55,7 +88,7 @@ export function lintResumeForAts(data: ResumeData, options: AtsLintOptions = {})
 	const ignoredKeys = new Set(data.metadata.check?.ignored ?? []);
 	const all = ATS_RULES.flatMap((rule) => rule(context))
 		.map((item: AtsRuleFinding): AtsFinding => ({ ...item, key: atsFindingKey(item, data) }))
-		.sort(compareFindings);
+		.sort(compareFindings(data));
 	const findings = all.filter((item) => !ignoredKeys.has(item.key));
 
 	const counts: Record<AtsSeverity, number> = { error: 0, warning: 0, info: 0 };

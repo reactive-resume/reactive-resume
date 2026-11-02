@@ -279,7 +279,7 @@ test("keeps OAuth callbacks through registration while refusing guests and missi
 	await page.goto(`/api/auth/oauth2/authorize?${query}`);
 	await expect(page.getByRole("button", { name: "Continue as guest" })).toHaveCount(0);
 	const login = new URL(page.url());
-	await page.getByRole("button", { name: "Create one now", exact: true }).click();
+	await page.getByRole("link", { name: "Create one now", exact: true }).click();
 	expect(new URL(page.url()).searchParams.get("callbackURL")).toBe(login.searchParams.get("callbackURL"));
 	const guest = await page.request.post("/api/auth/sign-in/anonymous", { headers: { origin }, data: {} });
 	expect(guest.status()).toBe(200);
@@ -295,7 +295,7 @@ test("keeps OAuth callbacks through registration while refusing guests and missi
 		await page.goto(`/auth/consent?${dead}`);
 		await expect(page.getByText(invalidRequest)).toBeVisible();
 		await expect(page.getByText("Create an account to connect apps. Guest accounts are temporary.")).toHaveCount(0);
-		await expect(page.getByRole("button", { name: "Create account", exact: true })).toHaveCount(0);
+		await expect(page.getByRole("link", { name: "Create account", exact: true })).toHaveCount(0);
 	}
 	// While the client lookup is pending, a guest sees the loading state, not links for a request not yet checked.
 	let releaseLookup = () => {};
@@ -308,8 +308,8 @@ test("keeps OAuth callbacks through registration while refusing guests and missi
 	});
 	await page.goto(`/api/auth/oauth2/authorize?${query}`);
 	await expect(page.getByRole("status")).toHaveText("Loading connection request...");
-	await expect(page.getByRole("button", { name: "Create account", exact: true })).toHaveCount(0);
-	await expect(page.getByRole("button", { name: "Sign in", exact: true })).toHaveCount(0);
+	await expect(page.getByRole("link", { name: "Create account", exact: true })).toHaveCount(0);
+	await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveCount(0);
 	releaseLookup();
 	await expect(page.getByText("Create an account to connect apps. Guest accounts are temporary.")).toBeVisible();
 	await expect(page.getByRole("button", { name: "Allow access" })).toHaveCount(0);
@@ -331,7 +331,7 @@ test("keeps OAuth callbacks through registration while refusing guests and missi
 	await page.goto(`/api/auth/oauth2/authorize?${query}`);
 	await expect(page.getByText("Create an account to connect apps. Guest accounts are temporary.")).toBeVisible();
 	const resumed = new URL(page.url()).search.slice(1);
-	await page.getByRole("button", { name: "Create account", exact: true }).click();
+	await page.getByRole("link", { name: "Create account", exact: true }).click();
 	expect(new URL(page.url()).searchParams.get("callbackURL")).toBe(`/api/auth/oauth?${resumed}`);
 	await page.getByRole("textbox", { name: "Name", exact: true }).fill(account.name);
 	await page.getByLabel("Username").fill(account.username);
