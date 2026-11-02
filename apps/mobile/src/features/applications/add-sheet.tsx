@@ -63,7 +63,7 @@ const today = () => {
 
 /** Mounted until an explicit close/discard; unmounting cancels transient posting requests. */
 export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApplicationSheetProps) {
-	useNow();
+	const now = useNow();
 	const router = useRouter();
 	const { t, i18n } = useLingui();
 	const { timeZone } = useUserTime();
@@ -224,7 +224,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 		laneAvailable &&
 		!busy &&
 		(!sourceUrl.trim() || !duplicate.isPending);
-	const receipt = postingReadReceipt(parsed?.postingSource, i18n.locale);
+	const receipt = postingReadReceipt(parsed?.postingSource, i18n.locale, now.getTime());
 	const readAt = receipt?.readAt;
 	const sourceHost = receipt?.sourceHost ?? t`the posting page`;
 	const clipped = !!initialCapture?.truncated || !!parsed?.postingSource.truncated || description.length > 20_000;

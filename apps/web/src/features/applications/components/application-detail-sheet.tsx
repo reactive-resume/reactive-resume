@@ -668,9 +668,9 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 
 /** The saved posting: its link, what it asks for, and its text. */
 function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) {
-	useNow();
+	const now = useNow();
 	const { i18n } = useLingui();
-	const receipt = postingReadReceipt(application.postingSource, i18n.locale);
+	const receipt = postingReadReceipt(application.postingSource, i18n.locale, now.getTime());
 	const readAt = receipt?.readAt;
 	const sourceHost = receipt?.sourceHost ?? t`the posting page`;
 	return (

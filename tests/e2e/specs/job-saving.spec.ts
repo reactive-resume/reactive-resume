@@ -89,7 +89,11 @@ test("a reviewed read receipt ages and keeps its source host through save and re
 	await page.getByText("Platform Engineer", { exact: true }).first().click();
 	await page.getByRole("button", { name: "View posting", exact: true }).click();
 	const posting = page.getByRole("dialog", { name: "Platform Engineer · Lumen Workshop", exact: true });
-	await expect(posting.getByText(/Read .* from jobs.example.test\./)).toBeVisible();
+	const receipt = posting.getByText(/Read .* from jobs.example.test\./);
+	await expect(receipt).toBeVisible();
+	const previousReceipt = await receipt.textContent();
+	await page.clock.fastForward(60_000);
+	await expect(receipt).not.toHaveText(previousReceipt ?? "");
 	await expect(posting.getByRole("link")).toHaveAttribute("href", "https://edited.example.test/job");
 	await posting.screenshot({ path: info.outputPath("posting-read-saved.png"), animations: "disabled" });
 	expect(reads).toBe(1);

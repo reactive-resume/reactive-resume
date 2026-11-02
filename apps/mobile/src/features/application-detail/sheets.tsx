@@ -414,13 +414,13 @@ export function PostingSheet({ application, open, onClose }: ApplicationContentS
 }
 
 function PostingBody({ application, onClose }: Omit<ApplicationContentSheetProps, "open">) {
-	useNow();
+	const now = useNow();
 	const { t, i18n } = useLingui();
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();
 	const [text, setText] = useState(application.jobDescription ?? "");
 	const source = application.postingSource;
-	const receipt = postingReadReceipt(source, i18n.locale);
+	const receipt = postingReadReceipt(source, i18n.locale, now.getTime());
 	const readAt = receipt?.readAt;
 	const sourceHost = receipt?.sourceHost ?? t`the posting page`;
 	const sourceUrl = application.sourceUrl;

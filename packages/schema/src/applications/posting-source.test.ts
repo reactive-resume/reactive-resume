@@ -24,3 +24,19 @@ it("names the retained resolved host without exposing credentials, path or track
 	expect(postingReadReceipt({ ...source, retrievedAt: "invalid" }, "en-US")).toBeNull();
 	expect(postingReadReceipt(null, "en-US")).toBeNull();
 });
+
+it("uses a completed read's current instant even between client clock ticks", () => {
+	vi.useFakeTimers().setSystemTime(new Date("2026-11-02T13:30:00Z"));
+	const tick = Date.now();
+	vi.setSystemTime(new Date("2026-11-02T13:30:30Z"));
+	const source: PostingSource = {
+		method: "builtin",
+		format: "text",
+		truncated: false,
+		completeness: "unknown",
+		retrievedAt: new Date().toISOString(),
+	};
+	expect(postingReadReceipt(source, "en-US", tick)?.readAt).toBe("now");
+	vi.setSystemTime(new Date("2026-11-02T13:32:30Z"));
+	expect(postingReadReceipt(source, "en-US", Date.now())?.readAt).toBe("2 minutes ago");
+});

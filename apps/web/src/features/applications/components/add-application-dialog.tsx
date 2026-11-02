@@ -163,7 +163,7 @@ type AddApplicationFormProps = {
 };
 
 function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: AddApplicationFormProps) {
-	useNow();
+	const now = useNow();
 	const id = useId();
 	const { data: webAccess } = useQuery(orpc.webAccess.status.queryOptions());
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
@@ -263,7 +263,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const postingDescription = (description ?? (!link ? text : "")).slice(0, MAX_POSTING_CHARS);
 	const readable = text.length > 8 && (link || hasUsableProvider);
 	const parsed = reading?.text === text ? reading.result : null;
-	const receipt = postingReadReceipt(parsed?.postingSource, i18n.locale);
+	const receipt = postingReadReceipt(parsed?.postingSource, i18n.locale, now.getTime());
 	const readAt = receipt?.readAt;
 	const sourceHost = receipt?.sourceHost ?? t`the posting page`;
 	const clipped = Boolean(
