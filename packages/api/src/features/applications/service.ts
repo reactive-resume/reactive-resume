@@ -654,17 +654,23 @@ export const applicationService = {
    where entry->>'type' = 'stage' and entry->>'closedReason' = 'no-response'), ${schema.application.updatedAt})`.mapWith(
 					schema.application.updatedAt,
 				);
+		const ghosted = sql`exists
+     (select 1 from jsonb_array_elements(${schema.application.activity}) entry where entry->>'type' = 'stage' and entry->>'closedReason' = 'no-response')`;
+		// A reopened application that once went unanswered still counts, and still reads as "no reply".
 		const outcome = input.anyOutcome
-			? sql`${schema.application.status} = 'closed'`
-			: sql`((${schema.application.status} = 'closed' and ${schema.application.closedReason} = 'no-response') or exists
-     (select 1 from jsonb_array_elements(${schema.application.activity}) entry where entry->>'type' = 'stage' and entry->>'closedReason' = 'no-response'))`;
+			? sql`(${schema.application.status} = 'closed' or ${ghosted})`
+			: sql`((${schema.application.status} = 'closed' and ${schema.application.closedReason} = 'no-response') or ${ghosted})`;
+		const closedReason = sql<ApplicationClosedReason | null>`case
+     when ${schema.application.status} = 'closed' then ${schema.application.closedReason}
+     when ${ghosted} then 'no-response'
+     end`;
 		return db
 			.select({
 				id: schema.application.id,
 				company: schema.application.company,
 				role: schema.application.role,
 				at,
-				closedReason: schema.application.closedReason,
+				closedReason,
 			})
 			.from(schema.application)
 			.where(

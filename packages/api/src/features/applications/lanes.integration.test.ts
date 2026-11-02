@@ -1326,6 +1326,10 @@ describe.skipIf(!databaseUrl)("application lanes: persisted owner and workflow i
 		const evidence = await applications.priorNoResponse({ userId: "alice", company: "example labs" });
 		expect(evidence).toHaveLength(1);
 		expect(evidence[0]).toMatchObject({ id, role: "Engineer" });
+		// Reopened, it still counts with any outcome, and still reads as no reply.
+		expect(await applications.priorNoResponse({ userId: "alice", company: "example labs", anyOutcome: true })).toEqual([
+			expect.objectContaining({ id, closedReason: "no-response" }),
+		]);
 		expect(await applications.priorNoResponse({ userId: "bob", company: "example labs" })).toEqual([]);
 		expect(await applications.priorNoResponse({ userId: "alice", company: "example labs", excludeId: id })).toEqual([]);
 		expect(
