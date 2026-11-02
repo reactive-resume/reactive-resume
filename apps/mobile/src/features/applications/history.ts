@@ -5,12 +5,6 @@ type StageEntry = Extract<ApplicationSummary["activity"][number], { type: "stage
 
 type HistorySource = Pick<ApplicationSummary, "status" | "activity" | "appliedAt" | "laneId">;
 
-/** Lane-only history is useful for placement, never evidence of a submission or employer reply. */
-export const canonicalStageEntries = (application: Pick<HistorySource, "activity">) =>
-	application.activity.filter(
-		(entry): entry is StageEntry => entry.type === "stage" && entry.canonicalTransition !== false,
-	);
-
 export function currentLaneEntry(application: HistorySource, lanes: readonly ApplicationLane[] = []) {
 	const stages = application.activity
 		.filter((entry): entry is StageEntry => entry.type === "stage" && entry.stage === application.status)

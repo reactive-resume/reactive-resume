@@ -54,10 +54,6 @@ export function isCurrentLaneEvent(entry: ApplicationTimelineEntry, application:
 	return entry.stage === application.status;
 }
 
-/** False for a lane move within one category: it changes the column, not where the application stands. */
-export const isCanonicalStageEvent = (entry: ApplicationTimelineEntry) =>
-	entry.type === "stage" && entry.canonicalTransition !== false;
-
 export type LaneMode = "lanes" | "legacy";
 
 /** What to send to move to a lane: its ID with lanes, its category on older servers. */
