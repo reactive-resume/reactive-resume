@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
+import type { ComponentRef, ReactNode, Ref } from "react";
 import { Platform, Pressable, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ShortcutHelpButton } from "./shortcut-help";
 import { useIsTablet } from "./use-is-tablet";
 import { Icon, IconButton, Text, useTheme } from "@/ui";
 
@@ -14,6 +15,7 @@ type TopBarProps = {
 	title: string;
 	/** Opens a menu from the title (the document menu); adds the caret. */
 	onTitlePress?: (() => void) | undefined;
+	titleRef?: Ref<ComponentRef<typeof Pressable>> | undefined;
 	titleLabel?: string | undefined;
 	/** The line under the title: save status, or "Senior Game Developer · Interview". */
 	subtitle?: ReactNode;
@@ -27,7 +29,17 @@ type TopBarProps = {
  * The editor and workspace top bar (builder.html `ebar`): `surface`, 56 pt on phone and 60 pt on tablet, Back, the
  * title with a status line, and actions at the end. It pads the top and side safe areas itself.
  */
-export function TopBar({ backLabel, onBack, title, onTitlePress, titleLabel, subtitle, center, actions }: TopBarProps) {
+export function TopBar({
+	backLabel,
+	onBack,
+	title,
+	onTitlePress,
+	titleRef,
+	titleLabel,
+	subtitle,
+	center,
+	actions,
+}: TopBarProps) {
 	const insets = useSafeAreaInsets();
 	const tablet = useIsTablet();
 	const { colors, size, space } = useTheme();
@@ -73,6 +85,7 @@ export function TopBar({ backLabel, onBack, title, onTitlePress, titleLabel, sub
 				>
 					{onTitlePress ? (
 						<Pressable
+							ref={titleRef}
 							accessibilityRole="button"
 							accessibilityLabel={titleLabel ?? title}
 							onPress={onTitlePress}
@@ -97,7 +110,10 @@ export function TopBar({ backLabel, onBack, title, onTitlePress, titleLabel, sub
 						{stackedModes ? null : center}
 					</View>
 				) : null}
-				<View style={{ flexDirection: "row", alignItems: "center", gap: tablet ? space.s2 : 0 }}>{actions}</View>
+				<View style={{ flexDirection: "row", alignItems: "center", gap: tablet ? space.s2 : 0 }}>
+					{actions}
+					<ShortcutHelpButton />
+				</View>
 			</View>
 			{stackedModes ? <View style={{ alignItems: "center", paddingVertical: space.s2 }}>{center}</View> : null}
 		</View>

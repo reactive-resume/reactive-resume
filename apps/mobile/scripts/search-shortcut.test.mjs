@@ -44,6 +44,7 @@ const theme = {
 	shadows: { e3: {} },
 };
 const mocks = {
+	"@/shell/shortcut-help": { ShortcutHelpButton: "ShortcutHelpButton" },
 	react,
 	"expo-router": { useIsFocused: () => focused },
 	"../../modules/key-commands": {
@@ -143,7 +144,8 @@ assert.equal(focuses, 1, "Existing filtered search must regain focus");
 input = nodes(header.render({ ...props, value: "Cedar" })).find((node) => node.type === "TextInput");
 assert.equal(input.props.value, "Cedar", "Refocusing must preserve the filter");
 
-const sheetProps = { open: true, onClose() {}, children: null };
+let dismissed = 0;
+const sheetProps = { open: true, onClose() {}, onDismissed: () => dismissed++, children: null };
 const sheet = mount(Sheet, sheetProps);
 sheet.render();
 assert.deepEqual(commands, [], "An open sheet must release background shortcuts");
@@ -152,7 +154,10 @@ assert.equal(focuses, 1, "A late native event must not focus a field behind a sh
 const alertProps = { open: true, confirmLabel: "Delete", onConfirm() {}, onCancel() {} };
 const alert = mount(ConfirmDialog, alertProps);
 alert.render();
-sheet.render({ ...sheetProps, open: false });
+const closedSheet = sheet.render({ ...sheetProps, open: false });
+assert.equal(dismissed, 0, "Focus callback must wait for native dismissal");
+closedSheet.props.onDidDismiss();
+assert.equal(dismissed, 1, "Native dismissal releases the opener focus callback");
 assert.deepEqual(commands, [], "Closing one overlay must preserve the other overlay's suspension");
 alert.unmount();
 assert.ok(commands.some((command) => command.input === "f"));

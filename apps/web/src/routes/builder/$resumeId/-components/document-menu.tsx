@@ -2,7 +2,7 @@ import { ph, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -27,6 +27,7 @@ import { DocumentDetails } from "./document-details";
 import { ChipInput } from "@/components/input/chip-input";
 import { useDialogStore } from "@/dialogs/store";
 import { InlineNameInput } from "@/features/documents/inline-name-input";
+import { showKeyboardShortcuts } from "@/features/keyboard-shortcuts/store";
 import { savePendingChanges, saveResumeMetadata } from "@/features/resume/builder/draft";
 import { useCurrentResume, usePatchResume, useResumeStore } from "@/features/resume/builder/draft";
 import { setResumeLocked } from "@/features/resume/builder/lock";
@@ -44,6 +45,8 @@ type DocumentDialog = "rename" | "tags" | "notes" | "details" | null;
  * details, print and delete.
  */
 export function DocumentMenu() {
+	const helpRequested = useRef(false);
+	const menuTrigger = useRef<HTMLButtonElement>(null);
 	const resume = useCurrentResume();
 	const { id, name, isLocked } = resume;
 	const [dialog, setDialog] = useState<DocumentDialog>(null);
@@ -63,9 +66,21 @@ export function DocumentMenu() {
 					onDone={() => setDialog(null)}
 				/>
 			) : (
-				<DropdownMenu>
-					<DropdownMenuTrigger render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
-					<DocumentMenuItems onOpenDialog={setDialog} />
+				<DropdownMenu
+					onOpenChangeComplete={(open) => {
+						if (!open && helpRequested.current) {
+							helpRequested.current = false;
+							showKeyboardShortcuts(menuTrigger.current);
+						}
+					}}
+				>
+					<DropdownMenuTrigger ref={menuTrigger} render={<DocumentMenuTrigger name={name} isLocked={isLocked} />} />
+					<DocumentMenuItems
+						onOpenDialog={setDialog}
+						onHelp={() => {
+							helpRequested.current = true;
+						}}
+					/>
 				</DropdownMenu>
 			)}
 			<SaveStatus />
@@ -150,9 +165,10 @@ function BuilderTagsDialog({ tags: current, locked, onSave, onClose }: BuilderTa
 
 type DocumentMenuItemsProps = {
 	onOpenDialog: (dialog: DocumentDialog) => void;
+	onHelp: () => void;
 };
 
-function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
+function DocumentMenuItems({ onOpenDialog, onHelp }: DocumentMenuItemsProps) {
 	const navigate = useNavigate();
 	const { openDialog } = useDialogStore();
 	const resume = useCurrentResume();
@@ -266,6 +282,10 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 			<DropdownMenuItem disabled={offline} onClick={() => setSheetTab("download")}>
 				<Icon name="download-simple" />
 				<Trans>More download formats</Trans>
+			</DropdownMenuItem>
+			<DropdownMenuItem onClick={onHelp}>
+				<Icon name="keyboard" />
+				<Trans>Keyboard shortcuts</Trans>
 			</DropdownMenuItem>
 			<DropdownMenuItem onClick={() => setSheetTab("history")}>
 				<Icon name="clock-counter-clockwise" />

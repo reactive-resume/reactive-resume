@@ -11,6 +11,7 @@ import { localeMap } from "@/features/settings/locale-names";
 import { useProfile } from "@/features/settings/queries";
 import { getDeviceLocale, getLocalePreference, selectableLocales, setLocalePreference } from "@/i18n";
 import { timeZones } from "@/lib/timezones";
+import { CharacterShortcutSetting } from "@/shell/shortcut-help";
 import {
 	Banner,
 	Button,
@@ -110,6 +111,9 @@ export default function PreferencesScreen() {
 				]}
 			/>
 			<Text variant="callout" color="ink3">{t`Resumes always render on white paper, whatever the theme.`}</Text>
+			<SettingsGroup title={t`Keyboard shortcuts`}>
+				<CharacterShortcutSetting />
+			</SettingsGroup>
 			<SettingsGroup title={t`Feedback`} note={t`Applies to this device only.`}>
 				<ListRow
 					title={t`Haptic feedback`}

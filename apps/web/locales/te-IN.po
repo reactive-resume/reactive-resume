@@ -2244,6 +2244,10 @@ msgstr "యాక్సెస్‌ని అనుమతించండి"
 msgid "Allow comments"
 msgstr ""
 
+#: src/features/keyboard-shortcuts/character-shortcuts.tsx
+msgid "Allow keys such as ?, N, / and editor mode numbers outside text fields. Turn off when using speech input."
+msgstr "టెక్స్ట్ ఫీల్డ్‌ల వెలుపల ?, N, / మరియు ఎడిటర్ మోడ్ సంఖ్యల వంటి కీలను అనుమతించండి. వాయిస్ ఇన్‌పుట్ ఉపయోగిస్తున్నప్పుడు ఆఫ్ చేయండి."
+
 #: src/libs/orpc/ai-consent.ts
 msgid "Allow scheduled sharing"
 msgstr ""
@@ -2757,6 +2761,8 @@ msgstr "కారక నిష్పత్తి"
 #: src/features/assistant/conversation.tsx
 #: src/features/command-palette/pages/resumes.tsx
 #: src/features/homepage/write.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Assistant"
 msgstr "సహాయకుడు"
 
@@ -3388,6 +3394,7 @@ msgstr ""
 #: src/features/homepage/header.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Check"
 msgstr "తనిఖీ"
 
@@ -3738,6 +3745,7 @@ msgstr "విభాగాన్ని క్లియర్ చేయండి"
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Clear selection"
 msgstr "స్పష్టమైన ఎంపిక"
 
@@ -3780,6 +3788,7 @@ msgstr "క్లయింట్ ID"
 #: src/features/command-palette/content.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/new-document-dialog.tsx
+#: src/features/keyboard-shortcuts/index.tsx
 #: src/features/resume/builder/password-dialog.tsx
 #: src/features/resume/editor/check/check-panel.tsx
 #: src/features/resume/editor/check/page-layer.tsx
@@ -3875,6 +3884,7 @@ msgstr "రాబోయేవి"
 #. Accessible label for the command palette dialog
 #. Screen-reader dialog title for the command palette
 #: src/features/command-palette/content.tsx
+#: src/features/command-palette/index.tsx
 msgid "Command palette"
 msgstr "ఆదేశాల పాలెట్"
 
@@ -5739,6 +5749,7 @@ msgstr "{0} పాత్ర యొక్క వివరణ"
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/letter-shell.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -5968,6 +5979,8 @@ msgid "Download {name} sample PDF"
 msgstr "{name} నమూనా PDFని డౌన్‌లోడ్ చేయండి"
 
 #: src/features/resume/editor/chrome/download-sheet.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Download & history"
 msgstr "డౌన్‌లోడ్ & చరిత్ర"
 
@@ -6007,6 +6020,8 @@ msgstr "డౌన్‌లోడ్ విఫలమైంది. మళ్ళీ
 #: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/features/resume/share/web-page-text.ts
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Download PDF"
 msgstr "PDF ను డౌన్‌లోడ్ చేయండి"
 
@@ -8485,6 +8500,14 @@ msgstr "కీ ఉపసంహరించబడింది. దీన్ని
 #: src/features/settings/ai/web-access.tsx
 msgid "Key stored encrypted"
 msgstr "గుప్తీకరించిన కీ నిల్వ చేయబడింది"
+
+#: src/features/command-palette/pages/preferences/index.tsx
+#: src/features/keyboard-shortcuts/index.tsx
+#: src/features/settings/preferences.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/letter/-components/letter-bar.tsx
+msgid "Keyboard shortcuts"
+msgstr "కీబోర్డ్ సత్వరమార్గాలు"
 
 #: src/features/settings/ai/api-keys.tsx
 msgid "Keys act as you with the access you choose. New keys start read-only."
@@ -12506,6 +12529,7 @@ msgid "Red"
 msgstr "ఎరుపు"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Redo"
 msgstr ""
 
@@ -13455,6 +13479,8 @@ msgstr "నమూనా రెజ్యూమ్ జోడించబడిం�
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/profile.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
+#: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Save"
 msgstr "సేవ్ చేయండి"
 
@@ -14314,6 +14340,7 @@ msgstr "నెరడు వెడల్పు"
 #: src/features/resume/share/web-page-text.ts
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 msgid "Share"
 msgstr "షేర్ చేయండి"
 
@@ -14383,6 +14410,10 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
 msgstr "షార్ట్ లింక్ మరియు డొమైన్"
+
+#: src/features/keyboard-shortcuts/index.tsx
+msgid "Shortcuts available on this page. List commands require focus inside their list."
+msgstr "ఈ పేజీలో అందుబాటులో ఉన్న సత్వరమార్గాలు. జాబితా ఆదేశాలకు సంబంధిత జాబితాలో ఫోకస్ అవసరం."
 
 #: src/features/career/workspace/apply.tsx
 msgid "Shorten questions to 2,000 characters and answers to 6,000 characters before marking this applied."
@@ -14656,6 +14687,10 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "Since today"
 msgstr ""
+
+#: src/features/keyboard-shortcuts/character-shortcuts.tsx
+msgid "Single-character shortcuts"
+msgstr "ఒకే అక్షర సత్వరమార్గాలు"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -17006,6 +17041,7 @@ msgstr "లింక్‌లను అండర్లైన్ చేయండ�
 #: src/features/settings/ai/api-keys.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "రద్దు చేయి"
@@ -18072,6 +18108,7 @@ msgstr "{0}ని అడగదగినది"
 #: src/features/homepage/write.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/$resumeId/-components/editor-shell.tsx
+#: src/routes/builder/$resumeId/-components/use-editor-hotkeys.ts
 #: src/routes/builder/letter/-components/letter-bar.tsx
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Write"

@@ -22,6 +22,7 @@ import { useOpenReminder } from "@/features/reminders/open";
 import { useReviewPrompt } from "@/features/reviews/use-review-prompt";
 import { useAccountLocale } from "@/features/settings/account-locale";
 import { i18n, initI18n } from "@/i18n";
+import { KeyboardShortcuts, ShortcutHelpButton } from "@/shell/shortcut-help";
 import { EmptyState, Screen, Toaster, WindowSafeAreaProvider, useReducedMotion, useTheme } from "@/ui";
 import { fontAssets } from "@/ui/fonts";
 import { initTheme } from "@/ui/theme";
@@ -87,6 +88,7 @@ function RootStack() {
 			<Stack
 				screenOptions={{
 					animation: reduced ? "fade" : "default",
+					headerRight: () => <ShortcutHelpButton />,
 					headerTitleStyle: { fontFamily: navigationTheme.fonts.bold.fontFamily },
 				}}
 			>
@@ -103,6 +105,7 @@ function RootStack() {
 				<Stack.Screen name="applications/[id]" options={{ headerShown: false, title: t`Application` }} />
 				<Stack.Screen name="r/[username]/[slug]" options={{ title: t`Resume` }} />
 			</Stack>
+			<KeyboardShortcuts />
 		</ThemeProvider>
 	);
 }

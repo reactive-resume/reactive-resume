@@ -5,6 +5,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { TabsList, TabsTrigger } from "@reactive-resume/ui/components/tabs";
 import { DocumentMenu } from "./document-menu";
+import { useShortcutSettings } from "@/features/keyboard-shortcuts/settings";
 import { useCurrentBuilderResumeSelector, useCurrentResume, useResumeStore } from "@/features/resume/builder/draft";
 import { useOpenIssueCount } from "@/features/resume/editor/check/use-check";
 import { DownloadButtons, EditorBarFrame } from "@/features/resume/editor/chrome/bar";
@@ -83,6 +84,7 @@ const MODE_ICONS = {
 } as const;
 
 function ModeTabs() {
+	const characterShortcuts = useShortcutSettings((state) => state.characterShortcuts);
 	const issueCount = useOpenIssueCount();
 	const isPublic = useCurrentBuilderResumeSelector((resume) => resume.isPublic ?? false);
 	const labels: Record<EditorMode, string> = {
@@ -103,11 +105,15 @@ function ModeTabs() {
 					key={mode}
 					value={mode}
 					className="px-4"
-					aria-keyshortcuts={String(index + 1)}
-					title={t({
-						comment: "Mode tab tooltip: the mode, then the key that opens it",
-						message: `${labels[mode]} · key ${index + 1}`,
-					})}
+					aria-keyshortcuts={characterShortcuts ? String(index + 1) : undefined}
+					title={
+						characterShortcuts
+							? t({
+									comment: "Mode tab tooltip: the mode, then the key that opens it",
+									message: `${labels[mode]} · key ${index + 1}`,
+								})
+							: labels[mode]
+					}
 				>
 					<Icon name={MODE_ICONS[mode]} size={18} />
 					{labels[mode]}
