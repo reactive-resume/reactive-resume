@@ -58,9 +58,12 @@ const factChanged = (story: Story, facts: Map<string, Fact>) =>
 		return at !== undefined && new Date(at) > new Date(story.updatedAt);
 	});
 
-type StoriesPageProps = { storyId: string | undefined; edit: boolean };
+/** A new story started from an interview plan's step: its title, and the step's detail shown as a note. */
+type StoryStart = { title: string; note: string; plan: string };
 
-export function StoriesPage({ storyId, edit }: StoriesPageProps) {
+type StoriesPageProps = { storyId: string | undefined; edit: boolean; start?: StoryStart | undefined };
+
+export function StoriesPage({ storyId, edit, start: planStart }: StoriesPageProps) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const storyQuery = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: null } }));
@@ -168,6 +171,7 @@ export function StoriesPage({ storyId, edit }: StoriesPageProps) {
 								onSaved={(id) => open(id)}
 								onCancel={() => open(selected?.id)}
 								onDelete={selected ? () => remove(selected) : undefined}
+								start={selected ? undefined : planStart}
 							/>
 						) : (
 							selected && <StoryReader story={selected} facts={factsById} onEdit={() => open(selected.id, true)} />
@@ -459,9 +463,11 @@ type StoryEditorProps = {
 	 * kept on Cancel, so the review card can be reopened with the edits. Saved in the proposal's scope.
 	 */
 	proposal?: { key: string; story: Omit<CareerStoryData, "applicationId">; applicationId: string | null };
+	/** A new story from an interview plan's "Draft story" step. */
+	start?: StoryStart | undefined;
 };
 
-export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposal }: StoryEditorProps) {
+export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposal, start: plan }: StoryEditorProps) {
 	const queryClient = useQueryClient();
 	const start = proposal?.story ?? story?.data;
 	const applicationId = proposal ? proposal.applicationId : null;
@@ -470,9 +476,15 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 		setValue: setDraft,
 		clear,
 	} = useSessionDraft(
-		proposal ? `story:proposal:${proposal.key}` : `story:${story?.id ?? "new"}`,
+		proposal
+			? `story:proposal:${proposal.key}`
+			: story
+				? `story:${story.id}`
+				: plan
+					? `story:new:plan:${plan.plan}:${plan.title}`
+					: "story:new",
 		{
-			title: start?.title ?? "",
+			title: start?.title ?? plan?.title ?? "",
 			situation: start?.situation ?? "",
 			task: start?.task ?? "",
 			action: start?.action ?? "",
@@ -547,6 +559,11 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 				submit(event.currentTarget);
 			}}
 		>
+			{plan?.note && (
+				<p className="rounded-lg bg-info-soft px-3 py-2 text-sm text-info-text">
+					<Trans>From your interview plan: {plan.note}</Trans>
+				</p>
+			)}
 			<div className="grid gap-2">
 				{/* A textarea so a long title wraps as it does in the reader; Enter doesn't add a line. */}
 				<Textarea

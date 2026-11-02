@@ -11,7 +11,9 @@ import { useTheme } from "@/features/theme/provider";
 
 const githubUrl = "https://github.com/reactive-resume/reactive-resume";
 const licenseUrl = `${githubUrl}/blob/main/LICENSE`;
-const linkClass = "text-ink transition-colors hover:text-accent-text";
+// On touch, each link is a 44px row; the column gap closes so the columns don't grow.
+const linkClass =
+	"text-ink transition-colors hover:text-accent-text pointer-coarse:inline-flex pointer-coarse:min-h-11 pointer-coarse:items-center";
 
 type FooterLink =
 	| { label: string; href: string }
@@ -125,7 +127,7 @@ export function LandingFooter() {
 							<h2 id={`footer-${column.id}`} className={cn(labelClass, "mb-1 text-ink-3")}>
 								{column.title}
 							</h2>
-							<ul className="flex flex-col gap-2.5">
+							<ul className="flex flex-col gap-2.5 pointer-coarse:gap-0">
 								{column.links.map((link) => (
 									<li key={link.label}>
 										<FooterLinkItem link={link} />

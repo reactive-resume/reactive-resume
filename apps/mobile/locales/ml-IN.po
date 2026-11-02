@@ -215,8 +215,10 @@ msgstr "{0, plural, one {# എൻട്രി} other {# എൻട്രികൾ
 
 #. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
+#. placeholder {0}: sent.facts.length
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, one {# വസ്തുത} other {# വസ്തുതകൾ}}"
 
@@ -263,7 +265,9 @@ msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
 #. placeholder {0}: offerIds.length
+#. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, one {സംരക്ഷിച്ച # ഓഫർ} other {സംരക്ഷിച്ച # ഓഫറുകൾ}}"
 
@@ -278,7 +282,9 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# തിരഞ്ഞെടുത്തു} other {# തിരഞ്ഞെടുത്തു}}"
 
 #. placeholder {0}: knowledge.stories.length
+#. placeholder {0}: sent.stories.length
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, one {# കഥ} other {# കഥകൾ}}"
 
@@ -968,6 +974,10 @@ msgid "A fact changed. Review this story."
 msgstr "ഒരു വസ്തുത മാറി. ഈ കഥ പരിശോധിക്കുക."
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail."
 msgstr ""
 
@@ -1348,10 +1358,6 @@ msgstr "ജോലി ഓഫർ ചേർക്കുക"
 msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 msgstr "സ്വീകരിച്ച ഓഫറുകളുടേത് ഉൾപ്പെടെ ഓഫർ നിബന്ധനകൾ സ്വയം ചേർക്കുക. അല്ലെങ്കിൽ അപേക്ഷയുടെ «സന്ദേശങ്ങൾ» ടാബിൽ ഓഫർ ഇമെയിൽ ഒട്ടിച്ച് AI ഉപയോഗിക്കാൻ «എനിക്കുവേണ്ടി വായിക്കുക» തിരഞ്ഞെടുക്കുക. അപേക്ഷ സ്വീകരിച്ചതായി അടയ്ക്കുന്നത് നിബന്ധനകൾ രേഖപ്പെടുത്തില്ല."
 
-#: src/features/career/facts.tsx
-msgid "Add one above."
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "നിങ്ങളുടെ ജോലി കാണിക്കുന്ന ഒരു ലിങ്ക് ചേർക്കുക."
@@ -1447,6 +1453,10 @@ msgstr ""
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "നിങ്ങൾ ഡൊമെയ്ൻ നിയന്ത്രിക്കുന്നിടത്ത് ഈ റെക്കോർഡുകൾ ചേർക്കുക, തുടർന്ന് പരിശോധിക്കുക. മാറ്റങ്ങൾ എല്ലാവരിലേക്കും എത്താൻ കുറച്ച് മണിക്കൂറുകൾ എടുത്തേക്കാം."
+
+#: src/features/career/facts.tsx
+msgid "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
@@ -1941,6 +1951,7 @@ msgid "Application phone"
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "അപേക്ഷാ സംഗ്രഹങ്ങൾ"
 
@@ -2056,8 +2067,8 @@ msgid "Ask about your next career step…"
 msgstr "നിങ്ങളുടെ അടുത്ത കരിയർ ചുവടിനെക്കുറിച്ച് ചോദിക്കുക…"
 
 #: src/features/assistant/coach-screen.tsx
-msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
-msgstr "നിങ്ങളുടെ ജോലി തിരയലിനെക്കുറിച്ച് ചോദിക്കുക, അല്ലെങ്കിൽ കൂടുതൽ നന്നായി വിശദീകരിക്കാൻ ആഗ്രഹിക്കുന്ന ഒരു നേട്ടം കൊണ്ടുവരിക. താഴെ ഓണാക്കിയവയാണ് ഉത്തരങ്ങൾ ഉപയോഗിക്കുന്നത്, എന്തിനെ ആശ്രയിച്ചു എന്നും അവ പറയും."
+msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
+msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
@@ -2080,6 +2091,7 @@ msgid "Ask the assistant to work it in"
 msgstr "അതിൽ പ്രവർത്തിക്കാൻ അസിസ്റ്റൻ്റിനോട് ആവശ്യപ്പെടുക"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/today.tsx
 #: src/features/workspace/shell.tsx
 msgid "Ask the coach"
 msgstr "കോച്ചിനോട് ചോദിക്കുക"
@@ -2321,6 +2333,10 @@ msgstr "നിങ്ങളുടെ ഏറ്റവും കുറഞ്ഞ അ
 #: src/features/settings/locale-names.ts
 msgid "Bengali"
 msgstr "ബെംഗാളി"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "blank"
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "Board"
@@ -4446,6 +4462,10 @@ msgstr "ഈ ജോലിക്കുള്ള രേഖകൾ"
 msgid "Documents you move here stay for 30 days."
 msgstr "നിങ്ങൾ ഇവിടേക്ക് നീക്കുന്ന പ്രമാണങ്ങൾ 30 ദിവസം നിലനിൽക്കും."
 
+#: src/features/assistant/coach-screen.tsx
+msgid "Does this offer meet what I want?"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "ഡൊമെയ്ൻ കണക്റ്റ് ചെയ്തു"
@@ -5392,6 +5412,11 @@ msgstr "അനുയോജ്യതയിൽ നിന്ന്"
 #: src/features/assistant/assistant-screen.tsx
 msgid "From your experience entries"
 msgstr "നിങ്ങളുടെ അനുഭവക്കുറിപ്പുകളിൽ നിന്ന്"
+
+#. placeholder {0}: start.note
+#: src/features/career/stories.tsx
+msgid "From your interview plan: {0}"
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "From your timezone"
@@ -7645,6 +7670,11 @@ msgstr "ലിങ്ക് ചെയ്‌ത അപേക്ഷയൊന്ന�
 msgid "No location"
 msgstr "സ്ഥാനമില്ല"
 
+#. placeholder {0}: facts.find((fact) => fact.id === id)?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr ""
+
 #: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
@@ -7780,6 +7810,10 @@ msgstr "പ്രവൃത്തി പരിചയം കാണിക്കു�
 #: src/features/ats-checker/messages.ts
 msgid "No work-experience section was found."
 msgstr "പ്രവൃത്തിപരിചയ വിഭാഗം കണ്ടെത്തിയില്ല."
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "none"
+msgstr "ഒന്നുമില്ല"
 
 #: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
@@ -10457,6 +10491,10 @@ msgstr "ജോലി സംരക്ഷിക്കുന്നു. മറ്റ
 msgid "Saving…"
 msgstr "… സംരക്ഷിക്കുന്നു"
 
+#: src/features/career/today.tsx
+msgid "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -10785,6 +10823,11 @@ msgstr "അയച്ചു"
 msgid "Sent to {0}"
 msgstr "{0}-ലേക്ക് അയച്ചു"
 
+#. placeholder {0}: sent.summary
+#: src/features/assistant/messages.tsx
+msgid "Sent: {0}"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "സെർബിയൻ"
@@ -10844,6 +10887,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
 msgstr "റോളുകൾ കണ്ടെത്താൻ സെറ്റിംഗ്സ് എന്നതിൽ വെബ് തിരയൽ സജ്ജീകരിക്കുക."
+
+#: src/features/career/today.tsx
+msgid "Set your preferences"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -11734,6 +11781,11 @@ msgstr "ടാഗുകൾ"
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 msgstr "ടാഗുകൾ സോഫ്റ്റ്‌വെയറിന് വ്യക്തമായ വായനാ ക്രമം നൽകുന്നു. നിങ്ങളുടെ ടൂൾ അനുവദിക്കുന്നെങ്കിൽ, എക്സ്പോർട്ട് ചെയ്യുമ്പോൾ അവ പ്രവർത്തനക്ഷമമാക്കുക."
+
+#. placeholder {0}: previous.data.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr ""
 
 #: src/features/documents/document-sheets.tsx
 msgid "Tags…"
@@ -13047,12 +13099,25 @@ msgstr "25 MB വരെ · സെർവറിൽ പരിശോധിച്ച�
 msgid "Update"
 msgstr ""
 
+#. placeholder {0}: previous.data.title
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update “{0}” in Knowledge?"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Update posting details"
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update story"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update this story in Knowledge?"
 msgstr ""
 
 #: src/features/applications/queries.ts
@@ -13487,6 +13552,15 @@ msgstr "നിങ്ങൾക്കായി കാത്തിരിക്ക�
 msgid "Waiting to hear back"
 msgstr "തിരിച്ചു കേൾക്കാൻ കാത്തിരിക്കുന്നു"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "was {was}"
+msgstr ""
+
+#. placeholder {0}: part.was.trim() || t`blank`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Was: {0}"
+msgstr ""
+
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
 #: src/features/ai/web-access.tsx
@@ -13605,6 +13679,14 @@ msgstr "നിങ്ങൾക്ക് പ്രധാനപ്പെട്ട�
 msgid "What should change?"
 msgstr "എന്ത് മാറ്റണം?"
 
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding on this offer?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding?"
+msgstr ""
+
 #: src/features/workspace/coach-starters.ts
 msgid "What should I ask them?"
 msgstr ""
@@ -13633,6 +13715,10 @@ msgstr "തയ്യാറാക്കാൻ അവർ ആവശ്യപ്പ�
 msgid "What to do"
 msgstr "എന്തുചെയ്യും"
 
+#: src/features/assistant/messages.tsx
+msgid "What was sent"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "What works"
 msgstr "ഫലിക്കുന്നത്"
@@ -13648,6 +13734,14 @@ msgstr "നിങ്ങൾ അയച്ചത്"
 #: src/features/career/preferences.tsx
 msgid "What you're looking for"
 msgstr "നിങ്ങൾ തിരയുന്നത്"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from these offers that I should get in writing?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from this offer that I should get in writing?"
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "What's working"
@@ -13694,6 +13788,10 @@ msgstr "നിങ്ങൾ ജോലി അന്വേഷിക്കുന്�
 #: src/features/applications-board/insights-screen.tsx
 msgid "Where your applications went"
 msgstr "നിങ്ങളുടെ അപേക്ഷകൾ എവിടെ പോയി"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Which offer fits my requirements better?"
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
@@ -14078,6 +14176,10 @@ msgstr ""
 msgid "Your headings look the same as your body text."
 msgstr "നിങ്ങളുടെ തലക്കെട്ടുകൾ ബോഡി ടെക്സ്റ്റ് പോലെ തന്നെ കാണപ്പെടുന്നു."
 
+#: src/features/career/today.tsx
+msgid "Your job search starts here"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"
 msgstr "നിങ്ങളുടെ അറിവ്"
@@ -14132,6 +14234,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "നിങ്ങളുടെ ഫോൺ നമ്പർ അസാധാരണമായ രീതിയിലാണ് എഴുതിയിരിക്കുന്നത്."
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 #: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "നിങ്ങളുടെ പ്രിഫറൻസുകൾ"

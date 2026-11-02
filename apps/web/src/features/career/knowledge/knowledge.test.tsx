@@ -175,7 +175,8 @@ it("prefills currency when an offer arrives after an initially empty saved-offer
 	if (!client) throw new Error("Missing mounted query client");
 	await waitFor(() => expect(client.getQueryState(["savedItems"])?.status).toBe("success"));
 	const currency = screen.getByLabelText("Currency") as HTMLInputElement;
-	expect(currency.value).toBe("");
+	// Before any saved offer, the currency of the minimum salary in Preferences.
+	expect(currency.value).toBe("EUR");
 	await act(() => {
 		client.setQueryData(
 			["savedItems"],

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
 import { offerApplications, parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
-import { client, useCareerAction, useCareerTime, useOffers } from "./hooks";
+import { client, useCareerAction, useCareerQueries, useCareerTime, useOffers } from "./hooks";
 import { formatMoney } from "./offer-compare";
 import { EditorSheet, LoadState } from "./shared";
 import { WallClockField } from "@/features/application-detail/date-field";
@@ -169,7 +169,10 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		const currency = previousOfferCurrency(savedOffers.data);
 		if (currency) setPreviousCurrency(currency);
 	}
-	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
+	// A new offer starts in the last offer's currency, else the one the user's minimum salary is in (Preferences).
+	const careerProfile = useCareerQueries().profile.data;
+	const preferred = careerProfile?.minBase.amount === null ? undefined : careerProfile?.minBase.currency;
+	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? preferred ?? "" };
 	const [more, setMore] = useState(Boolean(offer));
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
 	const [submitted, setSubmitted] = useState(false);

@@ -21,6 +21,7 @@ import {
 	useWebSearch,
 	WebResearchChip,
 } from "./provider";
+import { usableStories } from "./sent";
 import { useDeleteThread, useThreadTime, useThreadTitle } from "./threads";
 import { client, orpc } from "@/api/client";
 import { useSession } from "@/auth/session";
@@ -52,18 +53,10 @@ function useCoachKnowledge() {
 	const facts = useQuery({ ...factsOptions, queryKey: [...factsOptions.queryKey, session.server], enabled });
 	const stories = useQuery({ ...storiesOptions, queryKey: [...storiesOptions.queryKey, session.server], enabled });
 	const active = (facts.data ?? []).filter((fact) => fact.status === "active" && fact.applicationId === null);
-	const usable = (stories.data ?? []).filter(
-		(story) =>
-			story.data.factIds.length > 0 &&
-			story.data.factIds.every((id) =>
-				active.some(
-					(fact) =>
-						fact.id === id && (fact.revisions.length === 0 || new Date(fact.updatedAt) <= new Date(story.updatedAt)),
-				),
-			),
-	);
+	const usable = usableStories(active, stories.data ?? []);
 	return {
 		all: facts.data ?? [],
+		allStories: stories.data ?? [],
 		isPending: facts.isPending || stories.isPending,
 		isError: facts.isError || stories.isError,
 		retry: () => {
@@ -72,6 +65,8 @@ function useCoachKnowledge() {
 		},
 		facts: active.length,
 		stories: usable.length,
+		factIds: active.map((fact) => fact.id),
+		storyIds: usable.map((story) => story.id),
 	};
 }
 
@@ -211,6 +206,15 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 						void threads.refetch();
 					}}
 					context={context}
+					// Recorded on each question as web does (coach-thread.tsx usedFor), for the Sent line on both.
+					sent={() => ({
+						facts: chips.memory ? knowledge.factIds.slice(0, 30) : [],
+						stories: chips.memory ? knowledge.storyIds.slice(0, 8) : [],
+						preferences: chips.memory,
+						applications: chips.application,
+						offers: context.offerIds ?? [],
+						web: context.web === true,
+					})}
 					document={null}
 					onRefresh={() =>
 						Promise.allSettled([
@@ -225,6 +229,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 					privacy={privacyFor}
 					remember={{ applicationId: null }}
 					facts={knowledge.all}
+					stories={knowledge.allStories}
 					storyEditor={({ story, onChange, onSaved, onClose }) => (
 						<StoryEditor
 							story={null}
@@ -285,7 +290,9 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 							) : null}
 						</>
 					}
-					empty={(send) => <Starters disabled={knowledgeBlocks || !provider} onPick={send} />}
+					empty={(send) => (
+						<Starters disabled={knowledgeBlocks || !provider} offers={context.offerIds?.length ?? 0} onPick={send} />
+					)}
 				/>
 			</ProviderGate>
 
@@ -315,7 +322,10 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 	);
 }
 
-function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: string) => void }) {
+/** `offers`: saved offers sent with this conversation (Offers → Plan what to ask), which get their own starters. */
+type StartersProps = { disabled: boolean; offers: number; onPick: (text: string) => void };
+
+function Starters({ disabled, offers, onPick }: StartersProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const applications = useApplications();
@@ -323,7 +333,7 @@ function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: stri
 	const now = useNow();
 	const open = (applications.data ?? []).filter((application) => application.status !== "closed");
 	// Starters that fit the account: an upcoming interview, an offer or found roles come first when there are some.
-	const starters = coachStarters({
+	const accountStarters = coachStarters({
 		nextInterviewCompany: collectInterviews(open, now)[0]?.application.company,
 		offers: open.filter((application) => application.status === "offer").length,
 		opportunities: (opportunities.data ?? []).filter((row) => !row.trackedApplicationId).length,
@@ -346,6 +356,21 @@ function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: stri
 				return { icon: "compass", text: t`What kinds of roles fit what I've done so far?` };
 		}
 	});
+	// Opened from Offers → Plan what to ask: starters about the offers being decided.
+	const starters: { icon: IconName; text: string }[] =
+		offers > 1
+			? [
+					{ icon: "question", text: t`What should I ask before deciding?` },
+					{ icon: "scales", text: t`Which offer fits my requirements better?` },
+					{ icon: "list-checks", text: t`What's missing from these offers that I should get in writing?` },
+				]
+			: offers === 1
+				? [
+						{ icon: "question", text: t`What should I ask before deciding on this offer?` },
+						{ icon: "scales", text: t`Does this offer meet what I want?` },
+						{ icon: "list-checks", text: t`What's missing from this offer that I should get in writing?` },
+					]
+				: accountStarters;
 	return (
 		<View style={{ gap: space.s4, paddingTop: space.s4 }}>
 			<View style={{ gap: space.s2 }}>
@@ -355,7 +380,7 @@ function Starters({ disabled, onPick }: { disabled: boolean; onPick: (text: stri
 				<Text color="ink2">
 					<Trans>
 						Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on
-						below and say what they relied on.
+						below, and each shows what was sent with it.
 					</Trans>
 				</Text>
 			</View>

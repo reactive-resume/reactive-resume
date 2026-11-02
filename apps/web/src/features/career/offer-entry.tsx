@@ -257,7 +257,10 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		const currency = previousOfferCurrency(savedOffers.data);
 		if (currency) setPreviousCurrency(currency);
 	}
-	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? "" };
+	// A new offer starts in the last offer's currency, else the one the user's minimum salary is in (Preferences).
+	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
+	const preferred = profile?.minBase.amount === null ? undefined : profile?.minBase.currency;
+	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? preferred ?? "" };
 	const [more, setMore] = useState(Boolean(offer));
 	const [submitted, setSubmitted] = useState(false);
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));

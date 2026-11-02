@@ -165,7 +165,11 @@ export function FactsPage({ highlight }: FactsPageProps) {
 						<EmptyState
 							variant="compact"
 							title={facts.length === 0 ? t`No facts yet` : t`No facts match`}
-							description={facts.length === 0 ? t`Add one above.` : t`Try another word or type.`}
+							description={
+								facts.length === 0
+									? t`Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them.`
+									: t`Try another word or type.`
+							}
 							action={
 								type !== null ? (
 									<Button variant="link" size="sm" onClick={() => setType(null)}>

@@ -2,7 +2,7 @@ import type { Application } from "@/features/applications/types";
 import type { MessageContext } from "@/features/assistant/chat";
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -346,17 +346,19 @@ function CoachSheetBody({
 						/>
 					)
 				}
-				privacy={({ earlier, withheld }: ChatHistory) => (
+				privacy={({ earlier, withheld, attached }: ChatHistory) => (
 					<PrivacyLine>
 						{stranded
 							? t`Nothing is sent until you choose a connection for this conversation.`
 							: earlier > 0
 								? chips.memory
-									? t`Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${label}.`
+									? t`Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to ${label}.`
 									: t`Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`
 								: chips.memory
-									? t`Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${label}.`
+									? t`Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to ${label}.`
 									: t`Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`}
+						{attached > 0 &&
+							` ${plural(attached, { one: "The attached file goes too.", other: "The # attached files go too." })}`}
 						{withheld > 0 && ` ${t`Messages from before Knowledge changed aren't sent.`}`}
 						{context.web && ` ${t`Search terms go to your web search service.`}`}{" "}
 						<MemoryNote knowledge={chips.memory} />

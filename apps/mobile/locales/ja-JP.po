@@ -215,8 +215,10 @@ msgstr "{0, plural, one {#件の項目} other {#件の項目}}"
 
 #. placeholder {0}: knowledge.facts
 #. placeholder {0}: knowledge.facts.length
+#. placeholder {0}: sent.facts.length
 #: src/features/assistant/coach-screen.tsx
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# fact} other {# facts}}"
 msgstr "{0, plural, other {#件の事実}}"
 
@@ -263,7 +265,9 @@ msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
 #. placeholder {0}: offerIds.length
+#. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# saved offer} other {# saved offers}}"
 msgstr "{0, plural, other {#件の保存済みオファー}}"
 
@@ -278,7 +282,9 @@ msgid "{0, plural, one {# selected} other {# selected}}"
 msgstr "{0, plural, one {# が選択されました} other {# が選択されました}}"
 
 #. placeholder {0}: knowledge.stories.length
+#. placeholder {0}: sent.stories.length
 #: src/features/assistant/messages.tsx
+#: src/features/assistant/sent.ts
 msgid "{0, plural, one {# story} other {# stories}}"
 msgstr "{0, plural, other {#件のストーリー}}"
 
@@ -968,6 +974,10 @@ msgid "A fact changed. Review this story."
 msgstr "事実が変更されました。このストーリーを見直してください。"
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail."
 msgstr ""
 
@@ -1348,10 +1358,6 @@ msgstr "オファーを追加"
 msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 msgstr "承諾済みのオファーも含め、条件を手動で追加できます。AIを使う場合は、応募の「メッセージ」タブにオファーのメールを貼り付け、「代わりに読む」を選んでください。応募を承諾済みとして終了しても、条件は記録されません。"
 
-#: src/features/career/facts.tsx
-msgid "Add one above."
-msgstr ""
-
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
 msgstr "自分の仕事を示すリンクを1つ追加してください。"
@@ -1447,6 +1453,10 @@ msgstr ""
 #: src/features/share/custom-domain.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "ドメインを管理しているサービスでこれらのレコードを追加してから、確認してください。変更がすべての人に反映されるまで数時間かかることがあります。"
+
+#: src/features/career/facts.tsx
+msgid "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
@@ -1941,6 +1951,7 @@ msgid "Application phone"
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 msgid "application summaries"
 msgstr "応募の概要"
 
@@ -2056,8 +2067,8 @@ msgid "Ask about your next career step…"
 msgstr "キャリアの次のステップについて質問…"
 
 #: src/features/assistant/coach-screen.tsx
-msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
-msgstr "就職活動について質問したり、うまく説明したい実績を持ち込んだりしてください。回答は下でオンになっている情報を使い、何に基づいたかを示します。"
+msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
+msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
 msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
@@ -2080,6 +2091,7 @@ msgid "Ask the assistant to work it in"
 msgstr "アシスタントに作業を依頼してください"
 
 #: src/features/ai/next-steps.tsx
+#: src/features/career/today.tsx
 #: src/features/workspace/shell.tsx
 msgid "Ask the coach"
 msgstr "コーチに聞く"
@@ -2321,6 +2333,10 @@ msgstr "最低基本給を下回ります。"
 #: src/features/settings/locale-names.ts
 msgid "Bengali"
 msgstr "ベンガル語"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "blank"
+msgstr ""
 
 #: src/features/applications-board/views.tsx
 msgid "Board"
@@ -4446,6 +4462,10 @@ msgstr "この仕事の書類"
 msgid "Documents you move here stay for 30 days."
 msgstr "ここに移動した書類は 30 日間保持されます。"
 
+#: src/features/assistant/coach-screen.tsx
+msgid "Does this offer meet what I want?"
+msgstr ""
+
 #: src/features/share/custom-domain.tsx
 msgid "Domain connected"
 msgstr "ドメインを接続しました"
@@ -5392,6 +5412,11 @@ msgstr "適合度から"
 #: src/features/assistant/assistant-screen.tsx
 msgid "From your experience entries"
 msgstr "体験エントリーから"
+
+#. placeholder {0}: start.note
+#: src/features/career/stories.tsx
+msgid "From your interview plan: {0}"
+msgstr ""
 
 #: src/features/career/search-regions-field.tsx
 msgid "From your timezone"
@@ -7645,6 +7670,11 @@ msgstr "リンクされた応募はありません"
 msgid "No location"
 msgstr "場所がありません"
 
+#. placeholder {0}: facts.find((fact) => fact.id === id)?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr ""
+
 #: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
@@ -7780,6 +7810,10 @@ msgstr "職歴は示されない"
 #: src/features/ats-checker/messages.ts
 msgid "No work-experience section was found."
 msgstr "職歴セクションが見つかりませんでした。"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "none"
+msgstr "なし"
 
 #: src/features/career/today.tsx
 #: src/features/design/advanced.tsx
@@ -10457,6 +10491,10 @@ msgstr "ジョブを保存しています。別の変更を行う前に、確認
 msgid "Saving…"
 msgstr "保存中…"
 
+#: src/features/career/today.tsx
+msgid "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications-board/calendar-screen.tsx
@@ -10785,6 +10823,11 @@ msgstr "送信済み"
 msgid "Sent to {0}"
 msgstr "{0} に送信されました"
 
+#. placeholder {0}: sent.summary
+#: src/features/assistant/messages.tsx
+msgid "Sent: {0}"
+msgstr ""
+
 #: src/features/settings/locale-names.ts
 msgid "Serbian"
 msgstr "セルビア語"
@@ -10844,6 +10887,10 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Set up web search in Settings to find roles."
 msgstr "求人を探すには、設定でウェブ検索を設定してください。"
+
+#: src/features/career/today.tsx
+msgid "Set your preferences"
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -11734,6 +11781,11 @@ msgstr "タグ"
 #: src/features/ats-checker/messages.ts
 msgid "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 msgstr "タグはソフトウェアに明確な読み取り順を伝えます。ツールが対応していれば、エクスポート時に有効にしてください。"
+
+#. placeholder {0}: previous.data.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr ""
 
 #: src/features/documents/document-sheets.tsx
 msgid "Tags…"
@@ -13047,12 +13099,25 @@ msgstr "最大 25 MB · サーバー上でチェックされ、保存されま�
 msgid "Update"
 msgstr ""
 
+#. placeholder {0}: previous.data.title
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update “{0}” in Knowledge?"
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Update posting details"
 msgstr ""
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update story"
+msgstr ""
+
 #: src/api/ai-consent.ts
 msgid "Update this server before approving an AI destination."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update this story in Knowledge?"
 msgstr ""
 
 #: src/features/applications/queries.ts
@@ -13487,6 +13552,15 @@ msgstr "あなたの対応待ち"
 msgid "Waiting to hear back"
 msgstr "返事を待っています"
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "was {was}"
+msgstr ""
+
+#. placeholder {0}: part.was.trim() || t`blank`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Was: {0}"
+msgstr ""
+
 #: app/(tabs)/settings/ai-web-access.tsx
 #: app/(tabs)/settings/ai.tsx
 #: src/features/ai/web-access.tsx
@@ -13605,6 +13679,14 @@ msgstr "あなたが重視すること"
 msgid "What should change?"
 msgstr "何を変えるべきでしょうか?"
 
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding on this offer?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What should I ask before deciding?"
+msgstr ""
+
 #: src/features/workspace/coach-starters.ts
 msgid "What should I ask them?"
 msgstr ""
@@ -13633,6 +13715,10 @@ msgstr "準備するよう求められたこと"
 msgid "What to do"
 msgstr "何をするか"
 
+#: src/features/assistant/messages.tsx
+msgid "What was sent"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "What works"
 msgstr "良かった点"
@@ -13648,6 +13734,14 @@ msgstr "あなたが送ったもの"
 #: src/features/career/preferences.tsx
 msgid "What you're looking for"
 msgstr "探している仕事"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from these offers that I should get in writing?"
+msgstr ""
+
+#: src/features/assistant/coach-screen.tsx
+msgid "What's missing from this offer that I should get in writing?"
+msgstr ""
 
 #: src/features/check/writing.tsx
 msgid "What's working"
@@ -13694,6 +13788,10 @@ msgstr "仕事を探している場所"
 #: src/features/applications-board/insights-screen.tsx
 msgid "Where your applications went"
 msgstr "応募の行き先"
+
+#: src/features/assistant/coach-screen.tsx
+msgid "Which offer fits my requirements better?"
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "Which opportunities best match my priorities?"
@@ -14078,6 +14176,10 @@ msgstr ""
 msgid "Your headings look the same as your body text."
 msgstr "見出しが本文と同じ見た目になっています。"
 
+#: src/features/career/today.tsx
+msgid "Your job search starts here"
+msgstr ""
+
 #: src/features/workspace/tabs/debrief.tsx
 msgid "your Knowledge"
 msgstr "あなたのナレッジ"
@@ -14132,6 +14234,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "電話番号が一般的でない形式で書かれています。"
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/assistant/sent.ts
 #: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "あなたの希望条件"

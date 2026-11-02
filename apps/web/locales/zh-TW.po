@@ -612,6 +612,14 @@ msgstr "{0} 項中已套用 {accepted} 項"
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/career/coach.tsx
+msgid "{attached, plural, one {# attached file} other {# attached files}}"
+msgstr ""
+
+#: src/features/career/workspace/coach-sheet.tsx
+msgid "{attached, plural, one {The attached file goes too.} other {The # attached files go too.}}"
+msgstr ""
+
 #: src/features/resume/editor/design/fit.ts
 msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
 msgstr ""
@@ -1232,6 +1240,10 @@ msgid "A fact changed. Review this story."
 msgstr "某個事實已變更。請檢查這個故事。"
 
 #: src/features/assistant/tool-approvals.tsx
+msgid "a fact that isn't available here"
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
 msgid "A fact that isn't available here. Saving will fail; edit the story first."
 msgstr ""
 
@@ -1699,6 +1711,7 @@ msgstr "新增證據"
 msgid "Add experience"
 msgstr "添加經驗"
 
+#: src/features/career/today.tsx
 #: src/features/career/workspace/fit.tsx
 msgid "Add facts"
 msgstr ""
@@ -1742,10 +1755,6 @@ msgstr "新增錄取邀約"
 #: src/features/career/offers.tsx
 msgid "Add offer terms manually, including accepted offers, or paste the offer email in an application's Messages tab and choose Read it for me to use AI. Closing as accepted does not record terms."
 msgstr "手動新增聘用條件（包括已接受的聘用），或將聘用郵件貼到求職申請的「訊息」分頁，並選擇「幫我讀一下」以使用 AI。將申請標記為已接受並關閉，不會自動記錄聘用條件。"
-
-#: src/features/career/knowledge/facts.tsx
-msgid "Add one above."
-msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Add one link that shows your work."
@@ -1854,6 +1863,10 @@ msgstr ""
 #: src/features/resume/share/dns-records-dialog.tsx
 msgid "Add these records where you manage the domain, then check. Changes can take a few hours to reach everyone."
 msgstr "請在管理網域的地方新增這些記錄，然後進行檢查。變更可能需要幾個小時才會對所有人生效。"
+
+#: src/features/career/knowledge/facts.tsx
+msgid "Add things you've done, with numbers when you have them, such as “Cut checkout errors by 30% in 2025”. The coach backs its answers and your stories with them."
+msgstr ""
 
 #: src/features/career/coach-chat.tsx
 msgid "Add this to my resume where it fits. Propose the edits for me to review:\n"
@@ -2206,8 +2219,8 @@ msgid "Also email {0}"
 msgstr "同時寄送電子郵件至 {0}"
 
 #: src/features/homepage/sections.tsx
-msgid "Also on mobile"
-msgstr "行動裝置也能使用"
+msgid "Also on mobile: <0>Google Play</0> · <1>iPhone beta on TestFlight</1>"
+msgstr ""
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Also shows the icons on skills, profiles and interests."
@@ -2581,8 +2594,8 @@ msgid "Ask about your next career step…"
 msgstr "詢問您職涯的下一步…"
 
 #: src/features/career/coach.tsx
-msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below and say what they relied on."
-msgstr "詢問您的求職狀況，或帶來一項想說得更清楚的成就。回答會使用下方已開啟的內容，並說明依據了什麼。"
+msgid "Ask about your search, or bring an accomplishment you want to explain better. Answers use what's switched on below, and each shows what was sent with it."
+msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
 msgid "Ask anything about this job. The coach reads the posting, your notes and what you sent, and can see you're on the {tabName} tab."
@@ -2616,6 +2629,7 @@ msgstr "詢問助理“{question}”"
 msgid "Ask the assistant to work it in"
 msgstr "請助理幫忙處理"
 
+#: src/features/career/today.tsx
 #: src/features/career/workspace/shell.tsx
 #: src/features/settings/ai/next-steps.tsx
 msgid "Ask the coach"
@@ -2905,6 +2919,10 @@ msgstr "孟加拉語"
 #: src/features/resume/share/download-tab.tsx
 msgid "Best for applying"
 msgstr "最適合申請"
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "blank"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Blocker"
@@ -3263,7 +3281,9 @@ msgstr "正在變更您的密碼…"
 msgid "Chat"
 msgstr ""
 
+#. Homepage scene title, one word followed by a full stop
 #. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
+#: src/features/homepage/check.tsx
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
@@ -5617,6 +5637,10 @@ msgstr "您移至此處的文件會保留 30 天。"
 msgid "Does it use AI?"
 msgstr "會使用 AI 嗎？"
 
+#: src/features/career/coach.tsx
+msgid "Does this offer meet what I want?"
+msgstr ""
+
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Domain connected"
 msgstr "網域已連結"
@@ -6919,6 +6943,11 @@ msgstr "來自您的求職信"
 msgid "From your experience entries"
 msgstr "根據您的經驗條目"
 
+#. placeholder {0}: plan.note
+#: src/features/career/knowledge/stories.tsx
+msgid "From your interview plan: {0}"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "From your message"
 msgstr "來自您的訊息"
@@ -6981,10 +7010,6 @@ msgstr "請向端點營運者取得 API 金鑰。"
 msgid "Get feedback"
 msgstr "取得回饋"
 
-#: src/features/homepage/sections.tsx
-msgid "Get it on"
-msgstr "立即下載"
-
 #: src/features/career/today.tsx
 msgid "Get new roles here every morning"
 msgstr "每天早上在這裡取得新職缺"
@@ -6996,10 +7021,6 @@ msgstr "在 Discord 上取得履歷回饋"
 #: src/features/homepage/footer.tsx
 msgid "Get started"
 msgstr "開始使用"
-
-#: src/features/homepage/sections.tsx
-msgid "Get the beta on"
-msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Getting long. Try “Shorter”, or cut the least specific paragraph."
@@ -9717,6 +9738,11 @@ msgstr "沒有看起來像「職稱 + 雇主」這種搭配的行。"
 msgid "No location"
 msgstr "沒有位置"
 
+#. placeholder {0}: fact?.text ?? t`a fact that isn't available here`
+#: src/features/assistant/tool-approvals.tsx
+msgid "No longer backed by: {0}"
+msgstr ""
+
 #: src/features/career/workspace/answer-library.tsx
 msgid "No matching saved answers. Clear the search to see all answers."
 msgstr ""
@@ -9876,6 +9902,7 @@ msgid "No. {number} · {name}"
 msgstr "編號：{number}·{name}"
 
 #. Receipt line amount for something Reactive Resume doesn't have, e.g. ads.
+#: src/features/assistant/tool-approvals.tsx
 #: src/features/homepage/sections.tsx
 msgid "none"
 msgstr "沒有任何"
@@ -11579,6 +11606,11 @@ msgstr "R"
 msgid "Raise the design sheet"
 msgstr "升起設計單"
 
+#. placeholder {0}: day(row.nextRunAt)
+#: src/features/career/today.tsx
+msgid "Ran {0} · done for this interview"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Re-export from a single-column layout, then copy the text out and check it reads top to bottom."
 msgstr "以單欄佈局重新匯出，然後把文字複製出來，檢查是否按從上到下的順序閱讀。"
@@ -13113,6 +13145,10 @@ msgstr "正在儲存…"
 msgid "Say it aloud"
 msgstr "大聲說出來"
 
+#: src/features/career/today.tsx
+msgid "Say what you're looking for, add facts about your work, then ask the coach. New roles, reminders and finished briefings appear here."
+msgstr ""
+
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Scan the QR code with your authenticator app, or copy the secret and paste it into the app."
 msgstr "使用您的驗證器應用程式掃描 QR Code，或複製金鑰並貼到應用程式中。"
@@ -13529,11 +13565,11 @@ msgid "Sends your message, earlier messages here and this application (posting, 
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on, to {label}."
 msgstr ""
 
 #. placeholder {0}: provider?.label
@@ -13552,6 +13588,11 @@ msgstr "高級產品設計師"
 #: src/features/resume/share/format.ts
 msgid "Sent"
 msgstr "傳送"
+
+#: src/features/career/coach-chat.tsx
+msgctxt "What went to the AI provider with a message"
+msgid "Sent"
+msgstr ""
 
 #. placeholder {0}: version.name
 #: src/features/resume/share/format.ts
@@ -13608,6 +13649,10 @@ msgstr ""
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Set up your authenticator app"
 msgstr "設定您的驗證器應用程式"
+
+#: src/features/career/today.tsx
+msgid "Set your preferences"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -13749,6 +13794,7 @@ msgstr "頁面顯示{title}"
 msgid "Show again"
 msgstr "再次顯示"
 
+#: src/features/career/coach-chat.tsx
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
 msgstr ""
@@ -13803,6 +13849,7 @@ msgid "Show in search engines"
 msgstr "在搜尋引擎中顯示"
 
 #: src/features/assistant/conversation.tsx
+#: src/features/career/coach-chat.tsx
 msgid "Show less"
 msgstr ""
 
@@ -14689,6 +14736,11 @@ msgstr "標籤能為軟體提供明確的閱讀順序。如果您的工具支援
 #: src/features/documents/document-actions.tsx
 msgid "Tags group documents in the library; pick one above the grid to filter by it."
 msgstr "為庫中的文件新增標籤；選擇網格上方的一個進行篩選。"
+
+#. placeholder {0}: previous?.tags.join(" · ") || t`none`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Tags were: {0}"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Tags, separated by commas"
@@ -16315,6 +16367,11 @@ msgstr "即將進行的採訪"
 msgid "Update"
 msgstr ""
 
+#. placeholder {0}: previous.data.title
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update “{0}” in Knowledge?"
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Update posting details"
 msgstr ""
@@ -16323,12 +16380,20 @@ msgstr ""
 msgid "Update resume"
 msgstr "更新履歷"
 
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update story"
+msgstr ""
+
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Update this application's details."
 msgstr "更新此應徵紀錄的詳細資料。"
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Update this server before approving an AI destination."
+msgstr ""
+
+#: src/features/assistant/tool-approvals.tsx
+msgid "Update this story in Knowledge?"
 msgstr ""
 
 #: src/features/applications/components/list-view.tsx
@@ -16561,7 +16626,6 @@ msgid "Use your editor's normal bullet list, so stray glyphs do not land mid-sen
 msgstr "使用編輯器自帶的一般項目符號清單功能，避免出現落在句子中間的雜散符號。"
 
 #: src/features/assistant/conversation.tsx
-#: src/features/career/coach-chat.tsx
 msgid "Used"
 msgstr "已使用"
 
@@ -16819,6 +16883,15 @@ msgstr ""
 msgid "Warning"
 msgstr "警告”"
 
+#: src/features/career/workspace/apply.tsx
+msgid "was {was}"
+msgstr ""
+
+#. placeholder {0}: part.was.trim() || t`blank`
+#: src/features/assistant/tool-approvals.tsx
+msgid "Was: {0}"
+msgstr ""
+
 #: src/features/homepage/hero.tsx
 msgid "WCAG 2.1 AA"
 msgstr "WCAG 2.1 AA"
@@ -16911,6 +16984,7 @@ msgid "Went well"
 msgstr "順利"
 
 #: src/features/ats-checker/checker.tsx
+#: src/features/homepage/check.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a parser reads"
 msgstr "解析器讀到的內容"
@@ -16997,6 +17071,14 @@ msgstr "對您重要的事"
 msgid "What should change?"
 msgstr "應該改變什麼？"
 
+#: src/features/career/coach.tsx
+msgid "What should I ask before deciding on this offer?"
+msgstr ""
+
+#: src/features/career/coach.tsx
+msgid "What should I ask before deciding?"
+msgstr ""
+
 #: src/features/career/workspace/coach-starters.ts
 msgid "What should I ask them?"
 msgstr ""
@@ -17017,10 +17099,6 @@ msgstr "要執行的工作"
 msgid "What should we work on?"
 msgstr "我們該做什麼工作？"
 
-#: src/features/homepage/check.tsx
-msgid "What software reads"
-msgstr "用什麼軟體讀取"
-
 #: src/features/career/workspace/prepare.tsx
 msgid "What success looks like, which challenge matters most, and the next step."
 msgstr "成功是什麼樣子、哪個挑戰最重要，以及下一步。"
@@ -17040,6 +17118,10 @@ msgstr "該怎麼辦"
 #: src/features/career/knowledge/stories.tsx
 msgid "What was happening before you started?"
 msgstr "在您開始之前，情況是怎樣的？"
+
+#: src/features/career/coach-chat.tsx
+msgid "What was sent"
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "What were you responsible for?"
@@ -17070,6 +17152,14 @@ msgstr "您在尋找什麼"
 #: src/features/settings/ai/api-keys.tsx
 msgid "What's it for?"
 msgstr "這是做什麼用的？"
+
+#: src/features/career/coach.tsx
+msgid "What's missing from these offers that I should get in writing?"
+msgstr ""
+
+#: src/features/career/coach.tsx
+msgid "What's missing from this offer that I should get in writing?"
+msgstr ""
 
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "What's working"
@@ -17136,6 +17226,10 @@ msgstr "您的時間軸是否能夠被還原出來。"
 #: src/features/homepage/faq.tsx
 msgid "Which languages does it speak?"
 msgstr "它說哪幾種語言？"
+
+#: src/features/career/coach.tsx
+msgid "Which offer fits my requirements better?"
+msgstr ""
 
 #: src/features/career/coach.tsx
 msgid "Which opportunities best match my priorities?"
@@ -17223,6 +17317,7 @@ msgstr "值得一問"
 msgid "Worth asking {0}"
 msgstr "值得問問 {0}"
 
+#. Homepage scene title, one word followed by a full stop
 #: src/features/homepage/footer.tsx
 #: src/features/homepage/header.tsx
 #: src/features/homepage/write.tsx
@@ -17681,6 +17776,10 @@ msgstr "您的標題看起來和內文一模一樣。"
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Your headline changed on the resume. The letter updated too."
 msgstr "您履歷上的標題發生了變化。這封信也更新了。"
+
+#: src/features/career/today.tsx
+msgid "Your job search starts here"
+msgstr ""
 
 #: src/features/career/workspace/debrief.tsx
 msgid "your Knowledge"
