@@ -89,7 +89,12 @@ function ShortcutContent({ shortcuts, onClose, opener }: ShortcutContentProps) {
 	return (
 		<DialogContent
 			closeLabel={t`Close`}
-			finalFocus={() => (opener?.isConnected ? opener : document.getElementById("keyboard-shortcuts-trigger"))}
+			finalFocus={() =>
+				opener?.isConnected
+					? opener
+					: (document.querySelector<HTMLElement>("[data-chat-shortcut-help]") ??
+						document.getElementById("keyboard-shortcuts-trigger"))
+			}
 		>
 			<DialogHeader>
 				<DialogTitle>

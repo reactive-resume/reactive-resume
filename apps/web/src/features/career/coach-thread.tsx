@@ -1,5 +1,4 @@
 import type { ChatAttachment, MessageContext } from "@/features/assistant/chat";
-import type { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import type { RouterOutput } from "@/libs/orpc/client";
 import type { QueryClient } from "@tanstack/react-query";
 import type { UIMessage } from "ai";
@@ -8,18 +7,10 @@ import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import z from "zod";
 import { AGENT_ATTACHMENT_TYPES } from "@reactive-resume/ai/tools/agent-tool-contracts";
-import { Button } from "@reactive-resume/ui/components/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
@@ -32,8 +23,8 @@ import { useSessionDraft } from "./hooks";
 import { MemoryCard } from "./knowledge/facts";
 import { ContextChip, useCareerTime, useNow, withUndo } from "./shared";
 import { fileToBase64 } from "@/features/assistant/chat";
+import { ChatComposer } from "@/features/assistant/chat-chrome";
 import { toastError } from "@/libs/error-message";
-import { isImeComposing } from "@/libs/keyboard";
 import { client, orpc } from "@/libs/orpc/client";
 
 // The open conversation (AI SDK, Markdown) loads once the coach is on screen, so pages that only use the helpers
@@ -352,7 +343,6 @@ type ComposerProps = Pick<CoachThreadProps, "placeholder" | "chips" | "notice" |
 /** A two-row box that grows to eight, with the context chips, attach and send (stop while writing). */
 export function Composer(props: ComposerProps) {
 	const { i18n } = useLingui();
-	const id = useId();
 	const draft = useSessionDraft(props.draftKey ? `coach:${props.draftKey}` : null, "", (value) =>
 		typeof value === "string" ? value : undefined,
 	);
@@ -401,39 +391,23 @@ export function Composer(props: ComposerProps) {
 	};
 
 	const page = props.variant === "page";
-	const sendLabel = props.streaming ? t`Stop` : t`Send`;
 
 	return (
 		<div className={page ? "border-t border-line px-6 py-3 max-sm:px-3 max-sm:py-2" : "px-3.5 pt-2 pb-3.5"}>
 			<div className={cn("grid gap-2", page && "mx-auto w-full max-w-[720px]")}>
 				{props.notice}
-				<div className="grid rounded-xl border border-control-border bg-raised transition-colors duration-quick focus-within:border-accent">
-					<label htmlFor={id} className="sr-only">
-						<Trans>Message the coach</Trans>
-					</label>
-					<textarea
-						id={id}
-						// What people write can be in any language: its own text sets the direction.
-						dir="auto"
-						value={text}
-						disabled={props.disabled}
-						placeholder={props.placeholder}
-						onChange={(event) => setText(event.target.value)}
-						onKeyDown={(event) => {
-							if (event.key === "Enter" && !event.shiftKey && !isImeComposing(event)) {
-								event.preventDefault();
-								void submit();
-							}
-							if (event.key === "Escape" && props.streaming) {
-								event.preventDefault();
-								props.onStop();
-							}
-						}}
-						className="field-sizing-content max-h-[200px] min-h-[68px] w-full resize-none bg-transparent px-4 pt-3 pb-1.5 text-base leading-[22px] outline-none placeholder:text-ink-3 disabled:opacity-60 md:text-[15px]"
-					/>
-					<div className="flex items-end gap-1.5 px-3 pb-2.5">
-						{/* One row on phones that scrolls sideways, so the chips don't push the message out of view. */}
-						<div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5 max-sm:[scrollbar-width:none] max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:*:shrink-0">
+				<ChatComposer
+					label={t`Message the coach`}
+					placeholder={props.placeholder}
+					value={text}
+					onValueChange={setText}
+					disabled={props.disabled}
+					sendDisabled={!text.trim() || props.disabled || uploading}
+					streaming={props.streaming}
+					onSend={() => void submit()}
+					onStop={props.onStop}
+					chips={
+						<>
 							{props.chips}
 							{attachments.map((attachment) => (
 								<span
@@ -454,43 +428,30 @@ export function Composer(props: ComposerProps) {
 									</button>
 								</span>
 							))}
-						</div>
-						<IconButton
-							icon="paperclip"
-							label={t`Attach a file`}
-							size="icon-sm"
-							disabled={props.disabled || uploading}
-							loading={uploading}
-							className="text-ink-2"
-							onClick={() => fileInput.current?.click()}
-						/>
-						<input
-							ref={fileInput}
-							type="file"
-							multiple
-							accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
-							className="hidden"
-							onChange={(event) => void upload(event.target.files)}
-						/>
-						<Tooltip>
-							<TooltipTrigger
-								render={
-									<Button
-										size="icon-sm"
-										aria-label={sendLabel}
-										disabled={!props.streaming && (props.disabled || uploading)}
-										onClick={props.streaming ? props.onStop : () => void submit()}
-										className="rounded-lg"
-									/>
-								}
-							>
-								{/* Stop is the one filled glyph: a solid square. */}
-								<Icon name={props.streaming ? "stop" : "arrow-up"} filled={props.streaming} size={18} />
-							</TooltipTrigger>
-							<TooltipContent>{sendLabel}</TooltipContent>
-						</Tooltip>
-					</div>
-				</div>
+						</>
+					}
+					actions={
+						<>
+							<IconButton
+								icon="paperclip"
+								label={t`Attach a file`}
+								size="icon-sm"
+								disabled={props.disabled || uploading}
+								loading={uploading}
+								className="text-ink-2"
+								onClick={() => fileInput.current?.click()}
+							/>
+							<input
+								ref={fileInput}
+								type="file"
+								multiple
+								accept={[...AGENT_ATTACHMENT_TYPES, ".md", ".docx"].join(",")}
+								className="hidden"
+								onChange={(event) => void upload(event.target.files)}
+							/>
+						</>
+					}
+				/>
 				{props.privacy(attachments.length)}
 			</div>
 		</div>
@@ -585,53 +546,6 @@ export function WebResearchChip({ status, pressed, onPressedChange }: WebResearc
 				</Trans>
 			</TooltipContent>
 		</Tooltip>
-	);
-}
-
-type UsableProvider = ReturnType<typeof useHasUsableAiProvider>["usableProviders"][number];
-
-type ModelChipProps = {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-	providers: readonly UsableProvider[];
-	current: UsableProvider | undefined;
-	label: string;
-	onChoose: (id: string) => void;
-};
-
-/** "Demo AI · gpt-4.1-mini": the connection this conversation uses; the menu switches it. */
-export function ModelChip({ open, onOpenChange, providers, current, label, onChoose }: ModelChipProps) {
-	const navigate = useNavigate();
-	const text = current ? `${current.label} · ${current.model}` : label;
-	return (
-		<DropdownMenu open={open} onOpenChange={onOpenChange}>
-			<DropdownMenuTrigger
-				render={
-					<button
-						type="button"
-						aria-label={t`Connection: ${text}`}
-						className="flex h-7 max-w-[50%] min-w-0 items-center rounded-sm bg-sunken px-2 font-mono text-xs text-ink-2 transition-colors duration-quick hover:text-ink aria-expanded:text-ink"
-					/>
-				}
-			>
-				<span className="truncate">{text}</span>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" className="w-64">
-				{providers.map((item) => (
-					<DropdownMenuItem key={item.id} onClick={() => onChoose(item.id)}>
-						<span className="grid min-w-0 flex-1">
-							<span className="truncate">{item.label}</span>
-							<span className="truncate font-mono text-xs text-ink-3">{item.model}</span>
-						</span>
-						{item.id === current?.id && <Icon name="check" size={16} />}
-					</DropdownMenuItem>
-				))}
-				{providers.length > 0 && <DropdownMenuSeparator />}
-				<DropdownMenuItem onClick={() => void navigate({ to: "/dashboard/settings/ai" })}>
-					<Trans>Connect another…</Trans>
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
 	);
 }
 

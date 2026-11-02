@@ -12,17 +12,11 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { Button } from "@reactive-resume/ui/components/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@reactive-resume/ui/components/dropdown-menu";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { cn } from "@reactive-resume/utils/style";
+import { ChatWelcome, ModelMenu } from "./chat-chrome";
 import { ConnectionNotice } from "./connection-notice";
 import { Composer, Conversation } from "./conversation";
 import { ProviderSetup, SetUpAi } from "./provider-setup";
@@ -37,7 +31,6 @@ import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS, stagger } from "@/libs/motion";
 import { client, orpc } from "@/libs/orpc/client";
 
-type UsableProvider = ReturnType<typeof useHasUsableAiProvider>["usableProviders"][number];
 type ThreadSummary = RouterOutput["agent"]["threads"]["list"][number];
 
 type AssistantPanelProps = {
@@ -379,52 +372,6 @@ function ConversationLoader({ threadId, document, destinationUnavailable, ...pro
 	);
 }
 
-type ModelMenuProps = {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-	providers: readonly UsableProvider[];
-	current: UsableProvider | undefined;
-	label: string;
-	onChoose: (id: string) => void;
-	/** Connect another…: opens the provider setup over the conversation. */
-	onConnect: () => void;
-};
-
-function ModelMenu({ open, onOpenChange, providers, current, label, onChoose, onConnect }: ModelMenuProps) {
-	return (
-		<DropdownMenu open={open} onOpenChange={onOpenChange}>
-			<DropdownMenuTrigger
-				render={
-					<button
-						type="button"
-						aria-label={t`Model: ${label}`}
-						className="flex h-7 max-w-[140px] items-center gap-0.5 rounded-md px-2 text-xs text-ink-2 transition-colors hover:bg-hover"
-					/>
-				}
-			>
-				<span className="truncate">{current?.model ?? label}</span>
-				<Icon name="caret-down" size={16} />
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" className="w-64">
-				{providers.map((item) => (
-					<DropdownMenuItem key={item.id} onClick={() => onChoose(item.id)}>
-						<span className="grid min-w-0 flex-1">
-							<span className="truncate">{item.label}</span>
-							<span className="truncate text-xs text-ink-3">{item.model}</span>
-						</span>
-						{item.id === current?.id && <Icon name="check" size={16} />}
-					</DropdownMenuItem>
-				))}
-				<DropdownMenuSeparator />
-				{/* Set up here, so the assistant and the message being typed stay as they are. */}
-				<DropdownMenuItem onClick={onConnect}>
-					<Trans>Connect another…</Trans>
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
-}
-
 function Notice({ children }: { children: ReactNode }) {
 	return <div className="m-4 rounded-xl bg-sunken p-4 text-sm text-ink-2">{children}</div>;
 }
@@ -549,47 +496,32 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 		document.kind === "resume" && data && rendered.pageCount > 0 ? measureOverflow(data, rendered) : undefined;
 
 	return (
-		<div className="grid min-h-0 flex-1 content-start gap-4 overflow-y-auto p-4">
-			<div className="grid gap-1.5">
-				<h3 className="font-display text-[22px] leading-7">
-					<Trans>What should we work on?</Trans>
-				</h3>
-				<p className="text-sm text-ink-2">
-					{prepare && document.posting ? (
-						// These tasks answer and draft; none of them edits the document.
-						<Trans>
-							I can see this {kind} and the {document.posting.company} posting. Ask how you fit, or get a follow-up
-							email or interview prep.
-						</Trans>
-					) : document.posting ? (
-						<Trans>
-							I can see this {kind} and the {document.posting.company} posting. Suggestions come back as edits you can
-							review before accepting.
-						</Trans>
-					) : (
-						<Trans>I can see this {kind}. Suggestions come back as edits you can review before accepting.</Trans>
-					)}
-				</p>
-			</div>
-			<ul className="grid gap-1">
-				{suggestionsFor(document, prepare, overflow).map((suggestion, index) => (
-					<li key={suggestion.label} style={stagger(index)} className={ENTER_CLASS}>
-						<button
-							type="button"
-							// On a locked document, only the tasks that answer rather than edit can start.
-							disabled={disabled || (document.locked && suggestion.edits !== false)}
-							onClick={() => onPick(suggestion.prompt ?? suggestion.label)}
-							className="flex min-h-11 w-full items-center gap-3 rounded-lg border border-line px-3 py-2 text-start transition-[background-color,scale] duration-quick ease-enter hover:bg-hover enabled:active:scale-[0.98] disabled:opacity-60"
-						>
-							<Icon name={suggestion.icon} size={20} className="shrink-0 text-ink-2" />
-							<span className="grid min-w-0">
-								<span className="truncate text-sm font-medium">{suggestion.label}</span>
-								<span className="truncate text-xs text-ink-3">{suggestion.hint}</span>
-							</span>
-						</button>
-					</li>
-				))}
-			</ul>
+		<div className="min-h-0 flex-1 overflow-y-auto p-4">
+			<ChatWelcome
+				description={
+					<>
+						{prepare && document.posting ? (
+							// These tasks answer and draft; none of them edits the document.
+							<Trans>
+								I can see this {kind} and the {document.posting.company} posting. Ask how you fit, or get a follow-up
+								email or interview prep.
+							</Trans>
+						) : document.posting ? (
+							<Trans>
+								I can see this {kind} and the {document.posting.company} posting. Suggestions come back as edits you can
+								review before accepting.
+							</Trans>
+						) : (
+							<Trans>I can see this {kind}. Suggestions come back as edits you can review before accepting.</Trans>
+						)}
+					</>
+				}
+				starters={suggestionsFor(document, prepare, overflow).map((suggestion) => ({
+					...suggestion,
+					disabled: disabled || (document.locked && suggestion.edits !== false),
+					onPick: () => onPick(suggestion.prompt ?? suggestion.label),
+				}))}
+			/>
 		</div>
 	);
 }
