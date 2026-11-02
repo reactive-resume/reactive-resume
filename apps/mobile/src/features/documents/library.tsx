@@ -533,7 +533,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 										{(["tags", "sharing", "lock"] as const).map((kind) => (
 											<Button
 												key={kind}
-												label={{ tags: t`Tags`, sharing: t`Sharing`, lock: t`Lock` }[kind]}
+												label={{ tags: t`Tags…`, sharing: t`Sharing`, lock: t`Lock` }[kind]}
 												variant="secondary"
 												disabled={!selected.length || operations.busy}
 												onPress={() => setSheet({ kind, documents: selected })}
