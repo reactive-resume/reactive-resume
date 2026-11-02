@@ -182,7 +182,33 @@ function organization(origin: string): StructuredData {
 	};
 }
 
-function homepageStructuredData(origin: string): StructuredData {
+const FEATURE_LIST = [
+	"Resume editor with a live page preview",
+	`${templateSchema.options.length} templates`,
+	"PDF, Word (DOCX), Markdown and JSON export",
+	"Import from PDF, LinkedIn and JSON Resume, or Word with an AI provider",
+	"ATS readability checker",
+	"Public or password-protected sharing links",
+	"Cover letters and a job application tracker",
+	"Optional AI assistant with your own API key",
+	"Self-hosting with Docker",
+];
+
+/** The page's own words, as its prerendered HTML has them in the visitor's language, for the structured data. */
+type PageText = { locale: Locale; title: string; description: string };
+
+const decodeHtml = (value: string) =>
+	value
+		.replace(/&quot;/g, '"')
+		.replace(/&#39;|&#x27;/g, "'")
+		.replace(/&lt;/g, "<")
+		.replace(/&gt;/g, ">")
+		.replace(/&amp;/g, "&");
+
+// "ATS Checker | Reactive Resume" → "ATS Checker": the page's name without the site's.
+const pageName = (title: string) => decodeHtml(title).split(" | ")[0]?.trim() || decodeHtml(title);
+
+function homepageStructuredData(origin: string, text: PageText): StructuredData {
 	const rootUrl = `${origin}/`;
 	return {
 		"@context": "https://schema.org",
@@ -199,39 +225,32 @@ function homepageStructuredData(origin: string): StructuredData {
 				"@type": ["SoftwareApplication", "WebApplication"],
 				name: "Reactive Resume",
 				url: rootUrl,
-				description: ROOT_DESCRIPTION,
+				description: decodeHtml(text.description),
+				inLanguage: text.locale,
 				applicationCategory: "BusinessApplication",
 				operatingSystem: "Web",
 				isAccessibleForFree: true,
 				offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 				license: `${githubUrl}/blob/main/LICENSE`,
 				publisher: { "@id": `${origin}/#organization` },
-				featureList: [
-					"Resume editor with a live page preview",
-					`${templateSchema.options.length} templates`,
-					"PDF, Word (DOCX), Markdown and JSON export",
-					"Import from PDF, LinkedIn and JSON Resume, or Word with an AI provider",
-					"ATS readability checker",
-					"Public or password-protected sharing links",
-					"Cover letters and a job application tracker",
-					"Optional AI assistant with your own API key",
-					"Self-hosting with Docker",
-				],
+				// The feature list is written in English; other languages leave it out rather than mix languages.
+				...(text.locale === defaultLocale ? { featureList: FEATURE_LIST } : {}),
 			},
 		],
 	};
 }
 
-function atsCheckerStructuredData(origin: string): StructuredData {
+function atsCheckerStructuredData(origin: string, text: PageText): StructuredData {
 	return {
 		"@context": "https://schema.org",
 		"@graph": [
 			organization(origin),
 			{
 				"@type": "WebApplication",
-				name: "ATS Checker",
+				name: pageName(text.title),
 				url: `${origin}/ats-checker`,
-				description: ATS_CHECKER_DESCRIPTION,
+				description: decodeHtml(text.description),
+				inLanguage: text.locale,
 				applicationCategory: "BusinessApplication",
 				operatingSystem: "Web",
 				isAccessibleForFree: true,
@@ -334,7 +353,7 @@ const prerenderedPages: Record<
 		name: string;
 		meta: { title: string; description: string };
 		image: string;
-		structuredData: (origin: string) => StructuredData;
+		structuredData: (origin: string, text: PageText) => StructuredData;
 	}
 > = {
 	"/": {
@@ -353,12 +372,13 @@ const prerenderedPages: Record<
 		name: "resume-templates",
 		meta: { title: TEMPLATES_TITLE, description: TEMPLATES_DESCRIPTION },
 		image: "/opengraph/banner.jpg",
-		structuredData: (origin) => ({
+		structuredData: (origin, text) => ({
 			"@context": "https://schema.org",
 			"@type": "CollectionPage",
-			name: "Free resume templates",
+			name: pageName(text.title),
 			url: `${origin}/resume-templates`,
-			description: TEMPLATES_DESCRIPTION,
+			description: decodeHtml(text.description),
+			inLanguage: text.locale,
 			mainEntity: {
 				"@type": "ItemList",
 				itemListElement: templateSchema.options.map((template, index) => ({
@@ -407,13 +427,14 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 		const page = await readFile(`${prerenderRoot}/${prerendered.name}/${locale}.html`).catch(() =>
 			withMeta(html, prerendered.meta),
 		);
+		const meta = readPageMeta(page, prerendered.meta);
 		const markup = createPageSeoMarkup({
 			canonicalUrl: new URL(pathname, env.APP_URL).toString(),
 			locale,
 			requested,
-			...readPageMeta(page, prerendered.meta),
+			...meta,
 			imageUrl: `${origin}${prerendered.image}`,
-			structuredData: prerendered.structuredData(origin),
+			structuredData: prerendered.structuredData(origin, { locale, ...meta }),
 		});
 		const body =
 			pathname === "/"
