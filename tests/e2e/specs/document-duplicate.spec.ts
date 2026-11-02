@@ -55,6 +55,31 @@ for (const kind of ["resume", "letter"] as const) {
 		expect((await read(request, kind, longThree)).name).toBe(`${"A".repeat(97)} 3`);
 	});
 
+	test(`${kind} builder duplicate uses the same numbered suggestion and accepts a long name`, async ({
+		authPage: page,
+	}) => {
+		const sourceName = "Fictional portfolio ".repeat(5).slice(0, 95);
+		const id = await create(page.request, kind, sourceName);
+		await page.goto(kind === "resume" ? `/builder/${id}` : `/builder/letter/${id}`);
+		await page.getByRole("button", { name: /^Document menu:/ }).click();
+		await page.getByRole("menuitem", { name: "Duplicate", exact: true }).click();
+		const dialog = page.getByRole(kind === "resume" ? "dialog" : "alertdialog", {
+			name: kind === "resume" ? "Duplicate resume" : "Duplicate",
+			exact: true,
+		});
+		const input = dialog.getByRole("textbox").first();
+		await expect(input).toHaveValue(`${sourceName.trim()} 2`);
+		const copyName = "Fictional renamed portfolio ".repeat(4).slice(0, 100).trim();
+		await input.fill(copyName);
+		await dialog.getByRole("button", { name: "Duplicate", exact: true }).click();
+		await expect(page).toHaveTitle(`${copyName} | Reactive Resume`);
+		const copyId = page.url().split("/").at(-1);
+		if (!copyId) throw new Error("Duplicate editor has no document ID");
+		expect(copyId).not.toBe(id);
+		expect((await read(page.request, kind, copyId)).name).toBe(copyName);
+		expect((await read(page.request, kind, id)).name).toBe(sourceName.trim());
+	});
+
 	test(`${kind} library duplicate asks before saving and toast Rename edits the new copy`, async ({
 		authPage: page,
 	}, testInfo) => {
