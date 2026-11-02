@@ -83,6 +83,9 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 		};
 		const onMove = (event: globalThis.PointerEvent) => {
 			pointer = { x: event.screenX, y: event.screenY };
+			// Moved since the scroll: later entries are the pointer's own, even back at the same spot.
+			if (pointerAtScroll && (pointerAtScroll.x !== pointer.x || pointerAtScroll.y !== pointer.y))
+				pointerAtScroll = null;
 		};
 		document.addEventListener("scroll", onScroll, { capture: true, passive: true });
 		document.addEventListener("pointermove", onMove, { capture: true, passive: true });
