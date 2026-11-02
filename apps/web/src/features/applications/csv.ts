@@ -120,7 +120,7 @@ const SLASH_DATE = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
  * Whether a column's slash dates are day-first (15/09/2026). Decided once per column: any first number above 12 makes
  * the column day-first; otherwise it reads month-first (10/15/2026), as US trackers export.
  */
-export function slashDatesDayFirst(values: readonly string[]) {
+function slashDatesDayFirst(values: readonly string[]) {
 	// Only a real day-first date votes: "31/02/2026" can't be one, so it doesn't turn the column around.
 	return values.some(
 		(value) => Number(SLASH_DATE.exec(value.trim())?.[1] ?? 0) > 12 && readCsvDate(value.trim(), true) !== undefined,
@@ -128,7 +128,7 @@ export function slashDatesDayFirst(values: readonly string[]) {
 }
 
 /** A date as other trackers write it (2026-10-15, 10/15/2026, 15/10/2026, 15.10.2026), as `YYYY-MM-DD`. */
-export function readCsvDate(value: string, dayFirst = false) {
+function readCsvDate(value: string, dayFirst = false) {
 	const pad = (number: string) => number.padStart(2, "0");
 	const iso = dateOnly(value);
 	if (iso) return iso;
