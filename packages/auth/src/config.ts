@@ -26,7 +26,7 @@ import { admin, anonymous, jwt, openAPI } from "better-auth/plugins";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { twoFactor } from "better-auth/plugins/two-factor";
 import { username } from "better-auth/plugins/username";
-import { and, desc, eq, gt, inArray, ne, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull, lt, ne, sql } from "drizzle-orm";
 import { createLocalJWKSet, jwtVerify } from "jose";
 import { createDefaultOwnedApplicationLanes, MAX_APPLICATION_LANES } from "@reactive-resume/db/application-lanes";
 import { db } from "@reactive-resume/db/client";
@@ -194,6 +194,38 @@ async function revokeGrantTokens(executor: Database | Transaction, userId: strin
 		.update(schema.oauthAccessToken)
 		.set({ revoked })
 		.where(and(eq(schema.oauthAccessToken.clientId, clientId), eq(schema.oauthAccessToken.userId, userId)));
+}
+
+// A consent this new was just granted, not an earlier one whose scopes were changed.
+const FRESH_GRANT_MS = 60_000;
+
+/**
+ * After a reconnect, refresh tokens from before it stop working. A refresh racing an earlier disconnect could leave
+ * one unrevoked; it would otherwise mint tokens for the new grant. An existing grant re-approved keeps its tokens.
+ */
+async function revokeTokensFromBeforeGrant(oauthQuery: string, headers: Headers | undefined) {
+	const clientId = new URLSearchParams(oauthQuery).get("client_id");
+	if (!clientId) return;
+	const session = await auth.api.getSession({ headers: headers ?? new Headers(), query: { disableCookieCache: true } });
+	if (!session) return;
+	const [consent] = await db
+		.select({ createdAt: schema.oauthConsent.createdAt })
+		.from(schema.oauthConsent)
+		.where(and(eq(schema.oauthConsent.clientId, clientId), eq(schema.oauthConsent.userId, session.user.id)))
+		.limit(1);
+	if (!consent?.createdAt || Date.now() - consent.createdAt.getTime() > FRESH_GRANT_MS) return;
+	const revoked = new Date();
+	await db
+		.update(schema.oauthRefreshToken)
+		.set({ revoked })
+		.where(
+			and(
+				eq(schema.oauthRefreshToken.clientId, clientId),
+				eq(schema.oauthRefreshToken.userId, session.user.id),
+				lt(schema.oauthRefreshToken.createdAt, consent.createdAt),
+				isNull(schema.oauthRefreshToken.revoked),
+			),
+		);
 }
 
 export function isCustomOAuthProviderEnabled() {
@@ -865,6 +897,10 @@ const getAuthConfig = () => {
 				const payload = ctx.context.returned as JWTPayload | undefined;
 				if (ctx.path === "/oauth2/public-client-prelogin" && payload && typeof payload.client_id === "string") {
 					return ctx.json({ client_id: payload.client_id, client_name: payload.client_name });
+				}
+				if (ctx.path === "/oauth2/consent" && ctx.body?.accept === true && typeof ctx.body.oauth_query === "string") {
+					await revokeTokensFromBeforeGrant(ctx.body.oauth_query, ctx.headers);
+					return;
 				}
 				// Run after the provider authenticates the introspecting client and verifies the token.
 				if (ctx.path !== "/oauth2/introspect" || !payload || payload.active !== true || typeof payload.azp !== "string")

@@ -71,7 +71,13 @@ export function ConnectedApps() {
 				<Banner
 					tone="danger"
 					message={t`Couldn't load connected applications.`}
-					action={{ label: t`Try again`, onPress: () => void connections.refetch() }}
+					action={{
+						label: t`Try again`,
+						onPress: () => {
+							void connections.refetch();
+							void ownClient.refetch();
+						},
+					}}
 				/>
 			) : null}
 			{connections.isSuccess && list.length === 0 ? (
@@ -80,8 +86,9 @@ export function ConnectedApps() {
 			{list.map((connection, index) => {
 				const name = connection.clientName?.trim() || connection.clientId;
 				// Disconnecting this app here would sign it out mid-tap; sign out from Settings instead.
-				// Until this app's client ID is known, every row could be this app: offer no Disconnect yet.
-				const own = !ownClient.isSuccess || ownClient.data === connection.clientId;
+				// Labelled "this app" only on a match; until the lookup succeeds no row offers Disconnect, since any could be it.
+				const own = ownClient.data === connection.clientId;
+				const canDisconnect = ownClient.isSuccess && !own;
 				const connected = connection.createdAt
 					? t`Connected ${i18n.date(connection.createdAt, { dateStyle: "medium" })}`
 					: null;
@@ -91,10 +98,10 @@ export function ConnectedApps() {
 							title={own ? t`${name} (this app)` : name}
 							subtitle={[...scopeLines(connection.scopes), ...(connected ? [connected] : [])].join("\n")}
 							leading="plugs-connected"
-							trailing={own ? undefined : <Text color="dangerText">{t`Disconnect`}</Text>}
-							accessibilityHint={own ? undefined : t`Disconnect ${name}`}
-							disabled={!own && disconnect.isPending}
-							onPress={own ? undefined : () => setSelected({ id: connection.id, name })}
+							trailing={canDisconnect ? <Text color="dangerText">{t`Disconnect`}</Text> : undefined}
+							accessibilityHint={canDisconnect ? t`Disconnect ${name}` : undefined}
+							disabled={canDisconnect && disconnect.isPending}
+							onPress={canDisconnect ? () => setSelected({ id: connection.id, name }) : undefined}
 						/>
 					</Animated.View>
 				);
