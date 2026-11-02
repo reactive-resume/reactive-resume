@@ -735,6 +735,8 @@ function requirementsFor(offer: Offer, profile: CareerProfileData, locale: strin
 
 type OpenQuestionsProps = { offers: Offer[] };
 
+const sentence = (text: string) => (/[.!?…。！？]$/u.test(text.trim()) ? text.trim() : `${text.trim()}.`);
+
 /** What neither offer says yet, as questions to ask, led by what the user said matters. */
 function OpenQuestions({ offers }: OpenQuestionsProps) {
 	const { locale } = useCareerTime();
@@ -797,10 +799,11 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 			) : (
 				<>
 					<p className="text-[13px] leading-[19px] text-ink-2">
+						{/* The quote ends its own sentence: a full stop inside it unless it already has one. */}
 						{said
 							? offers.filter(isDeciding).length > 1
-								? t`You said: “${said}” Ask both companies before deciding.`
-								: t`You said: “${said}” Ask before deciding.`
+								? t`You said: “${sentence(said)}” Ask both companies before deciding.`
+								: t`You said: “${sentence(said)}” Ask before deciding.`
 							: t`Ask before deciding.`}
 					</p>
 					<ol className="grid gap-2">

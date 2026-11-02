@@ -16,6 +16,7 @@ import {
 	formatDuration,
 	groupByDay,
 	interviewKindOf,
+	interviewTypeLabel,
 	monthGrid,
 	upcomingInterviews,
 } from "../interviews";
@@ -101,10 +102,25 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 			>
 				<div className="flex flex-wrap items-center gap-x-3 gap-y-2">
 					<div className="flex flex-wrap items-baseline gap-2">
-						<h2 className="text-lg font-semibold capitalize">{monthFormat.format(month)}</h2>
-						<span className="text-sm text-ink-3">
-							<Plural value={monthCount} _0="No interviews" one="# interview" other="# interviews" />
-						</span>
+						{/* On phones the list below shows every upcoming interview until a month is picked: title it that way,
+						    so the header never says "No interviews" above a list of them. */}
+						{compact && !monthAgenda ? (
+							<>
+								<h2 className="text-lg font-semibold">
+									<Trans>Upcoming</Trans>
+								</h2>
+								<span className="text-sm text-ink-3">
+									<Plural value={upcoming.length} _0="No interviews" one="# interview" other="# interviews" />
+								</span>
+							</>
+						) : (
+							<>
+								<h2 className="text-lg font-semibold capitalize">{monthFormat.format(month)}</h2>
+								<span className="text-sm text-ink-3">
+									<Plural value={monthCount} _0="No interviews" one="# interview" other="# interviews" />
+								</span>
+							</>
+						)}
 					</div>
 
 					<div className="ms-auto flex flex-wrap items-center gap-1">
@@ -233,7 +249,7 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 						{INTERVIEW_KINDS.map((kind) => (
 							<span key={kind.value} className="flex items-center gap-1.5">
 								<span className="size-2 rounded-sm" style={{ background: kind.color }} />
-								{kind.label}
+								{interviewTypeLabel(kind.value)}
 							</span>
 						))}
 					</div>
