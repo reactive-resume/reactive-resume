@@ -39,7 +39,7 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
    CREATE TABLE application (id text PRIMARY KEY, user_id text, company text, role text);
    CREATE TABLE resume (id text PRIMARY KEY, user_id text, name text, tags text[] DEFAULT '{}', is_locked boolean DEFAULT false,
     is_public boolean DEFAULT false, slug text DEFAULT 'resume', trashed_at timestamptz, created_at timestamptz DEFAULT '2026-01-01',
-    updated_at timestamptz DEFAULT '2026-01-01', edited_at timestamptz, application_id text);
+    updated_at timestamptz DEFAULT '2026-01-01', edited_at timestamptz, application_id text, password text);
    CREATE TABLE cover_letter (LIKE resume INCLUDING DEFAULTS);
    ALTER TABLE cover_letter ADD COLUMN source_application_id text, ADD COLUMN recipient_name text DEFAULT '',
     ADD COLUMN recipient_company text DEFAULT '', ADD COLUMN layout text DEFAULT 'structured', ADD COLUMN recipient text DEFAULT '';
@@ -85,6 +85,21 @@ describe.skipIf(!process.env.COVER_LETTER_TEST_DATABASE_URL)("document SQL pages
 			company: "Orbital",
 			role: "Design lead",
 		});
+	});
+
+	it("says which public links ask for a password, without the password itself", async () => {
+		await pool.query(`UPDATE resume SET password = 'hash' WHERE id = 'same' AND user_id = 'owner'`);
+		try {
+			const rows = await api.list();
+			expect(rows.map((row) => [`${row.type}:${row.id}`, row.hasPassword])).toEqual([
+				["letter:same", false],
+				["resume:foreign-link", false],
+				["resume:same", true],
+			]);
+			expect(JSON.stringify(rows)).not.toContain("hash");
+		} finally {
+			await pool.query(`UPDATE resume SET password = NULL WHERE id = 'same'`);
+		}
 	});
 
 	it("projects legacy recipients only for freeform letters, with HTML entities decoded", async () => {

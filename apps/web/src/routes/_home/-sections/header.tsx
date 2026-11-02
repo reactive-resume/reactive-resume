@@ -27,7 +27,7 @@ export function Header() {
 					<BrandIcon variant="icon" className="size-10" />
 				</Link>
 
-				<div className="ml-auto flex items-center gap-x-2">
+				<div className="ms-auto flex items-center gap-x-2">
 					<LocaleCombobox
 						render={
 							<Button size="icon" variant="ghost" aria-label={t`Change language`}>
@@ -47,7 +47,7 @@ export function Header() {
 							aria-label={t`Go to dashboard`}
 							render={
 								<Link to="/dashboard">
-									<ArrowRightIcon aria-hidden="true" />
+									<ArrowRightIcon aria-hidden="true" className="rtl:-scale-x-100" />
 								</Link>
 							}
 						/>

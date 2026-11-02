@@ -137,7 +137,9 @@ function LetterThumbnail({ name, recipient }: { name: string; recipient: string 
 }
 
 /** A status chip on the page thumbnail. The page is white in both themes, so the chip doesn't follow the theme. */
-function PaperBadge({ icon, label }: { icon: "globe" | "lock"; label: string }) {
+type PaperBadgeProps = { icon: "globe" | "lock" | "password"; label: string };
+
+function PaperBadge({ icon, label }: PaperBadgeProps) {
 	return (
 		<span className="grid size-[22px] place-items-center rounded bg-black/75 text-white" title={label}>
 			<Icon name={icon} size={14} />
@@ -210,7 +212,13 @@ export function DocumentCard({
 									<Trans>New</Trans>
 								</span>
 							)}
-							{document.isPublic && <PaperBadge icon="globe" label={t`Public`} />}
+							{/* A protected link reads differently from an open one, as in the builder's details. */}
+							{document.isPublic &&
+								(document.hasPassword ? (
+									<PaperBadge icon="password" label={t`Public, with a password`} />
+								) : (
+									<PaperBadge icon="globe" label={t`Public`} />
+								))}
 							{document.isLocked && <PaperBadge icon="lock" label={t`Locked`} />}
 						</span>
 					</OpenLink>
@@ -348,10 +356,13 @@ export function DocumentRow({
 							</span>
 						)}
 						{document.isPublic && (
-							<span title={t`Public`} className="shrink-0 text-ink-3">
-								<Icon name="globe" size={16} />
+							<span
+								title={document.hasPassword ? t`Public, with a password` : t`Public`}
+								className="shrink-0 text-ink-3"
+							>
+								<Icon name={document.hasPassword ? "password" : "globe"} size={16} />
 								<span className="sr-only">
-									<Trans>Public</Trans>
+									{document.hasPassword ? <Trans>Public, with a password</Trans> : <Trans>Public</Trans>}
 								</span>
 							</span>
 						)}
