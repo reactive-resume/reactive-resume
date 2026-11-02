@@ -27,12 +27,6 @@ export const attachmentPart = (attachment: ChatAttachment): FileUIPart => ({
 	filename: attachment.filename,
 });
 
-export const textOf = (message: UIMessage) =>
-	message.parts
-		.flatMap((part) => (part.type === "text" ? [part.text] : []))
-		.join("")
-		.trim();
-
 export type WebSource = { url: string; title: string };
 
 // Hosts only: IP literals and local names are never shown as sources (web: agentWebSources).
@@ -80,7 +74,7 @@ export function webSources(message: UIMessage): WebSource[] {
 type TranscriptNames = { user: string; assistant: string; sources: string };
 
 /** Copy transcript's wording in the reader's language: speakers, edits with their outcome, and question answers. */
-export function transcriptLabels(names: TranscriptNames): TranscriptLabels {
+function transcriptLabels(names: TranscriptNames): TranscriptLabels {
 	const statusLabel = { pending: t`proposed`, accepted: t`accepted`, rejected: t`rejected` };
 	return {
 		...names,
