@@ -1,6 +1,6 @@
 ---
 title: "Using the Trash"
-description: "Move resumes and cover letters to Trash in Reactive Resume, undo it, restore them within 30 days, or delete them for good."
+description: "Restore resumes and cover letters within 30 days, recover applications with their timelines intact, or explicitly delete them for good."
 ---
 
 When you remove a resume or cover letter, it goes to **Trash** instead of disappearing. It stays there for 30 days, so you can bring it back if you change your mind.
@@ -75,6 +75,27 @@ You can still restore one document from its row menu. On the Trash page, select 
   <img
     src="/images/guides/using-the-trash/trash-page-row-menu.webp"
     alt="The Trash page listing Product Designer, Frontend Engineer and Cover Letter - Orbital, with the Product Designer row menu showing Restore and Delete now"
+  />
+</Frame>
+
+## Restore an application
+
+Choose **Move to Trash** from an application's menu, or from its bulk selection controls. The confirmation explains that applications and their timelines can be restored. This saves the move on the server; reloading does not lose the recovery option.
+
+Open **Applications → More → Trash** on web, or **Trash** on the native Applications screen. From the document Trash page, choose **Applications**. The sidebar count and document retention information cover documents only. The Applications view loads 100 rows at a time, with **Previous** and **Next** for more.
+
+Select **Restore** beside the application. Its identity, timeline, document links, submitted snapshots, workspace, application-specific Knowledge, coach history and attached bytes stay intact. The move itself changes no linked document. Later explicit edits or permanent deletion of a linked document can still change that relationship.
+
+Applications stay in Trash until you delete them permanently; they do not use documents' automatic 30-day expiry. **Delete permanently…** asks for a held confirmation and removes the application and its dependent records. It keeps linked resumes, cover letters and their versions. **Empty Trash…** on the Documents view empties documents only.
+
+Restore and permanent deletion check the exact listed Trash generation. If another session restores or re-trashes the application, an older action fails instead of deleting or restoring the newer state. Refresh the list and review the current row before retrying. If the posting was tracked again while this application was in Trash, resolve that duplicate before restoring it.
+
+Application schedules and notifications are hidden while it is in Trash; queued work is canceled and existing coach runs receive cancellation. Restore does not replay canceled work. Review upcoming schedules and turn device reminders back on where needed.
+
+<Frame caption="Application recovery remains available after reload.">
+  <img
+    src="/images/guides/using-the-trash/application-trash.png"
+    alt="Trash Applications view showing a fictional Cedar application with Restore and Delete permanently controls, and its explicit retention policy."
   />
 </Frame>
 

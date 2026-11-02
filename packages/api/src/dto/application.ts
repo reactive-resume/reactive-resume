@@ -92,6 +92,7 @@ const applicationSchema = createSelectSchema(schema.application, {
 	appliedAt: z.date(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
+	trashedAt: z.date().nullable().optional(),
 }).omit({ submittedAt: true });
 
 /** An application's stage as a write left it, with the ID of its latest stage change: what a later move expects. */

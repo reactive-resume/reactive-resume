@@ -2545,6 +2545,79 @@ assert.equal(calls.at(-1).params.applicationId, "selected-job", "assistant recei
 assert.equal(calls.at(-1).pathname, "/builder/base-retry/assistant");
 console.log("PASS native temporary Job match context protects linkage and follows the assistant handoff");
 
+// Shipped Trash controls pass the listed generation and captured account, and never purge after an account switch.
+reset();
+let trashScope = "account-a";
+const trashRequests = [];
+const trashItem = { id: "retained", company: "Fictional Cedar", role: "Lead", trashedAt: new Date("2030-01-01") };
+let trashTask = Promise.resolve();
+const trashKey = () => ["trash"];
+const { ApplicationTrashScreen } = load("features/applications/trash-screen.tsx", {
+	"./error": { applicationError: (error) => String(error) },
+	"@/auth/session": {
+		getAccountScope: () => trashScope,
+		useSession: () => ({ server: "https://fixture.test", status: "signed-in" }),
+	},
+	"@tanstack/react-query": {
+		useQuery: () => ({ data: { items: [trashItem], total: 1 } }),
+		useQueryClient: () => ({ invalidateQueries: async () => {} }),
+		useMutation: (options) => ({
+			mutate: (input) => {
+				trashTask = options
+					.mutationFn(input)
+					.then(() => options.onSuccess?.())
+					.finally(() => options.onSettled?.());
+			},
+		}),
+	},
+	"@/api/client": {
+		orpc: {
+			applications: {
+				key: trashKey,
+				listTrash: {
+					queryOptions: ({ input, context }) => {
+						assert.equal(context.scope, trashScope);
+						return { queryKey: ["trash", input] };
+					},
+				},
+			},
+			career: { key: trashKey },
+			documents: { key: trashKey },
+			agent: { key: trashKey },
+		},
+		client: {
+			applications: {
+				restore: async (input, options) => {
+					trashRequests.push({ action: "restore", input, scope: options.context.scope });
+				},
+				purge: async (input, options) => {
+					trashRequests.push({ action: "purge", input, scope: options.context.scope });
+				},
+			},
+		},
+	},
+});
+control(render(ApplicationTrashScreen), "Restore").onPress();
+await trashTask;
+assert.deepEqual(trashRequests, [
+	{ action: "restore", input: { id: "retained", trashedAt: trashItem.trashedAt }, scope: "account-a" },
+]);
+control(render(ApplicationTrashScreen), "Delete permanently…").onPress();
+let trashConfirmation = nodes(render(ApplicationTrashScreen)).find((node) => node.type === "ConfirmDialog").props;
+assert.equal(trashConfirmation.hold, true);
+trashScope = "account-b";
+trashConfirmation.onConfirm();
+assert.equal(trashRequests.length, 1, "old account confirmation never dispatches under a new account");
+trashScope = "account-a";
+trashConfirmation.onConfirm();
+await trashTask;
+assert.deepEqual(trashRequests.at(-1), {
+	action: "purge",
+	input: { id: "retained", trashedAt: trashItem.trashedAt },
+	scope: "account-a",
+});
+console.log("PASS native application Trash restore/purge preserve generation, account binding and held confirmation");
+
 // Builder tags use the existing draft/flush owner and leave resume content intact.
 reset();
 const tagSaves = [];

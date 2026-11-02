@@ -268,9 +268,9 @@ const orpc = {
 		getById: { queryOptions: ({ input }) => ({ queryKey: ["applications", "detail", input] }) },
 		create: { mutationOptions: () => ({}) },
 		update: { mutationOptions: () => ({}) },
-		delete: { mutationOptions: () => ({}) },
+		trash: { mutationOptions: () => ({}) },
 		bulkUpdate: { mutationOptions: () => ({}) },
-		bulkDelete: { mutationOptions: () => ({}) },
+		bulkTrash: { mutationOptions: () => ({}) },
 		import: { mutationOptions: () => ({}) },
 		logFollowUp: { mutationOptions: () => ({}) },
 		stats: { queryKey: () => ["applications", "stats"] },
@@ -278,7 +278,8 @@ const orpc = {
 		key: () => ["applications"],
 	},
 	documents: { key: () => ["documents"] },
-	career: { workspace: { key: () => ["career", "workspace"] } },
+	career: { key: () => ["career"], workspace: { key: () => ["career", "workspace"] } },
+	agent: { key: () => ["agent"] },
 };
 let capturedQuery;
 let listRows = [{ ...summary[0], initialDetail: full[0] }];
@@ -430,7 +431,10 @@ const mutations = queries.useApplicationMutations();
 }
 mutations.update.onSettled(undefined, undefined, { id: "app-a" });
 assert.ok(invalidations.some((key) => key[0] === "applications"));
-assert.ok(invalidations.some((key) => key[0] === "career" && key[1] === "workspace"));
+assert.ok(
+	invalidations.some((key) => key[0] === "career"),
+	"application writes invalidate every affected career view",
+);
 const observerClient = new QueryClient();
 const cachedDetail = { ...full[0], resumeFileUrl: "/uploads/resume.pdf", resumeFileName: "resume.pdf" };
 const observerKey = ["application-detail", cachedDetail.id];

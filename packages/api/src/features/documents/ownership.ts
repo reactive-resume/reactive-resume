@@ -56,7 +56,7 @@ export async function isRetriedCreate(tx: DbOrTx, { table, id, userId, request }
 		.from(schema.resume)
 		.where(eq(schema.resume.id, id));
 	const [application] = await tx
-		.select({ userId: schema.application.userId })
+		.select({ userId: schema.application.userId, trashedAt: schema.application.trashedAt })
 		.from(schema.application)
 		.where(eq(schema.application.id, id));
 	const [receipt] = await tx
@@ -68,7 +68,7 @@ export async function isRetriedCreate(tx: DbOrTx, { table, id, userId, request }
 	// A receipted ID was free in both tables when its row was saved, so only that row can hold it.
 	const row = table === "resume" ? resume : application;
 	const sameRequest = receipt?.userId === userId && receipt.fingerprint === fingerprintOf(request);
-	if (row && row.userId === userId && sameRequest && !resume?.trashedAt) return true;
+	if (row && row.userId === userId && sameRequest && !resume?.trashedAt && !application?.trashedAt) return true;
 	throw idInUse();
 }
 

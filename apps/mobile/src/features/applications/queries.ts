@@ -122,7 +122,8 @@ export function useInvalidateApplications() {
 		await Promise.all([
 			queryClient.invalidateQueries({ queryKey: orpc.applications.key() }),
 			queryClient.invalidateQueries({ queryKey: orpc.documents.key() }),
-			queryClient.invalidateQueries({ queryKey: orpc.career.workspace.key() }),
+			queryClient.invalidateQueries({ queryKey: orpc.career.key() }),
+			queryClient.invalidateQueries({ queryKey: orpc.agent.key() }),
 			queryClient.invalidateQueries({ queryKey: ["applications-prior-outcomes"] }),
 		]);
 	};
@@ -197,7 +198,9 @@ export function useApplicationMutations() {
 		onSettled,
 	});
 	const remove = useMutation({
-		...orpc.applications.delete.mutationOptions(),
+		...orpc.applications.trash.mutationOptions(),
+		mutationFn: (input: RouterInput["applications"]["trash"]) =>
+			client.applications.trash(input, { context: { scope: scope ?? undefined } }),
 		onSuccess: (_data, input) => {
 			cancelReminders([input.id]);
 		},
@@ -236,7 +239,9 @@ export function useApplicationMutations() {
 		onSettled,
 	});
 	const bulkDelete = useMutation({
-		...orpc.applications.bulkDelete.mutationOptions(),
+		...orpc.applications.bulkTrash.mutationOptions(),
+		mutationFn: (input: RouterInput["applications"]["bulkTrash"]) =>
+			client.applications.bulkTrash(input, { context: { scope: scope ?? undefined } }),
 		onSuccess: (_data, input) => {
 			cancelReminders(input.ids);
 		},

@@ -1,8 +1,8 @@
 import type { DbOrTx } from "@reactive-resume/db/client";
 import { ORPCError } from "@orpc/client";
-import { eq } from "drizzle-orm";
 import * as tables from "@reactive-resume/db/schema";
 import { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
+import { activeApplications } from "./access";
 
 export async function findTrackedPosting(
 	db: DbOrTx,
@@ -21,7 +21,7 @@ export async function findTrackedPosting(
 			sourceUrl: tables.application.sourceUrl,
 		})
 		.from(tables.application)
-		.where(eq(tables.application.userId, userId));
+		.where(activeApplications(userId));
 	return (
 		rows.find((row) => row.id !== excludeId && row.sourceUrl && canonicalOpportunityUrl(row.sourceUrl) === url) ?? null
 	);

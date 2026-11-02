@@ -39,6 +39,7 @@ import { Route as FeedbackTokenRouteImport } from "./routes/feedback/$token";
 import { Route as BuilderResumeIdIndexRouteImport } from "./routes/builder/$resumeId/index";
 import { Route as BuilderLetterCoverLetterIdRouteImport } from "./routes/builder/letter/$coverLetterId";
 import { Route as DashboardApplicationsIndexRouteImport } from "./routes/dashboard/applications/index";
+import { Route as DashboardApplicationsTrashRouteImport } from "./routes/dashboard/applications/trash";
 import { Route as DashboardCareerIndexRouteImport } from "./routes/dashboard/career/index";
 import { Route as DashboardCareerKnowledgeRouteRouteImport } from "./routes/dashboard/career/knowledge/route";
 import { Route as DashboardCareerOffersRouteImport } from "./routes/dashboard/career/offers";
@@ -209,6 +210,12 @@ const DashboardApplicationsIndexRoute =
     path: "/applications/",
     getParentRoute: () => DashboardRouteRoute,
   } as any);
+const DashboardApplicationsTrashRoute =
+  DashboardApplicationsTrashRouteImport.update({
+    id: "/applications/trash",
+    path: "/applications/trash",
+    getParentRoute: () => DashboardRouteRoute,
+  } as any);
 const DashboardCareerIndexRoute = DashboardCareerIndexRouteImport.update({
   id: "/",
   path: "/",
@@ -343,6 +350,7 @@ export interface FileRoutesByFullPath {
   "/dashboard/career/knowledge": typeof DashboardCareerKnowledgeRouteRouteWithChildren;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
   "/builder/letter/$coverLetterId": typeof BuilderLetterCoverLetterIdRoute;
+  "/dashboard/applications/trash": typeof DashboardApplicationsTrashRoute;
   "/dashboard/career/offers": typeof DashboardCareerOffersRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/ai": typeof DashboardSettingsAiRoute;
@@ -386,6 +394,7 @@ export interface FileRoutesByTo {
   "/dashboard/career/knowledge": typeof DashboardCareerKnowledgeRouteRouteWithChildren;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
   "/builder/letter/$coverLetterId": typeof BuilderLetterCoverLetterIdRoute;
+  "/dashboard/applications/trash": typeof DashboardApplicationsTrashRoute;
   "/dashboard/career/offers": typeof DashboardCareerOffersRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/ai": typeof DashboardSettingsAiRoute;
@@ -437,6 +446,7 @@ export interface FileRoutesById {
   "/dashboard/career/knowledge": typeof DashboardCareerKnowledgeRouteRouteWithChildren;
   "/dashboard/settings/integrations": typeof DashboardSettingsIntegrationsRouteRoute;
   "/builder/letter/$coverLetterId": typeof BuilderLetterCoverLetterIdRoute;
+  "/dashboard/applications/trash": typeof DashboardApplicationsTrashRoute;
   "/dashboard/career/offers": typeof DashboardCareerOffersRoute;
   "/dashboard/settings/account": typeof DashboardSettingsAccountRoute;
   "/dashboard/settings/ai": typeof DashboardSettingsAiRoute;
@@ -488,6 +498,7 @@ export interface FileRouteTypes {
     | "/dashboard/career/knowledge"
     | "/dashboard/settings/integrations"
     | "/builder/letter/$coverLetterId"
+    | "/dashboard/applications/trash"
     | "/dashboard/career/offers"
     | "/dashboard/settings/account"
     | "/dashboard/settings/ai"
@@ -531,6 +542,7 @@ export interface FileRouteTypes {
     | "/dashboard/career/knowledge"
     | "/dashboard/settings/integrations"
     | "/builder/letter/$coverLetterId"
+    | "/dashboard/applications/trash"
     | "/dashboard/career/offers"
     | "/dashboard/settings/account"
     | "/dashboard/settings/ai"
@@ -581,6 +593,7 @@ export interface FileRouteTypes {
     | "/dashboard/career/knowledge"
     | "/dashboard/settings/integrations"
     | "/builder/letter/$coverLetterId"
+    | "/dashboard/applications/trash"
     | "/dashboard/career/offers"
     | "/dashboard/settings/account"
     | "/dashboard/settings/ai"
@@ -821,6 +834,13 @@ declare module "@tanstack/react-router" {
       path: "/applications";
       fullPath: "/dashboard/applications/";
       preLoaderRoute: typeof DashboardApplicationsIndexRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
+    "/dashboard/applications/trash": {
+      id: "/dashboard/applications/trash";
+      path: "/applications/trash";
+      fullPath: "/dashboard/applications/trash";
+      preLoaderRoute: typeof DashboardApplicationsTrashRouteImport;
       parentRoute: typeof DashboardRouteRoute;
     };
     "/dashboard/career/": {
@@ -1091,6 +1111,7 @@ interface DashboardRouteRouteChildren {
   DashboardCoverLettersRoute: typeof DashboardCoverLettersRoute;
   DashboardTrashRoute: typeof DashboardTrashRoute;
   DashboardIndexRoute: typeof DashboardIndexRoute;
+  DashboardApplicationsTrashRoute: typeof DashboardApplicationsTrashRoute;
   DashboardApplicationsIndexRoute: typeof DashboardApplicationsIndexRoute;
   DashboardResumesIndexRoute: typeof DashboardResumesIndexRoute;
   DashboardApplicationsApplicationIdChar123TabChar125Route: typeof DashboardApplicationsApplicationIdChar123TabChar125Route;
@@ -1102,6 +1123,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardCoverLettersRoute: DashboardCoverLettersRoute,
   DashboardTrashRoute: DashboardTrashRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardApplicationsTrashRoute: DashboardApplicationsTrashRoute,
   DashboardApplicationsIndexRoute: DashboardApplicationsIndexRoute,
   DashboardResumesIndexRoute: DashboardResumesIndexRoute,
   DashboardApplicationsApplicationIdChar123TabChar125Route:

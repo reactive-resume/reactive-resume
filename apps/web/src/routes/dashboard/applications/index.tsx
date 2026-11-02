@@ -291,6 +291,9 @@ function RouteComponent() {
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align="end">
 								<HotkeysProvider scope={`${overlayScope}-more`} exclusive>
+									<DropdownMenuItem onClick={() => void navigate({ to: "/dashboard/applications/trash" })}>
+										<Trans>Trash</Trans>
+									</DropdownMenuItem>
 									<DropdownMenuItem onClick={() => setImporting(true)}>
 										<Trans>Import CSV…</Trans>
 									</DropdownMenuItem>

@@ -260,7 +260,9 @@ export function registerTools(
 
 		[T.deleteApplication]: withErrorHandling("deleting application", async ({ id }) => {
 			await client.applications.delete({ id });
-			return text(`Deleted application (${id}).`);
+			return text(
+				`Moved application (${id}) to Trash. Restore using api_applications_list_trash and api_applications_restore.`,
+			);
 		}),
 
 		[T.importApplications]: withErrorHandling("importing applications", async (params) =>

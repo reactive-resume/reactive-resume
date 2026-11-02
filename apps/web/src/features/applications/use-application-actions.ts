@@ -19,9 +19,9 @@ export function useInvalidateApplications() {
 	const queryClient = useQueryClient();
 
 	return (id?: string) => {
-		void queryClient.invalidateQueries({ queryKey: applicationsListQueryKey() });
-		void queryClient.invalidateQueries({ queryKey: orpc.applications.stats.queryKey() });
-		void queryClient.invalidateQueries({ queryKey: orpc.applications.tags.queryKey() });
+		void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
+		void queryClient.invalidateQueries({ queryKey: orpc.career.key() });
+		void queryClient.invalidateQueries({ queryKey: orpc.agent.key() });
 		void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 		void queryClient.invalidateQueries({ queryKey: applicationLanesQueryKey() });
 		if (id) {
@@ -277,10 +277,16 @@ export function useApplicationActions() {
 	});
 
 	const remove = useMutation({
-		...orpc.applications.delete.mutationOptions(),
+		...orpc.applications.trash.mutationOptions(),
 		onSuccess: (_data, input) => {
 			invalidate(input.id);
-			toast.add({ description: t`Application deleted` });
+			toast.add({
+				description: t`Moved to Trash`,
+				actionProps: {
+					children: t`Trash`,
+					onClick: () => void router.navigate({ to: "/dashboard/applications/trash" }),
+				},
+			});
 		},
 		onError: (error) => toastError(error, t`Couldn't delete the application. Try again.`),
 	});

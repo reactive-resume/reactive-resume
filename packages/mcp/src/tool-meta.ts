@@ -670,7 +670,7 @@ export const TOOL_META = withAnnotationTitles({
 	[T.deleteApplication]: {
 		title: "Delete Application",
 		description:
-			"Permanently delete one job application and its owned uploaded documents that no remaining application references, removing those authenticated file URLs.",
+			"Move one job application to Trash, retaining its timeline, relationships and uploaded files. Restore it using api_applications_list_trash and api_applications_restore. Permanent removal requires api_applications_purge with the listed Trash timestamp.",
 		outputSchema: messageOutput,
 		inputSchema: wireInput(z.strictObject({ id: applicationIdSchema })),
 		annotations: WRITE_DESTRUCTIVE,
@@ -686,7 +686,7 @@ export const TOOL_META = withAnnotationTitles({
 	[T.bulkDeleteApplications]: {
 		title: "Bulk Delete Applications",
 		description:
-			"Permanently delete multiple applications and their owned uploaded documents that no remaining application references, removing those authenticated file URLs.",
+			"Move multiple applications to Trash, retaining their timelines, relationships and uploaded files. Restore from Trash after reload.",
 		outputSchema: toWireObjectSchema(applicationDto.bulkDelete.output),
 		inputSchema: wireInput(applicationDto.bulkDelete.input.strict()),
 		annotations: WRITE_DESTRUCTIVE,

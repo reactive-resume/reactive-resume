@@ -19,6 +19,7 @@ import { lockUser } from "../documents/ownership";
 import { resumeService } from "../resume/service";
 import { writeVersion } from "../resume/version-history";
 import { htmlToText } from "../web-access/builtin";
+import { activeApplications } from "./access";
 
 const digest = (value: string | Uint8Array) => createHash("sha256").update(value).digest("hex");
 // Unselected private fields invalidate approval without exposing guessable hashes of their values.
@@ -33,7 +34,7 @@ async function snapshot(tx: DbOrTx, userId: string, selection: PacketSelection) 
 	const [application] = await tx
 		.select()
 		.from(tables.application)
-		.where(and(eq(tables.application.id, selection.applicationId), eq(tables.application.userId, userId)));
+		.where(and(eq(tables.application.id, selection.applicationId), activeApplications(userId)));
 	if (!application) throw new ORPCError("NOT_FOUND");
 	if (!application.resumeId)
 		throw new ORPCError("BAD_REQUEST", { message: "Select a resume for this application first." });

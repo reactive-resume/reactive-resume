@@ -6,6 +6,7 @@ import { careerSystemPromptTemplate } from "@reactive-resume/ai/prompts";
 import { db } from "@reactive-resume/db/client";
 import { application, applicationLane, careerArtifact } from "@reactive-resume/db/schema";
 import { careerStoryInputSchema, factCategorySchema } from "@reactive-resume/schema/career";
+import { activeApplications } from "../applications/access";
 import { careerService, modelFact } from "./service";
 
 type CareerToolsInput = {
@@ -239,7 +240,7 @@ export function buildCareerTools(input: CareerToolsInput): ToolSet {
 						applicationLane,
 						and(eq(applicationLane.id, application.laneId), eq(applicationLane.userId, input.userId)),
 					)
-					.where(eq(application.userId, input.userId))
+					.where(activeApplications(input.userId))
 					.orderBy(desc(application.updatedAt))
 					.limit(50),
 		});
