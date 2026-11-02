@@ -297,7 +297,7 @@ function StoryReader({ story, facts, onEdit }: StoryReaderProps) {
 								{text ? (
 									<p className="text-[15px] leading-[23px] text-pretty whitespace-pre-line">{text}</p>
 								) : (
-									<p className="text-sm leading-[21px] text-ink-3 italic">
+									<p className="text-sm leading-[21px] text-ink-3">
 										<Trans>Not recorded yet. Leave it blank until you can support it.</Trans>
 									</p>
 								)}

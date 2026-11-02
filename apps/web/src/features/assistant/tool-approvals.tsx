@@ -160,7 +160,7 @@ function StoryProposal({ story, facts, previous }: StoryProposalProps) {
 							<dt className="text-[13px] font-semibold text-ink-2">{part.label}</dt>
 							<dd className="text-sm leading-[21px] wrap-anywhere whitespace-pre-line">
 								{part.text.trim() || (
-									<span className="text-ink-3 italic">
+									<span className="text-ink-3">
 										<Trans>Left blank. Add it later only if you can support it.</Trans>
 									</span>
 								)}

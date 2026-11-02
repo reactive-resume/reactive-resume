@@ -198,7 +198,7 @@ export function EntriesGroup() {
 								transition={{ duration: D2, ease: EASE_MOVE }}
 								className={cn(
 									"flex items-center justify-between gap-2 rounded-sm bg-sunken px-2 py-1 text-xs",
-									row.eyebrow && "py-0.5 text-[10px] tracking-wide text-accent-text uppercase",
+									row.eyebrow && "py-0.5 text-accent-text",
 								)}
 							>
 								<span className={cn("truncate", !row.eyebrow && "font-semibold")}>

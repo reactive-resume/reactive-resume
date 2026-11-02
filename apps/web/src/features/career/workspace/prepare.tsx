@@ -435,7 +435,7 @@ function BriefingNotes({ briefing }: { briefing: Briefing }) {
 	const { data } = briefing;
 	const items = [
 		{ label: t`Your focus`, text: data.focus },
-		{ label: t`Your opening`, text: data.opening && `“${data.opening}”`, italic: true },
+		{ label: t`Your opening`, text: data.opening && `“${data.opening}”` },
 		{ label: data.stories.length === 2 ? t`Two stories` : t`Stories`, text: data.stories.join("\n") },
 		{ label: t`Keep it honest`, text: data.honesty },
 	];
@@ -446,7 +446,7 @@ function BriefingNotes({ briefing }: { briefing: Briefing }) {
 				.map((item) => (
 					<div key={item.label} className="grid gap-1">
 						<dt className="text-[13px] font-semibold text-ink-2">{item.label}</dt>
-						<dd className={cn("text-sm leading-[21px] whitespace-pre-line", item.italic && "italic")}>{item.text}</dd>
+						<dd className="text-sm leading-[21px] whitespace-pre-line">{item.text}</dd>
 					</div>
 				))}
 		</dl>
