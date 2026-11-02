@@ -216,7 +216,12 @@ assert.equal(
 	"Needs you uses the account clock for date-only reminders",
 );
 const offerWithReminder = { ...dateOnlyReminder, status: "offer", followUpAt: "2026-11-10T09:00:00.000Z" };
-assert.equal(list.filterApplications([offerWithReminder], attentionFilter, attentionNow, "UTC").length, 0);
+assert.equal(
+	list.filterApplications([offerWithReminder], attentionFilter, attentionNow, "UTC").length,
+	1,
+	"Unknown offer hints cannot hide a decision that may need attention",
+);
+assert.equal(list.filterApplications([offerWithReminder], attentionFilter, attentionNow, "UTC", new Map()).length, 0);
 assert.equal(
 	list.filterApplications(
 		[offerWithReminder],

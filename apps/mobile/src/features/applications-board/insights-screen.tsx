@@ -89,7 +89,8 @@ function ApplicationInsights() {
 	const weekLabel = new Intl.DateTimeFormat(i18n.locale, { timeZone: "UTC", month: "numeric", day: "numeric" });
 	const half = tablet ? { flexBasis: 0, flexGrow: 1 } : null;
 
-	if (needsYou && applications.length === 0) {
+	const filtersActive = Boolean(search.trim() || needsYou);
+	if (filtersActive && applications.length === 0) {
 		return (
 			<EmptyState
 				variant="card"
@@ -104,11 +105,19 @@ function ApplicationInsights() {
 			<EmptyState
 				variant="card"
 				title={t`No replies to chart yet`}
-				message={t`Once you've sent a few applications, this shows how far they get and how quickly people reply.`}
-				action={{
-					label: t`Save job`,
-					onPress: () => router.setParams({ create: "1" }),
-				}}
+				message={
+					filtersActive
+						? t`Try different words or clear your filters.`
+						: t`Once you've sent a few applications, this shows how far they get and how quickly people reply.`
+				}
+				action={
+					filtersActive
+						? { label: t`Clear filters`, onPress: clearFilters }
+						: {
+								label: t`Save job`,
+								onPress: () => router.setParams({ create: "1" }),
+							}
+				}
 			/>
 		);
 	}

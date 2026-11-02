@@ -56,7 +56,7 @@ function ApplicationCalendar() {
 	const [width, setWidth] = useState(0);
 	const query = useApplications();
 	const pull = usePullRefresh(query.refetch);
-	const { search, needsYou } = useApplicationSearch();
+	const { search, needsYou, clearFilters } = useApplicationSearch();
 	const offers = useOfferHints();
 	const userTime = useUserTime();
 	const now = useNow();
@@ -120,6 +120,17 @@ function ApplicationCalendar() {
 				<Skeleton height={space.s12} />
 				<Skeleton height={space.s12 * 4} />
 			</View>
+		);
+	}
+
+	if ((search.trim() || needsYou) && events.length === 0) {
+		return (
+			<EmptyState
+				variant="card"
+				title={applications.length === 0 ? t`No matching applications` : t`Nothing scheduled yet`}
+				message={t`Try different words or clear your filters.`}
+				action={{ label: t`Clear filters`, onPress: clearFilters }}
+			/>
 		);
 	}
 

@@ -196,6 +196,10 @@ function RouteComponent() {
 	}, [prefetch]);
 	const setSearch = (patch: Partial<Search>) =>
 		void navigate({ resetScroll: false, search: (prev: Search) => ({ ...prev, ...patch }) });
+	const clearFilters = () => {
+		setQuery("");
+		setSearch({ q: "", needsYou: false, followUp: false, closed: false });
+	};
 
 	useEffect(() => {
 		if (!create) return;
@@ -224,7 +228,9 @@ function RouteComponent() {
 		(application) =>
 			matches(application, text) &&
 			(!followUp || needsFollowUp(getNextStep(application, now, timeZone), now)) &&
-			(!needsYou || needsAttention(getNextStep(application, now, timeZone, offerHintFor(offers, application.id)), now)),
+			(!needsYou ||
+				(offers === undefined && application.status === "offer") ||
+				needsAttention(getNextStep(application, now, timeZone, offerHintFor(offers, application.id)), now)),
 	);
 	const selected = applications?.find((application) => application.id === selectedId) ?? null;
 	// The board needs room to drag: phones get the list instead.
@@ -467,13 +473,7 @@ function RouteComponent() {
 							title={<Trans>No matching applications</Trans>}
 							description={<Trans>Try different words or clear your filters.</Trans>}
 							action={
-								<Button
-									variant="secondary"
-									onClick={() => {
-										setQuery("");
-										setSearch({ q: "", needsYou: false, followUp: false, closed: false });
-									}}
-								>
+								<Button variant="secondary" onClick={clearFilters}>
 									<Trans>Clear filters</Trans>
 								</Button>
 							}
@@ -511,7 +511,11 @@ function RouteComponent() {
 								</div>
 							)}
 							{shown === "insights" && (
-								<ApplicationInsights applications={filtered} onSaveJob={() => setAdding(true)} />
+								<ApplicationInsights
+									applications={filtered}
+									onSaveJob={() => setAdding(true)}
+									onClearFilters={text || needsYou || followUp ? clearFilters : undefined}
+								/>
 							)}
 							{shown === "calendar" && (
 								<ApplicationCalendar
@@ -519,6 +523,7 @@ function RouteComponent() {
 									applications={filtered.filter((application) => closed || application.status !== "closed")}
 									allApplications={applications ?? []}
 									onOpen={openApplication}
+									onClearFilters={text || needsYou || followUp ? clearFilters : undefined}
 								/>
 							)}
 						</div>

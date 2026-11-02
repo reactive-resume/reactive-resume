@@ -25,6 +25,7 @@ export function filterApplications(
 		(application) =>
 			(filters.showClosed || application.status !== "closed") &&
 			(!filters.needsYou ||
+				(offers === undefined && application.status === "offer") ||
 				needsAttention(
 					getNextStep(
 						application,

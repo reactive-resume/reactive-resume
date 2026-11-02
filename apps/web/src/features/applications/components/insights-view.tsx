@@ -28,9 +28,13 @@ export function InsightsSkeleton() {
 	);
 }
 
-type ApplicationInsightsProps = { applications: ApplicationSummary[]; onSaveJob: () => void };
+type ApplicationInsightsProps = {
+	applications: ApplicationSummary[];
+	onSaveJob: () => void;
+	onClearFilters?: (() => void) | undefined;
+};
 
-export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsightsProps) {
+export function ApplicationInsights({ applications, onSaveJob, onClearFilters }: ApplicationInsightsProps) {
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 
 	// A resume is tailored for an application when it was made for it (Copy for a job).
@@ -60,13 +64,25 @@ export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsi
 			<EmptyState
 				title={<Trans>No replies to chart yet</Trans>}
 				description={
-					<Trans>Once you've sent a few applications, this shows how far they get and how quickly people reply.</Trans>
+					onClearFilters ? (
+						<Trans>Try different words or clear your filters.</Trans>
+					) : (
+						<Trans>
+							Once you've sent a few applications, this shows how far they get and how quickly people reply.
+						</Trans>
+					)
 				}
 				action={
-					<Button onClick={onSaveJob}>
-						<Icon name="plus" />
-						<Trans>Save job</Trans>
-					</Button>
+					onClearFilters ? (
+						<Button variant="secondary" onClick={onClearFilters}>
+							<Trans>Clear filters</Trans>
+						</Button>
+					) : (
+						<Button onClick={onSaveJob}>
+							<Icon name="plus" />
+							<Trans>Save job</Trans>
+						</Button>
+					)
 				}
 			/>
 		);

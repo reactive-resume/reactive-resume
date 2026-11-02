@@ -947,12 +947,17 @@ const nativeCalendar = load("features/applications-board/calendar.ts", {
 });
 const calendarTokens = load("ui/tokens.ts", { "react-native": { Easing: { bezier: () => null } } });
 let calendarNow = new Date("2026-10-31T22:59:30Z");
-const calendarRows = [
+let calendarNeedsYou = false;
+let calendarRows = [
 	{
 		id: "calendar-application",
 		company: "Fictional Labs",
 		role: "Engineer",
 		status: "interview",
+		appliedAt: "2026-10-01T09:00:00Z",
+		followUpAt: null,
+		followUpNote: null,
+		tags: [],
 		activity: ["2026-10-31T22:30:00Z", "2026-11-01T09:00:00Z", "2026-11-04T14:00:00Z"].map((at, index) => ({
 			id: `calendar-${index}`,
 			type: "interview",
@@ -971,7 +976,15 @@ const { CalendarScreen } = load("features/applications-board/calendar-screen.tsx
 		plural: (value, forms) => (forms[value] ?? forms[value === 1 ? "one" : "other"]).replace("#", String(value)),
 	},
 	"./calendar": nativeCalendar,
-	"./search": { useApplicationSearch: () => ({ search: "" }) },
+	"./search": {
+		useApplicationSearch: () => ({
+			search: "",
+			needsYou: calendarNeedsYou,
+			clearFilters: () => {
+				calendarNeedsYou = false;
+			},
+		}),
+	},
 	"./views": { ApplicationsViewFrame: "ApplicationsViewFrame" },
 	"@/features/application-detail/hooks": {
 		useNow: () => calendarNow,
@@ -981,7 +994,7 @@ const { CalendarScreen } = load("features/applications-board/calendar-screen.tsx
 	"@/features/application-detail/interview-sheet": { InterviewSheet: "InterviewSheet" },
 	"@/features/application-detail/sheets": { FollowUpSheet: "FollowUpSheet" },
 	"@/features/applications/error": { applicationError: () => "offline" },
-	"@/features/applications/list": { filterApplications: (rows) => rows },
+	"@/features/applications/list": { filterApplications: listLogic.filterApplications },
 	"@/features/applications/queries": {
 		useApplications: () => ({ data: calendarRows, isError: false, isPending: false, refetch() {} }),
 	},
@@ -1033,6 +1046,23 @@ control(calendarView(), "This month").onPress();
 assert.equal(calendarHeading(), "February 2027");
 assert.ok(calendarText().includes("Today"));
 console.log("PASS native calendar follows account month/day and preserves explicit browsing");
+reset();
+calendarNow = new Date("2026-11-01T09:00:00Z");
+calendarRows = [
+	{
+		...calendarRows[0],
+		activity: [{ ...calendarRows[0].activity[0], at: "2026-12-01T09:00:00Z" }],
+	},
+];
+calendarNeedsYou = true;
+const filteredCalendar = nodes(calendarView()).find((node) => node.type === "EmptyState").props;
+assert.equal(filteredCalendar.title, "No matching applications");
+assert.equal(filteredCalendar.action.label, "Clear filters");
+filteredCalendar.action.onPress();
+assert.equal(calendarNeedsYou, false);
+assert.ok(calendarText().includes("Coming up"));
+assert.ok(nodes(calendarView()).some((node) => node.props.event?.day === "2026-12-01"));
+console.log("PASS native calendar explains filtered-empty events and clears the filter");
 
 // Manual offers use the production parser; only native widgets, transport and profile loading are boundaries.
 const amountParser = load("../../../packages/utils/src/amount.ts");
