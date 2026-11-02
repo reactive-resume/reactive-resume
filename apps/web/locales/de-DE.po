@@ -1921,6 +1921,7 @@ msgstr "Passen Sie Schriftarten, Farben, Abstände und Abschnitte im CV Builder 
 msgid "Ads"
 msgstr "Anzeigen"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Fortschrittlich"
@@ -2271,8 +2272,7 @@ msgstr "Alles, woran Sie sich bei diesem Job erinnern sollten"
 msgid "Anywhere"
 msgstr "Überall"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API-Schlüssel"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Grundgehalt"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Basis-URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Basis-URL (erforderlich)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Eingebauter Leser"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr "Integrierter Vorschlag. Du kannst jede Modell-ID eingeben, die dein Endpunkt unterstützt."
 
@@ -6087,6 +6090,10 @@ msgstr "Gib einen vollständigen Betrag wie 95000 ein oder lass das Feld leer."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Geben Sie einen vollständigen Betrag ein, z. B. 95000. Ihr bisheriger Betrag bleibt unverändert."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Gib eine Modell-ID ein."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Geben Sie einen Namen mit bis zu 64 Zeichen ein."
@@ -6109,6 +6116,14 @@ msgstr "Geben Sie eine gültige E-Mail-Adresse ein."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Geben Sie eine Webadresse ein, z. B. example.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Gib einen API-Schlüssel für diesen Anbieter ein."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Gib eine Basis-URL mit http:// oder https:// ein."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6846,6 +6861,14 @@ msgstr "Holen Sie sich einen Schlüssel unter <0>{0}</0>. Er wird verschlüsselt
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Erhalten Sie einen Plan für das Interview, erstellt aus der Stellenanzeige und Ihren eigenen Geschichten. Üben Sie laut und halten Sie danach fest, wie es lief."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API-Schlüssel erhalten"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Fordere einen API-Schlüssel beim Betreiber deines Endpunkts an."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8113,7 +8136,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Lassen Sie mindestens einen halben Zoll Rand um die Seite."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Lassen Sie das Feld leer, um den gespeicherten Schlüssel zu behalten"
 
@@ -8922,8 +8945,7 @@ msgstr "Gemischt"
 msgid "mixed format"
 msgstr "gemischtes Format"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Modell"
 
@@ -9131,7 +9153,7 @@ msgstr "Meine Aufgabe war herauszufinden, warum, ohne zusätzlichen Supportaufwa
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Name"
@@ -10302,7 +10324,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Optional für lokales Ollama"
 
@@ -14963,11 +14985,11 @@ msgstr "Die Rezension konnte nicht abgeschlossen werden. Versuchen Sie es erneut
 msgid "The same line repeats on every page."
 msgstr "Dieselbe Zeile wiederholt sich auf jeder Seite."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Der gespeicherte Schlüssel wird nicht an eine neue Basis-URL gesendet. Geben Sie ihn erneut ein, falls dieser Server einen Schlüssel benötigt."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Der gespeicherte Schlüssel wird nicht an eine neue Basis-URL gesendet. Geben Sie ihn erneut ein."
 

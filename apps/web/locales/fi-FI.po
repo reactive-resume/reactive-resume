@@ -1921,6 +1921,7 @@ msgstr "Säädä fontteja, värejä, välilyöntejä ja osioita CV-muodossa. Vie
 msgid "Ads"
 msgstr "Mainokset"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Edistynyt"
@@ -2271,8 +2272,7 @@ msgstr "Mitä tulee mieleen tästä työstä"
 msgid "Anywhere"
 msgstr "Missä tahansa"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API avain"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Peruspalkka"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Perus-URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Perus-URL (pakollinen)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Sisäänrakennettu lukija"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6087,6 +6090,10 @@ msgstr "Kirjoita koko summa, esimerkiksi 95000, tai jätä kenttä tyhjäksi."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Anna koko summa, esimerkiksi 95000. Aiempi summasi on ennallaan."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Anna mallin tunniste."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Anna nimi, enintään 64 merkkiä."
@@ -6109,6 +6116,14 @@ msgstr "Anna kelvollinen sähköpostiosoite."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Anna verkko-osoite, kuten esimerkki.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Anna tämän palveluntarjoajan API-avain."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Anna perus-URL, joka alkaa merkkijonolla http:// tai https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6846,6 +6861,14 @@ msgstr "Hanki avain osoitteesta <0>{0}</0>. Se tallennetaan salattuna ja sitä k
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Saat haastattelusuunnitelman, joka perustuu työpaikkailmoitukseen ja omiin tarinoihisi. Harjoittele ääneen ja kirjoita sitten muistiin, miten meni."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Hanki API-avain"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Hanki API-avain päätepisteesi ylläpitäjältä."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8113,7 +8136,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Jätä vähintään puolen tuuman marginaali sivun ympärille."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Jätä tyhjäksi säilyttääksesi tallennettu avain"
 
@@ -8922,8 +8945,7 @@ msgstr "Vaihtelevasti"
 msgid "mixed format"
 msgstr "sekoitettu muoto"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Malli"
 
@@ -9131,7 +9153,7 @@ msgstr "Tehtäväni oli selvittää syy lisäämättä tukityötä."
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Nimi"
@@ -10302,7 +10324,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Valinnainen paikalliselle Ollama:lle"
 
@@ -14963,11 +14985,11 @@ msgstr "Arviointia ei voitu suorittaa loppuun. Yritä uudelleen."
 msgid "The same line repeats on every page."
 msgstr "Sama rivi toistuu jokaisella sivulla."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Tallennettua avainta ei lähetetä uuteen perus-URL-osoitteeseen. Anna avain uudelleen, jos tämä palvelin vaatii avaimen."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Tallennettua avainta ei lähetetä uuteen perus-URL-osoitteeseen. Anna avain uudelleen."
 

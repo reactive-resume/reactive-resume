@@ -3,15 +3,14 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useId, useRef, useState } from "react";
-import { AI_PROVIDER_DEFAULT_MODELS } from "@reactive-resume/ai/defaults";
+import { useRef, useState } from "react";
+import { AI_PROVIDER_DEFAULT_MODELS, getAIProviderSetupProblem } from "@reactive-resume/ai/defaults";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Collapsible, CollapsibleContent } from "@reactive-resume/ui/components/collapsible";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Input } from "@reactive-resume/ui/components/input";
-import { Label } from "@reactive-resume/ui/components/label";
 import { cn } from "@reactive-resume/utils/style";
+import { ProviderFieldsForm, type ProviderFields } from "@/features/settings/ai/provider-fields";
 import { ProvidersSection } from "@/features/settings/ai/providers";
 import { providerTestError } from "@/features/settings/ai/test-error";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -19,13 +18,13 @@ import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/u
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { client, orpc } from "@/libs/orpc/client";
 
-type Choice = { provider: AIProvider; label: string; model: string; needsBaseURL?: boolean };
+type Choice = { provider: AIProvider; label: string; model: string };
 
 // Provider names are brands and stay untranslated.
 const CHOICES: Choice[] = [
 	{ provider: "openai", label: "OpenAI", model: AI_PROVIDER_DEFAULT_MODELS.openai },
 	{ provider: "anthropic", label: "Anthropic", model: AI_PROVIDER_DEFAULT_MODELS.anthropic },
-	{ provider: "openai-compatible", label: "OpenAI-compatible", model: "", needsBaseURL: true },
+	{ provider: "openai-compatible", label: "OpenAI-compatible", model: "" },
 ];
 
 /**
@@ -112,23 +111,25 @@ export function ProviderSetup() {
 
 type ConnectFormProps = { choice: Choice };
 function ConnectForm({ choice }: ConnectFormProps) {
-	const id = useId();
 	const queryClient = useQueryClient();
 	const createdId = useRef<string | null>(null);
 	const submitting = useRef(false);
-	const [apiKey, setApiKey] = useState("");
-	const [model, setModel] = useState(choice.model);
-	const [baseURL, setBaseURL] = useState("");
+	const [fields, setFields] = useState<ProviderFields>({
+		label: choice.label,
+		apiKey: "",
+		model: choice.model,
+		baseURL: "",
+	});
 	const [failure, setFailure] = useState<string | null>(null);
 
 	const connect = useMutation({
 		mutationFn: async () => {
 			const input = {
-				label: choice.label,
+				label: fields.label.trim() || choice.label,
 				provider: choice.provider,
-				model: model.trim(),
-				apiKey: apiKey.trim(),
-				...(baseURL.trim() ? { baseURL: baseURL.trim() } : {}),
+				model: fields.model.trim(),
+				apiKey: fields.apiKey.trim(),
+				...(fields.baseURL.trim() ? { baseURL: fields.baseURL.trim() } : {}),
 			};
 			const created = createdId.current
 				? await client.aiProviders.update({ id: createdId.current, ...input })
@@ -147,10 +148,11 @@ function ConnectForm({ choice }: ConnectFormProps) {
 			setFailure(getOrpcErrorMessage(error, { fallback: t`Couldn't connect. Check the key and try again.` })),
 	});
 
-	const ready = apiKey.trim() && model.trim() && (!choice.needsBaseURL || baseURL.trim());
+	const ready = getAIProviderSetupProblem(choice.provider, fields) === null;
 
 	return (
 		<form
+			noValidate
 			className="grid gap-3 border-t border-line bg-bg p-3"
 			onSubmit={(event) => {
 				event.preventDefault();
@@ -160,37 +162,7 @@ function ConnectForm({ choice }: ConnectFormProps) {
 				}
 			}}
 		>
-			{choice.needsBaseURL && (
-				<div className="grid gap-1.5">
-					<Label htmlFor={`${id}-url`}>
-						<Trans>Base URL</Trans>
-					</Label>
-					<Input
-						id={`${id}-url`}
-						value={baseURL}
-						placeholder="https://…/v1"
-						onChange={(event) => setBaseURL(event.target.value)}
-					/>
-				</div>
-			)}
-			<div className="grid gap-1.5">
-				<Label htmlFor={`${id}-key`}>
-					<Trans>API key</Trans>
-				</Label>
-				<Input
-					id={`${id}-key`}
-					type="password"
-					autoComplete="off"
-					value={apiKey}
-					onChange={(event) => setApiKey(event.target.value)}
-				/>
-			</div>
-			<div className="grid gap-1.5">
-				<Label htmlFor={`${id}-model`}>
-					<Trans>Model</Trans>
-				</Label>
-				<Input id={`${id}-model`} value={model} onChange={(event) => setModel(event.target.value)} />
-			</div>
+			<ProviderFieldsForm provider={choice.provider} value={fields} onChange={setFields} />
 			{failure && (
 				<p role="alert" className="text-xs text-danger-text">
 					{failure}

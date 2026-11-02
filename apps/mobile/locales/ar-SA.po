@@ -1481,6 +1481,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "متقدم"
@@ -2229,6 +2230,10 @@ msgstr "الراتب الأساسي"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "عنوان URL الأساسي"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "عنوان URL الأساسي (مطلوب)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3504,6 +3509,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -4792,6 +4798,10 @@ msgstr "أدخل مبلغًا كاملًا، مثل 95000. لم يتغيّر م�
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "أدخل لونًا سداسيًا عشريًا مثل #1a1a1a، أو rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "أدخل معرّف النموذج."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "أدخل اسمًا يصل إلى 64 حرفًا."
@@ -4829,6 +4839,14 @@ msgstr "أدخل رقمًا صحيحًا من 0 إلى 52، أو اتركه فا
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "أدخل عنوانًا مثل resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "أدخل مفتاح API لهذا المزوّد."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "أدخل عنوان URL أساسيًا يبدأ بـ http:// أو https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5312,6 +5330,14 @@ msgstr "الألمانية"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "احصل على المفتاح في {0}. يتم تخزينها بشكل مشفر واستخدامها فقط لطلباتك."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "الحصول على مفتاح API"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "احصل على مفتاح API من مشغّل نقطة النهاية."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -8334,7 +8360,7 @@ msgstr "قم بلصق رابط إعلان الوظيفة أو نصه، ثم قم
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications/list-screen.tsx
 msgid "Paste a job link. We'll save the posting so Check, the assistant and your letter can use it."
-msgstr "الصق رابط الوظيفة. سنقوم بحفظ إعلان الوظيفة حتى يتمكن الفحص والمساعد وخطابك من استخدامه."
+msgstr "الصق رابط الوظيفة. سنقوم بحفظ إعلان الوظيفة حتى يتمكن Check والمساعد وخطابك من استخدامه."
 
 #: src/features/check/job-match.tsx
 msgid "Paste a job posting"
@@ -10247,7 +10273,7 @@ msgstr "المدرسة"
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
 msgid "Screening"
-msgstr "الفرز الأولي"
+msgstr "الفحص"
 
 #: src/features/career/today.tsx
 msgid "Screening interview"
@@ -13105,7 +13131,7 @@ msgstr "تم إرسال الإصدار {date}"
 #. placeholder {0}: application.sentCheckScore
 #: src/features/application-detail/sections.tsx
 msgid "Version sent {date} · Check {0}"
-msgstr "تم إرسال الإصدار {date} · فحص: {0}"
+msgstr "تم إرسال الإصدار {date} · تحقق من {0}"
 
 #. placeholder {0}: document.versionId
 #: src/features/workspace/application-packet.tsx

@@ -1921,6 +1921,7 @@ msgstr "সিভি বিল্ডারে ফন্ট, রঙ, ব্যব
 msgid "Ads"
 msgstr "বিজ্ঞাপন"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "উন্নত"
@@ -2271,8 +2272,7 @@ msgstr "এই কাজ সম্পর্কে কিছু মনে রা�
 msgid "Anywhere"
 msgstr "যে কোন জায়গায়"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API কী"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "মূল বেতন"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "বেস ইউআরএল"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "বেস URL (আবশ্যক)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "অন্তর্নির্মিত পাঠক"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6087,6 +6090,10 @@ msgstr "পুরো অর্থের পরিমাণ লিখুন, য�
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "পুরো অঙ্ক লিখুন, যেমন 95000। আপনার আগের অঙ্ক অপরিবর্তিত আছে।"
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "একটি মডেল ID লিখুন।"
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "একটি নাম লিখুন, 64টি অক্ষর পর্যন্ত।"
@@ -6109,6 +6116,14 @@ msgstr "একটি বৈধ ইমেল ঠিকানা লিখুন."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "একটি ওয়েব ঠিকানা লিখুন, যেমন .com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "এই প্রদানকারীর জন্য একটি API কী লিখুন।"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// বা https:// দিয়ে শুরু হওয়া একটি বেস URL লিখুন।"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6846,6 +6861,14 @@ msgstr "<0>{0}</0> এ একটি কী পান। এটি এনক্�
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "চাকরির বিজ্ঞপ্তি ও আপনার নিজের গল্প দিয়ে তৈরি ইন্টারভিউয়ের একটি পরিকল্পনা নিন। জোরে বলে অনুশীলন করুন, তারপর কেমন গেল তা লিখে রাখুন।"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "একটি API কী নিন"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "আপনার এন্ডপয়েন্টের পরিচালকের কাছ থেকে একটি API কী নিন।"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8113,7 +8136,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "পৃষ্ঠার চারপাশে অন্তত আধা ইঞ্চি জায়গা রাখুন।"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "সংরক্ষিত কী রাখতে খালি ছেড়ে দিন"
 
@@ -8922,8 +8945,7 @@ msgstr "মিশ্র"
 msgid "mixed format"
 msgstr "মিশ্র বিন্যাস"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "মডেল"
 
@@ -9131,7 +9153,7 @@ msgstr "আমার কাজ ছিল সাপোর্টের কাজ �
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "নাম"
@@ -10302,7 +10324,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "স্থানীয় Ollama এর জন্য ঐচ্ছিক"
 
@@ -14963,11 +14985,11 @@ msgstr "পর্যালোচনা শেষ করতে পারেনি
 msgid "The same line repeats on every page."
 msgstr "একই লাইন প্রতিটি পৃষ্ঠায় পুনরাবৃত্তি হয়।"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "সংরক্ষিত কী একটি নতুন বেস URL-এ পাঠানো হয় না। এই সার্ভারে একটি কী প্রয়োজন হলে আবার কী লিখুন।"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "সংরক্ষিত কী একটি নতুন বেস URL-এ পাঠানো হয় না। আবার কী লিখুন।"
 
