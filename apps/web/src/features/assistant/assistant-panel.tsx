@@ -10,6 +10,7 @@ import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { measureOverflow } from "@reactive-resume/pdf/page-map";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -26,7 +27,6 @@ import { ConnectionNotice } from "./connection-notice";
 import { Composer, Conversation } from "./conversation";
 import { ProviderSetup, SetUpAi } from "./provider-setup";
 import { useResumeStore } from "@/features/resume/builder/draft";
-import { measureOverflow } from "@/features/resume/editor/design/fit";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { formatVersionTime } from "@/features/resume/share/format";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -418,11 +418,15 @@ type Overflow = ReturnType<typeof measureOverflow> | undefined;
 /** Tighten asks with the page's real overflow, so the reply can say honestly whether text edits close it. */
 function tightenPrompt(overflow: Overflow) {
 	if (overflow === undefined) return t`Tighten to one page`;
-	if (!overflow) return t`Tighten to one page. It already fits on one page, so only cut what's weak.`;
-	const next = overflow.authored + 1;
-	return overflow.lines
-		? t`Tighten to one page. It runs onto page ${next} by about ${overflow.lines} lines.`
-		: t`Tighten to one page. It runs onto page ${next}.`;
+	if (!overflow) return t`Tighten to one page. It fits within the planned pages, so only cut what's weak.`;
+	const first = overflow.spills[0];
+	if (first && first.pages.length === 1 && first.lines) {
+		const page = first.authoredPage;
+		const lines = first.lines;
+		return t`Tighten to one page. Page ${page} runs over by about ${lines} lines.`;
+	}
+	const count = overflow.pageCount;
+	return t`Tighten to one page. It currently runs to ${count} pages.`;
 }
 
 function suggestionsFor(document: AssistantDocument, prepare: boolean, overflow?: Overflow): Suggestion[] {
