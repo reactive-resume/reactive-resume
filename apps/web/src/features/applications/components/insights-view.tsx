@@ -334,94 +334,97 @@ function PipelineFlow({ insights }: { insights: ReturnType<typeof computeInsight
 				</Button>
 			</div>
 
-			<svg
-				ref={svgRef}
-				viewBox={`0 0 ${W} ${H}`}
-				className="mt-3 w-full rounded-xl"
-				style={{ fontFamily: FLOW_FONT }}
-				role="img"
-				aria-label={t`Pipeline flow`}
-			>
-				<defs>
+			{/* Below ~600px the labels shrink past reading size, so phones scroll the chart sideways instead. */}
+			<div className="mt-3 overflow-x-auto">
+				<svg
+					ref={svgRef}
+					viewBox={`0 0 ${W} ${H}`}
+					className="w-full min-w-[600px] rounded-xl"
+					style={{ fontFamily: FLOW_FONT }}
+					role="img"
+					aria-label={t`Pipeline flow`}
+				>
+					<defs>
+						{bars.slice(0, -1).map((bar, i) => {
+							const next = bars[i + 1];
+							if (!next) return null;
+							return (
+								<linearGradient key={`grad-${bar.label}`} id={`flow-grad-${i}`} x1="0" y1="0" x2="1" y2="0">
+									<stop offset="0%" stopColor={bar.color} />
+									<stop offset="100%" stopColor={next.color} />
+								</linearGradient>
+							);
+						})}
+					</defs>
+
+					<rect x={0} y={0} width={W} height={H} rx={16} fill={FLOW_BG} />
+
+					<text x={padX} y={40} fontSize={17} fontWeight={700} fill="#fafafa">
+						{t`Job search pipeline`}
+					</text>
+					<text x={padX} y={60} fontSize={12} fill="#71717a">
+						{plural(insights.total, { one: "# active application", other: "# active applications" })}
+					</text>
+					{insights.closed > 0 && (
+						<g>
+							<circle cx={W - padX - 96} cy={54} r={4} fill={FLOW_REJECTED} />
+							<text x={W - padX - 86} y={58} fontSize={12} fill="#a1a1aa">
+								{t`${insights.closed} closed`}
+							</text>
+						</g>
+					)}
+
+					{/* connecting bands — drawn center-to-center so they pass *behind* the bars (rendered
+				    next, on top), leaving a single continuous flow with no seam at each stage. */}
 					{bars.slice(0, -1).map((bar, i) => {
 						const next = bars[i + 1];
 						if (!next) return null;
+						const x1 = bar.cx;
+						const x2 = next.cx;
+						const cxa = (x1 + x2) / 2;
 						return (
-							<linearGradient key={`grad-${bar.label}`} id={`flow-grad-${i}`} x1="0" y1="0" x2="1" y2="0">
-								<stop offset="0%" stopColor={bar.color} />
-								<stop offset="100%" stopColor={next.color} />
-							</linearGradient>
+							<path
+								key={`band-${bar.label}`}
+								d={`M${x1},${bar.yTop} C${cxa},${bar.yTop} ${cxa},${next.yTop} ${x2},${next.yTop} L${x2},${next.yTop + next.h} C${cxa},${next.yTop + next.h} ${cxa},${bar.yTop + bar.h} ${x1},${bar.yTop + bar.h} Z`}
+								fill={`url(#flow-grad-${i})`}
+								opacity={0.32}
+							/>
 						);
 					})}
-				</defs>
 
-				<rect x={0} y={0} width={W} height={H} rx={16} fill={FLOW_BG} />
-
-				<text x={padX} y={40} fontSize={17} fontWeight={700} fill="#fafafa">
-					{t`Job search pipeline`}
-				</text>
-				<text x={padX} y={60} fontSize={12} fill="#71717a">
-					{plural(insights.total, { one: "# active application", other: "# active applications" })}
-				</text>
-				{insights.closed > 0 && (
-					<g>
-						<circle cx={W - padX - 96} cy={54} r={4} fill={FLOW_REJECTED} />
-						<text x={W - padX - 86} y={58} fontSize={12} fill="#a1a1aa">
-							{t`${insights.closed} closed`}
-						</text>
-					</g>
-				)}
-
-				{/* connecting bands — drawn center-to-center so they pass *behind* the bars (rendered
-				    next, on top), leaving a single continuous flow with no seam at each stage. */}
-				{bars.slice(0, -1).map((bar, i) => {
-					const next = bars[i + 1];
-					if (!next) return null;
-					const x1 = bar.cx;
-					const x2 = next.cx;
-					const cxa = (x1 + x2) / 2;
-					return (
-						<path
-							key={`band-${bar.label}`}
-							d={`M${x1},${bar.yTop} C${cxa},${bar.yTop} ${cxa},${next.yTop} ${x2},${next.yTop} L${x2},${next.yTop + next.h} C${cxa},${next.yTop + next.h} ${cxa},${bar.yTop + bar.h} ${x1},${bar.yTop + bar.h} Z`}
-							fill={`url(#flow-grad-${i})`}
-							opacity={0.32}
-						/>
-					);
-				})}
-
-				{/* bars + labels */}
-				{bars.map((bar, i) => (
-					<g key={`bar-${bar.label}`}>
-						<rect x={bar.x} y={bar.yTop} width={barW} height={bar.h} rx={6} fill={bar.color} />
-						<text x={bar.cx} y={bar.yTop - 10} textAnchor="middle" fontSize={15} fontWeight={700} fill="#fafafa">
-							{bar.reached}
-						</text>
-						<text x={bar.cx} y={H - 42} textAnchor="middle" fontSize={12} fontWeight={500} fill="#e4e4e7">
-							{bar.label}
-						</text>
-						{i > 0 && (
-							<text x={bar.cx} y={H - 26} textAnchor="middle" fontSize={11} fill={bar.color}>
-								{bar.conv}
+					{/* bars + labels */}
+					{bars.map((bar, i) => (
+						<g key={`bar-${bar.label}`}>
+							<rect x={bar.x} y={bar.yTop} width={barW} height={bar.h} rx={6} fill={bar.color} />
+							<text x={bar.cx} y={bar.yTop - 10} textAnchor="middle" fontSize={15} fontWeight={700} fill="#fafafa">
+								{bar.reached}
 							</text>
-						)}
-					</g>
-				))}
+							<text x={bar.cx} y={H - 42} textAnchor="middle" fontSize={12} fontWeight={500} fill="#e4e4e7">
+								{bar.label}
+							</text>
+							{i > 0 && (
+								<text x={bar.cx} y={H - 26} textAnchor="middle" fontSize={11} fill={bar.color}>
+									{bar.conv}
+								</text>
+							)}
+						</g>
+					))}
 
-				{/* export-only watermark: the Reactive Resume mark, bottom-right, 8px from each edge.
+					{/* export-only watermark: the Reactive Resume mark, bottom-right, 8px from each edge.
 				    Paths are apps/web/public/icon/dark.svg verbatim (fill #FAFAFA). */}
-				<g
-					data-export-only
-					style={{ display: "none" }}
-					transform={`translate(${W - 8 - 256 * ICON_SCALE}, ${H - 8 - 220 * ICON_SCALE}) scale(${ICON_SCALE})`}
-					fill="#FAFAFA"
-					fillRule="evenodd"
-					clipRule="evenodd"
-				>
-					<path d="M173.611 166.311L132.877 219.804H173.524L193.973 191.813L213.183 219.804H256L215.673 165.707L215.15 165.046L207.461 155.332L195.329 140.004L195.258 139.915L193.813 138.089L193.923 138.001L176.286 112.861H134.061L173.611 166.311ZM199.89 133.554L214.959 112.861H254.619L219.874 158.8L199.89 133.554Z" />
-					<path d="M0 36.1959V174.314H39.0678V137.614H60.3938L60.4323 137.671C60.8436 137.653 61.2517 137.634 61.6567 137.614C75.0665 136.968 85.1471 135.549 96.385 131.385C96.7596 131.246 97.1355 131.104 97.5128 130.959L97.4591 130.881C105.816 126.86 112.331 121.344 117.006 114.331C122.005 106.702 124.504 97.6915 124.504 87.2997C124.504 76.7764 122.005 67.7 117.006 60.0706C112.007 52.3097 104.904 46.3903 95.6964 42.3125C86.62 38.2347 75.7679 36.1959 63.1399 36.1959H0ZM102.156 137.725L64.8705 144.175L85.4361 174.314H127.266L102.156 137.725ZM39.0678 107.426H60.7721C68.9277 107.426 74.9786 105.65 78.9248 102.098C83.0026 98.5465 85.0415 93.6137 85.0415 87.2997C85.0415 80.8542 83.0026 75.8556 78.9248 72.304C74.9786 68.7523 68.9277 66.9765 60.7721 66.9765H39.0678V107.426Z" />
-				</g>
-			</svg>
+					<g
+						data-export-only
+						style={{ display: "none" }}
+						transform={`translate(${W - 8 - 256 * ICON_SCALE}, ${H - 8 - 220 * ICON_SCALE}) scale(${ICON_SCALE})`}
+						fill="#FAFAFA"
+						fillRule="evenodd"
+						clipRule="evenodd"
+					>
+						<path d="M173.611 166.311L132.877 219.804H173.524L193.973 191.813L213.183 219.804H256L215.673 165.707L215.15 165.046L207.461 155.332L195.329 140.004L195.258 139.915L193.813 138.089L193.923 138.001L176.286 112.861H134.061L173.611 166.311ZM199.89 133.554L214.959 112.861H254.619L219.874 158.8L199.89 133.554Z" />
+						<path d="M0 36.1959V174.314H39.0678V137.614H60.3938L60.4323 137.671C60.8436 137.653 61.2517 137.634 61.6567 137.614C75.0665 136.968 85.1471 135.549 96.385 131.385C96.7596 131.246 97.1355 131.104 97.5128 130.959L97.4591 130.881C105.816 126.86 112.331 121.344 117.006 114.331C122.005 106.702 124.504 97.6915 124.504 87.2997C124.504 76.7764 122.005 67.7 117.006 60.0706C112.007 52.3097 104.904 46.3903 95.6964 42.3125C86.62 38.2347 75.7679 36.1959 63.1399 36.1959H0ZM102.156 137.725L64.8705 144.175L85.4361 174.314H127.266L102.156 137.725ZM39.0678 107.426H60.7721C68.9277 107.426 74.9786 105.65 78.9248 102.098C83.0026 98.5465 85.0415 93.6137 85.0415 87.2997C85.0415 80.8542 83.0026 75.8556 78.9248 72.304C74.9786 68.7523 68.9277 66.9765 60.7721 66.9765H39.0678V107.426Z" />
+					</g>
+				</svg>
+			</div>
 		</div>
 	);
 }
