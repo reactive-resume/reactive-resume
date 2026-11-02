@@ -15,6 +15,7 @@ import { Actions, AiNotice, Block, StatusPill, GenerateNotice, useWorking, worki
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
 import { useHasAIProvider } from "@/features/ai/providers";
+import { routes } from "@/routes";
 import { Banner, Button, EmptyState, Icon, SelectSheet, Skeleton, Text, TextArea, showToast, useTheme } from "@/ui";
 
 type FitItem = SavedItem & { data: SavedData<"fit"> };
@@ -34,6 +35,16 @@ function Fit({ application, version }: WorkspaceTabProps) {
 	const provider = useHasAIProvider().defaultProvider;
 	const facts = useFacts(application.id);
 	const router = useRouter();
+	const tailor = () =>
+		application.resumeId
+			? router.push({
+					pathname: routes.builder(application.resumeId, "check", application.id),
+					params: { tab: "match" },
+				})
+			: router.push({
+					pathname: routes.new(),
+					params: { step: "copy", applicationId: application.id, destination: "job-match", context: "applications" },
+				});
 	const evidenceState = useQuery(orpc.career.fitEvidence.queryOptions({ input: { applicationId: application.id } }));
 	const documents = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const linkResume = useMutation(orpc.applications.update.mutationOptions());
@@ -176,6 +187,7 @@ function Fit({ application, version }: WorkspaceTabProps) {
 							status={statusOf(requirement)}
 							evidence={factId ? (factText(factId) ?? requirement.evidence) : requirement.evidence}
 							readOnly={readOnly}
+							onTailor={tailor}
 							onSaved={(id) => onSaved(requirement, id)}
 						/>
 					);
@@ -214,9 +226,10 @@ type RequirementCardProps = {
 	evidence: string;
 	readOnly: boolean;
 	onSaved: (factId: string) => void;
+	onTailor: () => void;
 };
 
-function RequirementCard({ requirement, status, evidence, readOnly, onSaved }: RequirementCardProps) {
+function RequirementCard({ requirement, status, evidence, readOnly, onSaved, onTailor }: RequirementCardProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const [editing, setEditing] = useState(false);
@@ -232,6 +245,9 @@ function RequirementCard({ requirement, status, evidence, readOnly, onSaved }: R
 				</Text>
 			</Actions>
 			<Text color={status === "missing" ? "ink2" : "ink"}>{evidence}</Text>
+			{status === "missing" || status === "partial" ? (
+				<Button variant="link" size="sm" label={t`Tailor resume for this job`} onPress={onTailor} />
+			) : null}
 			{canAdd ? (
 				editing ? (
 					<EvidenceEditor requirement={requirement} onCancel={() => setEditing(false)} onSaved={onSaved} />

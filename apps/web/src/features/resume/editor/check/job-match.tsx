@@ -6,7 +6,7 @@ import { ph, t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useId, useMemo, useState } from "react";
 import { buildMarkdown } from "@reactive-resume/resume/markdown";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -56,6 +56,10 @@ export type JobMatch = {
 	posting: string;
 	result: JobMatchResult | null;
 	hiddenTerms: readonly string[];
+	contextOnly: boolean;
+	applicationLoading: boolean;
+	applicationFailed: boolean;
+	retryApplication: () => void;
 };
 
 const loadAtsPdf = () => import("@reactive-resume/resume/ats-pdf");
@@ -64,15 +68,16 @@ const loadAtsPdf = () => import("@reactive-resume/resume/ats-pdf");
  * Job match reads the posting of the application the resume is linked to, or one pasted for this visit, and sorts
  * its terms into found and missing. Terms hidden as "not true for me" are left out. It isn't part of the score.
  */
-export function useJobMatch(data: ResumeData | undefined): JobMatch {
-	const applicationId = useCurrentBuilderResumeSelector((resume) => resume.applicationId ?? null);
+export function useJobMatch(data: ResumeData | undefined, selectedId?: string): JobMatch {
+	const linkedId = useCurrentBuilderResumeSelector((resume) => resume.applicationId ?? null);
+	const applicationId = selectedId ?? linkedId;
 	const pasted = useEditorStore((state) => state.pastedPosting);
-	const { data: application } = useQuery({
+	const applicationQuery = useQuery({
 		...orpc.applications.getById.queryOptions({ input: { id: applicationId ?? "" } }),
 		enabled: Boolean(applicationId),
 	});
-	const selectedApplication = application ?? null;
-	const posting = selectedApplication ? (selectedApplication.jobDescription ?? "").trim() : pasted.trim();
+	const selectedApplication = applicationQuery.data ?? null;
+	const posting = applicationId ? (selectedApplication?.jobDescription ?? "").trim() : pasted.trim();
 
 	// The matcher (stemmer and skill aliases) loads only once there's a posting to match.
 	const { data: engine } = useQuery({
@@ -114,7 +119,16 @@ export function useJobMatch(data: ResumeData | undefined): JobMatch {
 		selectedApplication?.role,
 	]);
 
-	return { application: selectedApplication, posting, result, hiddenTerms: hiddenTerms ?? [] };
+	return {
+		application: selectedApplication,
+		posting,
+		result,
+		hiddenTerms: hiddenTerms ?? [],
+		contextOnly: Boolean(applicationId) && applicationId !== linkedId,
+		applicationLoading: Boolean(applicationId) && applicationQuery.isPending,
+		applicationFailed: Boolean(applicationId) && applicationQuery.isError,
+		retryApplication: () => void applicationQuery.refetch(),
+	};
 }
 
 /** The first spelling of a term the posting uses, as it writes it ("Figma", not "figma"). */
@@ -136,6 +150,23 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 	const { i18n } = useLingui();
 	const hiddenList = formatList(i18n.locale, hiddenTerms);
 
+	if (match.applicationLoading)
+		return (
+			<p role="status">
+				<Trans>Loading…</Trans>
+			</p>
+		);
+	if (match.applicationFailed)
+		return (
+			<div role="alert">
+				<p>
+					<Trans>Couldn't load the linked posting.</Trans>
+				</p>
+				<Button onClick={match.retryApplication}>
+					<Trans>Retry</Trans>
+				</Button>
+			</div>
+		);
 	if (!posting) return <NoPosting application={application} />;
 
 	const open = result?.missing.find((term) => term.term === openTerm);
@@ -165,7 +196,7 @@ export function JobMatchTab({ match }: JobMatchTabProps) {
 
 	return (
 		<div className="grid gap-3.5">
-			<PostingSource application={application} />
+			<PostingSource application={application} contextOnly={match.contextOnly} />
 
 			{!result ? (
 				<p className="flex items-center gap-2 text-sm text-ink-2">
@@ -332,6 +363,8 @@ const newSkill = (name: string): SkillItem => ({
 });
 
 function useLinkApplication() {
+	const navigate = useNavigate({ from: "/builder/$resumeId" });
+	const search = useSearch({ from: "/builder/$resumeId" });
 	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const patchResume = usePatchResume();
 	const { mutateAsync, isPending } = useMutation({
@@ -352,6 +385,11 @@ function useLinkApplication() {
 			await mutateAsync(applicationId);
 			patchResume((resume) => {
 				resume.applicationId = applicationId;
+			});
+			await navigate({
+				to: ".",
+				search: (previous: typeof search) => ({ ...previous, applicationId: undefined }),
+				replace: true,
 			});
 			return true;
 		} catch (error) {
@@ -469,7 +507,7 @@ function CopyOrLink({ application, onDone }: CopyOrLinkProps) {
 }
 
 /** Where the posting comes from, with Change (link another application or unlink) or Save as application. */
-function PostingSource({ application }: { application: JobMatch["application"] }) {
+function PostingSource({ application, contextOnly }: { application: JobMatch["application"]; contextOnly: boolean }) {
 	const [changing, setChanging] = useState(false);
 	const [pickedId, setPickedId] = useState<string | null>(null);
 	const picked = useApplicationChoice(pickedId);
@@ -510,14 +548,16 @@ function PostingSource({ application }: { application: JobMatch["application"] }
 						{application.role} · {application.company}
 					</b>
 					<span className="text-xs text-ink-3">
-						<Trans>Posting from the linked application</Trans>
+						{contextOnly ? <Trans>For this visit only</Trans> : <Trans>Posting from the linked application</Trans>}
 					</span>
 				</span>
-				<Button size="sm" variant="secondary" aria-expanded={changing} onClick={() => setChanging(!changing)}>
-					<Trans>Change</Trans>
-				</Button>
+				{!contextOnly && (
+					<Button size="sm" variant="secondary" aria-expanded={changing} onClick={() => setChanging(!changing)}>
+						<Trans>Change</Trans>
+					</Button>
+				)}
 			</div>
-			{changing && (
+			{changing && !contextOnly && (
 				<div className="grid gap-2">
 					<ApplicationPicker value={picked?.id ?? application.id} onChange={setPickedId} />
 					{picked && picked.id !== application.id && (

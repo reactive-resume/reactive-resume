@@ -49,6 +49,7 @@ export type NewDocumentDialogData = {
 	context?: NewDocumentContext;
 	/** Open on a step other than the three choices. */
 	step?: "copy";
+	destination?: "job-match";
 	/** Copy for a job: the resume to start from. */
 	sourceResumeId?: string;
 	/** Copy for a job: the application it's for. */
@@ -73,7 +74,7 @@ type Step =
 	| { name: "failed"; file: File; message: string }
 	| { name: "copy" };
 
-type OpenResumeOptions = { withAssistant?: boolean; importedFrom?: string };
+type OpenResumeOptions = { withAssistant?: boolean; importedFrom?: string; checkTab?: "match" };
 
 function requireImportKind(kind: ImportKind | null, file: File): ImportKind {
 	if (!kind) {
@@ -251,13 +252,15 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 	const importDescriptionId = useId();
 
 	// A copy made for a job opens with the assistant ready to tailor it.
-	const openResume = (resumeId: string, { withAssistant = false, importedFrom }: OpenResumeOptions = {}) => {
+	const openResume = (resumeId: string, { withAssistant = false, importedFrom, checkTab }: OpenResumeOptions = {}) => {
 		closeDialog();
 		void navigate({
 			to: "/builder/$resumeId",
 			params: { resumeId },
 			search: {
 				...(withAssistant ? { assistant: "new" } : {}),
+				mode: checkTab ? "check" : undefined,
+				checkTab,
 				...(importedFrom ? { imported: importedFrom } : {}),
 			},
 		});
@@ -317,7 +320,12 @@ export function NewDocumentDialog({ data }: { data?: NewDocumentDialogData | und
 						onCreated={(resumeId, forJob) => {
 							markNew(resumeId);
 							void refreshDocuments();
-							openResume(resumeId, { withAssistant: forJob && hasUsableProvider });
+							openResume(
+								resumeId,
+								data?.destination === "job-match"
+									? { checkTab: "match" }
+									: { withAssistant: forJob && hasUsableProvider },
+							);
 						}}
 					/>
 				</div>
@@ -823,7 +831,9 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 	const applications = useQuery(applicationsListQueryOptions());
 	const resumes = (documents ?? []).filter((document) => document.type === "resume");
-	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
+	const jobs = (applications.data ?? []).filter(
+		(application) => application.status !== "closed" || application.id === initialJobId,
+	);
 	const [sourceId, setSourceId] = useState(initialSourceId);
 	const [changingSource, setChangingSource] = useState(!initialSourceId);
 	const [jobId, setJobId] = useState<string | null>(initialJobId ?? null);

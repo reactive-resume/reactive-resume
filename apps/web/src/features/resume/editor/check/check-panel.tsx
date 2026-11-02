@@ -1,4 +1,3 @@
-import type { CheckTab } from "../store";
 import type { CheckIssue } from "./issues";
 import type { CheckResult } from "./use-check";
 import type { AtsCategory, AtsReport } from "@reactive-resume/resume/ats";
@@ -6,6 +5,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { CSSProperties } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
+import { getRouteApi } from "@tanstack/react-router";
 import { useState } from "react";
 import { ATS_CATEGORIES, atsVerdict } from "@reactive-resume/resume/ats";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -39,9 +39,13 @@ import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
  * the linked application's posting, not scored) and Writing (an opt-in AI review, not scored).
  */
 export function CheckPanel() {
+	const route = getRouteApi("/builder/$resumeId");
+	const search = route.useSearch();
+	const { applicationId } = search;
+	const navigate = route.useNavigate();
 	const check = useCheck();
 	const tab = useEditorStore((state) => state.checkTab);
-	const match = useJobMatch(check?.data);
+	const match = useJobMatch(check?.data, applicationId);
 
 	if (!check) return null;
 
@@ -51,7 +55,11 @@ export function CheckPanel() {
 
 			<Tabs
 				value={tab}
-				onValueChange={(value) => useEditorStore.setState({ checkTab: value as CheckTab })}
+				onValueChange={(value) => {
+					if (value !== "issues" && value !== "match" && value !== "writing") return;
+					useEditorStore.setState({ checkTab: value });
+					void navigate({ to: ".", search: { ...search, checkTab: value }, replace: true });
+				}}
 				className="gap-3.5"
 			>
 				<TabsList aria-label={t`Check views`} className="h-[38px] w-full">
