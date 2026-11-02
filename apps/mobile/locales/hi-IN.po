@@ -779,6 +779,10 @@ msgstr "{minutes} मिनट"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {कोई साक्षात्कार नहीं} one {# साक्षात्कार} other {# साक्षात्कार}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} को पेज 1 में जोड़ा गया"
@@ -1942,6 +1946,10 @@ msgstr "नौकरी आवेदन तिथि"
 msgid "Application deleted"
 msgstr "नौकरी आवेदन हटा दिया गया"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2036,6 +2044,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "“{0}” का उपयोग करने वाले ऐप्स काम करना बंद कर देंगे। इसे पूर्ववत नहीं किया जा सकता।"
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -2316,6 +2328,11 @@ msgstr "इंटरव्यू से पहले"
 #: src/features/letters/share.tsx
 msgid "Before restore"
 msgstr "पुनर्स्थापित करने से पहले"
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Before restoring “{0}”"
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -3163,7 +3180,14 @@ msgstr "लेखन, नौकरी खोज और अपने बायो
 msgid "Connected · {milliseconds} ms"
 msgstr "कनेक्टेड · {milliseconds} एमएस"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "कनेक्टेड एप्लिकेशन"
 
@@ -3490,6 +3514,10 @@ msgstr "आवेदन लोड नहीं किया जा सका."
 msgid "Couldn't load applications. Try again."
 msgstr "आवेदन लोड नहीं हो सके। फिर से प्रयास करें।"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "दस्तावेज़ लोड नहीं हो सके। फिर कोशिश करें।"
@@ -3582,7 +3610,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3679,6 +3706,10 @@ msgstr "इस रेज़्यूमे को प्रस्तुत न�
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "कुंजी को रद्द नहीं किया जा सका. पुनः प्रयास करें।"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "इस कनेक्शन को रद्द नहीं किया जा सका। पुनः प्रयास करें।"
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3974,6 +4005,10 @@ msgstr "नया रेज़्यूमे बनाएँ"
 msgid "Create a resume first, then ask about it."
 msgstr "पहले एक बायोडाटा बनाएं, फिर उसके बारे में पूछें।"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "प्रति बनाएँ"
@@ -4212,6 +4247,10 @@ msgstr "आवेदन हटाएँ…"
 msgid "Delete conversation"
 msgstr "बातचीत हटाएँ"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "प्रविष्टि हटाएँ"
@@ -4226,6 +4265,7 @@ msgid "Delete forever…"
 msgstr "हमेशा के लिए हटाएं…"
 
 #: src/features/application-detail/interview-sheet.tsx
+#: src/features/application-detail/sections.tsx
 msgid "Delete interview"
 msgstr "साक्षात्कार हटाएँ"
 
@@ -4273,6 +4313,12 @@ msgstr "अनुभाग हटाएँ"
 #: src/features/career/stories.tsx
 msgid "Delete story"
 msgstr "कहानी हटाएँ"
+
+#. placeholder {0}: interviewTypeLabel(deleting.kind)
+#. placeholder {1}: day(new Date(deleting.at))
+#: src/features/application-detail/sections.tsx
+msgid "Delete the {0} interview on {1}?"
+msgstr ""
 
 #: src/features/application-detail/detail-screen.tsx
 msgid "Delete this application?"
@@ -4409,6 +4455,27 @@ msgstr "अपने ऑफ़लाइन संपादन त्यागे
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "क्या आप अपने ऑफ़लाइन संपादन त्यागें?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "डिसकनेक्ट करें"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -4703,6 +4770,11 @@ msgstr "इस चैट के पिछले संदेश"
 msgid "Edit"
 msgstr "संपादन करना"
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Edit {0}"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
@@ -4720,6 +4792,10 @@ msgstr ""
 #. placeholder {0}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {number}: {0}"
+msgstr ""
+
+#: src/features/application-detail/sheets.tsx
+msgid "Edit contact"
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -5419,6 +5495,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "आपके समय क्षेत्र के आधार पर"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6053,6 +6133,14 @@ msgstr "समस्याएँ"
 msgid "It has entries but isn't placed on a page."
 msgstr "इसमें प्रविष्टियाँ हैं लेकिन किसी पृष्ठ पर नहीं रखी गई हैं।"
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from the timeline and the calendar for good."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "इसे हमेशा के लिए टाइमलाइन से हटा दिया गया है।"
@@ -6159,6 +6247,10 @@ msgstr "रखना"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "एक ही पता रखें, ताकि सॉफ़्टवेयर को यह अंदाज़ा न लगाना पड़े कि किसका इस्तेमाल करना है।"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "जब आप एप्लिकेशन का उपयोग नहीं कर रहे हों तो पहुंच बनाए रखें।"
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6694,6 +6786,10 @@ msgstr "API कुंजियाँ लोड हो रही हैं..."
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "आवेदन लोड हो रहे हैं…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "कनेक्शन लोड हो रहे हैं..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7564,6 +7660,10 @@ msgstr "किसी बदलाव की ज़रूरत नहीं। �
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "उस खोज से कोई कमांड मेल नहीं खाती।"
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "अभी कोई कनेक्ट किया गया ऐप्लिकेशन नहीं है। जिन ऐप्स को आप अपने खाते तक पहुँच देते हैं, वे यहाँ दिखाई देते हैं।"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9233,6 +9333,10 @@ msgstr "लाइसेंस पढ़ें"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "केवल पढ़ने योग्य पहुंच"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9268,6 +9372,22 @@ msgstr "रेज़्यूमे पढ़ा"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "अपना ईमेल पता पढ़ें."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "अपनी प्रोफ़ाइल जानकारी पढ़ें."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9657,6 +9777,11 @@ msgstr ""
 msgid "Remove unavailable story reference"
 msgstr ""
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Removed {0}"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Rename"
@@ -9845,6 +9970,17 @@ msgstr "संस्करण पुनर्स्थापित करें"
 
 #: src/lib/undone.ts
 msgid "Restored"
+msgstr ""
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”"
+msgstr "पुनर्स्थापित \"{0}\""
+
+#. placeholder {0}: selected.name
+#. placeholder {1}: selected.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
 #. placeholder {0}: done.length
@@ -10097,10 +10233,6 @@ msgstr "मेरे जवाब की समीक्षा करें"
 msgid "Review packet"
 msgstr ""
 
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr ""
-
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -10318,6 +10450,10 @@ msgstr "बदलाव सहेजें"
 #: src/features/ai/web-access.tsx
 msgid "Save connection"
 msgstr "कनेक्शन सहेजें"
+
+#: src/features/application-detail/sheets.tsx
+msgid "Save contact"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
@@ -12395,6 +12531,10 @@ msgstr "यह कहीं और बदल गया, इसलिए इस�
 msgid "This connection is managed by your server."
 msgstr "यह कनेक्शन आपके सर्वर द्वारा प्रबंधित किया जाता है."
 
+#: src/features/application-detail/sheets.tsx
+msgid "This contact changed somewhere else. Cancel and edit it again."
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 msgid "This conversation couldn't be opened."
@@ -12882,6 +13022,7 @@ msgstr "{suggestion} आज़माएं"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

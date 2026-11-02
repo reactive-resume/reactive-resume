@@ -37,10 +37,11 @@ function versionTitle(version: Version) {
 			return t`Imported`;
 		case "auto":
 			return t`Editing session`;
+		// A named version's name goes with the restore's snapshots (web format.ts).
 		case "before-restore":
-			return t`Before restore`;
+			return version.name ? t`Before restoring “${version.name}”` : t`Before restore`;
 		case "restored":
-			return t`Restored a version`;
+			return version.name ? t`Restored “${version.name}”` : t`Restored a version`;
 		case "ai":
 			return t`AI edit`;
 		case "sent":
@@ -97,7 +98,11 @@ export function HistoryPanel({ resume, offline }: HistoryProps) {
 		) {
 			setSelected(null);
 			void list.refetch();
-			showToast({ message: t`Version restored. Your previous state is saved as “Before restore”.` });
+			showToast({
+				message: selected.name
+					? t`Restored “${selected.name}”. Your previous state is saved as “Before restoring “${selected.name}””.`
+					: t`Version restored. Your previous state is saved as “Before restore”.`,
+			});
 		}
 	};
 	const mutateVersion = async (remove: boolean) => {

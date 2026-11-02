@@ -124,4 +124,17 @@ describe("cover letter editor WebMCP tools", () => {
 		await expect(locked("update_cover_letter").execute({ content: "<p>x</p>" })).resolves.toMatch(/locked/);
 		expect(mocks.update).not.toHaveBeenCalled();
 	});
+
+	it("refuses fields the letter's layout doesn't show", async () => {
+		const structured = mountTools(letter);
+		await expect(
+			structured("update_cover_letter").execute({ recipient: "Dana Lee\nAcme", content: "<p>x</p>" }),
+		).resolves.toMatch("use recipientName and recipientCompany");
+
+		const freeform = mountTools({ ...letter, layout: "freeform" });
+		await expect(freeform("update_cover_letter").execute({ recipientName: "Dana" })).resolves.toMatch(
+			"leave out recipientName",
+		);
+		expect(mocks.update).not.toHaveBeenCalled();
+	});
 });

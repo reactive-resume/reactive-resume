@@ -126,6 +126,31 @@
 												"latencyMs"
 											],
 											"additionalProperties": true
+										},
+										"redis": {
+											"type": "object",
+											"properties": {
+												"status": {
+													"type": "string",
+													"enum": [
+														"healthy",
+														"unhealthy"
+													]
+												},
+												"latencyMs": {
+													"type": "number"
+												},
+												"error": {
+													"type": "string",
+													"description": "Generic failure message. Detailed diagnostics are logged on the server."
+												}
+											},
+											"required": [
+												"status",
+												"latencyMs"
+											],
+											"additionalProperties": true,
+											"description": "Present only when REDIS_URL is configured. An unhealthy Redis makes the overall status unhealthy."
 										}
 									},
 									"required": [
@@ -234,6 +259,31 @@
 												"latencyMs"
 											],
 											"additionalProperties": true
+										},
+										"redis": {
+											"type": "object",
+											"properties": {
+												"status": {
+													"type": "string",
+													"enum": [
+														"healthy",
+														"unhealthy"
+													]
+												},
+												"latencyMs": {
+													"type": "number"
+												},
+												"error": {
+													"type": "string",
+													"description": "Generic failure message. Detailed diagnostics are logged on the server."
+												}
+											},
+											"required": [
+												"status",
+												"latencyMs"
+											],
+											"additionalProperties": true,
+											"description": "Present only when REDIS_URL is configured. An unhealthy Redis makes the overall status unhealthy."
 										}
 									},
 									"required": [
@@ -1703,6 +1753,7 @@
 				"operationId": "parseResumePdf",
 				"summary": "Parse a PDF file into resume data",
 				"description": "Extracts structured resume data from a PDF file with one of the user's saved AI providers: the one named by `aiProviderId`, or their default. Send the file as a base64-encoded string. Returns a complete ResumeData object and saves nothing.",
+				"deprecated": true,
 				"tags": [
 					"AI"
 				],
@@ -6270,6 +6321,7 @@
 				"operationId": "parseResumeDocx",
 				"summary": "Parse a DOCX file into resume data",
 				"description": "Extracts structured resume data from a DOCX or DOC file with one of the user's saved AI providers: the one named by `aiProviderId`, or their default. Send the file as a base64-encoded string with the document's media type. Returns a complete ResumeData object and saves nothing.",
+				"deprecated": true,
 				"tags": [
 					"AI"
 				],
@@ -10845,6 +10897,7 @@
 				"operationId": "atsReview",
 				"summary": "Review extracted resume text",
 				"description": "Reviews the plain text extracted from a resume PDF and returns qualitative feedback: a summary, rewrite suggestions, strengths, and — when a job description is supplied — how the candidate's experience lines up with the role. Deliberately returns no score: the deterministic ATS report owns the only number in this feature. Requires authentication and AI credentials.",
+				"deprecated": true,
 				"tags": [
 					"AI"
 				],
@@ -11155,6 +11208,7 @@
 				"operationId": "improveLine",
 				"summary": "Suggest a rewrite of one line",
 				"description": "Suggests a rewrite of one line of a resume or cover letter: a stronger verb, an added result, a shorter version, or the user's own request. Returns the new line, a short reason, and whether it states anything the input didn't, so the user can check it. Writes nothing. Requires authentication and AI credentials.",
+				"deprecated": true,
 				"tags": [
 					"AI"
 				],
@@ -13333,6 +13387,7 @@
 				"operationId": "testAiProvider",
 				"summary": "Test saved AI provider",
 				"description": "Decrypts the saved API key server-side and validates the provider/model connection.",
+				"deprecated": true,
 				"tags": [
 					"AI Providers"
 				],
@@ -15201,6 +15256,7 @@
 			"post": {
 				"operationId": "sendAgentMessage",
 				"summary": "Send agent message",
+				"deprecated": true,
 				"tags": [
 					"Agent"
 				],
@@ -15445,6 +15501,7 @@
 			"post": {
 				"operationId": "stopAgentMessage",
 				"summary": "Stop active agent run",
+				"deprecated": true,
 				"tags": [
 					"Agent"
 				],
@@ -15563,6 +15620,7 @@
 			"get": {
 				"operationId": "resumeAgentMessages",
 				"summary": "Resume agent message stream",
+				"deprecated": true,
 				"tags": [
 					"Agent"
 				],
@@ -15704,6 +15762,7 @@
 				"operationId": "setAgentEditStatus",
 				"summary": "Record what happened to proposed edits",
 				"description": "Records that proposed edits were accepted, rejected, rewritten by the user, or are pending again (after an undo), so past conversations show their outcome.",
+				"deprecated": true,
 				"tags": [
 					"Agent"
 				],
@@ -22269,6 +22328,7 @@
 				"operationId": "updateApplication",
 				"summary": "Update a job application",
 				"description": "Updates one or more fields of an application, including moving it to a different pipeline stage or archiving it. Moving stages automatically appends an entry to the activity timeline. Only provided fields are changed. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Applications"
 				],
@@ -25134,6 +25194,7 @@
 				"operationId": "importApplications",
 				"summary": "Bulk import applications",
 				"description": "Creates many applications at once from a parsed CSV. Each item requires company and role. Returns the number imported. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Applications"
 				],
@@ -28612,6 +28673,7 @@
 				"operationId": "updateApplicationInterview",
 				"summary": "Update a scheduled interview",
 				"description": "Updates an interview timeline entry (date-time, kind, duration, location, notes). Only provided fields are changed. Delete interviews with the timeline entry delete endpoint. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Applications"
 				],
@@ -30242,6 +30304,7 @@
 				"operationId": "updateApplicationTimelineEntry",
 				"summary": "Update a timeline entry",
 				"description": "Updates a stage or note timeline entry date, or note text for note entries. Interview entries are rejected; use updateApplicationInterview. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Applications"
 				],
@@ -32480,6 +32543,7 @@
 				"operationId": "bulkUpdateApplications",
 				"summary": "Bulk update applications",
 				"description": "Applies the same change (move stage, archive/unarchive, add tags) to multiple applications at once. A closedReason requires every selected application to be Closed already, or status/laneId to move them to Closed. Contradictory selections fail atomically. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Applications"
 				],
@@ -32755,6 +32819,7 @@
 				"operationId": "bulkDeleteApplications",
 				"summary": "Bulk delete applications",
 				"description": "Permanently deletes multiple applications at once. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Applications"
 				],
@@ -33103,6 +33168,7 @@
 				"operationId": "searchApplicationPostings",
 				"summary": "Search job postings",
 				"description": "Searches through the server's SearXNG when it has one, otherwise the selected Firecrawl, Tavily or Exa connection. Returns up to five public links to review and import. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Applications",
 					"AI"
@@ -33446,6 +33512,7 @@
 				"operationId": "aiParseApplicationPosting",
 				"summary": "Read a job posting",
 				"description": "Reads a job link or pasted posting text into role, company, location, salary and requirements, and returns the posting text to save with the application. Links must be public https pages. Set useAI:false to read without AI, or true to allow AI enrichment. If omitted, AI is attempted only when the page lacks a role, company or description. Without an AI provider, only a page's own job data (JSON-LD) fills the fields. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Applications",
 					"AI"
@@ -33925,6 +33992,9 @@
 		"/applications/ai/autofill": {
 			"post": {
 				"operationId": "aiAutofillApplication",
+				"summary": "Fill application fields from a job posting",
+				"description": "Extracts the company, role, location and salary from pasted job-posting text with your AI provider. Nothing is saved; review the fields, then create or update the application.",
+				"deprecated": true,
 				"tags": [
 					"Applications",
 					"AI"
@@ -34155,6 +34225,9 @@
 		"/applications/{id}/ai/match-score": {
 			"post": {
 				"operationId": "aiApplicationMatchScore",
+				"summary": "Score the linked resume against the job",
+				"description": "Compares the application's linked resume with its job description using your AI provider and returns a 0–100 fit score with matching strengths and missing qualifications.",
+				"deprecated": true,
 				"tags": [
 					"Applications",
 					"AI"
@@ -34360,6 +34433,9 @@
 		"/applications/{id}/ai/draft-message": {
 			"post": {
 				"operationId": "aiDraftApplicationMessage",
+				"summary": "Draft a message about this application",
+				"description": "Drafts a cover letter or follow-up message from the application's posting and linked resume using your AI provider. A cover letter is saved as a new letter and its ID returned; a follow-up is returned as text. Nothing is sent.",
+				"deprecated": true,
 				"tags": [
 					"Applications",
 					"AI"
@@ -34593,6 +34669,9 @@
 		"/applications/{id}/ai/tailor-resume": {
 			"post": {
 				"operationId": "aiTailorResumeForApplication",
+				"summary": "Tailor a resume copy for this application",
+				"description": "Creates a copy of the linked resume with a summary rewritten for the job using your AI provider, and links the copy to the application.",
+				"deprecated": true,
 				"tags": [
 					"Applications",
 					"AI"
@@ -35555,6 +35634,222 @@
 						"lang": "bash",
 						"label": "cURL",
 						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/auth/api-keys/<keyId>\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
+		"/auth/connections": {
+			"get": {
+				"operationId": "listConnectedApplications",
+				"summary": "List connected applications",
+				"description": "Lists the applications you allowed through OAuth, newest first, with their registered names and granted scopes.",
+				"tags": [
+					"Authentication"
+				],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"connections": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"clientId": {
+														"type": "string"
+													},
+													"clientName": {
+														"anyOf": [
+															{
+																"type": "string"
+															},
+															{
+																"type": "null"
+															}
+														]
+													},
+													"scopes": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														}
+													},
+													"createdAt": {
+														"anyOf": [
+															{
+																"type": "string",
+																"format": "date-time",
+																"x-native-type": "date"
+															},
+															{
+																"type": "null"
+															}
+														]
+													}
+												},
+												"required": [
+													"id",
+													"clientId",
+													"clientName",
+													"scopes",
+													"createdAt"
+												]
+											}
+										}
+									},
+									"required": [
+										"connections"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl \"https://rxresu.me/api/openapi/auth/connections\" --header \"x-api-key: <api-key>\""
+					}
+				]
+			}
+		},
+		"/auth/connections/{id}": {
+			"delete": {
+				"operationId": "deleteConnectedApplication",
+				"summary": "Disconnect an application",
+				"description": "Disconnects an application you allowed through OAuth. Its tokens stop working at once; to use it again, connect it from the application.",
+				"tags": [
+					"Authentication"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									]
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Structured API error. See status and code; do not branch on message text.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"required": [
+										"defined",
+										"code",
+										"status",
+										"message"
+									],
+									"properties": {
+										"defined": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "string"
+										},
+										"status": {
+											"type": "integer"
+										},
+										"message": {
+											"type": "string"
+										},
+										"data": {}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"apiKey": []
+					},
+					{
+						"bearerAuth": []
+					},
+					{
+						"cookieAuth": []
+					}
+				],
+				"x-codeSamples": [
+					{
+						"lang": "bash",
+						"label": "cURL",
+						"source": "curl --request DELETE \"https://rxresu.me/api/openapi/auth/connections/<id>\" --header \"x-api-key: <api-key>\""
 					}
 				]
 			}
@@ -45893,6 +46188,8 @@
 		"/career/voice/transcripts": {
 			"get": {
 				"operationId": "listCareerTranscripts",
+				"summary": "List voice answer transcripts",
+				"description": "Lists the transcripts of answers you recorded by voice in Career practice, newest first.",
 				"tags": [
 					"Career"
 				],
@@ -46031,6 +46328,8 @@
 		"/career/voice/transcribe": {
 			"post": {
 				"operationId": "transcribeCareerAnswer",
+				"summary": "Transcribe a spoken answer",
+				"description": "Transcribes an answer you recorded in Career practice with your AI provider and saves the transcript.",
 				"tags": [
 					"Career"
 				],
@@ -46177,6 +46476,8 @@
 		"/career/voice/transcripts/{id}": {
 			"put": {
 				"operationId": "editCareerTranscript",
+				"summary": "Edit a voice answer transcript",
+				"description": "Corrects the text of a saved voice answer transcript.",
 				"tags": [
 					"Career"
 				],
@@ -46267,6 +46568,8 @@
 			},
 			"delete": {
 				"operationId": "deleteCareerTranscript",
+				"summary": "Delete a voice answer transcript",
+				"description": "Deletes a saved voice answer transcript.",
 				"tags": [
 					"Career"
 				],
@@ -46339,6 +46642,8 @@
 		"/career/voice/speak": {
 			"post": {
 				"operationId": "speakCareerQuestion",
+				"summary": "Read a practice question aloud",
+				"description": "Turns a Career practice question into speech audio with your AI provider.",
 				"tags": [
 					"Career"
 				],
@@ -59267,6 +59572,7 @@
 				"operationId": "updateCoverLetter",
 				"summary": "Update a cover letter",
 				"description": "Updates the supplied fields of a saved cover letter using its expected revision.",
+				"deprecated": true,
 				"tags": [
 					"Cover Letters"
 				],
@@ -62012,6 +62318,7 @@
 				"operationId": "refreshCoverLetterStyle",
 				"summary": "Refresh cover letter style",
 				"description": "Refreshes a cover letter's style from a selected resume while preserving its content and template.",
+				"deprecated": true,
 				"tags": [
 					"Cover Letters"
 				],
@@ -62826,6 +63133,7 @@
 				"operationId": "duplicateCoverLetter",
 				"summary": "Duplicate a cover letter",
 				"description": "Creates a copy of an existing saved cover letter, optionally with a new name.",
+				"deprecated": true,
 				"tags": [
 					"Cover Letters"
 				],
@@ -64370,6 +64678,7 @@
 				"operationId": "importCoverLetter",
 				"summary": "Import a cover letter",
 				"description": "Creates a saved cover letter from an exported Reactive Resume cover-letter document.",
+				"deprecated": true,
 				"tags": [
 					"Cover Letters"
 				],
@@ -67135,6 +67444,7 @@
 				"operationId": "restoreCoverLetterVersion",
 				"summary": "Restore a cover letter version",
 				"description": "Saves the current letter as \"Before restore\", then makes the letter read as the version did. Linked details and design keep coming from the resume.",
+				"deprecated": true,
 				"tags": [
 					"Cover Letters"
 				],
@@ -67949,6 +68259,7 @@
 				"operationId": "draftCoverLetter",
 				"summary": "Draft a cover letter's body",
 				"description": "Streams a draft of the letter's body, as text, from its linked resume and its application's posting, using only facts from them. Nothing is saved. `shorter` and `personal` revise a previous draft.",
+				"deprecated": true,
 				"tags": [
 					"Cover Letters",
 					"AI"
@@ -69795,6 +70106,7 @@
 				"operationId": "renameDocument",
 				"summary": "Rename a document",
 				"description": "Renames a resume or letter. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Documents"
 				],
@@ -69894,6 +70206,7 @@
 				"operationId": "setDocumentTags",
 				"summary": "Set a document's tags",
 				"description": "Replaces a resume's or letter's tags. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Documents"
 				],
@@ -69997,6 +70310,7 @@
 				"operationId": "lockDocument",
 				"summary": "Lock or unlock a document",
 				"description": "Locks a resume or letter against edits and Trash, or unlocks it. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Documents"
 				],
@@ -70094,6 +70408,7 @@
 				"operationId": "linkDocumentApplication",
 				"summary": "Link a document to an application",
 				"description": "Records the job application a resume or letter was made for, or clears it. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Documents"
 				],
@@ -74653,6 +74968,7 @@
 				"operationId": "trashDocument",
 				"summary": "Move a document to Trash",
 				"description": "Moves a resume or letter to Trash, where it stays for 30 days. A resume in Trash isn't shared. Locked documents can't be moved. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Documents"
 				],
@@ -74835,6 +75151,7 @@
 				"operationId": "restoreDocument",
 				"summary": "Restore a document",
 				"description": "Brings a document back from Trash. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Documents"
 				],
@@ -75052,6 +75369,7 @@
 				"operationId": "purgeDocument",
 				"summary": "Delete a document now",
 				"description": "Permanently deletes a document that is already in Trash. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Documents"
 				],
@@ -75276,6 +75594,7 @@
 				"operationId": "copyResumeForJob",
 				"summary": "Copy a resume for a job",
 				"description": "Duplicates a resume and links the copy to a job application. Saved jobs select the copy; submitted document history is preserved. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Documents"
 				],
@@ -75747,6 +76066,7 @@
 				"operationId": "recordResumeDownload",
 				"summary": "Record a public resume PDF download",
 				"description": "Records a visitor's explicit PDF download after the browser starts saving the file. Requires access to the public resume. For password-protected resumes, first call verifyResumePassword (POST /resumes/{username}/{slug}/password/verify) with the password, then send the returned HttpOnly resume_access_<resumeId> cookie with this request. A missing or invalid access cookie returns NEED_PASSWORD (HTTP 401); the cookie expires after 10 minutes. Owner downloads are excluded. Rate limited per resume and visitor.",
+				"deprecated": true,
 				"tags": [
 					"Resume Statistics"
 				],
@@ -81206,6 +81526,7 @@
 				"operationId": "updateResume",
 				"summary": "Update a resume",
 				"description": "Updates one or more fields of a resume identified by its ID. All fields are optional; only provided fields will be updated. A generated slug follows a new name while the resume has never been published; publishing it or setting a slug keeps the slug from then on. Publishing a resume that was not public (isPublic true on a private resume) also makes it the primary resume when the account has none, unless isPrimary is given. When expectedUpdatedAt is provided, a stale version returns RESUME_VERSION_CONFLICT (409) with data.updatedAt. Locked resumes cannot be updated. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Resumes"
 				],
@@ -95584,6 +95905,7 @@
 				"operationId": "checkResumeSlug",
 				"summary": "Check a resume address",
 				"description": "Checks whether a slug can be a resume's public address: Latin letters a–z and numbers in groups joined by single dashes, and not used by another of the user's resumes. When it can't, suggests one that works. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Resume Sharing"
 				],
@@ -95700,6 +96022,7 @@
 				"operationId": "importResume",
 				"summary": "Import a resume",
 				"description": "Creates a new resume from an existing ResumeData object (e.g. from a previously exported JSON file). A random name and slug are generated automatically. Returns the ID of the imported resume. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Resumes"
 				],
@@ -95850,6 +96173,7 @@
 				"operationId": "setResumeLocked",
 				"summary": "Set resume lock status",
 				"description": "Toggles the locked status of a resume. When locked, a resume cannot be updated, patched, or deleted. Useful for protecting finalized resumes from accidental edits. When expectedUpdatedAt is provided, a stale version returns RESUME_VERSION_CONFLICT (409). Returns the resume as the change left it. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Resumes"
 				],
@@ -114360,6 +114684,7 @@
 				"operationId": "verifyResumePassword",
 				"summary": "Verify resume password",
 				"description": "Verifies a password for a password-protected public resume. On success, the viewer is granted access to view the resume data for the duration of their session. No authentication required.",
+				"deprecated": true,
 				"tags": [
 					"Resume Sharing"
 				],
@@ -114464,6 +114789,7 @@
 				"operationId": "duplicateResume",
 				"summary": "Duplicate a resume",
 				"description": "Creates a copy of an existing resume with the same data, and the given name and tags. The slug is optional: when omitted it is generated from the name, made unique across the user's resumes, and follows the name until the copy is published. Returns the ID of the duplicated resume. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Resumes"
 				],
@@ -119750,6 +120076,7 @@
 				"operationId": "restoreResumeVersion",
 				"summary": "Restore a resume version",
 				"description": "Non-destructively restores a resume to a previous version snapshot by writing that snapshot's data back through the normal update path. Prior versions are preserved and the restore itself becomes a new snapshot. Only the resume owner can restore versions. Requires authentication.",
+				"deprecated": true,
 				"tags": [
 					"Resumes"
 				],
@@ -125109,6 +125436,7 @@
 			"post": {
 				"operationId": "testWebAccessConnection",
 				"summary": "Test provider search and reading independently",
+				"deprecated": true,
 				"tags": [
 					"Integrations"
 				],
@@ -147556,6 +147884,8 @@
 		"/applications/ai/autofills": {
 			"post": {
 				"operationId": "createApplicationAutofill",
+				"summary": "Fill application fields from a job posting",
+				"description": "Extracts the company, role, location and salary from pasted job-posting text with your AI provider. Nothing is saved; review the fields, then create or update the application.",
 				"tags": [
 					"Applications",
 					"AI"
@@ -147786,6 +148116,8 @@
 		"/applications/{id}/ai/match-scores": {
 			"post": {
 				"operationId": "createApplicationMatchScore",
+				"summary": "Score the linked resume against the job",
+				"description": "Compares the application's linked resume with its job description using your AI provider and returns a 0–100 fit score with matching strengths and missing qualifications.",
 				"tags": [
 					"Applications",
 					"AI"
@@ -147991,6 +148323,8 @@
 		"/applications/{id}/ai/message-drafts": {
 			"post": {
 				"operationId": "createApplicationMessageDraft",
+				"summary": "Draft a message about this application",
+				"description": "Drafts a cover letter or follow-up message from the application's posting and linked resume using your AI provider. A cover letter is saved as a new letter and its ID returned; a follow-up is returned as text. Nothing is sent.",
 				"tags": [
 					"Applications",
 					"AI"
@@ -148224,6 +148558,8 @@
 		"/applications/{id}/ai/tailored-resumes": {
 			"post": {
 				"operationId": "createTailoredResume",
+				"summary": "Tailor a resume copy for this application",
+				"description": "Creates a copy of the linked resume with a summary rewritten for the job using your AI provider, and links the copy to the application.",
 				"tags": [
 					"Applications",
 					"AI"

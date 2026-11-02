@@ -757,7 +757,14 @@ export const coverLetterService = {
 			versionId: input.versionId,
 		});
 		const current = await getById(input);
-		await writeLetterVersion(db, { letter: current, userId: input.userId, kind: "before-restore" });
+		// A named version's name goes with both snapshots, so History reads "Restored “Version A”", not two identical rows.
+		const restoredName = version.name || null;
+		await writeLetterVersion(db, {
+			letter: current,
+			userId: input.userId,
+			kind: "before-restore",
+			name: restoredName,
+		});
 
 		const { data } = version;
 		const restored = await updateRevision(
@@ -780,7 +787,7 @@ export const coverLetterService = {
 			throw error instanceof CurrentClientRequired ? await refuseOlderClient(input) : error;
 		});
 		const resolved = await resolveLinks(restored, input.userId);
-		await writeLetterVersion(db, { letter: resolved, userId: input.userId, kind: "restored" });
+		await writeLetterVersion(db, { letter: resolved, userId: input.userId, kind: "restored", name: restoredName });
 		return resolved;
 	},
 	/** The version an application was sent with ("sent", named after the company). */

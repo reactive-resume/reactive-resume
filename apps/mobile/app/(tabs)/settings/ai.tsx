@@ -1,7 +1,6 @@
 import { useLingui } from "@lingui/react/macro";
 import { useRouter, Stack } from "expo-router";
-import { openAccountSettings } from "@/features/settings/browser";
-import { Card, ListRow, Screen, Text, showToast } from "@/ui";
+import { Card, ListRow, Screen, Text } from "@/ui";
 
 export default function AiScreen() {
 	const router = useRouter();
@@ -26,13 +25,9 @@ export default function AiScreen() {
 				/>
 				<ListRow
 					title={t`Connected applications`}
-					subtitle={t`Review permissions and disconnect apps in your browser. You may need to sign in there.`}
 					leading="plugs-connected"
-					onPress={() => {
-						void openAccountSettings("/dashboard/settings/ai").catch(() =>
-							showToast({ message: t`Couldn't open the browser. Try again.` }),
-						);
-					}}
+					chevron
+					onPress={() => router.push("/settings/ai-connections")}
 				/>
 				<ListRow
 					title={t`Report AI content`}

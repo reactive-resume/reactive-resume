@@ -8,7 +8,7 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
 ## Before you start
 
 - You need a Reactive Resume account. The examples use the hosted instance at `https://rxresu.me`. If you self-host, replace it with your own address.
-- An API key acts as you. Anyone who has it can read and edit your documents, so treat it like a password.
+- An API key acts as you with the access you choose when you create it. A **Read only** key can read your whole account; a **Read, write and delete** key can also change and delete it. Anyone who has a key can use it, so treat it like a password.
 
 ## Create an API key
 
@@ -20,7 +20,7 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
     In the **API keys** section, select **New key**.
   </Step>
   <Step title="Name the key, choose its access and expiration">
-    Under **What's it for?**, enter a name that reminds you where the key is used, such as "Resume sync script". **Access** starts at **Read only**. Choose **Read, write and delete** only if your client needs to change data. Under **Expires**, choose **30 days**, **90 days** or **Never**, then select **Create key**. If you signed in more than a day ago, you're asked to sign in again first.
+    Under **What's it for?**, enter a name that reminds you where the key is used, such as "Resume sync script". Under **Access**, choose **Read only** unless the tool needs to change your documents; **Read, write and delete** lets it change and delete them too. Under **Expires**, choose **30 days**, **90 days** or **Never**, then select **Create key**. If you signed in more than a day ago, you're asked to sign in again first.
 
     <Frame caption="Name a key and choose its expiration">
       <img src="/images/guides/using-the-api/new-api-key-dialog.webp" alt="New API key dialog with Resume sync script entered and expiration choices" />
@@ -28,7 +28,7 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
 
   </Step>
   <Step title="Copy the key">
-    Select **Copy**, store the key somewhere safe (a password manager or your deployment's secret store), then select **Done**.
+    Select **Copy**, store the key somewhere safe (a password manager or your deployment's secret store), then select **Done**. New keys start with `rr_`, so secret scanners can spot one that leaks into a repository. Send the key in the `x-api-key` header. For an MCP client, **Copy MCP config** copies a ready-to-paste server entry with this instance's address and the key in its header.
 
     <Frame caption="Copy a new key once; example value hidden">
       <img src="/images/guides/using-the-api/api-key-shown-once.webp" alt="New API key dialog with the one-time key value hidden, Copy and Done, and the warning that it will not be shown again" />
@@ -41,7 +41,7 @@ The Reactive Resume REST API lets your own scripts, extensions and automations r
   </Step>
 </Steps>
 
-Your keys are listed in the **API keys** table with the date each was created, the date it was last used and when it expires. Expired keys disappear from the list and stop working.
+Your keys are listed in the **API keys** table with their access (**Read only** or **Full access**), the date each was created, the date it was last used and when it expires. The mobile app shows the same details under **Settings → Account → API keys**. Expired keys disappear from the list and stop working.
 
 <Frame caption="Manage API keys from settings">
   <img

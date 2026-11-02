@@ -98,6 +98,15 @@ function getAgentSkills() {
 	return skills;
 }
 
+/** How many skills the index lists, or null when the bundled skills can't be read. */
+export function countAgentSkills(): number | null {
+	try {
+		return getAgentSkills().length;
+	} catch {
+		return null;
+	}
+}
+
 export function handleAgentSkillsIndex() {
 	const index = {
 		$schema: SCHEMA_URL,
