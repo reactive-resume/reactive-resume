@@ -11,7 +11,7 @@ export type EditorMode = (typeof EDITOR_MODES)[number];
 /** The Download & history sheet's tabs; each entry point opens its own. */
 export type SheetTab = "download" | "history";
 
-export type CheckTab = "issues" | "match" | "writing";
+type CheckTab = "issues" | "match" | "writing";
 
 /** Phones show one view at a time: the page, or one mode's panel. */
 export type MobileView = "page" | EditorMode;

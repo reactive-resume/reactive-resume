@@ -5,7 +5,7 @@ import type { CareerWorkspace, GenerateTask } from "@reactive-resume/schema/care
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
@@ -17,6 +17,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { DisclosureText } from "../disclosure";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { StatusPill, Swap, GenerateNotice, Working, workingSteps } from "../shared";
+import { useDialogStore } from "@/dialogs/store";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
 import { toastError } from "@/libs/error-message";
@@ -55,6 +56,16 @@ export function AiNotice({ task, application, interview, className }: AiNoticePr
 
 /** W1–W3: each requirement from the posting against the user's evidence, with gaps closed in place. */
 export function FitTab({ application, version }: WorkspaceTabProps) {
+	const navigate = useNavigate();
+	const openDialog = useDialogStore((state) => state.openDialog);
+	const tailor = () =>
+		application.resumeId
+			? void navigate({
+					to: "/builder/$resumeId",
+					params: { resumeId: application.resumeId },
+					search: { mode: "check", checkTab: "match", applicationId: application.id },
+				})
+			: openDialog("document.new", { step: "copy", applicationId: application.id, destination: "job-match" });
 	const queryClient = useQueryClient();
 	const saved = useSavedItems(application.id);
 	const workspace = useWorkspace(application.id);
@@ -266,6 +277,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 							status={statusOf(requirement)}
 							evidence={factId ? (factText(factId) ?? requirement.evidence) : requirement.evidence}
 							readOnly={readOnly}
+							onTailor={tailor}
 							onSaved={(id) => onSaved(requirement, id)}
 						/>
 					);
@@ -313,10 +325,11 @@ type RequirementRowProps = {
 	evidence: string;
 	readOnly: boolean;
 	onSaved: (factId: string) => void;
+	onTailor: () => void;
 };
 
 /** One requirement. Below 1024px From and Status sit under the name; on phones each row is a card. */
-function RequirementRow({ requirement, status, evidence, readOnly, onSaved }: RequirementRowProps) {
+function RequirementRow({ requirement, status, evidence, readOnly, onSaved, onTailor }: RequirementRowProps) {
 	const [editing, setEditing] = useState(false);
 	const from = requirement.origin === "posting" ? t`Posting` : t`Inferred`;
 	const canAdd = !readOnly && (status === "missing" || status === "partial");
@@ -341,6 +354,11 @@ function RequirementRow({ requirement, status, evidence, readOnly, onSaved }: Re
 			</div>
 			<div role="cell" className="grid content-start justify-items-start gap-2.5">
 				<p className={cn("text-sm leading-5", status === "missing" ? "text-ink-2" : "text-ink")}>{evidence}</p>
+				{(status === "missing" || status === "partial") && (
+					<Button size="sm" variant="link" onClick={onTailor}>
+						<Trans>Tailor resume for this job</Trans>
+					</Button>
+				)}
 				{canAdd && (
 					<Swap id={editing ? "editor" : "action"} className="w-full">
 						{editing ? (

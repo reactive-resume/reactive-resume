@@ -38,7 +38,7 @@ vi.mock("@/libs/orpc/client", () => ({
 		},
 	},
 }));
-vi.mock("@tanstack/react-router", () => ({ useNavigate: () => api.navigate }));
+vi.mock("@tanstack/react-router", () => ({ useNavigate: () => api.navigate, useSearch: () => ({}) }));
 vi.mock("@/features/resume/builder/draft", () => ({
 	useCurrentBuilderResumeSelector: (select: (resume: { id: string; applicationId: null }) => unknown) =>
 		select({ id: "base-resume", applicationId: null }),

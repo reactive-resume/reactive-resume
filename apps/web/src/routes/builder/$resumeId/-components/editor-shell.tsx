@@ -44,6 +44,10 @@ export function EditorShell() {
 			preloadRichTextEditor();
 		});
 	}, []);
+	const { checkTab } = routeApi.useSearch();
+	useEffect(() => {
+		if (checkTab) useEditorStore.setState({ checkTab });
+	}, [checkTab]);
 	useOpenVersionFromUrl();
 	useOpenAssistantFromUrl();
 	useResumeWebMcpTools(routeApi.useParams().resumeId);
