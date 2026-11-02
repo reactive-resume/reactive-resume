@@ -432,9 +432,10 @@ function QrCodeButton({ url }: { url: string }) {
 		const blob = svgBlob();
 		if (blob) downloadWithAnchor(blob, "resume-qr-code.svg");
 	};
+	const failed = () => toast.add({ type: "error", description: t`Couldn't save the QR code as PNG. Try SVG instead.` });
 	const savePng = () => {
 		const blob = svgBlob();
-		if (!blob) return;
+		if (!blob) return failed();
 		const source = URL.createObjectURL(blob);
 		const image = new Image();
 		image.onload = () => {
@@ -444,9 +445,12 @@ function QrCodeButton({ url }: { url: string }) {
 			const context = canvas.getContext("2d");
 			context?.drawImage(image, 0, 0, canvas.width, canvas.height);
 			URL.revokeObjectURL(source);
-			canvas.toBlob((png) => png && downloadWithAnchor(png, "resume-qr-code.png"), "image/png");
+			canvas.toBlob((png) => (png ? downloadWithAnchor(png, "resume-qr-code.png") : failed()), "image/png");
 		};
-		image.onerror = () => URL.revokeObjectURL(source);
+		image.onerror = () => {
+			URL.revokeObjectURL(source);
+			failed();
+		};
 		image.src = source;
 	};
 

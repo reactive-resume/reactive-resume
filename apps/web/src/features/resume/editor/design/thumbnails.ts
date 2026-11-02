@@ -18,11 +18,11 @@ const SIZE = { width: 344, height: 486 };
 const fingerprint = (data: ResumeData) =>
 	fnv1a(JSON.stringify({ ...data, metadata: { ...data.metadata, template: null } })).toString(36);
 
-/** The newest image already rendered for `template`, from any earlier content. */
-function lastRender(queryClient: QueryClient, template: Template): string | undefined {
+/** The newest image already rendered for `template` from this resume's earlier content (never another resume's). */
+function lastRender(queryClient: QueryClient, resumeId: string, template: Template): string | undefined {
 	const [latest] = queryClient
 		.getQueryCache()
-		.findAll({ queryKey: [QUERY_KEY, template] })
+		.findAll({ queryKey: [QUERY_KEY, resumeId, template] })
 		.filter((query) => typeof query.state.data === "string")
 		.toSorted((a, b) => b.state.dataUpdatedAt - a.state.dataUpdatedAt);
 	return latest?.state.data as string | undefined;
@@ -32,7 +32,7 @@ function lastRender(queryClient: QueryClient, template: Template): string | unde
  * A template's first page rendered from the user's own content, font and colour. Cached by template and
  * content; until it's ready the gallery shows the template's sample image, so the grid never jumps.
  */
-export function useTemplateThumbnail(template: Template, data: ResumeData, enabled: boolean) {
+export function useTemplateThumbnail(template: Template, data: ResumeData, enabled: boolean, resumeId = "") {
 	const queryClient = useQueryClient();
 	const hash = fingerprint(data);
 	// New resumes inherit account details; those alone don't show a template's section layout.
@@ -45,7 +45,8 @@ export function useTemplateThumbnail(template: Template, data: ResumeData, enabl
 	}, [queryClient]);
 
 	return useQuery({
-		queryKey: [QUERY_KEY, template, hash],
+		// Keyed by resume too, so a render of one resume never stands in for another's.
+		queryKey: [QUERY_KEY, resumeId, template, hash],
 		queryFn: ({ signal }) =>
 			enqueueThumbnailRender(async () => {
 				const pdf = await createResumePdfBlob({ ...data, metadata: { ...data.metadata, template } });
@@ -54,8 +55,9 @@ export function useTemplateThumbnail(template: Template, data: ResumeData, enabl
 		enabled: enabled && hasContent,
 		// Mutations invalidate every query; the same template and content draw the same image, so never refetch.
 		staleTime: "static",
-		// While the new image renders, show this template's last render of the user's own content (also after Design
+		// While the new image renders, show this template's last render of this resume (also after Design
 		// was closed and reopened), never the sample: that one shows other people's names and photos.
-		placeholderData: (previous) => (hasContent ? (previous ?? lastRender(queryClient, template)) : undefined),
+		placeholderData: (previous) =>
+			hasContent ? (previous ?? (resumeId ? lastRender(queryClient, resumeId, template) : undefined)) : undefined,
 	});
 }
