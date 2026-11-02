@@ -41,7 +41,7 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 	return (
 		<View style={{ gap: space.s2 }}>
 			<Text variant="callout" weight={600} color="ink2">
-				{t`Where you're looking for work`}
+				{t`Countries to search`}
 			</Text>
 			<View
 				style={{

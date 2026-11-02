@@ -752,7 +752,7 @@ reset();
 const addView = () => render(AddApplicationSheet, { onClose: () => calls.push("close-draft") });
 control(addView(), "Fill details manually").onPress();
 control(addView(), "Company").onChangeText("Fictional Labs");
-control(addView(), "Role / title").onChangeText("Engineer");
+control(addView(), "Role").onChangeText("Engineer");
 const priorLink = () => nodes(addView()).find((node) => node.type === "PriorNoResponse").props;
 const discardPrior = () =>
 	nodes(addView()).find(

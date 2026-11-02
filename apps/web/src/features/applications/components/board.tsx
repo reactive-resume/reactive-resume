@@ -177,7 +177,8 @@ function Column({ lane, applications, onOpen }: ColumnProps) {
 		<section
 			aria-label={label}
 			className={cn(
-				"flex w-[272px] shrink-0 flex-col rounded-xl border bg-sunken transition-colors duration-quick",
+				// Lanes share the width (five fit at desktop sizes) down to 220px; past that the board scrolls.
+				"flex max-w-[320px] min-w-[220px] flex-1 basis-0 flex-col rounded-xl border bg-sunken transition-colors duration-quick",
 				isOver ? "border-accent bg-accent-soft" : "border-transparent",
 			)}
 		>

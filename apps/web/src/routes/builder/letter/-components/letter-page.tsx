@@ -123,6 +123,7 @@ export function LetterPage() {
 				<ResumePreview
 					data={data}
 					includeCoverLetterHeader
+					contentLabel={t`Letter content`}
 					pageLayout="vertical"
 					pageGap={24}
 					pageScale={pageScale}

@@ -101,7 +101,13 @@ export function describeNextStep(
 		case "no-reply":
 			return {
 				icon: "clock",
-				title: plural(step.days, { one: "No reply in # day", other: "No reply in # days" }),
+				title:
+					step.after === "interview"
+						? plural(step.days, {
+								one: "No word since your interview # day ago",
+								other: "No word since your interview # days ago",
+							})
+						: plural(step.days, { one: "No reply in # day", other: "No reply in # days" }),
 				sub: t`A short follow-up is usually fine now`,
 				tone: "warn",
 			};

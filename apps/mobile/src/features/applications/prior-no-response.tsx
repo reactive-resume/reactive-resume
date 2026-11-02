@@ -1,3 +1,5 @@
+import type { ApplicationClosedReason } from "@reactive-resume/schema/applications/data";
+import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -8,6 +10,23 @@ import { client } from "@/api/client";
 import { getAccountScope, getServer } from "@/auth/session";
 import { routes } from "@/routes";
 import { Banner, Button, useTheme } from "@/ui";
+
+/**
+ * How an earlier application ended, for the list under the notice. A server from before `anyOutcome` returns rows
+ * without `closedReason`, and only no-response ones, so a missing reason reads as "no reply".
+ */
+const outcomeText = (reason: ApplicationClosedReason | null) =>
+	reason === "no-response"
+		? t`no reply`
+		: reason === "not-selected"
+			? t`not selected`
+			: reason === "withdrew"
+				? t`you withdrew`
+				: reason === "accepted"
+					? t`you accepted an offer`
+					: reason === "accepted-other"
+						? t`you took another offer`
+						: t`closed`;
 
 type PriorNoResponseProps = {
 	company: string;
@@ -28,10 +47,10 @@ export function PriorNoResponse({ company, excludeId, disabled, onOpen }: PriorN
 		return () => clearTimeout(timer);
 	}, [normalized]);
 	const query = useQuery({
-		queryKey: ["applications-prior-no-response", getServer(), scope, lookup, excludeId],
+		queryKey: ["applications-prior-outcomes", getServer(), scope, lookup, excludeId],
 		queryFn: ({ signal }) =>
 			client.applications.priorNoResponse(
-				{ company: lookup, ...(excludeId ? { excludeId } : {}) },
+				{ company: lookup, anyOutcome: true, ...(excludeId ? { excludeId } : {}) },
 				{ signal, context: { scope: scope ?? undefined } },
 			),
 		enabled: lanes.supported && lookup.length > 0 && lookup === normalized,
@@ -49,16 +68,13 @@ export function PriorNoResponse({ company, excludeId, disabled, onOpen }: PriorN
 	if (!query.data?.length) return null;
 	return (
 		<View style={{ gap: space.s2 }}>
-			<Banner
-				tone="info"
-				message={t`A previous application to this company was closed with No response. You can still apply.`}
-			/>
+			<Banner tone="info" message={t`You applied to this company before. You can still apply.`} />
 			{query.data.map((application) => (
 				<Button
 					key={application.id}
 					variant="link"
 					disabled={disabled}
-					label={`${application.role} · ${application.company}`}
+					label={`${application.role} · ${application.company} · ${outcomeText(application.closedReason === undefined ? "no-response" : application.closedReason)}`}
 					onPress={() => {
 						if (onOpen?.(application.id) === false) return;
 						router.push(routes.applicationDetails(application.id));

@@ -252,12 +252,17 @@ function ApplicationsList() {
 									one: "# application needs a follow-up.",
 									other: "# applications need a follow-up.",
 								})
-							: owed[0].step.kind === "no-reply"
+							: owed[0].step.kind === "no-reply" && owed[0].step.after === "interview"
 								? plural(days, {
-										one: `${company}: no reply for # day. A short follow-up is usually fine now.`,
-										other: `${company}: no reply for # days. A short follow-up is usually fine now.`,
+										one: `${company}: no word since your interview # day ago. A short follow-up is usually fine now.`,
+										other: `${company}: no word since your interview # days ago. A short follow-up is usually fine now.`,
 									})
-								: t`${company}: a follow-up is due.`
+								: owed[0].step.kind === "no-reply"
+									? plural(days, {
+											one: `${company}: no reply for # day. A short follow-up is usually fine now.`,
+											other: `${company}: no reply for # days. A short follow-up is usually fine now.`,
+										})
+									: t`${company}: a follow-up is due.`
 					}
 					action={
 						owed.length > 1
@@ -490,7 +495,7 @@ function ApplicationsList() {
 								<View style={{ flex: 1 }}>
 									<ListRow
 										title={item.role}
-										subtitle={`${item.company}${item.location ? ` · ${item.location}` : ""}\n${next.title}${next.sub ? ` · ${next.sub}` : ""}${sentDocuments ? `\n${sentDocuments}` : ""}`}
+										subtitle={`${item.company}${item.location ? ` · ${item.location}` : ""}${item.tags.length ? ` · ${item.tags.slice(0, 2).join(", ")}${item.tags.length > 2 ? ` +${item.tags.length - 2}` : ""}` : ""}\n${next.title}${next.sub ? ` · ${next.sub}` : ""}${sentDocuments ? `\n${sentDocuments}` : ""}`}
 										selected={selectedIds.includes(item.id)}
 										leading={selecting ? (selectedIds.includes(item.id) ? "check-square" : "square") : undefined}
 										accessibilityHint={selecting ? t`Toggle selection` : t`Open application`}
@@ -593,7 +598,7 @@ function ApplicationsList() {
 						{bulk === "delete" && (
 							<Banner
 								tone="warn"
-								message={t`Applications and their attachments will be deleted permanently. This can't be undone.`}
+								message={t`They and their timelines are deleted permanently. Linked resumes and letters are kept.`}
 							/>
 						)}
 						<Button

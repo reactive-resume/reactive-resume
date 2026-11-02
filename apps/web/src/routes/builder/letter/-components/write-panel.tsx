@@ -26,6 +26,7 @@ import { Switch, SwitchRow } from "@reactive-resume/ui/components/switch";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { cn } from "@reactive-resume/utils/style";
+import { LetterLanguageField } from "./design-panel";
 import { templates } from "@/dialogs/resume/template/data";
 import { getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { applicationsListQueryOptions } from "@/features/applications/queries";
@@ -139,6 +140,9 @@ export function LetterWritePanel() {
 		</div>
 	);
 }
+
+/** Today's date in the person's own time zone, as `YYYY-MM-DD`. */
+const todayDate = () => new Date().toLocaleDateString("en-CA");
 
 type ForSectionProps = {
 	letter: CoverLetter;
@@ -308,13 +312,27 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 					<Label htmlFor={`${id}-date`}>
 						<Trans>Date</Trans>
 					</Label>
-					<Input
-						id={`${id}-date`}
-						type="date"
-						value={letter.letterDate ?? ""}
-						disabled={disabled}
-						onChange={(event) => edit({ letterDate: event.target.value || null })}
-					/>
+					<div className="flex gap-1.5">
+						<Input
+							id={`${id}-date`}
+							type="date"
+							value={letter.letterDate ?? ""}
+							disabled={disabled}
+							onChange={(event) => edit({ letterDate: event.target.value || null })}
+						/>
+						{/* A letter reused later should carry the day it's sent. */}
+						{letter.letterDate !== todayDate() && (
+							<Button
+								variant="ghost"
+								size="sm"
+								className="h-9 shrink-0"
+								disabled={disabled}
+								onClick={() => edit({ letterDate: todayDate() })}
+							>
+								<Trans>Today</Trans>
+							</Button>
+						)}
+					</div>
 				</div>
 			</div>
 			<p className="text-xs text-ink-3">
@@ -379,7 +397,7 @@ function FromSection({ letter, disabled: readOnly }: FromSectionProps) {
 					label={t`Use details from “${resume?.name ?? t`the resume`}”`}
 					description={
 						letter.senderLinked
-							? t`Linked. Name, email, phone and city update when the resume does.`
+							? t`Linked. The header (name, contact details, links and photo) updates when the resume does.`
 							: t`Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details.`
 					}
 					checked={letter.senderLinked}
@@ -488,9 +506,17 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 	const structured = letter.layout === "structured";
 	const name = greetingName(letter.recipientName);
 	const showEditor = writing || countWords(letter.content) > 0;
+	const languageId = useId();
 
 	return (
 		<Section id="letter-body" title={<Trans>Letter</Trans>}>
+			{/* The greeting and sign-off are written in the letter's language, so it's chosen with the words. */}
+			<div className="grid gap-1.5">
+				<Label htmlFor={languageId}>
+					<Trans>Language</Trans>
+				</Label>
+				<LetterLanguageField id={languageId} disabled={disabled} />
+			</div>
 			{structured && (
 				<LetterFramingField
 					letter={letter}

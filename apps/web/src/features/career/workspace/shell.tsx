@@ -529,7 +529,8 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 		const people = upcoming.participants.map((person) => [person.name, person.role].filter(Boolean).join(", "));
 		const ics = buildIcs({
 			uid: upcoming.id,
-			title: `${interviewKindOf(upcoming.kind)?.label ?? ""} interview · ${application.role}, ${application.company}`,
+			// In the interface language, like the rest of the entry the calendar shows.
+			title: t`${interviewKindOf(upcoming.kind)?.label ?? ""} interview · ${application.role}, ${application.company}`,
 			start,
 			end: new Date(start.getTime() + upcoming.durationMinutes * 60_000),
 			...(upcoming.location ? { location: upcoming.location } : {}),

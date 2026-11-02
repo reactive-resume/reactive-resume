@@ -31,6 +31,7 @@ import { LIST_ORDER } from "../stages";
 import { useInvalidateApplications, useMoveWithUndo } from "../use-application-actions";
 import { useApplicationLanes } from "../use-application-lanes";
 import { ClosedLaneItems } from "./application-actions-menu";
+import { TagChips } from "./tag-chips";
 import { useCareerTime, useNow } from "@/features/career/shared";
 import { useConfirm } from "@/hooks/use-confirm";
 import { formatRelativeTime } from "@/libs/locale";
@@ -324,6 +325,7 @@ const ApplicationRow = memo(function ApplicationRow({
 			) : (
 				<span dir="auto" className="truncate text-xs text-ink-3">
 					{[application.company, application.location].filter(Boolean).join(" · ")}
+					<TagChips tags={application.tags} />
 				</span>
 			)}
 		</button>
@@ -575,8 +577,10 @@ function BulkBar({ ids, allSelected, onSelectAll, onDone }: BulkBarProps) {
 					const confirmed = await confirm(
 						plural(ids.length, { one: "Delete # application?", other: "Delete # applications?" }),
 						{
-							description: t`They and their timelines are deleted permanently. This can't be undone.`,
+							description: t`They and their timelines are deleted permanently. Linked resumes and letters are kept.`,
 							confirmText: plural(ids.length, { one: "Delete # application", other: "Delete # applications" }),
+							cancelText: plural(ids.length, { one: "Keep application", other: "Keep applications" }),
+							variant: "danger",
 						},
 					);
 					if (confirmed) bulkDelete.mutate({ ids });

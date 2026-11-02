@@ -44,6 +44,9 @@ const zoneFormatter = (timeZone: string) =>
 		hourCycle: "h23",
 	});
 
+/** A time zone as people read it: "America/New_York" is "America/New York", as the zone picker lists it. */
+const timeZoneName = (zone: string) => zone.replaceAll("_", " ");
+
 /** An instant as the date ("2026-10-08") and time ("17:58") on a clock in `timeZone`. */
 function zonedParts(instant: Date | string, timeZone: string) {
 	const parts = Object.fromEntries(
@@ -368,7 +371,7 @@ export function InterviewDialog({
 								onChange={(event) => set("date", event.target.value)}
 							/>
 						</Field>
-						<Field label={t`Time · ${draft.timezone}`} htmlFor={`${id}-time`}>
+						<Field label={t`Time · ${timeZoneName(draft.timezone)}`} htmlFor={`${id}-time`}>
 							<Input
 								id={`${id}-time`}
 								type="time"

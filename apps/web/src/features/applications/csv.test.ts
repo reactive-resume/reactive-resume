@@ -55,6 +55,49 @@ describe("mapCsvToApplications", () => {
 		]);
 		expect(skipped).toBe(2);
 	});
+	it("reads other trackers' stage names, outcomes and date formats", () => {
+		const csv = [
+			"Company,Job Title,Status,Date Applied",
+			"A,Eng,Phone Screen,10/15/2026",
+			"B,Eng,Ghosted,09/02/2026",
+			"C,Eng,Rejected,2026-09-01",
+			"D,Eng,Wishlist,",
+		].join("\n");
+		const { rows, invalidValues } = mapCsvToApplications(parseCsv(csv));
+		expect(invalidValues).toEqual([]);
+		expect(
+			rows.map(({ company, status, closedReason, applicationDate }) => ({
+				company,
+				status,
+				closedReason,
+				applicationDate,
+			})),
+		).toEqual([
+			{ company: "A", status: "screening", closedReason: undefined, applicationDate: "2026-10-15" },
+			{ company: "B", status: "closed", closedReason: "no-response", applicationDate: "2026-09-02" },
+			{ company: "C", status: "closed", closedReason: "not-selected", applicationDate: "2026-09-01" },
+			{ company: "D", status: "saved", closedReason: undefined, applicationDate: undefined },
+		]);
+	});
+	it("reads a column's slash dates day-first when one of them can only be", () => {
+		const csv = "company,role,stage date\nA,Eng,15/09/2026\nB,Eng,02/10/2026\nC,Eng,15.09.2026";
+		expect(mapCsvToApplications(parseCsv(csv)).rows.map((row) => row.stageEnteredAt)).toEqual([
+			"2026-09-15",
+			"2026-10-02",
+			"2026-09-15",
+		]);
+	});
+	it("ignores impossible day-first dates when choosing a column's order, and inherited names as stages", () => {
+		const csv = "company,role,stage,stage date\nA,Eng,applied,31/02/2026\nB,Eng,applied,02/10/2026\nC,Eng,constructor,";
+		const { rows, invalidValues } = mapCsvToApplications(parseCsv(csv));
+		expect(rows.find((row) => row.company === "B")?.stageEnteredAt).toBe("2026-02-10");
+		expect(invalidValues).toEqual(
+			expect.arrayContaining([
+				{ row: 2, field: "stageEnteredAt", value: "31/02/2026" },
+				{ row: 4, field: "status", value: "constructor" },
+			]),
+		);
+	});
 	it("reports malformed posting metadata and lets an explicit column omission resolve it", () => {
 		const table = parseCsv("Company,Role,Posting Source\nAcme,Engineer,not-json");
 		expect(mapCsvToApplications(table).invalidValues).toEqual([{ row: 2, field: "postingSource", value: "not-json" }]);

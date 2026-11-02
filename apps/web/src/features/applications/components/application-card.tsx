@@ -4,6 +4,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { describeNextStep, getNextStep } from "../next-step";
 import { offerHintFor, useOfferHints } from "../queries";
 import { ApplicationActionsMenu } from "./application-actions-menu";
+import { TagChips } from "./tag-chips";
 import { useCareerTime } from "@/features/career/shared";
 
 type ApplicationCardProps = {
@@ -51,8 +52,11 @@ export function ApplicationCard({ application, onClick, withMenu = false, draggi
 					<span dir="auto" className="truncate text-sm font-semibold">
 						{application.role}
 					</span>
-					<span dir="auto" className="truncate text-xs text-ink-3">
-						{application.company}
+					<span className="flex min-w-0 items-center gap-1.5 text-xs text-ink-3">
+						<span dir="auto" className="truncate">
+							{application.company}
+						</span>
+						<TagChips tags={application.tags} />
 					</span>
 				</button>
 				{withMenu && <ApplicationActionsMenu application={application} className="relative z-10 -me-1.5 -mt-1.5" />}

@@ -66,6 +66,7 @@ const fieldLabel = (field: CsvField) =>
 		laneLabel: t`Stage name`,
 		laneCategory: t`Stage counts as`,
 		laneClosedReason: t`Stage outcome`,
+		closedReason: t`Outcome`,
 		contacts: t`Contacts`,
 	})[field];
 
@@ -206,7 +207,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 					</SheetDescription>
 				</SheetHeader>
 
-				<div className="-mt-1 flex flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-4">
+				<div className="-mt-1 flex flex-1 flex-col gap-4 overflow-y-auto px-6 pt-1 pb-4">
 					<div className="flex items-center gap-2">
 						<Button size="sm" variant="secondary" onClick={() => fileRef.current?.click()}>
 							<Icon name="file-arrow-up" size={16} />
@@ -358,9 +359,20 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 										<ul className="list-disc ps-4">
 											{result.invalidValues.map(({ row, field, value }) => (
 												<li key={`${row}:${field}`}>
-													<Trans>
-														Row {row}, {fieldLabel(field)}: “{value}” is invalid.
-													</Trans>
+													{field === "stageEnteredAt" ? (
+														<Trans>
+															Row {row}: couldn't read the date “{value}”. Use a date like 2026-10-15.
+														</Trans>
+													) : field === "status" ? (
+														<Trans>
+															Row {row}: “{value}” isn't a stage. Use Saved, Applied, Screening, Interview, Offer or
+															Closed.
+														</Trans>
+													) : (
+														<Trans>
+															Row {row}, {fieldLabel(field)}: couldn't read “{value}”.
+														</Trans>
+													)}
 												</li>
 											))}
 										</ul>
@@ -439,6 +451,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 							importMutation.isPending
 						}
 						onClick={() => {
+							// The file imports whole or not at all: values that can't be read are fixed first.
 							if (!result?.invalidValues.length && unmatched === 0 && !stagesUnresolved) importMutation.mutate();
 						}}
 					>
