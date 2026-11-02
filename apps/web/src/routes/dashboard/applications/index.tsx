@@ -32,12 +32,14 @@ import { ImportApplicationsSheet } from "@/features/applications/components/impo
 import { ApplicationInsights, InsightsSkeleton } from "@/features/applications/components/insights-view";
 import { ApplicationList } from "@/features/applications/components/list-view";
 import { ManageLanesSheet } from "@/features/applications/components/manage-lanes-sheet";
-import { getNextStep, needsFollowUp } from "@/features/applications/next-step";
+import { getNextStep, needsAttention, needsFollowUp } from "@/features/applications/next-step";
 import {
 	applicationDetailQueryOptions,
 	applicationsFullListQueryOptions,
 	applicationsListQueryOptions,
 	hydrateApplicationDetail,
+	offerHintFor,
+	useOfferHints,
 } from "@/features/applications/queries";
 import { applicationLanesQueryOptions, useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { useCareerTime, useNow } from "@/features/career/shared";
@@ -54,12 +56,13 @@ const searchSchema = z.object({
 	closed: z.boolean().default(false).catch(false),
 	// Only applications that owe a follow-up (the banner's Show).
 	followUp: z.boolean().default(false).catch(false),
+	needsYou: z.boolean().default(false).catch(false),
 	// Deep links: open Add, or one application.
 	create: z.boolean().default(false).catch(false),
 	applicationId: z.string().optional().catch(undefined),
 });
 type Search = z.output<typeof searchSchema>;
-const defaultSearch: Search = { q: "", view: "list", closed: false, followUp: false, create: false };
+const defaultSearch: Search = { q: "", view: "list", closed: false, followUp: false, needsYou: false, create: false };
 
 // How long the page waits for the list and lanes before drawing anyway (a skeleton, or rows in the default order).
 const LOADER_WAIT_MS = 1000;
@@ -101,7 +104,7 @@ function matches(application: ApplicationSummary, query: string) {
 }
 
 function RouteComponent() {
-	const { q, view, closed, followUp, create, applicationId } = Route.useSearch();
+	const { q, view, closed, followUp, needsYou, create, applicationId } = Route.useSearch();
 	const navigate = useNavigate({ from: Route.fullPath });
 	const phone = useBreakpoint() === "mobile";
 	// Typing filters at once; the URL only seeds the search.
@@ -193,6 +196,10 @@ function RouteComponent() {
 	}, [prefetch]);
 	const setSearch = (patch: Partial<Search>) =>
 		void navigate({ resetScroll: false, search: (prev: Search) => ({ ...prev, ...patch }) });
+	const clearFilters = () => {
+		setQuery("");
+		setSearch({ q: "", needsYou: false, followUp: false, closed: false });
+	};
 
 	useEffect(() => {
 		if (!create) return;
@@ -216,9 +223,14 @@ function RouteComponent() {
 	const text = useDeferredValue(query).trim().toLowerCase();
 	const now = useNow();
 	const { timeZone } = useCareerTime();
+	const offers = useOfferHints(needsYou);
 	const filtered = (applications ?? []).filter(
 		(application) =>
-			matches(application, text) && (!followUp || needsFollowUp(getNextStep(application, now, timeZone), now)),
+			matches(application, text) &&
+			(!followUp || needsFollowUp(getNextStep(application, now, timeZone), now)) &&
+			(!needsYou ||
+				(offers === undefined && application.status === "offer") ||
+				needsAttention(getNextStep(application, now, timeZone, offerHintFor(offers, application.id)), now)),
 	);
 	const selected = applications?.find((application) => application.id === selectedId) ?? null;
 	// The board needs room to drag: phones get the list instead.
@@ -230,6 +242,7 @@ function RouteComponent() {
 		setSelectedId(application.id);
 	};
 	const noMatches = !!applications && !empty && text && filtered.length === 0;
+	const noAttentionMatches = !!applications && !empty && needsYou && filtered.length === 0;
 	// Every application is closed and closed ones are hidden: say so, as the phone app does, instead of a bare header.
 	const allClosed =
 		!!applications &&
@@ -341,6 +354,15 @@ function RouteComponent() {
 							/>
 						</div>
 
+						<Button
+							variant="secondary"
+							aria-pressed={needsYou}
+							onClick={() => setSearch({ needsYou: !needsYou })}
+							className={cn(needsYou && "bg-sunken")}
+						>
+							<Icon name={needsYou ? "check-square" : "square"} size={18} />
+							<Trans>Needs you</Trans>
+						</Button>
 						{shown !== "insights" && (
 							<Button
 								variant="secondary"
@@ -446,6 +468,16 @@ function RouteComponent() {
 								</Button>
 							}
 						/>
+					) : noAttentionMatches ? (
+						<EmptyState
+							title={<Trans>No matching applications</Trans>}
+							description={<Trans>Try different words or clear your filters.</Trans>}
+							action={
+								<Button variant="secondary" onClick={clearFilters}>
+									<Trans>Clear filters</Trans>
+								</Button>
+							}
+						/>
 					) : noMatches ? (
 						<div className="grid justify-items-center gap-2 py-16 text-center">
 							<p className="text-sm font-medium">
@@ -479,7 +511,11 @@ function RouteComponent() {
 								</div>
 							)}
 							{shown === "insights" && (
-								<ApplicationInsights applications={applications ?? []} onSaveJob={() => setAdding(true)} />
+								<ApplicationInsights
+									applications={filtered}
+									onSaveJob={() => setAdding(true)}
+									onClearFilters={text || needsYou || followUp ? clearFilters : undefined}
+								/>
 							)}
 							{shown === "calendar" && (
 								<ApplicationCalendar
@@ -487,6 +523,7 @@ function RouteComponent() {
 									applications={filtered.filter((application) => closed || application.status !== "closed")}
 									allApplications={applications ?? []}
 									onOpen={openApplication}
+									onClearFilters={text || needsYou || followUp ? clearFilters : undefined}
 								/>
 							)}
 						</div>

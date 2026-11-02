@@ -22,7 +22,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import { keepPending, pendingAfterError, stageAt, tabletColumnWidth } from "./board";
 import { useApplicationSearch } from "./search";
 import { ApplicationsViewFrame } from "./views";
-import { useUserTime } from "@/features/application-detail/hooks";
+import { useNow, useUserTime } from "@/features/application-detail/hooks";
 import { CloseSheet, MarkAppliedSheet } from "@/features/application-detail/sheets";
 import { applicationError } from "@/features/applications/error";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
@@ -93,7 +93,10 @@ function Board() {
 	const query = useApplications();
 	const laneQuery = useApplicationLanes();
 	const [actionLane, setActionLane] = useState<ApplicationLane | undefined>();
-	const { search } = useApplicationSearch();
+	const { search, needsYou, clearFilters } = useApplicationSearch();
+	const now = useNow();
+	const { timeZone } = useUserTime();
+	const offers = useOfferHints();
 	const { update } = useApplicationMutations();
 	const stageMoved = useStageMovedToast();
 	// One open flag per sheet: a sheet's late dismissal can never close the one that replaced it.
@@ -126,7 +129,13 @@ function Board() {
 	const hovered = useRef<string | null>(null);
 	const dragged = useRef<Application | null>(null);
 
-	const applications = filterApplications(query.data ?? [], { search, tag: "", showClosed: true });
+	const applications = filterApplications(
+		query.data ?? [],
+		{ search, tag: "", showClosed: true, needsYou },
+		now,
+		timeZone,
+		offers,
+	);
 	if (pending && !keepPending(pending, query.data ?? [])) setPending(null);
 	const statusOf = (application: Application) =>
 		pending?.id === application.id ? pending.to : resolveLane(laneQuery.lanes, application).id;
@@ -323,15 +332,17 @@ function Board() {
 			<EmptyState
 				variant="card"
 				icon="briefcase"
-				title={search.trim() && query.data?.length ? t`No matching applications` : t`Track your first job`}
+				title={
+					(search.trim() || needsYou) && query.data?.length ? t`No matching applications` : t`Track your first job`
+				}
 				message={
-					search.trim() && query.data?.length
+					(search.trim() || needsYou) && query.data?.length
 						? t`Try different words or clear your filters.`
 						: t`Paste a job link. We'll save the posting so Check, the assistant and your letter can use it.`
 				}
 				action={
-					search.trim() && query.data?.length
-						? { label: t`Clear filters`, onPress: () => useApplicationSearch.getState().setSearch("") }
+					(search.trim() || needsYou) && query.data?.length
+						? { label: t`Clear filters`, onPress: clearFilters }
 						: { label: t`Save a job`, onPress: () => router.setParams({ create: "1" }) }
 				}
 			/>

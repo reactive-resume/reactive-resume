@@ -80,6 +80,8 @@ async function bulkMove(page: Page, company: string, stage: string, navigate = t
 	await page.getByRole("button", { name: "Move to…" }).click();
 	await page.getByRole("menuitem", { name: stage }).click();
 	await expect(page.getByText(`1 application moved to ${stage}`)).toBeVisible();
+	// The menu can leave the pointer over the Undo toast, pausing its deferred commit.
+	await page.mouse.move(0, 0);
 }
 const changedToast = (page: Page) =>
 	page.getByText("1 application changed in the meantime, so it keeps its newer stage");

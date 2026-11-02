@@ -41,9 +41,16 @@ type ApplicationCalendarProps = {
 	// Every application, offered by the "schedule interview" picker.
 	allApplications: ApplicationSummary[];
 	onOpen: (application: ApplicationSummary) => void;
+	onClearFilters?: (() => void) | undefined;
 };
 
-export function ApplicationCalendar({ compact, applications, allApplications, onOpen }: ApplicationCalendarProps) {
+export function ApplicationCalendar({
+	compact,
+	applications,
+	allApplications,
+	onOpen,
+	onClearFilters,
+}: ApplicationCalendarProps) {
 	const { locale, timeZone, plainTime, timeRange } = useCareerTime();
 	const now = useNow();
 	const todayKey = dayKey(now, timeZone);
@@ -265,13 +272,23 @@ export function ApplicationCalendar({ compact, applications, allApplications, on
 					<EmptyState
 						title={<Trans>Nothing scheduled yet</Trans>}
 						description={
-							<Trans>Add screening calls and technical interviews to see them here and on the calendar.</Trans>
+							onClearFilters ? (
+								<Trans>Try different words or clear your filters.</Trans>
+							) : (
+								<Trans>Add screening calls and technical interviews to see them here and on the calendar.</Trans>
+							)
 						}
 						action={
-							<Button size="sm" variant="secondary" onClick={() => schedule()}>
-								<Icon name="calendar-plus" size={16} />
-								<Trans>Schedule interview</Trans>
-							</Button>
+							onClearFilters ? (
+								<Button size="sm" variant="secondary" onClick={onClearFilters}>
+									<Trans>Clear filters</Trans>
+								</Button>
+							) : (
+								<Button size="sm" variant="secondary" onClick={() => schedule()}>
+									<Icon name="calendar-plus" size={16} />
+									<Trans>Schedule interview</Trans>
+								</Button>
+							)
 						}
 					/>
 				) : (

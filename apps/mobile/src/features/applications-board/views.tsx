@@ -12,7 +12,7 @@ import { ImportApplicationsSheet } from "@/features/applications/import-sheet";
 import { LaneNotice } from "@/features/applications/lane-notice";
 import { LaneSettings } from "@/features/applications/lane-settings";
 import { routes } from "@/routes";
-import { Segmented, IconButton, useTheme } from "@/ui";
+import { Chip, Segmented, IconButton, useTheme } from "@/ui";
 
 type ApplicationsViewFrameProps = {
 	current: ApplicationsView;
@@ -80,6 +80,12 @@ export function ApplicationsViewFrame({ current, children, search, addDisabled }
 					onChange={(view) => {
 						if (view !== current) router.replace(routes.applications(view));
 					}}
+				/>
+				<Chip
+					label={t`Needs you`}
+					selected={shared.needsYou}
+					icon={shared.needsYou ? "check-square" : "square"}
+					onPress={addDisabled ? undefined : () => shared.setNeedsYou(!shared.needsYou)}
 				/>
 			</View>
 			<SafeAreaInsetsContext value={{ ...insets, top: 0, left: 0, right: 0 }}>
