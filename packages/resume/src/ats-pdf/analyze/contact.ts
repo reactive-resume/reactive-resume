@@ -44,7 +44,7 @@ function extractPhones(text: string): string[] {
 
 function hostOf(value: string): string | null {
 	try {
-		const url = new URL(value.startsWith("http") ? value : `https://${value}`);
+		const url = new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`);
 		return url.hostname.replace(/^www\./, "").toLowerCase();
 	} catch {
 		return null;

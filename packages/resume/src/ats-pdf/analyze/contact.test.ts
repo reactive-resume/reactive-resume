@@ -9,6 +9,7 @@ describe("hasProfessionalLink", () => {
 	it("counts known profiles and personal sites", () => {
 		expect(hasProfessionalLink(contact(["https://linkedin.com/in/maya"]))).toBe(true);
 		expect(hasProfessionalLink(contact(["https://example.com/portfolio"]))).toBe(true);
+		expect(hasProfessionalLink(contact(["HTTPS://portfolio.example.com"]))).toBe(true);
 		expect(hasProfessionalLink(contact(["morgan.design"]))).toBe(true);
 	});
 

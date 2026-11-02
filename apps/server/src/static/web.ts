@@ -8,7 +8,7 @@ import { env } from "@reactive-resume/env/server";
 import { jsonLdScript, socialMetaTags } from "@reactive-resume/pdf/web-page-document";
 import { templateSchema } from "@reactive-resume/schema/templates";
 import { isAppSectionPath, RESERVED_SEGMENTS } from "@reactive-resume/utils/app-paths";
-import { defaultLocale, getLocaleAlternates, localizedUrl } from "@reactive-resume/utils/locale";
+import { defaultLocale, getLocaleAlternates, languageTag, localizedUrl } from "@reactive-resume/utils/locale";
 import { escapeHtml } from "@reactive-resume/utils/string";
 import { getPageLocale } from "./locale";
 import { CONTEXT7_ASK_DESCRIPTION, CONTEXT7_ASK_URL } from "./seo";
@@ -226,7 +226,7 @@ function homepageStructuredData(origin: string, text: PageText): StructuredData 
 				name: "Reactive Resume",
 				url: rootUrl,
 				description: decodeHtml(text.description),
-				inLanguage: text.locale,
+				inLanguage: languageTag(text.locale),
 				applicationCategory: "BusinessApplication",
 				operatingSystem: "Web",
 				isAccessibleForFree: true,
@@ -250,7 +250,7 @@ function atsCheckerStructuredData(origin: string, text: PageText): StructuredDat
 				name: pageName(text.title),
 				url: `${origin}/ats-checker`,
 				description: decodeHtml(text.description),
-				inLanguage: text.locale,
+				inLanguage: languageTag(text.locale),
 				applicationCategory: "BusinessApplication",
 				operatingSystem: "Web",
 				isAccessibleForFree: true,
@@ -378,7 +378,7 @@ const prerenderedPages: Record<
 			name: pageName(text.title),
 			url: `${origin}/resume-templates`,
 			description: decodeHtml(text.description),
-			inLanguage: text.locale,
+			inLanguage: languageTag(text.locale),
 			mainEntity: {
 				"@type": "ItemList",
 				itemListElement: templateSchema.options.map((template, index) => ({
@@ -424,9 +424,12 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 		const { locale, requested } = getPageLocale(request) ?? { locale: defaultLocale, requested: false };
 		const origin = new URL(env.APP_URL).origin;
 		// Without a prerendered page (a build that skipped it), the app shell titled for the page renders it in the browser.
-		const page = await readFile(`${prerenderRoot}/${prerendered.name}/${locale}.html`).catch(() =>
-			withMeta(html, prerendered.meta),
-		);
+		let textLocale: Locale = locale;
+		const page = await readFile(`${prerenderRoot}/${prerendered.name}/${locale}.html`).catch(() => {
+			// The shell's title and description are English: the structured data says so too.
+			textLocale = defaultLocale;
+			return withMeta(html, prerendered.meta);
+		});
 		const meta = readPageMeta(page, prerendered.meta);
 		const markup = createPageSeoMarkup({
 			canonicalUrl: new URL(pathname, env.APP_URL).toString(),
@@ -434,7 +437,7 @@ export async function handleWebApp(request: Request, readFile: ReadWebFile = (pa
 			requested,
 			...meta,
 			imageUrl: `${origin}${prerendered.image}`,
-			structuredData: prerendered.structuredData(origin, { locale, ...meta }),
+			structuredData: prerendered.structuredData(origin, { locale: textLocale, ...meta }),
 		});
 		const body =
 			pathname === "/"
