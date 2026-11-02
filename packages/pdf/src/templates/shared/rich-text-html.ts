@@ -3,6 +3,7 @@ import { NodeType, parse } from "node-html-parser";
 import { assertRichTextComplexity } from "@reactive-resume/schema/resume/limits";
 import { isDarkColor } from "@reactive-resume/utils/color";
 import { getRichTextSemanticKind, getRichTextSemanticNodeKey } from "../../semantic/rich-text-keys";
+import { textDirection } from "./bidi";
 
 export const richTextMarkClassName = "rr-pdf-mark";
 export const richTextSemanticNodeKeyAttribute = "data-resume-semantic-node-key";
@@ -253,10 +254,31 @@ export const normalizeRichTextHtml = (
 	// RTL pseudo-bullets must become real list items before both the semantic
 	// descriptor and renderer traverse the HTML. RLM anchors each independent
 	// react-pdf-html text frame without changing element ancestry or indices.
+	// A paragraph that starts with a Latin (or other left-to-right) letter reads left to right (see
+	// `paragraphDirection`): an RLM there would pull its first fragment to the far side of the line.
 	return convertPseudoBulletParagraphs(normalizedHtml, direction).replace(
 		/<(p|li)\b([^>]*)>/gi,
-		(_match, tag, rest) => `<${tag}${rest}>‏`,
+		(match: string, tag: string, rest: string, offset: number, html: string) =>
+			textDirection(leadingText(html, offset + match.length)) === "ltr" ? match : `<${tag}${rest}>‏`,
 	);
+};
+
+/** The text that follows `from` up to its first letter, with tags skipped: enough to read its direction. */
+const leadingText = (html: string, from: number) => {
+	let text = "";
+	for (let at = from; at < html.length && text.length < 200; at++) {
+		const char = html[at];
+		if (char === "<" || char === "&") {
+			// A tag, or an entity such as &nbsp;, whose letters aren't the text's.
+			const close = html.indexOf(char === "<" ? ">" : ";", at);
+			if (close === -1 || (char === "&" && close - at > 10)) break;
+			at = close;
+			continue;
+		}
+		text += char;
+		if (/\p{L}/u.test(char ?? "")) break;
+	}
+	return text;
 };
 
 export const parseNormalizedRichTextHtml = (html: string, options?: NormalizeRichTextHtmlOptions) =>

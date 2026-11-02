@@ -379,9 +379,9 @@ msgstr ""
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {# perce kezdődött} other {# perce kezdődött}}"
 
-#. placeholder {0}: overflow.lines
+#. placeholder {0}: overflow.pageCount
 #: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
+msgid "{0, plural, one {Still runs to # page.} other {Still runs to # pages.}}"
 msgstr ""
 
 #. placeholder {0}: documents.length
@@ -489,6 +489,12 @@ msgstr "{0}/{1} alkalmazható ellenőrzés sikeres"
 msgid "{0} of {1} applicable checks passed."
 msgstr "{0}/{1} alkalmazható ellenőrzés sikeres."
 
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/career/workspace/apply.tsx
+msgid "{0} of {1} characters"
+msgstr ""
+
 #. placeholder {0}: thread.editsAccepted
 #. placeholder {1}: thread.editsProposed
 #: src/features/assistant/assistant-panel.tsx
@@ -520,6 +526,12 @@ msgstr "A {1} adaptált álláspályázatok {0}-ja választ kapott; {2}/{3} más
 #: src/features/ats-checker/report/jd-coverage.tsx
 msgid "{0} of {1} terms found"
 msgstr "{0}/{1} kifejezés megtalálva"
+
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/career/workspace/apply.tsx
+msgid "{0} of {1} words"
+msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/conversation.tsx
@@ -577,6 +589,11 @@ msgstr "{0}, nem tartozik a helyeid közé"
 msgid "{0}. Issue resolved."
 msgstr "{0}. A probléma megoldva."
 
+#. placeholder {0}: terms.join(" · ")
+#: src/features/career/workspace/messages.tsx
+msgid "{0}. Opens in Career → Offers."
+msgstr ""
+
 #. placeholder {0}: proposals.length
 #: src/features/assistant/conversation.tsx
 msgid "{accepted} of {0} applied"
@@ -584,6 +601,14 @@ msgstr "{accepted}/{0} alkalmazva"
 
 #: src/features/career/workspace/apply.tsx
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
+msgstr ""
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
+msgstr ""
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
 msgstr ""
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
@@ -614,6 +639,10 @@ msgstr "Csak {company}"
 msgid "{company}: a follow-up is due."
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "{connection} didn't respond."
 msgstr "{connection} nem válaszolt."
@@ -637,6 +666,10 @@ msgstr "{count, plural, one {# bejegyzés} other {# bejegyzések}}"
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# megoldatlan probléma} other {# megoldatlan probléma}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{count, plural, one {Added page {page} and moved # section onto it} other {Added page {page} and moved # sections onto it}}"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -794,8 +827,12 @@ msgid "{length}m"
 msgstr "{length} p"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "{lines, plural, one {Runs onto page {next} by about # line} other {Runs onto page {next} by about # lines}}"
-msgstr "{lines, plural, one {A {next} oldalra fut körülbelül # sorral} other {A {next} oldalra fut körülbelül # sorokkal}}"
+msgid "{lines, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "{lines, plural, one {Page {page} still runs over by about # line.} other {Page {page} still runs over by about # lines.}}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "{minimum} minimum"
@@ -870,9 +907,9 @@ msgstr "{open, plural, one {# áttekintendő dolog.} other {# áttekintendő dol
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {# oldal} other {# oldalak}}"
 
-#: src/features/resume/editor/design/fit.ts
-msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
-msgstr "{pages, plural, one {9 pt-os betűmérettel is még # oldal. Rejts el egy szakaszt, vagy rövidítsd a bejegyzéseket.} other {9 pt-os betűmérettel is még # oldal. Rejts el egy szakaszt, vagy rövidítsd a bejegyzéseket.}}"
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{pageCount, plural, one {Runs to # page} other {Runs to # pages}}"
+msgstr ""
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
@@ -937,10 +974,6 @@ msgstr ""
 #: src/features/career/workspace/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# történet} other {# történet}}"
-
-#: src/features/career/workspace/messages.tsx
-msgid "{summary}. Opens in Career → Offers."
-msgstr "{summary}. A Karrier → Ajánlatok részben nyílik meg."
 
 #: src/features/career/workspace/fit.tsx
 msgid "{supported} supported · {partial} partly · {missing} missing"
@@ -1686,6 +1719,15 @@ msgstr "Adj hozzá egyet az országkóddal együtt; egyes jelentkezési űrlapok
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Add page"
 msgstr "Oldal hozzáadása"
+
+#. placeholder {0}: authored + 1
+#: src/features/resume/editor/design/fit.ts
+msgid "Add page {0}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Add page {next}"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Add passkey"
@@ -2555,6 +2597,10 @@ msgstr "Kérdezett és <0>válaszolt.</0>"
 msgid "Asks for an example of your onboarding work."
 msgstr "Egy példát kér az onboardinggal kapcsolatos munkádból."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "Aspect ratio"
 msgstr "Méretarány"
@@ -2766,6 +2812,12 @@ msgstr "Függőleges vonal"
 msgid "Barista, 2012"
 msgstr "Barista, 2012"
 
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
+#. placeholder {1}: periodLabel(offer.period)
+#: src/features/career/workspace/messages.tsx
+msgid "Base {0} {1}"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/workspace/messages.tsx
@@ -2832,6 +2884,12 @@ msgstr "Félkövér"
 #: src/features/career/workspace/messages.tsx
 msgid "Bonus"
 msgstr "Bónusz"
+
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
+#: src/features/career/workspace/messages.tsx
+msgid "Bonus {0}{1}"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
@@ -2984,6 +3042,7 @@ msgstr "A szoftver be tudja olvasni az önéletrajzát?"
 #: src/features/career/offer-entry.tsx
 #: src/features/career/schedule-sheet.tsx
 #: src/features/career/workspace/fit.tsx
+#: src/features/career/workspace/messages.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/builder/password-dialog.tsx
@@ -3169,6 +3228,11 @@ msgstr "Ellenőrizze egy másik fájlt"
 #: src/features/homepage/check.tsx
 msgid "Check any PDF, no account needed"
 msgstr "Ellenőrizze bármelyik PDF-t, nincs szükség fiókra"
+
+#. placeholder {0}: proposal.note
+#: src/features/career/workspace/apply.tsx
+msgid "Check before accepting: {0}"
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 #: src/features/resume/share/dns-records-dialog.tsx
@@ -4092,6 +4156,10 @@ msgstr ""
 msgid "Couldn't complete this connection. Restart the connection from your client and try again."
 msgstr "Nem sikerült befejezni ezt a kapcsolatot. Indítsd újra a kapcsolódást a kliensből, és próbáld újra."
 
+#: src/features/career/workspace/messages.tsx
+msgid "Couldn't confirm the application move. Reload this application before retrying."
+msgstr ""
+
 #. Fallback toast when linking a social authentication provider fails
 #: src/features/settings/account/auth-hooks.ts
 msgid "Couldn't connect your {providerName} account. Try again."
@@ -4333,6 +4401,10 @@ msgstr "Nem sikerült beadottként megjelölni. Próbáld újra."
 msgid "Couldn't mark this as read. Try again."
 msgstr "Nem sikerült olvasottként megjelölni. Próbáld újra."
 
+#: src/features/resume/editor/proposals/page-fit.tsx
+msgid "Couldn't measure page fit. Check the page preview before accepting."
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
 msgid "Couldn't move the document to Trash. Try again."
 msgstr "Nem sikerült a Kukába helyezni a dokumentumot. Próbáld újra."
@@ -4530,6 +4602,10 @@ msgstr "Nem sikerült menteni a módosításokat. Próbálja újra, mielőtt fol
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't save your changes. Try again."
 msgstr "Nem sikerült menteni a módosításaidat. Próbáld újra."
+
+#: src/features/resume/builder/draft.ts
+msgid "Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again."
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Couldn't save your preferences. Try again."
@@ -6105,6 +6181,15 @@ msgstr "Belépési lehetőségek"
 msgid "Equity"
 msgstr "Részesedés"
 
+#. placeholder {0}: offer.equity
+#: src/features/career/workspace/messages.tsx
+msgid "Equity {0}"
+msgstr ""
+
+#: src/features/resume/editor/proposals/page-fit.tsx
+msgid "Estimated overflow change: {change} lines."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Every {days} days at {clock} · next {next}"
 msgstr "{days} naponta {clock}-kor · következő: {next}"
@@ -6294,10 +6379,6 @@ msgstr "Funkciók"
 #: src/features/career/workspace/practise.tsx
 msgid "Feedback"
 msgstr "Visszajelzés"
-
-#: src/features/career/workspace/practise.tsx
-msgid "Feedback needs an AI connection. <0/>. Nothing is sent until you ask."
-msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Fewer support tickets isn’t backed by a number yet. Say it as something you noticed."
@@ -6759,10 +6840,6 @@ msgstr "Kapj tervet az interjúra a hirdetés és a saját történeteid alapjá
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
 msgstr "Visszajelzés kérése"
-
-#: src/features/career/workspace/practise.tsx
-msgid "Get feedback sends the question, your answer, this posting and your stories to {providerName}."
-msgstr "A Visszajelzés kérése elküldi a kérdést, a válaszodat, ezt a hirdetést és a történeteidet ide: {providerName}."
 
 #: src/features/homepage/sections.tsx
 msgid "Get it on"
@@ -7598,6 +7675,10 @@ msgstr "Üzenetei és mellékletei törlődnek. Az Ön által elfogadott módos�
 msgid "Its own design ({summary})."
 msgstr "Saját tervezésű ({summary})."
 
+#: src/features/career/disclosure.tsx
+msgid "its requirements"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "A mentett kulcs törlődik. Az ezt használó beszélgetésekhez másik szolgáltatóra van szükség."
@@ -7879,6 +7960,10 @@ msgstr "A Tudástár nem említi a mentorálást."
 msgid "Knowledge is off for this message: the coach doesn't read it or remember anything you say"
 msgstr ""
 
+#: src/features/career/disclosure.tsx
+msgid "Knowledge that's switched on"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
 msgstr ""
@@ -7910,6 +7995,7 @@ msgstr "Fekvő"
 #: src/features/settings/preferences.tsx
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
+#: src/routes/builder/letter/-components/design-panel.tsx
 msgid "Language"
 msgstr "Nyelv"
 
@@ -8009,6 +8095,10 @@ msgstr "Képzési keret"
 #: src/features/career/workspace/messages.tsx
 msgid "Leave"
 msgstr "Elhagyás"
+
+#: src/features/resume/builder/draft.ts
+msgid "Leave anyway"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
@@ -8485,6 +8575,10 @@ msgstr "Szerkesztés zárolása"
 msgid "Locked"
 msgstr "Zárolva"
 
+#: src/features/resume/editor/save-status.tsx
+msgid "Locked · unlock to save"
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "Bezárt. A szerkesztéshez oldja fel a zárolást."
@@ -8653,6 +8747,18 @@ msgstr "A margók {minimum} pt"
 msgid "Mark as applied"
 msgstr "Megjelölés beadottként"
 
+#: src/features/career/workspace/messages.tsx
+msgid "Mark as applied and move"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Mark as applied and move it?"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "Mark as applied and move to {stage}"
+msgstr ""
+
 #: src/features/applications/components/board.tsx
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "Mark as closed"
@@ -8666,10 +8772,6 @@ msgstr ""
 #: src/features/career/today.tsx
 msgid "Mark as read"
 msgstr "Megjelölés olvasottként"
-
-#: src/features/career/workspace/messages.tsx
-msgid "Mark it as applied in Apply first."
-msgstr "Előbb jelöld beadottként a Jelentkezés lapon."
 
 #: src/features/career/workspace/apply.tsx
 msgid "Markdown (.md)"
@@ -8731,6 +8833,10 @@ msgstr "MCP"
 #: src/features/settings/ai/mcp.tsx
 msgid "MCP server"
 msgstr "MCP szerver"
+
+#: src/features/resume/editor/proposals/page-fit.tsx
+msgid "Measuring page fit…"
+msgstr ""
 
 #: src/features/applications/components/insights-view.tsx
 msgid "median to first reply"
@@ -9357,6 +9463,10 @@ msgstr ""
 msgid "No documents attached"
 msgstr "Nincsenek csatolt dokumentumok"
 
+#: src/features/career/workspace/messages.tsx
+msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/assistant/assistant-panel.tsx
 msgid "no edits"
 msgstr "nincs szerkesztés"
@@ -9550,6 +9660,10 @@ msgstr "Még nincsenek címkék"
 #: src/features/resume/editor/check/job-match.tsx
 msgid "No terms stood out in this posting."
 msgstr "Ebben az álláshirdetésben egyetlen kifejezés sem tűnt fel."
+
+#: src/features/career/workspace/messages.tsx
+msgid "No terms were extracted. Opens in Career → Offers."
+msgstr ""
 
 #: src/features/ats-checker/checker.tsx
 #: src/features/ats-checker/messages.ts
@@ -9971,6 +10085,10 @@ msgctxt "Entry header layout"
 msgid "One line"
 msgstr "Egy sor"
 
+#: src/features/resume/editor/design/fit.ts
+msgid "One section fills the last page, so there's nothing to move onto a new one. Shorten it, or split it in Design → Page → Pages and sections."
+msgstr ""
+
 #: src/features/templates/gallery.tsx
 msgid "One-column templates give hiring software a simple top-to-bottom reading order. Two-column templates put supporting details in a sidebar and leave more room for visual hierarchy. Choose for your content, then check the exported PDF."
 msgstr "Az egyoszlopos sablonok egyszerű, felülről lefelé haladó olvasási sorrendet biztosítanak a munkaerő-felvételi szoftvereknek. A kétoszlopos sablonok a támogató részleteket az oldalsávba helyezik, és több teret hagynak a vizuális hierarchiának. Válasszon tartalmat, majd ellenőrizze az exportált PDF-et."
@@ -10143,10 +10261,6 @@ msgstr "Nyitás"
 #: src/features/ats-checker/checker.tsx
 msgid "Opening the file"
 msgstr "A fájl megnyitása"
-
-#: src/features/career/workspace/messages.tsx
-msgid "Opens in Career → Offers."
-msgstr "A Karrier → Ajánlatok részben nyílik meg."
 
 #: src/features/resume/stylesheet/editor.tsx
 msgid "opens in new tab"
@@ -10344,6 +10458,12 @@ msgstr "1. oldal"
 msgid "Page 1 · {formatLabel}"
 msgstr "1. oldal · {formatLabel}"
 
+#. placeholder {0}: fit.data.before
+#. placeholder {1}: fit.data.after
+#: src/features/resume/editor/proposals/page-fit.tsx
+msgid "Page fit: {0} → {1} printed pages."
+msgstr ""
+
 #: src/components/layout/not-found-screen.tsx
 msgid "Page not found"
 msgstr "Az oldal nem található"
@@ -10355,6 +10475,10 @@ msgstr "Az oldal beolvasása nem fejeződött be."
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Page view"
 msgstr "Oldalnézet"
+
+#: src/routes/builder/$resumeId/-components/design-panel.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/documents/page-navigation.tsx
 msgid "Pagination"
@@ -10557,15 +10681,27 @@ msgstr "PDF, Word vagy JSON. Önéletrajzot készítünk belőle."
 msgid "People using it"
 msgstr "Emberek, akik használják"
 
+#: src/features/career/workspace/messages.tsx
+msgid "per hour"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 msgid "Per hour"
 msgstr "Óránként"
 
+#: src/features/career/workspace/messages.tsx
+msgid "per month"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
 msgid "Per month"
 msgstr "Havonta"
+
+#: src/features/career/workspace/messages.tsx
+msgid "per year"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/workspace/messages.tsx
@@ -11482,6 +11618,11 @@ msgstr "A felvétel leállt a 2 perces korlátnál. Az elmondottak átírása fo
 msgid "Recording time"
 msgstr "Felvétel ideje"
 
+#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
+#: src/features/career/workspace/messages.tsx
+msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
+msgstr ""
+
 #. placeholder {0}: records.join(" · ")
 #: src/features/career/workspace/apply.tsx
 msgid "Records {0} as sent. You submit on the employer's site yourself."
@@ -11519,6 +11660,10 @@ msgstr "Téglalap (teljes szélesség)"
 msgid "Red"
 msgstr "Piros"
 
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Redo"
+msgstr ""
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Redo resume change"
 msgstr "Ismételje meg az önéletrajz módosítását"
@@ -11547,6 +11692,10 @@ msgstr "Ajánló…, kiemelendő dolgok stb."
 #: src/features/homepage/remember.tsx
 msgid "Reflection"
 msgstr "Tanulság"
+
+#: src/features/career/workspace/prepare.tsx
+msgid "Refresh the briefing"
+msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Refresh the briefing 2 hours before"
@@ -11957,6 +12106,11 @@ msgstr "Válaszhatáridő"
 msgid "respond by {0}"
 msgstr ""
 
+#. placeholder {0}: day(offer.respondBy ?? "")
+#: src/features/career/workspace/messages.tsx
+msgid "Respond by {0}"
+msgstr ""
+
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Responsibility"
 msgstr ""
@@ -12212,10 +12366,6 @@ msgstr ""
 msgid "Review my answer"
 msgstr "Válaszom értékelése"
 
-#: src/features/career/workspace/debrief.tsx
-msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
-msgstr "A Válaszom értékelése elküldi a kérdést, az elmondottakat, ezt a hirdetést és a Tudástáradat ide: {providerName}."
-
 #: src/features/career/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
@@ -12264,10 +12414,6 @@ msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
-msgstr ""
-
-#: src/features/career/workspace/debrief.tsx
-msgid "Reviewing needs an AI connection. <0/>. What you write here stays in this browser until then."
 msgstr ""
 
 #: src/features/settings/ai/api-keys.tsx
@@ -12373,10 +12519,6 @@ msgstr "Kutatás ügyfelekkel"
 #: src/features/career/today.tsx
 msgid "Running · {0}"
 msgstr ""
-
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "Runs onto page {next}"
-msgstr "A {next} oldalon fut"
 
 #: src/libs/locale.ts
 msgid "Russian"
@@ -13004,8 +13146,18 @@ msgstr "A feladó adatai a levélbe másolva"
 msgid "Sending password reset email..."
 msgstr "Jelszó‑visszaállító e‑mail küldése..."
 
+#: src/features/career/disclosure.tsx
+msgid "Sends {list} to {providerLabel}."
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
+msgstr ""
+
+#. placeholder {0}: application.company
+#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends the {0} posting to {1} to draft the body."
 msgstr ""
 
 #. placeholder {0}: providerState.usableProviders[0]?.label
@@ -13014,14 +13166,9 @@ msgstr ""
 msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
 msgstr ""
 
-#: src/features/career/workspace/prepare.tsx
-msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}."
-msgstr "Elküldi ezt a jelentkezést (hirdetés, jegyzetek, interjú részletei) és a bekapcsolt Tudástárat ide: {label}."
-
-#. placeholder {0}: provider.label
-#. placeholder {1}: provider.model
-#: src/features/career/workspace/fit.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {0} · {1}."
+#. placeholder {0}: providerState.usableProviders[0]?.label
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Sends the posting text to {0} to read it."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -13035,6 +13182,17 @@ msgstr "Ezt a levelet és az álláshirdetést a kulcsával együtt küldi el a 
 #: src/features/assistant/conversation.tsx
 msgid "Sends this letter to {provider} with your key, only when you press send."
 msgstr "Ezt a levelet a kulcsával együtt küldi el a {provider} címre, csak akkor, ha megnyomja a küldést."
+
+#. placeholder {0}: application.company
+#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
+msgstr ""
+
+#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "Sends this letter's resume to {0} to draft the body."
+msgstr ""
 
 #. placeholder {0}: provider.label
 #. placeholder {1}: provider.model
@@ -13059,7 +13217,7 @@ msgid "Sends your message and the posting to {provider} with your key, only when
 msgstr "Üzenetét és az álláshirdetést a kulcsával együtt küldi el a {provider} címre, csak akkor, ha megnyomja a küldést."
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents sent) to {connection}."
+msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -13067,16 +13225,16 @@ msgid "Sends your message to {provider} with your key, only when you press send.
 msgstr "Üzenetét a kulcsával együtt küldi el a {provider} címre, csak ha megnyomja a küldést."
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents sent) to {connection}."
+msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents sent) and Knowledge that's switched on to {connection}."
+msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
 msgstr ""
 
 #: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to {connection}."
-msgstr "Elküldi az üzenetedet, ezt a jelentkezést (hirdetés, jegyzetek, elküldött dokumentumok) és a bekapcsolt Tudástárat ide: {connection}."
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
+msgstr ""
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -13864,6 +14022,15 @@ msgstr ""
 msgid "Started"
 msgstr "Elkezdődött"
 
+#: src/features/career/offers.tsx
+msgid "Starts"
+msgstr ""
+
+#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
+#: src/features/career/workspace/messages.tsx
+msgid "Starts {0}"
+msgstr ""
+
 #: src/features/career/shared.tsx
 msgid "Starts in {minutes} minutes"
 msgstr "{minutes} perc múlva kezdődik"
@@ -13899,8 +14066,8 @@ msgstr "Maradj itt"
 msgid "Step {0} of {1}"
 msgstr ""
 
-#: src/features/assistant/conversation.tsx
-msgid "Still runs onto page {next}."
+#: src/features/resume/builder/draft.ts
+msgid "Still saving your latest changes. They're kept on this device if you leave now."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -14414,10 +14581,6 @@ msgstr "Ezt a fájlt nem sikerült PDF-ként beolvasni. Válassz egy PDF-fájlt,
 msgid "That file is too large to check. PDFs up to 25 MB work."
 msgstr "A fájl túl nagy az ellenőrzéshez. PDFs akár 25 MB munka."
 
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "That link couldn't be read. Paste the posting text instead."
-msgstr "A linket nem lehetett elolvasni. Helyette illessze be az álláshirdetés szövegét."
-
 #: src/features/resume/share/web-page-text.ts
 msgid "That password isn't correct. Check it with the resume owner and try again."
 msgstr "Ez a jelszó nem helyes. Egyeztesd az önéletrajz tulajdonosával, és próbáld újra."
@@ -14562,6 +14725,14 @@ msgstr ""
 msgid "The copy is linked to the application, so Check and the assistant use its posting."
 msgstr "A másolat az álláspályázathoz kapcsolódik, így a Check és az asszisztens használja az álláshirdetését."
 
+#: src/features/career/disclosure.tsx
+msgid "the cover letter for this job"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the employer's message"
+msgstr ""
+
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "The end is before the start."
 msgstr "A vége a kezdet előtt van."
@@ -14582,12 +14753,20 @@ msgstr "A fájl nem olvasható önéletrajzként."
 msgid "The greeting follows the name."
 msgstr "Az üdvözlés a név után következik."
 
+#: src/features/career/disclosure.tsx
+msgid "the interview details"
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "The key is encrypted on the server and never shown again. Saving tests the connection."
 msgstr "A kulcs titkosítva van a szerveren, és soha többé nem jelenik meg. A mentés teszteli a kapcsolatot."
 
 #: src/features/settings/ai/test-error.ts
 msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the last messages"
 msgstr ""
 
 #: src/routes/builder/letter/-components/download-sheet.tsx
@@ -14609,6 +14788,14 @@ msgstr "A levél ismét megegyezik az önéletrajz tervével"
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "A vonal megváltozott, mióta kérted, ezért nem cserélték ki."
+
+#: src/features/career/workspace/messages.tsx
+msgid "the linked cover letter"
+msgstr ""
+
+#: src/features/career/workspace/messages.tsx
+msgid "the linked resume"
+msgstr ""
 
 #: src/features/career/workspace/saved.tsx
 msgid "the message"
@@ -14674,6 +14861,10 @@ msgstr ""
 msgid "The posting:"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "The preview took too long to update, so Fit stopped. Check the pages, and use Undo to take its changes back."
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "A szolgáltató nem válaszolt. Ellenőrizze a kulcsot, a modellt és a URL alapegységet."
@@ -14702,6 +14893,14 @@ msgstr "A szolgáltató visszaküldött egy értékelést, amelyet nem lehetett 
 msgid "The provider's response couldn't be verified. Try again."
 msgstr "A szolgáltató válaszát nem sikerült ellenőrizni. Próbáld újra."
 
+#: src/features/career/disclosure.tsx
+msgid "the question and what you said"
+msgstr ""
+
+#: src/features/career/disclosure.tsx
+msgid "the question and your answer"
+msgstr ""
+
 #: src/features/applications/components/detail/close-dialog.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Az ok az Insights számára megmarad. A linkelt dokumentumokhoz nem nyúlnak hozzá."
@@ -14719,6 +14918,10 @@ msgstr "az önéletrajz"
 msgid "The resume as it is"
 msgstr "Az önéletrajz úgy ahogy van"
 
+#: src/features/career/disclosure.tsx
+msgid "the resume for this job"
+msgstr ""
+
 #: src/features/resume/editor/check/writing-tab.tsx
 msgid "The review couldn't finish. Try again."
 msgstr "A felülvizsgálatot nem lehetett befejezni. Próbáld újra."
@@ -14734,6 +14937,10 @@ msgstr "A mentett kulcsot nem küldi el új alap URL-re. Adja meg újra a kulcso
 #: src/features/settings/ai/providers.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "A mentett kulcsot nem küldi el új alap URL-re. Írja be újra a kulcsot."
+
+#: src/features/career/disclosure.tsx
+msgid "the saved offer"
+msgstr ""
 
 #: src/libs/error-message.ts
 msgid "The saved provider key can't be decrypted. Enter the key again in Settings → AI & developer."
@@ -15031,6 +15238,10 @@ msgstr "Ez a betű és a „{resumeName}” két PDFs néven szerepel, amelyek e
 msgid "This letter changed in another tab. Reload above to keep editing; your edits stay in a copy."
 msgstr ""
 
+#: src/routes/builder/letter/$coverLetterId.tsx
+msgid "This letter has an unkept draft. Click Keep to save it, or Discard to leave without it."
+msgstr ""
+
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "This letter is locked. Unlock it from its menu to edit."
 msgstr "Ez a levél zárolva van. A szerkesztéshez oldja fel a menüből."
@@ -15088,6 +15299,10 @@ msgstr "Ez a PDF jelszóval védett. Mentsd el egy nem védett másolatként, é
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr ""
 
+#: src/features/career/disclosure.tsx
+msgid "this posting"
+msgstr ""
+
 #: src/features/assistant/question-card.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr ""
@@ -15131,6 +15346,10 @@ msgstr ""
 #: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "Ez az önéletrajz jelenleg nincs megosztva."
+
+#: src/features/resume/builder/draft.ts
+msgid "This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them."
+msgstr ""
 
 #: src/features/resume/builder/draft.ts
 msgid "This resume was updated by an AI agent."
@@ -15225,16 +15444,15 @@ msgid "Tighten to one page"
 msgstr "Húzza meg egy oldalra"
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It already fits on one page, so only cut what's weak."
-msgstr ""
-
-#. placeholder {0}: overflow.lines
-#: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It runs onto page {next} by about {0} lines."
+msgid "Tighten to one page. It currently runs to {count} pages."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It runs onto page {next}."
+msgid "Tighten to one page. It fits within the planned pages, so only cut what's weak."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. Page {page} runs over by about {lines} lines."
 msgstr ""
 
 #: src/features/career/shared.tsx
@@ -15318,6 +15536,10 @@ msgstr "Ma, {hour}"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Tomorrow"
 msgstr "Holnap"
+
+#: src/features/career/workspace/prepare.tsx
+msgid "Too close to the interview to schedule a refresh."
+msgstr ""
 
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
@@ -15624,17 +15846,12 @@ msgstr "A hivatkozások aláhúzása"
 #: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
-#: src/features/resume/editor/check/actions.ts
-#: src/features/resume/editor/design/fit.ts
-#: src/features/resume/editor/design/template-group.tsx
+#: src/features/resume/builder/undo-toast.ts
 #: src/features/resume/editor/proposals/proposals.ts
-#: src/features/resume/editor/webmcp.ts
-#: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/editor/write/section-row.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "Visszavonás"
@@ -15923,10 +16140,6 @@ msgstr "Minta használata"
 
 #: src/features/career/draft-recovery.tsx
 msgid "Use saved version"
-msgstr ""
-
-#: src/features/resume/editor/check/actions.ts
-msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -16462,6 +16675,10 @@ msgstr "Mi működik"
 msgid "When do they need your answer?"
 msgstr "Mikorra kell nekik a válaszod?"
 
+#: src/features/career/offers.tsx
+msgid "When would you start?"
+msgstr ""
+
 #: src/features/career/coach.tsx
 msgid "When you press send, {shared} go to {connection}."
 msgstr "Küldéskor {shared} jut el ide: {connection}."
@@ -16625,6 +16842,10 @@ msgstr "Írj levelet"
 msgid "Write a letter…"
 msgstr ""
 
+#: src/features/career/workspace/messages.tsx
+msgid "Write a new reply in {languageName}"
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Write a story once, with the facts behind it, and the coach uses it in 3 places. Switch a fact off and nothing leans on it."
 msgstr "Írj meg egy történetet egyszer, a mögötte álló tényekkel, és a coach 3 helyen használja. Kapcsolj ki egy tényt, és semmi sem támaszkodik rá."
@@ -16688,6 +16909,10 @@ msgstr "Írd meg a válaszod, vagy fogalmazz meg egyet a Tudástáradból."
 #: src/features/homepage/write.tsx
 msgid "Write your professional resume"
 msgstr "Írja meg szakmai önéletrajzát"
+
+#: src/routes/builder/letter/-components/design-panel.tsx
+msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/resume/editor/check/check-panel.tsx
@@ -16833,6 +17058,10 @@ msgid "You're looking at a saved version. It can't be edited."
 msgstr "Egy mentett verziót nézel. Nem szerkeszthető."
 
 #: src/features/resume/builder/draft.ts
+msgid "You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "You're offline. Reconnect to save your changes before leaving."
 msgstr "Ön offline állapotban van. Csatlakozzon újra a módosítások mentéséhez, mielőtt kilép."
 
@@ -16843,6 +17072,10 @@ msgstr "Mindennel naprakész vagy"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "Vendégfiókot használsz"
+
+#: src/features/resume/builder/undo-toast.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
@@ -16861,14 +17094,13 @@ msgstr "Fiókját törölték."
 msgid "Your AI"
 msgstr "Saját AI"
 
-#: src/features/career/workspace/debrief.tsx
-#: src/features/career/workspace/practise.tsx
-msgid "your AI connection"
-msgstr "az AI-kapcsolatod"
-
 #: src/features/career/hooks.ts
 msgid "Your AI connection"
 msgstr "Az AI-kapcsolatod"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "your AI provider"
+msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
 msgid "Your AI settings changed. Nothing was sent; try again."
@@ -16880,6 +17112,10 @@ msgstr "A válaszod"
 
 #: src/features/career/workspace/apply.tsx
 msgid "Your answer changed while the draft was written. Draft again to use it."
+msgstr ""
+
+#: src/features/career/workspace/apply.tsx
+msgid "Your answer changed while this was drafted. Draft again to review the newer version."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -16943,6 +17179,10 @@ msgstr ""
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Az elérhetőségeid nem az első oldalon vannak."
+
+#: src/features/career/disclosure.tsx
+msgid "your contacts"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your data"
@@ -17013,6 +17253,10 @@ msgstr "Az Ön fájlja"
 msgid "Your focus"
 msgstr "A fókuszod"
 
+#: src/features/career/disclosure.tsx
+msgid "your form answers"
+msgstr ""
+
 #: src/features/auth/components/guest-banner.tsx
 msgid "Your guest documents and applications are in this account."
 msgstr ""
@@ -17073,6 +17317,7 @@ msgstr "A neved megváltozott az önéletrajzon. A levél is frissült."
 msgid "Your name is missing"
 msgstr "Hiányzik a neved"
 
+#: src/features/career/disclosure.tsx
 #: src/features/career/workspace/saved.tsx
 msgid "your notes"
 msgstr "a jegyzeteid"
@@ -17098,6 +17343,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "A telefonszámod szokatlan formában van megírva."
 
 #: src/features/career/coach.tsx
+#: src/features/career/disclosure.tsx
 msgid "your preferences"
 msgstr "a preferenciáid"
 
@@ -17252,287 +17498,3 @@ msgstr "Kicsinyítés"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-
-#. placeholder {0}: overflow.pageCount
-#: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Still runs to # page.} other {Still runs to # pages.}}"
-msgstr ""
-
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "{lines, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
-msgstr ""
-
-#: src/features/assistant/conversation.tsx
-msgid "{lines, plural, one {Page {page} still runs over by about # line.} other {Page {page} still runs over by about # lines.}}"
-msgstr ""
-
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "{pageCount, plural, one {Runs to # page} other {Runs to # pages}}"
-msgstr ""
-
-#: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It currently runs to {count} pages."
-msgstr ""
-
-#: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It fits within the planned pages, so only cut what's weak."
-msgstr ""
-
-#: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. Page {page} runs over by about {lines} lines."
-msgstr ""
-
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
-#: src/features/career/workspace/apply.tsx
-msgid "{0} of {1} characters"
-msgstr ""
-
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
-#: src/features/career/workspace/apply.tsx
-msgid "{0} of {1} words"
-msgstr ""
-
-#. placeholder {0}: terms.join(" · ")
-#: src/features/career/workspace/messages.tsx
-msgid "{0}. Opens in Career → Offers."
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
-msgstr ""
-
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
-#. placeholder {1}: periodLabel(offer.period)
-#: src/features/career/workspace/messages.tsx
-msgid "Base {0} {1}"
-msgstr ""
-
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
-#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
-#: src/features/career/workspace/messages.tsx
-msgid "Bonus {0}{1}"
-msgstr ""
-
-#. placeholder {0}: proposal.note
-#: src/features/career/workspace/apply.tsx
-msgid "Check before accepting: {0}"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "Couldn't confirm the application move. Reload this application before retrying."
-msgstr ""
-
-#: src/features/resume/editor/proposals/page-fit.tsx
-msgid "Couldn't measure page fit. Check the page preview before accepting."
-msgstr ""
-
-#. placeholder {0}: offer.equity
-#: src/features/career/workspace/messages.tsx
-msgid "Equity {0}"
-msgstr ""
-
-#: src/features/resume/editor/proposals/page-fit.tsx
-msgid "Estimated overflow change: {change} lines."
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "its requirements"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "Knowledge that's switched on"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "Mark as applied and move"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "Mark as applied and move it?"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "Mark as applied and move to {stage}"
-msgstr ""
-
-#: src/features/resume/editor/proposals/page-fit.tsx
-msgid "Measuring page fit…"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "No terms were extracted. Opens in Career → Offers."
-msgstr ""
-
-#. placeholder {0}: fit.data.before
-#. placeholder {1}: fit.data.after
-#: src/features/resume/editor/proposals/page-fit.tsx
-msgid "Page fit: {0} → {1} printed pages."
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "per hour"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "per month"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "per year"
-msgstr ""
-
-#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
-#: src/features/career/workspace/messages.tsx
-msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
-msgstr ""
-
-#: src/features/career/workspace/prepare.tsx
-msgid "Refresh the briefing"
-msgstr ""
-
-#. placeholder {0}: day(offer.respondBy ?? "")
-#: src/features/career/workspace/messages.tsx
-msgid "Respond by {0}"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "Sends {list} to {providerLabel}."
-msgstr ""
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends the {0} posting to {1} to draft the body."
-msgstr ""
-
-#. placeholder {0}: providerState.usableProviders[0]?.label
-#: src/features/applications/components/add-application-dialog.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr ""
-
-#. placeholder {0}: application.company
-#. placeholder {1}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} to draft the body."
-msgstr ""
-
-#. placeholder {0}: providerState.usableProviders[0]?.label ?? t`your AI provider`
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Sends this letter's resume to {0} to draft the body."
-msgstr ""
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
-msgstr ""
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {connection}."
-msgstr ""
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
-msgstr ""
-
-#: src/features/career/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {connection}."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Starts"
-msgstr ""
-
-#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
-#: src/features/career/workspace/messages.tsx
-msgid "Starts {0}"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the cover letter for this job"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the employer's message"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the interview details"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the last messages"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "the linked cover letter"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "the linked resume"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the question and what you said"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the question and your answer"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the resume for this job"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "the saved offer"
-msgstr ""
-
-#: src/routes/builder/letter/$coverLetterId.tsx
-msgid "This letter has an unkept draft. Click Keep to save it, or Discard to leave without it."
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "this posting"
-msgstr ""
-
-#: src/features/career/workspace/prepare.tsx
-msgid "Too close to the interview to schedule a refresh."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "When would you start?"
-msgstr ""
-
-#: src/features/career/workspace/messages.tsx
-msgid "Write a new reply in {languageName}"
-msgstr ""
-
-#: src/routes/builder/letter/-components/design-panel.tsx
-msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
-msgstr ""
-
-#: src/routes/builder/letter/-components/write-panel.tsx
-msgid "your AI provider"
-msgstr ""
-
-#: src/features/career/workspace/apply.tsx
-msgid "Your answer changed while this was drafted. Draft again to review the newer version."
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "your contacts"
-msgstr ""
-
-#: src/features/career/disclosure.tsx
-msgid "your form answers"
-msgstr ""

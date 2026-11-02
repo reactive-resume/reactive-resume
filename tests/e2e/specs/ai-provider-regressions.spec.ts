@@ -56,7 +56,7 @@ test("pending local edit remains actionable with provider Off", async ({ authPag
 	await page
 		.getByRole("region", { name: "Assistant", exact: true })
 		.screenshot({ path: info.outputPath("pending-off-accepted.png"), animations: "disabled" });
-	await page.getByRole("button", { name: "Undo", exact: true }).click();
+	await page.locator('[data-slot="toast"]').getByRole("button", { name: "Undo", exact: true }).click();
 	await expect(edits.getByRole("button", { name: "Accept", exact: true })).toBeEnabled();
 	expect(stub.requests.length).toBe(count);
 });

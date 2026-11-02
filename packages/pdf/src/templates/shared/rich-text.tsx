@@ -14,6 +14,7 @@ import {
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { getRichTextSemanticNodeKey } from "../../semantic/rich-text-keys";
 import { Html, Link as PdfLink, Text as PdfText } from "../../text";
+import { paragraphDirection } from "./bidi";
 import { useTemplateStyle } from "./context";
 import {
 	normalizeRichTextHtml,
@@ -45,10 +46,14 @@ type RichTextProps = {
 // react-pdf textkit reads BiDi base direction from each run's own `direction` attribute
 // (default "ltr"), and react-pdf-html buckets inline content into styleless inner <Text>
 // frames — so the rtl style has to be injected onto every descendant, not just a wrapper.
-const applyRtlDirectionRecursively = (node: ReactNode): ReactNode => {
+// The paragraph's own direction (see `paragraphDirection`) goes on every run, aligned to the page's start.
+const applyRtlDirectionRecursively = (
+	node: ReactNode,
+	direction: "ltr" | "rtl" = paragraphDirection(node),
+): ReactNode => {
 	if (Array.isArray(node)) {
 		return node.map((child, i) => {
-			const cloned = applyRtlDirectionRecursively(child);
+			const cloned = applyRtlDirectionRecursively(child, direction);
 			if (isValidElement(cloned) && cloned.key == null) {
 				return cloneElement(cloned as ReactElement<{ key?: string }>, {
 					key: `rtl-${i}`,
@@ -63,13 +68,13 @@ const applyRtlDirectionRecursively = (node: ReactNode): ReactNode => {
 		children?: ReactNode;
 	}>;
 	const existingStyle = element.props.style;
-	const rtlPatch: Style = { direction: "rtl", textAlign: "right" };
+	const rtlPatch: Style = { direction, textAlign: "right" };
 	const nextStyle: Style | Style[] = Array.isArray(existingStyle)
 		? [...existingStyle, rtlPatch]
 		: existingStyle
 			? [existingStyle, rtlPatch]
 			: rtlPatch;
-	const nextChildren = applyRtlDirectionRecursively(element.props.children);
+	const nextChildren = applyRtlDirectionRecursively(element.props.children, direction);
 	return cloneElement(element, { style: nextStyle }, nextChildren);
 };
 
@@ -308,6 +313,7 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 								contentResolved.style,
 								safeTextStyle,
 								rtlTextWrapStyle,
+								{ direction: paragraphDirection(children) },
 							)}
 						>
 							{applyRtlDirectionRecursively(children)}

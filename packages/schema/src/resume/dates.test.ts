@@ -139,6 +139,22 @@ describe("formatYearMonth", () => {
 	] as const)("prints 2022-03 as %s in %s", (format, locale, expected) => {
 		expect(formatYearMonth("2022-03", { locale, format })).toBe(expected);
 	});
+
+	it.each([
+		["ar-SA", "short", "٢٠١٩"],
+		["fa-IR", "long", "۲۰۱۹"],
+		["ja-JP", "short", "2019"],
+		["en-US", "long", "2019"],
+		["ar-SA", "iso", "2019"],
+		["ar-SA", "numeric", "2019"],
+	] as const)("prints a year-only date in %s (%s) in its month dates' digits", (locale, format, expected) => {
+		expect(formatYearMonth("2019", { locale, format })).toBe(expected);
+	});
+
+	it("keeps a year's leading zeros", () => {
+		expect(formatYearMonth("0019", { locale: "en-US", format: "short" })).toBe("0019");
+		expect(formatYearMonth("0019", { locale: "ar-SA", format: "long" })).toBe("٠٠١٩");
+	});
 });
 
 describe("formatResumeDates", () => {

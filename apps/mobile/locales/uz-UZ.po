@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {Haftasiga # kun ofisda} other {Haftasiga # kun ofisda}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# sahifa} other {# sahifa}}"
@@ -346,10 +346,20 @@ msgstr ""
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {# kuni javob yo'q} other {# kunlarda javob yo'q}}"
 
+#. placeholder {0}: firstSpill.lines
+#: src/preview/page.tsx
+msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
+msgstr ""
+
 #. placeholder {0}: displayed?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {Rezyume (#)} other {Rezyumelar (#)}}"
+
+#. placeholder {0}: overflow.pageCount
+#: src/preview/page.tsx
+msgid "{0, plural, one {Runs to # page} other {Runs to # pages}}"
+msgstr ""
 
 #. placeholder {0}: -change.words
 #: src/features/workspace/tabs/apply.tsx
@@ -478,6 +488,12 @@ msgstr "{0} kamroq"
 msgid "{0} more"
 msgstr "{0} ko'proq"
 
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} characters"
+msgstr ""
+
 #. placeholder {0}: shown.length
 #. placeholder {1}: TEMPLATES.length
 #: src/features/design/template-group.tsx
@@ -491,6 +507,12 @@ msgstr "{0} ning {1} ko'rsatilgan"
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{1} ta moslashtirilgan arizadan {0} tasiga javob keldi; boshqa rezyume bilan yuborilgan {3} tadan {2} tasiga."
+
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} words"
+msgstr ""
 
 #. placeholder {0}: fact.company
 #: src/features/career/facts.tsx
@@ -544,6 +566,11 @@ msgstr ""
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, kirish {1} / {2}"
 
+#. placeholder {0}: terms.join(" · ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "{0}. Opens in Career → Offers."
+msgstr ""
+
 #. placeholder {0}: Math.round(zoom * 100)
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
@@ -562,6 +589,10 @@ msgstr "{active, plural, one {# ta faol ariza} other {# ta faol ariza}}"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. Ushbu ishga ariza va sizning Bilimlar yuboradi; provayderingiz haq olishi mumkin."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -586,6 +617,10 @@ msgstr ""
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# ta hujjat yangilandi} other {# ta hujjat yangilandi}}"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "{cost} a year"
@@ -796,10 +831,6 @@ msgstr ""
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# ta hikoya} other {# ta hikoya}}"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "{summary}. Opens in Career → Offers."
-msgstr "{summary}. Karyera → Takliflar bo'limida ochiladi."
 
 #: src/features/workspace/tabs/fit.tsx
 msgid "{supported} supported · {partial} partly · {missing} missing"
@@ -1297,6 +1328,11 @@ msgstr "Mamlakat kodi bilan birga qoʻshing; ba'zi ariza shakllari topshirishdan
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "Sahifa qo‘shish"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -2019,6 +2055,10 @@ msgstr "Server administratoringizdan hisob maʼlumotlarini shifrlashni yoqish yo
 msgid "Ask, or describe a change…"
 msgstr "Oʻzgarishlarni soʻrang yoki tavsiflang…"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
+msgstr ""
+
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
 msgstr "Tomonlar nisbati"
@@ -2118,8 +2158,9 @@ msgstr "Ozarbayjon tili"
 msgid "Back"
 msgstr "Orqaga"
 
-#: src/shell/builder-chrome.tsx
-msgid "Back to application"
+#. placeholder {0}: application.company
+#: src/shell/editor-origin.ts
+msgid "Back to {0}"
 msgstr ""
 
 #: app/applications/[id]/_layout.tsx
@@ -2182,6 +2223,12 @@ msgstr "Fon tasmasi"
 msgctxt "Entry header accent: a bar beside the header"
 msgid "Bar"
 msgstr "Chiziqcha"
+
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
+#. placeholder {1}: periodLabel(offer.period)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Base {0} {1}"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -2254,6 +2301,12 @@ msgstr "Qalin"
 msgid "Bonus"
 msgstr "Bonus"
 
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
+#: src/features/workspace/tabs/messages.tsx
+msgid "Bonus {0}{1}"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/workspace/tabs/messages.tsx
@@ -2290,8 +2343,8 @@ msgid "Briefing ready"
 msgstr "Brifing tayyor"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Briefing refresh is on · {next}"
-msgstr "Brifingni yangilash yoqilgan · {next}"
+msgid "Briefing refresh is on · {nextAt}"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Briefing refresh paused"
@@ -2361,6 +2414,7 @@ msgstr "Dasturiy ta'minot sizning rezyumeingizni o'qiy oladimi?"
 #: src/features/search/search-screen.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/pickers.tsx
 #: src/linking/open.ts
@@ -2492,6 +2546,11 @@ msgstr "Qayta tekshirish"
 #: src/features/ats-checker/checker.tsx
 msgid "Check another file"
 msgstr "Boshqa faylni tekshiring"
+
+#. placeholder {0}: proposal.note
+#: src/features/workspace/tabs/apply.tsx
+msgid "Check before accepting: {0}"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 msgid "Check DNS"
@@ -3071,10 +3130,6 @@ msgstr "Kontent panjara koʻrinishida joylashtirilgan."
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "Kontent hali ham tugaydi. Bo'limni yashiring yoki yozuvlarni qisqartiring."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "Hisobot uchun kontent"
@@ -3273,6 +3328,10 @@ msgstr ""
 msgid "Couldn't confirm AI connections. Try again before using the assistant."
 msgstr "AI ulanishlarini tasdiqlab bo‘lmadi. Yordamchidan foydalanishdan oldin qayta urinib ko'ring."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't confirm the application move. Reload this application before retrying."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Couldn't confirm the save. Check Applications before retrying to avoid a duplicate."
 msgstr "Saqlashni tasdiqlab bo‘lmadi. Takrorlanishning oldini olish uchun qayta urinishdan oldin Arizalarni tekshiring."
@@ -3445,6 +3504,10 @@ msgstr ""
 msgid "Couldn't mark it as applied. Try again."
 msgstr "Topshirildi deb belgilab bo'lmadi. Qayta urinib ko'ring."
 
+#: src/features/assistant/page-fit.tsx
+msgid "Couldn't measure page fit. Check the page preview before accepting."
+msgstr ""
+
 #: app/(tabs)/settings/account.tsx
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
@@ -3530,6 +3593,10 @@ msgstr "Bu rezyumeni ko‘rsatib bo‘lmadi."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Kalitni bekor qilib boʻlmadi. Qayta urinib ko'ring."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -4819,6 +4886,15 @@ msgstr "Kirish imkoniyatlari"
 msgid "Equity"
 msgstr "Ulush"
 
+#. placeholder {0}: offer.equity
+#: src/features/workspace/tabs/messages.tsx
+msgid "Equity {0}"
+msgstr ""
+
+#: src/features/assistant/page-fit.tsx
+msgid "Estimated overflow change: {change} lines."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Every 3 days"
 msgstr "Har 3 kunda"
@@ -4937,10 +5013,6 @@ msgstr ""
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
 msgstr "Fikr-mulohaza"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Feedback needs an AI connection. Nothing is sent until you ask."
-msgstr "Fikr-mulohaza uchun AI ulanishi kerak. Siz so'ramaguningizcha hech narsa yuborilmaydi."
 
 #. placeholder {0}: index + 1
 #: src/features/write/basics-screen.tsx
@@ -5256,10 +5328,6 @@ msgstr "Kalitni {0} orqali oling. U shifrlangan holda saqlanadi va faqat sizning
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Fikr-mulohaza olish"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Get feedback sends the question, your answer, this posting and your stories to {providerName}."
-msgstr "“Fikr-mulohaza olish” savolni, javobingizni, ushbu e'lonni va hikoyalaringizni {providerName}ga yuboradi."
 
 #: src/features/career/today.tsx
 msgid "Get new roles here every morning"
@@ -5846,6 +5914,10 @@ msgstr "Uning xabarlari va qo'shimchalari o'chiriladi. Siz qabul qilgan tahrirla
 msgid "Its own design ({summary})."
 msgstr "O'zining dizayni ({summary})."
 
+#: src/features/workspace/parts.tsx
+msgid "its requirements"
+msgstr ""
+
 #: src/features/ai/provider-editor.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "Uning saqlangan kaliti o'chiriladi. Undan foydalangan holda suhbatlar uchun boshqa provayder kerak."
@@ -6046,6 +6118,10 @@ msgstr "Bilimlar"
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "Bilimlar yuklanmadi. Qayta urinib ko'ring yoki yuborishdan oldin Bilimlarni o'chiring."
 
+#: src/features/workspace/parts.tsx
+msgid "Knowledge that's switched on"
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
 msgstr ""
@@ -6079,6 +6155,7 @@ msgstr "Bosqichlar arizalar taxtangizni tartibga soladi. Ularning toifasi ariza 
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/document-menu/index.tsx
+#: src/features/letters/design.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/write/fields.ts
 msgid "Language"
@@ -6138,8 +6215,6 @@ msgstr "Matnni gorizontal joylashtiring. Aylantirilgan qismlar koʻpincha yoʻqo
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "Maketi"
 
@@ -6153,6 +6228,7 @@ msgstr "Siz nima uchun mos ekanligingizni aytadi"
 msgid "Learning budget"
 msgstr "O'qish byudjeti"
 
+#: app/letter/[id]/_layout.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/workspace/tabs/messages.tsx
@@ -6179,6 +6255,10 @@ msgstr "Sarlavhani asl holatga qaytarish uchun bo‘sh qoldiring."
 #: src/features/write/rich-text-field.tsx
 msgid "Leave it empty to remove the link."
 msgstr "Havolani olib tashlash uchun uni bo'sh qoldiring."
+
+#: app/letter/[id]/_layout.tsx
+msgid "Leave without keeping the draft?"
+msgstr ""
 
 #: src/features/design/template-group.tsx
 msgid "Left"
@@ -6708,6 +6788,18 @@ msgstr "Chegaralar {minimum} pt"
 msgid "Mark as applied"
 msgstr "Topshirildi deb belgilash"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move it?"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move to {stage}"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "Mark as closed"
 msgstr ""
@@ -6720,10 +6812,6 @@ msgstr ""
 msgid "Mark as read"
 msgstr "O'qilgan deb belgilash"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark it as applied in Apply first."
-msgstr "Avval Topshirish bo'limida uni topshirildi deb belgilang."
-
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Markdown"
@@ -6732,6 +6820,10 @@ msgstr "Markdown"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Markdown (.md)"
 msgstr "Markdown (.md)"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Marked as applied and moved. You submit on the employer's site yourself."
+msgstr ""
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Marked as applied. The versions you sent are kept."
@@ -6781,6 +6873,10 @@ msgstr "MCP"
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP serveri"
+
+#: src/features/assistant/page-fit.tsx
+msgid "Measuring page fit…"
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "median to first reply"
@@ -7320,6 +7416,10 @@ msgstr "Sanalar topilmadi."
 msgid "no documents"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "tahrirlar yo'q"
@@ -7491,6 +7591,10 @@ msgstr "Hali hikoyalar yo'q"
 
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "No terms were extracted. Opens in Career → Offers."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -8034,10 +8138,6 @@ msgstr "Xat ochilmoqda…"
 msgid "Opening the resume…"
 msgstr "rezyume ochilmoqda…"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Opens in Career → Offers."
-msgstr "Karyera → Takliflar bo'limida ochiladi."
-
 #: src/features/assistant/provider.tsx
 msgid "Opens Knowledge → Preferences, where you choose what the coach remembers."
 msgstr ""
@@ -8185,6 +8285,12 @@ msgstr "Yuklangan PDF sahifasining {0} sahifasi"
 msgid "Page {currentPage} of {0}"
 msgstr "{currentPage}-sahifa, jami {0}"
 
+#. placeholder {0}: fit.data.before
+#. placeholder {1}: fit.data.after
+#: src/features/assistant/page-fit.tsx
+msgid "Page fit: {0} → {1} printed pages."
+msgstr ""
+
 #: src/features/letters/design.tsx
 msgid "Page format"
 msgstr "Sahifa formati"
@@ -8196,6 +8302,10 @@ msgstr "Sahifani o'qish tugamadi."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "Sahifa ko'rinishi"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -8323,6 +8433,10 @@ msgstr "PDF uslublari CSS to‘plamini qo‘llab-quvvatlaydi. Aylantirish, chizi
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
 msgstr "PDF, Word, Reactive Resume, JSON Resume yoki LinkedIn eksporti."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per hour"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
@@ -8330,12 +8444,20 @@ msgstr "PDF, Word, Reactive Resume, JSON Resume yoki LinkedIn eksporti."
 msgid "Per hour"
 msgstr "Soatiga"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per month"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 #: src/features/workspace/tabs/messages.tsx
 msgid "Per month"
 msgstr "Oyiga"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "per year"
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -9018,6 +9140,11 @@ msgstr "Yozib olish 2 daqiqalik chegarada to'xtadi. Aytganlaringiz transkripsiya
 msgid "Recording time"
 msgstr "Yozib olish vaqti"
 
+#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr ""
@@ -9071,6 +9198,10 @@ msgstr "Yo'naltirish"
 #: src/features/career/stories.tsx
 msgid "Reflection"
 msgstr "Mulohaza"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Refresh the briefing"
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing 2 hours before"
@@ -9415,6 +9546,11 @@ msgstr "Standart dizayn sozlamalarini tiklash"
 msgid "Respond by"
 msgstr "Javob berish muddati"
 
+#. placeholder {0}: day(offer.respondBy ?? "")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Respond by {0}"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 msgid "respond by {respondBy}"
 msgstr ""
@@ -9692,10 +9828,6 @@ msgstr "Ish tafsilotlarini ko'rib chiqing"
 msgid "Review my answer"
 msgstr "Javobimni baholash"
 
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
-msgstr "“Javobimni baholash” savolni, aytganlaringizni, ushbu e'lonni va Bilimlaringizni {providerName}ga yuboradi."
-
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr ""
@@ -9744,10 +9876,6 @@ msgstr ""
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr ""
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Reviewing needs an AI connection. What you write here stays on this device until then."
-msgstr "Tekshirish uchun AI ulanishi kerak. Bu yerda yozganlaringiz shu vaqtgacha ushbu qurilmada qoladi."
 
 #: src/features/settings/api-keys.tsx
 msgid "Revoke"
@@ -9843,11 +9971,6 @@ msgstr ""
 #: src/features/career/schedule-sheet.tsx
 msgid "Runs at {0}."
 msgstr "{0} da ishlaydi."
-
-#. placeholder {0}: authored + 1
-#: src/preview/page.tsx
-msgid "Runs onto page {0}"
-msgstr "{0}-sahifaga oʻtib ketadi"
 
 #: src/features/settings/locale-names.ts
 msgid "Russian"
@@ -10347,27 +10470,43 @@ msgstr "Yuboruvchi ma'lumotlari xatga ko'chirildi"
 msgid "Sending…"
 msgstr "Yuborilmoqda…"
 
+#. placeholder {0}: formatList(i18n.locale, labels)
+#: src/features/workspace/parts.tsx
+msgid "Sends {0} to {label}."
+msgstr ""
+
 #: src/features/career/role-suggestions.tsx
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr ""
 
-#. placeholder {0}: ai.defaultProvider.label
-#. placeholder {1}: ai.defaultProvider.model
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
 #: src/features/letters/write.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
 msgstr ""
 
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
-msgstr "Ushbu ishga arizani (ish haqida eʼlon, eslatmalar, suhbat tafsilotlari) va {name} yoqilgan Bilimlar yuboradi."
+#. placeholder {0}: providers.defaultProvider.label
+#: src/features/applications/add-sheet.tsx
+msgid "Sends the posting text to {0} to read it."
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr ""
 
-#: src/features/workspace/parts.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
-msgstr "Ushbu ishga arizaning ishga joylashuvi haqidagi eʼlon, eslatmalar va hujjatlar hamda yoqilgan Bilimlar ni {label} manziliga yuboradi."
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
+msgstr ""
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
+msgstr ""
 
 #. placeholder {0}: ai.defaultProvider.label
 #. placeholder {1}: ai.defaultProvider.model
@@ -10380,19 +10519,19 @@ msgid "Sends this PDF to your configured AI provider instead of reading its text
 msgstr "Ushbu PDF matn qatlamini oʻqish oʻrniga sozlangan AI provayderingizga yuboradi."
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents sent) to {label}."
+msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents sent) to {label}."
+msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
-msgstr "Xabaringizni, oldingi xabarlarni, ushbu ish arizasini (e’lon, qaydlar va yuborilgan hujjatlar) hamda Bilim bo‘limidagi yoqilgan ma’lumotlarni {label} xizmatiga yuboradi."
+msgid "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgstr ""
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
 msgstr ""
 
 #. placeholder {0}: provider?.label
@@ -11097,12 +11236,25 @@ msgstr "Ko'pgina rezyumelar mavjud bo'limlardan boshlang."
 msgid "Start with your name. Build from there."
 msgstr "Ismingiz bilan boshlang. U yerdan quring."
 
+#: src/features/career/offers.tsx
+msgid "Starts"
+msgstr ""
+
+#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Starts {0}"
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Starts now"
 msgstr "Hozir boshlanadi"
 
 #: src/features/settings/application-profile.tsx
 msgid "State or region"
+msgstr ""
+
+#: app/letter/[id]/_layout.tsx
+msgid "Stay"
 msgstr ""
 
 #: src/features/documents/new-document.tsx
@@ -11596,6 +11748,10 @@ msgstr ""
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "the cover letter for this job"
+msgstr ""
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -11609,6 +11765,10 @@ msgstr ""
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "Tahrirlovchi Tekshiruv da ochiladi, u import qilingan rezyumeni qayta tekshiradi."
 
+#: src/features/workspace/parts.tsx
+msgid "the employer's message"
+msgstr ""
+
 #: src/features/write/date-field.tsx
 msgid "The end is before the start."
 msgstr "Oxiri boshlanishidan oldin."
@@ -11621,6 +11781,10 @@ msgstr "Kuzatuv saqlanadi. Eslatma olish uchun qurilmangiz sozlamalarida bildiri
 msgid "The greeting follows the name."
 msgstr "Salom ismdan keyin keladi."
 
+#: src/features/workspace/parts.tsx
+msgid "the interview details"
+msgstr ""
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "Intervyu saqlanadi. Eslatma olish uchun qurilmangiz sozlamalarida bildirishnomalarga ruxsat bering."
@@ -11631,6 +11795,10 @@ msgstr "Kalit serverda shifrlangan va boshqa ko'rsatilmaydi. Saqlash ulanishni s
 
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
+msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "the last messages"
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -11656,6 +11824,14 @@ msgstr "Maktub yana rezyume dizayniga mos keladi"
 #: src/features/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "Siz so'raganingizdan beri chiziq o'zgardi, shuning uchun u almashtirilmadi."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked cover letter"
+msgstr ""
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked resume"
+msgstr ""
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "the message"
@@ -11697,6 +11873,14 @@ msgstr ""
 msgid "The provider reported a server error. Try again later."
 msgstr ""
 
+#: src/features/workspace/parts.tsx
+msgid "the question and what you said"
+msgstr ""
+
+#: src/features/workspace/parts.tsx
+msgid "the question and your answer"
+msgstr ""
+
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "Sababi Insights uchun saqlanadi. Bog'langan hujjatlarga tegilmaydi."
@@ -11713,6 +11897,10 @@ msgstr "Qolgan fayl bu hisobotda yo'q."
 msgid "The resume as it is"
 msgstr "Rezyume qanday bo'lsa"
 
+#: src/features/workspace/parts.tsx
+msgid "the resume for this job"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
 msgstr "Bir xil qator har bir sahifada takrorlanadi."
@@ -11724,6 +11912,10 @@ msgstr "Saqlangan kalit yangi asosiy URL manziliga yuborilmaydi. Agar bu server 
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Saqlangan kalit yangi asosiy URL manziliga yuborilmaydi. Kalitni yana kiriting."
+
+#: src/features/workspace/parts.tsx
+msgid "the saved offer"
+msgstr ""
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -12073,6 +12265,10 @@ msgstr "Ushbu PDF matn qatlamiga ega emas, shuning uchun tahlilchi undan hech na
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "Bu PDF parol bilan himoyalangan. Himoyalanmagan nusxa saqlab, qayta urinib koʻring."
 
+#: src/features/workspace/parts.tsx
+msgid "this posting"
+msgstr ""
+
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr ""
@@ -12264,6 +12460,10 @@ msgstr "Tanlovni almashtirish"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Tomorrow"
 msgstr "Ertaga"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Too close to the interview to schedule a refresh."
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
@@ -12484,7 +12684,6 @@ msgstr "Havolalar tagiga chizish"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13155,6 +13354,10 @@ msgstr "Nima ishlayapti"
 msgid "When do you need a decision?"
 msgstr "Sizga qachon qaror kerak?"
 
+#: src/features/career/offers.tsx
+msgid "When would you start?"
+msgstr ""
+
 #: src/features/assistant/coach-screen.tsx
 msgid "When you tap send, {list} go to {connection}."
 msgstr "Yuborish tugmasiga teganingizda, {list} {connection} ga yuboriladi."
@@ -13282,6 +13485,10 @@ msgstr "Xat yozing"
 msgid "Write a letter…"
 msgstr ""
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Write a new reply in {languageName}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"
 msgstr ""
@@ -13329,6 +13536,10 @@ msgstr "Nima qilganingizni yozing."
 #: src/features/workspace/tabs/apply.tsx
 msgid "Write your answer, or draft one from your Knowledge."
 msgstr "Javobingizni yozing yoki Bilimlaringiz asosida qoralama tuzing."
+
+#: src/features/letters/design.tsx
+msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -13453,10 +13664,10 @@ msgstr "Siz oflaynsiz. Qayta ulanganda qayta urinib ko'ring."
 msgid "You're up to date"
 msgstr "Yangi narsa yo'q"
 
-#: src/features/workspace/tabs/debrief.tsx
-#: src/features/workspace/tabs/practise.tsx
-msgid "your AI connection"
-msgstr "AI ulanishingiz"
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"
@@ -13478,6 +13689,10 @@ msgstr "Sizning javobingiz · {mode}"
 msgid "Your answer changed while the draft was written. Draft again to use it."
 msgstr ""
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Your answer changed while this was drafted. Draft again to review the newer version."
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your attempts"
 msgstr "Urinishlaringiz"
@@ -13497,6 +13712,10 @@ msgstr "Ushbu qurilmadagi oʻzgartirishlaringiz saqlangan versiya bilan almashti
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Kontakt ma'lumotlaringiz birinchi sahifada emas."
+
+#: src/features/workspace/parts.tsx
+msgid "your contacts"
+msgstr ""
 
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
@@ -13539,6 +13758,10 @@ msgstr "Sizning faktlaringiz, hikoyalaringiz va afzalliklaringiz. Bilimlar tahri
 msgid "Your focus"
 msgstr "Yo'nalishingiz"
 
+#: src/features/workspace/parts.tsx
+msgid "your form answers"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Sarlavhalaringiz asosiy matningiz bilan bir xil koʻrinadi."
@@ -13579,6 +13802,7 @@ msgstr "Ismingiz manzilingiz sifatida, .cv registri OlaCV'dan. {CODE} kodi birin
 msgid "Your name is missing"
 msgstr "Sizning ismingiz yo'q"
 
+#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "eslatmalaringiz"
@@ -13596,6 +13820,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "Telefon raqamingiz odatiy boʻlmagan shaklda yozilgan."
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "afzalliklaringiz"
 
@@ -13697,6 +13922,10 @@ msgstr "Hikoyangizni yuklab bo'lmadi."
 msgid "Your two-minute introduction"
 msgstr "Ikki daqiqalik o'zingizni tanishtirish"
 
+#: app/letter/[id]/_layout.tsx
+msgid "Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place."
+msgstr ""
+
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening this application."
 msgstr "Bu arizani ochishdan oldin ish haqidagi saqlanmagan tafsilotlar bekor qilinadi."
@@ -13726,289 +13955,3 @@ msgstr "Kichraytirish"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-
-#. placeholder {0}: firstSpill.lines
-#: src/preview/page.tsx
-msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
-msgstr ""
-
-#. placeholder {0}: overflow.pageCount
-#: src/preview/page.tsx
-msgid "{0, plural, one {Runs to # page} other {Runs to # pages}}"
-msgstr ""
-
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
-#: src/features/workspace/tabs/apply.tsx
-msgid "{0} of {1} characters"
-msgstr ""
-
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
-#: src/features/workspace/tabs/apply.tsx
-msgid "{0} of {1} words"
-msgstr ""
-
-#. placeholder {0}: terms.join(" · ")
-#: src/features/workspace/tabs/messages.tsx
-msgid "{0}. Opens in Career → Offers."
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
-msgstr ""
-
-#. placeholder {0}: application.company
-#: src/shell/editor-origin.ts
-msgid "Back to {0}"
-msgstr ""
-
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
-#. placeholder {1}: periodLabel(offer.period)
-#: src/features/workspace/tabs/messages.tsx
-msgid "Base {0} {1}"
-msgstr ""
-
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
-#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
-#: src/features/workspace/tabs/messages.tsx
-msgid "Bonus {0}{1}"
-msgstr ""
-
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Briefing refresh is on · {nextAt}"
-msgstr ""
-
-#. placeholder {0}: proposal.note
-#: src/features/workspace/tabs/apply.tsx
-msgid "Check before accepting: {0}"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Couldn't confirm the application move. Reload this application before retrying."
-msgstr ""
-
-#: src/features/assistant/page-fit.tsx
-msgid "Couldn't measure page fit. Check the page preview before accepting."
-msgstr ""
-
-#. placeholder {0}: offer.equity
-#: src/features/workspace/tabs/messages.tsx
-msgid "Equity {0}"
-msgstr ""
-
-#: src/features/assistant/page-fit.tsx
-msgid "Estimated overflow change: {change} lines."
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "Knowledge that's switched on"
-msgstr ""
-
-#: app/letter/[id]/_layout.tsx
-msgid "Leave without keeping the draft?"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark as applied and move"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark as applied and move it?"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark as applied and move to {stage}"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Marked as applied and moved. You submit on the employer's site yourself."
-msgstr ""
-
-#: src/features/assistant/page-fit.tsx
-msgid "Measuring page fit…"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "No terms were extracted. Opens in Career → Offers."
-msgstr ""
-
-#. placeholder {0}: fit.data.before
-#. placeholder {1}: fit.data.after
-#: src/features/assistant/page-fit.tsx
-msgid "Page fit: {0} → {1} printed pages."
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "per hour"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "per month"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "per year"
-msgstr ""
-
-#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
-#: src/features/workspace/tabs/messages.tsx
-msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
-msgstr ""
-
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Refresh the briefing"
-msgstr ""
-
-#. placeholder {0}: day(offer.respondBy ?? "")
-#: src/features/workspace/tabs/messages.tsx
-msgid "Respond by {0}"
-msgstr ""
-
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr ""
-
-#. placeholder {0}: application.company
-#. placeholder {1}: ai.defaultProvider.label
-#. placeholder {2}: ai.defaultProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr ""
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr ""
-
-#. placeholder {0}: application.company
-#. placeholder {1}: ai.defaultProvider.label
-#. placeholder {2}: ai.defaultProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr ""
-
-#. placeholder {0}: ai.defaultProvider.label
-#. placeholder {1}: ai.defaultProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr ""
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr ""
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr ""
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-msgstr ""
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "Starts"
-msgstr ""
-
-#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
-#: src/features/workspace/tabs/messages.tsx
-msgid "Starts {0}"
-msgstr ""
-
-#: app/letter/[id]/_layout.tsx
-msgid "Stay"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "the linked cover letter"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "the linked resume"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr ""
-
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Too close to the interview to schedule a refresh."
-msgstr ""
-
-#: src/features/career/offers.tsx
-msgid "When would you start?"
-msgstr ""
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Write a new reply in {languageName}"
-msgstr ""
-
-#: src/features/letters/design.tsx
-msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
-msgstr ""
-
-#: src/features/workspace/tabs/apply.tsx
-msgid "Your answer changed while this was drafted. Draft again to review the newer version."
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr ""
-
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr ""
-
-#: app/letter/[id]/_layout.tsx
-msgid "Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place."
-msgstr ""

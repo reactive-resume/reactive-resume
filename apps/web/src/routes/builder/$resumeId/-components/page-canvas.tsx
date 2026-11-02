@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { lazyRouteComponent } from "@tanstack/react-router";
 import { Suspense, useState } from "react";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
+import { spillingSections } from "@reactive-resume/resume/spill";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { cn } from "@reactive-resume/utils/style";
@@ -16,7 +17,7 @@ import { useCurrentBuilderResumeSelector, useResumeData, useResumeStore } from "
 import { CheckPageLayer, PageViewToggle } from "@/features/resume/editor/check/page-layer";
 import { ParserView } from "@/features/resume/editor/check/parser-view";
 import { CanvasStatusPill, usePageScale, ZoomBar } from "@/features/resume/editor/chrome";
-import { runFit } from "@/features/resume/editor/design/fit";
+import { addSpillPage, runFit } from "@/features/resume/editor/design/fit";
 import { PageOverlay } from "@/features/resume/editor/page-overlay";
 import { markProposals, pendingProposals } from "@/features/resume/editor/proposals/proposals";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -236,12 +237,21 @@ function ResumePageCaption(props: ResumePageCaptionProps) {
 
 type OverflowChipProps = NonNullable<ReturnType<typeof measureOverflow>>;
 
-/** Names the first authored page that spills, with Fit using the existing single undo step. */
+/**
+ * Names the first authored page that spills, with two ways out: Add page, which moves the sections that spill off
+ * the last page onto a new one, and Fit, which tightens the design until it fits. Each is one undo step.
+ */
 function OverflowChip({ authored, spills, pageCount }: OverflowChipProps) {
 	const [fitting, setFitting] = useState(false);
 	const first = spills[0];
 	const page = first?.authoredPage;
 	const lines = first?.lines;
+	const next = authored + 1;
+	const data = useResumeData();
+	const pageMap = useEditorStore((state) => state.rendered.pageMap);
+	const canAddPage = !!data && spillingSections(data.metadata.layout.pages, pageMap?.nodes) !== null;
+	const action =
+		"h-6 rounded-md bg-surface px-2.5 text-xs font-semibold whitespace-nowrap text-ink shadow-e1 disabled:opacity-60";
 
 	return (
 		<span className="flex min-h-8 items-center gap-2 rounded-lg bg-warn-soft py-1 ps-3 pe-1.5 text-[13px] text-warn-text">
@@ -255,6 +265,11 @@ function OverflowChip({ authored, spills, pageCount }: OverflowChipProps) {
 			) : (
 				<Plural value={pageCount} one="Runs to # page" other="Runs to # pages" />
 			)}
+			{canAddPage && (
+				<button type="button" disabled={fitting} onClick={() => addSpillPage()} className={action}>
+					<Trans>Add page {next}</Trans>
+				</button>
+			)}
 			<button
 				type="button"
 				disabled={fitting}
@@ -262,7 +277,7 @@ function OverflowChip({ authored, spills, pageCount }: OverflowChipProps) {
 					setFitting(true);
 					void runFit().finally(() => setFitting(false));
 				}}
-				className="h-6 rounded-md bg-surface px-2.5 text-xs font-semibold whitespace-nowrap text-ink shadow-e1 disabled:opacity-60"
+				className={action}
 			>
 				<Plural value={authored} _1="Fit to one page" other="Fit to # pages" />
 			</button>

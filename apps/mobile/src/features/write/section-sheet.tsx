@@ -6,6 +6,7 @@ import { useState } from "react";
 import { addEntry, edit, requestFocus, useSectionTitle, useSortByDate, useUndoToast, useWriteData } from "./hooks";
 import { deleteCustomSection, findPlacement, getSectionObject, NO_PAGES, placeSection, selectPages } from "./model";
 import { IconPickerSheet, PromptSheet } from "./pickers";
+import { useResumeStore } from "@/draft";
 import { routes } from "@/routes";
 import { Icon, ListRow, Sheet, Switch, Text, useTheme } from "@/ui";
 
@@ -274,14 +275,37 @@ export function SectionSheet({ resumeId, section, open, onClose, onMove }: Secti
 							onPress={() => {
 								close();
 								if (section.kind === "custom") {
+									const data = useResumeStore.getState().data;
+									const custom = data?.customSections.find((item) => item.id === section.id);
+									const places = layoutPlaces(data?.metadata.layout.pages ?? [], section.id);
 									edit((draft) => deleteCustomSection(draft, section.id));
-									undoToast(t`${title} deleted`);
+									// After later edits, Undo adds the section back where it was.
+									undoToast(t`${title} deleted`, (draft) => {
+										if (!custom || draft.customSections.some((item) => item.id === custom.id)) return false;
+										draft.customSections.push(structuredClone(custom));
+										restoreToLayout(draft.metadata.layout.pages, custom.id, places);
+										return true;
+									});
 								} else {
+									const before = "items" in settings ? { items: settings.items } : { content: settings.content };
 									change((target) => {
 										if ("items" in target) target.items = [];
 										else target.content = "";
 									});
-									undoToast(t`${title} cleared`);
+									// After later edits, Undo puts the entries back if the section is still empty.
+									undoToast(t`${title} cleared`, (draft) => {
+										const target = getSectionObject(draft, section);
+										if (!target) return false;
+										if ("items" in target && "items" in before && target.items.length === 0) {
+											target.items = structuredClone(before.items) as typeof target.items;
+											return true;
+										}
+										if ("content" in target && "content" in before && !target.content) {
+											target.content = before.content;
+											return true;
+										}
+										return false;
+									});
 								}
 							}}
 						/>
@@ -328,4 +352,41 @@ export function SectionSheet({ resumeId, section, open, onClose, onMove }: Secti
 			/>
 		</>
 	);
+}
+
+type LayoutPage = { fullWidth: boolean; main: string[]; sidebar: string[] };
+type LayoutPlace = { main: number; sidebar: number; others: string[]; pageCount: number };
+
+/** Where a section sits on each page, with the sections it shares that page with, to find the page again later. */
+function layoutPlaces(pages: LayoutPage[], id: string): LayoutPlace[] {
+	return pages.map((page) => ({
+		main: page.main.indexOf(id),
+		sidebar: page.sidebar.indexOf(id),
+		others: [...page.main, ...page.sidebar].filter((other) => other !== id),
+		pageCount: pages.length,
+	}));
+}
+
+/**
+ * Puts a restored section back where it was: its column and place, on the page that still holds the sections it
+ * shared it with (pages deleted or reordered since shift indexes). A page made full width since takes it in its main
+ * column; a page that can't be found leaves it at the end of the last page (web section-row).
+ */
+function restoreToLayout(pages: LayoutPage[], id: string, places: LayoutPlace[]) {
+	let placed = false;
+	places.forEach((place, index) => {
+		if (place.main === -1 && place.sidebar === -1) return;
+		const byNeighbours = pages.find((page) =>
+			place.others.some((other) => [...page.main, ...page.sidebar].includes(other)),
+		);
+		// A page it had to itself is known only by position, which holds while the page count hasn't changed.
+		const page =
+			byNeighbours ?? (place.others.length === 0 && pages.length === place.pageCount ? pages[index] : undefined);
+		if (!page) return;
+		if (place.sidebar !== -1 && !page.fullWidth)
+			page.sidebar.splice(Math.min(place.sidebar, page.sidebar.length), 0, id);
+		else page.main.splice(Math.min(place.main === -1 ? page.main.length : place.main, page.main.length), 0, id);
+		placed = true;
+	});
+	if (!placed) pages.at(-1)?.main.push(id);
 }
