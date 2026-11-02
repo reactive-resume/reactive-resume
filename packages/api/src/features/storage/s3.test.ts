@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
-import { DeleteObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 
 vi.mock("@reactive-resume/env/server", () => ({
 	env: {
@@ -15,6 +15,32 @@ const { getStorageService } = await import("./service");
 afterEach(() => vi.restoreAllMocks());
 
 describe("S3 storage migration prerequisites", () => {
+	it("bounds a streamed object even when its advertised length is wrong", async () => {
+		const cancel = vi.fn();
+		vi.spyOn(S3Client.prototype, "send").mockImplementation(async (command) => {
+			if (!(command instanceof GetObjectCommand)) throw new Error("Unexpected command");
+			return {
+				ContentLength: 0,
+				Body: {
+					transformToWebStream: () =>
+						new ReadableStream<Uint8Array>(
+							{
+								pull(controller) {
+									controller.enqueue(new Uint8Array([1, 2, 3, 4]));
+								},
+								cancel,
+							},
+							{ highWaterMark: 0 },
+						),
+					transformToByteArray: async () => new Uint8Array([1, 2, 3, 4]),
+				},
+			};
+		});
+		await expect(getStorageService().read("uploads/owner/pictures/file.pdf", { maxBytes: 3 })).rejects.toThrow(
+			"byte limit",
+		);
+		expect(cancel).toHaveBeenCalledOnce();
+	});
 	it("lists every page so all guest upload references can be migrated", async () => {
 		const firstPage = Array.from({ length: 1_000 }, (_, i) => ({ Key: `uploads/guest/pictures/${i}.png` }));
 		const send = vi.spyOn(S3Client.prototype, "send");

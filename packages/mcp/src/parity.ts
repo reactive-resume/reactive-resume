@@ -236,15 +236,18 @@ const accountExportOutputSchema = z
 			),
 	})
 	.describe(
-		"Account backup excluding the private application profile. Export that profile in Settings → Profile. Secrets such as password hashes, tokens and API keys are never included.",
+		"Account records with file references only, excluding the private application profile and uploaded bytes. Export that profile in Settings → Profile. Secrets such as password hashes, tokens and API keys are never included.",
 	);
 
 /** The live server and server card share static contracts, never request context or callbacks. */
 function parityToolContract(path: string, procedure: AnyProcedure): ParityToolContract {
 	const definition = procedure["~orpc"];
-	const inputJson = definition.inputSchema
-		? wireJsonSchema(requireZod(definition.inputSchema), "input")
-		: z.toJSONSchema(z.object({}));
+	const inputJson =
+		path === "auth.exportData"
+			? z.toJSONSchema(z.object({}))
+			: definition.inputSchema
+				? wireJsonSchema(requireZod(definition.inputSchema), "input")
+				: z.toJSONSchema(z.object({}));
 	if (path === "ai.parsePdf" || path === "ai.parseDocx" || path === "agent.attachments.create") {
 		const properties = inputJson.properties as Record<string, unknown>;
 		properties[path === "agent.attachments.create" ? "data" : "file"] = z.toJSONSchema(fileInputSchema);
@@ -417,6 +420,8 @@ export function registerParityTools(
 							? 25 * 1024 * 1024
 							: 10 * 1024 * 1024;
 				let input = await decodeInput(params, inputJson as Record<string, unknown>, userId, maxBytes);
+				// File collection sees private profile references before MCP removes that profile. Keep this export records-only.
+				if (path === "auth.exportData") input = { includeUploads: false };
 				if (path === "ai.parsePdf" || path === "ai.parseDocx" || path === "agent.attachments.create") {
 					const record = input as Record<string, unknown>;
 					const field = path === "agent.attachments.create" ? "data" : "file";
@@ -449,7 +454,11 @@ export function registerParityTools(
 					result = await getClientCall(client, path)(input);
 					// Application-only data stays out of model tool results, including account backups.
 					if (path === "auth.exportData" && result && typeof result === "object") {
-						const { applicationProfile: _privateProfile, ...backup } = result as Record<string, unknown>;
+						const {
+							applicationProfile: _privateProfile,
+							uploads: _privateFiles,
+							...backup
+						} = result as Record<string, unknown>;
 						result = backup;
 					}
 				}

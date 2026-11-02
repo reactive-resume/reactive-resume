@@ -1,5 +1,7 @@
+import type { StorageReadOptions } from "./read";
 import { del, get, list, put } from "@vercel/blob";
 import { env } from "@reactive-resume/env/server";
+import { readStorageBody } from "./read";
 
 export function blobOptions() {
 	return {
@@ -42,11 +44,19 @@ export class BlobStorageService {
 		});
 	}
 
-	async read(key: string) {
-		const result = await get(blobPath(key), { ...blobOptions(), access: "private", useCache: false });
+	async read(key: string, options?: StorageReadOptions) {
+		options?.signal?.throwIfAborted();
+		const result = await get(blobPath(key), {
+			...blobOptions(),
+			access: "private",
+			useCache: false,
+			...(options?.signal ? { abortSignal: options.signal } : {}),
+		});
 		if (!result) return null;
 		if (result.statusCode !== 200) throw new Error("Unexpected conditional Blob response");
-		const data = new Uint8Array(await new Response(result.stream).arrayBuffer());
+		const data = options
+			? await readStorageBody(result.stream, options, result.blob.size)
+			: new Uint8Array(await new Response(result.stream).arrayBuffer());
 		return {
 			data,
 			size: data.byteLength,
