@@ -13,7 +13,8 @@ export function ConnectingClient({ callbackURL, register = false }: ConnectingCl
 	const oauthQuery = getOAuthSignInOptions(callbackURL).oauth_query;
 	const clientId = oauthQuery ? new URLSearchParams(oauthQuery).get("client_id") : null;
 	const { data: name } = useQuery({
-		queryKey: ["oauth-client", clientId, oauthQuery],
+		// Its own key: the consent page caches the whole client object under "oauth-client".
+		queryKey: ["oauth-client-name", clientId, oauthQuery],
 		enabled: !!oauthQuery && !!clientId,
 		retry: false,
 		queryFn: async () => {

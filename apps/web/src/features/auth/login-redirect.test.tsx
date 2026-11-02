@@ -23,7 +23,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@tanstack/react-query", () => ({
 	useQuery: (options: { queryKey?: unknown[] }) =>
-		options.queryKey?.[0] === "oauth-client"
+		options.queryKey?.[0] === "oauth-client-name"
 			? { data: "Docs example client" }
 			: { data: { google: "Google", github: "GitHub", linkedin: "LinkedIn", custom: "SSO", passkey: true } },
 	useQueryClient: () => mocks.queryClient,
