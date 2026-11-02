@@ -108,7 +108,8 @@ export function LandingHeader() {
 /** The repository's live star count, counted up from zero once it arrives. */
 function GithubLink() {
 	const { i18n } = useLingui();
-	const { data: stars } = useQuery(orpc.statistics.github.getStarCount.queryOptions());
+	const { data, isError } = useQuery(orpc.statistics.github.getStarCount.queryOptions());
+	const stars = isError ? undefined : data;
 	const countRef = useRef<HTMLSpanElement>(null);
 
 	useEffect(() => {
