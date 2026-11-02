@@ -10,6 +10,7 @@ import { useRouteContext, useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
 import { pendingCommits } from "./pending-commits";
+import { useRemoving } from "./removing";
 import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getAccountGeneration } from "@/libs/auth/clear-account-data";
 import { getOrpcErrorMessage, toastError } from "@/libs/error-message";
@@ -210,8 +211,13 @@ export function useTicks(applicationId: string, key: string) {
 	};
 }
 
+/** Saved items for a job, without those deleted while their Undo is still showing, for every reader. */
 export function useSavedItems(applicationId: string) {
-	return useQuery(orpc.career.savedItems.queryOptions({ input: { applicationId } }));
+	const removing = useRemoving((state) => state.ids);
+	return useQuery({
+		...orpc.career.savedItems.queryOptions({ input: { applicationId } }),
+		select: (items) => (removing.size === 0 ? items : items.filter((item) => !removing.has(item.id))),
+	});
 }
 
 /** The newest saved item of one kind, optionally for one interview. */

@@ -779,6 +779,10 @@ msgstr "{minutes} min"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {Geen onderhoude} one {# onderhoud} other {# onderhoude}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} by bladsy 1 gevoeg"
@@ -1946,6 +1950,10 @@ msgstr "Aansoekdatum"
 msgid "Application deleted"
 msgstr "Werksaansoek verwyder"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2040,6 +2048,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "Programme wat “{0}” gebruik, sal ophou werk. Dit kan nie ongedaan gemaak word nie."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -2320,6 +2332,11 @@ msgstr "Voor onderhoud"
 #: src/features/letters/share.tsx
 msgid "Before restore"
 msgstr "Voor herstel"
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Before restoring “{0}”"
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -3167,7 +3184,14 @@ msgstr "Koppel die gereedskap wat jy gebruik vir skryf, werksoek en werk met jou
 msgid "Connected · {milliseconds} ms"
 msgstr "Gekoppel · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Gekoppelde toepassings"
 
@@ -3494,6 +3518,10 @@ msgstr "Kon nie werkaansoeke laai nie."
 msgid "Couldn't load applications. Try again."
 msgstr "Kon nie aansoeke laai nie. Probeer weer."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "Dokumente kon nie gelaai word nie. Probeer weer."
@@ -3586,7 +3614,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3683,6 +3710,10 @@ msgstr "Kon nie hierdie CV weergee nie."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Kon nie die sleutel herroep nie. Probeer weer."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Kon nie hierdie verbinding herroep nie. Probeer weer."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3978,6 +4009,10 @@ msgstr "Skep 'n nuwe CV"
 msgid "Create a resume first, then ask about it."
 msgstr "Skep eers 'n CV en vra dan daaroor."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "Skep kopie"
@@ -4216,6 +4251,10 @@ msgstr "Vee aansoek uit…"
 msgid "Delete conversation"
 msgstr "Vee gesprek uit"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "Vee inskrywing uit"
@@ -4230,6 +4269,7 @@ msgid "Delete forever…"
 msgstr "Vee permanent uit…"
 
 #: src/features/application-detail/interview-sheet.tsx
+#: src/features/application-detail/sections.tsx
 msgid "Delete interview"
 msgstr "Vee onderhoud uit"
 
@@ -4277,6 +4317,12 @@ msgstr "Vee afdeling uit"
 #: src/features/career/stories.tsx
 msgid "Delete story"
 msgstr "Vee storie uit"
+
+#. placeholder {0}: interviewTypeLabel(deleting.kind)
+#. placeholder {1}: day(new Date(deleting.at))
+#: src/features/application-detail/sections.tsx
+msgid "Delete the {0} interview on {1}?"
+msgstr ""
 
 #: src/features/application-detail/detail-screen.tsx
 msgid "Delete this application?"
@@ -4413,6 +4459,27 @@ msgstr "Gooi jou vanlyn wysigings weg en laai die gestoorde weergawe."
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "Gooi jou vanlyn wysigings weg?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "Ontkoppel"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -4707,6 +4774,11 @@ msgstr "vroeëre boodskappe in hierdie klets"
 msgid "Edit"
 msgstr "Wysig"
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Edit {0}"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
@@ -4724,6 +4796,10 @@ msgstr ""
 #. placeholder {0}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {number}: {0}"
+msgstr ""
+
+#: src/features/application-detail/sheets.tsx
+msgid "Edit contact"
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -5427,6 +5503,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "Van jou tydsone"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6061,6 +6141,14 @@ msgstr "Kwessies"
 msgid "It has entries but isn't placed on a page."
 msgstr "Dit het inskrywings, maar word nie op 'n bladsy geplaas nie."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from the timeline and the calendar for good."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Dit is vir goed van die tydlyn verwyder."
@@ -6167,6 +6255,10 @@ msgstr "Hou"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "Hou by een adres, sodat sagteware nie hoef te raai watter een om te gebruik nie."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "Behou toegang wanneer jy nie die toepassing gebruik nie."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6698,6 +6790,10 @@ msgstr "Laai tans API-sleutels …"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "Laai aansoeke…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "Laai tans verbindings..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7568,6 +7664,10 @@ msgstr "Geen verandering nodig nie. Dit is reeds by {stage}."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "Geen opdragte pas by daardie soektog nie."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "Nog geen gekoppelde toepassings nie. Programme wat jy toegang tot jou rekening gee, verskyn hier."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9237,6 +9337,10 @@ msgstr "Lees lisensie"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "Leesalleentoegang"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9272,6 +9376,22 @@ msgstr "Het die CV gelees"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "Lees jou e-posadres."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "Lees jou profielinligting."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9661,6 +9781,11 @@ msgstr ""
 msgid "Remove unavailable story reference"
 msgstr ""
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Removed {0}"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Rename"
@@ -9849,6 +9974,17 @@ msgstr "Herstel weergawe"
 
 #: src/lib/undone.ts
 msgid "Restored"
+msgstr ""
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”"
+msgstr "\"{0}\" herstel"
+
+#. placeholder {0}: selected.name
+#. placeholder {1}: selected.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
 #. placeholder {0}: done.length
@@ -10101,10 +10237,6 @@ msgstr "Hersien my antwoord"
 msgid "Review packet"
 msgstr ""
 
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr "Hersien toestemmings en ontkoppel toepassings in jou blaaier. Jy moet dalk daar aanmeld."
-
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -10322,6 +10454,10 @@ msgstr "Stoor veranderinge"
 #: src/features/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Stoor verbinding"
+
+#: src/features/application-detail/sheets.tsx
+msgid "Save contact"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
@@ -12399,6 +12535,10 @@ msgstr "Dit het iewers anders verander, so dit is nie gestoor nie. Jou teks word
 msgid "This connection is managed by your server."
 msgstr "Hierdie verbinding word deur jou bediener bestuur."
 
+#: src/features/application-detail/sheets.tsx
+msgid "This contact changed somewhere else. Cancel and edit it again."
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 msgid "This conversation couldn't be opened."
@@ -12886,6 +13026,7 @@ msgstr "Probeer {suggestion}"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx

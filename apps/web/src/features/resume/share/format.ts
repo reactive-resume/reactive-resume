@@ -35,9 +35,9 @@ export function getVersionTitle(version: Pick<VersionSummary, "kind" | "name">) 
 		case "auto":
 			return t`Editing session`;
 		case "before-restore":
-			return t`Before restore`;
+			return version.name ? t`Before restoring “${version.name}”` : t`Before restore`;
 		case "restored":
-			return t`Restored a version`;
+			return version.name ? t`Restored “${version.name}”` : t`Restored a version`;
 		case "ai":
 			return t`AI edit`;
 		case "sent":

@@ -10,6 +10,7 @@ import { Dialog } from "@reactive-resume/ui/components/dialog";
 const api = vi.hoisted(() => ({
 	providers: vi.fn(),
 	importResume: vi.fn(),
+	createResume: vi.fn(),
 	parsePdf: vi.fn(),
 	parseDocx: vi.fn(),
 	readPdfResume: vi.fn(),
@@ -34,7 +35,7 @@ vi.mock("@/libs/orpc/client", () => ({
 		},
 		documents: { key: () => ["documents"], list: { queryKey: () => ["documents", "list"] } },
 		resume: {
-			create: { mutationOptions: () => ({ mutationFn: vi.fn() }) },
+			create: { mutationOptions: () => ({ mutationFn: api.createResume }) },
 			list: { queryOptions: () => ({ queryKey: ["resume", "list"], queryFn: async () => [] }) },
 		},
 		coverLetters: { create: { mutationOptions: () => ({ mutationFn: api.createLetter }) } },
@@ -144,4 +145,28 @@ it("numbers a new letter while untitled ones exist, so the library can tell them
 	fireEvent.click(screen.getByRole("button", { name: "New cover letter instead" }));
 	await vi.waitFor(() => expect(api.createLetter).toHaveBeenCalledOnce());
 	expect(api.createLetter.mock.calls[0]?.[0]).toMatchObject({ name: "Untitled letter 3" });
+});
+
+it("keeps lookup failure recovery available on New and retries without creating a document", async () => {
+	mount();
+	await screen.findByRole("alert");
+	expect(screen.getByText("Couldn't load AI connections. Your saved connections haven't changed.")).toBeVisible();
+	let finishLookup = () => {};
+	api.providers.mockReturnValue(
+		new Promise((resolve) => {
+			finishLookup = () => resolve([]);
+		}),
+	);
+	const lookupCalls = api.providers.mock.calls.length;
+	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+	await screen.findByRole("status", { name: "Loading AI connections…" });
+	expect(api.providers.mock.calls.length).toBeGreaterThan(lookupCalls);
+	await act(async () => finishLookup());
+	await vi.waitFor(() => expect(screen.queryByRole("status")).toBeNull());
+	expect(screen.queryByRole("alert")).toBeNull();
+	expect(screen.getByRole("button", { name: /Import a resume/ })).toBeEnabled();
+	expect(screen.getByRole("button", { name: /Start blank/ })).toBeEnabled();
+	expect(api.importResume).not.toHaveBeenCalled();
+	expect(api.createLetter).not.toHaveBeenCalled();
+	expect(api.createResume).not.toHaveBeenCalled();
 });

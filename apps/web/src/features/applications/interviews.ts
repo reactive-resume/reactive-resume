@@ -1,5 +1,6 @@
 import type { ApplicationSummary } from "./types";
 import type { InterviewKind, InterviewTimelineEntry } from "@reactive-resume/schema/applications/data";
+import { t } from "@lingui/core/macro";
 import { INTERVIEW_KINDS } from "@reactive-resume/schema/applications/data";
 
 export type ScheduledInterview = {
@@ -9,7 +10,21 @@ export type ScheduledInterview = {
 	end: Date;
 };
 
-export const interviewKindOf = (kind: InterviewKind) => INTERVIEW_KINDS.find((item) => item.value === kind);
+/** "Screening", "Behavioral": interview types in the interface language (the schema's labels are English). */
+export const interviewTypeLabel = (kind: InterviewKind) =>
+	({
+		screening: t`Screening`,
+		technical: t`Technical`,
+		behavioral: t`Behavioral`,
+		onsite: t`Onsite`,
+		other: t`Other`,
+	})[kind];
+
+/** An interview type with its label translated, so every place that shows one reads the same. */
+export const interviewKindOf = (kind: InterviewKind) => {
+	const item = INTERVIEW_KINDS.find((entry) => entry.value === kind);
+	return item ? { ...item, label: interviewTypeLabel(item.value) } : undefined;
+};
 
 export const isInterview = (entry: ApplicationSummary["activity"][number]): entry is InterviewTimelineEntry =>
 	entry.type === "interview";

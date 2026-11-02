@@ -9,6 +9,7 @@ import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
+import { ConnectingClient } from "../components/connecting-client";
 import { GuestTransferNote } from "../components/guest-banner";
 import { SocialAuth } from "../components/social-auth";
 import { getAuthRedirectOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
@@ -127,6 +128,7 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 				<h1 className="text-[30px] leading-9">
 					<Trans comment="Title on the registration page">Start your resume</Trans>
 				</h1>
+				<ConnectingClient callbackURL={callbackURL} register />
 
 				<p dir="auto" className="text-ink-2">
 					<Trans comment="Reassurance under the registration title, repeating the homepage's promise">

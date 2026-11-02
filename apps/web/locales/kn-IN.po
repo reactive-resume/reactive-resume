@@ -85,6 +85,11 @@ msgstr "(ಹೆಡರ್ ಇಲ್ಲ)"
 msgid "(optional)"
 msgstr "(ಐಚ್ಛಿಕ)"
 
+#. placeholder {0}: upcoming.length
+#: src/features/applications/components/calendar-view.tsx
+msgid "{0, plural, =0 {No interviews} one {# interview} other {# interviews}}"
+msgstr ""
+
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2905,7 +2910,12 @@ msgstr "ಮೂಲಭೂತಗಳು"
 msgid "Before restore"
 msgstr "ಪುನಃಸ್ಥಾಪಿಸುವ ಮೊದಲು"
 
-#: src/features/applications/components/interview-dialog.tsx
+#. placeholder {0}: version.name
+#: src/features/resume/share/format.ts
+msgid "Before restoring “{0}”"
+msgstr ""
+
+#: src/features/applications/interviews.ts
 msgid "Behavioral"
 msgstr "ನಡವಳಿಕೆಯ"
 
@@ -4111,6 +4121,10 @@ msgstr "ಒಂದು ಉದ್ಯೋಗದ ಕುರಿತ ಸಂಭಾಷಣೆ
 msgid "Copied"
 msgstr "ನಕಲು ಮಾಡಲಾಗಿದೆ"
 
+#: src/features/settings/ai/api-keys.tsx
+msgid "Copied the MCP config with this key."
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "Copies for {company}"
 msgstr ""
@@ -4176,6 +4190,10 @@ msgstr "ಲಿಂಕ್ ನಕಲಿಸಿ"
 
 #: src/features/resume/editor/check/job-match.tsx
 msgid "Copy made for {company}. This resume is unchanged."
+msgstr ""
+
+#: src/features/settings/ai/api-keys.tsx
+msgid "Copy MCP config"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
@@ -4332,6 +4350,7 @@ msgstr "ಪ್ರತಿಲಿಪಿಯನ್ನು ನಕಲಿಸಲು ಸಾ�
 #: src/features/career/coach-thread.tsx
 #: src/features/resume/share/copy-link-button.tsx
 #: src/features/resume/share/copy-text.tsx
+#: src/features/settings/ai/api-keys.tsx
 msgid "Couldn't copy to the clipboard. Try again."
 msgstr "ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
@@ -5065,6 +5084,14 @@ msgstr ""
 msgid "Create account"
 msgstr "ಖಾತೆ ರಚಿಸಿ"
 
+#: src/features/auth/components/connecting-client.tsx
+msgid "Create an account to connect {name}."
+msgstr ""
+
+#: src/features/auth/components/connecting-client.tsx
+msgid "Create an account to connect an application."
+msgstr ""
+
 #: src/features/auth/pages/consent.tsx
 msgid "Create an account to connect apps. Guest accounts are temporary."
 msgstr ""
@@ -5363,6 +5390,10 @@ msgstr ""
 msgid "Delete entry"
 msgstr "ನಮೂದನ್ನು ಅಳಿಸಿ"
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Delete interview"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game the search."
 msgstr "ಅದನ್ನು ಅಳಿಸಿ. ಗುಪ್ತ ಕೀವರ್ಡ್‌ಗಳನ್ನು ಹುಡುಕಾಟವನ್ನು ಮೋಸಗೊಳಿಸುವ ಉದ್ದೇಶಪೂರ್ವಕ ಪ್ರಯತ್ನವೆಂದು ಪರಿಗಣಿಸಲಾಗುತ್ತದೆ."
@@ -5407,6 +5438,10 @@ msgstr "ವಿಭಾಗವನ್ನು ಅಳಿಸಿ"
 #: src/features/career/knowledge/stories.tsx
 msgid "Delete story"
 msgstr "ಕಥೆಯನ್ನು ಅಳಿಸಿ"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Delete the {kind} interview on {date}?"
+msgstr ""
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -5979,6 +6014,11 @@ msgstr "ಈ ಚಾಟ್‌ನ ಹಿಂದಿನ ಸಂದೇಶಗಳು"
 msgid "Edit"
 msgstr "ಸಂಪಾದಿಸಿ"
 
+#. placeholder {0}: contact.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Edit {0}"
+msgstr ""
+
 #. Screen reader label for button that edits a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
 msgid "Edit {chip}"
@@ -6109,6 +6149,7 @@ msgstr "ಸಂಪಾದಿಸಲಾಗಿದೆ"
 msgid "Edited by you"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/page-overlay.tsx
 msgid "Editing"
 msgstr "ಸಂಪಾದನೆ"
@@ -7002,6 +7043,10 @@ msgstr "ನಿಮ್ಮ ರೆಸ್ಯೂಮೆಯಿಂದ"
 #: src/features/career/knowledge/search-regions-field.tsx
 msgid "From your timezone"
 msgstr "ನಿಮ್ಮ ಸಮಯ ವಲಯದಿಂದ"
+
+#: src/features/settings/ai/api-keys.tsx
+msgid "Full access"
+msgstr ""
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -7897,6 +7942,10 @@ msgid "It's free and open source, kept going by donations from the people who us
 msgstr "ಇದು ಉಚಿತ ಮತ್ತು ಮುಕ್ತ ಮೂಲ, ಇದನ್ನು ಬಳಸುವವರ ದೇಣಿಗೆಗಳಿಂದ ನಡೆಯುತ್ತದೆ. ಇದು ನಿಮಗೆ ಸಹಾಯ ಮಾಡಿದ್ದರೆ, ಕೊಡುಗೆ ನೀಡುವುದನ್ನು ಪರಿಗಣಿಸಿ."
 
 #: src/features/applications/components/detail/activity.tsx
+msgid "It's removed from the timeline and the calendar for good."
+msgstr ""
+
+#: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
 msgstr "ಒಳ್ಳೆಯದಕ್ಕಾಗಿ ಇದನ್ನು ಟೈಮ್‌ಲೈನ್‌ನಿಂದ ತೆಗೆದುಹಾಕಲಾಗಿದೆ."
 
@@ -8708,6 +8757,7 @@ msgstr "ಹೆಸರಿರುವ ಹಂತಗಳನ್ನು ಆಮದು ಮಾ
 msgid "Loading"
 msgstr "ಲೋಡ್ ಆಗುತ್ತಿದೆ"
 
+#: src/features/documents/new-document-dialog.tsx
 #: src/features/settings/integrations/ai-provider-load-state.tsx
 msgid "Loading AI connections…"
 msgstr "AI ಸಂಪರ್ಕಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…"
@@ -10459,7 +10509,7 @@ msgstr "ನೀವು ಮಾತ್ರ, ನೀವು ಅದನ್ನು ಹಂಚ�
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "ಕಚೇರಿಯಲ್ಲಿ"
 
@@ -10668,7 +10718,7 @@ msgstr ""
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "ಮೂಲ ಟೇಬಲ್ ಫಾರ್ಮ್ಯಾಟಿಂಗ್ ಅನ್ನು ಸಂರಕ್ಷಿಸಲಾಗಿದೆ. ಈ ವಿಷಯವನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಸಂಪಾದಿಸಲು ಸಾಧ್ಯವಾಗದ ಕಾರಣ ಓದಲು ಮಾತ್ರ."
 
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 msgid "Other"
 msgstr "ಇತರೆ"
 
@@ -11752,6 +11802,10 @@ msgstr ""
 msgid "Read only"
 msgstr "ಓದಲು-ಮಾತ್ರ ಪ್ರವೇಶ"
 
+#: src/features/settings/ai/api-keys.tsx
+msgid "Read only can't change or delete anything."
+msgstr ""
+
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -12307,6 +12361,11 @@ msgstr ""
 msgid "Remove unavailable story reference"
 msgstr ""
 
+#. placeholder {0}: contact.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Removed {0}"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/settings/account/security.tsx
@@ -12496,9 +12555,17 @@ msgid "Restored"
 msgstr ""
 
 #. placeholder {0}: document.name
+#. placeholder {0}: version.name
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/share/format.ts
 msgid "Restored “{0}”"
 msgstr "\"{0}\" ಮರುಸ್ಥಾಪಿಸಲಾಗಿದೆ"
+
+#. placeholder {0}: version.name
+#. placeholder {1}: version.name
+#: src/features/resume/share/history-tab.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
+msgstr ""
 
 #. placeholder {0}: done.length
 #: src/features/documents/document-actions.tsx
@@ -12935,6 +13002,7 @@ msgid "Sample resume added. Delete it anytime."
 msgstr "ಮಾದರಿ ರೆಸ್ಯೂಮೆ ಸೇರಿಸಲಾಗಿದೆ. ಅದನ್ನು ಯಾವಾಗ ಬೇಕಾದರೂ ಅಳಿಸಿ."
 
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/profile.tsx
@@ -13249,7 +13317,7 @@ msgid "School"
 msgstr "ಶಾಲೆ"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "ಸ್ಕ್ರೀನಿಂಗ್"
@@ -13506,6 +13574,10 @@ msgstr ""
 
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send again"
+msgstr ""
+
+#: src/features/settings/ai/api-keys.tsx
+msgid "Send it in the <0>x-api-key</0> header."
 msgstr ""
 
 #. Primary action button label on forgot-password form
@@ -14011,6 +14083,14 @@ msgstr "ನಿಮ್ಮ AI ಕ್ಲೈಂಟ್‌ನಿಂದ ಸೈನ್ ಇ
 #: src/features/auth/pages/register.tsx
 msgid "Sign in now"
 msgstr "ಈಗ ಸೈನ್ ಇನ್ ಮಾಡಿ"
+
+#: src/features/auth/components/connecting-client.tsx
+msgid "Sign in to connect {name}."
+msgstr ""
+
+#: src/features/auth/components/connecting-client.tsx
+msgid "Sign in to connect an application."
+msgstr ""
 
 #. Title on the login page
 #: src/features/auth/pages/login.tsx
@@ -14867,7 +14947,7 @@ msgstr "ಕಾರ್ಯ"
 msgid "Teal"
 msgstr "ಟೀಲ್"
 
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "ತಾಂತ್ರಿಕ"
 
@@ -15190,6 +15270,11 @@ msgstr ""
 
 #: src/features/settings/ai/providers.tsx
 msgid "The connection works. Turn on Use this provider to use it."
+msgstr ""
+
+#. placeholder {0}: contact.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "The contacts changed somewhere else, so {0} wasn't removed. Remove it again."
 msgstr ""
 
 #: src/features/resume/editor/check/job-match.tsx
@@ -15589,6 +15674,10 @@ msgstr ""
 #: src/features/auth/pages/consent.tsx
 msgid "This connection request is invalid or has expired. Start the connection again from your client."
 msgstr "ಈ ಸಂಪರ್ಕ ವಿನಂತಿ ಅಮಾನ್ಯವಾಗಿದೆ ಅಥವಾ ಅವಧಿ ಮೀರಿದೆ. ನಿಮ್ಮ ಕ್ಲೈಂಟ್‌ನಿಂದ ಸಂಪರ್ಕವನ್ನು ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಿ."
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "This contact changed somewhere else. Cancel and edit it again."
+msgstr ""
 
 #: src/features/assistant/conversation.tsx
 msgid "This conversation couldn't be opened."
@@ -16429,6 +16518,10 @@ msgstr "2 ನಿಮಿಷಗಳವರೆಗೆ. ಅಥವಾ 2 MB ವರೆಗ�
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "2 ನಿಮಿಷಗಳವರೆಗೆ. ನೀವು ಮಾತನಾಡುತ್ತಿದ್ದಂತೆ ನಿಮ್ಮ ಪದಗಳು ಕಾಣಿಸುತ್ತವೆ."
+
+#: src/features/applications/components/calendar-view.tsx
+msgid "Upcoming"
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
@@ -17572,6 +17665,10 @@ msgstr "ನೀವು ಉತ್ತರಿಸಿದ್ದೀರಿ: {answer}"
 msgid "You applied to {0} before and didn't hear back."
 msgstr "ನೀವು ಈ ಹಿಂದೆ {0} ಗೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಿದ್ದೀರಿ, ಆದರೆ ಯಾವುದೇ ಉತ್ತರ ಬಂದಿಲ್ಲ."
 
+#: src/features/auth/pages/consent.tsx
+msgid "You can disconnect it anytime in Settings → AI & developer."
+msgstr ""
+
 #: src/features/resume/editor/save-status.tsx
 msgid "You can keep editing. Changes sync when you're back online. Download and Share need a connection."
 msgstr "ನೀವು ಸಂಪಾದನೆಯನ್ನು ಮುಂದುವರಿಸಬಹುದು. ನೀವು ಆನ್‌ಲೈನ್‌ಗೆ ಹಿಂತಿರುಗಿದಾಗ ಬದಲಾವಣೆಗಳು ಸಿಂಕ್ ಆಗುತ್ತವೆ. ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಹಂಚಿಕೊಳ್ಳಲು ಸಂಪರ್ಕದ ಅಗತ್ಯವಿದೆ."
@@ -17647,6 +17744,10 @@ msgstr "ನೀವು ಎಲ್ಲವನ್ನೂ ನೋಡಿದ್ದೀರಿ"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "ನೀವು ಅತಿಥಿ ಖಾತೆಯನ್ನು ಬಳಸುತ್ತಿದ್ದೀರಿ"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "You're viewing an earlier version. Go back to now in History to edit."
+msgstr ""
 
 #: src/features/resume/builder/undo-toast.ts
 msgid "You've made changes since. Use Undo to step back through them."

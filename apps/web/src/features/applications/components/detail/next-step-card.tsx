@@ -69,7 +69,20 @@ export function NextStepCard({ application, onScheduleInterview }: NextStepCardP
 			start,
 			end: new Date(start.getTime() + minutes * 60_000),
 			...(step.kind === "interview" && step.interview.location ? { location: step.interview.location } : {}),
-			...(step.kind === "interview" && step.interview.notes ? { description: step.interview.notes } : {}),
+			// Who you'll meet, then the notes, as the workspace's Add to calendar writes them; a reminder an hour before.
+			...(step.kind === "interview"
+				? {
+						alarmMinutes: 60,
+						description: [
+							step.interview.participants
+								.map((person) => [person.name, person.role].filter(Boolean).join(", "))
+								.join("\n"),
+							step.interview.notes,
+						]
+							.filter(Boolean)
+							.join("\n\n"),
+					}
+				: {}),
 		});
 		const blob = new Blob([ics], { type: "text/calendar" });
 		const date = dayKey(start, timeZone);

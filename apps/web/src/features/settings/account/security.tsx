@@ -29,7 +29,7 @@ export function SecuritySection() {
 	const social = SOCIAL.filter((provider) => provider in enabledProviders);
 
 	return (
-		<SettingsSection title={<Trans>Sign-in & security</Trans>}>
+		<SettingsSection id="security" title={<Trans>Sign-in & security</Trans>}>
 			<SettingsRow
 				title={<Trans>Password</Trans>}
 				description={

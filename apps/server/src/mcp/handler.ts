@@ -49,9 +49,13 @@ export async function handleMcp(request: Request, trustedClient = "unknown") {
 		return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 	} catch (error) {
 		if (error instanceof AuthError) {
-			return errorResponse(401, "Unauthorized", {
-				"WWW-Authenticate": `Bearer resource_metadata="${env.APP_URL}/.well-known/oauth-protected-resource"`,
-			});
+			return errorResponse(
+				401,
+				"Sign-in required. Connect with OAuth or send a valid API key in the x-api-key header.",
+				{
+					"WWW-Authenticate": `Bearer resource_metadata="${env.APP_URL}/.well-known/oauth-protected-resource"`,
+				},
+			);
 		}
 		if (error instanceof ORPCError && error.code === "TOO_MANY_REQUESTS") {
 			const reset = (error.data as { reset?: number } | undefined)?.reset;

@@ -23,7 +23,7 @@ import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { interviewKindOf } from "../../interviews";
+import { interviewKindOf, interviewTypeLabel } from "../../interviews";
 import { getCategoryLane, getLaneLabel, isCurrentLaneEvent } from "../../lanes";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { useApplicationLanes } from "../../use-application-lanes";
@@ -50,7 +50,7 @@ type ActivityProps = {
  * date (and a note's text) or deletes it; the entry that anchors the current stage can't be deleted.
  */
 export function Activity({ application, onOpenInterview }: ActivityProps) {
-	const { format } = useCareerTime();
+	const { format, day } = useCareerTime();
 	const invalidate = useInvalidateApplications();
 	const confirm = useConfirm();
 	const { lanes } = useApplicationLanes();
@@ -191,10 +191,19 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 										variant="destructive"
 										disabled={entry.id === anchorId}
 										onClick={async () => {
-											const confirmed = await confirm(t`Delete this entry?`, {
-												description: t`It's removed from the timeline for good.`,
-												confirmText: t`Delete entry`,
-											});
+											// An interview is named, and leaving the calendar too.
+											const interview = entry.type === "interview" ? entry : null;
+											const kind = interview ? interviewTypeLabel(interview.kind) : "";
+											const date = interview ? day(new Date(interview.at)) : "";
+											const confirmed = await confirm(
+												interview ? t`Delete the ${kind} interview on ${date}?` : t`Delete this entry?`,
+												{
+													description: interview
+														? t`It's removed from the timeline and the calendar for good.`
+														: t`It's removed from the timeline for good.`,
+													confirmText: interview ? t`Delete interview` : t`Delete entry`,
+												},
+											);
 											if (confirmed) deleteEntry.mutate({ id: application.id, entryId: entry.id });
 										}}
 									>

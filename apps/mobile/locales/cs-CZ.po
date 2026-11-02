@@ -779,6 +779,10 @@ msgstr "{minutes} min"
 msgid "{monthInterviews, plural, =0 {No interviews} one {# interview} other {# interviews}}"
 msgstr "{monthInterviews, plural, =0 {Žádné pohovory} one {# pohovor} few {# pohovory} other {# pohovorů}}"
 
+#: src/features/settings/connected-apps.tsx
+msgid "{name} (this app)"
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "{name} added to page 1"
 msgstr "{name} přidáno na stránku 1"
@@ -1946,6 +1950,10 @@ msgstr "Datum žádosti"
 msgid "Application deleted"
 msgstr "Žádost o zaměstnání smazána"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Application disconnected."
+msgstr ""
+
 #: src/features/settings/application-profile.tsx
 msgid "Application email"
 msgstr ""
@@ -2040,6 +2048,10 @@ msgstr ""
 #: src/features/settings/api-keys.tsx
 msgid "Apps using “{0}” will stop working. This can't be undone."
 msgstr "Aplikace používající „{0}“ přestanou fungovat. Tuto akci nelze vrátit zpět."
+
+#: app/(tabs)/settings/ai-connections.tsx
+msgid "Apps you allowed to use your account, such as AI clients. You can disconnect one anytime."
+msgstr ""
 
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
@@ -2320,6 +2332,11 @@ msgstr "Před pohovorem"
 #: src/features/letters/share.tsx
 msgid "Before restore"
 msgstr "Před obnovením"
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Before restoring “{0}”"
+msgstr ""
 
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
@@ -3167,7 +3184,14 @@ msgstr "Propojte nástroje, které používáte pro psaní, hledání práce a p
 msgid "Connected · {milliseconds} ms"
 msgstr "Připojeno · {milliseconds} ms"
 
+#. placeholder {0}: i18n.date(connection.createdAt, { dateStyle: "medium" })
+#: src/features/settings/connected-apps.tsx
+msgid "Connected {0}"
+msgstr ""
+
+#: app/(tabs)/settings/ai-connections.tsx
 #: app/(tabs)/settings/ai.tsx
+#: src/features/settings/connected-apps.tsx
 msgid "Connected applications"
 msgstr "Připojené aplikace"
 
@@ -3494,6 +3518,10 @@ msgstr "Žádosti o zaměstnání se nepodařilo načíst."
 msgid "Couldn't load applications. Try again."
 msgstr "Žádosti se nepodařilo načíst. Zkuste to znovu."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't load connected applications."
+msgstr ""
+
 #: src/features/ai/next-steps.tsx
 msgid "Couldn't load documents. Try again."
 msgstr "Dokumenty se nepodařilo načíst. Zkuste to znovu."
@@ -3586,7 +3614,6 @@ msgid "Couldn't measure page fit. Check the page preview before accepting."
 msgstr ""
 
 #: app/(tabs)/settings/account.tsx
-#: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
 #: src/features/ai/provider-editor.tsx
@@ -3683,6 +3710,10 @@ msgstr "Tento životopis se nepodařilo vykreslit."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Klíč se nepodařilo zrušit. Zkuste to znovu."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Couldn't revoke this connection. Try again."
+msgstr "Toto připojení se nepodařilo zrušit. Zkuste to znovu."
 
 #: src/preview/page.tsx
 msgid "Couldn't run Fit. Try again."
@@ -3978,6 +4009,10 @@ msgstr "Vytvořte nový životopis"
 msgid "Create a resume first, then ask about it."
 msgstr "Nejprve vytvořte životopis a poté se na něj ptejte."
 
+#: src/features/settings/connected-apps.tsx
+msgid "Create and change documents, applications and your profile."
+msgstr ""
+
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
 msgstr "Vytvořit kopii"
@@ -4216,6 +4251,10 @@ msgstr "Smazat žádost…"
 msgid "Delete conversation"
 msgstr "Smazat konverzaci"
 
+#: src/features/settings/connected-apps.tsx
+msgid "Delete documents and account data."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "Delete entry"
 msgstr "Smazat záznam"
@@ -4230,6 +4269,7 @@ msgid "Delete forever…"
 msgstr "Smazat navždy…"
 
 #: src/features/application-detail/interview-sheet.tsx
+#: src/features/application-detail/sections.tsx
 msgid "Delete interview"
 msgstr "Smazat pohovor"
 
@@ -4277,6 +4317,12 @@ msgstr "Smazat sekci"
 #: src/features/career/stories.tsx
 msgid "Delete story"
 msgstr "Smazat příběh"
+
+#. placeholder {0}: interviewTypeLabel(deleting.kind)
+#. placeholder {1}: day(new Date(deleting.at))
+#: src/features/application-detail/sections.tsx
+msgid "Delete the {0} interview on {1}?"
+msgstr ""
 
 #: src/features/application-detail/detail-screen.tsx
 msgid "Delete this application?"
@@ -4413,6 +4459,27 @@ msgstr "Zahoďte své offline úpravy a načtěte uloženou verzi."
 #: src/draft/conflict-sheet.tsx
 msgid "Discard your offline edits?"
 msgstr "Zahodit offline úpravy?"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect"
+msgstr "Odpojit"
+
+#. placeholder {0}: selected?.name ?? ""
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect “{0}”?"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect {name}"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnect an application from your account."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Disconnected “{name}”."
+msgstr ""
 
 #: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
@@ -4707,6 +4774,11 @@ msgstr "dřívější zprávy v tomto chatu"
 msgid "Edit"
 msgstr "Upravit"
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Edit {0}"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
@@ -4724,6 +4796,10 @@ msgstr ""
 #. placeholder {0}: proposal.location
 #: src/features/assistant/messages.tsx
 msgid "Edit {number}: {0}"
+msgstr ""
+
+#: src/features/application-detail/sheets.tsx
+msgid "Edit contact"
 msgstr ""
 
 #: src/features/workspace/preparation.tsx
@@ -5427,6 +5503,10 @@ msgstr ""
 msgid "From your timezone"
 msgstr "Podle vašeho časového pásma"
 
+#: src/features/settings/api-keys.tsx
+msgid "Full access"
+msgstr ""
+
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
 msgid "Full name"
@@ -6061,6 +6141,14 @@ msgstr "Problémy"
 msgid "It has entries but isn't placed on a page."
 msgstr "Obsahuje položky, ale není umístěn na stránce."
 
+#: src/features/settings/connected-apps.tsx
+msgid "It loses access now. To use it again, connect it from the app. This cannot be undone."
+msgstr ""
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from the timeline and the calendar for good."
+msgstr ""
+
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
 msgstr "Je nadobro odstraněn z časové osy."
@@ -6167,6 +6255,10 @@ msgstr "Nechat"
 #: src/features/ats-checker/messages.ts
 msgid "Keep a single address, so software does not have to guess which one to use."
 msgstr "Ponechte jedinou adresu, aby software nemusel hádat, kterou použít."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Keep access when you are not using the application."
+msgstr "Ponechte si přístup, když aplikaci nepoužíváte."
 
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
@@ -6698,6 +6790,10 @@ msgstr "Načítání klíčů API…"
 #: src/features/search/search-screen.tsx
 msgid "Loading applications…"
 msgstr "Načítání žádostí…"
+
+#: src/features/settings/connected-apps.tsx
+msgid "Loading connections..."
+msgstr "Načítání připojení..."
 
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/search/search-screen.tsx
@@ -7568,6 +7664,10 @@ msgstr "Změna není potřeba. Žádost už je ve fázi {stage}."
 #: src/features/search/search-screen.tsx
 msgid "No commands match that search."
 msgstr "Tomuto hledání neodpovídají žádné příkazy."
+
+#: src/features/settings/connected-apps.tsx
+msgid "No connected applications. Apps you allow appear here."
+msgstr "Zatím žádné připojené aplikace. Zobrazí se tu aplikace, kterým povolíte přístup k účtu."
 
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
@@ -9237,6 +9337,10 @@ msgstr "Přečíst licenci"
 msgid "Read on {0}. The employer may have changed it since."
 msgstr ""
 
+#: src/features/settings/api-keys.tsx
+msgid "Read only"
+msgstr "Přístup pouze pro čtení"
+
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/today.tsx
 msgid "Read posting"
@@ -9272,6 +9376,22 @@ msgstr "Přečetl životopis"
 
 #: src/features/applications/add-sheet.tsx
 msgid "Read with AI"
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your email address."
+msgstr "Přečtěte si svou e-mailovou adresu."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your profile information."
+msgstr "Přečtěte si informace o svém profilu."
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read your whole account, including exports and coaching conversations."
+msgstr ""
+
+#: src/features/settings/connected-apps.tsx
+msgid "Read, change and delete documents and applications (legacy connection)."
 msgstr ""
 
 #: src/features/ats-checker/messages.ts
@@ -9661,6 +9781,11 @@ msgstr ""
 msgid "Remove unavailable story reference"
 msgstr ""
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Removed {0}"
+msgstr ""
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Rename"
@@ -9849,6 +9974,17 @@ msgstr "Obnovit verzi"
 
 #: src/lib/undone.ts
 msgid "Restored"
+msgstr ""
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”"
+msgstr "Obnoveno „{0}“"
+
+#. placeholder {0}: selected.name
+#. placeholder {1}: selected.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 msgstr ""
 
 #. placeholder {0}: done.length
@@ -10101,10 +10237,6 @@ msgstr "Zhodnotit mou odpověď"
 msgid "Review packet"
 msgstr ""
 
-#: app/(tabs)/settings/ai.tsx
-msgid "Review permissions and disconnect apps in your browser. You may need to sign in there."
-msgstr ""
-
 #: src/features/workspace/preparation.tsx
 msgid "Review readiness and record your submission"
 msgstr ""
@@ -10322,6 +10454,10 @@ msgstr "Uložit změny"
 #: src/features/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Uložit připojení"
+
+#: src/features/application-detail/sheets.tsx
+msgid "Save contact"
+msgstr ""
 
 #: src/features/career/facts.tsx
 msgid "Save fact"
@@ -12399,6 +12535,10 @@ msgstr "Toto se změnilo někde jinde, takže to nebylo uloženo. Váš text je 
 msgid "This connection is managed by your server."
 msgstr "Toto připojení je spravováno vaším serverem."
 
+#: src/features/application-detail/sheets.tsx
+msgid "This contact changed somewhere else. Cancel and edit it again."
+msgstr ""
+
 #: src/features/assistant/assistant-screen.tsx
 #: src/features/assistant/chat-view.tsx
 msgid "This conversation couldn't be opened."
@@ -12886,6 +13026,7 @@ msgstr "Zkuste {suggestion}"
 #: src/features/assistant/messages.tsx
 #: src/features/letters/write.tsx
 #: src/features/settings/api-keys.tsx
+#: src/features/settings/connected-apps.tsx
 #: src/features/workspace/parts.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/shell.tsx
