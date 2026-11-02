@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { create } from "zustand/react";
 
@@ -38,3 +39,8 @@ export const useNewDocumentsStore = create<NewDocumentsStore>()(
 		},
 	),
 );
+
+/** Opening a document in its editor clears its "New" badge, however it was opened (a card, Create and open, import). */
+export function useMarkDocumentOpened(id: string) {
+	useEffect(() => useNewDocumentsStore.getState().markOpened(id), [id]);
+}

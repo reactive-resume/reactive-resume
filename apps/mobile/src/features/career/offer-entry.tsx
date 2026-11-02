@@ -6,7 +6,12 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
-import { offerApplications, parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
+import {
+	offerApplications,
+	offerHintFromSalary,
+	parseOfferEntry,
+	previousOfferCurrency,
+} from "@reactive-resume/schema/career-offer";
 import { client, useCareerAction, useCareerQueries, useCareerTime, useOffers } from "./hooks";
 import { formatMoney } from "./offer-compare";
 import { EditorSheet, LoadState } from "./shared";
@@ -18,7 +23,14 @@ import { useMoveWithUndo } from "@/features/applications/stage-actions";
 import { routes } from "@/routes";
 import { Banner, Button, Card, SelectSheet, Text, TextField, showToast, useTheme } from "@/ui";
 
-type Application = { id: string; company: string; role: string; status?: ApplicationStatus | undefined };
+type Application = {
+	id: string;
+	company: string;
+	role: string;
+	status?: ApplicationStatus | undefined;
+	/** The job's salary line, to start a new offer's currency and base from. */
+	salary?: string | null | undefined;
+};
 type OfferEntryProps = {
 	application?: Application | undefined;
 	primary?: boolean;
@@ -147,17 +159,35 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const lanes = useApplicationLanes();
 	const moveWithUndo = useMoveWithUndo();
 	const [applicationId, setApplicationId] = useState(application?.id ?? "");
+	// A new offer for a job starts from the job's own salary line: its currency, its pay period, and the low end as an
+	// editable base.
+	const chosen = application ?? applications.data?.find((row) => row.id === applicationId);
+	const hint = offer ? null : offerHintFromSalary(chosen?.salary);
 	const [draft, setTerms] = useState(() =>
 		offer
 			? offerTermsSchema.parse(offer.data)
-			: { ...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }), currency: "" },
+			: {
+					...offerTermsSchema.parse({ currency: "USD", period: hint?.period ?? "year", base: null, variable: null }),
+					currency: "",
+				},
 	);
 	const amount = (value: number | null | undefined) => (value === null || value === undefined ? "" : String(value));
 	const [amounts, setAmounts] = useState(() => ({
-		base: amount(offer?.data.base),
+		base: amount(offer ? offer.data.base : hint?.base),
 		variable: amount(offer?.data.variable),
 		learning: amount(offer?.data.learning),
 	}));
+	// What the job's salary filled in, so an untouched sheet isn't "changed" and choosing another job refills it.
+	const [seed, setSeed] = useState(() => ({ base: offer ? "" : amount(hint?.base), period: hint?.period ?? "year" }));
+	const chooseApplication = (id: string) => {
+		setApplicationId(id);
+		if (offer) return;
+		const next = offerHintFromSalary(applications.data?.find((row) => row.id === id)?.salary);
+		const nextSeed = { base: amount(next.base), period: next.period ?? "year" };
+		if (amounts.base === seed.base) setAmounts((current) => ({ ...current, base: nextSeed.base }));
+		if (draft.period === seed.period) setTerms((current) => ({ ...current, period: nextSeed.period }));
+		setSeed(nextSeed);
+	};
 	const deadline = offer?.data.respondBy ? zonedFields(offer.data.respondBy, timeZone) : null;
 	const [date, setDate] = useState(deadline?.date ?? "");
 	const [time, setTime] = useState(deadline?.time ?? "17:00");
@@ -172,7 +202,8 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	// A new offer starts in the last offer's currency, else the one the user's minimum salary is in (Preferences).
 	const careerProfile = useCareerQueries().profile.data;
 	const preferred = careerProfile?.minBase.amount === null ? undefined : careerProfile?.minBase.currency;
-	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? preferred ?? "" };
+	const terms =
+		offer || currencyTyped ? draft : { ...draft, currency: hint?.currency ?? previousCurrency ?? preferred ?? "" };
 	const [more, setMore] = useState(Boolean(offer));
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
 	const [submitted, setSubmitted] = useState(false);
@@ -189,12 +220,12 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	});
 	const dirty = !!(
 		(currencyTyped && terms.currency) ||
-		amounts.base ||
+		amounts.base !== seed.base ||
 		amounts.variable ||
 		amounts.learning ||
 		date ||
 		terms.version !== "written" ||
-		terms.period !== "year" ||
+		terms.period !== seed.period ||
 		terms.officeDays !== null ||
 		terms.variableConditions ||
 		terms.equity ||
@@ -251,7 +282,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 								value: row.id,
 								label: `${row.company} · ${row.role} · ${row.closedReason === "accepted" ? t`Accepted` : row.status === "offer" ? t`Offer` : row.status === "closed" ? t`Closed` : t`In progress`}`,
 							}))}
-							onChange={setApplicationId}
+							onChange={chooseApplication}
 						/>
 						{applications.data?.length === 0 ? (
 							<Button

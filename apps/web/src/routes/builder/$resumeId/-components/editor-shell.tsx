@@ -14,6 +14,7 @@ import { ResumeAssistant } from "@/features/assistant/dock";
 import { takeAssistantHandoff } from "@/features/assistant/handoff";
 import { openAssistantFrom } from "@/features/assistant/open";
 import { useAssistantInUrl } from "@/features/assistant/use-assistant-url";
+import { useMarkDocumentOpened } from "@/features/documents/new-documents";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { IssueStepper } from "@/features/resume/editor/check/page-layer";
 import { EditorFrame, MobileTabBar, useEditorLayout } from "@/features/resume/editor/chrome/shell";
@@ -46,6 +47,7 @@ export function EditorShell() {
 	useOpenVersionFromUrl();
 	useOpenAssistantFromUrl();
 	useResumeWebMcpTools(routeApi.useParams().resumeId);
+	useMarkDocumentOpened(routeApi.useParams().resumeId);
 
 	return (
 		<Tabs value={mode} onValueChange={(value) => setMode(value as EditorMode)} className="contents">

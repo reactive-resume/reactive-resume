@@ -1,6 +1,11 @@
 import type { ApplicationStatus, ApplicationTimelineEntry } from "./data";
 import { describe, expect, it } from "vite-plus/test";
-import { applicationTimelineEntrySchema, hasApplicationSubmission, latestStageEntryId } from "./data";
+import {
+	applicationTimelineEntrySchema,
+	hasApplicationSubmission,
+	latestStageEntryId,
+	nextInterviewKind,
+} from "./data";
 
 const stage = (status: ApplicationStatus): Extract<ApplicationTimelineEntry, { type: "stage" }> => ({
 	id: status,
@@ -42,4 +47,15 @@ it("stage-write identity survives date edits, API sorting, legacy dates and same
 	}
 	expect(latestStageEntryId([legacy, { ...second, at: new Date("2020-01-01") }])).toBe("interview");
 	expect(latestStageEntryId([stage("applied"), legacy])).toBe("saved");
+});
+
+describe("nextInterviewKind", () => {
+	it("suggests the step after the furthest interview, then Other", () => {
+		expect(nextInterviewKind([])).toBe("screening");
+		expect(nextInterviewKind([], true)).toBe("technical");
+		expect(nextInterviewKind(["screening"])).toBe("technical");
+		expect(nextInterviewKind(["technical", "screening"])).toBe("behavioral");
+		expect(nextInterviewKind(["onsite"])).toBe("other");
+		expect(nextInterviewKind(["other"])).toBe("other");
+	});
 });

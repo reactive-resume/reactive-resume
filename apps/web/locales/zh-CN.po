@@ -189,8 +189,10 @@ msgstr "{0, plural, other {# 个联系人的电子邮件无效或没有姓名；
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, other {剩余 # 天}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {#日} other {#天}}"
 
@@ -1007,6 +1009,10 @@ msgstr "{templateCount} 个免费简历模板。"
 #: src/features/homepage/prepare.tsx
 msgid "{time} · Video call · 45 min"
 msgstr "{time} · 视频通话 · 45 分钟"
+
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -2150,6 +2156,10 @@ msgstr ""
 msgid "All models"
 msgstr "所有模型"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "您的所有文档、求职申请、API 密钥和公共链接都将被永久删除。此操作无法撤销。"
@@ -2817,6 +2827,7 @@ msgstr "回到现在"
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
+#: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Back to sign in"
 msgstr "返回登录"
@@ -3300,10 +3311,6 @@ msgstr "检查"
 msgid "Check a PDF"
 msgstr "检查 PDF"
 
-#: src/features/ats-checker/checker.tsx
-msgid "Check a sample file"
-msgstr "检查示例文件"
-
 #: src/features/career/workspace/fit.tsx
 msgid "Check again"
 msgstr "重新检查"
@@ -3391,10 +3398,6 @@ msgstr "请检查网络连接后重试。"
 #: src/features/auth/pages/register.tsx
 msgid "Check your email"
 msgstr "查看你的邮箱"
-
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Check your email for a link to reset your password."
-msgstr "请检查你的电子邮件，点击邮件中的链接重置密码。"
 
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
@@ -3486,6 +3489,10 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "请选择与当前密码不同的密码。"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Choose a PDF"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
@@ -4167,6 +4174,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "复印一份工作..."
 
@@ -5584,6 +5592,10 @@ msgstr "已开始听写"
 msgid "Dictation stopped at the 2-minute limit."
 msgstr "已达 2 分钟上限，听写已停止。"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Didn't get it?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Didn't land"
 msgstr "不理想"
@@ -5928,10 +5940,6 @@ msgstr "拖动即可重新定位，上传前可使用滑块进行缩放。"
 msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Drop a PDF here or choose a file"
-msgstr "将 PDF 拖放到此处或选择一个文件"
-
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
 msgstr "去掉人称代词，直接以动词开头。这是大多数地区通行的写法。"
@@ -6071,6 +6079,10 @@ msgstr "编辑采访"
 msgid "Edit interview…"
 msgstr "编辑访谈..."
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "编辑关键字"
@@ -6194,9 +6206,7 @@ msgstr "电子邮箱（可选）"
 
 #. Label for email input on forgot-password form
 #. Label for email input on registration form
-#. Label for login identifier input that accepts email or username
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Email address"
 msgstr "电子邮箱地址"
@@ -6212,6 +6222,11 @@ msgstr ""
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
 msgstr "此服务器上未设置电子邮件传送，因此该地址未经过验证。"
+
+#. Label for login identifier input that accepts email or username
+#: src/features/auth/pages/login.tsx
+msgid "Email or username"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Email the recruiter"
@@ -6676,6 +6691,10 @@ msgstr "从工作申请中填写。问候语跟在名字之后。"
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Filled in what we could from the posting."
 msgstr "已根据职位发布尽量填充。"
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
@@ -7143,6 +7162,7 @@ msgstr "回家"
 
 #: src/components/layout/error-screen.tsx
 #: src/components/layout/not-found-screen.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "转到仪表板"
@@ -7516,6 +7536,10 @@ msgstr "图标…"
 msgid "Icons in contact line"
 msgstr "联系线中的图标"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account uses that address, a reset link is on its way."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "If another resume holds Primary, turn it on for this one instead."
 msgstr ""
@@ -7625,6 +7649,10 @@ msgstr "导入步骤"
 
 #: src/features/documents/documents-page.tsx
 msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Import this file into a free Reactive Resume to keep editing it, with Check reading it as you go."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -8097,6 +8125,10 @@ msgstr "让它保持<0>免费。</0>"
 #: src/features/career/workspace/prepare.tsx
 msgid "Keep it honest"
 msgstr "保持诚实"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Keep it this way"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
@@ -8631,6 +8663,7 @@ msgid "Link updated"
 msgstr "链接已更新"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "已链接 · 尚未发送"
 
@@ -9371,6 +9404,11 @@ msgstr "把你的电子邮件和电话号码移到第一页顶部。"
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "已将 {1} 个中的 {0} 个移至垃圾箱。已跳过锁定的文件。"
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -10502,11 +10540,6 @@ msgstr "打开{title}"
 msgid "Open briefing"
 msgstr "打开简报"
 
-#. Button label to open the user's default email app
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Open email app"
-msgstr "打开邮件应用"
-
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
 msgstr "打开对焦模式"
@@ -10667,6 +10700,10 @@ msgstr "或者"
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "或通过以下方式继续"
+
+#: src/features/ats-checker/checker.tsx
+msgid "or drop it here · up to 25 MB · checked in your browser, never uploaded"
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "Or in your own words…"
@@ -13109,6 +13146,7 @@ msgid "Save these offer terms to compare"
 msgstr "保存这些录用条件以进行比较"
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13270,6 +13308,10 @@ msgstr "定时任务已删除"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "安排面试"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13547,6 +13589,10 @@ msgstr "发送"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Send again"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Send it in the <0>x-api-key</0> header."
 msgstr ""
@@ -13698,6 +13744,10 @@ msgstr "发送"
 #: src/features/career/coach-chat.tsx
 msgctxt "What went to the AI provider with a message"
 msgid "Sent"
+msgstr ""
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Sent again. It can take a minute to arrive."
 msgstr ""
 
 #. placeholder {0}: version.name
@@ -13933,6 +13983,10 @@ msgstr "显示所有类型"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "显示已关闭的求职申请"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -15826,6 +15880,10 @@ msgstr ""
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "此 PDF 受密码保护。请保存一份不受保护的副本后重试。"
 
+#: src/features/ats-checker/checker.tsx
+msgid "This PDF looks damaged. Export it again from your editor and choose the new file."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr ""
@@ -16174,6 +16232,10 @@ msgstr "尝试{0}"
 msgid "Try a sample"
 msgstr "尝试样品"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Try a sample file"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -16477,10 +16539,6 @@ msgstr "最长 2 分钟。或<0>选择音频文件</0>（不超过 2 MB）。"
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "最长 2 分钟。说话时文字会实时显示。"
-
-#: src/features/ats-checker/checker.tsx
-msgid "Up to 25 MB · checked in your browser, never uploaded"
-msgstr "最多 25 个 MB · 在浏览器中查看，从未上传"
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
@@ -17628,10 +17686,6 @@ msgstr "您回答：{answer}"
 msgid "You applied to {0} before and didn't hear back."
 msgstr "您之前申请过{0}，但未收到回复。"
 
-#: src/features/auth/pages/login.tsx
-msgid "You can also sign in with your username."
-msgstr "你也可以用用户名登录。"
-
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
 msgstr ""
@@ -17723,6 +17777,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "您已达到{MAX_APPLICATION_LANES}个阶段的上限。请移除一个后再添加。"
+
+#: src/features/auth/pages/login.tsx
+msgid "you@example.com or your username"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

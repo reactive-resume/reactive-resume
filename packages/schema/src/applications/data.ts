@@ -215,3 +215,15 @@ export function hasApplicationSubmission(application: {
 			))
 	);
 }
+
+const INTERVIEW_SEQUENCE: readonly InterviewKind[] = ["screening", "technical", "behavioral", "onsite"];
+
+/**
+ * The type a new interview most likely is: the step after the furthest one already on the timeline, or Other past an
+ * onsite. With none yet, a screening, or a technical round once the application has moved to the Interview stage.
+ */
+export function nextInterviewKind(existing: readonly InterviewKind[], pastScreening = false): InterviewKind {
+	const furthest = Math.max(-1, ...existing.map((kind) => INTERVIEW_SEQUENCE.indexOf(kind)));
+	if (furthest === -1) return existing.length > 0 ? "other" : pastScreening ? "technical" : "screening";
+	return INTERVIEW_SEQUENCE[furthest + 1] ?? "other";
+}

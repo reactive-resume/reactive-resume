@@ -8,6 +8,7 @@ import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
+import { readPastedPostingHeader } from "@reactive-resume/import/job-posting";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -60,7 +61,12 @@ type SaveJobDraft = {
 	pastedText: string;
 	description: string | null;
 	reading: { text: string; result: Parsed } | null;
+	/** Fields the person typed: a read or a header guess never writes over them, also after the dialog reopens. */
+	authored: AuthoredField[];
 };
+
+type AuthoredField = "role" | "company" | "location" | "salary";
+const AUTHORED_FIELDS: readonly AuthoredField[] = ["role", "company", "location", "salary"];
 
 const EMPTY_SAVE_JOB: SaveJobDraft = {
 	input: "",
@@ -72,6 +78,7 @@ const EMPTY_SAVE_JOB: SaveJobDraft = {
 	pastedText: "",
 	description: null,
 	reading: null,
+	authored: [],
 };
 
 const draftFromCapture = (capture: PostingCapture): SaveJobDraft => ({
@@ -96,7 +103,10 @@ function parseSaveJobDraft(value: unknown): SaveJobDraft | undefined {
 	const reading = draft.reading;
 	if (reading !== null && (typeof reading !== "object" || typeof reading.text !== "string" || !reading.result))
 		return undefined;
-	return draft;
+	const authored = Array.isArray(draft.authored)
+		? AUTHORED_FIELDS.filter((field) => (draft.authored as unknown[]).includes(field))
+		: [];
+	return { ...draft, authored };
 }
 
 type AddApplicationDialogProps = {
@@ -190,7 +200,12 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const [coverLetterId, setCoverLetterId] = useState("");
 	const [location, setLocation] = keep("location");
 	const [salary, setSalary] = keep("salary");
-	const authored = useRef(new Set<"role" | "company" | "location" | "salary">());
+	const [authoredFields, setAuthoredFields] = keep("authored");
+	const authored = useRef(new Set<AuthoredField>(authoredFields));
+	const markAuthored = (field: AuthoredField) => {
+		authored.current.add(field);
+		setAuthoredFields((current) => (current.includes(field) ? current : [...current, field]));
+	};
 	const [pasteOpen, setPasteOpen] = keep("pasteOpen");
 	const [pastedText, setPastedText] = keep("pastedText");
 	const [description, setDescription] = keep("description");
@@ -261,6 +276,36 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 				...(clipped ? { completeness: "incomplete" as const } : {}),
 			}
 		: null;
+	// Without AI, a pasted posting's first line usually names the role and company ("Role — Company (City)"): fill what
+	// it gives, never over what the person typed. AI or a link still reads the rest; a capture brings its own fields.
+	const header = !link && !initialCapture ? readPastedPostingHeader(text) : null;
+	const guess = !hasUsableProvider && !parsed ? header : null;
+	const headerKey = header ? JSON.stringify(header) : "";
+	const guessKey = guess ? headerKey : "";
+	// What the fields held before a guess filled them, so they go back if the pasted text stops having a header.
+	const beforeGuess = useRef<{ role: string; company: string; location: string; salary: string } | null>(null);
+	useEffect(() => {
+		const fill = (key: AuthoredField, value: string, apply: (value: string) => void) => {
+			if (!authored.current.has(key)) apply(value);
+		};
+		if (guess) {
+			beforeGuess.current ??= { role, company, location, salary };
+			const before = beforeGuess.current;
+			fill("role", guess.role, setRole);
+			fill("company", guess.company, setCompany);
+			fill("location", guess.location || before.location, setLocation);
+			fill("salary", guess.salary || before.salary, setSalary);
+		} else if (!header && beforeGuess.current) {
+			const before = beforeGuess.current;
+			beforeGuess.current = null;
+			fill("role", before.role, setRole);
+			fill("company", before.company, setCompany);
+			fill("location", before.location, setLocation);
+			fill("salary", before.salary, setSalary);
+		}
+		// oxlint-disable-next-line react/exhaustive-deps -- keyed by the header's content; the field values are read once
+	}, [guessKey, headerKey]);
+
 	const readPosting = (useAI = false) => {
 		if (!readable || read.isPending) return;
 		const request = new AbortController();
@@ -467,6 +512,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 												setPasteOpen(false);
 												setDescription(null);
 												resetRead();
+												// The chosen posting replaces what came before: no earlier guess comes back over it.
+												beforeGuess.current = null;
 												if (!authored.current.has("role")) setRole("");
 												if (!authored.current.has("company")) setCompany("");
 												if (!authored.current.has("location")) setLocation("");
@@ -618,6 +665,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						error={read.error}
 						parsed={parsed}
 						ai={hasUsableProvider}
+						guessed={!!guess}
 					/>
 				)}
 			</div>
@@ -710,7 +758,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						id={`${id}-role`}
 						value={role}
 						onChange={(event) => {
-							authored.current.add("role");
+							markAuthored("role");
 							setRole(event.target.value);
 						}}
 					/>
@@ -723,7 +771,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						id={`${id}-company`}
 						value={company}
 						onChange={(event) => {
-							authored.current.add("company");
+							markAuthored("company");
 							setCompany(event.target.value);
 						}}
 					/>
@@ -772,7 +820,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						id={`${id}-location`}
 						value={location}
 						onChange={(event) => {
-							authored.current.add("location");
+							markAuthored("location");
 							setLocation(event.target.value);
 						}}
 					/>
@@ -785,7 +833,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						id={`${id}-salary`}
 						value={salary}
 						onChange={(event) => {
-							authored.current.add("salary");
+							markAuthored("salary");
 							setSalary(event.target.value);
 						}}
 					/>
@@ -879,10 +927,12 @@ type ReadStatusProps = {
 	error: unknown;
 	parsed: Parsed | null;
 	ai: boolean;
+	/** The role and company were filled from the pasted text's first line, without AI. */
+	guessed?: boolean;
 };
 
 /** What reading the posting found, or why the fields need filling in by hand. */
-function ReadStatus({ link, readable, pending, error, parsed, ai }: ReadStatusProps) {
+function ReadStatus({ link, readable, pending, error, parsed, ai, guessed = false }: ReadStatusProps) {
 	const base = "flex items-start gap-1.5 text-xs leading-[17px]";
 
 	// Keep the failure visible when opening paste recovery.
@@ -945,6 +995,15 @@ function ReadStatus({ link, readable, pending, error, parsed, ai }: ReadStatusPr
 			<p className={cn(base, "text-accent-text")} role="status">
 				<Icon name="check-circle" size={16} className="shrink-0" />
 				<Trans>Found the role and company on the page. Review the details before saving.</Trans>
+			</p>
+		);
+	}
+
+	if (guessed) {
+		return (
+			<p className={cn(base, "text-ink-2")} role="status">
+				<Icon name="check-circle" size={16} className="shrink-0" />
+				<Trans>Filled the role and company from the posting's first line. Review them before saving.</Trans>
 			</p>
 		);
 	}

@@ -113,6 +113,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 			</div>
 
 			<form
+				noValidate
 				className="grid gap-6"
 				onSubmit={(event) => {
 					event.preventDefault();

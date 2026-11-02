@@ -12,7 +12,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useId, useState } from "react";
 import { offerTermsSchema } from "@reactive-resume/schema/career";
-import { offerApplications, parseOfferEntry, previousOfferCurrency } from "@reactive-resume/schema/career-offer";
+import {
+	offerApplications,
+	offerHintFromSalary,
+	parseOfferEntry,
+	previousOfferCurrency,
+} from "@reactive-resume/schema/career-offer";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -42,6 +47,8 @@ type Application = {
 	role: string;
 	status?: ApplicationStatus | undefined;
 	closedReason?: string | null;
+	/** The job's salary line, to start a new offer's currency and base from. */
+	salary?: string | null | undefined;
 };
 type OfferEntryProps = {
 	frame?: ((action: ReactNode) => ReactNode) | undefined;
@@ -235,17 +242,35 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const { lanes } = useApplicationLanes();
 	const applications = useQuery({ ...applicationsListQueryOptions(), enabled: !application && !offer });
 	const [applicationId, setApplicationId] = useState(application?.id ?? offer?.applicationId ?? "");
+	// A new offer for a job starts from the job's own salary line: its currency, its pay period, and the low end as an
+	// editable base.
+	const chosen = application ?? applications.data?.find((row) => row.id === applicationId);
+	const hint = offer ? null : offerHintFromSalary(chosen?.salary);
 	const [draft, setTerms] = useState(() =>
 		offer
 			? offerTerms(offer.data)
-			: { ...offerTermsSchema.parse({ currency: "USD", period: "year", base: null, variable: null }), currency: "" },
+			: {
+					...offerTermsSchema.parse({ currency: "USD", period: hint?.period ?? "year", base: null, variable: null }),
+					currency: "",
+				},
 	);
 	const amount = (value: number | null | undefined) => (value === null || value === undefined ? "" : String(value));
 	const [amounts, setAmounts] = useState(() => ({
-		base: amount(offer?.data.base),
+		base: amount(offer ? offer.data.base : hint?.base),
 		variable: amount(offer?.data.variable),
 		learning: amount(offer?.data.learning),
 	}));
+	// What the job's salary filled in, so an untouched sheet isn't "changed" and choosing another job refills it.
+	const [seed, setSeed] = useState(() => ({ base: offer ? "" : amount(hint?.base), period: hint?.period ?? "year" }));
+	const chooseApplication = (id: string) => {
+		setApplicationId(id);
+		if (offer) return;
+		const next = offerHintFromSalary(applications.data?.find((row) => row.id === id)?.salary);
+		const nextSeed = { base: amount(next.base), period: next.period ?? "year" };
+		if (amounts.base === seed.base) setAmounts((current) => ({ ...current, base: nextSeed.base }));
+		if (draft.period === seed.period) setTerms((current) => ({ ...current, period: nextSeed.period }));
+		setSeed(nextSeed);
+	};
 	const deadline = offer?.data.respondBy ? zonedFields(offer.data.respondBy, timeZone) : null;
 	const [date, setDate] = useState(deadline?.date ?? "");
 	const [time, setTime] = useState(deadline?.time ?? "17:00");
@@ -260,7 +285,8 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	// A new offer starts in the last offer's currency, else the one the user's minimum salary is in (Preferences).
 	const { data: profile } = useQuery(orpc.career.profile.queryOptions());
 	const preferred = profile?.minBase.amount === null ? undefined : profile?.minBase.currency;
-	const terms = offer || currencyTyped ? draft : { ...draft, currency: previousCurrency ?? preferred ?? "" };
+	const terms =
+		offer || currencyTyped ? draft : { ...draft, currency: hint?.currency ?? previousCurrency ?? preferred ?? "" };
 	const [more, setMore] = useState(Boolean(offer));
 	const [submitted, setSubmitted] = useState(false);
 	const change = (patch: Partial<OfferTerms>) => setTerms((current) => ({ ...current, ...patch }));
@@ -381,7 +407,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						disabled={!!application || !!offer}
 						onBlur={() => touch("application")}
 						aria-invalid={submitted && !applicationId}
-						onChange={(event) => setApplicationId(event.target.value)}
+						onChange={(event) => chooseApplication(event.target.value)}
 						required
 					>
 						<option value="">{t`Choose an application`}</option>

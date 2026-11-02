@@ -189,8 +189,10 @@ msgstr "{0, plural, one {# 연락처의 이메일이 잘못되었거나 이름�
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {#일 남음} other {#일 남음}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# 데이} other {#일}}"
 
@@ -1007,6 +1009,10 @@ msgstr "{templateCount}개의 무료 이력서 템플릿입니다."
 #: src/features/homepage/prepare.tsx
 msgid "{time} · Video call · 45 min"
 msgstr "{time} · 화상 통화 · 45분"
+
+#: src/features/ats-checker/checker.tsx
+msgid "{tips, plural, one {Plus # tip.} other {Plus # tips.}}"
+msgstr ""
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "{title} cleared"
@@ -2150,6 +2156,10 @@ msgstr ""
 msgid "All models"
 msgstr "모든 모델"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "모든 서류, 입사 지원 내역, API 키 및 공개 링크가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다."
@@ -2817,6 +2827,7 @@ msgstr "지금으로 돌아가기"
 #. Action returning the visitor to the sign-in page after a failed sign-in
 #. Secondary navigation button on 2FA verification screen
 #: src/features/auth/pages/error.tsx
+#: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Back to sign in"
 msgstr "로그인으로 돌아가기"
@@ -3300,10 +3311,6 @@ msgstr "검토"
 msgid "Check a PDF"
 msgstr "PDF 확인"
 
-#: src/features/ats-checker/checker.tsx
-msgid "Check a sample file"
-msgstr "샘플 파일 확인"
-
 #: src/features/career/workspace/fit.tsx
 msgid "Check again"
 msgstr "다시 확인"
@@ -3391,10 +3398,6 @@ msgstr "연결을 확인하고 다시 시도하세요."
 #: src/features/auth/pages/register.tsx
 msgid "Check your email"
 msgstr "이메일을 확인하세요"
-
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Check your email for a link to reset your password."
-msgstr "비밀번호를 재설정할 수 있는 링크가 이메일로 전송되었습니다."
 
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
@@ -3486,6 +3489,10 @@ msgstr ""
 #: src/dialogs/auth/change-password.tsx
 msgid "Choose a password that's different from your current one."
 msgstr "현재 비밀번호와 다른 비밀번호를 선택하세요."
+
+#: src/features/ats-checker/checker.tsx
+msgid "Choose a PDF"
+msgstr ""
 
 #: src/features/applications/components/file-attachment-field.tsx
 msgid "Choose a PDF file."
@@ -4167,6 +4174,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "작업용 복사…"
 
@@ -5584,6 +5592,10 @@ msgstr "받아쓰기 시작됨"
 msgid "Dictation stopped at the 2-minute limit."
 msgstr "2분 제한에 도달해 받아쓰기가 중지되었습니다."
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Didn't get it?"
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 msgid "Didn't land"
 msgstr "잘 전달되지 않음"
@@ -5928,10 +5940,6 @@ msgstr "업로드하기 전에 드래그하여 위치를 조정하고 슬라이�
 msgid "Drop a file here or browse. PDF, Word (needs AI), Reactive Resume or JSON Resume. Sections come in ready to edit. For a PDF or Word file, anything that couldn't be placed is listed before you create the resume."
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Drop a PDF here or choose a file"
-msgstr "여기에 PDF를 놓거나 파일을 선택하세요"
-
 #: src/features/ats-checker/messages.ts
 msgid "Drop the pronouns and start from the verb. That is the convention in most markets."
 msgstr "대명사를 빼고 동사로 시작하세요. 대부분의 시장에서 통용되는 방식입니다."
@@ -6071,6 +6079,10 @@ msgstr "인터뷰 편집"
 msgid "Edit interview…"
 msgstr "인터뷰 편집…"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Edit it in Reactive Resume"
+msgstr ""
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "키워드 수정"
@@ -6194,9 +6206,7 @@ msgstr "이메일(선택)"
 
 #. Label for email input on forgot-password form
 #. Label for email input on registration form
-#. Label for login identifier input that accepts email or username
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/login.tsx
 #: src/features/auth/pages/register.tsx
 msgid "Email address"
 msgstr "이메일 주소"
@@ -6212,6 +6222,11 @@ msgstr ""
 #: src/features/settings/account/profile.tsx
 msgid "Email delivery isn't set up on this server, so the address isn't verified."
 msgstr "이 서버에는 이메일 전송이 설정되어 있지 않으므로 주소가 확인되지 않습니다."
+
+#. Label for login identifier input that accepts email or username
+#: src/features/auth/pages/login.tsx
+msgid "Email or username"
+msgstr ""
 
 #: src/features/applications/components/detail/next-step-card.tsx
 msgid "Email the recruiter"
@@ -6676,6 +6691,10 @@ msgstr "취업 지원서에서 작성되었습니다. 인사말은 이름을 따
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Filled in what we could from the posting."
 msgstr "공고에서 가능한 내용을 채웠습니다."
+
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
 
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
@@ -7143,6 +7162,7 @@ msgstr "집에 가세요"
 
 #: src/components/layout/error-screen.tsx
 #: src/components/layout/not-found-screen.tsx
+#: src/features/auth/pages/consent.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "대시보드로 이동"
@@ -7516,6 +7536,10 @@ msgstr "상…"
 msgid "Icons in contact line"
 msgstr "접촉선의 아이콘"
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "If an account uses that address, a reset link is on its way."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "If another resume holds Primary, turn it on for this one instead."
 msgstr ""
@@ -7625,6 +7649,10 @@ msgstr "가져오기 단계"
 
 #: src/features/documents/documents-page.tsx
 msgid "Import the one you have, or start blank."
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Import this file into a free Reactive Resume to keep editing it, with Check reading it as you go."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
@@ -8097,6 +8125,10 @@ msgstr "계속 <0>무료로</0> 이용할 수 있도록 도와주세요."
 #: src/features/career/workspace/prepare.tsx
 msgid "Keep it honest"
 msgstr "솔직하게"
+
+#: src/features/ats-checker/checker.tsx
+msgid "Keep it this way"
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Keep it under 2.5 MB, usually by removing or shrinking images."
@@ -8631,6 +8663,7 @@ msgid "Link updated"
 msgstr "링크가 업데이트되었습니다."
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "연결됨 · 아직 전송되지 않음"
 
@@ -9371,6 +9404,11 @@ msgstr "이메일과 전화번호를 첫 페이지 상단으로 옮기세요."
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1}개 중 {0}개를 휴지통으로 이동했습니다. 잠긴 서류는 건너뛰었습니다."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -10502,11 +10540,6 @@ msgstr "{title} 열기"
 msgid "Open briefing"
 msgstr "브리핑 열기"
 
-#. Button label to open the user's default email app
-#: src/features/auth/pages/forgot-password.tsx
-msgid "Open email app"
-msgstr "이메일 앱 열기"
-
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Open focus mode"
 msgstr "초점 모드 열기"
@@ -10667,6 +10700,10 @@ msgstr "또는"
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "또는 다음으로 계속"
+
+#: src/features/ats-checker/checker.tsx
+msgid "or drop it here · up to 25 MB · checked in your browser, never uploaded"
+msgstr ""
 
 #: src/features/assistant/question-card.tsx
 msgid "Or in your own words…"
@@ -13109,6 +13146,7 @@ msgid "Save these offer terms to compare"
 msgstr "비교할 수 있도록 이 오퍼 조건 저장"
 
 #: src/features/resume/editor/check/job-match.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save this resume's changes before copying it."
 msgstr ""
 
@@ -13270,6 +13308,10 @@ msgstr "스케줄이 삭제되었습니다"
 #: src/features/applications/components/calendar-view.tsx
 msgid "Schedule interview"
 msgstr "인터뷰 예약"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
@@ -13547,6 +13589,10 @@ msgstr "보내다"
 msgid "Send {0} again"
 msgstr ""
 
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Send again"
+msgstr ""
+
 #: src/features/settings/ai/api-keys.tsx
 msgid "Send it in the <0>x-api-key</0> header."
 msgstr ""
@@ -13698,6 +13744,10 @@ msgstr "전송된"
 #: src/features/career/coach-chat.tsx
 msgctxt "What went to the AI provider with a message"
 msgid "Sent"
+msgstr ""
+
+#: src/features/auth/pages/forgot-password.tsx
+msgid "Sent again. It can take a minute to arrive."
 msgstr ""
 
 #. placeholder {0}: version.name
@@ -13933,6 +13983,10 @@ msgstr "모든 유형 표시"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "마감된 지원서 표시"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
@@ -15826,6 +15880,10 @@ msgstr ""
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "이 PDF는 비밀번호로 보호되어 있습니다. 보호되지 않은 사본을 저장한 뒤 다시 시도하세요."
 
+#: src/features/ats-checker/checker.tsx
+msgid "This PDF looks damaged. Export it again from your editor and choose the new file."
+msgstr ""
+
 #: src/features/resume/editor/write/picture-settings.tsx
 msgid "This photo is larger than 10 MB. Use Crop and upload to shrink it."
 msgstr ""
@@ -16174,6 +16232,10 @@ msgstr "{0}를 사용해 보세요"
 msgid "Try a sample"
 msgstr "샘플을 사용해 보세요"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Try a sample file"
+msgstr ""
+
 #: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/career/coach-chat.tsx
 #: src/features/career/load-state.tsx
@@ -16477,10 +16539,6 @@ msgstr "최대 2분. 또는 2MB 이하의 <0>오디오 파일을 선택하세요
 #: src/features/career/workspace/practise.tsx
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "최대 2분. 말하는 대로 텍스트가 표시됩니다."
-
-#: src/features/ats-checker/checker.tsx
-msgid "Up to 25 MB · checked in your browser, never uploaded"
-msgstr "최대 25개 MB · 브라우저에서 확인했지만 업로드되지 않았습니다."
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
@@ -17628,10 +17686,6 @@ msgstr "당신은 대답했습니다: {answer}"
 msgid "You applied to {0} before and didn't hear back."
 msgstr "이전에 {0}에 지원했지만 응답을 받지 못했습니다."
 
-#: src/features/auth/pages/login.tsx
-msgid "You can also sign in with your username."
-msgstr "사용자 이름으로 로그인할 수도 있습니다."
-
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
 msgstr ""
@@ -17723,6 +17777,10 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "단계가 최대 {MAX_APPLICATION_LANES}개에 도달했습니다. 새 단계를 추가하려면 하나를 삭제하세요."
+
+#: src/features/auth/pages/login.tsx
+msgid "you@example.com or your username"
+msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

@@ -699,6 +699,7 @@ let finishSave;
 let matchedPosting = null;
 const { AddApplicationSheet } = load("features/applications/add-sheet.tsx", {
 	"@reactive-resume/utils/timezone": timeParser,
+	"@reactive-resume/import/job-posting": { readPastedPostingHeader: () => null },
 	"@/features/application-detail/hooks": { useUserTime: () => ({ timeZone: "UTC" }) },
 	react: { ...react, useEffect: () => {} },
 	"@orpc/client": { ORPCError: class extends Error {} },

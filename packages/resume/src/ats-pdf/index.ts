@@ -154,6 +154,9 @@ export type {
 	TextLine,
 } from "./types";
 export type { PdfRuleCode };
+
+export { pdfVerdict } from "./verdict";
+export type { PdfVerdict } from "./verdict";
 export { buildResumeSemantics } from "./analyze/semantics";
 export { PDF_ATS_RULE_CODES } from "./catalog";
 export { buildExtractedDocument, columnSegments } from "./extract";
