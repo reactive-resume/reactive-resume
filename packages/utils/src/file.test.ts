@@ -31,3 +31,12 @@ it("removes traversal, separators, control characters and header punctuation", (
 	expect(sanitizeFileName('a"b<c>d:e|f?g*h')).toBe("abcdefgh");
 	expect(sanitizeFileName("\u202e李明-Resume.pdf")).toBe("李明-Resume.pdf");
 });
+
+it("names the file in the resume's own language", () => {
+	const data = (locale: string) => ({ basics: { name: "Layla Haddad" }, metadata: { page: { locale } } });
+	expect(getDefaultFileName({ name: "", data: data("de-DE") })).toBe("Layla-Haddad-Lebenslauf");
+	expect(getDefaultFileName({ name: "", data: data("de-DE") }, "cover-letter")).toBe("Layla-Haddad-Anschreiben");
+	expect(getDefaultFileName({ name: "", data: data("en-US") })).toBe("Layla-Haddad-Resume");
+	// A locale without a translation keeps the English word.
+	expect(getDefaultFileName({ name: "", data: data("xx-XX") })).toBe("Layla-Haddad-Resume");
+});

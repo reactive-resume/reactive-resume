@@ -7,7 +7,7 @@ test("renames the public address and keeps the old one redirecting", async ({ br
 	const address = page.getByRole("textbox", { name: "Address" });
 
 	await address.fill("not_valid!");
-	await expect(page.getByText("Use lowercase letters, numbers and single dashes.")).toBeVisible();
+	await expect(page.getByText("Use Latin letters a–z, numbers and single dashes.")).toBeVisible();
 
 	await address.fill("renamed-address");
 	await expect(page.getByText(/^Live at .*\/renamed-address$/)).toBeVisible();

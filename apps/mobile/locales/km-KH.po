@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: km-KH\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -550,12 +556,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-ប្រវត្តិរូបសង្ខេប"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -786,10 +786,6 @@ msgstr "{name} អង្គុយនៅក្នុងរបារចំហៀ�
 #: src/features/check/issues.ts
 msgid "{name} uses one column"
 msgstr "{name} ប្រើជួរឈរមួយ។"
-
-#: src/features/share/download.tsx
-msgid "{name}-Cover-Letter"
-msgstr "{name}-លិខិតអម"
 
 #: src/features/check/issues.ts
 msgid "{names} come last in the text. Most systems still find them; some don't."
@@ -2524,6 +2520,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "មិនអាចរក្សាទុកការផ្លាស់ប្តូរបានទេ។ ព្យាយាមម្តងទៀតមុនពេលបន្ត។"
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "ផ្លាស់ប្តូរចំណងជើងផ្នែក និងពាក្យកាលបរិច្ឆេទតែប៉ុណ្ណោះ មិនមែនខ្លឹមសាររបស់អ្នកទេ។"
 
@@ -2540,6 +2537,7 @@ msgstr "ការផ្លាស់ប្តូរទៅ “{name}” ត្រ�
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "ពិនិត្យ"
@@ -9758,6 +9756,11 @@ msgstr "ឯកសារប្រវត្តិរូបសង្ខេប"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr "ភាសានៃប្រវត្តិរូប"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10371,6 +10374,7 @@ msgstr "កាលវិភាគ"
 msgid "School"
 msgstr "សាលា"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -11800,8 +11804,8 @@ msgid "The account changed. Try again."
 msgstr "គណនីបានផ្លាស់ប្តូរ។ ព្យាយាមម្តងទៀត។"
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "អាសយដ្ឋានត្រូវតែមានតែអក្សរតូច និងលេខប៉ុណ្ណោះ ដោយបំបែកដោយសញ្ញាដាច់ៗតែមួយ។"
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr "អាសយដ្ឋានត្រូវតែមានតែអក្សរឡាតាំង a–z និងលេខប៉ុណ្ណោះ ដោយបំបែកដោយសញ្ញាដាច់ៗតែមួយ។"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12980,8 +12984,8 @@ msgid "Use {url}"
 msgstr "ប្រើ {url}"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "ប្រើអក្សរតូចពី 3 ទៅ 64 អក្សរតូច លេខ ចំណុច សហសញ្ញា និងសញ្ញាគូសក្រោម។"
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "ប្រើអក្សរឡាតាំង a–z ពី 3 ទៅ 64 លេខ ចំណុច សហសញ្ញា និងសញ្ញាគូសក្រោម។"
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -13061,8 +13065,8 @@ msgstr "ប្រើសម្រាប់ពាក្យសុំទាំងអ
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "ប្រើអក្សរតូច លេខ និងសញ្ញាដាច់ៗ។"
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr "ប្រើអក្សរឡាតាំង a–z លេខ និងសញ្ញាដាច់ៗ។"
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"

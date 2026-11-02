@@ -165,7 +165,7 @@ export const resumeDto = {
 			status: z
 				.enum(["available", "current", "invalid", "taken"])
 				.describe(
-					"available: free to use. current: this resume's slug already. invalid: not lowercase letters, numbers and single dashes. taken: another of the user's resumes uses it.",
+					"available: free to use. current: this resume's slug already. invalid: not Latin letters a–z, numbers and single dashes. taken: another of the user's resumes uses it.",
 				),
 			takenBy: z.string().optional().describe("The name of the resume that uses the slug, when taken."),
 			suggestion: z.string().optional().describe("A slug that would work instead."),

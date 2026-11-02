@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: ta-IN\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -550,12 +556,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-ரெஸ்யூம்"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -786,10 +786,6 @@ msgstr "{name} பக்கப்பட்டியில் அமர்ந்�
 #: src/features/check/issues.ts
 msgid "{name} uses one column"
 msgstr "{name} ஒரு நெடுவரிசையைப் பயன்படுத்துகிறது"
-
-#: src/features/share/download.tsx
-msgid "{name}-Cover-Letter"
-msgstr "{name}-கவர்-கடிதம்"
 
 #: src/features/check/issues.ts
 msgid "{names} come last in the text. Most systems still find them; some don't."
@@ -2524,6 +2520,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "மாற்றங்களைச் சேமிக்க முடியவில்லை. தொடர்வதற்கு முன் மீண்டும் முயற்சிக்கவும்."
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "பிரிவு தலைப்புகள் மற்றும் தேதி வார்த்தைகளை மட்டும் மாற்றுகிறது, உங்கள் உள்ளடக்கத்தை அல்ல."
 
@@ -2540,6 +2537,7 @@ msgstr "“{name}”க்கான மாற்றங்கள் மற்ற�
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "சரிபார்ப்பு"
@@ -9758,6 +9756,11 @@ msgstr "ரெஸ்யூம் கோப்பு"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr "சுயவிவரத்தின் மொழி"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10371,6 +10374,7 @@ msgstr "அட்டவணைகள்"
 msgid "School"
 msgstr "பள்ளி"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -11800,8 +11804,8 @@ msgid "The account changed. Try again."
 msgstr "கணக்கு மாற்றப்பட்டது. மீண்டும் முயற்சிக்கவும்."
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "முகவரியில் லத்தீன் சிறிய எழுத்துக்கள் மற்றும் எண்கள் மட்டுமே இருக்க வேண்டும், ஒற்றைக் கோடுகளால் பிரிக்கப்பட வேண்டும்."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr "முகவரியில் லத்தீன் எழுத்துக்கள் a–z மற்றும் எண்கள் மட்டுமே இருக்க வேண்டும், ஒற்றைக் கோடுகளால் பிரிக்கப்பட வேண்டும்."
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12980,8 +12984,8 @@ msgid "Use {url}"
 msgstr "{url} ஐப் பயன்படுத்தவும்"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "3 முதல் 64 வரையிலான சிறிய எழுத்துக்கள், எண்கள், புள்ளிகள், ஹைபன்கள் மற்றும் அடிக்கோடுகளைப் பயன்படுத்தவும்."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "3 முதல் 64 வரையிலான லத்தீன் எழுத்துக்கள் a–z, எண்கள், புள்ளிகள், ஹைபன்கள் மற்றும் அடிக்கோடுகளைப் பயன்படுத்தவும்."
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -13061,8 +13065,8 @@ msgstr "எல்லா விண்ணப்பங்களுக்கும�
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "சிறிய எழுத்துக்கள், எண்கள் மற்றும் ஒற்றை கோடுகளைப் பயன்படுத்தவும்."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr "லத்தீன் எழுத்துக்கள் a–z, எண்கள் மற்றும் ஒற்றை கோடுகளைப் பயன்படுத்தவும்."
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"

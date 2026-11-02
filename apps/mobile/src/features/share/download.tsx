@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import { View } from "react-native";
 import { lintResumeForAts } from "@reactive-resume/resume/ats";
 import { composeCoverLetter, createCoverLetterResumeData } from "@reactive-resume/resume/cover-letter";
+import { getDefaultFileName } from "@reactive-resume/utils/file";
 import { flushResume } from "./document";
 import { exportDirectory, exportFile, printResume, shareExport } from "./files";
 import { letterWords } from "./letter";
@@ -30,7 +31,8 @@ export function DownloadTab({ resume, offline }: DownloadProps) {
 	);
 	const [withLetter, setWithLetter] = useState(false);
 	const [format, setFormat] = useState<ExportFormat>("pdf");
-	const [name, setName] = useState(safeFileName(t`${resume.data.basics.name || resume.name}-Resume`));
+	// Named like web's download, in the resume's own language: "Layla-Haddad-Lebenslauf".
+	const [name, setName] = useState(safeFileName(getDefaultFileName(resume)));
 	const [busy, setBusy] = useState(false);
 	const [exportReady, setExportReady] = useState(false);
 	const active = useRef(false);
@@ -80,18 +82,34 @@ export function DownloadTab({ resume, offline }: DownloadProps) {
 					if (latest.conflict || !["saved", "idle"].includes(latest.status))
 						throw new Error(t`Save the cover letter before exporting it.`);
 				}
-				const savedLetter = chosen === "pdf" ? await client.coverLetters.getById({ id: linked.coverLetterId }) : null;
-				const composed = savedLetter
-					? composeCoverLetter(savedLetter, await letterWords(savedLetter.style.metadata.page.locale))
-					: null;
+				// Read once: PDF renders from it, the other formats take its language, and every format takes its name. Only
+				// the name needs it for JSON, so a failed read there falls back to an English name rather than no file.
+				const savedLetter = await client.coverLetters.getById({ id: linked.coverLetterId }).catch((cause: unknown) => {
+					if (chosen === "json") return null;
+					throw cause;
+				});
+				const composed =
+					chosen === "pdf" && savedLetter
+						? composeCoverLetter(savedLetter, await letterWords(savedLetter.style.metadata.page.locale))
+						: null;
 
 				letterFile = await exportFile({
 					directory,
 					id: linked.coverLetterId,
-					name: t`${name}-Cover-Letter`,
+					// Named as web names it, in the letter's own language: "Layla-Haddad-Anschreiben".
+					name: savedLetter
+						? safeFileName(
+								getDefaultFileName(
+									{ name: savedLetter.name, slug: "", data: createCoverLetterResumeData(savedLetter) },
+									"cover-letter",
+								),
+							)
+						: // English, as the comment above says: the letter's own language is unknown without it.
+							safeFileName(`${name}-Cover-Letter`),
 					format: chosen,
 					letter: true,
-					...(savedLetter && composed ? { data: createCoverLetterResumeData({ ...savedLetter, ...composed }) } : {}),
+					...(savedLetter ? { letterLocale: savedLetter.style.metadata.page.locale } : {}),
+					...(composed && savedLetter ? { data: createCoverLetterResumeData({ ...savedLetter, ...composed }) } : {}),
 				});
 			}
 			await shareExport(file, chosen);

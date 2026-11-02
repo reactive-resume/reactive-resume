@@ -193,6 +193,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 									label={t`Slug`}
 									value={slug}
 									onChangeText={(value) => setSlug(normalizeSlug(value))}
+									ltr
 									editable={!operations.busy}
 									autoCapitalize="none"
 									autoCorrect={false}
@@ -201,7 +202,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 										slug.length > MAX_SLUG_LENGTH
 											? t`Use at most 64 characters.`
 											: slug && !isValidSlug(slug)
-												? t`Use lowercase letters, numbers and single dashes.`
+												? t`Use Latin letters a–z, numbers and single dashes.`
 												: undefined
 									}
 								/>

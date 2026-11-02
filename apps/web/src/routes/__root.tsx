@@ -145,5 +145,5 @@ function RootComponent() {
 
 function LocalizedToaster() {
 	useLingui();
-	return <Toaster closeLabel={t`Close notification`} />;
+	return <Toaster closeLabel={t`Close notification`} regionLabel={t`Notifications`} />;
 }

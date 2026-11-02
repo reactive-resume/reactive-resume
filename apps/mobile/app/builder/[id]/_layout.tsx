@@ -80,7 +80,15 @@ export default function BuilderLayout() {
 		{ pane: "write", label: t`Write`, icon: "pencil-simple", href: routes.builder(id, "write", origin.applicationId) },
 		{ pane: "page", label: t`Page`, icon: "file-text", href: routes.builder(id, "page", origin.applicationId) },
 		{ pane: "design", label: t`Design`, icon: "palette", href: routes.builder(id, "design", origin.applicationId) },
-		{ pane: "check", label: t`Check`, icon: "list-checks", href: routes.builder(id, "check", origin.applicationId) },
+		{
+			pane: "check",
+			label: t({
+				comment: "The resume builder mode that reviews the resume for problems. Not the Screening application stage.",
+				message: "Check",
+			}),
+			icon: "list-checks",
+			href: routes.builder(id, "check", origin.applicationId),
+		},
 		{ pane: "share", label: t`Share`, icon: "globe", href: routes.builder(id, "share", origin.applicationId) },
 	];
 

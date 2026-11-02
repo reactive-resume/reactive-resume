@@ -9,6 +9,7 @@ import { AddSectionMenu, StartSuggestions } from "./add-section";
 import { BasicsCard } from "./basics-card";
 import { getOutlineRows, summarizeContent } from "./model";
 import { Outline } from "./outline";
+import { ResumeLanguage } from "./resume-language";
 import { useDialogStore } from "@/dialogs/store";
 import { useCurrentBuilderResumeSelector, useIsResumeLocked } from "@/features/resume/builder/draft";
 import { useUnlockResume } from "@/features/resume/builder/use-unlock-resume";
@@ -32,6 +33,7 @@ export function WritePanel() {
 			{locked && <LockedNote />}
 			<ImportedNote />
 
+			<ResumeLanguage locked={locked} />
 			<BasicsCard locked={locked} />
 
 			<div>

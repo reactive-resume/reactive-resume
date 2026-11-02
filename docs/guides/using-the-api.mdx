@@ -62,7 +62,7 @@ Sharing controls belong to resume metadata, outside the resume's `data` object:
 | `hideContactDetails`  | Redacts dedicated contact fields from public representations. Defaults to `false`.                                                                                                    |
 | `isPrimary`           | Selects the account's resume for `/<username>` and its verified domain. Only a published resume can become primary.                                                                   |
 
-New or changed `slug` values must be 1–64 characters: lowercase letters and numbers separated by single dashes.
+New or changed `slug` values must be 1–64 characters: Latin letters a–z and numbers separated by single dashes.
 An invalid value returns `INVALID_SLUG` (HTTP 400). Reads and updates that retain an unchanged legacy slug remain
 supported. Renames preserve an old address for 30 days.
 

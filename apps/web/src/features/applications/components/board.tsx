@@ -124,7 +124,7 @@ export function ApplicationBoard({ applications, showClosed, onOpen }: BoardProp
 				{active ? <ApplicationCard application={active} dragging /> : null}
 			</DragOverlay>
 			<Dialog open={Boolean(closing)} onOpenChange={(open) => !open && setClosing(null)}>
-				<DialogContent className="sm:max-w-sm">
+				<DialogContent closeLabel={t`Close`} className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>
 							<Trans>Mark as closed</Trans>

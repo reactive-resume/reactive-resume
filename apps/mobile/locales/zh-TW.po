@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: zh-TW\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -550,12 +556,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-履歷"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -786,10 +786,6 @@ msgstr "{name} 位於側邊欄"
 #: src/features/check/issues.ts
 msgid "{name} uses one column"
 msgstr "{name} 使用一根立柱"
-
-#: src/features/share/download.tsx
-msgid "{name}-Cover-Letter"
-msgstr "{name}-求職信"
 
 #: src/features/check/issues.ts
 msgid "{names} come last in the text. Most systems still find them; some don't."
@@ -2524,6 +2520,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "無法儲存更改。繼續之前重試。"
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "僅更改部分標題和日期單詞，而不更改您的內容。"
 
@@ -2540,6 +2537,7 @@ msgstr "對「{name}」的改變被儲存在另一個裝置上。您所做的編
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "檢查"
@@ -9758,6 +9756,11 @@ msgstr "履歷檔案"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr "履歷語言"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10371,6 +10374,7 @@ msgstr "排程"
 msgid "School"
 msgstr "學校"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -11800,8 +11804,8 @@ msgid "The account changed. Try again."
 msgstr "账户变了。再試一次。"
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "網址只能包含小寫字母和數字，並以單連字號分隔。"
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr "網址只能包含拉丁字母 a–z和數字，並以單連字號分隔。"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12980,8 +12984,8 @@ msgid "Use {url}"
 msgstr "使用{url}"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "使用 3 到 64 個小寫字母、數字、點、連字號和底線。"
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "使用 3 到 64 個拉丁字母 a–z、數字、點、連字號和底線。"
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -13061,8 +13065,8 @@ msgstr "用於所有應徵"
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "使用小寫字母、數字和單破折號。"
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr "使用拉丁字母 a–z、數字和單破折號。"
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"

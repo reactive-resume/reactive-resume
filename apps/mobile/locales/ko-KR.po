@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: ko-KR\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -550,12 +556,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-이력서"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -786,10 +786,6 @@ msgstr "{name}는 사이드바에 있습니다."
 #: src/features/check/issues.ts
 msgid "{name} uses one column"
 msgstr "{name}는 하나의 열을 사용합니다."
-
-#: src/features/share/download.tsx
-msgid "{name}-Cover-Letter"
-msgstr "{name}-커버-커버레터"
 
 #: src/features/check/issues.ts
 msgid "{names} come last in the text. Most systems still find them; some don't."
@@ -2524,6 +2520,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "변경 사항을 저장하지 못했습니다. 계속하기 전에 다시 시도하세요."
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "콘텐츠가 아닌 섹션 제목과 날짜 단어만 변경합니다."
 
@@ -2540,6 +2537,7 @@ msgstr "'{name}'에 대한 변경사항이 다른 기기에 저장되었습니�
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "검토"
@@ -9758,6 +9756,11 @@ msgstr "이력서 파일"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr "이력서 언어"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10371,6 +10374,7 @@ msgstr "스케줄"
 msgid "School"
 msgstr "학교"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -11800,8 +11804,8 @@ msgid "The account changed. Try again."
 msgstr "계정이 변경되었습니다. 다시 시도해 보세요."
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "주소에는 소문자와 숫자만 포함되어야 하며 단일 대시로 구분되어야 합니다."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr "주소에는 영문자(a–z)와 숫자만 포함되어야 하며 단일 대시로 구분되어야 합니다."
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12980,8 +12984,8 @@ msgid "Use {url}"
 msgstr "{url} 사용"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "3~64자의 소문자, 숫자, 점, 하이픈, 밑줄을 사용하세요."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "3~64자의 영문자(a–z), 숫자, 점, 하이픈, 밑줄을 사용하세요."
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -13061,8 +13065,8 @@ msgstr "모든 지원에 사용"
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "소문자, 숫자, 단일 대시를 사용하세요."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr "영문자(a–z), 숫자, 단일 대시를 사용하세요."
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"

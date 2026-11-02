@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: he-IL\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -550,12 +556,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-קורות-חיים"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -786,10 +786,6 @@ msgstr "{name} יושב בסרגל הצד"
 #: src/features/check/issues.ts
 msgid "{name} uses one column"
 msgstr "{name} משתמש בעמודה אחת"
-
-#: src/features/share/download.tsx
-msgid "{name}-Cover-Letter"
-msgstr "{name}-מכתב-מקדים"
 
 #: src/features/check/issues.ts
 msgid "{names} come last in the text. Most systems still find them; some don't."
@@ -2524,6 +2520,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "לא ניתן היה לשמור את השינויים. נסה שוב לפני שתמשיך."
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "משנה את כותרות המדור ומילות התאריך בלבד, לא את התוכן שלך."
 
@@ -2540,6 +2537,7 @@ msgstr "שינויים ב-\"{name}\" נשמרו במכשיר אחר. העריכ�
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "בדיקה"
@@ -9758,6 +9756,11 @@ msgstr "קובץ קורות חיים"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr "שפת קורות החיים"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10371,6 +10374,7 @@ msgstr "תזמונים"
 msgid "School"
 msgstr "בית ספר"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -11800,8 +11804,8 @@ msgid "The account changed. Try again."
 msgstr "החשבון השתנה. נסה שוב."
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "הכתובת חייבת להכיל רק אותיות קטנות ומספרים, מופרדים במקפים בודדים."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr "הכתובת חייבת להכיל רק אותיות לטיניות a–z ומספרים, מופרדים במקפים בודדים."
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12980,8 +12984,8 @@ msgid "Use {url}"
 msgstr "השתמש ב-{url}"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "השתמש ב-3 עד 64 אותיות קטנות, מספרים, נקודות, מקפים וקווים תחתונים."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "השתמש ב-3 עד 64 אותיות לטיניות a–z, מספרים, נקודות, מקפים וקווים תחתונים."
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -13061,8 +13065,8 @@ msgstr "השתמש לכל המועמדויות"
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "השתמש באותיות קטנות, מספרים ומקפים בודדים."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr "השתמש באותיות לטיניות a–z, מספרים ומקפים בודדים."
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"

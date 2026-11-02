@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: or-IN\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -550,12 +556,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-ରେଜ୍ୟୁମେ"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -786,10 +786,6 @@ msgstr "{name} ପାର୍ଶ୍ୱ ପଟିରେ ବସିଥାଏ |"
 #: src/features/check/issues.ts
 msgid "{name} uses one column"
 msgstr "{name} ଗୋଟିଏ ସ୍ତମ୍ଭ ବ୍ୟବହାର କରେ |"
-
-#: src/features/share/download.tsx
-msgid "{name}-Cover-Letter"
-msgstr "{name}-କଭର୍-ଚିଠି"
 
 #: src/features/check/issues.ts
 msgid "{names} come last in the text. Most systems still find them; some don't."
@@ -2526,6 +2522,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "ପରିବର୍ତ୍ତନଗୁଡିକ ସଞ୍ଚୟ ହୋଇପାରିବ ନାହିଁ। ଜାରି ରଖିବା ପୂର୍ବରୁ ପୁନଃଚେଷ୍ଟା କରନ୍ତୁ।"
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "କେବଳ ବିଭାଗ ବିଷୟବସ୍ତୁ ଏବଂ ତାରିଖ ଶବ୍ଦ ପରିବର୍ତ୍ତନ କରେ, ତୁମର ବିଷୟବସ୍ତୁ ନୁହେଁ |"
 
@@ -2542,6 +2539,7 @@ msgstr "“{name}”ର ପରିବର୍ତ୍ତନ ଅନ୍ୟ ଡିଭା
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "ଯାଞ୍ଚ"
@@ -9786,6 +9784,11 @@ msgstr "ରେଜୁମେ ଫାଇଲ୍"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr "ରେଜ୍ୟୁମେର ଭାଷା"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10401,6 +10404,7 @@ msgstr "ସମୟସୂଚୀ"
 msgid "School"
 msgstr "ବିଦ୍ୟାଳୟ"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -11838,8 +11842,8 @@ msgstr "|\n"
 "ଖାତା ବଦଳିଗଲା | ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ |"
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "ଠିକଣାରେ କେବଳ ଛୋଟ ଅକ୍ଷର ଏବଂ ସଂଖ୍ୟା ରହିବା ଉଚିତ, ଯାହା ଏକକ ଡ୍ୟାସ୍ ଦ୍ୱାରା ପୃଥକ ହୋଇଥିବ।"
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr "ଠିକଣାରେ କେବଳ ଲାଟିନ୍ ଅକ୍ଷର a–z ଏବଂ ସଂଖ୍ୟା ରହିବା ଉଚିତ, ଯାହା ଏକକ ଡ୍ୟାସ୍ ଦ୍ୱାରା ପୃଥକ ହୋଇଥିବ।"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -13019,8 +13023,8 @@ msgid "Use {url}"
 msgstr "{url} ବ୍ୟବହାର କରନ୍ତୁ |"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "3 ରୁ 64 ଲୋୟର କେସ୍ ଅକ୍ଷର, ସଂଖ୍ୟା, ବିନ୍ଦୁ, ହାଇଫେନ୍ ଏବଂ ଅଣ୍ଡରସ୍କୋର୍ ବ୍ୟବହାର କରନ୍ତୁ |"
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "3 ରୁ 64 ଲାଟିନ୍ ଅକ୍ଷର a–z, ସଂଖ୍ୟା, ବିନ୍ଦୁ, ହାଇଫେନ୍ ଏବଂ ଅଣ୍ଡରସ୍କୋର୍ ବ୍ୟବହାର କରନ୍ତୁ |"
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -13101,8 +13105,8 @@ msgstr "ସମସ୍ତ ଆବେଦନ ପାଇଁ ବ୍ୟବହାର କ�
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "ଲୋୟର କେସ୍ ଅକ୍ଷର, ସଂଖ୍ୟା ଏବଂ ଏକକ ଡ୍ୟାସ୍ ବ୍ୟବହାର କରନ୍ତୁ |"
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr "ଲାଟିନ୍ ଅକ୍ଷର a–z, ସଂଖ୍ୟା ଏବଂ ଏକକ ଡ୍ୟାସ୍ ବ୍ୟବହାର କରନ୍ତୁ |"
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"

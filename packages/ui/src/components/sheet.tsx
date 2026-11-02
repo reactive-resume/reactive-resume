@@ -33,12 +33,14 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
 	);
 }
 
+/** A close button needs a name in the interface language: required whenever the button shows. */
+type CloseButtonProps =
+	| { showCloseButton?: true; /** Accessible name of the close button; pass a translated string. */ closeLabel: string }
+	| { showCloseButton: false; closeLabel?: string };
+
 type SheetContentProps = SheetPrimitive.Popup.Props & {
 	side?: "top" | "right" | "bottom" | "left";
-	showCloseButton?: boolean;
-	/** Accessible name of the close button; pass a translated string. */
-	closeLabel?: string;
-};
+} & CloseButtonProps;
 
 /**
  * A task beside the page. Side sheets slide in from their edge over 320ms; the bottom variant is the mobile

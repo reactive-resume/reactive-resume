@@ -473,6 +473,15 @@ const animation = {
 	withSequence: (...values) => values.at(-1),
 };
 const componentFixtures = {
+	"@reactive-resume/utils/string": {
+		getInitials: (name) =>
+			name
+				.split(" ")
+				.map((part) => [...part][0] ?? "")
+				.slice(0, 2)
+				.join("")
+				.toUpperCase(),
+	},
 	"./button": ui,
 	"./icon": ui,
 	"./motion": ui,

@@ -18,6 +18,7 @@ import Animated, {
 	withRepeat,
 	withTiming,
 } from "react-native-reanimated";
+import { getInitials } from "@reactive-resume/utils/string";
 import { Button, IconButton } from "./button";
 import { Icon } from "./icon";
 import { haptics, useReducedMotion } from "./motion";
@@ -510,14 +511,8 @@ export type AvatarProps = {
 
 export function Avatar({ name, uri, size = 40 }: AvatarProps) {
 	const { colors, fonts, motion, radius } = useTheme();
-	// Array.from keeps surrogate pairs whole, so a name starting with an emoji or a supplementary-plane letter
-	// does not show half a character.
-	const initials = name
-		.split(/\s+/)
-		.filter(Boolean)
-		.slice(0, 2)
-		.map((part) => Array.from(part)[0]?.toLocaleUpperCase())
-		.join("");
+	// Shared with web: whole characters, and joining scripts (Arabic) kept apart so the letters don't read as a word.
+	const initials = getInitials(name.replace(/\s+/g, " ").trim());
 	const circle = { width: size, height: size, borderRadius: radius.rLg };
 
 	if (uri)

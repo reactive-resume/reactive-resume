@@ -526,7 +526,7 @@ function PictureCropDialog({ cropState, aspect, onClose, onUpload }: PictureCrop
 				onCropOpenChangeComplete(open);
 			}}
 		>
-			<DialogContent>
+			<DialogContent closeLabel={t`Close`}>
 				<DialogHeader>
 					<DialogTitle>
 						<Trans>Crop photo</Trans>

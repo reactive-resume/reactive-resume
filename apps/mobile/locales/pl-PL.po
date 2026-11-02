@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: pl-PL\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -550,12 +556,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-CV"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -786,10 +786,6 @@ msgstr "{name} znajduje się na pasku bocznym"
 #: src/features/check/issues.ts
 msgid "{name} uses one column"
 msgstr "{name} wykorzystuje jedną kolumnę"
-
-#: src/features/share/download.tsx
-msgid "{name}-Cover-Letter"
-msgstr "{name} – List motywacyjny"
 
 #: src/features/check/issues.ts
 msgid "{names} come last in the text. Most systems still find them; some don't."
@@ -2524,6 +2520,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Nie można zapisać zmian. Spróbuj ponownie przed kontynuowaniem."
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "Zmienia tylko tytuły sekcji i słowa daty, a nie treść."
 
@@ -2540,6 +2537,7 @@ msgstr "Zmiany w „{name}” zostały zapisane na innym urządzeniu. Twoje zmia
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "Kontrola"
@@ -9758,6 +9756,11 @@ msgstr "Plik CV"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr "Język CV"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10371,6 +10374,7 @@ msgstr "Harmonogramy"
 msgid "School"
 msgstr "Szkoła"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -11800,8 +11804,8 @@ msgid "The account changed. Try again."
 msgstr "Konto się zmieniło. Spróbuj ponownie."
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "Adres może zawierać tylko małe litery i cyfry, oddzielone pojedynczymi myślnikami."
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr "Adres może zawierać tylko łacińskie litery a–z i cyfry, oddzielone pojedynczymi myślnikami."
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12980,8 +12984,8 @@ msgid "Use {url}"
 msgstr "Użyj {url}"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "Użyj od 3 do 64 małych liter, cyfr, kropek, łączników i podkreśleń."
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "Użyj od 3 do 64 łacińskich liter a–z, cyfr, kropek, łączników i podkreśleń."
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -13061,8 +13065,8 @@ msgstr "Używaj we wszystkich aplikacjach"
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "Używaj małych liter, cyfr i pojedynczych myślników."
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr "Używaj łacińskich liter a–z, cyfr i pojedynczych myślników."
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"

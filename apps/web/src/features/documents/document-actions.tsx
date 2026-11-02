@@ -500,7 +500,7 @@ export function TagsDialog({ documents: requested, onClose }: TagsDialogProps) {
 				if (!open) setTags(null);
 			}}
 		>
-			<DialogContent>
+			<DialogContent closeLabel={t`Close`}>
 				<DialogHeader>
 					<DialogTitle>
 						{documents && documents.length > 1 ? (
@@ -575,7 +575,7 @@ export function LinkApplicationDialog({ document: requested, onClose }: LinkAppl
 			onOpenChange={(open) => !open && onClose()}
 			onOpenChangeComplete={onOpenChangeComplete}
 		>
-			<DialogContent>
+			<DialogContent closeLabel={t`Close`}>
 				<DialogHeader>
 					<DialogTitle>
 						<Trans>Link to application</Trans>

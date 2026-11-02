@@ -182,7 +182,7 @@ function FollowUpDialog({ application, open, onOpenChange }: FollowUpDialogProps
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-sm">
+			<DialogContent closeLabel={t`Close`} className="sm:max-w-sm">
 				<DialogHeader>
 					<DialogTitle>
 						<Trans>Follow-up</Trans>

@@ -325,7 +325,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 				}
 			}}
 		>
-			<SheetContent side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
+			<SheetContent closeLabel={t`Close`} side="right" className="w-full gap-0 data-[side=right]:sm:max-w-lg">
 				<SheetHeader>
 					<SheetTitle>{isEditing ? <Trans>Edit application</Trans> : <Trans>Add application</Trans>}</SheetTitle>
 					<SheetDescription>

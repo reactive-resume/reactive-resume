@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: am-ET\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
@@ -550,12 +556,6 @@ msgstr ""
 msgid "{0} words · {1} characters"
 msgstr ""
 
-#. placeholder {0}: resume.data.basics.name || resume.name
-#: src/features/letters/share.tsx
-#: src/features/share/download.tsx
-msgid "{0}-Resume"
-msgstr "{0}-የስራ-ልምድ-ማስረጃ"
-
 #. placeholder {0}: Math.min(displayedOffset + 1, displayed?.total ?? page.total)
 #. placeholder {0}: recoveryStart + 1
 #. placeholder {1}: Math.min(displayedOffset + 100, displayed?.total ?? page.total)
@@ -786,10 +786,6 @@ msgstr "{name} በጎን አሞሌው ላይ ተቀምጧል"
 #: src/features/check/issues.ts
 msgid "{name} uses one column"
 msgstr "{name} አንድ አምድ ይጠቀማል"
-
-#: src/features/share/download.tsx
-msgid "{name}-Cover-Letter"
-msgstr "{name}-የሽፋን-ደብዳቤ"
 
 #: src/features/check/issues.ts
 msgid "{names} come last in the text. Most systems still find them; some don't."
@@ -2524,6 +2520,7 @@ msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "ለውጦች ሊቀመጡ አልቻሉም። ከመቀጠልዎ በፊት እንደገና ሞክር።"
 
 #: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
 msgid "Changes section titles and date words only, not your content."
 msgstr "ይዘትዎን ሳይሆን ክፍል ርዕሶችን እና የቀን ቃላትን ብቻ ይለውጣል።"
 
@@ -2540,6 +2537,7 @@ msgstr "በ«{name}» ላይ የተደረጉ ለውጦች በሌላ መሣሪያ
 msgid "Changing the key, model or address pauses scheduled AI work. Re-enable each schedule to approve its destination."
 msgstr ""
 
+#. The resume builder mode that reviews the resume for problems. Not the Screening application stage.
 #: app/builder/[id]/_layout.tsx
 msgid "Check"
 msgstr "ምርመራ"
@@ -9758,6 +9756,11 @@ msgstr "የሪዙሜ ፋይል"
 msgid "Resume for a new letter"
 msgstr ""
 
+#. Label beside the picker for the language a resume's headings and dates print in
+#: src/features/write/resume-language.tsx
+msgid "Resume language"
+msgstr "የሲቪ ቋንቋ"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Resume options"
@@ -10371,6 +10374,7 @@ msgstr "መርሐ ግብሮች"
 msgid "School"
 msgstr "ት/ቤት"
 
+#. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -11800,8 +11804,8 @@ msgid "The account changed. Try again."
 msgstr "መለያው ተቀይሯል። እንደገና ይሞክሩ።"
 
 #: src/features/documents/queries.ts
-msgid "The address must contain only lowercase letters and numbers, separated by single dashes."
-msgstr "አድራሻው በነጠላ ሰረዞች (-) የተለዩ የላቲን ትናንሽ ፊደላትን እና ቁጥሮችን ብቻ መያዝ አለበት።"
+msgid "The address must contain only Latin letters a–z and numbers, separated by single dashes."
+msgstr "አድራሻው በነጠላ ሰረዞች (-) የተለዩ የላቲን ፊደላትን (a–z) እና ቁጥሮችን ብቻ መያዝ አለበት።"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "The answer changed since, so it wasn't restored."
@@ -12980,8 +12984,8 @@ msgid "Use {url}"
 msgstr "{url} ይጠቀሙ"
 
 #: src/features/settings/profile.tsx
-msgid "Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores."
-msgstr "ከ 3 እስከ 64 ንዑስ ሆሄያት፣ ቁጥሮች፣ ነጥቦች፣ ሰረዞች እና የስር ምልክቶች ተጠቀም።"
+msgid "Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores."
+msgstr "ከ 3 እስከ 64 የላቲን ፊደላት (a–z)፣ ቁጥሮች፣ ነጥቦች፣ ሰረዞች እና የስር ምልክቶች ተጠቀም።"
 
 #: src/features/share/web-page.tsx
 msgid "Use 6–64 characters."
@@ -13061,8 +13065,8 @@ msgstr "ለሁሉም ማመልከቻዎች ተጠቀም"
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
-msgid "Use lowercase letters, numbers and single dashes."
-msgstr "ትንሽ ሆሄያትን፣ ቁጥሮችን እና ነጠላ ሰረዞች (-)ን ተጠቀም።"
+msgid "Use Latin letters a–z, numbers and single dashes."
+msgstr "የላቲን ፊደላትን (a–z)፣ ቁጥሮችን እና ነጠላ ሰረዞች (-)ን ተጠቀም።"
 
 #: src/features/career/search-regions-field.tsx
 msgid "Use my timezone"

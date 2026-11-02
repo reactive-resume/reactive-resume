@@ -459,7 +459,7 @@ export function SetUpWebAccess() {
 				<Trans>Set up web access</Trans>
 			</Button>
 			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogContent className="max-h-[85svh] overflow-y-auto">
+				<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto">
 					<DialogHeader>
 						<DialogTitle>
 							<Trans>Web access</Trans>
