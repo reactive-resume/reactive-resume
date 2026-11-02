@@ -24,6 +24,21 @@ export const Route = createFileRoute("/agent/$threadId")({
 				search: { assistant: params.threadId },
 				replace: true,
 			});
+		// A coach conversation has no document: it opens in Career, or in its application's workspace.
+		const thread = detail?.thread;
+		if (thread?.scope === "application" && thread.applicationId)
+			throw redirect({
+				to: "/dashboard/applications/$applicationId/{-$tab}",
+				params: { applicationId: thread.applicationId },
+				search: { coach: params.threadId },
+				replace: true,
+			});
+		if (thread?.scope === "career")
+			throw redirect({
+				to: "/dashboard/career/coach/{-$conversationId}",
+				params: { conversationId: params.threadId },
+				replace: true,
+			});
 		// An old link lands on Documents with the reason, instead of silently.
 		toast.add({
 			type: "error",

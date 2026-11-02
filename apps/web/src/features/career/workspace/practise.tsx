@@ -456,7 +456,7 @@ function Session({
 		<div className="grid min-w-0 gap-4">
 			<section className="grid gap-3 rounded-xl border border-line bg-surface p-5">
 				<div className="flex flex-wrap items-center justify-between gap-2">
-					<p className="font-mono text-xs font-medium text-ink-2">
+					<p className="text-xs font-medium text-ink-2">
 						{t`Question ${position} of ${total}`} · {question.origin === "recalled" ? t`Recalled` : t`Practice`}
 					</p>
 					{canHear && (
@@ -1068,9 +1068,7 @@ function SavedAttempt({ item }: { item: Attempt }) {
 	return (
 		<div className="grid min-w-0 gap-4">
 			<section className="grid gap-3 rounded-xl border border-line bg-surface p-5">
-				<p className="font-mono text-xs font-medium text-ink-2">
-					{item.data.origin === "recalled" ? t`Recalled` : t`Practice`}
-				</p>
+				<p className="text-xs font-medium text-ink-2">{item.data.origin === "recalled" ? t`Recalled` : t`Practice`}</p>
 				<h2 className="font-display text-[22px] leading-[29px]">{item.data.question}</h2>
 			</section>
 			<section className="grid gap-3 rounded-xl border border-line bg-surface p-4 md:p-5">

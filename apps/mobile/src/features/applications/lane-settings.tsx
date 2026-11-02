@@ -157,7 +157,9 @@ export function LaneSettings({ open, onClose }: LaneSettingsProps) {
 													disabled={busy}
 													onPress={() => {
 														setRetiring(lane);
-														setReplacement("");
+														// With one lane to move to, it's chosen already.
+														const choices = compatibleReplacements(query.lanes, lane);
+														setReplacement(choices.length === 1 ? (choices[0]?.id ?? "") : "");
 													}}
 												/>
 											)}

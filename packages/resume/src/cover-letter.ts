@@ -137,17 +137,22 @@ export const defaultCoverLetterSignOff = (letter: Pick<CoverLetter, "style">, wo
 export function composeCoverLetter(letter: ComposableLetter, words: LetterWords) {
 	if (letter.layout === "freeform") return { recipient: letter.recipient, content: letter.content };
 
-	const to = [letter.recipientName.trim() || words.hiringTeam, letter.recipientCompany.trim()]
-		.filter(Boolean)
-		.map(escapeHtml)
-		.join("<br />");
+	// "Hiring team" stands in for a missing name above a company; with neither, there's no address line at all (the
+	// greeting already says "Dear hiring team").
+	const addressed = Boolean(letter.recipientName.trim() || letter.recipientCompany.trim());
+	const to = addressed
+		? [letter.recipientName.trim() || words.hiringTeam, letter.recipientCompany.trim()]
+				.filter(Boolean)
+				.map(escapeHtml)
+				.join("<br />")
+		: "";
 	const date = letter.letterDate ? `<p>${escapeHtml(words.formatDate(letter.letterDate))}</p>` : "";
 	const name = greetingName(letter.recipientName);
 	const greeting = letter.greeting ?? (name ? words.greeting(name) : words.teamGreeting);
 	const signOff = letter.signOff ?? defaultCoverLetterSignOff(letter, words);
 
 	return {
-		recipient: `<p>${to}</p>${date}`,
+		recipient: `${to ? `<p>${to}</p>` : ""}${date}`,
 		content: [
 			greeting.trim() ? coverLetterTextToHtml(greeting) : "",
 			letter.content,

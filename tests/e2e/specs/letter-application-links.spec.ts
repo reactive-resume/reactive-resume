@@ -23,7 +23,7 @@ test("links a prepared letter from application details and returns to the same j
 	const { applicationId, letter } = await createFixture(page);
 	await page.goto(`/dashboard/applications?applicationId=${applicationId}`);
 	await page.getByLabel("Use an existing letter").selectOption(letter.id);
-	await expect(page.getByRole("link", { name: "Open", exact: true })).toHaveAttribute(
+	await expect(page.getByRole("link", { name: "Open letter", exact: true })).toHaveAttribute(
 		"href",
 		new RegExp(`/builder/letter/${letter.id}`),
 	);

@@ -848,9 +848,7 @@ function ComingUp({ now, className }: ComingUpProps) {
 			</Eyebrow>
 			<div className="flex items-start gap-3">
 				<span className="flex w-11 shrink-0 flex-col items-center rounded-lg bg-sunken py-1.5">
-					<span className="font-mono text-[11px] font-medium text-ink-3">
-						{format(start, { weekday: "short" }).toLocaleUpperCase(locale)}
-					</span>
+					<span className="font-mono text-[11px] font-medium text-ink-3">{format(start, { weekday: "short" })}</span>
 					<span className="font-display text-[22px] leading-[26px]">{format(start, { day: "numeric" })}</span>
 				</span>
 				<div className="grid min-w-0 gap-0.5">
@@ -1092,7 +1090,7 @@ function Schedules({ deleted, onOpenSchedule, className }: SchedulesProps) {
 				</AnimatePresence>
 			)}
 			<p className="border-t border-line px-4 pt-2.5 pb-3.5 text-xs leading-[17px] text-ink-3">
-				<Trans>Reminders appear here. Email copies are optional and need a verified address.</Trans>
+				<Trans>Results appear in Needs you. Email copies are optional and need a verified address.</Trans>
 			</p>
 		</section>
 	);

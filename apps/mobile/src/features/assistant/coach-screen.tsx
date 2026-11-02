@@ -131,7 +131,7 @@ export function CoachScreen({ offerIds }: CoachScreenProps) {
 					? t`Knowledge couldn't load. Try again or switch Knowledge off before sending.`
 					: chips.memory && knowledge.isPending
 						? t`Loading Knowledge before you send…`
-						: t`When you tap send, ${list} go to ${connection}.`,
+						: t`When you tap send, ${list} go to your ${connection}.`,
 			...(withheld > 0 ? [t`Messages from before Knowledge changed aren't sent.`] : []),
 			...(context.web ? [t`Search terms go to your web search service.`] : []),
 			memory.note,

@@ -354,7 +354,11 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 							onChange={(value) => change({ officeDays: value === "" ? null : Number(value) })}
 							options={[
 								{ value: "", label: t`Unknown` },
-								...[0, 1, 2, 3, 4, 5].map((days) => ({ value: String(days), label: String(days) })),
+								// The word Preferences uses for no office days.
+								...[0, 1, 2, 3, 4, 5].map((days) => ({
+									value: String(days),
+									label: days === 0 ? t`Remote (0)` : String(days),
+								})),
 							]}
 						/>
 						{textFields.map(({ key, label, max }) => (
@@ -380,7 +384,12 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 					/>
 				) : null}
 				{submitted && !payload.success ? (
-					<Banner tone="danger" message={t`Choose an application and correct the highlighted fields before saving.`} />
+					<Banner
+						tone="danger"
+						message={
+							applicationId ? t`Correct the highlighted fields before saving.` : t`Choose an application before saving.`
+						}
+					/>
 				) : null}
 				{action.error ? <Banner tone="danger" message={action.error} /> : null}
 				<Button

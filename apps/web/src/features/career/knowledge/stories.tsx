@@ -219,7 +219,10 @@ const StoryCard = memo(function StoryCard({ story, selected, changed }: StoryCar
 			>
 				<span className="text-sm leading-5 font-semibold">{story.data.title}</span>
 				<span className="text-xs text-ink-3">
-					<Trans>{filled} of 5 parts</Trans> · {plural(factCount, { one: "# fact", other: "# facts" })}
+					<Trans>{filled} of 5 parts</Trans> ·{" "}
+					<span className={cn(factCount === 0 && "text-warn-text")}>
+						{plural(factCount, { one: "# fact", other: "# facts" })}
+					</span>
 				</span>
 				<PartTiles story={story} />
 				{changed && (
@@ -685,6 +688,13 @@ export function StoryEditor({ story, facts, onSaved, onCancel, onDelete, proposa
 				{shared.length === 0 && (
 					<p className="text-[13px] text-ink-3">
 						<Trans>No facts to link yet. Add them in Facts.</Trans>
+					</p>
+				)}
+				{/* The coach and Practice send only backed stories: say so before saving one without a fact. */}
+				{!draft.factIds.some((id) => shared.some((fact) => fact.id === id && fact.status === "active")) && (
+					<p role="status" className="flex items-start gap-1.5 text-[13px] text-warn-text">
+						<Icon name="warning" size={16} className="mt-px shrink-0" />
+						<Trans>Without a fact, the coach and practice can't use this story.</Trans>
 					</p>
 				)}
 				{unavailable.length > 0 && (

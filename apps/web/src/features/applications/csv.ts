@@ -75,6 +75,8 @@ type ParsedApplication = {
 	company: string;
 	role: string;
 	status?: ApplicationStatus;
+	/** The outcome of a closed application: from a "Rejected" or "Ghosted" stage, or a Closed Reason column. */
+	closedReason?: ApplicationClosedReason;
 	lane?: CsvLane;
 	location?: string;
 	salary?: string;
@@ -112,6 +114,55 @@ function dateOnly(value: string) {
 	return date.toISOString().slice(0, 10) === value ? value : undefined;
 }
 
+const SLASH_DATE = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+
+/**
+ * Whether a column's slash dates are day-first (15/09/2026). Decided once per column: any first number above 12 makes
+ * the column day-first; otherwise it reads month-first (10/15/2026), as US trackers export.
+ */
+function slashDatesDayFirst(values: readonly string[]) {
+	// Only a real day-first date votes: "31/02/2026" can't be one, so it doesn't turn the column around.
+	return values.some(
+		(value) => Number(SLASH_DATE.exec(value.trim())?.[1] ?? 0) > 12 && readCsvDate(value.trim(), true) !== undefined,
+	);
+}
+
+/** A date as other trackers write it (2026-10-15, 10/15/2026, 15/10/2026, 15.10.2026), as `YYYY-MM-DD`. */
+function readCsvDate(value: string, dayFirst = false) {
+	const pad = (number: string) => number.padStart(2, "0");
+	const iso = dateOnly(value);
+	if (iso) return iso;
+	const dotted = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(value);
+	if (dotted) return dateOnly(`${dotted[3]}-${pad(dotted[2] ?? "")}-${pad(dotted[1] ?? "")}`);
+	const slashed = SLASH_DATE.exec(value);
+	if (!slashed) return undefined;
+	const [, first = "", second = "", year] = slashed;
+	return dayFirst ? dateOnly(`${year}-${pad(second)}-${pad(first)}`) : dateOnly(`${year}-${pad(first)}-${pad(second)}`);
+}
+
+/** Stage names other trackers use, as a stage and, for a closed one, its outcome. */
+const STAGE_ALIASES: Record<string, { status: ApplicationStatus; closedReason?: ApplicationClosedReason }> = {
+	wishlist: { status: "saved" },
+	wishlisted: { status: "saved" },
+	bookmarked: { status: "saved" },
+	"to apply": { status: "saved" },
+	"phone screen": { status: "screening" },
+	"recruiter screen": { status: "screening" },
+	"recruiter call": { status: "screening" },
+	screen: { status: "screening" },
+	interviewing: { status: "interview" },
+	"offer received": { status: "offer" },
+	rejected: { status: "closed", closedReason: "not-selected" },
+	declined: { status: "closed", closedReason: "not-selected" },
+	"not selected": { status: "closed", closedReason: "not-selected" },
+	ghosted: { status: "closed", closedReason: "no-response" },
+	"no response": { status: "closed", closedReason: "no-response" },
+	withdrawn: { status: "closed", closedReason: "withdrew" },
+	withdrew: { status: "closed", closedReason: "withdrew" },
+	hired: { status: "closed", closedReason: "accepted" },
+	accepted: { status: "closed", closedReason: "accepted" },
+};
+
 // Header aliases → canonical field. Matched case-insensitively after trimming.
 const HEADER_ALIASES: Record<string, CsvField> = {
 	company: "company",
@@ -125,6 +176,9 @@ const HEADER_ALIASES: Record<string, CsvField> = {
 	stage: "status",
 	"applied date": "applicationDate",
 	"application date": "applicationDate",
+	"date applied": "applicationDate",
+	"applied on": "applicationDate",
+	"closed reason": "closedReason",
 	"stage date": "stageEnteredAt",
 	"stage entered at": "stageEnteredAt",
 	location: "location",
@@ -160,6 +214,7 @@ export const CSV_FIELDS: readonly CsvField[] = [
 	"laneLabel",
 	"laneCategory",
 	"laneClosedReason",
+	"closedReason",
 	"stageEnteredAt",
 	"applicationDate",
 	"location",
@@ -226,7 +281,14 @@ export type CsvMapResult = {
 	contactsSkipped: number;
 	invalidValues: {
 		row: number;
-		field: "status" | "stageEnteredAt" | "applicationDate" | "postingSource" | "laneCategory" | "laneClosedReason";
+		field:
+			| "status"
+			| "stageEnteredAt"
+			| "applicationDate"
+			| "postingSource"
+			| "laneCategory"
+			| "laneClosedReason"
+			| "closedReason";
 		value: string;
 	}[];
 	headers: string[];
@@ -264,6 +326,15 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 	let contactsSkipped = 0;
 	const invalidValues: CsvMapResult["invalidValues"] = [];
 
+	// Slash dates are read the same way down each column: day-first when any of them can only be.
+	const dayFirst = new Map(
+		fieldFor.flatMap((field, column) =>
+			field === "stageEnteredAt" || field === "applicationDate"
+				? [[column, slashDatesDayFirst(dataRows.map((row) => row[column] ?? ""))] as const]
+				: [],
+		),
+	);
+
 	for (const [index, raw] of dataRows.entries()) {
 		const record: Partial<CsvApplication> = {};
 		const invalid: CsvMapResult["invalidValues"] = [];
@@ -274,10 +345,22 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 			if (!value) return;
 			if (field === "tags") record.tags = parseTags(value);
 			else if (field === "status") {
-				// Older exports may still say `rejected`, the stage `closed` replaced.
-				const stage = value.toLowerCase();
-				const parsed = applicationStatusSchema.safeParse(stage === "rejected" ? "closed" : stage);
-				if (parsed.success) record.status = parsed.data;
+				// Other trackers' names ("Phone Screen", "Ghosted", "Rejected") read as a stage and outcome.
+				const stage = value
+					.toLowerCase()
+					.replace(/[\s_-]+/g, " ")
+					.trim();
+				// Own entries only: "constructor" isn't a stage name.
+				const alias = Object.hasOwn(STAGE_ALIASES, stage) ? STAGE_ALIASES[stage] : undefined;
+				const parsed = applicationStatusSchema.safeParse(stage);
+				if (alias) {
+					record.status = alias.status;
+					if (alias.closedReason) record.closedReason ??= alias.closedReason;
+				} else if (parsed.success) record.status = parsed.data;
+				else invalid.push({ row: index + 2, field, value });
+			} else if (field === "closedReason") {
+				const parsed = applicationClosedReasonSchema.safeParse(value.toLowerCase().replace(/\s+/g, "-"));
+				if (parsed.success) record.closedReason = parsed.data;
 				else invalid.push({ row: index + 2, field, value });
 			} else if (field === "laneCategory") {
 				const parsed = applicationStatusSchema.safeParse(value.toLowerCase());
@@ -289,7 +372,7 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 				else invalid.push({ row: index + 2, field, value });
 			} else if (field === "laneLabel") record.laneLabel = value.slice(0, 80);
 			else if (field === "stageEnteredAt" || field === "applicationDate") {
-				const date = dateOnly(value);
+				const date = readCsvDate(value, dayFirst.get(i) ?? false);
 				if (date !== undefined) record[field] = date;
 				else invalid.push({ row: index + 2, field, value });
 			} else if (field === "postingSource") {
@@ -339,6 +422,8 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 			application.status = category;
 			application.lane = { label: laneLabel, category, closedReason: laneClosedReason ?? null };
 		}
+		// An outcome belongs only to a closed application (a lane may have just made it one).
+		if (application.closedReason && application.status !== "closed") delete application.closedReason;
 		if (contactName || contactRole || contactType || contactEmail || contactPhone) {
 			const contact = contactSchema.safeParse({
 				name: contactName,
@@ -486,7 +571,10 @@ export function exportApplicationsCsv(
 			application.sourceUrl ?? "",
 			application.jobDescription ?? "",
 			application.postingSource ? JSON.stringify(application.postingSource) : "",
-			application.tags.length > 0 ? JSON.stringify(application.tags) : "",
+			// "; " reads in a spreadsheet and imports back; tags that contain a separator keep the JSON list, so they do too.
+			application.tags.some((tag) => /[;,|]/.test(tag))
+				? JSON.stringify(application.tags)
+				: application.tags.join("; "),
 			application.contacts
 				.map(({ name, role, type }) => {
 					const details = [role, type].filter(Boolean).join(", ");

@@ -135,13 +135,20 @@ export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsi
 					<h2 id="insights-tailored" className="text-sm font-semibold">
 						<Trans>Tailored vs. base resume</Trans>
 					</h2>
-					<p className="text-sm leading-6 text-ink-2">
-						<Trans>
-							{outcomes.tailored.replied} of {outcomes.tailored.sent} tailored applications got a reply;{" "}
-							{outcomes.base.replied} of {outcomes.base.sent} sent with another resume.
-						</Trans>{" "}
-						{outcomes.tailored.sent + outcomes.base.sent < 10 && <Trans>Small numbers, but worth noticing.</Trans>}
-					</p>
+					{/* A comparison needs a few of each: "0 of 0" compares nothing. */}
+					{outcomes.tailored.sent >= 3 && outcomes.base.sent >= 3 ? (
+						<p className="text-sm leading-6 text-ink-2">
+							<Trans>
+								{outcomes.tailored.replied} of {outcomes.tailored.sent} tailored applications got a reply;{" "}
+								{outcomes.base.replied} of {outcomes.base.sent} sent with another resume.
+							</Trans>{" "}
+							{outcomes.tailored.sent + outcomes.base.sent < 10 && <Trans>Small numbers, but worth noticing.</Trans>}
+						</p>
+					) : (
+						<p className="text-sm leading-6 text-ink-2">
+							<Trans>Not enough applications to compare yet: this needs 3 of each.</Trans>
+						</p>
+					)}
 				</section>
 			)}
 

@@ -181,8 +181,9 @@ export function ApplicationDetail({ id }: ApplicationDetailProps) {
 			<ConfirmDialog
 				open={overlay?.kind === "delete"}
 				title={t`Delete this application?`}
-				message={t`“${application.role} · ${application.company}” and its timeline are deleted permanently. This can't be undone.`}
+				message={t`“${application.role} · ${application.company}” and its timeline are deleted permanently. Linked resumes and letters are kept.`}
 				confirmLabel={t`Delete application`}
+				cancelLabel={t`Keep application`}
 				destructive
 				onCancel={close}
 				onConfirm={() => {

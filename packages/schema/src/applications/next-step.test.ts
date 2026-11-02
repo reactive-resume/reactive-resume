@@ -33,7 +33,7 @@ it.each(["applied", "screening", "interview", "offer"] as const)(
 		expect(order([b, a])).toEqual(["A", "B"]);
 		expect(applicationStageSince(a)).toEqual(new Date("2026-10-01"));
 		expect(getNextStep(a, now)).toMatchObject({ days: 30 });
-		if (status === "applied") expect(getNextStep(a, now).kind).toBe("no-reply");
+		if (status === "applied" || status === "screening") expect(getNextStep(a, now).kind).toBe("no-reply");
 		a.activity[0] = event(status, "2026-10-25");
 		expect(order([a, b])).toEqual(["B", "A"]);
 	},
@@ -110,6 +110,24 @@ it("orders offers by saved reply deadlines before undated decisions, preserving 
 	).toBeLessThan(0);
 	expect(nextStepSortKey(late, now, "UTC", null)).toEqual([1, Date.parse("2026-10-01")]);
 	expect(getNextStep(early, now, "UTC", earlyHint)).toMatchObject({ kind: "offer", days: 10 });
+});
+
+it("nudges after silence following the last interview, counted from its end", () => {
+	const interview = (at: string): ApplicationTimelineEntry =>
+		({
+			id: `i-${at}`,
+			type: "interview",
+			at: new Date(at),
+			durationMinutes: 60,
+			kind: "technical",
+		}) as ApplicationTimelineEntry;
+	const quiet = {
+		...app("A", "interview", "2026-10-01", "2026-10-01"),
+		activity: [event("interview", "2026-10-01"), interview("2026-10-05T10:00:00Z")],
+	};
+	expect(getNextStep(quiet, now)).toMatchObject({ kind: "no-reply", after: "interview", days: 26 });
+	const recent = { ...quiet, activity: [event("interview", "2026-10-01"), interview("2026-10-28T10:00:00Z")] };
+	expect(getNextStep(recent, now).kind).toBe("interview-feedback");
 });
 
 it("keeps an undated imported stage out of elapsed-time and no-reply claims", () => {

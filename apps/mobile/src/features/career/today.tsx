@@ -529,7 +529,7 @@ export function TodayScreen() {
 							<Text
 								variant="callout"
 								color="ink3"
-							>{t`Reminders appear here. Email copies are optional and need a verified address.`}</Text>
+							>{t`Results appear in Needs you. Email copies are optional and need a verified address.`}</Text>
 						</Section>
 					</View>
 				</View>

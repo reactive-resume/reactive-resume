@@ -16,8 +16,8 @@ msgstr ""
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
 #: src/features/application-detail/detail-screen.tsx
-msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
-msgstr "\"{0} · {1}\" e la relativa sequenza temporale vengono eliminati in modo permanente. L'operazione non può essere annullata."
+msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #. placeholder {0}: isolate(open.label)
 #: src/features/check/job-match.tsx
@@ -365,6 +365,11 @@ msgstr ""
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {Nessuna risposta nel giorno #} other {Nessuna risposta entro # giorni}}"
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {No word since your interview # day ago} other {No word since your interview # days ago}}"
+msgstr ""
+
 #. placeholder {0}: firstSpill.lines
 #: src/preview/page.tsx
 msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
@@ -671,6 +676,10 @@ msgstr "{days, plural, =0 {· da oggi} one {· da # giorno} other {· da # giorn
 #: src/features/applications/list-screen.tsx
 msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 msgstr "{days, plural, one {{company}: nessuna risposta da # giorno. Un breve follow-up di solito va bene ora.} other {{company}: nessuna risposta da # giorni. Un breve follow-up di solito va bene ora.}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no word since your interview # day ago. A short follow-up is usually fine now.} other {{company}: no word since your interview # days ago. A short follow-up is usually fine now.}}"
+msgstr ""
 
 #: src/features/ai/provider-model.tsx
 msgid "{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice."
@@ -1031,10 +1040,6 @@ msgstr "Una data numerica si legge in modo diverso a seconda del paese."
 #: src/features/ats-checker/messages.ts
 msgid "A page is rotated."
 msgstr "Una pagina è ruotata."
-
-#: src/features/applications/prior-no-response.tsx
-msgid "A previous application to this company was closed with No response. You can still apply."
-msgstr "Una precedente candidatura a questa azienda è stata chiusa con esito Nessuna risposta. Puoi comunque candidarti."
 
 #: src/features/application-detail/sheets.tsx
 msgid "A reminder to check in, shown as the next step until you do."
@@ -1977,10 +1982,6 @@ msgstr "Viste delle candidature"
 msgid "Applications"
 msgstr "Candidature"
 
-#: src/features/applications/list-screen.tsx
-msgid "Applications and their attachments will be deleted permanently. This can't be undone."
-msgstr "Le candidature e i relativi allegati verranno eliminati in modo permanente. L'operazione non può essere annullata."
-
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
 msgstr "Candidature nel tempo"
@@ -2828,8 +2829,8 @@ msgid "Choose an application"
 msgstr "Scegli una candidatura"
 
 #: src/features/career/offer-entry.tsx
-msgid "Choose an application and correct the highlighted fields before saving."
-msgstr "Scegli una candidatura e correggi i campi evidenziati prima di salvare."
+msgid "Choose an application before saving."
+msgstr ""
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Choose an audio file"
@@ -2968,6 +2969,10 @@ msgstr "Chiudi l'assistente"
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
 msgstr "Vicino…"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "closed"
+msgstr ""
 
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
@@ -3355,6 +3360,10 @@ msgstr "Correggi"
 #: src/features/career/facts.tsx
 msgid "Correct fact"
 msgstr "Correggi il fatto"
+
+#: src/features/career/offer-entry.tsx
+msgid "Correct the highlighted fields before saving."
+msgstr ""
 
 #: src/features/career/offer-entry.tsx
 msgid "Correct the terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -3937,6 +3946,10 @@ msgstr "Conta le parole"
 #: src/features/ats-checker/checker.tsx
 msgid "Counted separately from the parse score. Coverage does not predict anything."
 msgstr "Conteggiata separatamente dal punteggio di lettura. La copertura non prevede nulla."
+
+#: src/features/career/search-regions-field.tsx
+msgid "Countries to search"
+msgstr ""
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Counts every application that reached each stage, including ones now closed."
@@ -6257,6 +6270,10 @@ msgstr "Usa un solo indirizzo, così il software non deve indovinare quale utili
 msgid "Keep access when you are not using the application."
 msgstr "Mantenere l'accesso quando non stai usando l'applicazione."
 
+#: src/features/application-detail/detail-screen.tsx
+msgid "Keep application"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
 msgstr "Conservali entrambi"
@@ -6745,8 +6762,8 @@ msgid "Linked to the resume again"
 msgstr "Di nuovo collegato al curriculum"
 
 #: src/features/letters/write.tsx
-msgid "Linked. Name, email, phone and city update when the resume does."
-msgstr "Collegato. Nome, email, telefono e città vengono aggiornati quando lo fa il curriculum."
+msgid "Linked. The header (name, contact details, links and photo) updates when the resume does."
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Links"
@@ -7845,6 +7862,10 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
+#: src/features/applications/prior-no-response.tsx
+msgid "no reply"
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "Nessuna risposta"
@@ -7979,6 +8000,10 @@ msgstr "Non disponibile finché il curriculum richiede una password."
 msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
 msgstr "Non ancora collegato. Aggiungi i suoi record DNS dove gestisci il dominio, poi verifica."
 
+#: src/features/applications-board/insights-screen.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "Non fa per me"
@@ -8033,6 +8058,10 @@ msgstr "Non salvato: questo fatto era già stato dimenticato."
 #: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
+msgstr ""
+
+#: src/features/applications/prior-no-response.tsx
+msgid "not selected"
 msgstr ""
 
 #: src/features/applications/stages.ts
@@ -8093,6 +8122,10 @@ msgstr "Nulla indica un ruolo come in corso."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "Niente in questo giorno."
+
+#: src/features/application-detail/sections.tsx
+msgid "Nothing recorded as sent."
+msgstr ""
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -8862,10 +8895,13 @@ msgstr "Flusso della pipeline"
 msgid "Plain text (.txt)"
 msgstr "Testo semplice (.txt)"
 
-#: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Plain text with headings. Paste into application forms and notes."
 msgstr "Testo semplice con titoli. Incolla nei moduli e nelle note di domanda di lavoro."
+
+#: src/features/letters/share.tsx
+msgid "Plain text. Paste into application forms and emails."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Plan again"
@@ -9690,14 +9726,14 @@ msgstr "Promemoria"
 msgid "Reminders"
 msgstr "Promemoria"
 
-#: src/features/career/today.tsx
-msgid "Reminders appear here. Email copies are optional and need a verified address."
-msgstr "I promemoria compaiono qui. Le copie via email sono facoltative e richiedono un indirizzo verificato."
-
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 msgid "Remote"
 msgstr "Da remoto"
+
+#: src/features/career/offer-entry.tsx
+msgid "Remote (0)"
+msgstr ""
 
 #: src/features/share/custom-domain.tsx
 #: src/ui/fields.tsx
@@ -10017,6 +10053,10 @@ msgstr ""
 msgid "Result"
 msgstr "Risultato"
 
+#: src/features/career/today.tsx
+msgid "Results appear in Needs you. Email copies are optional and need a verified address."
+msgstr ""
+
 #: app/_layout.tsx
 #: app/builder/[id]/_layout.tsx
 #: src/features/applications/add-sheet.tsx
@@ -10311,6 +10351,7 @@ msgstr "Giusto"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10325,10 +10366,6 @@ msgstr "Ruolo (facoltativo)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Ruolo {0}"
-
-#: src/features/applications/add-sheet.tsx
-msgid "Role / title"
-msgstr "Ruolo / titolo"
 
 #: src/features/applications-board/views.tsx
 msgid "Role, company or contact"
@@ -10390,16 +10427,13 @@ msgid "Rust"
 msgstr "Rosso ruggine"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 msgid "Salary"
 msgstr "Stipendio"
 
 #: src/features/career/today.tsx
 msgid "Salary not detected"
 msgstr ""
-
-#: src/features/applications/add-sheet.tsx
-msgid "Salary range"
-msgstr "Fascia salariale"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Same length"
@@ -12518,6 +12552,10 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "Questi aprono le impostazioni dell'account del tuo server in una scheda del browser all'interno dell'app. Potrebbe essere necessario accedere da lì."
 
+#: src/features/applications/list-screen.tsx
+msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Cercano voci come Esperienza, Istruzione e Competenze."
@@ -12940,6 +12978,7 @@ msgstr "Per ricevere un promemoria, consenti le notifiche nelle impostazioni del
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/letters/write.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
@@ -13941,7 +13980,7 @@ msgid "When would you start?"
 msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
-msgid "When you tap send, {list} go to {connection}."
+msgid "When you tap send, {list} go to your {connection}."
 msgstr "Quando tocchi Invia, {list} vengono inviati a {connection}."
 
 #: app/(auth)/sign-in.tsx
@@ -13961,10 +14000,6 @@ msgstr "Dove vuoi lavorare"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Where you work"
 msgstr "Dove lavori"
-
-#: src/features/career/search-regions-field.tsx
-msgid "Where you're looking for work"
-msgstr "Dove stai cercando lavoro"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Where your applications went"
@@ -14006,6 +14041,10 @@ msgstr ""
 #: src/features/career/offers.tsx
 msgid "Within your office-day limit."
 msgstr "Entro il limite dei giorni d'ufficio."
+
+#: src/features/career/stories.tsx
+msgid "Without a fact, the coach and practice can't use this story."
+msgstr ""
 
 #: src/features/letters/write.tsx
 msgid "Without one, you fill in the recipient yourself and drafting uses only your resume."
@@ -14164,6 +14203,10 @@ msgstr ""
 msgid "You"
 msgstr "Voi"
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you accepted an offer"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "You already use this for “{takenBy}”."
 msgstr "Questo è già utilizzato per «{takenBy}»."
@@ -14171,6 +14214,10 @@ msgstr "Questo è già utilizzato per «{takenBy}»."
 #: src/features/assistant/messages.tsx
 msgid "You answered: {answer}"
 msgstr "Hai risposto: {answer}"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "You applied to this company before. You can still apply."
+msgstr ""
 
 #: src/shell/builder-chrome.tsx
 msgid "You can keep editing. Changes sync when you're back online. PDF sharing works with cached fonts and images."
@@ -14201,9 +14248,17 @@ msgstr "Hai modifiche non salvate."
 msgid "You send it from your own email."
 msgstr "La invii tu dalla tua email."
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you took another offer"
+msgstr ""
+
 #: src/features/settings/sign-out.tsx
 msgid "You will be signed out of {server}. Any edits not yet synced from this device will be lost."
 msgstr "Verrai disconnesso da {server}. Eventuali modifiche non ancora sincronizzate da questo dispositivo andranno perse."
+
+#: src/features/applications/prior-no-response.tsx
+msgid "you withdrew"
+msgstr ""
 
 #: src/features/ai/web-access.tsx
 msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."
