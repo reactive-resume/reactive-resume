@@ -29,7 +29,7 @@ test("Calendar keeps an editable month agenda on phone widths and direct links",
 	const agenda = page.getByTestId("interview-agenda");
 	await expect(agenda.getByText("Northstar Labs", { exact: true })).toHaveCount(2);
 	await expect(agenda.getByRole("heading", { name: "Tomorrow", exact: true })).toBeVisible();
-	await expect(agenda).toContainText(/09:00.*10:00/);
+	await expect(agenda).toContainText(/09:00 AM.*10:00 AM/);
 	expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 	await page.screenshot({ path: testInfo.outputPath("phone-interview-agenda.png"), fullPage: true });
 
@@ -48,7 +48,7 @@ test("Calendar keeps an editable month agenda on phone widths and direct links",
 	await page.getByRole("button", { name: "Next month", exact: true }).click();
 	await expect(page.getByRole("heading", { name: "November 2026", exact: true })).toBeVisible();
 	await expect(agenda.getByRole("heading", { name: /November 4/ })).toBeVisible();
-	await expect(agenda).toContainText(/14:00.*15:00/);
+	await expect(agenda).toContainText(/02:00 PM.*03:00 PM/);
 	await page.getByRole("button", { name: "Next month", exact: true }).click();
 	await expect(agenda).toContainText("Nothing scheduled yet");
 	await page.getByRole("button", { name: "Previous month", exact: true }).click();
@@ -69,7 +69,7 @@ for (const scenario of [
 		now: "2026-10-31T23:15:00Z",
 		at: ["2026-10-31T23:30:00Z", "2026-11-01T00:30:00Z"],
 		days: ["Today", "Tomorrow"],
-		times: ["23:30 – 00:30", "00:30 – 01:30"],
+		times: ["11:30 PM – 12:30 AM", "12:30 AM – 01:30 AM"],
 		nextMonth: "November 2026",
 		nextCount: 1,
 	},
@@ -79,7 +79,7 @@ for (const scenario of [
 		now: "2026-10-31T23:15:00Z",
 		at: ["2026-10-31T23:30:00Z", "2026-11-01T00:30:00Z"],
 		days: ["Today"],
-		times: ["00:30 – 01:30", "01:30 – 02:30"],
+		times: ["12:30 AM – 01:30 AM", "01:30 AM – 02:30 AM"],
 		nextMonth: "December 2026",
 		nextCount: 0,
 	},
@@ -89,7 +89,7 @@ for (const scenario of [
 		now: "2026-03-28T23:15:00Z",
 		at: ["2026-03-29T00:30:00Z", "2026-03-29T22:30:00Z"],
 		days: ["Today", "Tomorrow"],
-		times: ["01:30 – 03:30", "00:30 – 01:30"],
+		times: ["01:30 AM – 03:30 AM", "12:30 AM – 01:30 AM"],
 		nextMonth: "April 2026",
 		nextCount: 0,
 	},
@@ -99,7 +99,7 @@ for (const scenario of [
 		now: "2026-10-24T22:15:00Z",
 		at: ["2026-10-25T00:30:00Z", "2026-10-25T01:30:00Z"],
 		days: ["Tomorrow"],
-		times: ["00:30 – 01:30", "01:30 – 02:30"],
+		times: ["12:30 AM – 01:30 AM", "01:30 AM – 02:30 AM"],
 		nextMonth: "November 2026",
 		nextCount: 0,
 	},

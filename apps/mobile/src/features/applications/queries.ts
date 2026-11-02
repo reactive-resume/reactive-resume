@@ -123,7 +123,7 @@ export function useInvalidateApplications() {
 			queryClient.invalidateQueries({ queryKey: orpc.applications.key() }),
 			queryClient.invalidateQueries({ queryKey: orpc.documents.key() }),
 			queryClient.invalidateQueries({ queryKey: orpc.career.workspace.key() }),
-			queryClient.invalidateQueries({ queryKey: ["applications-prior-no-response"] }),
+			queryClient.invalidateQueries({ queryKey: ["applications-prior-outcomes"] }),
 		]);
 	};
 }

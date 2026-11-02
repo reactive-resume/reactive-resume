@@ -22,8 +22,8 @@ msgstr ""
 #. placeholder {1}: application.company
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
-msgstr "“{0} · {1}” y su línea de tiempo se eliminan permanentemente. Esto no se puede deshacer."
+msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #. placeholder {0}: term.label
 #: src/features/resume/editor/check/job-match.tsx
@@ -354,6 +354,11 @@ msgstr "{0, plural, one {Importar solicitud de empleo #} other {Importar solicit
 msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
 msgstr "{0, plural, one {Se importó # candidatura.} other {Se importaron # candidaturas.}}"
 
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {Keep application} other {Keep applications}}"
+msgstr ""
+
 #. placeholder {0}: knowledge.active.length
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
@@ -368,6 +373,11 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {Sin respuesta en el día #} other {Sin respuesta en días #}}"
+
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {No word since your interview # day ago} other {No word since your interview # days ago}}"
+msgstr ""
 
 #. placeholder {0}: passages.length
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -476,6 +486,13 @@ msgstr "{0} en {1} equivale a {2} en tu zona horaria ({preferredZone})."
 #: src/features/career/workspace/shell.tsx
 msgid "{0} interview"
 msgstr "{0} entrevista"
+
+#. placeholder {0}: interviewKindOf(upcoming.kind)?.label ?? ""
+#. placeholder {1}: application.role
+#. placeholder {2}: application.company
+#: src/features/career/workspace/shell.tsx
+msgid "{0} interview · {1}, {2}"
+msgstr ""
 
 #. placeholder {0}: i18n.number(row.minutes)
 #. placeholder {0}: row.minutes
@@ -721,6 +738,10 @@ msgstr "{count} seleccionados"
 #: src/routes/dashboard/applications/index.tsx
 msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 msgstr "{days, plural, one {{company}: sin respuesta desde hace # día. Ya suele estar bien enviar un breve seguimiento.} other {{company}: sin respuesta desde hace # días. Ya suele estar bien enviar un breve seguimiento.}}"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{days, plural, one {{company}: no word since your interview # day ago. A short follow-up is usually fine now.} other {{company}: no word since your interview # days ago. A short follow-up is usually fine now.}}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day a week} other {# office days a week}}"
@@ -3750,6 +3771,10 @@ msgstr "cerrar el asistente"
 #: src/features/applications/components/list-view.tsx
 msgid "Close…"
 msgstr "Cerca…"
+
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "closed"
+msgstr ""
 
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
@@ -6840,7 +6865,7 @@ msgstr "Arreglar estos en el editor"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Fix these values in the CSV, or leave their columns out, before importing."
-msgstr "Corrige estos valores en el CSV, o excluye sus columnas, antes de importar."
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Fixing onboarding drop-off at Northwind Labs"
@@ -8165,6 +8190,11 @@ msgstr "Mantener el acceso cuando no estés usando la aplicación."
 msgid "Keep account"
 msgstr "mantener cuenta"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Keep application"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Keep connection"
 msgstr "Mantener conexión"
@@ -8372,6 +8402,7 @@ msgstr "Horizontal"
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Language"
 msgstr "Idioma"
 
@@ -8593,6 +8624,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "cuerpo de la letra"
 
+#: src/routes/builder/letter/-components/letter-page.tsx
+msgid "Letter content"
+msgstr ""
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Letter details"
 msgstr "Detalles de la carta"
@@ -8771,8 +8806,8 @@ msgid "Linked to the resume again"
 msgstr "Vinculado al currículum nuevamente."
 
 #: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Linked. Name, email, phone and city update when the resume does."
-msgstr "Vinculado. Nombre, correo electrónico, teléfono y ciudad se actualizan cuando lo hace el currículum."
+msgid "Linked. The header (name, contact details, links and photo) updates when the resume does."
+msgstr ""
 
 #. Authentication provider display name in account settings
 #. Brand name label for LinkedIn social sign-in button
@@ -10017,6 +10052,10 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "no reply"
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "Sin respuesta"
@@ -10182,6 +10221,10 @@ msgstr "No conectado"
 msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
 msgstr "Aún no está conectado. Añade sus registros DNS donde gestionas el dominio y luego compruébalo."
 
+#: src/features/applications/components/insights-view.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "No es para mí"
@@ -10256,6 +10299,10 @@ msgstr "no puntuado"
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Not scored"
 msgstr "Sin puntuar"
+
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "not selected"
+msgstr ""
 
 #: src/features/applications/stages.ts
 msgid "Not selected"
@@ -10343,6 +10390,10 @@ msgstr "Nada coincide con “{0}”"
 #: src/features/documents/documents-page.tsx
 msgid "Nothing matches these filters"
 msgstr "Nada coincide con estos filtros"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Nothing recorded as sent."
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Nothing scheduled yet"
@@ -10665,12 +10716,20 @@ msgstr ""
 msgid "Open Interview prep"
 msgstr ""
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Open letter"
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "Abrir Preferencias"
 
 #: src/features/career/offers.tsx
 msgid "Open questions"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Open resume"
 msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
@@ -10689,9 +10748,17 @@ msgstr "Abrir historia"
 msgid "Open the exported file and confirm you can select and copy every part of it."
 msgstr "Abra el archivo exportado y confirme que puede seleccionar y copiar todas sus partes."
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Open the letter version sent"
+msgstr ""
+
 #: src/routes/auth/native-callback.tsx
 msgid "Open the Reactive Resume app"
 msgstr "Abra la aplicación Reactive Resume"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Open the resume version sent"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Open the schedule"
@@ -10861,6 +10928,7 @@ msgstr "de 100"
 msgid "Out of date: the text has changed since."
 msgstr "Desactualizado: el texto ha cambiado desde entonces."
 
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
 msgstr "Resultado"
@@ -11276,6 +11344,10 @@ msgstr "Texto sin formato (.txt)"
 #: src/features/resume/share/download-tab.tsx
 msgid "Plain text with headings. Paste into application forms and notes."
 msgstr "Texto plano con títulos. Péguelo en formularios de solicitud de empleo y notas."
+
+#: src/routes/builder/letter/-components/download-sheet.tsx
+msgid "Plain text. Paste into application forms and emails."
+msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Plan again"
@@ -12992,6 +13064,7 @@ msgid "Right now"
 msgstr "Ahora mismo"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/list-view.tsx
@@ -13008,10 +13081,6 @@ msgstr "Puesto (opcional)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Role {0}"
 msgstr "Rol {0}"
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Role / title"
-msgstr "Puesto / título"
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -13041,8 +13110,16 @@ msgstr "Espacioso"
 
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
-msgid "Row {row}, {0}: “{value}” is invalid."
-msgstr "Fila {row}, {0}: “{value}” no es válido."
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Row {row}: “{value}” isn't a stage. Use Saved, Applied, Screening, Interview, Offer or Closed."
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Row {row}: couldn't read the date “{value}”. Use a date like 2026-10-15."
+msgstr ""
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Row order"
@@ -13080,6 +13157,7 @@ msgstr "S"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Salary"
@@ -13088,10 +13166,6 @@ msgstr "Salario"
 #: src/features/career/today.tsx
 msgid "Salary not detected"
 msgstr ""
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Salary range"
-msgstr "Rango salarial"
 
 #: src/features/homepage/prepare.tsx
 msgid "Sam"
@@ -13530,8 +13604,8 @@ msgid "Search or run a command…"
 msgstr "Buscar o ejecutar un comando…"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Search role, company or contact"
-msgstr "Buscar rol, empresa o contacto"
+msgid "Search role, company, contact or tag"
+msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Search saved answers"
@@ -15774,8 +15848,8 @@ msgid "These edits use a job posting, so they go to a copy of this resume made f
 msgstr ""
 
 #: src/features/applications/components/list-view.tsx
-msgid "They and their timelines are deleted permanently. This can't be undone."
-msgstr "Ellos y sus líneas de tiempo se eliminan permanentemente. Esto no se puede deshacer."
+msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
@@ -16196,7 +16270,7 @@ msgstr "Condensando"
 msgid "Time"
 msgstr "Hora"
 
-#. placeholder {0}: draft.timezone
+#. placeholder {0}: timeZoneName(draft.timezone)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Time · {0}"
 msgstr "Hora · {0}"
@@ -16251,6 +16325,7 @@ msgstr "Para seleccionarlo, pulsa Espacio o Intro. Usa las flechas para moverlo,
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
@@ -17822,6 +17897,10 @@ msgstr "Ayer {time}"
 msgid "You"
 msgstr "Tú"
 
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "you accepted an offer"
+msgstr ""
+
 #. placeholder {0}: result.takenBy
 #: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
@@ -17833,8 +17912,8 @@ msgstr "Tu respondiste: {answer}"
 
 #. placeholder {0}: data[0]?.company
 #: src/features/applications/components/prior-no-response-notice.tsx
-msgid "You applied to {0} before and didn't hear back."
-msgstr "Ya presentaste una candidatura en {0} y no recibiste respuesta."
+msgid "You applied to {0} before."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
@@ -17883,6 +17962,14 @@ msgstr "Lo envías desde tu propio correo."
 #: src/features/settings/account/security.tsx
 msgid "You sign in without one"
 msgstr "Te registras sin uno"
+
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "you took another offer"
+msgstr ""
+
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "you withdrew"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "You'll always see it in Today. Email depends on your server's mail setup."

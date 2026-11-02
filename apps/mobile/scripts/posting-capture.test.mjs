@@ -279,7 +279,7 @@ assert.ok(
 	"clipping warning visible before More details",
 );
 control(tree, "Company").onChangeText("Fictional Co");
-control(view(), "Role / title").onChangeText("Engineer");
+control(view(), "Role").onChangeText("Engineer");
 control(nodes(view()).find((node) => node.type === "EditorSheet").props.footer, "Save job").onPress();
 await settle();
 assert.equal(saved.jobDescription.length, 20_000);

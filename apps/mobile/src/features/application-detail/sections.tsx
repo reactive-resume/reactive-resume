@@ -481,7 +481,15 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 					onChange={(id) => void linkLetter(id)}
 				/>
 			)}
-			{application.status !== "closed" && (!resumeId || !coverLetterId) ? (
+			{/* A closed or offer-stage application has an outcome, not a preparation task: nothing more will be sent. */}
+			{(application.status === "closed" || application.status === "offer") &&
+			!resumeId &&
+			!coverLetterId &&
+			!application.resumeFileUrl &&
+			!application.coverLetterUrl ? (
+				<Text color="ink3">{t`Nothing recorded as sent.`}</Text>
+			) : null}
+			{application.status !== "closed" && application.status !== "offer" && (!resumeId || !coverLetterId) ? (
 				<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 					{!resumeId ? (
 						<Button

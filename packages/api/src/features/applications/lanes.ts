@@ -186,8 +186,13 @@ export const applicationLaneService = {
 				throw new ORPCError("BAD_REQUEST", { message: "A pipeline supports at most 40 active lanes." });
 			if (input.category !== "closed" && input.closedReason != null)
 				throw new ORPCError("BAD_REQUEST", { message: "Only Closed lanes can preset an outcome." });
+			// A new stage goes after the last one that counts as the same category, so an Interview stage shows with the
+			// interviews, not after Closed. Without one, it goes last.
+			const ordered = active.toSorted((a, b) => a.position - b.position);
+			const after = ordered.findLastIndex((lane) => lane.category === input.category);
+			const id = generateId();
 			await tx.insert(schema.applicationLane).values({
-				id: generateId(),
+				id,
 				userId,
 				label: input.label,
 				category: input.category,
@@ -195,6 +200,17 @@ export const applicationLaneService = {
 				closedReason: input.closedReason ?? null,
 				position: Math.max(...active.map((lane) => lane.position)) + 1,
 			});
+			if (after === -1 || after === ordered.length - 1) return;
+			const ids = [
+				...ordered.slice(0, after + 1).map((lane) => lane.id),
+				id,
+				...ordered.slice(after + 1).map((l) => l.id),
+			];
+			for (const [position, laneId] of ids.entries())
+				await tx
+					.update(schema.applicationLane)
+					.set({ position })
+					.where(and(eq(schema.applicationLane.id, laneId), eq(schema.applicationLane.userId, userId)));
 		}),
 	update: (
 		userId: string,

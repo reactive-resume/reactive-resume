@@ -16,8 +16,8 @@ msgstr ""
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
 #: src/features/application-detail/detail-screen.tsx
-msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
-msgstr "\"{0} · {1}\" और इसकी टाइमलाइन स्थायी रूप से हटा दी गई है। इसे पूर्ववत नहीं किया जा सकता."
+msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #. placeholder {0}: isolate(open.label)
 #: src/features/check/job-match.tsx
@@ -365,6 +365,11 @@ msgstr ""
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {# दिन में कोई उत्तर नहीं} other {# दिनों में कोई उत्तर नहीं}}"
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {No word since your interview # day ago} other {No word since your interview # days ago}}"
+msgstr ""
+
 #. placeholder {0}: firstSpill.lines
 #: src/preview/page.tsx
 msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
@@ -671,6 +676,10 @@ msgstr "{days, plural, =0 {· आज से} one {· # दिन के लि�
 #: src/features/applications/list-screen.tsx
 msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 msgstr "{days, plural, one {{company}: # दिन से कोई उत्तर नहीं। अब एक छोटा फ़ॉलो-अप आमतौर पर ठीक रहता है।} other {{company}: # दिनों से कोई उत्तर नहीं। अब एक छोटा फ़ॉलो-अप आमतौर पर ठीक रहता है।}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no word since your interview # day ago. A short follow-up is usually fine now.} other {{company}: no word since your interview # days ago. A short follow-up is usually fine now.}}"
+msgstr ""
 
 #: src/features/ai/provider-model.tsx
 msgid "{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice."
@@ -1031,10 +1040,6 @@ msgstr "एक अंकीय तारीख अलग-अलग देशो�
 #: src/features/ats-checker/messages.ts
 msgid "A page is rotated."
 msgstr "एक पेज घुमाया हुआ है।"
-
-#: src/features/applications/prior-no-response.tsx
-msgid "A previous application to this company was closed with No response. You can still apply."
-msgstr "इस कंपनी में पिछला आवेदन कोई जवाब नहीं परिणाम के साथ बंद किया गया था। आप फिर भी आवेदन कर सकते हैं।"
 
 #: src/features/application-detail/sheets.tsx
 msgid "A reminder to check in, shown as the next step until you do."
@@ -1976,10 +1981,6 @@ msgstr "आवेदन दृश्य"
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "आवेदन"
-
-#: src/features/applications/list-screen.tsx
-msgid "Applications and their attachments will be deleted permanently. This can't be undone."
-msgstr "आवेदन और उनके अटैचमेंट हमेशा के लिए हट जाएँगे। इसे पूर्ववत नहीं किया जा सकता।"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2968,6 +2969,10 @@ msgstr "सहायक को बंद करें"
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
 msgstr "बंद करना…"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "closed"
+msgstr ""
 
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
@@ -6257,6 +6262,10 @@ msgstr "एक ही पता रखें, ताकि सॉफ़्टव
 msgid "Keep access when you are not using the application."
 msgstr "जब आप एप्लिकेशन का उपयोग नहीं कर रहे हों तो पहुंच बनाए रखें।"
 
+#: src/features/application-detail/detail-screen.tsx
+msgid "Keep application"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
 msgstr "दोनों रखें"
@@ -6745,8 +6754,8 @@ msgid "Linked to the resume again"
 msgstr "पुनः बायोडाटा से लिंक किया गया"
 
 #: src/features/letters/write.tsx
-msgid "Linked. Name, email, phone and city update when the resume does."
-msgstr "जुड़ा हुआ. बायोडाटा आने पर नाम, ईमेल, फोन और शहर अपडेट करें।"
+msgid "Linked. The header (name, contact details, links and photo) updates when the resume does."
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Links"
@@ -7845,6 +7854,10 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
+#: src/features/applications/prior-no-response.tsx
+msgid "no reply"
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "कोई जबाव नहीं"
@@ -7979,6 +7992,10 @@ msgstr "जब तक रेज़्यूमे के लिए पासव�
 msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
 msgstr "अभी जुड़ा नहीं है। इसके DNS रिकॉर्ड वहाँ जोड़ें जहाँ आप डोमेन प्रबंधित करते हैं, फिर जाँचें।"
 
+#: src/features/applications-board/insights-screen.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "मेरे लिए नहीं"
@@ -8033,6 +8050,10 @@ msgstr "सहेजा नहीं गया — यह तथ्य पहल
 #: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
+msgstr ""
+
+#: src/features/applications/prior-no-response.tsx
+msgid "not selected"
 msgstr ""
 
 #: src/features/applications/stages.ts
@@ -8093,6 +8114,10 @@ msgstr "कुछ भी किसी भूमिका को जारी न
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "इस दिन कुछ भी नहीं."
+
+#: src/features/application-detail/sections.tsx
+msgid "Nothing recorded as sent."
+msgstr ""
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -8862,10 +8887,13 @@ msgstr "पाइपलाइन प्रवाह"
 msgid "Plain text (.txt)"
 msgstr "सादा टेक्स्ट (.txt)"
 
-#: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Plain text with headings. Paste into application forms and notes."
 msgstr "शीर्षकों के साथ सादा पाठ. नौकरी के आवेदन पत्र और नोट्स में चिपकाएँ।"
+
+#: src/features/letters/share.tsx
+msgid "Plain text. Paste into application forms and emails."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Plan again"
@@ -10311,6 +10339,7 @@ msgstr "सही"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10325,10 +10354,6 @@ msgstr "भूमिका (वैकल्पिक)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "भूमिका {0}"
-
-#: src/features/applications/add-sheet.tsx
-msgid "Role / title"
-msgstr "भूमिका / शीर्षक"
 
 #: src/features/applications-board/views.tsx
 msgid "Role, company or contact"
@@ -10390,16 +10415,13 @@ msgid "Rust"
 msgstr "जंग"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 msgid "Salary"
 msgstr "वेतन"
 
 #: src/features/career/today.tsx
 msgid "Salary not detected"
 msgstr ""
-
-#: src/features/applications/add-sheet.tsx
-msgid "Salary range"
-msgstr "वेतन सीमा"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Same length"
@@ -12518,6 +12540,10 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "ये ऐप के अंदर ब्राउज़र टैब में आपके सर्वर की खाता सेटिंग खोलते हैं। आपको वहां साइन इन करने की आवश्यकता हो सकती है."
 
+#: src/features/applications/list-screen.tsx
+msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "वे अनुभव, शिक्षा और कौशल जैसे शीर्षकों की तलाश करते हैं।"
@@ -12940,6 +12966,7 @@ msgstr "अनुस्मारक प्राप्त करने के �
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/letters/write.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
@@ -14164,6 +14191,10 @@ msgstr ""
 msgid "You"
 msgstr "आप"
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you accepted an offer"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "You already use this for “{takenBy}”."
 msgstr "आप पहले से ही इसका उपयोग “{takenBy}” के लिए कर रहे हैं।"
@@ -14171,6 +14202,10 @@ msgstr "आप पहले से ही इसका उपयोग “{taken
 #: src/features/assistant/messages.tsx
 msgid "You answered: {answer}"
 msgstr "आपने उत्तर दिया: {answer}"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "You applied to this company before. You can still apply."
+msgstr ""
 
 #: src/shell/builder-chrome.tsx
 msgid "You can keep editing. Changes sync when you're back online. PDF sharing works with cached fonts and images."
@@ -14201,9 +14236,17 @@ msgstr "आपके पास सहेजे नहीं गए परिव�
 msgid "You send it from your own email."
 msgstr "आप इसे अपने ईमेल से भेजते हैं।"
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you took another offer"
+msgstr ""
+
 #: src/features/settings/sign-out.tsx
 msgid "You will be signed out of {server}. Any edits not yet synced from this device will be lost."
 msgstr "आपको {server} से साइन आउट कर दिया जाएगा. इस उपकरण से अभी तक समन्वयित नहीं किया गया कोई भी संपादन खो जाएगा।"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "you withdrew"
+msgstr ""
 
 #: src/features/ai/web-access.tsx
 msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."

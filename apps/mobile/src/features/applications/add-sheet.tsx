@@ -571,7 +571,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 								editable={!busy}
 							/>
 							<TextField
-								label={t`Role / title`}
+								label={t`Role`}
 								value={role}
 								onChangeText={(value) => {
 									authored.current.add("role");
@@ -632,7 +632,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 										editable={!busy}
 									/>
 									<TextField
-										label={t`Salary range`}
+										label={t`Salary`}
 										value={salary}
 										onChangeText={(value) => {
 											authored.current.add("salary");

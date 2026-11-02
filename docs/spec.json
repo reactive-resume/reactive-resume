@@ -18249,6 +18249,7 @@
 			"get": {
 				"operationId": "getPriorNoResponseApplications",
 				"summary": "Find prior no-response applications at a company",
+				"description": "Up to the ten most recent earlier applications at the same company that ended without a response. With `anyOutcome`, up to the ten most recent earlier closed applications, with their outcome (`closedReason`). Requires authentication.",
 				"tags": [
 					"Applications"
 				],
@@ -18271,6 +18272,16 @@
 						"required": false,
 						"schema": {
 							"type": "string"
+						},
+						"allowEmptyValue": true,
+						"allowReserved": true
+					},
+					{
+						"name": "anyOutcome",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						},
 						"allowEmptyValue": true,
 						"allowReserved": true
@@ -18299,6 +18310,23 @@
 												"type": "string",
 												"format": "date-time",
 												"x-native-type": "date"
+											},
+											"closedReason": {
+												"anyOf": [
+													{
+														"enum": [
+															"accepted",
+															"not-selected",
+															"withdrew",
+															"accepted-other",
+															"no-response"
+														],
+														"type": "string"
+													},
+													{
+														"type": "null"
+													}
+												]
 											}
 										},
 										"required": [

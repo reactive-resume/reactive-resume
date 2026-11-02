@@ -165,8 +165,10 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 
 	const onDelete = async () => {
 		const confirmed = await confirm(t`Delete this application?`, {
-			description: t`“${application.role} · ${application.company}” and its timeline are deleted permanently. This can't be undone.`,
+			description: t`“${application.role} · ${application.company}” and its timeline are deleted permanently. Linked resumes and letters are kept.`,
 			confirmText: t`Delete application`,
+			cancelText: t`Keep application`,
+			variant: "danger",
 		});
 		if (!confirmed) return;
 		remove.mutate({ id: application.id }, { onSuccess: onDeleted });

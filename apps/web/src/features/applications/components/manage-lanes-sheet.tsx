@@ -96,7 +96,7 @@ export function ManageLanesSheet({ open, onOpenChange }: ManageLanesSheetProps) 
 					</SheetDescription>
 				</SheetHeader>
 
-				<div className="-mt-1 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4 pt-1 pb-4">
+				<div className="-mt-1 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-6 pt-1 pb-4">
 					{unsupported ? (
 						<p className="rounded-lg bg-sunken p-3 text-sm text-ink-2">
 							<Trans>This server doesn't support custom stages yet. Your applications use the standard ones.</Trans>
@@ -450,7 +450,8 @@ function RetireLaneDialog({ lane, lanes, disabled, onCancel, onRetire }: RetireL
 	const options = lanes.filter(
 		(item) => item.id !== lane.id && item.category === lane.category && item.closedReason === lane.closedReason,
 	);
-	const [replacementId, setReplacementId] = useState("");
+	// With one stage to move to, it's chosen already.
+	const [replacementId, setReplacementId] = useState(options.length === 1 ? (options[0]?.id ?? "") : "");
 
 	return (
 		<Dialog open onOpenChange={(next) => !next && onCancel()}>

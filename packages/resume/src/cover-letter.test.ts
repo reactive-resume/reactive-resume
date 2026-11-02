@@ -129,7 +129,12 @@ describe("independent cover letters", () => {
 		});
 		expect(
 			composeCoverLetter({ ...letter, recipientName: "", recipientCompany: "", letterDate: null }, words),
-		).toMatchObject({ recipient: "<p>Hiring team</p>", content: expect.stringMatching(/^<p>Dear hiring team,<\/p>/) });
+		).toMatchObject({ recipient: "", content: expect.stringMatching(/^<p>Dear hiring team,<\/p>/) });
+		// "Hiring team" stands in only above a company.
+		expect(
+			composeCoverLetter({ ...letter, recipientName: "", recipientCompany: "Lumen", letterDate: null }, words)
+				.recipient,
+		).toBe("<p>Hiring team<br />Lumen</p>");
 		expect(composeCoverLetter({ ...letter, layout: "freeform" }, words)).toEqual({
 			recipient: "<p>Unused</p>",
 			content: "<p>Body</p>",

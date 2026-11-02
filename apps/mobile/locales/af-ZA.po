@@ -16,8 +16,8 @@ msgstr ""
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
 #: src/features/application-detail/detail-screen.tsx
-msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
-msgstr "\"{0} · {1}\" en sy tydlyn word permanent uitgevee. Dit kan nie ongedaan gemaak word nie."
+msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #. placeholder {0}: isolate(open.label)
 #: src/features/check/job-match.tsx
@@ -365,6 +365,11 @@ msgstr ""
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {Geen antwoord in # dag nie} other {Geen antwoord in # dae nie}}"
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {No word since your interview # day ago} other {No word since your interview # days ago}}"
+msgstr ""
+
 #. placeholder {0}: firstSpill.lines
 #: src/preview/page.tsx
 msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
@@ -671,6 +676,10 @@ msgstr "{days, plural, =0 {· sedert vandag} one {· vir # dag} other {· vir # 
 #: src/features/applications/list-screen.tsx
 msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 msgstr "{days, plural, one {{company}: geen antwoord vir # dag nie. ’n Kort opvolg is gewoonlik nou goed.} other {{company}: geen antwoord vir # dae nie. ’n Kort opvolg is gewoonlik nou goed.}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no word since your interview # day ago. A short follow-up is usually fine now.} other {{company}: no word since your interview # days ago. A short follow-up is usually fine now.}}"
+msgstr ""
 
 #: src/features/ai/provider-model.tsx
 msgid "{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice."
@@ -1031,10 +1040,6 @@ msgstr "'n Numeriese datum word verskillend gelees in verskillende lande."
 #: src/features/ats-checker/messages.ts
 msgid "A page is rotated."
 msgstr "'n Bladsy is gedraai."
-
-#: src/features/applications/prior-no-response.tsx
-msgid "A previous application to this company was closed with No response. You can still apply."
-msgstr "'n Vorige aansoek by hierdie maatskappy is met Geen reaksie nie gesluit. Jy kan steeds aansoek doen."
 
 #: src/features/application-detail/sheets.tsx
 msgid "A reminder to check in, shown as the next step until you do."
@@ -1976,10 +1981,6 @@ msgstr "Aansoekaansigte"
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "Aansoeke"
-
-#: src/features/applications/list-screen.tsx
-msgid "Applications and their attachments will be deleted permanently. This can't be undone."
-msgstr "Aansoeke en hul aanhangsels sal permanent uitgevee word. Dit kan nie ongedaan gemaak word nie."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2968,6 +2969,10 @@ msgstr "Maak die assistent toe"
 #: src/features/applications/list-screen.tsx
 msgid "Close…"
 msgstr "Maak toe …"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "closed"
+msgstr ""
 
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
@@ -6257,6 +6262,10 @@ msgstr "Hou by een adres, sodat sagteware nie hoef te raai watter een om te gebr
 msgid "Keep access when you are not using the application."
 msgstr "Behou toegang wanneer jy nie die toepassing gebruik nie."
 
+#: src/features/application-detail/detail-screen.tsx
+msgid "Keep application"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
 msgstr "Hou albei"
@@ -6745,8 +6754,8 @@ msgid "Linked to the resume again"
 msgstr "Weer gekoppel aan die CV"
 
 #: src/features/letters/write.tsx
-msgid "Linked. Name, email, phone and city update when the resume does."
-msgstr "Gekoppel. Naam, e-pos, telefoon en stad werk op wanneer die CV dit doen."
+msgid "Linked. The header (name, contact details, links and photo) updates when the resume does."
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Links"
@@ -7845,6 +7854,10 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
+#: src/features/applications/prior-no-response.tsx
+msgid "no reply"
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "Geen reaksie nie"
@@ -7979,6 +7992,10 @@ msgstr "Nie beskikbaar terwyl die CV 'n wagwoord benodig nie."
 msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
 msgstr "Nog nie gekoppel nie. Voeg sy DNS-rekords by waar jy die domein bestuur, en kontroleer dan."
 
+#: src/features/applications-board/insights-screen.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "Nie vir my nie"
@@ -8033,6 +8050,10 @@ msgstr "Nie bewaar nie — hierdie feit is voorheen vergeet."
 #: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
+msgstr ""
+
+#: src/features/applications/prior-no-response.tsx
+msgid "not selected"
 msgstr ""
 
 #: src/features/applications/stages.ts
@@ -8093,6 +8114,10 @@ msgstr "Niks dui 'n rol as voortgaande aan nie."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "Niks op hierdie dag nie."
+
+#: src/features/application-detail/sections.tsx
+msgid "Nothing recorded as sent."
+msgstr ""
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -8862,10 +8887,13 @@ msgstr "Pyplynvloei"
 msgid "Plain text (.txt)"
 msgstr "Gewone teks (.txt)"
 
-#: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Plain text with headings. Paste into application forms and notes."
 msgstr "Gewone teks met opskrifte. Plak in werksaansoekvorms en notas."
+
+#: src/features/letters/share.tsx
+msgid "Plain text. Paste into application forms and emails."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Plan again"
@@ -10311,6 +10339,7 @@ msgstr "Reg"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10325,10 +10354,6 @@ msgstr "Rol (opsioneel)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Rol {0}"
-
-#: src/features/applications/add-sheet.tsx
-msgid "Role / title"
-msgstr "Rol / titel"
 
 #: src/features/applications-board/views.tsx
 msgid "Role, company or contact"
@@ -10390,16 +10415,13 @@ msgid "Rust"
 msgstr "Roesbruin"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 msgid "Salary"
 msgstr "Salaris"
 
 #: src/features/career/today.tsx
 msgid "Salary not detected"
 msgstr ""
-
-#: src/features/applications/add-sheet.tsx
-msgid "Salary range"
-msgstr "Salarisreeks"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Same length"
@@ -12518,6 +12540,10 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "Dit maak jou bediener se rekeninginstellings oop in 'n blaaieroortjie binne die toepassing. Jy moet dalk daar aanmeld."
 
+#: src/features/applications/list-screen.tsx
+msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Hulle soek opskrifte soos Ervaring, Onderwys en Vaardighede."
@@ -12940,6 +12966,7 @@ msgstr "Laat kennisgewings in jou toestelinstellings toe om 'n herinnering te kr
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/letters/write.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
@@ -14164,6 +14191,10 @@ msgstr ""
 msgid "You"
 msgstr "Jy"
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you accepted an offer"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "You already use this for “{takenBy}”."
 msgstr "Jy gebruik dit reeds vir “{takenBy}”."
@@ -14171,6 +14202,10 @@ msgstr "Jy gebruik dit reeds vir “{takenBy}”."
 #: src/features/assistant/messages.tsx
 msgid "You answered: {answer}"
 msgstr "Jy het geantwoord: {answer}"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "You applied to this company before. You can still apply."
+msgstr ""
 
 #: src/shell/builder-chrome.tsx
 msgid "You can keep editing. Changes sync when you're back online. PDF sharing works with cached fonts and images."
@@ -14201,9 +14236,17 @@ msgstr "Jy het ongestoorde veranderinge."
 msgid "You send it from your own email."
 msgstr "Jy stuur dit van jou eie e-pos af."
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you took another offer"
+msgstr ""
+
 #: src/features/settings/sign-out.tsx
 msgid "You will be signed out of {server}. Any edits not yet synced from this device will be lost."
 msgstr "Jy sal by {server} afgemeld word. Enige wysigings wat nog nie vanaf hierdie toestel gesinkroniseer is nie, sal verlore gaan."
+
+#: src/features/applications/prior-no-response.tsx
+msgid "you withdrew"
+msgstr ""
 
 #: src/features/ai/web-access.tsx
 msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."

@@ -21,6 +21,7 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
+import { NativeSelect } from "@reactive-resume/ui/components/native-select";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Textarea } from "@reactive-resume/ui/components/textarea";
 import { toast } from "@reactive-resume/ui/components/toast";
@@ -780,7 +781,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			<PriorNoResponseNotice company={company} />
 
 			<div className="grid gap-1.5">
-				<span id={`${id}-stage`} className="text-sm font-medium">
+				{/* The group's name, styled as the other field labels. */}
+				<span id={`${id}-stage`} className="text-xs leading-4 font-medium text-ink-2">
 					<Trans>Stage</Trans>
 				</span>
 				<SegmentedControl
@@ -857,19 +859,14 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 				<Label htmlFor={`${id}-resume`}>
 					{stage === "saved" ? <Trans>Resume (optional)</Trans> : <Trans>Resume submitted (optional)</Trans>}
 				</Label>
-				<select
-					id={`${id}-resume`}
-					value={resumeId}
-					onChange={(event) => setResumeId(event.target.value)}
-					className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
-				>
+				<NativeSelect id={`${id}-resume`} value={resumeId} onChange={(event) => setResumeId(event.target.value)}>
 					<option value="">{t`No resume selected`}</option>
 					{resumes.map((document) => (
 						<option key={document.id} value={document.id}>
 							{document.name}
 						</option>
 					))}
-				</select>
+				</NativeSelect>
 			</div>
 			<div className="grid gap-1.5">
 				<Label htmlFor={`${id}-letter`}>
@@ -879,11 +876,10 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						<Trans>Cover letter submitted (optional)</Trans>
 					)}
 				</Label>
-				<select
+				<NativeSelect
 					id={`${id}-letter`}
 					value={coverLetterId}
 					onChange={(event) => setCoverLetterId(event.target.value)}
-					className="h-9 rounded-md border border-control-border bg-surface px-2 text-sm"
 				>
 					<option value="">{t`No cover letter selected`}</option>
 					{documents
@@ -893,7 +889,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 								{document.name}
 							</option>
 						))}
-				</select>
+				</NativeSelect>
 			</div>
 			<DialogFooter>
 				<Button

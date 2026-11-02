@@ -22,8 +22,8 @@ msgstr ""
 #. placeholder {1}: application.company
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
-msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
-msgstr "\"{0} · {1}\" و جدول زمانی آن برای همیشه حذف می شوند. این قابل واگرد نیست."
+msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #. placeholder {0}: term.label
 #: src/features/resume/editor/check/job-match.tsx
@@ -354,6 +354,11 @@ msgstr "{0, plural, one {وارد کردن # درخواست} other {وارد ک�
 msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
 msgstr "{0, plural, one {# درخواست وارد شد.} other {# درخواست وارد شد.}}"
 
+#. placeholder {0}: ids.length
+#: src/features/applications/components/list-view.tsx
+msgid "{0, plural, one {Keep application} other {Keep applications}}"
+msgstr ""
+
 #. placeholder {0}: knowledge.active.length
 #: src/features/career/coach.tsx
 msgid "{0, plural, one {Knowledge · # fact} other {Knowledge · # facts}}"
@@ -368,6 +373,11 @@ msgstr ""
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {بدون پاسخ در روز #} other {بدون پاسخ در روز #}}"
+
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {No word since your interview # day ago} other {No word since your interview # days ago}}"
+msgstr ""
 
 #. placeholder {0}: passages.length
 #: src/features/resume/editor/check/writing-tab.tsx
@@ -476,6 +486,13 @@ msgstr "{0} در {1} برابر با {2} در منطقهٔ زمانی شما ({p
 #: src/features/career/workspace/shell.tsx
 msgid "{0} interview"
 msgstr "مصاحبه {0}"
+
+#. placeholder {0}: interviewKindOf(upcoming.kind)?.label ?? ""
+#. placeholder {1}: application.role
+#. placeholder {2}: application.company
+#: src/features/career/workspace/shell.tsx
+msgid "{0} interview · {1}, {2}"
+msgstr ""
 
 #. placeholder {0}: i18n.number(row.minutes)
 #. placeholder {0}: row.minutes
@@ -721,6 +738,10 @@ msgstr "{count} انتخاب شد"
 #: src/routes/dashboard/applications/index.tsx
 msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 msgstr "{days, plural, one {{company}: # روز بدون پاسخ. معمولاً اکنون یک پیگیری کوتاه مناسب است.} other {{company}: # روز بدون پاسخ. معمولاً اکنون یک پیگیری کوتاه مناسب است.}}"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "{days, plural, one {{company}: no word since your interview # day ago. A short follow-up is usually fine now.} other {{company}: no word since your interview # days ago. A short follow-up is usually fine now.}}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "{days, plural, one {# office day a week} other {# office days a week}}"
@@ -3750,6 +3771,10 @@ msgstr "دستیار را ببندید"
 #: src/features/applications/components/list-view.tsx
 msgid "Close…"
 msgstr "بستن…"
+
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "closed"
+msgstr ""
 
 #: src/features/applications/components/detail/close-dialog.tsx
 #: src/features/applications/next-step.ts
@@ -6840,7 +6865,7 @@ msgstr "اینها را در ویرایشگر برطرف کنید"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Fix these values in the CSV, or leave their columns out, before importing."
-msgstr "پیش از وارد کردن، این مقادیر را در CSV اصلاح کنید یا ستون‌هایشان را کنار بگذارید."
+msgstr ""
 
 #: src/features/homepage/remember.tsx
 msgid "Fixing onboarding drop-off at Northwind Labs"
@@ -8165,6 +8190,11 @@ msgstr "هنگامی که از برنامه استفاده نمی‌کنید، �
 msgid "Keep account"
 msgstr "حساب نگه دارید"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Keep application"
+msgstr ""
+
 #: src/features/settings/ai/web-access.tsx
 msgid "Keep connection"
 msgstr "حفظ اتصال"
@@ -8372,6 +8402,7 @@ msgstr "افقی"
 #: src/features/user/dropdown-menu.tsx
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 #: src/routes/builder/letter/-components/design-panel.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 msgid "Language"
 msgstr "زبان"
 
@@ -8593,6 +8624,10 @@ msgstr ""
 msgid "Letter body"
 msgstr "بدن نامه"
 
+#: src/routes/builder/letter/-components/letter-page.tsx
+msgid "Letter content"
+msgstr ""
+
 #: src/routes/builder/letter/-components/letter-shell.tsx
 msgid "Letter details"
 msgstr "جزئیات نامه"
@@ -8771,8 +8806,8 @@ msgid "Linked to the resume again"
 msgstr "دوباره به رزومه لینک شد"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
-msgid "Linked. Name, email, phone and city update when the resume does."
-msgstr "پیوند داده شده است. نام، ایمیل، تلفن و شهر به‌روزرسانی زمانی که رزومه انجام می‌شود."
+msgid "Linked. The header (name, contact details, links and photo) updates when the resume does."
+msgstr ""
 
 #. Authentication provider display name in account settings
 #. Brand name label for LinkedIn social sign-in button
@@ -10017,6 +10052,10 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "no reply"
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "بدون پاسخ"
@@ -10182,6 +10221,10 @@ msgstr "متصل نیست"
 msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
 msgstr "هنوز متصل نشده است. رکوردهای DNS آن را جایی که دامنه را مدیریت می‌کنید اضافه کنید، سپس بررسی کنید."
 
+#: src/features/applications/components/insights-view.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "مناسب من نیست"
@@ -10256,6 +10299,10 @@ msgstr "گل نخورده"
 #: src/features/ats-checker/report/report-view.tsx
 msgid "Not scored"
 msgstr "امتیازدهی نشده"
+
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "not selected"
+msgstr ""
 
 #: src/features/applications/stages.ts
 msgid "Not selected"
@@ -10343,6 +10390,10 @@ msgstr "هیچ چیزی مطابق با \"{0}\" نیست"
 #: src/features/documents/documents-page.tsx
 msgid "Nothing matches these filters"
 msgstr "هیچ چیز با این فیلترها مطابقت ندارد"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Nothing recorded as sent."
+msgstr ""
 
 #: src/features/applications/components/calendar-view.tsx
 msgid "Nothing scheduled yet"
@@ -10665,12 +10716,20 @@ msgstr ""
 msgid "Open Interview prep"
 msgstr ""
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Open letter"
+msgstr ""
+
 #: src/features/career/coach-chat.tsx
 msgid "Open preferences"
 msgstr "باز کردن ترجیحات"
 
 #: src/features/career/offers.tsx
 msgid "Open questions"
+msgstr ""
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Open resume"
 msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
@@ -10689,9 +10748,17 @@ msgstr "باز کردن داستان"
 msgid "Open the exported file and confirm you can select and copy every part of it."
 msgstr "فایل خروجی را باز کنید و مطمئن شوید می‌توانید هر بخش آن را انتخاب و کپی کنید."
 
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Open the letter version sent"
+msgstr ""
+
 #: src/routes/auth/native-callback.tsx
 msgid "Open the Reactive Resume app"
 msgstr "برنامه Reactive Resume را باز کنید"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Open the resume version sent"
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Open the schedule"
@@ -10861,6 +10928,7 @@ msgstr "از ۱۰۰"
 msgid "Out of date: the text has changed since."
 msgstr "تاریخ گذشته: متن تغییر کرده است."
 
+#: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Outcome"
 msgstr "نتیجه"
@@ -11276,6 +11344,10 @@ msgstr "متن ساده (.txt)"
 #: src/features/resume/share/download-tab.tsx
 msgid "Plain text with headings. Paste into application forms and notes."
 msgstr "متن ساده با عنوان در فرم ها و یادداشت های درخواست کار بچسبانید."
+
+#: src/routes/builder/letter/-components/download-sheet.tsx
+msgid "Plain text. Paste into application forms and emails."
+msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Plan again"
@@ -12992,6 +13064,7 @@ msgid "Right now"
 msgstr "همین حالا"
 
 #: src/features/applications/components/add-application-dialog.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/applications/components/interview-dialog.tsx
 #: src/features/applications/components/list-view.tsx
@@ -13008,10 +13081,6 @@ msgstr "نقش (اختیاری)"
 #: src/features/resume/editor/write/entries.tsx
 msgid "Role {0}"
 msgstr "نقش {0}"
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Role / title"
-msgstr "نقش / عنوان"
 
 #. placeholder {0}: index + 1
 #: src/features/applications/components/interview-dialog.tsx
@@ -13041,8 +13110,16 @@ msgstr "جادار"
 
 #. placeholder {0}: fieldLabel(field)
 #: src/features/applications/components/import-applications-sheet.tsx
-msgid "Row {row}, {0}: “{value}” is invalid."
-msgstr "ردیف {row}، {0}: «{value}» نامعتبر است."
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Row {row}: “{value}” isn't a stage. Use Saved, Applied, Screening, Interview, Offer or Closed."
+msgstr ""
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Row {row}: couldn't read the date “{value}”. Use a date like 2026-10-15."
+msgstr ""
 
 #: src/features/resume/editor/design/entries-group.tsx
 msgid "Row order"
@@ -13080,6 +13157,7 @@ msgstr "S"
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Salary"
@@ -13088,10 +13166,6 @@ msgstr "حقوق"
 #: src/features/career/today.tsx
 msgid "Salary not detected"
 msgstr ""
-
-#: src/features/applications/components/application-form-sheet.tsx
-msgid "Salary range"
-msgstr "بازهٔ حقوق"
 
 #: src/features/homepage/prepare.tsx
 msgid "Sam"
@@ -13530,8 +13604,8 @@ msgid "Search or run a command…"
 msgstr "جستجو یا اجرای فرمان…"
 
 #: src/routes/dashboard/applications/index.tsx
-msgid "Search role, company or contact"
-msgstr "نقش، شرکت یا مخاطب را جستجو کنید"
+msgid "Search role, company, contact or tag"
+msgstr ""
 
 #: src/features/career/workspace/answer-library.tsx
 msgid "Search saved answers"
@@ -15774,8 +15848,8 @@ msgid "These edits use a job posting, so they go to a copy of this resume made f
 msgstr ""
 
 #: src/features/applications/components/list-view.tsx
-msgid "They and their timelines are deleted permanently. This can't be undone."
-msgstr "آنها و جدول زمانی آنها برای همیشه حذف می شوند. این قابل واگرد نیست."
+msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
@@ -16196,7 +16270,7 @@ msgstr "در حال فشرده‌سازی"
 msgid "Time"
 msgstr "ساعت"
 
-#. placeholder {0}: draft.timezone
+#. placeholder {0}: timeZoneName(draft.timezone)
 #: src/features/applications/components/interview-dialog.tsx
 msgid "Time · {0}"
 msgstr "زمان · {0}"
@@ -16251,6 +16325,7 @@ msgstr "برای برداشتن، کلید فاصله یا Enter را فشار �
 #: src/features/applications/components/calendar-view.tsx
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/resume/share/share-panel.tsx
+#: src/routes/builder/letter/-components/write-panel.tsx
 #: src/routes/dashboard/career/index.tsx
 #: src/routes/dashboard/career/route.tsx
 msgid "Today"
@@ -17822,6 +17897,10 @@ msgstr "دیروز {time}"
 msgid "You"
 msgstr "شما"
 
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "you accepted an offer"
+msgstr ""
+
 #. placeholder {0}: result.takenBy
 #: src/features/resume/share/address-field.tsx
 msgid "You already use this for “{0}”."
@@ -17833,8 +17912,8 @@ msgstr "شما پاسخ دادید: {answer}"
 
 #. placeholder {0}: data[0]?.company
 #: src/features/applications/components/prior-no-response-notice.tsx
-msgid "You applied to {0} before and didn't hear back."
-msgstr "قبلاً برای {0} درخواست شغلی فرستاده‌اید و پاسخی نگرفته‌اید."
+msgid "You applied to {0} before."
+msgstr ""
 
 #: src/features/auth/pages/consent.tsx
 msgid "You can disconnect it anytime in Settings → AI & developer."
@@ -17883,6 +17962,14 @@ msgstr "آن را از ایمیل خودتان می‌فرستید."
 #: src/features/settings/account/security.tsx
 msgid "You sign in without one"
 msgstr "شما بدون یکی وارد سیستم می شوید"
+
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "you took another offer"
+msgstr ""
+
+#: src/features/applications/components/prior-no-response-notice.tsx
+msgid "you withdrew"
+msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
 msgid "You'll always see it in Today. Email depends on your server's mail setup."

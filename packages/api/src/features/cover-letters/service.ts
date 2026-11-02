@@ -725,6 +725,8 @@ export const coverLetterService = {
 			name: input.name ?? (await suggestDuplicateName({ ...input, type: "letter" })),
 			// A copy is a new document, not a second owner of the original's application.
 			sourceApplicationId: null,
+			// A letter reused weeks later is dated the day it's made, not the original's day (a cleared date stays cleared).
+			letterDate: letter.letterDate === null ? null : today(),
 		});
 		return resolveLinks(copy, input.userId);
 	},

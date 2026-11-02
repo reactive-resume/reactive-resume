@@ -134,7 +134,7 @@ function LetterDownload({ letter, offline }: { letter: LetterDocument; offline: 
 			id: "md",
 			label: t`Markdown`,
 			extension: ".md",
-			description: t`Plain text with headings. Paste into application forms and notes.`,
+			description: t`Plain text. Paste into application forms and emails.`,
 		},
 		{
 			id: "json",
