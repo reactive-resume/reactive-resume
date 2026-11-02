@@ -1,4 +1,5 @@
 import type { ElementInfo, LayoutInfo } from "@formepdf/core";
+import type { ResumeData } from "@reactive-resume/schema/resume/data";
 
 /**
  * Maps rendered PDF regions back to resume data, so the editor can outline the block a field
@@ -35,9 +36,44 @@ export type PageMapNode = PageMapTarget & {
 };
 
 export type PageMap = {
-	pages: { width: number; height: number }[];
+	pages: { width: number; height: number; contentBounds?: { top: number; bottom: number } }[];
 	nodes: PageMapNode[];
 };
+
+/** Physical spill pages grouped by their authored page, using the semantic keys carried through rendering. */
+export function measureOverflow(data: ResumeData, rendered: { pageCount: number; pageMap: PageMap | undefined }) {
+	const authored = Math.max(1, data.metadata.layout.pages.length);
+	if (rendered.pageCount <= authored) return null;
+	const groups = new Map<number, Map<number, { top: number; bottom: number }>>();
+	for (const node of rendered.pageMap?.nodes ?? []) {
+		const authoredPage = Number(node.key.match(/^page-(\d+)\//)?.[1]);
+		if (!Number.isInteger(authoredPage) || authoredPage < 1 || authoredPage > authored) continue;
+		let pages = groups.get(authoredPage);
+		if (!pages) groups.set(authoredPage, (pages = new Map()));
+		const extent = pages.get(node.page);
+		const content = rendered.pageMap?.pages[node.page]?.contentBounds;
+		pages.set(node.page, {
+			top: content?.top ?? Math.min(extent?.top ?? node.y, node.y),
+			bottom: content?.bottom ?? Math.max(extent?.bottom ?? 0, node.y + node.height),
+		});
+	}
+	const lineHeight = data.metadata.typography.body.fontSize * data.metadata.typography.body.lineHeight;
+	const spills = [...groups]
+		.sort(([a], [b]) => a - b)
+		.flatMap(([authoredPage, pages]) => {
+			const ordered = [...pages].sort(([a], [b]) => a - b).slice(1);
+			if (ordered.length === 0) return [];
+			const height = ordered.reduce((sum, [, extent]) => sum + extent.bottom - extent.top, 0);
+			return [
+				{
+					authoredPage,
+					pages: ordered.map(([page]) => page + 1),
+					lines: height > 0 && lineHeight > 0 ? Math.max(1, Math.round(height / lineHeight)) : null,
+				},
+			];
+		});
+	return { authored, pageCount: rendered.pageCount, spills };
+}
 
 const decode = (value: string) => {
 	try {
@@ -100,15 +136,31 @@ export const extractPageMap = (layout: LayoutInfo): PageMap => {
 	const nodes: PageMapNode[] = [];
 	// Only blocks something is tagged with; the paths between them aren't blocks.
 	const tagged = new Set<string>();
+	const contentBounds: ({ top: number; bottom: number } | undefined)[] = [];
 
 	const pages = layout.pages.map((page) => {
 		const own = new Map<string, Box>();
 		const contents = new Map<string, Box>();
-		const visit = (element: ElementInfo) => {
+		let textBounds: { top: number; bottom: number } | undefined;
+		const visit = (element: ElementInfo, parentFile?: string) => {
 			const file = element.sourceLocation?.file;
+			const textFile = file ?? parentFile;
 			const box = { x: element.x, y: element.y, width: element.width, height: element.height };
 			// Forme leaves a box it failed to place at ±Number.MAX_VALUE.
 			const finite = Object.values(box).every((value) => Math.abs(value) < 1e6);
+			if (
+				finite &&
+				element.kind === "Text" &&
+				(textFile?.startsWith(NODE_SOURCE_PREFIX) || textFile?.startsWith(NODE_CONTENT_PREFIX))
+			) {
+				const top = Math.max(page.contentY, box.y);
+				const bottom = Math.min(page.contentY + page.contentHeight, box.y + box.height);
+				if (bottom > top)
+					textBounds = {
+						top: Math.min(textBounds?.top ?? top, top),
+						bottom: Math.max(textBounds?.bottom ?? bottom, bottom),
+					};
+			}
 			if (finite && file?.startsWith(NODE_SOURCE_PREFIX)) {
 				const key = file.slice(NODE_SOURCE_PREFIX.length);
 				if (!own.has(key)) own.set(key, box);
@@ -123,9 +175,10 @@ export const extractPageMap = (layout: LayoutInfo): PageMap => {
 					key = key.slice(0, Math.max(0, key.lastIndexOf("/")));
 				}
 			}
-			for (const child of element.children) visit(child);
+			for (const child of element.children) visit(child, textFile);
 		};
 		for (const element of page.elements) visit(element);
+		contentBounds.push(textBounds);
 		return { own, contents };
 	});
 
@@ -136,5 +189,12 @@ export const extractPageMap = (layout: LayoutInfo): PageMap => {
 		}
 	});
 
-	return { pages: layout.pages.map((page) => ({ width: page.width, height: page.height })), nodes };
+	return {
+		pages: layout.pages.map((page, index) => ({
+			width: page.width,
+			height: page.height,
+			...(contentBounds[index] ? { contentBounds: contentBounds[index] } : {}),
+		})),
+		nodes,
+	};
 };

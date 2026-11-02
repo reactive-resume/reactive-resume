@@ -56,6 +56,7 @@ type Context = {
 	rowParent: boolean;
 	keepNestedRowsWhole: boolean;
 	breakBeforeNodes: ReadonlySet<string>;
+	presenceAheadNodes: ReadonlyMap<string, number>;
 	/** The parent's padding: Forme places absolute boxes inside it, react-pdf over it. */
 	parentPadding: Edges;
 	/** The opaque colour behind the element being converted (see `flattenAlpha`). */
@@ -460,7 +461,17 @@ function barAsBorder(spread: { style: FormeStyle; children: ReactNode[] }): {
 }
 
 function convertChildren(children: HostNode[], context: Context): ReactNode[] {
-	return children.map((child, index) => convertNode(child, context, index));
+	let ahead = 0;
+	return children.map((child, index) => {
+		let element = convertNode(child, context, index);
+		if (ahead && element) {
+			element = createElement(FormeView, { key: index, style: { marginTop: -ahead } }, element);
+			ahead = 0;
+		}
+		const key = "props" in child ? child.props[RESUME_NODE_PROP] : undefined;
+		if (typeof key === "string") ahead = context.presenceAheadNodes.get(key) ?? ahead;
+		return element;
+	});
 }
 
 function convertNode(node: HostNode, parentContext: Context, key: number): ReactNode {
@@ -523,7 +534,7 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 			)
 				viewStyle.wrap = false;
 			const bordered = insetBorder(viewStyle, children);
-			const element = createElement(
+			let element = createElement(
 				FormeView,
 				{
 					key,
@@ -532,6 +543,12 @@ function convertNode(node: HostNode, parentContext: Context, key: number): React
 				...bordered.children,
 			);
 			tagNode(element, props, context);
+			const ahead = typeof nodeKey === "string" ? context.presenceAheadNodes.get(nodeKey) : undefined;
+			if (ahead) {
+				// Transparent reserved space participates in pagination, then the following content occupies it.
+				element = createElement(FormeView, { key, style: { wrap: false, paddingBottom: ahead } }, element);
+				tagNode(element, props, context);
+			}
 			if (props.fixed !== true)
 				return strutMinWidth(shrinkToFit(placePercentOffset(element, style, context), context), context);
 			// A repeated view nested in a column stays with the column: its fragments already paint on each page.
@@ -967,6 +984,8 @@ export type ConvertOptions = {
 	splitListItems?: ReadonlySet<number>;
 	/** Unplaced sections or items that need an explicit page break on a render retry. */
 	breakBeforeNodes?: ReadonlySet<string>;
+	/** Keep an entry header with its measured first body fragment, without keeping its whole entry together. */
+	presenceAheadNodes?: ReadonlyMap<string, number>;
 	/** Measured heights of free-form pages, by page index; an unmeasured one is `FREE_FORM_MEASURE_HEIGHT` tall. */
 	freeFormHeights?: readonly (number | undefined)[] | undefined;
 };
@@ -979,6 +998,7 @@ export function toFormeDocument(
 		breakBeforeListItems = new Set(),
 		splitListItems = new Set(),
 		breakBeforeNodes = new Set(),
+		presenceAheadNodes = new Map(),
 		freeFormHeights = [],
 	}: ConvertOptions = {},
 ): ConvertedDocument {
@@ -995,6 +1015,7 @@ export function toFormeDocument(
 		rowParent: false,
 		keepNestedRowsWhole,
 		breakBeforeNodes,
+		presenceAheadNodes,
 		images,
 		backdrop: WHITE,
 		pageMargin: undefined,

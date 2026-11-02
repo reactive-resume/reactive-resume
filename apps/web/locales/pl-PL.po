@@ -379,9 +379,9 @@ msgstr ""
 msgid "{0, plural, one {Started # minute ago} other {Started # minutes ago}}"
 msgstr "{0, plural, one {Rozpoczęto # minutę temu} few {Rozpoczęto # minuty temu} many {Rozpoczęto # minut temu} other {Rozpoczęto # minuty temu}}"
 
-#. placeholder {0}: overflow.lines
+#. placeholder {0}: overflow.pageCount
 #: src/features/assistant/conversation.tsx
-msgid "{0, plural, one {Still runs onto page {next} by about # line.} other {Still runs onto page {next} by about # lines.}}"
+msgid "{0, plural, one {Still runs to # page.} other {Still runs to # pages.}}"
 msgstr ""
 
 #. placeholder {0}: documents.length
@@ -794,8 +794,12 @@ msgid "{length}m"
 msgstr "{length} min"
 
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "{lines, plural, one {Runs onto page {next} by about # line} other {Runs onto page {next} by about # lines}}"
-msgstr "{lines, plural, one {Biegnie na stronę {next} przez mniej więcej linię #} other {Biegnie na stronę {next} przez około #}}"
+msgid "{lines, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
+msgstr ""
+
+#: src/features/assistant/conversation.tsx
+msgid "{lines, plural, one {Page {page} still runs over by about # line.} other {Page {page} still runs over by about # lines.}}"
+msgstr ""
 
 #: src/features/career/offers.tsx
 msgid "{minimum} minimum"
@@ -869,6 +873,10 @@ msgstr "{open, plural, one {# rzecz do recenzji.} other {# rzeczy do przejrzenia
 #: src/routes/builder/$resumeId/-components/document-details.tsx
 msgid "{pageCount, plural, one {# page} other {# pages}}"
 msgstr "{pageCount, plural, one {Strona #} other {Strony #}}"
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "{pageCount, plural, one {Runs to # page} other {Runs to # pages}}"
+msgstr ""
 
 #: src/features/resume/editor/design/fit.ts
 msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
@@ -12374,10 +12382,6 @@ msgstr "Prowadzenie badań z klientami"
 msgid "Running · {0}"
 msgstr ""
 
-#: src/routes/builder/$resumeId/-components/page-canvas.tsx
-msgid "Runs onto page {next}"
-msgstr "Działa na stronie {next}"
-
 #: src/libs/locale.ts
 msgid "Russian"
 msgstr "Rosyjski"
@@ -13900,10 +13904,6 @@ msgid "Step {0} of {1}"
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
-msgid "Still runs onto page {next}."
-msgstr ""
-
-#: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
 #: src/routes/builder/letter/-components/write-panel.tsx
@@ -15225,16 +15225,15 @@ msgid "Tighten to one page"
 msgstr "Dokręć do jednej strony"
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It already fits on one page, so only cut what's weak."
-msgstr ""
-
-#. placeholder {0}: overflow.lines
-#: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It runs onto page {next} by about {0} lines."
+msgid "Tighten to one page. It currently runs to {count} pages."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
-msgid "Tighten to one page. It runs onto page {next}."
+msgid "Tighten to one page. It fits within the planned pages, so only cut what's weak."
+msgstr ""
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Tighten to one page. Page {page} runs over by about {lines} lines."
 msgstr ""
 
 #: src/features/career/shared.tsx

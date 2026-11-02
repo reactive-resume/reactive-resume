@@ -561,3 +561,32 @@ test("resume: a lock after an edit from elsewhere is refused, and that edit stil
 	await o.refresh();
 	assert.equal(s().data.basics.headline, "Edited elsewhere");
 });
+
+test("resume: another account's draft doesn't wait on a Share write still in flight (RX-161)", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	let release;
+	const pending = new Promise((resolve) => {
+		release = resolve;
+	});
+	const writing = o.writeMetadata(async (baseline) => {
+		await pending;
+		return { ...baseline, isPublic: true, updatedAt: new Date(baseline.updatedAt.getTime() + 1) };
+	});
+	o.suspend();
+	scope = "https://review.invalid:bob";
+	let opened = false;
+	const opening = s()
+		.open("resume")
+		.then(() => {
+			opened = true;
+		});
+	for (let i = 0; i < 20 && !opened; i++) await new Promise((resolve) => setImmediate(resolve));
+	assert.equal(opened, true, "The new account's draft opens without waiting for the old write");
+	release();
+	await writing;
+	await opening;
+	assert.equal(s().document.isPublic, false, "The old account's answer doesn't land in the new draft");
+});
