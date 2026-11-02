@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useId } from "react";
 import { cn } from "@reactive-resume/utils/style";
 
 type SettingsSectionProps = {
@@ -13,11 +14,17 @@ type SettingsSectionProps = {
 
 /** A settings group: a title and its rows, divided from the group above by a rule. No card around it. */
 export function SettingsSection({ title, description, action, children, className }: SettingsSectionProps) {
+	const titleId = useId();
 	return (
-		<section className={cn("grid gap-3 border-t border-line pt-6 first:border-t-0 first:pt-0", className)}>
+		<section
+			aria-labelledby={titleId}
+			className={cn("grid gap-3 border-t border-line pt-6 first:border-t-0 first:pt-0", className)}
+		>
 			<div className="flex items-center justify-between gap-3">
 				<div className="grid gap-0.5">
-					<h2 className="text-[17px] font-semibold">{title}</h2>
+					<h2 id={titleId} className="text-[17px] font-semibold">
+						{title}
+					</h2>
 					{description && <p className="text-sm text-ink-3">{description}</p>}
 				</div>
 				{action}

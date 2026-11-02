@@ -18,6 +18,7 @@ import { isImeComposing } from "@/libs/keyboard";
 type AskOptions = {
 	description?: string;
 	confirmText?: string;
+	variant?: "primary" | "danger";
 	cancelText?: string;
 	/** Prompts only: the text the field starts with. */
 	defaultValue?: string;
@@ -119,7 +120,7 @@ export function ConfirmDialogProvider({ children }: { children: React.ReactNode 
 								{state.confirmText}
 							</HoldButton>
 						) : (
-							<AlertDialogAction onClick={() => answer(state.withInput ? value : "")}>
+							<AlertDialogAction variant={state.variant} onClick={() => answer(state.withInput ? value : "")}>
 								{state.confirmText ?? t`Confirm`}
 							</AlertDialogAction>
 						)}
