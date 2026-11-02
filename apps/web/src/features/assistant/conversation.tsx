@@ -85,6 +85,8 @@ type ConversationProps = {
 	onSwitchModel: () => void;
 	/** The conversation's connection was switched off or removed: nothing is sent until the user picks another. */
 	notice?: ReactNode;
+	/** Above the box without stopping sends: why edits wait (a locked document). */
+	banner?: ReactNode;
 };
 
 /** One conversation: the thread (role="log"), change sets and questions in it, and the composer. */
@@ -422,7 +424,7 @@ export function Conversation(props: ConversationProps) {
 				disabled={readOnly || !!props.notice}
 				hasHistory={messages.length > 0}
 				threadId={threadId}
-				notice={props.notice}
+				notice={props.notice ?? props.banner}
 				onSend={send}
 				onStop={stopReply}
 			/>

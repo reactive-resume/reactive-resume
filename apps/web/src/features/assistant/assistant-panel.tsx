@@ -27,6 +27,7 @@ import { ConnectionNotice } from "./connection-notice";
 import { Composer, Conversation } from "./conversation";
 import { ProviderSetup, SetUpAi } from "./provider-setup";
 import { useResumeStore } from "@/features/resume/builder/draft";
+import { useUnlockResume } from "@/features/resume/builder/use-unlock-resume";
 import { useEditorStore } from "@/features/resume/editor/store";
 import { formatVersionTime } from "@/features/resume/share/format";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -289,7 +290,7 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 				/>
 			) : (
 				<>
-					<EmptyState document={document} disabled={document.locked || starting} onPick={(text) => void start(text)} />
+					<EmptyState document={document} disabled={starting} onPick={(text) => void start(text)} />
 					<Composer
 						// A draft arriving while the box is open replaces what's in it.
 						key={`${draftKey}:${draft ?? ""}`}
@@ -299,7 +300,8 @@ export function AssistantPanel({ document, onClose }: AssistantPanelProps) {
 						onContextChange={setContext}
 						providerLabel={providerLabel}
 						streaming={starting}
-						disabled={document.locked}
+						disabled={false}
+						notice={document.locked ? <LockedNotice document={document} /> : undefined}
 						threadId={null}
 						ensureThread={ensureThread}
 						onSend={(text, attachments) => void start(text, attachments)}
@@ -353,9 +355,11 @@ function ConversationLoader({ threadId, document, destinationUnavailable, ...pro
 			initialMessages={thread.data.messages}
 			activeRun={Boolean(thread.data.thread.activeRunId)}
 			document={document}
-			readOnly={thread.data.isReadOnly || document.locked || destinationUnavailable}
+			readOnly={thread.data.isReadOnly || destinationUnavailable}
 			localEditsLocked={document.locked || !thread.data.document}
 			{...props}
+			// A locked document still takes questions; the banner says why edits wait, with Unlock.
+			banner={document.locked ? <LockedNotice document={document} /> : undefined}
 		/>
 	);
 }
@@ -410,7 +414,8 @@ function Notice({ children }: { children: ReactNode }) {
 }
 
 /** `prompt` is what's sent when it differs from the label (the measured overflow goes with Tighten). */
-type Suggestion = { icon: IconName; label: string; hint: string; prompt?: string };
+/** `edits: false` for tasks that answer or draft rather than edit, which a locked document still takes. */
+type Suggestion = { icon: IconName; label: string; hint: string; prompt?: string; edits?: false };
 
 /** The page's overflow as last drawn; undefined before the page has been drawn. */
 type Overflow = ReturnType<typeof measureOverflow> | undefined;
@@ -443,12 +448,23 @@ function suggestionsFor(document: AssistantDocument, prepare: boolean, overflow?
 	// Prepare for next step: the application's fit, a follow-up and the interview (what the copilot did).
 	if (prepare && document.posting)
 		return [
-			{ icon: "briefcase", label: t`How well do I fit this role?`, hint: t`Compares your resume with the posting` },
-			{ icon: "envelope-simple", label: t`Draft a follow-up email`, hint: t`Short and polite, for the recruiter` },
+			{
+				icon: "briefcase",
+				label: t`How well do I fit this role?`,
+				hint: t`Compares your resume with the posting`,
+				edits: false,
+			},
+			{
+				icon: "envelope-simple",
+				label: t`Draft a follow-up email`,
+				hint: t`Short and polite, for the recruiter`,
+				edits: false,
+			},
 			{
 				icon: "chat-text",
 				label: t`Prepare me for the interview`,
 				hint: t`Likely questions, from the posting and your resume`,
+				edits: false,
 			},
 			...tailor,
 		];
@@ -463,7 +479,7 @@ function suggestionsFor(document: AssistantDocument, prepare: boolean, overflow?
 
 	return [
 		...tailor,
-		{ icon: "scissors", label: t`Find weak bullets`, hint: t`Checks every bullet for action and result` },
+		{ icon: "scissors", label: t`Find weak bullets`, hint: t`Checks every bullet for action and result`, edits: false },
 		{
 			icon: "arrows-in-line-vertical",
 			label: t`Tighten to one page`,
@@ -475,6 +491,28 @@ function suggestionsFor(document: AssistantDocument, prepare: boolean, overflow?
 }
 
 type EmptyStateProps = { document: AssistantDocument; disabled: boolean; onPick: (text: string) => void };
+
+/** Above the composer on a locked document: questions still work, edits wait for Unlock. */
+function LockedNotice({ document }: { document: AssistantDocument }) {
+	return (
+		<p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg bg-info-soft px-3 py-2 text-xs text-info-text">
+			<Icon name="lock" size={16} className="shrink-0" />
+			<span className="flex-1">
+				<Trans>Locked. I can answer questions; unlock to get edits.</Trans>
+			</span>
+			{document.kind === "resume" && <UnlockButton />}
+		</p>
+	);
+}
+
+function UnlockButton() {
+	const { unlock, isPending } = useUnlockResume();
+	return (
+		<Button size="sm" variant="secondary" loading={isPending} onClick={unlock} aria-label={t`Unlock editing`}>
+			<Trans>Unlock</Trans>
+		</Button>
+	);
+}
 
 function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 	const kind = document.kind === "letter" ? t`letter` : t`resume`;
@@ -491,7 +529,13 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 					<Trans>What should we work on?</Trans>
 				</h3>
 				<p className="text-sm text-ink-2">
-					{document.posting ? (
+					{prepare && document.posting ? (
+						// These tasks answer and draft; none of them edits the document.
+						<Trans>
+							I can see this {kind} and the {document.posting.company} posting. Ask how you fit, or get a follow-up
+							email or interview prep.
+						</Trans>
+					) : document.posting ? (
 						<Trans>
 							I can see this {kind} and the {document.posting.company} posting. Suggestions come back as edits you can
 							review before accepting.
@@ -500,18 +544,14 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 						<Trans>I can see this {kind}. Suggestions come back as edits you can review before accepting.</Trans>
 					)}
 				</p>
-				{document.locked && (
-					<p className="text-xs text-warn-text">
-						<Trans>This document is locked. Unlock it to get suggestions.</Trans>
-					</p>
-				)}
 			</div>
 			<ul className="grid gap-1">
 				{suggestionsFor(document, prepare, overflow).map((suggestion, index) => (
 					<li key={suggestion.label} style={stagger(index)} className={ENTER_CLASS}>
 						<button
 							type="button"
-							disabled={disabled}
+							// On a locked document, only the tasks that answer rather than edit can start.
+							disabled={disabled || (document.locked && suggestion.edits !== false)}
 							onClick={() => onPick(suggestion.prompt ?? suggestion.label)}
 							className="flex min-h-11 w-full items-center gap-3 rounded-lg border border-line px-3 py-2 text-start transition-[background-color,scale] duration-quick ease-enter hover:bg-hover enabled:active:scale-[0.98] disabled:opacity-60"
 						>

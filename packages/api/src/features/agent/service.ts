@@ -886,6 +886,8 @@ function createAgent(input: {
 	threadId: string;
 	/** Null when the message leaves the document out. */
 	document: (AssistantDocument & { name: string }) | null;
+	/** The document is locked: the assistant answers and drafts, but proposes no edits until it's unlocked. */
+	locked: boolean;
 	posting: AgentPosting | null;
 	/** The open resume is the copy made for the posting's application, so tailoring can edit it. */
 	jobCopy: boolean;
@@ -943,6 +945,7 @@ function createAgent(input: {
 	}
 	const tools = buildAgentTools({
 		document: document?.kind ?? null,
+		canEdit: !input.locked,
 		// The career coach searches only when the user switched Web research on for this message.
 		externalSearch: input.search && (!input.career || input.career.web),
 		signal: input.signal,
@@ -986,6 +989,7 @@ function createAgent(input: {
 			),
 			proposeEdits: timedToolHandler("propose_edits", (edits: ProposeEditsInput | ProposeResumeEditsInput) => {
 				if (!document) throw new Error("The document isn't shared with this message.");
+				if (input.locked) throw new Error("The document is locked. Unlock it to get edits.");
 				return proposeEdits({
 					userId: input.userId,
 					threadId: input.threadId,
@@ -1049,6 +1053,7 @@ function createAgent(input: {
 		? buildCareerInstructions(input.career)
 		: buildAgentInstructions({
 				document: document ? { kind: document.kind, name: document.name } : null,
+				locked: input.locked,
 				posting: input.posting ? { ...input.posting, jobCopy: input.jobCopy } : null,
 				knowledge: input.knowledge,
 				searchTool: "search_web" in tools ? "search_web" : null,
@@ -1259,7 +1264,8 @@ export const agentService = {
 				}),
 				attachments: attachments.map(toAttachment),
 				document,
-				isReadOnly: !thread.aiProviderId || (thread.scope === "document" ? !document || document.locked : false),
+				// A locked document still takes questions; only its edits wait until it's unlocked.
+				isReadOnly: !thread.aiProviderId || (thread.scope === "document" ? !document : false),
 				history: { cutoffAt: withheld.cutoffAt, withheld: ids(withheld.rows) },
 				// Replies that ended early (stopped, timed out, failed or cut off by a restart), as their rows record it.
 				interrupted: ids(rows.filter((row) => row.role === "assistant" && row.status === "canceled")),
@@ -1403,11 +1409,8 @@ export const agentService = {
 			)
 				throw new ORPCError("BAD_REQUEST", { message: "Attach files by uploading them." });
 
+			// A locked document still takes questions and drafts: the run gets no edit tool (see createAgent).
 			const loaded = document ? await loadDocument(input.userId, document) : null;
-			if (loaded?.locked)
-				throw new ORPCError("BAD_REQUEST", {
-					message: "Unlock the document to change it.",
-				});
 			const posting =
 				input.context?.posting === false || !document || !loaded
 					? null
@@ -1725,6 +1728,7 @@ export const agentService = {
 					threadId: input.threadId,
 					document:
 						input.context?.document === false || !document || !loaded ? null : { ...document, name: loaded.name },
+					locked: loaded?.locked === true,
 					...(careerContext && isCareer
 						? await (async () => {
 								const shareApplication = input.context?.application !== false;

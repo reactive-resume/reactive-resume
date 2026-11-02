@@ -17,6 +17,7 @@ import { client } from "@/api/client";
 import { getAccountScope, useSession } from "@/auth/session";
 import { useLetterStore, useResumeStore } from "@/draft";
 import { useHasAIProvider } from "@/features/ai/providers";
+import { useUnlockResume } from "@/features/write/unlock";
 import { routes } from "@/routes";
 import { Banner, Button, Icon, IconButton, Text, useTheme } from "@/ui";
 
@@ -224,7 +225,7 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 				privacy={(history) => disclosure(t, document, context, label, history.earlier > 0)}
 				placeholder={t`Ask, or describe a change…`}
 				assistantName={t`Assistant`}
-				disabled={document.locked || !provider}
+				disabled={!provider}
 				{...(handed && threadId === null ? { draft: handed } : {})}
 				notice={
 					stranded ? (
@@ -234,6 +235,9 @@ function DocumentAssistantScreen(props: DocumentAssistantScreenProps) {
 							onUse={(id) => void choose(id)}
 							onChoose={() => setModelOpen(true)}
 						/>
+					) : document.locked ? (
+						// A locked document still takes questions; edits wait for Unlock (web assistant-panel).
+						<LockedNotice document={document} />
 					) : null
 				}
 				prompt={ask}
@@ -423,7 +427,31 @@ function disclosure(
 const needsJobCopy = (document: AssistantDocument, context: MessageContext) =>
 	document.kind === "resume" && Boolean(context.posting && document.posting) && !document.jobCopy;
 
-type Suggestion = { icon: IconName; label: string; hint: string };
+/** `edits: false` for tasks that answer or draft rather than edit, which a locked document still takes. */
+type Suggestion = { icon: IconName; label: string; hint: string; edits?: false };
+
+/** Above the composer on a locked document: questions still work, edits wait for Unlock. */
+function LockedNotice({ document }: { document: AssistantDocument }) {
+	const { t } = useLingui();
+	return document.kind === "resume" ? (
+		<UnlockBanner resumeId={document.id} />
+	) : (
+		<Banner tone="info" icon="lock" message={t`Locked. I can answer questions; unlock to get edits.`} />
+	);
+}
+
+function UnlockBanner({ resumeId }: { resumeId: string }) {
+	const { t } = useLingui();
+	const unlock = useUnlockResume(resumeId);
+	return (
+		<Banner
+			tone="info"
+			icon="lock"
+			message={t`Locked. I can answer questions; unlock to get edits.`}
+			action={{ label: unlock.isPending ? t`Unlocking…` : t`Unlock`, onPress: () => unlock.mutate() }}
+		/>
+	);
+}
 
 type SuggestionsProps = { document: AssistantDocument; prepare: boolean; onPick: (text: string) => void };
 
@@ -438,18 +466,34 @@ function Suggestions({ document, prepare, onPick }: SuggestionsProps) {
 	let suggestions: Suggestion[] =
 		prepare && company
 			? [
-					{ icon: "briefcase", label: t`How well do I fit this role?`, hint: t`Compares your resume with the posting` },
-					{ icon: "envelope-simple", label: t`Draft a follow-up email`, hint: t`Short and polite, for the recruiter` },
+					{
+						icon: "briefcase",
+						label: t`How well do I fit this role?`,
+						hint: t`Compares your resume with the posting`,
+						edits: false,
+					},
+					{
+						icon: "envelope-simple",
+						label: t`Draft a follow-up email`,
+						hint: t`Short and polite, for the recruiter`,
+						edits: false,
+					},
 					{
 						icon: "chat-text",
 						label: t`Prepare me for the interview`,
 						hint: t`Likely questions, from the posting and your resume`,
+						edits: false,
 					},
 					...tailor,
 				]
 			: [
 					...tailor,
-					{ icon: "scissors", label: t`Find weak bullets`, hint: t`Checks every bullet for action and result` },
+					{
+						icon: "scissors",
+						label: t`Find weak bullets`,
+						hint: t`Checks every bullet for action and result`,
+						edits: false,
+					},
 					{
 						icon: "arrows-in-line-vertical",
 						label: t`Tighten to one page`,
@@ -481,6 +525,12 @@ function Suggestions({ document, prepare, onPick }: SuggestionsProps) {
 						) : (
 							<Trans>I can see this letter. Suggestions come back as edits you can review before accepting.</Trans>
 						)
+					) : company && prepare ? (
+						// These tasks answer and draft; none of them edits the resume (web assistant-panel).
+						<Trans>
+							I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview
+							prep.
+						</Trans>
 					) : company ? (
 						<Trans>
 							I can see this resume and the {company} posting. Suggestions come back as edits you can review before
@@ -490,11 +540,6 @@ function Suggestions({ document, prepare, onPick }: SuggestionsProps) {
 						<Trans>I can see this resume. Suggestions come back as edits you can review before accepting.</Trans>
 					)}
 				</Text>
-				{document.locked ? (
-					<Text variant="callout" color="warnText">
-						<Trans>This document is locked. Unlock it to get suggestions.</Trans>
-					</Text>
-				) : null}
 			</View>
 			<View style={{ gap: space.s2 }}>
 				{suggestions.map((suggestion) => (
@@ -502,7 +547,8 @@ function Suggestions({ document, prepare, onPick }: SuggestionsProps) {
 						key={suggestion.label}
 						accessibilityRole="button"
 						accessibilityHint={suggestion.hint}
-						disabled={document.locked}
+						// On a locked document, only the tasks that answer rather than edit can start.
+						disabled={document.locked && suggestion.edits !== false}
 						onPress={() => onPick(suggestion.label)}
 						style={({ pressed }) => ({
 							flexDirection: "row",
@@ -515,7 +561,7 @@ function Suggestions({ document, prepare, onPick }: SuggestionsProps) {
 							borderColor: colors.line,
 							borderRadius: radius.rLg,
 							backgroundColor: pressed ? colors.press : "transparent",
-							opacity: document.locked ? 0.45 : 1,
+							opacity: document.locked && suggestion.edits !== false ? 0.45 : 1,
 						})}
 					>
 						<Icon name={suggestion.icon} size={20} color={colors.ink2} />

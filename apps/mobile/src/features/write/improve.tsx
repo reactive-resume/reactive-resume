@@ -4,6 +4,7 @@ import { ORPCError } from "@orpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { View } from "react-native";
+import { isNetworkError } from "@reactive-resume/utils/http";
 import { orpc } from "@/api/client";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { Button, ListRow, Text, TextField, useTheme } from "@/ui";
@@ -29,8 +30,12 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const ai = useHasAIProvider();
-	const [asking, setAsking] = useState(false);
+	// "custom" asks what to change; "result" asks what the result was, since only the user knows it (web improve).
+	const [asking, setAsking] = useState<"custom" | "result" | null>(null);
 	const [request, setRequest] = useState("");
+	const [result, setResult] = useState("");
+	// The last request sent, so Try again and Try another send it again.
+	const [last, setLast] = useState<Action | null>(null);
 	const [changed, setChanged] = useState(false);
 	const [setup, setSetup] = useState(false);
 	const improve = useMutation(orpc.ai.improve.mutationOptions());
@@ -41,17 +46,22 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 		{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Make it shorter` },
 	];
 
-	const run = (action: Action) =>
+	const run = (action: Action) => {
+		setLast(action);
+		const words = action === "custom" ? request.trim() : action === "result" ? result.trim() : "";
 		improve.mutate({
 			action,
 			line: line.text,
 			where,
 			context: context.slice(0, 10_000),
-			...(action === "custom" ? { request: request.trim() } : {}),
+			...(words ? { request: words } : {}),
 		});
+	};
+	const pick = (action: Action) => (action === "result" ? setAsking("result") : run(action));
 
-	const error =
-		improve.error instanceof ORPCError && improve.error.message
+	const error = isNetworkError(improve.error)
+		? t`Couldn't reach Reactive Resume. Check your internet connection, then try again.`
+		: improve.error instanceof ORPCError && improve.error.message
 			? improve.error.message
 			: t`Couldn't get a suggestion. Nothing changed.`;
 
@@ -123,6 +133,9 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 							/>
 						) : null}
 						<Button size="sm" variant="secondary" label={t`Keep mine`} onPress={onClose} />
+						{last && !changed ? (
+							<Button size="sm" variant="ghost" label={t`Try another`} onPress={() => run(last)} />
+						) : null}
 					</View>
 				</View>
 			) : improve.isPending ? (
@@ -135,11 +148,33 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 						{error}
 					</Text>
 					<View style={{ flexDirection: "row", gap: space.s2 }}>
-						<Button size="sm" variant="secondary" label={t`Try again`} onPress={() => improve.reset()} />
+						{/* Sends the same request again (web improve). */}
+						<Button
+							size="sm"
+							variant="secondary"
+							label={t`Try again`}
+							onPress={() => (last ? run(last) : improve.reset())}
+						/>
 						<Button size="sm" variant="ghost" label={t`Cancel`} onPress={onClose} />
 					</View>
 				</View>
-			) : asking ? (
+			) : asking === "result" ? (
+				<View style={{ gap: space.s2 }}>
+					<TextField
+						label={t`What changed because of this? A number, a time saved, who used it.`}
+						value={result}
+						maxLength={500}
+						autoFocus
+						returnKeyType="send"
+						onChangeText={setResult}
+						onSubmitEditing={() => result.trim() && run("result")}
+					/>
+					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
+						<Button size="sm" label={t`Add`} disabled={!result.trim()} onPress={() => run("result")} />
+						<Button size="sm" variant="ghost" label={t`I don't have one yet`} onPress={() => run("result")} />
+					</View>
+				</View>
+			) : asking === "custom" ? (
 				<View style={{ gap: space.s2 }}>
 					<TextField
 						label={t`What should change?`}
@@ -163,10 +198,10 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 							key={option.action}
 							title={option.label}
 							leading={option.icon}
-							onPress={() => run(option.action)}
+							onPress={() => pick(option.action)}
 						/>
 					))}
-					<ListRow title={t`Ask for something else…`} leading="chat-text" onPress={() => setAsking(true)} />
+					<ListRow title={t`Ask for something else…`} leading="chat-text" onPress={() => setAsking("custom")} />
 					<ListRow title={t`Cancel`} leading="x" onPress={onClose} />
 				</View>
 			)}
