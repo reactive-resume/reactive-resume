@@ -22,6 +22,7 @@ import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers"
 import { WebAccessAttention } from "@/features/ai/web-access";
 import { WallClockField } from "@/features/application-detail/date-field";
 import { useUserTime } from "@/features/application-detail/hooks";
+import { defaultCopySource } from "@/features/documents/filter";
 import { routes } from "@/routes";
 import {
 	Banner,
@@ -61,7 +62,7 @@ const today = () => {
 /** Mounted until an explicit close/discard; unmounting cancels transient posting requests. */
 export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApplicationSheetProps) {
 	const router = useRouter();
-	const { t } = useLingui();
+	const { t, i18n } = useLingui();
 	const { timeZone } = useUserTime();
 	const { space } = useTheme();
 	const session = useSession();
@@ -95,7 +96,10 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 	const [priorToOpen, setPriorToOpen] = useState<string | null>(null);
 	const [initialDate] = useState(today);
 	const [stageDate, setStageDate] = useState(initialDate);
-	const [resumeId, setResumeId] = useState("");
+	// A saved job starts on the most recently edited base resume; a submitted one names what was sent, so it starts empty.
+	const [resumeChoice, setResumeId] = useState<string | null>(null);
+	const resumes = (documents.data ?? []).filter((doc) => doc.type === "resume");
+	const resumeId = resumeChoice ?? (stage === "saved" ? (defaultCopySource(resumes)?.id ?? "") : "");
 	const [letterId, setLetterId] = useState("");
 	const [tags, setTags] = useState<string[]>([]);
 	const [followUpDate, setFollowUpDate] = useState("");
@@ -262,7 +266,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 		description ||
 		laneId !== "" ||
 		stageDate !== initialDate ||
-		resumeId ||
+		resumeChoice ||
 		letterId ||
 		tags.length ||
 		followUpDate ||
@@ -396,6 +400,10 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 									onChangeText={changeInput}
 									editable={!busy}
 									maxLength={100_000}
+									// A longer paste is cut at the limit: say so (web add-application-dialog).
+									{...(input.length >= 100_000
+										? { helper: t`Only the first ${i18n.number(100_000)} characters are kept.` }
+										: {})}
 								/>
 							)}
 							{mode === "text" && !providers.hasAIProvider && (
@@ -511,7 +519,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 									message={
 										parsed.enrichmentWarning
 											? t`AI enrichment was unavailable. Review the page details or fill them manually.`
-											: t`Review the details before saving. Retrieved content does not establish that the posting is still open.`
+											: t`Review the details before saving. The employer may have changed or closed the posting since it was read.`
 									}
 								/>
 							)}
@@ -631,7 +639,7 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 										value={resumeId}
 										options={[
 											{ value: "", label: t`No resume selected` },
-											...docs.filter((doc) => doc.type === "resume").map((doc) => ({ value: doc.id, label: doc.name })),
+											...resumes.map((doc) => ({ value: doc.id, label: doc.name })),
 										]}
 										onChange={setResumeId}
 										disabled={!!busy}

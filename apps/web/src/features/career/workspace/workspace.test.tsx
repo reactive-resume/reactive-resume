@@ -36,6 +36,7 @@ vi.mock("@/libs/orpc/client", () => {
 		key: () => [name],
 		queryKey: () => [name],
 		queryOptions: () => ({ queryKey: [name], queryFn: async () => api.data[name], staleTime: Infinity }),
+		mutationKey: () => [name],
 		mutationOptions: () => ({ mutationFn: mutation }),
 	});
 	return {
@@ -70,7 +71,7 @@ vi.mock("@/libs/orpc/client", () => {
 				saveFact: endpoint("saveFact"),
 			},
 		},
-		client: { career: { voice: { speak: api.speak } } },
+		client: { career: { generate: api.generate, voice: { speak: api.speak } } },
 	};
 });
 vi.mock("@tanstack/react-router", () => ({

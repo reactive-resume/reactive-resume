@@ -6,6 +6,7 @@ import type { DisclosureItem } from "@reactive-resume/schema/career-disclosure";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
 import { disclosureItemsFromPresence } from "@reactive-resume/schema/career-disclosure";
@@ -30,8 +31,8 @@ export const workingSteps = (task: GenerateTask["task"] | "tighten") =>
 	})[task];
 
 /**
- * A 10–30 second wait reads as progress: the label moves through the work's steps every 2.2 seconds, then loops
- * through general phrases. Returns `idle` until `busy`.
+ * A 10–30 second wait reads as progress: the label moves through the work's steps every 2.2 seconds, then stays on
+ * "Still working". Returns `idle` until `busy`.
  */
 export function useWorking(busy: boolean, steps: string[], idle: string) {
 	const [state, setState] = useState({ busy, tick: 0 });
@@ -43,9 +44,32 @@ export function useWorking(busy: boolean, steps: string[], idle: string) {
 	}, [busy]);
 	const tick = state.tick;
 	if (!busy) return idle;
-	const general = [t`Thinking`, t`Cooking`, t`Connecting the dots`, t`Double-checking`, t`Polishing`];
-	const phrase = tick < steps.length ? steps[tick] : general[(tick - steps.length) % general.length];
-	return `${phrase ?? ""}…`;
+	return `${tick < steps.length ? (steps[tick] ?? "") : t`Still working`}…`;
+}
+
+type GenerateNoticeProps = {
+	generate: { isPending: boolean; failure: string | null; stop: () => void; reset: () => void };
+	onRetry: () => void;
+};
+
+/** Beside a workspace AI action: Stop while it runs; when it failed, the reason inline with Try again. */
+export function GenerateNotice({ generate, onRetry }: GenerateNoticeProps) {
+	const { t } = useLingui();
+	const router = useRouter();
+	if (generate.isPending)
+		return <Button variant="ghost" size="sm" icon="stop" label={t`Stop`} onPress={generate.stop} />;
+	if (!generate.failure) return null;
+	return (
+		<Banner
+			tone="danger"
+			message={generate.failure}
+			actions={[
+				{ label: t`Try again`, onPress: onRetry },
+				{ label: t`AI settings`, onPress: () => router.push("/settings/ai-providers") },
+			]}
+			onDismiss={generate.reset}
+		/>
+	);
 }
 
 type CheckRowProps = {

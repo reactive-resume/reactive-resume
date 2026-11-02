@@ -5,8 +5,9 @@ import { expect, test } from "../fixtures/test";
 
 const outlineOrder = async (page: Page) => {
 	await expect(page.locator("#sidebar-education")).toBeVisible();
+	// Outline rows only: the page preview's item overlays carry data-section-id too.
 	return page
-		.locator("[data-section-id]")
+		.locator('[id^="sidebar-"][data-section-id]')
 		.evaluateAll((rows) => rows.map((row) => row.getAttribute("data-section-id")));
 };
 
@@ -145,7 +146,7 @@ test("a short drag near the bottom of the outline moves a section a few places, 
 	await expect(page.getByRole("region", { name: "Resume page" })).toBeVisible();
 	const before = await outlineOrder(page);
 	const id = before[Math.floor(before.length / 2)] as string;
-	const row = page.locator(`[data-section-id="${id}"]`);
+	const row = page.locator(`#sidebar-${id}[data-section-id="${id}"]`);
 	const panel = page.locator('[data-slot="tabs-content"]').filter({ has: row });
 	const panelBox = await panel.boundingBox();
 	if (!panelBox) throw new Error("No panel");

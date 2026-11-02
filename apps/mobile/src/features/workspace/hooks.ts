@@ -14,7 +14,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
 import { EMPTY_WORKSPACE } from "@reactive-resume/schema/career";
 import { createAutosave, createDraftStore, nextDraftState, saveFailure } from "./state";
-import { orpc } from "@/api/client";
+import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
 import { getDraftScope } from "@/draft";
 import { useHasAIProvider } from "@/features/ai/providers";
@@ -177,24 +177,47 @@ export function latest<K extends SavedItem["data"]["kind"]>(
 	);
 }
 
+type GenerateInput = Parameters<typeof client.career.generate>[0];
+
+/** What a failed workspace task says: an unreadable answer names the provider and where to switch it. */
+function generateFailure(error: unknown, name: string | undefined) {
+	if (error instanceof ORPCError && error.code === "INTERNAL_SERVER_ERROR")
+		return name
+			? t`Couldn't read ${name}'s answer. Try again, or switch the default provider in AI settings.`
+			: t`Couldn't read the AI's answer. Try again, or switch the default provider in AI settings.`;
+	const who = name ?? t`Your AI connection`;
+	return workspaceError(error, t`${who} didn't respond. Nothing was changed; try again.`);
+}
+
 /**
- * Asks the coach for one structured piece of work for a tab. Errors say what didn't run; stored data stays usable.
+ * Asks the coach for one structured piece of work for a tab. A failure is kept as `failure` for the tab to show inline;
+ * `stop` cancels the request and clears it. Stored data stays usable either way.
  */
 export function useGenerate(applicationId: string) {
 	const { i18n } = useLingui();
 	const queryClient = useQueryClient();
 	const connection = useHasAIProvider();
-	const name = connection.defaultProvider?.label ?? t`Your AI connection`;
+	const controller = useRef<AbortController | null>(null);
 	const mutation = useMutation({
-		...orpc.career.generate.mutationOptions(),
+		mutationKey: orpc.career.generate.mutationKey(),
+		mutationFn: (input: GenerateInput) => {
+			const abort = new AbortController();
+			controller.current = abort;
+			return client.career.generate(input, { signal: abort.signal });
+		},
 		onSuccess: (result) => {
 			if (result.item) void queryClient.invalidateQueries({ queryKey: orpc.career.savedItems.key() });
 		},
-		onError: (error) =>
-			showToast({ message: workspaceError(error, t`${name} didn't respond. Nothing was changed; try again.`) }),
 	});
+	const { reset } = mutation;
 	return {
 		...mutation,
+		failure: mutation.error ? generateFailure(mutation.error, connection.defaultProvider?.label) : null,
+		// Reset first: the aborted request then rejects without reaching this hook's state.
+		stop: () => {
+			reset();
+			controller.current?.abort();
+		},
 		run: (task: GenerateTask) => {
 			if (connection.isUnavailable)
 				return Promise.reject(new Error(t`AI connections haven't loaded. Try again before generating.`));

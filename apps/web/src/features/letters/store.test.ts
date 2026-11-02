@@ -11,7 +11,8 @@ vi.mock("@/libs/orpc/client", () => ({
 	streamClient: { coverLetters: { draft: mocks.draft } },
 }));
 
-const { discardLetterDraft, startLetterDraft, useLetterEditorStore } = await import("./store");
+const { discardLetterDraft, dismissLetterDraftFailure, startLetterDraft, stopLetterDraft, useLetterEditorStore } =
+	await import("./store");
 
 const letter: CoverLetter = {
 	id: "letter",
@@ -247,12 +248,39 @@ describe("drafts", () => {
 		mocks.draft.mockResolvedValue(chunks("I'm applying", " for the role."));
 		await startLetterDraft();
 		expect(mocks.draft).toHaveBeenCalledWith({ id: "letter", variant: "draft" }, expect.anything());
-		expect(store().draft).toEqual({ phase: "ready", text: "I'm applying for the role." });
+		expect(store().draft).toEqual({ phase: "ready", text: "I'm applying for the role.", versions: [] });
 		expect(store().letter?.content).toBe("<p>Mine</p>");
 
 		discardLetterDraft();
 		expect(store().draft).toEqual({ phase: "idle" });
 		expect(store().letter?.content).toBe("<p>Mine</p>");
+	});
+
+	it("keeps the earlier draft beside a Shorter one, and goes back to it when a later run fails (A3-15)", async () => {
+		mocks.draft.mockResolvedValueOnce(chunks("The long draft."));
+		await startLetterDraft();
+		mocks.draft.mockResolvedValueOnce(chunks("Short."));
+		await startLetterDraft("shorter", "The long draft.");
+		expect(store().draft).toEqual({ phase: "ready", text: "Short.", versions: ["The long draft."] });
+
+		mocks.draft.mockRejectedValueOnce(new Error("Provider down"));
+		await startLetterDraft("personal", "Short.");
+		expect(store().draft).toMatchObject({ phase: "failed", versions: ["The long draft.", "Short."] });
+		dismissLetterDraftFailure();
+		expect(store().draft).toEqual({ phase: "ready", text: "Short.", versions: ["The long draft."] });
+	});
+
+	it("keeps what streamed when drafting is stopped (A3-15)", async () => {
+		mocks.draft.mockResolvedValueOnce(
+			(async function* () {
+				yield "Dear team, I";
+				await new Promise(() => {});
+			})(),
+		);
+		void startLetterDraft();
+		await vi.waitFor(() => expect(store().draft).toMatchObject({ phase: "streaming", text: "Dear team, I" }));
+		stopLetterDraft();
+		expect(store().draft).toEqual({ phase: "ready", text: "Dear team, I", versions: [], stopped: true });
 	});
 
 	it("shows a ready, unkept draft again after a reload without asking the provider twice", async () => {
@@ -269,7 +297,7 @@ describe("drafts", () => {
 		// A reload: the store is empty, then the route loads the same letter.
 		useLetterEditorStore.setState({ letter: null, draft: { phase: "idle" } });
 		store().load(letter);
-		expect(store().draft).toEqual({ phase: "ready", text: "A draft I paid for." });
+		expect(store().draft).toEqual({ phase: "ready", text: "A draft I paid for.", versions: [] });
 		expect(mocks.draft).toHaveBeenCalledTimes(1);
 		// The body is still untouched until Keep.
 		expect(store().letter?.content).toBe("<p>Mine</p>");
@@ -298,7 +326,7 @@ describe("drafts", () => {
 		discardLetterDraft();
 		setAccountScope("account-a");
 		store().load(letter);
-		expect(store().draft).toEqual({ phase: "ready", text: "Private account A draft" });
+		expect(store().draft).toEqual({ phase: "ready", text: "Private account A draft", versions: [] });
 		expect(mocks.draft).toHaveBeenCalledTimes(1);
 	});
 
@@ -311,7 +339,7 @@ describe("drafts", () => {
 		});
 		store().edit({ recipientName: "Dana" });
 		await startLetterDraft();
-		expect(store().draft).toEqual({ phase: "ready", text: "Saved revision draft" });
+		expect(store().draft).toEqual({ phase: "ready", text: "Saved revision draft", versions: [] });
 	});
 
 	it("does not start a paid request when saving fails or the account changes during the save", async () => {

@@ -78,8 +78,15 @@ type LetterSaveStatus = "saved" | "saving" | "error" | "conflict";
  */
 export type LetterDraft =
 	| { phase: "idle" }
-	| { phase: "streaming" | "ready"; text: string }
-	| { phase: "failed"; provider: string | null; error: unknown };
+	/**
+	 * `versions` are the earlier finished drafts, oldest first, so Shorter or More personal never loses one.
+	 * `stopped` marks text Stop cut short.
+	 */
+	| { phase: "streaming" | "ready"; text: string; versions: string[]; stopped?: true }
+	| { phase: "failed"; provider: string | null; error: unknown; versions: string[] };
+
+/** The most drafts kept side by side: the current one and up to four before it. */
+const MAX_DRAFT_VERSIONS = 5;
 
 const SAVE_DELAY_MS = 800;
 
@@ -126,14 +133,23 @@ type LetterEditorStore = {
 const idleDraft: LetterDraft = { phase: "idle" };
 
 const draftKey = (id: string) => `letter-draft:${getAccountId() ?? "signed-out"}:${id}`;
-type StoredDraft = { text: string; variant: "draft" | "shorter" | "personal"; revision: number };
+type StoredDraft = {
+	text: string;
+	versions?: string[];
+	variant: "draft" | "shorter" | "personal";
+	revision: number;
+	stopped?: true;
+};
 
 /** An unkept draft survives a same-tab reload with Keep/Discard, so it never costs a second paid request. */
 function readStoredDraft(id: string, revision: number): LetterDraft | null {
 	try {
 		const value = JSON.parse(sessionStorage.getItem(draftKey(id)) ?? "null") as StoredDraft | null;
 		if (!value || typeof value.text !== "string" || !value.text.trim() || value.revision !== revision) return null;
-		return { phase: "ready", text: value.text };
+		const versions = Array.isArray(value.versions)
+			? value.versions.filter((version): version is string => typeof version === "string").slice(-4)
+			: [];
+		return { phase: "ready", text: value.text, versions, ...(value.stopped ? { stopped: true as const } : {}) };
 	} catch {
 		return null;
 	}
@@ -557,13 +573,18 @@ export async function startLetterDraft(variant: "draft" | "shorter" | "personal"
 		getAccountGeneration() === account &&
 		useLetterEditorStore.getState().sessionId === sessionId;
 	let revision = letter.revision;
+	// A revision keeps what came before it; the oldest drops off past the limit.
+	const before = useLetterEditorStore.getState().draft;
+	const versions = (
+		before.phase === "ready" ? [...before.versions, before.text] : before.phase === "idle" ? [] : before.versions
+	).slice(-(MAX_DRAFT_VERSIONS - 1));
 	const setDraft = (draft: LetterDraft) => {
 		if (!current()) return;
 		useLetterEditorStore.setState({ draft });
-		if (draft.phase === "ready") writeStoredDraft(letter.id, { text: draft.text, variant, revision });
+		if (draft.phase === "ready") writeStoredDraft(letter.id, { text: draft.text, versions, variant, revision });
 	};
 	clearStoredLetterDraft(letter.id);
-	setDraft({ phase: "streaming", text: "" });
+	setDraft({ phase: "streaming", text: "", versions });
 
 	try {
 		// Draft from the same saved links and revision the editor shows.
@@ -580,15 +601,59 @@ export async function startLetterDraft(variant: "draft" | "shorter" | "personal"
 		let text = "";
 		for await (const chunk of stream) {
 			text += chunk;
-			setDraft({ phase: "streaming", text });
+			setDraft({ phase: "streaming", text, versions });
 		}
 		if (!text.trim()) throw new Error("The draft came back empty.");
-		setDraft({ phase: "ready", text: text.trim() });
+		setDraft({ phase: "ready", text: text.trim(), versions });
 	} catch (error) {
 		if (controller.signal.aborted) return;
 		const data = error instanceof ORPCError ? (error.data as { provider?: unknown } | undefined) : undefined;
-		setDraft({ phase: "failed", provider: typeof data?.provider === "string" ? data.provider : null, error });
+		setDraft({
+			phase: "failed",
+			provider: typeof data?.provider === "string" ? data.provider : null,
+			error,
+			versions,
+		});
 	}
+}
+
+/** The draft's earlier version, or nothing: what's left when a run is stopped or its failure dismissed. */
+function settleDraft(text: string, versions: string[], stopped: boolean): LetterDraft {
+	const { letter } = useLetterEditorStore.getState();
+	const last = versions.at(-1);
+	const draft: LetterDraft = text.trim()
+		? { phase: "ready", text: text.trim(), versions, ...(stopped ? { stopped: true as const } : {}) }
+		: last !== undefined
+			? { phase: "ready", text: last, versions: versions.slice(0, -1) }
+			: idleDraft;
+	if (letter) {
+		if (draft.phase === "ready")
+			writeStoredDraft(letter.id, {
+				text: draft.text,
+				versions: draft.versions,
+				variant: "draft",
+				revision: letter.revision,
+				...(draft.stopped ? { stopped: true as const } : {}),
+			});
+		else clearStoredLetterDraft(letter.id);
+	}
+	return draft;
+}
+
+/** Stops a draft that's streaming and keeps what arrived as a draft to review; with nothing yet, the last version. */
+export function stopLetterDraft() {
+	const { draft } = useLetterEditorStore.getState();
+	drafting?.abort();
+	drafting = null;
+	if (draft.phase !== "streaming") return;
+	useLetterEditorStore.setState({ draft: settleDraft(draft.text, draft.versions, true) });
+}
+
+/** Closes a failed run, going back to the draft before it when there was one. */
+export function dismissLetterDraftFailure() {
+	const { draft } = useLetterEditorStore.getState();
+	if (draft.phase !== "failed") return;
+	useLetterEditorStore.setState({ draft: settleDraft("", draft.versions, false) });
 }
 
 export function discardLetterDraft() {

@@ -5,6 +5,7 @@ import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { protectedProcedure } from "../../context";
 import { aiRequestRateLimit } from "../../middleware/rate-limit";
 import { aiProvidersService } from "../ai-providers/service";
+import { applicationService } from "../applications/service";
 import { assertDocumentVersion } from "../documents/ownership";
 import { atsReviewInputSchema, atsReviewOutputSchema, reviewResumeText } from "./ats-review";
 import { improveInputSchema, improveLine, improveOutputSchema } from "./improve";
@@ -231,10 +232,18 @@ export const aiRouter = {
 			try {
 				const provider = await getRunnableProvider(context.user.id, input.aiProviderId);
 				await aiProvidersService.authorize({ userId: context.user.id, id: provider.id });
+				// The posting comes from the user's own application, never from the client.
+				const posting =
+					input.action === "posting" && input.applicationId
+						? await applicationService
+								.getById({ id: input.applicationId, userId: context.user.id })
+								.then((application) => application.jobDescription?.slice(0, 12_000))
+						: undefined;
 				signal?.throwIfAborted();
 
 				return await improveLine({
 					...input,
+					posting,
 					signal,
 					provider: provider.provider,
 					model: provider.model,

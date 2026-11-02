@@ -23,7 +23,7 @@ import {
 	workspaceError,
 } from "../hooks";
 import { minutesUntil, preparePhase } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, Pill, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, CheckRow, Pill, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
 import { useFlags } from "@/api/flags";
@@ -89,19 +89,15 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 	const provider = useHasAIProvider().defaultProvider;
 	const generate = useGenerate(application.id);
 	const label = useWorking(generate.isPending, workingSteps("briefing"), t`Plan my preparation`);
+	const plan = () => void generate.run({ task: "briefing", interviewId: interview.id }).catch(() => undefined);
 	return (
 		<EmptyState
 			variant="card"
 			title={t`A focused plan for this round`}
 			message={t`A timed plan, your opening, the stories to bring and questions to ask. It becomes your checklist 10 minutes before the call.`}
 		>
-			{provider ? (
-				<Button
-					label={label}
-					loading={generate.isPending}
-					onPress={() => void generate.run({ task: "briefing", interviewId: interview.id }).catch(() => undefined)}
-				/>
-			) : null}
+			{provider ? <Button label={label} loading={generate.isPending} onPress={plan} /> : null}
+			<GenerateNotice generate={generate} onRetry={plan} />
 			<AiNotice task="briefing" application={application} interview centered />
 		</EmptyState>
 	);
@@ -128,6 +124,8 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 	const provider = useHasAIProvider().defaultProvider;
 	const generate = useGenerate(application.id);
 	const againLabel = useWorking(generate.isPending, workingSteps("briefing"), t`Plan again`);
+	const planAgain = (interviewId: string) =>
+		void generate.run({ task: "briefing", interviewId }).catch(() => undefined);
 	const done = (index: number) => ticks.ticked.includes(String(index));
 	const total = data.plan.reduce((sum, row) => sum + row.minutes, 0);
 	const doneMinutes = data.plan.reduce((sum, row, index) => sum + (done(index) ? row.minutes : 0), 0);
@@ -162,9 +160,10 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 					variant="secondary"
 					label={againLabel}
 					loading={generate.isPending}
-					onPress={() => void generate.run({ task: "briefing", interviewId: interview.id }).catch(() => undefined)}
+					onPress={() => planAgain(interview.id)}
 				/>
 			) : null}
+			{!readOnly ? <GenerateNotice generate={generate} onRetry={() => interview && planAgain(interview.id)} /> : null}
 			<View
 				accessibilityElementsHidden
 				importantForAccessibility="no-hide-descendants"

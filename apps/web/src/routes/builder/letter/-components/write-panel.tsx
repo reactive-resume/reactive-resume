@@ -33,7 +33,13 @@ import { useApplicationLanes } from "@/features/applications/use-application-lan
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { useLetterWords } from "@/features/letters/compose";
 import { countWords, LETTER_LENGTH, letterLength } from "@/features/letters/length";
-import { discardLetterDraft, startLetterDraft, useLetterEditorStore } from "@/features/letters/store";
+import {
+	discardLetterDraft,
+	dismissLetterDraftFailure,
+	startLetterDraft,
+	stopLetterDraft,
+	useLetterEditorStore,
+} from "@/features/letters/store";
 import { useLetterMode } from "@/features/letters/use-letter-mode";
 import { ACCENTS, FONT_PAIRINGS, matchFontPairing, rgbaToHex } from "@/features/resume/editor/design/presets";
 import { CustomFields } from "@/features/resume/editor/write/basics-card";
@@ -515,6 +521,7 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 					value={letter.content}
 					disabled={disabled}
 					heightClassName="min-h-[240px]"
+					improve={{ letter: true, applicationId: application?.id }}
 					onChange={(content) => edit({ content })}
 				/>
 			) : (
@@ -596,7 +603,16 @@ function EmptyBody({ letter, application, disabled, onWrite }: EmptyBodyProps) {
 	return (
 		<div className="grid justify-items-start gap-3 rounded-xl border border-dashed border-line-2 p-4">
 			<p className="text-sm text-ink-2">
-				{company && hasResume ? (
+				{/* Without a provider, drafting isn't on offer yet: say what would make it so. */}
+				{canDraft && !providerState.isUnavailable && !hasUsableProvider ? (
+					company && hasResume ? (
+						<Trans>Start typing, or connect an AI provider to draft from the {company} posting and your resume.</Trans>
+					) : company ? (
+						<Trans>Start typing, or connect an AI provider to draft from the {company} posting.</Trans>
+					) : (
+						<Trans>Start typing, or connect an AI provider to draft from your resume.</Trans>
+					)
+				) : company && hasResume ? (
 					<Trans>Start typing, or draft from what we know: the {company} posting and your resume.</Trans>
 				) : company ? (
 					<Trans>Start typing, or draft from what we know: the {company} posting.</Trans>
@@ -659,6 +675,7 @@ type DraftBoxProps = {
 /** The draft on its green wash, then the dark chip: Keep, Shorter, More personal, Discard. */
 function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 	const reducedMotion = useReducedMotion();
+	const [pick, setPick] = useState<{ draft: LetterDraft; index: number } | null>(null);
 	// Retrying repeats the last request.
 	const last = useRef<{ variant: "draft" | "shorter" | "personal"; previous?: string }>({ variant: "draft" });
 	const run = (variant: "draft" | "shorter" | "personal", previous?: string) => {
@@ -682,7 +699,7 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 					<Button size="sm" variant="secondary" onClick={() => run(last.current.variant, last.current.previous)}>
 						<Trans>Try again</Trans>
 					</Button>
-					<Button size="sm" variant="ghost" onClick={discardLetterDraft}>
+					<Button size="sm" variant="ghost" onClick={dismissLetterDraftFailure}>
 						<Trans>Dismiss</Trans>
 					</Button>
 				</div>
@@ -691,8 +708,12 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 	}
 
 	const streaming = draft.phase === "streaming";
+	// Earlier versions stay side by side with the newest: "2 of 3", and Accept or a revision uses the one shown.
+	const all = streaming ? [draft.text] : [...draft.versions, draft.text];
+	const index = pick?.draft === draft ? Math.min(pick.index, all.length - 1) : all.length - 1;
+	const shown = all[index] ?? draft.text;
 	// Reduced motion shows the whole draft at once.
-	const text = streaming && reducedMotion ? "" : draft.text;
+	const text = streaming && reducedMotion ? "" : shown;
 	const sources =
 		letter.sourceResumeId && application
 			? t`Draft · uses only your resume and the posting`
@@ -718,9 +739,41 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 				)}
 			</div>
 			{streaming && (
-				<Button size="sm" variant="ghost" className="w-fit" onClick={discardLetterDraft}>
+				<Button size="sm" variant="ghost" className="w-fit" onClick={stopLetterDraft}>
 					<Trans>Stop</Trans>
 				</Button>
+			)}
+			{draft.phase === "ready" && draft.stopped && index === all.length - 1 && (
+				<p className="text-xs text-ink-3">
+					<Trans>Stopped before the end. Accept it and finish it yourself, or reject it.</Trans>
+				</p>
+			)}
+			{draft.phase === "ready" && all.length > 1 && (
+				<div className="flex items-center gap-1 text-xs text-ink-2">
+					<Button
+						size="icon-xs"
+						variant="ghost"
+						aria-label={t`Previous version`}
+						disabled={index === 0}
+						onClick={() => setPick({ draft, index: index - 1 })}
+					>
+						<Icon name="caret-left" size={16} />
+					</Button>
+					<span className="font-mono tabular-nums">
+						<Trans>
+							{index + 1} of {all.length}
+						</Trans>
+					</span>
+					<Button
+						size="icon-xs"
+						variant="ghost"
+						aria-label={t`Next version`}
+						disabled={index === all.length - 1}
+						onClick={() => setPick({ draft, index: index + 1 })}
+					>
+						<Icon name="caret-right" size={16} />
+					</Button>
+				</div>
 			)}
 			{draft.phase === "ready" && (
 				<div
@@ -732,10 +785,10 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 					</span>
 					<button
 						type="button"
-						onClick={() => onKeep(draft.text)}
-						className="h-8 rounded-lg bg-accent px-3 text-[13px] font-semibold text-on-accent hover:bg-accent-hover"
+						onClick={() => onKeep(shown)}
+						className="touch-target relative h-8 rounded-lg bg-accent px-3 text-[13px] font-semibold text-on-accent hover:bg-accent-hover"
 					>
-						<Trans>Keep</Trans>
+						<Trans>Accept</Trans>
 					</button>
 					{(
 						[
@@ -746,8 +799,8 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 						<button
 							key={variant}
 							type="button"
-							onClick={() => run(variant, draft.text)}
-							className="h-8 rounded-lg px-2.5 text-[13px] hover:bg-[oklch(1_0_0/0.12)]"
+							onClick={() => run(variant, shown)}
+							className="touch-target relative h-8 rounded-lg px-2.5 text-[13px] hover:bg-[oklch(1_0_0/0.12)]"
 						>
 							{label}
 						</button>
@@ -755,9 +808,9 @@ function DraftBox({ draft, letter, application, onKeep }: DraftBoxProps) {
 					<button
 						type="button"
 						onClick={discardLetterDraft}
-						className="h-8 rounded-lg px-2.5 text-[13px] hover:bg-[oklch(1_0_0/0.12)]"
+						className="touch-target relative h-8 rounded-lg px-2.5 text-[13px] hover:bg-[oklch(1_0_0/0.12)]"
 					>
-						<Trans>Discard</Trans>
+						<Trans>Reject</Trans>
 					</button>
 				</div>
 			)}

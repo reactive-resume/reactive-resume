@@ -12,7 +12,10 @@ import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/u
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
-type Action = "verb" | "result" | "shorter" | "custom";
+type Action = "verb" | "result" | "shorter" | "posting" | "warmer" | "custom";
+
+/** In a cover letter the unit is a paragraph, with presets of its own; `applicationId` is the linked job. */
+export type ImproveKind = { letter: true; applicationId?: string | null | undefined };
 
 /** The line Improve works on: the paragraph or list item holding the caret, as it was when Improve opened. */
 export type ImproveLine = { from: number; to: number; text: string };
@@ -33,13 +36,14 @@ type ImprovePanelProps = {
 	onClose: () => void;
 	/** Applies the accepted text as its own editor/app history event. */
 	onAccept: (text: string) => void;
+	kind?: ImproveKind | undefined;
 };
 
 /**
  * B · Improve: pick what to change, then Replace or Keep mine. Only the one line changes, and only when the user
  * replaces it; if the line was edited meanwhile, the suggestion is not applied.
  */
-export function ImprovePanel({ editor, line, where, onClose, onAccept }: ImprovePanelProps) {
+export function ImprovePanel({ editor, line, where, onClose, onAccept, kind }: ImprovePanelProps) {
 	const providers = useHasUsableAiProvider();
 	const provider = providers.usableProviders[0];
 	// "custom" asks what to change; "result" asks what the result was, since only the user knows it.
@@ -52,11 +56,21 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 	const improve = useMutation(orpc.ai.improve.mutationOptions());
 	const resultId = useId();
 
-	const options: Array<{ action: Action; icon: IconName; label: string }> = [
-		{ action: "verb", icon: "lightning", label: t`Stronger verb` },
-		{ action: "result", icon: "trend-up", label: t`Add a result` },
-		{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Make it shorter` },
-	];
+	const letter = kind?.letter === true;
+	const applicationId = kind?.applicationId ?? undefined;
+	const options: Array<{ action: Action; icon: IconName; label: string }> = letter
+		? [
+				...(applicationId
+					? [{ action: "posting" as const, icon: "briefcase" as const, label: t`Tie to the posting` }]
+					: []),
+				{ action: "warmer", icon: "hand-heart", label: t`Warmer` },
+				{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Shorter` },
+			]
+		: [
+				{ action: "verb", icon: "lightning", label: t`Stronger verb` },
+				{ action: "result", icon: "trend-up", label: t`Add a result` },
+				{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Make it shorter` },
+			];
 
 	const run = (
 		action: Action,
@@ -71,6 +85,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 			where,
 			context: editor.getText(),
 			...(words ? { request: words } : {}),
+			...(action === "posting" && applicationId ? { applicationId } : {}),
 		});
 	};
 	const pick = (action: Action) => (action === "result" ? setAsking("result") : run(action));
@@ -98,7 +113,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 			}}
 		>
 			<span className="px-2 pt-1 pb-1.5 text-xs font-semibold text-ink-3">
-				<Trans>Improve selected line</Trans>
+				{letter ? <Trans>Improve this paragraph</Trans> : <Trans>Improve selected line</Trans>}
 			</span>
 
 			<p className="px-2 text-xs text-ink-3">
@@ -109,9 +124,23 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 				<SetUpAi />
 			) : (
 				<p className="px-2 text-xs text-ink-3">
-					<Trans>
-						Sends this line, surrounding field text and your instructions to {provider.label} · {provider.model}.
-					</Trans>
+					{letter ? (
+						applicationId ? (
+							<Trans>
+								Sends this paragraph, the rest of the letter, the linked job posting and your instructions to{" "}
+								{provider.label} · {provider.model}.
+							</Trans>
+						) : (
+							<Trans>
+								Sends this paragraph, the rest of the letter and your instructions to {provider.label} ·{" "}
+								{provider.model}.
+							</Trans>
+						)
+					) : (
+						<Trans>
+							Sends this line, surrounding field text and your instructions to {provider.label} · {provider.model}.
+						</Trans>
+					)}
 				</p>
 			)}
 			{!provider ? null : improve.data ? (

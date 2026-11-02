@@ -260,6 +260,7 @@ const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx
 		},
 	},
 	"@/auth/session": auth,
+	"@/features/documents/filter": { defaultCopySource: () => undefined },
 	"@/features/ai/providers": {
 		AIProviderSetupSheet: "AIProviderSetupSheet",
 		useHasAIProvider: () => ({ hasAIProvider: hasProvider }),
