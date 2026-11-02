@@ -44,6 +44,7 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 	const router = useRouter();
 	const { t } = useLingui();
 	const { space } = useTheme();
+	const contextOnly = Boolean(applicationId) && applicationId !== useResumeStore.getState().document?.applicationId;
 	const applications = useApplications();
 	const application = useApplication(applicationId ?? "");
 	const invalidate = useInvalidateApplications();
@@ -85,6 +86,7 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 				await resume.refresh();
 				// Apply a metadata refresh deferred by the posting field's keyboard, without queuing a save.
 				await resume.blur();
+				router.setParams({ applicationId: undefined });
 			}
 			void invalidate();
 			return true;
@@ -185,7 +187,7 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 				<SelectSheet
 					label={t`Linked application`}
 					value={applicationId ?? ""}
-					disabled={locked || offline || linking}
+					disabled={locked || offline || linking || contextOnly}
 					options={[
 						{ value: "", label: t`No linked application` },
 						...(applications.data ?? []).map((entry) => ({
@@ -235,6 +237,7 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 					<Text variant="title">
 						{application.data?.company} · {application.data?.role}
 					</Text>
+					{contextOnly ? <Text color="ink3">{t`For this visit only`}</Text> : null}
 					<Button
 						variant="ghost"
 						label={t`Open application`}
@@ -372,6 +375,7 @@ export function JobMatch({ id, data, applicationId, locked, offline, onTerm }: J
 								router.push({
 									pathname: routes.assistant(id),
 									params: {
+										applicationId: applicationId ?? undefined,
 										// A pasted posting goes with it: without a linked application the assistant can't see it.
 										ask: applicationId
 											? t`Help me work “${open.label}” into my resume, only where my experience supports it.`

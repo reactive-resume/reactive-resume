@@ -277,3 +277,102 @@ test("manual offers save and compare without an AI provider", async ({ authPage:
 	expect(aiRequests).toEqual([]);
 	await page.getByRole("main").screenshot({ path: testInfo.outputPath("offers.png") });
 });
+
+for (const linked of [true, false]) {
+	test(`Fit gap opens ${linked ? "the linked resume" : "a job copy"} on this application's Job match`, async ({
+		authPage: page,
+	}, info) => {
+		test.skip(process.env.FLAG_ALLOW_UNSAFE_AI_BASE_URL !== "true", "Needs FLAG_ALLOW_UNSAFE_AI_BASE_URL=true");
+		test.setTimeout(90_000);
+		const source = await page.request.post("/api/openapi/resumes", {
+			data: { name: "Fictional Cedar resume", tags: [], withSampleData: true },
+		});
+		await expect(source).toBeOK();
+		const sourceId: string = await source.json();
+		const other = await page.request.post("/api/openapi/applications", {
+			data: { company: "Fictional Orbit", role: "Analyst", jobDescription: "Differential calculus" },
+		});
+		await expect(other).toBeOK();
+		const otherId: string = await other.json();
+		await expect(
+			await page.request.post("/api/openapi/documents/application", {
+				data: { type: "resume", id: sourceId, applicationId: otherId },
+			}),
+		).toBeOK();
+		const before = await (await page.request.get(`/api/openapi/resumes/${sourceId}`)).json();
+		const target = await page.request.post("/api/openapi/applications", {
+			data: {
+				company: "Fictional Cedar",
+				role: "Operations lead",
+				jobDescription: "Enterprise onboarding and TypeScript systems",
+				...(linked ? { resumeId: sourceId } : {}),
+			},
+		});
+		await expect(target).toBeOK();
+		const targetId: string = await target.json();
+		const provider = await page.request.post("/api/openapi/ai-providers", {
+			data: {
+				label: "Fictional local provider",
+				provider: "openai-compatible",
+				model: "stub",
+				baseURL: stub.baseURL,
+				apiKey: "stub-key",
+			},
+		});
+		await expect(provider).toBeOK();
+		await expect(await page.request.post(`/api/openapi/ai-providers/${(await provider.json()).id}/test`)).toBeOK();
+		await expect(
+			await page.request.post("/api/openapi/career/facts", {
+				data: {
+					text: "I maintained internal tools.",
+					category: "experience",
+					source: { kind: "manual", id: "fit-handoff", quote: "I maintained internal tools." },
+				},
+			}),
+		).toBeOK();
+		await page.goto(`/dashboard/applications/${targetId}/fit`);
+		await page.getByRole("button", { name: "Check fit", exact: true }).click();
+		const tailor = page.getByRole("button", { name: "Tailor resume for this job", exact: true });
+		await expect(tailor).toBeVisible({ timeout: 30_000 });
+		if (linked)
+			await page.getByRole("main").screenshot({ path: info.outputPath("fit-gap-resume.png"), animations: "disabled" });
+		const calls = stub.requests.length;
+		await tailor.click();
+		if (!linked) {
+			const copy = page.getByRole("dialog");
+			await expect(
+				copy.getByRole("button", { name: "Operations lead · Fictional Cedar", exact: true }),
+			).toHaveAttribute("aria-pressed", "true");
+			await copy.getByRole("button", { name: "Create and open", exact: true }).click();
+		}
+		await expect(page).toHaveURL(/mode=check/);
+		await expect(page).toHaveURL(/checkTab=match/);
+		await expect(page.getByRole("tab", { name: /Job match/, selected: true })).toBeVisible();
+		await expect(page.getByText("Operations lead · Fictional Cedar", { exact: true })).toBeVisible();
+		if (linked) {
+			await expect(page).toHaveURL(new RegExp(`/builder/${sourceId}`));
+			await expect(page.getByText("For this visit only", { exact: true })).toBeVisible();
+			await expect(page.getByRole("button", { name: "Change", exact: true })).toHaveCount(0);
+		} else {
+			const copyId = new URL(page.url()).pathname.split("/").at(-1);
+			expect(copyId).not.toBe(sourceId);
+			const record = await (await page.request.get(`/api/openapi/resumes/${copyId}`)).json();
+			expect(record.applicationId).toBe(targetId);
+			const application = await (await page.request.get(`/api/openapi/applications/${targetId}`)).json();
+			expect(application.resumeId).toBe(copyId);
+		}
+		await page.reload();
+		await expect(page.getByRole("tab", { name: /Job match/, selected: true })).toBeVisible();
+		await expect(page.getByText("Operations lead · Fictional Cedar", { exact: true })).toBeVisible();
+		const after = await (await page.request.get(`/api/openapi/resumes/${sourceId}`)).json();
+		expect(after.applicationId).toBe(before.applicationId);
+		expect(after.data).toEqual(before.data);
+		expect(stub.requests).toHaveLength(calls);
+		if (linked) {
+			await expect(page.locator('[data-resume-preview-template][aria-hidden="false"] canvas').first()).toBeVisible({
+				timeout: 30_000,
+			});
+			await page.screenshot({ path: info.outputPath("fit-job-match.png"), animations: "disabled" });
+		}
+	});
+}

@@ -36,6 +36,7 @@ export function NewDocument() {
 		step?: string;
 		sourceResumeId?: string;
 		applicationId?: string;
+		destination?: string;
 	}>();
 	const jobFirst = params.context === "career" || params.context === "applications";
 	const letterFirst = params.context === "letters";
@@ -74,7 +75,9 @@ export function NewDocument() {
 	const resumes = (documents.data ?? []).filter((document) => document.type === "resume");
 	// A named resume (the editor's Copy for a job) is the only source until the list has it: never another resume.
 	const source = sourceId ? resumes.find((document) => document.id === sourceId) : defaultCopySource(resumes);
-	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
+	const jobs = (applications.data ?? []).filter(
+		(application) => application.status !== "closed" || application.id === params.applicationId,
+	);
 	const job = newJob ? undefined : jobs.find((application) => application.id === jobId);
 	const waitingForJob = !newJob && Boolean(jobId) && !job && applications.isFetching;
 	const company = newJob ? newJob.company.trim() : job?.company;
@@ -100,7 +103,9 @@ export function NewDocument() {
 	}, []);
 	const open = (document: ImportedDocument) => {
 		useNewDocuments.getState().markOpened(document);
-		router.replace(document.type === "resume" ? routes.builder(document.id) : routes.letter(document.id));
+		if (document.type === "resume" && params.destination === "job-match")
+			router.replace({ pathname: routes.builder(document.id, "check"), params: { tab: "match" } });
+		else router.replace(document.type === "resume" ? routes.builder(document.id) : routes.letter(document.id));
 	};
 	const run = async (task: (signal: AbortSignal) => Promise<void>) => {
 		if (running.current) return;
@@ -221,7 +226,8 @@ export function NewDocument() {
 				const forJob = Boolean(newJob || jobId);
 				setCreated(document);
 				setApplicationLinked(true);
-				if (forJob && ai.hasAIProvider) onCopiedForJob(id);
+				if (params.destination === "job-match") open(document);
+				else if (forJob && ai.hasAIProvider) onCopiedForJob(id);
 				else open(document);
 			}
 		});
