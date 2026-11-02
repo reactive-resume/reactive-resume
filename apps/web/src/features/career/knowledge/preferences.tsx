@@ -310,7 +310,7 @@ function ChipField({ label, placeholder, value, onChange }: ChipFieldProps) {
 			<label htmlFor={id} className="text-xs font-medium text-ink-2">
 				{label}
 			</label>
-			<div className="flex min-h-10 flex-wrap items-center gap-[5px] rounded-md border border-control-border bg-raised p-[5px] transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)]">
+			<div className="flex min-h-10 flex-wrap items-center gap-1 rounded-md border border-control-border bg-raised p-1 transition-[border-color,box-shadow] duration-quick focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-soft)]">
 				{value.map((chip) => (
 					<span
 						key={chip}

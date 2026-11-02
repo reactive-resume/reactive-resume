@@ -367,7 +367,7 @@ function BriefingNotes({ briefing }: { briefing: Briefing }) {
 	const { data } = briefing;
 	const items = [
 		{ label: t`Your focus`, text: data.focus },
-		{ label: t`Your opening`, text: data.opening && `“${data.opening}”`, italic: true },
+		{ label: t`Your opening`, text: data.opening && `“${data.opening}”` },
 		{ label: data.stories.length === 2 ? t`Two stories` : t`Stories`, text: data.stories.join("\n") },
 		{ label: t`Keep it honest`, text: data.honesty },
 	];
@@ -380,7 +380,7 @@ function BriefingNotes({ briefing }: { briefing: Briefing }) {
 						<Text variant="label" color="ink2">
 							{item.label}
 						</Text>
-						<Text style={item.italic ? { fontStyle: "italic" } : null}>{item.text}</Text>
+						<Text>{item.text}</Text>
 					</View>
 				))}
 		</View>

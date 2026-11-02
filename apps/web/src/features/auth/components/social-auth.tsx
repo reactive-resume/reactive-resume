@@ -35,7 +35,7 @@ export function SocialAuth({ signUp = false }: SocialAuthProps) {
 		<>
 			<div className="flex items-center gap-x-2">
 				<hr className="flex-1" />
-				<span className="text-xs font-medium tracking-wide">
+				<span className="text-xs font-medium">
 					<Trans context="Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password">
 						or continue with
 					</Trans>

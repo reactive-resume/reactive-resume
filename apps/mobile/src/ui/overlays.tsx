@@ -708,7 +708,7 @@ export function Toaster() {
 									opacity: pressed ? 0.6 : 1,
 								})}
 							>
-								<Text weight={700} color="accentSoft">
+								<Text weight={600} color="accentSoft">
 									{control.label}
 								</Text>
 							</Pressable>

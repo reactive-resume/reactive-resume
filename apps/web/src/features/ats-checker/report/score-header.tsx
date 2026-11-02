@@ -24,7 +24,7 @@ export function ScoreHeader({ report }: ScoreHeaderProps) {
 	return (
 		<div className="space-y-3 rounded-md border bg-surface p-3">
 			<div className="flex items-baseline gap-2">
-				<span className={cn("text-4xl leading-none font-bold tabular-nums", tone.text)}>
+				<span className={cn("font-display text-4xl leading-none tabular-nums", tone.text)}>
 					<RollingNumber value={report.score} />
 				</span>
 				<span className="text-sm text-ink-3">
