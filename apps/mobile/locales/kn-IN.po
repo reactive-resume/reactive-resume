@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {ವಾರದಲ್ಲಿ # ದಿನ ಕಛೇರಿಯಲ್ಲಿ} other {ವಾರದಲ್ಲಿ # ದಿನಗಳು ಕಚೇರಿಯಲ್ಲಿ}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# ಪುಟ} other {# ಪುಟಗಳು}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {# ಸಕ್ರಿಯ ಅರ್ಜಿ} other {# ಸ
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. ಈ ಅರ್ಜಿ ಮತ್ತು ನಿಮ್ಮ ಜ್ಞಾನವನ್ನು ಕಳುಹಿಸುತ್ತದೆ; ನಿಮ್ಮ ಪೂರೈಕೆದಾರರು ಶುಲ್ಕ ವಿಧಿಸಬಹುದು."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1325,6 +1329,11 @@ msgstr "ದೇಶದ ಕೋಡ್‌ನೊಂದಿಗೆ ಒಂದನ್ನು 
 msgid "Add page"
 msgstr "ಪುಟವನ್ನು ಸೇರಿಸಿ"
 
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
 msgstr ""
@@ -1976,10 +1985,6 @@ msgstr "ಅರೇಬಿಕ್"
 #: src/features/write/fields.ts
 msgid "Area of study"
 msgstr "ಅಧ್ಯಯನದ ಪ್ರದೇಶ"
-
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "ಸಾಫ್ಟ್ವೇರ್ ಅದನ್ನು ಓದುತ್ತದೆ"
 
 #: src/features/applications/list-screen.tsx
 msgid "Ascending"
@@ -3121,10 +3126,6 @@ msgstr "ವಿಷಯವನ್ನು ಗ್ರಿಡ್‌ನಲ್ಲಿ ಜೋ�
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "ವಿಷಯ ಇನ್ನೂ ಮುಗಿದಿದೆ. ವಿಭಾಗವನ್ನು ಮರೆಮಾಡಿ ಅಥವಾ ನಮೂದುಗಳನ್ನು ಕಡಿಮೆ ಮಾಡಿ."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "ವರದಿ ಮಾಡಲು ವಿಷಯ"
@@ -3588,6 +3589,10 @@ msgstr "ಈ ರೆಸ್ಯೂಮ್ ಅನ್ನು ನಿರೂಪಿಸಲು
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "ಕೀಯನ್ನು ಹಿಂಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6206,8 +6211,6 @@ msgstr "ಪಠ್ಯವನ್ನು ಅಡ್ಡಡ್ಡಲಾಗಿ ಜೋಡ�
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "ಲೇಔಟ್‌"
 
@@ -8189,10 +8192,6 @@ msgstr "ಸಂಸ್ಥೆ"
 msgid "Original"
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "ಮೂಲ ಪುಟ"
-
 #: src/features/write/rich-text-field.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "ಮೂಲ ಟೇಬಲ್ ಫಾರ್ಮ್ಯಾಟಿಂಗ್ ಅನ್ನು ಸಂರಕ್ಷಿಸಲಾಗಿದೆ. ಈ ವಿಷಯವನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಸಂಪಾದಿಸಲು ಸಾಧ್ಯವಾಗದ ಕಾರಣ ಓದಲು ಮಾತ್ರ."
@@ -8295,6 +8294,10 @@ msgstr "ಪುಟ ಓದುವಿಕೆ ಮುಗಿಯಲಿಲ್ಲ."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "ಪುಟ ವೀಕ್ಷಣೆ"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -11167,6 +11170,10 @@ msgstr ""
 msgid "Start"
 msgstr "ಪ್ರಾರಂಭಿಸಿ"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version instead."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
 msgstr "ಪರಾಮರ್ಶೆಯನ್ನು ಪ್ರಾರಂಭಿಸಿ"
@@ -11988,6 +11995,10 @@ msgstr "ಪ್ರೊಫೈಲ್, ಪೋರ್ಟ್‌ಫೋಲಿಯೊ ಅಥ
 msgid "There is no summary paragraph."
 msgstr "ಯಾವುದೇ ಸಾರಾಂಶ ಪ್ಯಾರಾಗ್ರಾಫ್ ಇಲ್ಲ."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -12673,7 +12684,6 @@ msgstr "ಲಿಂಕ್‌ಗಳನ್ನು ಅಂಡರ್‌ಲೈನ್ ಮ�
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13248,10 +13258,12 @@ msgstr "ಪ್ರತಿ ಅವಶ್ಯಕತೆಯನ್ನು ತೂಗಿ ನ
 msgid "Went well"
 msgstr "ಚೆನ್ನಾಗಿ ಆಯಿತು"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a parser reads"
 msgstr "ಪಾರ್ಸರ್ ಓದುವುದು ಏನು"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a person sees"
 msgstr "ವ್ಯಕ್ತಿ ನೋಡುವುದು ಏನು"
@@ -13653,6 +13665,11 @@ msgstr "ನೀವು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿರುವಿರ�
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "ನೀವು ಎಲ್ಲವನ್ನೂ ನೋಡಿದ್ದೀರಿ"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

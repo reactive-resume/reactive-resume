@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {# dia d’oficina a la setmana} other {# dies d’oficina a la setmana}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# pàgina} many {# pàgines} other {# pàgines}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {# candidatura activa} other {# candidatures active
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. Envia aquesta candidatura i el vostre Coneixements; el vostre proveïdor pot cobrar."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1325,6 +1329,11 @@ msgstr "Afegeix-ne un amb el prefix del país; alguns formularis de sol·licitud
 msgid "Add page"
 msgstr "Afegeix una pàgina"
 
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
 msgstr ""
@@ -1976,10 +1985,6 @@ msgstr "Àrab"
 #: src/features/write/fields.ts
 msgid "Area of study"
 msgstr "Àmbit d'estudi"
-
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "Tal com el llegeix el programari"
 
 #: src/features/applications/list-screen.tsx
 msgid "Ascending"
@@ -3121,10 +3126,6 @@ msgstr "El contingut està disposat en una graella."
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "El contingut encara s'esgota. Amaga una secció o escurça les entrades."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "Contingut per informar"
@@ -3588,6 +3589,10 @@ msgstr "No s'ha pogut representar aquest currículum vitae."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "No s'ha pogut revocar la clau. Torna-ho a provar."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6206,8 +6211,6 @@ msgstr "Disposa el text horitzontalment. Els fragments girats sovint es perden o
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "Disposició"
 
@@ -8189,10 +8192,6 @@ msgstr "Organització"
 msgid "Original"
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "Pàgina original"
-
 #: src/features/write/rich-text-field.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "Es conserva el format original de la taula. Aquest contingut és només de lectura perquè no es pot editar amb seguretat."
@@ -8295,6 +8294,10 @@ msgstr "La lectura de la pàgina no s'ha acabat."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "Vista de pàgina"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -11167,6 +11170,10 @@ msgstr ""
 msgid "Start"
 msgstr "Comença"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version instead."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
 msgstr "Comença un balanç"
@@ -11988,6 +11995,10 @@ msgstr "No hi ha cap enllaç a un perfil, portafoli o repositori."
 msgid "There is no summary paragraph."
 msgstr "No hi ha cap paràgraf de resum."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -12673,7 +12684,6 @@ msgstr "Subratlla els enllaços"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13248,10 +13258,12 @@ msgstr "Sospesant cada requisit"
 msgid "Went well"
 msgstr "Va anar bé"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a parser reads"
 msgstr "El que llegeix un analitzador"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a person sees"
 msgstr "El que veu una persona"
@@ -13653,6 +13665,11 @@ msgstr "Estàs fora de línia. Torna-ho a provar quan tornis a connectar-te."
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "Ho teniu tot al dia"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

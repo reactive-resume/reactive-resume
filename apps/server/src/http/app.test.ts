@@ -317,6 +317,8 @@ describe("sign-in addresses", () => {
 		["/Sign-In?redirect=%2Fdashboard", "/auth/login?redirect=%2Fdashboard"],
 		["/signup", "/auth/register"],
 		["/register", "/auth/register"],
+		["/pricing", "/"],
+		["/features", "/"],
 	])("sends %s to %s when no shared resume lives there", async (path, location) => {
 		const { createApp } = await import("./app");
 		mocks.isProfilePath.mockReturnValue(true);

@@ -33,7 +33,8 @@ vi.mock("@reactive-resume/db/client", () => ({
 	},
 }));
 
-const { createGithubProfileMapper, createProfileMapper, isUsernameReserved } = await import("./oauth-profile");
+const { allocateUniqueUsername, createGithubProfileMapper, createProfileMapper, isUsernameReserved } =
+	await import("./oauth-profile");
 
 beforeEach(() => {
 	dbMock.selectQueue.length = 0;
@@ -143,5 +144,13 @@ describe("isUsernameReserved", () => {
 		// The email lookup, then "login-1" (a release, then an account); "login" itself is turned down without one.
 		expect(dbMock.select).toHaveBeenCalledTimes(3);
 		expect(result).toMatchObject({ username: "login-1", displayUsername: "login-1" });
+	});
+});
+
+describe("allocateUniqueUsername", () => {
+	it("makes a name of at least three characters from a short email address", async () => {
+		await expect(allocateUniqueUsername("a@example.test")).resolves.toBe("user");
+		await expect(allocateUniqueUsername("ab@example.test", "x")).resolves.toBe("user");
+		await expect(allocateUniqueUsername("ada@example.test", "x")).resolves.toBe("ada");
 	});
 });

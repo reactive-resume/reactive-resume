@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr ""
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr ""
@@ -588,6 +588,10 @@ msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
+msgstr ""
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
 msgstr ""
 
 #: src/preview/page.tsx
@@ -1325,6 +1329,11 @@ msgstr ""
 msgid "Add page"
 msgstr ""
 
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
 msgstr ""
@@ -1975,10 +1984,6 @@ msgstr ""
 
 #: src/features/write/fields.ts
 msgid "Area of study"
-msgstr ""
-
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
 msgstr ""
 
 #: src/features/applications/list-screen.tsx
@@ -3121,10 +3126,6 @@ msgstr ""
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr ""
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr ""
@@ -3587,6 +3588,10 @@ msgstr ""
 
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
+msgstr ""
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
 msgstr ""
 
 #: src/features/career/facts.tsx
@@ -6206,8 +6211,6 @@ msgstr ""
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr ""
 
@@ -8189,10 +8192,6 @@ msgstr ""
 msgid "Original"
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr ""
-
 #: src/features/write/rich-text-field.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr ""
@@ -8294,6 +8293,10 @@ msgstr ""
 
 #: src/features/check/page.tsx
 msgid "Page view"
+msgstr ""
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
 msgstr ""
 
 #: src/features/design/style-groups.tsx
@@ -11167,6 +11170,10 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version instead."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
 msgstr ""
@@ -11988,6 +11995,10 @@ msgstr ""
 msgid "There is no summary paragraph."
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -12673,7 +12684,6 @@ msgstr ""
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13248,10 +13258,12 @@ msgstr ""
 msgid "Went well"
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a parser reads"
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a person sees"
 msgstr ""
@@ -13652,6 +13664,11 @@ msgstr ""
 
 #: src/features/career/today.tsx
 msgid "You're up to date"
+msgstr ""
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
 msgstr ""
 
 #: src/features/workspace/hooks.ts

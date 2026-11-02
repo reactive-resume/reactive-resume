@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {सप्ताह में # दिन ऑफ़िस में} other {सप्ताह में # दिन ऑफ़िस में}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# पृष्ठ} other {# पृष्ठ}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {# सक्रिय आवेदन} other {# स
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. यह आवेदन और आपका ज्ञानकोश भेजता है; आपका प्रदाता शुल्क ले सकता है."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1325,6 +1329,11 @@ msgstr "देश कोड सहित एक नंबर जोड़ें;
 msgid "Add page"
 msgstr "पेज जोड़ें"
 
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
 msgstr ""
@@ -1976,10 +1985,6 @@ msgstr "अरबी"
 #: src/features/write/fields.ts
 msgid "Area of study"
 msgstr "अध्ययन का क्षेत्र"
-
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "जैसे ही सॉफ्टवेयर इसे पढ़ता है"
 
 #: src/features/applications/list-screen.tsx
 msgid "Ascending"
@@ -3121,10 +3126,6 @@ msgstr "सामग्री ग्रिड में व्यवस्थि
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "सामग्री अभी भी खत्म हो गई है. किसी अनुभाग को छुपाएं या प्रविष्टियों को छोटा करें."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "रिपोर्ट करने के लिए सामग्री"
@@ -3588,6 +3589,10 @@ msgstr "इस रेज़्यूमे को प्रस्तुत न�
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "कुंजी को रद्द नहीं किया जा सका. पुनः प्रयास करें।"
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6206,8 +6211,6 @@ msgstr "टेक्स्ट को क्षैतिज रूप से व�
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "लेआउट"
 
@@ -8189,10 +8192,6 @@ msgstr "संगठन"
 msgid "Original"
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "मूल पृष्ठ"
-
 #: src/features/write/rich-text-field.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "मूल तालिका स्वरूपण संरक्षित है. यह सामग्री केवल पढ़ने के लिए है क्योंकि इसे सुरक्षित रूप से संपादित नहीं किया जा सकता है।"
@@ -8295,6 +8294,10 @@ msgstr "पेज पढ़ना ख़त्म नहीं हुआ."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "पृष्ठ का दृश्य"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -11167,6 +11170,10 @@ msgstr ""
 msgid "Start"
 msgstr "शुरू"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version instead."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
 msgstr "समीक्षा शुरू करें"
@@ -11988,6 +11995,10 @@ msgstr "किसी प्रोफ़ाइल, पोर्टफ़ोलि
 msgid "There is no summary paragraph."
 msgstr "कोई सारांश पैराग्राफ नहीं है।"
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -12673,7 +12684,6 @@ msgstr "लिंकों को रेखांकित करें"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13248,10 +13258,12 @@ msgstr "हर आवश्यकता को तौल रहा है"
 msgid "Went well"
 msgstr "अच्छा रहा"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a parser reads"
 msgstr "पार्सर क्या पढ़ता है"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a person sees"
 msgstr "व्यक्ति क्या देखता है"
@@ -13653,6 +13665,11 @@ msgstr "आप ऑफ़लाइन हैं. पुनः कनेक्ट 
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "सब कुछ अप-टू-डेट है"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

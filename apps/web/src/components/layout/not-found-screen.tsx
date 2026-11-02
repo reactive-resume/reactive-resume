@@ -1,14 +1,24 @@
 import { Trans } from "@lingui/react/macro";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
 import { buttonVariants } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
+import { cn } from "@reactive-resume/utils/style";
 
-export function NotFoundScreen() {
+type NotFoundScreenProps = {
+	/** Inside a layout that already shows the logo (the sign-in pages): no second logo, no full-screen height. */
+	inLayout?: boolean;
+};
+
+/** "Page not found", leading home; the dashboard is the first way out only for someone signed in. */
+export function NotFoundScreen({ inLayout = false }: NotFoundScreenProps) {
+	const { session } = useRouteContext({ strict: false });
+	const signedIn = !!session?.user;
+
 	return (
-		<div className="mx-auto flex h-svh max-w-md flex-col items-center justify-center gap-y-4">
-			<BrandIcon variant="logo" className="size-12" />
+		<div className={cn("mx-auto flex max-w-md flex-col items-center justify-center gap-y-4", !inLayout && "h-svh")}>
+			{!inLayout && <BrandIcon variant="logo" className="size-12" />}
 
 			<Alert>
 				<Icon name="warning" size={16} />
@@ -21,12 +31,14 @@ export function NotFoundScreen() {
 			</Alert>
 
 			<div className="flex items-center gap-x-2">
-				<Link to="/dashboard" className={buttonVariants()}>
-					<Icon name="magnifying-glass" size={16} />
-					<Trans>Go to dashboard</Trans>
-				</Link>
+				{signedIn && (
+					<Link to="/dashboard" className={buttonVariants()}>
+						<Trans>Go to dashboard</Trans>
+						<Icon name="arrow-right" size={16} className="rtl:-scale-x-100" />
+					</Link>
+				)}
 
-				<Link to="/" className={buttonVariants({ variant: "secondary" })}>
+				<Link to="/" className={buttonVariants({ variant: signedIn ? "secondary" : "primary" })}>
 					<Icon name="house" size={16} />
 					<Trans>Go home</Trans>
 				</Link>

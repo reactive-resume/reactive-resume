@@ -1638,6 +1638,60 @@ function educationCells(row: TextLine) {
 		: fields;
 }
 
+// A long degree wraps over a few lines beside its school; more than this reads as prose, not one cell.
+const MAX_WRAPPED_CELL_LINES = 4;
+
+/**
+ * The lines a right cell wraps onto when it's too long to sit beside its school: a school alone on its row, then two
+ * or more lines in the cell's font, inset from the school's edge and ending on the right edge that the next row's
+ * right cell (location and period) ends on, whose left cell starts under the school. Null when the rows don't line up.
+ */
+function wrappedRightCell(source: ImportLine[], index: number): ImportLine[] | null {
+	const row = source[index];
+	const lead = row ? educationCells(row) : [];
+	const school = lead[0];
+	if (!row || !school || lead.length !== 1) return null;
+	const size = school.fontSize;
+	const lines: ImportLine[] = [];
+	for (let at = index + 1; at < source.length && lines.length <= MAX_WRAPPED_CELL_LINES; at++) {
+		const line = source[at];
+		const cells = line ? educationCells(line) : [];
+		const cell = cells[0];
+		const first = lines[0] ? educationCells(lines[0])[0] : cell;
+		if (!line || !cell || !first || cells.length !== 1) break;
+		if (
+			cell.fontRef === school.fontRef ||
+			cell.fontRef !== first.fontRef ||
+			cell.x <= school.x + size * 0.25 ||
+			Math.abs(cell.x + cell.width - first.x - first.width) >= size * 0.25 ||
+			line.page !== row.page ||
+			line.stream !== row.stream
+		)
+			break;
+		lines.push(line);
+	}
+	const degree = lines[0] ? educationCells(lines[0])[0] : undefined;
+	const below = source[index + 1 + lines.length];
+	const cells = below ? educationCells(below) : [];
+	const [area, tail] = cells;
+	if (
+		lines.length < 2 ||
+		lines.length > MAX_WRAPPED_CELL_LINES ||
+		!degree ||
+		!below ||
+		!area ||
+		!tail ||
+		cells.length !== 2 ||
+		area.fontRef !== degree.fontRef ||
+		Math.abs(area.x - school.x) >= size * 0.25 ||
+		Math.abs(degree.x + degree.width - tail.x - tail.width) >= size * 0.25 ||
+		below.page !== row.page ||
+		below.stream !== row.stream
+	)
+		return null;
+	return lines;
+}
+
 /** Decode only corroborated stacked records; every unassigned span stays in the record description. */
 function educationRecords(
 	source: ImportLine[],
@@ -1646,6 +1700,8 @@ function educationRecords(
 ): ResumeData["sections"]["education"]["items"] | null {
 	work.charge(source.reduce((n, row) => n + row.spans.length, 0) * 4);
 	const run: ImportLine[] = [];
+	// Rows folded from a wrapped right cell: the cell's first line spans the row, so it starts just past the school.
+	const folded = new Set<ImportLine>();
 	for (let index = 0; index < source.length; index++) {
 		const row = source[index];
 		if (!row) continue;
@@ -1679,6 +1735,18 @@ function educationRecords(
 		) {
 			run.push({ ...row, ...lineWithSpans(row, [...row.spans, ...next.spans]) });
 			index++;
+			continue;
+		}
+		const wrapped = wrappedRightCell(source, index);
+		if (wrapped) {
+			// Each wrapped line starts a new word: the lines' spans overlap on the page, so no gap would add the space.
+			const lines = wrapped.map((line, at) =>
+				line.spans.map((span, position) => (at > 0 && position === 0 ? { ...span, spaceBefore: true } : span)),
+			);
+			const merged = { ...row, ...lineWithSpans(row, [...row.spans, ...lines.flat()]) };
+			folded.add(merged);
+			run.push(merged);
+			index += wrapped.length;
 		} else run.push(row);
 	}
 	const rows = run.map(educationCells);
@@ -1703,7 +1771,7 @@ function educationRecords(
 			lead.fontRef !== pair.fontRef &&
 			Math.abs(area.x - lead.x) < lead.fontSize * 0.25 &&
 			area.fontRef !== lead.fontRef &&
-			pair.x > lead.x + lead.fontSize &&
+			pair.x > lead.x + lead.fontSize * (run[index] && folded.has(run[index]) ? 0.25 : 1) &&
 			tail.x > area.x + area.fontSize &&
 			Math.abs(pair.x + pair.width - tail.x - tail.width) < lead.fontSize * 0.25 &&
 			run[index]?.page === run[index + 1]?.page &&

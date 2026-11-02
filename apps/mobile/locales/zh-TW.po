@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {每週到辦公室 # 天} other {每週到辦公室 # 天}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, other {# 頁}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {# 筆進行中的應徵紀錄} other {# 筆進行�
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}。將此應徵紀錄和知識庫傳送給供應商；供應商可能收費。"
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1325,6 +1329,11 @@ msgstr "新增一個帶國碼的號碼；有些申請表單要求先填寫才能
 msgid "Add page"
 msgstr "新增頁面"
 
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
 msgstr ""
@@ -1976,10 +1985,6 @@ msgstr "阿拉伯文"
 #: src/features/write/fields.ts
 msgid "Area of study"
 msgstr "研究領域"
-
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "當軟體讀取時"
 
 #: src/features/applications/list-screen.tsx
 msgid "Ascending"
@@ -3121,10 +3126,6 @@ msgstr "內容以網格形式排列。"
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "內容仍然溢出。隱藏部分或縮短項目。"
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "檢舉內容"
@@ -3588,6 +3589,10 @@ msgstr "無法轉譯此履歷。"
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "無法撤銷金鑰。請重試。"
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6206,8 +6211,6 @@ msgstr "將文字水平排列。旋轉的文字段落常常會遺失或錯位。
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "版面配置"
 
@@ -8189,10 +8192,6 @@ msgstr "組織"
 msgid "Original"
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "原頁"
-
 #: src/features/write/rich-text-field.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "原始表格格式已保留。由於無法安全編輯，此內容為唯讀。"
@@ -8295,6 +8294,10 @@ msgstr "頁面閱讀未完成。"
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "頁面瀏覽量"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -11167,6 +11170,10 @@ msgstr ""
 msgid "Start"
 msgstr "開始"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version instead."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
 msgstr "開始回顧"
@@ -11988,6 +11995,10 @@ msgstr "沒有指向個人檔案、作品集或程式碼庫的連結。"
 msgid "There is no summary paragraph."
 msgstr "沒有個人簡介段落。"
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -12673,7 +12684,6 @@ msgstr "底線連結"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13248,10 +13258,12 @@ msgstr "正在權衡每項條件"
 msgid "Went well"
 msgstr "順利"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a parser reads"
 msgstr "解析器讀到的內容"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a person sees"
 msgstr "人看到的內容"
@@ -13653,6 +13665,11 @@ msgstr "您目前離線。請重新連線後再試。"
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "已全部看完"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

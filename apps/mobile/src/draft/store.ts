@@ -612,7 +612,16 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 		}
 		// Never advance the baseline of unsaved data in response to SSE (including our own echo).
 		if (dirty || inflight) {
+			const unlocked = state().locked && !remote.isLocked;
 			store.setState({ locked: remote.isLocked });
+			// Unlocking sends what couldn't be saved while it was locked, without waiting for Retry. Locking and
+			// unlocking moved the server's revision without touching the content: when the content is still what these
+			// edits build on, adopt that revision first; a real change elsewhere still meets them as a conflict.
+			if (unlocked && dirty && !inflight) {
+				if (JSON.stringify(adapter.data(remote)) === JSON.stringify(adapter.data(active.baseline)))
+					active.baseline = remote;
+				void flush();
+			}
 			return;
 		}
 		if (editing || env.focused()) {

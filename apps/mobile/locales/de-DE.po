@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {# Bürotag pro Woche} other {# Bürotage pro Woche}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# Seite} other {# Seiten}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {# aktive Bewerbung} other {# aktive Bewerbungen}}"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. Sendet diese Bewerbung und Ihr Wissen; Ihr Anbieter kann Gebühren erheben."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1325,6 +1329,11 @@ msgstr "Fügen Sie eine mit Landesvorwahl hinzu; manche Bewerbungsformulare verl
 msgid "Add page"
 msgstr "Seite hinzufügen"
 
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
 msgstr ""
@@ -1976,10 +1985,6 @@ msgstr "Arabisch"
 #: src/features/write/fields.ts
 msgid "Area of study"
 msgstr "Studienbereich"
-
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "Wie die Software es liest"
 
 #: src/features/applications/list-screen.tsx
 msgid "Ascending"
@@ -3121,10 +3126,6 @@ msgstr "Der Inhalt ist als Raster angeordnet."
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "Der Inhalt läuft noch über. Blenden Sie einen Abschnitt aus oder kürzen Sie Einträge."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "Zu meldender Inhalt"
@@ -3588,6 +3589,10 @@ msgstr "Dieser Lebenslauf konnte nicht gerendert werden."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Der Schlüssel konnte nicht widerrufen werden. Versuchen Sie es erneut."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6206,8 +6211,6 @@ msgstr "Ordnen Sie den Text horizontal an. Gedrehte Textabschnitte werden oft au
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "Layout"
 
@@ -8189,10 +8192,6 @@ msgstr "Organisation"
 msgid "Original"
 msgstr "Original"
 
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "Originalseite"
-
 #: src/features/write/rich-text-field.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "Die ursprüngliche Tabellenformatierung bleibt erhalten. Dieser Inhalt ist schreibgeschützt, da er nicht sicher bearbeitet werden kann."
@@ -8295,6 +8294,10 @@ msgstr "Das Lesen der Seite wurde nicht abgeschlossen."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "Seitenansicht"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -11167,6 +11170,10 @@ msgstr ""
 msgid "Start"
 msgstr "Start"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version instead."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
 msgstr "Nachbereitung starten"
@@ -11988,6 +11995,10 @@ msgstr "Es gibt keinen Link zu einem Profil, Portfolio oder Repository."
 msgid "There is no summary paragraph."
 msgstr "Es gibt keinen zusammenfassenden Absatz."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -12673,7 +12684,6 @@ msgstr "Unterstreichen Sie Links"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13248,10 +13258,12 @@ msgstr "Jede Anforderung wird gewichtet"
 msgid "Went well"
 msgstr "Lief gut"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a parser reads"
 msgstr "Was ein Parser liest"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a person sees"
 msgstr "Was eine Person sieht"
@@ -13653,6 +13665,11 @@ msgstr "Sie sind offline. Versuchen Sie es erneut, wenn Sie die Verbindung wiede
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "Sie sind auf dem neuesten Stand"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

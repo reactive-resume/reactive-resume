@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {# kontorsdag i veckan} other {# kontorsdagar i veckan}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# sida} other {# sidor}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {# aktiv ansökan} other {# aktiva ansökningar}}"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. Skickar denna jobbansökan och din Kunskap; din leverantör kan ta betalt."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1325,6 +1329,11 @@ msgstr "Lägg till ett med landskod; vissa ansökningsformulär kräver det inna
 msgid "Add page"
 msgstr "Lägg till sida"
 
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
 msgstr ""
@@ -1976,10 +1985,6 @@ msgstr "Arabiska"
 #: src/features/write/fields.ts
 msgid "Area of study"
 msgstr "Studieområde"
-
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "Som programvara läser det"
 
 #: src/features/applications/list-screen.tsx
 msgid "Ascending"
@@ -3121,10 +3126,6 @@ msgstr "Innehållet är upplagt i ett rutnät."
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "Innehållet rinner fortfarande över. Dölj ett avsnitt eller förkorta poster."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "Innehåll att rapportera"
@@ -3588,6 +3589,10 @@ msgstr "Det gick inte att återge detta CV."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Det gick inte att återkalla nyckeln. Försök igen."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6206,8 +6211,6 @@ msgstr "Lägg ut texten horisontellt. Roterade textstycken faller ofta bort elle
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "Layout"
 
@@ -8189,10 +8192,6 @@ msgstr "Organisation"
 msgid "Original"
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "Originalsida"
-
 #: src/features/write/rich-text-field.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "Den ursprungliga tabellformateringen bevaras. Innehållet är skrivskyddat eftersom det inte kan redigeras på ett säkert sätt."
@@ -8295,6 +8294,10 @@ msgstr "Sidläsningen avslutades inte."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "Sidvy"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -11167,6 +11170,10 @@ msgstr ""
 msgid "Start"
 msgstr "Start"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version instead."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
 msgstr "Starta en utvärdering"
@@ -11988,6 +11995,10 @@ msgstr "Det finns ingen länk till en profil, portfölj eller kodförvar."
 msgid "There is no summary paragraph."
 msgstr "Det finns inget sammanfattande stycke."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -12673,7 +12684,6 @@ msgstr "Stryk under länkar"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13248,10 +13258,12 @@ msgstr "Väger varje krav"
 msgid "Went well"
 msgstr "Gick bra"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a parser reads"
 msgstr "Vad en tolkare läser"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a person sees"
 msgstr "Vad en person ser"
@@ -13653,6 +13665,11 @@ msgstr "Du är offline. Försök igen när du återansluter."
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "Du är ikapp"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

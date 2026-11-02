@@ -7,6 +7,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { measureOverflow } from "@reactive-resume/pdf/page-map";
+import { addPageWith, spillingSections } from "@reactive-resume/resume/spill";
 import { fitResume } from "./fit";
 import { usePageZoom, ZoomViewport } from "./use-page-zoom";
 import { usePreview } from "./usePreview";
@@ -38,6 +39,7 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 	const selection = selected?.data === draft.data ? selected.node : null;
 	const [fitting, setFitting] = useState(false);
 	const [fitFailed, setFitFailed] = useState(false);
+	const [fitError, setFitError] = useState(false);
 	const [fitApplied, setFitApplied] = useState(false);
 	const latestData = useRef(draft.data);
 	useLayoutEffect(() => {
@@ -72,9 +74,15 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 		if (!data || fitting || draft.locked) return;
 		setFitting(true);
 		setFitFailed(false);
+		setFitError(false);
 		try {
 			const fitted = await fitResume(data, () => mounted.current && latestData.current === data);
 			if (!mounted.current || latestData.current !== data) return;
+			// Squeezing that still runs over gains nothing: leave the design as it was and offer a page instead.
+			if (!fitted.fits) {
+				setFitFailed(true);
+				return;
+			}
 			let applied = false;
 			draft.update(
 				(value) => {
@@ -85,12 +93,10 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 				},
 				{ newStep: true },
 			);
-			if (applied) {
-				setFitApplied(true);
-				setFitFailed(!fitted.fits);
-			}
+			if (applied) setFitApplied(true);
 		} catch {
-			if (mounted.current) setFitFailed(true);
+			// A render that failed says nothing about whether the content fits.
+			if (mounted.current) setFitError(true);
 		} finally {
 			if (mounted.current) setFitting(false);
 		}
@@ -99,6 +105,26 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 	const overflow = data && result ? measureOverflow(data, result) : null;
 	const firstSpill = overflow?.spills[0];
 	const page = firstSpill?.authoredPage;
+	// The sections that spill off the last page go onto a new page: the other way out besides Fit.
+	// Only for the draft itself: with the Assistant's edits marked, the page shown isn't the one a new page would split.
+	const spilling =
+		overflow && data && result && !previewData
+			? spillingSections(data.metadata.layout.pages, result.pageMap.nodes)
+			: null;
+	const addPage = () => {
+		if (!spilling || draft.locked || !data) return;
+		const measured = JSON.stringify(data.metadata.layout.pages);
+		draft.update(
+			(value) => {
+				// The layout changed before this render caught up: the sections measured here may not spill any more.
+				if (JSON.stringify(value.metadata.layout.pages) !== measured) return;
+				addPageWith(value.metadata.layout.pages, spilling);
+			},
+			{ newStep: true },
+		);
+		setFitFailed(false);
+		setFitApplied(false);
+	};
 	const currentPage = Math.min(
 		result?.pageCount ?? 1,
 		Number(Object.entries(rows).find(([, row]) => (row.y + row.height) * (zoom ?? 1) > offset)?.[0] ?? 0) + 1,
@@ -146,8 +172,15 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 					}
 				/>
 			) : null}
+			{fitError ? <Banner tone="danger" message={t`Couldn't run Fit. Try again.`} /> : null}
 			{fitFailed ? (
-				<Banner tone="warn" message={t`Content still runs over. Hide a section or shorten entries.`} />
+				<Banner
+					tone="warn"
+					message={plural(authored, {
+						1: "Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.",
+						other: "Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.",
+					})}
+				/>
 			) : null}
 			{fitApplied ? (
 				<Button
@@ -200,6 +233,14 @@ export function ResumePage({ id, draft, focused, previewData }: ResumePageProps)
 													})
 												: plural(overflow.pageCount, { one: "Runs to # page", other: "Runs to # pages" })}
 										</Text>
+										{spilling ? (
+											<Button
+												variant="secondary"
+												label={t`Add page ${authored + 1}`}
+												disabled={draft.locked || preview.rendering || fitting}
+												onPress={addPage}
+											/>
+										) : null}
 										<Button
 											variant="secondary"
 											label={plural(authored, { 1: "Fit to one page", other: "Fit to # pages" })}

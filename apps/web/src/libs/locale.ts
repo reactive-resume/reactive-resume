@@ -3,7 +3,14 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import Cookies from "js-cookie";
-import { defaultLocale, isLocale, localeSchema, localizedUrl, supportedLocales } from "@reactive-resume/utils/locale";
+import {
+	defaultLocale,
+	getPreferredLocale,
+	isLocale,
+	localeSchema,
+	localizedUrl,
+	supportedLocales,
+} from "@reactive-resume/utils/locale";
 
 const storageKey = "locale";
 const persistLocale = (locale: Locale) => Cookies.set(storageKey, locale, { expires: 365, path: "/", sameSite: "lax" });
@@ -115,8 +122,10 @@ export const getLocale = () => {
 		return locale;
 	}
 
-	const locale = Cookies.get(storageKey);
-	return resolveLocale(locale ?? defaultLocale);
+	const saved = Cookies.get(storageKey);
+	if (saved !== undefined) return resolveLocale(saved);
+	// Browser hints affect the app only; neither persist them nor vary shared server HTML by Accept-Language.
+	return getPreferredLocale(navigator.languages ?? []);
 };
 
 const loadMessages = async (locale: Locale) => {

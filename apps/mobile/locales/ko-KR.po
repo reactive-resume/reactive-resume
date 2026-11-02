@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {주 #일 사무실 출근} other {주 #일 사무실 출근}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, other {#페이지}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {진행 중인 지원 #건} other {진행 중인 �
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. 이 지원 내역과 지식을 전송합니다. 제공자가 요금을 부과할 수 있습니다."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1325,6 +1329,11 @@ msgstr "국가 코드를 포함해 추가하세요. 일부 지원서 양식은 �
 msgid "Add page"
 msgstr "페이지 추가"
 
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
 msgstr ""
@@ -1976,10 +1985,6 @@ msgstr "아랍어"
 #: src/features/write/fields.ts
 msgid "Area of study"
 msgstr "연구분야"
-
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "소프트웨어가 그것을 읽으면"
 
 #: src/features/applications/list-screen.tsx
 msgid "Ascending"
@@ -3121,10 +3126,6 @@ msgstr "내용이 격자 형태로 배치되어 있습니다."
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "콘텐츠가 계속 초과됩니다. 섹션을 숨기거나 항목을 줄이세요."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "신고할 내용"
@@ -3588,6 +3589,10 @@ msgstr "이 이력서를 렌더링할 수 없습니다."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "키를 취소할 수 없습니다. 다시 시도해 보세요."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6206,8 +6211,6 @@ msgstr "텍스트를 가로로 배치하세요. 회전된 텍스트는 누락되
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "레이아웃"
 
@@ -8189,10 +8192,6 @@ msgstr "기관"
 msgid "Original"
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "원본 페이지"
-
 #: src/features/write/rich-text-field.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "원본 표 서식이 유지됩니다. 안전하게 편집할 수 없어 이 콘텐츠는 읽기 전용입니다."
@@ -8295,6 +8294,10 @@ msgstr "페이지 읽기가 완료되지 않았습니다."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "페이지 조회수"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -11167,6 +11170,10 @@ msgstr ""
 msgid "Start"
 msgstr "시작"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version instead."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
 msgstr "회고 시작"
@@ -11988,6 +11995,10 @@ msgstr "프로필, 포트폴리오 또는 저장소로 연결되는 링크가 �
 msgid "There is no summary paragraph."
 msgstr "요약 문단이 없습니다."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -12673,7 +12684,6 @@ msgstr "링크에 밑줄을 긋습니다"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13248,10 +13258,12 @@ msgstr "각 요건 따져 보는 중"
 msgid "Went well"
 msgstr "잘됨"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a parser reads"
 msgstr "파서가 읽는 내용"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a person sees"
 msgstr "사람이 보는 화면"
@@ -13653,6 +13665,11 @@ msgstr "오프라인 상태입니다. 다시 연결되면 다시 시도하세요
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "모두 확인했습니다"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {# يوم في المكتب أسبوعيًا} other {# يوم في المكتب أسبوعيًا} zero {# يوم في المكتب أسبوعيًا} two {يومان (#) في المكتب أسبوعيًا} few {# أيام في المكتب أسبوعيًا} many {# يوم في المكتب أسبوعيًا}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, zero {# صفحة} one {# صفحة} two {صفحتان} few {# صفحات} many {# صفحة} other {# صفحة}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {# طلب نشط} other {# طلب نشط} zero {# �
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. يرسل هذا الطلب ومعرفتك؛ قد يفرض مزودك رسومًا."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1325,6 +1329,11 @@ msgstr "أضف رقمًا برمز الدولة؛ فبعض نماذج التقد
 msgid "Add page"
 msgstr "إضافة صفحة"
 
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
+
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
 msgstr ""
@@ -1976,10 +1985,6 @@ msgstr "العربية"
 #: src/features/write/fields.ts
 msgid "Area of study"
 msgstr "مجال الدراسة"
-
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "كما يقرأها البرنامج"
 
 #: src/features/applications/list-screen.tsx
 msgid "Ascending"
@@ -3121,10 +3126,6 @@ msgstr "المحتوى منظّم في شبكة."
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "المحتوى لا يزال يتجاوز الصفحة. إخفاء قسم أو تقصير الإدخالات."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "المحتوى للإبلاغ"
@@ -3588,6 +3589,10 @@ msgstr "تعذر عرض هذه السيرة الذاتية."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "تعذر إلغاء المفتاح. حاول ثانية."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6206,8 +6211,6 @@ msgstr "رتّب النص أفقيًا. غالبًا ما يتم إسقاط ال
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "التخطيط"
 
@@ -8189,10 +8192,6 @@ msgstr "المنظمة"
 msgid "Original"
 msgstr ""
 
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "الصفحة الأصلية"
-
 #: src/features/write/rich-text-field.tsx
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "يتم الحفاظ على تنسيق الجدول الأصلي. هذا المحتوى للقراءة فقط لأنه لا يمكن تحريره بأمان."
@@ -8295,6 +8294,10 @@ msgstr "لم تنتهي قراءة الصفحة."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "عرض الصفحة"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -11167,6 +11170,10 @@ msgstr ""
 msgid "Start"
 msgstr "البداية"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version instead."
+msgstr ""
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Start a debrief"
 msgstr "ابدأ مراجعة ما بعد المقابلة"
@@ -11988,6 +11995,10 @@ msgstr "لا يوجد رابط لملف تعريف أو ملف أعمال أو �
 msgid "There is no summary paragraph."
 msgstr "لا توجد فقرة ملخّص."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -12673,7 +12684,6 @@ msgstr "تسطير الروابط"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13248,10 +13258,12 @@ msgstr "جارٍ تقييم كل متطلب"
 msgid "Went well"
 msgstr "سارت جيدًا"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a parser reads"
 msgstr "ما يقرأه المحلِّل"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/check/page.tsx
 msgid "What a person sees"
 msgstr "ما يراه الشخص"
@@ -13653,6 +13665,11 @@ msgstr "أنت غير متصل بالإنترنت. حاول مرة أخرى عن
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "أنت مطّلع على كل شيء"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

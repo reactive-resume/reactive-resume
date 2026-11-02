@@ -27,6 +27,7 @@ import { useKeyboardInset } from "@reactive-resume/ui/hooks/use-keyboard-inset";
 import { cn } from "@reactive-resume/utils/style";
 import { ImprovePanel, lineAtCaret } from "./improve";
 import { acceptImproveLine } from "./improve-history";
+import { cleanPastedHtml } from "@/components/input/pasted-html";
 import { richTextExtensions } from "@/components/input/rich-text-extensions";
 import { hasUnsupportedTableMarkup, toPreviewHtml } from "@/components/input/rich-text-markup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -216,7 +217,10 @@ export function RichTextEditor({
 		immediatelyRender: false,
 		shouldRerenderOnTransaction: false,
 		editorProps: {
-			transformPastedHTML: (html) => (hasUnsupportedTableMarkup(html) ? toPreviewHtml(html) : html),
+			transformPastedHTML: (pasted) => {
+				const html = cleanPastedHtml(pasted);
+				return hasUnsupportedTableMarkup(html) ? toPreviewHtml(html) : html;
+			},
 			attributes: {
 				...(id ? { id } : {}),
 				"aria-label": label,

@@ -77,6 +77,14 @@ export function SaveStatus() {
 					</button>
 				</span>
 			)}
+			{status === "locked" && (
+				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-warn-text")}>
+					<Icon name="lock" size={16} />
+					<span className="truncate">
+						<Trans>Locked · unlock to save</Trans>
+					</span>
+				</span>
+			)}
 			{status === "conflict" && (
 				<span className={cn(ENTER_CLASS, "flex min-w-0 items-center gap-1.5 text-warn-text")}>
 					<Icon name="cloud-warning" size={16} />

@@ -7,12 +7,41 @@ import { changeLocale, getLocale } from "./locale";
 
 beforeEach(() => {
 	Cookies.remove("locale");
+	window.history.replaceState(null, "", "/");
+	vi.stubGlobal("navigator", { languages: ["en-US"] });
 	vi.spyOn(window.location, "reload").mockImplementation(() => {});
 });
 
 afterEach(() => {
 	Cookies.remove("locale");
 	vi.restoreAllMocks();
+	vi.unstubAllGlobals();
+});
+
+describe("first-visit language", () => {
+	it("follows the browser without persisting an inferred choice", () => {
+		vi.stubGlobal("navigator", { languages: ["unsupported", "de-AT", "fr-FR"] });
+		window.history.replaceState({ key: "visit" }, "", "/ats-checker?campaign=first#check");
+		const href = window.location.href;
+		expect(getLocale()).toBe("de-DE");
+		expect(Cookies.get("locale")).toBeUndefined();
+		expect(window.location.href).toBe(href);
+		expect(window.history.state).toEqual({ key: "visit" });
+		expect(window.location.reload).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		["?locale=ja-JP", "fr-FR", "ja-JP"],
+		["?locale=en-US", undefined, "en-US"],
+		["", "fr-FR", "fr-FR"],
+		["?locale=unsupported", "fr-FR", "fr-FR"],
+	])("keeps explicit URL %s and cookie %s ahead of browser language", (search, saved, expected) => {
+		vi.stubGlobal("navigator", { languages: ["de-DE"] });
+		window.history.replaceState(null, "", `/${search}`);
+		if (saved) Cookies.set("locale", saved);
+		expect(getLocale()).toBe(expected);
+		expect(Cookies.get("locale")).toBe(expected);
+	});
 });
 
 describe("changeLocale", () => {

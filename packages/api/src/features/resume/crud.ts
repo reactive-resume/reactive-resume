@@ -71,7 +71,7 @@ export const crudRouter = {
 			operationId: "createResume",
 			summary: "Create a new resume",
 			description:
-				"Creates a new resume with the given name and tags. The slug (its public address) is optional: when omitted it is generated from the name (or is \"resume\" when autoName is set) and made unique across the user's resumes, and it follows the resume's name until the resume is published or given a slug; when given it must be unique too. Optionally initializes the resume with sample data by setting withSampleData to true. Returns the ID of the newly created resume. Requires authentication.",
+				"Creates a new resume with the given name and tags. The slug (its public address) is optional: when omitted it is generated from the name (or is \"resume\" when autoName is set) and made unique across the user's resumes, and it follows the resume's name until the resume is published or given a slug; when given it must be unique too. Optionally initializes the resume with sample data by setting withSampleData to true, and starts it in a given template. Returns the ID of the newly created resume. Requires authentication.",
 			successDescription: "The ID of the newly created resume.",
 		})
 		.input(resumeDto.create.input)
@@ -92,6 +92,7 @@ export const crudRouter = {
 					withSampleData: input.withSampleData,
 					name: context.user.name,
 					locale: context.locale,
+					template: input.template,
 				}),
 			}),
 		),

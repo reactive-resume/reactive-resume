@@ -44,7 +44,7 @@ export const getRouter = async () => {
 		defaultPendingMinMs: 300,
 		defaultErrorComponent: ErrorScreen,
 		defaultPendingComponent: LoadingScreen,
-		defaultNotFoundComponent: NotFoundScreen,
+		defaultNotFoundComponent: () => <NotFoundScreen />,
 		context: { orpc, queryClient, theme, locale, session, flags },
 	});
 

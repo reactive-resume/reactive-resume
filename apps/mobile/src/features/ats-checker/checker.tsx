@@ -25,7 +25,7 @@ type PickedFile = Pick<DocumentPickerAsset, "uri" | "name" | "size" | "mimeType"
 type State =
 	| { name: "idle"; error?: string | undefined }
 	| { name: "busy"; file: PickedFile; step: number }
-	| { name: "done"; file: PickedFile; result: AtsResult }
+	| { name: "done"; file: PickedFile; result: AtsResult; importError?: string | undefined }
 	| { name: "importing" };
 
 const MAX_POSTING = 20_000;
@@ -97,7 +97,8 @@ export function AtsChecker() {
 		reset();
 	};
 
-	const importAndOpen = async (file: PickedFile) => {
+	// A failed import goes back to the report it came from, with the reason (web checker).
+	const importAndOpen = async (file: PickedFile, result?: AtsResult) => {
 		setState({ name: "importing" });
 		const controller = new AbortController();
 		abort.current = controller;
@@ -109,15 +110,14 @@ export function AtsChecker() {
 			router.replace(routes.builder(imported.id, "check"));
 		} catch (error) {
 			if (controller.signal.aborted) return;
-			setState({
-				name: "idle",
-				error: error instanceof ImportError ? error.message : t`Couldn't import the file. Try again from Documents.`,
-			});
+			const message =
+				error instanceof ImportError ? error.message : t`Couldn't import the file. Try again from Documents.`;
+			setState(result ? { name: "done", file, result, importError: message } : { name: "idle", error: message });
 		}
 	};
 
-	const fix = (file: PickedFile) => {
-		if (signedIn) return void importAndOpen(file);
+	const fix = (file: PickedFile, result: AtsResult) => {
+		if (signedIn) return void importAndOpen(file, result);
 		pendingImport.current = { file, server: getServer(), at: Date.now() };
 		router.push(routes.signIn());
 	};
@@ -147,7 +147,8 @@ export function AtsChecker() {
 					result={state.result}
 					uri={state.file.uri}
 					size={state.file.size ?? new File(state.file.uri).size}
-					onFix={() => fix(state.file)}
+					importError={state.importError}
+					onFix={() => fix(state.file, state.result)}
 					onReset={reset}
 					onBlank={() => router.replace(routes.new())}
 				/>
@@ -326,12 +327,17 @@ type ResultProps = {
 	result: AtsResult;
 	uri: string;
 	size: number;
+	importError?: string | undefined;
 	onFix: () => void;
 	onReset: () => void;
 	onBlank: () => void;
 };
 
-function Result({ result, uri, size, onFix, onReset, onBlank }: ResultProps) {
+// A file with no text behind its pages has nothing to import: the editor would open empty. A partly scanned one
+// (IMAGE_ONLY_DOCUMENT) still brings its readable pages.
+const UNREADABLE = new Set(["NO_TEXT_LAYER"]);
+
+function Result({ result, uri, size, importError, onFix, onReset, onBlank }: ResultProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const { report } = result;
@@ -343,6 +349,7 @@ function Result({ result, uri, size, onFix, onReset, onBlank }: ResultProps) {
 	const verdict =
 		report.score >= 80 ? t`Reads cleanly` : report.score >= 50 ? t`Mostly readable` : t`Hard for software to read`;
 	const tooLarge = size > MAX_IMPORT_BYTES;
+	const unreadable = report.findings.some((finding) => UNREADABLE.has(finding.code));
 	const megabytes = Math.ceil(size / 1_000_000);
 
 	const accordion = (key: string, title: string, count: string, icon: IconName, color: string, body: ReactNode) => {
@@ -414,8 +421,8 @@ function Result({ result, uri, size, onFix, onReset, onBlank }: ResultProps) {
 					onChange={setLens}
 					options={[
 						{ value: "report", label: t`Report` },
-						{ value: "page", label: t`Original page` },
-						{ value: "text", label: t`As software reads it` },
+						{ value: "page", label: t`What a person sees` },
+						{ value: "text", label: t`What a parser reads` },
 					]}
 				/>
 
@@ -524,7 +531,25 @@ function Result({ result, uri, size, onFix, onReset, onBlank }: ResultProps) {
 					backgroundColor: colors.surface,
 				}}
 			>
-				{tooLarge ? (
+				{importError ? <Banner tone="danger" message={importError} /> : null}
+				{unreadable ? (
+					<>
+						<Banner
+							tone="warn"
+							icon="warning"
+							title={t`There's no text here to bring into the editor`}
+							message={t`Start a blank resume and paste your sections in, or import the Word version instead.`}
+						/>
+						<View style={{ flexDirection: "row", gap: space.s2 }}>
+							<View style={{ flex: 1 }}>
+								<Button variant="secondary" label={t`Check another file`} onPress={onReset} fullWidth />
+							</View>
+							<View style={{ flex: 1 }}>
+								<Button label={t`Start blank`} onPress={onBlank} fullWidth />
+							</View>
+						</View>
+					</>
+				) : tooLarge ? (
 					<>
 						<Banner
 							tone="warn"

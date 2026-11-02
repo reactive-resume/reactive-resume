@@ -603,6 +603,14 @@ msgstr "{0} 项中已应用 {accepted} 项"
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
+msgstr ""
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
 msgstr "{authored, plural, =1 {适配为一页} other {适配为 # 页}}"
@@ -658,6 +666,10 @@ msgstr "{count, plural, one {#条目} other {# 条目}}"
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, other {# 个待解决问题}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{count, plural, one {Added page {page} and moved # section onto it} other {Added page {page} and moved # sections onto it}}"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -898,10 +910,6 @@ msgstr "{pageCount, plural, one {#页面} other {#页面}}"
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{pageCount, plural, one {Runs to # page} other {Runs to # pages}}"
 msgstr ""
-
-#: src/features/resume/editor/design/fit.ts
-msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
-msgstr "{pages, plural, other {在 9 pt 下仍有 # 页。请隐藏一个部分或缩短条目。}}"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
@@ -1712,6 +1720,15 @@ msgstr "添加一个带国家区号的号码；有些申请表要求先填写才
 msgid "Add page"
 msgstr "添加页面"
 
+#. placeholder {0}: authored + 1
+#: src/features/resume/editor/design/fit.ts
+msgid "Add page {0}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Add page {next}"
+msgstr ""
+
 #: src/features/settings/account/security.tsx
 msgid "Add passkey"
 msgstr "添加密钥"
@@ -2494,10 +2511,6 @@ msgstr "已存档（关闭）"
 msgid "Area of study"
 msgstr "研究领域"
 
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "当软件读取时"
-
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -2607,6 +2620,11 @@ msgstr "助理对话"
 #: src/features/settings/ai/web-access.tsx
 msgid "Assistant."
 msgstr "助手。"
+
+#. Password rule shown under the password field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "At least 8 characters."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "At Northwind Labs I led research for our onboarding redesign. I interviewed 14 customers, found three drop-off points, and we shipped a shorter setup. Activation rose from 31% to 44%."
@@ -3291,10 +3309,6 @@ msgstr "查看你的邮箱"
 msgid "Check your email for a link to reset your password."
 msgstr "请检查你的电子邮件，点击邮件中的链接重置密码。"
 
-#: src/features/auth/pages/register.tsx
-msgid "Check your email for a link to verify your account."
-msgstr "请检查你的电子邮件，点击邮件中的链接验证账号。"
-
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
 msgid "Check your resume’s ATS readability"
@@ -3895,12 +3909,10 @@ msgstr "内容以网格形式排列。"
 msgid "Content revision: {0}"
 msgstr ""
 
-#. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/assistant/conversation.tsx
-#: src/features/auth/pages/register.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Continue"
 msgstr "继续"
@@ -4153,6 +4165,7 @@ msgid "Couldn't connect. Check the key and try again."
 msgstr "无法连接。检查密钥并重试。"
 
 #: src/features/auth/pages/login.tsx
+#: src/features/homepage/hero.tsx
 msgid "Couldn't continue as a guest. Try again."
 msgstr "无法以访客身份继续。请重试。"
 
@@ -4586,6 +4599,10 @@ msgstr "无法保存您的更改。继续之前请重试。"
 msgid "Couldn't save your changes. Try again."
 msgstr "无法保存你的更改。请重试。"
 
+#: src/features/resume/builder/draft.ts
+msgid "Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again."
+msgstr ""
+
 #: src/features/career/knowledge/preferences.tsx
 msgid "Couldn't save your preferences. Try again."
 msgstr "无法保存你的偏好。请重试。"
@@ -4868,10 +4885,6 @@ msgstr "求职信"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Create"
 msgstr "创建"
-
-#: src/features/templates/gallery.tsx
-msgid "Create a free account, then choose your template in Design. Switch layouts anytime without rewriting your content."
-msgstr "创建一个免费帐户，然后在 设计 中选择您的模板。随时切换布局，无需重写内容。"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Create a new resume"
@@ -7310,6 +7323,10 @@ msgstr "导入简历"
 msgid "Import a resume, start a letter, save a job, copy one for a job, or start blank."
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
+msgid "Import a Word file instead"
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Import failed. Check the CSV and try again."
 msgstr "导入失败。请检查 CSV 后重试。"
@@ -7344,8 +7361,8 @@ msgid "Import the one you have, or start blank."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
-msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
-msgstr "将此文件导入到免费的 Reactive Resume 中。每一个问题都在 Check 中等着您。"
+msgid "Import this file into a free Reactive Resume, then keep checking it in Check as you edit. Check reads the resume you're editing, so its findings can differ from this file's."
+msgstr ""
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Import this file into the browser helper, review the destination and fill report. Unsupported forms use exact PDF downloads and copyable answers below. Native browser integration requires its own verified build."
@@ -8075,6 +8092,10 @@ msgstr "学习预算"
 msgid "Leave"
 msgstr "离开"
 
+#: src/features/resume/builder/draft.ts
+msgid "Leave anyway"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr "页面四周至少留出半英寸的边距。"
@@ -8549,6 +8570,10 @@ msgstr "锁定编辑"
 #: src/features/documents/document-card.tsx
 msgid "Locked"
 msgstr "锁定"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Locked · unlock to save"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
@@ -10056,6 +10081,10 @@ msgctxt "Entry header layout"
 msgid "One line"
 msgstr "单行"
 
+#: src/features/resume/editor/design/fit.ts
+msgid "One section fills the last page, so there's nothing to move onto a new one. Shorten it, or split it in Design → Page → Pages and sections."
+msgstr ""
+
 #: src/features/templates/gallery.tsx
 msgid "One-column templates give hiring software a simple top-to-bottom reading order. Two-column templates put supporting details in a sidebar and leave more room for visual hierarchy. Choose for your content, then check the exported PDF."
 msgstr "一栏模板为招聘软件提供了简单的从上到下的阅读顺序。两列模板将支持细节放在侧边栏中，并为视觉层次结构留出更多空间。选择您的内容，然后检查导出的 PDF。"
@@ -10264,6 +10293,11 @@ msgstr ""
 msgid "Optional for local Ollama"
 msgstr "本地可选 Ollama"
 
+#. Hint under the optional username field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "Optional. Leave it empty and we'll make one from your email. You can change it in Settings."
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
@@ -10318,10 +10352,6 @@ msgstr "组织"
 #: src/features/resume/editor/write/improve.tsx
 msgid "Original"
 msgstr ""
-
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "原页"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
@@ -10442,6 +10472,10 @@ msgstr "页面阅读未完成。"
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Page view"
 msgstr "页面浏览量"
+
+#: src/routes/builder/$resumeId/-components/design-panel.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/documents/page-navigation.tsx
 msgid "Pagination"
@@ -10716,6 +10750,10 @@ msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Pick a template below to start with it, or choose later in Design. Switch layouts anytime without rewriting your content."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -11622,6 +11660,10 @@ msgstr "矩形（全宽）"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Red"
 msgstr "红色"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Redo"
+msgstr ""
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Redo resume change"
@@ -13906,6 +13948,14 @@ msgstr "GitHub 星标"
 msgid "Start"
 msgstr "开始"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume"
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version from Documents."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Start a debrief"
 msgstr "开始复盘"
@@ -14023,6 +14073,10 @@ msgstr "留在这里"
 #. placeholder {1}: STEPS.length
 #: src/features/career/workspace/preparation.tsx
 msgid "Step {0} of {1}"
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
+msgid "Still saving your latest changes. They're kept on this device if you leave now."
 msgstr ""
 
 #: src/features/assistant/conversation.tsx
@@ -14816,6 +14870,10 @@ msgstr ""
 msgid "The posting:"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "The preview took too long to update, so Fit stopped. Check the pages, and use Undo to take its changes back."
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "提供者没有回答。检查钥匙、型号和底座URL。"
@@ -14985,6 +15043,10 @@ msgstr "没有指向个人主页、作品集或代码仓库的链接。"
 #: src/features/ats-checker/messages.ts
 msgid "There is no summary paragraph."
 msgstr "没有个人简介段落。"
+
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
 
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
@@ -15299,6 +15361,10 @@ msgid "This resume isn't shared right now."
 msgstr "这份简历目前尚未共享。"
 
 #: src/features/resume/builder/draft.ts
+msgid "This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "This resume was updated by an AI agent."
 msgstr "这份简历由人工智能代理更新。"
 
@@ -15349,10 +15415,6 @@ msgstr "此服务器使用标准阶段，因此不会保留文件中的阶段名
 #: src/features/auth/pages/error.tsx
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "此次登录尝试已过期或已被使用。请重试。"
-
-#: src/features/auth/pages/register.tsx
-msgid "This step is optional, but recommended."
-msgstr "此步骤可选，但推荐完成。"
 
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
@@ -15614,6 +15676,10 @@ msgstr "用这个再试一次"
 msgid "Try another word or type."
 msgstr ""
 
+#: src/features/homepage/hero.tsx
+msgid "Try it without an account"
+msgstr ""
+
 #: src/routes/auth/native-callback.tsx
 msgid "Try opening the app again"
 msgstr "尝试再次打开应用程序"
@@ -15793,17 +15859,12 @@ msgstr "下划线链接"
 #: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
-#: src/features/resume/editor/check/actions.ts
-#: src/features/resume/editor/design/fit.ts
-#: src/features/resume/editor/design/template-group.tsx
+#: src/features/resume/builder/undo-toast.ts
 #: src/features/resume/editor/proposals/proposals.ts
-#: src/features/resume/editor/webmcp.ts
-#: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/editor/write/section-row.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "撤销"
@@ -16094,8 +16155,8 @@ msgstr "使用示例"
 msgid "Use saved version"
 msgstr ""
 
-#: src/features/resume/editor/check/actions.ts
-msgid "Use the builder's Undo to undo earlier changes."
+#: src/features/templates/gallery.tsx
+msgid "Use the {name} template"
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -16124,6 +16185,10 @@ msgstr "使用该提供商"
 
 #: src/features/career/workspace/fit.tsx
 msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Use this template"
 msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
@@ -16273,10 +16338,6 @@ msgstr "正在验证验证码…"
 msgid "Verifying code…"
 msgstr "验证码…"
 
-#: src/features/auth/pages/register.tsx
-msgid "Verifying your email confirms that you own this address."
-msgstr "验证您的电子邮件确认您拥有该地址。"
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date}"
 msgstr "版本已发送 {date}"
@@ -16414,6 +16475,10 @@ msgstr "我们向 {email} 发送了确认链接。打开它以完成更改。"
 msgid "We sent a link to {currentEmail} to approve the change. Then open the link we send to {email}."
 msgstr "我们已向 {currentEmail} 发送链接以批准此更改。然后请打开我们发送到 {email} 的链接。"
 
+#: src/features/auth/pages/register.tsx
+msgid "We sent a link to verify your account. It's optional, and you can resend it from Settings."
+msgstr ""
+
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
 msgid "We sent a new verification link to {0}."
@@ -16484,10 +16549,12 @@ msgstr "正在权衡每项要求"
 msgid "Went well"
 msgstr "顺利"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a parser reads"
 msgstr "解析器读到的内容"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a person sees"
 msgstr "人看到的内容"
@@ -17014,6 +17081,10 @@ msgid "You're looking at a saved version. It can't be edited."
 msgstr "您正在查看已保存的版本。它无法编辑。"
 
 #: src/features/resume/builder/draft.ts
+msgid "You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "You're offline. Reconnect to save your changes before leaving."
 msgstr "你离线了。离开前重新连接以保存更改。"
 
@@ -17025,13 +17096,13 @@ msgstr "已全部看完"
 msgid "You're using a guest account"
 msgstr "你正在使用访客账户"
 
+#: src/features/resume/builder/undo-toast.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
+
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "您已达到{MAX_APPLICATION_LANES}个阶段的上限。请移除一个后再添加。"
-
-#: src/features/auth/pages/register.tsx
-msgid "Your account is ready"
-msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."
