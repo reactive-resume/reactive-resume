@@ -1,4 +1,5 @@
 import type { APIRequestContext, Locator, Page } from "@playwright/test";
+import { Pool } from "pg";
 import { deleteE2EUser } from "../fixtures/db";
 import { expect, test } from "../fixtures/test";
 
@@ -245,18 +246,85 @@ test("an older server keeps fixed-stage reads and writes without synthetic lane 
 });
 
 for (const failure of ["none", "second-create", "import", "lost-create-response"] as const) {
-	test(`CSV import maps distinct same-category stages and resumes after ${failure}`, async ({ authPage: page }) => {
+	test(`CSV import maps distinct same-category stages and resumes after ${failure}`, async ({
+		authPage: page,
+	}, info) => {
 		await page.goto("/dashboard/applications");
 		await page.getByRole("button", { name: "More", exact: true }).click();
 		// Stages have loaded once the menu offers to manage them.
 		await page.getByRole("menuitem", { name: "Manage stages…", exact: true }).waitFor();
 		await page.getByRole("menuitem", { name: "Import CSV…", exact: true }).click();
 		const sheet = page.getByRole("dialog", { name: "Import from CSV", exact: true });
-		await sheet
-			.getByLabel("CSV data", { exact: true })
-			.fill(
-				"Company,Role,Stage,Lane,Lane Category\nFictional Labs,Engineering I,interview,Pairing session,interview\nFictional Labs,Engineering II,interview,Portfolio review,interview",
-			);
+		const csv =
+			"Company,Role,Stage,Lane,Lane Category\nFictional Labs,Engineering I,interview,Pairing session,interview\nFictional Labs,Engineering II,interview,Portfolio review,interview";
+		if (failure === "none") {
+			await page.setViewportSize({ width: 1440, height: 1000 });
+			await sheet
+				.getByLabel("CSV data", { exact: true })
+				.fill("Company,Role,Stage,Stage Date\nFictional Cedar,Engineer,bogus,2026-99-99");
+			await expect(
+				sheet.getByText("Fix these values in the CSV, or leave their columns out, before importing.", { exact: true }),
+			).toBeVisible();
+			await expect(sheet.getByRole("button", { name: "Import 0 applications", exact: true })).toBeDisabled();
+			await sheet.screenshot({ path: info.outputPath("csv-validation.png") });
+			await sheet.getByRole("button", { name: "Use sample", exact: true }).click();
+			await expect(sheet.getByRole("button", { name: "Import 1 application", exact: true })).toBeEnabled();
+			for (const failRead of [true, false]) {
+				await page.evaluate((failRead) => {
+					const original = File.prototype.text;
+					let release!: () => void;
+					const held = new Promise<void>((resolve) => {
+						release = resolve;
+					});
+					window.addEventListener(
+						"release-csv-read",
+						() => {
+							File.prototype.text = original;
+							release();
+						},
+						{ once: true },
+					);
+					File.prototype.text = async function () {
+						await held;
+						if (failRead) throw new Error("File read failed");
+						return original.call(this);
+					};
+				}, failRead);
+				try {
+					await sheet.locator('input[type="file"]').setInputFiles({
+						name: "fictional-applications.csv",
+						mimeType: "text/csv",
+						buffer: Buffer.from(csv),
+					});
+					await expect(sheet.getByRole("button", { name: "Import 1 application", exact: true })).toBeDisabled();
+					await expect(sheet.getByRole("button", { name: "Upload .csv", exact: true })).toBeDisabled();
+					await expect(sheet.getByLabel("CSV data", { exact: true })).toBeDisabled();
+					await expect(sheet.locator('input[type="file"]')).toHaveValue("");
+				} finally {
+					await page.evaluate(() => window.dispatchEvent(new Event("release-csv-read")));
+				}
+				if (failRead) {
+					await expect(page.getByText("Couldn't read that file. Choose a .csv file and try again.")).toBeVisible();
+					await expect(sheet.getByRole("button", { name: "Import 1 application", exact: true })).toBeEnabled();
+				}
+			}
+			await expect(sheet.getByText("2 applications ready to import", { exact: true })).toBeVisible();
+			await sheet.screenshot({ path: info.outputPath("csv-review.png") });
+			const columns = sheet.getByRole("region", { name: "Columns", exact: true });
+			expect(
+				await columns.evaluate((element) => {
+					const editor = document.getElementById("import-csv-text");
+					return Boolean(editor && element.getBoundingClientRect().top < editor.getBoundingClientRect().top);
+				}),
+			).toBe(true);
+			await expect(sheet.getByLabel("CSV data", { exact: true })).toHaveAttribute("rows", "4");
+			await page.setViewportSize({ width: 390, height: 844 });
+			await expect(sheet.getByRole("heading", { name: "Columns", exact: true })).toBeInViewport({ ratio: 1 });
+			await page.setViewportSize({ width: 1440, height: 1000 });
+			const stored = await page.request.get("/api/openapi/applications");
+			await expect(stored).toBeOK();
+			expect(await stored.json()).toEqual([]);
+		} else await sheet.getByLabel("CSV data", { exact: true }).fill(csv);
 		const importButton = sheet.getByRole("button", { name: "Import 2 applications", exact: true });
 		await expect(importButton).toBeDisabled();
 		await sheet.getByLabel("Stage Pairing session goes to", { exact: true }).selectOption({
@@ -266,8 +334,20 @@ for (const failure of ["none", "second-create", "import", "lost-create-response"
 		await sheet.getByLabel("Stage Portfolio review goes to", { exact: true }).selectOption({
 			label: "Add “Portfolio review” as a new stage",
 		});
+		if (failure === "none") {
+			await expect(importButton).toBeEnabled();
+			await sheet.screenshot({ path: info.outputPath("csv-ready.png") });
+		}
 		let createCalls = 0;
 		let failed = false;
+		let importStarted!: () => void;
+		let releaseImport!: () => void;
+		const dispatched = new Promise<void>((resolve) => {
+			importStarted = resolve;
+		});
+		const held = new Promise<void>((resolve) => {
+			releaseImport = resolve;
+		});
 		await page.route("**/api/rpc/applications/lanes/create", async (route) => {
 			createCalls++;
 			if (!failed && failure === "second-create" && createCalls === 2) {
@@ -281,7 +361,11 @@ for (const failure of ["none", "second-create", "import", "lost-create-response"
 			}
 			return route.continue();
 		});
-		await page.route("**/api/rpc/applications/import", (route) => {
+		await page.route("**/api/rpc/applications/import", async (route) => {
+			if (failure === "none") {
+				importStarted();
+				await held;
+			}
 			if (!failed && failure === "import") {
 				failed = true;
 				return route.abort("failed");
@@ -289,6 +373,17 @@ for (const failure of ["none", "second-create", "import", "lost-create-response"
 			return route.continue();
 		});
 		await importButton.click();
+		if (failure === "none") {
+			await dispatched;
+			try {
+				await expect(sheet.getByLabel("CSV data", { exact: true })).toBeDisabled();
+				await expect(sheet.getByRole("button", { name: "Upload .csv", exact: true })).toBeDisabled();
+				await expect(sheet.getByRole("button", { name: "Use sample", exact: true })).toBeDisabled();
+				await expect(sheet.getByLabel("Column Company goes to", { exact: true })).toBeDisabled();
+			} finally {
+				releaseImport();
+			}
+		}
 		if (failure !== "none") {
 			await expect(page.getByText("Import failed. Check the CSV and try again.", { exact: true })).toBeVisible();
 			await expect(sheet.getByLabel("Stage Pairing session goes to", { exact: true })).toBeEnabled();
@@ -300,7 +395,7 @@ for (const failure of ["none", "second-create", "import", "lost-create-response"
 			await importButton.click();
 		}
 		await expect(sheet).not.toBeVisible();
-		const rows: { role: string; status: string; laneId: string }[] = await (
+		const rows: { id: string; role: string; status: string; laneId: string }[] = await (
 			await page.request.get("/api/openapi/applications")
 		).json();
 		const pipeline: { lanes: { id: string; label: string | null }[] } = await (
@@ -314,6 +409,29 @@ for (const failure of ["none", "second-create", "import", "lost-create-response"
 			expect(row?.status).toBe("interview");
 			expect(pipeline.lanes.find((lane) => lane.id === row?.laneId)?.label).toBe(label);
 			expect(pipeline.lanes.filter((lane) => lane.label === label)).toHaveLength(1);
+		}
+		if (failure === "none") {
+			const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+			try {
+				const stored = await pool.query(
+					"select role, status, lane_id from application where id = any($1::text[]) order by role",
+					[rows.map((row) => row.id)],
+				);
+				expect(stored.rows).toEqual([
+					{
+						role: "Engineering I",
+						status: "interview",
+						lane_id: pipeline.lanes.find((lane) => lane.label === "Pairing session")?.id,
+					},
+					{
+						role: "Engineering II",
+						status: "interview",
+						lane_id: pipeline.lanes.find((lane) => lane.label === "Portfolio review")?.id,
+					},
+				]);
+			} finally {
+				await pool.end();
+			}
 		}
 	});
 }

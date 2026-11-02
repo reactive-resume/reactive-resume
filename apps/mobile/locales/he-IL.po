@@ -162,6 +162,11 @@ msgstr ""
 msgid "{0, plural, one {# application moved to {1}} other {# applications moved to {2}}}"
 msgstr ""
 
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# application ready to import} other {# applications ready to import}}"
+msgstr "{0, plural, one {מועמדות אחת מוכנה לייבוא} other {# מועמדויות מוכנות לייבוא}}"
+
 #. placeholder {0}: selectedIds.length
 #: src/features/applications/list-screen.tsx
 msgid "{0, plural, one {# application selected.} other {# applications selected.}}"
@@ -186,6 +191,11 @@ msgstr ""
 #: src/features/write/section-sheet.tsx
 msgid "{0, plural, one {# column} other {# columns}}"
 msgstr "{0, plural, one {# עמודה} other {# עמודות}}"
+
+#. placeholder {0}: result.contactsSkipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# contact has an invalid email or no name; its application still imports.} other {# contacts have an invalid email or no name; their applications still import.}}"
+msgstr "{0, plural, one {לאיש קשר # יש אימייל לא חוקי או ללא שם; בקשת העבודה שלו עדיין מיובאת.} other {לאנשי הקשר של # יש דוא\"ל לא חוקי או ללא שם; בקשות העבודה שלהם עדיין מייבאות.}}"
 
 #. placeholder {0}: daysLeftInTrash(trashed)
 #: src/features/documents/library.tsx
@@ -270,6 +280,11 @@ msgstr ""
 msgid "{0, plural, one {# role updated.} other {# roles updated.}}"
 msgstr ""
 
+#. placeholder {0}: result.skipped
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {# row has no company or role and will be skipped.} other {# rows have no company or role and will be skipped.}}"
+msgstr "{0, plural, one {לשורה # אין חברה או תפקיד והיא תידלג.} other {לשורות # אין חברה או תפקיד והם ידלגו.}}"
+
 #. placeholder {0}: offerIds.length
 #. placeholder {0}: sent.offers.length
 #: src/features/assistant/coach-screen.tsx
@@ -350,6 +365,16 @@ msgstr "{0, plural, one {כל יום} other {כל # ימים}}"
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {For # day} other {For # days}}"
 msgstr "{0, plural, one {ליום #} other {עבור # ימים}}"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Import # application} other {Import # applications}}"
+msgstr "{0, plural, one {ייבוא מועמדות אחת} other {ייבוא # מועמדויות}}"
+
+#. placeholder {0}: saved.imported
+#: src/features/applications/import-sheet.tsx
+msgid "{0, plural, one {Imported # application.} other {Imported # applications.}}"
+msgstr "{0, plural, one {יובאה מועמדות #.} other {יובאו # מועמדויות.}}"
 
 #. placeholder {0}: knowledge.facts
 #: src/features/assistant/coach-screen.tsx
@@ -866,6 +891,10 @@ msgstr "{sender}-מכתב-מקדים"
 msgid "{skipped, plural, one {# change couldn't be prepared. Save your latest changes and ask again, or open Write to edit it directly.} other {# changes couldn't be prepared. Save your latest changes and ask again, or open Write to edit them directly.}}"
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "{skipped, plural, one {# row had no company or role and was skipped.} other {# rows had no company or role and were skipped.}}"
+msgstr "{skipped, plural, one {בשורה # לא הייתה חברה או תפקיד והיא דולגה.} other {ב-# שורות לא הייתה חברה או תפקיד והן דולגו.}}"
+
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {סיפור אחד} two {שני סיפורים} other {# סיפורים}}"
@@ -905,6 +934,10 @@ msgstr "{toCheck, plural, one {# לבדוק} other {# לבדוק}}"
 #: src/features/assistant/messages.tsx
 msgid "{toConfirm, plural, one {# edit adds a new detail, so accept it on its own once you've checked it.} other {# edits add new details, so accept each on its own once you've checked it.}}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "{unmatched, plural, one {Choose where # stage goes before importing.} other {Choose where # stages go before importing.}}"
+msgstr "{unmatched, plural, one {יש לבחור לאן לשייך # שלב לפני הייבוא.} two {יש לבחור לאן לשייך # שלבים לפני הייבוא.} other {יש לבחור לאן לשייך # שלבים לפני הייבוא.}}"
 
 #: src/features/assistant/messages.tsx
 msgid "{unresolved, plural, one {# citation didn't match anything the assistant could read.} other {# citations didn't match anything the assistant could read.}}"
@@ -1198,6 +1231,11 @@ msgstr "פְּעִילוּת"
 #: src/features/write/improve.tsx
 msgid "Add"
 msgstr "הוספה"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Add “{0}” as a new stage"
+msgstr "הוספת „{0}” כשלב חדש"
 
 #: src/features/applications/lane-settings.tsx
 msgid "Add a compatible replacement lane first."
@@ -1978,6 +2016,7 @@ msgstr ""
 
 #: src/features/application-detail/sheets.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Application date"
 msgstr "תאריך הגשת מועמדות לעבודה"
 
@@ -2087,6 +2126,10 @@ msgstr ""
 #: src/features/settings/locale-names.ts
 msgid "Arabic"
 msgstr "ערבית"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Archived (closes it)"
+msgstr "הועבר לארכיון (סוגר אותו)"
 
 #: src/features/write/fields.ts
 msgid "Area of study"
@@ -2516,6 +2559,7 @@ msgstr "האם תוכנה יכולה לקרוא את קורות החיים של�
 #: src/features/ai/web-access.tsx
 #: src/features/application-detail/date-field.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/assistant/coach-screen.tsx
@@ -2830,6 +2874,10 @@ msgstr "בחירת קורות חיים"
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "בחרו קורות חיים ב-Write כדי להתאים לעיצוב שלו. עד אז, למכתב יש משלו."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Choose a stage"
+msgstr "בחירת שלב"
+
 #: src/api/ai-consent.ts
 msgid "Choose a tested AI provider before sharing data."
 msgstr "בחר ספק AI בדוק לפני שיתוף נתונים."
@@ -2906,6 +2954,10 @@ msgstr "בחר שעה"
 #: src/features/applications/list-screen.tsx
 msgid "Choose up to 200 applications per bulk action."
 msgstr "בחר עד 200 מועמדויות לכל פעולה מרוכזת."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Choose where each stage named in the file goes, or add it as a new stage."
+msgstr "יש לבחור לאן לשייך כל שלב ששמו מופיע בקובץ, או להוסיף אותו כשלב חדש."
 
 #: src/features/assistant/provider.tsx
 msgid "Choose…"
@@ -3049,6 +3101,11 @@ msgstr "צבע (#RRGGBB)"
 msgid "Colors and level"
 msgstr "צבעים ורמה"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Column {header} goes to"
+msgstr "עמודה {header} עוברת"
+
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/section-sheet.tsx
 msgid "Columns"
 msgstr "עמודות"
@@ -3081,6 +3138,7 @@ msgstr "קומפקטי"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/check/job-match.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/documents/new-document.tsx
@@ -3247,8 +3305,29 @@ msgstr "החיבור נשמר"
 msgid "Contact details"
 msgstr "פרטי יצירת קשר"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Contact email"
+msgstr "אימייל ליצירת קשר"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact label"
+msgstr "תווית איש קשר"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact name"
+msgstr "שם איש הקשר"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact phone"
+msgstr "טלפון ליצירת קשר"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Contact role"
+msgstr "תפקיד יצירת קשר"
+
 #: src/features/application-detail/sections.tsx
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Contacts"
 msgstr "אנשי קשר"
 
@@ -3716,6 +3795,10 @@ msgstr "לא ניתן היה להגיע לספק ה-AI שלך. נסה שוב א�
 msgid "Couldn't read {name}'s answer. Try again, or switch the default provider in AI settings."
 msgstr ""
 
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't read that file. Choose a .csv file and try again."
+msgstr "לא ניתן היה לקרוא את הקובץ. בחר קובץ ‎.csv ונסה שוב."
+
 #: src/features/ats-checker/check.ts
 #: src/features/ats-checker/checker.tsx
 msgid "Couldn't read that file. Try again."
@@ -3889,6 +3972,10 @@ msgstr "לא ניתן היה לשתף את אירוע היומן. נסה שוב.
 #: src/features/workspace/tabs/debrief.tsx
 msgid "Couldn't share the calendar file. Try again."
 msgstr "לא ניתן היה לשתף את קובץ היומן. נסה שוב."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Couldn't share the file. Try again."
+msgstr "לא ניתן לשתף את הקובץ. נסו שוב."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Couldn't share the picture. Try again."
@@ -4118,6 +4205,10 @@ msgstr "יוצר מסמך…"
 #: src/features/documents/new-document.tsx
 msgid "Creating the resume…"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "CSV data"
+msgstr "נתוני CSV"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/preferences.tsx
@@ -4701,6 +4792,10 @@ msgstr "הורד את PDF במקום זאת"
 #: src/features/workspace/application-packet.tsx
 msgid "Download reviewed packet"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Download them"
+msgstr "הורד אותם"
 
 #: src/features/share/link.tsx
 msgid "downloads"
@@ -5413,6 +5508,10 @@ msgstr "תקן את התאריכים"
 msgid "Fix these in the editor"
 msgstr "תקן את אלה בעורך"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "לפני הייבוא, תקנו ערכים אלה ב־CSV או השמיטו את העמודות המתאימות."
+
 #: src/features/ats-checker/messages.ts
 msgid "Flatten the form so the text is part of the page."
 msgstr "שטח את הטופס כך שהטקסט יהיה חלק מהעמוד."
@@ -6039,9 +6138,18 @@ msgstr "הייבוא בוטל."
 msgid "Import canceled. Refresh Documents before retrying if the upload had finished."
 msgstr "הייבוא בוטל. רענן את המסמכים לפני ניסיון חוזר אם ההעלאה הסתיימה."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "הייבוא נכשל. בדוק את ה-CSV ונסה שוב."
+
 #: src/features/documents/new-document.tsx
 msgid "Import file"
 msgstr "ייבוא קובץ"
+
+#: src/features/applications-board/views.tsx
+#: src/features/applications/import-sheet.tsx
+msgid "Import from CSV"
+msgstr "ייבוא מ-CSV"
 
 #: src/features/write/outline.tsx
 msgid "Import it"
@@ -6287,6 +6395,7 @@ msgid "Job"
 msgstr "מִשׂרָה"
 
 #: src/features/application-detail/sheets.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Job description"
 msgstr "תיאור משרה"
@@ -6619,6 +6728,10 @@ msgstr "השאר ריק כדי לאפס את הכותרת למקורית."
 msgid "Leave it empty to remove the link."
 msgstr "השאר אותו ריק כדי להסיר את הקישור."
 
+#: src/features/applications/import-sheet.tsx
+msgid "Leave out"
+msgstr "לְהַשְׁמִיט"
+
 #: app/letter/[id]/_layout.tsx
 msgid "Leave without keeping the draft?"
 msgstr ""
@@ -6758,6 +6871,7 @@ msgstr "קווים קרובים כל כך יכולים לרוץ יחד בעת ק
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/write/fields.ts
 #: src/features/write/rich-text-field.tsx
 msgid "Link"
@@ -6896,6 +7010,10 @@ msgstr "עדכונים בזמן אמת בזמן עריכה"
 msgid "Live at {url}"
 msgstr "פורסם ב-{url}"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Load your stages before importing named stages. Your CSV data is kept."
+msgstr "יש לטעון את השלבים שלך לפני ייבוא שלבים בעלי שם. נתוני ה־CSV שלך יישמרו."
+
 #: src/features/design/design-pane.tsx
 msgid "Loading"
 msgstr "טוען"
@@ -6984,6 +7102,7 @@ msgstr "טוען…"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/letters/write.tsx
 #: src/features/write/basics-screen.tsx
@@ -8206,6 +8325,7 @@ msgstr "מֵידָע"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/document-menu/index.tsx
 msgid "Notes"
 msgstr "הערות"
@@ -8450,6 +8570,10 @@ msgstr ""
 #: src/features/ats-checker/checker.tsx
 msgid "Only the first {0} pages were checked."
 msgstr "רק דפי {0} הראשונים נבדקו."
+
+#: src/features/applications/import-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once, leaving out {overflow}. Split the file to import the rest."
+msgstr "רק {MAX_IMPORT} השורות הראשונות מיובאות בבת אחת, ו-{overflow} נותרות בחוץ. פצל את הקובץ כדי לייבא את השאר."
 
 #: src/features/check/parser.tsx
 msgid "Only the first 30 pages were checked."
@@ -8718,6 +8842,7 @@ msgid "Out of date: the text has changed since."
 msgstr "לא מעודכן: הטקסט השתנה מאז."
 
 #: src/features/application-detail/detail-screen.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Outcome"
 msgstr "תוצאה"
 
@@ -8851,6 +8976,10 @@ msgstr "הדבק פרסום דרושים"
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste a message from {company}"
 msgstr "הדבק הודעה מ-{company}"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Paste rows or upload a .csv. Columns are matched automatically, and you check the match before anything is saved."
+msgstr "הדבק שורות או העלה .csv. עמודות מותאמות אוטומטית, ואתה בודק את ההתאמה לפני שמשהו נשמר."
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Paste the email or message, without the signature."
@@ -9103,6 +9232,10 @@ msgstr "מודעת דרושים"
 #: src/features/assistant/messages.tsx
 msgid "Posting asks for: {requirement}"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Posting source"
+msgstr "מקור פרסום דרושים"
 
 #: src/features/career/today.tsx
 msgid "Postings can change or close. Publication date unknown; search coverage is incomplete."
@@ -10279,6 +10412,7 @@ msgstr "הפסקת השימוש בשלב"
 #: app/builder/[id]/page.tsx
 #: app/builder/[id]/write.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/lane-settings.tsx
 #: src/features/applications/prior-no-response.tsx
 #: src/features/assistant/assistant-screen.tsx
@@ -10487,6 +10621,7 @@ msgstr "יָמִינָה"
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10530,6 +10665,11 @@ msgstr "סיבוב"
 msgid "Rotation isn't supported by PDF rendering."
 msgstr "סיבוב אינו נתמך על ידי עיבוד PDF."
 
+#. placeholder {0}: fieldLabel(field)
+#: src/features/applications/import-sheet.tsx
+msgid "Row {row}, {0}: couldn't read “{value}”."
+msgstr "שורה {row}, {0}: לא ניתן לקרוא את „{value}”."
+
 #: src/features/design/style-groups.tsx
 msgid "Row order"
 msgstr "סדר השורות"
@@ -10563,6 +10703,7 @@ msgstr "חלודה"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Salary"
 msgstr "שכר"
 
@@ -11736,6 +11877,7 @@ msgstr "מיין לפי תאריך"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 msgid "Source"
 msgstr "מקור"
 
@@ -11810,6 +11952,31 @@ msgctxt "Entry header layout"
 msgid "Stacked"
 msgstr "זה מתחת לזה"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Stage"
+msgstr "שלב"
+
+#. placeholder {0}: lane.label
+#: src/features/applications/import-sheet.tsx
+msgid "Stage {0} goes to"
+msgstr "השלב {0} ישויך אל"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage counts as"
+msgstr "השלב נחשב כ־"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage date"
+msgstr "תאריך שלב"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage name"
+msgstr "שם השלב"
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stage outcome"
+msgstr "תוצאת השלב"
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Stage stays {stage}"
 msgstr "השלב נשאר {stage}"
@@ -11817,6 +11984,10 @@ msgstr "השלב נשאר {stage}"
 #: src/features/workspace/shell.tsx
 msgid "Stage, details and timeline"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Stages"
+msgstr "שלבים"
 
 #: src/features/write/date-field.tsx
 msgid "Start"
@@ -12118,6 +12289,7 @@ msgstr "תייג מועמדויות נבחרות"
 
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
+#: src/features/applications/import-sheet.tsx
 #: src/features/career/stories.tsx
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
@@ -13031,6 +13203,10 @@ msgstr "שרת זה מדווח על כתובת שונה מזו שהזנת. הז�
 msgid "This server uses http. The app needs https."
 msgstr "שרת זה משתמש ב-http. האפליקציה צריכה https."
 
+#: src/features/applications/import-sheet.tsx
+msgid "This server uses the standard stages, so stage names in the file aren't kept."
+msgstr "שרת זה משתמש בשלבים הרגילים, ולכן שמות השלבים בקובץ לא יישמרו."
+
 #: src/auth/messages.ts
 msgid "This sign-in attempt expired or was already used. Sign in again."
 msgstr "ניסיון ההתחברות הזה פג או שכבר נעשה בו שימוש. היכנס שוב."
@@ -13525,6 +13701,10 @@ msgstr "עודכנו {completed} מתוך {0}. דולג על מסמכים נעו
 msgid "Updating preview…"
 msgstr "מעדכן את התצוגה המקדימה…"
 
+#: src/features/applications/import-sheet.tsx
+msgid "Upload .csv"
+msgstr "העלה .csv"
+
 #: src/features/ats-checker/checker.tsx
 msgid "Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order, and how to fix it. Free, no account needed."
 msgstr "העלה PDF וראה את הטקסט שמערכת המעקב של המועמדים מחלצת: מה חסר, מה לא תקין ואיך לתקן את זה. חינם, אין צורך בחשבון."
@@ -13679,6 +13859,10 @@ msgstr ""
 #: src/features/career/role-suggestions.tsx
 msgid "Use reviewed roles in preferences"
 msgstr ""
+
+#: src/features/applications/import-sheet.tsx
+msgid "Use sample"
+msgstr "השתמש בדוגמה"
 
 #: src/draft/conflict-sheet.tsx
 #: src/features/application-detail/sections.tsx

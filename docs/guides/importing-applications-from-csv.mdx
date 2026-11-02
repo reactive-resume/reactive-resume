@@ -3,7 +3,7 @@ title: "Importing applications from CSV"
 description: "Move job applications from a spreadsheet into Reactive Resume with CSV import, check how columns are matched, and export your applications back to CSV."
 ---
 
-CSV import/export is available in the web app. Open Reactive Resume in your browser to use it; the mobile app does not offer CSV import/export.
+Import CSV files in the web or native mobile app. To export your application list to CSV, use the web app.
 
 If you've been tracking your job search in a spreadsheet, you can bring it into **Applications** in one go. Save the sheet as CSV, paste or upload it, check how the columns were matched, and import. You can also export your applications to CSV at any time.
 
@@ -12,7 +12,8 @@ If you've been tracking your job search in a spreadsheet, you can bring it into 
 <Steps>
   <Step title="Open Import from CSV">
     In **Applications**, select **More** next to **Save job**, then **Import CSV…**. If you have no applications yet,
-    select **Import from CSV** on the empty page.
+    select **Import from CSV** on the empty page. In the native app, select **Import from CSV** (the file upload icon)
+    in the Applications heading; it is available in List, Board, Calendar and Insights.
   </Step>
   <Step title="Add your rows">
     Select **Upload .csv** to choose a file, or paste rows into **CSV data**. The first row must be the column headings.
@@ -20,7 +21,8 @@ If you've been tracking your job search in a spreadsheet, you can bring it into 
   </Step>
   <Step title="Check the column matches">
     Under **Columns**, each heading from your file points to the field it goes into. Reactive Resume matches common
-    headings automatically. Change any match with its menu, or choose **Leave out** to skip a column.
+    headings automatically. Change any match with its menu, or choose **Leave out** to skip a column. Once rows are
+    loaded, column matches and the import summary appear before the compact **CSV data** editor in both apps.
   </Step>
   <Step title="Review the summary">
     The summary says how many applications are ready to import, and how many rows or contacts will be skipped. Invalid
@@ -32,22 +34,22 @@ If you've been tracking your job search in a spreadsheet, you can bring it into 
 
 <Frame caption="Review the column mapping before importing">
   <img
-    src="/images/guides/importing-applications-from-csv/import-from-csv-column-matching.webp"
-    alt="Import from CSV with two fictional rows and automatic Company, Role, Location and Stage column mappings"
+    src="/images/guides/importing-applications-from-csv/csv-review.png"
+    alt="CSV review with Company, Role, Stage, Lane and Lane Category matches above the CSV data editor"
   />
 </Frame>
 
 <Frame caption="Review the ready summary before importing">
   <img
-    src="/images/guides/importing-applications-from-csv/import-from-csv-ready-summary.webp"
-    alt="Import from CSV with two fictional rows ready to import and matched Company, Role, Location and Stage columns"
+    src="/images/guides/importing-applications-from-csv/csv-ready.png"
+    alt="CSV review with two fictional applications ready to import and choices for the Pairing session and Portfolio review stages"
   />
 </Frame>
 
 <Frame caption="Correct CSV warnings before importing">
   <img
-    src="/images/guides/career/import-validation.png"
-    alt="Import from CSV validation for fictional rows with unsupported stage, invalid salary and invalid date warnings"
+    src="/images/guides/importing-applications-from-csv/csv-validation.png"
+    alt="CSV review warning for a fictional row with an unsupported stage and an invalid stage date"
   />
 </Frame>
 
@@ -103,6 +105,8 @@ Up to 500 applications import at a time. If your file has more, the summary says
 </Tip>
 
 ## Export applications to CSV
+
+Open the web app for these export controls.
 
 <Steps>
   <Step title="Open Export to CSV">Select **More**, then **Export CSV…**.</Step>
