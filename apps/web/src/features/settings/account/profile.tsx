@@ -26,9 +26,11 @@ import { client, orpc } from "@/libs/orpc/client";
 import { sessionQueryKey } from "@/libs/root-context";
 
 const nameSchema = z.string().trim().min(1).max(64);
+// Usernames are lowercase: capitals typed are taken as their lowercase letters rather than refused.
 const usernameSchema = z
 	.string()
 	.trim()
+	.toLowerCase()
 	.min(3)
 	.max(64)
 	.regex(/^[a-z0-9._-]+$/);
@@ -241,7 +243,10 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 							: t`Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores.`
 					}
 					confirm={confirmUsername}
-					save={(username) => updateUser({ username, displayUsername: username })}
+					save={(value) => {
+						const username = value.trim().toLowerCase();
+						return updateUser({ username, displayUsername: username });
+					}}
 					hint={<Trans>Part of every public link. Old links keep working for 30 days after a change.</Trans>}
 				/>
 				<SavedField

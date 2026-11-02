@@ -19,7 +19,8 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 	const [edit, setEdit] = useState<string | null>(null);
 	const draft = edit ?? value;
 	const [touched, setTouched] = useState(false);
-	const trimmed = draft.trim();
+	// Usernames are lowercase: capitals typed are taken as their lowercase letters rather than refused (web profile).
+	const trimmed = field === "username" ? draft.trim().toLowerCase() : draft.trim();
 	const invalid = field === "name" ? !trimmed || trimmed.length > 64 : !/^[a-z0-9._-]{3,64}$/.test(trimmed);
 	const mutation = useMutation({
 		mutationKey: ["settings", "profile", field],

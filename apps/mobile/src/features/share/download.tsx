@@ -104,7 +104,8 @@ export function DownloadTab({ resume, offline }: DownloadProps) {
 									"cover-letter",
 								),
 							)
-						: safeFileName(t`${name}-Cover-Letter`),
+						: // English, as the comment above says: the letter's own language is unknown without it.
+							safeFileName(`${name}-Cover-Letter`),
 					format: chosen,
 					letter: true,
 					...(savedLetter ? { letterLocale: savedLetter.style.metadata.page.locale } : {}),
