@@ -84,4 +84,24 @@ describe("transcriptOf", () => {
 		] as unknown as UIMessage[];
 		expect(transcriptOf(messages, labels)).toBe("Assistant: Q: Which role?");
 	});
+
+	it("copies an answer once when it's also stored as the next message", () => {
+		const messages = [
+			{
+				id: "1",
+				role: "assistant",
+				parts: [
+					{
+						type: "tool-ask_user_question",
+						state: "output-available",
+						input: { question: "Which role?" },
+						output: "Designer",
+					},
+				],
+			},
+			{ id: "2", role: "user", parts: [{ type: "text", text: "Designer" }] },
+			{ id: "3", role: "user", parts: [{ type: "text", text: "Designer" }] },
+		] as unknown as UIMessage[];
+		expect(transcriptOf(messages, labels)).toBe("Assistant: Q: Which role?\nA: Designer\n\nYou: Designer");
+	});
 });

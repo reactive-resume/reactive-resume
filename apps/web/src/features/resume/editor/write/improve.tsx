@@ -46,8 +46,8 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 	const [asking, setAsking] = useState<"custom" | "result" | null>(null);
 	const [request, setRequest] = useState("");
 	const [result, setResult] = useState("");
-	// The last request sent, so Try again and Try another send it again.
-	const [last, setLast] = useState<Action | null>(null);
+	// The last request sent, with its words, so Try again and Try another send exactly that again.
+	const [last, setLast] = useState<{ action: Action; words: string } | null>(null);
 	const [changed, setChanged] = useState(false);
 	const improve = useMutation(orpc.ai.improve.mutationOptions());
 	const resultId = useId();
@@ -58,10 +58,12 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 		{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Make it shorter` },
 	];
 
-	const run = (action: Action) => {
+	const run = (
+		action: Action,
+		words = action === "custom" ? request.trim() : action === "result" ? result.trim() : "",
+	) => {
 		if (!provider) return;
-		setLast(action);
-		const words = action === "custom" ? request.trim() : action === "result" ? result.trim() : "";
+		setLast({ action, words });
 		improve.mutate({
 			aiProviderId: provider.id,
 			action,
@@ -136,7 +138,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 							<Trans>Keep mine</Trans>
 						</Button>
 						{last && !changed && (
-							<Button size="sm" variant="ghost" onClick={() => run(last)}>
+							<Button size="sm" variant="ghost" onClick={() => run(last.action, last.words)}>
 								<Trans>Try another</Trans>
 							</Button>
 						)}
@@ -173,7 +175,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 					<button
 						type="button"
 						className="w-fit text-xs text-ink-3 underline underline-offset-2"
-						onClick={() => run("result")}
+						onClick={() => run("result", "")}
 					>
 						<Trans>I don't have one yet</Trans>
 					</button>
@@ -230,7 +232,12 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 						{getOrpcErrorMessage(improve.error, { fallback: t`Couldn't get a suggestion. Nothing changed.` })}
 					</p>
 					{/* Sends the same request again; the options stay one step back. */}
-					<Button size="sm" variant="secondary" className="w-fit" onClick={() => (last ? run(last) : improve.reset())}>
+					<Button
+						size="sm"
+						variant="secondary"
+						className="w-fit"
+						onClick={() => (last ? run(last.action, last.words) : improve.reset())}
+					>
 						<Trans>Try again</Trans>
 					</Button>
 				</div>

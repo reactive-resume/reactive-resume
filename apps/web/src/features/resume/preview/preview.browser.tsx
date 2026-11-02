@@ -35,7 +35,7 @@ type PreviewPdf = {
 };
 
 /**
- * Whether two renders lay the page out the same: the same pages, and every block at the same place and height. Only
+ * Whether two renders lay the page out the same: the same pages, and every block at the same place and size. Only
  * then is a cross-fade between them a change of wording; otherwise it would show two layouts at once for a moment
  * (DESIGN.md: document reflow is never animated).
  */
@@ -43,7 +43,10 @@ const layoutKey = (pageMap: PageMap | undefined) =>
 	pageMap
 		? [
 				pageMap.pages.length,
-				...pageMap.nodes.map((node) => `${node.key}:${node.page}:${Math.round(node.y)}:${Math.round(node.height)}`),
+				...pageMap.nodes.map(
+					(node) =>
+						`${node.key}:${node.page}:${Math.round(node.x)}:${Math.round(node.y)}:${Math.round(node.width)}:${Math.round(node.height)}`,
+				),
 			].join("|")
 		: null;
 const sameLayout = (a: PageMap | undefined, b: PageMap | undefined) => {

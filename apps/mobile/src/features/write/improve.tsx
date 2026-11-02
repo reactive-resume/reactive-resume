@@ -34,8 +34,8 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 	const [asking, setAsking] = useState<"custom" | "result" | null>(null);
 	const [request, setRequest] = useState("");
 	const [result, setResult] = useState("");
-	// The last request sent, so Try again and Try another send it again.
-	const [last, setLast] = useState<Action | null>(null);
+	// The last request sent, with its words, so Try again and Try another send exactly that again.
+	const [last, setLast] = useState<{ action: Action; words: string } | null>(null);
 	const [changed, setChanged] = useState(false);
 	const [setup, setSetup] = useState(false);
 	const improve = useMutation(orpc.ai.improve.mutationOptions());
@@ -46,9 +46,11 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 		{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Make it shorter` },
 	];
 
-	const run = (action: Action) => {
-		setLast(action);
-		const words = action === "custom" ? request.trim() : action === "result" ? result.trim() : "";
+	const run = (
+		action: Action,
+		words = action === "custom" ? request.trim() : action === "result" ? result.trim() : "",
+	) => {
+		setLast({ action, words });
 		improve.mutate({
 			action,
 			line: line.text,
@@ -134,7 +136,7 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 						) : null}
 						<Button size="sm" variant="secondary" label={t`Keep mine`} onPress={onClose} />
 						{last && !changed ? (
-							<Button size="sm" variant="ghost" label={t`Try another`} onPress={() => run(last)} />
+							<Button size="sm" variant="ghost" label={t`Try another`} onPress={() => run(last.action, last.words)} />
 						) : null}
 					</View>
 				</View>
@@ -153,7 +155,7 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 							size="sm"
 							variant="secondary"
 							label={t`Try again`}
-							onPress={() => (last ? run(last) : improve.reset())}
+							onPress={() => (last ? run(last.action, last.words) : improve.reset())}
 						/>
 						<Button size="sm" variant="ghost" label={t`Cancel`} onPress={onClose} />
 					</View>
@@ -171,7 +173,7 @@ export function ImprovePanel({ line, where, context, onClose, onReplace }: Impro
 					/>
 					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.s2 }}>
 						<Button size="sm" label={t`Add`} disabled={!result.trim()} onPress={() => run("result")} />
-						<Button size="sm" variant="ghost" label={t`I don't have one yet`} onPress={() => run("result")} />
+						<Button size="sm" variant="ghost" label={t`I don't have one yet`} onPress={() => run("result", "")} />
 					</View>
 				</View>
 			) : asking === "custom" ? (

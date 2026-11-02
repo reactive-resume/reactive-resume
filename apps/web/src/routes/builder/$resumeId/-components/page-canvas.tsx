@@ -84,7 +84,8 @@ function ResumePageCanvas() {
 		? viewing.data
 		: data && previewTemplate
 			? { ...data, metadata: { ...data.metadata, template: previewTemplate } }
-			: data && marked.length > 0
+			: // Only undecided edits change the page: once every one is decided, it draws (and measures) as it is.
+				data && pendingProposals(data, marked, undefined, applications).length > 0
 				? markProposals(data, marked, applications)
 				: undefined;
 	// Fit is the resume's as it is: a render with edits marked (old and new text both shown) doesn't count. The callback

@@ -36,13 +36,18 @@ export function transcriptOf(
 	statusOf: (id: string) => EditStatus | undefined = () => undefined,
 ) {
 	let count = 0;
+	// An answered question's answer can also be stored as the user's next message (repaired older conversations): it's
+	// copied once, with its question.
+	let lastAnswer: string | null = null;
 	return messages
 		.flatMap((message) => {
 			const blocks: string[] = [];
+			const answered = lastAnswer;
+			lastAnswer = null;
 			for (const part of message.parts as ToolPart[]) {
 				if (part.type === "text") {
 					const text = (part as { text?: string }).text?.trim();
-					if (text) blocks.push(text);
+					if (text && !(message.role === "user" && text === answered)) blocks.push(text);
 					continue;
 				}
 				if (part.type === "tool-propose_edits" && part.state === "output-available") {
@@ -64,6 +69,7 @@ export function transcriptOf(
 					if (typeof question !== "string" || !question.trim()) continue;
 					const answer = part.state === "output-available" && typeof part.output === "string" ? part.output : null;
 					blocks.push(labels.question(question.trim(), answer));
+					if (answer !== null) lastAnswer = answer.trim();
 				}
 			}
 			const sources = agentWebSources(message)

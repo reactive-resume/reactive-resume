@@ -95,6 +95,8 @@ export function Conversation(props: ConversationProps) {
 	const queryClient = useQueryClient();
 	const [context, setContext] = useState<MessageContext>(props.initialContext);
 	const [rejections, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
+	const writes = useRef(0);
+	const owners = useRef(new Map<string, { write: number; previous: EditStatus | undefined }>());
 	const [stopped, setStopped] = useState(false);
 	// Messages already in the thread when it opens are history; only new ones rise in.
 	const [initialIds] = useState(() => new Set(props.initialMessages.map((message) => message.id)));
@@ -246,16 +248,36 @@ export function Conversation(props: ConversationProps) {
 	// Rejections and their Undo are recorded here; an acceptance is recorded with the document save that applies it.
 	const record = (message: UIMessage, part: ToolPart, changed: readonly Proposal[], next: EditStatus) => {
 		if (!part.toolCallId || next === "accepted") return;
-		setStatuses((current) => new Map([...current, ...changed.map((proposal) => [proposal.id, next] as const)]));
+		// Each id remembers which write set it and what it showed before, so a failed write puts back only what it
+		// still owns: a later Reject or Undo of the same edit keeps its own value.
+		const write = ++writes.current;
+		const ids = changed.map((proposal) => proposal.id);
+		for (const id of ids) owners.current.set(id, { write, previous: rejections.get(id) });
+		setStatuses((current) => new Map([...current, ...ids.map((id) => [id, next] as const)]));
 		void client.agent.messages
 			.setEditStatus({
 				threadId,
 				messageId: message.id,
 				toolCallId: part.toolCallId,
-				edits: changed.map((proposal) => ({ id: proposal.id, status: next })),
+				edits: ids.map((id) => ({ id, status: next })),
 			})
 			.then(refresh)
-			.catch(() => undefined);
+			.catch(() => {
+				const mine = ids.flatMap((id) => {
+					const owner = owners.current.get(id);
+					return owner?.write === write ? [[id, owner.previous] as const] : [];
+				});
+				for (const [id] of mine) owners.current.delete(id);
+				setStatuses((current) => {
+					const restored = new Map(current);
+					for (const [id, previous] of mine) {
+						if (previous === undefined) restored.delete(id);
+						else restored.set(id, previous);
+					}
+					return restored;
+				});
+				toast.add({ type: "error", description: t`Couldn't save that decision. Try again.` });
+			});
 	};
 
 	// The user's wording shows (and Accept uses it) only once the server has it and a fresh read of the receipts shows
