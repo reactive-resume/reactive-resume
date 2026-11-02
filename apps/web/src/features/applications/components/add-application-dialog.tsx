@@ -8,6 +8,7 @@ import { ORPCError } from "@orpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useRef, useState } from "react";
+import { readPastedPostingHeader } from "@reactive-resume/import/job-posting";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	Dialog,
@@ -261,6 +262,19 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 				...(clipped ? { completeness: "incomplete" as const } : {}),
 			}
 		: null;
+	// Without AI, a pasted posting's first line usually names the role and company ("Role — Company (City)"): fill what
+	// it gives, never over what the person typed. AI or a link still reads the rest.
+	const guess = !link && !hasUsableProvider && !parsed ? readPastedPostingHeader(text) : null;
+	const guessKey = guess ? JSON.stringify(guess) : "";
+	useEffect(() => {
+		if (!guess) return;
+		if (!authored.current.has("role")) setRole(guess.role);
+		if (!authored.current.has("company")) setCompany(guess.company);
+		if (guess.location && !authored.current.has("location")) setLocation(guess.location);
+		if (guess.salary && !authored.current.has("salary")) setSalary(guess.salary);
+		// oxlint-disable-next-line react/exhaustive-deps -- keyed by guessKey, the guess's content; the object is new each render
+	}, [guessKey]);
+
 	const readPosting = (useAI = false) => {
 		if (!readable || read.isPending) return;
 		const request = new AbortController();
@@ -618,6 +632,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						error={read.error}
 						parsed={parsed}
 						ai={hasUsableProvider}
+						guessed={!!guess}
 					/>
 				)}
 			</div>
@@ -879,10 +894,12 @@ type ReadStatusProps = {
 	error: unknown;
 	parsed: Parsed | null;
 	ai: boolean;
+	/** The role and company were filled from the pasted text's first line, without AI. */
+	guessed?: boolean;
 };
 
 /** What reading the posting found, or why the fields need filling in by hand. */
-function ReadStatus({ link, readable, pending, error, parsed, ai }: ReadStatusProps) {
+function ReadStatus({ link, readable, pending, error, parsed, ai, guessed = false }: ReadStatusProps) {
 	const base = "flex items-start gap-1.5 text-xs leading-[17px]";
 
 	// Keep the failure visible when opening paste recovery.
@@ -945,6 +962,15 @@ function ReadStatus({ link, readable, pending, error, parsed, ai }: ReadStatusPr
 			<p className={cn(base, "text-accent-text")} role="status">
 				<Icon name="check-circle" size={16} className="shrink-0" />
 				<Trans>Found the role and company on the page. Review the details before saving.</Trans>
+			</p>
+		);
+	}
+
+	if (guessed) {
+		return (
+			<p className={cn(base, "text-ink-2")} role="status">
+				<Icon name="check-circle" size={16} className="shrink-0" />
+				<Trans>Filled the role and company from the posting's first line. Review them before saving.</Trans>
 			</p>
 		);
 	}

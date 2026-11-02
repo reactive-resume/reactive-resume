@@ -202,6 +202,7 @@ const lanes = [{ id: "saved", category: "saved", label: "Saved" }];
 const timezoneHelpers = load(new URL("../../../packages/utils/src/timezone.ts", import.meta.url).pathname, { zod });
 const { AddApplicationSheet } = load(source("features/applications/add-sheet.tsx"), {
 	"@reactive-resume/utils/timezone": timezoneHelpers,
+	"@reactive-resume/import/job-posting": { readPastedPostingHeader: () => null },
 	"@/features/application-detail/hooks": { useUserTime: () => ({ timeZone: "UTC" }) },
 	"@orpc/client": { ORPCError },
 	"@tanstack/react-query": {

@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
+import { readPastedPostingHeader } from "@reactive-resume/import/job-posting";
 import { fromZonedDateTime } from "@reactive-resume/utils/timezone";
 import { parseDateOnly } from "./date";
 import { applicationError } from "./error";
@@ -161,11 +162,20 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 				{ signal, context: { scope: accountScope ?? undefined } },
 			);
 			if (!current(signal)) return;
+			// Read without AI, pasted text fills nothing: take what its first line names ("Role — Company (City)"), as the web
+			// dialog does. The person reviews every field before saving.
+			const guess = mode === "text" && result.filledBy === "none" ? readPastedPostingHeader(input) : null;
+			const fields = {
+				company: result.company || (guess?.company ?? ""),
+				role: result.role || (guess?.role ?? ""),
+				location: result.location || (guess?.location ?? ""),
+				salary: result.salary || (guess?.salary ?? ""),
+			};
 			setParsed(result);
-			setCompany((value) => (authored.current.has("company") ? value : result.company));
-			setRole((value) => (authored.current.has("role") ? value : result.role));
-			setLocation((value) => (authored.current.has("location") ? value : result.location));
-			setSalary((value) => (authored.current.has("salary") ? value : result.salary));
+			setCompany((value) => (authored.current.has("company") ? value : fields.company));
+			setRole((value) => (authored.current.has("role") ? value : fields.role));
+			setLocation((value) => (authored.current.has("location") ? value : fields.location));
+			setSalary((value) => (authored.current.has("salary") ? value : fields.salary));
 			setSourceUrl(result.sourceUrl ?? (mode === "link" ? input.trim() : sourceUrl));
 			setDescription(result.jobDescription);
 			setReview(true);
