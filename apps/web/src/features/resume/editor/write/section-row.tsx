@@ -35,6 +35,7 @@ import { addEntryTo } from "./actions";
 import { countEntriesToCheck, getEntries, getSectionObject } from "./model";
 import { IconPicker } from "@/components/input/icon-picker";
 import { useCurrentBuilderResumeSelector, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { undoToast } from "@/features/resume/builder/undo-toast";
 import { usePrompt } from "@/hooks/use-confirm";
 import { DRAG_SETTLE } from "@/libs/motion";
 import { getSectionTitle } from "@/libs/resume/section";
@@ -197,9 +198,6 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 			{ newStep: true },
 		);
 
-	const undoToast = (description: string) =>
-		toast.add({ description, actionProps: { children: t`Undo`, onClick: () => useResumeStore.getState().undo() } });
-
 	const isSkills = section.type === "skills";
 	const canSort = section.type === "experience" || section.type === "education";
 	const columns =
@@ -245,14 +243,31 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 	};
 
 	const reset = () => {
+		const before = "items" in settings ? { items: settings.items } : { content: settings.content };
 		edit((target) => {
 			if ("items" in target) target.items = [];
 			else target.content = "";
 		});
-		undoToast(t`${title} cleared`);
+		undoToast(t`${title} cleared`, {
+			// Later edits came after the clear: put the entries back if the section is still empty.
+			restore: () => {
+				const data = useResumeStore.getState().resume?.data;
+				const target = data ? getSectionObject(data, section) : undefined;
+				const empty = target ? ("items" in target ? target.items.length === 0 : !target.content) : false;
+				if (!empty) return false;
+				edit((draft) => {
+					if ("items" in draft && "items" in before) draft.items = structuredClone(before.items) as typeof draft.items;
+					else if ("content" in draft && "content" in before) draft.content = before.content;
+				});
+				return true;
+			},
+		});
 	};
 
 	const remove = () => {
+		const data = useResumeStore.getState().resume?.data;
+		const custom = data?.customSections.find((item) => item.id === section.id);
+		const places = layoutPlaces(data?.metadata.layout.pages ?? [], section.id);
 		updateResumeData(
 			(draft) => {
 				draft.customSections = draft.customSections.filter((custom) => custom.id !== section.id);
@@ -263,7 +278,21 @@ function SectionMenu({ section, title, onMove }: SectionMenuProps) {
 			},
 			{ newStep: true },
 		);
-		undoToast(t`${title} deleted`);
+		undoToast(t`${title} deleted`, {
+			// Later edits came after the delete: add the section back where it was.
+			restore: () => {
+				const data = useResumeStore.getState().resume?.data;
+				if (!custom || !data || data.customSections.some((item) => item.id === custom.id)) return false;
+				updateResumeData(
+					(draft) => {
+						draft.customSections.push(structuredClone(custom));
+						restoreToLayout(draft.metadata.layout.pages, custom.id, places);
+					},
+					{ newStep: true },
+				);
+				return true;
+			},
+		});
 	};
 
 	return (
@@ -426,4 +455,41 @@ function useProposedCount(sectionId: string) {
 	const data = useCurrentBuilderResumeSelector((resume) => resume.data);
 	const applications = useResumeStore((state) => state.proposalApplications);
 	return pendingProposals(data, proposals, sectionId, applications).length;
+}
+
+type LayoutPage = { fullWidth: boolean; main: string[]; sidebar: string[] };
+type LayoutPlace = { main: number; sidebar: number; others: string[]; pageCount: number };
+
+/** Where a section sits on each page, with the sections it shares that page with, to find the page again later. */
+function layoutPlaces(pages: LayoutPage[], id: string): LayoutPlace[] {
+	return pages.map((page) => ({
+		main: page.main.indexOf(id),
+		sidebar: page.sidebar.indexOf(id),
+		others: [...page.main, ...page.sidebar].filter((other) => other !== id),
+		pageCount: pages.length,
+	}));
+}
+
+/**
+ * Puts a restored section back where it was: its column and place, on the page that still holds the sections it
+ * shared it with (pages deleted or reordered since shift indexes). A page made full width since takes it in its main
+ * column; a page that can't be found leaves it at the end of the last page.
+ */
+function restoreToLayout(pages: LayoutPage[], id: string, places: LayoutPlace[]) {
+	let placed = false;
+	places.forEach((place, index) => {
+		if (place.main === -1 && place.sidebar === -1) return;
+		const byNeighbours = pages.find((page) =>
+			place.others.some((other) => [...page.main, ...page.sidebar].includes(other)),
+		);
+		// A page it had to itself is known only by position, which holds while the page count hasn't changed.
+		const page =
+			byNeighbours ?? (place.others.length === 0 && pages.length === place.pageCount ? pages[index] : undefined);
+		if (!page) return;
+		if (place.sidebar !== -1 && !page.fullWidth)
+			page.sidebar.splice(Math.min(place.sidebar, page.sidebar.length), 0, id);
+		else page.main.splice(Math.min(place.main === -1 ? page.main.length : place.main, page.main.length), 0, id);
+		placed = true;
+	});
+	if (!placed) pages.at(-1)?.main.push(id);
 }

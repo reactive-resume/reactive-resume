@@ -2,7 +2,6 @@ import type { GroupProps } from "./style-groups";
 import type { FontWeight } from "@reactive-resume/fonts";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { DateFormat } from "@reactive-resume/schema/resume/dates";
-import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import * as Clipboard from "expo-clipboard";
 import { useEffect, useState } from "react";
@@ -12,7 +11,7 @@ import { compileStylesheet, isFatalStylesheetDiagnostic } from "@reactive-resume
 import { icons } from "@reactive-resume/schema/icons";
 import { Field, Stepper, SwitchRow } from "./controls";
 import { DATE_FORMATS, parseColorInput, resetDesign, rgbaToHex } from "./presets";
-import { useResumeStore } from "@/draft";
+import { useUndoToast } from "@/features/write/hooks";
 import { Button, Chip, Icon, ListRow, SelectSheet, Text, showToast, useTheme, type IconName } from "@/ui";
 
 export type AdvancedId = "typography" | "colours" | "page" | "layout" | "styles";
@@ -27,6 +26,7 @@ type AdvancedGroupProps = GroupProps & {
 export function AdvancedGroup({ data, write, disabled, open, onOpenChange, onPush }: AdvancedGroupProps) {
 	const { t } = useLingui();
 	const { colors, space, size } = useTheme();
+	const undoToast = useUndoToast();
 	const { metadata } = data;
 	const css = metadata.stylesheet?.source.text.trim() ?? "";
 	const rows: { id: AdvancedId; icon: IconName; title: string; value: string }[] = [
@@ -38,21 +38,12 @@ export function AdvancedGroup({ data, write, disabled, open, onOpenChange, onPus
 		},
 		{ id: "colours", icon: "palette", title: t`Design`, value: t`Colors and level` },
 		{ id: "page", icon: "file-text", title: t`Page`, value: `${metadata.page.marginX} × ${metadata.page.marginY} pt` },
-		{
-			id: "layout",
-			icon: "square-split-horizontal",
-			title: t`Layout`,
-			value: plural(metadata.layout.pages.length, { one: "# page", other: "# pages" }),
-		},
 		{ id: "styles", icon: "code", title: t`Custom styles`, value: css ? t`Custom` : t`None` },
 	];
 
 	const reset = () => {
 		write("reset", (draft) => resetDesign(draft.metadata), true);
-		showToast({
-			message: t`Design reset to defaults`,
-			action: { label: t`Undo`, onPress: () => useResumeStore.getState().undo() },
-		});
+		undoToast(t`Design reset to defaults`);
 	};
 
 	return (

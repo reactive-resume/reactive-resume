@@ -603,6 +603,14 @@ msgstr "{0}-இல் {accepted} பயன்படுத்தப்பட்�
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
+msgstr ""
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
 msgstr "{authored, plural, =1 {ஒரு பக்கத்தில் பொருத்து} other {# பக்கங்களில் பொருத்து}}"
@@ -658,6 +666,10 @@ msgstr "{count, plural, one {# நுழைவு} other {# உள்ளீட�
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# திறந்த சிக்கல்} other {# திறந்த சிக்கல்கள்}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{count, plural, one {Added page {page} and moved # section onto it} other {Added page {page} and moved # sections onto it}}"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -898,10 +910,6 @@ msgstr "{pageCount, plural, one {# பக்கம்} other {# பக்கங�
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{pageCount, plural, one {Runs to # page} other {Runs to # pages}}"
 msgstr ""
-
-#: src/features/resume/editor/design/fit.ts
-msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
-msgstr "{pages, plural, one {9 pt-இல் இன்னும் # பக்கம். ஒரு பிரிவை மறைக்கவும் அல்லது பதிவுகளைச் சுருக்கவும்.} other {9 pt-இல் இன்னும் # பக்கங்கள். ஒரு பிரிவை மறைக்கவும் அல்லது பதிவுகளைச் சுருக்கவும்.}}"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
@@ -1711,6 +1719,15 @@ msgstr "நாட்டுக் குறியீட்டுடன் ஒன�
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Add page"
 msgstr "பக்கத்தைச் சேர்க்கவும்"
+
+#. placeholder {0}: authored + 1
+#: src/features/resume/editor/design/fit.ts
+msgid "Add page {0}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Add page {next}"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Add passkey"
@@ -4581,6 +4598,10 @@ msgstr "உங்கள் மாற்றங்களைச் சேமிக�
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't save your changes. Try again."
 msgstr "உங்கள் மாற்றங்களைச் சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+
+#: src/features/resume/builder/draft.ts
+msgid "Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again."
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Couldn't save your preferences. Try again."
@@ -8071,6 +8092,10 @@ msgstr "கற்றல் பட்ஜெட்"
 msgid "Leave"
 msgstr "வெளியேறு"
 
+#: src/features/resume/builder/draft.ts
+msgid "Leave anyway"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr "பக்கத்தைச் சுற்றி குறைந்தது அரை அங்குலம் இடைவெளி விடவும்."
@@ -8545,6 +8570,10 @@ msgstr "பூட்டு எடிட்டிங்"
 #: src/features/documents/document-card.tsx
 msgid "Locked"
 msgstr "பூட்டப்பட்டது"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Locked · unlock to save"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
@@ -10052,6 +10081,10 @@ msgctxt "Entry header layout"
 msgid "One line"
 msgstr "ஒரே வரி"
 
+#: src/features/resume/editor/design/fit.ts
+msgid "One section fills the last page, so there's nothing to move onto a new one. Shorten it, or split it in Design → Page → Pages and sections."
+msgstr ""
+
 #: src/features/templates/gallery.tsx
 msgid "One-column templates give hiring software a simple top-to-bottom reading order. Two-column templates put supporting details in a sidebar and leave more room for visual hierarchy. Choose for your content, then check the exported PDF."
 msgstr "ஒரு-நெடுவரிசை வார்ப்புருக்கள் பணியமர்த்தல் மென்பொருளுக்கு எளிய மேலிருந்து கீழாக வாசிப்பு வரிசையை வழங்குகின்றன. இரண்டு நெடுவரிசை வார்ப்புருக்கள் பக்கப்பட்டியில் துணை விவரங்களை வைத்து, காட்சி படிநிலைக்கு அதிக இடமளிக்கின்றன. உங்கள் உள்ளடக்கத்தைத் தேர்வுசெய்து, ஏற்றுமதி செய்யப்பட்ட PDFஐச் சரிபார்க்கவும்."
@@ -10439,6 +10472,10 @@ msgstr "பக்க வாசிப்பு முடிவடையவில�
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Page view"
 msgstr "பக்கக் காட்சி"
+
+#: src/routes/builder/$resumeId/-components/design-panel.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/documents/page-navigation.tsx
 msgid "Pagination"
@@ -11623,6 +11660,10 @@ msgstr "செவ்வகம் (முழு அகலம்)"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Red"
 msgstr "சிவப்பு"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Redo"
+msgstr ""
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Redo resume change"
@@ -14034,6 +14075,10 @@ msgstr "இங்கேயே இரு"
 msgid "Step {0} of {1}"
 msgstr ""
 
+#: src/features/resume/builder/draft.ts
+msgid "Still saving your latest changes. They're kept on this device if you leave now."
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
@@ -14825,6 +14870,10 @@ msgstr ""
 msgid "The posting:"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "The preview took too long to update, so Fit stopped. Check the pages, and use Undo to take its changes back."
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "வழங்குநர் பதிலளிக்கவில்லை. விசை, மாதிரி மற்றும் அடிப்படை URL ஆகியவற்றைச் சரிபார்க்கவும்."
@@ -15310,6 +15359,10 @@ msgstr ""
 #: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "இந்த ரெஸ்யூம் தற்போது பகிரப்படவில்லை."
+
+#: src/features/resume/builder/draft.ts
+msgid "This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them."
+msgstr ""
 
 #: src/features/resume/builder/draft.ts
 msgid "This resume was updated by an AI agent."
@@ -15806,17 +15859,12 @@ msgstr "இணைப்புகளை அடிக்கோடிடவும�
 #: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
-#: src/features/resume/editor/check/actions.ts
-#: src/features/resume/editor/design/fit.ts
-#: src/features/resume/editor/design/template-group.tsx
+#: src/features/resume/builder/undo-toast.ts
 #: src/features/resume/editor/proposals/proposals.ts
-#: src/features/resume/editor/webmcp.ts
-#: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/editor/write/section-row.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "செயல்தவிர்"
@@ -16109,10 +16157,6 @@ msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Use the {name} template"
-msgstr ""
-
-#: src/features/resume/editor/check/actions.ts
-msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -17037,6 +17081,10 @@ msgid "You're looking at a saved version. It can't be edited."
 msgstr "நீங்கள் சேமித்த பதிப்பைப் பார்க்கிறீர்கள். அதைத் திருத்த முடியாது."
 
 #: src/features/resume/builder/draft.ts
+msgid "You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "You're offline. Reconnect to save your changes before leaving."
 msgstr "ஆஃப்லைனில் உள்ளீர்கள். வெளியேறும் முன் உங்கள் மாற்றங்களைச் சேமிக்க மீண்டும் இணைக்கவும்."
 
@@ -17047,6 +17095,10 @@ msgstr "அனைத்தையும் பார்த்துவிட்�
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "நீங்கள் விருந்தினர் கணக்கைப் பயன்படுத்துகிறீர்கள்"
+
+#: src/features/resume/builder/undo-toast.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."

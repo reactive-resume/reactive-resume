@@ -10,6 +10,9 @@ const mocks = vi.hoisted(() => {
 	const history: Data[] = [];
 	const store = {
 		resume: { data: { summary: "" } as Data },
+		get undoStack() {
+			return history;
+		},
 		updateResumeData: (edit: (draft: Data) => void) => {
 			history.push(store.resume.data);
 			const draft = structuredClone(store.resume.data);
@@ -53,5 +56,5 @@ it("leaves a later edit in place, pointing to the builder's Undo instead (R8)", 
 	mocks.toasts[0]?.actionProps?.onClick();
 
 	expect(mocks.store.resume.data.summary).toBe("typed after");
-	expect(mocks.toasts.at(-1)?.description).toBe("Use the builder's Undo to undo earlier changes.");
+	expect(mocks.toasts.at(-1)?.description).toBe("You've made changes since. Use Undo to step back through them.");
 });

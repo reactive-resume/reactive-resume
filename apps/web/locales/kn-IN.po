@@ -603,6 +603,14 @@ msgstr "{0} ನ {accepted} ಅನ್ವಯಿಸಲಾಗಿದೆ"
 msgid "{added, plural, one {# new or reworded sentence} other {# new or reworded sentences}}"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt, so the design is back as it was. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt, so the design is back as it was. Add a page or shorten entries.}}"
+msgstr ""
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
+
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
 msgstr "{authored, plural, =1 {ಒಂದು ಪುಟಕ್ಕೆ ಹೊಂದಿಸಿ} other {# ಪುಟಗಳಿಗೆ ಹೊಂದಿಸಿ}}"
@@ -658,6 +666,10 @@ msgstr "{count, plural, one {# ಪ್ರವೇಶ} other {# ನಮೂದುಗ�
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 msgid "{count, plural, one {# open issue} other {# open issues}}"
 msgstr "{count, plural, one {# ಬಾಕಿ ಸಮಸ್ಯೆ} other {# ಬಾಕಿ ಸಮಸ್ಯೆಗಳು}}"
+
+#: src/features/resume/editor/design/fit.ts
+msgid "{count, plural, one {Added page {page} and moved # section onto it} other {Added page {page} and moved # sections onto it}}"
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "{count, plural, one {Apply # change} other {Apply # changes}}"
@@ -898,10 +910,6 @@ msgstr "{pageCount, plural, one {# ಪುಟ} other {# ಪುಟಗಳು}}"
 #: src/routes/builder/$resumeId/-components/page-canvas.tsx
 msgid "{pageCount, plural, one {Runs to # page} other {Runs to # pages}}"
 msgstr ""
-
-#: src/features/resume/editor/design/fit.ts
-msgid "{pages, plural, one {Still # page at 9 pt. Hide a section or shorten entries.} other {Still # pages at 9 pt. Hide a section or shorten entries.}}"
-msgstr "{pages, plural, one {9 pt ನಲ್ಲಿ ಇನ್ನೂ # ಪುಟ. ಒಂದು ವಿಭಾಗವನ್ನು ಮರೆಮಾಡಿ ಅಥವಾ ನಮೂದುಗಳನ್ನು ಚಿಕ್ಕದಾಗಿಸಿ.} other {9 pt ನಲ್ಲಿ ಇನ್ನೂ # ಪುಟಗಳು. ಒಂದು ವಿಭಾಗವನ್ನು ಮರೆಮಾಡಿ ಅಥವಾ ನಮೂದುಗಳನ್ನು ಚಿಕ್ಕದಾಗಿಸಿ.}}"
 
 #: src/routes/builder/letter/-components/write-panel.tsx
 msgid "{pairing} type"
@@ -1711,6 +1719,15 @@ msgstr "ದೇಶದ ಕೋಡ್‌ನೊಂದಿಗೆ ಒಂದನ್ನು 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Add page"
 msgstr "ಪುಟವನ್ನು ಸೇರಿಸಿ"
+
+#. placeholder {0}: authored + 1
+#: src/features/resume/editor/design/fit.ts
+msgid "Add page {0}"
+msgstr ""
+
+#: src/routes/builder/$resumeId/-components/page-canvas.tsx
+msgid "Add page {next}"
+msgstr ""
 
 #: src/features/settings/account/security.tsx
 msgid "Add passkey"
@@ -4581,6 +4598,10 @@ msgstr "ನಿಮ್ಮ ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಲ�
 #: src/features/applications/components/application-form-sheet.tsx
 msgid "Couldn't save your changes. Try again."
 msgstr "ನಿಮ್ಮ ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+
+#: src/features/resume/builder/draft.ts
+msgid "Couldn't save your latest changes. They're kept on this device: retry, or leave and they'll be back when you open this resume again."
+msgstr ""
 
 #: src/features/career/knowledge/preferences.tsx
 msgid "Couldn't save your preferences. Try again."
@@ -8071,6 +8092,10 @@ msgstr "ಕಲಿಕೆಯ ಬಜೆಟ್"
 msgid "Leave"
 msgstr "ಬಿಡಿ"
 
+#: src/features/resume/builder/draft.ts
+msgid "Leave anyway"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Leave at least half an inch around the page."
 msgstr "ಪುಟದ ಸುತ್ತಲೂ ಕನಿಷ್ಠ ಅರ್ಧ ಇಂಚು ಜಾಗ ಬಿಡಿ."
@@ -8545,6 +8570,10 @@ msgstr "ಸಂಪಾದನೆಯನ್ನು ಲಾಕ್ ಮಾಡಿ"
 #: src/features/documents/document-card.tsx
 msgid "Locked"
 msgstr "ಲಾಕ್ ಮಾಡಲಾಗಿದೆ"
+
+#: src/features/resume/editor/save-status.tsx
+msgid "Locked · unlock to save"
+msgstr ""
 
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
@@ -10052,6 +10081,10 @@ msgctxt "Entry header layout"
 msgid "One line"
 msgstr "ಒಂದು ಸಾಲು"
 
+#: src/features/resume/editor/design/fit.ts
+msgid "One section fills the last page, so there's nothing to move onto a new one. Shorten it, or split it in Design → Page → Pages and sections."
+msgstr ""
+
 #: src/features/templates/gallery.tsx
 msgid "One-column templates give hiring software a simple top-to-bottom reading order. Two-column templates put supporting details in a sidebar and leave more room for visual hierarchy. Choose for your content, then check the exported PDF."
 msgstr "ಒಂದು-ಕಾಲಮ್ ಟೆಂಪ್ಲೇಟ್‌ಗಳು ನೇಮಕಾತಿ ಸಾಫ್ಟ್‌ವೇರ್ ಅನ್ನು ಸರಳವಾದ ಮೇಲಿನಿಂದ ಕೆಳಕ್ಕೆ ಓದುವ ಕ್ರಮವನ್ನು ನೀಡುತ್ತವೆ. ಎರಡು-ಕಾಲಮ್ ಟೆಂಪ್ಲೇಟ್‌ಗಳು ಪೋಷಕ ವಿವರಗಳನ್ನು ಸೈಡ್‌ಬಾರ್‌ನಲ್ಲಿ ಇರಿಸುತ್ತವೆ ಮತ್ತು ದೃಶ್ಯ ಕ್ರಮಾನುಗತಕ್ಕೆ ಹೆಚ್ಚಿನ ಸ್ಥಳವನ್ನು ಬಿಡುತ್ತವೆ. ನಿಮ್ಮ ವಿಷಯಕ್ಕಾಗಿ ಆಯ್ಕೆಮಾಡಿ, ನಂತರ ರಫ್ತು ಮಾಡಿದ PDF ಅನ್ನು ಪರಿಶೀಲಿಸಿ."
@@ -10439,6 +10472,10 @@ msgstr "ಪುಟ ಓದುವಿಕೆ ಮುಗಿಯಲಿಲ್ಲ."
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "Page view"
 msgstr "ಪುಟ ವೀಕ್ಷಣೆ"
+
+#: src/routes/builder/$resumeId/-components/design-panel.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/documents/page-navigation.tsx
 msgid "Pagination"
@@ -11623,6 +11660,10 @@ msgstr "ಆಯತ (ಪೂರ್ಣ ಅಗಲ)"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Red"
 msgstr "ಕೆಂಪು"
+
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
+msgid "Redo"
+msgstr ""
 
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Redo resume change"
@@ -14034,6 +14075,10 @@ msgstr "ಇಲ್ಲೇ ಇರು"
 msgid "Step {0} of {1}"
 msgstr ""
 
+#: src/features/resume/builder/draft.ts
+msgid "Still saving your latest changes. They're kept on this device if you leave now."
+msgstr ""
+
 #: src/features/assistant/conversation.tsx
 #: src/features/career/coach-thread.tsx
 #: src/features/homepage/prepare.tsx
@@ -14825,6 +14870,10 @@ msgstr ""
 msgid "The posting:"
 msgstr ""
 
+#: src/features/resume/editor/design/fit.ts
+msgid "The preview took too long to update, so Fit stopped. Check the pages, and use Undo to take its changes back."
+msgstr ""
+
 #: src/features/settings/ai/providers.tsx
 msgid "The provider didn't answer. Check the key, the model and the base URL."
 msgstr "ಒದಗಿಸುವವರು ಉತ್ತರಿಸಲಿಲ್ಲ. ಕೀ, ಮಾದರಿ ಮತ್ತು ಬೇಸ್ URL ಪರಿಶೀಲಿಸಿ."
@@ -15310,6 +15359,10 @@ msgstr ""
 #: src/features/resume/share/web-page-text.ts
 msgid "This resume isn't shared right now."
 msgstr "ಈ ರೆಸ್ಯೂಮೆಯನ್ನು ಇದೀಗ ಹಂಚಿಕೊಂಡಿಲ್ಲ."
+
+#: src/features/resume/builder/draft.ts
+msgid "This resume was locked before your latest changes were saved. They're kept on this device: unlock it to save them."
+msgstr ""
 
 #: src/features/resume/builder/draft.ts
 msgid "This resume was updated by an AI agent."
@@ -15806,17 +15859,12 @@ msgstr "ಲಿಂಕ್‌ಗಳನ್ನು ಅಂಡರ್‌ಲೈನ್ ಮ�
 #: src/features/career/workspace/messages.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/homepage/write.tsx
-#: src/features/resume/editor/check/actions.ts
-#: src/features/resume/editor/design/fit.ts
-#: src/features/resume/editor/design/template-group.tsx
+#: src/features/resume/builder/undo-toast.ts
 #: src/features/resume/editor/proposals/proposals.ts
-#: src/features/resume/editor/webmcp.ts
-#: src/features/resume/editor/write/entry-card.tsx
 #: src/features/resume/editor/write/picture-settings.tsx
-#: src/features/resume/editor/write/section-row.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/routes/builder/$resumeId/-components/design-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
+#: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
 msgid "Undo"
 msgstr "ರದ್ದುಗೊಳಿಸಿ"
@@ -16109,10 +16157,6 @@ msgstr ""
 
 #: src/features/templates/gallery.tsx
 msgid "Use the {name} template"
-msgstr ""
-
-#: src/features/resume/editor/check/actions.ts
-msgid "Use the builder's Undo to undo earlier changes."
 msgstr ""
 
 #: src/features/resume/editor/check/issues.ts
@@ -17037,6 +17081,10 @@ msgid "You're looking at a saved version. It can't be edited."
 msgstr "ನೀವು ಉಳಿಸಿದ ಆವೃತ್ತಿಯನ್ನು ನೋಡುತ್ತಿದ್ದೀರಿ. ಅದನ್ನು ಸಂಪಾದಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ."
 
 #: src/features/resume/builder/draft.ts
+msgid "You're offline, so your latest changes aren't saved yet. They're kept on this device until you're back."
+msgstr ""
+
+#: src/features/resume/builder/draft.ts
 msgid "You're offline. Reconnect to save your changes before leaving."
 msgstr "ನೀವು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿರುವಿರಿ. ಹೊರಡುವ ಮೊದಲು ನಿಮ್ಮ ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಲು ಮರುಸಂಪರ್ಕಿಸಿ."
 
@@ -17047,6 +17095,10 @@ msgstr "ನೀವು ಎಲ್ಲವನ್ನೂ ನೋಡಿದ್ದೀರಿ"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "ನೀವು ಅತಿಥಿ ಖಾತೆಯನ್ನು ಬಳಸುತ್ತಿದ್ದೀರಿ"
+
+#: src/features/resume/builder/undo-toast.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."

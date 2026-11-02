@@ -81,7 +81,13 @@ type TextFieldProps = Omit<ComponentProps<typeof Input>, "value" | "onChange"> &
 	wide?: boolean | undefined;
 };
 
-/** A labelled text field. Errors appear after the first blur and say how to fix them. */
+// Addresses and numbers read left to right in every language; free text follows its own first letters.
+const LTR_TYPES = new Set(["email", "tel", "url"]);
+
+/**
+ * A labelled text field. Errors appear after the first blur and say how to fix them. Emails, phones and links keep a
+ * left-to-right direction in right-to-left languages; other text takes the direction of what's typed.
+ */
 export function TextField({
 	label,
 	value,
@@ -109,6 +115,7 @@ export function TextField({
 							onBlur?.(event);
 						}}
 						className={className}
+						dir={LTR_TYPES.has(props.type ?? "") ? "ltr" : "auto"}
 						{...props}
 					/>
 				}

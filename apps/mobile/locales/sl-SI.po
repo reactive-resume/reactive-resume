@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {# dan v pisarni na teden} two {# dneva v pisarni na teden} other {# dni v pisarni na teden}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# stran} two {# strani} few {# strani} other {# strani}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {# aktivna prijava} two {# aktivni prijavi} few {# 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. Pošlje to prijavo in vaše Znanje; ponudnik lahko zaračuna uporabo."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1324,6 +1328,11 @@ msgstr "Dodajte ga s klicno kodo države; nekateri prijavni obrazci ga zahtevajo
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "Dodaj stran"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -3117,10 +3126,6 @@ msgstr "Vsebina je razporejena v mreži."
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "Vsebina še vedno sega čez rob. Skrijte razdelek ali skrajšajte vnose."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "Vsebina za prijavo"
@@ -3584,6 +3589,10 @@ msgstr "Tega življenjepisa ni bilo mogoče upodobiti."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Ključa ni bilo mogoče preklicati. Poskusite znova."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6202,8 +6211,6 @@ msgstr "Besedilo razporedite vodoravno. Zasukani odseki se pogosto izgubijo ali 
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "Postavitev"
 
@@ -8287,6 +8294,10 @@ msgstr "Branje strani ni končano."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "Pogled strani"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -12673,7 +12684,6 @@ msgstr "Podčrtaj povezave"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13655,6 +13665,11 @@ msgstr "Brez povezave ste. Poskusite znova, ko se znova povežete."
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "Na tekočem ste"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

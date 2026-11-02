@@ -155,6 +155,25 @@ function className(declarations: [string, string][], context: Context): string |
 	return name;
 }
 
+/**
+ * A text box laid out as a row places its runs by `justify-content`, not `text-align`, and its direction orders them:
+ * a left-to-right sentence on a right-to-left page would sit at the far left, away from its bullet. Its alignment
+ * becomes the row's, read in the box's own direction.
+ */
+function alignFlexText(declarations: [string, string][]) {
+	const value = (property: string) => declarations.findLast(([name]) => name === property)?.[1];
+	if (value("display") !== "flex" || value("justify-content") !== undefined) return;
+	if (!["row", "row-reverse", undefined].includes(value("flex-direction"))) return;
+	const align = value("text-align");
+	if (align !== "left" && align !== "right" && align !== "center") return;
+	const rtl = value("--rr-text-direction") === "rtl";
+	const reversed = value("flex-direction") === "row-reverse";
+	// Right in a left-to-right row is its end; a right-to-left or reversed row flips that once each.
+	const flips = [align === "right", rtl, reversed].filter(Boolean).length;
+	const end = flips % 2 === 1;
+	declarations.push(["justify-content", align === "center" ? "center" : end ? "flex-end" : "flex-start"]);
+}
+
 const isText = (node: HostNode) => "text" in node || node.type === HOST.text || node.type === HOST.link;
 
 const isEmptyText = (node: HostNode): boolean =>
@@ -302,6 +321,7 @@ function convertNode(node: HostNode, parent: Context): string {
 		case HOST.link: {
 			const { declarations, fontSize, hidden } = styleOf(node, parent);
 			if (hidden) return "";
+			alignFlexText(declarations);
 			const context = { ...parent, fontSize };
 			const href =
 				node.type === HOST.link && typeof props.src === "string" ? (toSafeLink(props.src) ?? undefined) : undefined;

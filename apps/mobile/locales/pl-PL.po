@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {# dzień w biurze w tygodniu} other {# dni w biurze w tygodniu}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# strona} few {# strony} many {# stron} other {# strony}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {# aktywne podanie o pracę} few {# aktywne podania
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. Wysyła to podanie o pracę i Twoją Wiedzę; dostawca może naliczyć opłatę."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1324,6 +1328,11 @@ msgstr "Dodaj numer z kodem kraju; niektóre formularze aplikacyjne wymagają go
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "Dodaj stronę"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -3117,10 +3126,6 @@ msgstr "Treść jest ułożona w siatce."
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "Treść nadal się przepełnia. Ukryj sekcję lub skróć wpisy."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "Treść do zgłoszenia"
@@ -3584,6 +3589,10 @@ msgstr "Nie można wyrenderować tego CV."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Nie można unieważnić klucza. Spróbuj ponownie."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6202,8 +6211,6 @@ msgstr "Ułóż tekst poziomo. Obrócone fragmenty są często pomijane lub źle
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "Układ"
 
@@ -8287,6 +8294,10 @@ msgstr "Czytanie strony nie zostało zakończone."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "Widok strony"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -12673,7 +12684,6 @@ msgstr "Podkreśl linki"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13655,6 +13665,11 @@ msgstr "Jesteś offline. Spróbuj ponownie po ponownym połączeniu."
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "Wszystko na bieżąco"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

@@ -6,7 +6,14 @@ import { i18n } from "@lingui/core";
 import { getLocales } from "expo-localization";
 import Storage from "expo-sqlite/kv-store";
 import { I18nManager, Platform, Settings } from "react-native";
-import { defaultLocale, isLocale, isRTL, localeSchema, supportedLocales } from "@reactive-resume/utils/locale";
+import {
+	defaultLocale,
+	getPreferredLocale,
+	isLocale,
+	isRTL,
+	localeSchema,
+	supportedLocales,
+} from "@reactive-resume/utils/locale";
 
 const storageKey = "locale";
 export const selectableLocales = __DEV__ ? localeSchema.options : supportedLocales;
@@ -72,13 +79,7 @@ const loaders: Record<Locale, () => Promise<{ messages: Messages }>> = {
 
 /** The supported locale closest to the device's preferred languages. */
 export function getDeviceLocale(): Locale {
-	const supported = supportedLocales;
-	for (const { languageTag, languageCode } of getLocales()) {
-		if (isLocale(languageTag) && supported.includes(languageTag)) return languageTag;
-		const sameLanguage = supported.find((locale) => locale.split("-")[0] === languageCode);
-		if (sameLanguage) return sameLanguage;
-	}
-	return defaultLocale;
+	return getPreferredLocale(getLocales().map(({ languageTag }) => languageTag));
 }
 
 /** The user's override, or null to follow the device. */

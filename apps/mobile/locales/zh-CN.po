@@ -234,9 +234,9 @@ msgstr ""
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {每周到岗#天} other {每周到岗#天}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, other {# 页}}"
@@ -589,6 +589,10 @@ msgstr "{active, plural, one {#份进行中的申请} other {#份进行中的申
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at}·{providerLabel}。发送此申请和您的知识库；您的提供商可能会收费。"
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr ""
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -1324,6 +1328,11 @@ msgstr "添加一个带国家区号的号码；有些申请表要求先填写才
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "添加页面"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -3117,10 +3126,6 @@ msgstr "内容以网格形式排列。"
 msgid "Content revision: {0}"
 msgstr ""
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "内容仍然溢出。隐藏部分或缩短条目。"
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "举报内容"
@@ -3584,6 +3589,10 @@ msgstr "无法呈现此简历。"
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "无法撤销密钥。再试一次。"
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr ""
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -6202,8 +6211,6 @@ msgstr "将文字水平排列。旋转的文字段落常常会丢失或错位。
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "布局"
 
@@ -8287,6 +8294,10 @@ msgstr "页面阅读未完成。"
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "页面浏览量"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr ""
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -12673,7 +12684,6 @@ msgstr "下划线链接"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13655,6 +13665,11 @@ msgstr "您已离线。重新连接后重试。"
 #: src/features/career/today.tsx
 msgid "You're up to date"
 msgstr "已全部看完"
+
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr ""
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"

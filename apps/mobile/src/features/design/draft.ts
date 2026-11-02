@@ -32,7 +32,7 @@ export function useClearPreviewOnLeave() {
 /** Applies a template as its own undo step, with a toast offering Undo. */
 export function applyTemplate(template: Template) {
 	setPreviewTemplate(null);
-	const { data, update, undo } = useResumeStore.getState();
+	const { data, update } = useResumeStore.getState();
 	if (!data || data.metadata.template === template) return;
 	update(
 		(value) => {
@@ -40,7 +40,19 @@ export function applyTemplate(template: Template) {
 		},
 		{ newStep: true },
 	);
-	showToast({ message: t`Template changed to ${templateName(template)}`, action: { label: t`Undo`, onPress: undo } });
+	const changed = useResumeStore.getState().data;
+	// Undo takes back the template change only; after another edit it would take back that edit instead.
+	showToast({
+		message: t`Template changed to ${templateName(template)}`,
+		action: {
+			label: t`Undo`,
+			onPress: () => {
+				const current = useResumeStore.getState();
+				if (current.data === changed) current.undo();
+				else showToast({ message: t`You've made changes since. Use Undo to step back through them.` });
+			},
+		},
+	});
 }
 
 type PageDraft = Pick<ResumeDraftStore, "data" | "update" | "locked" | "undo">;
