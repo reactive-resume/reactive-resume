@@ -1517,8 +1517,8 @@ msgid "Access"
 msgstr "Acceso"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "Se concede acceso a"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "Se concede acceso a <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1619,8 +1619,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "Añadir una palabra clave..."
+msgid "Add a keyword…"
+msgstr "Añadir una palabra clave…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -4165,6 +4165,21 @@ msgstr "Teléfono de contacto"
 msgid "Contact role"
 msgstr "Rol de contacto"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr ""
+
+#. placeholder {0}: primary.name
+#. placeholder {1}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0} and {1} more"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6150,8 +6165,8 @@ msgid "Duplicated “{0}”"
 msgstr "Se duplicó «{0}»"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "Duplicando tu currículum..."
+msgid "Duplicating your resume…"
+msgstr "Duplicando tu currículum…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6338,12 +6353,16 @@ msgid "Editing"
 msgstr "Edición"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "Editar palabra clave..."
+msgid "Editing keyword…"
+msgstr "Editar palabra clave…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "Sesión de edición"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -6430,7 +6449,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -9040,16 +9059,16 @@ msgid "Loading applications…"
 msgstr "Cargando candidaturas…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
-msgstr "Cargando la solicitud de conexión..."
+msgid "Loading connection request…"
+msgstr "Cargando la solicitud de conexión…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Loading connection…"
 msgstr "Cargando conexión…"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "Cargando conexiones..."
+msgid "Loading connections…"
+msgstr "Cargando conexiones…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12895,8 +12914,8 @@ msgid "Reset your password"
 msgstr "Restablecer tu contraseña"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "Restableciendo tu contraseña..."
+msgid "Resetting your password…"
+msgstr "Restableciendo tu contraseña…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -12998,6 +13017,7 @@ msgid "resume"
 msgstr "reanudar"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
@@ -13839,11 +13859,8 @@ msgstr "La búsqueda fue probada con la búsqueda de su servidor. Los enlaces se
 msgid "Search works"
 msgstr "Buscar trabajos"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "Buscar..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "Buscar…"
@@ -13957,8 +13974,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "Seleccionar..."
+msgid "Select…"
+msgstr "Seleccionar…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -14029,8 +14046,8 @@ msgid "Sender details copied into the letter"
 msgstr "Detalles del remitente copiados en la carta."
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "Enviando correo para restablecer contraseña..."
+msgid "Sending password reset email…"
+msgstr "Enviando correo para restablecer contraseña…"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14585,19 +14602,23 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "Iniciando sesión..."
+msgid "Signing in…"
+msgstr "Iniciando sesión…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "Cerrando sesión..."
+msgid "Signing out…"
+msgstr "Cerrando sesión…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "Registrándose..."
+msgid "Signing up…"
+msgstr "Registrándose…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "Since today"
 msgstr ""
 
 #: src/dialogs/resume/template/data.ts
@@ -16923,6 +16944,7 @@ msgstr "Subrayado"
 msgid "Underline links"
 msgstr "Enlaces subrayados"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
@@ -16975,7 +16997,6 @@ msgid "Unlink this application"
 msgstr "Desvincular esta solicitud de empleo"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16983,6 +17004,7 @@ msgid "Unlock"
 msgstr "Desbloquear"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -17077,8 +17099,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "Se actualizaron {done} de {total}. Se omitieron los documentos bloqueados y, en los enlaces públicos, las cartas de presentación."
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "Actualizando tu currículum..."
+msgid "Updating your resume…"
+msgstr "Actualizando tu currículum…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17116,6 +17138,10 @@ msgstr "Utilice {minimum} pt"
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum} pt margins"
 msgstr "Utilice márgenes de punto {minimum}"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use {name}"
+msgstr "Usar {name}"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {url}"
@@ -17428,14 +17454,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "Verificando código de respaldo..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "Verificando código..."
+msgid "Verifying backup code…"
+msgstr "Verificando código de respaldo…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "Código de verificación…"
 

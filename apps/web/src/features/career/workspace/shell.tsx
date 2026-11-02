@@ -419,7 +419,7 @@ function WorkspaceHeader({ application, onAskCoach }: WorkspaceHeaderProps) {
 			</Link>
 			<div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
 				<div className="grid min-w-0 gap-1.5">
-					<h1 className="font-display text-2xl leading-8 font-medium md:text-[30px] md:leading-9">
+					<h1 className="font-display text-2xl leading-8 md:text-[30px] md:leading-9">
 						{application.role} · {application.company}
 					</h1>
 					<p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink-2">

@@ -546,7 +546,7 @@ export function DocumentsLibrary({ trashed = false }: DocumentsLibraryProps) {
 					)}
 					{trashed && all.length > 0 && (
 						<Button
-							label={t`Empty trash`}
+							label={t`Empty Trash`}
 							variant="danger"
 							disabled={!rowsCurrent || operations.busy}
 							onPress={() => setPurge({ documents: all, all: true })}

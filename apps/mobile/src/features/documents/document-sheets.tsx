@@ -196,7 +196,7 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 							/>
 						)}
 						<ListRow
-							title={first.isLocked ? t`Unlock` : t`Lock editing`}
+							title={first.isLocked ? t`Unlock editing` : t`Lock editing`}
 							leading={first.isLocked ? "lock-open" : "lock"}
 							disabled={operations.busy}
 							onPress={() =>
@@ -371,7 +371,7 @@ export function DocumentSheets({ value, onClose, onChange, onSelect }: DocumentS
 					[true, false].map((isLocked) => (
 						<Button
 							key={String(isLocked)}
-							label={isLocked ? t`Lock editing` : t`Unlock`}
+							label={isLocked ? t`Lock editing` : t`Unlock editing`}
 							variant="secondary"
 							loading={operations.busy}
 							onPress={() =>

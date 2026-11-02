@@ -113,7 +113,7 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 				</div>
 			) : isPending ? (
 				<p role="status">
-					<Trans>Loading connection request...</Trans>
+					<Trans>Loading connection request…</Trans>
 				</p>
 			) : isAnonymous ? (
 				<div className="space-y-4">
@@ -159,14 +159,17 @@ export function OAuthConsentPage({ oauthQuery, email, isAnonymous, disableSignup
 						</p>
 						{destination && (
 							<p className="text-xs text-ink-3">
-								<Trans>Access is sent to</Trans>: <span className="font-medium text-ink">{destination}</span>
+								{/* One message, so translators can place the address where their language puts it. */}
+								<Trans>
+									Access is sent to <span className="font-medium text-ink">{destination}</span>
+								</Trans>
 							</p>
 						)}
 					</div>
 					<p className="text-sm">
 						<Trans>Only allow applications you trust. This application will be able to:</Trans>
 					</p>
-					<ul className="list-disc space-y-2 pl-5 text-sm">
+					<ul className="list-disc space-y-2 ps-5 text-sm">
 						{["api:read", "api:write", "api:delete"].some((scope) => scopes.has(scope)) ? (
 							<>
 								{scopes.has("api:read") && (

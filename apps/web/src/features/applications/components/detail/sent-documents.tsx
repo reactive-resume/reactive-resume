@@ -6,6 +6,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { suggestApplicationDocuments } from "@reactive-resume/schema/applications/document-suggestions";
 import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import {
@@ -75,12 +76,13 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 	const createLetter = useMutation(orpc.coverLetters.create.mutationOptions());
 	const link = useMutation({
 		...orpc.documents.linkApplication.mutationOptions(),
-		onSuccess: () => {
+		onSettled: () => {
 			invalidate(application.id);
 			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 		},
 		onError: (error) => toastError(error, t`Couldn't save the documents. Try again.`),
 	});
+	const busy = disabled || update.isPending || link.isPending || createLetter.isPending;
 
 	const resume = documents?.find((document) => document.type === "resume" && document.id === application.resumeId);
 	const letter = documents?.find((document) => document.type === "letter" && document.id === application.coverLetterId);
@@ -237,6 +239,31 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 				</SentDocumentRow>
 			)}
 
+			{suggestApplicationDocuments(application, documents ?? []).map((document) => {
+				const name = document.name;
+				const kind = document.type === "resume" ? t`Resume` : t`Cover letter`;
+				return (
+					<Button
+						key={`${document.type}:${document.id}`}
+						size="sm"
+						variant="secondary"
+						className="h-auto min-h-9 justify-start text-start wrap-anywhere whitespace-normal"
+						disabled={busy}
+						onClick={() =>
+							link.mutate({
+								type: document.type,
+								id: document.id,
+								applicationId: application.id,
+								...(document.type === "resume" ? { expectedUpdatedAt: document.updatedAt } : {}),
+							})
+						}
+					>
+						<Icon name={document.type === "resume" ? "file-text" : "envelope-simple"} size={16} />
+						{t`Use ${name}`} · {kind}
+					</Button>
+				);
+			})}
+
 			{/* A closed or offer-stage application has an outcome, not a preparation task: nothing more will be sent. */}
 			{(application.status === "closed" || application.status === "offer") &&
 				!application.resumeId &&
@@ -254,7 +281,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 						{!application.resumeId && (
 							<Button
 								size="sm"
-								disabled={disabled}
+								disabled={busy}
 								onClick={() => openDialog("document.new", { step: "copy", applicationId: application.id })}
 							>
 								<Icon name="copy" size={16} />
@@ -262,12 +289,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 							</Button>
 						)}
 						{!application.coverLetterId && (
-							<Button
-								size="sm"
-								variant="secondary"
-								disabled={disabled || createLetter.isPending}
-								onClick={() => void writeLetter()}
-							>
+							<Button size="sm" variant="secondary" disabled={busy} onClick={() => void writeLetter()}>
 								<Icon name="envelope-simple" size={16} />
 								<Trans>Write a letter</Trans>
 							</Button>
@@ -279,7 +301,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 				<NativeSelect
 					aria-label={t`Use an existing letter`}
 					value={application.coverLetterId ?? ""}
-					disabled={disabled || link.isPending}
+					disabled={busy}
 					onChange={(event) => {
 						const id = event.target.value;
 						if (id) link.mutate({ type: "letter", id, applicationId: application.id });
@@ -310,7 +332,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 								: null
 						}
 						attachLabel={t`Attach a resume file (PDF, up to 10 MB)`}
-						disabled={disabled || update.isPending}
+						disabled={busy}
 						onChange={(value) =>
 							update.mutate({
 								id: application.id,
@@ -325,7 +347,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 								: null
 						}
 						attachLabel={t`Attach a cover letter file (PDF, up to 10 MB)`}
-						disabled={disabled || update.isPending}
+						disabled={busy}
 						onChange={(value) =>
 							update.mutate({
 								id: application.id,
@@ -337,6 +359,7 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 			) : (
 				<button
 					type="button"
+					disabled={busy}
 					onClick={() => setAttaching(true)}
 					className="w-fit text-xs text-ink-3 underline underline-offset-2 hover:text-ink-2"
 				>

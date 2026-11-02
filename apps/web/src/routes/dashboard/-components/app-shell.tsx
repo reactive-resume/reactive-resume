@@ -217,12 +217,19 @@ function Sidebar() {
 
 			<div className="mt-auto grid gap-2">
 				{trash && <NavLink item={trash} current={isCurrent(trash.to)} />}
-				<Button aria-label={t`New`} aria-keyshortcuts="N" className="h-9 justify-between" onClick={openNew}>
+				{/* Secondary, so each view's own primary action is the one accent button on screen. */}
+				<Button
+					variant="secondary"
+					aria-label={t`New`}
+					aria-keyshortcuts="N"
+					className="h-9 justify-between"
+					onClick={openNew}
+				>
 					<span className="flex items-center gap-1.5">
 						<Icon name="plus" />
 						<Trans>New</Trans>
 					</span>
-					<Kbd className="bg-on-accent/15 text-on-accent">N</Kbd>
+					<Kbd>N</Kbd>
 				</Button>
 				<UserDropdownMenu>
 					{({ session }) => (

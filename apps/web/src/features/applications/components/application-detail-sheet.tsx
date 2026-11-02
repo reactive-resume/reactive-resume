@@ -186,7 +186,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 							{application.company.slice(0, 1).toUpperCase()}
 						</span>
 						<div className="grid min-w-0 flex-1 gap-0.5">
-							<SheetTitle dir="auto" className="font-display text-[22px] leading-7 font-medium">
+							<SheetTitle dir="auto" className="font-display text-[22px] leading-7">
 								{application.role}
 							</SheetTitle>
 							<SheetDescription className="flex flex-wrap items-center gap-x-1.5 text-sm text-ink-2">
@@ -263,7 +263,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 											/>
 											<span
 												className={cn(
-													"truncate text-[11px]",
+													"truncate text-xs",
 													lane.id === current.id ? "font-semibold text-ink" : "text-ink-3",
 												)}
 											>

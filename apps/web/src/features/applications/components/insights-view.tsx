@@ -10,6 +10,7 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { computeInsights, computeOutcomes, computeTimeline } from "../insights";
 import { getStageColor, getStageLabel } from "../stages";
+import { CareerLoadError } from "@/features/career/load-state";
 import { stagger } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
@@ -30,7 +31,7 @@ export function InsightsSkeleton() {
 type ApplicationInsightsProps = { applications: ApplicationSummary[]; onSaveJob: () => void };
 
 export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsightsProps) {
-	const { data } = useQuery(orpc.applications.stats.queryOptions({}));
+	const { data, isError, refetch } = useQuery(orpc.applications.stats.queryOptions({}));
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 
 	// A resume is tailored for an application when it was made for it (Copy for a job).
@@ -45,6 +46,8 @@ export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsi
 	const timeline = computeTimeline(applications);
 	const maxWeek = Math.max(1, ...timeline.map((bucket) => bucket.count));
 
+	// A failed load says so, with Retry, instead of a skeleton that never resolves.
+	if (!data && isError) return <CareerLoadError onRetry={() => void refetch()} />;
 	if (!data) return <InsightsSkeleton />;
 
 	const insights = computeInsights(data.byStage);
@@ -106,7 +109,7 @@ export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsi
 
 			<div className="grid gap-4 sm:grid-cols-2">
 				<div className="rounded-xl border border-line p-5">
-					<div className="font-display text-[34px] leading-10 font-medium">
+					<div className="font-display text-[34px] leading-10">
 						{Math.round((outcomes.heardBack / outcomes.sent) * 100)}%
 					</div>
 					<div className="text-sm text-ink-2">
@@ -114,7 +117,7 @@ export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsi
 					</div>
 				</div>
 				<div className="rounded-xl border border-line p-5">
-					<div className="font-display text-[34px] leading-10 font-medium">
+					<div className="font-display text-[34px] leading-10">
 						{outcomes.medianDaysToReply === null ? (
 							"—"
 						) : (
@@ -202,7 +205,7 @@ export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsi
 											style={{ ...stagger(index), width: `${Math.max((row.count / maxSource) * 100, 3)}%` }}
 										/>
 									</div>
-									<span className="w-6 text-right text-ink-3">{row.count}</span>
+									<span className="w-6 text-end text-ink-3">{row.count}</span>
 								</div>
 							))
 						)}

@@ -1517,8 +1517,8 @@ msgid "Access"
 msgstr "Zugriff"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "Zugriff wird erteilt an"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "Zugriff wird erteilt an <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1619,8 +1619,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "Ein Schlüsselwort hinzufügen..."
+msgid "Add a keyword…"
+msgstr "Ein Schlüsselwort hinzufügen…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -2054,7 +2054,7 @@ msgstr "Anzeigen"
 #: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
-msgstr "Fortschrittlich"
+msgstr "Erweitert"
 
 #: src/features/ats-checker/messages.ts
 msgid "Advice for the person reading it. None of this affects the score."
@@ -4165,6 +4165,21 @@ msgstr "Kontakttelefon"
 msgid "Contact role"
 msgstr "Kontaktrolle"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr ""
+
+#. placeholder {0}: primary.name
+#. placeholder {1}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0} and {1} more"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6150,8 +6165,8 @@ msgid "Duplicated “{0}”"
 msgstr "„{0}“ dupliziert"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "Ihr Lebenslauf wird dupliziert..."
+msgid "Duplicating your resume…"
+msgstr "Ihr Lebenslauf wird dupliziert…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6338,12 +6353,16 @@ msgid "Editing"
 msgstr "Bearbeitung"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "Schlüsselwort bearbeiten..."
+msgid "Editing keyword…"
+msgstr "Schlüsselwort bearbeiten…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "Bearbeitungssitzung"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -6430,7 +6449,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -9040,16 +9059,16 @@ msgid "Loading applications…"
 msgstr "Bewerbungen werden geladen…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
-msgstr "Verbindungsanfrage wird geladen..."
+msgid "Loading connection request…"
+msgstr "Verbindungsanfrage wird geladen…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Loading connection…"
 msgstr "Verbindung wird geladen…"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "Verbindungen werden geladen..."
+msgid "Loading connections…"
+msgstr "Verbindungen werden geladen…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -10206,7 +10225,7 @@ msgstr "Es wurde keine Telefonnummer gefunden."
 
 #: src/features/resume/editor/write/basics-card.tsx
 msgid "No photo. Most ATS ignore photos; some regions expect one."
-msgstr "Kein Foto. Die meisten ATS ignorieren Fotos; Einige Regionen erwarten einen."
+msgstr "Kein Foto. Die meisten ATS ignorieren Fotos; einige Regionen erwarten eins."
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "No postings found. Try different keywords."
@@ -11743,7 +11762,7 @@ msgstr "Briefing vorbereiten"
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Prepare a resume"
-msgstr "Bereiten Sie einen Lebenslauf vor"
+msgstr "Lebenslauf vorbereiten"
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "Prepare me for the interview"
@@ -12895,8 +12914,8 @@ msgid "Reset your password"
 msgstr "Setzen Sie Ihr Passwort zurück"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "Ihr Passwort wird zurückgesetzt..."
+msgid "Resetting your password…"
+msgstr "Ihr Passwort wird zurückgesetzt…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -12998,6 +13017,7 @@ msgid "resume"
 msgstr "Lebenslauf"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
@@ -13839,11 +13859,8 @@ msgstr "Die Suche wurde mit dem Suchdienst Ihres Servers getestet. Links werden 
 msgid "Search works"
 msgstr "Suche funktioniert"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "Suchen..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "Suche…"
@@ -13957,8 +13974,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "Auswählen..."
+msgid "Select…"
+msgstr "Auswählen…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -14029,8 +14046,8 @@ msgid "Sender details copied into the letter"
 msgstr "Absenderangaben in den Brief übernommen"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "E-Mail zum Zurücksetzen des Passworts wird gesendet..."
+msgid "Sending password reset email…"
+msgstr "E-Mail zum Zurücksetzen des Passworts wird gesendet…"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14585,20 +14602,24 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "Anmeldung läuft..."
+msgid "Signing in…"
+msgstr "Anmeldung läuft…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "Abmeldung läuft..."
+msgid "Signing out…"
+msgstr "Abmeldung läuft…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "Registrierung läuft..."
+msgid "Signing up…"
+msgstr "Registrierung läuft…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
 msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "Since today"
+msgstr "Seit heute"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -16923,6 +16944,7 @@ msgstr "Unterstrichen"
 msgid "Underline links"
 msgstr "Unterstreichen Sie Links"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
@@ -16975,7 +16997,6 @@ msgid "Unlink this application"
 msgstr "Verknüpfung dieser Stellenbewerbung aufheben"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16983,6 +17004,7 @@ msgid "Unlock"
 msgstr "Entsperren"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -17077,8 +17099,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "{done} von {total} aktualisiert. Gesperrte Dokumente und, bei öffentlichen Links, Anschreiben wurden übersprungen."
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "Ihr Lebenslauf wird aktualisiert..."
+msgid "Updating your resume…"
+msgstr "Ihr Lebenslauf wird aktualisiert…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17116,6 +17138,10 @@ msgstr "Verwenden Sie den Punkt {minimum}"
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum} pt margins"
 msgstr "Verwenden Sie {minimum} pt-Ränder"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use {name}"
+msgstr "{name} verwenden"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {url}"
@@ -17428,14 +17454,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "Backup-Code wird verifiziert..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "Code wird verifiziert..."
+msgid "Verifying backup code…"
+msgstr "Backup-Code wird verifiziert…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "Code wird verifiziert…"
 
@@ -17549,7 +17572,7 @@ msgstr "Wartet auf Sie"
 
 #: src/features/applications/next-step.ts
 msgid "Waiting to hear back"
-msgstr "Ich warte auf eine Antwort"
+msgstr "Warten auf Antwort"
 
 #: src/features/resume/editor/write/improve.tsx
 msgid "Warmer"
@@ -18019,7 +18042,7 @@ msgstr ""
 #: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/career/workspace/preparation.tsx
 msgid "Write a letter"
-msgstr "Schreibe einen Brief"
+msgstr "Brief schreiben"
 
 #: src/features/documents/document-actions.tsx
 msgid "Write a letter…"

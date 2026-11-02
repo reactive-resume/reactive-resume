@@ -146,13 +146,13 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 				render ?? (
 					<Button
 						variant="secondary"
-						className={cn("justify-start text-left font-normal hover:bg-sunken/20", className)}
+						className={cn("justify-start text-start font-normal hover:bg-sunken/20", className)}
 					/>
 				)
 			}
 		>
-			<span className={cn("min-w-0 flex-1 truncate text-left", showClear && hasSelectedValue && "pe-7")}>
-				<ComboboxValue placeholder={placeholder ?? t`Select...`} />
+			<span className={cn("min-w-0 flex-1 truncate text-start", showClear && hasSelectedValue && "pe-7")}>
+				<ComboboxValue placeholder={placeholder ?? t`Select…`} />
 			</span>
 		</ComboboxTrigger>
 	);
@@ -186,7 +186,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 			<ComboboxContent aria-label={placeholder ?? t`Options`}>
 				<ComboboxInput
-					placeholder={placeholder ?? t`Search...`}
+					placeholder={placeholder ?? t`Search…`}
 					render={<Input disabled={disabled} className="border-none focus-visible:border-none focus-visible:ring-0" />}
 				/>
 				<ComboboxEmpty>{emptyMessage ?? t`No results found.`}</ComboboxEmpty>

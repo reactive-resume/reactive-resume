@@ -146,7 +146,7 @@ export function Remember() {
 							<Icon name="book-open" size={15} />
 							{t`Story · 5 of 5 parts`}
 						</span>
-						<h3 className="mt-2 font-display text-[clamp(20px,1.7vw,26px)] leading-[1.15] font-medium text-pretty text-ink">
+						<h3 className="mt-2 font-display text-[clamp(20px,1.7vw,26px)] leading-[1.15] text-pretty text-ink">
 							{t`Fixing onboarding drop-off at Northwind Labs`}
 						</h3>
 						{/* Below 1000px only the five tiles show, so the switch and the draft it changes share the screen. */}

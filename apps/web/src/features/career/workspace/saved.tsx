@@ -16,6 +16,7 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
 import { useSavedItems } from "../hooks";
+import { CareerLoadError } from "../load-state";
 import { formatMoney } from "../offer-compare";
 import { useRemoving } from "../removing";
 import { CollapseRow, FilterChip, tabLabel, useCareerTime, withUndo } from "../shared";
@@ -59,6 +60,9 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 				<Skeleton className="h-72 rounded-xl" />
 			</div>
 		);
+
+	// A failed load isn't "nothing saved": it says so, with Retry.
+	if (saved.isError && !saved.data) return <CareerLoadError onRetry={() => void saved.refetch()} />;
 
 	// useSavedItems already leaves out items whose Undo is still showing.
 	const items = saved.data ?? [];

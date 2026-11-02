@@ -209,10 +209,12 @@ export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 	}, []);
 
 	const buttonClassName =
-		"flex size-8 items-center justify-center rounded-lg text-ink-2 transition-colors duration-quick hover:bg-hover disabled:text-ink-3 disabled:hover:bg-transparent";
+		// touch-target: a 44px hit area on touch screens around the 32px button; the bar's coarse-pointer gap keeps
+		// neighbouring hit areas from overlapping.
+		"touch-target relative flex size-8 items-center justify-center rounded-lg text-ink-2 transition-colors duration-quick hover:bg-hover disabled:text-ink-3 disabled:hover:bg-transparent";
 
 	return (
-		<div className="absolute bottom-[18px] left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-line bg-raised p-1 shadow-e2">
+		<div className="absolute bottom-[18px] left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-line bg-raised p-1 shadow-e2 pointer-coarse:gap-1.5">
 			<button
 				type="button"
 				aria-label={t`Zoom out`}
@@ -225,7 +227,7 @@ export function ZoomBar({ fitScale, pageCount }: ZoomBarProps) {
 			<button
 				type="button"
 				aria-label={t`Fit page to width`}
-				className="h-8 min-w-[52px] rounded-lg px-1.5 font-mono text-xs font-medium text-ink transition-colors duration-quick hover:bg-hover"
+				className="touch-target relative h-8 min-w-[52px] rounded-lg px-1.5 font-mono text-xs font-medium text-ink transition-colors duration-quick hover:bg-hover"
 				onClick={() => setZoom("fit")}
 			>
 				{zoom === "fit" ? <Trans>Fit</Trans> : `${Math.round(current * 100)}%`}

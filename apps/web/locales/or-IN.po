@@ -1517,8 +1517,8 @@ msgid "Access"
 msgstr "ପ୍ରବେଶ ଅନୁମତି"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "ପ୍ରବେଶ ଅନୁମତିର ପ୍ରାପ୍ତକର୍ତ୍ତା"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "ପ୍ରବେଶ ଅନୁମତିର ପ୍ରାପ୍ତକର୍ତ୍ତା <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1619,8 +1619,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "ଏକ କୀୱାର୍ଡ ଯୋଡନ୍ତୁ..."
+msgid "Add a keyword…"
+msgstr "ଏକ କୀୱାର୍ଡ ଯୋଡନ୍ତୁ…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -4165,6 +4165,21 @@ msgstr "ଫୋନ୍ ଯୋଗାଯୋଗ କରନ୍ତୁ |"
 msgid "Contact role"
 msgstr "ଯୋଗାଯୋଗ ଭୂମିକା"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr ""
+
+#. placeholder {0}: primary.name
+#. placeholder {1}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0} and {1} more"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6150,8 +6165,8 @@ msgid "Duplicated “{0}”"
 msgstr "“{0}” ଡୁପ୍ଲିକେଟ୍ ହେଲା"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "ଆପଣଙ୍କ ରେଜ୍ୟୁମେ ନକଲ ହେଉଛି..."
+msgid "Duplicating your resume…"
+msgstr "ଆପଣଙ୍କ ରେଜ୍ୟୁମେ ନକଲ ହେଉଛି…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6338,12 +6353,16 @@ msgid "Editing"
 msgstr "ସମ୍ପାଦନା"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "କୀୱାର୍ଡ ସମ୍ପାଦନ ହେଉଛି..."
+msgid "Editing keyword…"
+msgstr "କୀୱାର୍ଡ ସମ୍ପାଦନ ହେଉଛି…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "ସମ୍ପାଦନା ଅଧିବେଶନ |"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -6430,7 +6449,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -9041,16 +9060,16 @@ msgid "Loading applications…"
 msgstr "ଆବେଦନଗୁଡ଼ିକ ଲୋଡ୍ ହେଉଛି…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
-msgstr "ସଂଯୋଗ ଅନୁରୋଧ ଲୋଡିଂ ..."
+msgid "Loading connection request…"
+msgstr "ସଂଯୋଗ ଅନୁରୋଧ ଲୋଡିଂ …"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Loading connection…"
 msgstr "ସଂଯୋଗ ଲୋଡିଂ…"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "ସଂଯୋଗ ଲୋଡ୍ ହେଉଛି..."
+msgid "Loading connections…"
+msgstr "ସଂଯୋଗ ଲୋଡ୍ ହେଉଛି…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12897,8 +12916,8 @@ msgid "Reset your password"
 msgstr "ଆପଣଙ୍କ ପାସୱାର୍ଡ ରିସେଟ୍ କରନ୍ତୁ"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "ଆପଣଙ୍କ ପାସୱାର୍ଡ ରିସେଟ୍ ହେଉଛି..."
+msgid "Resetting your password…"
+msgstr "ଆପଣଙ୍କ ପାସୱାର୍ଡ ରିସେଟ୍ ହେଉଛି…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -13000,6 +13019,7 @@ msgid "resume"
 msgstr "ରେଜୁମ୍"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
@@ -13841,11 +13861,8 @@ msgstr "ଆପଣଙ୍କ ସର୍ଭରର ସନ୍ଧାନ ସେବା �
 msgid "Search works"
 msgstr "ସନ୍ଧାନ କାର୍ଯ୍ୟ"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "ଖୋଜନ୍ତୁ..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "ଖୋଜନ୍ତୁ…"
@@ -13959,8 +13976,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "ବାଛନ୍ତୁ..."
+msgid "Select…"
+msgstr "ବାଛନ୍ତୁ…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -14031,8 +14048,8 @@ msgid "Sender details copied into the letter"
 msgstr "ପ୍ରେରକଙ୍କ ବିବରଣୀ ଚିଠିରେ କପି ହୋଇଛି |"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "ପାସୱାର୍ଡ ରିସେଟ୍ ଇମେଲ୍ ପଠାଯାଉଛି..."
+msgid "Sending password reset email…"
+msgstr "ପାସୱାର୍ଡ ରିସେଟ୍ ଇମେଲ୍ ପଠାଯାଉଛି…"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14587,19 +14604,23 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "ସାଇନ୍ ଇନ୍ ହେଉଛି..."
+msgid "Signing in…"
+msgstr "ସାଇନ୍ ଇନ୍ ହେଉଛି…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "ସାଇନ୍ ଆଉଟ୍ ହେଉଛି..."
+msgid "Signing out…"
+msgstr "ସାଇନ୍ ଆଉଟ୍ ହେଉଛି…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "ସାଇନ୍ ଅପ୍ ହେଉଛି..."
+msgid "Signing up…"
+msgstr "ସାଇନ୍ ଅପ୍ ହେଉଛି…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "Since today"
 msgstr ""
 
 #: src/dialogs/resume/template/data.ts
@@ -16926,6 +16947,7 @@ msgstr "ଅଣ୍ଡରଲାଇନ୍"
 msgid "Underline links"
 msgstr "ଲିଙ୍କଗୁଡିକ ଅଣ୍ଡରଲାଇନ୍ କରନ୍ତୁ |"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
@@ -16978,7 +17000,6 @@ msgid "Unlink this application"
 msgstr "ଏହି ଚାକିରି ଆବେଦନର ଲିଙ୍କ୍ ହଟାନ୍ତୁ"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16986,6 +17007,7 @@ msgid "Unlock"
 msgstr "ଅନଲକ୍ କରନ୍ତୁ"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -17080,8 +17102,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "{total}ଟିରୁ {done}ଟି ଅପଡେଟ୍ ହେଲା। ତାଲା ପଡିଥିବା ଡକ୍ୟୁମେଣ୍ଟ୍ ଏବଂ ସାର୍ବଜନିକ ଲିଙ୍କ୍ ପାଇଁ ଚିଠିଗୁଡ଼ିକ ଛାଡି ଦିଆଗଲା।"
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "ଆପଣଙ୍କ ରେଜ୍ୟୁମେ ଅଦ୍ୟତନ ହେଉଛି..."
+msgid "Updating your resume…"
+msgstr "ଆପଣଙ୍କ ରେଜ୍ୟୁମେ ଅଦ୍ୟତନ ହେଉଛି…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17119,6 +17141,10 @@ msgstr "{minimum} pt ବ୍ୟବହାର କରନ୍ତୁ |"
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum} pt margins"
 msgstr "{minimum} pt ମାର୍ଜିନ ବ୍ୟବହାର କରନ୍ତୁ |"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use {name}"
+msgstr "{name} ବ୍ୟବହାର କରନ୍ତୁ"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {url}"
@@ -17431,14 +17457,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "ବ୍ୟାକଅପ୍ କୋଡ୍ ସତ୍ୟାପନ ହେଉଛି..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "କୋଡ୍ ସତ୍ୟାପନ ହେଉଛି..."
+msgid "Verifying backup code…"
+msgstr "ବ୍ୟାକଅପ୍ କୋଡ୍ ସତ୍ୟାପନ ହେଉଛି…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "କୋଡ୍ ଯାଞ୍ଚ କରାଯାଉଛି…"
 

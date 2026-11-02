@@ -1517,8 +1517,8 @@ msgid "Access"
 msgstr "அணுகல்"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "அணுகல் வழங்கப்படுகிறது"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "அணுகல் வழங்கப்படுகிறது <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1619,8 +1619,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "ஒரு முக்கிய வார்த்தையைச் சேர்க்கவும்..."
+msgid "Add a keyword…"
+msgstr "ஒரு முக்கிய வார்த்தையைச் சேர்க்கவும்…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -4165,6 +4165,21 @@ msgstr "தொடர்பு தொலைபேசி"
 msgid "Contact role"
 msgstr "தொடர்பு பங்கு"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr ""
+
+#. placeholder {0}: primary.name
+#. placeholder {1}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0} and {1} more"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6150,8 +6165,8 @@ msgid "Duplicated “{0}”"
 msgstr "“{0}” நகலாக்கப்பட்டது"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "உங்கள் ரெஸ்யூமியின் நகலை உருவாக்கிக் கொண்டிருக்கிறது..."
+msgid "Duplicating your resume…"
+msgstr "உங்கள் ரெஸ்யூமியின் நகலை உருவாக்கிக் கொண்டிருக்கிறது…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6338,12 +6353,16 @@ msgid "Editing"
 msgstr "எடிட்டிங்"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "முக்கியச்சொல்லைத் திருத்துதல்..."
+msgid "Editing keyword…"
+msgstr "முக்கியச்சொல்லைத் திருத்துதல்…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "எடிட்டிங் அமர்வு"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -6430,7 +6449,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -9040,16 +9059,16 @@ msgid "Loading applications…"
 msgstr "விண்ணப்பங்கள் ஏற்றப்படுகின்றன…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
-msgstr "இணைப்பு கோரிக்கையை ஏற்றுகிறது..."
+msgid "Loading connection request…"
+msgstr "இணைப்பு கோரிக்கையை ஏற்றுகிறது…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Loading connection…"
 msgstr "இணைப்பை ஏற்றுகிறது…"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "இணைப்புகளை ஏற்றுகிறது..."
+msgid "Loading connections…"
+msgstr "இணைப்புகளை ஏற்றுகிறது…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12895,8 +12914,8 @@ msgid "Reset your password"
 msgstr "உங்கள் கடவுச்சொல்லை மீட்டமைக்கவும்"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "உங்கள் கடவுச்சொல்லை மீட்டமைத்து கொண்டிருக்கிறது..."
+msgid "Resetting your password…"
+msgstr "உங்கள் கடவுச்சொல்லை மீட்டமைத்து கொண்டிருக்கிறது…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -12998,6 +13017,7 @@ msgid "resume"
 msgstr "ரெஸ்யூம்"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
@@ -13839,11 +13859,8 @@ msgstr "உங்கள் சர்வரின் தேடலுடன் த
 msgid "Search works"
 msgstr "தேடல் வேலை செய்கிறது"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "தேடு..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "தேடு…"
@@ -13957,8 +13974,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "தேர்ந்தெடு..."
+msgid "Select…"
+msgstr "தேர்ந்தெடு…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -14029,8 +14046,8 @@ msgid "Sender details copied into the letter"
 msgstr "அனுப்புநரின் விவரங்கள் கடிதத்தில் நகலெடுக்கப்பட்டன"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "கடவுச்சொல் மீட்டமைப்பு மின்னஞ்சலை அனுப்பிக் கொண்டிருக்கிறது..."
+msgid "Sending password reset email…"
+msgstr "கடவுச்சொல் மீட்டமைப்பு மின்னஞ்சலை அனுப்பிக் கொண்டிருக்கிறது…"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14585,19 +14602,23 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "உள்நுழைகிறது..."
+msgid "Signing in…"
+msgstr "உள்நுழைகிறது…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "வெளியேறிக் கொண்டிருக்கிறது..."
+msgid "Signing out…"
+msgstr "வெளியேறிக் கொண்டிருக்கிறது…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "பதிவு செய்து கொண்டிருக்கிறது..."
+msgid "Signing up…"
+msgstr "பதிவு செய்து கொண்டிருக்கிறது…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "Since today"
 msgstr ""
 
 #: src/dialogs/resume/template/data.ts
@@ -16923,6 +16944,7 @@ msgstr "அடிக்கோடு"
 msgid "Underline links"
 msgstr "இணைப்புகளை அடிக்கோடிடவும்"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
@@ -16975,7 +16997,6 @@ msgid "Unlink this application"
 msgstr "இந்த வேலை விண்ணப்பத்தின் இணைப்பை நீக்கவும்"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16983,6 +17004,7 @@ msgid "Unlock"
 msgstr "பூட்டை திற"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -17077,8 +17099,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "{total} இல் {done} புதுப்பிக்கப்பட்டன. பூட்டப்பட்ட ஆவணங்களும், பொது இணைப்புகளுக்குக் கடிதங்களும் தவிர்க்கப்பட்டன."
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "உங்கள் ரெஸ்யூமியை புதுப்பித்து கொண்டிருக்கிறது..."
+msgid "Updating your resume…"
+msgstr "உங்கள் ரெஸ்யூமியை புதுப்பித்து கொண்டிருக்கிறது…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17116,6 +17138,10 @@ msgstr "{minimum} pt ஐப் பயன்படுத்தவும்"
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum} pt margins"
 msgstr "{minimum} pt விளிம்புகளைப் பயன்படுத்தவும்"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use {name}"
+msgstr "{name} ஐப் பயன்படுத்தவும்"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {url}"
@@ -17428,14 +17454,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "காப்பு குறியீட்டை சரிபார்த்து கொண்டிருக்கிறது..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "குறியீட்டை சரிபார்த்து கொண்டிருக்கிறது..."
+msgid "Verifying backup code…"
+msgstr "காப்பு குறியீட்டை சரிபார்த்து கொண்டிருக்கிறது…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "சரிபார்க்கும் குறியீடு…"
 

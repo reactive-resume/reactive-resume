@@ -561,7 +561,7 @@ function Stat({ value, label }: { value: number | string; label: string }) {
 		<div className="flex flex-col-reverse gap-0.5">
 			<dt className="text-xs text-ink-3">{label}</dt>
 			{/* Lining figures: in the display face an old-style "1" reads as "l". */}
-			<dd className="font-display text-[26px] leading-[30px] font-medium tabular-nums [font-variant-numeric:lining-nums_tabular-nums]">
+			<dd className="font-display text-[26px] leading-[30px] tabular-nums [font-variant-numeric:lining-nums_tabular-nums]">
 				{value}
 			</dd>
 		</div>

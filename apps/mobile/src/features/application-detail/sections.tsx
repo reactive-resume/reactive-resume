@@ -13,6 +13,7 @@ import Storage from "expo-sqlite/kv-store";
 import { openBrowserAsync } from "expo-web-browser";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Pressable, View } from "react-native";
+import { suggestApplicationDocuments } from "@reactive-resume/schema/applications/document-suggestions";
 import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { attachmentProblem } from "./attachment";
 import {
@@ -37,6 +38,7 @@ import {
 	getLaneHistoryLabel,
 	getLaneLabel,
 	laneInput,
+	undoLaneInput,
 	nextActiveLane,
 	resolveLane,
 } from "@/features/applications/lanes";
@@ -119,7 +121,9 @@ export function StageStepper({ application, onMarkApplied, onCloseLane, onSchedu
 					const scheduled = application.activity.some(
 						(entry) => entry.type === "interview" && new Date(entry.at).getTime() > Date.now(),
 					);
-					stageMoved(application, target, scheduled ? undefined : onSchedule);
+					stageMoved(application, target, scheduled ? undefined : onSchedule, () =>
+						update.mutate({ id: application.id, ...undoLaneInput(lane, application, lanes.supported) }),
+					);
 				},
 				onError: (error) => showToast({ message: applicationError(error) }),
 			},
@@ -328,16 +332,24 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 	const { createLetter } = useDetailMutations(application.id);
 	const queryClient = useQueryClient();
 	const [linking, setLinking] = useState(false);
-	const linkLetter = async (id: string) => {
+	const documentBusy = linking || createLetter.isPending;
+	const linkDocument = async (document: NonNullable<typeof documents.data>[number]) => {
 		setLinking(true);
 		try {
-			await client.documents.linkApplication({ type: "letter", id, applicationId: application.id });
+			await client.documents.linkApplication({
+				type: document.type,
+				id: document.id,
+				applicationId: application.id,
+				...(document.type === "resume" ? { expectedUpdatedAt: document.updatedAt } : {}),
+			});
 			await Promise.all([
 				queryClient.invalidateQueries({ queryKey: orpc.applications.key() }),
 				queryClient.invalidateQueries({ queryKey: orpc.documents.key() }),
 			]);
 		} catch (error) {
 			showToast({ message: applicationError(error) });
+			void queryClient.invalidateQueries({ queryKey: orpc.applications.key() });
+			void queryClient.invalidateQueries({ queryKey: orpc.documents.key() });
 		} finally {
 			setLinking(false);
 		}
@@ -477,10 +489,28 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 								(!item.application || item.application.id === application.id),
 						)
 						.map((item) => ({ value: item.id, label: item.name }))}
-					disabled={linking}
-					onChange={(id) => void linkLetter(id)}
+					disabled={documentBusy}
+					onChange={(id) => {
+						const document = documents.data?.find((item) => item.type === "letter" && item.id === id);
+						if (document) void linkDocument(document);
+					}}
 				/>
 			)}
+			{suggestApplicationDocuments(application, documents.data ?? []).map((document) => {
+				const name = document.name;
+				const kind = document.type === "resume" ? t`Resume` : t`Cover letter`;
+				return (
+					<Button
+						key={`${document.type}:${document.id}`}
+						size="sm"
+						variant="secondary"
+						icon={document.type === "resume" ? "file-text" : "envelope-simple"}
+						label={`${t`Use ${name}`} · ${kind}`}
+						disabled={documentBusy}
+						onPress={() => void linkDocument(document)}
+					/>
+				);
+			})}
 			{/* A closed or offer-stage application has an outcome, not a preparation task: nothing more will be sent. */}
 			{(application.status === "closed" || application.status === "offer") &&
 			!resumeId &&
@@ -496,6 +526,7 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 							size="sm"
 							icon="copy"
 							label={t`Prepare a resume`}
+							disabled={documentBusy}
 							onPress={() =>
 								router.push(`${routes.new()}?step=copy&applicationId=${encodeURIComponent(application.id)}`)
 							}
@@ -507,6 +538,7 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 							variant="secondary"
 							icon="envelope-simple"
 							label={t`Write a letter`}
+							disabled={documentBusy}
 							loading={createLetter.isPending}
 							onPress={writeLetter}
 						/>

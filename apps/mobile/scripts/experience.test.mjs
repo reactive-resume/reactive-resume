@@ -362,8 +362,13 @@ const nextSteps = load("features/applications/next-step.ts", {
 });
 const time = { locale: "en-US", timeZone: "UTC", when: String, time: String, day: String, utcDay: String };
 const outcomesDomain = load("../../../packages/schema/src/applications/outcomes.ts");
+const suggestionsDomain = load("../../../packages/schema/src/applications/document-suggestions.ts");
+let applicationDocuments = [];
+let rejectDocumentLink = false;
+let creatingApplicationLetter = false;
 const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-detail/sections.tsx", {
 	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
+	"@reactive-resume/schema/applications/document-suggestions": suggestionsDomain,
 	"@tanstack/react-query": { useQueryClient: () => ({ invalidateQueries: async () => {} }) },
 	"expo-document-picker": {},
 	"expo-file-system": {},
@@ -372,18 +377,28 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 	"./attachment": {},
 	"./notes-queue": { createNotesQueue: () => ({}) },
 	"./hooks": {
-		useDocuments: () => ({ data: [] }),
-		useDetailMutations: () => ({ createLetter: { isPending: false } }),
+		useDocuments: () => ({ data: applicationDocuments }),
+		useDetailMutations: () => ({ createLetter: { isPending: creatingApplicationLetter } }),
 		useNow: () => new Date(),
 		useUserTime: () => time,
 		followUpReminder: () => null,
 		interviewReminder: () => null,
 	},
 	"./sheets": { FollowUpSheet: "FollowUpSheet", ReminderSheet: "ReminderSheet" },
-	"@/api/client": {},
+	"@/api/client": {
+		client: {
+			documents: {
+				linkApplication: async (input) => {
+					calls.push({ documentLink: input });
+					if (rejectDocumentLink) throw new Error("Unavailable");
+				},
+			},
+		},
+		orpc: { applications: { key: () => ["applications"] }, documents: { key: () => ["documents"] } },
+	},
 	"@/auth/session": {},
 	"@/draft": {},
-	"@/features/applications/error": {},
+	"@/features/applications/error": { applicationError: () => "Link unavailable" },
 	"@/features/applications/history": history,
 	"@/features/applications/lane-notice": { LaneNotice: "LaneNotice" },
 	"@/features/applications/lane-queries": laneQuery,
@@ -403,10 +418,15 @@ const { StageStepper, NextStepCard, WhatYouSent } = load("features/application-d
 });
 const application = {
 	id: "job-a",
+	company: "Fictional Cedar",
 	status: "saved",
 	activity: [],
 	appliedAt: new Date().toISOString(),
 	followUpAt: null,
+	resumeId: null,
+	coverLetterId: null,
+	sentResumeVersionId: null,
+	sentCoverLetterVersionId: null,
 };
 reset();
 tree = render(StageStepper, { application, onMarkApplied: () => calls.push("mark-applied") });
@@ -452,6 +472,62 @@ for (const [resumeId, coverLetterId] of [
 		!coverLetterId,
 	);
 }
+
+reset();
+const suggestedResume = {
+	id: "existing-resume",
+	type: "resume",
+	name: "Fictional Cedar — Portfolio",
+	isLocked: false,
+	trashedAt: null,
+	application: null,
+	updatedAt: new Date("2026-11-01T12:00:00Z"),
+};
+const suggestedLetter = { ...suggestedResume, id: "existing-letter", type: "letter", name: "Fictional Cedar — Letter" };
+applicationDocuments = [suggestedResume, suggestedLetter];
+tree = render(WhatYouSent, { application });
+rejectDocumentLink = true;
+control(tree, "Use Fictional Cedar — Portfolio · Resume").onPress();
+tree = render(WhatYouSent, { application });
+assert.equal(
+	control(tree, "Use Fictional Cedar — Letter · Cover letter").disabled,
+	true,
+	"Pending links disable peer suggestions",
+);
+assert.equal(control(tree, "Prepare a resume").disabled, true);
+assert.equal(control(tree, "Write a letter").disabled, true);
+await settle();
+tree = render(WhatYouSent, { application });
+assert.ok(calls.some((call) => call?.message === "Link unavailable"));
+assert.equal(
+	control(tree, "Use Fictional Cedar — Portfolio · Resume").disabled,
+	false,
+	"Failed links retain a retry action",
+);
+rejectDocumentLink = false;
+control(tree, "Use Fictional Cedar — Portfolio · Resume").onPress();
+await settle();
+assert.deepEqual(calls.filter((call) => call?.documentLink).at(-1).documentLink, {
+	type: "resume",
+	id: "existing-resume",
+	applicationId: "job-a",
+	expectedUpdatedAt: suggestedResume.updatedAt,
+});
+tree = render(WhatYouSent, { application });
+control(tree, "Use Fictional Cedar — Letter · Cover letter").onPress();
+await settle();
+assert.deepEqual(calls.filter((call) => call?.documentLink).at(-1).documentLink, {
+	type: "letter",
+	id: "existing-letter",
+	applicationId: "job-a",
+});
+creatingApplicationLetter = true;
+tree = render(WhatYouSent, { application });
+assert.equal(control(tree, "Use Fictional Cedar — Portfolio · Resume").disabled, true);
+assert.equal(control(tree, "Use an existing letter").disabled, true);
+creatingApplicationLetter = false;
+applicationDocuments = [];
+console.log("PASS native company-matched resume/letter selection, revision guard, pending state and failed-link retry");
 
 for (const [overrides, label, destination] of [
 	[{}, "Prepare application", "apply"],

@@ -47,7 +47,7 @@ type SubmitLoginOptions = {
 };
 
 async function submitLogin({ value, callbackURL, reauthenticate, navigate, queryClient, router }: SubmitLoginOptions) {
-	const toastId = toast.add({ type: "loading", description: t`Signing in...` });
+	const toastId = toast.add({ type: "loading", description: t`Signing in…` });
 
 	try {
 		const isEmail = value.identifier.includes("@");

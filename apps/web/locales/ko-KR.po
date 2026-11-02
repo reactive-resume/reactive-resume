@@ -1517,8 +1517,8 @@ msgid "Access"
 msgstr "액세스"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "다음에 대한 액세스 권한이 부여됩니다."
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "다음에 대한 액세스 권한이 부여됩니다. <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1619,8 +1619,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "키워드 추가..."
+msgid "Add a keyword…"
+msgstr "키워드 추가…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -4165,6 +4165,21 @@ msgstr "전화번호로 연락하기"
 msgid "Contact role"
 msgstr "연락 역할"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr ""
+
+#. placeholder {0}: primary.name
+#. placeholder {1}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0} and {1} more"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6150,8 +6165,8 @@ msgid "Duplicated “{0}”"
 msgstr "“{0}”을(를) 복제했습니다"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "이력서를 복제하는 중입니다..."
+msgid "Duplicating your resume…"
+msgstr "이력서를 복제하는 중입니다…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6338,12 +6353,16 @@ msgid "Editing"
 msgstr "편집"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "키워드 편집 중..."
+msgid "Editing keyword…"
+msgstr "키워드 편집 중…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "편집 세션"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -6430,7 +6449,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -9040,7 +9059,7 @@ msgid "Loading applications…"
 msgstr "지원 목록 불러오는 중…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
+msgid "Loading connection request…"
 msgstr "연결 요청을 불러오는 중…"
 
 #: src/features/settings/ai/web-access.tsx
@@ -9048,8 +9067,8 @@ msgid "Loading connection…"
 msgstr "연결 로드 중…"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "연결 로드 중..."
+msgid "Loading connections…"
+msgstr "연결 로드 중…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12895,8 +12914,8 @@ msgid "Reset your password"
 msgstr "비밀번호 재설정"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "비밀번호를 재설정하는 중입니다..."
+msgid "Resetting your password…"
+msgstr "비밀번호를 재설정하는 중입니다…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -12998,6 +13017,7 @@ msgid "resume"
 msgstr "재개하다"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
@@ -13839,11 +13859,8 @@ msgstr "검색은 서버의 검색으로 테스트되었습니다. 링크는 내
 msgid "Search works"
 msgstr "작품검색"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "검색..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "검색…"
@@ -13957,8 +13974,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "선택..."
+msgid "Select…"
+msgstr "선택…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -14029,8 +14046,8 @@ msgid "Sender details copied into the letter"
 msgstr "편지에 복사된 보낸 사람 정보"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "비밀번호 재설정 이메일을 보내는 중입니다..."
+msgid "Sending password reset email…"
+msgstr "비밀번호 재설정 이메일을 보내는 중입니다…"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14585,19 +14602,23 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "로그인 중..."
+msgid "Signing in…"
+msgstr "로그인 중…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "로그아웃 중..."
+msgid "Signing out…"
+msgstr "로그아웃 중…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "가입 중..."
+msgid "Signing up…"
+msgstr "가입 중…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "Since today"
 msgstr ""
 
 #: src/dialogs/resume/template/data.ts
@@ -16923,6 +16944,7 @@ msgstr "밑줄"
 msgid "Underline links"
 msgstr "링크에 밑줄을 긋습니다"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
@@ -16975,7 +16997,6 @@ msgid "Unlink this application"
 msgstr "이 채용 지원서 연결 해제"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16983,6 +17004,7 @@ msgid "Unlock"
 msgstr "잠금 해제"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -17077,8 +17099,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "{total}개 중 {done}개를 업데이트했습니다. 잠긴 서류와 공개 링크를 설정할 수 없는 커버레터는 건너뛰었습니다."
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "이력서를 업데이트하는 중입니다..."
+msgid "Updating your resume…"
+msgstr "이력서를 업데이트하는 중입니다…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17116,6 +17138,10 @@ msgstr "{minimum}pt 사용"
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum} pt margins"
 msgstr "{minimum} 포인트 여백 사용"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use {name}"
+msgstr "{name} 사용"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {url}"
@@ -17428,14 +17454,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "백업 코드를 확인하는 중입니다..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "코드를 확인하는 중입니다..."
+msgid "Verifying backup code…"
+msgstr "백업 코드를 확인하는 중입니다…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "코드… 확인 중"
 

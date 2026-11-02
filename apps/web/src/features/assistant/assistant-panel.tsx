@@ -551,7 +551,7 @@ function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 	return (
 		<div className="grid min-h-0 flex-1 content-start gap-4 overflow-y-auto p-4">
 			<div className="grid gap-1.5">
-				<h3 className="font-display text-[22px] leading-7 font-medium">
+				<h3 className="font-display text-[22px] leading-7">
 					<Trans>What should we work on?</Trans>
 				</h3>
 				<p className="text-sm text-ink-2">

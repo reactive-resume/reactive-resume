@@ -66,7 +66,7 @@ export function ConnectedApps() {
 	const list = connections.data?.connections ?? [];
 	return (
 		<SettingsGroup title={t`Connected applications`} note={t`Disconnect an application from your account.`}>
-			{connections.isPending ? <ListRow title={t`Loading connections...`} /> : null}
+			{connections.isPending ? <ListRow title={t`Loading connections…`} /> : null}
 			{connections.isError ? (
 				<Banner
 					tone="danger"

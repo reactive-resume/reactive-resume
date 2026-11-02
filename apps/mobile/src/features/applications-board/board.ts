@@ -1,4 +1,10 @@
-// Board drag and drop state, kept pure so Node runs it in the M5-T3 scenarios.
+// Board geometry and drag/drop state.
+
+/** Fit the open lanes after sidebar/padding; retain readable scrolling columns on smaller tablets. */
+export function tabletColumnWidth(width: number, openLanes: number, padding: number, gap: number) {
+	const count = Math.max(1, openLanes);
+	return Math.max(208, Math.min(250, (width - padding * 2 - gap * (count - 1)) / count));
+}
 
 /** A dropped card shown in its new column until the list's optimistic update lands. */
 export type PendingMove = { id: string; from: string; to: string };

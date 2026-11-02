@@ -116,7 +116,7 @@ type PaperBadgeProps = { icon: "globe" | "lock" | "password"; label: string };
 
 function PaperBadge({ icon, label }: PaperBadgeProps) {
 	return (
-		<span className="grid size-[22px] place-items-center rounded bg-black/75 text-white" title={label}>
+		<span className="grid size-[22px] place-items-center rounded-sm bg-ink text-bg" title={label}>
 			<Icon name={icon} size={14} />
 			<span className="sr-only">{label}</span>
 		</span>
@@ -227,9 +227,10 @@ export function DocumentCard({
 						{renaming && !disabled ? (
 							<RenameInput document={document} onDone={() => setRenaming(false)} />
 						) : (
-							<h3 dir="auto" className="truncate text-sm leading-5 font-semibold">
+							// Right under the page's h1: an h2, so heading levels don't skip.
+							<h2 dir="auto" className="truncate text-sm leading-5 font-semibold">
 								{document.name}
-							</h3>
+							</h2>
 						)}
 						<span className="truncate text-xs text-ink-3">{meta}</span>
 						{document.application ? (

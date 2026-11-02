@@ -1517,8 +1517,8 @@ msgid "Access"
 msgstr "പ്രവേശനം"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "എന്നിവയ്ക്ക് പ്രവേശനം അനുവദിച്ചിരിക്കുന്നു"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "എന്നിവയ്ക്ക് പ്രവേശനം അനുവദിച്ചിരിക്കുന്നു <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1619,8 +1619,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "ഒരു കീവേഡ് ചേർക്കുക..."
+msgid "Add a keyword…"
+msgstr "ഒരു കീവേഡ് ചേർക്കുക…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -4165,6 +4165,21 @@ msgstr "ബന്ധപ്പെടാനുള്ള ഫോൺ"
 msgid "Contact role"
 msgstr "കോൺടാക്റ്റ് റോൾ"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr ""
+
+#. placeholder {0}: primary.name
+#. placeholder {1}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0} and {1} more"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6150,8 +6165,8 @@ msgid "Duplicated “{0}”"
 msgstr "“{0}” ഡ്യൂപ്ലിക്കേറ്റ് ചെയ്തു"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "നിങ്ങളുടെ റിസ്യൂം ഡൂപ്ലിക്കേറ്റ് ചെയ്യുന്നു..."
+msgid "Duplicating your resume…"
+msgstr "നിങ്ങളുടെ റിസ്യൂം ഡൂപ്ലിക്കേറ്റ് ചെയ്യുന്നു…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6338,12 +6353,16 @@ msgid "Editing"
 msgstr "എഡിറ്റിംഗ്"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "പുനഃക്രമീകരിക്കുന്ന പ്രധാനവാക്ക്..."
+msgid "Editing keyword…"
+msgstr "പുനഃക്രമീകരിക്കുന്ന പ്രധാനവാക്ക്…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "എഡിറ്റിംഗ് സെഷൻ"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -6430,7 +6449,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -9040,16 +9059,16 @@ msgid "Loading applications…"
 msgstr "അപേക്ഷകൾ ലോഡ് ചെയ്യുന്നു…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
-msgstr "കണക്ഷൻ അഭ്യർത്ഥന ലോഡ് ചെയ്യുന്നു..."
+msgid "Loading connection request…"
+msgstr "കണക്ഷൻ അഭ്യർത്ഥന ലോഡ് ചെയ്യുന്നു…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Loading connection…"
 msgstr "കണക്ഷൻ ലോഡ് ചെയ്യുന്നു..."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "കണക്ഷനുകൾ ലോഡ് ചെയ്യുന്നു..."
+msgid "Loading connections…"
+msgstr "കണക്ഷനുകൾ ലോഡ് ചെയ്യുന്നു…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12895,8 +12914,8 @@ msgid "Reset your password"
 msgstr "നിങ്ങളുടെ പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യുക"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "നിങ്ങളുടെ പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യുന്നു..."
+msgid "Resetting your password…"
+msgstr "നിങ്ങളുടെ പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യുന്നു…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -12998,6 +13017,7 @@ msgid "resume"
 msgstr "പുനരാരംഭിക്കുക"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
@@ -13839,11 +13859,8 @@ msgstr "നിങ്ങളുടെ സെർവറിൻ്റെ തിരയ�
 msgid "Search works"
 msgstr "തിരയൽ പ്രവർത്തിക്കുന്നു"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "തിരയുക..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "… തിരയുക"
@@ -13957,8 +13974,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "തിരഞ്ഞെടുക്കുക..."
+msgid "Select…"
+msgstr "തിരഞ്ഞെടുക്കുക…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -14029,8 +14046,8 @@ msgid "Sender details copied into the letter"
 msgstr "അയച്ചയാളുടെ വിശദാംശങ്ങൾ കത്തിൽ പകർത്തി"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "പാസ്‌വേഡ് റീസെറ്റ് ഇമെയിൽ അയക്കുന്നു..."
+msgid "Sending password reset email…"
+msgstr "പാസ്‌വേഡ് റീസെറ്റ് ഇമെയിൽ അയക്കുന്നു…"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14585,19 +14602,23 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "സൈൻ ഇൻ ചെയ്യുന്നു..."
+msgid "Signing in…"
+msgstr "സൈൻ ഇൻ ചെയ്യുന്നു…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "സൈൻ ഔട്ട് ചെയ്യുന്നു..."
+msgid "Signing out…"
+msgstr "സൈൻ ഔട്ട് ചെയ്യുന്നു…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "സൈൻ അപ് ചെയ്യുന്നു..."
+msgid "Signing up…"
+msgstr "സൈൻ അപ് ചെയ്യുന്നു…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "Since today"
 msgstr ""
 
 #: src/dialogs/resume/template/data.ts
@@ -16923,6 +16944,7 @@ msgstr "അടിവര"
 msgid "Underline links"
 msgstr "ലിങ്കുകൾക്ക് അടിവരയിടുക"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
@@ -16975,7 +16997,6 @@ msgid "Unlink this application"
 msgstr "ഈ ജോലി അപേക്ഷ അൺലിങ്ക് ചെയ്യുക"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16983,6 +17004,7 @@ msgid "Unlock"
 msgstr "അൺലോക്ക് ചെയ്യുക"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -17077,8 +17099,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "{total}-ൽ {done} എണ്ണം അപ്ഡേറ്റ് ചെയ്തു. ലോക്ക് ചെയ്ത പ്രമാണങ്ങളും, പൊതു ലിങ്കുകൾക്കായി ലെറ്ററുകളും ഒഴിവാക്കി."
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "നിങ്ങളുടെ റിസ്യൂം അപ്‌ഡേറ്റ് ചെയ്യുന്നു..."
+msgid "Updating your resume…"
+msgstr "നിങ്ങളുടെ റിസ്യൂം അപ്‌ഡേറ്റ് ചെയ്യുന്നു…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17116,6 +17138,10 @@ msgstr "{minimum} pt ഉപയോഗിക്കുക"
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum} pt margins"
 msgstr "{minimum} pt മാർജിനുകൾ ഉപയോഗിക്കുക"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use {name}"
+msgstr "{name} ഉപയോഗിക്കുക"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {url}"
@@ -17428,14 +17454,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "ബാക്കപ്പ് കോഡ് പരിശോദിക്കുന്നു..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "കോഡ് പരിശോദിക്കുന്നു..."
+msgid "Verifying backup code…"
+msgstr "ബാക്കപ്പ് കോഡ് പരിശോദിക്കുന്നു…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "കോഡ് പരിശോധിക്കുന്നു…"
 

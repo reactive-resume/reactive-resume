@@ -1512,8 +1512,8 @@ msgid "Access"
 msgstr "Access"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "Access is sent to"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "Access is sent to <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1614,8 +1614,8 @@ msgid "Add a job…"
 msgstr "Add a job…"
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "Add a keyword..."
+msgid "Add a keyword…"
+msgstr "Add a keyword…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -4162,6 +4162,21 @@ msgstr "Contact phone"
 msgid "Contact role"
 msgstr "Contact role"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr "Contact: {0}"
+
+#. placeholder {0}: primary.name
+#. placeholder {1}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0} and {1} more"
+msgstr "Contact: {0} and {1} more"
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr "Contact: none yet"
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6147,8 +6162,8 @@ msgid "Duplicated “{0}”"
 msgstr "Duplicated “{0}”"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
-msgstr "Duplicating your resume..."
+msgid "Duplicating your resume…"
+msgstr "Duplicating your resume…"
 
 #: src/libs/locale.ts
 msgid "Dutch"
@@ -6335,12 +6350,16 @@ msgid "Editing"
 msgstr "Editing"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "Editing keyword..."
+msgid "Editing keyword…"
+msgstr "Editing keyword…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "Editing session"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr "Editor"
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -6427,8 +6446,8 @@ msgid "Empty Trash?"
 msgstr "Empty Trash?"
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
-msgstr "Empty trash…"
+msgid "Empty Trash…"
+msgstr "Empty Trash…"
 
 #: src/features/resume/editor/write/dates-field.tsx
 msgid "End"
@@ -9037,16 +9056,16 @@ msgid "Loading applications…"
 msgstr "Loading applications…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
-msgstr "Loading connection request..."
+msgid "Loading connection request…"
+msgstr "Loading connection request…"
 
 #: src/features/settings/ai/web-access.tsx
 msgid "Loading connection…"
 msgstr "Loading connection…"
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "Loading connections..."
+msgid "Loading connections…"
+msgstr "Loading connections…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12892,8 +12911,8 @@ msgid "Reset your password"
 msgstr "Reset your password"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
-msgstr "Resetting your password..."
+msgid "Resetting your password…"
+msgstr "Resetting your password…"
 
 #: src/features/homepage/footer.tsx
 msgid "Resources"
@@ -12995,6 +13014,7 @@ msgid "resume"
 msgstr "resume"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
@@ -13836,11 +13856,8 @@ msgstr "Search was tested with your server's search. Links are read with the bui
 msgid "Search works"
 msgstr "Search works"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "Search..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "Search…"
@@ -13954,8 +13971,8 @@ msgid "Select this page in Trash"
 msgstr "Select this page in Trash"
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "Select..."
+msgid "Select…"
+msgstr "Select…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -14026,8 +14043,8 @@ msgid "Sender details copied into the letter"
 msgstr "Sender details copied into the letter"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
-msgstr "Sending password reset email..."
+msgid "Sending password reset email…"
+msgstr "Sending password reset email…"
 
 #: src/features/career/disclosure.tsx
 msgid "Sends {list} to {providerLabel}."
@@ -14582,20 +14599,24 @@ msgstr "Signed out of that device."
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
-msgstr "Signing in..."
+msgid "Signing in…"
+msgstr "Signing in…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
-msgstr "Signing out..."
+msgid "Signing out…"
+msgstr "Signing out…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "Signing up..."
+msgid "Signing up…"
+msgstr "Signing up…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
 msgstr "since last counted view"
+
+#: src/features/applications/next-step.ts
+msgid "Since today"
+msgstr "Since today"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -16920,6 +16941,7 @@ msgstr "Underline"
 msgid "Underline links"
 msgstr "Underline links"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
@@ -16972,7 +16994,6 @@ msgid "Unlink this application"
 msgstr "Unlink this application"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16980,6 +17001,7 @@ msgid "Unlock"
 msgstr "Unlock"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -17074,8 +17096,8 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "Updated {done} of {total}. Locked documents, and letters for public links, were skipped."
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
-msgstr "Updating your resume..."
+msgid "Updating your resume…"
+msgstr "Updating your resume…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Upload .csv"
@@ -17113,6 +17135,10 @@ msgstr "Use {minimum} pt"
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum} pt margins"
 msgstr "Use {minimum} pt margins"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use {name}"
+msgstr "Use {name}"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {url}"
@@ -17425,14 +17451,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr "Verify your email to add a passkey. The link is in Account details above."
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
-msgstr "Verifying backup code..."
-
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "Verifying code..."
+msgid "Verifying backup code…"
+msgstr "Verifying backup code…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "Verifying code…"
 

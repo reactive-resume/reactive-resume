@@ -214,7 +214,7 @@ export function FitTab({ application, version }: WorkspaceTabProps) {
 		<div className="grid gap-5">
 			<div className="grid items-end gap-x-6 gap-y-2 @xl:grid-cols-[minmax(0,1fr)_auto]">
 				<div className="grid gap-1">
-					<h2 className="font-display text-[22px] leading-7 font-medium">{item.data.headline}</h2>
+					<h2 className="font-display text-[22px] leading-7">{item.data.headline}</h2>
 					<p className="max-w-[560px] text-sm leading-[19px] text-ink-2">{item.data.summary}</p>
 				</div>
 				<p className="flex flex-wrap items-baseline gap-x-2 font-mono text-xs font-medium text-ink-2">

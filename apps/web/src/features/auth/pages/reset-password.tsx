@@ -32,7 +32,7 @@ export function ResetPasswordPage({ token }: Props) {
 		defaultValues: { password: "" },
 		validators: { onSubmit: formSchema },
 		onSubmit: async ({ value }) => {
-			const toastId = toast.add({ type: "loading", description: t`Resetting your password...` });
+			const toastId = toast.add({ type: "loading", description: t`Resetting your password…` });
 
 			const { error } = await authClient.resetPassword({ token, newPassword: value.password });
 

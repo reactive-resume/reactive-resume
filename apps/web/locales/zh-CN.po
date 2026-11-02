@@ -1517,8 +1517,8 @@ msgid "Access"
 msgstr "访问权限"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Access is sent to"
-msgstr "访问权限授予对象"
+msgid "Access is sent to <0>{destination}</0>"
+msgstr "访问权限授予对象 <0>{destination}</0>"
 
 #: src/features/auth/pages/consent.tsx
 msgid "Access your account through the API, including reading, changing and deleting your documents and job applications."
@@ -1619,8 +1619,8 @@ msgid "Add a job…"
 msgstr ""
 
 #: src/components/input/chip-input.tsx
-msgid "Add a keyword..."
-msgstr "添加关键字..."
+msgid "Add a keyword…"
+msgstr "添加关键字…"
 
 #. Tooltip for action button that opens URL label editor
 #: src/components/input/url-input.tsx
@@ -4165,6 +4165,21 @@ msgstr "联系电话"
 msgid "Contact role"
 msgstr "联系角色"
 
+#. placeholder {0}: primary.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0}"
+msgstr ""
+
+#. placeholder {0}: primary.name
+#. placeholder {1}: others.length
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: {0} and {1} more"
+msgstr ""
+
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Contact: none yet"
+msgstr ""
+
 #: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Contacts"
@@ -6150,7 +6165,7 @@ msgid "Duplicated “{0}”"
 msgstr "已复制“{0}”"
 
 #: src/dialogs/resume/index.tsx
-msgid "Duplicating your resume..."
+msgid "Duplicating your resume…"
 msgstr "正在复制你的简历…"
 
 #: src/libs/locale.ts
@@ -6338,12 +6353,16 @@ msgid "Editing"
 msgstr "编辑"
 
 #: src/components/input/chip-input.tsx
-msgid "Editing keyword..."
-msgstr "编辑关键字..."
+msgid "Editing keyword…"
+msgstr "编辑关键字…"
 
 #: src/features/resume/share/format.ts
 msgid "Editing session"
 msgstr "编辑会话"
+
+#: src/features/resume/editor/chrome/shell.tsx
+msgid "Editor"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-components/editor-bar.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -6430,7 +6449,7 @@ msgid "Empty Trash?"
 msgstr ""
 
 #: src/features/documents/trash-page.tsx
-msgid "Empty trash…"
+msgid "Empty Trash…"
 msgstr ""
 
 #: src/features/resume/editor/write/dates-field.tsx
@@ -9040,7 +9059,7 @@ msgid "Loading applications…"
 msgstr "正在加载申请…"
 
 #: src/features/auth/pages/consent.tsx
-msgid "Loading connection request..."
+msgid "Loading connection request…"
 msgstr "正在加载连接请求…"
 
 #: src/features/settings/ai/web-access.tsx
@@ -9048,8 +9067,8 @@ msgid "Loading connection…"
 msgstr "正在加载连接..."
 
 #: src/features/settings/ai/connected-apps.tsx
-msgid "Loading connections..."
-msgstr "正在加载连接..."
+msgid "Loading connections…"
+msgstr "正在加载连接…"
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Loading conversations…"
@@ -12895,7 +12914,7 @@ msgid "Reset your password"
 msgstr "重置密码"
 
 #: src/features/auth/pages/reset-password.tsx
-msgid "Resetting your password..."
+msgid "Resetting your password…"
 msgstr "正在重置你的密码…"
 
 #: src/features/homepage/footer.tsx
@@ -12998,6 +13017,7 @@ msgid "resume"
 msgstr "恢复"
 
 #: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/detail/sent-documents.tsx
 #: src/features/applications/components/list-view.tsx
 #: src/features/career/workspace/preparation.tsx
 #: src/features/documents/document-card.tsx
@@ -13839,11 +13859,8 @@ msgstr "搜索已通过您服务器的搜索进行了测试。使用内置阅读
 msgid "Search works"
 msgstr "搜索作品"
 
-#: src/components/ui/combobox.tsx
-msgid "Search..."
-msgstr "搜索..."
-
 #. Placeholder in command palette input on nested pages
+#: src/components/ui/combobox.tsx
 #: src/features/command-palette/content.tsx
 msgid "Search…"
 msgstr "搜索…"
@@ -13957,8 +13974,8 @@ msgid "Select this page in Trash"
 msgstr ""
 
 #: src/components/ui/combobox.tsx
-msgid "Select..."
-msgstr "选择..."
+msgid "Select…"
+msgstr "选择…"
 
 #: src/features/documents/documents-page.tsx
 msgid "Selected documents"
@@ -14029,7 +14046,7 @@ msgid "Sender details copied into the letter"
 msgstr "发件人详细信息复制到信件中"
 
 #: src/features/auth/pages/forgot-password.tsx
-msgid "Sending password reset email..."
+msgid "Sending password reset email…"
 msgstr "正在发送密码重置邮件…"
 
 #: src/features/career/disclosure.tsx
@@ -14585,19 +14602,23 @@ msgstr ""
 
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
-msgid "Signing in..."
+msgid "Signing in…"
 msgstr "正在登录…"
 
 #: src/features/user/dropdown-menu.tsx
-msgid "Signing out..."
+msgid "Signing out…"
 msgstr "正在退出…"
 
 #: src/features/auth/pages/register.tsx
-msgid "Signing up..."
+msgid "Signing up…"
 msgstr "正在注册…"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "since last counted view"
+msgstr ""
+
+#: src/features/applications/next-step.ts
+msgid "Since today"
 msgstr ""
 
 #: src/dialogs/resume/template/data.ts
@@ -16923,6 +16944,7 @@ msgstr "下划线"
 msgid "Underline links"
 msgstr "下划线链接"
 
+#: src/features/applications/use-application-actions.ts
 #: src/features/assistant/document.ts
 #: src/features/career/coach-chat.tsx
 #: src/features/career/shared.tsx
@@ -16975,7 +16997,6 @@ msgid "Unlink this application"
 msgstr "取消此职位申请的链接"
 
 #: src/features/assistant/assistant-panel.tsx
-#: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/features/resume/share/web-page-text.ts
@@ -16983,6 +17004,7 @@ msgid "Unlock"
 msgstr "解锁"
 
 #: src/features/assistant/assistant-panel.tsx
+#: src/features/documents/document-actions.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -17077,7 +17099,7 @@ msgid "Updated {done} of {total}. Locked documents, and letters for public links
 msgstr "已更新 {total} 个中的 {done} 个。已跳过锁定的文件，公共链接操作也已跳过求职信。"
 
 #: src/dialogs/resume/index.tsx
-msgid "Updating your resume..."
+msgid "Updating your resume…"
 msgstr "正在更新你的简历…"
 
 #: src/features/applications/components/import-applications-sheet.tsx
@@ -17116,6 +17138,10 @@ msgstr "使用 {minimum} pt"
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {minimum} pt margins"
 msgstr "使用 {minimum} pt 边距"
+
+#: src/features/applications/components/detail/sent-documents.tsx
+msgid "Use {name}"
+msgstr "使用 {name}"
 
 #: src/features/resume/editor/check/issues.ts
 msgid "Use {url}"
@@ -17428,14 +17454,11 @@ msgid "Verify your email to add a passkey. The link is in Account details above.
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying backup code..."
+msgid "Verifying backup code…"
 msgstr "正在验证备份码…"
 
-#: src/features/auth/pages/verify-2fa.tsx
-msgid "Verifying code..."
-msgstr "正在验证验证码…"
-
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying code…"
 msgstr "验证码…"
 

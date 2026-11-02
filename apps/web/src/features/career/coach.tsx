@@ -545,7 +545,7 @@ function EmptyState({ disabled, offers, onPick }: EmptyStateProps) {
 	return (
 		<div className="grid gap-6 pt-[clamp(0px,6vh,48px)]">
 			<div className="grid gap-3">
-				<h3 className="font-display text-[30px] leading-9 font-medium">
+				<h3 className="font-display text-[30px] leading-9">
 					<Trans>What are you working on?</Trans>
 				</h3>
 				<p className="text-[15px] leading-[23px] text-ink-2">
