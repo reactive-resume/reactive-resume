@@ -18,6 +18,11 @@ const textOf = (node: ReactNode): string => {
  * page's direction.
  */
 export function paragraphDirection(node: ReactNode): "ltr" | "rtl" {
-	for (const char of textOf(node)) if (LETTER.test(char)) return RTL_LETTER.test(char) ? "rtl" : "ltr";
+	return textDirection(textOf(node));
+}
+
+/** The same decision for plain text: its first letter's direction, or right to left with no letters. */
+export function textDirection(text: string): "ltr" | "rtl" {
+	for (const char of text) if (LETTER.test(char)) return RTL_LETTER.test(char) ? "rtl" : "ltr";
 	return "rtl";
 }
