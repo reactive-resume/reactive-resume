@@ -727,6 +727,7 @@ function ConversationRow({ thread, current, detail, index, onOpen, onDelete }: C
 				)}
 			>
 				<span className="truncate text-sm font-medium">{thread.title}</span>
+				{thread.firstMessage && <span className="truncate text-sm text-ink-2">{thread.firstMessage}</span>}
 				<span className="truncate text-xs text-ink-3">{detail}</span>
 			</button>
 			<IconButton

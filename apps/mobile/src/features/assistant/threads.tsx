@@ -87,12 +87,17 @@ export function PastConversations({ threads, isMine, currentId, onOpen, onDelete
 			key={thread.id}
 			title={title(thread)}
 			subtitle={[
-				time(thread.lastMessageAt),
-				outcome(thread),
-				...(other ? [thread.coverLetterName ?? thread.resumeName ?? ""] : []),
+				thread.firstMessage,
+				[
+					time(thread.lastMessageAt),
+					outcome(thread),
+					...(other ? [thread.coverLetterName ?? thread.resumeName ?? ""] : []),
+				]
+					.filter(Boolean)
+					.join(" · "),
 			]
 				.filter(Boolean)
-				.join(" · ")}
+				.join("\n")}
 			selected={thread.id === currentId}
 			onPress={() => onOpen(thread)}
 			trailing={<IconButton icon="dots-three" label={t`Delete ${title(thread)}`} onPress={() => remove.ask(thread)} />}

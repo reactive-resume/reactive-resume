@@ -177,6 +177,7 @@ type AttachmentModelInput = {
 };
 
 type ThreadSummaryRow = AgentThreadRecord & {
+	firstMessage?: UIMessage | null;
 	resumeName?: string | null;
 	coverLetterName?: string | null;
 	providerLabel?: string | null;
@@ -186,6 +187,9 @@ function toThreadSummary(row: ThreadSummaryRow) {
 	return {
 		id: row.id,
 		title: row.title,
+		...(row.firstMessage !== undefined
+			? { firstMessage: row.firstMessage ? buildThreadTitle(row.firstMessage, "", 160) || null : null }
+			: {}),
 		status: row.status,
 		scope: (row.scope ?? "document") as "document" | "application" | "career",
 		applicationId: row.applicationId ?? null,
@@ -1117,6 +1121,13 @@ function createAgent(input: {
 
 const threadSummarySelection = {
 	...getColumns(schema.agentThread),
+	firstMessage: sql<UIMessage | null>`(
+		select ${schema.agentMessage.uiMessage} from ${schema.agentMessage}
+		where ${schema.agentMessage.threadId} = ${schema.agentThread.id}
+			and ${schema.agentMessage.userId} = ${schema.agentThread.userId}
+			and ${schema.agentMessage.role} = 'user'
+		order by ${schema.agentMessage.sequence} asc limit 1
+	)`,
 	resumeName: schema.resume.name,
 	coverLetterName: schema.coverLetter.name,
 	providerLabel: schema.aiProvider.label,

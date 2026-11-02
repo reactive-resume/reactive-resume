@@ -214,6 +214,101 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 		return proposalOf((await send(threadId, {})).messages);
 	}
 
+	it("lists the original owned opening message beneath the task title without generating a subtitle", async () => {
+		const db = fixture.db;
+		if (!db) throw new Error("Missing fixture database");
+		const thread = await agent.threads.start({ userId, resumeId: copyId });
+		const attachmentOnly = await agent.threads.start({ userId, resumeId: copyId });
+		const empty = await agent.threads.start({ userId, resumeId: copyId });
+		await pool.query("UPDATE agent_threads SET title = $1 WHERE id = $2", [
+			"Tailor summary to payments roles",
+			thread.id,
+		]);
+		await db.insert(tables.user).values({
+			id: "history-stranger",
+			name: "Other Fictional User",
+			email: "other-history@example.test",
+			username: `${schemaName}-other`,
+			displayUsername: `${schemaName}-other`,
+		});
+		await db.insert(tables.agentThread).values({ id: "foreign-history", userId: "history-stranger", title: "Private" });
+		await db.insert(tables.agentMessage).values([
+			{
+				userId,
+				threadId: thread.id,
+				role: "assistant",
+				sequence: 0,
+				uiMessage: { role: "assistant", parts: [{ type: "text", text: "Not the opener" }] },
+			},
+			{
+				userId: "history-stranger",
+				threadId: thread.id,
+				role: "user",
+				sequence: 1,
+				uiMessage: { role: "user", parts: [{ type: "text", text: "FOREIGN_MESSAGE_MUST_STAY_PRIVATE" }] },
+			},
+			{
+				userId,
+				threadId: thread.id,
+				role: "user",
+				sequence: 2,
+				uiMessage: {
+					role: "user",
+					parts: [
+						{ type: "text", text: "I'm applying for payments roles.\n" },
+						{ type: "file", url: "agent-attachment:posting", mediaType: "text/plain" },
+						{ type: "text", text: "Please tailor my summary." },
+					],
+				},
+			},
+			{
+				userId,
+				threadId: thread.id,
+				role: "user",
+				sequence: 3,
+				uiMessage: { role: "user", parts: [{ type: "text", text: "Later follow-up" }] },
+			},
+			{
+				userId,
+				threadId: attachmentOnly.id,
+				role: "user",
+				sequence: 0,
+				uiMessage: { role: "user", parts: [{ type: "file", url: "agent-attachment:notes", mediaType: "text/plain" }] },
+			},
+			{
+				userId,
+				threadId: attachmentOnly.id,
+				role: "user",
+				sequence: 1,
+				uiMessage: { role: "user", parts: [{ type: "text", text: "Do not substitute this follow-up" }] },
+			},
+		]);
+		const calls = fixture.prompts.length;
+		const summaries = await agent.threads.list({ userId });
+		expect(summaries.find((row) => row.id === thread.id)).toMatchObject({
+			title: "Tailor summary to payments roles",
+			firstMessage: "I'm applying for payments roles. Please tailor my summary.",
+		});
+		expect(summaries.find((row) => row.id === attachmentOnly.id)?.firstMessage).toBeNull();
+		expect(summaries.find((row) => row.id === empty.id)?.firstMessage).toBeNull();
+		expect(summaries.some((row) => row.id === "foreign-history")).toBe(false);
+		expect(JSON.stringify(summaries)).not.toContain("FOREIGN_MESSAGE_MUST_STAY_PRIVATE");
+		await db.insert(tables.agentMessage).values({
+			userId,
+			threadId: empty.id,
+			role: "user",
+			sequence: 0,
+			uiMessage: {
+				role: "user",
+				parts: [{ type: "text", text: "Research roles and prepare my summary. ".repeat(10) }],
+			},
+		});
+		const preview = (await agent.threads.list({ userId })).find((row) => row.id === empty.id)?.firstMessage;
+		expect(preview).toMatch(/^Research roles.*…$/);
+		expect(preview?.length).toBeLessThanOrEqual(160);
+		expect(fixture.prompts).toHaveLength(calls);
+	});
+
 	it("never sends or shows a Knowledge reply once sharing is off or the fact is forgotten", async () => {
 		const { id: threadId } = await agent.threads.start({ userId, resumeId: copyId });
 		const passage = (await loadDocument(userId, { kind: "resume", id: copyId })).passages[0];

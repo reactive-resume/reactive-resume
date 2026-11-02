@@ -49,6 +49,39 @@ async function send(page: Page, text: string) {
 	}).toPass({ timeout: 20_000 });
 }
 
+test("history keeps the original opening message beneath its task title without more AI calls", async ({
+	authPage: page,
+}, testInfo) => {
+	test.setTimeout(90_000);
+	await createSampleResumeFromDashboard(page, testInfo);
+	const resumeId = resumeIdOf(page);
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	await connectStub(page);
+	const opening = "I'm applying for payments roles. Please tighten my summary.";
+	await send(page, opening);
+	await expect(page.getByRole("list", { name: "Proposed edits" })).toBeVisible({ timeout: 20_000 });
+	await expect(page.getByRole("button", { name: "Stop", exact: true })).toBeHidden();
+	const calls = stub.requests.length;
+	const response = await page.request.get("/api/openapi/agent/threads");
+	await expect(response).toBeOK();
+	const threads = (await response.json()) as Array<{ workingResumeId: string; title: string; firstMessage: string }>;
+	expect(threads.find((thread) => thread.workingResumeId === resumeId)).toMatchObject({
+		title: "Tighten the first passage",
+		firstMessage: opening,
+	});
+	await page.getByRole("button", { name: "Past conversations", exact: true }).click();
+	const row = page.getByRole("button", { name: /^Tighten the first passage/ });
+	await expect(row).toContainText(opening);
+	await expect(row).toContainText("0 of 1 edits accepted");
+	await page
+		.getByRole("region", { name: "Assistant" })
+		.screenshot({ path: testInfo.outputPath("past-conversations.png") });
+	await page.reload();
+	await page.getByRole("button", { name: "Past conversations", exact: true }).click();
+	await expect(row).toContainText(opening);
+	expect(stub.requests).toHaveLength(calls);
+});
+
 test("proposes edits that change nothing until accepted, asks before assuming, and stops", async ({
 	authPage: page,
 }, testInfo) => {
