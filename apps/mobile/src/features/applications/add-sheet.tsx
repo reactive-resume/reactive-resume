@@ -469,13 +469,15 @@ export function AddApplicationSheet({ onClose, initialCapture, onAdded }: AddApp
 								disabled={!!busy}
 								onPress={() => {
 									if (mode === "link" && isLink(input)) setSourceUrl(input.trim());
-									// Pasted text without AI: fill what its first line names, never over what was typed.
-									const guess = mode === "text" ? readPastedPostingHeader(input) : null;
-									if (guess) {
-										if (!authored.current.has("role")) setRole(guess.role);
-										if (!authored.current.has("company")) setCompany(guess.company);
-										if (guess.location && !authored.current.has("location")) setLocation(guess.location);
-										if (guess.salary && !authored.current.has("salary")) setSalary(guess.salary);
+									// Pasted text without AI: fill what its first line names, never over what was typed. Without a
+									// header, nothing from an earlier posting stays behind, as after a read. A read of this same
+									// text (parsed) already filled them.
+									if (mode === "text" && !parsed) {
+										const guess = readPastedPostingHeader(input);
+										if (!authored.current.has("role")) setRole(guess?.role ?? "");
+										if (!authored.current.has("company")) setCompany(guess?.company ?? "");
+										if (!authored.current.has("location")) setLocation(guess?.location ?? "");
+										if (!authored.current.has("salary")) setSalary(guess?.salary ?? "");
 									}
 									setReview(true);
 								}}

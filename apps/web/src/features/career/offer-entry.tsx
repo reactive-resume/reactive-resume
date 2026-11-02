@@ -244,7 +244,8 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const [applicationId, setApplicationId] = useState(application?.id ?? offer?.applicationId ?? "");
 	// A new offer for a job starts from the job's own salary line: its currency, its pay period, and the low end as an
 	// editable base.
-	const hint = offer ? null : offerHintFromSalary(application?.salary);
+	const chosen = application ?? applications.data?.find((row) => row.id === applicationId);
+	const hint = offer ? null : offerHintFromSalary(chosen?.salary);
 	const [draft, setTerms] = useState(() =>
 		offer
 			? offerTerms(offer.data)
@@ -259,6 +260,17 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		variable: amount(offer?.data.variable),
 		learning: amount(offer?.data.learning),
 	}));
+	// What the job's salary filled in, so an untouched sheet isn't "changed" and choosing another job refills it.
+	const [seed, setSeed] = useState(() => ({ base: offer ? "" : amount(hint?.base), period: hint?.period ?? "year" }));
+	const chooseApplication = (id: string) => {
+		setApplicationId(id);
+		if (offer) return;
+		const next = offerHintFromSalary(applications.data?.find((row) => row.id === id)?.salary);
+		const nextSeed = { base: amount(next.base), period: next.period ?? "year" };
+		if (amounts.base === seed.base) setAmounts((current) => ({ ...current, base: nextSeed.base }));
+		if (draft.period === seed.period) setTerms((current) => ({ ...current, period: nextSeed.period }));
+		setSeed(nextSeed);
+	};
 	const deadline = offer?.data.respondBy ? zonedFields(offer.data.respondBy, timeZone) : null;
 	const [date, setDate] = useState(deadline?.date ?? "");
 	const [time, setTime] = useState(deadline?.time ?? "17:00");
@@ -395,7 +407,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 						disabled={!!application || !!offer}
 						onBlur={() => touch("application")}
 						aria-invalid={submitted && !applicationId}
-						onChange={(event) => setApplicationId(event.target.value)}
+						onChange={(event) => chooseApplication(event.target.value)}
 						required
 					>
 						<option value="">{t`Choose an application`}</option>

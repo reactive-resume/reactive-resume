@@ -161,7 +161,8 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	const [applicationId, setApplicationId] = useState(application?.id ?? "");
 	// A new offer for a job starts from the job's own salary line: its currency, its pay period, and the low end as an
 	// editable base.
-	const hint = offer ? null : offerHintFromSalary(application?.salary);
+	const chosen = application ?? applications.data?.find((row) => row.id === applicationId);
+	const hint = offer ? null : offerHintFromSalary(chosen?.salary);
 	const [draft, setTerms] = useState(() =>
 		offer
 			? offerTermsSchema.parse(offer.data)
@@ -176,6 +177,17 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 		variable: amount(offer?.data.variable),
 		learning: amount(offer?.data.learning),
 	}));
+	// What the job's salary filled in, so an untouched sheet isn't "changed" and choosing another job refills it.
+	const [seed, setSeed] = useState(() => ({ base: offer ? "" : amount(hint?.base), period: hint?.period ?? "year" }));
+	const chooseApplication = (id: string) => {
+		setApplicationId(id);
+		if (offer) return;
+		const next = offerHintFromSalary(applications.data?.find((row) => row.id === id)?.salary);
+		const nextSeed = { base: amount(next.base), period: next.period ?? "year" };
+		if (amounts.base === seed.base) setAmounts((current) => ({ ...current, base: nextSeed.base }));
+		if (draft.period === seed.period) setTerms((current) => ({ ...current, period: nextSeed.period }));
+		setSeed(nextSeed);
+	};
 	const deadline = offer?.data.respondBy ? zonedFields(offer.data.respondBy, timeZone) : null;
 	const [date, setDate] = useState(deadline?.date ?? "");
 	const [time, setTime] = useState(deadline?.time ?? "17:00");
@@ -208,12 +220,12 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 	});
 	const dirty = !!(
 		(currencyTyped && terms.currency) ||
-		amounts.base ||
+		amounts.base !== seed.base ||
 		amounts.variable ||
 		amounts.learning ||
 		date ||
 		terms.version !== "written" ||
-		terms.period !== "year" ||
+		terms.period !== seed.period ||
 		terms.officeDays !== null ||
 		terms.variableConditions ||
 		terms.equity ||
@@ -270,7 +282,7 @@ export function OfferForm({ application, offer: initialOffer, onClose, onSaved }
 								value: row.id,
 								label: `${row.company} · ${row.role} · ${row.closedReason === "accepted" ? t`Accepted` : row.status === "offer" ? t`Offer` : row.status === "closed" ? t`Closed` : t`In progress`}`,
 							}))}
-							onChange={setApplicationId}
+							onChange={chooseApplication}
 						/>
 						{applications.data?.length === 0 ? (
 							<Button

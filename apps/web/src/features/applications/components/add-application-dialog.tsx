@@ -61,7 +61,12 @@ type SaveJobDraft = {
 	pastedText: string;
 	description: string | null;
 	reading: { text: string; result: Parsed } | null;
+	/** Fields the person typed: a read or a header guess never writes over them, also after the dialog reopens. */
+	authored: AuthoredField[];
 };
+
+type AuthoredField = "role" | "company" | "location" | "salary";
+const AUTHORED_FIELDS: readonly AuthoredField[] = ["role", "company", "location", "salary"];
 
 const EMPTY_SAVE_JOB: SaveJobDraft = {
 	input: "",
@@ -73,6 +78,7 @@ const EMPTY_SAVE_JOB: SaveJobDraft = {
 	pastedText: "",
 	description: null,
 	reading: null,
+	authored: [],
 };
 
 const draftFromCapture = (capture: PostingCapture): SaveJobDraft => ({
@@ -97,7 +103,10 @@ function parseSaveJobDraft(value: unknown): SaveJobDraft | undefined {
 	const reading = draft.reading;
 	if (reading !== null && (typeof reading !== "object" || typeof reading.text !== "string" || !reading.result))
 		return undefined;
-	return draft;
+	const authored = Array.isArray(draft.authored)
+		? AUTHORED_FIELDS.filter((field) => (draft.authored as unknown[]).includes(field))
+		: [];
+	return { ...draft, authored };
 }
 
 type AddApplicationDialogProps = {
@@ -191,7 +200,12 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	const [coverLetterId, setCoverLetterId] = useState("");
 	const [location, setLocation] = keep("location");
 	const [salary, setSalary] = keep("salary");
-	const authored = useRef(new Set<"role" | "company" | "location" | "salary">());
+	const [authoredFields, setAuthoredFields] = keep("authored");
+	const authored = useRef(new Set<AuthoredField>(authoredFields));
+	const markAuthored = (field: AuthoredField) => {
+		authored.current.add(field);
+		setAuthoredFields((current) => (current.includes(field) ? current : [...current, field]));
+	};
 	const [pasteOpen, setPasteOpen] = keep("pasteOpen");
 	const [pastedText, setPastedText] = keep("pastedText");
 	const [description, setDescription] = keep("description");
@@ -271,7 +285,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 	// What the fields held before a guess filled them, so they go back if the pasted text stops having a header.
 	const beforeGuess = useRef<{ role: string; company: string; location: string; salary: string } | null>(null);
 	useEffect(() => {
-		const fill = (key: "role" | "company" | "location" | "salary", value: string, apply: (value: string) => void) => {
+		const fill = (key: AuthoredField, value: string, apply: (value: string) => void) => {
 			if (!authored.current.has(key)) apply(value);
 		};
 		if (guess) {
@@ -498,6 +512,8 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 												setPasteOpen(false);
 												setDescription(null);
 												resetRead();
+												// The chosen posting replaces what came before: no earlier guess comes back over it.
+												beforeGuess.current = null;
 												if (!authored.current.has("role")) setRole("");
 												if (!authored.current.has("company")) setCompany("");
 												if (!authored.current.has("location")) setLocation("");
@@ -742,7 +758,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						id={`${id}-role`}
 						value={role}
 						onChange={(event) => {
-							authored.current.add("role");
+							markAuthored("role");
 							setRole(event.target.value);
 						}}
 					/>
@@ -755,7 +771,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						id={`${id}-company`}
 						value={company}
 						onChange={(event) => {
-							authored.current.add("company");
+							markAuthored("company");
 							setCompany(event.target.value);
 						}}
 					/>
@@ -804,7 +820,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						id={`${id}-location`}
 						value={location}
 						onChange={(event) => {
-							authored.current.add("location");
+							markAuthored("location");
 							setLocation(event.target.value);
 						}}
 					/>
@@ -817,7 +833,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 						id={`${id}-salary`}
 						value={salary}
 						onChange={(event) => {
-							authored.current.add("salary");
+							markAuthored("salary");
 							setSalary(event.target.value);
 						}}
 					/>

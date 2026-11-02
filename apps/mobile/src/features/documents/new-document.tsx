@@ -72,7 +72,8 @@ export function NewDocument() {
 		enabled: step === "copy" && session.status === "signed-in",
 	});
 	const resumes = (documents.data ?? []).filter((document) => document.type === "resume");
-	const source = resumes.find((document) => document.id === sourceId) ?? defaultCopySource(resumes);
+	// A named resume (the editor's Copy for a job) is the only source until the list has it: never another resume.
+	const source = sourceId ? resumes.find((document) => document.id === sourceId) : defaultCopySource(resumes);
 	const jobs = (applications.data ?? []).filter((application) => application.status !== "closed");
 	const job = newJob ? undefined : jobs.find((application) => application.id === jobId);
 	const waitingForJob = !newJob && Boolean(jobId) && !job && applications.isFetching;

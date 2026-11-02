@@ -813,7 +813,8 @@ function CopyForJob({ initialSourceId, initialJobId, onBack, onCancel, onCreated
 	const [name, setName] = useState<string | null>(null);
 	const { mutateAsync: copyForJob, isPending } = useMutation(orpc.documents.copyForJob.mutationOptions());
 
-	const source = resumes.find((resume) => resume.id === sourceId) ?? defaultCopySource(resumes);
+	// A named resume (the builder's Copy for a job) is the only source until the list has it: never another resume.
+	const source = sourceId ? resumes.find((resume) => resume.id === sourceId) : defaultCopySource(resumes);
 	const job = adding ? null : jobs.find((application) => application.id === jobId);
 	const waitingForJob = !adding && Boolean(jobId) && !job && applications.isFetching;
 	const company = adding ? newJob.company.trim() : job?.company;
