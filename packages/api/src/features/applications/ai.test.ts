@@ -123,7 +123,14 @@ describe("posting import", () => {
 			completeness: "unknown" as const,
 		};
 		vi.mocked(fetchJobPosting).mockResolvedValue({
-			page: { role: "Engineer", company: "Example", location: "Berlin", description: "Actual posting", closesAt: "" },
+			page: {
+				role: "Engineer",
+				company: "Example",
+				location: "Berlin",
+				description: "Actual posting",
+				language: "",
+				closesAt: "",
+			},
 			text: "Actual posting",
 			source,
 		});
@@ -151,7 +158,14 @@ describe("posting import", () => {
 
 	it("uses complete structured fields without even resolving an AI provider, including legacy callers", async () => {
 		vi.mocked(fetchJobPosting).mockResolvedValue({
-			page: { role: "Engineer", company: "Fictional", location: "Berlin", description: "Build tools", closesAt: "" },
+			page: {
+				role: "Engineer",
+				company: "Fictional",
+				location: "Berlin",
+				description: "Build tools",
+				language: "",
+				closesAt: "",
+			},
 			text: "Build tools",
 			source: {
 				method: "builtin",
@@ -202,6 +216,54 @@ describe("posting import", () => {
 		);
 		const options = vi.mocked(generateText).mock.calls[0]?.[0];
 		expect(options?.messages?.[0]?.content).toContain("<<<POSTING_START>>>");
+	});
+	it("keeps the page's structured title and company over names the model inferred", async () => {
+		const source = {
+			method: "builtin" as const,
+			format: "text" as const,
+			requestedUrl: "https://jobs.lever.co/spotify/186b763a-0000-4000-8000-000000000000",
+			retrievedAt: "2026-10-30T12:00:00.000Z",
+			truncated: false,
+			completeness: "unknown" as const,
+		};
+		vi.mocked(fetchJobPosting).mockResolvedValue({
+			page: {
+				role: "Backend Engineer - Data Platform",
+				company: "Spotify",
+				location: "Berlin",
+				description: "Build the data platform.\nSpotify is an equal opportunity employer.",
+				language: "en",
+				closesAt: "",
+			},
+			text: "Build the data platform.",
+			source,
+		});
+		vi.mocked(aiProvidersService.getDefaultRunnable).mockResolvedValue({
+			provider: "openai",
+			model: "gpt-5",
+			apiKey: "test",
+		} as never);
+		vi.mocked(generateText).mockResolvedValue({
+			text: JSON.stringify({
+				role: "Backend Engineer, Data Management",
+				company: "Spotify AB",
+				location: "Remote",
+				salary: "",
+				language: "en",
+				requirements: ["Go"],
+			}),
+		} as never);
+		const result = await call(aiRouter.parsePosting, { input: source.requestedUrl, useAI: true }, { context });
+		expect(result).toMatchObject({
+			role: "Backend Engineer - Data Platform",
+			company: "Spotify",
+			filledBy: "ai",
+			postingSource: { language: "en" },
+		});
+		// The structured title is also given to the model, never only inferred from the description.
+		expect(vi.mocked(generateText).mock.calls.at(-1)?.[0]).toMatchObject({
+			messages: [{ role: "user", content: expect.stringContaining("Title: Backend Engineer - Data Platform") }],
+		});
 	});
 	it("bounds pasted text and declares truncation without needing any provider", async () => {
 		vi.mocked(aiProvidersService.getDefaultRunnable).mockResolvedValue(null);

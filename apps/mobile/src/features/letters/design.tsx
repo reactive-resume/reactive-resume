@@ -25,6 +25,7 @@ import { relinkLetter } from "./save";
 import { relinked } from "./write";
 import { useLetterStore } from "@/draft";
 import { applyTextSize } from "@/features/design/presets";
+import { selectableLocales } from "@/i18n";
 import { routes } from "@/routes";
 import { Button, IconButton, ListRow, Segmented, SelectSheet, Switch, Text, TextField, useTheme } from "@/ui";
 
@@ -59,7 +60,7 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
  */
 export function LetterDesign({ id }: { id: string }) {
 	const router = useRouter();
-	const { t } = useLingui();
+	const { t, i18n } = useLingui();
 	const letter = useLetterStore((state) => (state.document?.id === id ? state.document : null));
 	const resumes = useResumes();
 	if (!letter) return null;
@@ -78,8 +79,30 @@ export function LetterDesign({ id }: { id: string }) {
 		);
 	};
 
+	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" });
+	const locale = letter.style.metadata.page.locale;
+
 	return (
 		<ScrollView keyboardShouldPersistTaps="handled">
+			<Group title={t`Language`}>
+				<SelectSheet
+					label={t`Language`}
+					value={locale}
+					options={selectableLocales.map((code) => ({
+						value: code,
+						label: languageName.of(code) ?? code,
+						description: code,
+					}))}
+					onChange={(value) =>
+						useLetterStore.getState().update((draft) => void (draft.style.metadata.page.locale = value), {
+							coalesceKey: "locale",
+						})
+					}
+				/>
+				<Text color="ink2">
+					{t`Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them.`}
+				</Text>
+			</Group>
 			<Group title={t`Matching the resume`}>
 				{letter.sourceResumeId ? (
 					<>

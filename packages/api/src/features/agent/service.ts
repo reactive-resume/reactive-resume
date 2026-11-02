@@ -7,6 +7,7 @@ import type {
 	ProposeEditsOutput,
 	ProposeResumeEditsInput,
 } from "@reactive-resume/ai/tools/agent-tool-contracts";
+import type { DbOrTx } from "@reactive-resume/db/client";
 import type { WorkspaceTab } from "@reactive-resume/schema/career";
 import type { FilePart, ImagePart, ModelMessage, TextPart, UIMessage, UIMessageChunk } from "ai";
 import { ORPCError } from "@orpc/client";
@@ -835,6 +836,16 @@ async function proposeEdits(input: {
 	return output;
 }
 
+function instructionsFor(text: string, provider: Parameters<typeof getModel>[0]["provider"]) {
+	return provider === "anthropic"
+		? {
+				role: "system" as const,
+				content: text,
+				providerOptions: { anthropic: { cacheControl: { type: "ephemeral" as const } } },
+			}
+		: text;
+}
+
 /**
  * A refinement replaces the conversation's earlier undecided suggestion for the same passage. The new result names
  * them and the apps show them as replaced, so the user isn't asked to clean up after the reply. Nothing is written
@@ -854,7 +865,8 @@ async function supersedeEarlierEdits(
 }
 
 function createAgent(input: {
-	authorize: () => Promise<void>;
+	/** Runs immediately before every SDK call and returns fresh instructions after re-projecting shared inputs. */
+	authorize: () => Promise<string | undefined>;
 	deviceTimeZone?: string | undefined;
 	career?: {
 		context: Awaited<ReturnType<typeof careerService.context>>;
@@ -863,6 +875,9 @@ function createAgent(input: {
 		web: boolean;
 		tab: WorkspaceTab | undefined;
 		offers: Awaited<ReturnType<typeof careerService.savedItems>>;
+		/** This application's saved work and typed answers, when the user shares the application. */
+		items: Awaited<ReturnType<typeof careerService.savedItems>>;
+		answers: { question: string; answer: string }[];
 		sourceMessageId: string | undefined;
 	};
 	/** Pages the model may read: links the user wrote or sources found earlier; search results join them. */
@@ -1062,16 +1077,8 @@ function createAgent(input: {
 			middleware: addToolInputExamplesMiddleware(),
 		}),
 		// The loop re-sends stable instructions every step; on anthropic, prompt caching pays from step 2.
-		instructions:
-			input.provider.provider === "anthropic"
-				? {
-						role: "system",
-						content: instructionsText,
-						providerOptions: {
-							anthropic: { cacheControl: { type: "ephemeral" } },
-						},
-					}
-				: instructionsText,
+		// prepareStep may replace them with a fresh projection at the authorization boundary.
+		instructions: instructionsFor(instructionsText, input.provider.provider),
 		repairToolCall: repairAgentToolCall,
 		stopWhen: isStepCount(MAX_AGENT_STEPS),
 		maxOutputTokens: MAX_AGENT_OUTPUT_TOKENS,
@@ -1080,9 +1087,12 @@ function createAgent(input: {
 		// Runs before every loop step, so an older document snapshot never outlives a newer read.
 		prepareStep: async ({ messages }) => {
 			const pruned = pruneAgentModelContext(messages);
-			await input.authorize();
+			const fresh = await input.authorize();
 			input.signal.throwIfAborted();
-			return pruned === messages ? {} : { messages: pruned };
+			return {
+				...(pruned === messages ? {} : { messages: pruned }),
+				...(fresh ? { instructions: instructionsFor(fresh, input.provider.provider) } : {}),
+			};
 		},
 		tools,
 	});
@@ -1611,9 +1621,38 @@ export const agentService = {
 
 				if (careerContext && careerContext.memoryVersion !== (await careerService.memoryVersion(input.userId)))
 					throw new ORPCError("CONFLICT", { message: "Career memory changed. Try again." });
+				// Re-project the categories this message newly shares at the provider boundary. A deletion or edit
+				// after the request began must not leave old text in instructions that are about to be sent.
+				const projectCareerInstructions = async (reader: DbOrTx) => {
+					if (!careerContext) return undefined;
+					const shareApplication = input.context?.application !== false;
+					const applicationId = careerContext.application?.id;
+					const [items, answers] =
+						shareApplication && applicationId
+							? await Promise.all([
+									careerService.savedItems({ userId: input.userId, applicationId }, reader, careerContext),
+									careerService.workspaceAnswers(input.userId, applicationId, reader),
+								])
+							: [[], []];
+					const offers = input.context?.offerIds?.length
+						? (await careerService.savedItems({ userId: input.userId, kind: "offer" }, reader)).filter((offer) =>
+								input.context?.offerIds?.includes(offer.id),
+							)
+						: [];
+					return buildCareerInstructions({
+						context: careerContext,
+						shareApplication,
+						shareMemory: input.context?.memory !== false,
+						tab: input.context?.tab,
+						items,
+						answers,
+						offers,
+					});
+				};
 				const agent = createAgent({
 					authorize: async () => {
 						controller.signal.throwIfAborted();
+						let freshInstructions: string | undefined;
 						await aiProvidersService.authorize({ userId: input.userId, id: runnableProvider.id }, async (tx) => {
 							const [currentThread] = await tx
 								.select({ id: schema.agentThread.id, providerId: schema.agentThread.aiProviderId })
@@ -1676,8 +1715,10 @@ export const agentService = {
 									undefined,
 									tx,
 								);
+							freshInstructions = await projectCareerInstructions(tx);
 						});
 						controller.signal.throwIfAborted();
+						return freshInstructions;
 					},
 					deviceTimeZone: input.deviceTimeZone,
 					userId: input.userId,
@@ -1685,21 +1726,37 @@ export const agentService = {
 					document:
 						input.context?.document === false || !document || !loaded ? null : { ...document, name: loaded.name },
 					...(careerContext && isCareer
-						? {
-								career: {
-									context: careerContext,
-									shareApplication: input.context?.application !== false,
-									shareMemory: input.context?.memory !== false,
-									web: input.context?.web === true,
-									tab: input.context?.tab,
-									offers: input.context?.offerIds?.length
-										? (await careerService.savedItems({ userId: input.userId, kind: "offer" })).filter((offer) =>
-												input.context?.offerIds?.includes(offer.id),
-											)
-										: [],
-									sourceMessageId,
-								},
-							}
+						? await (async () => {
+								const shareApplication = input.context?.application !== false;
+								const items =
+									shareApplication && careerContext.application
+										? await careerService.savedItems({
+												userId: input.userId,
+												applicationId: careerContext.application.id,
+											})
+										: [];
+								const answers =
+									shareApplication && careerContext.application
+										? await careerService.workspaceAnswers(input.userId, careerContext.application.id)
+										: [];
+								return {
+									career: {
+										context: careerContext,
+										shareApplication,
+										shareMemory: input.context?.memory !== false,
+										web: input.context?.web === true,
+										tab: input.context?.tab,
+										offers: input.context?.offerIds?.length
+											? (await careerService.savedItems({ userId: input.userId, kind: "offer" })).filter((offer) =>
+													input.context?.offerIds?.includes(offer.id),
+												)
+											: [],
+										items,
+										answers,
+										sourceMessageId,
+									},
+								};
+							})()
 						: {}),
 					allowedSources: [
 						...replay.flatMap((message) => agentWebSources(message).map((source) => source.url)),

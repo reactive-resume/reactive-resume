@@ -90,6 +90,8 @@ export const offerTermsSchema = z.object({
 	learning: z.number().nonnegative().nullable().default(null),
 	other: z.string().max(1000).default(""),
 	respondBy: z.iso.datetime({ offset: true }).nullable().default(null),
+	/** The first day of work the employer stated, as a local date (YYYY-MM-DD). */
+	startDate: z.iso.date().nullable().default(null),
 });
 export type OfferTerms = z.infer<typeof offerTermsSchema>;
 
@@ -303,7 +305,12 @@ export const generateTaskSchema = z.discriminatedUnion("task", [
 		answer: text(6000).min(1),
 		landed: z.enum(["well", "mixed", "not"]),
 	}),
-	z.object({ task: z.literal("reply"), message: text(20_000).min(1) }),
+	z.object({
+		task: z.literal("reply"),
+		message: text(20_000).min(1),
+		/** The user's explicit choice to write the reply in their interface language instead of the employer's. */
+		replyLocale: z.string().min(2).max(20).optional(),
+	}),
 	/** Not saved: a shorter answer, or a first draft when `answer` is empty. */
 	z.object({
 		task: z.literal("answer"),

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
 	answerFactRevision,
+	answerLimit,
 	answerStoryRevision,
 	answerRelevance,
 	answerScopeAllows,
@@ -79,5 +80,55 @@ describe("reviewed answer contracts", () => {
 		expect(answerStoryRevision({ ...story, data: { ...story.data, action: "Corrected action" } })).not.toBe(
 			answerStoryRevision(story),
 		);
+	});
+});
+
+describe("answerLimit", () => {
+	it("reads a word limit in the languages the app ships", () => {
+		expect(answerLimit("Describe a reliable service. (150 words max)")).toEqual({ kind: "words", max: 150 });
+		expect(answerLimit("¿Por qué quieres trabajar aquí? (máximo 80 palabras)")).toEqual({ kind: "words", max: 80 });
+		expect(answerLimit("Beschreibe ein Projekt (max. 200 Wörter)")).toEqual({ kind: "words", max: 200 });
+	});
+
+	it("reads a character limit and ignores numbers that are not limits", () => {
+		expect(answerLimit("Summarise your work in under 300 characters")).toEqual({ kind: "characters", max: 300 });
+		expect(answerLimit("Summarise your work in 300 Zeichen")).toEqual({ kind: "characters", max: 300 });
+		expect(answerLimit("Which year did you graduate?")).toBeNull();
+		expect(answerLimit("How many applications have you sent in 150 days?")).toBeNull();
+	});
+
+	it("does not turn a floor into a maximum", () => {
+		expect(answerLimit("Answer in at least 150 words")).toBeNull();
+		expect(answerLimit("Minimum 200 words")).toBeNull();
+		expect(answerLimit("Напишите не менее 100 слов")).toBeNull();
+	});
+
+	it.each([
+		"Décrivez votre expérience en environ 100 mots",
+		"Beschreibe deine Erfahrung in ungefähr 100 Wörtern",
+		"Schreiben Sie etwa 100 Wörter",
+		"Escriba alrededor de 100 palabras",
+		"Describe tu experiencia en aproximadamente 100 palabras",
+		"Descreva sua experiência em cerca de 100 palavras",
+	])("does not treat an approximate length as a cap: %s", (question) => {
+		expect(answerLimit(question)).toBeNull();
+	});
+
+	it("prefers the stated character cap over a parenthetical word conversion", () => {
+		expect(answerLimit("Summarise in 300 characters (about 50 words)")).toEqual({
+			kind: "characters",
+			max: 300,
+		});
+		expect(answerLimit("Maximum 200 words or 1200 characters")).toEqual({ kind: "characters", max: 1200 });
+	});
+
+	it("keeps an ordinary 'about' out of the cap clause and honors a later maximum", () => {
+		expect(answerLimit("Tell us about yourself (150 words max)")).toEqual({ kind: "words", max: 150 });
+		expect(answerLimit("At least 100 words, no more than 200 words")).toEqual({ kind: "words", max: 200 });
+	});
+
+	it("reads Russian and Arabic units", () => {
+		expect(answerLimit("Напишите 100 слов")).toEqual({ kind: "words", max: 100 });
+		expect(answerLimit("اكتب 100 كلمة")).toEqual({ kind: "words", max: 100 });
 	});
 });

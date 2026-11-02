@@ -161,7 +161,11 @@ type ReplyChange = { type: "stage"; stage: string } | { type: "follow-up" } | { 
 
 /** A stage the application is already at, or can't reach from Saved, is shown fixed: nothing to apply. */
 export const isFixedChange = (change: ReplyChange | undefined, status: string) =>
-	change?.type === "stage" && (change.stage === status || status === "saved");
+	change?.type === "stage" && change.stage === status;
+
+/** A stage move from Saved records the submission receipt in the same confirmed action. */
+export const needsSubmission = (change: ReplyChange | undefined, status: string) =>
+	status === "saved" && change?.type === "stage";
 
 /** The changes ticked by default: every one that isn't fixed. */
 export const openChanges = (changes: ReplyChange[], status: string) =>
@@ -338,3 +342,7 @@ export function writeNumbersAsDigits(text: string) {
 		return percent ? `${value}%` : String(value);
 	});
 }
+
+/** A streaming or ready, unkept letter draft must be kept or discarded before leaving the editor. */
+export const draftNeedsLeaveGuard = (phase: "idle" | "streaming" | "ready" | "failed" | "unsaved") =>
+	phase === "streaming" || phase === "ready";

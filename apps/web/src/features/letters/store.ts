@@ -13,6 +13,7 @@ import {
 } from "@reactive-resume/resume/proposals";
 import { coverLetterDocumentSchema, coverLetterSchema } from "@reactive-resume/schema/cover-letter/data";
 import { generateId } from "@reactive-resume/utils/string";
+import { getAccountGeneration, getAccountId } from "@/libs/auth/account-scope";
 import { client, streamClient } from "@/libs/orpc/client";
 
 type LetterMetadata = CoverLetter["style"]["metadata"];
@@ -29,6 +30,8 @@ export type LetterEdits = Partial<
 > & {
 	/** The letter's own sender details, all of them editable once the sender link is off. */
 	sender?: Partial<CoverLetter["style"]["basics"] & { picture: Pick<CoverLetter["style"]["picture"], "hidden"> }>;
+	/** The letter language stays independent from its linked design. */
+	locale?: string;
 	metadata?: Partial<Pick<LetterMetadata, "typography" | "design" | "page">>;
 };
 
@@ -39,13 +42,22 @@ const mergeEdits = (edits: LetterEdits, next: LetterEdits): LetterEdits => ({
 	...(edits.sender && next.sender ? { sender: { ...edits.sender, ...next.sender } } : {}),
 });
 
-const applyEdits = (letter: CoverLetter, { metadata, sender, ...fields }: LetterEdits): CoverLetter => ({
+const applyEdits = (letter: CoverLetter, { metadata, sender, locale, ...fields }: LetterEdits): CoverLetter => ({
 	...letter,
 	...fields,
 	...(metadata ? { designLinked: false } : {}),
 	style: {
 		...letter.style,
 		...(metadata ? { metadata: { ...letter.style.metadata, ...metadata } } : {}),
+		...(locale
+			? {
+					metadata: {
+						...letter.style.metadata,
+						...metadata,
+						page: { ...(metadata?.page ?? letter.style.metadata.page), locale },
+					},
+				}
+			: {}),
 		...(sender ? senderStyle(letter.style, sender) : {}),
 	},
 });
@@ -113,6 +125,36 @@ type LetterEditorStore = {
 
 const idleDraft: LetterDraft = { phase: "idle" };
 
+const draftKey = (id: string) => `letter-draft:${getAccountId() ?? "signed-out"}:${id}`;
+type StoredDraft = { text: string; variant: "draft" | "shorter" | "personal"; revision: number };
+
+/** An unkept draft survives a same-tab reload with Keep/Discard, so it never costs a second paid request. */
+function readStoredDraft(id: string, revision: number): LetterDraft | null {
+	try {
+		const value = JSON.parse(sessionStorage.getItem(draftKey(id)) ?? "null") as StoredDraft | null;
+		if (!value || typeof value.text !== "string" || !value.text.trim() || value.revision !== revision) return null;
+		return { phase: "ready", text: value.text };
+	} catch {
+		return null;
+	}
+}
+
+function writeStoredDraft(id: string, draft: StoredDraft) {
+	try {
+		sessionStorage.setItem(draftKey(id), JSON.stringify(draft));
+	} catch {
+		// Blocked storage leaves the draft in this view; only a reload loses it.
+	}
+}
+
+function clearStoredLetterDraft(id: string) {
+	try {
+		sessionStorage.removeItem(draftKey(id));
+	} catch {
+		// Nothing to clear.
+	}
+}
+
 let timer: ReturnType<typeof setTimeout> | undefined;
 let inflight: Promise<void> | null = null;
 let drafting: AbortController | null = null;
@@ -130,6 +172,7 @@ const recoveryEditsSchema = coverLetterSchema
 	})
 	.partial()
 	.extend({
+		locale: coverLetterSchema.shape.style.shape.metadata.shape.page.shape.locale.optional(),
 		sender: coverLetterSchema.shape.style.shape.basics
 			.extend({ picture: coverLetterSchema.shape.style.shape.picture.pick({ hidden: true }) })
 			.partial()
@@ -312,7 +355,8 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 			changing: false,
 			pending: restore?.pending ?? {},
 			sessionId: generateId(),
-			draft: idleDraft,
+			// A ready draft from before a reload is shown again, never re-requested.
+			draft: readStoredDraft(letter.id, letter.revision) ?? idleDraft,
 		});
 		if (restore || Object.keys(get().pendingProposalApplications).length > 0)
 			timer = setTimeout(() => void get().flush(), SAVE_DELAY_MS);
@@ -502,17 +546,33 @@ export const useLetterEditorStore = create<LetterEditorStore>()((set, get) => ({
 
 /** Streams a draft from the posting (or a Shorter / More personal revision of `previous`) into `draft`. */
 export async function startLetterDraft(variant: "draft" | "shorter" | "personal" = "draft", previous?: string) {
-	const letter = useLetterEditorStore.getState().letter;
+	const { letter, sessionId } = useLetterEditorStore.getState();
 	if (!letter) return;
+	const account = getAccountGeneration();
 	drafting?.abort();
 	const controller = new AbortController();
 	drafting = controller;
+	const current = () =>
+		drafting === controller &&
+		getAccountGeneration() === account &&
+		useLetterEditorStore.getState().sessionId === sessionId;
+	let revision = letter.revision;
 	const setDraft = (draft: LetterDraft) => {
-		if (drafting === controller) useLetterEditorStore.setState({ draft });
+		if (!current()) return;
+		useLetterEditorStore.setState({ draft });
+		if (draft.phase === "ready") writeStoredDraft(letter.id, { text: draft.text, variant, revision });
 	};
+	clearStoredLetterDraft(letter.id);
 	setDraft({ phase: "streaming", text: "" });
 
 	try {
+		// Draft from the same saved links and revision the editor shows.
+		const saved = await useLetterEditorStore.getState().flush();
+		if (!current()) return;
+		if (!saved) throw new Error("Save the letter before drafting. Your edits are still here.");
+		const savedLetter = useLetterEditorStore.getState().letter;
+		if (!savedLetter || savedLetter.id !== letter.id) return;
+		revision = savedLetter.revision;
 		const stream = await streamClient.coverLetters.draft(
 			{ id: letter.id, variant, ...(previous ? { previous } : {}) },
 			{ signal: controller.signal },
@@ -532,7 +592,9 @@ export async function startLetterDraft(variant: "draft" | "shorter" | "personal"
 }
 
 export function discardLetterDraft() {
+	const id = useLetterEditorStore.getState().letter?.id;
 	drafting?.abort();
 	drafting = null;
+	if (id) clearStoredLetterDraft(id);
 	useLetterEditorStore.setState({ draft: idleDraft });
 }

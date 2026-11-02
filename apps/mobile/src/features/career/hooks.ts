@@ -102,6 +102,11 @@ export function useCareerTime() {
 				minute: "2-digit",
 				...(labelled ? { timeZoneName: "short" as const } : {}),
 			}).format(new Date(value)),
+		/** A whole day, such as an offer's start date. */
+		date: (value: Date | string) =>
+			new Intl.DateTimeFormat(i18n.locale, { timeZone, day: "numeric", month: "short", year: "numeric" }).format(
+				new Date(value),
+			),
 	};
 }
 

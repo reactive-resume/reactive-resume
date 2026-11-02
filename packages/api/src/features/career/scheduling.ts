@@ -1,4 +1,6 @@
 export { canonicalOpportunityUrl } from "@reactive-resume/schema/applications/posting-url";
+/** One owner for the briefing time: the schema helper the editor and the server both use. */
+export { prepareRunAt } from "@reactive-resume/schema/career-schedule";
 /** Preserve local wall time across daily schedules, advancing nonexistent DST times forward. */
 export function nextCareerRun(previous: Date, days: number, timezone: string): Date {
 	const formatter = new Intl.DateTimeFormat("en-CA", {
@@ -65,33 +67,6 @@ export function parseListingTitle(title: string): { role: string; company: strin
 	const colon = parts[0]?.match(/^([^:]+):\s*(.+)$/);
 	if (parts.length === 1 && colon) return { company: colon[1] ?? "", role: colon[2] ?? "" };
 	return { role: parts[0] ?? title.trim(), company: parts[1] ?? "" };
-}
-
-/**
- * When a briefing runs: 24 or 2 hours before the interview, or 08:00 on its day in `timezone` (or 2 hours before, for
- * an interview that starts before 10:00).
- */
-export function prepareRunAt(interviewAt: Date, lead: "24h" | "2h" | "morning", timezone: string): Date {
-	if (lead !== "morning") return new Date(interviewAt.getTime() - (lead === "24h" ? 24 : 2) * 3_600_000);
-	const formatter = new Intl.DateTimeFormat("en-CA", {
-		timeZone: timezone,
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-		hour: "2-digit",
-		minute: "2-digit",
-		hourCycle: "h23",
-	});
-	const wall = (date: Date) => {
-		const f = Object.fromEntries(formatter.formatToParts(date).map(({ type, value }) => [type, Number(value)]));
-		return Date.UTC(f.year ?? 0, (f.month ?? 1) - 1, f.day ?? 1, f.hour ?? 0, f.minute ?? 0);
-	};
-	const day = new Date(wall(interviewAt));
-	const target = Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), 8);
-	// Correct by the zone's offset at the answer itself, not at 08:00 UTC, so a clock change that day can't shift it.
-	let at = target;
-	for (let i = 0; i < 3; i++) at = target - (wall(new Date(at)) - at);
-	return new Date(Math.min(at, interviewAt.getTime() - 2 * 3_600_000));
 }
 
 /**

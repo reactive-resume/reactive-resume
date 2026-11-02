@@ -21,6 +21,7 @@ import { additionParts, blockText, needsConfirmation, proposalText } from "@reac
 import { webSources } from "./chat";
 import { handToAssistant } from "./handoff";
 import { AssistantMarkdown } from "./markdown";
+import { ProposalPageFit } from "./page-fit";
 import { isProposeEdits, requirementsOf, skippedCount, titleOf, toProposals } from "./proposals";
 import { client, orpc } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
@@ -34,6 +35,7 @@ export type EditStatus = Proposal["status"];
 
 /** What the chat can do with proposed edits: present only when it's about a document. */
 export type ProposalHandlers = {
+	resumeId?: string | undefined;
 	statuses: ReadonlyMap<string, Receipt>;
 	stateOf: (proposal: Proposal) => ProposalState;
 	locked: boolean;
@@ -348,6 +350,7 @@ function ToolPartView({ part, message, streaming, readOnly, answerable, proposal
 				<View style={{ gap: space.s2 }}>
 					{list.length > 0 ? (
 						<ChangeSet
+							resumeId={proposals.resumeId}
 							title={titleOf(part)}
 							proposals={list}
 							states={states}
@@ -516,6 +519,7 @@ function QuestionCard({ part, readOnly, busy = false, onAnswer }: QuestionCardPr
 }
 
 type ChangeSetProps = {
+	resumeId?: string | undefined;
 	/** What the set does, as the assistant titled it. */
 	title: string;
 	proposals: readonly Proposal[];
@@ -530,6 +534,7 @@ type ChangeSetProps = {
 
 /** "n proposed edits" with Accept all, then each edit numbered: where it lands, old text struck, new text, why. */
 function ChangeSet({
+	resumeId,
 	title,
 	proposals,
 	states,
@@ -587,6 +592,7 @@ function ChangeSet({
 					/>
 				) : null}
 			</View>
+			{resumeId && !locked && checked.length > 0 ? <ProposalPageFit resumeId={resumeId} proposals={checked} /> : null}
 			{toConfirm > 0 && checked.length > 1 ? (
 				<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s3, paddingTop: space.s2 }}>
 					{plural(toConfirm, {

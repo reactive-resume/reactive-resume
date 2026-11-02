@@ -77,3 +77,17 @@ export function previousOfferCurrency(items: readonly SavedOffer[] | undefined):
 	}
 	return newest?.data.currency ?? "";
 }
+
+export type OfferTermKey = "base" | "variable" | "equity" | "startDate" | "respondBy";
+
+/** The extracted terms a review must show, in reading order, omitting ones the employer didn't state. */
+export function offerTermKeys(terms: Pick<OfferTerms, OfferTermKey>): OfferTermKey[] {
+	const known: Record<OfferTermKey, boolean> = {
+		base: terms.base !== null,
+		variable: terms.variable !== null,
+		equity: terms.equity.trim() !== "",
+		startDate: terms.startDate !== null,
+		respondBy: terms.respondBy !== null,
+	};
+	return (["base", "variable", "equity", "startDate", "respondBy"] as const).filter((key) => known[key]);
+}

@@ -135,8 +135,10 @@ function LetterHotkeys({ onModeChange }: { onModeChange: (mode: LetterMode) => v
 function useUnsavedGuard() {
 	useEffect(() => {
 		const onBeforeUnload = (event: BeforeUnloadEvent) => {
-			const { status, pending } = useLetterEditorStore.getState();
-			if (status === "saved" && Object.keys(pending).length === 0) return;
+			const { status, pending, draft } = useLetterEditorStore.getState();
+			// An unkept draft is work the user paid for; reloading without a warning would lose it silently.
+			const unkept = draft.phase === "streaming" || draft.phase === "ready";
+			if (!unkept && status === "saved" && Object.keys(pending).length === 0) return;
 			void useLetterEditorStore.getState().flush();
 			event.preventDefault();
 		};
