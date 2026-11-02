@@ -21,8 +21,8 @@ export function CvDomainCard({ suggestion: { domain, checked, price }, connectin
 	const [visited, setVisited] = useState(false);
 	const money = (amount: number, currency: string) =>
 		i18n.number(amount, { style: "currency", currency, maximumFractionDigits: Number.isInteger(amount) ? 0 : 2 });
-	const cost = price ? money(price.amount, price.currency) : null;
-	const yearly = price?.renewal === price?.amount;
+	const originalCost = price ? money(price.amount, price.currency) : null;
+	const cost = price ? money(price.amount / 2, price.currency) : null;
 
 	return (
 		<div className="grid gap-3 rounded-xl bg-sunken p-3.5">
@@ -39,7 +39,10 @@ export function CvDomainCard({ suggestion: { domain, checked, price }, connectin
 							{cost && (
 								<>
 									{" · "}
-									{yearly ? <Trans>{cost} a year</Trans> : <Trans>{cost} the first year</Trans>}
+									<s>{originalCost}</s>{" "}
+									<span className="font-medium text-ink">
+										<Trans>{cost} the first year</Trans>
+									</span>
 								</>
 							)}
 						</>

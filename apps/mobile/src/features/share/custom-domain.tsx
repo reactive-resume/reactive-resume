@@ -178,8 +178,8 @@ function CvDomainCard({ suggestion: { domain, checked, price }, connecting, disa
 	const [visited, setVisited] = useState(false);
 	const money = (amount: number, currency: string) =>
 		i18n.number(amount, { style: "currency", currency, maximumFractionDigits: Number.isInteger(amount) ? 0 : 2 });
-	const cost = price ? money(price.amount, price.currency) : null;
-	const yearly = price?.renewal === price?.amount;
+	const originalCost = price ? money(price.amount, price.currency) : null;
+	const cost = price ? money(price.amount / 2, price.currency) : null;
 
 	return (
 		<View style={{ gap: space.s3, padding: space.s4, borderRadius: radius.rLg, backgroundColor: colors.sunken }}>
@@ -191,7 +191,15 @@ function CvDomainCard({ suggestion: { domain, checked, price }, connecting, disa
 					{checked ? (
 						<>
 							<Text variant="caption" color="accentText">{t`Available`}</Text>
-							{cost ? ` · ${yearly ? t`${cost} a year` : t`${cost} the first year`}` : ""}
+							{cost && (
+								<>
+									{" · "}
+									<Text variant="caption" color="ink3" style={{ textDecorationLine: "line-through" }}>
+										{originalCost}
+									</Text>{" "}
+									<Text variant="caption" weight={500}>{t`${cost} the first year`}</Text>
+								</>
+							)}
 						</>
 					) : (
 						t`May be available`
