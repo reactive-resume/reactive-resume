@@ -336,18 +336,17 @@ Button labels and `aria-label` strings are usually **imperative verbs**: they sa
 control does. Read as a noun or an adjective, they turn into nonsense. This is the most common
 error in the catalogs after the ambiguous nouns above.
 
-**Open** — the verb. `Open AI agent` means _open the AI agent panel_; it does not describe an
-agent that is "open", and it is **not a reference to OpenAI, the company**. Around forty-five of
-the fifty-three catalogs got this wrong, split between "an open AI agent" and a transliteration
-of _OpenAI_. The same applies to `Open in builder`.
+**Open** — the verb. `Open AI assistant` means _open the AI assistant panel_; it does not describe
+an assistant that is "open", and it is **not a reference to OpenAI, the company**. Many catalogs got
+this wrong, split between "an open AI …" and a transliteration of _OpenAI_. The same applies to
+`Open in builder`.
 
 **Close** — likewise the verb, as in `Close AI assistant`. Not "an assistant for closing things",
 and not the adjective "close/nearby".
 
-The app names two different surfaces here, and both strings are real: **AI agent** is the
-full workspace at `/agent`, opened from the builder dock (`Open AI agent`), while **AI assistant**
-is the panel that slides out inside the builder (`Open AI assistant`, `Close AI assistant`).
-Translate them as two distinct names, the way the English does.
+The **AI assistant** is the panel that slides out inside the builder (`Open AI assistant`,
+`Close AI assistant`); in Career the same kind of conversation is the **coach**. `/agent` is only a
+redirect from older links, not a surface of its own, so there is no "AI agent" string to translate.
 
 **Clear** — the verb, to empty a field or remove filters. Not the adjective "transparent",
 "obvious", or "clear-cut".

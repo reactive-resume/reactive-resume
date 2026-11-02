@@ -64,7 +64,7 @@ export function SearchRegionsField({ value, accountTimeZone, onChange }: SearchR
 	return (
 		<div role="group" aria-labelledby={labelId} className="grid content-start gap-1.5">
 			<span id={labelId} className="text-xs font-medium text-ink-2">
-				<Trans>Where you're looking for work</Trans>
+				<Trans>Countries to search</Trans>
 			</span>
 			<div className="flex min-h-10 flex-wrap items-center gap-[5px] rounded-md border border-control-border bg-raised p-[5px]">
 				{shown.codes.map((code) => {

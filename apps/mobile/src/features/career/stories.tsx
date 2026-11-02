@@ -227,6 +227,10 @@ export function StoryEditor({ story, facts, onClose, proposal, start }: StoryEdi
 						}
 					/>
 				))}
+				{/* The coach and Practice send only backed stories: say so before saving one without a fact. */}
+				{available.length > 0 && payload.factIds.length === 0 ? (
+					<Banner tone="warn" message={t`Without a fact, the coach and practice can't use this story.`} />
+				) : null}
 				{unavailable.length > 0 ? (
 					<Banner
 						tone="warn"
