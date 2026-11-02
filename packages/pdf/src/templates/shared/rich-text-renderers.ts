@@ -2,6 +2,7 @@ import type { Style } from "../../forme/style-types";
 import type { ReactElement, ReactNode } from "react";
 import { cloneElement, createElement } from "react";
 import { Text as PdfText, View } from "#react-pdf-renderer";
+import { paragraphDirection } from "./bidi";
 import {
 	getRichTextEdgeTrimStyle,
 	isRichTextElementInsideListItem,
@@ -41,6 +42,7 @@ export const renderRichTextParagraph = ({
 		paragraphStyles,
 		getRichTextEdgeTrimStyle(element),
 		rtl ? rtlTextWrapStyle : undefined,
+		rtl ? { direction: paragraphDirection(children) } : undefined,
 		semanticStyle,
 		safeTextStyle,
 	);

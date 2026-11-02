@@ -11,13 +11,13 @@ import { templateLayouts } from "@reactive-resume/schema/templates";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { SegmentedControl, SegmentedControlItem } from "@reactive-resume/ui/components/segmented-control";
 import { Slider } from "@reactive-resume/ui/components/slider";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { isRTL } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
 import { useTemplateThumbnail } from "./thumbnails";
 import { templates } from "@/dialogs/resume/template/data";
 import { useResumeData, useResumeStore, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { undoToast } from "@/features/resume/builder/undo-toast";
 
 type Filter = "all" | "one" | "two" | "ats";
 
@@ -40,7 +40,7 @@ const layoutTags = (id: Template) => {
 
 /** Applies a template with the page's cross-fade and an Undo toast. Font, size and colour carry across. */
 function applyTemplate(template: Template) {
-	const { resume, updateResumeData, undo } = useResumeStore.getState();
+	const { resume, updateResumeData } = useResumeStore.getState();
 	useEditorStore.setState({ previewTemplate: null });
 	if (!resume || resume.data.metadata.template === template) return;
 
@@ -50,10 +50,7 @@ function applyTemplate(template: Template) {
 		},
 		{ newStep: true },
 	);
-	toast.add({
-		description: t`Template changed to ${templates[template].name}`,
-		actionProps: { children: t`Undo`, onClick: undo },
-	});
+	undoToast(t`Template changed to ${templates[template].name}`);
 }
 
 // Touch has no hover: holding a card this long previews it instead.

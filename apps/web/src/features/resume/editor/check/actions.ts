@@ -1,12 +1,12 @@
 import type { CheckIssue } from "./issues";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
-import { toast } from "@reactive-resume/ui/components/toast";
 import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { useEditorStore } from "../store";
 import { useEditorMode } from "../use-editor-mode";
 import { getScrollBehavior, revealSelectionInPanel } from "../write/reveal";
 import { useResumeStore } from "@/features/resume/builder/draft";
+import { undoToast } from "@/features/resume/builder/undo-toast";
 
 /** The author's Check choices on a draft, created on first use. */
 export function checkStateOf(draft: ResumeData) {
@@ -14,25 +14,10 @@ export function checkStateOf(draft: ResumeData) {
 	return draft.metadata.check;
 }
 
-/**
- * One undo step, confirmed in a toast whose Undo takes it back, as the app does. Undo there takes back this change only
- * while it is still the latest one; after another edit it would undo that edit instead, so it points to the builder's
- * Undo.
- */
+/** One undo step, confirmed in a toast whose Undo takes back this change only (see `undoToast`). */
 export function editWithUndo(edit: (draft: ResumeData) => void, message: string) {
 	useResumeStore.getState().updateResumeData(edit, { newStep: true });
-	const changed = useResumeStore.getState().resume?.data;
-	toast.add({
-		description: message,
-		actionProps: {
-			children: t`Undo`,
-			onClick: () => {
-				const current = useResumeStore.getState();
-				if (changed && current.resume?.data === changed) current.undo();
-				else toast.add({ description: t`Use the builder's Undo to undo earlier changes.` });
-			},
-		},
-	});
+	undoToast(message);
 }
 
 /** Scrolls the page to an issue's pin, or the panel to its card. */

@@ -234,9 +234,9 @@ msgstr "{0, plural, one {# new or reworded sentence} other {# new or reworded se
 msgid "{0, plural, one {# office day a week} other {# office days a week}}"
 msgstr "{0, plural, one {# office day a week} other {# office days a week}}"
 
-#. placeholder {0}: metadata.layout.pages.length
+#. placeholder {0}: props.data.metadata.layout.pages.length
 #. placeholder {0}: result?.pageCount ?? 1
-#: src/features/design/advanced.tsx
+#: src/features/design/design-pane.tsx
 #: src/features/letters/page.tsx
 msgid "{0, plural, one {# page} other {# pages}}"
 msgstr "{0, plural, one {# page} other {# pages}}"
@@ -346,10 +346,20 @@ msgstr "{0, plural, one {Longer by # word} other {Longer by # words}}"
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {No reply in # day} other {No reply in # days}}"
 
+#. placeholder {0}: firstSpill.lines
+#: src/preview/page.tsx
+msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
+msgstr "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
+
 #. placeholder {0}: displayed?.counts.resume ?? 0
 #: src/features/documents/library.tsx
 msgid "{0, plural, one {Resume (#)} other {Resumes (#)}}"
 msgstr "{0, plural, one {Resume (#)} other {Resumes (#)}}"
+
+#. placeholder {0}: overflow.pageCount
+#: src/preview/page.tsx
+msgid "{0, plural, one {Runs to # page} other {Runs to # pages}}"
+msgstr "{0, plural, one {Runs to # page} other {Runs to # pages}}"
 
 #. placeholder {0}: -change.words
 #: src/features/workspace/tabs/apply.tsx
@@ -478,6 +488,12 @@ msgstr "{0} less"
 msgid "{0} more"
 msgstr "{0} more"
 
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} characters"
+msgstr "{0} of {1} characters"
+
 #. placeholder {0}: shown.length
 #. placeholder {1}: TEMPLATES.length
 #: src/features/design/template-group.tsx
@@ -491,6 +507,12 @@ msgstr "{0} of {1} shown"
 #: src/features/applications-board/insights-screen.tsx
 msgid "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
 msgstr "{0} of {1} tailored applications got a reply; {2} of {3} sent with another resume."
+
+#. placeholder {0}: measured(proposal.text)
+#. placeholder {1}: limit.max
+#: src/features/workspace/tabs/apply.tsx
+msgid "{0} of {1} words"
+msgstr "{0} of {1} words"
 
 #. placeholder {0}: fact.company
 #: src/features/career/facts.tsx
@@ -544,6 +566,11 @@ msgstr "{0}–{1} of {2}"
 msgid "{0}, entry {1} of {2}"
 msgstr "{0}, entry {1} of {2}"
 
+#. placeholder {0}: terms.join(" · ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "{0}. Opens in Career → Offers."
+msgstr "{0}. Opens in Career → Offers."
+
 #. placeholder {0}: Math.round(zoom * 100)
 #: src/features/letters/page.tsx
 #: src/preview/page.tsx
@@ -562,6 +589,10 @@ msgstr "{active, plural, one {# active application} other {# active applications
 #: src/features/workspace/tabs/prepare.tsx
 msgid "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
 msgstr "{at} · {providerLabel}. Sends this application and your Knowledge; your provider may charge."
+
+#: src/preview/page.tsx
+msgid "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
+msgstr "{authored, plural, =1 {Couldn't fit on one page, even at 9 pt. Add a page or shorten entries.} other {Couldn't fit on # pages, even at 9 pt. Add a page or shorten entries.}}"
 
 #: src/preview/page.tsx
 msgid "{authored, plural, =1 {Fit to one page} other {Fit to # pages}}"
@@ -586,6 +617,10 @@ msgstr "{company}: a follow-up is due."
 #: src/features/documents/queries.ts
 msgid "{completed, plural, one {# document updated} other {# documents updated}}"
 msgstr "{completed, plural, one {# document updated} other {# documents updated}}"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
+msgstr "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
 
 #: src/features/share/custom-domain.tsx
 msgid "{cost} a year"
@@ -796,10 +831,6 @@ msgstr "{skipped, plural, one {# change couldn't be prepared. Save your latest c
 #: src/features/workspace/tabs/saved.tsx
 msgid "{stories, plural, one {# story} other {# stories}}"
 msgstr "{stories, plural, one {# story} other {# stories}}"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "{summary}. Opens in Career → Offers."
-msgstr "{summary}. Opens in Career → Offers."
 
 #: src/features/workspace/tabs/fit.tsx
 msgid "{supported} supported · {partial} partly · {missing} missing"
@@ -1297,6 +1328,11 @@ msgstr "Add one with its country code; some application forms require it before 
 #: src/features/design/layout-screen.tsx
 msgid "Add page"
 msgstr "Add page"
+
+#. placeholder {0}: authored + 1
+#: src/preview/page.tsx
+msgid "Add page {0}"
+msgstr "Add page {0}"
 
 #: src/features/workspace/preparation.tsx
 msgid "Add posting"
@@ -2021,6 +2057,10 @@ msgstr "Ask your server administrator to enable credential encryption or configu
 msgid "Ask, or describe a change…"
 msgstr "Ask, or describe a change…"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
+msgstr "Asks you to confirm the answers and documents, then records them as sent and moves it."
+
 #: src/features/write/picture-screen.tsx
 msgid "Aspect ratio"
 msgstr "Aspect ratio"
@@ -2120,9 +2160,10 @@ msgstr "Azerbaijani"
 msgid "Back"
 msgstr "Back"
 
-#: src/shell/builder-chrome.tsx
-msgid "Back to application"
-msgstr "Back to application"
+#. placeholder {0}: application.company
+#: src/shell/editor-origin.ts
+msgid "Back to {0}"
+msgstr "Back to {0}"
 
 #: app/applications/[id]/_layout.tsx
 #: src/features/application-detail/detail-screen.tsx
@@ -2184,6 +2225,12 @@ msgstr "Band"
 msgctxt "Entry header accent: a bar beside the header"
 msgid "Bar"
 msgstr "Bar"
+
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
+#. placeholder {1}: periodLabel(offer.period)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Base {0} {1}"
+msgstr "Base {0} {1}"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -2256,6 +2303,12 @@ msgstr "Bold"
 msgid "Bonus"
 msgstr "Bonus"
 
+#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
+#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
+#: src/features/workspace/tabs/messages.tsx
+msgid "Bonus {0}{1}"
+msgstr "Bonus {0}{1}"
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/workspace/tabs/messages.tsx
@@ -2292,8 +2345,8 @@ msgid "Briefing ready"
 msgstr "Briefing ready"
 
 #: src/features/workspace/tabs/prepare.tsx
-msgid "Briefing refresh is on · {next}"
-msgstr "Briefing refresh is on · {next}"
+msgid "Briefing refresh is on · {nextAt}"
+msgstr "Briefing refresh is on · {nextAt}"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Briefing refresh paused"
@@ -2363,6 +2416,7 @@ msgstr "Can software read your resume?"
 #: src/features/search/search-screen.tsx
 #: src/features/workspace/preparation.tsx
 #: src/features/workspace/tabs/fit.tsx
+#: src/features/workspace/tabs/messages.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/pickers.tsx
 #: src/linking/open.ts
@@ -2494,6 +2548,11 @@ msgstr "Check again"
 #: src/features/ats-checker/checker.tsx
 msgid "Check another file"
 msgstr "Check another file"
+
+#. placeholder {0}: proposal.note
+#: src/features/workspace/tabs/apply.tsx
+msgid "Check before accepting: {0}"
+msgstr "Check before accepting: {0}"
 
 #: src/features/share/custom-domain.tsx
 msgid "Check DNS"
@@ -3073,10 +3132,6 @@ msgstr "Content is laid out in a grid."
 msgid "Content revision: {0}"
 msgstr "Content revision: {0}"
 
-#: src/preview/page.tsx
-msgid "Content still runs over. Hide a section or shorten entries."
-msgstr "Content still runs over. Hide a section or shorten entries."
-
 #: src/features/ai/report-content.tsx
 msgid "Content to report"
 msgstr "Content to report"
@@ -3275,6 +3330,10 @@ msgstr "Couldn't complete this action. Your draft is kept. If another device cha
 msgid "Couldn't confirm AI connections. Try again before using the assistant."
 msgstr "Couldn't confirm AI connections. Try again before using the assistant."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Couldn't confirm the application move. Reload this application before retrying."
+msgstr "Couldn't confirm the application move. Reload this application before retrying."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Couldn't confirm the save. Check Applications before retrying to avoid a duplicate."
 msgstr "Couldn't confirm the save. Check Applications before retrying to avoid a duplicate."
@@ -3447,6 +3506,10 @@ msgstr "Couldn't load. Try again."
 msgid "Couldn't mark it as applied. Try again."
 msgstr "Couldn't mark it as applied. Try again."
 
+#: src/features/assistant/page-fit.tsx
+msgid "Couldn't measure page fit. Check the page preview before accepting."
+msgstr "Couldn't measure page fit. Check the page preview before accepting."
+
 #: app/(tabs)/settings/account.tsx
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
@@ -3532,6 +3595,10 @@ msgstr "Couldn't render this resume."
 #: src/features/settings/api-keys.tsx
 msgid "Couldn't revoke the key. Try again."
 msgstr "Couldn't revoke the key. Try again."
+
+#: src/preview/page.tsx
+msgid "Couldn't run Fit. Try again."
+msgstr "Couldn't run Fit. Try again."
 
 #: src/features/career/facts.tsx
 #: src/features/career/hooks.ts
@@ -4821,6 +4888,15 @@ msgstr "Entry options"
 msgid "Equity"
 msgstr "Equity"
 
+#. placeholder {0}: offer.equity
+#: src/features/workspace/tabs/messages.tsx
+msgid "Equity {0}"
+msgstr "Equity {0}"
+
+#: src/features/assistant/page-fit.tsx
+msgid "Estimated overflow change: {change} lines."
+msgstr "Estimated overflow change: {change} lines."
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Every 3 days"
 msgstr "Every 3 days"
@@ -4939,10 +5015,6 @@ msgstr "Family name"
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
 msgstr "Feedback"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Feedback needs an AI connection. Nothing is sent until you ask."
-msgstr "Feedback needs an AI connection. Nothing is sent until you ask."
 
 #. placeholder {0}: index + 1
 #: src/features/write/basics-screen.tsx
@@ -5258,10 +5330,6 @@ msgstr "Get a key at {0}. It's stored encrypted and used only for your requests.
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
 msgstr "Get feedback"
-
-#: src/features/workspace/tabs/practise.tsx
-msgid "Get feedback sends the question, your answer, this posting and your stories to {providerName}."
-msgstr "Get feedback sends the question, your answer, this posting and your stories to {providerName}."
 
 #: src/features/career/today.tsx
 msgid "Get new roles here every morning"
@@ -5848,6 +5916,10 @@ msgstr "Its messages and attachments are deleted. Edits you accepted stay in the
 msgid "Its own design ({summary})."
 msgstr "Its own design ({summary})."
 
+#: src/features/workspace/parts.tsx
+msgid "its requirements"
+msgstr "its requirements"
+
 #: src/features/ai/provider-editor.tsx
 msgid "Its saved key is deleted. Conversations using it need another provider."
 msgstr "Its saved key is deleted. Conversations using it need another provider."
@@ -6048,6 +6120,10 @@ msgstr "Knowledge"
 msgid "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 msgstr "Knowledge couldn't load. Try again or switch Knowledge off before sending."
 
+#: src/features/workspace/parts.tsx
+msgid "Knowledge that's switched on"
+msgstr "Knowledge that's switched on"
+
 #: src/features/career/role-suggestions.tsx
 msgid "Knowledge:"
 msgstr "Knowledge:"
@@ -6081,6 +6157,7 @@ msgstr "Lanes organize your board. Their category keeps submission, reminders an
 #: app/(tabs)/settings/preferences.tsx
 #: src/features/design/style-groups.tsx
 #: src/features/document-menu/index.tsx
+#: src/features/letters/design.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/write/fields.ts
 msgid "Language"
@@ -6140,8 +6217,6 @@ msgstr "Lay the text out horizontally. Rotated runs are often dropped or misplac
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
-#: src/features/design/advanced.tsx
-#: src/features/design/design-pane.tsx
 msgid "Layout"
 msgstr "Layout"
 
@@ -6155,6 +6230,7 @@ msgstr "Leads with why you fit"
 msgid "Learning budget"
 msgstr "Learning budget"
 
+#: app/letter/[id]/_layout.tsx
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/workspace/tabs/messages.tsx
@@ -6181,6 +6257,10 @@ msgstr "Leave empty to reset the title to the original."
 #: src/features/write/rich-text-field.tsx
 msgid "Leave it empty to remove the link."
 msgstr "Leave it empty to remove the link."
+
+#: app/letter/[id]/_layout.tsx
+msgid "Leave without keeping the draft?"
+msgstr "Leave without keeping the draft?"
 
 #: src/features/design/template-group.tsx
 msgid "Left"
@@ -6710,6 +6790,18 @@ msgstr "Margins set to {minimum} pt"
 msgid "Mark as applied"
 msgstr "Mark as applied"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move"
+msgstr "Mark as applied and move"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move it?"
+msgstr "Mark as applied and move it?"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Mark as applied and move to {stage}"
+msgstr "Mark as applied and move to {stage}"
+
 #: src/features/application-detail/sheets.tsx
 msgid "Mark as closed"
 msgstr "Mark as closed"
@@ -6722,10 +6814,6 @@ msgstr "Mark as closed…"
 msgid "Mark as read"
 msgstr "Mark as read"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark it as applied in Apply first."
-msgstr "Mark it as applied in Apply first."
-
 #: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Markdown"
@@ -6734,6 +6822,10 @@ msgstr "Markdown"
 #: src/features/workspace/tabs/apply.tsx
 msgid "Markdown (.md)"
 msgstr "Markdown (.md)"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "Marked as applied and moved. You submit on the employer's site yourself."
+msgstr "Marked as applied and moved. You submit on the employer's site yourself."
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Marked as applied. The versions you sent are kept."
@@ -6783,6 +6875,10 @@ msgstr "MCP"
 #: app/(tabs)/settings/ai.tsx
 msgid "MCP server"
 msgstr "MCP server"
+
+#: src/features/assistant/page-fit.tsx
+msgid "Measuring page fit…"
+msgstr "Measuring page fit…"
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "median to first reply"
@@ -7322,6 +7418,10 @@ msgstr "No dates were found."
 msgid "no documents"
 msgstr "no documents"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
+msgstr "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
+
 #: src/features/assistant/threads.tsx
 msgid "no edits"
 msgstr "no edits"
@@ -7494,6 +7594,10 @@ msgstr "No stories yet"
 #: src/features/career/role-suggestions.tsx
 msgid "No supported suggestions returned. Enter roles manually or choose different context."
 msgstr "No supported suggestions returned. Enter roles manually or choose different context."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "No terms were extracted. Opens in Career → Offers."
+msgstr "No terms were extracted. Opens in Career → Offers."
 
 #: src/features/ats-checker/checker.tsx
 #: src/features/ats-checker/messages.ts
@@ -8036,10 +8140,6 @@ msgstr "Opening the letter…"
 msgid "Opening the resume…"
 msgstr "Opening the resume…"
 
-#: src/features/workspace/tabs/messages.tsx
-msgid "Opens in Career → Offers."
-msgstr "Opens in Career → Offers."
-
 #: src/features/assistant/provider.tsx
 msgid "Opens Knowledge → Preferences, where you choose what the coach remembers."
 msgstr "Opens Knowledge → Preferences, where you choose what the coach remembers."
@@ -8187,6 +8287,12 @@ msgstr "Page {0} of the uploaded PDF"
 msgid "Page {currentPage} of {0}"
 msgstr "Page {currentPage} of {0}"
 
+#. placeholder {0}: fit.data.before
+#. placeholder {1}: fit.data.after
+#: src/features/assistant/page-fit.tsx
+msgid "Page fit: {0} → {1} printed pages."
+msgstr "Page fit: {0} → {1} printed pages."
+
 #: src/features/letters/design.tsx
 msgid "Page format"
 msgstr "Page format"
@@ -8198,6 +8304,10 @@ msgstr "Page reading didn't finish."
 #: src/features/check/page.tsx
 msgid "Page view"
 msgstr "Page view"
+
+#: src/features/design/design-pane.tsx
+msgid "Pages and sections"
+msgstr "Pages and sections"
 
 #: src/features/design/style-groups.tsx
 msgid "Paper"
@@ -8325,6 +8435,10 @@ msgstr "PDF styles support a subset of CSS. Rotation, dashed and dotted borders,
 msgid "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
 msgstr "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per hour"
+msgstr "per hour"
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
@@ -8332,12 +8446,20 @@ msgstr "PDF, Word, Reactive Resume, JSON Resume or LinkedIn export."
 msgid "Per hour"
 msgstr "Per hour"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "per month"
+msgstr "per month"
+
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
 #: src/features/career/preferences.tsx
 #: src/features/workspace/tabs/messages.tsx
 msgid "Per month"
 msgstr "Per month"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "per year"
+msgstr "per year"
 
 #: src/features/career/offer-entry.tsx
 #: src/features/career/offers.tsx
@@ -9020,6 +9142,11 @@ msgstr "Recording stopped at the 2-minute limit. Transcribing what you said."
 msgid "Recording time"
 msgstr "Recording time"
 
+#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
+msgstr "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
+
 #: src/features/workspace/tabs/apply.tsx
 msgid "Records {records} as sent. You submit on the employer's site yourself."
 msgstr "Records {records} as sent. You submit on the employer's site yourself."
@@ -9073,6 +9200,10 @@ msgstr "Referral"
 #: src/features/career/stories.tsx
 msgid "Reflection"
 msgstr "Reflection"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Refresh the briefing"
+msgstr "Refresh the briefing"
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Refresh the briefing 2 hours before"
@@ -9417,6 +9548,11 @@ msgstr "Reset design defaults"
 msgid "Respond by"
 msgstr "Respond by"
 
+#. placeholder {0}: day(offer.respondBy ?? "")
+#: src/features/workspace/tabs/messages.tsx
+msgid "Respond by {0}"
+msgstr "Respond by {0}"
+
 #: src/features/career/offer-entry.tsx
 msgid "respond by {respondBy}"
 msgstr "respond by {respondBy}"
@@ -9694,10 +9830,6 @@ msgstr "Review job details"
 msgid "Review my answer"
 msgstr "Review my answer"
 
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
-msgstr "Review my answer sends the question, what you said, this posting and your Knowledge to {providerName}."
-
 #: src/features/workspace/application-packet.tsx
 msgid "Review packet"
 msgstr "Review packet"
@@ -9746,10 +9878,6 @@ msgstr "Reviewed {0}"
 #: src/features/workspace/answer-library.tsx
 msgid "Reviewed answer saved"
 msgstr "Reviewed answer saved"
-
-#: src/features/workspace/tabs/debrief.tsx
-msgid "Reviewing needs an AI connection. What you write here stays on this device until then."
-msgstr "Reviewing needs an AI connection. What you write here stays on this device until then."
 
 #: src/features/settings/api-keys.tsx
 msgid "Revoke"
@@ -9845,11 +9973,6 @@ msgstr "Running"
 #: src/features/career/schedule-sheet.tsx
 msgid "Runs at {0}."
 msgstr "Runs at {0}."
-
-#. placeholder {0}: authored + 1
-#: src/preview/page.tsx
-msgid "Runs onto page {0}"
-msgstr "Runs onto page {0}"
 
 #: src/features/settings/locale-names.ts
 msgid "Russian"
@@ -10349,27 +10472,43 @@ msgstr "Sender details copied into the letter"
 msgid "Sending…"
 msgstr "Sending…"
 
+#. placeholder {0}: formatList(i18n.locale, labels)
+#: src/features/workspace/parts.tsx
+msgid "Sends {0} to {label}."
+msgstr "Sends {0} to {label}."
+
 #: src/features/career/role-suggestions.tsx
 msgid "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 msgstr "Sends only your selected resume and up to 20 active shared facts to this connection. No application profile, saved answers or private application facts. Your provider may charge."
 
-#. placeholder {0}: ai.defaultProvider.label
-#. placeholder {1}: ai.defaultProvider.model
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
 #: src/features/letters/write.tsx
-msgid "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
-msgstr "Sends the linked resume, posting and letter details to {0} · {1}. Your provider may charge."
+msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
+msgstr "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
 
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
-msgstr "Sends this application (posting, notes, interview details) and Knowledge that's switched on to {name}."
+#. placeholder {0}: providers.defaultProvider.label
+#: src/features/applications/add-sheet.tsx
+msgid "Sends the posting text to {0} to read it."
+msgstr "Sends the posting text to {0} to read it."
 
 #: src/features/career/schedule-sheet.tsx
 msgid "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 msgstr "Sends this application and enabled Knowledge to this connection. Your provider may charge. Scheduled work never switches to another connection automatically."
 
-#: src/features/workspace/parts.tsx
-msgid "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
-msgstr "Sends this application's posting, notes and documents, plus Knowledge that's switched on, to {label}."
+#. placeholder {0}: application.company
+#. placeholder {1}: ai.defaultProvider.label
+#. placeholder {2}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
+msgstr "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
+
+#. placeholder {0}: ai.defaultProvider.label
+#. placeholder {1}: ai.defaultProvider.model
+#: src/features/letters/write.tsx
+msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
+msgstr "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
 
 #. placeholder {0}: ai.defaultProvider.label
 #. placeholder {1}: ai.defaultProvider.model
@@ -10382,20 +10521,20 @@ msgid "Sends this PDF to your configured AI provider instead of reading its text
 msgstr "Sends this PDF to your configured AI provider instead of reading its text layer."
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents sent) to {label}."
-msgstr "Sends your message and this application (posting, notes, documents sent) to {label}."
+msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
+msgstr "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents sent) to {label}."
-msgstr "Sends your message, earlier messages and this application (posting, notes, documents sent) to {label}."
+msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
+msgstr "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
-msgstr "Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
+msgid "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgstr "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
 
 #: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
-msgstr "Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to {label}."
+msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
+msgstr "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
 
 #. placeholder {0}: provider?.label
 #. placeholder {1}: provider?.model
@@ -11099,6 +11238,15 @@ msgstr "Start with the sections most resumes have."
 msgid "Start with your name. Build from there."
 msgstr "Start with your name. Build from there."
 
+#: src/features/career/offers.tsx
+msgid "Starts"
+msgstr "Starts"
+
+#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
+#: src/features/workspace/tabs/messages.tsx
+msgid "Starts {0}"
+msgstr "Starts {0}"
+
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Starts now"
 msgstr "Starts now"
@@ -11106,6 +11254,10 @@ msgstr "Starts now"
 #: src/features/settings/application-profile.tsx
 msgid "State or region"
 msgstr "State or region"
+
+#: app/letter/[id]/_layout.tsx
+msgid "Stay"
+msgstr "Stay"
 
 #: src/features/documents/new-document.tsx
 msgid "Stay in Documents"
@@ -11598,6 +11750,10 @@ msgstr "The connection works. Turn on Use this provider to use it."
 msgid "The copy gets the job's posting and keeps this resume as it is for other jobs."
 msgstr "The copy gets the job's posting and keeps this resume as it is for other jobs."
 
+#: src/features/workspace/parts.tsx
+msgid "the cover letter for this job"
+msgstr "the cover letter for this job"
+
 #: src/features/history/history.tsx
 #: src/features/letters/share.tsx
 msgid "The current state will be saved as “Before restore” first."
@@ -11611,6 +11767,10 @@ msgstr "the document"
 msgid "The editor opens on Check, which checks the imported resume again."
 msgstr "The editor opens on Check, which checks the imported resume again."
 
+#: src/features/workspace/parts.tsx
+msgid "the employer's message"
+msgstr "the employer's message"
+
 #: src/features/write/date-field.tsx
 msgid "The end is before the start."
 msgstr "The end is before the start."
@@ -11623,6 +11783,10 @@ msgstr "The follow-up is saved. To get a reminder, allow notifications in your d
 msgid "The greeting follows the name."
 msgstr "The greeting follows the name."
 
+#: src/features/workspace/parts.tsx
+msgid "the interview details"
+msgstr "the interview details"
+
 #: src/features/application-detail/interview-sheet.tsx
 msgid "The interview is saved. To get a reminder, allow notifications in your device settings."
 msgstr "The interview is saved. To get a reminder, allow notifications in your device settings."
@@ -11634,6 +11798,10 @@ msgstr "The key is encrypted on the server and never shown again. Saving tests t
 #: src/features/ai/error.ts
 msgid "The key was rejected. Check the key and test again."
 msgstr "The key was rejected. Check the key and test again."
+
+#: src/features/workspace/parts.tsx
+msgid "the last messages"
+msgstr "the last messages"
 
 #: src/features/career/schedule-sheet.tsx
 msgid "The lead time has passed. Saving runs the briefing now."
@@ -11658,6 +11826,14 @@ msgstr "The letter matches the resume's design again"
 #: src/features/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "The line changed since you asked, so it wasn't replaced."
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked cover letter"
+msgstr "the linked cover letter"
+
+#: src/features/workspace/tabs/messages.tsx
+msgid "the linked resume"
+msgstr "the linked resume"
 
 #: src/features/workspace/tabs/saved.tsx
 msgid "the message"
@@ -11699,6 +11875,14 @@ msgstr "The provider limited this request. Wait and try again; check your accoun
 msgid "The provider reported a server error. Try again later."
 msgstr "The provider reported a server error. Try again later."
 
+#: src/features/workspace/parts.tsx
+msgid "the question and what you said"
+msgstr "the question and what you said"
+
+#: src/features/workspace/parts.tsx
+msgid "the question and your answer"
+msgstr "the question and your answer"
+
 #: src/features/application-detail/sheets.tsx
 msgid "The reason is kept for Insights. Linked documents aren't touched."
 msgstr "The reason is kept for Insights. Linked documents aren't touched."
@@ -11715,6 +11899,10 @@ msgstr "The rest of the file isn't in this report."
 msgid "The resume as it is"
 msgstr "The resume as it is"
 
+#: src/features/workspace/parts.tsx
+msgid "the resume for this job"
+msgstr "the resume for this job"
+
 #: src/features/ats-checker/messages.ts
 msgid "The same line repeats on every page."
 msgstr "The same line repeats on every page."
@@ -11726,6 +11914,10 @@ msgstr "The saved key isn't sent to a new base URL. Enter it again if this serve
 #: src/features/ai/provider-editor.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "The saved key isn't sent to a new base URL. Enter it again."
+
+#: src/features/workspace/parts.tsx
+msgid "the saved offer"
+msgstr "the saved offer"
 
 #: src/features/check/screen.tsx
 msgid "The score counts how reliably software reads your resume. It doesn't predict whether you'll be shortlisted."
@@ -12075,6 +12267,10 @@ msgstr "This PDF has no text layer, so a parser reads nothing from it."
 msgid "This PDF is password protected. Save an unprotected copy and try again."
 msgstr "This PDF is password protected. Save an unprotected copy and try again."
 
+#: src/features/workspace/parts.tsx
+msgid "this posting"
+msgstr "this posting"
+
 #: src/features/assistant/messages.tsx
 msgid "This question couldn't be asked. Send a new message to continue."
 msgstr "This question couldn't be asked. Send a new message to continue."
@@ -12266,6 +12462,10 @@ msgstr "Toggle selection"
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Tomorrow"
 msgstr "Tomorrow"
+
+#: src/features/workspace/tabs/prepare.tsx
+msgid "Too close to the interview to schedule a refresh."
+msgstr "Too close to the interview to schedule a refresh."
 
 #: src/features/design/style-groups.tsx
 msgid "Too light for headings on white. It may be hard to read and print faintly."
@@ -12486,7 +12686,6 @@ msgstr "Underline links"
 #: src/features/assistant/proposals.ts
 #: src/features/career/undo.ts
 #: src/features/check/actions.ts
-#: src/features/design/advanced.tsx
 #: src/features/design/draft.ts
 #: src/features/document-menu/index.tsx
 #: src/features/documents/queries.ts
@@ -13157,6 +13356,10 @@ msgstr "What's working"
 msgid "When do you need a decision?"
 msgstr "When do you need a decision?"
 
+#: src/features/career/offers.tsx
+msgid "When would you start?"
+msgstr "When would you start?"
+
 #: src/features/assistant/coach-screen.tsx
 msgid "When you tap send, {list} go to {connection}."
 msgstr "When you tap send, {list} go to {connection}."
@@ -13284,6 +13487,10 @@ msgstr "Write a letter"
 msgid "Write a letter…"
 msgstr "Write a letter…"
 
+#: src/features/workspace/tabs/messages.tsx
+msgid "Write a new reply in {languageName}"
+msgstr "Write a new reply in {languageName}"
+
 #: src/features/workspace/preparation.tsx
 msgid "Write and review form answers"
 msgstr "Write and review form answers"
@@ -13331,6 +13538,10 @@ msgstr "Write what you did."
 #: src/features/workspace/tabs/apply.tsx
 msgid "Write your answer, or draft one from your Knowledge."
 msgstr "Write your answer, or draft one from your Knowledge."
+
+#: src/features/letters/design.tsx
+msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
+msgstr "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
 
 #: src/features/ats-checker/messages.ts
 #: src/features/check/issues.ts
@@ -13455,10 +13666,10 @@ msgstr "You're offline. Try again when you reconnect."
 msgid "You're up to date"
 msgstr "You're up to date"
 
-#: src/features/workspace/tabs/debrief.tsx
-#: src/features/workspace/tabs/practise.tsx
-msgid "your AI connection"
-msgstr "your AI connection"
+#: src/features/design/draft.ts
+#: src/features/write/hooks.ts
+msgid "You've made changes since. Use Undo to step back through them."
+msgstr "You've made changes since. Use Undo to step back through them."
 
 #: src/features/workspace/hooks.ts
 msgid "Your AI connection"
@@ -13480,6 +13691,10 @@ msgstr "Your answer · {mode}"
 msgid "Your answer changed while the draft was written. Draft again to use it."
 msgstr "Your answer changed while the draft was written. Draft again to use it."
 
+#: src/features/workspace/tabs/apply.tsx
+msgid "Your answer changed while this was drafted. Draft again to review the newer version."
+msgstr "Your answer changed while this was drafted. Draft again to review the newer version."
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Your attempts"
 msgstr "Your attempts"
@@ -13499,6 +13714,10 @@ msgstr "Your changes on this device will be replaced by the saved version."
 #: src/features/ats-checker/messages.ts
 msgid "Your contact details are not on the first page."
 msgstr "Your contact details are not on the first page."
+
+#: src/features/workspace/parts.tsx
+msgid "your contacts"
+msgstr "your contacts"
 
 #: app/(tabs)/settings/account.tsx
 msgid "Your data"
@@ -13541,6 +13760,10 @@ msgstr "Your facts, stories and preferences. Editing Knowledge sends nothing to 
 msgid "Your focus"
 msgstr "Your focus"
 
+#: src/features/workspace/parts.tsx
+msgid "your form answers"
+msgstr "your form answers"
+
 #: src/features/ats-checker/messages.ts
 msgid "Your headings look the same as your body text."
 msgstr "Your headings look the same as your body text."
@@ -13581,6 +13804,7 @@ msgstr "Your name as your address, from OlaCV, the .cv registry. Code {CODE} tak
 msgid "Your name is missing"
 msgstr "Your name is missing"
 
+#: src/features/workspace/parts.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "your notes"
 msgstr "your notes"
@@ -13598,6 +13822,7 @@ msgid "Your phone number is written in an unusual shape."
 msgstr "Your phone number is written in an unusual shape."
 
 #: src/features/assistant/coach-screen.tsx
+#: src/features/workspace/parts.tsx
 msgid "your preferences"
 msgstr "your preferences"
 
@@ -13699,6 +13924,10 @@ msgstr "Your story couldn't be loaded."
 msgid "Your two-minute introduction"
 msgstr "Your two-minute introduction"
 
+#: app/letter/[id]/_layout.tsx
+msgid "Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place."
+msgstr "Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place."
+
 #: src/features/applications/add-sheet.tsx
 msgid "Your unsaved job details will be discarded before opening this application."
 msgstr "Your unsaved job details will be discarded before opening this application."
@@ -13728,292 +13957,6 @@ msgstr "Zoom out"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-
-#. placeholder {0}: firstSpill.lines
-#: src/preview/page.tsx
-msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
-msgstr "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
-
-#. placeholder {0}: overflow.pageCount
-#: src/preview/page.tsx
-msgid "{0, plural, one {Runs to # page} other {Runs to # pages}}"
-msgstr "{0, plural, one {Runs to # page} other {Runs to # pages}}"
-
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
-#: src/features/workspace/tabs/apply.tsx
-msgid "{0} of {1} characters"
-msgstr "{0} of {1} characters"
-
-#. placeholder {0}: measured(proposal.text)
-#. placeholder {1}: limit.max
-#: src/features/workspace/tabs/apply.tsx
-msgid "{0} of {1} words"
-msgstr "{0} of {1} words"
-
-#. placeholder {0}: terms.join(" · ")
-#: src/features/workspace/tabs/messages.tsx
-msgid "{0}. Opens in Career → Offers."
-msgstr "{0}. Opens in Career → Offers."
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
-msgstr "{confirmedAnswers, plural, one {# written answer} other {# written answers}}"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Asks you to confirm the answers and documents, then records them as sent and moves it."
-msgstr "Asks you to confirm the answers and documents, then records them as sent and moves it."
-
-#. placeholder {0}: application.company
-#: src/shell/editor-origin.ts
-msgid "Back to {0}"
-msgstr "Back to {0}"
-
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.base ?? 0)
-#. placeholder {1}: periodLabel(offer.period)
-#: src/features/workspace/tabs/messages.tsx
-msgid "Base {0} {1}"
-msgstr "Base {0} {1}"
-
-#. placeholder {0}: formatMoney(i18n.locale, offer.currency, offer.variable ?? 0)
-#. placeholder {1}: offer.variableConditions ? ` (${offer.variableConditions})` : ""
-#: src/features/workspace/tabs/messages.tsx
-msgid "Bonus {0}{1}"
-msgstr "Bonus {0}{1}"
-
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Briefing refresh is on · {nextAt}"
-msgstr "Briefing refresh is on · {nextAt}"
-
-#. placeholder {0}: proposal.note
-#: src/features/workspace/tabs/apply.tsx
-msgid "Check before accepting: {0}"
-msgstr "Check before accepting: {0}"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Couldn't confirm the application move. Reload this application before retrying."
-msgstr "Couldn't confirm the application move. Reload this application before retrying."
-
-#: src/features/assistant/page-fit.tsx
-msgid "Couldn't measure page fit. Check the page preview before accepting."
-msgstr "Couldn't measure page fit. Check the page preview before accepting."
-
-#. placeholder {0}: offer.equity
-#: src/features/workspace/tabs/messages.tsx
-msgid "Equity {0}"
-msgstr "Equity {0}"
-
-#: src/features/assistant/page-fit.tsx
-msgid "Estimated overflow change: {change} lines."
-msgstr "Estimated overflow change: {change} lines."
-
-#: src/features/workspace/parts.tsx
-msgid "its requirements"
-msgstr "its requirements"
-
-#: src/features/workspace/parts.tsx
-msgid "Knowledge that's switched on"
-msgstr "Knowledge that's switched on"
-
-#: app/letter/[id]/_layout.tsx
-msgid "Leave without keeping the draft?"
-msgstr "Leave without keeping the draft?"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark as applied and move"
-msgstr "Mark as applied and move"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark as applied and move it?"
-msgstr "Mark as applied and move it?"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Mark as applied and move to {stage}"
-msgstr "Mark as applied and move to {stage}"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Marked as applied and moved. You submit on the employer's site yourself."
-msgstr "Marked as applied and moved. You submit on the employer's site yourself."
-
-#: src/features/assistant/page-fit.tsx
-msgid "Measuring page fit…"
-msgstr "Measuring page fit…"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
-msgstr "No documents or answers are linked. This records the application as sent, and moves it. You submit on the employer's site yourself."
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "No terms were extracted. Opens in Career → Offers."
-msgstr "No terms were extracted. Opens in Career → Offers."
-
-#. placeholder {0}: fit.data.before
-#. placeholder {1}: fit.data.after
-#: src/features/assistant/page-fit.tsx
-msgid "Page fit: {0} → {1} printed pages."
-msgstr "Page fit: {0} → {1} printed pages."
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "per hour"
-msgstr "per hour"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "per month"
-msgstr "per month"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "per year"
-msgstr "per year"
-
-#. placeholder {0}: [ ...(confirmedAnswers ? [plural(confirmedAnswers, { one: "# written answer", other: "# written answers" })] : []), ...confirmedDocuments, ].join(", ")
-#: src/features/workspace/tabs/messages.tsx
-msgid "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
-msgstr "Records {0} as sent, and moves this application. You submit on the employer's site yourself."
-
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Refresh the briefing"
-msgstr "Refresh the briefing"
-
-#. placeholder {0}: day(offer.respondBy ?? "")
-#: src/features/workspace/tabs/messages.tsx
-msgid "Respond by {0}"
-msgstr "Respond by {0}"
-
-#. placeholder {0}: formatList(i18n.locale, labels)
-#: src/features/workspace/parts.tsx
-msgid "Sends {0} to {label}."
-msgstr "Sends {0} to {label}."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: ai.defaultProvider.label
-#. placeholder {2}: ai.defaultProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Sends the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-
-#. placeholder {0}: providers.defaultProvider.label
-#: src/features/applications/add-sheet.tsx
-msgid "Sends the posting text to {0} to read it."
-msgstr "Sends the posting text to {0} to read it."
-
-#. placeholder {0}: application.company
-#. placeholder {1}: ai.defaultProvider.label
-#. placeholder {2}: ai.defaultProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-msgstr "Sends this letter's resume and the {0} posting to {1} · {2} to draft the body. Your provider may charge."
-
-#. placeholder {0}: ai.defaultProvider.label
-#. placeholder {1}: ai.defaultProvider.model
-#: src/features/letters/write.tsx
-msgid "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-msgstr "Sends this letter's resume to {0} · {1} to draft the body. Your provider may charge."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-msgstr "Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-msgstr "Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-
-#: src/features/workspace/coach-sheet.tsx
-msgid "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-msgstr "Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to {label}."
-
-#: src/features/career/offers.tsx
-msgid "Starts"
-msgstr "Starts"
-
-#. placeholder {0}: formatDateOnly(offer.startDate ?? "", i18n.locale)
-#: src/features/workspace/tabs/messages.tsx
-msgid "Starts {0}"
-msgstr "Starts {0}"
-
-#: app/letter/[id]/_layout.tsx
-msgid "Stay"
-msgstr "Stay"
-
-#: src/features/workspace/parts.tsx
-msgid "the cover letter for this job"
-msgstr "the cover letter for this job"
-
-#: src/features/workspace/parts.tsx
-msgid "the employer's message"
-msgstr "the employer's message"
-
-#: src/features/workspace/parts.tsx
-msgid "the interview details"
-msgstr "the interview details"
-
-#: src/features/workspace/parts.tsx
-msgid "the last messages"
-msgstr "the last messages"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "the linked cover letter"
-msgstr "the linked cover letter"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "the linked resume"
-msgstr "the linked resume"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and what you said"
-msgstr "the question and what you said"
-
-#: src/features/workspace/parts.tsx
-msgid "the question and your answer"
-msgstr "the question and your answer"
-
-#: src/features/workspace/parts.tsx
-msgid "the resume for this job"
-msgstr "the resume for this job"
-
-#: src/features/workspace/parts.tsx
-msgid "the saved offer"
-msgstr "the saved offer"
-
-#: src/features/workspace/parts.tsx
-msgid "this posting"
-msgstr "this posting"
-
-#: src/features/workspace/tabs/prepare.tsx
-msgid "Too close to the interview to schedule a refresh."
-msgstr "Too close to the interview to schedule a refresh."
-
-#: src/features/career/offers.tsx
-msgid "When would you start?"
-msgstr "When would you start?"
-
-#: src/features/workspace/tabs/messages.tsx
-msgid "Write a new reply in {languageName}"
-msgstr "Write a new reply in {languageName}"
-
-#: src/features/letters/design.tsx
-msgid "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
-msgstr "Writes the greeting, sign-off and date, and the language a new draft uses. Your own words stay as you wrote them."
-
-#: src/features/workspace/tabs/apply.tsx
-msgid "Your answer changed while this was drafted. Draft again to review the newer version."
-msgstr "Your answer changed while this was drafted. Draft again to review the newer version."
-
-#: src/features/workspace/parts.tsx
-msgid "your contacts"
-msgstr "your contacts"
-
-#: src/features/workspace/parts.tsx
-msgid "your form answers"
-msgstr "your form answers"
-
-#: app/letter/[id]/_layout.tsx
-msgid "Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place."
-msgstr "Your unkept draft stays in this app for your next visit. Keep it in the letter to edit it in place."
 
 #: app/(tabs)/settings/ai-mcp.tsx
 #: src/features/settings/api-keys.tsx

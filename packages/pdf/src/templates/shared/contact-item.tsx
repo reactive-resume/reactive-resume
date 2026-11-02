@@ -11,6 +11,10 @@ import { composeStyles } from "./styles";
 
 type ContactStyle = Style | Style[];
 
+// Addresses and numbers read left to right on a right-to-left page too: "+81 3-1234-5678", not "3-1234-5678 81+".
+const LTR_VALUE: Style = { direction: "ltr" };
+const ltrText = (textStyle: ContactStyle | undefined) => composeStyles(textStyle, LTR_VALUE);
+
 type WebsiteDisplay = {
 	url: string;
 	label?: string | undefined;
@@ -59,7 +63,7 @@ export const WebsiteContactItem = ({
 	return (
 		<Link nodeKey={keys.primitiveNodeKey} src={website.url} {...(style ? { style } : {})}>
 			<Icon nodeKey={keys.iconNodeKey} name="globe" {...(iconColor ? { color: iconColor } : {})} />
-			<Text nodeKey={keys.fieldNodeKey} {...(textStyle ? { style: textStyle } : {})}>
+			<Text nodeKey={keys.fieldNodeKey} style={ltrText(textStyle)}>
 				{getWebsiteDisplayText(website)}
 			</Text>
 		</Link>
@@ -126,7 +130,7 @@ export const EmailContactItem = ({
 	return (
 		<Link nodeKey={keys.primitiveNodeKey} src={`mailto:${email}`} {...(style ? { style } : {})}>
 			<Icon nodeKey={keys.iconNodeKey} name={iconName} {...(iconColor ? { color: iconColor } : {})} />
-			<Text nodeKey={keys.fieldNodeKey} {...(textStyle ? { style: textStyle } : {})}>
+			<Text nodeKey={keys.fieldNodeKey} style={ltrText(textStyle)}>
 				{email}
 			</Text>
 		</Link>
@@ -148,7 +152,7 @@ export const PhoneContactItem = ({ phone, style, textStyle, iconColor, primitive
 	return (
 		<Link nodeKey={keys.primitiveNodeKey} src={`tel:${phone}`} {...(style ? { style } : {})}>
 			<Icon nodeKey={keys.iconNodeKey} name="phone" {...(iconColor ? { color: iconColor } : {})} />
-			<Text nodeKey={keys.fieldNodeKey} {...(textStyle ? { style: textStyle } : {})}>
+			<Text nodeKey={keys.fieldNodeKey} style={ltrText(textStyle)}>
 				{phone}
 			</Text>
 		</Link>

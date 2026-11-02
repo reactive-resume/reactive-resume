@@ -110,6 +110,10 @@ describe("normalizeRichTextHtml", () => {
 
 	it("normalizes RTL pseudo-bullets into anchored list items in the shared HTML path", () => {
 		expect(normalizeRichTextHtml("<p>‏- א<br>‏- ב</p>", { direction: "rtl" })).toBe("<ul><li>‏א</li><li>‏ב</li></ul>");
+		// A Latin paragraph on a right-to-left page reads left to right: no RLM pulls its first fragment across the line.
+		expect(normalizeRichTextHtml("<p>Led <b>the</b> team.</p><p>&nbsp;قاد</p>", { direction: "rtl" })).toBe(
+			"<p>Led <b>the</b> team.</p><p>‏&nbsp;قاد</p>",
+		);
 	});
 });
 

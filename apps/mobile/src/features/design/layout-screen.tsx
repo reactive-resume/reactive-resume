@@ -38,7 +38,7 @@ type LayoutScreenProps = GroupProps & {
 };
 
 /**
- * Advanced → Layout: each page's Main and Sidebar sections. Press and hold ⋮⋮ to lift a section and drag it
+ * Page → Pages and sections: each page's Main and Sidebar sections. Press and hold ⋮⋮ to lift a section and drag it
  * between columns and pages; ⋮ (Move to…) does the same without dragging.
  */
 export function LayoutScreen({ data, write, disabled, onDragChange }: LayoutScreenProps) {

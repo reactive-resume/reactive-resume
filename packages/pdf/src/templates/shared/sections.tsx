@@ -1773,7 +1773,11 @@ const ReferencesSection = ({ sectionId = "references", sectionData }: ItemSectio
 								{item.name}
 							</ItemTitle>
 							{hasSplitRowText(item.position) && <Text semanticField="position">{item.position}</Text>}
-							{hasSplitRowText(item.phone) && <Text semanticField="phone">{item.phone}</Text>}
+							{hasSplitRowText(item.phone) && (
+								<Text semanticField="phone" style={{ direction: "ltr" }}>
+									{item.phone}
+								</Text>
+							)}
 						</SectionItemHeader>
 						<RichText semanticField="description">{item.description}</RichText>
 
