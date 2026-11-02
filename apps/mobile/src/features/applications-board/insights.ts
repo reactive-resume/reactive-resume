@@ -1,6 +1,6 @@
 import type { OutcomeSource } from "@reactive-resume/schema/applications/outcomes";
 import { applicationSentAt, furthestStage } from "@reactive-resume/schema/applications/outcomes";
-export { computeOutcomes } from "@reactive-resume/schema/applications/outcomes";
+export { computeOutcomes, countSources } from "@reactive-resume/schema/applications/outcomes";
 // Insights maths, ported from apps/web/src/features/applications/insights.ts. Everything derives from the shared
 // applications list (it holds every application, closed ones included), so the figures match the server's stats
 // without a second query. Weeks are bucketed on the user's clock. Pure: Node runs it in the M5-T3 scenarios.
@@ -59,11 +59,4 @@ export function computePipeline(applications: readonly Pick<Application, "status
 		return { status, reached: count, conversion: previous > 0 ? Math.round((count / previous) * 100) : null };
 	});
 	return { active: applications.length - closed, closed, steps };
-}
-
-/** Applications per source, most first; applications without a source are left out (as the server's stats). */
-export function countSources(applications: readonly Pick<Application, "source">[]) {
-	const counts = new Map<string, number>();
-	for (const { source } of applications) if (source) counts.set(source, (counts.get(source) ?? 0) + 1);
-	return [...counts].map(([source, count]) => ({ source, count })).toSorted((a, b) => b.count - a.count);
 }

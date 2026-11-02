@@ -12,6 +12,13 @@ export type OutcomeSource = {
 const DAY_MS = 86_400_000;
 const REPLY_STAGES = new Set<ApplicationStatus>(["screening", "interview", "offer"]);
 
+/** Applications per source, most first; applications without a source are left out (as the server's stats). */
+export function countSources(applications: readonly { source: string | null }[]) {
+	const counts = new Map<string, number>();
+	for (const { source } of applications) if (source) counts.set(source, (counts.get(source) ?? 0) + 1);
+	return [...counts].map(([source, count]) => ({ source, count })).toSorted((a, b) => b.count - a.count);
+}
+
 // Moves between lanes of one stage aren't milestones: only canonical stage changes count.
 const stageEntries = (application: OutcomeSource) =>
 	application.activity

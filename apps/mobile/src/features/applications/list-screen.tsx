@@ -82,7 +82,7 @@ function ApplicationsList() {
 	const { bulkUpdate, bulkDelete } = useApplicationMutations();
 	const offerHints = useOfferHints();
 	const moveWithUndo = useMoveWithUndo();
-	const { search, setSearch } = useApplicationSearch();
+	const { search, setSearch, needsYou, clearFilters } = useApplicationSearch();
 	const [tag, setTag] = useState("");
 	const [showClosed, setShowClosed] = useState(false);
 	// Next step first, as on web: what's dated soonest, then whatever has waited longest in its stage.
@@ -129,12 +129,17 @@ function ApplicationsList() {
 			// Without storage the nudge is dismissed for this visit only.
 		}
 	};
-	const filtered = filterApplications(applications, { search, tag, showClosed }).filter(
-		(application) => !followUpOnly || owesFollowUp(application),
-	);
-	const filtersActive = Boolean(search.trim() || tag || showClosed || followUpOnly);
+	const filtered = filterApplications(
+		applications,
+		{ search, tag, showClosed, needsYou },
+		now,
+		timeZone,
+		offerHints,
+	).filter((application) => !followUpOnly || owesFollowUp(application));
+	const filtersActive = Boolean(search.trim() || tag || showClosed || followUpOnly || needsYou);
 	const groups = groupApplications(filtered, sort, direction, now, laneList, timeZone, offerHints);
 	const selectedIds = visibleSelection(groups, collapsed, selected);
+	if (selectedIds.length !== selected.size) setSelected(new Set(selectedIds));
 	const onViewableItemsChanged = useApplicationDetailPrefetch();
 	const tags = [...new Set(applications.flatMap((item) => item.tags))].sort();
 	const changeFilters = (change: () => void) => {
@@ -412,7 +417,7 @@ function ApplicationsList() {
 											? !filtersActive
 												? setShowClosed(true)
 												: changeFilters(() => {
-														setSearch("");
+														clearFilters();
 														setTag("");
 														setShowClosed(false);
 														setFollowUpOnly(false);

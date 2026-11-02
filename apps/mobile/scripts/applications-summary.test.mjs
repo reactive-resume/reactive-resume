@@ -66,7 +66,7 @@ const nextStep = load("features/applications/next-step.ts", {
 });
 const list = load("features/applications/list.ts", {
 	"./lanes": lanes,
-	"./next-step": nextStep,
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
 	"./stages": stages,
 });
 const schedule = {
@@ -197,6 +197,36 @@ const summaryFiltered = list.filterApplications(summary, { search: "engineer", t
 assert.deepEqual(
 	summaryFiltered.map(({ id }) => id),
 	fullFiltered.map(({ id }) => id),
+);
+
+const attentionFilter = { search: "", tag: "", showClosed: true, needsYou: true };
+const attentionNow = new Date("2026-11-02T00:00:00.000Z");
+const dateOnlyReminder = {
+	...summary[0],
+	status: "applied",
+	activity: [],
+	appliedAt: attentionNow,
+	followUpAt: "2026-11-03T00:00:00.000Z",
+	followUpDateOnly: true,
+};
+assert.equal(list.filterApplications([dateOnlyReminder], attentionFilter, attentionNow, "UTC").length, 0);
+assert.equal(
+	list.filterApplications([dateOnlyReminder], attentionFilter, attentionNow, "Pacific/Kiritimati").length,
+	1,
+	"Needs you uses the account clock for date-only reminders",
+);
+const offerWithReminder = { ...dateOnlyReminder, status: "offer", followUpAt: "2026-11-10T09:00:00.000Z" };
+assert.equal(list.filterApplications([offerWithReminder], attentionFilter, attentionNow, "UTC").length, 0);
+assert.equal(
+	list.filterApplications(
+		[offerWithReminder],
+		attentionFilter,
+		attentionNow,
+		"UTC",
+		new Map([[offerWithReminder.id, { respondBy: "2026-11-12T09:00:00.000Z" }]]),
+	).length,
+	1,
+	"A saved offer's decision is not hidden by its later follow-up reminder",
 );
 
 const fullGroups = list.groupApplications(full, "next", "desc", new Date("2026-01-04T00:00:00.000Z"));

@@ -1,18 +1,39 @@
 import type { ApplicationLane } from "./lanes";
-import type { OfferHint } from "./next-step";
 import type { ApplicationSummary as Application } from "./types";
+import type { OfferHint } from "@reactive-resume/schema/applications/next-step";
+import {
+	compareNextStepSortKeys,
+	getNextStep,
+	needsAttention,
+	nextStepSortKey,
+} from "@reactive-resume/schema/applications/next-step";
 import { createDefaultApplicationLanes, resolveLane, visibleLanes } from "./lanes";
-import { compareNextStepSortKeys, nextStepSortKey } from "./next-step";
 import { LIST_ORDER } from "./stages";
 
 export type ApplicationSort = "updated" | "role" | "next";
-export type ApplicationFilters = { search: string; tag: string; showClosed: boolean };
+export type ApplicationFilters = { search: string; tag: string; showClosed: boolean; needsYou?: boolean };
 
-export function filterApplications(applications: readonly Application[], filters: ApplicationFilters) {
+export function filterApplications(
+	applications: readonly Application[],
+	filters: ApplicationFilters,
+	now = new Date(),
+	timeZone = "UTC",
+	offers?: ReadonlyMap<string, OfferHint>,
+) {
 	const search = filters.search.trim().toLocaleLowerCase();
 	return applications.filter(
 		(application) =>
 			(filters.showClosed || application.status !== "closed") &&
+			(!filters.needsYou ||
+				needsAttention(
+					getNextStep(
+						application,
+						now,
+						timeZone,
+						offers === undefined ? undefined : (offers.get(application.id) ?? null),
+					),
+					now,
+				)) &&
 			(!filters.tag || application.tags.includes(filters.tag)) &&
 			(!search ||
 				[

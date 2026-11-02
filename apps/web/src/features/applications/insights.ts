@@ -1,6 +1,6 @@
 import type { OutcomeSource } from "@reactive-resume/schema/applications/outcomes";
 import { applicationSentAt, furthestStage } from "@reactive-resume/schema/applications/outcomes";
-export { computeOutcomes } from "@reactive-resume/schema/applications/outcomes";
+export { computeOutcomes, countSources } from "@reactive-resume/schema/applications/outcomes";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
 import { STAGES } from "@reactive-resume/schema/applications/data";
 import { PIPELINE } from "./stages";

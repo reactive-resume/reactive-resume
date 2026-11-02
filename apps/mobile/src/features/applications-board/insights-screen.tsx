@@ -16,6 +16,7 @@ import { useDocuments, useNow, useUserTime } from "@/features/application-detail
 import { applicationError } from "@/features/applications/error";
 import { filterApplications } from "@/features/applications/list";
 import { useApplications } from "@/features/applications/queries";
+import { useOfferHints } from "@/features/applications/stage-actions";
 import { getStageColor, getStageLabel } from "@/features/applications/stages";
 import { useIsTablet } from "@/shell/use-is-tablet";
 import { Banner, Button, Card, EmptyState, Skeleton, Text, showToast, useTheme } from "@/ui";
@@ -40,7 +41,8 @@ function ApplicationInsights() {
 	const tablet = useIsTablet();
 	const query = useApplications();
 	const pull = usePullRefresh(query.refetch);
-	const { search } = useApplicationSearch();
+	const { search, needsYou, clearFilters } = useApplicationSearch();
+	const offers = useOfferHints();
 	const documents = useDocuments();
 	const { timeZone } = useUserTime();
 	const now = useNow();
@@ -62,7 +64,13 @@ function ApplicationInsights() {
 		);
 	}
 
-	const applications = filterApplications(query.data, { search, tag: "", showClosed: true });
+	const applications = filterApplications(
+		query.data,
+		{ search, tag: "", showClosed: true, needsYou },
+		now,
+		timeZone,
+		offers,
+	);
 	// A resume is tailored for an application when it was made for it (Copy for a job).
 	const madeFor = new Map(
 		(documents.data ?? []).flatMap((document) =>
@@ -81,6 +89,16 @@ function ApplicationInsights() {
 	const weekLabel = new Intl.DateTimeFormat(i18n.locale, { timeZone: "UTC", month: "numeric", day: "numeric" });
 	const half = tablet ? { flexBasis: 0, flexGrow: 1 } : null;
 
+	if (needsYou && applications.length === 0) {
+		return (
+			<EmptyState
+				variant="card"
+				title={t`No matching applications`}
+				message={t`Try different words or clear your filters.`}
+				action={{ label: t`Clear filters`, onPress: clearFilters }}
+			/>
+		);
+	}
 	if (outcomes.sent === 0) {
 		return (
 			<EmptyState

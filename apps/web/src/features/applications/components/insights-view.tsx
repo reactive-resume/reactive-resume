@@ -3,14 +3,14 @@ import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
+import { APPLICATION_STATUSES } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { EmptyState } from "@reactive-resume/ui/components/empty-state";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { computeInsights, computeOutcomes, computeTimeline } from "../insights";
+import { computeInsights, computeOutcomes, computeTimeline, countSources } from "../insights";
 import { getStageColor, getStageLabel } from "../stages";
-import { CareerLoadError } from "@/features/career/load-state";
 import { stagger } from "@/libs/motion";
 import { orpc } from "@/libs/orpc/client";
 
@@ -31,7 +31,6 @@ export function InsightsSkeleton() {
 type ApplicationInsightsProps = { applications: ApplicationSummary[]; onSaveJob: () => void };
 
 export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsightsProps) {
-	const { data, isError, refetch } = useQuery(orpc.applications.stats.queryOptions({}));
 	const { data: documents } = useQuery(orpc.documents.list.queryOptions({ input: { trashed: false } }));
 
 	// A resume is tailored for an application when it was made for it (Copy for a job).
@@ -46,12 +45,14 @@ export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsi
 	const timeline = computeTimeline(applications);
 	const maxWeek = Math.max(1, ...timeline.map((bucket) => bucket.count));
 
-	// A failed load says so, with Retry, instead of a skeleton that never resolves.
-	if (!data && isError) return <CareerLoadError onRetry={() => void refetch()} />;
-	if (!data) return <InsightsSkeleton />;
-
-	const insights = computeInsights(data.byStage);
-	const maxSource = Math.max(1, ...data.bySource.map((s) => s.count));
+	const insights = computeInsights(
+		APPLICATION_STATUSES.map((status) => ({
+			status,
+			count: applications.filter((application) => application.status === status).length,
+		})),
+	);
+	const sources = countSources(applications);
+	const maxSource = Math.max(1, ...sources.map((s) => s.count));
 	const widest = Math.max(1, ...outcomes.funnel.map((row) => row.reached));
 
 	if (outcomes.sent === 0) {
@@ -191,12 +192,12 @@ export function ApplicationInsights({ applications, onSaveJob }: ApplicationInsi
 						<Trans>Count by source</Trans>
 					</p>
 					<div className="mt-4 flex flex-col gap-3">
-						{data.bySource.length === 0 ? (
+						{sources.length === 0 ? (
 							<p className="text-sm text-ink-3">
 								<Trans>No source data yet.</Trans>
 							</p>
 						) : (
-							data.bySource.map((row, index) => (
+							sources.map((row, index) => (
 								<div key={row.source} className="flex items-center gap-3 text-xs">
 									<span className="w-28 shrink-0 truncate font-medium">{row.source}</span>
 									<div className="h-2.5 flex-1 overflow-hidden rounded-sm bg-sunken">

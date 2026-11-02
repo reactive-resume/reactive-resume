@@ -49,6 +49,7 @@ const ui = Object.fromEntries(
 		"Button",
 		"Card",
 		"ChipInput",
+		"Chip",
 		"ConfirmDialog",
 		"Icon",
 		"IconButton",
@@ -583,9 +584,10 @@ console.log(
 // Applications empty states must offer an action that changes the visible collection.
 let applications = [];
 let applicationSearch = "";
+let applicationNeedsYou = false;
 let needsFollowUpFixture = false;
 const listLogic = load("features/applications/list.ts", {
-	"./next-step": { nextStepSortKey: () => [1, 0], compareNextStepSortKeys: domainNextStep.compareNextStepSortKeys },
+	"@reactive-resume/schema/applications/next-step": domainNextStep,
 	"./stages": { LIST_ORDER: ["saved", "applied", "closed"] },
 	"./lanes": lanes,
 });
@@ -619,8 +621,13 @@ const { ApplicationsListScreen } = load("features/applications/list-screen.tsx",
 	"@/features/applications-board/search": {
 		useApplicationSearch: () => ({
 			search: applicationSearch,
+			needsYou: applicationNeedsYou,
 			setSearch: (value) => {
 				applicationSearch = value;
+			},
+			clearFilters: () => {
+				applicationSearch = "";
+				applicationNeedsYou = false;
 			},
 		}),
 	},
@@ -646,6 +653,10 @@ const job = {
 	tags: [],
 	contacts: [],
 	updatedAt: "2026-10-19T10:00:00Z",
+	activity: [],
+	appliedAt: "2026-10-19T10:00:00Z",
+	followUpAt: null,
+	followUpNote: null,
 };
 applications = [job];
 listTree = listView();
@@ -682,6 +693,20 @@ const selectedRow = nodes(sectionList.props.renderItem({ item: applications[0] }
 	(node) => node.type === "ListRow",
 );
 assert.equal(selectedRow.props.leading, "check-square", "ellipsis keeps explicit bulk selection reachable");
+applicationNeedsYou = true;
+listTree = listView();
+sectionList = nodes(listTree).find((node) => node.type === "SectionList");
+assert.equal(sectionList.props.sections.length, 0, "Needs you hides the selected Saved application");
+assert.equal(sectionList.props.ListEmptyComponent.props.action.label, "Clear filters");
+sectionList.props.ListEmptyComponent.props.action.onPress();
+assert.equal(applicationNeedsYou, false);
+listTree = listView();
+sectionList = nodes(listTree).find((node) => node.type === "SectionList");
+assert.equal(
+	nodes(sectionList.props.renderItem({ item: applications[0] })).find((node) => node.type === "ListRow").props.leading,
+	"square",
+	"Clearing Needs you never restores a hidden bulk selection",
+);
 console.log(
 	"PASS Applications empty/create, closed-only reveal, filter reset, single press and explicit bulk selection entry",
 );
@@ -702,7 +727,16 @@ const { ApplicationsViewFrame } = load("features/applications-board/views.tsx", 
 		useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
 	},
 	"@/components/collection-header": { CollectionHeader: "CollectionHeader" },
-	"./search": { useApplicationSearch: () => ({ search: "", setSearch() {} }) },
+	"./search": {
+		useApplicationSearch: () => ({
+			search: "",
+			setSearch() {},
+			needsYou: applicationNeedsYou,
+			setNeedsYou: (value) => {
+				applicationNeedsYou = value;
+			},
+		}),
+	},
 	"@/features/applications/add-sheet": { AddApplicationSheet: "AddApplicationSheet" },
 	"@/features/applications/import-sheet": { ImportApplicationsSheet: "ImportApplicationsSheet" },
 	"@/features/applications/lane-notice": { LaneNotice: "LaneNotice" },
@@ -719,6 +753,12 @@ for (const view of ["list", "board", "calendar", "insights"]) {
 	reset();
 	createParam = "1";
 	let tree = render(ApplicationsViewFrame, { current: view, children: "View" });
+	assert.equal(control(tree, "Needs you").selected, false);
+	control(tree, "Needs you").onPress();
+	tree = render(ApplicationsViewFrame, { current: view, children: "View" });
+	assert.equal(control(tree, "Needs you").selected, true);
+	control(tree, "Needs you").onPress();
+	tree = render(ApplicationsViewFrame, { current: view, children: "View" });
 	const header = nodes(tree).find((node) => node.type === "CollectionHeader");
 	control(header.props.actions, "Import from CSV").onPress();
 	tree = render(ApplicationsViewFrame, { current: view, children: "View" });
@@ -748,6 +788,17 @@ for (const view of ["list", "board", "calendar", "insights"]) {
 	);
 }
 console.log("PASS Applications views own in-place Save job with repeat/cancel and no back stack");
+
+let identityChanged;
+const { useApplicationSearch: sharedFilters } = load("features/applications-board/search.ts", {
+	zustand: createRequire(new URL("../package.json", import.meta.url))("zustand"),
+	"@/auth/session": { subscribeIdentity: (listener) => (identityChanged = listener) },
+});
+sharedFilters.getState().setSearch("Fictional private company");
+sharedFilters.getState().setNeedsYou(true);
+identityChanged();
+assert.equal(sharedFilters.getState().search, "");
+assert.equal(sharedFilters.getState().needsYou, false, "Attention filtering clears with the account identity");
 
 // New routes in place on every Applications view, but pushes the list from a workspace and the context sheet elsewhere.
 let pathname = "/applications/board";
@@ -913,6 +964,7 @@ const calendarRows = [
 	},
 ];
 const { CalendarScreen } = load("features/applications-board/calendar-screen.tsx", {
+	"@/features/applications/stage-actions": { useOfferHints: () => undefined },
 	"react-native": { View: "View", Pressable: "Pressable", ScrollView: "ScrollView", RefreshControl: "RefreshControl" },
 	"@lingui/react/macro": { useLingui: () => ({ t: tag, i18n: { locale: "en-GB" } }) },
 	"@lingui/core/macro": {
