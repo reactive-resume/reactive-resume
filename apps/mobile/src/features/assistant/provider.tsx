@@ -99,10 +99,13 @@ export function ModelSheet({ open, onClose, providers, currentId, onChoose }: Mo
 	);
 }
 
-/** The model chip in the header: "gpt-4.1 ▾". */
-export function ModelButton({ label, onPress }: { label: string; onPress: () => void }) {
+type ModelButtonProps = { current: UsableProvider | undefined; label: string; onPress: () => void };
+
+/** The connection and model this conversation uses, shared by the document assistant and both coach surfaces. */
+export function ModelButton({ current, label: fallback, onPress }: ModelButtonProps) {
 	const { t } = useLingui();
 	const { colors, space } = useTheme();
+	const label = current ? `${current.label} · ${current.model}` : fallback;
 	return (
 		<Pressable
 			accessibilityRole="button"

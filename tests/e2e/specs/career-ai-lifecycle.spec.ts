@@ -47,6 +47,56 @@ async function send(page: Page, text: string) {
 	await coachComposer(page).press("Enter");
 }
 
+test("shared chat chrome keeps assistant and coach context, disclosure and unsent drafts distinct", async ({
+	authPage: page,
+}, testInfo) => {
+	await connect(page, "Fictional Cedar AI");
+	const calls = stub.requests.length;
+	await page.goto("/dashboard/career/coach");
+	await expect(page.getByRole("heading", { name: "What should we work on?" })).toBeVisible();
+	await expect(page.getByText(/When you press send, .*application summaries/)).toBeVisible();
+	await coachComposer(page).fill("Help me explain my project impact");
+	const model = page.getByRole("button", { name: "Connection: Fictional Cedar AI · stub", exact: true });
+	await model.click();
+	await page.getByRole("menuitem", { name: "Fictional Cedar AI stub" }).click();
+	await expect(coachComposer(page)).toHaveValue("Help me explain my project impact");
+	await expect(page.locator("#keyboard-shortcuts-trigger")).toBeHidden();
+	const help = page.getByRole("button", { name: "Keyboard shortcuts", exact: true });
+	await help.click();
+	await page
+		.getByRole("dialog", { name: "Keyboard shortcuts", exact: true })
+		.getByRole("button", { name: "Close", exact: true })
+		.click();
+	await expect(help).toBeFocused();
+	await page.getByRole("main").screenshot({ path: testInfo.outputPath("chat-coach.png"), animations: "disabled" });
+
+	const created = await page.request.post("/api/openapi/resumes", {
+		data: { name: "Fictional Cedar resume", tags: [], withSampleData: true },
+	});
+	await expect(created).toBeOK();
+	await page.goto(`/builder/${await created.json()}`);
+	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	const assistant = page.getByRole("region", { name: "Assistant", exact: true });
+	await expect(assistant.getByRole("heading", { name: "What should we work on?" })).toBeVisible();
+	await expect(assistant.getByText(/Sends this resume to Fictional Cedar AI with your key/)).toBeVisible();
+	await expect(assistant.getByText(/application summaries/)).toHaveCount(0);
+	const input = assistant.getByRole("textbox", { name: "Message the assistant" });
+	await expect(input).toHaveValue("");
+	await input.fill("Review my resume summary");
+	await assistant.getByRole("button", { name: "Connection: Fictional Cedar AI · stub", exact: true }).click();
+	await page.getByRole("menuitem", { name: "Fictional Cedar AI stub" }).click();
+	await expect(input).toHaveValue("Review my resume summary");
+	await assistant.screenshot({ path: testInfo.outputPath("chat-assistant.png"), animations: "disabled" });
+
+	const applicationId = await createApplication(page, "Fictional Cedar");
+	await page.goto(`/dashboard/applications/${applicationId}/fit?coach=new`);
+	await expect(page.getByRole("heading", { name: "What should we work on?", exact: true })).toBeVisible();
+	await expect(page.getByRole("textbox", { name: "Message the coach" })).toBeVisible();
+	await expect(page.getByText(/Sends your message, this application \(posting, notes, documents/)).toBeVisible();
+	await expect(page.getByRole("button", { name: "Connection: Fictional Cedar AI · stub", exact: true })).toBeVisible();
+	expect(stub.requests).toHaveLength(calls);
+});
+
 test("a stopped or failed reply keeps the reading position and its state after reopening", async ({
 	authPage: page,
 }, testInfo) => {
