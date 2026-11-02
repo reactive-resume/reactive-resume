@@ -76,13 +76,16 @@ export function LinkTab({ resume, offline }: LinkProps) {
 	}, [resume.slug]);
 
 	// Every sharing setting saves one way, like web: straight to the server and never through the draft's undo, after
-	// the draft's pending edits so the version check holds; then the draft reloads the server copy.
+	// the draft's pending edits so the version check holds. The draft takes the answer as its own revision, so Undo and
+	// confirmed assistant decisions stay.
 	const save = (settings: ShareSettings, cancelled = () => false) =>
 		operations.run(async () => {
-			const current = await flushResume(resume.id);
+			await flushResume(resume.id);
 			if (cancelled()) return;
-			await client.resume.update({ id: resume.id, ...settings, expectedUpdatedAt: current.updatedAt });
-			await draftResume.refresh();
+			await draftResume.writeMetadata(async (baseline) => ({
+				...baseline,
+				...(await client.resume.update({ id: resume.id, ...settings, expectedUpdatedAt: baseline.updatedAt })),
+			}));
 		});
 	const saveCheckedSlug = useEffectEvent((value: string, cancelled: () => boolean) => save({ slug: value }, cancelled));
 

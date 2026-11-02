@@ -9,6 +9,7 @@ import { ResumeConflictSheet, useResumeDraftOwner, useResumeStore } from "@/draf
 import { DocumentMenu } from "@/features/document-menu";
 import { routes } from "@/routes";
 import { BuilderChrome, useBuilderChrome } from "@/shell/builder-chrome";
+import { useEditorApplicationOrigin } from "@/shell/editor-origin";
 import { useKeyCommands } from "@/shell/key-commands";
 import { IconButton } from "@/ui";
 
@@ -70,6 +71,11 @@ export default function BuilderLayout() {
 	// switching panes or rotating never reopens the draft or resets undo.
 	useResumeDraftOwner(id);
 
+	const linkedApplicationId = useResumeStore((state) =>
+		state.document?.id === id ? state.document.applicationId : null,
+	);
+	const back = useEditorApplicationOrigin("resume", id, origin.applicationId ?? linkedApplicationId);
+
 	const panes: PaneTab<BuilderPane>[] = [
 		{ pane: "write", label: t`Write`, icon: "pencil-simple", href: routes.builder(id, "write", origin.applicationId) },
 		{ pane: "page", label: t`Page`, icon: "file-text", href: routes.builder(id, "page", origin.applicationId) },
@@ -84,6 +90,7 @@ export default function BuilderLayout() {
 			tabletPanes={["write", "design", "check", "share"]}
 			page={<PageScreen />}
 			title={t`Resume`}
+			back={back}
 			onExport={() => router.push(routes.export(id))}
 			modals={["export", "assistant"]}
 		>

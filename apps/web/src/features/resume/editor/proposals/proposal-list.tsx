@@ -15,6 +15,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
 import { useEditorStore } from "../store";
+import { ProposalPageFit } from "./page-fit";
 import { acceptResumeProposals } from "./proposals";
 import { useIsResumeLocked, useResumeStore } from "@/features/resume/builder/draft";
 import { ENTER_CLASS, POP_CLASS } from "@/libs/motion";
@@ -82,6 +83,7 @@ export function ProposalList({ proposals, data, onSuggestAgain }: ProposalListPr
 }
 
 type ChangeSetProps = {
+	resumeId?: string | undefined;
 	proposals: readonly Proposal[];
 	/** Each proposal's state as the document reads now (out of date once its passage changed). */
 	states: readonly ProposalState[];
@@ -156,11 +158,16 @@ export function ChangeSet(props: ChangeSetProps) {
 				<h3 id={headingId} className="text-sm font-semibold">
 					{title ?? <Plural value={proposals.length} one="# proposed edit" other="# proposed edits" />}
 				</h3>
-				{checked.length > 1 && (
-					<Button size="sm" disabled={locked} onClick={() => accept(checked)}>
-						{toConfirm > 0 ? <Trans>Accept the others</Trans> : <Trans>Accept all</Trans>}
-					</Button>
-				)}
+				<div className="grid justify-items-end gap-1">
+					{props.resumeId && !locked && checked.length > 0 && (
+						<ProposalPageFit resumeId={props.resumeId} proposals={checked} />
+					)}
+					{checked.length > 1 && (
+						<Button size="sm" disabled={locked} onClick={() => accept(checked)}>
+							{toConfirm > 0 ? <Trans>Accept the others</Trans> : <Trans>Accept all</Trans>}
+						</Button>
+					)}
+				</div>
 			</header>
 
 			{requirements.length > 0 && <Coverage requirements={requirements} factText={props.factText} />}

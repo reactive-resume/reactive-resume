@@ -610,6 +610,7 @@ function Conversation(props: ConversationProps) {
 		() =>
 			document
 				? {
+						resumeId: document.kind === "resume" ? document.id : undefined,
 						statuses,
 						stateOf: document.stateOf,
 						locked: document.locked || !receiptsReady,

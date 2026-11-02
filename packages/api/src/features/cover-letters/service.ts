@@ -84,7 +84,15 @@ async function resolveLinks(letter: CoverLetter, userId: string, reader: DbOrTx 
 		style: {
 			...letter.style,
 			...(letter.senderLinked ? { basics: linked.basics, picture: linked.picture } : {}),
-			...(letter.designLinked ? { metadata: linked.metadata } : {}),
+			// Language belongs to the letter, not its design: a German letter keeps German framing on a shared template.
+			...(letter.designLinked
+				? {
+						metadata: {
+							...linked.metadata,
+							page: { ...linked.metadata.page, locale: letter.style.metadata.page.locale },
+						},
+					}
+				: {}),
 		},
 	};
 }
@@ -112,7 +120,12 @@ async function getResumeStyle(
 async function getOwnedApplication(userId: string, id?: string) {
 	if (!id) return null;
 	const [application] = await db
-		.select({ id: schema.application.id, company: schema.application.company, contacts: schema.application.contacts })
+		.select({
+			id: schema.application.id,
+			company: schema.application.company,
+			contacts: schema.application.contacts,
+			postingSource: schema.application.postingSource,
+		})
 		.from(schema.application)
 		.where(and(eq(schema.application.id, id), eq(schema.application.userId, userId)));
 	if (!application) throw new ORPCError("NOT_FOUND");
@@ -514,6 +527,17 @@ export const coverLetterService = {
 		const application = await getOwnedApplication(input.userId, input.applicationId);
 		const style = await getResumeStyle(input.userId, input.resumeId);
 		if (input.template) style.metadata.template = input.template;
+		// The letter is for an employer whose posting declared a language: start in it, so the body, greeting,
+		// sign-off and date all match. The user can change it in Design; existing letters are never rewritten.
+		const postingLanguage = application?.postingSource?.language;
+		if (postingLanguage) {
+			try {
+				const [canonical] = Intl.getCanonicalLocales(postingLanguage);
+				if (canonical) style.metadata.page.locale = canonical;
+			} catch {
+				// An unusable tag leaves the letter's own language alone.
+			}
+		}
 		const linked = Boolean(input.resumeId) && !input.template;
 		const letter = await db.transaction(async (tx) => {
 			await lockUser(tx, input.userId);
@@ -600,6 +624,21 @@ export const coverLetterService = {
 			const style = changes.style ?? stored.style;
 			const set = Object.fromEntries(Object.entries(input.metadata).filter(([, value]) => value !== undefined));
 			changes.style = { ...style, metadata: { ...style.metadata, ...(set as Partial<typeof style.metadata>) } };
+		}
+		if (input.locale !== undefined) {
+			const canonical = (() => {
+				try {
+					return Intl.getCanonicalLocales(input.locale)[0];
+				} catch {
+					return undefined;
+				}
+			})();
+			if (!canonical) throw new ORPCError("BAD_REQUEST", { message: "Choose a language for the letter." });
+			const style = changes.style ?? stored.style;
+			changes.style = {
+				...style,
+				metadata: { ...style.metadata, page: { ...style.metadata.page, locale: canonical } },
+			};
 		}
 		if (input.name !== undefined) changes.name = coverLetterContentSchema.shape.name.parse(input.name);
 		if (input.recipient !== undefined)

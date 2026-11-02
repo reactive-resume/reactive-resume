@@ -324,6 +324,129 @@ export function hasFitEvidence(context: {
 	return context.facts.length > 0 || context.stories.length > 0 || !!context.resume?.text.trim();
 }
 
+/**
+ * Records that the user submitted this application: locks the owner, checks the answers and linked documents they
+ * confirmed, moves the application to applied, and snapshots what was sent. Callers may already hold the owner lock
+ * and the application row; the advisory lock is re-entrant within one transaction. Returns the row and only stage writes committed by this call.
+ */
+async function submitAnswerSnapshot(
+	tx: DbOrTx,
+	userId: string,
+	applicationId: string,
+	answers: CareerWorkspace["answers"],
+	expectedAnswers: CareerWorkspace["answers"],
+	expectedDocuments?: { resumeId: string | null; coverLetterId: string | null },
+) {
+	const parsed = careerWorkspaceSchema.shape.answers.parse(answers);
+	await lockUser(tx, userId);
+	const [application] = await tx
+		.select()
+		.from(tables.application)
+		.where(and(eq(tables.application.id, applicationId), eq(tables.application.userId, userId)))
+		.for("update");
+	if (!application) throw new ORPCError("NOT_FOUND");
+	if (
+		expectedDocuments &&
+		(expectedDocuments.resumeId !== application.resumeId ||
+			expectedDocuments.coverLetterId !== application.coverLetterId)
+	)
+		throw new ORPCError("CONFLICT", {
+			message: "Selected documents changed elsewhere. Review them before marking as applied.",
+		});
+	const [workspace] = await tx
+		.select()
+		.from(tables.careerWorkspace)
+		.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
+	const current = careerWorkspaceSchema.parse({ ...EMPTY_WORKSPACE, ...workspace?.data });
+	// A lost success response may be retried only while the committed submission still matches.
+	// Draft equality alone also matches a never-submitted application closed in another tab.
+	if (application.status !== "saved") {
+		const conflict = () =>
+			new ORPCError("CONFLICT", {
+				message: "This application has changed since submission. Reload it before continuing.",
+			});
+		const applied = application.activity.findLast(
+			(entry) => entry.type === "stage" && entry.stage === "applied" && entry.canonicalTransition !== false,
+		);
+		if (application.status !== "applied" || !applied || !isDeepStrictEqual(current.answers, parsed)) throw conflict();
+		const sent = parsed.filter((answer) => answer.answer.trim());
+		if (sent.length) {
+			const [snapshot] = await tx
+				.select({ id: tables.careerArtifact.id })
+				.from(tables.careerArtifact)
+				.where(
+					and(
+						eq(tables.careerArtifact.userId, userId),
+						eq(tables.careerArtifact.applicationId, applicationId),
+						eq(tables.careerArtifact.inputVersion, hash(JSON.stringify([applicationId, applied.at, sent]))),
+					),
+				);
+			if (!snapshot) throw conflict();
+		}
+		if (application.resumeId) {
+			if (!application.sentResumeVersionId) throw conflict();
+			const [version] = await tx
+				.select({ id: tables.resumeVersion.id })
+				.from(tables.resumeVersion)
+				.where(
+					and(
+						eq(tables.resumeVersion.id, application.sentResumeVersionId),
+						eq(tables.resumeVersion.resumeId, application.resumeId),
+						eq(tables.resumeVersion.userId, userId),
+					),
+				);
+			if (!version) throw conflict();
+		}
+		if (application.coverLetterId) {
+			if (!application.sentCoverLetterVersionId) throw conflict();
+			const [version] = await tx
+				.select({ id: tables.coverLetterVersion.id })
+				.from(tables.coverLetterVersion)
+				.where(
+					and(
+						eq(tables.coverLetterVersion.id, application.sentCoverLetterVersionId),
+						eq(tables.coverLetterVersion.coverLetterId, application.coverLetterId),
+						eq(tables.coverLetterVersion.userId, userId),
+					),
+				);
+			if (!version) throw conflict();
+		}
+		return { application, stages: [] };
+	}
+	if (!isDeepStrictEqual(current.answers, expectedAnswers) && !isDeepStrictEqual(current.answers, parsed))
+		throw new ORPCError("CONFLICT", {
+			message: "Application answers changed elsewhere. Review them before marking as applied.",
+		});
+	const at = new Date();
+	const { values } = await applicationTransitionValues(tx, userId, { status: "applied" }, application, at);
+	const [submitted] = await tx
+		.update(tables.application)
+		.set({
+			...values,
+		})
+		.where(eq(tables.application.id, applicationId))
+		.returning();
+	if (!submitted) throw new ORPCError("NOT_FOUND");
+	await recordSentResume(submitted, tx);
+	const data = { ...current, answers: parsed };
+	await tx
+		.insert(tables.careerWorkspace)
+		.values({ applicationId, userId, data })
+		.onConflictDoUpdate({ target: tables.careerWorkspace.applicationId, set: { data, updatedAt: at } });
+	const sent = parsed.filter((answer) => answer.answer.trim());
+	if (sent.length)
+		await tx.insert(tables.careerArtifact).values({
+			userId,
+			applicationId,
+			interviewId: null,
+			title: "Application answers",
+			data: { kind: "answers", answers: sent },
+			evidence: { factIds: await ownedFactIds(tx, userId, sent), storyIds: [] },
+			inputVersion: hash(JSON.stringify([applicationId, at, sent])),
+		});
+	return { application: submitted, stages: [savedStageOf(submitted)] };
+}
+
 const QUOTE_NOT_IN_SOURCE = "The source does not contain that quotation.";
 
 /** The application fields applying an employer's message owns, as stored on the reply for Undo. */
@@ -716,9 +839,13 @@ export const careerService = {
 		};
 	},
 	/** Saved items for one application (or across all of them for one kind), newest first. */
-	savedItems: async (input: Owned & { kind?: SavedItemData["kind"] | undefined }) => {
-		const context = input.applicationId ? await careerService.context(input) : null;
-		const rows = await db
+	savedItems: async (
+		input: Owned & { kind?: SavedItemData["kind"] | undefined },
+		reader: DbOrTx = db,
+		contextOverride?: { version: string } | null,
+	) => {
+		const context = contextOverride ?? (input.applicationId ? await careerService.context(input) : null);
+		const rows = await reader
 			.select({
 				item: tables.careerArtifact,
 				company: tables.application.company,
@@ -760,6 +887,16 @@ export const careerService = {
 				outdated: item.data.kind !== "answers" && context !== null && item.inputVersion !== context.version,
 			};
 		});
+	},
+	/** The answers the user typed for this application's form, as the Apply tab shows them. */
+	workspaceAnswers: async (userId: string, applicationId: string, reader: DbOrTx = db) => {
+		const [row] = await reader
+			.select({ data: tables.careerWorkspace.data })
+			.from(tables.careerWorkspace)
+			.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
+		const parsed = careerWorkspaceSchema.safeParse({ ...EMPTY_WORKSPACE, ...row?.data });
+		if (!parsed.success) return [];
+		return parsed.data.answers.map(({ question, answer }) => ({ question, answer }));
 	},
 	createOffer: async (userId: string, { applicationId, ...terms }: z.infer<typeof careerOfferInputSchema>) => {
 		const context = await careerService.context({ userId, applicationId });
@@ -1006,11 +1143,17 @@ export const careerService = {
 			.delete(tables.careerArtifact)
 			.where(and(eq(tables.careerArtifact.id, id), eq(tables.careerArtifact.userId, userId)));
 	},
-	/**
-	 * Applies the ticked changes of a read employer message. Reaching Applied goes through Mark as applied. Returns the
-	 * application's stage only when this call writes it, so a repeat cannot acknowledge another device's move.
-	 */
-	applyReply: async (userId: string, id: string, selected: number[]) => {
+	/** Applies the ticked changes of a read employer message. Reaching Applied goes through Mark as applied. */
+	applyReply: async (
+		userId: string,
+		id: string,
+		selected: number[],
+		submission?: {
+			answers: CareerWorkspace["answers"];
+			expectedAnswers: CareerWorkspace["answers"];
+			expectedDocuments: { resumeId: string | null; coverLetterId: string | null };
+		},
+	) => {
 		const [saved] = await db
 			.select()
 			.from(tables.careerArtifact)
@@ -1022,7 +1165,7 @@ export const careerService = {
 		const context = await careerService.context({ userId, applicationId });
 		return db.transaction(async (tx) => {
 			await lockUser(tx, userId);
-			const [application] = await tx
+			let [application] = await tx
 				.select()
 				.from(tables.application)
 				.where(and(eq(tables.application.id, applicationId), eq(tables.application.userId, userId)))
@@ -1035,6 +1178,7 @@ export const careerService = {
 				.for("update");
 			if (!item?.applicationId || item.data.kind !== "reply") throw new ORPCError("NOT_FOUND");
 			const data = item.data;
+			// A retry after a lost success response sees the committed receipt before submitting again.
 			if (data.applied) return { stages: [] };
 
 			if (
@@ -1053,6 +1197,21 @@ export const careerService = {
 					message:
 						"This application or its knowledge changed since the message was read. Read the message again before applying changes.",
 				});
+			// A stage move from Saved is one change: the receipt (answers, documents, versions) commits in this same
+			// transaction, so a failed or canceled confirmation leaves neither the submission nor the move behind.
+			let submissionStages: ReturnType<typeof savedStageOf>[] = [];
+			if (submission) {
+				const result = await submitAnswerSnapshot(
+					tx,
+					userId,
+					applicationId,
+					submission.answers,
+					submission.expectedAnswers,
+					submission.expectedDocuments,
+				);
+				application = result.application;
+				submissionStages = result.stages;
+			}
 			const changes = data.changes.filter((_, index) => selected.includes(index));
 			const now = new Date();
 			let offerId: string | null = null;
@@ -1106,7 +1265,7 @@ export const careerService = {
 				.update(tables.careerArtifact)
 				.set({ data: { ...data, applied: { at: now.toISOString(), changes: selected, undo } } })
 				.where(eq(tables.careerArtifact.id, id));
-			return { stages: updated && transition.changed ? [savedStageOf(updated)] : [] };
+			return { stages: updated && transition.changed ? [savedStageOf(updated)] : submissionStages };
 		});
 	},
 	/**
@@ -1239,123 +1398,23 @@ export const careerService = {
 		});
 	},
 	/** The submitted answers, document versions and stage are one committed action. */
-	submitApplication: async (
+	submitApplication: (
 		userId: string,
 		applicationId: string,
 		answers: CareerWorkspace["answers"],
 		expectedAnswers: CareerWorkspace["answers"],
 		expectedDocuments?: { resumeId: string | null; coverLetterId: string | null },
 	) => {
-		const parsed = careerWorkspaceSchema.shape.answers.parse(answers);
-		return await db.transaction(async (tx) => {
-			await lockUser(tx, userId);
-			const [application] = await tx
-				.select()
-				.from(tables.application)
-				.where(and(eq(tables.application.id, applicationId), eq(tables.application.userId, userId)))
-				.for("update");
-			if (!application) throw new ORPCError("NOT_FOUND");
-			if (
-				expectedDocuments &&
-				(expectedDocuments.resumeId !== application.resumeId ||
-					expectedDocuments.coverLetterId !== application.coverLetterId)
-			)
-				throw new ORPCError("CONFLICT", {
-					message: "Selected documents changed elsewhere. Review them before marking as applied.",
-				});
-			const [workspace] = await tx
-				.select()
-				.from(tables.careerWorkspace)
-				.where(and(eq(tables.careerWorkspace.applicationId, applicationId), eq(tables.careerWorkspace.userId, userId)));
-			const current = careerWorkspaceSchema.parse({ ...EMPTY_WORKSPACE, ...workspace?.data });
-			// A lost success response may be retried only while the committed submission still matches.
-			// Draft equality alone also matches a never-submitted application closed in another tab.
-			if (application.status !== "saved") {
-				const conflict = () =>
-					new ORPCError("CONFLICT", {
-						message: "This application has changed since submission. Reload it before continuing.",
-					});
-				const applied = application.activity.findLast(
-					(entry) => entry.type === "stage" && entry.stage === "applied" && entry.canonicalTransition !== false,
-				);
-				if (application.status !== "applied" || !applied || !isDeepStrictEqual(current.answers, parsed))
-					throw conflict();
-				const sent = parsed.filter((answer) => answer.answer.trim());
-				if (sent.length) {
-					const [snapshot] = await tx
-						.select({ id: tables.careerArtifact.id })
-						.from(tables.careerArtifact)
-						.where(
-							and(
-								eq(tables.careerArtifact.userId, userId),
-								eq(tables.careerArtifact.applicationId, applicationId),
-								eq(tables.careerArtifact.inputVersion, hash(JSON.stringify([applicationId, applied.at, sent]))),
-							),
-						);
-					if (!snapshot) throw conflict();
-				}
-				if (application.resumeId) {
-					if (!application.sentResumeVersionId) throw conflict();
-					const [version] = await tx
-						.select({ id: tables.resumeVersion.id })
-						.from(tables.resumeVersion)
-						.where(
-							and(
-								eq(tables.resumeVersion.id, application.sentResumeVersionId),
-								eq(tables.resumeVersion.resumeId, application.resumeId),
-								eq(tables.resumeVersion.userId, userId),
-							),
-						);
-					if (!version) throw conflict();
-				}
-				if (application.coverLetterId) {
-					if (!application.sentCoverLetterVersionId) throw conflict();
-					const [version] = await tx
-						.select({ id: tables.coverLetterVersion.id })
-						.from(tables.coverLetterVersion)
-						.where(
-							and(
-								eq(tables.coverLetterVersion.id, application.sentCoverLetterVersionId),
-								eq(tables.coverLetterVersion.coverLetterId, application.coverLetterId),
-								eq(tables.coverLetterVersion.userId, userId),
-							),
-						);
-					if (!version) throw conflict();
-				}
-				return { stages: [] };
-			}
-			if (!isDeepStrictEqual(current.answers, expectedAnswers) && !isDeepStrictEqual(current.answers, parsed))
-				throw new ORPCError("CONFLICT", {
-					message: "Application answers changed elsewhere. Review them before marking as applied.",
-				});
-			const at = new Date();
-			const { values } = await applicationTransitionValues(tx, userId, { status: "applied" }, application, at);
-			const [submitted] = await tx
-				.update(tables.application)
-				.set({
-					...values,
-				})
-				.where(eq(tables.application.id, applicationId))
-				.returning();
-			if (!submitted) throw new ORPCError("NOT_FOUND");
-			await recordSentResume(submitted, tx);
-			const data = { ...current, answers: parsed };
-			await tx
-				.insert(tables.careerWorkspace)
-				.values({ applicationId, userId, data })
-				.onConflictDoUpdate({ target: tables.careerWorkspace.applicationId, set: { data, updatedAt: at } });
-			const sent = parsed.filter((answer) => answer.answer.trim());
-			if (sent.length)
-				await tx.insert(tables.careerArtifact).values({
-					userId,
-					applicationId,
-					interviewId: null,
-					title: "Application answers",
-					data: { kind: "answers", answers: sent },
-					evidence: { factIds: await ownedFactIds(tx, userId, sent), storyIds: [] },
-					inputVersion: hash(JSON.stringify([applicationId, at, sent])),
-				});
-			return { stages: [savedStageOf(submitted)] };
+		return db.transaction(async (tx) => {
+			const { stages } = await submitAnswerSnapshot(
+				tx,
+				userId,
+				applicationId,
+				answers,
+				expectedAnswers,
+				expectedDocuments,
+			);
+			return { stages };
 		});
 	},
 	/** Copies the workspace's answers into Saved when the application is marked as applied: what was sent. */

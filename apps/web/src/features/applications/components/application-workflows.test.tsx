@@ -353,3 +353,26 @@ it("replaces prior posting autofill while preserving authored fields, including 
 	expect(screen.getByRole("textbox", { name: "Location" })).toHaveValue("Paris");
 	expect(screen.getByRole("textbox", { name: "Salary" })).toHaveValue("");
 });
+
+it("keeps the link's failure above the paste fallback instead of claiming it read the page", async () => {
+	api.parsePosting.mockRejectedValue(
+		new ORPCError("POSTING_UNREADABLE", {
+			status: 422,
+			message: "That link is a list of jobs. Open one posting and paste its link, or paste the posting text below.",
+		}),
+	);
+	mount(<AddApplicationDialog open onOpenChange={vi.fn()} onAdded={vi.fn()} />);
+	fireEvent.change(await screen.findByRole("textbox", { name: "Job link or posting text" }), {
+		target: { value: "https://jobs.lever.co/spotify" },
+	});
+	fireEvent.click(screen.getByRole("button", { name: "Read posting" }));
+	await screen.findByRole("textbox", { name: "Pasted description" });
+	const error = await screen.findByRole("alert");
+	expect(error.textContent).toContain("That link is a list of jobs");
+	expect(screen.queryByText(/We read the page and save the posting/)).toBeNull();
+	// Changing the pasted text is an intentional new attempt; it clears the old reason.
+	fireEvent.change(screen.getByRole("textbox", { name: "Pasted description" }), {
+		target: { value: "A full posting" },
+	});
+	await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+});

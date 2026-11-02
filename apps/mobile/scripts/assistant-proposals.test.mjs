@@ -722,6 +722,7 @@ test("provider Off keeps saved local Accept and Undo actionable while questions 
 			"@tanstack/react-query": { useQueryClient: () => ({}) },
 			"./chat": { webSources: () => [] },
 			"./markdown": { AssistantMarkdown: "Markdown" },
+			"./page-fit": { ProposalPageFit: () => null },
 			"./proposals": proposals,
 			"@/api/client": {},
 			"@orpc/client": mobileRequire("@orpc/client"),

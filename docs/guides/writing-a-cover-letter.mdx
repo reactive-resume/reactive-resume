@@ -87,7 +87,14 @@ The letter editor looks like the resume editor, with two modes: **Write** and **
 
   </Step>
   <Step title="Letter: the body">
-    Under **Letter**, select **Write it myself** and type the body. The greeting and sign-off are added around it in the document's language, inherited from the resume while the design is linked. Change **Language** under **Design → Page** to choose the letter's own language.
+    Under **Letter**, select **Write it myself** and type the body. The greeting and sign-off are added around it in the letter's language. A letter created from an application starts in the posting's declared language, so the body, greeting, sign-off and date stay in one language. **Design → Language** changes the letter's language at any time, even while its design still mimics the resume: the design link shares template, type and colors, not the language, and your authored greeting, sign-off and words are never rewritten.
+
+<Frame caption="Language is its own Design setting. This letter was created from a German posting, so its greeting, date and sign-off are German while its template, type and colors still match the resume.">
+  <img
+    src="/images/guides/writing-a-cover-letter/letter-design-language.png"
+    alt="Letter Design panel with Match the resume on, a Language field set to German, and a German letter page with Einstellungsteam, 31. Oktober 2026 and Liebes Einstellungsteam"
+  />
+</Frame>
 
     Edit **Greeting** or **Sign-off** to use your own wording. **Sign-off** includes your name: edit the whole signature and add your phone, email or other details on lines below it. Custom signatures print exactly as entered, without an extra name appended. Clear either field to omit it, useful when you already wrote a closing in the body. Select **Use default** to restore the automatic wording and sender name.
 
@@ -130,15 +137,18 @@ If you've connected an AI provider, an empty body offers a first draft. See [Con
 <Steps>
   <Step title="Start the draft">
     Select **Draft from the posting** when the letter is linked to an application, or **Draft from your resume** when it
-    only has a resume. The draft uses only what the letter is linked to: the posting, your resume, or both. Select
-    **Stop** to cancel it while it's being written.
+    only has a resume. The draft uses only what the letter is linked to: the posting, your resume, or both, and it is
+    written in the letter's language. The line beside the button names the provider it sends them to. Select **Stop** to
+    cancel it while it's being written.
   </Step>
   <Step title="Refine it">
     When the draft is ready, ask for **Shorter** or **More personal** versions, or select **Discard** to drop it.
   </Step>
   <Step title="Keep it">
     Select **Keep** to put the draft in the body. Until you do, the draft never replaces anything, and you can edit it
-    freely afterwards.
+    freely afterwards. An unkept draft survives a reload in the same tab: it comes back with **Keep**, **Shorter**,
+    **More personal** and **Discard**, so seeing it again doesn't cost another request. Leaving the editor with a draft
+    streaming or waiting asks you to keep or discard it first.
   </Step>
 </Steps>
 

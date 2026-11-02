@@ -2,11 +2,15 @@
 import type { IconName } from "@/ui";
 import type { ColorToken } from "@/ui/tokens";
 import type { GenerateTask } from "@reactive-resume/schema/career";
+import type { DisclosureItem } from "@reactive-resume/schema/career-disclosure";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, View } from "react-native";
+import { disclosureItemsFromPresence } from "@reactive-resume/schema/career-disclosure";
+import { formatList } from "@reactive-resume/utils/locale";
+import { useFacts, useStories } from "./hooks";
 import { AIProviderSetupSheet, useHasAIProvider } from "@/features/ai/providers";
 import { ReportAiContent } from "@/features/ai/report-content";
 import { Banner, Button, Card, Icon, Text, useTheme } from "@/ui";
@@ -179,11 +183,66 @@ export function PrivacyLine({ children, centered = false }: PrivacyLineProps) {
  * Where an AI button's data goes, or, with no usable connection, a button that adds one in place. Tabs show their AI
  * buttons only when `useHasAIProvider().defaultProvider` is set.
  */
-type AiNoticeProps = { sends?: string | undefined; centered?: boolean };
+type DisclosureApplication = {
+	id: string;
+	resumeId: string | null;
+	coverLetterId: string | null;
+	jobDescription: string | null;
+	requirements: readonly string[];
+	notes?: string | null | undefined;
+	contacts: readonly unknown[];
+};
 
-export function AiNotice({ sends, centered = false }: AiNoticeProps) {
-	const { t } = useLingui();
+type AiNoticeProps = {
+	/** Names exactly what this action sends; the list comes from the same schema the server builds its prompt from. */
+	task?: GenerateTask["task"] | undefined;
+	application?: DisclosureApplication | undefined;
+	interview?: boolean | undefined;
+	/** A short, explicit sentence for an action outside the structured tasks (a letter draft, reading a posting). */
+	sends?: string | undefined;
+	centered?: boolean;
+};
+
+const itemLabel = (item: DisclosureItem, task: GenerateTask["task"]): string => {
+	switch (item) {
+		case "preferences":
+			return t`your preferences`;
+		case "posting":
+			return t`this posting`;
+		case "requirements":
+			return t`its requirements`;
+		case "notes":
+			return t`your notes`;
+		case "contacts":
+			return t`your contacts`;
+		case "resume":
+			return t`the resume for this job`;
+		case "letter":
+			return t`the cover letter for this job`;
+		case "knowledge":
+			return t`Knowledge that's switched on`;
+		case "interview":
+			return t`the interview details`;
+		case "answers":
+			return t`your form answers`;
+		case "offer":
+			return t`the saved offer`;
+		case "replies":
+			return t`the last messages`;
+		case "input":
+			return task === "reply"
+				? t`the employer's message`
+				: task === "debrief"
+					? t`the question and what you said`
+					: t`the question and your answer`;
+	}
+};
+
+export function AiNotice({ task, application, interview = false, sends, centered = false }: AiNoticeProps) {
+	const { t, i18n } = useLingui();
 	const connection = useHasAIProvider();
+	const facts = useFacts(application?.id ?? "", Boolean(application));
+	const stories = useStories(application?.id ?? "", Boolean(application));
 	const [setup, setSetup] = useState(false);
 	const provider = connection.defaultProvider;
 	if (connection.isLoading) return <ActivityIndicator />;
@@ -203,12 +262,32 @@ export function AiNotice({ sends, centered = false }: AiNoticeProps) {
 			</>
 		);
 	const label = `${provider.label} · ${provider.model}`;
+	const presence: Partial<Record<DisclosureItem, boolean>> = {
+		preferences: true,
+		posting: Boolean(application?.jobDescription?.trim()),
+		requirements: Boolean(application?.requirements.length),
+		notes: Boolean(application?.notes?.trim()),
+		contacts: Boolean(application?.contacts.length),
+		resume: Boolean(application?.resumeId),
+		letter: Boolean(application?.coverLetterId),
+		knowledge: Boolean(
+			facts.isPending ||
+			facts.isError ||
+			stories.isPending ||
+			stories.isError ||
+			facts.data?.length ||
+			stories.data?.length,
+		),
+		interview,
+		input: true,
+	};
+	const labels = task ? disclosureItemsFromPresence(task, presence).map((item) => itemLabel(item, task)) : [];
+	const sentence =
+		sends ??
+		(task && application && labels.length > 0 ? t`Sends ${formatList(i18n.locale, labels)} to ${label}.` : null);
 	return (
 		<>
-			<PrivacyLine centered={centered}>
-				{sends ??
-					t`Sends this application's posting, notes and documents, plus Knowledge that's switched on, to ${label}.`}
-			</PrivacyLine>
+			{sentence ? <PrivacyLine centered={centered}>{sentence}</PrivacyLine> : null}
 			<ReportAiContent source="career" />
 		</>
 	);

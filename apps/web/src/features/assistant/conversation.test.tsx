@@ -29,6 +29,7 @@ vi.mock("@/features/resume/editor/store", () => ({
 vi.mock("@/features/resume/builder/draft", () => ({
 	useResumeStore: (select: (state: { resume: null }) => unknown) => select({ resume: null }),
 }));
+vi.mock("@/features/resume/editor/proposals/page-fit", () => ({ ProposalPageFit: () => null }));
 vi.mock("@/libs/orpc/client", () => ({
 	client: { agent: { attachments: { create: mocks.attach }, messages: { setEditStatus: mocks.record } } },
 	orpc: {

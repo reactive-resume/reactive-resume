@@ -341,11 +341,11 @@ function CoachSheetBody({
 							? t`Nothing is sent until you choose a connection for this conversation.`
 							: earlier > 0
 								? chips.memory
-									? t`Sends your message, earlier messages here, this application (posting, notes, documents sent) and Knowledge that's switched on to ${connection}.`
-									: t`Sends your message, earlier messages here and this application (posting, notes, documents sent) to ${connection}.`
+									? t`Sends your message, earlier messages here, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${connection}.`
+									: t`Sends your message, earlier messages here and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${connection}.`
 								: chips.memory
-									? t`Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to ${connection}.`
-									: t`Sends your message and this application (posting, notes, documents sent) to ${connection}.`}
+									? t`Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${connection}.`
+									: t`Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${connection}.`}
 						{withheld > 0 && ` ${t`Messages from before Knowledge changed aren't sent.`}`}
 						{context.web && ` ${t`Search terms go to your web search service.`}`}{" "}
 						<MemoryNote knowledge={chips.memory} />

@@ -7,6 +7,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import { useId, useRef, useState } from "react";
+import { firstFutureLead, PREPARE_LEADS } from "@reactive-resume/schema/career-schedule";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@reactive-resume/ui/components/dialog";
@@ -19,7 +20,8 @@ import { useBreakpoint } from "@reactive-resume/ui/hooks/use-breakpoint";
 import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks, useWorkspace } from "../hooks";
-import { Eyebrow, flash, minutesUntil, PrivacyLine, useCareerTime, Working, workingSteps } from "../shared";
+import { Eyebrow, flash, minutesUntil, useCareerTime, useNow, Working, workingSteps } from "../shared";
+import { AiNotice } from "./fit";
 import { interviewTypeLabel } from "@/features/applications/components/interview-dialog";
 import { SetUpAi } from "@/features/assistant/provider-setup";
 import { AiProviderLoadState } from "@/features/settings/integrations/ai-provider-load-state";
@@ -91,7 +93,6 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 	const connection = useDefaultProvider();
 	const { provider } = connection;
 	const generate = useGenerate(application.id);
-	const label = provider?.label ?? "";
 	return (
 		<EmptyState
 			title={t`A focused plan for this round`}
@@ -118,11 +119,7 @@ function PlanEmpty({ application, interview }: PlanEmptyProps) {
 			{connection.isUnavailable ? (
 				<AiProviderLoadState state={connection} />
 			) : provider ? (
-				<PrivacyLine className="max-w-[360px] text-start">
-					<Trans>
-						Sends this application (posting, notes, interview details) and Knowledge that's switched on to {label}.
-					</Trans>
-				</PrivacyLine>
+				<AiNotice task="briefing" application={application} interview className="max-w-[360px] text-start" />
 			) : null}
 		</EmptyState>
 	);
@@ -314,8 +311,6 @@ function Plan({ application, interview, briefing, readOnly, go }: PlanProps) {
 	);
 }
 
-const LEADS = ["24h", "2h", "morning"] as const;
-
 type RefreshSwitchProps = { application: Application; interview: InterviewTimelineEntry };
 
 /** The C5 prepare schedule for this interview: toggling here changes it in Today too. */
@@ -328,14 +323,17 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 	const { data: providers } = useQuery(orpc.aiProviders.list.queryOptions());
 	const { data: schedules } = useQuery(orpc.career.schedules.queryOptions({ input: {} }));
 	const schedule = schedules?.find((item) => item.kind === "prepare" && item.interviewId === interview.id);
-	const lead = LEADS.find((item) => item === schedule?.lead) ?? "24h";
+	// The first lead still ahead of now; if every one has passed, there is nothing honest to schedule.
+	const now = useNow();
+	const next = firstFutureLead(new Date(interview.at), timeZone, now);
+	const lead = schedule?.lead ?? next?.lead ?? PREPARE_LEADS[0];
 	// The schedule's own connection while it's switched on and tested; otherwise the default, as the run itself does.
 	const own = providers?.find(
 		(item) => item.id === schedule?.aiProviderId && item.enabled && item.testStatus === "success",
 	);
 	const providerId = own?.id ?? provider?.id ?? null;
 	const providerLabel = own?.label ?? provider?.label ?? "";
-	const runAt = schedule?.nextRunAt ?? new Date(new Date(interview.at).getTime() - 24 * 3_600_000);
+	const runAt = schedule?.nextRunAt ?? next?.runAt ?? null;
 
 	const save = useMutation({
 		...orpc.career.saveSchedule.mutationOptions(),
@@ -351,11 +349,13 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 
 	const enabled = save.isPending ? save.variables.enabled : (schedule?.enabled ?? false);
 	const available = !connection.isUnavailable && flags?.careerSchedulingEnabled !== false && !!providerId;
-	const label = {
-		"24h": t`Refresh the briefing 24 hours before`,
-		"2h": t`Refresh the briefing 2 hours before`,
-		morning: t`Refresh the briefing on the morning of`,
-	}[lead];
+	const label = next
+		? {
+				"24h": t`Refresh the briefing 24 hours before`,
+				"2h": t`Refresh the briefing 2 hours before`,
+				morning: t`Refresh the briefing on the morning of`,
+			}[next.lead]
+		: t`Refresh the briefing`;
 	const description =
 		flags?.careerSchedulingEnabled === false
 			? t`Scheduled work isn't available on this server.`
@@ -363,7 +363,9 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 				? t`AI connections are unavailable.`
 				: !providerId
 					? t`Connect an AI provider in Settings to refresh it automatically.`
-					: t`${when(runAt)} · ${providerLabel}. Sends this application and your Knowledge; your provider may charge.`;
+					: runAt
+						? t`${when(runAt)} · ${providerLabel}. Sends this application and your Knowledge; your provider may charge.`
+						: t`Too close to the interview to schedule a refresh.`;
 
 	return (
 		<div className="rounded-xl border border-line bg-surface px-4 py-2">
@@ -372,19 +374,19 @@ function RefreshSwitch({ application, interview }: RefreshSwitchProps) {
 				label={<span className="font-semibold">{label}</span>}
 				description={description}
 				checked={enabled}
-				disabled={save.isPending || (!available && !enabled)}
+				disabled={save.isPending || (!available && !enabled) || (!next && !enabled)}
 				onCheckedChange={(checked) =>
 					save.mutate({
 						...(schedule ? { id: schedule.id } : {}),
 						kind: "prepare",
 						applicationId: application.id,
 						interviewId: interview.id,
-						lead,
+						lead: (next?.lead ?? lead) as "24h" | "2h" | "morning",
 						enabled: checked,
 						email: schedule?.email ?? false,
 						timezone: timeZone,
 						locale,
-						nextRunAt: new Date(runAt),
+						nextRunAt: next?.runAt ?? runAt ?? new Date(interview.at),
 						aiProviderId: providerId,
 						query: "",
 						intervalDays: null,

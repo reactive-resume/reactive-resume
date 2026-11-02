@@ -70,6 +70,15 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 	await page.getByRole("button", { name: /Tighten to one page/ }).click();
 	const edits = page.getByRole("list", { name: "Proposed edits" });
 	await expect(edits).toBeVisible({ timeout: 20_000 });
+	await expect(page.getByText(/Page fit: \d+ → \d+ printed pages\./)).toBeVisible({ timeout: 30_000 });
+	await expect(page.getByText(/Estimated overflow change: [+-]?\d+ lines\./)).toBeVisible();
+	const fitText = await page.getByText(/Page fit: \d+ → \d+ printed pages\./).textContent();
+	const predictedPages = Number(fitText?.match(/→ (\d+) printed/)?.[1]);
+	expect(predictedPages).toBeGreaterThan(0);
+	await edits
+		.locator("..")
+		.locator("header")
+		.screenshot({ path: testInfo.outputPath("proposal-page-fit.png") });
 	await expect
 		.poll(() =>
 			JSON.stringify(
@@ -86,6 +95,7 @@ test("proposes edits that change nothing until accepted, asks before assuming, a
 	await edits.getByRole("button", { name: "Accept" }).click();
 	await expect(edits.getByText("Applied")).toBeVisible();
 	await expect.poll(() => resumeJson(page, resumeId), { timeout: 15_000 }).toContain("(tightened by the stub)");
+	await expect(page.locator("figcaption")).toHaveCount(predictedPages);
 	await expect(page.getByText("1 proposed", { exact: true })).toBeHidden();
 	await expect(page.getByText(/Page 1 still runs over by about \d+ lines\./)).toBeVisible();
 
@@ -115,6 +125,8 @@ test("Accept all preserves overlapping additions and reports the rewrite it cann
 	await send(page, "Propose overlapping edits");
 	const edits = page.getByRole("list", { name: "Proposed edits" });
 	await expect(edits).toBeVisible({ timeout: 20_000 });
+	await expect(page.getByText(/Page fit: \d+ → \d+ printed pages\./)).toBeVisible({ timeout: 30_000 });
+	expect(await resumeJson(page, resumeId)).not.toContain("Introduced accessibility reviews.");
 	await page.getByRole("button", { name: "Accept all", exact: true }).click();
 	await expect(edits.getByText("Applied", { exact: true })).toHaveCount(3);
 	await expect(edits.getByText("Out of date: the text has changed since.", { exact: true })).toHaveCount(1);

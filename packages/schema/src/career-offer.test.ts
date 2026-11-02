@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { offerTermsSchema } from "./career";
-import { parseOfferEntry, previousOfferCurrency } from "./career-offer";
+import { offerTermKeys, parseOfferEntry, previousOfferCurrency } from "./career-offer";
 
 const entry = () => ({
 	applicationId: "owned-job",
@@ -100,5 +100,27 @@ describe("previousOfferCurrency", () => {
 		).toBe("EUR");
 		expect(previousOfferCurrency([])).toBe("");
 		expect(previousOfferCurrency(undefined)).toBe("");
+	});
+});
+
+describe("offerTermKeys", () => {
+	it("lists every stated term and omits unknown ones", () => {
+		expect(
+			offerTermKeys(
+				offerTermsSchema.parse({
+					currency: "EUR",
+					period: "year",
+					base: 82_000,
+					variable: 8_200,
+					variableConditions: "10% of base",
+					equity: "0.05%",
+					startDate: "2027-01-04",
+					respondBy: "2026-11-20T16:00:00Z",
+				}),
+			),
+		).toEqual(["base", "variable", "equity", "startDate", "respondBy"]);
+		expect(
+			offerTermKeys(offerTermsSchema.parse({ currency: "EUR", period: "year", base: null, variable: null })),
+		).toEqual([]);
 	});
 });

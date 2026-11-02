@@ -764,6 +764,7 @@ function ToolPartView({
 				<div className="grid gap-1.5">
 					{proposals.length > 0 ? (
 						<ChangeSet
+							resumeId={document.kind === "resume" ? document.id : undefined}
 							proposals={proposals}
 							states={states}
 							locked={localEditsLocked || forJobCopy}

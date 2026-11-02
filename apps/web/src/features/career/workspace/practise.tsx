@@ -24,6 +24,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { useCoachKnowledge } from "../coach-thread";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useSessionDraft } from "../hooks";
 import { CollapseRow, PrivacyLine, useCareerTime, Working, workingSteps } from "../shared";
+import { AiNotice } from "./fit";
 import {
 	acceptAudioFile,
 	canDictate,
@@ -124,6 +125,7 @@ export function PractiseTab({ application, version, interview, speak, story, now
 			) : (
 				<Session
 					key={`${application.id}:${interview?.id ?? "none"}:${story ?? "general"}`}
+					application={application}
 					applicationId={application.id}
 					interviewId={interview?.id ?? null}
 					questions={questions}
@@ -213,6 +215,7 @@ type Step =
 	| { name: "error" };
 
 type SessionProps = {
+	application: WorkspaceTabProps["application"];
 	applicationId: string;
 	interviewId: string | null;
 	questions: Question[];
@@ -222,7 +225,16 @@ type SessionProps = {
 	initialMode: Mode;
 };
 
-function Session({ applicationId, interviewId, questions, voice, initialMode, storyId, storyTitle }: SessionProps) {
+function Session({
+	application,
+	applicationId,
+	interviewId,
+	questions,
+	voice,
+	initialMode,
+	storyId,
+	storyTitle,
+}: SessionProps) {
 	const id = useId();
 	const generate = useGenerate(applicationId);
 	const connection = useDefaultProvider();
@@ -421,7 +433,6 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 			.catch(() => undefined);
 	};
 
-	const providerName = provider?.label ?? t`your AI connection`;
 	const recordingNow = step.name === "recording";
 	const elapsed = clock(recordingNow ? step.seconds : 0);
 	const model = voice.settings.transcribe.model;
@@ -657,21 +668,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 							<Trans>Compared with your stories and the posting.</Trans>
 						</p>
 					</div>
-					{connection.isUnavailable ? (
-						<AiProviderLoadState state={connection} />
-					) : provider ? (
-						<PrivacyLine>
-							<Trans>
-								Get feedback sends the question, your answer, this posting and your stories to {providerName}.
-							</Trans>
-						</PrivacyLine>
-					) : (
-						<PrivacyLine>
-							<Trans>
-								Feedback needs an AI connection. <SetUpAi />. Nothing is sent until you ask.
-							</Trans>
-						</PrivacyLine>
-					)}
+					<AiNotice task="practice" application={application} interview={interviewId !== null} />
 				</div>
 			</section>
 

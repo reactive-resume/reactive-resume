@@ -1,7 +1,23 @@
+import type { PageMap } from "@reactive-resume/pdf/page-map";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { nativeEngine } from "@reactive-resume/forme-native";
 import { renderResumePdf } from "@reactive-resume/pdf/native";
 import { configurePreviewResources, readPreviewImage } from "./resources";
+
+/** Layout measurement uses the same engine, fonts and images as the native preview. */
+export async function measureResume(data: ResumeData): Promise<PageMap> {
+	configurePreviewResources();
+	let pageMap: PageMap | undefined;
+	await renderResumePdf(nativeEngine, {
+		data,
+		readImage: readPreviewImage,
+		onPageMap: (map) => {
+			pageMap = map;
+		},
+	});
+	if (!pageMap) throw new Error("Page map unavailable");
+	return pageMap;
+}
 
 /** Port of web design/presets: density, margins, then half-point steps with a 9 pt floor. */
 export function tightenResume(data: ResumeData): boolean {
@@ -36,14 +52,7 @@ export async function fitResume(data: ResumeData, isCurrent: () => boolean) {
 	const candidate = structuredClone(data);
 	const authored = Math.max(1, data.metadata.layout.pages.length);
 	for (let step = 0; step < 16 && isCurrent() && tightenResume(candidate); step++) {
-		let count = 0;
-		await renderResumePdf(nativeEngine, {
-			data: candidate,
-			readImage: readPreviewImage,
-			onPageMap: (map) => {
-				count = map.pages.length;
-			},
-		});
+		const count = (await measureResume(candidate)).pages.length;
 		if (count <= authored) return { data: candidate, fits: true };
 	}
 	return { data: candidate, fits: false };

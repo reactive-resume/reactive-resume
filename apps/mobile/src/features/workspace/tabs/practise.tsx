@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { Linking, Pressable, View } from "react-native";
 import { latest, useDraft, useGenerate, useSavedItems, useStories, workspaceError } from "../hooks";
 import { acceptedAudioType, clock, MAX_SECONDS, writeNumbersAsDigits } from "../logic";
-import { Actions, Block, PrivacyLine, Progress, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, PrivacyLine, Progress, useWorking, workingSteps } from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { afterTranscribed, createRequests, playLatest } from "../state";
 import { deleteQuietly, speak, transcribe, usePlayer, useRecorder, useVoiceSettings } from "../voice";
@@ -117,6 +117,7 @@ function Practise({ application, version, interview, speak: speakFirst, story, n
 			) : (
 				<Session
 					key={`${application.id}:${interview?.id ?? "none"}:${story ?? "general"}`}
+					application={application}
 					applicationId={application.id}
 					interviewId={interview?.id ?? null}
 					questions={questions}
@@ -173,6 +174,7 @@ function AttemptRow({ item, now, current, onOpen }: AttemptRowProps) {
 // ---- One question at a time ----
 
 type SessionProps = {
+	application: WorkspaceTabProps["application"];
 	applicationId: string;
 	interviewId: string | null;
 	questions: Question[];
@@ -182,7 +184,16 @@ type SessionProps = {
 	initialMode: Mode;
 };
 
-function Session({ applicationId, interviewId, questions, voice, initialMode, storyId, storyTitle }: SessionProps) {
+function Session({
+	application,
+	applicationId,
+	interviewId,
+	questions,
+	voice,
+	initialMode,
+	storyId,
+	storyTitle,
+}: SessionProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const generate = useGenerate(applicationId);
@@ -351,7 +362,6 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 	const recordingNow = step.name === "recording";
 	const elapsed = clock(recorder.seconds);
 	const model = transcriber?.model ?? "";
-	const providerName = provider?.label ?? t`your AI connection`;
 	const transcriberName = transcriber?.label ?? "";
 	const spokenFor = spoken?.seconds != null ? clock(spoken.seconds) : t`audio file`;
 	const answerField = (
@@ -548,16 +558,7 @@ function Session({ applicationId, interviewId, questions, voice, initialMode, st
 					<Text variant="caption" color="ink2">
 						{t`Compared with your stories and the posting.`}
 					</Text>
-					{provider ? (
-						<PrivacyLine>
-							{t`Get feedback sends the question, your answer, this posting and your stories to ${providerName}.`}
-						</PrivacyLine>
-					) : (
-						<>
-							<PrivacyLine>{t`Feedback needs an AI connection. Nothing is sent until you ask.`}</PrivacyLine>
-							<Button variant="link" icon="key" label={t`Connect an AI provider`} onPress={() => setSetup(true)} />
-						</>
-					)}
+					<AiNotice task="practice" application={application} interview={interviewId !== null} />
 				</View>
 			</Block>
 
