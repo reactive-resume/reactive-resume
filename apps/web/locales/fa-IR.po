@@ -1925,6 +1925,7 @@ msgstr "فونت ها، رنگ ها، فاصله ها و بخش ها را در �
 msgid "Ads"
 msgstr "تبلیغات"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "پیشرفته"
@@ -2275,8 +2276,7 @@ msgstr "هر چیزی که در مورد این شغل به یاد داشته ب
 msgid "Anywhere"
 msgstr "هر جا"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "کلید API"
@@ -2829,10 +2829,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "حقوق پایه"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "آدرس اینترنتی پایه"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "URL پایه (الزامی)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2979,7 +2982,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "خواننده داخلی"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6069,6 +6072,10 @@ msgstr "مبلغ کامل، مانند 95000، را وارد کنید یا خا�
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "مبلغ کامل را وارد کنید، مثلاً 95000. مبلغ قبلی شما تغییری نکرده است."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "شناسهٔ مدل را وارد کنید."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "یک نام تا 64 کاراکتر وارد کنید."
@@ -6091,6 +6098,14 @@ msgstr "یک آدرس ایمیل معتبر وارد کنید."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "یک آدرس وب مانند مثال.com وارد کنید"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "یک کلید API برای این ارائه‌دهنده وارد کنید."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "یک URL پایه با http:// یا https:// وارد کنید."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6828,6 +6843,14 @@ msgstr "یک کلید در <0>{0}</0> دریافت کنید. رمزگذاری ش
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "برای مصاحبه برنامه‌ای بگیرید که از آگهی شغلی و داستان‌های خودتان ساخته شده است. با صدای بلند تمرین کنید، سپس بنویسید چطور پیش رفت."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "دریافت کلید API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "از گردانندهٔ نقطهٔ پایانی خود یک کلید API بگیرید."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8100,7 +8123,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "حداقل نیم اینچ حاشیه دور صفحه بگذارید."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "برای نگه داشتن کلید ذخیره شده خالی بگذارید"
 
@@ -8909,8 +8932,7 @@ msgstr "بینابین"
 msgid "mixed format"
 msgstr "فرمت ترکیبی"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "مدل"
 
@@ -9118,7 +9140,7 @@ msgstr "کار من این بود که علت را پیدا کنم، بدون ا
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "نام"
@@ -10293,7 +10315,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "اختیاری برای Ollama محلی"
 
@@ -14952,11 +14974,11 @@ msgstr "بازبینی به پایان نرسید. دوباره امتحان ک�
 msgid "The same line repeats on every page."
 msgstr "همان خط در هر صفحه تکرار می‌شود."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "کلید ذخیره شده به URL پایه جدید ارسال نمی شود. اگر این سرور به کلید نیاز دارد، کلید را دوباره وارد کنید."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "کلید ذخیره شده به URL پایه جدید ارسال نمی شود. دوباره کلید را وارد کنید."
 

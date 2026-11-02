@@ -1925,6 +1925,7 @@ msgstr "Rregulloni fontet, ngjyrat, ndarjet dhe seksionet në ndërtuesin e CV-s
 msgid "Ads"
 msgstr "Reklamat"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "I avancuar"
@@ -2275,8 +2276,7 @@ msgstr "Çdo gjë për të mbajtur mend për këtë punë"
 msgid "Anywhere"
 msgstr "Kudo"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "Çelësi API"
@@ -2829,10 +2829,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Paga bazë"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "URL-ja bazë"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "URL bazë (e detyrueshme)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2979,7 +2982,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Lexues i integruar"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6069,6 +6072,10 @@ msgstr "Vendosni shumën e plotë, për shembull 95000, ose lëreni bosh."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Vendosni një shumë të plotë, si 95000. Shuma juaj e mëparshme nuk ka ndryshuar."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Vendosni një ID modeli."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Futni një emër, deri në 64 karaktere."
@@ -6091,6 +6098,14 @@ msgstr "Fut një adresë të vlefshme emaili."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Fut një adresë ueb, si shembull.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Vendosni një çelës API për këtë ofrues."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Vendosni një URL bazë që fillon me http:// ose https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6828,6 +6843,14 @@ msgstr "Merr një çelës në <0>{0}</0>. Ai ruhet i koduar dhe përdoret vetëm
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Merrni një plan për intervistën, të ndërtuar nga shpallja dhe historitë tuaja. Ushtrohuni me zë, pastaj shkruani si shkoi."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Merrni një çelës API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Merrni një çelës API nga operatori i pikës suaj fundore."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8100,7 +8123,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Lini të paktën gjysmë inç hapësirë rreth faqes."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Lëreni bosh për të mbajtur çelësin e ruajtur"
 
@@ -8909,8 +8932,7 @@ msgstr "Mesatarisht"
 msgid "mixed format"
 msgstr "format e përzier"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Modeli"
 
@@ -9118,7 +9140,7 @@ msgstr "Detyra ime ishte të zbuloja pse, pa shtuar punë për mbështetjen."
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Emri"
@@ -10293,7 +10315,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Opsionale për Ollama lokale"
 
@@ -14952,11 +14974,11 @@ msgstr "Rishikimi nuk mund të përfundonte. Provo sërish."
 msgid "The same line repeats on every page."
 msgstr "I njëjti rresht përsëritet në çdo faqe."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Çelësi i ruajtur nuk dërgohet në një URL të re bazë. Futni përsëri çelësin nëse ky server kërkon një çelës."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Çelësi i ruajtur nuk dërgohet në një URL të re bazë. Futni përsëri çelësin."
 

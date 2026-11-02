@@ -1925,6 +1925,7 @@ msgstr "सीव्ही बिल्डरमध्ये फॉन्ट, �
 msgid "Ads"
 msgstr "जाहिराती"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "प्रगत"
@@ -2275,8 +2276,7 @@ msgstr "या नोकरीबद्दल लक्षात ठेवण्
 msgid "Anywhere"
 msgstr "कुठेही"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API की"
@@ -2829,10 +2829,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "मूळ पगार"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "बेस यूआरएल"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "बेस URL (आवश्यक)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2979,7 +2982,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "अंगभूत वाचक"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6069,6 +6072,10 @@ msgstr "95000 यासारखी पूर्ण रक्कम भरा �
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "95000 सारखी पूर्ण रक्कम टाका. तुमची आधीची रक्कम बदललेली नाही."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "मॉडेल ID प्रविष्ट करा."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 वर्णांपर्यंत नाव एंटर करा."
@@ -6091,6 +6098,14 @@ msgstr "वैध ईमेल पत्ता प्रविष्ट कर�
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "एक वेब पत्ता प्रविष्ट करा, उदाहरणार्थ.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "या प्रदात्यासाठी API की प्रविष्ट करा."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// किंवा https:// ने सुरू होणारा बेस URL प्रविष्ट करा."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6828,6 +6843,14 @@ msgstr "<0>{0}</0> वर एक की मिळवा. हे एन्क्�
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "जॉब पोस्टिंग आणि तुमच्या स्वतःच्या कथांवर आधारित मुलाखतीची योजना मिळवा. मोठ्याने सराव करा, नंतर ते कसे झाले ते लिहून ठेवा."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API की मिळवा"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "तुमच्या एंडपॉइंटच्या संचालकाकडून API की मिळवा."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8100,7 +8123,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "पानाभोवती किमान अर्धा इंच जागा सोडा."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "जतन केलेली की ठेवण्यासाठी रिकामी सोडा"
 
@@ -8909,8 +8932,7 @@ msgstr "संमिश्र"
 msgid "mixed format"
 msgstr "मिश्र स्वरूप"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "मॉडेल"
 
@@ -9118,7 +9140,7 @@ msgstr "सपोर्टचे काम न वाढवता त्या�
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "नाव"
@@ -10293,7 +10315,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "स्थानिक Ollama साठी पर्यायी"
 
@@ -14952,11 +14974,11 @@ msgstr "पुनरावलोकन पूर्ण होऊ शकले �
 msgid "The same line repeats on every page."
 msgstr "तीच ओळ प्रत्येक पानावर पुनरावृत्त होते."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "सेव्ह केलेली की नवीन बेस URL वर पाठवली जात नाही. या सर्व्हरला की आवश्यक असल्यास पुन्हा की प्रविष्ट करा."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "सेव्ह केलेली की नवीन बेस URL वर पाठवली जात नाही. पुन्हा की प्रविष्ट करा."
 
