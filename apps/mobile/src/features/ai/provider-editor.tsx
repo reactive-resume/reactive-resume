@@ -28,7 +28,7 @@ export type AIProviderSetupSheetProps = {
 	open: boolean;
 	onClose: () => void;
 	/** Called only after a connection test succeeds and the provider list refreshes. */
-	onReady?: (() => void) | undefined;
+	onReady?: ((provider: SavedProvider) => void) | undefined;
 };
 
 /** Inline setup for Improve, Check Writing, Assistant and Practise; keeps the caller's screen mounted. */
@@ -80,7 +80,7 @@ export function ProviderEditorSheet({ open, provider, onClose }: ProviderEditorS
 type ProviderFormProps = {
 	saved?: SavedProvider | undefined;
 	onClose: () => void;
-	onReady?: (() => void) | undefined;
+	onReady?: ((provider: SavedProvider) => void) | undefined;
 };
 
 function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
@@ -178,7 +178,7 @@ function ProviderForm({ saved, onClose, onReady }: ProviderFormProps) {
 			if (!mounted.current || getServer() !== server) return;
 			if (tested.testStatus === "success" && tested.enabled) {
 				set({ apiKey: "" });
-				onReady?.();
+				onReady?.(tested);
 				onClose();
 			} else
 				setFailure(

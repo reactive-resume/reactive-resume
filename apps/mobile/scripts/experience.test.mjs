@@ -1835,7 +1835,9 @@ console.log("PASS native custom-field Undo restores its field without reverting 
 
 // A job selected before its summary arrives must never become an unlinked copy.
 let copyApplications = { data: [], isFetching: true, refetch() {} };
+let newDocumentParams = { step: "copy", applicationId: "new-job" };
 const { NewDocument } = load("features/documents/new-document.tsx", {
+	"@/routes": load("routes.ts"),
 	"./copy-for-job": {
 		copyForJob: async (input) => {
 			calls.push(input);
@@ -1850,7 +1852,7 @@ const { NewDocument } = load("features/documents/new-document.tsx", {
 	"expo-network": { getNetworkStateAsync: async () => ({ isConnected: true }) },
 	"expo-router": {
 		useRouter: () => ({ replace: (href) => calls.push(href) }),
-		useLocalSearchParams: () => ({ step: "copy", applicationId: "new-job" }),
+		useLocalSearchParams: () => newDocumentParams,
 		Stack: { Screen: "StackScreen" },
 	},
 	"@reactive-resume/schema/resume/dates": {},
@@ -1858,13 +1860,24 @@ const { NewDocument } = load("features/documents/new-document.tsx", {
 	"@/features/write/fields": { SECTION_TITLES: {} },
 	"./new-documents": { useNewDocuments: { getState: () => ({ markOpened() {} }) } },
 	"./queries": {
-		useDocuments: () => ({ data: [{ id: "source", type: "resume", name: "Resume" }] }),
+		useDocuments: () => ({
+			data: [{ id: "source", type: "resume", name: "Resume" }],
+			isPending: false,
+			isError: false,
+		}),
 		useDocumentRefresh: () => () => {},
 		documentError: String,
 	},
 	"@/api/client": {
 		client: {
+			coverLetters: {
+				create: async (input) => {
+					calls.push({ createdLetter: input });
+					return { id: "letter-new" };
+				},
+			},
 			documents: {
+				list: async () => [],
 				copyForJob: async (input) => {
 					calls.push(input);
 					return "copy";
@@ -1892,6 +1905,159 @@ control(render(NewDocument), "Create copy").onPress();
 await settle();
 assert.equal(calls[0].applicationId, "new-job");
 console.log("PASS native copy waits for selected job and preserves application ID");
+
+reset();
+newDocumentParams = { context: "letters" };
+const newLetter = render(NewDocument);
+assert.equal(control(newLetter, "New cover letter").variant, "primary");
+assert.equal(control(newLetter, "New cover letter").disabled, false);
+assert.ok(
+	nodes(newLetter).some((node) => node.type === "StackScreen" && node.props.options.title === "New cover letter"),
+);
+assert.ok(
+	!nodes(newLetter).some((node) =>
+		["Import a resume", "Copy a resume for a job", "Start blank"].includes(node.props.title),
+	),
+);
+assert.ok(
+	!nodes(newLetter).some((node) =>
+		["Try with a sample resume", "Check a PDF with the ATS checker"].includes(node.props.label),
+	),
+);
+control(newLetter, "New cover letter").onPress();
+await settle();
+assert.deepEqual(calls, [
+	{ createdLetter: { name: "Untitled letter", recipient: "", content: "" } },
+	"/letter/letter-new/write",
+]);
+newDocumentParams = {};
+reset();
+assert.ok(nodes(render(NewDocument)).some((node) => node.props.title === "Import a resume"));
+assert.equal(control(render(NewDocument), "New cover letter instead").variant, "ghost");
+console.log(
+	"PASS native letter entry reuses creation screen without resume alternatives; ordinary New remains available",
+);
+
+{
+	const { routes: realRoutes } = load("routes.ts");
+	let documents = {
+		data: [
+			{ id: "resume-a", type: "resume", name: "Fictional resume" },
+			{ id: "letter-a", type: "letter", name: "Fictional letter" },
+		],
+	};
+	let applications = { data: [{ id: "job-a", role: "Engineer", company: "Fictional company" }] };
+	let documentQueryEnabled;
+	let applicationQueryEnabled;
+	const { NextSteps } = load("features/ai/next-steps.tsx", {
+		"@/routes": { routes: realRoutes },
+		"@/ui": { ...ui, Sheet: "Sheet" },
+		"@/features/documents/queries": {
+			useDocuments: (_trashed, enabled) => {
+				documentQueryEnabled = enabled;
+				return documents;
+			},
+		},
+		"@/features/applications/queries": {
+			useApplications: (enabled) => {
+				applicationQueryEnabled = enabled;
+				return applications;
+			},
+		},
+	});
+	reset();
+	let dismissed = false;
+	const view = () =>
+		render(NextSteps, {
+			onDismiss: () => {
+				dismissed = true;
+			},
+		});
+	view();
+	assert.equal(documentQueryEnabled, false);
+	assert.equal(applicationQueryEnabled, false);
+	for (const [action, expected] of [
+		["Improve selected line", realRoutes.builder("resume-a", "write")],
+		["Review writing", { pathname: "/builder/[id]/check", params: { id: "resume-a", tab: "writing" } }],
+		["Check fit", realRoutes.application("job-a", "fit")],
+	]) {
+		control(view(), action).onPress();
+		const picker = view();
+		assert.equal(documentQueryEnabled, action !== "Check fit");
+		assert.equal(applicationQueryEnabled, action === "Check fit");
+		assert.ok(!nodes(picker).some((node) => node.props.title === "Fictional letter"));
+		nodes(picker)
+			.find((node) => node.props.title === (action === "Check fit" ? "Engineer" : "Fictional resume"))
+			.props.onPress();
+		assert.deepEqual(calls.at(-1), expected);
+		assert.equal(nodes(view()).find((node) => node.type === "Sheet").props.open, false);
+		assert.equal(documentQueryEnabled, false);
+		assert.equal(applicationQueryEnabled, false);
+	}
+	control(view(), "New cover letter").onPress();
+	assert.equal(calls.at(-1), "/new?context=letters");
+	control(view(), "Ask the coach").onPress();
+	assert.equal(calls.at(-1), realRoutes.career("coach"));
+	documents = { data: [] };
+	applications = { data: [] };
+	control(view(), "Improve selected line").onPress();
+	control(view(), "Import or create a resume").onPress();
+	assert.equal(calls.at(-1), realRoutes.new());
+	control(view(), "Check fit").onPress();
+	control(view(), "Save a job").onPress();
+	assert.equal(calls.at(-1), realRoutes.newJob());
+	let retries = 0;
+	documents = {
+		error: new Error("Offline"),
+		refetch: () => {
+			retries++;
+		},
+	};
+	control(view(), "Review writing").onPress();
+	control(view(), "Try again").onPress();
+	assert.equal(retries, 1);
+	control(view(), "Dismiss").onPress();
+	assert.equal(dismissed, true);
+	console.log(
+		"PASS native first-connection actions use real routes, gate pickers, preserve empty/error recovery, and do not import AI clients",
+	);
+
+	let providerState = { providers: [], usableProviders: [], isUnavailable: false };
+	const { ProviderList } = load("features/ai/provider-list.tsx", {
+		"@orpc/client": { ORPCError: class extends Error {} },
+		"@tanstack/react-query": {},
+		"./catalog": {},
+		"./error": {},
+		"./next-steps": { NextSteps },
+		"./provider-editor": {},
+		"./providers": { AIProviderSetupSheet: "SetupSheet", useHasAIProvider: () => providerState },
+		"@/api/client": {},
+	});
+	reset();
+	const providerView = () => render(ProviderList);
+	const guidance = () => nodes(providerView()).find((node) => node.type === NextSteps);
+	assert.equal(guidance(), undefined, "No success before setup");
+	nodes(providerView())
+		.find((node) => node.type === "SetupSheet")
+		.props.onClose();
+	assert.equal(guidance(), undefined, "Cancel does not show success");
+	const first = { id: "first", testStatus: "success", enabled: true };
+	nodes(providerView())
+		.find((node) => node.type === "SetupSheet")
+		.props.onReady(first);
+	assert.equal(guidance(), undefined, "Success waits for usable canonical provider list");
+	providerState = { ...providerState, providers: [first], usableProviders: [first] };
+	assert.ok(guidance());
+	guidance().props.onDismiss();
+	assert.equal(guidance(), undefined);
+	const second = { ...first, id: "second" };
+	nodes(providerView())
+		.find((node) => node.type === "SetupSheet")
+		.props.onReady(second);
+	providerState = { ...providerState, providers: [first, second], usableProviders: [first, second] };
+	assert.equal(guidance(), undefined, "Second connection does not reintroduce dismissed guidance");
+	console.log("PASS native first-success guidance waits for usable state and stays dismissed for a second provider");
+}
 
 // React Query uses the latest mutation options after asynchronous public-link counting.
 let currentProfileMutation;

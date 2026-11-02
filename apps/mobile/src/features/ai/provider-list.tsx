@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { View } from "react-native";
 import { keyEnding, providerLabel } from "./catalog";
 import { aiSettingsError, providerTestError } from "./error";
+import { NextSteps } from "./next-steps";
 import { ProviderEditorSheet } from "./provider-editor";
 import { AIProviderSetupSheet, useHasAIProvider } from "./providers";
 import { client, orpc } from "@/api/client";
@@ -16,6 +17,7 @@ export function ProviderList() {
 	const state = useHasAIProvider();
 	const { space } = useTheme();
 	const [adding, setAdding] = useState(false);
+	const [connectedId, setConnectedId] = useState<string | null>(null);
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const editing = state.providers.find((provider) => provider.id === editingId);
 	if (state.error)
@@ -43,6 +45,9 @@ export function ProviderList() {
 	const managed = state.providers.some((provider) => provider.managed);
 	return (
 		<>
+			{state.usableProviders.some((provider) => provider.id === connectedId) && (
+				<NextSteps onDismiss={() => setConnectedId(null)} />
+			)}
 			{state.providers.length === 0 && (
 				<EmptyState
 					icon="sparkle"
@@ -65,7 +70,14 @@ export function ProviderList() {
 					<Button label={t`Add AI provider`} icon="plus" variant="secondary" onPress={() => setAdding(true)} />
 				</>
 			)}
-			<AIProviderSetupSheet open={adding} onClose={() => setAdding(false)} />
+			<AIProviderSetupSheet
+				open={adding}
+				onClose={() => setAdding(false)}
+				onReady={(provider) => {
+					if (!state.providers.some((other) => other.id !== provider.id && other.testStatus === "success"))
+						setConnectedId(provider.id);
+				}}
+			/>
 			{editing && !editing.managed && (
 				<ProviderEditorSheet open provider={editing} onClose={() => setEditingId(null)} />
 			)}

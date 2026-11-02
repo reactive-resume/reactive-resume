@@ -43,13 +43,13 @@ export function documentError(error: unknown) {
 	return t`Couldn't complete this action. Try again.`;
 }
 
-export function useDocuments(trashed = false) {
+export function useDocuments(trashed = false, enabled = true) {
 	const session = useSession();
 	const options = orpc.documents.list.queryOptions({ input: { trashed } });
 	return useQuery({
 		...options,
 		queryKey: [...options.queryKey, session.server],
-		enabled: session.status === "signed-in",
+		enabled: enabled && session.status === "signed-in",
 	});
 }
 

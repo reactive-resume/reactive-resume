@@ -1609,6 +1609,10 @@ msgstr ""
 msgid "AI is optional. Review target roles in Knowledge, wait for Saved, then create a new schedule. Existing schedules keep this query until you edit and save it."
 msgstr ""
 
+#: src/features/ai/next-steps.tsx
+msgid "AI is ready"
+msgstr "AI तैयार है"
+
 #: src/features/check/writing.tsx
 msgid "AI provider"
 msgstr "AI प्रदाता"
@@ -2075,6 +2079,7 @@ msgstr "सहायक से पूछें \"{question}\""
 msgid "Ask the assistant to work it in"
 msgstr "सहायक से इस पर काम करने के लिए कहें"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/workspace/shell.tsx
 msgid "Ask the coach"
 msgstr "कोच से पूछें"
@@ -2610,6 +2615,7 @@ msgstr ""
 msgid "Check every claim, date and result against your experience."
 msgstr "हर दावे, तारीख़ और परिणाम को अपने अनुभव से मिलाकर जाँचें।"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/workspace/tabs/fit.tsx
 #: src/features/workspace/tabs/saved.tsx
 msgid "Check fit"
@@ -2753,6 +2759,10 @@ msgstr "10 एमबी से छोटी फोटो चुनें।"
 msgid "Choose a replacement"
 msgstr "एक विकल्प चुनें"
 
+#: src/features/ai/next-steps.tsx
+msgid "Choose a resume"
+msgstr "एक बायोडाटा चुनें"
+
 #: src/features/letters/design.tsx
 msgid "Choose a resume in Write to match its design. Until then, the letter has its own."
 msgstr "इसके डिज़ाइन से मेल खाने के लिए लिखें में एक बायोडाटा चुनें। तब तक, पत्र का अपना है."
@@ -2785,6 +2795,7 @@ msgstr ""
 msgid "Choose a WebM, MP4, MP3, WAV or Ogg file up to 2 MB."
 msgstr "2 MB तक की WebM, MP4, MP3, WAV या Ogg फ़ाइल चुनें।"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Choose an application"
 msgstr "एक आवेदन चुनें"
@@ -3458,6 +3469,14 @@ msgstr "API कुंजियाँ लोड नहीं हो सकीं.
 #: src/features/documents/new-document.tsx
 msgid "Couldn't load applications."
 msgstr "आवेदन लोड नहीं किया जा सका."
+
+#: src/features/ai/next-steps.tsx
+msgid "Couldn't load applications. Try again."
+msgstr "आवेदन लोड नहीं हो सके। फिर से प्रयास करें।"
+
+#: src/features/ai/next-steps.tsx
+msgid "Couldn't load documents. Try again."
+msgstr "दस्तावेज़ लोड नहीं हो सके। फिर कोशिश करें।"
 
 #: src/features/documents/thumbnail.tsx
 msgid "Couldn't load letter"
@@ -4378,6 +4397,7 @@ msgstr "अपने ऑफ़लाइन संपादन त्यागे
 msgid "Discard your offline edits?"
 msgstr "क्या आप अपने ऑफ़लाइन संपादन त्यागें?"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/letters/write.tsx
 #: src/ui/layout.tsx
 msgid "Dismiss"
@@ -5826,6 +5846,10 @@ msgstr "फ़ाइल आयात करें"
 msgid "Import it"
 msgstr "इसे आयात करें"
 
+#: src/features/ai/next-steps.tsx
+msgid "Import or create a resume"
+msgstr "एक बायोडाटा आयात करें या बनाएं"
+
 #: src/features/documents/library.tsx
 msgid "Import the one you have, or start blank."
 msgstr ""
@@ -5850,6 +5874,7 @@ msgstr "इसे आपके नए बायोडाटा में आय�
 msgid "Improve needs an AI provider. Connect one to continue."
 msgstr "सुधार के लिए एक AI प्रदाता की आवश्यकता है। जारी रखने के लिए एक को कनेक्ट करें."
 
+#: src/features/ai/next-steps.tsx
 #: src/features/write/improve.tsx
 #: src/features/write/rich-text-field.tsx
 msgid "Improve selected line"
@@ -6701,6 +6726,7 @@ msgstr "आपका सार्वजनिक पता लोड हो र�
 
 #: app/(tabs)/settings/preferences.tsx
 #: app/builder/[id]/write.tsx
+#: src/features/ai/next-steps.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/settings/application-profile.tsx
 #: src/features/write/entry-screen.tsx
@@ -7374,6 +7400,11 @@ msgstr "नया आवेदन"
 msgid "New conversation"
 msgstr "नई बातचीत"
 
+#: src/features/ai/next-steps.tsx
+#: src/features/documents/new-document.tsx
+msgid "New cover letter"
+msgstr "नया कवर लेटर"
+
 #: src/features/documents/new-document.tsx
 msgid "New cover letter instead"
 msgstr "इसके स्थान पर नया कवर लेटर"
@@ -7483,9 +7514,10 @@ msgstr "अभी तक कोई AI प्रदाता नहीं"
 msgid "No application"
 msgstr "कोई नौकरी आवेदन नहीं"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "No applications yet."
-msgstr ""
+msgstr "अभी तक कोई नौकरी का आवेदन नहीं है।"
 
 #: src/features/letters/write.tsx
 msgid "No applications yet. Add one in Applications first."
@@ -7691,9 +7723,10 @@ msgstr "कोई बायोडाटा नहीं"
 msgid "No resume selected"
 msgstr "कोई बायोडाटा नहीं चुना गया"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/documents/library.tsx
 msgid "No resumes yet"
-msgstr ""
+msgstr "अभी तक कोई बायोडाटा नहीं है"
 
 #: src/features/documents/new-document.tsx
 msgid "No sections were found in this file."
@@ -10057,6 +10090,7 @@ msgstr ""
 msgid "Review wording, employer context and every claim. Saving does not confirm Knowledge facts or send data to AI."
 msgstr ""
 
+#: src/features/ai/next-steps.tsx
 #: src/features/check/writing.tsx
 msgid "Review writing"
 msgstr "समीक्षा लेखन"
@@ -10205,6 +10239,7 @@ msgstr "नमूना रेज़्यूमे"
 msgid "Save"
 msgstr "सहेजें"
 
+#: src/features/ai/next-steps.tsx
 #: src/features/applications-board/board-screen.tsx
 #: src/features/applications-board/views.tsx
 #: src/features/applications/add-sheet.tsx
@@ -12780,6 +12815,7 @@ msgstr "{suggestion} आज़माएं"
 #: app/(auth)/server.tsx
 #: app/(tabs)/settings/account.tsx
 #: app/(tabs)/settings/preferences.tsx
+#: src/features/ai/next-steps.tsx
 #: src/features/ai/provider-editor.tsx
 #: src/features/ai/provider-list.tsx
 #: src/features/ai/web-access.tsx
