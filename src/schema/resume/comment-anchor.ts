@@ -64,16 +64,6 @@ export const REVIEW_VERDICTS: Partial<Record<string, "changes" | "approved">> = 
 	APPROVED: "approved",
 };
 
-/** Starter comment bank for a tenant; reviewers add, use and delete their own from there. */
-export const STARTER_SNIPPETS = [
-	"Quantify the impact: add numbers, percentages or scale.",
-	"Start this line with a strong action verb.",
-	"Too long. Cut this to one line.",
-	"Not relevant for placements. Remove it.",
-	"Fix the grammar or spelling here.",
-	"Add more detail here.",
-];
-
 const escapeHtml = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 const anchorSection = (data: ResumeData, id: string) =>

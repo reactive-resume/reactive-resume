@@ -145,26 +145,23 @@ async function getLatestEvaluationsByResumeIds(resumeIds: string[]) {
 	return latest;
 }
 
-/** Returns true if the most recent history action for a resume is "SUBMITTED" */
-async function getSubmissionStatusByResumeIds(resumeIds: string[]) {
+/**
+ * Which resumes have ever been submitted.
+ *
+ * This used to read only the newest history row, so a resume that was submitted and then verified
+ * reported false — the verdict is the newer row. On this tenant that marked 245 of 461 submitted
+ * resumes as never submitted.
+ */
+export async function getSubmissionStatusByResumeIds(resumeIds: string[]) {
 	if (resumeIds.length === 0) return new Map<string, boolean>();
 
 	const history = await db
-		.select({
-			resumeId: schema.resumeHistory.resumeId,
-			action: schema.resumeHistory.action,
-		})
+		.select({ resumeId: schema.resumeHistory.resumeId })
 		.from(schema.resumeHistory)
-		.where(inArray(schema.resumeHistory.resumeId, resumeIds))
-		.orderBy(desc(schema.resumeHistory.createdAt));
+		.where(and(inArray(schema.resumeHistory.resumeId, resumeIds), eq(schema.resumeHistory.action, "SUBMITTED")));
 
-	// Only keep the latest entry per resume
 	const statusMap = new Map<string, boolean>();
-	for (const h of history) {
-		if (!statusMap.has(h.resumeId)) {
-			statusMap.set(h.resumeId, h.action === "SUBMITTED");
-		}
-	}
+	for (const h of history) statusMap.set(h.resumeId, true);
 	return statusMap;
 }
 
@@ -433,9 +430,7 @@ export const sectionsDashboard = protectedProcedure
 					menteeTenantId = (await getTenantIdForOrgUnits(unitSections.map((s) => s.id))) ?? menteeTenantId;
 				}
 				const mentees =
-					menteeTenantId && menteeTenantId !== "default"
-						? await getMenteeStudents(engLabsUser.id, menteeTenantId)
-						: [];
+					menteeTenantId && menteeTenantId !== "default" ? await getMenteeStudents(engLabsUser.id, menteeTenantId) : [];
 
 				facultyStudentIds = new Set(mentees.map((m) => m.id));
 
@@ -1299,7 +1294,10 @@ export const bulkUpdateResumes = protectedProcedure
 	)
 	.handler(async ({ context, input }) => {
 		const { bulkUpdateSectionResumes } = await import("@/integrations/drizzle/services/resume-feedback.service");
-		await assertReviewStaff(context.user, input.resumes.map((r) => r.id));
+		await assertReviewStaff(
+			context.user,
+			input.resumes.map((r) => r.id),
+		);
 
 		const actorType =
 			input.status === "APPROVED" || input.status === "PO_VERIFIED" ? "PLACEMENT_OFFICER" : "INSTRUCTOR";

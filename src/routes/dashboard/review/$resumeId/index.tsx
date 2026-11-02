@@ -277,6 +277,10 @@ function ReviewPage() {
 	}
 
 	const { resume, comments, evaluations, history } = data;
+
+	// Standard feedback already sent on this resume, so the composer can mark it instead of
+	// letting a reviewer send the same line again on a later round.
+	const sentContents = new Set(comments.map((c) => c.content));
 	const latestEval = evaluations[0];
 	const status =
 		resume.reviewStatus === "DRAFT"
@@ -400,7 +404,9 @@ function ReviewPage() {
 						<p>
 							{latestEval ? (
 								<>
-									<span className="font-semibold text-foreground tabular-nums">{latestEval.overallScore?.toFixed(1)}/5</span>{" "}
+									<span className="font-semibold text-foreground tabular-nums">
+										{latestEval.overallScore?.toFixed(1)}/5
+									</span>{" "}
 									{t`latest score`}
 								</>
 							) : (
@@ -440,7 +446,9 @@ function ReviewPage() {
 								onClick={() => setActiveTab(tab.id)}
 								className={cn(
 									"flex items-center gap-1.5 rounded-t-xl px-4 py-2.5 font-semibold text-sm transition-all",
-									activeTab === tab.id ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground",
+									activeTab === tab.id
+										? "bg-card text-primary shadow-sm"
+										: "text-muted-foreground hover:text-foreground",
 								)}
 							>
 								{tab.icon}
@@ -465,9 +473,7 @@ function ReviewPage() {
 							<div>
 								<p className="mb-1 font-medium text-muted-foreground text-xs">{t`Review status`}</p>
 								<div className="flex items-center gap-2">
-									<span
-										className={cn("rounded-full px-2.5 py-0.5 font-semibold text-xs", status.bg, status.text)}
-									>
+									<span className={cn("rounded-full px-2.5 py-0.5 font-semibold text-xs", status.bg, status.text)}>
 										{status.label}
 									</span>
 									{resume.reviewStatus === "FINALIZED_BY_FACULTY" && (
@@ -605,6 +611,7 @@ function ReviewPage() {
 									replyTo={replyTo}
 									onCancelReply={() => setReplyTo(null)}
 									inputRef={commentInputRef}
+									sentContents={sentContents}
 									isPending={addCommentMutation.isPending}
 									onSubmit={(input) =>
 										addCommentMutation.mutateAsync({
@@ -982,7 +989,9 @@ function EvaluatePanel({
 			<div className="flex flex-col items-center justify-center py-12 text-center">
 				<ListChecksIcon weight="duotone" className="mb-3 size-10 text-muted-foreground" />
 				<p className="font-semibold text-muted-foreground">No checklists available</p>
-				<p className="mt-1 text-muted-foreground text-sm">Go to the Checklists tab to create an evaluation checklist first.</p>
+				<p className="mt-1 text-muted-foreground text-sm">
+					Go to the Checklists tab to create an evaluation checklist first.
+				</p>
 			</div>
 		);
 	}
@@ -1019,8 +1028,8 @@ function EvaluatePanel({
 				<div className="space-y-3">
 					<p className="font-semibold text-muted-foreground text-xs uppercase tracking-widest">Evaluation Criteria</p>
 					<p className="-mt-1 text-muted-foreground text-xs">
-						Each item contributes a share of the final score based on its weight. Higher weight means a
-						higher score share.
+						Each item contributes a share of the final score based on its weight. Higher weight means a higher score
+						share.
 					</p>
 					{checklist.items.map((item) => {
 						const result = getItemResult(item.id);
@@ -1047,7 +1056,9 @@ function EvaluatePanel({
 										onClick={() => setItemResult(item.id, { passed: !result.passed })}
 										className={cn(
 											"rounded-xl px-3 py-1.5 font-semibold text-xs transition-all",
-											result.passed ? "bg-emerald-600 text-white" : "bg-border text-muted-foreground hover:bg-muted-foreground/30",
+											result.passed
+												? "bg-emerald-600 text-white"
+												: "bg-border text-muted-foreground hover:bg-muted-foreground/30",
 										)}
 									>
 										{result.passed ? "✓ Passed" : "✗ Not Passed"}
@@ -1060,9 +1071,7 @@ function EvaluatePanel({
 												onClick={() => setItemResult(item.id, { score: s })}
 												className={cn(
 													"h-7 w-7 rounded-lg font-bold text-xs transition-all",
-													result.score === s
-														? "bg-primary text-white"
-														: "bg-card text-muted-foreground hover:bg-muted",
+													result.score === s ? "bg-primary text-white" : "bg-card text-muted-foreground hover:bg-muted",
 												)}
 											>
 												{s}
@@ -1944,7 +1953,9 @@ function RevisionDiffOverlay({
 					<GitDiffIcon weight="duotone" className="size-5" />
 					<h2 className="font-bold text-foreground">Before &amp; After</h2>
 				</div>
-				<p className="text-muted-foreground text-xs">Comparing current resume against evaluation snapshot from {evalDate}</p>
+				<p className="text-muted-foreground text-xs">
+					Comparing current resume against evaluation snapshot from {evalDate}
+				</p>
 				<div className="ml-auto flex items-center gap-3">
 					<div className="flex items-center gap-2 rounded-xl bg-muted/50 px-3 py-1.5 text-xs">
 						<span className="font-bold text-emerald-600">+{added}</span>
@@ -1988,7 +1999,9 @@ function RevisionDiffOverlay({
 					<div className="flex h-full flex-col items-center justify-center text-center">
 						<CheckCircleIcon weight="duotone" className="mb-3 size-12 text-emerald-300" />
 						<p className="font-semibold text-muted-foreground">No changes found</p>
-						<p className="mt-1 text-muted-foreground text-sm">The resume content is identical to the evaluation snapshot.</p>
+						<p className="mt-1 text-muted-foreground text-sm">
+							The resume content is identical to the evaluation snapshot.
+						</p>
 					</div>
 				) : (
 					<div className="mx-auto max-w-3xl px-8 py-6">
@@ -2025,7 +2038,9 @@ function RevisionDiffOverlay({
 												line.type === "add" && "text-emerald-800",
 												line.type === "remove" && "text-red-700 line-through opacity-75",
 												line.type === "same" &&
-													(isHeader ? "font-bold text-muted-foreground text-xs uppercase tracking-widest" : "text-muted-foreground"),
+													(isHeader
+														? "font-bold text-muted-foreground text-xs uppercase tracking-widest"
+														: "text-muted-foreground"),
 											)}
 										>
 											{line.text}

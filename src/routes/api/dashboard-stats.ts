@@ -26,6 +26,7 @@ import {
 	getUnitSchemaTypes,
 } from "@/integrations/eng-labs";
 import type { EngLabsLearnerProfile } from "@/integrations/eng-labs/types";
+import { getSubmissionStatusByResumeIds } from "@/integrations/orpc/router/dashboard";
 import { env } from "@/utils/env";
 
 // ── Helper functions (same as dashboard.ts oRPC procedure) ──
@@ -67,20 +68,6 @@ async function getLatestEvaluationsByResumeIds(resumeIds: string[]) {
 		if (!latest.has(e.resumeId)) latest.set(e.resumeId, e.overallScore);
 	}
 	return latest;
-}
-
-async function getSubmissionStatusByResumeIds(resumeIds: string[]) {
-	if (resumeIds.length === 0) return new Map<string, boolean>();
-	const history = await db
-		.select({ resumeId: schema.resumeHistory.resumeId, action: schema.resumeHistory.action })
-		.from(schema.resumeHistory)
-		.where(inArray(schema.resumeHistory.resumeId, resumeIds))
-		.orderBy(desc(schema.resumeHistory.createdAt));
-	const statusMap = new Map<string, boolean>();
-	for (const h of history) {
-		if (!statusMap.has(h.resumeId)) statusMap.set(h.resumeId, h.action === "SUBMITTED");
-	}
-	return statusMap;
 }
 
 // ── Main handler ──
