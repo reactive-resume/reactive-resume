@@ -133,19 +133,30 @@ it("still shows a shared resume whose owner's username looks like an app page", 
 	expect(response.status).toBe(200);
 });
 
-it("gives a visitor at an address with no shared resume a way to the app's home, in their language", async () => {
-	const { loadPublicWebPage } = await import("@reactive-resume/api/features/resume/web-page");
-	vi.mocked(loadPublicWebPage).mockResolvedValue({ status: "unavailable" } as never);
-	const { serveResumePage } = await import("./resume-page");
+it.each([
+	["", undefined, "de-DE", "de-DE"],
+	["", "fr-FR", "de-DE", "fr-FR"],
+	["?locale=ja-JP", "fr-FR", "de-DE", "ja-JP"],
+	["", "zu-ZA", "de-DE", "en-US"],
+])(
+	"keeps explicit language ahead of the header on unavailable pages: %s %s",
+	async (search, saved, header, expected) => {
+		const { loadPublicWebPage } = await import("@reactive-resume/api/features/resume/web-page");
+		vi.mocked(loadPublicWebPage).mockResolvedValue({ status: "unavailable" } as never);
+		const { serveResumePage } = await import("./resume-page");
 
-	const response = await serveResumePage(
-		new Request("https://resume.example/unshared-user", { headers: { "accept-language": "de-DE" } }),
-		{ username: "unshared-user", primary: true },
-		"test",
-	);
+		const response = await serveResumePage(
+			new Request(`https://resume.example/unshared-user${search}`, {
+				headers: { "accept-language": header, ...(saved ? { cookie: `theme=light; locale=${saved}` } : {}) },
+			}),
+			{ username: "unshared-user", primary: true },
+			"test",
+		);
 
-	const html = await response.text();
-	expect(response.status).toBe(404);
-	expect(html).toMatch(/<a class="home" href="https:\/\/resume\.example\/">.*<\/a><\/main>/);
-	expect(html).toContain('lang="de-DE"');
-});
+		const html = await response.text();
+		expect(response.status).toBe(404);
+		expect(html).toMatch(/<a class="home" href="https:\/\/resume\.example\/">.*<\/a><\/main>/);
+		expect(html).toContain(`lang="${expected}"`);
+		expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+	},
+);

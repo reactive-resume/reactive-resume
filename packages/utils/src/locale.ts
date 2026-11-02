@@ -84,6 +84,18 @@ const pseudoLocale: Locale = "zu-ZA";
 
 export const supportedLocales: readonly Locale[] = localeSchema.options.filter((locale) => locale !== pseudoLocale);
 
+/** Follow ordered device/browser preferences without ever selecting the development pseudo-locale. */
+export function getPreferredLocale(languages: readonly string[]): Locale {
+	for (const language of languages) {
+		const tag = language.toLowerCase();
+		const exact = supportedLocales.find((locale) => locale.toLowerCase() === tag);
+		if (exact) return exact;
+		const sameLanguage = supportedLocales.find((locale) => locale.split("-")[0] === tag.split("-")[0]);
+		if (sameLanguage) return sameLanguage;
+	}
+	return defaultLocale;
+}
+
 /** hreflang alternates for a page: every real locale plus x-default. "sr-SP" isn't a valid region, so it's "sr". */
 export function getLocaleAlternates(pageUrl: string) {
 	const alternates = supportedLocales.map((locale) => ({

@@ -124,6 +124,20 @@ describe("web app fallback classification", () => {
 		expect(await unknown.text()).toContain('<div id="app">en-US</div>');
 	});
 
+	it("keeps shared HTML and its cache validators independent of browser language hints", async () => {
+		vi.mocked(fs.readFile).mockImplementation((path) =>
+			Promise.resolve(`<html><head></head><body>${String(path)}</body></html>`),
+		);
+		const german = await handleWebApp(new Request("https://rxresu.me/", { headers: { "accept-language": "de-DE" } }));
+		const french = await handleWebApp(new Request("https://rxresu.me/", { headers: { "accept-language": "fr-FR" } }));
+		const body = await german.text();
+		expect(body).toContain("home/en-US.html");
+		expect(await french.text()).toBe(body);
+		expect(german.headers.get("ETag")).toBe(french.headers.get("ETag"));
+		expect(german.headers.get("Vary")).toBe("Cookie");
+		expect(german.headers.get("Set-Cookie")).toBeNull();
+	});
+
 	it.each(["/", "/index.html"])(
 		"preserves request parameters in language links before JavaScript on %s",
 		async (path) => {
