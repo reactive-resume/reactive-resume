@@ -36,6 +36,35 @@ it("shows exact approved content only for structured pending requests", () => {
 	]);
 });
 
+it("keeps the saved story a proposal updates, so the card can show the change", () => {
+	const story = {
+		title: "Checkout rebuild",
+		situation: "Checkout failed often.",
+		task: "Own the fix.",
+		action: "Rebuilt it.",
+		result: "",
+		reflection: "",
+		tags: [],
+		factIds: ["fact-1"],
+	};
+	const message: UIMessage = {
+		id: "reply",
+		role: "assistant",
+		parts: [
+			{
+				type: "tool-save_story",
+				toolCallId: "story",
+				state: "approval-requested",
+				input: { ...story, id: "story-1" },
+				approval: { id: "story-approval" },
+			},
+		],
+	} as UIMessage;
+	expect(agentApprovalRequests(message)).toMatchObject([
+		{ id: "story-approval", kind: "story", story: { id: "story-1", title: "Checkout rebuild" } },
+	]);
+});
+
 it("preserves deduplicated retrieved sources after serialization and ignores failed tools and invented links", () => {
 	const message: UIMessage = {
 		id: "message",

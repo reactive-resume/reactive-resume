@@ -22,6 +22,7 @@ import {
 	useWebSearch,
 	WebResearchChip,
 } from "@/features/assistant/provider";
+import { usableStories } from "@/features/assistant/sent";
 import { useDeleteThread, useThreadTime, useThreadTitle } from "@/features/assistant/threads";
 import { StoryEditor } from "@/features/career/stories";
 import { Banner, Button, IconButton, ListRow, Sheet, Text, showToast, useTheme } from "@/ui";
@@ -68,6 +69,7 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 	const [chips, setChips] = useState({ memory: true, web: false });
 	const memory = useMemoryNote(chips.memory);
 	const facts = useQuery(orpc.career.facts.queryOptions({ input: { applicationId: application.id } }));
+	const stories = useQuery(orpc.career.stories.queryOptions({ input: { applicationId: application.id } }));
 	const title = useThreadTitle();
 	const time = useThreadTime();
 	const open = (id: string) => {
@@ -183,12 +185,35 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 							void threads.refetch();
 						}}
 						context={context}
+						// Recorded on each question as web does (coach-thread.tsx usedFor), for the Sent line on both.
+						sent={() => ({
+							facts: chips.memory
+								? (facts.data ?? [])
+										.filter((fact) => fact.status === "active")
+										.slice(0, 30)
+										.map((fact) => fact.id)
+								: [],
+							// The stories the server gives the coach, so Sent never counts one it left out.
+							stories: chips.memory
+								? usableStories(
+										(facts.data ?? []).filter((fact) => fact.status === "active"),
+										stories.data ?? [],
+									)
+										.slice(0, 8)
+										.map((story) => story.id)
+								: [],
+							preferences: chips.memory,
+							applications: false,
+							offers: [],
+							web: context.web === true,
+						})}
 						document={null}
 						disabled={!providers.hasAIProvider || stranded}
 						connection={label}
 						privacy={privacy}
 						remember={{ applicationId: application.id }}
 						facts={facts.data ?? []}
+						stories={stories.data ?? []}
 						storyEditor={({ story, onChange, onSaved, onClose }) => (
 							<StoryEditor
 								story={null}

@@ -383,7 +383,7 @@ it("marks a reply that ended early after a reopen, without crediting Knowledge t
 	const view = mount([asked, { id: "a-2", role: "assistant", parts: [] } as UIMessage]);
 	await screen.findByText("Stopped before answering.");
 	expect(screen.getByRole("button", { name: "Try again" })).toBeDefined();
-	expect(screen.queryByText("Used")).toBeNull();
+	expect(screen.queryByText("Sent")).toBeNull();
 	view.unmount();
 	mount([asked, textMessage("word0 word1 word27")]);
 	await screen.findByText("Stopped before the answer finished.");

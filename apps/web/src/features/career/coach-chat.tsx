@@ -297,6 +297,7 @@ export function ChatView(props: ChatViewProps) {
 		</>
 	);
 
+	const repeats = repeatsSent(messages);
 	return (
 		<div className="flex min-h-0 flex-1 flex-col">
 			{props.header(messages)}
@@ -318,6 +319,7 @@ export function ChatView(props: ChatViewProps) {
 										<MessageView
 											message={message}
 											question={questionBefore(messages, index)}
+											sentRepeats={repeats[index] ?? false}
 											streaming={busy && index === messages.length - 1}
 											enter={!initialIds.has(message.id)}
 											knowledge={knowledge}
@@ -330,6 +332,7 @@ export function ChatView(props: ChatViewProps) {
 											message={message}
 											disabled={readOnly || busy || index !== messages.length - 1}
 											facts={knowledge.all}
+											stories={knowledge.allStories}
 											storyEditor={storyEditor}
 											onDecision={(decision) => {
 												void addToolApprovalResponse(decision);
@@ -351,7 +354,7 @@ export function ChatView(props: ChatViewProps) {
 
 			<Composer
 				{...props}
-				privacy={props.privacy({ earlier, withheld: messages.length - earlier })}
+				privacy={(attached) => props.privacy({ earlier, withheld: messages.length - earlier, attached })}
 				streaming={busy}
 				disabled={readOnly}
 				ensureThread={() => Promise.resolve(threadId)}
@@ -366,12 +369,31 @@ export function ChatView(props: ChatViewProps) {
 const questionBefore = (messages: readonly UIMessage[], index: number) =>
 	messages.slice(0, index).findLast((message) => message.role === "user");
 
+/** What went with an answer's question, as a comparable key; null when nothing was recorded. */
+const sentKey = (question: UIMessage | undefined) => {
+	const parsed = usedSchema.safeParse(question?.metadata);
+	return parsed.success ? JSON.stringify(parsed.data.context) : null;
+};
+
+/** Per message: an answer whose question sent exactly what the answer before it sent. */
+const repeatsSent = (messages: readonly UIMessage[]) => {
+	const keys = messages.map((message, index) =>
+		message.role === "assistant" ? sentKey(questionBefore(messages, index)) : undefined,
+	);
+	return keys.map((key, index) => {
+		if (typeof key !== "string") return false;
+		return keys.slice(0, index).findLast((previous) => previous !== undefined) === key;
+	});
+};
+
 // ---- One message ----
 
 type MessageViewProps = {
 	message: UIMessage;
 	/** The user message before this answer, which records what it shared. */
 	question: UIMessage | undefined;
+	/** It sent the same as the answer before: the Sent row moves behind a button in the Copy row. */
+	sentRepeats: boolean;
 	streaming: boolean;
 	enter: boolean;
 	knowledge: Knowledge;
@@ -386,6 +408,7 @@ type MessageViewProps = {
 const MessageView = memo(function MessageView({
 	message,
 	question,
+	sentRepeats,
 	streaming,
 	enter,
 	knowledge,
@@ -396,13 +419,17 @@ const MessageView = memo(function MessageView({
 }: MessageViewProps) {
 	const text = textOf(message);
 	const scoped = applicationId !== null;
+	const [showSent, setShowSent] = useState(false);
 
 	if (message.role === "user") {
 		const files = partsOf(message).filter((part) => part.type === "file") as Array<Part & { filename?: string }>;
 		return (
 			<div className={cn("group/message grid justify-items-end gap-1", enter && ENTER_CLASS)}>
 				{text && (
-					<p className="max-w-[80%] rounded-lg bg-sunken px-3.5 py-2.5 text-sm leading-[21px] whitespace-pre-wrap">
+					<p
+						dir="auto"
+						className="max-w-[80%] rounded-lg bg-sunken px-3.5 py-2.5 text-sm leading-[21px] whitespace-pre-wrap"
+					>
 						{text}
 					</p>
 				)}
@@ -468,8 +495,9 @@ const MessageView = memo(function MessageView({
 				</div>
 			)}
 
-			{/* An answer that never came used nothing; a stopped one still shows what it was given. */}
-			{!streaming && used && (text || stories.length > 0) && (
+			{/* An answer that never came was sent nothing; a stopped one still shows what it was given. Repeats of the
+			    answer before stay one click away, so a long thread doesn't list the same row under every answer. */}
+			{!streaming && used && (text || stories.length > 0) && (!sentRepeats || applications.length > 0 || showSent) && (
 				<UsedChips used={used} applications={scoped ? [] : applications} knowledge={knowledge} />
 			)}
 
@@ -500,6 +528,17 @@ const MessageView = memo(function MessageView({
 						<Icon name="copy" size={16} />
 						<Trans>Copy</Trans>
 					</Button>
+					{sentRepeats && used && applications.length === 0 && (
+						<Button
+							size="sm"
+							variant="ghost"
+							className="text-ink-2"
+							aria-expanded={showSent}
+							onClick={() => setShowSent((current) => !current)}
+						>
+							<Trans>What was sent</Trans>
+						</Button>
+					)}
 					<AddToResume text={text} applicationId={applicationId} company={company} />
 				</div>
 			)}
@@ -507,7 +546,7 @@ const MessageView = memo(function MessageView({
 	);
 });
 
-// ---- "Used": what was shared for this answer, each group opening the exact items ----
+// ---- "Sent": what went with the question for this answer, each group opening the exact items ----
 
 type UsedChipsProps = {
 	used: Used["context"];
@@ -620,7 +659,7 @@ function UsedChips({ used, applications, knowledge }: UsedChipsProps) {
 	return (
 		<div className="flex flex-wrap items-center gap-1.5">
 			<span className="me-0.5 text-xs text-ink-3">
-				<Trans>Used</Trans>
+				<Trans context="What went to the AI provider with a message">Sent</Trans>
 			</span>
 			{chips}
 		</div>
@@ -834,6 +873,7 @@ function AutoRemembered({ id, text, knowledge, company }: AutoRememberedProps) {
 	const queryClient = useQueryClient();
 	const [undone, setUndone] = useState(false);
 	const [sharing, setSharing] = useState(false);
+	const [expanded, setExpanded] = useState(false);
 	const fact = knowledge.all.find((item) => item.id === id);
 	if (undone || !fact) return null;
 
@@ -861,34 +901,52 @@ function AutoRemembered({ id, text, knowledge, company }: AutoRememberedProps) {
 	};
 
 	const name = company ?? fact.company;
+	// Icon in its own column, the quote beside it (two lines until Show all) with its actions inline after it.
+	const long = text.length > 160;
 	return (
-		<p className="flex flex-wrap items-center gap-1.5 text-sm text-ink-2">
-			<Icon name="check-circle" size={18} className="text-accent-text" />
-			{fact.applicationId !== null && name ? (
-				<Trans>
-					Remembered for {name} only: “{text}”
-				</Trans>
-			) : (
-				<Trans>Remembered: “{text}”</Trans>
-			)}
-			{fact.applicationId !== null && (
-				<>
-					<span aria-hidden="true">·</span>
-					<button
-						type="button"
-						disabled={sharing}
-						className="font-medium text-ink underline underline-offset-2 disabled:opacity-60"
-						onClick={() => void share()}
-					>
-						<Trans>Use for all applications</Trans>
-					</button>
-				</>
-			)}
-			<span aria-hidden="true">·</span>
-			<button type="button" className="font-medium text-ink underline underline-offset-2" onClick={() => void undo()}>
-				<Trans>Undo</Trans>
-			</button>
-		</p>
+		<div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-1.5 text-sm text-ink-2">
+			<Icon name="check-circle" size={18} className="mt-0.5 text-accent-text" />
+			<p dir="auto">
+				<span className={cn(long && !expanded && "line-clamp-2 block")}>
+					{fact.applicationId !== null && name ? (
+						<Trans>
+							Remembered for {name} only: “{text}”
+						</Trans>
+					) : (
+						<Trans>Remembered: “{text}”</Trans>
+					)}
+				</span>{" "}
+				{long && (
+					<>
+						<button
+							type="button"
+							aria-expanded={expanded}
+							className="font-medium text-ink underline underline-offset-2"
+							onClick={() => setExpanded((current) => !current)}
+						>
+							{expanded ? <Trans>Show less</Trans> : <Trans>Show all</Trans>}
+						</button>{" "}
+						<span aria-hidden="true">·</span>{" "}
+					</>
+				)}
+				{fact.applicationId !== null && (
+					<>
+						<button
+							type="button"
+							disabled={sharing}
+							className="font-medium text-ink underline underline-offset-2 disabled:opacity-60"
+							onClick={() => void share()}
+						>
+							<Trans>Use for all applications</Trans>
+						</button>{" "}
+						<span aria-hidden="true">·</span>{" "}
+					</>
+				)}
+				<button type="button" className="font-medium text-ink underline underline-offset-2" onClick={() => void undo()}>
+					<Trans>Undo</Trans>
+				</button>
+			</p>
+		</div>
 	);
 }
 
@@ -960,6 +1018,7 @@ function RememberMessage({ message, applicationId, company }: RememberMessagePro
 					<Trans>Remember as a fact in Knowledge</Trans>
 				</label>
 				<Textarea
+					dir="auto"
 					id={`${message.id}-remember`}
 					value={text}
 					maxLength={2000}

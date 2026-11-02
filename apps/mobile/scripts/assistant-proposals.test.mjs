@@ -466,6 +466,7 @@ test("native chat records real successes and explicit history changes, never ref
 			"./proposals": proposals,
 			"./recovery": load("recovery"),
 			"./tool-approvals": {},
+			"./sent": { sentLines: (messages) => messages.map(() => null) },
 			"@/api/client": {
 				client: {
 					agent: {

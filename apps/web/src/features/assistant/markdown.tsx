@@ -9,7 +9,7 @@ import remarkGfm from "remark-gfm";
  */
 export const AssistantMarkdown = function AssistantMarkdown({ text }: { text: string }) {
 	return (
-		<div className="typeset typeset-chat min-w-0">
+		<div dir="auto" className="typeset typeset-chat min-w-0">
 			<ReactMarkdown
 				skipHtml
 				remarkPlugins={[remarkGfm]}
