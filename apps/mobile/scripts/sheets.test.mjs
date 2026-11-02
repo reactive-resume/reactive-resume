@@ -31,6 +31,7 @@ const theme = {
 const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 const mocks = {
 	react,
+	"@/shell/key-commands": { useKeyCommandBlocker() {} },
 	"react-native": {
 		AccessibilityInfo: { isScreenReaderEnabled: async () => false, addEventListener() {} },
 		Platform: { OS: "ios" },

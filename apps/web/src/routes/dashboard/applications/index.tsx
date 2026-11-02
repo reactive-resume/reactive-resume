@@ -1,6 +1,7 @@
 import type { Application, ApplicationSummary } from "@/features/applications/types";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
+import { useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, stripSearchParams, useNavigate } from "@tanstack/react-router";
 import { useCallback, useDeferredValue, useEffect, useRef, useState } from "react";
@@ -105,6 +106,8 @@ function RouteComponent() {
 	const phone = useBreakpoint() === "mobile";
 	// Typing filters at once; the URL only seeds the search.
 	const [query, setQuery] = useState(q);
+	const pageRef = useRef<HTMLDivElement>(null);
+	const searchRef = useRef<HTMLInputElement>(null);
 	const [capture, setCapture] = useState(takePostingCapture);
 	const [adding, setAdding] = useState(!!capture);
 	const [importing, setImporting] = useState(false);
@@ -118,6 +121,14 @@ function RouteComponent() {
 	const [viewSwitched, setViewSwitched] = useState(false);
 
 	const { data: applications, isPending, isError, isFetching, refetch } = useQuery(applicationsListQueryOptions());
+	useHotkey(
+		"/",
+		(event) => {
+			if (event.keyCode === 229) return;
+			searchRef.current?.focus();
+		},
+		{ enabled: Boolean(applications?.length), target: pageRef },
+	);
 	const queryClient = useQueryClient();
 	const { data: fullApplications } = useQuery({ ...applicationsFullListQueryOptions(), enabled: exporting });
 
@@ -243,7 +254,11 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5">
+		<div
+			ref={pageRef}
+			tabIndex={-1}
+			className="mx-auto grid w-full max-w-[1180px] content-start gap-5 px-8 py-8 max-sm:px-4 max-sm:py-5"
+		>
 			<PageHeader
 				title={<Trans>Applications</Trans>}
 				actions={
@@ -312,7 +327,9 @@ function RouteComponent() {
 								className="pointer-events-none absolute start-2.5 top-1/2 -translate-y-1/2 text-ink-3"
 							/>
 							<Input
+								ref={searchRef}
 								type="search"
+								aria-keyshortcuts="/"
 								aria-label={t`Search applications`}
 								placeholder={t`Search role, company or contact`}
 								value={query}

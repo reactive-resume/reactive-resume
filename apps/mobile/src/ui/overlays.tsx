@@ -31,6 +31,7 @@ import { haptics, useIsWide, useReducedMotion } from "./motion";
 import { useWindowSafeAreaInsets } from "./safe-area";
 import { Text } from "./text";
 import { useTheme } from "./theme";
+import { useKeyCommandBlocker } from "@/shell/key-commands";
 
 const android = Platform.OS === "android";
 
@@ -102,6 +103,7 @@ export function Sheet({
 	scroll = true,
 	dismissible = true,
 }: SheetProps) {
+	useKeyCommandBlocker(open);
 	const { t } = useLingui();
 	const { colors, radius, size, space } = useTheme();
 	const wide = useIsWide();
@@ -417,6 +419,7 @@ export function ConfirmDialog({
 	onConfirm,
 	onCancel,
 }: ConfirmDialogProps) {
+	useKeyCommandBlocker(open);
 	const { t } = useLingui();
 	const { colors, radius, shadows, space } = useTheme();
 	const { width, height, fontScale } = useWindowDimensions();
