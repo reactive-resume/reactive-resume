@@ -26,6 +26,7 @@ import { openAssistantFrom } from "@/features/assistant/open";
 import { useNewDocumentsStore } from "@/features/documents/new-documents";
 import {
 	savePendingChanges,
+	saveResumeMetadata,
 	useCurrentBuilderResumeSelector,
 	useIsResumeLocked,
 	usePatchResume,
@@ -333,11 +334,22 @@ const newSkill = (name: string): SkillItem => ({
 function useLinkApplication() {
 	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
 	const patchResume = usePatchResume();
-	const { mutateAsync, isPending } = useMutation(orpc.documents.linkApplication.mutationOptions());
+	const { mutateAsync, isPending } = useMutation({
+		mutationFn: (applicationId: string | null) =>
+			// The next autosave builds on the linked revision instead of conflicting with it.
+			saveResumeMetadata(resumeId, async (expectedUpdatedAt, options) => {
+				const resume = await orpc.documents.linkApplication.call(
+					{ type: "resume", id: resumeId, applicationId, expectedUpdatedAt },
+					options,
+				);
+				if (!resume) throw new Error(t`Couldn't link the application. Try again.`);
+				return resume;
+			}),
+	});
 
 	const link = async (applicationId: string | null) => {
 		try {
-			await mutateAsync({ type: "resume", id: resumeId, applicationId });
+			await mutateAsync(applicationId);
 			patchResume((resume) => {
 				resume.applicationId = applicationId;
 			});

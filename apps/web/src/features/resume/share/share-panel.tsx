@@ -350,8 +350,15 @@ function PasswordRow() {
 	const patchResume = usePatchResume();
 	const confirm = useConfirm();
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const { mutateAsync: setPassword } = useMutation(orpc.resume.setPassword.mutationOptions());
-	const { mutateAsync: removePassword } = useMutation(orpc.resume.removePassword.mutationOptions());
+	// Like the switches: through the autosave owner, so the next autosave builds on the password's revision.
+	const setPassword = (password: string) =>
+		saveResumeMetadata(resume.id, (expectedUpdatedAt, options) =>
+			orpc.resume.setPassword.call({ id: resume.id, password, expectedUpdatedAt }, options),
+		);
+	const removePassword = () =>
+		saveResumeMetadata(resume.id, (expectedUpdatedAt, options) =>
+			orpc.resume.removePassword.call({ id: resume.id, expectedUpdatedAt }, options),
+		);
 
 	const turnOff = async () => {
 		const confirmed = await confirm(t`Remove the password?`, {
@@ -360,7 +367,7 @@ function PasswordRow() {
 		});
 		if (!confirmed) return;
 		try {
-			await removePassword({ id: resume.id });
+			await removePassword();
 			patchResume((draft) => {
 				draft.hasPassword = false;
 			});
@@ -388,7 +395,7 @@ function PasswordRow() {
 				<ResumePasswordDialog
 					onClose={() => setDialogOpen(false)}
 					onSubmit={async (password) => {
-						await setPassword({ id: resume.id, password });
+						await setPassword(password);
 						patchResume((draft) => {
 							draft.hasPassword = true;
 						});

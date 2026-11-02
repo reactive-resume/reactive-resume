@@ -18,8 +18,8 @@ import {
 	useIsResumeLocked,
 	usePatchResume,
 } from "@/features/resume/builder/draft";
+import { setResumeLocked } from "@/features/resume/builder/lock";
 import { getResumeErrorMessage } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
 
 /**
  * Write: the Basics card, then the outline of sections in print order with their entries, then Add
@@ -119,19 +119,19 @@ function ImportedNote() {
 function LockedNote() {
 	const resume = useCurrentResume();
 	const patchResume = usePatchResume();
-	const { mutate: setLocked, isPending } = useMutation(orpc.resume.setLocked.mutationOptions());
+	const { mutate: setLocked, isPending } = useMutation({
+		// The next autosave builds on the unlocked revision instead of conflicting with it.
+		mutationFn: (id: string) => setResumeLocked(id, false),
+	});
 
 	const unlock = () =>
-		setLocked(
-			{ id: resume.id, isLocked: false },
-			{
-				onSuccess: () =>
-					patchResume((draft) => {
-						draft.isLocked = false;
-					}),
-				onError: (error) => toast.add({ type: "error", description: getResumeErrorMessage(error) }),
-			},
-		);
+		setLocked(resume.id, {
+			onSuccess: () =>
+				patchResume((draft) => {
+					draft.isLocked = false;
+				}),
+			onError: (error) => toast.add({ type: "error", description: getResumeErrorMessage(error) }),
+		});
 
 	return (
 		<Alert variant="info" className="items-center">

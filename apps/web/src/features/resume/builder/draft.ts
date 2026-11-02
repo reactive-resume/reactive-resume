@@ -110,6 +110,8 @@ type Runtime = {
 	queryClient?: QueryClient;
 	hasPendingLocalChanges: boolean;
 	isSaving: boolean;
+	/** Settles when the body save on the wire finishes, whatever its answer. */
+	saveSettled?: Promise<void> | undefined;
 	metadataWrite?: Promise<Resume> | undefined;
 	metadataWriting?: boolean | undefined;
 	/** Version of the data we accepted, never metadata fetched while local edits are pending. */
@@ -389,6 +391,10 @@ async function flushResumeSave(id: string) {
 	const submittedApplications = runtime.pendingProposalApplications;
 	runtime.pendingResume = undefined;
 	runtime.isSaving = true;
+	let settle = () => {};
+	runtime.saveSettled = new Promise<void>((resolve) => {
+		settle = resolve;
+	});
 
 	try {
 		const updated = (await orpc.resume.update.call(
@@ -462,6 +468,7 @@ async function flushResumeSave(id: string) {
 			runtime.slowSaveToastId = undefined;
 		}
 		runtime.isSaving = false;
+		settle();
 		if (runtime.pendingResume && !runtime.saveFailed) void flushResumeSave(id);
 	}
 }
@@ -950,6 +957,11 @@ function trackResumeMetadataWrite(id: string) {
 export async function saveResumeMetadata<T extends Resume>(
 	id: string,
 	write: (expectedUpdatedAt: Date | undefined, options?: { signal: AbortSignal }) => Promise<T>,
+	/**
+	 * `savePending: false` sends the write without saving pending edits first: unlocking, when a lock from elsewhere
+	 * is what stopped them. Its answer becomes the base only when its data is the base's (see trackResumeMetadataWrite).
+	 */
+	{ savePending = true }: { savePending?: boolean } = {},
 ): Promise<T> {
 	const runtime = runtimes.get(id);
 	if (!runtime?.baseUpdatedAt) throw new DOMException("", "AbortError");
@@ -979,7 +991,21 @@ export async function saveResumeMetadata<T extends Resume>(
 	const acknowledge = trackResumeMetadataWrite(id);
 	const pending = (runtime.metadataWrite?.catch(() => undefined) ?? Promise.resolve()).then(async () => {
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
-		if (!(await savePendingChanges(id))) throw new Error(t`Couldn't save your changes. Try again before continuing.`);
+		if (savePending && !(await savePendingChanges(id)))
+			throw new Error(t`Couldn't save your changes. Try again before continuing.`);
+		// Unchecked writes still wait for a body save already on the wire: its older answer must not land after this
+		// write's and move the base back.
+		if (!savePending && runtime.isSaving && runtime.saveSettled) {
+			let timer: ReturnType<typeof setTimeout> | undefined;
+			const stalled = new Promise<"stalled">((resolve) => {
+				timer = setTimeout(() => resolve("stalled"), SAVE_WAIT_MS);
+			});
+			const settled = await Promise.race([runtime.saveSettled.then(() => "settled" as const), stalled]);
+			clearTimeout(timer);
+			// Nothing is sent while an older save may still land after it.
+			if (settled === "stalled")
+				throw new DOMException(t`Saving is taking longer than expected. Your changes are still open.`, "TimeoutError");
+		}
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
 		runtime.metadataWriting = true;
 		try {
