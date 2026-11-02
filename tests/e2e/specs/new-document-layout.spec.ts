@@ -138,6 +138,7 @@ for (const lookup of ["empty", "ready", "failed"] as const) {
 					failLookup = false;
 					await dialog.getByRole("button", { name: "Try again", exact: true }).click();
 					await expect(dialog.getByRole("alert")).toHaveCount(0);
+					await expect(dialog.getByRole("status")).toHaveCount(0);
 					expect(returnedProviders).toEqual([]);
 					const recovered = await settledBoxes(dialog, targets);
 					for (const [index, box] of recovered.entries()) {

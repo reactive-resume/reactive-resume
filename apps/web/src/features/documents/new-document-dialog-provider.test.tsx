@@ -151,11 +151,19 @@ it("keeps lookup failure recovery available on New and retries without creating 
 	mount();
 	await screen.findByRole("alert");
 	expect(screen.getByText("Couldn't load AI connections. Your saved connections haven't changed.")).toBeVisible();
-	api.providers.mockResolvedValue([]);
+	let finishLookup = () => {};
+	api.providers.mockReturnValue(
+		new Promise((resolve) => {
+			finishLookup = () => resolve([]);
+		}),
+	);
 	const lookupCalls = api.providers.mock.calls.length;
 	fireEvent.click(screen.getByRole("button", { name: "Try again" }));
-	await vi.waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+	await screen.findByRole("status", { name: "Loading AI connections…" });
 	expect(api.providers.mock.calls.length).toBeGreaterThan(lookupCalls);
+	await act(async () => finishLookup());
+	await vi.waitFor(() => expect(screen.queryByRole("status")).toBeNull());
+	expect(screen.queryByRole("alert")).toBeNull();
 	expect(screen.getByRole("button", { name: /Import a resume/ })).toBeEnabled();
 	expect(screen.getByRole("button", { name: /Start blank/ })).toBeEnabled();
 	expect(api.importResume).not.toHaveBeenCalled();
