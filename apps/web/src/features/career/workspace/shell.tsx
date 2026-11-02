@@ -22,7 +22,6 @@ import { getInitials } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { useOverlayHistory, useSavedItems } from "../hooks";
 import { CareerLoadError } from "../load-state";
-import { useRemoving } from "../removing";
 import { CountdownChip, Eyebrow, minutesUntil, tabLabel, useCareerTime, useNow } from "../shared";
 import { ApplyTab } from "./apply";
 import { CoachSheet } from "./coach-sheet";
@@ -126,8 +125,7 @@ export function Workspace({ applicationId, tab: requested, search }: WorkspacePr
 	const query = useQuery(orpc.applications.getById.queryOptions({ input: { id: applicationId } }));
 	const saved = useSavedItems(applicationId);
 	// Items being deleted (Undo still offered) are already gone from the list: leave them out of the badge too.
-	const removing = useRemoving((state) => state.ids);
-	const savedCount = (saved.data ?? []).filter((item) => !removing.has(item.id)).length;
+	const savedCount = saved.data?.length ?? 0;
 	const workspace = useQuery(orpc.career.workspace.queryOptions({ input: { applicationId } }));
 	const overlay = useOverlayHistory();
 	const application = query.data;

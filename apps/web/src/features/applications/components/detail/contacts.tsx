@@ -1,7 +1,7 @@
 import type { Contact } from "@reactive-resume/schema/applications/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { contactSchema } from "@reactive-resume/schema/applications/data";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
@@ -13,9 +13,16 @@ const EMPTY_CONTACT = { name: "", role: "", type: "", email: "", phone: "" };
 
 type ContactsProps = { contacts: Contact[]; disabled: boolean; onChange: (contacts: Contact[]) => void };
 
+const contactKey = (contact: Contact) =>
+	JSON.stringify([contact.name, contact.role ?? "", contact.type ?? "", contact.email ?? "", contact.phone ?? ""]);
+const sameContact = (a: Contact | undefined, b: Contact | undefined) => !!a && !!b && contactKey(a) === contactKey(b);
+
 /** The Contact cell: the primary contact (the first), and the full list, with add and remove, in a popover. */
 export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
-	const [primary, ...others] = contacts;
+	// A removed contact hides at once, here and in the list, and is saved away when its Undo toast closes.
+	const [removing, setRemoving] = useState<Contact | null>(null);
+	const shown = removing ? contacts.filter((contact) => contact !== removing) : contacts;
+	const [primary, ...others] = shown;
 
 	return (
 		<Popover>
@@ -27,23 +34,39 @@ export function Contacts({ contacts, disabled, onChange }: ContactsProps) {
 				<h3 className="text-sm font-semibold">
 					<Trans>Contacts</Trans>
 				</h3>
-				<ContactList contacts={contacts} disabled={disabled} onChange={onChange} />
+				<ContactList
+					contacts={contacts}
+					disabled={disabled}
+					onChange={onChange}
+					removing={removing}
+					onRemoving={setRemoving}
+				/>
 			</PopoverContent>
 		</Popover>
 	);
 }
 
-function ContactList({ contacts, disabled, onChange }: ContactsProps) {
+type ContactListProps = ContactsProps & {
+	removing: Contact | null;
+	onRemoving: (contact: Contact | null) => void;
+};
+
+function ContactList({ contacts, disabled, onChange, removing, onRemoving }: ContactListProps) {
 	const id = useId();
 	const [adding, setAdding] = useState(false);
-	// The contact being corrected, by position; the same form opens prefilled.
-	const [editing, setEditing] = useState<number | null>(null);
+	// The contact being corrected: its position, and what it said when the form opened.
+	const [editing, setEditing] = useState<{ index: number; original: Contact } | null>(null);
 	const [draft, setDraft] = useState(EMPTY_CONTACT);
 	const [error, setError] = useState("");
-	// A removed contact hides at once and is saved away when its Undo toast closes.
-	const [removing, setRemoving] = useState<Contact | null>(null);
 	const shown = contacts.filter((contact) => contact !== removing);
 	const formOpen = adding || editing !== null;
+	// Until a removal's Undo closes, the list it will save is fixed; changes made meanwhile would be overwritten.
+	const locked = disabled || removing !== null;
+	// The removal saves against the latest list, not the one it started from.
+	const latest = useRef(contacts);
+	useEffect(() => {
+		latest.current = contacts;
+	}, [contacts]);
 
 	const close = () => {
 		setDraft(EMPTY_CONTACT);
@@ -57,10 +80,14 @@ function ContactList({ contacts, disabled, onChange }: ContactsProps) {
 		// Checked with the API's schema here, so a mistyped email is caught before the draft is thrown away.
 		const parsed = contactSchema.safeParse(draft);
 		if (!parsed.success) return setError(t`Enter a valid email address.`);
+		// Contacts are saved by position. If the list changed while the form was open (another tab or device), that
+		// position may hold someone else now: stop rather than overwrite them.
+		if (editing && !sameContact(contacts[editing.index], editing.original))
+			return setError(t`This contact changed somewhere else. Cancel and edit it again.`);
 		onChange(
 			editing === null
 				? [...contacts, parsed.data]
-				: contacts.map((contact, index) => (index === editing ? parsed.data : contact)),
+				: contacts.map((contact, index) => (index === editing.index ? parsed.data : contact)),
 		);
 		close();
 	};
@@ -77,17 +104,19 @@ function ContactList({ contacts, disabled, onChange }: ContactsProps) {
 		});
 		setError("");
 		setAdding(false);
-		setEditing(index);
+		setEditing({ index, original: contact });
 	};
 
 	const remove = (contact: Contact) => {
-		setRemoving(contact);
+		onRemoving(contact);
 		withUndo({
 			description: t`Removed ${contact.name}`,
-			onUndo: () => setRemoving(null),
+			onUndo: () => onRemoving(null),
 			commit: () => {
-				onChange(contacts.filter((item) => item !== contact));
-				setRemoving(null);
+				const current = latest.current;
+				const at = current.findIndex((item) => item === contact || sameContact(item, contact));
+				if (at !== -1) onChange(current.filter((_, index) => index !== at));
+				onRemoving(null);
 			},
 		});
 	};
@@ -141,7 +170,7 @@ function ContactList({ contacts, disabled, onChange }: ContactsProps) {
 							size="icon-xs"
 							variant="ghost"
 							className="touch-target relative"
-							disabled={disabled || formOpen}
+							disabled={locked || formOpen}
 							aria-label={t`Edit ${contact.name}`}
 							onClick={() => edit(index)}
 						>
@@ -151,7 +180,7 @@ function ContactList({ contacts, disabled, onChange }: ContactsProps) {
 							size="icon-xs"
 							variant="ghost"
 							className="touch-target relative"
-							disabled={disabled || formOpen}
+							disabled={locked || formOpen}
 							aria-label={t`Remove ${contact.name}`}
 							onClick={() => remove(contact)}
 						>
@@ -201,7 +230,7 @@ function ContactList({ contacts, disabled, onChange }: ContactsProps) {
 					</div>
 				</form>
 			) : (
-				<Button size="sm" variant="ghost" className="w-fit" disabled={disabled} onClick={() => setAdding(true)}>
+				<Button size="sm" variant="ghost" className="w-fit" disabled={locked} onClick={() => setAdding(true)}>
 					<Icon name="plus" size={16} />
 					<Trans>Add contact</Trans>
 				</Button>

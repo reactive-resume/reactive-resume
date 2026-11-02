@@ -8,7 +8,7 @@ import type {
 } from "@reactive-resume/schema/applications/data";
 import { useLingui } from "@lingui/react/macro";
 import { openBrowserAsync } from "expo-web-browser";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Linking, View } from "react-native";
 import { contactSchema } from "@reactive-resume/schema/applications/data";
 import { followUpInstant, isDateOnlyFollowUp } from "@reactive-resume/schema/applications/follow-up";
@@ -470,14 +470,23 @@ function PostingBody({ application, onClose }: Omit<ApplicationContentSheetProps
 const EMPTY_CONTACT = { name: "", role: "", type: "", email: "", phone: "" };
 
 /** Contacts: the list with remove, and a form to add one, checked with the API's schema before saving. */
+const contactKey = (contact: Contact) =>
+	JSON.stringify([contact.name, contact.role ?? "", contact.type ?? "", contact.email ?? "", contact.phone ?? ""]);
+const sameContact = (a: Contact | undefined, b: Contact | undefined) => !!a && !!b && contactKey(a) === contactKey(b);
+
 export function ContactsSheet({ application, open, onClose }: ApplicationContentSheetProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { update } = useApplicationMutations();
 	const [draft, setDraft] = useState(EMPTY_CONTACT);
 	const [error, setError] = useState("");
-	// The contact being corrected, by position; the form below fills with it (web contacts.tsx).
-	const [editing, setEditing] = useState<number | null>(null);
+	// The contact being corrected: its position, and what it said when the form opened (web contacts.tsx).
+	const [editing, setEditing] = useState<{ index: number; original: Contact } | null>(null);
+	// Undo reinserts into the list as it is then, not the list from before the removal.
+	const latest = useRef(application.contacts);
+	useEffect(() => {
+		latest.current = application.contacts;
+	}, [application.contacts]);
 	const save = (contacts: Contact[], onSuccess = () => {}) =>
 		update.mutate(
 			{ id: application.id, contacts },
@@ -490,10 +499,13 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 	const add = () => {
 		const parsed = contactSchema.safeParse(draft);
 		if (!parsed.success) return setError(t`Enter a valid email address.`);
+		// Saved by position: if the list changed since the form opened, that position may be someone else now.
+		if (editing && !sameContact(application.contacts[editing.index], editing.original))
+			return setError(t`This contact changed somewhere else. Cancel and edit it again.`);
 		const next =
 			editing === null
 				? [...application.contacts, parsed.data]
-				: application.contacts.map((contact, index) => (index === editing ? parsed.data : contact));
+				: application.contacts.map((contact, index) => (index === editing.index ? parsed.data : contact));
 		save(next, () => {
 			setDraft(EMPTY_CONTACT);
 			setEditing(null);
@@ -503,7 +515,7 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 		const contact = application.contacts[index];
 		if (!contact) return;
 		setError("");
-		setEditing(index);
+		setEditing({ index, original: contact });
 		setDraft({
 			name: contact.name,
 			role: contact.role,
@@ -512,14 +524,27 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 			phone: contact.phone,
 		});
 	};
-	// Removing saves at once, with Undo putting the list back as it was.
+	// Removing saves at once. Undo puts the contact back where it was in the list as it is then, so a contact added or
+	// edited after the removal survives.
 	const remove = (index: number) => {
-		const before = application.contacts;
-		const contact = before[index];
+		const contact = application.contacts[index];
 		if (!contact) return;
+		if (editing) {
+			setEditing(null);
+			setDraft(EMPTY_CONTACT);
+			setError("");
+		}
 		save(
-			before.filter((_, i) => i !== index),
-			() => showToast({ message: t`Removed ${contact.name}`, undo: () => save(before) }),
+			application.contacts.filter((_, i) => i !== index),
+			() =>
+				showToast({
+					message: t`Removed ${contact.name}`,
+					undo: () => {
+						const current = latest.current;
+						if (current.some((item) => sameContact(item, contact))) return;
+						save([...current.slice(0, index), contact, ...current.slice(index)]);
+					},
+				}),
 		);
 	};
 

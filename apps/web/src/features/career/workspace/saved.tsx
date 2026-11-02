@@ -49,7 +49,6 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 	const saved = useSavedItems(application.id);
 	const remove = useMutation(orpc.career.deleteSavedItem.mutationOptions());
 	const [filter, setFilter] = useState<SavedItemKind | null>(null);
-	const removing = useRemoving((state) => state.ids);
 	const { add: hide, drop: unhide } = useRemoving.getState();
 	const [expanded, setExpanded] = useState<string | null>(null);
 
@@ -61,7 +60,8 @@ export function SavedTab({ application, go }: WorkspaceTabProps) {
 			</div>
 		);
 
-	const items = (saved.data ?? []).filter((item) => !removing.has(item.id));
+	// useSavedItems already leaves out items whose Undo is still showing.
+	const items = saved.data ?? [];
 	const present = KINDS.filter(({ kind }) => items.some((item) => item.data.kind === kind));
 	const shown = items.filter((item) => filter === null || item.data.kind === filter);
 
