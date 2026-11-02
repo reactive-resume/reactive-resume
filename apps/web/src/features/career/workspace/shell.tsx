@@ -529,6 +529,7 @@ function ContextColumn({ application, interview, now, onEdit }: ContextColumnPro
 			end: new Date(start.getTime() + upcoming.durationMinutes * 60_000),
 			...(upcoming.location ? { location: upcoming.location } : {}),
 			description: [people.join("\n"), upcoming.notes].filter(Boolean).join("\n\n"),
+			alarmMinutes: 60,
 		});
 		downloadWithAnchor(
 			new Blob([ics], { type: "text/calendar" }),
