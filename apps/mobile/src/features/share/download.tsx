@@ -82,9 +82,14 @@ export function DownloadTab({ resume, offline }: DownloadProps) {
 					if (latest.conflict || !["saved", "idle"].includes(latest.status))
 						throw new Error(t`Save the cover letter before exporting it.`);
 				}
-				const savedLetter = await client.coverLetters.getById({ id: linked.coverLetterId });
+				// Read once: PDF renders from it, the other formats take its language, and every format takes its name. Only
+				// the name needs it for JSON, so a failed read there falls back to an English name rather than no file.
+				const savedLetter = await client.coverLetters.getById({ id: linked.coverLetterId }).catch((cause: unknown) => {
+					if (chosen === "json") return null;
+					throw cause;
+				});
 				const composed =
-					chosen === "pdf"
+					chosen === "pdf" && savedLetter
 						? composeCoverLetter(savedLetter, await letterWords(savedLetter.style.metadata.page.locale))
 						: null;
 
@@ -92,15 +97,18 @@ export function DownloadTab({ resume, offline }: DownloadProps) {
 					directory,
 					id: linked.coverLetterId,
 					// Named as web names it, in the letter's own language: "Layla-Haddad-Anschreiben".
-					name: safeFileName(
-						getDefaultFileName(
-							{ name: savedLetter.name, slug: "", data: createCoverLetterResumeData(savedLetter) },
-							"cover-letter",
-						),
-					),
+					name: savedLetter
+						? safeFileName(
+								getDefaultFileName(
+									{ name: savedLetter.name, slug: "", data: createCoverLetterResumeData(savedLetter) },
+									"cover-letter",
+								),
+							)
+						: safeFileName(t`${name}-Cover-Letter`),
 					format: chosen,
 					letter: true,
-					...(composed ? { data: createCoverLetterResumeData({ ...savedLetter, ...composed }) } : {}),
+					...(savedLetter ? { letterLocale: savedLetter.style.metadata.page.locale } : {}),
+					...(composed && savedLetter ? { data: createCoverLetterResumeData({ ...savedLetter, ...composed }) } : {}),
 				});
 			}
 			await shareExport(file, chosen);
