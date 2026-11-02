@@ -206,6 +206,8 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 							applicationId: application.id,
 							...(application.sentResumeVersionId ? { version: application.sentResumeVersionId } : {}),
 						}}
+						// Two "Open" links sit in this section: each names its document.
+						aria-label={workspace && application.sentResumeVersionId ? t`Open the resume version sent` : t`Open resume`}
 						className={buttonVariants({ size: "sm", variant: "secondary" })}
 					>
 						{workspace && application.sentResumeVersionId ? <Trans>Open sent version</Trans> : <Trans>Open</Trans>}
@@ -233,6 +235,9 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 							applicationId: application.id,
 							...(application.sentCoverLetterVersionId ? { version: application.sentCoverLetterVersionId } : {}),
 						}}
+						aria-label={
+							workspace && application.sentCoverLetterVersionId ? t`Open the letter version sent` : t`Open letter`
+						}
 						className={buttonVariants({ size: "sm", variant: "secondary" })}
 					>
 						{workspace && application.sentCoverLetterVersionId ? <Trans>Open sent version</Trans> : <Trans>Open</Trans>}
@@ -241,32 +246,43 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 				</SentDocumentRow>
 			)}
 
-			{/* A closed application has an outcome, not a preparation task: no Prepare a resume / Write a letter primary action. */}
-			{application.status !== "closed" && (!application.resumeId || !application.coverLetterId) && (
-				<div className="flex flex-wrap gap-1.5">
-					{!application.resumeId && (
-						<Button
-							size="sm"
-							disabled={disabled}
-							onClick={() => openDialog("document.new", { step: "copy", applicationId: application.id })}
-						>
-							<Icon name="copy" size={16} />
-							<Trans>Prepare a resume</Trans>
-						</Button>
-					)}
-					{!application.coverLetterId && (
-						<Button
-							size="sm"
-							variant="secondary"
-							disabled={disabled || createLetter.isPending}
-							onClick={() => void writeLetter()}
-						>
-							<Icon name="envelope-simple" size={16} />
-							<Trans>Write a letter</Trans>
-						</Button>
-					)}
-				</div>
-			)}
+			{/* A closed or offer-stage application has an outcome, not a preparation task: nothing more will be sent. */}
+			{(application.status === "closed" || application.status === "offer") &&
+				!application.resumeId &&
+				!application.coverLetterId &&
+				!application.resumeFileUrl &&
+				!application.coverLetterUrl && (
+					<p className="text-[13px] text-ink-3">
+						<Trans>Nothing recorded as sent.</Trans>
+					</p>
+				)}
+			{application.status !== "closed" &&
+				application.status !== "offer" &&
+				(!application.resumeId || !application.coverLetterId) && (
+					<div className="flex flex-wrap gap-1.5">
+						{!application.resumeId && (
+							<Button
+								size="sm"
+								disabled={disabled}
+								onClick={() => openDialog("document.new", { step: "copy", applicationId: application.id })}
+							>
+								<Icon name="copy" size={16} />
+								<Trans>Prepare a resume</Trans>
+							</Button>
+						)}
+						{!application.coverLetterId && (
+							<Button
+								size="sm"
+								variant="secondary"
+								disabled={disabled || createLetter.isPending}
+								onClick={() => void writeLetter()}
+							>
+								<Icon name="envelope-simple" size={16} />
+								<Trans>Write a letter</Trans>
+							</Button>
+						)}
+					</div>
+				)}
 
 			{application.status === "saved" && !application.sentCoverLetterVersionId && (
 				<NativeSelect

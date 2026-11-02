@@ -16,8 +16,8 @@ msgstr ""
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
 #: src/features/application-detail/detail-screen.tsx
-msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
-msgstr "\"{0} · {1}\" og dets tidslinje slettes permanent. Dette kan ikke fortrydes."
+msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #. placeholder {0}: isolate(open.label)
 #: src/features/check/job-match.tsx
@@ -365,6 +365,11 @@ msgstr ""
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {Intet svar i # dag} other {Intet svar i # dage}}"
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {No word since your interview # day ago} other {No word since your interview # days ago}}"
+msgstr ""
+
 #. placeholder {0}: firstSpill.lines
 #: src/preview/page.tsx
 msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
@@ -440,12 +445,7 @@ msgstr "{0} · Ikke bedømt"
 msgid "{0} · Value uncertain"
 msgstr "{0} · Værdien usikker"
 
-#. placeholder {0}: document.name
-#. placeholder {0}: first.name
-#. placeholder {0}: resume.name
-#: src/features/document-menu/index.tsx
-#: src/features/documents/document-sheets.tsx
-#: src/features/documents/library.tsx
+#. placeholder {0}: source?.name ?? ""
 #: src/features/documents/new-document.tsx
 msgid "{0} (copy)"
 msgstr "{0} (kopi)"
@@ -676,6 +676,10 @@ msgstr "{days, plural, =0 {· siden i dag} one {· i # dag} other {· i # dage}}
 #: src/features/applications/list-screen.tsx
 msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 msgstr "{days, plural, one {{company}: intet svar i # dag. En kort opfølgning er som regel fin nu.} other {{company}: intet svar i # dage. En kort opfølgning er som regel fin nu.}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no word since your interview # day ago. A short follow-up is usually fine now.} other {{company}: no word since your interview # days ago. A short follow-up is usually fine now.}}"
+msgstr ""
 
 #: src/features/ai/provider-model.tsx
 msgid "{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice."
@@ -1036,10 +1040,6 @@ msgstr "En numerisk dato læses forskelligt i forskellige lande."
 #: src/features/ats-checker/messages.ts
 msgid "A page is rotated."
 msgstr "En side er roteret."
-
-#: src/features/applications/prior-no-response.tsx
-msgid "A previous application to this company was closed with No response. You can still apply."
-msgstr "En tidligere ansøgning til denne virksomhed blev lukket med Intet svar. Du kan stadig søge."
 
 #: src/features/application-detail/sheets.tsx
 msgid "A reminder to check in, shown as the next step until you do."
@@ -1981,10 +1981,6 @@ msgstr "Ansøgningsvisninger"
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "Ansøgninger"
-
-#: src/features/applications/list-screen.tsx
-msgid "Applications and their attachments will be deleted permanently. This can't be undone."
-msgstr "Ansøgninger og deres vedhæftede filer slettes permanent. Det kan ikke fortrydes."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2979,6 +2975,10 @@ msgstr "Luk assistenten"
 msgid "Close…"
 msgstr "Tæt…"
 
+#: src/features/applications/prior-no-response.tsx
+msgid "closed"
+msgstr ""
+
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -3310,6 +3310,7 @@ msgid "Copy code"
 msgstr "Kopiér kode"
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
 msgid "Copy created"
 msgstr "Kopi oprettet"
 
@@ -6261,6 +6262,10 @@ msgstr "Hold dig til én adresse, så software ikke skal gætte, hvilken den ska
 msgid "Keep access when you are not using the application."
 msgstr "Bevare adgang, når du ikke bruger applikationen."
 
+#: src/features/application-detail/detail-screen.tsx
+msgid "Keep application"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
 msgstr "Behold begge"
@@ -6745,8 +6750,8 @@ msgid "Linked to the resume again"
 msgstr "Linket til CV'et igen"
 
 #: src/features/letters/write.tsx
-msgid "Linked. Name, email, phone and city update when the resume does."
-msgstr "Forbundet. Navn, e-mail, telefon og by opdateres, når cv'et gør det."
+msgid "Linked. The header (name, contact details, links and photo) updates when the resume does."
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Links"
@@ -7845,6 +7850,10 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
+#: src/features/applications/prior-no-response.tsx
+msgid "no reply"
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "Intet svar"
@@ -7979,6 +7988,10 @@ msgstr "Ikke tilgængelig, mens CV'et kræver en adgangskode."
 msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
 msgstr "Ikke forbundet endnu. Tilføj DNS-posterne der, hvor du administrerer domænet, og tjek derefter."
 
+#: src/features/applications-board/insights-screen.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "Ikke noget for mig"
@@ -8032,6 +8045,10 @@ msgstr "Ikke gemt — dette faktum blev glemt tidligere."
 #: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
+msgstr ""
+
+#: src/features/applications/prior-no-response.tsx
+msgid "not selected"
 msgstr ""
 
 #: src/features/applications/stages.ts
@@ -8092,6 +8109,10 @@ msgstr "Intet markerer en rolle som igangværende."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "Intet på denne dag."
+
+#: src/features/application-detail/sections.tsx
+msgid "Nothing recorded as sent."
+msgstr ""
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -8861,10 +8882,13 @@ msgstr "Pipelineflow"
 msgid "Plain text (.txt)"
 msgstr "Ren tekst (.txt)"
 
-#: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Plain text with headings. Paste into application forms and notes."
 msgstr "Almindelig tekst med overskrifter. Indsæt i jobansøgningsskemaer og noter."
+
+#: src/features/letters/share.tsx
+msgid "Plain text. Paste into application forms and emails."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Plan again"
@@ -10310,6 +10334,7 @@ msgstr "Højre"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10324,10 +10349,6 @@ msgstr "Rolle (valgfri)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Rolle {0}"
-
-#: src/features/applications/add-sheet.tsx
-msgid "Role / title"
-msgstr "Rolle / titel"
 
 #: src/features/applications-board/views.tsx
 msgid "Role, company or contact"
@@ -10389,16 +10410,13 @@ msgid "Rust"
 msgstr "Rustrød"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 msgid "Salary"
 msgstr "Løn"
 
 #: src/features/career/today.tsx
 msgid "Salary not detected"
 msgstr ""
-
-#: src/features/applications/add-sheet.tsx
-msgid "Salary range"
-msgstr "Løninterval"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Same length"
@@ -12502,6 +12520,10 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "Disse åbner din servers kontoindstillinger i en browserfane i appen. Du skal muligvis logge ind der."
 
+#: src/features/applications/list-screen.tsx
+msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "De leder efter overskrifter som Erfaring, Uddannelse og Færdigheder."
@@ -12924,6 +12946,7 @@ msgstr "For at få en påmindelse skal du tillade meddelelser i dine enhedsindst
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/letters/write.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
@@ -14139,6 +14162,10 @@ msgstr ""
 msgid "You"
 msgstr "Du"
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you accepted an offer"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "You already use this for “{takenBy}”."
 msgstr "Du bruger allerede dette til “{takenBy}”."
@@ -14146,6 +14173,10 @@ msgstr "Du bruger allerede dette til “{takenBy}”."
 #: src/features/assistant/messages.tsx
 msgid "You answered: {answer}"
 msgstr "Du svarede: {answer}"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "You applied to this company before. You can still apply."
+msgstr ""
 
 #: src/shell/builder-chrome.tsx
 msgid "You can keep editing. Changes sync when you're back online. PDF sharing works with cached fonts and images."
@@ -14176,9 +14207,17 @@ msgstr "Du har ikke-gemte ændringer."
 msgid "You send it from your own email."
 msgstr "Du sender den fra din egen e-mail."
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you took another offer"
+msgstr ""
+
 #: src/features/settings/sign-out.tsx
 msgid "You will be signed out of {server}. Any edits not yet synced from this device will be lost."
 msgstr "Du bliver logget ud af {server}. Eventuelle redigeringer, der endnu ikke er synkroniseret fra denne enhed, vil gå tabt."
+
+#: src/features/applications/prior-no-response.tsx
+msgid "you withdrew"
+msgstr ""
 
 #: src/features/ai/web-access.tsx
 msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."

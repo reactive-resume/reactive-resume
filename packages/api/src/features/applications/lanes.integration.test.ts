@@ -155,6 +155,17 @@ describe.skipIf(!databaseUrl)("application lanes: persisted owner and workflow i
 	}
 	const read = (id: string) => applications.getById({ id, userId: "alice" });
 
+	it("puts a new stage after the last stage of its category, not after Closed", async () => {
+		const lane = await addLane("Final round", "interview");
+		const order = (await lanes.get("alice")).lanes
+			.filter((item) => !item.retiredAt)
+			.toSorted((a, b) => a.position - b.position);
+		const index = order.findIndex((item) => item.id === lane.id);
+		expect(order[index - 1]?.category).toBe("interview");
+		expect(order[index + 1]?.category).not.toBe("interview");
+		expect(order.at(-1)?.category).toBe("closed");
+	});
+
 	it("backfills deterministic lanes without changing any legacy field or timeline JSON", () => {
 		const { lane_id: laneId, ...preserved } = afterMigration;
 		expect(laneId).toBe("application-lane:migration-owner:applied");
@@ -1276,6 +1287,27 @@ describe.skipIf(!databaseUrl)("application lanes: persisted owner and workflow i
 		});
 		expect(await applications.priorNoResponse({ userId: "alice", company: "exact co" })).toHaveLength(10);
 		expect(await applications.priorNoResponse({ userId: "alice", company: "Exact Company" })).toEqual([]);
+	});
+
+	it("with anyOutcome, finds every earlier closed application with its outcome; without it, only no-response", async () => {
+		await applications.importMany({
+			userId: "alice",
+			items: [
+				{ company: "Outcome Co", role: "Rejected role", status: "closed", closedReason: "not-selected" },
+				{ company: "Outcome Co", role: "Ghosted role", status: "closed", closedReason: "no-response" },
+				{ company: "Outcome Co", role: "Open role", status: "applied" },
+			],
+		});
+		const all = await applications.priorNoResponse({ userId: "alice", company: "outcome co", anyOutcome: true });
+		expect(
+			all.map(({ role, closedReason }) => ({ role, closedReason })).toSorted((a, b) => a.role.localeCompare(b.role)),
+		).toEqual([
+			{ role: "Ghosted role", closedReason: "no-response" },
+			{ role: "Rejected role", closedReason: "not-selected" },
+		]);
+		expect(
+			(await applications.priorNoResponse({ userId: "alice", company: "outcome co" })).map((row) => row.role),
+		).toEqual(["Ghosted role"]);
 	});
 
 	it("revision conflicts and retirement preserve application timestamps, events, snapshots and lane metadata", async () => {

@@ -337,7 +337,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 					</SheetDescription>
 				</SheetHeader>
 
-				<div className="-mt-1 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-4 [&>*]:shrink-0">
+				<div className="-mt-1 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 pt-1 pb-4 [&>*]:shrink-0">
 					{/* Hidden entirely when AI is off. */}
 					{!aiEnabled && (
 						<Field label={t`Job description`}>
@@ -372,7 +372,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 						{(id) => <Input id={id} value={form.company} onChange={(event) => set("company", event.target.value)} />}
 					</Field>
 					{!isEditing && <PriorNoResponseNotice company={form.company} />}
-					<Field label={t`Role / title`} required>
+					<Field label={t`Role`} required>
 						{(id) => <Input id={id} value={form.role} onChange={(event) => set("role", event.target.value)} />}
 					</Field>
 
@@ -395,7 +395,7 @@ export function ApplicationFormSheet({ open, onOpenChange, application: requeste
 								</>
 							)}
 						</Field>
-						<Field label={t`Salary range`}>
+						<Field label={t`Salary`}>
 							{(id) => <Input id={id} value={form.salary} onChange={(event) => set("salary", event.target.value)} />}
 						</Field>
 					</div>

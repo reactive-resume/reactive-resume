@@ -1,4 +1,5 @@
 import z from "zod";
+import { applicationClosedReasonSchema } from "@reactive-resume/schema/applications/data";
 import { protectedProcedure } from "../../context";
 import { applicationDto } from "../../dto/application";
 import { resumeMutationRateLimit } from "../../middleware/rate-limit";
@@ -33,9 +34,27 @@ export const crudRouter = {
 			tags: ["Applications"],
 			operationId: "getPriorNoResponseApplications",
 			summary: "Find prior no-response applications at a company",
+			description:
+				"Earlier applications at the same company that ended without a response. With `anyOutcome`, every earlier closed application, with its outcome (`closedReason`). Requires authentication.",
 		})
-		.input(z.object({ company: z.string().trim().min(1).max(500), excludeId: z.string().optional() }))
-		.output(z.array(z.object({ id: z.string(), company: z.string(), role: z.string(), at: z.date() })))
+		.input(
+			z.object({
+				company: z.string().trim().min(1).max(500),
+				excludeId: z.string().optional(),
+				anyOutcome: z.boolean().optional(),
+			}),
+		)
+		.output(
+			z.array(
+				z.object({
+					id: z.string(),
+					company: z.string(),
+					role: z.string(),
+					at: z.date(),
+					closedReason: applicationClosedReasonSchema.nullable().optional(),
+				}),
+			),
+		)
 		.handler(({ input, context }) => applicationService.priorNoResponse({ ...input, userId: context.user.id })),
 	list: protectedProcedure
 		.route({

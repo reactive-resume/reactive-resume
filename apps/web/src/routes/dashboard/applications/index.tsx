@@ -267,10 +267,13 @@ function RouteComponent() {
 								)}
 							</DropdownMenuContent>
 						</DropdownMenu>
-						<Button onClick={() => setAdding(true)}>
-							<Icon name="plus" />
-							<Trans>Save job</Trans>
-						</Button>
+						{/* The empty state has its own Save job: one primary action, not two. */}
+						{!empty && (
+							<Button onClick={() => setAdding(true)}>
+								<Icon name="plus" />
+								<Trans>Save job</Trans>
+							</Button>
+						)}
 					</>
 				}
 			>
@@ -314,7 +317,7 @@ function RouteComponent() {
 							<Input
 								type="search"
 								aria-label={t`Search applications`}
-								placeholder={t`Search role, company or contact`}
+								placeholder={t`Search role, company, contact or tag`}
 								value={query}
 								className="ps-8"
 								onChange={(event) => setQuery(event.target.value)}
@@ -574,6 +577,12 @@ function FollowUpNudge({ applications, onOpen, onShowAll }: FollowUpNudgeProps) 
 			<span className="min-w-0 flex-1">
 				{owed.length > 1 ? (
 					<Plural value={count} one="# application needs a follow-up." other="# applications need a follow-up." />
+				) : first.step.kind === "no-reply" && first.step.after === "interview" ? (
+					<Plural
+						value={days}
+						one={`${company}: no word since your interview # day ago. A short follow-up is usually fine now.`}
+						other={`${company}: no word since your interview # days ago. A short follow-up is usually fine now.`}
+					/>
 				) : first.step.kind === "no-reply" ? (
 					<Plural
 						value={days}

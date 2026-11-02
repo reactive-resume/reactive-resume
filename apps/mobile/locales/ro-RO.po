@@ -16,8 +16,8 @@ msgstr ""
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
 #: src/features/application-detail/detail-screen.tsx
-msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
-msgstr "„{0} · {1}” și cronologia acestuia sunt șterse definitiv. Acest lucru nu poate fi anulat."
+msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #. placeholder {0}: isolate(open.label)
 #: src/features/check/job-match.tsx
@@ -365,6 +365,11 @@ msgstr ""
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {Niciun răspuns în ziua #} other {Niciun răspuns în zilele #}}"
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {No word since your interview # day ago} other {No word since your interview # days ago}}"
+msgstr ""
+
 #. placeholder {0}: firstSpill.lines
 #: src/preview/page.tsx
 msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
@@ -440,12 +445,7 @@ msgstr "{0} · Nu a fost punctat"
 msgid "{0} · Value uncertain"
 msgstr "{0} · Valoare incertă"
 
-#. placeholder {0}: document.name
-#. placeholder {0}: first.name
-#. placeholder {0}: resume.name
-#: src/features/document-menu/index.tsx
-#: src/features/documents/document-sheets.tsx
-#: src/features/documents/library.tsx
+#. placeholder {0}: source?.name ?? ""
 #: src/features/documents/new-document.tsx
 msgid "{0} (copy)"
 msgstr "{0} (copie)"
@@ -676,6 +676,10 @@ msgstr "{days, plural, =0 {· de azi} one {· de # zi} few {· de # zile} other 
 #: src/features/applications/list-screen.tsx
 msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 msgstr "{days, plural, one {{company}: niciun răspuns de # zi. De obicei, acum e potrivit un scurt mesaj de follow-up.} few {{company}: niciun răspuns de # zile. De obicei, acum e potrivit un scurt mesaj de follow-up.} other {{company}: niciun răspuns de # de zile. De obicei, acum e potrivit un scurt mesaj de follow-up.}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no word since your interview # day ago. A short follow-up is usually fine now.} other {{company}: no word since your interview # days ago. A short follow-up is usually fine now.}}"
+msgstr ""
 
 #: src/features/ai/provider-model.tsx
 msgid "{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice."
@@ -1036,10 +1040,6 @@ msgstr "O dată numerică este citită diferit în funcție de țară."
 #: src/features/ats-checker/messages.ts
 msgid "A page is rotated."
 msgstr "O pagină este rotită."
-
-#: src/features/applications/prior-no-response.tsx
-msgid "A previous application to this company was closed with No response. You can still apply."
-msgstr "O candidatură anterioară la această companie a fost închisă cu rezultatul „Nici un răspuns”. Puteți candida în continuare."
 
 #: src/features/application-detail/sheets.tsx
 msgid "A reminder to check in, shown as the next step until you do."
@@ -1981,10 +1981,6 @@ msgstr "Vizualizări candidaturi"
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "Candidaturi"
-
-#: src/features/applications/list-screen.tsx
-msgid "Applications and their attachments will be deleted permanently. This can't be undone."
-msgstr "Candidaturile și atașamentele acestora vor fi șterse definitiv. Acțiunea nu poate fi anulată."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2979,6 +2975,10 @@ msgstr "Închideți asistentul"
 msgid "Close…"
 msgstr "Aproape…"
 
+#: src/features/applications/prior-no-response.tsx
+msgid "closed"
+msgstr ""
+
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -3310,6 +3310,7 @@ msgid "Copy code"
 msgstr "Copiază codul"
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
 msgid "Copy created"
 msgstr "Copie creată"
 
@@ -6261,6 +6262,10 @@ msgstr "Păstrați o singură adresă, ca programele să nu fie nevoite să ghic
 msgid "Keep access when you are not using the application."
 msgstr "Să păstreze accesul când nu folosești aplicația."
 
+#: src/features/application-detail/detail-screen.tsx
+msgid "Keep application"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
 msgstr "Păstrați ambele"
@@ -6745,8 +6750,8 @@ msgid "Linked to the resume again"
 msgstr "Conectat din nou la cv"
 
 #: src/features/letters/write.tsx
-msgid "Linked. Name, email, phone and city update when the resume does."
-msgstr "Legat. Numele, e-mailul, telefonul și orașul se actualizează atunci când CV-ul o face."
+msgid "Linked. The header (name, contact details, links and photo) updates when the resume does."
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Links"
@@ -7845,6 +7850,10 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
+#: src/features/applications/prior-no-response.tsx
+msgid "no reply"
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "Nici un răspuns"
@@ -7979,6 +7988,10 @@ msgstr "Indisponibil cât timp CV-ul necesită o parolă."
 msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
 msgstr "Încă neconectat. Adaugă înregistrările DNS ale domeniului acolo unde îl gestionezi, apoi verifică."
 
+#: src/features/applications-board/insights-screen.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "Nu e pentru mine"
@@ -8032,6 +8045,10 @@ msgstr "Nesalvat — acest fapt a fost uitat anterior."
 #: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
+msgstr ""
+
+#: src/features/applications/prior-no-response.tsx
+msgid "not selected"
 msgstr ""
 
 #: src/features/applications/stages.ts
@@ -8092,6 +8109,10 @@ msgstr "Nimic nu marchează un rol ca fiind în desfășurare."
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "Nimic în această zi."
+
+#: src/features/application-detail/sections.tsx
+msgid "Nothing recorded as sent."
+msgstr ""
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -8861,10 +8882,13 @@ msgstr "Fluxul candidaturilor"
 msgid "Plain text (.txt)"
 msgstr "Text simplu (.txt)"
 
-#: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Plain text with headings. Paste into application forms and notes."
 msgstr "Text simplu cu titluri. Lipiți în formularele și note de cerere de angajare."
+
+#: src/features/letters/share.tsx
+msgid "Plain text. Paste into application forms and emails."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Plan again"
@@ -10310,6 +10334,7 @@ msgstr "Corect"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10324,10 +10349,6 @@ msgstr "Rol (opțional)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "Rolul {0}"
-
-#: src/features/applications/add-sheet.tsx
-msgid "Role / title"
-msgstr "Rol/titlu"
 
 #: src/features/applications-board/views.tsx
 msgid "Role, company or contact"
@@ -10389,16 +10410,13 @@ msgid "Rust"
 msgstr "Ruginiu"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 msgid "Salary"
 msgstr "Salariu"
 
 #: src/features/career/today.tsx
 msgid "Salary not detected"
 msgstr ""
-
-#: src/features/applications/add-sheet.tsx
-msgid "Salary range"
-msgstr "Gama de salariu"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Same length"
@@ -12502,6 +12520,10 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "Acestea deschid setările contului serverului dvs. într-o filă de browser din interiorul aplicației. Poate fi necesar să vă conectați acolo."
 
+#: src/features/applications/list-screen.tsx
+msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "Ei caută rubrici precum Experiență, Educație și Abilități."
@@ -12924,6 +12946,7 @@ msgstr "Pentru a primi un memento, permiteți notificările în setările dispoz
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/letters/write.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
@@ -14139,6 +14162,10 @@ msgstr ""
 msgid "You"
 msgstr "Tu"
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you accepted an offer"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "You already use this for “{takenBy}”."
 msgstr "Utilizați deja acest lucru pentru „{takenBy}”."
@@ -14146,6 +14173,10 @@ msgstr "Utilizați deja acest lucru pentru „{takenBy}”."
 #: src/features/assistant/messages.tsx
 msgid "You answered: {answer}"
 msgstr "Ai răspuns: {answer}"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "You applied to this company before. You can still apply."
+msgstr ""
 
 #: src/shell/builder-chrome.tsx
 msgid "You can keep editing. Changes sync when you're back online. PDF sharing works with cached fonts and images."
@@ -14176,9 +14207,17 @@ msgstr "Aveți modificări nesalvate."
 msgid "You send it from your own email."
 msgstr "Îl trimiteți de pe propriul e-mail."
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you took another offer"
+msgstr ""
+
 #: src/features/settings/sign-out.tsx
 msgid "You will be signed out of {server}. Any edits not yet synced from this device will be lost."
 msgstr "Veți fi deconectat de la {server}. Toate editările care nu au fost încă sincronizate de pe acest dispozitiv se vor pierde."
+
+#: src/features/applications/prior-no-response.tsx
+msgid "you withdrew"
+msgstr ""
 
 #: src/features/ai/web-access.tsx
 msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."

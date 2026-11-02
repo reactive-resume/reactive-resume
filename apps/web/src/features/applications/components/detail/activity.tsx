@@ -86,8 +86,8 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 			month: "short",
 			day: "numeric",
 			// Stage and note entries are whole days, stored at noon UTC.
-			// 24-hour like the workspace and calendar, so one interview reads the same everywhere.
-			...(withTime ? { hour: "2-digit", minute: "2-digit", hourCycle: "h23" } : { timeZone: "UTC" }),
+			// The locale's clock, like the workspace and calendar, so one interview reads the same everywhere.
+			...(withTime ? { hour: "2-digit", minute: "2-digit" } : { timeZone: "UTC" }),
 		});
 
 	const describe = (entry: ApplicationTimelineEntry) => {

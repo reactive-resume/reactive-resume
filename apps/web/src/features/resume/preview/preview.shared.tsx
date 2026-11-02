@@ -16,6 +16,8 @@ export type ResumePreviewProps = {
 	showPageNumbers?: boolean;
 	/** Letters show the sender's header, which a document with only a letter otherwise leaves out. */
 	includeCoverLetterHeader?: boolean;
+	/** The name of the text version screen readers read in place of the page images ("Resume content" by default). */
+	contentLabel?: string;
 	/** Drawn above each page (e.g. "Page 1 · Letter"). Replaces the small page-number caption. */
 	renderPageCaption?: (page: { pageNumber: number; totalPages: number }) => ReactNode;
 	/** Drawn over each page, in page-relative coordinates; receives the page map of the render on screen. */

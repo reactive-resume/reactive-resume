@@ -41,7 +41,7 @@ const formatWhen = (date: Date, locale: string, timeZone: string, withTime: bool
 		day: "numeric",
 		month: "short",
 		timeZone,
-		...(withTime ? { hour: "2-digit", minute: "2-digit", hourCycle: "h23" } : {}),
+		...(withTime ? { hour: "2-digit", minute: "2-digit" } : {}),
 	});
 
 /** How a next step reads in the list, on cards and in the detail sheet. */
@@ -88,7 +88,13 @@ export function describeNextStep(
 		case "no-reply":
 			return {
 				icon: "clock",
-				title: plural(step.days, { one: "No reply in # day", other: "No reply in # days" }),
+				title:
+					step.after === "interview"
+						? plural(step.days, {
+								one: "No word since your interview # day ago",
+								other: "No word since your interview # days ago",
+							})
+						: plural(step.days, { one: "No reply in # day", other: "No reply in # days" }),
 				sub: t`A short follow-up is usually fine now`,
 				tone: "warn",
 			};

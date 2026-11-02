@@ -498,7 +498,8 @@ assert.deepEqual(nextStep.getNextStep(stageOnly("offer"), day11), {
 	overdue: false,
 	terms: true,
 });
-assert.deepEqual(nextStep.getNextStep(stageOnly("screening"), day11), { kind: "waiting", days: 10 });
+// Silence after a screen gets the same nudge as after applying.
+assert.deepEqual(nextStep.getNextStep(stageOnly("screening"), day11), { kind: "no-reply", days: 10 });
 assert.equal(
 	nextStep.describeNextStep(
 		{ kind: "offer", days: 10, respondBy: null, overdue: false, terms: true },

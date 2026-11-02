@@ -42,11 +42,10 @@ export function useCareerTime() {
 	const labelled = !!device && device !== timeZone;
 	const format = (value: Date | string, options: Intl.DateTimeFormatOptions) =>
 		new Intl.DateTimeFormat(locale, { timeZone, ...options }).format(new Date(value));
-	const plain = (value: Date | string) => format(value, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+	// The locale decides 12- or 24-hour, as the interview dialog's own time field does.
+	const plain = (value: Date | string) => format(value, { hour: "2-digit", minute: "2-digit" });
 	const clock = (value: Date | string) =>
-		labelled
-			? format(value, { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "short" })
-			: plain(value);
+		labelled ? format(value, { hour: "2-digit", minute: "2-digit", timeZoneName: "short" }) : plain(value);
 
 	return {
 		timeZone,

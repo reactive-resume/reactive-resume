@@ -147,6 +147,7 @@ export function ResumePreviewClient({
 	renderPageOverlay,
 	onRender,
 	includeCoverLetterHeader = false,
+	contentLabel,
 }: ResumePreviewProps) {
 	const builderResumeData = useResumeData();
 	const resumeData = data ?? builderResumeData;
@@ -244,7 +245,7 @@ export function ResumePreviewClient({
 	return (
 		<div className={cn("grid", className)}>
 			{/* The pages are canvases, opaque to assistive tech; this is the same content as text, in print order. */}
-			<section className="sr-only" aria-label={t`Resume content`}>
+			<section className="sr-only" aria-label={contentLabel ?? t`Resume content`}>
 				<ResumeReflow data={resumeData} />
 			</section>
 			{lostCharacters && (

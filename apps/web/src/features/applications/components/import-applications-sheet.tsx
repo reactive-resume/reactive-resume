@@ -65,6 +65,7 @@ const fieldLabel = (field: CsvField) =>
 		laneLabel: t`Stage name`,
 		laneCategory: t`Stage counts as`,
 		laneClosedReason: t`Stage outcome`,
+		closedReason: t`Outcome`,
 		contacts: t`Contacts`,
 	})[field];
 
@@ -205,7 +206,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 					</SheetDescription>
 				</SheetHeader>
 
-				<div className="-mt-1 flex flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-4">
+				<div className="-mt-1 flex flex-1 flex-col gap-4 overflow-y-auto px-6 pt-1 pb-4">
 					<div className="flex items-center gap-2">
 						<Button size="sm" variant="secondary" onClick={() => fileRef.current?.click()}>
 							<Icon name="file-arrow-up" size={16} />
@@ -352,14 +353,27 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 								{result.invalidValues.length > 0 && (
 									<div role="alert" className="grid gap-1 text-warn-text">
 										<p>
-											<Trans>Fix these values in the CSV, or leave their columns out, before importing.</Trans>
+											<Trans>
+												These rows are left out. Import the rest now, then fix these in the CSV and import them again.
+											</Trans>
 										</p>
 										<ul className="list-disc ps-4">
 											{result.invalidValues.map(({ row, field, value }) => (
 												<li key={`${row}:${field}`}>
-													<Trans>
-														Row {row}, {fieldLabel(field)}: “{value}” is invalid.
-													</Trans>
+													{field === "stageEnteredAt" ? (
+														<Trans>
+															Row {row}: couldn't read the date “{value}”. Use a date like 2026-10-15.
+														</Trans>
+													) : field === "status" ? (
+														<Trans>
+															Row {row}: “{value}” isn't a stage. Use Saved, Applied, Screening, Interview, Offer or
+															Closed.
+														</Trans>
+													) : (
+														<Trans>
+															Row {row}, {fieldLabel(field)}: couldn't read “{value}”.
+														</Trans>
+													)}
 												</li>
 											))}
 										</ul>
@@ -430,15 +444,10 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button
-						disabled={
-							importable.length === 0 ||
-							(result?.invalidValues.length ?? 0) > 0 ||
-							unmatched > 0 ||
-							stagesUnresolved ||
-							importMutation.isPending
-						}
+						disabled={importable.length === 0 || unmatched > 0 || stagesUnresolved || importMutation.isPending}
 						onClick={() => {
-							if (!result?.invalidValues.length && unmatched === 0 && !stagesUnresolved) importMutation.mutate();
+							// Rows with values that couldn't be read are already left out of `importable`.
+							if (unmatched === 0 && !stagesUnresolved) importMutation.mutate();
 						}}
 					>
 						<Plural value={importable.length} one="Import # application" other="Import # applications" />

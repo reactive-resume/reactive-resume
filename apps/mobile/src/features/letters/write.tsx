@@ -13,6 +13,7 @@ import { Keyboard, View, useWindowDimensions } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { coverLetterTextToHtml, defaultCoverLetterSignOff, greetingName } from "@reactive-resume/resume/cover-letter";
 import { useLetterWords } from "./compose";
+import { LetterLanguageField } from "./design";
 import { designSummary } from "./design-presets";
 import {
 	discardLetterDraft,
@@ -64,6 +65,9 @@ type Recipe = (letter: WritableDraft<LetterDocument>) => void;
 const edit = (key: string, recipe: Recipe) => useLetterStore.getState().update(recipe, { coalesceKey: key });
 
 /** Tells the user how a link change went: confirmed, waiting for a connection, or refused over unsaved edits. */
+
+/** Today's date in the person's own time zone, as `YYYY-MM-DD`. */
+const todayDate = () => new Date().toLocaleDateString("en-CA");
 export function relinked(result: RelinkResult, done?: string) {
 	if (result === "unsaved") showToast({ message: t`Couldn't save your changes. Try again before continuing.` });
 	else if (result === "linked" && done) showToast({ message: done });
@@ -376,6 +380,15 @@ function ToSection({ letter, application, disabled }: LetterSectionProps) {
 						onChange={(value) => edit("letterDate", (draft) => void (draft.letterDate = value))}
 					/>
 				</View>
+				{/* A letter reused later should carry the day it's sent. */}
+				{letter.letterDate !== todayDate() && !disabled ? (
+					<Button
+						size="sm"
+						variant="ghost"
+						label={t`Today`}
+						onPress={() => edit("letterDate", (draft) => void (draft.letterDate = todayDate()))}
+					/>
+				) : null}
 				{letter.letterDate && !disabled ? (
 					<Button
 						size="sm"
@@ -455,7 +468,7 @@ function FromSection({ letter, disabled }: FromSectionProps) {
 					title={useDetailsLabel}
 					subtitle={
 						letter.senderLinked
-							? t`Linked. Name, email, phone and city update when the resume does.`
+							? t`Linked. The header (name, contact details, links and photo) updates when the resume does.`
 							: t`Off. Edit this letter’s details below. Turning this on replaces them with the resume’s current details.`
 					}
 					trailing={
@@ -606,6 +619,8 @@ function BodySection({ letter, application, disabled }: LetterSectionProps) {
 
 	return (
 		<Section title={t`Letter`}>
+			{/* The greeting and sign-off are written in the letter's language, so it's chosen with the words. */}
+			<LetterLanguageField letter={letter} disabled={disabled} />
 			{structured && words ? (
 				<FramingField
 					letter={letter}

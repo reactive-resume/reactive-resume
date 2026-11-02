@@ -135,12 +135,19 @@ function ApplicationInsights() {
 
 				{outcomes.tailored.sent + outcomes.base.sent > 0 ? (
 					<Section title={t`Tailored vs. base resume`}>
-						<Text color="ink2">
-							{t`${outcomes.tailored.replied} of ${outcomes.tailored.sent} tailored applications got a reply; ${outcomes.base.replied} of ${outcomes.base.sent} sent with another resume.`}
-						</Text>
-						{outcomes.tailored.sent + outcomes.base.sent < 10 ? (
-							<Text variant="callout" color="ink3">{t`Small numbers, but worth noticing.`}</Text>
-						) : null}
+						{/* A comparison needs a few of each: "0 of 0" compares nothing. */}
+						{outcomes.tailored.sent >= 3 && outcomes.base.sent >= 3 ? (
+							<>
+								<Text color="ink2">
+									{t`${outcomes.tailored.replied} of ${outcomes.tailored.sent} tailored applications got a reply; ${outcomes.base.replied} of ${outcomes.base.sent} sent with another resume.`}
+								</Text>
+								{outcomes.tailored.sent + outcomes.base.sent < 10 ? (
+									<Text variant="callout" color="ink3">{t`Small numbers, but worth noticing.`}</Text>
+								) : null}
+							</>
+						) : (
+							<Text color="ink2">{t`Not enough applications to compare yet: this needs 3 of each.`}</Text>
+						)}
 					</Section>
 				) : null}
 

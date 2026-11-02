@@ -219,9 +219,12 @@ export function LetterDesignPanel() {
 	);
 }
 
-/** The letter's language, independent of whether its design follows the resume. */
-function LetterLanguageField({ disabled }: { disabled: boolean }) {
-	const id = useId();
+/** The letter's language, independent of whether its design follows the resume. Write and Design both offer it. */
+type LetterLanguageFieldProps = { disabled: boolean; id?: string };
+
+export function LetterLanguageField({ disabled, id: givenId }: LetterLanguageFieldProps) {
+	const ownId = useId();
+	const id = givenId ?? ownId;
 	const locale = useLetterEditorStore((state) => state.letter?.style.metadata.page.locale ?? "en-US");
 	const edit = useLetterEditorStore((state) => state.edit);
 	return (

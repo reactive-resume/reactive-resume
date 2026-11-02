@@ -16,8 +16,8 @@ msgstr ""
 #. placeholder {0}: application.role
 #. placeholder {1}: application.company
 #: src/features/application-detail/detail-screen.tsx
-msgid "“{0} · {1}” and its timeline are deleted permanently. This can't be undone."
-msgstr "“{0} · {1}” എന്നതും അതിൻ്റെ ടൈംലൈനും ശാശ്വതമായി ഇല്ലാതാക്കി. ഇത് പഴയപടിയാക്കാനാകില്ല."
+msgid "“{0} · {1}” and its timeline are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
 
 #. placeholder {0}: isolate(open.label)
 #: src/features/check/job-match.tsx
@@ -365,6 +365,11 @@ msgstr ""
 msgid "{0, plural, one {No reply in # day} other {No reply in # days}}"
 msgstr "{0, plural, one {# ദിവസത്തിൽ മറുപടിയില്ല} other {# ദിവസങ്ങളിൽ മറുപടിയില്ല}}"
 
+#. placeholder {0}: step.days
+#: src/features/applications/next-step.ts
+msgid "{0, plural, one {No word since your interview # day ago} other {No word since your interview # days ago}}"
+msgstr ""
+
 #. placeholder {0}: firstSpill.lines
 #: src/preview/page.tsx
 msgid "{0, plural, one {Page {page} runs over by about # line} other {Page {page} runs over by about # lines}}"
@@ -440,12 +445,7 @@ msgstr "{0} · സ്കോർ ചെയ്തിട്ടില്ല"
 msgid "{0} · Value uncertain"
 msgstr "{0} · മൂല്യം ഉറപ്പില്ല"
 
-#. placeholder {0}: document.name
-#. placeholder {0}: first.name
-#. placeholder {0}: resume.name
-#: src/features/document-menu/index.tsx
-#: src/features/documents/document-sheets.tsx
-#: src/features/documents/library.tsx
+#. placeholder {0}: source?.name ?? ""
 #: src/features/documents/new-document.tsx
 msgid "{0} (copy)"
 msgstr "{0} (പകർപ്പ്)"
@@ -676,6 +676,10 @@ msgstr "{days, plural, =0 {· ഇന്ന് മുതൽ} one {· # ദിവ�
 #: src/features/applications/list-screen.tsx
 msgid "{days, plural, one {{company}: no reply for # day. A short follow-up is usually fine now.} other {{company}: no reply for # days. A short follow-up is usually fine now.}}"
 msgstr "{days, plural, one {{company}: # ദിവസമായി മറുപടിയില്ല. ഇപ്പോൾ ഒരു ചെറിയ ഫോളോ-അപ്പ് സാധാരണയായി നല്ലതാണ്.} other {{company}: # ദിവസമായി മറുപടിയില്ല. ഇപ്പോൾ ഒരു ചെറിയ ഫോളോ-അപ്പ് സാധാരണയായി നല്ലതാണ്.}}"
+
+#: src/features/applications/list-screen.tsx
+msgid "{days, plural, one {{company}: no word since your interview # day ago. A short follow-up is usually fine now.} other {{company}: no word since your interview # days ago. A short follow-up is usually fine now.}}"
+msgstr ""
 
 #: src/features/ai/provider-model.tsx
 msgid "{defaultModel} is the fast, low-cost default for everyday work. Pick a more capable model for long drafts and interview practice."
@@ -1036,10 +1040,6 @@ msgstr "ഒരു അക്ക തീയതി വ്യത്യസ്ത ര�
 #: src/features/ats-checker/messages.ts
 msgid "A page is rotated."
 msgstr "ഒരു പേജ് തിരിഞ്ഞിരിക്കുന്നു."
-
-#: src/features/applications/prior-no-response.tsx
-msgid "A previous application to this company was closed with No response. You can still apply."
-msgstr "ഈ കമ്പനിയിലേക്കുള്ള മുൻ അപേക്ഷ പ്രതികരണമില്ല എന്ന ഫലത്തോടെ അവസാനിപ്പിച്ചിരുന്നു. നിങ്ങൾക്ക് ഇപ്പോഴും അപേക്ഷിക്കാം."
 
 #: src/features/application-detail/sheets.tsx
 msgid "A reminder to check in, shown as the next step until you do."
@@ -1981,10 +1981,6 @@ msgstr "അപേക്ഷ കാഴ്ചകൾ"
 #: src/features/search/search-screen.tsx
 msgid "Applications"
 msgstr "അപേക്ഷകൾ"
-
-#: src/features/applications/list-screen.tsx
-msgid "Applications and their attachments will be deleted permanently. This can't be undone."
-msgstr "അപേക്ഷകളും അവയുടെ അറ്റാച്ച്‌മെന്റുകളും ശാശ്വതമായി ഇല്ലാതാക്കപ്പെടും. ഇത് പഴയപടിയാക്കാനാവില്ല."
 
 #: src/features/applications-board/insights-screen.tsx
 msgid "Applications over time"
@@ -2979,6 +2975,10 @@ msgstr "അസിസ്റ്റൻ്റ് അടയ്ക്കുക"
 msgid "Close…"
 msgstr "അടയ്ക്കുക..."
 
+#: src/features/applications/prior-no-response.tsx
+msgid "closed"
+msgstr ""
+
 #: src/features/application-detail/detail-screen.tsx
 #: src/features/applications/next-step.ts
 #: src/features/applications/stages.ts
@@ -3310,6 +3310,7 @@ msgid "Copy code"
 msgstr "കോഡ് പകർത്തുക"
 
 #: src/features/document-menu/index.tsx
+#: src/features/documents/document-sheets.tsx
 msgid "Copy created"
 msgstr "പകർപ്പ് സൃഷ്ടിച്ചു"
 
@@ -6261,6 +6262,10 @@ msgstr "ഒരൊറ്റ വിലാസം മാത്രം വയ്ക്
 msgid "Keep access when you are not using the application."
 msgstr "നിങ്ങൾ ആപ്ലിക്കേഷൻ ഉപയോഗിക്കാത്തപ്പോൾ ആക്സസ് നിലനിർത്തുക."
 
+#: src/features/application-detail/detail-screen.tsx
+msgid "Keep application"
+msgstr ""
+
 #: src/draft/conflict-sheet.tsx
 msgid "Keep both"
 msgstr "രണ്ടും സൂക്ഷിക്കുക"
@@ -6745,8 +6750,8 @@ msgid "Linked to the resume again"
 msgstr "വീണ്ടും റെസ്യൂമെയിലേക്ക് ലിങ്ക് ചെയ്തു"
 
 #: src/features/letters/write.tsx
-msgid "Linked. Name, email, phone and city update when the resume does."
-msgstr "ലിങ്ക് ചെയ്‌തു. റെസ്യൂമെ ചെയ്യുമ്പോൾ പേര്, ഇമെയിൽ, ഫോൺ, നഗരം എന്നിവ അപ്ഡേറ്റ് ചെയ്യുക."
+msgid "Linked. The header (name, contact details, links and photo) updates when the resume does."
+msgstr ""
 
 #: src/features/settings/application-profile.tsx
 msgid "Links"
@@ -7845,6 +7850,10 @@ msgstr ""
 msgid "No replies to chart yet"
 msgstr ""
 
+#: src/features/applications/prior-no-response.tsx
+msgid "no reply"
+msgstr ""
+
 #: src/features/applications/stages.ts
 msgid "No response"
 msgstr "പ്രതികരണമില്ല"
@@ -7979,6 +7988,10 @@ msgstr "റെസ്യൂമെയ്ക്ക് പാസ്‌വേഡ് �
 msgid "Not connected yet. Add its DNS records where you manage the domain, then check."
 msgstr "ഇതുവരെ കണക്റ്റ് ചെയ്തിട്ടില്ല. നിങ്ങൾ ഡൊമെയ്ൻ നിയന്ത്രിക്കുന്നിടത്ത് ഇതിന്റെ DNS റെക്കോർഡുകൾ ചേർക്കുക, തുടർന്ന് പരിശോധിക്കുക."
 
+#: src/features/applications-board/insights-screen.tsx
+msgid "Not enough applications to compare yet: this needs 3 of each."
+msgstr ""
+
 #: src/features/career/today.tsx
 msgid "Not for me"
 msgstr "എനിക്ക് പറ്റിയതല്ല"
@@ -8032,6 +8045,10 @@ msgstr "സേവ് ചെയ്തില്ല — ഈ വസ്തുത മ�
 #: src/features/settings/application-profile.tsx
 #: src/features/workspace/preparation.tsx
 msgid "Not saved yet"
+msgstr ""
+
+#: src/features/applications/prior-no-response.tsx
+msgid "not selected"
 msgstr ""
 
 #: src/features/applications/stages.ts
@@ -8092,6 +8109,10 @@ msgstr "ഒരു റോൾ തുടരുന്നതായി ഒന്നു
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing on this day."
 msgstr "ഈ ദിവസം ഒന്നുമില്ല."
+
+#: src/features/application-detail/sections.tsx
+msgid "Nothing recorded as sent."
+msgstr ""
 
 #: src/features/applications-board/calendar-screen.tsx
 msgid "Nothing scheduled yet"
@@ -8861,10 +8882,13 @@ msgstr "പൈപ്പ്ലൈൻ ഒഴുക്ക്"
 msgid "Plain text (.txt)"
 msgstr "പ്ലെയിൻ ടെക്സ്റ്റ് (.txt)"
 
-#: src/features/letters/share.tsx
 #: src/features/share/download.tsx
 msgid "Plain text with headings. Paste into application forms and notes."
 msgstr "തലക്കെട്ടുകളുള്ള പ്ലെയിൻ ടെക്സ്റ്റ്. ജോലി അപേക്ഷാ ഫോമുകളിലും കുറിപ്പുകളിലും ഒട്ടിക്കുക."
+
+#: src/features/letters/share.tsx
+msgid "Plain text. Paste into application forms and emails."
+msgstr ""
 
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Plan again"
@@ -10310,6 +10334,7 @@ msgstr "ശരിയാണ്"
 
 #: src/features/application-detail/interview-sheet.tsx
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 #: src/features/applications/list-screen.tsx
 #: src/features/check/job-match.tsx
 #: src/features/documents/new-document.tsx
@@ -10324,10 +10349,6 @@ msgstr "റോൾ (ഓപ്ഷണൽ)"
 #: src/features/write/entry-fields.tsx
 msgid "Role {0}"
 msgstr "റോൾ {0}"
-
-#: src/features/applications/add-sheet.tsx
-msgid "Role / title"
-msgstr "റോൾ / തലക്കെട്ട്"
 
 #: src/features/applications-board/views.tsx
 msgid "Role, company or contact"
@@ -10389,16 +10410,13 @@ msgid "Rust"
 msgstr "തുരുമ്പ് തവിട്ട്"
 
 #: src/features/application-detail/sections.tsx
+#: src/features/applications/add-sheet.tsx
 msgid "Salary"
 msgstr "ശമ്പളം"
 
 #: src/features/career/today.tsx
 msgid "Salary not detected"
 msgstr ""
-
-#: src/features/applications/add-sheet.tsx
-msgid "Salary range"
-msgstr "ശമ്പള പരിധി"
 
 #: src/features/workspace/tabs/apply.tsx
 msgid "Same length"
@@ -12502,6 +12520,10 @@ msgstr ""
 msgid "These open your server's account settings in a browser tab inside the app. You may need to sign in there."
 msgstr "ഇവ ആപ്പിനുള്ളിലെ ബ്രൗസർ ടാബിൽ നിങ്ങളുടെ സെർവറിൻ്റെ അക്കൗണ്ട് ക്രമീകരണം തുറക്കുന്നു. നിങ്ങൾ അവിടെ സൈൻ ഇൻ ചെയ്യേണ്ടി വന്നേക്കാം."
 
+#: src/features/applications/list-screen.tsx
+msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
+msgstr ""
+
 #: src/features/check/issues.ts
 msgid "They look for headings such as Experience, Education and Skills."
 msgstr "അവർ അനുഭവം, വിദ്യാഭ്യാസം, കഴിവുകൾ തുടങ്ങിയ തലക്കെട്ടുകൾക്കായി നോക്കുന്നു."
@@ -12924,6 +12946,7 @@ msgstr "ഒരു റിമൈൻഡർ ലഭിക്കാൻ, നിങ്�
 
 #: app/(tabs)/career/_layout.tsx
 #: src/features/applications-board/calendar-screen.tsx
+#: src/features/letters/write.tsx
 #: src/features/search/search-screen.tsx
 #: src/features/share/link.tsx
 msgid "Today"
@@ -14139,6 +14162,10 @@ msgstr ""
 msgid "You"
 msgstr "നിങ്ങൾ"
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you accepted an offer"
+msgstr ""
+
 #: src/features/share/link.tsx
 msgid "You already use this for “{takenBy}”."
 msgstr "\"{takenBy}\" എന്നതിനായി നിങ്ങൾ ഇതിനകം ഇത് ഉപയോഗിക്കുന്നു."
@@ -14146,6 +14173,10 @@ msgstr "\"{takenBy}\" എന്നതിനായി നിങ്ങൾ ഇത�
 #: src/features/assistant/messages.tsx
 msgid "You answered: {answer}"
 msgstr "നിങ്ങൾ ഉത്തരം നൽകി: {answer}"
+
+#: src/features/applications/prior-no-response.tsx
+msgid "You applied to this company before. You can still apply."
+msgstr ""
 
 #: src/shell/builder-chrome.tsx
 msgid "You can keep editing. Changes sync when you're back online. PDF sharing works with cached fonts and images."
@@ -14176,9 +14207,17 @@ msgstr "നിങ്ങൾക്ക് സംരക്ഷിക്കാത്�
 msgid "You send it from your own email."
 msgstr "നിങ്ങളുടെ സ്വന്തം ഇമെയിലിൽ നിന്ന് നിങ്ങൾ തന്നെ ഇത് അയയ്ക്കുക."
 
+#: src/features/applications/prior-no-response.tsx
+msgid "you took another offer"
+msgstr ""
+
 #: src/features/settings/sign-out.tsx
 msgid "You will be signed out of {server}. Any edits not yet synced from this device will be lost."
 msgstr "നിങ്ങൾ {server}-ൽ നിന്ന് സൈൻ ഔട്ട് ചെയ്യപ്പെടും. ഈ ഉപകരണത്തിൽ നിന്ന് ഇതുവരെ സമന്വയിപ്പിക്കാത്ത എല്ലാ എഡിറ്റുകളും നഷ്‌ടമാകും."
+
+#: src/features/applications/prior-no-response.tsx
+msgid "you withdrew"
+msgstr ""
 
 #: src/features/ai/web-access.tsx
 msgid "You'll need to enter the key again to reconnect. The built-in reader remains active."

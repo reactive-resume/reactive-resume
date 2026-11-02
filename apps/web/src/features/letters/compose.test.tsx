@@ -13,7 +13,7 @@ it.each([
 	{
 		appLocale: "en-US",
 		documentLocale: "de-DE",
-		greeting: "Liebes Einstellungsteam,",
+		greeting: "Sehr geehrte Damen und Herren,",
 		signOff: "Mit freundlichen Grüßen",
 		date: "28. September 2026",
 	},

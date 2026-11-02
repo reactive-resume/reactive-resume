@@ -24,7 +24,8 @@ export type OfferHint = { respondBy: string | null };
 export type NextStep =
 	| { kind: "interview"; interview: InterviewTimelineEntry; at: Date }
 	| { kind: "follow-up"; at: Date; note: string; overdue: boolean }
-	| { kind: "no-reply"; days: number }
+	/** Silence past the follow-up mark: since applying or the screen, or (`after: "interview"`) since the last interview. */
+	| { kind: "no-reply"; days: number; after?: "interview" }
 	| { kind: "waiting"; days: number }
 	/** Interview stage with every recorded interview behind it: the employer's answer is due. */
 	| { kind: "interview-feedback"; days: number }
@@ -88,13 +89,21 @@ export function getNextStep(
 	if (application.status === "saved") return { kind: "not-applied" };
 
 	const days = daysInStage(application, now);
-	if (application.status === "applied" && days >= FOLLOW_UP_AFTER_DAYS) return { kind: "no-reply", days };
+	// Going quiet after a screen is as common as after applying: both get the same nudge.
+	if ((application.status === "applied" || application.status === "screening") && days >= FOLLOW_UP_AFTER_DAYS)
+		return { kind: "no-reply", days };
 	if (application.status === "interview") {
 		const since = applicationStageSince(application).getTime();
-		const feedbackDue = application.activity.some(
-			(entry) => entry.type === "interview" && new Date(entry.at).getTime() >= since,
-		);
-		return feedbackDue ? { kind: "interview-feedback", days } : { kind: "no-interview", days };
+		const ended = application.activity
+			.filter((entry): entry is InterviewTimelineEntry => entry.type === "interview")
+			.filter((entry) => new Date(entry.at).getTime() >= since)
+			.map((entry) => new Date(entry.at).getTime() + entry.durationMinutes * 60_000);
+		if (ended.length === 0) return { kind: "no-interview", days };
+		// No word since the last interview ended, counted from then.
+		const quiet = daysBetween(new Date(Math.max(...ended)), now);
+		return quiet >= FOLLOW_UP_AFTER_DAYS
+			? { kind: "no-reply", days: quiet, after: "interview" }
+			: { kind: "interview-feedback", days };
 	}
 	return { kind: "waiting", days };
 }
