@@ -53,7 +53,7 @@ vi.mock("@/libs/orpc/client", () => {
 					"profile",
 					"savedItems",
 					"saveStory",
-					"saveProfile",
+					"updateProfile",
 					"saveFact",
 					"suggestTargetRoles",
 					"updateFact",
@@ -62,7 +62,7 @@ vi.mock("@/libs/orpc/client", () => {
 				].map((name) => [name, endpoint(name)]),
 			),
 		},
-		client: { career: { saveProfile: api.saveProfile } },
+		client: { career: { updateProfile: api.saveProfile } },
 	};
 });
 vi.mock("@tanstack/react-router", () => ({
@@ -324,6 +324,13 @@ it("does not claim an Ask first privacy default when the saved memory setting fa
 	expect(screen.queryByRole("radio", { name: "Ask first" })).toBeNull();
 });
 
+it("saves only memory consent from Facts, preserving other cached preferences", async () => {
+	mount(<FactsPage highlight={undefined} />);
+	fireEvent.click(await screen.findByRole("radio", { name: "Never" }));
+	await waitFor(() => expect(api.saveProfile).toHaveBeenCalledWith({ memoryMode: "off" }, expect.anything()));
+	expect(clients[0]?.getQueryData(["profile"])).toEqual({ ...profile(), memoryMode: "off" });
+});
+
 it("rejects salary shorthand without autosaving a different number, and accepts a full amount", async () => {
 	mount(<PreferencesPage />);
 	const input = await screen.findByRole("textbox", { name: "Minimum base salary" });
@@ -344,6 +351,7 @@ it("rejects salary shorthand without autosaving a different number, and accepts 
 		),
 	);
 	expect(input.getAttribute("aria-invalid")).toBeNull();
+	expect(api.saveProfile.mock.calls.at(-1)?.[0].memoryMode).toBeUndefined();
 });
 
 it("lets an existing office-day requirement return to unspecified", async () => {

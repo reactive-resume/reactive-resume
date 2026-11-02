@@ -291,8 +291,8 @@ export function useMemoryNote(knowledge: boolean) {
 				size="sm"
 				icon="brain"
 				label={label}
-				accessibilityHint={t`Opens Knowledge → Preferences, where you choose what the coach remembers.`}
-				onPress={() => router.push({ pathname: routes.career("knowledge"), params: { tab: "preferences" } })}
+				accessibilityHint={t`Opens Knowledge → Facts, where you choose what the coach remembers.`}
+				onPress={() => router.push({ pathname: routes.career("knowledge"), params: { tab: "facts" } })}
 			/>
 		) : null,
 	};

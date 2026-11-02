@@ -1662,6 +1662,36 @@ describe.skipIf(!databaseUrl)("career knowledge, context and data lifecycle", ()
 		expect((await service.profile("alice")).searchRegions).toBeNull();
 	});
 
+	it("keeps independent memory and Preferences saves, including concurrent writes", async () => {
+		const original = careerProfileDataSchema.parse({
+			memoryMode: "auto",
+			priorities: "Time for mentoring",
+			minBase: { amount: 95000, currency: "EUR", period: "year" },
+			searchRegions: ["DE"],
+		});
+		await service.saveProfile("alice", original);
+		const { memoryMode: _memoryMode, ...preferences } = original;
+		await Promise.all([
+			service.saveProfile("alice", { memoryMode: "off" }),
+			service.saveProfile("alice", { ...preferences, priorities: "Thoughtful work", memoryMode: undefined }),
+		]);
+		expect(await service.profile("alice")).toEqual({
+			...original,
+			memoryMode: "off",
+			priorities: "Thoughtful work",
+		});
+		for (const memoryMode of ["ask", "auto", "off"] as const) {
+			await service.saveProfile("alice", { memoryMode });
+			expect(await service.profile("alice")).toMatchObject({
+				memoryMode,
+				priorities: "Thoughtful work",
+				minBase: original.minBase,
+				searchRegions: ["DE"],
+			});
+		}
+		expect((await service.profile("bob")).memoryMode).toBe("ask");
+	});
+
 	it("exports source metadata and owned coaching records without credentials, then cascades account deletion", async () => {
 		await service.saveProfile("alice", careerProfileDataSchema.parse({ priorities: "Autonomy" }));
 		const saved = await fact("alice", "I mentor junior engineers.");

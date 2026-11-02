@@ -95,6 +95,53 @@ test("reload and close preserve preferences, messages, answers and notes without
 	await expect(reopened.getByLabel("Notes", { exact: true })).toHaveValue("Keep this note when its tab closes.");
 });
 
+test("Facts owns memory consent and stale Preferences saves preserve it", async ({ authPage: page }) => {
+	const read = async () => await (await page.request.get("/api/openapi/career/profile")).json();
+	await expect(
+		await page.request.patch("/api/openapi/career/profile", {
+			data: { memoryMode: "auto", minBase: { amount: 95000, currency: "EUR", period: "year" } },
+		}),
+	).toBeOK();
+	await page.goto("/dashboard/career/knowledge/preferences");
+	const priorities = page.getByLabel("What matters to you");
+	await expect(priorities).toBeVisible();
+	await expect(page.getByText("Remember facts from my messages")).toHaveCount(0);
+	// Another control changes consent while this Preferences form retains its original profile.
+	await expect(await page.request.patch("/api/openapi/career/profile", { data: { memoryMode: "off" } })).toBeOK();
+	await priorities.fill("Time for mentoring");
+	await page.getByLabel("Notice period", { exact: true }).focus();
+	await page.getByLabel("Notice period", { exact: true }).blur();
+	await expect.poll(async () => (await read()).priorities).toBe("Time for mentoring");
+	expect((await read()).memoryMode).toBe("off");
+	await page.goto("/dashboard/career/knowledge/facts");
+	await expect(page.getByRole("radio", { name: "Never", exact: true })).toBeChecked();
+	for (const [label, memoryMode] of [
+		["Ask first", "ask"],
+		["Automatically", "auto"],
+		["Never", "off"],
+	]) {
+		await page.getByRole("radio", { name: label, exact: true }).click();
+		await expect.poll(async () => (await read()).memoryMode).toBe(memoryMode);
+		expect(await read()).toMatchObject({
+			priorities: "Time for mentoring",
+			minBase: { amount: 95000, currency: "EUR", period: "year" },
+		});
+	}
+	await page.reload();
+	await expect(page.getByRole("radio", { name: "Never", exact: true })).toBeChecked();
+	await expect(
+		await page.request.patch("/api/openapi/career/profile", { data: { memoryMode: "invalid" } }),
+	).not.toBeOK();
+	expect((await read()).memoryMode).toBe("off");
+	// Older clients retain the existing whole-profile PUT and its defaulting behavior.
+	await expect(await page.request.put("/api/openapi/career/profile", { data: { priorities: "Legacy save" } })).toBeOK();
+	expect(await read()).toMatchObject({
+		priorities: "Legacy save",
+		memoryMode: "ask",
+		minBase: { amount: null, currency: "USD", period: "year" },
+	});
+});
+
 test("follow-up writes project to Today and back, and attached PDFs count as sent", async ({
 	authPage: page,
 }, info) => {

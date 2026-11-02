@@ -216,7 +216,7 @@ export function MemoryCard() {
 				aria-labelledby={labelId}
 				value={mode}
 				disabled={!profile}
-				onValueChange={(value) => profile && save({ ...profile, memoryMode: value as MemoryMode })}
+				onValueChange={(value) => profile && save({ memoryMode: value as MemoryMode })}
 				className="h-[34px]"
 			>
 				{modes.map(([value, label]) => (

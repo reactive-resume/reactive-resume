@@ -96,7 +96,11 @@ export function Preferences({ initial }: PreferencesProps) {
 					current.server,
 				]);
 				if (getServer() !== current.server || identity?.id !== current.accountId) return;
-				await client.career.saveProfile(value);
+				// Recovered Preferences drafts can contain an old memory choice, now owned by Facts.
+				await client.career.updateProfile(
+					{ ...value, memoryMode: undefined },
+					{ context: { scope: JSON.stringify([current.server, current.accountId]) } },
+				);
 				setSaved(queuedJson);
 				current.clear(current.raw);
 				current.unblock();
@@ -161,23 +165,6 @@ export function Preferences({ initial }: PreferencesProps) {
 					)}
 				</>
 			) : null}
-			<SelectSheet
-				label={t`Remember facts from my messages`}
-				value={draft.memoryMode}
-				onChange={(memoryMode) => change({ memoryMode })}
-				options={[
-					{ value: "ask", label: t`Ask first` },
-					{ value: "auto", label: t`Automatically` },
-					{ value: "off", label: t`Never` },
-				]}
-			/>
-			<Text color="ink3">
-				{draft.memoryMode === "ask"
-					? t`The coach proposes each fact in the chat. Nothing is saved until you agree.`
-					: draft.memoryMode === "auto"
-						? t`The coach saves facts you state, and tells you. You can undo.`
-						: t`The coach doesn't remember anything from your messages.`}
-			</Text>
 			<ChipInput
 				label={t`Target roles`}
 				values={draft.targetRoles}

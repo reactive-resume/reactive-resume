@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vite-plus/test";
-import { careerOfferInputSchema, careerProfileDataSchema } from "./career";
+import { careerOfferInputSchema, careerProfileDataSchema, careerProfileUpdateSchema } from "./career";
+
+describe("career profile updates", () => {
+	it("never supplies defaults for fields another control owns", () => {
+		expect(careerProfileUpdateSchema.parse({ memoryMode: "off" })).toEqual({ memoryMode: "off" });
+		expect(careerProfileUpdateSchema.parse({ priorities: "Mentoring" })).toEqual({ priorities: "Mentoring" });
+		expect(careerProfileUpdateSchema.parse({})).toEqual({});
+		expect(careerProfileDataSchema.parse({}).memoryMode).toBe("ask");
+	});
+});
 
 describe("careerProfileDataSchema searchRegions", () => {
 	it("leaves searchRegions absent when the input has none", () => {
