@@ -39,6 +39,7 @@ const routes = {
 };
 const mocks = {
 	react,
+	"@/shell/key-commands": { useKeyCommands() {} },
 	"react-native": native,
 	"react-native-safe-area-context": safe,
 	"@lingui/react/macro": { useLingui: () => ({ t: tag }) },

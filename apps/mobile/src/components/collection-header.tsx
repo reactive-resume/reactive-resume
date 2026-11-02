@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
+import type { ComponentRef, ReactNode } from "react";
 import { useLingui } from "@lingui/react/macro";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { I18nManager, Keyboard, TextInput, View, useWindowDimensions } from "react-native";
+import { useKeyCommands } from "@/shell/key-commands";
 import { Icon, IconButton, Text, useTheme } from "@/ui";
 
 type CollectionHeaderProps = {
@@ -40,6 +41,16 @@ export function CollectionHeader({
 	const { t } = useLingui();
 	const { colors, radius, size, space, type } = useTheme();
 	const [searching, setSearching] = useState(Boolean(value));
+	const [focusOnOpen, setFocusOnOpen] = useState(false);
+	const searchRef = useRef<ComponentRef<typeof TextInput>>(null);
+	const openSearch = () => {
+		setFocusOnOpen(true);
+		setSearching(true);
+		searchRef.current?.focus();
+	};
+	useKeyCommands(
+		searchLabel && !disabled ? [{ id: "collection.search", input: "f", title: searchLabel, run: openSearch }] : [],
+	);
 	const { fontScale } = useWindowDimensions();
 	const stacked = fontScale > 1.3;
 	return (
@@ -67,6 +78,7 @@ export function CollectionHeader({
 				>
 					<Icon name="magnifying-glass" size={size.icon.row} color={colors.ink3} />
 					<TextInput
+						ref={searchRef}
 						accessibilityLabel={searchLabel}
 						placeholder={placeholder}
 						placeholderTextColor={colors.ink3}
@@ -75,7 +87,7 @@ export function CollectionHeader({
 						maxLength={maxLength}
 						onChangeText={onChangeText}
 						editable={!disabled}
-						autoFocus={!value}
+						autoFocus={focusOnOpen}
 						autoCorrect={false}
 						autoCapitalize="none"
 						returnKeyType="search"
@@ -115,12 +127,7 @@ export function CollectionHeader({
 						}}
 					>
 						{searchLabel ? (
-							<IconButton
-								icon="magnifying-glass"
-								label={searchLabel}
-								disabled={disabled}
-								onPress={() => setSearching(true)}
-							/>
+							<IconButton icon="magnifying-glass" label={searchLabel} disabled={disabled} onPress={openSearch} />
 						) : null}
 						{actions}
 					</View>

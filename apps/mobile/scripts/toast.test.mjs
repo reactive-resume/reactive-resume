@@ -25,6 +25,7 @@ const theme = {
 };
 const mocks = {
 	react,
+	"@/shell/key-commands": { useKeyCommandBlocker() {} },
 	"react-native": {
 		AccessibilityInfo: {
 			isScreenReaderEnabled: async () => false,

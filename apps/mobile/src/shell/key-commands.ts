@@ -10,8 +10,10 @@ type Owner = { readonly current: readonly KeyBinding[] };
 
 // Every mounted `useKeyCommands`, in mount order. For the same keys the latest mounted one wins.
 const owners = new Set<Owner>();
+let blockers = 0;
 
 const active = () => {
+	if (blockers) return [];
 	const byKey = new Map<string, KeyBinding>();
 	for (const owner of owners)
 		for (const binding of owner.current) byKey.set(`${binding.input}:${!!binding.shift}`, binding);
@@ -20,6 +22,19 @@ const active = () => {
 
 const sync = () =>
 	keyCommands?.setCommands(active().map(({ id, input, shift, title }) => ({ id, input, shift: !!shift, title })));
+
+/** Sheets and alerts suspend background commands, including late native events. */
+export function useKeyCommandBlocker(open: boolean) {
+	useEffect(() => {
+		if (!open) return;
+		blockers++;
+		sync();
+		return () => {
+			blockers--;
+			sync();
+		};
+	}, [open]);
+}
 
 keyCommands?.addListener("onKeyCommand", ({ id }) =>
 	active()
