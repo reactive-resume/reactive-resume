@@ -1921,6 +1921,7 @@ msgstr "Προσαρμόστε γραμματοσειρές, χρώματα, κ�
 msgid "Ads"
 msgstr "Διαφημίσεις"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Προχωρημένος"
@@ -2271,8 +2272,7 @@ msgstr "Οτιδήποτε να θυμάστε για αυτή τη δουλει
 msgid "Anywhere"
 msgstr "Οπουδήποτε"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "Κλειδί API"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Βασικός μισθός"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Βασική διεύθυνση URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Βασικό URL (απαιτείται)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Ενσωματωμένος αναγνώστης"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "Εισαγάγετε ολόκληρο το ποσό, όπως 95000, ή 
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Εισαγάγετε ολόκληρο το ποσό, π.χ. 95000. Το προηγούμενο ποσό σας δεν άλλαξε."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Εισαγάγετε ένα αναγνωριστικό μοντέλου."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Εισαγάγετε ένα όνομα, έως 64 χαρακτήρες."
@@ -6087,6 +6094,14 @@ msgstr "Εισαγάγετε μια έγκυρη διεύθυνση email."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Εισαγάγετε μια διεύθυνση ιστού, όπως το παράδειγμα.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Εισαγάγετε ένα κλειδί API για αυτόν τον πάροχο."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Εισαγάγετε ένα βασικό URL που αρχίζει με http:// ή https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "Για το LibreOffice και άλλους επεξεργαστές α�
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Για πύλες ή υπαλλήλους προσλήψεων που ζητούν Word. Η διάταξη είναι απλοποιημένη."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "Για σενάρια, επεκτάσεις και πελάτες MCP. Τα κλειδιά λειτουργούν όπως εσείς και μπορούν να διαβάσουν και να επεξεργαστούν τα έγγραφά σας."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "Λάβετε ένα κλειδί στο <0>{0}</0>. Αποθηκεύετ
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Λάβετε ένα πλάνο για τη συνέντευξη, βασισμένο στην ανάρτηση εργασίας και στις δικές σας ιστορίες. Εξασκηθείτε φωναχτά και μετά σημειώστε πώς πήγε."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Λήψη κλειδιού API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Αποκτήστε ένα κλειδί API από τον διαχειριστή του τελικού σας σημείου."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7904,8 +7923,8 @@ msgid "Key stored encrypted"
 msgstr "Το κλειδί αποθηκεύεται κρυπτογραφημένο"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Τα κλειδιά λειτουργούν όπως εσείς και μπορούν να διαβάσουν και να επεξεργαστούν τα έγγραφά σας."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Τα κλειδιά ενεργούν εκ μέρους σας με την πρόσβαση που επιλέγετε. Τα νέα κλειδιά ξεκινούν με πρόσβαση μόνο για ανάγνωση."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Αφήστε τουλάχιστον μισή ίντσα γύρω από τη σελίδα."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Αφήστε κενό για να διατηρήσετε το αποθηκευμένο κλειδί"
 
@@ -8160,10 +8179,6 @@ msgstr "Διάρκεια σε λεπτά"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Το μήκος δεν είναι ελάττωμα και δεν υπάρχει καθολικός κανόνας μίας σελίδας. Κρατήστε τις σελίδες που αξίζουν τη θέση τους."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Επιτρέψτε σε πελάτες τεχνητής νοημοσύνης όπως το Claude ή το Cursor να διαβάσουν και να επεξεργαστούν τα βιογραφικά σας, χρησιμοποιώντας ένα κλειδί API παραπάνω."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8913,8 +8928,7 @@ msgstr "Μικτή"
 msgid "mixed format"
 msgstr "μικτή μορφή"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Μοντέλο"
 
@@ -9122,7 +9136,7 @@ msgstr "Η δουλειά μου ήταν να βρω το γιατί, χωρί�
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Όνομα"
@@ -10289,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Προαιρετικό για τοπικό Ollama"
 
@@ -13566,6 +13580,10 @@ msgstr "Οι πλευρικές γραμμές συχνά διαβάζονται
 msgid "Sign in"
 msgstr "Σύνδεση"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Συνδεθείτε από την εφαρμογή τεχνητής νοημοσύνης σας ή χρησιμοποιήστε ένα κλειδί API."
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14940,11 +14958,11 @@ msgstr "Η κριτική δεν μπορούσε να ολοκληρωθεί. �
 msgid "The same line repeats on every page."
 msgstr "Η ίδια γραμμή επαναλαμβάνεται σε κάθε σελίδα."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Το αποθηκευμένο κλειδί δεν αποστέλλεται σε νέα διεύθυνση URL βάσης. Εισαγάγετε ξανά το κλειδί εάν αυτός ο διακομιστής απαιτεί κλειδί."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Το αποθηκευμένο κλειδί δεν αποστέλλεται σε νέα διεύθυνση URL βάσης. Εισάγετε ξανά το κλειδί."
 
@@ -17518,35 +17536,3 @@ msgstr "Σμίκρυνση"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Ζουλού"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Τα κλειδιά ενεργούν εκ μέρους σας με την πρόσβαση που επιλέγετε. Τα νέα κλειδιά ξεκινούν με πρόσβαση μόνο για ανάγνωση."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Συνδεθείτε από την εφαρμογή τεχνητής νοημοσύνης σας ή χρησιμοποιήστε ένα κλειδί API."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "Βασικό URL (απαιτείται)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "Εισαγάγετε ένα αναγνωριστικό μοντέλου."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "Εισαγάγετε ένα κλειδί API για αυτόν τον πάροχο."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Εισαγάγετε ένα βασικό URL που αρχίζει με http:// ή https://."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "Λήψη κλειδιού API"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Αποκτήστε ένα κλειδί API από τον διαχειριστή του τελικού σας σημείου."

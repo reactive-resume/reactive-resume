@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Avansert"
@@ -2235,6 +2236,10 @@ msgstr "Grunnlønn"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Basis-URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Basis-URL (påkrevd)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "Opprett en ny CV"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Lag en CV først, og spør deretter om den."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Opprett en API-nøkkel i nettleserens kontoinnstillinger. API-nøkler fungerer på dine vegne og kan lese og redigere dokumentene dine."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "Skriv inn et fullt beløp, for eksempel 95000. Det forrige beløpet ditt
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Skriv inn en sekskantfarge som #1a1a1a eller rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Skriv inn en modell-ID."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Skriv inn et navn, opptil 64 tegn."
@@ -4837,6 +4843,14 @@ msgstr "Skriv inn et helt tall fra 0 til 52, eller la stå tomt."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Skriv inn en adresse som resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Skriv inn en API-nøkkel for denne leverandøren."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Skriv inn en basis-URL som starter med http:// eller https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "Tysk"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Få en nøkkel på {0}. Den lagres kryptert og brukes kun til dine forespørsler."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Få en API-nøkkel"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Få en API-nøkkel fra operatøren av endepunktet ditt."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "Beholdt som den er"
 msgid "Key stored encrypted"
 msgstr "Nøkkel lagret kryptert"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "API-nøkler fungerer på dine vegne og kan få tilgang til dokumentene dine. Opprett nye nøkler i nettleserens kontoinnstillinger."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Oppsett for nøkkelord"
@@ -6295,10 +6313,6 @@ msgstr "Mindre"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Mindre enn 48 timer igjen."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "La AI-klienter som Claude eller Cursor lese og redigere CV-ene dine ved å bruke en API-nøkkel."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Nytt dokument"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Nye nøkler starter med kun lesetilgang. Opprett nøkler i kontoinnstillingene dine i nettleseren."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "Logg på igjen for å fortsette å sjekke denne CV-en."
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Logg på igjen for å fortsette å jobbe. Endringer du har gjort beholdes på denne enheten og synkroniseres etter at du logger på."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Logg inn fra AI-klienten din, eller bruk en API-nøkkel."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "Logg på eller opprett en konto i nettleseren ved å bruke e-post, en passordnøkkel, Google, GitHub eller LinkedIn. Du kommer tilbake hit når du er ferdig."
@@ -13954,36 +13977,3 @@ msgstr "Zoom ut"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Nye nøkler starter med kun lesetilgang. Opprett nøkler i kontoinnstillingene dine i nettleseren."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Logg inn fra AI-klienten din, eller bruk en API-nøkkel."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Basis-URL (påkrevd)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Skriv inn en modell-ID."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Skriv inn en API-nøkkel for denne leverandøren."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Skriv inn en basis-URL som starter med http:// eller https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Få en API-nøkkel"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Få en API-nøkkel fra operatøren av endepunktet ditt."

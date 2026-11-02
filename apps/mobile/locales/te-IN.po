@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "అధునాతన"
@@ -2235,6 +2236,10 @@ msgstr "మూల వేతనం"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "బేస్ URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "బేస్ URL (అవసరం)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "కొత్త రిజ్యూమ్ సృష్టించండ�
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "ముందుగా రెజ్యూమేని సృష్టించండి, ఆపై దాని గురించి అడగండి."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "మీ బ్రౌజర్‌లోని ఖాతా సెట్టింగ్‌ల నుండి API కీని సృష్టించండి. కీలు మీ వలె పని చేస్తాయి మరియు మీ పత్రాలను చదవగలవు మరియు సవరించగలవు."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "95000 వంటి పూర్తి మొత్తాన్ని న
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a లేదా rgba(...) వంటి హెక్స్ రంగును నమోదు చేయండి."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "మోడల్ IDని నమోదు చేయండి."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 అక్షరాల వరకు పేరును నమోదు చేయండి."
@@ -4837,6 +4843,14 @@ msgstr "0 నుండి 52 వరకు పూర్తి సంఖ్యన�
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org వంటి చిరునామాను నమోదు చేయండి."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "ఈ ప్రొవైడర్ కోసం API కీని నమోదు చేయండి."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// లేదా https:// తో ప్రారంభమయ్యే బేస్ URLని నమోదు చేయండి."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "జర్మన్"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "{0} వద్ద కీని పొందండి. ఇది గుప్తీకరించబడి నిల్వ చేయబడుతుంది మరియు మీ అభ్యర్థనల కోసం మాత్రమే ఉపయోగించబడుతుంది."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "API కీని పొందండి"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "మీ ఎండ్‌పాయింట్ నిర్వాహకుని నుండి API కీని పొందండి."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "అలాగే ఉంచారు"
 msgid "Key stored encrypted"
 msgstr "గుప్తీకరించిన కీ నిల్వ చేయబడింది"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "కీలు మీ తరఫున పనిచేస్తాయి, మీ పత్రాలను యాక్సెస్ చేయగలవు. బ్రౌజర్‌లోని ఖాతా సెట్టింగులలో కొత్త కీలు సృష్టించవచ్చు."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "కీవర్డ్ లేఅవుట్"
@@ -6295,10 +6313,6 @@ msgstr "తక్కువ"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "48 గంటల కంటే తక్కువ సమయం మిగిలి ఉంది."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "API కీని ఉపయోగించి Claude లేదా Cursor వంటి AI క్లయింట్‌లు మీ రెజ్యూమ్‌లను చదవడానికి మరియు సవరించడానికి అనుమతించండి."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "కొత్త పత్రం"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "కొత్త కీలకు మొదట చదవడానికి మాత్రమే అనుమతి ఉంటుంది. మీ బ్రౌజర్‌లో ఖాతా సెట్టింగ్‌ల నుండి కీలను సృష్టించండి."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "ఈ రెజ్యూమ్‌ని తనిఖీ చేయడం �
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "పనిని కొనసాగించడానికి మళ్లీ సైన్ ఇన్ చేయండి. మీరు చేసిన సవరణలు ఈ పరికరంలో ఉంచబడతాయి మరియు మీరు సైన్ ఇన్ చేసిన తర్వాత సమకాలీకరించబడతాయి."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "మీ AI క్లయింట్ నుండి సైన్ ఇన్ చేయండి లేదా API కీని ఉపయోగించండి."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "ఇమెయిల్, పాస్‌కీ, Google, GitHub లేదా LinkedInతో సైన్ ఇన్ చేయండి లేదా బ్రౌజర్‌లో ఖాతాను సృష్టించండి. మీరు పూర్తి చేసిన తర్వాత ఇక్కడకు తిరిగి రండి."
@@ -13954,36 +13977,3 @@ msgstr "జూమ్ అవుట్ చేయండి"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "జులు"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "కొత్త కీలకు మొదట చదవడానికి మాత్రమే అనుమతి ఉంటుంది. మీ బ్రౌజర్‌లో ఖాతా సెట్టింగ్‌ల నుండి కీలను సృష్టించండి."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "మీ AI క్లయింట్ నుండి సైన్ ఇన్ చేయండి లేదా API కీని ఉపయోగించండి."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "బేస్ URL (అవసరం)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "మోడల్ IDని నమోదు చేయండి."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "ఈ ప్రొవైడర్ కోసం API కీని నమోదు చేయండి."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// లేదా https:// తో ప్రారంభమయ్యే బేస్ URLని నమోదు చేయండి."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "API కీని పొందండి"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "మీ ఎండ్‌పాయింట్ నిర్వాహకుని నుండి API కీని పొందండి."

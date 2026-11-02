@@ -1921,6 +1921,7 @@ msgstr "CV ବିଲଡରରେ ଫଣ୍ଟ, ରଙ୍ଗ, ବ୍ୟବଧା�
 msgid "Ads"
 msgstr "ବିଜ୍ଞାପନଗୁଡିକ |"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "ଅଗ୍ରୀମ"
@@ -2271,8 +2272,7 @@ msgstr "ଏହି କାର୍ଯ୍ୟ ବିଷୟରେ ମନେ ରଖି�
 msgid "Anywhere"
 msgstr "ଯେକୌଣସି ସ୍ଥାନରେ"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API କି"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "ମୂଳ ଦରମା"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "ମୂଳ URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "ବେସ୍ URL (ଆବଶ୍ୟକ)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "ବିଲ୍ଟ-ଇନ୍ ରିଡର୍ |"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "95000 ପରି ସମ୍ପୂର୍ଣ୍ଣ ରାଶି ଲେଖନ
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "95000 ପରି ଏକ ପୂର୍ଣ୍ଣ ରାଶି ଲେଖନ୍ତୁ। ଆପଣଙ୍କ ପୂର୍ବ ରାଶି ଅପରିବର୍ତ୍ତିତ ଅଛି।"
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "ଏକ ମଡେଲ୍ ID ପ୍ରବେଶ କରନ୍ତୁ।"
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 ଅକ୍ଷର ପର୍ଯ୍ୟନ୍ତ ଏକ ନାମ ପ୍ରବେଶ କରନ୍ତୁ |"
@@ -6087,6 +6094,14 @@ msgstr "ଏକ ବ valid ଧ ଇମେଲ୍ ଠିକଣା ପ୍ରବେଶ 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "ଉଦାହରଣ .com ପରି ଏକ ୱେବ୍ ଠିକଣା ପ୍ରବେଶ କରନ୍ତୁ |"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "ଏହି ପ୍ରଦାନକାରୀଙ୍କ ପାଇଁ ଏକ API କି ପ୍ରବେଶ କରନ୍ତୁ।"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// କିମ୍ବା https:// ରୁ ଆରମ୍ଭ ହେଉଥିବା ବେସ୍ URL ପ୍ରବେଶ କରନ୍ତୁ।"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "LibreOffice ଏବଂ ଅନ୍ୟ ଓପନ୍-ସୋର୍ସ ଏଡ�
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "ପୋର୍ଟାଲ୍ କିମ୍ବା ନିଯୁକ୍ତିକାରୀଙ୍କ ପାଇଁ ଯେଉଁମାନେ Word ମାଗନ୍ତି | ଲେଆଉଟ୍ ସରଳୀକୃତ |"
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "ସ୍କ୍ରିପ୍ଟ, ଏକ୍ସଟେନ୍ସନ୍ ଏବଂ MCP କ୍ଲାଏଣ୍ଟ ପାଇଁ | କିଗୁଡ଼ିକ ତୁମ ପରି କାର୍ଯ୍ୟ କରେ ଏବଂ ତୁମର ଡକ୍ୟୁମେଣ୍ଟ୍ ପ read ି ଏଡିଟ୍ କରିପାରିବ |"
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "<0>{0}</0> ରେ ଏକ ଚାବି ପାଆନ୍ତୁ | ଏହା 
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "ଚାକିରି ବିଜ୍ଞାପନ ଓ ଆପଣଙ୍କ ନିଜ କାହାଣୀରୁ ପ୍ରସ୍ତୁତ ସାକ୍ଷାତକାର ଯୋଜନା ପାଆନ୍ତୁ। ଜୋରରେ କହି ଅଭ୍ୟାସ କରନ୍ତୁ, ତା'ପରେ କିପରି ହେଲା ଲେଖନ୍ତୁ।"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "ଏକ API କି ପାଆନ୍ତୁ"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "ଆପଣଙ୍କ ଏଣ୍ଡପଏଣ୍ଟର ପରିଚାଳକଙ୍କଠାରୁ ଏକ API କି ପାଆନ୍ତୁ।"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7905,8 +7924,8 @@ msgid "Key stored encrypted"
 msgstr "କି ଗଚ୍ଛିତ ଏନକ୍ରିପ୍ଟ ହୋଇଛି |"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "କିଗୁଡ଼ିକ ତୁମ ପରି କାର୍ଯ୍ୟ କରେ ଏବଂ ତୁମର ଡକ୍ୟୁମେଣ୍ଟ୍ ପ read ି ଏଡିଟ୍ କରିପାରିବ |"
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "ଆପଣ ବାଛିଥିବା ପ୍ରବେଶ ଅନୁମତି ସହ କିଗୁଡ଼ିକ ଆପଣଙ୍କ ପକ୍ଷରୁ କାମ କରନ୍ତି। ନୂଆ କିଗୁଡ଼ିକ ଆରମ୍ଭରେ କେବଳ ପଢ଼ିବା ଅନୁମତି ଦିଅନ୍ତି।"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8101,7 +8120,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "ପୃଷ୍ଠା ଚାରିପାଖରେ ଅତିକମରେ ଅଧ ଇଞ୍ଚ ଛାଡ଼ନ୍ତୁ।"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "ସଞ୍ଚିତ ଚାବିକୁ ରଖିବା ପାଇଁ ଖାଲି ଛାଡିଦିଅ |"
 
@@ -8161,10 +8180,6 @@ msgstr "ମିନିଟରେ ଅବଧି"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "ଲମ୍ବ ଏକ ତ୍ରୁଟି ନୁହେଁ, ଏବଂ କୌଣସି ସାର୍ବଜନୀନ ଏକ-ପୃଷ୍ଠା ନିୟମ ନାହିଁ। ଯେଉଁ ପୃଷ୍ଠାଗୁଡ଼ିକ ନିଜର ସ୍ଥାନ ଅର୍ଜନ କରନ୍ତି ସେଗୁଡ଼ିକୁ ରଖନ୍ତୁ।"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "ଉପରୋକ୍ତ API କି ବ୍ୟବହାର କରି Claude କିମ୍ବା Cursor ପରି AI କ୍ଲାଏଣ୍ଟମାନଙ୍କୁ ତୁମର ରେଜୁମ୍ ପ read ଼ିବା ଏବଂ ସଂପାଦନ କରିବାକୁ ଦିଅ |"
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8914,8 +8929,7 @@ msgstr "ମିଶ୍ରିତ"
 msgid "mixed format"
 msgstr "ମିଶ୍ରିତ ଫର୍ମାଟ୍ |"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "ମଡେଲ୍"
 
@@ -9123,7 +9137,7 @@ msgstr "ମୋ କାମ ଥିଲା ସପୋର୍ଟ କାମ ନ ବଢ଼
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "ନାମ"
@@ -10291,7 +10305,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "ସ୍ଥାନୀୟ Ollama ପାଇଁ ବ tion କଳ୍ପିକ |"
 
@@ -13568,6 +13582,10 @@ msgstr "ସାଇଡ୍ ବାର୍ ଗୁଡିକ ପ୍ରାୟତ last ଶ
 msgid "Sign in"
 msgstr "ସାଇନ୍ ଇନ୍ କରନ୍ତୁ"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "ଆପଣଙ୍କ AI କ୍ଲାଏଣ୍ଟରୁ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ କିମ୍ବା ଏକ API କି ବ୍ୟବହାର କରନ୍ତୁ।"
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14942,11 +14960,11 @@ msgstr "ସମୀକ୍ଷା ସମାପ୍ତ ହୋଇପାରିଲା ନ
 msgid "The same line repeats on every page."
 msgstr "ସମାନ ଧାଡ଼ି ପ୍ରତ୍ୟେକ ପୃଷ୍ଠାରେ ପୁନରାବୃତ୍ତି ହୁଏ।"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "ସଞ୍ଚିତ କୀ ଏକ ନୂଆ ବେସ୍ URLକୁ ପଠାଯାଏ ନାହିଁ। ଏହି ସର୍ଭର ପାଇଁ କୀ ଆବଶ୍ୟକ ହେଲେ ଏହାକୁ ପୁଣି ଦିଅନ୍ତୁ।"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "ସଞ୍ଚିତ କୀ ଏକ ନୂଆ ବେସ୍ URLକୁ ପଠାଯାଏ ନାହିଁ। ଏହାକୁ ପୁଣି ଦିଅନ୍ତୁ।"
 
@@ -17521,35 +17539,3 @@ msgstr "ଜୁମ୍ ଆଉଟ୍ କରନ୍ତୁ"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ଜୁଲୁ"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "ଆପଣ ବାଛିଥିବା ପ୍ରବେଶ ଅନୁମତି ସହ କିଗୁଡ଼ିକ ଆପଣଙ୍କ ପକ୍ଷରୁ କାମ କରନ୍ତି। ନୂଆ କିଗୁଡ଼ିକ ଆରମ୍ଭରେ କେବଳ ପଢ଼ିବା ଅନୁମତି ଦିଅନ୍ତି।"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "ଆପଣଙ୍କ AI କ୍ଲାଏଣ୍ଟରୁ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ କିମ୍ବା ଏକ API କି ବ୍ୟବହାର କରନ୍ତୁ।"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "ବେସ୍ URL (ଆବଶ୍ୟକ)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "ଏକ ମଡେଲ୍ ID ପ୍ରବେଶ କରନ୍ତୁ।"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "ଏହି ପ୍ରଦାନକାରୀଙ୍କ ପାଇଁ ଏକ API କି ପ୍ରବେଶ କରନ୍ତୁ।"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// କିମ୍ବା https:// ରୁ ଆରମ୍ଭ ହେଉଥିବା ବେସ୍ URL ପ୍ରବେଶ କରନ୍ତୁ।"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "ଏକ API କି ପାଆନ୍ତୁ"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "ଆପଣଙ୍କ ଏଣ୍ଡପଏଣ୍ଟର ପରିଚାଳକଙ୍କଠାରୁ ଏକ API କି ପାଆନ୍ତୁ।"

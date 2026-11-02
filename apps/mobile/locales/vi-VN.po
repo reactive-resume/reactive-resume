@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Trình độ cao"
@@ -2235,6 +2236,10 @@ msgstr "Lương cơ bản"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "URL cơ sở"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "URL cơ sở (bắt buộc)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "Tạo sơ yếu lý lịch mới"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Trước tiên hãy tạo một bản lý lịch, sau đó hỏi về nó."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Tạo khóa API trong cài đặt tài khoản trình duyệt của bạn. Các khóa API thay mặt bạn và có thể đọc và chỉnh sửa tài liệu của bạn."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "Nhập số tiền đầy đủ, ví dụ 95000. Số tiền trước đ
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Nhập màu hex như #1a1a1a hoặc rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Nhập ID mô hình."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Nhập tên, tối đa 64 ký tự."
@@ -4837,6 +4843,14 @@ msgstr "Nhập số nguyên từ 0 đến 52 hoặc để trống."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Nhập địa chỉ như resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Nhập khóa API cho nhà cung cấp này."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Nhập URL cơ sở bắt đầu bằng http:// hoặc https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "Tiếng Đức"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Nhận key tại {0}. Nó được lưu trữ được mã hóa và chỉ được sử dụng cho các yêu cầu của bạn."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Lấy khóa API"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Lấy khóa API từ đơn vị vận hành endpoint của bạn."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "Giữ nguyên như cũ"
 msgid "Key stored encrypted"
 msgstr "Khóa được lưu trữ được mã hóa"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Khóa API thay mặt bạn và có thể truy cập tài liệu của bạn. Tạo khóa mới trong cài đặt tài khoản trình duyệt của bạn."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Bố cục từ khóa"
@@ -6295,10 +6313,6 @@ msgstr "Ít hơn"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Còn chưa đầy 48 giờ."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Cho phép các máy khách AI như Claude hoặc Cursor đọc và chỉnh sửa sơ yếu lý lịch của bạn bằng cách sử dụng khóa API."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Tài liệu mới"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Khóa mới ban đầu chỉ có quyền đọc. Tạo khóa trong phần cài đặt tài khoản trên trình duyệt."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "Đăng nhập lại để tiếp tục kiểm tra sơ yếu lý lịch n
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Đăng nhập lại để tiếp tục làm việc. Các chỉnh sửa bạn thực hiện sẽ được lưu giữ trên thiết bị này và đồng bộ hóa sau khi bạn đăng nhập."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Đăng nhập từ ứng dụng AI của bạn hoặc dùng khóa API."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "Đăng nhập hoặc tạo tài khoản trong trình duyệt bằng email, khóa truy cập, Google, GitHub hoặc LinkedIn. Bạn sẽ quay lại đây khi xong."
@@ -13954,36 +13977,3 @@ msgstr "Thu nhỏ"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Khóa mới ban đầu chỉ có quyền đọc. Tạo khóa trong phần cài đặt tài khoản trên trình duyệt."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Đăng nhập từ ứng dụng AI của bạn hoặc dùng khóa API."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "URL cơ sở (bắt buộc)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Nhập ID mô hình."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Nhập khóa API cho nhà cung cấp này."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Nhập URL cơ sở bắt đầu bằng http:// hoặc https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Lấy khóa API"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Lấy khóa API từ đơn vị vận hành endpoint của bạn."

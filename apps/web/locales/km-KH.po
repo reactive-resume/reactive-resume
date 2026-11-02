@@ -1921,6 +1921,7 @@ msgstr "កែសម្រួលពុម្ពអក្សរ ពណ៌ គម�
 msgid "Ads"
 msgstr "ការផ្សាយពាណិជ្ជកម្ម"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "កម្រិតខ្ពស់"
@@ -2271,8 +2272,7 @@ msgstr "អ្វីដែលត្រូវចងចាំអំពីការ
 msgid "Anywhere"
 msgstr "កន្លែងណាក៏បាន"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "គ្រាប់ចុច API"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "ប្រាក់ខែគោល"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "URL មូលដ្ឋាន"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "URL មូលដ្ឋាន (តម្រូវឱ្យបំពេញ)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "កម្មវិធីអានដែលភ្ជាប់មកជាមួយ"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "បញ្ចូលចំនួនទឹកប្រាក់ពេញ �
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "បញ្ចូលចំនួនពេញ ដូចជា 95000។ ចំនួនពីមុនរបស់អ្នកមិនបានផ្លាស់ប្តូរទេ។"
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "បញ្ចូល ID ម៉ូដែល។"
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "បញ្ចូលឈ្មោះរហូតដល់ 64 តួអក្សរ។"
@@ -6087,6 +6094,14 @@ msgstr "បញ្ចូលអាសយដ្ឋានអ៊ីមែលត្រ
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "បញ្ចូលអាសយដ្ឋានគេហទំព័រ ដូចជាឧទាហរណ៍.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "បញ្ចូលសោ API សម្រាប់អ្នកផ្តល់សេវានេះ។"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "បញ្ចូល URL មូលដ្ឋានដែលចាប់ផ្តើមដោយ http:// ឬ https://។"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "សម្រាប់ LibreOffice និងកម្មវិធីក�
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "សម្រាប់វិបផតថល ឬអ្នកជ្រើសរើសបុគ្គលិកដែលស្នើសុំ Word ។ ប្លង់ត្រូវបានធ្វើឱ្យសាមញ្ញ។"
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "សម្រាប់ស្គ្រីប ផ្នែកបន្ថែម និងអតិថិជន MCP ។ គ្រាប់ចុចដើរតួជាអ្នក ហើយអាចអាន និងកែសម្រួលឯកសាររបស់អ្នក។"
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "ទទួលបានសោនៅ <0>{0}</0> ។ វាត្រូវ�
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "ទទួលបានផែនការសម្រាប់ការសម្ភាសន៍ ដែលបង្កើតពីការប្រកាសការងារ និងរឿងរបស់អ្នកផ្ទាល់។ ហាត់និយាយឮៗ បន្ទាប់មកកត់ត្រាថាវាដំណើរការយ៉ាងដូចម្តេច។"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "ទទួលសោ API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "ទទួលសោ API ពីប្រតិបត្តិករចំណុចតភ្ជាប់របស់អ្នក។"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7904,8 +7923,8 @@ msgid "Key stored encrypted"
 msgstr "កូនសោត្រូវបានរក្សាទុកដោយអ៊ិនគ្រីប"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "គ្រាប់ចុចដើរតួជាអ្នក ហើយអាចអាន និងកែសម្រួលឯកសាររបស់អ្នក។"
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "សោធ្វើសកម្មភាពជំនួសអ្នកតាមសិទ្ធិចូលប្រើដែលអ្នកជ្រើសរើស។ សោថ្មីចាប់ផ្តើមដោយមានសិទ្ធិអានតែប៉ុណ្ណោះ។"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "ទុកចន្លោះយ៉ាងតិចកន្លះអ៊ីញជុំវិញទំព័រ។"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "ទុក​ទទេ​ដើម្បី​រក្សា​សោ​ដែល​បាន​រក្សា​ទុក"
 
@@ -8160,10 +8179,6 @@ msgstr "រយៈពេលគិតជានាទី"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "ប្រវែងមិនមែនជាកំហុសទេ ហើយគ្មានច្បាប់ទំព័រតែមួយជាសកលនោះទេ។ រក្សាទុកតែទំព័រណាដែលសមនឹងកន្លែងរបស់វា។"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "អនុញ្ញាតឱ្យអតិថិជន AI ដូចជា Claude ឬ Cursor អាន និងកែសម្រួលប្រវត្តិរូបសង្ខេបរបស់អ្នក ដោយប្រើគ្រាប់ចុច API ខាងលើ។"
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8913,8 +8928,7 @@ msgstr "ចម្រុះ"
 msgid "mixed format"
 msgstr "ទម្រង់ចម្រុះ"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "ម៉ូដែល"
 
@@ -9122,7 +9136,7 @@ msgstr "ការងាររបស់ខ្ញុំគឺស្វែងរក
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "ឈ្មោះ"
@@ -10289,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "ជាជម្រើសសម្រាប់ Ollama ក្នុងស្រុក"
 
@@ -13566,6 +13580,10 @@ msgstr "របារចំហៀងត្រូវបានអានជាញឹ
 msgid "Sign in"
 msgstr "ចូល"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "ចូលគណនីពីកម្មវិធី AI របស់អ្នក ឬប្រើសោ API។"
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14940,11 +14958,11 @@ msgstr "ការវាយតម្លៃមិនអាចបញ្ចប់ប
 msgid "The same line repeats on every page."
 msgstr "បន្ទាត់ដដែលកើតឡើងម្តងទៀតនៅលើគ្រប់ទំព័រ។"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "សោដែលបានរក្សាទុកមិនត្រូវបានផ្ញើទៅកាន់ URL មូលដ្ឋានថ្មីទេ។ បញ្ចូលសោម្តងទៀត ប្រសិនបើម៉ាស៊ីនមេនេះត្រូវការសោ។"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "សោដែលបានរក្សាទុកមិនត្រូវបានផ្ញើទៅកាន់ URL មូលដ្ឋានថ្មីទេ។ បញ្ចូលសោម្តងទៀត។"
 
@@ -17518,35 +17536,3 @@ msgstr "បង្រួម"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "សោធ្វើសកម្មភាពជំនួសអ្នកតាមសិទ្ធិចូលប្រើដែលអ្នកជ្រើសរើស។ សោថ្មីចាប់ផ្តើមដោយមានសិទ្ធិអានតែប៉ុណ្ណោះ។"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "ចូលគណនីពីកម្មវិធី AI របស់អ្នក ឬប្រើសោ API។"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "URL មូលដ្ឋាន (តម្រូវឱ្យបំពេញ)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "បញ្ចូល ID ម៉ូដែល។"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "បញ្ចូលសោ API សម្រាប់អ្នកផ្តល់សេវានេះ។"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "បញ្ចូល URL មូលដ្ឋានដែលចាប់ផ្តើមដោយ http:// ឬ https://។"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "ទទួលសោ API"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "ទទួលសោ API ពីប្រតិបត្តិករចំណុចតភ្ជាប់របស់អ្នក។"

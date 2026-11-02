@@ -1921,6 +1921,7 @@ msgstr "CV ビルダーでフォント、色、間隔、セクションを調整
 msgid "Ads"
 msgstr "広告"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "高度な"
@@ -2271,8 +2272,7 @@ msgstr "この仕事について覚えておくべきこと"
 msgid "Anywhere"
 msgstr "どこでも"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "APIキー"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "基本給"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "ベースURL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "ベースURL（必須）"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "内蔵リーダー"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "95000のように省略せずに金額を入力するか、空欄にし�
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "95000のように、金額を省略せずに入力してください。以前の金額は変更されていません。"
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "モデルIDを入力してください。"
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "名前を 64 文字以内で入力します。"
@@ -6087,6 +6094,14 @@ msgstr "有効なメールアドレスを入力してください。"
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "example.com のような Web アドレスを入力します。"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "このプロバイダーのAPIキーを入力してください。"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// または https:// で始まるベースURLを入力してください。"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "LibreOffice などのオープンソースのエディター向け。レ
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Word を要求するポータルまたは採用担当者向け。レイアウトが簡素化されています。"
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "スクリプト、拡張機能、および MCP クライアント用。キーはユーザーとして機能し、ドキュメントを読み取ったり編集したりできます。"
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "<0>{0}</0> でキーを取得します。暗号化されて保存され�
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "求人情報とあなた自身のストーリーから作った面接プランを用意します。声に出して練習し、どうだったかを書き留めましょう。"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "APIキーを取得"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "エンドポイントの運営者からAPIキーを取得してください。"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7904,8 +7923,8 @@ msgid "Key stored encrypted"
 msgstr "キーは暗号化されて保存されます"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "キーはユーザーとして機能し、ドキュメントを読み取ったり編集したりできます。"
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "キーは選択したアクセス権限であなたに代わって操作します。新しいキーは読み取り専用で作成されます。"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "ページの周囲に少なくとも0.5インチの余白を残してください。"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "保存されたキーを保持するには空のままにしておきます"
 
@@ -8160,10 +8179,6 @@ msgstr "時間（分）"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "長さそのものは欠点ではなく、1ページに収めるべきという普遍的なルールもありません。価値のあるページだけを残してください。"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "上の API キーを使用して、Claude や Cursor などの AI クライアントに履歴書を読み取って編集させます。"
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8913,8 +8928,7 @@ msgstr "どちらとも言えない"
 msgid "mixed format"
 msgstr "混合フォーマット"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "モデル"
 
@@ -9122,7 +9136,7 @@ msgstr "私の役割は、サポートの負担を増やさずに原因を突き
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "名前"
@@ -10289,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "ローカル Ollama の場合はオプション"
 
@@ -13566,6 +13580,10 @@ msgstr "サイドバーは多くの場合、最後に読まれるか、メイン
 msgid "Sign in"
 msgstr "サインイン"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "AIクライアントからログインするか、APIキーを使用してください。"
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14940,11 +14958,11 @@ msgstr "レビューを完了できませんでした。もう一度やり直し
 msgid "The same line repeats on every page."
 msgstr "同じ行がすべてのページに繰り返し表示されています。"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "保存されたキーは新しいベース URL には送信されません。このサーバーにキーが必要な場合は、キーを再度入力します。"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "保存されたキーは新しいベース URL には送信されません。再度キーを入力してください。"
 
@@ -17518,35 +17536,3 @@ msgstr "ズームアウト"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ズールー語"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "キーは選択したアクセス権限であなたに代わって操作します。新しいキーは読み取り専用で作成されます。"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "AIクライアントからログインするか、APIキーを使用してください。"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "ベースURL（必須）"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "モデルIDを入力してください。"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "このプロバイダーのAPIキーを入力してください。"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// または https:// で始まるベースURLを入力してください。"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "APIキーを取得"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "エンドポイントの運営者からAPIキーを取得してください。"

@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Разширено"
@@ -2235,6 +2236,10 @@ msgstr "Основна заплата"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Базов URL адрес"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Базов URL (задължително)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "Създаване на нова автобиография"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Първо създайте автобиография, а след това попитайте за нея."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Създайте ключ API от настройките на акаунта във вашия браузър. Ключовете действат като вас и могат да четат и редактират вашите документи."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "Въведете пълна сума, например 95000. Преди
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Въведете шестнадесетичен цвят като #1a1a1a или rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Въведете идентификатор на модел."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Въведете име, до 64 знака."
@@ -4837,6 +4843,14 @@ msgstr "Въведете цяло число от 0 до 52 или оставе�
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Въведете адрес като resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Въведете API ключ за този доставчик."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Въведете базов URL, започващ с http:// или https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "Немски"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Вземете ключ на {0}. Той се съхранява криптиран и се използва само за вашите заявки."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Получаване на API ключ"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Получете API ключ от оператора на крайната си точка."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "Запазено както е"
 msgid "Key stored encrypted"
 msgstr "Ключът се съхранява криптиран"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Ключовете действат като вас и имат достъп до вашите документи. Новите ключове се създават в настройките на вашия акаунт в браузъра."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Оформление на ключови думи"
@@ -6295,10 +6313,6 @@ msgstr "По-малко"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Остават по-малко от 48 часа."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Позволете на AI клиенти като Claude или Cursor да четат и редактират вашите автобиографии, като използват API ключ."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Нов документ"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Новите ключове започват с достъп само за четене. Създавайте ключове в настройките на акаунта си в браузъра."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "Влезте отново, за да продължите да пров�
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Влезте отново, за да продължите да работите. Направените от вас редакции се съхраняват на това устройство и се синхронизират, след като влезете."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Влезте от своя AI клиент или използвайте API ключ."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "Влезте или създайте акаунт в браузъра с имейл, ключ за достъп, Google, GitHub или LinkedIn. След това ще се върнете тук."
@@ -13954,36 +13977,3 @@ msgstr "Намаляване"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Зулуски"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Новите ключове започват с достъп само за четене. Създавайте ключове в настройките на акаунта си в браузъра."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Влезте от своя AI клиент или използвайте API ключ."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Базов URL (задължително)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Въведете идентификатор на модел."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Въведете API ключ за този доставчик."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Въведете базов URL, започващ с http:// или https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Получаване на API ключ"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Получете API ключ от оператора на крайната си точка."

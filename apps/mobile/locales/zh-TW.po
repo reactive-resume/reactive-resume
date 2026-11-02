@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "先進的"
@@ -2235,6 +2236,10 @@ msgstr "底薪"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "基本 URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "基礎 URL（必填）"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "建立新履歷"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "首先創建一份簡歷，然後詢問。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "請在瀏覽器的帳戶設定中建立 API 金鑰。金鑰可代表您讀取和編輯文件。"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "請輸入完整金額，例如 95000。您先前的金額未變更。"
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "輸入十六進位顏色，例如 #1a1a1a 或 rgba(…)。"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "請輸入模型 ID。"
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "輸入名稱，最多 64 個字元。"
@@ -4837,6 +4843,14 @@ msgstr "輸入0到52之間的整數，或留空。"
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "請輸入類似 resume.example.org 的地址。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "請輸入此供應商的 API 金鑰。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "請輸入以 http:// 或 https:// 開頭的基礎 URL。"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "德文"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "在{0}處取得鑰匙。它被加密存儲並且僅用於您的請求。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "取得 API 金鑰"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "請向端點營運者取得 API 金鑰。"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "保持原樣"
 msgid "Key stored encrypted"
 msgstr "密鑰加密存儲"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "金鑰可代表您存取文件。請在瀏覽器的帳戶設定中建立新金鑰。"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "關鍵詞版面"
@@ -6295,10 +6313,6 @@ msgstr "少"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "還剩不到48小時。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "讓 AI 使用者端（如 Claude 或 Cursor）使用 API 金鑰來讀取和編輯您的履歷。"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "新文件"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "新金鑰預設為唯讀權限。請在瀏覽器中的帳號設定裡建立金鑰。"
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "重新登入以繼續檢查此履歷。"
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "重新登入以繼續工作。變更保留在此裝置上，登入後會同步。"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "從你的 AI 用戶端登入，或使用 API 金鑰。"
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "在瀏覽器中以電子郵件、通行金鑰、Google、GitHub 或 LinkedIn 登入或建立帳戶。完成後會返回此處。"
@@ -13954,36 +13977,3 @@ msgstr "縮小"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "祖魯語"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "新金鑰預設為唯讀權限。請在瀏覽器中的帳號設定裡建立金鑰。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "從你的 AI 用戶端登入，或使用 API 金鑰。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "基礎 URL（必填）"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "請輸入模型 ID。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "請輸入此供應商的 API 金鑰。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "請輸入以 http:// 或 https:// 開頭的基礎 URL。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "取得 API 金鑰"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "請向端點營運者取得 API 金鑰。"

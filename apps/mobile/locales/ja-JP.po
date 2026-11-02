@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "高度な"
@@ -2235,6 +2236,10 @@ msgstr "基本給"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "ベースURL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "ベースURL（必須）"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "新しいレジュメを作成"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "まず履歴書を作成してから、それについて質問してください。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "ブラウザのアカウント設定から API キーを作成します。キーはユーザーとして機能し、書類を読み取ったり編集したりできます。"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "95000のように、金額を省略せずに入力してください。�
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a または rgba(…) のような 16 進数の色を入力してください。"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "モデルIDを入力してください。"
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "名前を 64 文字以内で入力します。"
@@ -4837,6 +4843,14 @@ msgstr "0 ～ 52 の整数を入力するか、空白のままにします。"
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org などのアドレスを入力します。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "このプロバイダーのAPIキーを入力してください。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// または https:// で始まるベースURLを入力してください。"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "ドイツ語"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Get a key at {0}.暗号化されて保存され、リクエストにのみ使用されます。"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "APIキーを取得"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "エンドポイントの運営者からAPIキーを取得してください。"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "そのままにしておきます"
 msgid "Key stored encrypted"
 msgstr "キーは暗号化されて保存されます"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "キーはユーザーとして機能し、書類にアクセスできます。新しいキーはブラウザのアカウント設定で作成されます。"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "キーワードのレイアウト"
@@ -6295,10 +6313,6 @@ msgstr "少ない"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "残りは 48 時間未満です。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Claude や Cursor などの AI クライアントが API キーを使用してレジュメを読み取り、編集できるようにします。"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "新しいドキュメント"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "新しいキーは読み取り専用で作成されます。ブラウザーのアカウント設定でキーを作成してください。"
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "このレジュメの確認を続けるには、もう一度サインイ
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "作業を続けるには、再度サインインしてください。行った編集内容はこのデバイスに保存され、サインイン後に同期されます。"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "AIクライアントからログインするか、APIキーを使用してください。"
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "電子メール、パスキー、Google、GitHub、または LinkedIn を使用してブラウザでサインインするか、アカウントを作成します。それからここに戻ってください。"
@@ -13954,36 +13977,3 @@ msgstr "ズームアウト"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ズールー語"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "新しいキーは読み取り専用で作成されます。ブラウザーのアカウント設定でキーを作成してください。"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "AIクライアントからログインするか、APIキーを使用してください。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "ベースURL（必須）"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "モデルIDを入力してください。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "このプロバイダーのAPIキーを入力してください。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// または https:// で始まるベースURLを入力してください。"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "APIキーを取得"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "エンドポイントの運営者からAPIキーを取得してください。"

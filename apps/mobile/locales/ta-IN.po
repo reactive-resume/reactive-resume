@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "மேம்பட்ட"
@@ -2235,6 +2236,10 @@ msgstr "அடிப்படைச் சம்பளம்"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "அடிப்படை URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "அடிப்படை URL (கட்டாயம்)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "ஒரு புதிய ரெஸ்யூமியை உருவா
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "முதலில் ஒரு ரெஸ்யூமே உருவாக்கவும், பிறகு அதைப் பற்றி கேட்கவும்."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "உங்கள் உலாவியின் கணக்கு அமைப்புகளில் API விசையை உருவாக்கவும். API விசைகள் உங்கள் சார்பாக செயல்படுகின்றன, மேலும் உங்கள் ஆவணங்களைப் படிக்கவும் திருத்தவும் முடியும்."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "95000 போன்ற முழுத் தொகையை உள்ள
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a போன்ற ஹெக்ஸ் நிறத்தை அல்லது rgba(…)-ஐ உள்ளிடவும்."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "மாதிரி ID-ஐ உள்ளிடவும்."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 எழுத்துகள் வரை ஒரு பெயரை உள்ளிடவும்."
@@ -4837,6 +4843,14 @@ msgstr "0 முதல் 52 வரையிலான முழு எண்ண�
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org போன்ற முகவரியை உள்ளிடவும்."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "இந்த வழங்குநருக்கான API விசையை உள்ளிடவும்."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// அல்லது https:// என்று தொடங்கும் அடிப்படை URL-ஐ உள்ளிடவும்."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "ஜெர்மன்"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "{0} இல் ஒரு விசையைப் பெறுங்கள். இது குறியாக்கம் செய்யப்பட்டு உங்கள் கோரிக்கைகளுக்கு மட்டுமே பயன்படுத்தப்படுகிறது."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "API விசையைப் பெறவும்"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "உங்கள் எண்ட்பாயிண்ட் நிர்வாகியிடமிருந்து API விசையைப் பெறவும்."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "அப்படியே வைத்துள்ளனர்"
 msgid "Key stored encrypted"
 msgstr "குறியாக்கம் செய்யப்பட்ட விசை சேமிக்கப்பட்டது"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "API விசைகள் உங்கள் சார்பாக செயல்படுகின்றன மற்றும் உங்கள் ஆவணங்களை அணுக முடியும். உங்கள் உலாவியின் கணக்கு அமைப்புகளில் புதிய விசைகளை உருவாக்கவும்."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "முக்கியச்சொல் அடுக்கு அமைப்பு"
@@ -6295,10 +6313,6 @@ msgstr "குறைவு"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "இன்னும் 48 மணிநேரம் உள்ளது."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Claude அல்லது Cursor போன்ற AI கிளையன்ட்கள் API விசையைப் பயன்படுத்தி உங்கள் ரெஸ்யூமைப் படிக்கவும் திருத்தவும் அனுமதிக்கவும்."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "புதிய ஆவணம்"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "புதிய விசைகள் தொடக்கத்தில் படிக்க மட்டுமே அனுமதிக்கும். உங்கள் உலாவியில் கணக்கு அமைப்புகளிலிருந்து விசைகளை உருவாக்கவும்."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "இந்த ரெஸ்யூமைத் தொடர்ந்து 
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "தொடர்ந்து செயல்பட மீண்டும் உள்நுழையவும். நீங்கள் செய்த திருத்தங்கள் இந்தச் சாதனத்தில் வைக்கப்பட்டு, உள்நுழைந்த பிறகு ஒத்திசைக்கப்படும்."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "உங்கள் AI கிளையன்டிலிருந்து உள்நுழையவும் அல்லது API விசையைப் பயன்படுத்தவும்."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "மின்னஞ்சல், கடவுச் சாவி, Google, GitHub அல்லது LinkedIn ஆகியவற்றைப் பயன்படுத்தி உலாவியில் உள்நுழையவும் அல்லது கணக்கை உருவாக்கவும். நீங்கள் முடித்ததும் இங்கு திரும்புவீர்கள்."
@@ -13954,36 +13977,3 @@ msgstr "சிறிதாக்கு"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ஜூலு"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "புதிய விசைகள் தொடக்கத்தில் படிக்க மட்டுமே அனுமதிக்கும். உங்கள் உலாவியில் கணக்கு அமைப்புகளிலிருந்து விசைகளை உருவாக்கவும்."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "உங்கள் AI கிளையன்டிலிருந்து உள்நுழையவும் அல்லது API விசையைப் பயன்படுத்தவும்."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "அடிப்படை URL (கட்டாயம்)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "மாதிரி ID-ஐ உள்ளிடவும்."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "இந்த வழங்குநருக்கான API விசையை உள்ளிடவும்."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// அல்லது https:// என்று தொடங்கும் அடிப்படை URL-ஐ உள்ளிடவும்."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "API விசையைப் பெறவும்"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "உங்கள் எண்ட்பாயிண்ட் நிர்வாகியிடமிருந்து API விசையைப் பெறவும்."

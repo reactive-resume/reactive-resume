@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Canggih"
@@ -2235,6 +2236,10 @@ msgstr "Gaji pokok"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "URL Dasar"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "URL dasar (wajib)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "Buat resume baru"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Buat resume terlebih dahulu, lalu tanyakan tentangnya."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Buat kunci API dari pengaturan Akun di browser Anda. Kunci bertindak sebagai Anda dan dapat membaca serta mengedit dokumen Anda."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "Masukkan jumlah lengkap, misalnya 95000. Jumlah sebelumnya tidak berubah
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Masukkan warna hex seperti #1a1a1a, atau rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Masukkan ID model."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Masukkan nama, maksimal 64 karakter."
@@ -4837,6 +4843,14 @@ msgstr "Masukkan bilangan bulat dari 0 hingga 52, atau biarkan kosong."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Masukkan alamat seperti resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Masukkan kunci API untuk penyedia ini."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Masukkan URL dasar yang diawali http:// atau https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "Jerman"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Dapatkan kunci di {0}. Itu disimpan terenkripsi dan hanya digunakan untuk permintaan Anda."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Dapatkan kunci API"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Dapatkan kunci API dari pengelola endpoint Anda."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "Tetap apa adanya"
 msgid "Key stored encrypted"
 msgstr "Kunci disimpan terenkripsi"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Kunci bertindak sebagai Anda dan dapat mengakses dokumen Anda. Kunci baru dibuat di pengaturan akun browser Anda."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Tata letak kata kunci"
@@ -6295,10 +6313,6 @@ msgstr "Kurang"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Kurang dari 48 jam lagi."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Izinkan klien AI seperti Claude atau Cursor membaca dan mengedit CV Anda, menggunakan kunci API."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Dokumen baru"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Kunci baru awalnya hanya memiliki akses baca. Buat kunci di pengaturan akun Anda melalui browser."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "Masuk lagi untuk melanjutkan pengecekan CV ini."
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Masuk lagi untuk terus bekerja. Hasil edit yang Anda buat disimpan di perangkat ini dan disinkronkan setelah Anda masuk."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Masuk dari klien AI Anda, atau gunakan kunci API."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "Masuk atau buat akun di browser, dengan email, kunci sandi, Google, GitHub atau LinkedIn. Anda kembali ke sini setelah selesai."
@@ -13954,36 +13977,3 @@ msgstr "Perkecil"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Kunci baru awalnya hanya memiliki akses baca. Buat kunci di pengaturan akun Anda melalui browser."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Masuk dari klien AI Anda, atau gunakan kunci API."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "URL dasar (wajib)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Masukkan ID model."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Masukkan kunci API untuk penyedia ini."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Masukkan URL dasar yang diawali http:// atau https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Dapatkan kunci API"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Dapatkan kunci API dari pengelola endpoint Anda."

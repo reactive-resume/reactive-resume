@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "የላቀ"
@@ -2235,6 +2236,10 @@ msgstr "መሠረታዊ ደመወዝ"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "የመሠረት ዩአርኤል"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "መሠረታዊ URL (ያስፈልጋል)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "አዲስ የየታሪክ ማቅረቢያ ፍጠር"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "መጀመሪያ የትምህርት ማስረጃ ይፍጠሩ፣ ከዚያ ስለሱ ይጠይቁ።"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "በአሳሽህ ውስጥ ከመለያ ቅንጅቶች የAPI ቁልፍ ፍጠር። ቁልፎች እንደ እርስዎ ይሰራሉ ​​እና ሰነዶችዎን ማንበብ እና ማርትዕ ይችላሉ።"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "ሙሉ መጠን ያስገቡ፣ ለምሳሌ 95000። የቀድሞው �
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "እንደ #1a1a1a፣ ወይም rgba(…) ያለ ሄክስ ቀለም ያስገቡ።"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "የሞዴል መለያ ያስገቡ።"
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "ስም አስገባ፣ እስከ 64 ቁምፊዎች።"
@@ -4837,6 +4843,14 @@ msgstr "ሙሉ ቁጥር ከ 0 እስከ 52 ያስገቡ ወይም ባዶ ይተ
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "እንደ resume.example.org ያለ አድራሻ ያስገቡ።"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "ለዚህ አቅራቢ የAPI ቁልፍ ያስገቡ።"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "በhttp:// ወይም https:// የሚጀምር መሠረታዊ URL ያስገቡ።"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "ጀርመንኛ"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "በ{0} ላይ ቁልፍ ያግኙ። የተመሰጠረ ነው የተከማቸ እና ለጥያቄዎችህ ብቻ ጥቅም ላይ የዋለ ነው።"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "የAPI ቁልፍ ያግኙ"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "ከመገናኛ ነጥብዎ አስተዳዳሪ የAPI ቁልፍ ያግኙ።"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "እንዳለ ተይዟል።"
 msgid "Key stored encrypted"
 msgstr "የተከማቸ ቁልፍ ተመስጥሯል።"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "ቁልፎች እንደ እርስዎ ይሰራሉ እና ሰነዶችዎን መድረስ ይችላሉ። በአሳሽ መለያ ቅንጅቶች ውስጥ አዲስ ቁልፎች ተፈጥረዋል።"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "ቁልፍ ቃል አቀማመጥ"
@@ -6295,10 +6313,6 @@ msgstr "ያነሰ"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "ከ48 ሰአታት ያነሰ ጊዜ ቀርቷል።"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "እንደ Claude ወይም Cursor ያሉ AI ደንበኞች የAPI ቁልፍ ተጠቅመው የስራ ልምድ ማስረጃዎችን እንዲያነቡ እና እንዲያርትዑ ያድርጉ።"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "አዲስ ሰነድ"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "አዲስ ቁልፎች ለማንበብ ብቻ በሚያስችል ፈቃድ ይጀምራሉ። ቁልፎችን በአሳሽዎ ውስጥ ባሉት የመለያ ቅንብሮች ይፍጠሩ።"
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "ይህንን የስራ ልምድ ማስረጃ መፈተሽ ለመቀጠ�
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "መስራት ለመቀጠል እንደገና ይግቡ። ያደረጓቸው አርትዖቶች በዚህ መሣሪያ ላይ ይቀመጣሉ እና ከገቡ በኋላ ያመሳስሉ።"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "ከAI ደንበኛ መተግበሪያዎ ይግቡ፣ ወይም የAPI ቁልፍ ይጠቀሙ።"
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "በአሳሹ ይግቡ ወይም መለያ ይፍጠሩ፣ በኢሜል፣ በይለፍ ቃል፣ Google፣ GitHub ወይም LinkedIn። ሲጨርሱ ወደዚህ ይመለሳሉ።"
@@ -13954,36 +13977,3 @@ msgstr "አጉር"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "ዙሉ"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "አዲስ ቁልፎች ለማንበብ ብቻ በሚያስችል ፈቃድ ይጀምራሉ። ቁልፎችን በአሳሽዎ ውስጥ ባሉት የመለያ ቅንብሮች ይፍጠሩ።"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "ከAI ደንበኛ መተግበሪያዎ ይግቡ፣ ወይም የAPI ቁልፍ ይጠቀሙ።"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "መሠረታዊ URL (ያስፈልጋል)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "የሞዴል መለያ ያስገቡ።"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "ለዚህ አቅራቢ የAPI ቁልፍ ያስገቡ።"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "በhttp:// ወይም https:// የሚጀምር መሠረታዊ URL ያስገቡ።"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "የAPI ቁልፍ ያግኙ"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "ከመገናኛ ነጥብዎ አስተዳዳሪ የAPI ቁልፍ ያግኙ።"

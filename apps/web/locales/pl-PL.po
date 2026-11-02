@@ -1921,6 +1921,7 @@ msgstr "Dostosuj czcionki, kolory, odstępy i sekcje w kreatorze CV. Wyeksportuj
 msgid "Ads"
 msgstr "Reklamy"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Zaawansowany"
@@ -2271,8 +2272,7 @@ msgstr "Wszystko, co warto zapamiętać na temat tej pracy"
 msgid "Anywhere"
 msgstr "Gdziekolwiek"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "Klucz API"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Wynagrodzenie zasadnicze"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Podstawowy adres URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Bazowy URL (wymagany)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Wbudowany czytnik"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "Wpisz pełną kwotę, na przykład 95000, lub pozostaw puste pole."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Wpisz pełną kwotę, np. 95000. Poprzednia kwota się nie zmieniła."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Wpisz identyfikator modelu."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Wpisz nazwę, maksymalnie 64 znaki."
@@ -6087,6 +6094,14 @@ msgstr "Wpisz prawidłowy adres e-mail."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Wprowadź adres internetowy, na przykład .com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Wpisz klucz API dla tego dostawcy."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Wpisz bazowy URL zaczynający się od http:// lub https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "Dla LibreOffice i innych edytorów open source. Układ jest uproszczony.
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Dla portali lub rekruterów, którzy proszą o Word. Układ jest uproszczony."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "Dla skryptów, rozszerzeń i klientów MCP. Klucze działają jak Ty i mogą czytać i edytować Twoje dokumenty."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "Zdobądź klucz pod adresem <0>{0}</0>. Jest przechowywany w postaci zas
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Otrzymaj plan rozmowy przygotowany na podstawie ogłoszenia i Twoich historii. Poćwicz na głos, a potem zapisz, jak poszło."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Uzyskaj klucz API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Uzyskaj klucz API od operatora swojego punktu końcowego."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7904,8 +7923,8 @@ msgid "Key stored encrypted"
 msgstr "Klucz przechowywany w postaci zaszyfrowanej"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Klucze działają jak Ty i mogą czytać i edytować Twoje dokumenty."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Klucze działają w Twoim imieniu z wybranym przez Ciebie dostępem. Nowe klucze początkowo mają dostęp tylko do odczytu."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Zostaw co najmniej pół cala marginesu wokół strony."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Pozostaw puste, aby zachować zapisany klucz"
 
@@ -8160,10 +8179,6 @@ msgstr "Długość w minutach"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Długość nie jest wadą i nie ma uniwersalnej zasady jednej strony. Zachowaj strony, które są tego warte."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Pozwól klientom AI, takim jak Claude lub Cursor, czytać i edytować Twoje CV, korzystając z powyższego klucza API."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8913,8 +8928,7 @@ msgstr "Różnie"
 msgid "mixed format"
 msgstr "formacie mieszanym"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -9122,7 +9136,7 @@ msgstr "Moim zadaniem było ustalić przyczynę, nie dokładając pracy działow
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Nazwa"
@@ -10289,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Opcjonalnie dla lokalnego Ollama"
 
@@ -13566,6 +13580,10 @@ msgstr "Paski boczne są często czytane jako ostatnie lub umieszczane w główn
 msgid "Sign in"
 msgstr "Zaloguj"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Zaloguj się ze swojego klienta AI lub użyj klucza API."
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14940,11 +14958,11 @@ msgstr "Recenzja nie mogła się zakończyć. Spróbuj ponownie."
 msgid "The same line repeats on every page."
 msgstr "Ten sam wiersz powtarza się na każdej stronie."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Zapisany klucz nie jest wysyłany na nowy bazowy adres URL. Wprowadź klucz ponownie, jeśli ten serwer wymaga klucza."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Zapisany klucz nie jest wysyłany na nowy bazowy adres URL. Wprowadź klucz ponownie."
 
@@ -17518,35 +17536,3 @@ msgstr "Pomniejsz"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Klucze działają w Twoim imieniu z wybranym przez Ciebie dostępem. Nowe klucze początkowo mają dostęp tylko do odczytu."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Zaloguj się ze swojego klienta AI lub użyj klucza API."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "Bazowy URL (wymagany)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "Wpisz identyfikator modelu."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "Wpisz klucz API dla tego dostawcy."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Wpisz bazowy URL zaczynający się od http:// lub https://."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "Uzyskaj klucz API"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Uzyskaj klucz API od operatora swojego punktu końcowego."

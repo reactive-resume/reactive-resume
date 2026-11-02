@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "উন্নত"
@@ -2235,6 +2236,10 @@ msgstr "মূল বেতন"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "বেস ইউআরএল"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "বেস URL (আবশ্যক)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "একটি নতুন জীবনবৃত্তান্ত তৈ
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "প্রথমে একটি জীবনবৃত্তান্ত তৈরি করুন, তারপর এটি সম্পর্কে জিজ্ঞাসা করুন।"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "আপনার ব্রাউজারে অ্যাকাউন্ট সেটিংস থেকে একটি API কী তৈরি করুন৷ কীগুলি আপনার মতো কাজ করে এবং আপনার নথিগুলি পড়তে এবং সম্পাদনা করতে পারে৷"
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "পুরো অঙ্ক লিখুন, যেমন 95000। আপ�
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a বা rgba(…)-এর মতো একটি hex রং লিখুন।"
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "একটি মডেল ID লিখুন।"
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "একটি নাম লিখুন, 64টি অক্ষর পর্যন্ত।"
@@ -4837,6 +4843,14 @@ msgstr "0 থেকে 52 পর্যন্ত একটি পূর্ণ স
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org এর মতো একটি ঠিকানা লিখুন।"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "এই প্রদানকারীর জন্য একটি API কী লিখুন।"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// বা https:// দিয়ে শুরু হওয়া একটি বেস URL লিখুন।"
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "জার্মান"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "{0} এ একটি কী পান। এটি এনক্রিপ্ট করা সংরক্ষিত এবং শুধুমাত্র আপনার অনুরোধের জন্য ব্যবহার করা হয়."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "একটি API কী নিন"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "আপনার এন্ডপয়েন্টের পরিচালকের কাছ থেকে একটি API কী নিন।"
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "যেমন আছে তেমন রাখা হয়েছে"
 msgid "Key stored encrypted"
 msgstr "কী সংরক্ষিত এনক্রিপ্টেড"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "কীগুলি আপনার মতো কাজ করে এবং আপনার নথিগুলি অ্যাক্সেস করতে পারে। আপনার ব্রাউজার অ্যাকাউন্ট সেটিংসে নতুন কী তৈরি করা হয়েছে।"
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "কীওয়ার্ড লেআউট"
@@ -6295,10 +6313,6 @@ msgstr "কম"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "৪৮ ঘণ্টারও কম বাকি।"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "একটি API কী ব্যবহার করে AI ক্লায়েন্টদের যেমন Claude বা Cursor আপনার জীবনবৃত্তান্তগুলি পড়তে এবং সম্পাদনা করতে দিন৷"
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "নতুন নথি"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "নতুন কীগুলো শুরুতে শুধু পড়ার অনুমতি পায়। ব্রাউজারে আপনার অ্যাকাউন্ট সেটিংস থেকে কী তৈরি করুন।"
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "এই পরীক্ষা চালিয়ে যেতে আব�
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "কাজ চালিয়ে যেতে আবার সাইন ইন করুন। আপনার করা সম্পাদনাগুলি এই ডিভাইসে রাখা হয় এবং আপনি সাইন ইন করার পরে সিঙ্ক করেন৷"
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "আপনার AI ক্লায়েন্ট থেকে সাইন ইন করুন, অথবা একটি API কী ব্যবহার করুন।"
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "ব্রাউজারে ইমেইল, passkey, Google, GitHub বা LinkedIn দিয়ে সাইন ইন করুন বা অ্যাকাউন্ট খুলুন। শেষ হলে এখানে ফিরে আসবেন।"
@@ -13954,36 +13977,3 @@ msgstr "জুম আউট"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "জুলু"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "নতুন কীগুলো শুরুতে শুধু পড়ার অনুমতি পায়। ব্রাউজারে আপনার অ্যাকাউন্ট সেটিংস থেকে কী তৈরি করুন।"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "আপনার AI ক্লায়েন্ট থেকে সাইন ইন করুন, অথবা একটি API কী ব্যবহার করুন।"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "বেস URL (আবশ্যক)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "একটি মডেল ID লিখুন।"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "এই প্রদানকারীর জন্য একটি API কী লিখুন।"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// বা https:// দিয়ে শুরু হওয়া একটি বেস URL লিখুন।"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "একটি API কী নিন"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "আপনার এন্ডপয়েন্টের পরিচালকের কাছ থেকে একটি API কী নিন।"

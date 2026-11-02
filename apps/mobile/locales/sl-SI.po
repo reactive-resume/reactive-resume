@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Napredno"
@@ -2235,6 +2236,10 @@ msgstr "Osnovna plača"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Osnovni URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Osnovni URL (obvezno)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "Ustvari nov življenjepis"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Najprej ustvarite življenjepis, nato pa vprašajte o njem."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Ustvarite ključ API v nastavitvah računa v brskalniku. Ključi delujejo v vašem imenu ter lahko berejo in urejajo vaše dokumente."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "Vnesite celoten znesek, na primer 95000. Vaš prejšnji znesek ostaja ne
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Vnesite šestnajstiško barvo, na primer #1a1a1a, ali rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Vnesite ID modela."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Vnesite ime do 64 znakov."
@@ -4837,6 +4843,14 @@ msgstr "Vnesite celo število od 0 do 52 ali pustite prazno."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Vnesite naslov, kot je resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Vnesite ključ API za tega ponudnika."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Vnesite osnovni URL, ki se začne z http:// ali https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "Nemščina"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Dobite ključ pri {0}. Shranjen je šifriran in se uporablja samo za vaše zahteve."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Pridobi ključ API"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Pridobite ključ API od upravljavca svoje končne točke."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "Ohranjeno tako kot je"
 msgid "Key stored encrypted"
 msgstr "Ključ shranjen šifriran"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Ključi delujejo kot vi in lahko dostopajo do vaših dokumentov. Novi ključi se ustvarijo v nastavitvah računa vašega brskalnika."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Postavitev ključnih besed"
@@ -6295,10 +6313,6 @@ msgstr "Manj"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Še manj kot 48 ur."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Odjemalcem AI, kot sta Claude in Cursor, dovolite branje in urejanje življenjepisov s ključem API."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Nov dokument"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Novi ključi imajo na začetku dostop samo za branje. Ključe ustvarite v nastavitvah računa v brskalniku."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "Ponovno se prijavite, če želite nadaljevati s preverjanjem tega življ
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Če želite nadaljevati z delom, se znova prijavite. Spremembe, ki ste jih naredili, se hranijo v tej napravi in se sinhronizirajo, ko se prijavite."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Prijavite se iz svojega odjemalca UI ali uporabite ključ API."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "Prijavite se ali ustvarite račun v brskalniku z e-pošto, ključem za dostop, Google, GitHub ali LinkedIn. Ko končate, se vrnete sem."
@@ -13954,36 +13977,3 @@ msgstr "Oddalji"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zuluščina"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Novi ključi imajo na začetku dostop samo za branje. Ključe ustvarite v nastavitvah računa v brskalniku."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Prijavite se iz svojega odjemalca UI ali uporabite ključ API."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Osnovni URL (obvezno)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Vnesite ID modela."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Vnesite ključ API za tega ponudnika."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Vnesite osnovni URL, ki se začne z http:// ali https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Pridobi ključ API"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Pridobite ključ API od upravljavca svoje končne točke."

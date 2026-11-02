@@ -1921,6 +1921,7 @@ msgstr "Pielāgojiet fontus, krāsas, atstarpes un sadaļas CV veidotājā. Eksp
 msgid "Ads"
 msgstr "Reklāmas"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Paplašināts"
@@ -2271,8 +2272,7 @@ msgstr "Viss, kas jāatceras par šo darbu"
 msgid "Anywhere"
 msgstr "Jebkur"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API atslēga"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Pamatalga"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Bāzes URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Pamata URL (obligāts)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Iebūvēts lasītājs"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "Ievadiet pilnu summu, piemēram, 95000, vai atstājiet lauku tukšu."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Ievadiet pilnu summu, piemēram, 95000. Iepriekšējā summa nav mainīta."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Ievadiet modeļa ID."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Ievadiet nosaukumu, līdz 64 rakstzīmēm."
@@ -6087,6 +6094,14 @@ msgstr "Ievadiet derīgu e-pasta adresi."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Ievadiet tīmekļa adresi, piemēram, .com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Ievadiet šī pakalpojumu sniedzēja API atslēgu."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Ievadiet pamata URL, kas sākas ar http:// vai https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "LibreOffice un citiem atvērtā koda redaktoriem. Izkārtojums ir vienk�
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Portāliem vai vervētājiem, kuri lūdz Word. Izkārtojums ir vienkāršots."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "Skriptiem, paplašinājumiem un MCP klientiem. Taustiņi darbojas kā jūs un varat lasīt un rediģēt savus dokumentus."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "Iegūstiet atslēgu vietnē <0>{0}</0>. Tas tiek saglabāts šifrēts un
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Saņemiet intervijas plānu, kas balstīts uz sludinājumu un jūsu pašu stāstiem. Vingrinieties skaļi un pēc tam pierakstiet, kā gāja."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Iegūt API atslēgu"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Iegūstiet API atslēgu no sava galapunkta operatora."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7904,8 +7923,8 @@ msgid "Key stored encrypted"
 msgstr "Atslēga saglabāta šifrēta"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Taustiņi darbojas kā jūs un varat lasīt un rediģēt savus dokumentus."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Atslēgas darbojas jūsu vārdā ar jūsu izvēlētajām piekļuves tiesībām. Jaunām atslēgām sākotnēji ir tikai lasīšanas piekļuve."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Atstājiet vismaz pusi collas brīvas vietas ap lapu."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Atstājiet tukšu, lai saglabātu saglabāto atslēgu"
 
@@ -8160,10 +8179,6 @@ msgstr "Ilgums minūtēs"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Garums nav trūkums, un nepastāv universāls vienas lapas noteikums. Saglabājiet tās lapas, kas ir pelnījušas savu vietu."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Ļaujiet AI klientiem, piemēram, Claude vai Cursor, lasīt un rediģēt jūsu CV, izmantojot iepriekš norādīto taustiņu API."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8913,8 +8928,7 @@ msgstr "Dažādi"
 msgid "mixed format"
 msgstr "jaukts formāts"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Modelis"
 
@@ -9122,7 +9136,7 @@ msgstr "Mans uzdevums bija noskaidrot iemeslu, nepalielinot atbalsta darba apjom
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Nosaukums"
@@ -10289,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Pēc izvēles vietējam Ollama"
 
@@ -13566,6 +13580,10 @@ msgstr "Sānjoslas bieži tiek lasītas pēdējās vai sajauktas galvenajā kolo
 msgid "Sign in"
 msgstr "Pieteikties"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Pierakstieties no sava MI klienta vai izmantojiet API atslēgu."
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14940,11 +14958,11 @@ msgstr "Pārskatīšanu nevarēja pabeigt. Mēģiniet vēlreiz."
 msgid "The same line repeats on every page."
 msgstr "Viena un tā pati rinda atkārtojas katrā lapā."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Saglabātā atslēga netiek nosūtīta uz jaunu bāzes URL. Ievadiet atslēgu vēlreiz, ja šim serverim ir nepieciešama atslēga."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Saglabātā atslēga netiek nosūtīta uz jaunu bāzes URL. Ievadiet atslēgu vēlreiz."
 
@@ -17518,35 +17536,3 @@ msgstr "Tālināt"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Atslēgas darbojas jūsu vārdā ar jūsu izvēlētajām piekļuves tiesībām. Jaunām atslēgām sākotnēji ir tikai lasīšanas piekļuve."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Pierakstieties no sava MI klienta vai izmantojiet API atslēgu."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "Pamata URL (obligāts)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "Ievadiet modeļa ID."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "Ievadiet šī pakalpojumu sniedzēja API atslēgu."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Ievadiet pamata URL, kas sākas ar http:// vai https://."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "Iegūt API atslēgu"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Iegūstiet API atslēgu no sava galapunkta operatora."

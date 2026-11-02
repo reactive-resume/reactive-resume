@@ -1921,6 +1921,7 @@ msgstr "Pas lettertypen, kleuren, spatiëring en secties aan in de CV-builder. E
 msgid "Ads"
 msgstr "Advertenties"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Geavanceerd"
@@ -2271,8 +2272,7 @@ msgstr "Alles om te onthouden over deze baan"
 msgid "Anywhere"
 msgstr "Overal"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API-sleutel"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Basissalaris"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Basis-URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Basis-URL (verplicht)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Ingebouwde lezer"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "Vul een volledig bedrag in, zoals 95000, of laat het veld leeg."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Voer een volledig bedrag in, zoals 95000. Uw vorige bedrag is niet gewijzigd."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Voer een model-ID in."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Voer een naam in, maximaal 64 tekens."
@@ -6087,6 +6094,14 @@ msgstr "Voer een geldig e-mailadres in."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Voer een webadres in, zoals voorbeeld.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Voer een API-sleutel voor deze provider in."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Voer een basis-URL in die begint met http:// of https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "Voor LibreOffice en andere opensource-editors. De lay-out is vereenvoudi
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Voor portals of recruiters die om Word vragen. De lay-out is vereenvoudigd."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "Voor scripts, extensies en MCP-clients. Sleutels fungeren als u en kunnen uw documenten lezen en bewerken."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "Haal een sleutel op bij <0>{0}</0>. Deze wordt versleuteld opgeslagen en
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Krijg een plan voor het gesprek, gebaseerd op de vacature en uw eigen verhalen. Oefen hardop en noteer daarna hoe het ging."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API-sleutel verkrijgen"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Vraag een API-sleutel aan bij de beheerder van je endpoint."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7904,8 +7923,8 @@ msgid "Key stored encrypted"
 msgstr "Sleutel versleuteld opgeslagen"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Sleutels fungeren als u en kunnen uw documenten lezen en bewerken."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Sleutels handelen namens jou met de toegang die je kiest. Nieuwe sleutels beginnen met alleen-lezen-toegang."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Laat minstens 1,3 cm ruimte rondom de pagina."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Laat dit leeg om de opgeslagen sleutel te behouden"
 
@@ -8160,10 +8179,6 @@ msgstr "Duur in minuten"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Lengte is geen gebrek, en er is geen universele regel van één pagina. Houd de pagina's die hun plek verdienen."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Laat AI-clients zoals Claude of Cursor uw cv's lezen en bewerken met behulp van een API-sleutel hierboven."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8913,8 +8928,7 @@ msgstr "Wisselend"
 msgid "mixed format"
 msgstr "gemengd formaat"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -9122,7 +9136,7 @@ msgstr "Mijn taak was uitzoeken waarom, zonder extra supportwerk."
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Naam"
@@ -10289,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Optioneel voor lokale Ollama"
 
@@ -13566,6 +13580,10 @@ msgstr "Zijbalken worden vaak als laatste gelezen of in de hoofdkolom gemengd."
 msgid "Sign in"
 msgstr "Inloggen"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Meld je aan vanuit je AI-client of gebruik een API-sleutel."
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14940,11 +14958,11 @@ msgstr "De beoordeling kon niet worden voltooid. Probeer het opnieuw."
 msgid "The same line repeats on every page."
 msgstr "Dezelfde regel herhaalt zich op elke pagina."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "De opgeslagen sleutel wordt niet naar een nieuwe basis-URL verzonden. Voer de sleutel opnieuw in als deze server een sleutel nodig heeft."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "De opgeslagen sleutel wordt niet naar een nieuwe basis-URL verzonden. Voer de sleutel opnieuw in."
 
@@ -17518,35 +17536,3 @@ msgstr "Uitzoomen"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Sleutels handelen namens jou met de toegang die je kiest. Nieuwe sleutels beginnen met alleen-lezen-toegang."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Meld je aan vanuit je AI-client of gebruik een API-sleutel."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "Basis-URL (verplicht)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "Voer een model-ID in."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "Voer een API-sleutel voor deze provider in."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Voer een basis-URL in die begint met http:// of https://."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "API-sleutel verkrijgen"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Vraag een API-sleutel aan bij de beheerder van je endpoint."

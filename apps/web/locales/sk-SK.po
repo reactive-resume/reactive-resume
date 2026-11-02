@@ -1921,6 +1921,7 @@ msgstr "Upravte písma, farby, medzery a sekcie v nástroji na tvorbu životopis
 msgid "Ads"
 msgstr "reklamy"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Pokročilé"
@@ -2271,8 +2272,7 @@ msgstr "Všetko, čo si treba o tejto práci zapamätať"
 msgid "Anywhere"
 msgstr "Kdekoľvek"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "Kľúč API"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Základný plat"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Základná URL adresa"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Základná URL (povinné)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Vstavaná čítačka"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "Zadajte celú sumu, napríklad 95000, alebo nechajte pole prázdne."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Zadajte celú sumu, napríklad 95000. Predchádzajúca suma sa nezmenila."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Zadajte ID modelu."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Zadajte názov, maximálne 64 znakov."
@@ -6087,6 +6094,14 @@ msgstr "Zadajte platnú e-mailovú adresu."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Zadajte webovú adresu, napríklad example.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Zadajte kľúč API pre tohto poskytovateľa."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Zadajte základnú URL začínajúcu na http:// alebo https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "Pre LibreOffice a ďalšie open-source editory. Rozloženie je zjednodu�
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Pre portály alebo recruiterov, ktorí žiadajú o Word. Rozloženie je zjednodušené."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "Pre skripty, rozšírenia a klientov MCP. Klávesy fungujú ako vy a môžu čítať a upravovať vaše dokumenty."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "Získajte kľúč na <0>{0}</0>. Je uložený zašifrovaný a používa 
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Získajte plán na pohovor zostavený z inzerátu a vašich vlastných príbehov. Precvičte si odpovede nahlas a potom si zapíšte, ako to šlo."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Získať kľúč API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Získajte kľúč API od prevádzkovateľa svojho koncového bodu."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7904,8 +7923,8 @@ msgid "Key stored encrypted"
 msgstr "Kľúč uložený zašifrovaný"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Klávesy fungujú ako vy a môžu čítať a upravovať vaše dokumenty."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Kľúče konajú vo vašom mene s prístupom, ktorý zvolíte. Nové kľúče majú spočiatku prístup iba na čítanie."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Ponechajte okolo strany aspoň pol palca voľného miesta."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Ak chcete uložiť uložený kľúč, nechajte prázdne"
 
@@ -8160,10 +8179,6 @@ msgstr "Dĺžka v minútach"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Dĺžka nie je nedostatok a univerzálne pravidlo jednej strany neexistuje. Ponechajte strany, ktoré si svoje miesto zaslúžia."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Umožnite klientom AI ako Claude alebo Cursor čítať a upravovať vaše životopisy pomocou vyššie uvedeného klávesu API."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8913,8 +8928,7 @@ msgstr "Zmiešané"
 msgid "mixed format"
 msgstr "zmiešaný formát"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -9122,7 +9136,7 @@ msgstr "Mojou úlohou bolo zistiť prečo, bez pridania práce podpore."
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Názov"
@@ -10289,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Voliteľné pre lokálne Ollama"
 
@@ -13566,6 +13580,10 @@ msgstr "Bočné panely sa často čítajú ako posledné alebo sa primiešavajú
 msgid "Sign in"
 msgstr "Prihlásiť sa"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Prihláste sa zo svojho AI klienta alebo použite kľúč API."
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14940,11 +14958,11 @@ msgstr "Recenzia sa nedala dokončiť. Skúste to znova."
 msgid "The same line repeats on every page."
 msgstr "Ten istý riadok sa opakuje na každej strane."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Uložený kľúč sa neodošle na novú základnú adresu URL. Ak tento server vyžaduje kľúč, zadajte kľúč znova."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Uložený kľúč sa neodošle na novú základnú adresu URL. Zadajte kľúč znova."
 
@@ -17518,35 +17536,3 @@ msgstr "Oddialiť"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Kľúče konajú vo vašom mene s prístupom, ktorý zvolíte. Nové kľúče majú spočiatku prístup iba na čítanie."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Prihláste sa zo svojho AI klienta alebo použite kľúč API."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "Základná URL (povinné)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "Zadajte ID modelu."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "Zadajte kľúč API pre tohto poskytovateľa."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Zadajte základnú URL začínajúcu na http:// alebo https://."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "Získať kľúč API"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Získajte kľúč API od prevádzkovateľa svojho koncového bodu."

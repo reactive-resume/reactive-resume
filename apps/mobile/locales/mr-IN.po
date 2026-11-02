@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "प्रगत"
@@ -2235,6 +2236,10 @@ msgstr "मूळ पगार"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "बेस यूआरएल"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "बेस URL (आवश्यक)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "नवीन रेझ्युमे बनवा"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "प्रथम एक रेझ्युमे तयार करा, नंतर त्याबद्दल विचारा."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "तुमच्या ब्राउझरमधील खाते सेटिंग्जमधून API की तयार करा. की तुमच्याप्रमाणे काम करतात आणि तुमचे दस्तऐवज वाचू आणि संपादित करू शकतात."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "95000 सारखी पूर्ण रक्कम टाका. त�
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a, किंवा rgba(…) सारखा हेक्स रंग टाका."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "मॉडेल ID प्रविष्ट करा."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 वर्णांपर्यंत नाव एंटर करा."
@@ -4837,6 +4843,14 @@ msgstr "0 ते 52 पर्यंत पूर्ण संख्या प्
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org सारखा पत्ता द्या."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "या प्रदात्यासाठी API की प्रविष्ट करा."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// किंवा https:// ने सुरू होणारा बेस URL प्रविष्ट करा."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "जर्मन"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "{0} वर एक की मिळवा. हे एन्क्रिप्टेड स्टोअर केलेले आहे आणि फक्त तुमच्या विनंत्यांसाठी वापरले जाते."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "API की मिळवा"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "तुमच्या एंडपॉइंटच्या संचालकाकडून API की मिळवा."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "आहे तसा ठेवला"
 msgid "Key stored encrypted"
 msgstr "की संग्रहित एनक्रिप्टेड"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "की तुमच्या वतीने काम करतात आणि दस्तऐवज उघडू शकतात. नवीन की ब्राउझरमधील खाते सेटिंग्जमध्ये तयार करता येतात."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "कीवर्ड लेआउट"
@@ -6295,10 +6313,6 @@ msgstr "कमी"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "48 तासांपेक्षा कमी वेळ शिल्लक."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "API की वापरून Claude किंवा Cursor सारख्या AI क्लायंटना तुमचे रेझ्युमे वाचू आणि संपादित करू द्या."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "नवीन दस्तऐवज"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "नवीन की सुरुवातीला केवळ वाचण्याची परवानगी देतात. तुमच्या ब्राउझरमधील खाते सेटिंग्जमध्ये की तयार करा."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "या रेझ्युमेची तपासणी पुढे �
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "काम सुरू ठेवण्यासाठी पुन्हा साइन इन करा. बदल या डिव्हाइसवर जतन आहेत आणि साइन इन केल्यावर सिंक होतील."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "तुमच्या AI क्लायंटमधून साइन इन करा किंवा API की वापरा."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "ब्राउझरमध्ये ईमेल, पासकी, Google, GitHub किंवा LinkedIn वापरून साइन इन करा किंवा खाते तयार करा. पूर्ण झाल्यावर इथे परत याल."
@@ -13954,36 +13977,3 @@ msgstr "बाहेर झूम करा"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "झुलू"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "नवीन की सुरुवातीला केवळ वाचण्याची परवानगी देतात. तुमच्या ब्राउझरमधील खाते सेटिंग्जमध्ये की तयार करा."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "तुमच्या AI क्लायंटमधून साइन इन करा किंवा API की वापरा."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "बेस URL (आवश्यक)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "मॉडेल ID प्रविष्ट करा."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "या प्रदात्यासाठी API की प्रविष्ट करा."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// किंवा https:// ने सुरू होणारा बेस URL प्रविष्ट करा."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "API की मिळवा"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "तुमच्या एंडपॉइंटच्या संचालकाकडून API की मिळवा."

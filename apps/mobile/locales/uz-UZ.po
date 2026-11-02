@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Ilg'or"
@@ -2235,6 +2236,10 @@ msgstr "Asosiy maosh"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Asosiy URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Asosiy URL (majburiy)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "Yangi rezyume yarating"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Avval rezyume yarating, keyin bu haqda so'rang."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Brauzeringizdagi Hisob sozlamalaridan API kalitini yarating. Kalitlar siz kabi ishlaydi va hujjatlaringizni o'qishi va tahrirlashi mumkin."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "To'liq summani kiriting, masalan, 95000. Avvalgi summa o'zgarmadi."
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "#1a1a1a yoki rgba(…) kabi hex rang kodini kiriting."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Model ID sini kiriting."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 belgigacha bo'lgan nomni kiriting."
@@ -4837,6 +4843,14 @@ msgstr "0 dan 52 gacha butun sonni kiriting yoki bo'sh qoldiring."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "resume.example.org kabi manzilni kiriting."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Bu provayder uchun API kalitini kiriting."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// yoki https:// bilan boshlanadigan asosiy URL kiriting."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "Nemischa"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Kalitni {0} orqali oling. U shifrlangan holda saqlanadi va faqat sizning so'rovlaringiz uchun ishlatiladi."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "API kalitini oling"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Endpointingiz operatoridan API kalitini oling."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "Xuddi shunday saqlangan"
 msgid "Key stored encrypted"
 msgstr "Kalit shifrlangan holda saqlanadi"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "Kalitlar siz kabi ishlaydi va hujjatlaringizga kirishi mumkin. Yangi kalitlar brauzer hisob qaydnomangiz sozlamalarida yaratiladi."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Kalit so'z tartibi"
@@ -6295,10 +6313,6 @@ msgstr "Kamroq"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "48 soatdan kam vaqt qoldi."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Claude yoki Cursor kabi AI mijozlariga API kaliti yordamida rezyumelaringizni oʻqish va tahrirlashiga ruxsat bering."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Yangi hujjat"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Yangi kalitlar faqat o‘qish huquqi bilan boshlanadi. Kalitlarni brauzerdagi hisob sozlamalarida yarating."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "Ushbu rezyumeni tekshirishni davom ettirish uchun qayta kiring."
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Ishlashni davom ettirish uchun qayta kiring. Siz kiritgan tahrirlar ushbu qurilmada saqlanadi va tizimga kirganingizdan keyin sinxronlanadi."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "AI mijoz dasturingizdan tizimga kiring yoki API kalitidan foydalaning."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "E-pochta, parol, Google, GitHub yoki LinkedIn bilan tizimga kiring yoki brauzerda hisob yarating. Ishingiz tugagach, bu erga qaytasiz."
@@ -13954,36 +13977,3 @@ msgstr "Kichraytirish"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Yangi kalitlar faqat o‘qish huquqi bilan boshlanadi. Kalitlarni brauzerdagi hisob sozlamalarida yarating."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "AI mijoz dasturingizdan tizimga kiring yoki API kalitidan foydalaning."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Asosiy URL (majburiy)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Model ID sini kiriting."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Bu provayder uchun API kalitini kiriting."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "http:// yoki https:// bilan boshlanadigan asosiy URL kiriting."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "API kalitini oling"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Endpointingiz operatoridan API kalitini oling."

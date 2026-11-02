@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Adds after: {0}"
 msgstr ""
 
+#: src/features/ai/provider-editor.tsx
 #: src/features/design/advanced.tsx
 msgid "Advanced"
 msgstr "Paplašināts"
@@ -2235,6 +2236,10 @@ msgstr "Pamatalga"
 #: src/features/ai/provider-editor.tsx
 msgid "Base URL"
 msgstr "Bāzes URL"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Base URL (required)"
+msgstr "Pamata URL (obligāts)"
 
 #: src/features/write/basics-screen.tsx
 #: src/features/write/outline.tsx
@@ -3508,6 +3513,7 @@ msgstr ""
 #: app/(tabs)/settings/ai.tsx
 #: app/(tabs)/settings/index.tsx
 #: src/auth/auth-header.tsx
+#: src/features/ai/provider-editor.tsx
 #: src/features/settings/api-keys.tsx
 #: src/features/share/download.tsx
 msgid "Couldn't open the browser. Try again."
@@ -3879,10 +3885,6 @@ msgstr "Izveidot jaunu CV"
 #: src/features/search/search-screen.tsx
 msgid "Create a resume first, then ask about it."
 msgstr "Vispirms izveidojiet CV, pēc tam jautājiet par to."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Create an API key from Account settings in your browser. Keys act as you and can read and edit your documents."
-msgstr "Pārlūkprogrammas konta iestatījumos izveidojiet atslēgu API. API atslēgas darbojas jūsu vārdā un var lasīt un rediģēt jūsu dokumentus."
 
 #: src/features/documents/new-document.tsx
 msgid "Create copy"
@@ -4800,6 +4802,10 @@ msgstr "Ievadiet pilnu summu, piemēram, 95000. Iepriekšējā summa nav mainīt
 msgid "Enter a hex color like #1a1a1a, or rgba(…)."
 msgstr "Ievadiet hex krāsu, piemēram, #1a1a1a, vai rgba(…)."
 
+#: src/features/ai/provider-editor.tsx
+msgid "Enter a model ID."
+msgstr "Ievadiet modeļa ID."
+
 #: src/features/settings/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Ievadiet nosaukumu, līdz 64 rakstzīmēm."
@@ -4837,6 +4843,14 @@ msgstr "Ievadiet veselu skaitli no 0 līdz 52 vai atstājiet tukšu."
 #: app/(auth)/server.tsx
 msgid "Enter an address like resume.example.org."
 msgstr "Ievadiet adresi, piemēram, resume.example.org."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an API key for this provider."
+msgstr "Ievadiet šī pakalpojumu sniedzēja API atslēgu."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Ievadiet pamata URL, kas sākas ar http:// vai https://."
 
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
@@ -5320,6 +5334,14 @@ msgstr "Vācu"
 #: src/features/ai/web-access.tsx
 msgid "Get a key at {0}. It's stored encrypted and used only for your requests."
 msgstr "Iegūstiet atslēgu vietnē {0}. Tas tiek saglabāts šifrēts un tiek izmantots tikai jūsu pieprasījumiem."
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key"
+msgstr "Iegūt API atslēgu"
+
+#: src/features/ai/provider-editor.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Iegūstiet API atslēgu no sava galapunkta operatora."
 
 #: src/features/workspace/tabs/practise.tsx
 msgid "Get feedback"
@@ -6076,10 +6098,6 @@ msgstr "Saglabāts kā ir"
 msgid "Key stored encrypted"
 msgstr "Atslēga saglabāta šifrēta"
 
-#: src/features/settings/api-keys.tsx
-msgid "Keys act as you and can access your documents. New keys are created in your browser account settings."
-msgstr "API atslēgas darbojas jūsu vārdā un var piekļūt jūsu dokumentiem. Pārlūkprogrammas konta iestatījumos izveidojiet jaunas atslēgas."
-
 #: src/features/write/section-sheet.tsx
 msgid "Keyword layout"
 msgstr "Atslēgvārdu izkārtojums"
@@ -6295,10 +6313,6 @@ msgstr "Mazāk"
 #: src/features/career/offers.tsx
 msgid "Less than 48 hours left."
 msgstr "Atlikušas mazāk nekā 48 stundas."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key."
-msgstr "Ļaujiet AI klientiem, piemēram, Claude vai Cursor, lasīt un rediģēt jūsu CV ar API atslēgu."
 
 #: src/features/documents/library.tsx
 msgid "Let's start with what you have"
@@ -7266,6 +7280,11 @@ msgstr ""
 #: src/features/search/search-screen.tsx
 msgid "New document"
 msgstr "Jauns dokuments"
+
+#: app/(tabs)/settings/ai-mcp.tsx
+#: src/features/settings/api-keys.tsx
+msgid "New keys start read-only. Create keys in your browser account settings."
+msgstr "Jaunām atslēgām sākotnēji ir tikai lasīšanas piekļuve. Izveidojiet atslēgas sava konta iestatījumos pārlūkprogrammā."
 
 #: src/features/design/layout-screen.tsx
 #: src/features/write/entry-sheet.tsx
@@ -10868,6 +10887,10 @@ msgstr "Pierakstieties vēlreiz, lai turpinātu pārbaudīt šo CV."
 msgid "Sign in again to keep working. Edits you made are kept on this device and sync after you sign in."
 msgstr "Pierakstieties vēlreiz, lai turpinātu strādāt. Jūsu veiktie labojumi tiek saglabāti šajā ierīcē un tiek sinhronizēti pēc pierakstīšanās."
 
+#: app/(tabs)/settings/ai-mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Pierakstieties no sava MI klienta vai izmantojiet API atslēgu."
+
 #: app/(auth)/sign-in.tsx
 msgid "Sign in or create an account in the browser, with email, a passkey, Google, GitHub or LinkedIn. You come back here when you're done."
 msgstr "Pierakstieties vai izveidojiet kontu pārlūkprogrammā, izmantojot e-pastu, ieejas atslēgu, Google, GitHub vai LinkedIn. Jūs atgriezīsities šeit, kad pabeigsiet."
@@ -13954,36 +13977,3 @@ msgstr "Tālināt"
 #: src/features/settings/locale-names.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: app/(tabs)/settings/ai-mcp.tsx
-#: src/features/settings/api-keys.tsx
-msgid "New keys start read-only. Create keys in your browser account settings."
-msgstr "Jaunām atslēgām sākotnēji ir tikai lasīšanas piekļuve. Izveidojiet atslēgas sava konta iestatījumos pārlūkprogrammā."
-
-#: app/(tabs)/settings/ai-mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Pierakstieties no sava MI klienta vai izmantojiet API atslēgu."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Base URL (required)"
-msgstr "Pamata URL (obligāts)"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter a model ID."
-msgstr "Ievadiet modeļa ID."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an API key for this provider."
-msgstr "Ievadiet šī pakalpojumu sniedzēja API atslēgu."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Ievadiet pamata URL, kas sākas ar http:// vai https://."
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key"
-msgstr "Iegūt API atslēgu"
-
-#: src/features/ai/provider-editor.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Iegūstiet API atslēgu no sava galapunkta operatora."

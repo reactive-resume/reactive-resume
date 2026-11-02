@@ -1921,6 +1921,7 @@ msgstr "Állítsa be a betűtípusokat, a színeket, a térközöket és a szaka
 msgid "Ads"
 msgstr "Hirdetések"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Fejlett"
@@ -2271,8 +2272,7 @@ msgstr "Amire emlékezni kell erről a munkáról"
 msgid "Anywhere"
 msgstr "Bárhol"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API kulcs"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Alapfizetés"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Alap URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Alap-URL (kötelező)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Beépített olvasó"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "Teljes összeget adj meg, például 95000, vagy hagyd üresen a mezőt."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Adj meg teljes összeget, például 95000. A korábbi összeged nem változott."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Adjon meg egy modellazonosítót."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Adjon meg egy nevet, legfeljebb 64 karakterből."
@@ -6087,6 +6094,14 @@ msgstr "Adjon meg egy érvényes e-mail címet."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Adjon meg egy webcímet, például.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Adjon meg egy API-kulcsot ehhez a szolgáltatóhoz."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Adjon meg egy http:// vagy https:// kezdetű alap-URL-t."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "LibreOffice-hoz és más nyílt forráskódú szerkesztőkhöz. Az elren
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Portáloknak vagy toborzóknak, akik a Word-t kérik. Az elrendezés egyszerűsített."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "Szkriptekhez, bővítményekhez és MCP kliensekhez. A gombok úgy működnek, mint Ön, és olvashatják és szerkeszthetik a dokumentumokat."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "Szerezzen kulcsot a <0>{0}</0> címen. Titkosítva tárolja, és csak az
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Kapj tervet az interjúra a hirdetés és a saját történeteid alapján. Gyakorolj hangosan, aztán írd le, hogyan ment."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API-kulcs beszerzése"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Kérjen API-kulcsot a végpontja üzemeltetőjétől."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7904,8 +7923,8 @@ msgid "Key stored encrypted"
 msgstr "A kulcs titkosítva tárolva"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "A gombok úgy működnek, mint Ön, és olvashatják és szerkeszthetik a dokumentumokat."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "A kulcsok az Ön nevében járnak el a kiválasztott hozzáféréssel. Az új kulcsok kezdetben csak olvasási hozzáférést kapnak."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Hagyj legalább 1,27 cm margót az oldal körül."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Hagyja üresen a mentett kulcs megtartásához"
 
@@ -8160,10 +8179,6 @@ msgstr "Hossz percben"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "A hossz önmagában nem hiba, és nincs egyetemes egyoldalas szabály. Tartsd meg azokat az oldalakat, amelyek megérdemlik a helyüket."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Hagyja, hogy az AI kliensek, például a Claude vagy a Cursor elolvassák és szerkeszthessék önéletrajzát a fenti API billentyű használatával."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8913,8 +8928,7 @@ msgstr "Vegyes"
 msgid "mixed format"
 msgstr "vegyes formátum"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Modell"
 
@@ -9122,7 +9136,7 @@ msgstr "Az volt a feladatom, hogy kiderítsem, miért, anélkül hogy több ügy
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Név"
@@ -10289,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Opcionális a helyi Ollama számára"
 
@@ -13566,6 +13580,10 @@ msgstr "Az oldalsávokat gyakran utoljára olvassák be, vagy keverik a fő oszl
 msgid "Sign in"
 msgstr "Bejelentkezés"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Jelentkezzen be az AI-klienséből, vagy használjon API-kulcsot."
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14940,11 +14958,11 @@ msgstr "A felülvizsgálatot nem lehetett befejezni. Próbáld újra."
 msgid "The same line repeats on every page."
 msgstr "Ugyanaz a sor ismétlődik minden oldalon."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "A mentett kulcsot nem küldi el új alap URL-re. Adja meg újra a kulcsot, ha a szervernek kulcsra van szüksége."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "A mentett kulcsot nem küldi el új alap URL-re. Írja be újra a kulcsot."
 
@@ -17518,35 +17536,3 @@ msgstr "Kicsinyítés"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "A kulcsok az Ön nevében járnak el a kiválasztott hozzáféréssel. Az új kulcsok kezdetben csak olvasási hozzáférést kapnak."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Jelentkezzen be az AI-klienséből, vagy használjon API-kulcsot."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "Alap-URL (kötelező)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "Adjon meg egy modellazonosítót."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "Adjon meg egy API-kulcsot ehhez a szolgáltatóhoz."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "Adjon meg egy http:// vagy https:// kezdetű alap-URL-t."
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "API-kulcs beszerzése"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "Kérjen API-kulcsot a végpontja üzemeltetőjétől."

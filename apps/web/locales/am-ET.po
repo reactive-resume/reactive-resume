@@ -1921,6 +1921,7 @@ msgstr "በሲቪ ገንቢ ውስጥ ቅርጸ ቁምፊዎችን ፣ ቀለሞ
 msgid "Ads"
 msgstr "ማስታወቂያዎች"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "የላቀ"
@@ -2271,8 +2272,7 @@ msgstr "ስለዚህ ሥራ ለማስታወስ ማንኛውንም ነገር"
 msgid "Anywhere"
 msgstr "የትም ቦታ"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API ቁልፍ"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "መሠረታዊ ደመወዝ"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "የመሠረት ዩአርኤል"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "መሠረታዊ URL (ያስፈልጋል)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "አብሮ የተሰራ አንባቢ"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "እንደ 95000 ያለ ሙሉ መጠን ያስገቡ፣ ወይም ባዶ
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "ሙሉ መጠን ያስገቡ፣ ለምሳሌ 95000። የቀድሞው መጠንዎ አልተቀየረም።"
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "የሞዴል መለያ ያስገቡ።"
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "ስም አስገባ፣ እስከ 64 ቁምፊዎች።"
@@ -6087,6 +6094,14 @@ msgstr "የሚሰራ የኢሜይል አድራሻ አስገባ።"
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "እንደ ምሳሌ.com ያለ የድር አድራሻ ያስገቡ"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "ለዚህ አቅራቢ የAPI ቁልፍ ያስገቡ።"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "በhttp:// ወይም https:// የሚጀምር መሠረታዊ URL ያስገቡ።"
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6618,10 +6633,6 @@ msgstr "ለLibreOffice እና ለሌሎች ክፍት ምንጭ አርታዒዎ�
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Word ለሚጠይቁ ፖርታል ወይም ቀጣሪዎች። አቀማመጥ ቀላል ነው።"
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "ለስክሪፕቶች፣ ቅጥያዎች እና MCP ደንበኞች። ቁልፎች እንደ እርስዎ ይሰራሉ ​​እና ሰነዶችዎን ማንበብ እና ማርትዕ ይችላሉ።"
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -6828,6 +6839,14 @@ msgstr "በ<0>{0}</0> ላይ ቁልፍ ያግኙ። የተመሰጠረ ነው �
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "ከሥራ ማስታወቂያው እና ከራስዎ ታሪኮች የተገነባ የቃለ መጠይቅ ዕቅድ ያግኙ። ጮክ ብለው ይለማመዱ፣ ከዚያ እንዴት እንደሄደ ይጻፉ።"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "የAPI ቁልፍ ያግኙ"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "ከመገናኛ ነጥብዎ አስተዳዳሪ የAPI ቁልፍ ያግኙ።"
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -7904,8 +7923,8 @@ msgid "Key stored encrypted"
 msgstr "የተከማቸ ቁልፍ ተመስጥሯል።"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "ቁልፎች እንደ እርስዎ ይሰራሉ ​​እና ሰነዶችዎን ማንበብ እና ማርትዕ ይችላሉ።"
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "ቁልፎች በመረጡት የመዳረሻ ፈቃድ በእርስዎ ስም ይሰራሉ። አዲስ ቁልፎች ለማንበብ ብቻ በሚያስችል ፈቃድ ይጀምራሉ።"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8100,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "በገጹ ዙሪያ ቢያንስ ግማሽ ኢንች ይተው።"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "የተቀመጠውን ቁልፍ ለማስቀመጥ ባዶውን ይተውት።"
 
@@ -8160,10 +8179,6 @@ msgstr "ርዝመት በደቂቃ"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "ርዝመት ጉድለት አይደለም፣ እና ሁሉን አቀፍ የአንድ-ገጽ ህግ የለም። ቦታቸውን የሚገባቸውን ገጾች ያቆዩ።"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "እንደ Claude ወይም Cursor ያሉ የ AI ደንበኞች ከላይ ያለውን የAPI ቁልፍ ተጠቅመው የስራ ልምድዎን እንዲያነቡ እና እንዲያርትዑ ያድርጉ።"
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -8913,8 +8928,7 @@ msgstr "የተቀላቀለ"
 msgid "mixed format"
 msgstr "የተደባለቀ ቅርጸት"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "ሞዴል"
 
@@ -9122,7 +9136,7 @@ msgstr "የእኔ ኃላፊነት የድጋፍ ሥራ ሳልጨምር ምክን�
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "ስም"
@@ -10289,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "ለአካባቢው Ollama አማራጭ"
 
@@ -13566,6 +13580,10 @@ msgstr "የጎን አሞሌዎች ብዙውን ጊዜ በመጨረሻ ይነበ�
 msgid "Sign in"
 msgstr "ግባ"
 
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "ከAI ደንበኛ መተግበሪያዎ ይግቡ፣ ወይም የAPI ቁልፍ ይጠቀሙ።"
+
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
@@ -14940,11 +14958,11 @@ msgstr "ግምገማው መጨረስ አልቻለም። እንደገና ይሞ�
 msgid "The same line repeats on every page."
 msgstr "ተመሳሳይ መስመር በእያንዳንዱ ገጽ ላይ ይደጋገማል።"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "የተቀመጠው ቁልፍ ወደ አዲስ የመሠረት ዩአርኤል አይላክም። ይህ አገልጋይ ቁልፍ የሚፈልግ ከሆነ ቁልፉን እንደገና ያስገቡ።"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "የተቀመጠው ቁልፍ ወደ አዲስ የመሠረት ዩአርኤል አይላክም። ቁልፉን እንደገና ያስገቡ።"
 
@@ -17518,35 +17536,3 @@ msgstr "አጉር"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "ዙሉ"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "ቁልፎች በመረጡት የመዳረሻ ፈቃድ በእርስዎ ስም ይሰራሉ። አዲስ ቁልፎች ለማንበብ ብቻ በሚያስችል ፈቃድ ይጀምራሉ።"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "ከAI ደንበኛ መተግበሪያዎ ይግቡ፣ ወይም የAPI ቁልፍ ይጠቀሙ።"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Base URL (required)"
-msgstr "መሠረታዊ URL (ያስፈልጋል)"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter a model ID."
-msgstr "የሞዴል መለያ ያስገቡ።"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an API key for this provider."
-msgstr "ለዚህ አቅራቢ የAPI ቁልፍ ያስገቡ።"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Enter an http:// or https:// base URL."
-msgstr "በhttp:// ወይም https:// የሚጀምር መሠረታዊ URL ያስገቡ።"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key"
-msgstr "የAPI ቁልፍ ያግኙ"
-
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Get an API key from your endpoint operator."
-msgstr "ከመገናኛ ነጥብዎ አስተዳዳሪ የAPI ቁልፍ ያግኙ።"
