@@ -2313,6 +2313,11 @@ msgstr "Before interview"
 msgid "Before restore"
 msgstr "Before restore"
 
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Before restoring “{0}”"
+msgstr "Before restoring “{0}”"
+
 #: src/features/application-detail/hooks.ts
 #: src/features/applications/next-step.ts
 msgid "Behavioral"
@@ -4222,6 +4227,7 @@ msgid "Delete forever…"
 msgstr "Delete forever…"
 
 #: src/features/application-detail/interview-sheet.tsx
+#: src/features/application-detail/sections.tsx
 msgid "Delete interview"
 msgstr "Delete interview"
 
@@ -4268,6 +4274,12 @@ msgstr "Delete section"
 #: src/features/career/stories.tsx
 msgid "Delete story"
 msgstr "Delete story"
+
+#. placeholder {0}: interviewTypeLabel(deleting.kind)
+#. placeholder {1}: day(new Date(deleting.at))
+#: src/features/application-detail/sections.tsx
+msgid "Delete the {0} interview on {1}?"
+msgstr "Delete the {0} interview on {1}?"
 
 #: src/features/application-detail/detail-screen.tsx
 msgid "Delete this application?"
@@ -4702,6 +4714,11 @@ msgstr "earlier messages in this chat"
 msgid "Edit"
 msgstr "Edit"
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Edit {0}"
+msgstr "Edit {0}"
+
 #. placeholder {0}: index + 1
 #. placeholder {1}: proposal.location
 #: src/features/assistant/messages.tsx
@@ -4720,6 +4737,10 @@ msgstr "Edit {number} · {location}: added \"{after}\" ({outcome})"
 #: src/features/assistant/messages.tsx
 msgid "Edit {number}: {0}"
 msgstr "Edit {number}: {0}"
+
+#: src/features/application-detail/sheets.tsx
+msgid "Edit contact"
+msgstr "Edit contact"
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -6051,6 +6072,10 @@ msgstr "Issues"
 #: src/features/check/issues.ts
 msgid "It has entries but isn't placed on a page."
 msgstr "It has entries but isn't placed on a page."
+
+#: src/features/application-detail/sections.tsx
+msgid "It's removed from the timeline and the calendar for good."
+msgstr "It's removed from the timeline and the calendar for good."
 
 #: src/features/application-detail/sections.tsx
 msgid "It's removed from the timeline for good."
@@ -9648,6 +9673,11 @@ msgstr "Remove unavailable fact reference"
 msgid "Remove unavailable story reference"
 msgstr "Remove unavailable story reference"
 
+#. placeholder {0}: contact.name
+#: src/features/application-detail/sheets.tsx
+msgid "Removed {0}"
+msgstr "Removed {0}"
+
 #: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Rename"
@@ -9837,6 +9867,17 @@ msgstr "Restore version"
 #: src/lib/undone.ts
 msgid "Restored"
 msgstr "Restored"
+
+#. placeholder {0}: version.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”"
+msgstr "Restored “{0}”"
+
+#. placeholder {0}: selected.name
+#. placeholder {1}: selected.name
+#: src/features/history/history.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
+msgstr "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
 
 #. placeholder {0}: done.length
 #: src/features/documents/queries.ts
@@ -10309,6 +10350,10 @@ msgstr "Save changes"
 #: src/features/ai/web-access.tsx
 msgid "Save connection"
 msgstr "Save connection"
+
+#: src/features/application-detail/sheets.tsx
+msgid "Save contact"
+msgstr "Save contact"
 
 #: src/features/career/facts.tsx
 msgid "Save fact"

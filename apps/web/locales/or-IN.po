@@ -85,6 +85,11 @@ msgstr "(କ head ଣସି ହେଡର୍ ନାହିଁ)"
 msgid "(optional)"
 msgstr "(ଇଚ୍ଛାଧୀନ)"
 
+#. placeholder {0}: upcoming.length
+#: src/features/applications/components/calendar-view.tsx
+msgid "{0, plural, =0 {No interviews} one {# interview} other {# interviews}}"
+msgstr ""
+
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2908,7 +2913,12 @@ msgstr "ମୌଳିକ ବିବରଣୀ"
 msgid "Before restore"
 msgstr "ପୁନ restore ସ୍ଥାପନ ପୂର୍ବରୁ"
 
-#: src/features/applications/components/interview-dialog.tsx
+#. placeholder {0}: version.name
+#: src/features/resume/share/format.ts
+msgid "Before restoring “{0}”"
+msgstr ""
+
+#: src/features/applications/interviews.ts
 msgid "Behavioral"
 msgstr "ଆଚରଣଗତ"
 
@@ -5321,6 +5331,10 @@ msgstr ""
 msgid "Delete entry"
 msgstr "ଏଣ୍ଟ୍ରି ବିଲୋପ କରନ୍ତୁ |"
 
+#: src/features/applications/components/detail/activity.tsx
+msgid "Delete interview"
+msgstr ""
+
 #: src/features/ats-checker/messages.ts
 msgid "Delete it. Hidden keywords are treated as a deliberate attempt to game the search."
 msgstr "ଏହାକୁ ଡିଲିଟ୍ କରନ୍ତୁ। ଲୁକ୍କାୟିତ କୀୱାର୍ଡଗୁଡ଼ିକୁ ସନ୍ଧାନକୁ ମିଥ୍ୟାରେ ପ୍ରଭାବିତ କରିବାର ଇଚ୍ଛାକୃତ ପ୍ରୟାସ ଭାବରେ ବିବେଚନା କରାଯାଏ।"
@@ -5364,6 +5378,10 @@ msgstr "ବିଭାଗ ବିଲୋପ କରନ୍ତୁ |"
 #: src/features/career/knowledge/stories.tsx
 msgid "Delete story"
 msgstr "କାହାଣୀ ବିଲୋପ କରନ୍ତୁ"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "Delete the {kind} interview on {date}?"
+msgstr ""
 
 #: src/features/applications/components/application-actions-menu.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
@@ -5933,6 +5951,11 @@ msgstr "ଏହି ଚାଟ୍‌ର ପୂର୍ବ ବାର୍ତ୍ତା"
 msgid "Edit"
 msgstr "ସମ୍ପାଦନ କରନ୍ତୁ"
 
+#. placeholder {0}: contact.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Edit {0}"
+msgstr ""
+
 #. Screen reader label for button that edits a keyword chip. Variable is the current keyword text.
 #: src/components/input/chip-input.tsx
 msgid "Edit {chip}"
@@ -6059,6 +6082,7 @@ msgstr "ସମ୍ପାଦିତ |"
 msgid "Edited by you"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/page-overlay.tsx
 msgid "Editing"
 msgstr "ସମ୍ପାଦନା"
@@ -7833,6 +7857,10 @@ msgstr "ଏହା ଚାକିରି ଆବେଦନର ଟାଇମଲାଇନ
 #: src/components/ui/donation-toast.tsx
 msgid "It's free and open source, kept going by donations from the people who use it. If it has helped you, consider chipping in."
 msgstr "ଏହା ମାଗଣା ଓ ଓପନ୍ ସୋର୍ସ, ଏହାକୁ ବ୍ୟବହାର କରୁଥିବା ଲୋକଙ୍କ ଦାନରେ ଚାଲେ। ଯଦି ଏହା ଆପଣଙ୍କୁ ସାହାଯ୍ୟ କରିଛି, ଅଳ୍ପ କିଛି ଯୋଗଦାନ କରିବାକୁ ବିଚାର କରନ୍ତୁ।"
+
+#: src/features/applications/components/detail/activity.tsx
+msgid "It's removed from the timeline and the calendar for good."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 msgid "It's removed from the timeline for good."
@@ -10389,7 +10417,7 @@ msgstr "କେବଳ ଆପଣ, ଯେପର୍ଯ୍ୟନ୍ତ ଆପଣ ଏ�
 msgid "Only your recording is sent to this transcription model. The returned transcript is saved to your account."
 msgstr ""
 
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 msgid "Onsite"
 msgstr "ଅନସାଇଟ୍"
 
@@ -10600,7 +10628,7 @@ msgstr ""
 msgid "Original table formatting is preserved. This content is read-only because it cannot be edited safely."
 msgstr "ମୂଳ ଟେବୁଲ୍ ଫର୍ମାଟିଂ ସଂରକ୍ଷିତ | ଏହି ବିଷୟବସ୍ତୁ କେବଳ ପଠନୀୟ କାରଣ ଏହା ସୁରକ୍ଷିତ ଭାବରେ ସମ୍ପାଦିତ ହୋଇପାରିବ ନାହିଁ |"
 
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 msgid "Other"
 msgstr "ଅନ୍ୟାନ୍ୟ"
 
@@ -12235,6 +12263,11 @@ msgstr ""
 msgid "Remove unavailable story reference"
 msgstr ""
 
+#. placeholder {0}: contact.name
+#: src/features/applications/components/detail/contacts.tsx
+msgid "Removed {0}"
+msgstr ""
+
 #: src/features/career/coach.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/settings/account/security.tsx
@@ -12428,9 +12461,17 @@ msgid "Restored"
 msgstr ""
 
 #. placeholder {0}: document.name
+#. placeholder {0}: version.name
 #: src/features/documents/document-actions.tsx
+#: src/features/resume/share/format.ts
 msgid "Restored “{0}”"
 msgstr "ପୁନରୁଦ୍ଧାର “{0}”"
+
+#. placeholder {0}: version.name
+#. placeholder {1}: version.name
+#: src/features/resume/share/history-tab.tsx
+msgid "Restored “{0}”. Your previous state is saved as “Before restoring “{1}””."
+msgstr ""
 
 #. placeholder {0}: done.length
 #: src/features/documents/document-actions.tsx
@@ -12866,6 +12907,7 @@ msgid "Sample resume added. Delete it anytime."
 msgstr "ନମୁନା ରେଜୁମ୍ ଯୋଗ କରାଯାଇଛି | ଏହାକୁ ଯେକ time ଣସି ସମୟରେ ବିଲୋପ କରନ୍ତୁ |"
 
 #: src/features/applications/components/detail/activity.tsx
+#: src/features/applications/components/detail/contacts.tsx
 #: src/features/applications/components/detail/next-step-card.tsx
 #: src/features/resume/share/history-tab.tsx
 #: src/features/settings/profile.tsx
@@ -13180,7 +13222,7 @@ msgid "School"
 msgstr "ବିଦ୍ୟାଳୟ"
 
 #. Application stage: the first recruiter screen after applying. Not the resume builder's Check mode.
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 #: src/features/applications/stages.ts
 msgid "Screening"
 msgstr "ସ୍କ୍ରିନିଂ"
@@ -14784,7 +14826,7 @@ msgstr "କାର୍ଯ୍ୟ"
 msgid "Teal"
 msgstr "ନୀଳସବୁଜ"
 
-#: src/features/applications/components/interview-dialog.tsx
+#: src/features/applications/interviews.ts
 msgid "Technical"
 msgstr "ଟେକ୍ନିକାଲ୍"
 
@@ -16350,6 +16392,10 @@ msgid "Up to 25 MB · checked in your browser, never uploaded"
 msgstr "25 MB ପର୍ଯ୍ୟନ୍ତ your ଆପଣଙ୍କର ବ୍ରାଉଜରରେ ଯା ed ୍ଚ ହୋଇଛି, କେବେବି ଅପଲୋଡ୍ ହୋଇନାହିଁ |"
 
 #: src/features/applications/components/calendar-view.tsx
+msgid "Upcoming"
+msgstr ""
+
+#: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming interviews"
 msgstr "ଆଗାମୀ ସାକ୍ଷାତକାର |"
 
@@ -17523,13 +17569,15 @@ msgstr "ଆପଣ ଏହାକୁ ପୂର୍ବରୁ ଭୁଲାଇ ଦେ�
 msgid "You partnered with engineering. How you led the work isn’t described yet."
 msgstr "ଆପଣ ଇଞ୍ଜିନିୟରିଂ ସହ ମିଶି କାମ କଲେ। ଆପଣ କାମର ନେତୃତ୍ୱ କିପରି ନେଲେ ତାହା ଏପର୍ଯ୍ୟନ୍ତ ବର୍ଣ୍ଣନା କରାଯାଇନାହିଁ।"
 
+#. placeholder {0}: sentence(said)
 #: src/features/career/offers.tsx
-msgid "You said: “{said}” Ask before deciding."
-msgstr "ଆପଣ କହିଥିଲେ: “{said}” ନିଷ୍ପତ୍ତି ନେବା ପୂର୍ବରୁ ପଚାରନ୍ତୁ।"
+msgid "You said: “{0}” Ask before deciding."
+msgstr ""
 
+#. placeholder {0}: sentence(said)
 #: src/features/career/offers.tsx
-msgid "You said: “{said}” Ask both companies before deciding."
-msgstr "ଆପଣ କହିଥିଲେ: “{said}” ନିଷ୍ପତ୍ତି ନେବା ପୂର୍ବରୁ ଉଭୟ କମ୍ପାନୀକୁ ପଚାରନ୍ତୁ।"
+msgid "You said: “{0}” Ask both companies before deciding."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "You send it from your own email."
@@ -17570,6 +17618,10 @@ msgstr "ଆପଣ ଅପ୍-ଟୁ-ଡେଟ୍ ଅଛନ୍ତି"
 #: src/features/auth/components/guest-banner.tsx
 msgid "You're using a guest account"
 msgstr "ଆପଣ ଏକ ଅତିଥି ଆକାଉଣ୍ଟ ବ୍ୟବହାର କରୁଛନ୍ତି"
+
+#: src/routes/builder/letter/-components/write-panel.tsx
+msgid "You're viewing an earlier version. Go back to now in History to edit."
+msgstr ""
 
 #: src/features/resume/builder/undo-toast.ts
 msgid "You've made changes since. Use Undo to step back through them."
