@@ -1,99 +1,15 @@
+import type { OutcomeSource } from "@reactive-resume/schema/applications/outcomes";
+import { applicationSentAt, furthestStage } from "@reactive-resume/schema/applications/outcomes";
+export { computeOutcomes } from "@reactive-resume/schema/applications/outcomes";
 // Insights maths, ported from apps/web/src/features/applications/insights.ts. Everything derives from the shared
 // applications list (it holds every application, closed ones included), so the figures match the server's stats
 // without a second query. Weeks are bucketed on the user's clock. Pure: Node runs it in the M5-T3 scenarios.
 import type { ApplicationSummary as Application } from "../applications/types";
 import type { ApplicationStatus } from "@reactive-resume/schema/applications/data";
-import { canonicalStageEntries } from "../applications/history";
 import { zonedParts } from "../reminders/schedule.ts";
 
 const DAY_MS = 86_400_000;
 const PIPELINE: readonly ApplicationStatus[] = ["saved", "applied", "screening", "interview", "offer"];
-const REPLY_STAGES = new Set<ApplicationStatus>(["screening", "interview", "offer"]);
-
-type OutcomeSource = Pick<Application, "status" | "closedReason" | "activity" | "appliedAt" | "resumeId">;
-
-const stageEntries = (application: OutcomeSource) =>
-	canonicalStageEntries(application)
-		.map((entry) => ({ stage: entry.stage, at: new Date(entry.at), closedReason: entry.closedReason }))
-		.sort((a, b) => a.at.getTime() - b.at.getTime());
-
-/** How far along the pipeline an application ever got; closed ones keep their furthest stage. */
-function furthestStage(application: OutcomeSource) {
-	const stages = [...stageEntries(application).map((entry) => entry.stage), application.status];
-	return Math.max(...stages.map((stage) => PIPELINE.indexOf(stage)));
-}
-
-/** When it was sent: its first stage at Applied or beyond, else the applied date on record. */
-function sentAt(application: OutcomeSource) {
-	const applied = PIPELINE.indexOf("applied");
-	return (
-		stageEntries(application).find((entry) => PIPELINE.indexOf(entry.stage) >= applied)?.at ??
-		new Date(application.appliedAt)
-	);
-}
-
-/** The first reply after sending: moving on to screening or beyond, or being turned down. */
-function firstReply(application: OutcomeSource) {
-	const since = sentAt(application).getTime();
-	return application.activity
-		.flatMap((entry) => (entry.type === "stage" ? [{ ...entry, at: new Date(entry.at) }] : []))
-		.sort((a, b) => a.at.getTime() - b.at.getTime())
-		.find(
-			(entry) =>
-				entry.at.getTime() >= since &&
-				((entry.canonicalTransition !== false && REPLY_STAGES.has(entry.stage)) ||
-					(entry.stage === "closed" &&
-						(entry.closedReason === undefined ? application.closedReason : entry.closedReason) === "not-selected")),
-		)?.at;
-}
-
-function median(values: number[]) {
-	if (values.length === 0) return null;
-	const sorted = values.toSorted((a, b) => a - b);
-	const middle = Math.floor(sorted.length / 2);
-	return sorted.length % 2 ? (sorted[middle] ?? null) : ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2;
-}
-
-export type Outcomes = {
-	/** Applications that ever reached each stage from Applied on, closed ones included. */
-	funnel: { status: ApplicationStatus; reached: number }[];
-	sent: number;
-	heardBack: number;
-	medianDaysToReply: number | null;
-	/** Sent applications whose linked resume was made for them, against those sent with another resume. */
-	tailored: { sent: number; replied: number };
-	base: { sent: number; replied: number };
-};
-
-/** The funnel of stages reached, how many heard back and how fast, and tailored against base resumes. */
-export function computeOutcomes<T extends OutcomeSource>(
-	applications: readonly T[],
-	isTailored: (application: T) => boolean,
-): Outcomes {
-	const sent = applications.filter((application) => furthestStage(application) >= PIPELINE.indexOf("applied"));
-	const replies = sent.map((application) => ({ application, reply: firstReply(application) }));
-	const withReplies = replies.filter((entry) => entry.reply !== undefined);
-	const compare = (tailored: boolean) => {
-		const group = replies.filter(({ application }) => application.resumeId && isTailored(application) === tailored);
-		return { sent: group.length, replied: group.filter((entry) => entry.reply !== undefined).length };
-	};
-
-	return {
-		funnel: (["applied", "screening", "interview", "offer"] as const).map((status) => ({
-			status,
-			reached: sent.filter((application) => furthestStage(application) >= PIPELINE.indexOf(status)).length,
-		})),
-		sent: sent.length,
-		heardBack: withReplies.length,
-		medianDaysToReply: median(
-			withReplies.map(({ application, reply }) =>
-				Math.round(((reply?.getTime() ?? 0) - sentAt(application).getTime()) / DAY_MS),
-			),
-		),
-		tailored: compare(true),
-		base: compare(false),
-	};
-}
 
 const dayNumber = (instant: Date, timeZone: string) =>
 	Date.parse(`${zonedParts(instant, timeZone).date}T00:00:00Z`) / DAY_MS;
@@ -113,7 +29,9 @@ export function computeTimeline(
 
 	for (const application of applications) {
 		if (furthestStage(application) < PIPELINE.indexOf("applied")) continue;
-		const day = dayNumber(sentAt(application), timeZone);
+		const sent = applicationSentAt(application);
+		if (!sent) continue;
+		const day = dayNumber(sent, timeZone);
 		if (day < first) continue;
 		const index = Math.min(weeks - 1, Math.floor((day - first) / 7));
 		counts[index] = (counts[index] ?? 0) + 1;

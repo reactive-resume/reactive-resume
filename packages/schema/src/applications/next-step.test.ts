@@ -111,3 +111,23 @@ it("orders offers by saved reply deadlines before undated decisions, preserving 
 	expect(nextStepSortKey(late, now, "UTC", null)).toEqual([1, Date.parse("2026-10-01")]);
 	expect(getNextStep(early, now, "UTC", earlyHint)).toMatchObject({ kind: "offer", days: 10 });
 });
+
+it("keeps an undated imported stage out of elapsed-time and no-reply claims", () => {
+	const application = {
+		status: "applied" as const,
+		appliedAt: new Date("2026-01-01"),
+		followUpAt: null,
+		followUpNote: null,
+		activity: [
+			{
+				id: "imported",
+				type: "stage" as const,
+				stage: "applied" as const,
+				at: new Date("2026-01-01"),
+				dateUnknown: true,
+			},
+		],
+	};
+	expect(applicationStageSince(application)).toBeNull();
+	expect(getNextStep(application, new Date("2026-10-01"))).toEqual({ kind: "waiting", days: null });
+});

@@ -158,6 +158,8 @@ export const applicationTimelineEntrySchema = z.discriminatedUnion("type", [
 		laneLabel: z.string().max(80).nullable().optional(),
 		closedReason: applicationClosedReasonSchema.nullable().optional(),
 		canonicalTransition: z.boolean().optional(),
+		/** Imported state with no known entry date; `at` records the import, not the stage transition. */
+		dateUnknown: z.boolean().optional(),
 		/** Server-assigned write order, independent of the editable display date. Absent on legacy entries. */
 		writeSequence: z.number().int().positive().optional(),
 	}),

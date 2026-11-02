@@ -227,7 +227,12 @@ export const applicationDto = {
 
 	// Bulk create from a CSV import. Each item is a create input; company/role required per item.
 	import: {
-		input: z.object({ items: z.array(createInputSchema).min(1).max(500) }),
+		input: z.object({
+			items: z
+				.array(createInputSchema.extend({ applicationDate: timelineDateSchema.optional() }))
+				.min(1)
+				.max(500),
+		}),
 		output: z.object({ imported: z.number() }),
 	},
 

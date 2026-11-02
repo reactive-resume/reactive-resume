@@ -25,31 +25,33 @@ export type NextStep =
 	| { kind: "interview"; interview: InterviewTimelineEntry; at: Date }
 	| { kind: "follow-up"; at: Date; note: string; overdue: boolean }
 	| { kind: "no-reply"; days: number }
-	| { kind: "waiting"; days: number }
+	| { kind: "waiting"; days: number | null }
 	/** Interview stage with every recorded interview behind it: the employer's answer is due. */
-	| { kind: "interview-feedback"; days: number }
+	| { kind: "interview-feedback"; days: number | null }
 	/** Interview stage with no interview recorded yet. */
-	| { kind: "no-interview"; days: number }
+	| { kind: "no-interview"; days: number | null }
 	/** Offer stage: the user decides. */
-	| { kind: "offer"; days: number; respondBy: Date | null; overdue: boolean; terms: boolean }
+	| { kind: "offer"; days: number | null; respondBy: Date | null; overdue: boolean; terms: boolean }
 	| { kind: "not-applied" }
 	| { kind: "closed" };
 
 /** The latest canonical category entry. Lane-only moves never restart the employer-reply clock. */
-export function applicationStageSince(application: ApplicationStageSource): Date {
+export function applicationStageSince(application: ApplicationStageSource): Date | null {
 	const entries = application.activity.filter(
 		(entry) => entry.type === "stage" && entry.stage === application.status && entry.canonicalTransition !== false,
 	);
-	return new Date(
-		entries.length ? Math.max(...entries.map((entry) => new Date(entry.at).getTime())) : application.appliedAt,
-	);
+	const latest = entries.toSorted((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())[0];
+	if (latest?.type === "stage" && latest.dateUnknown) return null;
+	return new Date(latest?.at ?? application.appliedAt);
 }
 
 const daysBetween = (from: Date, to: Date) => Math.max(0, Math.floor((to.getTime() - from.getTime()) / DAY_MS));
 
 /** Whole days since the application entered its current stage; moving between lanes of that stage doesn't count. */
-const daysInStage = (application: ApplicationStageSource, now: Date) =>
-	daysBetween(applicationStageSince(application), now);
+const daysInStage = (application: ApplicationStageSource, now: Date) => {
+	const since = applicationStageSince(application);
+	return since ? daysBetween(since, now) : null;
+};
 
 export function getNextStep(
 	application: NextStepSource,
@@ -88,12 +90,13 @@ export function getNextStep(
 	if (application.status === "saved") return { kind: "not-applied" };
 
 	const days = daysInStage(application, now);
-	if (application.status === "applied" && days >= FOLLOW_UP_AFTER_DAYS) return { kind: "no-reply", days };
+	if (application.status === "applied" && days !== null && days >= FOLLOW_UP_AFTER_DAYS)
+		return { kind: "no-reply", days };
 	if (application.status === "interview") {
-		const since = applicationStageSince(application).getTime();
-		const feedbackDue = application.activity.some(
-			(entry) => entry.type === "interview" && new Date(entry.at).getTime() >= since,
-		);
+		const since = applicationStageSince(application)?.getTime();
+		const feedbackDue =
+			since !== undefined &&
+			application.activity.some((entry) => entry.type === "interview" && new Date(entry.at).getTime() >= since);
 		return feedbackDue ? { kind: "interview-feedback", days } : { kind: "no-interview", days };
 	}
 	return { kind: "waiting", days };
@@ -137,7 +140,7 @@ export function nextStepSortKey(
 	const step = getNextStep(application, now, timeZone, offer);
 	if (step.kind === "interview" || step.kind === "follow-up") return [0, step.at.getTime()];
 	if (step.kind === "offer" && step.respondBy) return [0, step.respondBy.getTime()];
-	return [1, applicationStageSince(application).getTime()];
+	return [1, applicationStageSince(application)?.getTime() ?? Infinity];
 }
 
 /** Stable ordering shared by both lists and Today; reversing the date order keeps ID ties stable. */

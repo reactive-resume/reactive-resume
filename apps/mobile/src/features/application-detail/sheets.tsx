@@ -649,7 +649,9 @@ type TimelineEntrySheetProps = SheetBaseProps & {
 export function TimelineEntrySheet({ entry, open, saving, onClose, onSave, onDelete }: TimelineEntrySheetProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
-	const [date, setDate] = useState(() => (entry ? new Date(entry.at).toISOString().slice(0, 10) : ""));
+	const [date, setDate] = useState(() =>
+		entry && !(entry.type === "stage" && entry.dateUnknown) ? new Date(entry.at).toISOString().slice(0, 10) : "",
+	);
 	const [text, setText] = useState(entry?.type === "note" ? entry.text : "");
 
 	return (
