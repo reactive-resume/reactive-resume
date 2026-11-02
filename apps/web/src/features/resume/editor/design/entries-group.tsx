@@ -123,11 +123,26 @@ export function EntriesGroup() {
 			true,
 		);
 
-	const rows = [
-		{ id: "organization", name: t`Company`, detail: t`Location` },
-		{ id: "role", name: t`Position`, detail: t`Date` },
-	];
-	if (entry.lead === "role") rows.reverse();
+	// The rows as the chosen layout prints them, so swapping shows what the page will do.
+	const leadRow = entry.lead === "role" ? { id: "role", name: t`Position` } : { id: "organization", name: t`Company` };
+	const otherRow = entry.lead === "role" ? { id: "organization", name: t`Company` } : { id: "role", name: t`Position` };
+	const rows: { id: string; name: string; detail: string; eyebrow?: boolean }[] =
+		entry.layout === "eyebrow"
+			? // The rest sits above the lead, as a small accent line; the date stays with the lead.
+				[
+					{ ...otherRow, detail: t`Location`, eyebrow: true },
+					{ ...leadRow, detail: t`Date` },
+				]
+			: entry.layout === "date-column"
+				? // The date has a column of its own.
+					[
+						{ ...leadRow, detail: t`Location` },
+						{ ...otherRow, detail: "" },
+					]
+				: [
+						{ ...leadRow, detail: entry.lead === "role" ? t`Date` : t`Location` },
+						{ ...otherRow, detail: entry.lead === "role" ? t`Location` : t`Date` },
+					];
 
 	return (
 		<div className="grid gap-4">
@@ -168,18 +183,28 @@ export function EntriesGroup() {
 					<Trans>Row order</Trans>
 				</span>
 				<div className="flex items-center gap-2 rounded-lg border border-line bg-bg p-1.5">
+					{entry.layout === "date-column" && (
+						<span className="shrink-0 self-start rounded-sm bg-sunken px-2 py-1 text-xs text-ink-3">
+							<Trans>Date</Trans>
+						</span>
+					)}
 					<div className="grid min-w-0 flex-1 gap-1">
 						{rows.map((row) => (
 							<m.div
 								key={row.id}
 								layout="position"
 								// Measured only when the order changes, so the panel moving around it doesn't slide the chips.
-								layoutDependency={entry.lead}
+								layoutDependency={`${entry.lead}:${entry.layout}`}
 								transition={{ duration: D2, ease: EASE_MOVE }}
-								className="flex items-center justify-between gap-2 rounded-sm bg-sunken px-2 py-1 text-xs"
+								className={cn(
+									"flex items-center justify-between gap-2 rounded-sm bg-sunken px-2 py-1 text-xs",
+									row.eyebrow && "py-0.5 text-[10px] tracking-wide text-accent-text uppercase",
+								)}
 							>
-								<span className="truncate font-semibold">{row.name}</span>
-								<span className="truncate text-ink-3">{row.detail}</span>
+								<span className={cn("truncate", !row.eyebrow && "font-semibold")}>
+									{row.eyebrow ? `${row.name} · ${row.detail}` : row.name}
+								</span>
+								{!row.eyebrow && row.detail && <span className="truncate text-ink-3">{row.detail}</span>}
 							</m.div>
 						))}
 					</div>
@@ -189,7 +214,6 @@ export function EntriesGroup() {
 						variant="secondary"
 						size="icon-sm"
 						tooltipSide="top"
-						className="rounded-full"
 						label={entry.lead === "role" ? t`Swap rows: lead with company` : t`Swap rows: lead with position`}
 						onClick={() => set({ lead: entry.lead === "role" ? "organization" : "role" })}
 					/>

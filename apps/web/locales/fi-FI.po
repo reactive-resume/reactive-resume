@@ -1660,6 +1660,7 @@ msgid "Add a tag and press Enter…"
 msgstr "Lisää tunniste ja paina Enter…"
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Add a tag…"
 msgstr ""
 
@@ -2354,8 +2355,8 @@ msgid "Any font, in Advanced"
 msgstr "Mikä tahansa fontti Lisäasetukset-tilassa"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Anyone who opens the public URL will need this password."
-msgstr "Jokainen, joka avaa julkisen URL-osoitteen, tarvitsee tämän salasanan."
+msgid "Anyone who opens the public link needs this password."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
@@ -3304,11 +3305,6 @@ msgstr "Muutin ansioluetteloa suoraan (aiempi keskustelu)"
 msgid "Changelog"
 msgstr "Muutosloki"
 
-#: src/features/resume/editor/design/style-groups.tsx
-#: src/features/resume/editor/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "Muuttaa vain osien otsikot ja päivämääräsanat, ei sisältöäsi."
-
 #. placeholder {0}: versionLabel(earlier)
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3888,8 +3884,8 @@ msgid "Complete {0} before saving."
 msgstr "Täytä {0} ennen tallentamista."
 
 #: src/features/resume/share/download-tab.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "Täydellinen tietojen varmuuskopiointi. Tuo takaisin Reactive Resume- tai JSON Resume-työkaluihin."
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
@@ -4703,6 +4699,7 @@ msgid "Couldn't remove the passkey. Try again."
 msgstr "Salasanaa ei voitu poistaa. Yritä uudelleen."
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "Asiakirjaa ei voitu nimetä uudelleen. Yritä uudelleen."
 
@@ -4794,6 +4791,10 @@ msgstr "Työpaikkailmoitusta ei voitu tallentaa. Yritä uudelleen."
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't save the provider. Try again."
 msgstr "Palveluntarjoajaa ei voitu tallentaa. Yritä uudelleen."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't save the QR code as PNG. Try SVG instead."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't save the story. Try again."
@@ -5881,10 +5882,6 @@ msgstr "Lataa PDF-esimerkki"
 msgid "Download them"
 msgstr "Lataa ne"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "Lataussummat voivat sisältää toistuvia napsautuksia."
-
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
@@ -6048,6 +6045,10 @@ msgstr "Ilmoituksen jokaista vaatimusta verrataan tietopankkisi faktoihin ja tar
 #: src/features/assistant/conversation.tsx
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "Jokainen lähetys alkaa alusta tästä viestistä ja valituista tiedostoista. Aiempi keskusteluhistoria säilyy täällä."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -7240,6 +7241,11 @@ msgstr "Siirry Reactive Resume -palveluun"
 msgid "Go to…"
 msgstr "Siirry kohtaan…"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/address-field.tsx
+msgid "Goes live at {0} when you publish."
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Good luck out there. Reactive Resume stays free because people chip in."
 msgstr "Onnea sinne. Reactive Resume pysyy ilmaiseksi, koska ihmiset hakeutuvat sisään."
@@ -7590,6 +7596,7 @@ msgid "Icon…"
 msgstr "Kuvake…"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Icons in contact line"
 msgstr "Kuvakkeet kontaktilinjassa"
 
@@ -8206,6 +8213,10 @@ msgstr ""
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Keep on one page"
 msgstr "Pysy yhdellä sivulla"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -9514,8 +9525,8 @@ msgstr "Tehtäväni oli selvittää syy lisäämättä tukityötä."
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/inline-name-input.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/documents/trash-page.tsx
 #: src/features/resume/editor/check/parser-view.tsx
@@ -10594,6 +10605,10 @@ msgstr ""
 msgid "Only the text to read aloud is sent to this speech model."
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Only you can see this address. Publish it in Share."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Vain sinä näet nämä"
@@ -10660,6 +10675,10 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
+msgstr ""
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Open Share"
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -11723,8 +11742,8 @@ msgstr "Julkaise verkkosivu, niin katselut ja lataukset lasketaan. Laskenta on a
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "Julkaise tämä ansioluettelo, niin se avautuu lyhytlinkistäsi ja omasta verkkotunnuksestasi."
 
-#: src/features/resume/share/address-field.tsx
-msgid "Publish to choose an address."
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
@@ -13197,6 +13216,10 @@ msgstr "Tallenna nimi"
 msgid "Save offer"
 msgstr "Tallenna työtarjous"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save PNG"
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
 msgstr ""
@@ -13218,7 +13241,12 @@ msgstr "Tallenna ajastus"
 msgid "Save story"
 msgstr "Tallenna tarina"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save SVG"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save tags"
 msgstr "Tallenna tunnisteet"
 
@@ -13908,6 +13936,11 @@ msgstr "Ota todennussovellus käyttöön"
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -14000,6 +14033,10 @@ msgstr "Lyhyt ja suora. Hienoa, jos työpaikkailmoitus vaatii lyhyyttä."
 #: src/features/assistant/assistant-panel.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "Lyhyt ja kohtelias, rekrytoijalle"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
@@ -14097,10 +14134,6 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Näytä otsikko"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Show icons"
-msgstr "Näytä kuvakkeet"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
@@ -14275,8 +14308,8 @@ msgid "Signing up..."
 msgstr "Rekisteröidytään..."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "since last view"
-msgstr "edellisestä katselusta lähtien"
+msgid "since last counted view"
+msgstr ""
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -14985,6 +15018,7 @@ msgstr "Tunniste"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags"
 msgstr "Tunnisteet"
 
@@ -14997,6 +15031,7 @@ msgid "Tags give software an explicit reading order. Enable them when exporting,
 msgstr "Tagit antavat ohjelmistolle selkeän lukujärjestyksen. Ota ne käyttöön viedessäsi, jos työkalusi tarjoaa sen."
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags group documents in the library; pick one above the grid to filter by it."
 msgstr "Tagit ryhmittele asiakirjat kirjastossa; valitse yksi ruudukon yläpuolelta suodattaaksesi sen mukaan."
 
@@ -15012,6 +15047,7 @@ msgstr "Tunnisteet pilkuilla erotettuina"
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags…"
 msgstr "Tunnisteet…"
 
@@ -16417,6 +16453,10 @@ msgstr "Ota kaksivaiheinen vahvistus käyttöön"
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Ota tämä ajastus käyttöön"
@@ -16646,6 +16686,10 @@ msgstr "Enintään 2 minuuttia. Tai <0>valitse äänitiedosto</0> (enintään 2 
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "Enintään 2 minuuttia. Sanasi näkyvät sitä mukaa kuin puhut."
 
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Up to 20 tags per document, 40 characters per tag."
+msgstr "Jopa 20 tunnistetta asiakirjaa kohti, 40 merkkiä per tunniste."
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
 msgstr ""
@@ -16753,6 +16797,10 @@ msgstr "Käytä enintään 64 merkkiä."
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "Käytä tummempaa sävyä"
+
+#: src/features/resume/editor/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a plain international form, such as +1 555 010 1234."
@@ -18033,8 +18081,8 @@ msgid "Your email address isn't verified with the provider. Verify it there, the
 msgstr "Sähköpostiosoitettasi ei ole vahvistettu palveluntarjoajalla. Vahvista se siellä ja yritä sitten uudelleen."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "Sähköpostiosoitteesi, puhelinnumerosi, sijaintisi ja muut otsakkeen tiedot sekä suosittelijoiden puhelinnumerot jätetään pois verkkosivulta, sen PDF:stä ja hakutuloksista."
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -18244,6 +18292,24 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "Lyhytlinkkisi ja oma verkkotunnuksesi kertovat, ettei tätä ansioluetteloa ole jaettu, ennen kuin julkaiset sen uudelleen."
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."

@@ -30,7 +30,7 @@ export function ResumeLanguage({ locale, locked }: ResumeLanguageProps) {
 				accessibilityRole="button"
 				accessibilityLabel={label}
 				accessibilityValue={{ text: languageName(locale) }}
-				accessibilityHint={t`Changes section titles and date words only, not your content.`}
+				accessibilityHint={t`Sets section titles, date words and text direction. Your content isn't translated.`}
 				disabled={locked}
 				onPress={() => setOpen(true)}
 				style={{ flexDirection: "row", alignItems: "center", gap: space.s1 }}

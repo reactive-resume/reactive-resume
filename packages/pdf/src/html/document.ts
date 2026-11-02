@@ -29,7 +29,8 @@ export type WebPageDocumentOptions = {
 
 /**
  * The desk around the sheet, the floating actions and the footer, in the product's Desk & Paper values: a warm desk
- * (dark at night; the paper stays white), the green accent, small radii and the system font. Phones pin the actions
+ * (dark at night; the paper stays white), the green accent, small radii and the system font. Below 1280px, where
+ * floating actions would sit on the paper, they dock in a bar under it; phones pin the actions
  * to the bottom edge, so the page leaves room for them.
  */
 const SHELL_CSS = `
@@ -47,6 +48,11 @@ body{margin:0;background:#f8f7f3;color:#111;font-family:system-ui,-apple-system,
 .rr-actions .rr-primary{background:#337344;color:#f7fef8}
 .rr-toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#111;color:#fff;font:500 14px system-ui,sans-serif;padding:10px 16px;border-radius:4px;opacity:0;transition:opacity .2s;pointer-events:none}
 .rr-toast[data-on]{opacity:1}
+@media (min-width:641px) and (max-width:1279px){
+.rr-actions{left:0;right:0;bottom:0;justify-content:center;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgb(255 255 255/.92);backdrop-filter:blur(12px);box-shadow:0 -1px 0 rgb(0 0 0/.08)}
+.rr-actions a,.rr-actions button{box-shadow:none;border:1px solid rgb(0 0 0/.12)}
+.rr-actions .rr-primary{border-color:#337344}
+}
 @media (max-width:640px){
 .rr.rr-desk{padding:0 0 96px}
 .rr-page{box-shadow:none}
@@ -182,12 +188,18 @@ export function renderUnavailableDocument(options: {
 	lang: string;
 	messages: WebPageMessages;
 	homeUrl: string;
+	/** Set when the viewer owns the unpublished resume: they're told so and sent to its Share panel. */
+	shareUrl?: string | undefined;
 }): string {
-	const { messages } = options;
+	const { messages, shareUrl } = options;
+	const hint = shareUrl ? messages.ownerUnavailableHint : messages.unavailableHint;
+	const action = shareUrl
+		? `<a class="home" href="${escapeHtml(shareUrl)}">${LOGO}${escapeHtml(messages.ownerPublish)}</a>`
+		: `<a class="home" href="${escapeHtml(options.homeUrl)}">${LOGO}${escapeHtml(messages.home)}</a>`;
 	return shell(
 		options.lang,
 		`<title>${escapeHtml(messages.unavailableTitle)}</title><meta name="robots" content="noindex, nofollow">`,
 		MESSAGE_CSS,
-		`<main><h1>${escapeHtml(messages.unavailableTitle)}</h1><p>${escapeHtml(messages.unavailableHint)}</p><a class="home" href="${escapeHtml(options.homeUrl)}">${LOGO}${escapeHtml(messages.home)}</a></main>`,
+		`<main><h1>${escapeHtml(messages.unavailableTitle)}</h1><p>${escapeHtml(hint)}</p>${action}</main>`,
 	);
 }

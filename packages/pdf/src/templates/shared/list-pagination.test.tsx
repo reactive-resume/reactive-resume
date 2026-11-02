@@ -56,12 +56,13 @@ async function listPages(margin: number, repeats = 5, options: { html?: string }
 // again with that item starting the next page.
 describe("list marker pagination (#3344)", () => {
 	it("keeps content on the current page when the first paragraph can start", async () => {
-		const result = await listPages(192);
+		// The margins sit either side of where the first line stops fitting under the name-only header.
+		const result = await listPages(196);
 		expect(result.first).toBe(0);
 		expect(result.marker).toBe(result.first);
 	});
 	it("allows a long list item to continue across pages", async () => {
-		const result = await listPages(194, 30);
+		const result = await listPages(198, 30);
 		expect(result.first).toBe(1);
 		expect(result.marker).toBe(result.first);
 		expect(result.last).toBeGreaterThan(result.first);

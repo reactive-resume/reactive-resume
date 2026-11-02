@@ -9,7 +9,7 @@ The patch endpoint lets you make small, targeted changes to a resume's content w
 
 - Create an API key and try a first request, as described in [Using the API](/guides/using-the-api).
 - Find the resume's ID with `GET /api/openapi/resumes`, then fetch its current content with `GET /api/openapi/resumes/{id}`. Paths in your operations point into the `data` object of that response.
-- Keep the [JSON resume schema](/guides/json-resume-schema) at hand. It lists every field, its type and which fields a new item needs.
+- Keep the [Reactive Resume JSON schema](/guides/json-resume-schema) at hand. It lists every field, its type and which fields a new item needs.
 
 ## Choose PATCH or PUT
 
@@ -222,5 +222,5 @@ If the resume has moved on, you get `409` with the code `RESUME_VERSION_CONFLICT
 ## Related guides
 
 - [Using the API](/guides/using-the-api): keys, authentication and the other endpoints.
-- [JSON resume schema](/guides/json-resume-schema): every path and value type you can patch.
+- [Reactive Resume JSON schema](/guides/json-resume-schema): every path and value type you can patch.
 - [Using the MCP server](/guides/using-the-mcp-server): let an AI client write these patches for you.

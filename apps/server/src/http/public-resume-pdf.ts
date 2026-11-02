@@ -1,4 +1,5 @@
 import { createPublicResumePdf } from "@reactive-resume/api/features/resume/public-pdf";
+import { publicResumePath } from "@reactive-resume/resume/sharing";
 import { contentDisposition } from "@reactive-resume/utils/http";
 
 const noStoreResponse = (body: string, status: number) =>
@@ -53,8 +54,19 @@ export async function handlePublicResumePdf(
 	} catch (error) {
 		const status = errorStatus(error);
 		if (status === 500) console.error("Public resume PDF generation failed", error);
+		// A person following a shared PDF link gets the web page, which asks for the password or says it isn't shared.
+		const browser = (request.headers.get("accept") ?? "").includes("text/html");
+		if (browser && (status === 401 || status === 404))
+			return new Response(null, {
+				status: 303,
+				headers: { Location: publicResumePath({ username, slug }), "Cache-Control": "private, no-store" },
+			});
 		return noStoreResponse(
-			status === 500 ? "Failed to generate public resume PDF" : "Public resume PDF unavailable",
+			status === 401
+				? "This resume is password-protected. Open its web page to enter the password."
+				: status === 404
+					? "This resume's PDF isn't available."
+					: "Couldn't create the PDF. Try again in a minute.",
 			status,
 		);
 	}
