@@ -143,13 +143,24 @@ type DatesFieldProps = {
 	format?: DateFormat | undefined;
 	/** Awards, certifications and publications have one date. */
 	single?: boolean | undefined;
+	/** Education: an end date still to come can print as "Expected May 2027". */
+	expectable?: boolean | undefined;
 	disabled?: boolean | undefined;
 	autoFocus?: boolean | undefined;
 	onChange: (dates: ResumeDates) => void;
 };
 
 /** Preset date fields or verbatim custom text, using the existing raw date representation. */
-export function DatesField({ dates, locale, format, single = false, disabled, autoFocus, onChange }: DatesFieldProps) {
+export function DatesField({
+	dates,
+	locale,
+	format,
+	single = false,
+	expectable = false,
+	disabled,
+	autoFocus,
+	onChange,
+}: DatesFieldProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const [invalid, setInvalid] = useState({ start: false, end: false });
@@ -221,6 +232,17 @@ export function DatesField({ dates, locale, format, single = false, disabled, au
 						onValueChange={(present) => onChange(editDates(dates, { present, end: present ? null : dates.end }))}
 					/>
 					<Text>{t`Present`}</Text>
+				</View>
+			) : null}
+			{!custom && !single && expectable && !dates.present ? (
+				<View style={{ flexDirection: "row", alignItems: "center", gap: space.s2 }}>
+					<Switch
+						label={t`Expected`}
+						value={dates.expected === true}
+						disabled={disabled}
+						onValueChange={(expected) => onChange(editDates(dates, { expected }))}
+					/>
+					<Text>{t`Expected`}</Text>
 				</View>
 			) : null}
 			{unreadable ? (
