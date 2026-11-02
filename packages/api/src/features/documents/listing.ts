@@ -20,6 +20,8 @@ function library(database: DbOrTx, input: ListInput) {
 			tags: resume.tags,
 			isLocked: resume.isLocked,
 			isPublic: resume.isPublic,
+			// Whether the link asks for a password; the hash itself never leaves the database.
+			hasPassword: sql<boolean>`${resume.password} is not null`.as("has_password"),
 			slug: sql<string | null>`${resume.slug}`.as("slug"),
 			trashedAt: resume.trashedAt,
 			createdAt: resume.createdAt,
@@ -45,6 +47,7 @@ function library(database: DbOrTx, input: ListInput) {
 			tags: coverLetter.tags,
 			isLocked: coverLetter.isLocked,
 			isPublic: sql<boolean>`false`.as("is_public"),
+			hasPassword: sql<boolean>`false`.as("has_password"),
 			slug: sql<string | null>`null`.as("slug"),
 			trashedAt: coverLetter.trashedAt,
 			createdAt: coverLetter.createdAt,
