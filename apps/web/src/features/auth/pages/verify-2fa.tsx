@@ -3,6 +3,7 @@ import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter, useSearch } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Checkbox } from "@reactive-resume/ui/components/checkbox";
@@ -50,9 +51,13 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 			const rawCode = value.code.trim().replaceAll("-", "");
 			const code = backupCode ? `${rawCode.slice(0, 5)}-${rawCode.slice(5)}` : value.code;
 			const options = { code, trustDevice: value.trustDevice, ...getOAuthSignInOptions(callbackURL) };
-			const { data, error } = backupCode
+			let { data, error } = backupCode
 				? await authClient.twoFactor.verifyBackupCode(options)
 				: await authClient.twoFactor.verifyTotp(options);
+			// New backup codes are all capitals; older ones mix cases. A lower-case code that didn't match gets one
+			// retry in capitals; other failures (an expired challenge, rate limits) don't spend another attempt.
+			if (error?.code === "INVALID_BACKUP_CODE" && backupCode && code !== code.toUpperCase())
+				({ data, error } = await authClient.twoFactor.verifyBackupCode({ ...options, code: code.toUpperCase() }));
 
 			if (error) {
 				toast.add({
@@ -70,6 +75,9 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 								})),
 					id: toastId,
 				});
+				// A wrong code is cleared and the first box takes focus again, ready for the next try.
+				form.setFieldValue("code", "");
+				focusCode();
 				return;
 			}
 
@@ -82,6 +90,12 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 	});
 
 	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
+	// Typing the code works at once: the first box (or the backup code field) has focus when the page opens.
+	const codeRef = useRef<HTMLDivElement>(null);
+	const focusCode = () => codeRef.current?.querySelector("input")?.focus();
+	useEffect(() => {
+		codeRef.current?.querySelector("input")?.focus();
+	}, []);
 
 	return (
 		<>
@@ -109,6 +123,7 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 				<form.Field name="code">
 					{(field) => (
 						<FormItem
+							ref={codeRef}
 							className="justify-self-center"
 							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
 						>

@@ -2142,10 +2142,6 @@ msgstr "모든 지원 내역"
 msgid "All applications (including closed)"
 msgstr "모든 채용 지원서(마감된 포함)"
 
-#: src/features/settings/account/data.tsx
-msgid "All documents and applications as JSON, in one zip"
-msgstr "JSON 형식의 모든 문서 및 입사 지원서는 하나의 zip으로 제공됩니다."
-
 #: src/features/documents/trash-page.tsx
 msgid "All documents in Trash will be deleted for good and can't be restored."
 msgstr ""
@@ -3096,6 +3092,10 @@ msgstr "면접 준비에도 도움이 되나요?"
 msgid "Can software read your resume?"
 msgstr "소프트웨어가 이력서를 읽을 수 있나요?"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Can't scan? Enter this key in the app:"
+msgstr ""
+
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3264,6 +3264,10 @@ msgstr "콘텐츠가 아닌 섹션 제목과 날짜 단어만 변경합니다."
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
 msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
+msgstr "변경하면 먼저 현재 주소에서 승인을 받은 다음 새 주소를 확인합니다. 귀하의 사용자 이름은 모든 공개 링크의 일부입니다."
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3848,6 +3852,10 @@ msgstr "확인"
 msgid "Confirm applied"
 msgstr "지원 완료 확인"
 
+#: src/features/auth/email-text.ts
+msgid "Confirm email"
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Confirm password"
 msgstr "비밀번호 확인"
@@ -3867,6 +3875,29 @@ msgstr "새 면접을 추가하기 전에 {contact} 님과 시간을 확인하�
 #: src/features/career/workspace/prepare.tsx
 msgid "Confirm the time, link and who you'll meet. Glance at the resume and letter you sent."
 msgstr "시간, 링크, 만날 사람을 확인하세요. 보낸 이력서와 커버레터를 훑어보세요."
+
+#. Email sent to a new address to finish an email change. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this address to finish changing your {appName} email. The link works for 1 hour."
+msgstr ""
+
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this is your email address for {appName}. The link works for 1 hour."
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm your new {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email address"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Confirms {time} today, by video."
@@ -5632,6 +5663,10 @@ msgstr "이 작업에 대한 문서"
 #: src/features/documents/trash-page.tsx
 msgid "Documents you move here stay for 30 days."
 msgstr "여기로 옮긴 서류는 30일 동안 보관됩니다."
+
+#: src/features/settings/account/data.tsx
+msgid "Documents, applications and Career data as JSON, in one zip"
+msgstr ""
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -7479,11 +7514,15 @@ msgid "If you close this dialog, your changes are lost."
 msgstr "이 대화 상자를 닫으면 변경 사항이 사라집니다."
 
 #: src/features/auth/email-text.ts
-msgid "If you did not create this account, you can safely ignore this email."
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 msgstr ""
 
 #: src/features/auth/email-text.ts
-msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgid "If you didn't ask for this, ignore this email; your account won't change."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, you can ignore this email."
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -12391,10 +12430,6 @@ msgstr ""
 msgid "Reset your password"
 msgstr "비밀번호 재설정"
 
-#: src/features/auth/email-text.ts
-msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
-msgstr ""
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "비밀번호를 재설정하는 중입니다..."
@@ -14963,11 +14998,6 @@ msgstr "태국어"
 msgid "Thank you for keeping it free."
 msgstr "무료로 보관해 주셔서 감사합니다."
 
-#. Verification email. appName: Reactive Resume
-#: src/features/auth/email-text.ts
-msgid "Thanks for signing up for {appName}. Verify your email address to continue."
-msgstr ""
-
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "감사합니다, Sam 님. 사례 하나를 말씀드리면, Northwind Labs에서 고객 인터뷰 14건부터 더 짧은 설정 과정까지 온보딩 리디자인을 이끌었습니다."
@@ -15200,6 +15230,10 @@ msgstr "편지가 이력서의 디자인과 다시 일치합니다."
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "요청한 이후 줄이 변경되었으므로 교체되지 않았습니다."
+
+#: src/features/auth/email-text.ts
+msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "the linked cover letter"
