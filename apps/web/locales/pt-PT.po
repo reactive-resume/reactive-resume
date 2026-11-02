@@ -184,8 +184,10 @@ msgstr "{0, plural, one {# contacto tem um e-mail inválido ou não tem nome; a 
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {Falta # dia} other {Faltam # dias}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# dia} other {# dias}}"
 
@@ -2158,6 +2160,10 @@ msgstr ""
 msgid "All models"
 msgstr "Todos os modelos"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Todos os seus documentos, candidaturas, chaves API e links públicos serão eliminados definitivamente. Esta ação não pode ser anulada."
@@ -4127,6 +4133,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Cópia para um trabalho…"
 
@@ -6606,6 +6613,10 @@ msgstr "Preenchido a partir do formulário de emprego. A saudação segue o nome
 msgid "Filled in what we could from the posting."
 msgstr "Preenchemos o que foi possível a partir do anúncio."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "Preenchendo entradas"
@@ -8548,6 +8559,7 @@ msgid "Link updated"
 msgstr "Link atualizado"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Vinculado · ainda não enviado"
 
@@ -9287,6 +9299,11 @@ msgstr "Mova o seu email e número de telefone para o topo da primeira página."
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{0} de {1} movidos para a Lixeira. Os documentos bloqueados foram ignorados."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13173,6 +13190,10 @@ msgstr "Agendamento apagado"
 msgid "Schedule interview"
 msgstr "Agendar entrevista"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
 msgstr "Agendamento guardado"
@@ -13827,6 +13848,10 @@ msgstr "Mostrar todos os tipos"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Mostrar candidaturas encerradas"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

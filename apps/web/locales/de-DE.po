@@ -184,8 +184,10 @@ msgstr "{0, plural, one {# Kontakt hat eine ungültige E-Mail-Adresse oder keine
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {noch # Tag} other {noch # Tage}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# Tag} other {# Tage}}"
 
@@ -2158,6 +2160,10 @@ msgstr ""
 msgid "All models"
 msgstr "Alle Modelle"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Alle Ihre Unterlagen, Bewerbungen, API-Schlüssel und öffentlichen Links werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden."
@@ -4127,6 +4133,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Für einen Job kopieren…"
 
@@ -6606,6 +6613,10 @@ msgstr "Ausgefüllt aus der Bewerbung. Nach dem Namen folgt die Begrüßung."
 msgid "Filled in what we could from the posting."
 msgstr "Aus der Ausschreibung wurde ausgefüllt, was möglich war."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "Einträge ausfüllen"
@@ -8548,6 +8559,7 @@ msgid "Link updated"
 msgstr "Link aktualisiert"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Verlinkt · noch nicht gesendet"
 
@@ -9287,6 +9299,11 @@ msgstr "Verschieben Sie Ihre E-Mail-Adresse und Telefonnummer an den Anfang der 
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{0} von {1} in den Papierkorb verschoben. Gesperrte Dokumente wurden übersprungen."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13173,6 +13190,10 @@ msgstr "Zeitplan gelöscht"
 msgid "Schedule interview"
 msgstr "Vorstellungsgespräch vereinbaren"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
 msgstr "Zeitplan gespeichert"
@@ -13827,6 +13848,10 @@ msgstr "Alle Typen anzeigen"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Geschlossene Bewerbungen anzeigen"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

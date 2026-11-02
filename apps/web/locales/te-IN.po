@@ -184,8 +184,10 @@ msgstr "{0, plural, one {# పరిచయం చెల్లని ఇమెయ
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {# రోజు మిగిలి ఉంది} other {# రోజులు మిగిలి ఉన్నాయి}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# రోజు} other {# రోజులు}}"
 
@@ -2158,6 +2160,10 @@ msgstr ""
 msgid "All models"
 msgstr "అన్ని మోడల్‌లు"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "మీ పత్రాలు, ఉద్యోగ దరఖాస్తులు, API కీలు మరియు పబ్లిక్ లింక్‌లు అన్నీ శాశ్వతంగా తొలగించబడతాయి. ఈ చర్యను రద్దు చేయడం సాధ్యం కాదు."
@@ -4127,6 +4133,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "ఉద్యోగం కోసం కాపీ…"
 
@@ -6606,6 +6613,10 @@ msgstr "జాబ్ అప్లికేషన్ నుండి పూరి
 msgid "Filled in what we could from the posting."
 msgstr "పోస్టింగ్ నుండి సాధ్యమైనంత నింపాం."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "ఎంట్రీలను పూరించడం"
@@ -8548,6 +8559,7 @@ msgid "Link updated"
 msgstr "లింక్ నవీకరించబడింది"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "లింక్ చేయబడింది · ఇంకా పంపబడలేదు"
 
@@ -9287,6 +9299,11 @@ msgstr "మీ ఇమెయిల్ మరియు ఫోన్ నంబర�
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1} పత్రాలలో {0} ట్రాష్‌కి తరలించబడ్డాయి. లాక్ చేయబడిన పత్రాలు దాటవేయబడ్డాయి."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13173,6 +13190,10 @@ msgstr "షెడ్యూల్ తొలగించబడింది"
 msgid "Schedule interview"
 msgstr "షెడ్యూల్ ఇంటర్వ్యూ"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
 msgstr "షెడ్యూల్ సేవ్ చేయబడింది"
@@ -13827,6 +13848,10 @@ msgstr "అన్ని రకాలను చూపు"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "మూసిన ఉద్యోగ దరఖాస్తులను చూపించు"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

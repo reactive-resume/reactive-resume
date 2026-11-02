@@ -184,8 +184,10 @@ msgstr "{0, plural, one {#-yhteystiedoissa on virheellinen sähköpostiosoite ta
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {# päivä jäljellä} other {# päivää jäljellä}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# päivä} other {# päivää}}"
 
@@ -2158,6 +2160,10 @@ msgstr ""
 msgid "All models"
 msgstr "Kaikki mallit"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Kaikki asiakirjasi, työhakemuksesi, API-avaimesi ja julkiset linkkisi poistetaan pysyvästi. Tätä ei voi kumota."
@@ -4127,6 +4133,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Kopioi työhön…"
 
@@ -6606,6 +6613,10 @@ msgstr "Täytetty työhakemuksesta. Tervehdys seuraa nimeä."
 msgid "Filled in what we could from the posting."
 msgstr "Täytimme ilmoituksesta sen, minkä pystyimme."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "Merkintöjen täyttäminen"
@@ -8548,6 +8559,7 @@ msgid "Link updated"
 msgstr "Linkki päivitetty"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Linkitetty · ei vielä lähetetty"
 
@@ -9287,6 +9299,11 @@ msgstr "Siirrä sähköpostiosoitteesi ja puhelinnumerosi ensimmäisen sivun alk
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "Roskakoriin siirrettiin {0}/{1}. Lukitut asiakirjat ohitettiin."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13173,6 +13190,10 @@ msgstr "Ajastus poistettu"
 msgid "Schedule interview"
 msgstr "Aikataulu haastattelu"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
 msgstr "Ajastus tallennettu"
@@ -13827,6 +13848,10 @@ msgstr "Näytä kaikki tyypit"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Näytä suljetut työhakemukset"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

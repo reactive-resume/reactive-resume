@@ -179,8 +179,10 @@ msgstr "{0, plural, one {# contact has an invalid email or no name; its applicat
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {# day left} other {# days left}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# day} other {# days}}"
 
@@ -2155,6 +2157,10 @@ msgstr "All employers"
 msgid "All models"
 msgstr "All models"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr "All your applications are closed"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
@@ -4124,6 +4130,7 @@ msgid "Copy for {0}"
 msgstr "Copy for {0}"
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Copy for a job…"
 
@@ -6603,6 +6610,10 @@ msgstr "Filled from the application. The greeting follows the name."
 msgid "Filled in what we could from the posting."
 msgstr "Filled in what we could from the posting."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr "Filled the role and company from the posting's first line. Review them before saving."
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "Filling in entries"
@@ -8545,6 +8556,7 @@ msgid "Link updated"
 msgstr "Link updated"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Linked · not sent yet"
 
@@ -9284,6 +9296,11 @@ msgstr "Move your email and phone number to the top of page one."
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "Moved {0} of {1} to Trash. Locked documents were skipped."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr "Moved to {0}."
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13170,6 +13187,10 @@ msgstr "Schedule deleted"
 msgid "Schedule interview"
 msgstr "Schedule interview"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr "Schedule it"
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
 msgstr "Schedule saved"
@@ -13824,6 +13845,10 @@ msgstr "Show all types"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Show closed applications"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr "Show closed applications to see your past job searches."
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

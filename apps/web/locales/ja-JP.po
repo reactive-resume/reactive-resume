@@ -184,8 +184,10 @@ msgstr "{0, plural, other {#件の連絡先のメールアドレスが無効か�
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {残り # 日} other {残り # 日}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# 日} other {# 日}}"
 
@@ -2158,6 +2160,10 @@ msgstr ""
 msgid "All models"
 msgstr "すべてのモデル"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "すべての書類、求人への応募、API キー、パブリックリンクが完全に削除されます。これを元に戻すことはできません。"
@@ -4127,6 +4133,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "仕事用にコピー…"
 
@@ -6606,6 +6613,10 @@ msgstr "求人応募から入力します。名前の後に挨拶が続きます
 msgid "Filled in what we could from the posting."
 msgstr "求人情報から入力できる内容を入力しました。"
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "エントリーの記入"
@@ -8548,6 +8559,7 @@ msgid "Link updated"
 msgstr "リンクが更新されました"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "リンク済み・まだ送信されていません"
 
@@ -9287,6 +9299,11 @@ msgstr "メールアドレスと電話番号を1ページ目の上部に移動�
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "{1} 件中 {0} 件をゴミ箱に移動しました。ロックされた書類はスキップされました。"
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13173,6 +13190,10 @@ msgstr "スケジュールを削除しました"
 msgid "Schedule interview"
 msgstr "面接のスケジュールを立てる"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
 msgstr "スケジュールを保存しました"
@@ -13827,6 +13848,10 @@ msgstr "すべての種類を表示"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "終了した応募を表示"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"

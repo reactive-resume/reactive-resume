@@ -142,6 +142,11 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 				<Icon name="copy" />
 				<Trans>Duplicate</Trans>
 			</DropdownMenuItem>
+			{/* The library card's job copy, from inside the editor: a copy of this resume linked to a job. */}
+			<DropdownMenuItem onClick={() => openDialog("document.new", { step: "copy", sourceResumeId: id })}>
+				<Icon name="briefcase" />
+				<Trans>Copy for a job…</Trans>
+			</DropdownMenuItem>
 			<DropdownMenuItem onClick={handleToggleLock}>
 				<Icon name={isLocked ? "lock-open" : "lock"} />
 				{isLocked ? <Trans>Unlock editing</Trans> : <Trans>Lock editing</Trans>}

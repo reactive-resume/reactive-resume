@@ -184,8 +184,10 @@ msgstr "{0, plural, one {# stik ima neveljaven e-poštni naslov ali nima imena; 
 msgid "{0, plural, one {# day left} other {# days left}}"
 msgstr "{0, plural, one {še # dan} two {še # dneva} few {še # dnevi} other {še # dni}}"
 
+#. placeholder {0}: Math.round(minutes / (24 * 60))
 #. placeholder {0}: outcomes.medianDaysToReply
 #: src/features/applications/components/insights-view.tsx
+#: src/features/career/workspace/shell.tsx
 msgid "{0, plural, one {# day} other {# days}}"
 msgstr "{0, plural, one {# dan} other {# dni}}"
 
@@ -2158,6 +2160,10 @@ msgstr ""
 msgid "All models"
 msgstr "Vsi modeli"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "All your applications are closed"
+msgstr ""
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Vsi vaši dokumenti, prijave za zaposlitev, ključi API in javne povezave bodo trajno izbrisani. Tega dejanja ni mogoče razveljaviti."
@@ -4127,6 +4133,7 @@ msgid "Copy for {0}"
 msgstr ""
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Copy for a job…"
 msgstr "Kopija za službo ..."
 
@@ -6606,6 +6613,10 @@ msgstr "Izpolnjeno iz prošnje za delo. Pozdrav sledi imenu."
 msgid "Filled in what we could from the posting."
 msgstr "Izpolnili, kar smo lahko iz objave."
 
+#: src/features/applications/components/add-application-dialog.tsx
+msgid "Filled the role and company from the posting's first line. Review them before saving."
+msgstr ""
+
 #: src/features/documents/new-document-dialog.tsx
 msgid "Filling in entries"
 msgstr "Izpolnjevanje vnosov"
@@ -8548,6 +8559,7 @@ msgid "Link updated"
 msgstr "Povezava posodobljena"
 
 #: src/features/applications/components/detail/sent-documents.tsx
+#: src/features/applications/components/list-view.tsx
 msgid "Linked · not sent yet"
 msgstr "Povezano · še ni poslano"
 
@@ -9287,6 +9299,11 @@ msgstr "Premaknite svoj e-poštni naslov in telefonsko številko na vrh prve str
 #: src/features/documents/document-actions.tsx
 msgid "Moved {0} of {1} to Trash. Locked documents were skipped."
 msgstr "V smetnjak premaknjeno: {0} od {1}. Zaklenjeni dokumenti so bili preskočeni."
+
+#. placeholder {0}: getLaneLabel(lane)
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to {0}."
+msgstr ""
 
 #: src/features/applications/components/detail/activity.tsx
 #: src/features/applications/use-application-actions.ts
@@ -13173,6 +13190,10 @@ msgstr "Urnik izbrisan"
 msgid "Schedule interview"
 msgstr "Načrtujte intervju"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Schedule it"
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Schedule saved"
 msgstr "Urnik shranjen"
@@ -13827,6 +13848,10 @@ msgstr "Prikaži vse vrste"
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show closed applications"
 msgstr "Pokaži zaključene prijave"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Show closed applications to see your past job searches."
+msgstr ""
 
 #: src/features/resume/share/custom-domain-field.tsx
 msgid "Show DNS records"
