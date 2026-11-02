@@ -73,6 +73,13 @@ test("a selection over the API limit explains the limit and recovers at 200", as
 	for (const name of ["Tags…", "Move to…", "Close…", "Delete permanently…"]) {
 		await expect(bar.getByRole("button", { name, exact: true })).toBeEnabled();
 	}
+	await page.goto("/dashboard/applications?locale=fr-FR");
+	await expect(page.locator("html")).toHaveAttribute("lang", "fr-FR");
+	await page.getByRole("checkbox").first().check();
+	const translatedBar = page.getByRole("toolbar");
+	await expect(translatedBar.getByRole("button", { name: "Supprimer définitivement…", exact: true })).toBeVisible();
+	await translatedBar.getByRole("button", { name: "Tout sélectionner", exact: true }).click();
+	await expect(translatedBar.getByRole("status")).toHaveText("Choisissez jusqu'à 200 candidatures par action groupée.");
 });
 
 test("selected library rows scroll above floating bars as viewport and text size change", async ({
