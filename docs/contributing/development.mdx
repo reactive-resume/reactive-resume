@@ -273,6 +273,14 @@ New commits to a pull request cancel its superseded CI and autofix runs. Docker 
 
 Keep credentials and personal resume data out of code, logs, test fixtures, issues, and pull requests.
 
+## Release documentation checklist
+
+Alongside the release's changelog entry:
+
+1. Review the screens changed by the release and update their user guides, including control names and navigation.
+2. Re-shoot affected guide screenshots against the release source with fictional people and companies. Inspect each image, then match its caption and alt text to what it actually shows.
+3. Run `pnpm docs:check` and review its warnings for possible UI-label drift, missing pages or images, broken heading links, and unreferenced images. The check does not verify screenshots or replace a product walkthrough.
+
 ## Troubleshooting
 
 <AccordionGroup>
