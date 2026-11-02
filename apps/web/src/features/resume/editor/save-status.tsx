@@ -40,8 +40,30 @@ export function SaveStatus() {
 		}
 	};
 
+	// Announced apart from the visible line, so its Retry and Reload buttons aren't inside a live region; a failed save
+	// is assertive, every other state polite.
+	const announcement =
+		status === "saving"
+			? t`Saving…`
+			: status === "offline"
+				? t`Offline · saved on this device`
+				: status === "error"
+					? t`Not saved`
+					: status === "locked"
+						? t`Locked · unlock to save`
+						: status === "conflict"
+							? t`Review saved version`
+							: t`Saved`;
+
 	return (
-		<span role="status" aria-live="polite" className="flex min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
+		<span className="flex min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
+			<span
+				className="sr-only"
+				role={status === "error" ? "alert" : "status"}
+				aria-live={status === "error" ? "assertive" : "polite"}
+			>
+				{announcement}
+			</span>
 			{status === "saving" && (
 				<>
 					<Spinner decorative className="size-3" />

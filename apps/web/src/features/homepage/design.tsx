@@ -212,8 +212,10 @@ export function Design() {
 					{t`Pick from ${templateCount} templates, then set the type, color and spacing. The words stay put, so try as many looks as you like.`}
 				</SceneCaption>
 
+				{/* Named in full even while the link inside is inert, so the section and heading always have a name. */}
 				<h2
 					id="design-title"
+					aria-label={`${t`${templateCount} free resume templates.`} ${t`Make any of them yours.`}`}
 					className="pointer-events-none absolute inset-x-(--gutter) top-[12vh] bottom-[8vh] [transform:translateY(calc((1-var(--z))*30px))] text-center text-[8vw] leading-none font-normal text-balance opacity-(--z) will-change-[transform,opacity] min-[900px]:bottom-[5vh] min-[900px]:text-[clamp(36px,4vw,72px)]"
 				>
 					<Link to="/resume-templates" inert={!zoomed} className="flex h-full flex-col justify-between">

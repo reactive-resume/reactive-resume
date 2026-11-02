@@ -1,4 +1,8 @@
-import type { ApplicationStatus, ApplicationTimelineEntry } from "@reactive-resume/schema/applications/data";
+import type {
+	ApplicationClosedReason,
+	ApplicationStatus,
+	ApplicationTimelineEntry,
+} from "@reactive-resume/schema/applications/data";
 import type { ApplicationLane } from "@reactive-resume/schema/applications/lanes";
 import {
 	createDefaultApplicationLanes,
@@ -30,6 +34,21 @@ export const laneInput = (lane: ApplicationLane, supported: boolean) =>
 	supported
 		? { laneId: lane.id }
 		: { status: lane.category, ...(lane.closedReason ? { closedReason: lane.closedReason } : {}) };
+
+/**
+ * The write that undoes a move out of `from`. Leaving Closed clears the outcome on the server, so a move back to a
+ * Closed lane without a preset outcome sends the one the application had.
+ */
+export const undoLaneInput = (
+	from: ApplicationLane,
+	application: { closedReason?: ApplicationClosedReason | null | undefined },
+	supported: boolean,
+) => ({
+	...laneInput(from, supported),
+	...(from.category === "closed" && !from.closedReason && application.closedReason
+		? { closedReason: application.closedReason }
+		: {}),
+});
 
 export function visibleLanes(
 	lanes: ApplicationLane[],

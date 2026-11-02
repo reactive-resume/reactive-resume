@@ -230,8 +230,28 @@ function LetterSaveStatus() {
 		}
 	};
 
+	// Announced apart from the visible line, so its Retry and Reload buttons aren't inside a live region; a failed save
+	// is assertive, every other state polite.
+	const announcement =
+		status === "saving"
+			? t`Saving…`
+			: status === "saved"
+				? t`Saved`
+				: status === "error"
+					? t`Not saved`
+					: status === "conflict"
+						? t`Review saved version`
+						: "";
+
 	return (
-		<span role="status" aria-live="polite" className="flex min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
+		<span className="flex min-w-0 items-center gap-1.5 text-xs leading-4 text-ink-3">
+			<span
+				className="sr-only"
+				role={status === "error" ? "alert" : "status"}
+				aria-live={status === "error" ? "assertive" : "polite"}
+			>
+				{announcement}
+			</span>
 			{status === "saving" && (
 				<>
 					<Spinner decorative className="size-3" />

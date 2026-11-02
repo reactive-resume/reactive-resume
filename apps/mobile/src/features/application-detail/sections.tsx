@@ -38,6 +38,7 @@ import {
 	getLaneHistoryLabel,
 	getLaneLabel,
 	laneInput,
+	undoLaneInput,
 	nextActiveLane,
 	resolveLane,
 } from "@/features/applications/lanes";
@@ -120,7 +121,9 @@ export function StageStepper({ application, onMarkApplied, onCloseLane, onSchedu
 					const scheduled = application.activity.some(
 						(entry) => entry.type === "interview" && new Date(entry.at).getTime() > Date.now(),
 					);
-					stageMoved(application, target, scheduled ? undefined : onSchedule);
+					stageMoved(application, target, scheduled ? undefined : onSchedule, () =>
+						update.mutate({ id: application.id, ...undoLaneInput(lane, application, lanes.supported) }),
+					);
 				},
 				onError: (error) => showToast({ message: applicationError(error) }),
 			},

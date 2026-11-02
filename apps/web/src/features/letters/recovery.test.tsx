@@ -103,7 +103,8 @@ it("requires confirmation before copy-and-reload, supports cancel, and disables 
 	);
 	await act(async () => fireEvent.click(screen.getByRole("button", { name: "Reload" })));
 	expect(screen.getByRole("alertdialog")).toHaveTextContent("Your edits will be kept as a separate letter");
-	expect(screen.getByRole("button", { name: "Reload" })).toBeDisabled();
+	// Behind the open dialog, so out of the accessibility tree; still disabled against a second click.
+	expect(screen.getByRole("button", { name: "Reload", hidden: true })).toBeDisabled();
 	expect(mocks.import).not.toHaveBeenCalled();
 	await act(async () => fireEvent.click(screen.getByRole("button", { name: "Cancel" })));
 	expect(mocks.getById).not.toHaveBeenCalled();

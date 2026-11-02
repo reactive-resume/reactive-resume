@@ -263,7 +263,7 @@ function Detail({ application, onEditDetails, onDeleted }: DetailProps) {
 											/>
 											<span
 												className={cn(
-													"truncate text-[11px]",
+													"truncate text-xs",
 													lane.id === current.id ? "font-semibold text-ink" : "text-ink-3",
 												)}
 											>
