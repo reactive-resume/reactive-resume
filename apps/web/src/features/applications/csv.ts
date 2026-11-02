@@ -15,6 +15,7 @@ import {
 	STAGES,
 } from "@reactive-resume/schema/applications/data";
 import { getApplicationLane } from "@reactive-resume/schema/applications/lanes";
+import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 
 // Minimal RFC-4180-ish CSV parser: handles quoted fields, escaped quotes (""), commas and
 // newlines inside quotes, and \r\n. Enough for spreadsheet exports; not a full streaming parser.
@@ -83,6 +84,7 @@ type ParsedApplication = {
 	jobDescription?: string;
 	postingSource?: PostingSource;
 	stageEnteredAt?: string;
+	applicationDate?: string;
 	tags?: string[];
 	contacts?: Contact[];
 };
@@ -121,7 +123,8 @@ const HEADER_ALIASES: Record<string, CsvField> = {
 	"job title": "role",
 	status: "status",
 	stage: "status",
-	"applied date": "stageEnteredAt",
+	"applied date": "applicationDate",
+	"application date": "applicationDate",
 	"stage date": "stageEnteredAt",
 	"stage entered at": "stageEnteredAt",
 	location: "location",
@@ -158,6 +161,7 @@ export const CSV_FIELDS: readonly CsvField[] = [
 	"laneCategory",
 	"laneClosedReason",
 	"stageEnteredAt",
+	"applicationDate",
 	"location",
 	"salary",
 	"source",
@@ -222,7 +226,7 @@ export type CsvMapResult = {
 	contactsSkipped: number;
 	invalidValues: {
 		row: number;
-		field: "status" | "stageEnteredAt" | "postingSource" | "laneCategory" | "laneClosedReason";
+		field: "status" | "stageEnteredAt" | "applicationDate" | "postingSource" | "laneCategory" | "laneClosedReason";
 		value: string;
 	}[];
 	headers: string[];
@@ -284,9 +288,9 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 				if (parsed.success) record.laneClosedReason = parsed.data;
 				else invalid.push({ row: index + 2, field, value });
 			} else if (field === "laneLabel") record.laneLabel = value.slice(0, 80);
-			else if (field === "stageEnteredAt") {
+			else if (field === "stageEnteredAt" || field === "applicationDate") {
 				const date = dateOnly(value);
-				if (date !== undefined) record.stageEnteredAt = date;
+				if (date !== undefined) record[field] = date;
 				else invalid.push({ row: index + 2, field, value });
 			} else if (field === "postingSource") {
 				try {
@@ -304,6 +308,8 @@ export function mapCsvToApplications(table: string[][], mapping?: readonly (CsvF
 			skippedRows.push(raw);
 			continue;
 		}
+		if (record.applicationDate && record.stageEnteredAt && record.stageEnteredAt < record.applicationDate)
+			invalid.push({ row: index + 2, field: "stageEnteredAt", value: record.stageEnteredAt });
 		if (invalid.length > 0) {
 			invalidValues.push(...invalid);
 			continue;
@@ -404,6 +410,9 @@ export function selectApplicationsForExport(
 	{ scope, from, to }: ApplicationExportOptions,
 ): Application[] {
 	return (scope === "all" ? applications : filtered).filter((application) => {
+		if (!from && !to) return true;
+		const sent = applicationSentAt(application);
+		if (!sent) return false;
 		const date = new Date(application.appliedAt).toISOString().slice(0, 10);
 		return (!from || date >= from) && (!to || date <= to);
 	});
@@ -448,12 +457,16 @@ export function exportApplicationsCsv(
 	const dateOnly = (date: Date) => new Date(date).toISOString().slice(0, 10);
 	const stageLabel = stageName;
 	const timelineText = (entry: Application["activity"][number]) => {
-		if (entry.type === "stage") return entry.laneLabel ?? stageLabel(entry.stage);
+		if (entry.type === "stage") {
+			const label = entry.laneLabel ?? stageLabel(entry.stage);
+			return entry.dateUnknown ? `Imported in ${label}; stage date not recorded` : label;
+		}
 		if (entry.type === "note") return entry.text;
 		const kind = INTERVIEW_KINDS.find((item) => item.value === entry.kind)?.label ?? entry.kind;
 		return `${kind} interview (${new Date(entry.at).toISOString()})`;
 	};
 	const rows = applications.map((application) => {
+		const sent = applicationSentAt(application);
 		const timeline = [...application.activity].sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 		const stages = timeline.filter((entry) => entry.type === "stage");
 		const currentStage = stages.findLast((entry) => entry.stage === application.status);
@@ -465,8 +478,8 @@ export function exportApplicationsCsv(
 			lane ? (lane.label ?? stageLabel(lane.category)) : "",
 			lane?.category ?? "",
 			lane?.closedReason ?? "",
-			currentStage ? dateOnly(currentStage.at) : "",
-			dateOnly(application.appliedAt),
+			currentStage && !currentStage.dateUnknown ? dateOnly(currentStage.at) : "",
+			sent ? dateOnly(application.appliedAt) : "",
 			application.location ?? "",
 			application.salary ?? "",
 			application.source ?? "",
@@ -482,7 +495,9 @@ export function exportApplicationsCsv(
 				.join("\n"),
 			application.notes ?? "",
 			application.closedReason ?? "",
-			stages.map((entry) => `${stageLabel(entry.stage)} (${dateOnly(entry.at)})`).join(" → "),
+			stages
+				.map((entry) => `${stageLabel(entry.stage)} (${entry.dateUnknown ? "date not recorded" : dateOnly(entry.at)})`)
+				.join(" → "),
 			timeline.map((entry) => `${dateOnly(entry.at)}: ${timelineText(entry)}`).join("\n"),
 			new Date(application.createdAt).toISOString(),
 			new Date(application.updatedAt).toISOString(),

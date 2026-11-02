@@ -78,7 +78,9 @@ const schedule = {
 const calendar = load("features/applications-board/calendar.ts", {
 	"../reminders/schedule.ts": schedule,
 });
+const outcomesDomain = load("../../../packages/schema/src/applications/outcomes.ts");
 const insights = load("features/applications-board/insights.ts", {
+	"@reactive-resume/schema/applications/outcomes": outcomesDomain,
 	"../applications/history": history,
 	"../reminders/schedule.ts": schedule,
 });

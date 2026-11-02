@@ -40,7 +40,7 @@ const NEW_LANE = "new";
 
 const MAX_IMPORT = 500;
 const SAMPLE =
-	"Company,Role,Stage,Stage Date,Location,Salary,Source,Tags,Contact Name,Contact Email,Contact Phone\nStripe,Frontend Engineer,applied,2026-07-01,Remote,$180k,LinkedIn,remote;react,Jane Doe,jane@example.com,+1 555 0100";
+	"Company,Role,Stage,Application Date,Stage Date,Location,Salary,Source,Tags,Contact Name,Contact Email,Contact Phone\nStripe,Frontend Engineer,applied,2026-07-01,2026-07-01,Remote,$180k,LinkedIn,remote;react,Jane Doe,jane@example.com,+1 555 0100";
 
 const fieldLabel = (field: CsvField) =>
 	({
@@ -48,6 +48,7 @@ const fieldLabel = (field: CsvField) =>
 		role: t`Role`,
 		status: t`Stage`,
 		stageEnteredAt: t`Stage date`,
+		applicationDate: t`Application date`,
 		location: t`Location`,
 		salary: t`Salary`,
 		source: t`Source`,

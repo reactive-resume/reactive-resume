@@ -22,5 +22,7 @@ export function currentLaneEntry(application: HistorySource, lanes: readonly App
 	return exact[0] ?? stages.find((entry) => !entry.laneId) ?? latest;
 }
 
-export const laneSince = (application: HistorySource, lanes: readonly ApplicationLane[] = []) =>
-	new Date(currentLaneEntry(application, lanes)?.at ?? application.appliedAt);
+export const laneSince = (application: HistorySource, lanes: readonly ApplicationLane[] = []) => {
+	const entry = currentLaneEntry(application, lanes);
+	return entry?.dateUnknown ? null : new Date(entry?.at ?? application.appliedAt);
+};

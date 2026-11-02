@@ -20,7 +20,10 @@ export const daysInStage = (
 	application: Pick<Application, "status" | "activity" | "appliedAt" | "laneId">,
 	now = new Date(),
 	lanes: readonly ApplicationLane[] = [],
-) => Math.max(0, Math.floor((now.getTime() - laneSince(application, lanes).getTime()) / 86_400_000));
+) => {
+	const since = laneSince(application, lanes);
+	return since ? Math.max(0, Math.floor((now.getTime() - since.getTime()) / 86_400_000)) : null;
+};
 
 /**
  * What's known of an application's newest saved offer: its reply deadline. `null` means no offer is saved yet;
@@ -107,23 +110,25 @@ export function describeNextStep(
 				? {
 						icon: "hourglass",
 						title:
-							step.days === 0
-								? t`Applied today`
-								: plural(step.days, { one: "Applied # day ago", other: "Applied # days ago" }),
+							step.days === null
+								? t`Waiting to hear back`
+								: step.days === 0
+									? t`Applied today`
+									: plural(step.days, { one: "Applied # day ago", other: "Applied # days ago" }),
 						sub: "",
 						tone: "normal",
 					}
 				: {
 						icon: "hourglass",
 						title: t`Waiting to hear back`,
-						sub: plural(step.days, { one: "For # day", other: "For # days" }),
+						sub: step.days === null ? "" : plural(step.days, { one: "For # day", other: "For # days" }),
 						tone: "normal",
 					};
 		case "interview-feedback":
 			return {
 				icon: "hourglass",
 				title: t`Waiting for interview feedback`,
-				sub: plural(step.days, { one: "For # day", other: "For # days" }),
+				sub: step.days === null ? "" : plural(step.days, { one: "For # day", other: "For # days" }),
 				tone: "normal",
 			};
 		case "no-interview":

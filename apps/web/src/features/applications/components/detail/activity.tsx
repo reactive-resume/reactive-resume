@@ -96,7 +96,10 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 			const lane = lanes.find((item) => item.id === entry.laneId && item.category === entry.stage);
 			const fallback = getCategoryLane(lanes, entry.stage);
 			const label = lane ? getLaneLabel(lane) : (entry.laneLabel ?? getLaneLabel(fallback));
-			return { dot: (lane ?? fallback).color, text: t`Moved to ${label}` };
+			return {
+				dot: (lane ?? fallback).color,
+				text: entry.dateUnknown ? `${t`Imported`} · ${label}` : t`Moved to ${label}`,
+			};
 		}
 		if (entry.type === "note") return { dot: "var(--ink-3)", text: entry.text };
 		const kind = interviewKindOf(entry.kind);
@@ -155,7 +158,9 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 								<span className="min-w-0 flex-1 break-words whitespace-pre-wrap">{text}</span>
 							)}
 							<span className="shrink-0 text-xs leading-5 text-ink-3">
-								{formatDate(entry.at, entry.type === "interview")}
+								{entry.type === "stage" && entry.dateUnknown
+									? t`Not recorded`
+									: formatDate(entry.at, entry.type === "interview")}
 							</span>
 							<DropdownMenu>
 								<DropdownMenuTrigger
@@ -180,7 +185,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 											onClick={() =>
 												setEditing({
 													entry,
-													date: dateInputValue(entry.at),
+													date: entry.type === "stage" && entry.dateUnknown ? "" : dateInputValue(entry.at),
 													text: entry.type === "note" ? entry.text : "",
 												})
 											}
