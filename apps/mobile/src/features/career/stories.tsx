@@ -197,6 +197,8 @@ export function StoryEditor({ story, facts, onClose, proposal }: StoryEditorProp
 					<TextArea
 						key={part.key}
 						label={part.required ? part.label : `${part.label} ${t`(optional)`}`}
+						// The visible label marks only optional parts; a screen reader still hears which are required.
+						{...(part.required ? { accessibilityLabel: `${part.label} ${t`(required)`}` } : {})}
 						ref={(input) => {
 							inputs.current[part.key] = input;
 						}}
