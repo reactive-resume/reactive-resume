@@ -50,8 +50,10 @@ const versionSchema = z.object({
 
 // Writes next to the data (lock, password, linked application) take the revision the caller last saw, and answer
 // with the revision they made, so an open editor's next autosave builds on it.
-export const expectedRevisionSchema = z.coerce
-	.date()
+// Coercion would read null as 1970, which every resume fails; a malformed revision is refused before any check.
+export const expectedRevisionSchema = z
+	.union([z.date(), z.string(), z.number()])
+	.pipe(z.coerce.date())
 	.optional()
 	.describe(
 		"If provided, the change only applies when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409).",

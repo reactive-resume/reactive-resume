@@ -913,6 +913,11 @@ function trackResumeMetadataWrite(id: string) {
 export async function saveResumeMetadata<T extends Resume>(
 	id: string,
 	write: (expectedUpdatedAt: Date | undefined, options?: { signal: AbortSignal }) => Promise<T>,
+	/**
+	 * `savePending: false` sends the write without saving pending edits first: unlocking, when a lock from elsewhere
+	 * is what stopped them. Its answer becomes the base only when its data is the base's (see trackResumeMetadataWrite).
+	 */
+	{ savePending = true }: { savePending?: boolean } = {},
 ): Promise<T> {
 	const runtime = runtimes.get(id);
 	if (!runtime?.baseUpdatedAt) throw new DOMException("", "AbortError");
@@ -942,7 +947,8 @@ export async function saveResumeMetadata<T extends Resume>(
 	const acknowledge = trackResumeMetadataWrite(id);
 	const pending = (runtime.metadataWrite?.catch(() => undefined) ?? Promise.resolve()).then(async () => {
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
-		if (!(await savePendingChanges(id))) throw new Error(t`Couldn't save your changes. Try again before continuing.`);
+		if (savePending && !(await savePendingChanges(id)))
+			throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
 		runtime.metadataWriting = true;
 		try {

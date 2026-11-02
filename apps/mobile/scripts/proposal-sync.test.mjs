@@ -590,3 +590,54 @@ test("resume: another account's draft doesn't wait on a Share write still in fli
 	await opening;
 	assert.equal(s().document.isPublic, false, "The old account's answer doesn't land in the new draft");
 });
+
+test("resume: a second Share change waits for the first's revision, and the first's stream echo keeps Undo (RX-160)", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	accept(s, "resume");
+	await s().flush();
+	let release;
+	responseGate = new Promise((resolve) => {
+		release = resolve;
+	});
+	const share = (settings) =>
+		o.writeMetadata(async (baseline) => ({
+			...baseline,
+			...(await network("resume").update({ id: "resume", ...settings, expectedUpdatedAt: baseline.updatedAt })),
+		}));
+	const first = share({ isPublic: true });
+	const second = share({ showDownloadButtons: false });
+	for (let i = 0; i < 10 && requests.length === 0; i++) await Promise.resolve();
+	// The server has the first change; its stream event arrives before its answer.
+	await o.refresh();
+	responseGate = null;
+	release();
+	await first;
+	await second;
+	assert.equal(documents.resume.isPublic, true);
+	assert.equal(documents.resume.showDownloadButtons, false);
+	assert.equal(s().canUndo, true, "The echo of this app's own write is not someone else's");
+	assert.notDeepEqual(s().proposalApplications, {});
+});
+
+test("resume: unlocking unchecked takes the answer only while the saved data is unchanged (RX-160)", async () => {
+	const { owner } = setup("resume");
+	const o = owner();
+	const s = o.store.getState;
+	await s().open("resume");
+	const remote = structuredClone(documents.resume);
+	remote.data.basics.headline = "Edited elsewhere";
+	remote.isLocked = true;
+	remote.updatedAt = new Date(remote.updatedAt.getTime() + 5);
+	documents.resume = remote;
+	await o.writeMetadata(
+		async (baseline) => ({ ...baseline, ...(await network("resume").setLocked({ id: "resume", isLocked: false })) }),
+		{ conditional: false },
+	);
+	// The answer carries an edit this draft hasn't seen: the draft doesn't adopt it as its own revision.
+	assert.notEqual(s().document.updatedAt.getTime(), documents.resume.updatedAt.getTime());
+	await o.refresh();
+	assert.equal(s().data.basics.headline, "Edited elsewhere");
+});

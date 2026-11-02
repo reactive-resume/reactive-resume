@@ -620,7 +620,10 @@ describe.each([
 		const { update } = fieldWrite([{ isLocked: false, updatedAt: revision }], [row]);
 
 		await expect(run(revision)).resolves.toMatchObject({ id: "r1", updatedAt: row.updatedAt });
-		expect(update.set).toHaveBeenCalledWith(written);
+		expect(update.set).toHaveBeenCalledWith(expect.objectContaining(written));
+		// A revision later than the one it builds on, even in the same millisecond.
+		const set = update.set.mock.calls[0]?.[0] as { updatedAt: Date };
+		expect(set.updatedAt.getTime()).toBeGreaterThan(revision.getTime());
 		expect(publishResumeUpdatedMock).toHaveBeenCalledWith(
 			expect.objectContaining({ resumeId: "r1", updatedAt: row.updatedAt.toISOString() }),
 		);
@@ -633,12 +636,21 @@ describe.each([
 		expect(update.set).not.toHaveBeenCalled();
 	});
 
+	it("writes a revision later than the current one even when the clock hasn't moved on", async () => {
+		const future = new Date(Date.now() + 60_000);
+		const { update } = fieldWrite([{ isLocked: false, updatedAt: future }], [createResumeRow(defaultResumeData)]);
+
+		await run(future);
+		const set = update.set.mock.calls[0]?.[0] as { updatedAt: Date };
+		expect(set.updatedAt.getTime()).toBe(future.getTime() + 1);
+	});
+
 	it("writes without a version check when the caller sends none", async () => {
 		const row = createResumeRow(defaultResumeData);
 		const { update } = fieldWrite([{ isLocked: false, updatedAt: new Date("2026-01-03T00:00:00Z") }], [row]);
 
 		await expect(run()).resolves.toMatchObject({ id: "r1" });
-		expect(update.set).toHaveBeenCalledWith(written);
+		expect(update.set).toHaveBeenCalledWith(expect.objectContaining(written));
 	});
 
 	it(`${refusesLocked ? "refuses" : "allows"} a locked resume`, async () => {

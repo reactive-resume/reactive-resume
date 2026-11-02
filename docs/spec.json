@@ -69930,9 +69930,19 @@
 										"description": "The application to link, or null to unlink."
 									},
 									"expectedUpdatedAt": {
-										"type": "string",
-										"format": "date-time",
-										"x-native-type": "date",
+										"anyOf": [
+											{
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											{
+												"type": "string"
+											},
+											{
+												"type": "number"
+											}
+										],
 										"description": "Resumes only. If provided, the link only changes when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409)."
 									}
 								},
@@ -95322,9 +95332,19 @@
 										"description": "Whether the resume is locked."
 									},
 									"expectedUpdatedAt": {
-										"type": "string",
-										"format": "date-time",
-										"x-native-type": "date",
+										"anyOf": [
+											{
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											{
+												"type": "string"
+											},
+											{
+												"type": "number"
+											}
+										],
 										"description": "If provided, the change only applies when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409)."
 									}
 								},
@@ -99846,9 +99866,19 @@
 										"description": "Whether the resume is locked."
 									},
 									"expectedUpdatedAt": {
-										"type": "string",
-										"format": "date-time",
-										"x-native-type": "date",
+										"anyOf": [
+											{
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											{
+												"type": "string"
+											},
+											{
+												"type": "number"
+											}
+										],
 										"description": "If provided, the change only applies when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409)."
 									}
 								},
@@ -104373,9 +104403,19 @@
 										"maxLength": 64
 									},
 									"expectedUpdatedAt": {
-										"type": "string",
-										"format": "date-time",
-										"x-native-type": "date",
+										"anyOf": [
+											{
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											{
+												"type": "string"
+											},
+											{
+												"type": "number"
+											}
+										],
 										"description": "If provided, the change only applies when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409)."
 									}
 								},
@@ -108953,9 +108993,19 @@
 								"type": "object",
 								"properties": {
 									"expectedUpdatedAt": {
-										"type": "string",
-										"format": "date-time",
-										"x-native-type": "date",
+										"anyOf": [
+											{
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											{
+												"type": "string"
+											},
+											{
+												"type": "number"
+											}
+										],
 										"description": "If provided, the change only applies when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409)."
 									}
 								}
@@ -140601,9 +140651,19 @@
 										"description": "The application to link, or null to unlink."
 									},
 									"expectedUpdatedAt": {
-										"type": "string",
-										"format": "date-time",
-										"x-native-type": "date",
+										"anyOf": [
+											{
+												"type": "string",
+												"format": "date-time",
+												"x-native-type": "date"
+											},
+											{
+												"type": "string"
+											},
+											{
+												"type": "number"
+											}
+										],
 										"description": "Resumes only. If provided, the link only changes when the resume version still matches this timestamp; otherwise RESUME_VERSION_CONFLICT (409)."
 									}
 								},

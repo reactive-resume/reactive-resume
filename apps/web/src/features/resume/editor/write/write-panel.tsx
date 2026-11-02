@@ -13,14 +13,13 @@ import { getOutlineRows, summarizeContent } from "./model";
 import { Outline } from "./outline";
 import { useDialogStore } from "@/dialogs/store";
 import {
-	saveResumeMetadata,
 	useCurrentBuilderResumeSelector,
 	useCurrentResume,
 	useIsResumeLocked,
 	usePatchResume,
 } from "@/features/resume/builder/draft";
+import { setResumeLocked } from "@/features/resume/builder/lock";
 import { getResumeErrorMessage } from "@/libs/error-message";
-import { orpc } from "@/libs/orpc/client";
 
 /**
  * Write: the Basics card, then the outline of sections in print order with their entries, then Add
@@ -121,11 +120,8 @@ function LockedNote() {
 	const resume = useCurrentResume();
 	const patchResume = usePatchResume();
 	const { mutate: setLocked, isPending } = useMutation({
-		mutationFn: (id: string) =>
-			// The next autosave builds on the unlocked revision instead of conflicting with it.
-			saveResumeMetadata(id, (expectedUpdatedAt, options) =>
-				orpc.resume.setLocked.call({ id, isLocked: false, expectedUpdatedAt }, options),
-			),
+		// The next autosave builds on the unlocked revision instead of conflicting with it.
+		mutationFn: (id: string) => setResumeLocked(id, false),
 	});
 
 	const unlock = () =>

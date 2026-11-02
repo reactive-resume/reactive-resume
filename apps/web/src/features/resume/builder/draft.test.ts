@@ -326,6 +326,32 @@ describe("builder resume autosave", () => {
 		expect(store().undoStack.length).toBeGreaterThan(0);
 	});
 
+	it("unlocks without waiting for edits a lock stopped, then builds on the unlock when the data is unchanged (RX-160)", async () => {
+		const store = useResumeStore.getState;
+		const initial = makeResume("unlock-write");
+		store().initialize(initial);
+		// A lock from elsewhere stops this edit's save.
+		orpcMocks.updateResume.mockRejectedValueOnce(new ORPCError("RESUME_LOCKED", { status: 403 }));
+		store().updateResumeData((draft) => {
+			draft.basics.name = "Waiting edit";
+		});
+		await vi.advanceTimersByTimeAsync(500);
+		const unlocked = { ...initial, isLocked: false, updatedAt: new Date(initial.updatedAt.getTime() + 2000) };
+		const write = vi.fn(async (expectedUpdatedAt?: Date) => {
+			expect(expectedUpdatedAt).toEqual(initial.updatedAt);
+			return unlocked;
+		});
+		await saveResumeMetadata(initial.id, write, { savePending: false });
+		expect(write).toHaveBeenCalledTimes(1);
+		orpcMocks.updateResume.mockResolvedValueOnce({
+			...withBasicsName(unlocked, "Waiting edit"),
+			updatedAt: new Date(unlocked.updatedAt.getTime() + 1000),
+		});
+		store().retrySave();
+		await vi.advanceTimersByTimeAsync(500);
+		expect(orpcMocks.updateResume.mock.lastCall?.[0].expectedUpdatedAt).toEqual(unlocked.updatedAt);
+	});
+
 	it("finishes an in-flight body save before renaming, then saves from the rename revision", async () => {
 		const initial = makeResume("metadata-inflight");
 		useResumeStore.getState().initialize(initial);

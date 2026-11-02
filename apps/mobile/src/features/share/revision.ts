@@ -12,12 +12,21 @@ export async function setResumeLocked(id: string, isLocked: boolean) {
 		await client.resume.setLocked({ id, isLocked });
 		return;
 	}
-	// Locking saves pending edits first; a locked draft has none to save.
-	if (isLocked) await flushResume(id);
-	await draftResume.writeMetadata(async (baseline) => ({
-		...baseline,
-		...(await client.resume.setLocked({ id, isLocked, expectedUpdatedAt: baseline.updatedAt })),
-	}));
+	if (isLocked) {
+		// Locking saves pending edits first, then locks the revision they made.
+		await flushResume(id);
+		await draftResume.writeMetadata(async (baseline) => ({
+			...baseline,
+			...(await client.resume.setLocked({ id, isLocked, expectedUpdatedAt: baseline.updatedAt })),
+		}));
+		return;
+	}
+	// Unlocking can't wait for edits that a lock from elsewhere stopped, and that lock's revision may be unseen here:
+	// it goes unchecked, and the draft takes the answer only while the saved data is unchanged.
+	await draftResume.writeMetadata(
+		async (baseline) => ({ ...baseline, ...(await client.resume.setLocked({ id, isLocked })) }),
+		{ conditional: false },
+	);
 }
 
 /** Sets or removes the web page's password after the draft's pending edits, as the draft's own revision. */

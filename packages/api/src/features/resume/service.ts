@@ -498,9 +498,11 @@ export async function writeResumeFields(input: {
 		if (!existing) throw new ORPCError("NOT_FOUND");
 		if (input.unlockedOnly && existing.isLocked) throw new ORPCError("RESUME_LOCKED", { status: 403 });
 		assertResumeVersion(existing.updatedAt, input.expectedUpdatedAt);
+		// Each revision is later than the last, even in the same millisecond, so a stale revision can't match it.
+		const updatedAt = new Date(Math.max(Date.now(), existing.updatedAt.getTime() + 1));
 		const [updated] = await tx
 			.update(schema.resume)
-			.set(input.set)
+			.set({ ...input.set, updatedAt })
 			.where(activeResumeWhere(input.id, input.userId))
 			.returning(resumeColumns);
 		if (!updated) throw new ORPCError("NOT_FOUND");

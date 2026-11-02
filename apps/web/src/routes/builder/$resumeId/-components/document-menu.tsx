@@ -18,12 +18,12 @@ import { NotesSectionBuilder } from "../-sidebar/right/sections/notes";
 import { DocumentDetails } from "./document-details";
 import { useDialogStore } from "@/dialogs/store";
 import {
-	saveResumeMetadata,
 	useCurrentBuilderResumeSelector,
 	useCurrentResume,
 	usePatchResume,
 	useResumeStore,
 } from "@/features/resume/builder/draft";
+import { setResumeLocked } from "@/features/resume/builder/lock";
 import { DocumentMenuTrigger } from "@/features/resume/editor/chrome";
 import { SaveStatus } from "@/features/resume/editor/save-status";
 import { useEditorStore } from "@/features/resume/editor/store";
@@ -88,11 +88,8 @@ function DocumentMenuItems({ onOpenDialog }: DocumentMenuItemsProps) {
 	const { mutate: trashResume } = useMutation(orpc.documents.trash.mutationOptions());
 	const { mutateAsync: restoreResume } = useMutation(orpc.documents.restore.mutationOptions());
 	const { mutate: setLockedResume } = useMutation({
-		mutationFn: (next: boolean) =>
-			// Through the autosave owner: earlier edits save first, and the next autosave builds on this revision.
-			saveResumeMetadata(id, (expectedUpdatedAt, options) =>
-				orpc.resume.setLocked.call({ id, isLocked: next, expectedUpdatedAt }, options),
-			),
+		// Through the autosave owner, so the next autosave builds on this revision.
+		mutationFn: (next: boolean) => setResumeLocked(id, next),
 	});
 
 	// Locking is reversible, so it doesn't ask for confirmation.

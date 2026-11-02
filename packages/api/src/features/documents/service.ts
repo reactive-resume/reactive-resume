@@ -259,8 +259,11 @@ export const documentsService = {
 		await assertUnlocked(input);
 		const application = input.applicationId ? await assertOwnedApplication(input.userId, input.applicationId) : null;
 		if (input.type === "resume") {
+			// The application first: if it fails, the resume's revision hasn't moved, so a retry's version check still holds.
+			if (application && !application.sentResumeVersionId && (!application.resumeId || application.status === "saved"))
+				await applicationService.update({ userId: input.userId, id: application.id, resumeId: input.id });
 			// Answers with the resume's new revision, so the open editor's next autosave builds on it.
-			const resume = await writeResumeFields({
+			return writeResumeFields({
 				id: input.id,
 				userId: input.userId,
 				set: { applicationId: input.applicationId },
@@ -268,9 +271,6 @@ export const documentsService = {
 				expectedUpdatedAt: input.expectedUpdatedAt,
 				mutation: "update",
 			});
-			if (application && !application.sentResumeVersionId && (!application.resumeId || application.status === "saved"))
-				await applicationService.update({ userId: input.userId, id: application.id, resumeId: input.id });
-			return resume;
 		}
 
 		const letter = await coverLetterService.getById({ id: input.id, userId: input.userId });
