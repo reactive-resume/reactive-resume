@@ -292,7 +292,7 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 								</Trans>
 							) : (
 								<Trans>
-									Changing it sends a confirmation link to the new address. Your username is part of every public link.
+									Changing it sends a confirmation to the new address. Your username is part of every public link.
 								</Trans>
 							)}{" "}
 							{user.emailVerified ? null : smtpEnabled ? (

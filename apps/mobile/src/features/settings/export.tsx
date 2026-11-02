@@ -38,7 +38,7 @@ export function ExportDataRow() {
 	return (
 		<ListRow
 			title={exportData.isPending ? t`Preparing export…` : t`Export everything`}
-			subtitle={t`Documents, applications and Career data as JSON, in one zip. Images and attachments remain references.`}
+			subtitle={t`Your profile, documents, applications and Career data as JSON. Images and attachments remain references.`}
 			leading="download-simple"
 			disabled={exportData.isPending}
 			onPress={() => exportData.mutate()}
