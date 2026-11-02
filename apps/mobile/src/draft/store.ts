@@ -564,7 +564,14 @@ export function createDraftStore<D extends Document, T>(adapter: DraftAdapter<D,
 			const owner = await currentOwner();
 			// The lock state is the server's whether or not the answer becomes the base: an unchecked unlock whose data
 			// is unseen here still unlocks, and the next save then meets that data's version check.
-			if (owner && record === active && visit === generation) store.setState({ locked: written.isLocked });
+			if (
+				owner &&
+				record === active &&
+				visit === generation &&
+				// An answer older than a revision the draft already took (a refresh during the write) says nothing new.
+				adapter.version(written) >= adapter.version(active.baseline)
+			)
+				store.setState({ locked: written.isLocked });
 			// Checked after every wait: a refresh may have moved the baseline on meanwhile. An answer as new as the
 			// baseline (two writes in one millisecond) is still this write's own.
 			if (

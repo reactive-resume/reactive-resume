@@ -995,7 +995,17 @@ export async function saveResumeMetadata<T extends Resume>(
 			throw new Error(t`Couldn't save your changes. Try again before continuing.`);
 		// Unchecked writes still wait for a body save already on the wire: its older answer must not land after this
 		// write's and move the base back.
-		if (!savePending && runtime.isSaving) await runtime.saveSettled;
+		if (!savePending && runtime.isSaving && runtime.saveSettled) {
+			let timer: ReturnType<typeof setTimeout> | undefined;
+			const stalled = new Promise<"stalled">((resolve) => {
+				timer = setTimeout(() => resolve("stalled"), SAVE_WAIT_MS);
+			});
+			const settled = await Promise.race([runtime.saveSettled.then(() => "settled" as const), stalled]);
+			clearTimeout(timer);
+			// Nothing is sent while an older save may still land after it.
+			if (settled === "stalled")
+				throw new DOMException(t`Saving is taking longer than expected. Your changes are still open.`, "TimeoutError");
+		}
 		if (runtime.abortController.signal.aborted) throw runtime.abortController.signal.reason;
 		runtime.metadataWriting = true;
 		try {
