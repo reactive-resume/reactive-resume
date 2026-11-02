@@ -85,10 +85,6 @@ msgstr "(ヘッダーなし)"
 msgid "(optional)"
 msgstr "（任意）"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "（必須）"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2110,6 +2106,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "すべてのモデル"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "すべての書類、求人への応募、API キー、パブリックリンクが完全に削除されます。これを元に戻すことはできません。"
@@ -2998,10 +2998,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "内蔵リーダー"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "ブルガリア語"
@@ -3483,6 +3479,10 @@ msgstr "色を選択してください"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "モデルを選択"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5152,6 +5152,7 @@ msgid "Deep breath."
 msgstr "深呼吸。"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "デフォルト"
@@ -6131,6 +6132,10 @@ msgstr "このプロバイダーのAPIキーを入力してください。"
 msgid "Enter an http:// or https:// base URL."
 msgstr "http:// または https:// で始まるベースURLを入力してください。"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "エンドポイントが対応する任意のモデル ID を入力してください。"
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "保存してあるバックアップコードのうち 1 つを入力して、アカウントにアクセスしてください。"
@@ -6273,6 +6278,11 @@ msgstr "履歴書へのフィードバックを交換し、質問し、コミュ
 msgid "Exit focus mode"
 msgstr "フォーカスモードを終了する"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6406,6 +6416,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "日常の作業向けの、高速で低コストな既定モデルです。"
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6926,6 +6940,10 @@ msgstr "すべての職務と資格に期間を記載してください。"
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "保存するには、ストーリーにタイトルを付けてください。"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "ストーリーにタイトルを付けてから、「状況」「課題」「行動」を入力してください。「結果」と「学び」は、裏付けが得られるまで空欄にしてください。"
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8974,7 +8992,7 @@ msgstr "どちらとも言えない"
 msgid "mixed format"
 msgstr "混合フォーマット"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "モデル"
 
@@ -8993,6 +9011,10 @@ msgstr "単核症"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "より高性能"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9456,6 +9478,10 @@ msgstr "まだ求人への応募はありません。まず求人応募に 1 つ
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "このプロバイダーに対する組み込みの候補はありません。"
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11664,6 +11690,10 @@ msgstr "最近"
 msgid "Recipient"
 msgstr "宛先"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "おすすめ"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "もう一度録音"
@@ -13779,10 +13809,6 @@ msgstr "状況"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "状況、行動、結果"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "「状況」「課題」「行動」は必須です。「結果」と「学び」は、裏付けが得られるまで空欄にしてください。"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17496,6 +17522,10 @@ msgstr "あなたの希望条件"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "あなたのプロバイダー"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "APIキーを使用したリクエストに対して、プロバイダーがお客様のアカウントに料金を請求する場合があります。"
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

@@ -23,6 +23,12 @@ const titles = [
 export const generateSectionTitleCatalog = (catalogDirectory: string) => generateCatalog(catalogDirectory, titles);
 
 /** "Present" as printed in resume dates, per locale; untranslated locales carry the English source. */
+/** "Expected", printed before an end date still to come (a degree in progress). */
+export async function generateExpectedLabels(catalogDirectory: string) {
+	const catalog = await generateCatalog(catalogDirectory, ["Expected"]);
+	return Object.fromEntries(Object.entries(catalog).map(([locale, messages]) => [locale, messages.Expected]));
+}
+
 export async function generatePresentLabels(catalogDirectory: string) {
 	const catalog = await generateCatalog(catalogDirectory, ["Present"]);
 	return Object.fromEntries(Object.entries(catalog).map(([locale, messages]) => [locale, messages.Present]));

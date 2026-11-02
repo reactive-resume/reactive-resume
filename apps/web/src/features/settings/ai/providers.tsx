@@ -108,6 +108,9 @@ export function ProvidersSection() {
 								onEdit={() => setEditing(provider)}
 							/>
 						))}
+						<p className="text-[13px] leading-5 text-ink-3">
+							<Trans>Your provider may charge your account for requests made with your API key.</Trans>
+						</p>
 						<button
 							type="button"
 							onClick={() => setAdding(true)}

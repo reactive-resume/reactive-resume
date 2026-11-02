@@ -85,10 +85,6 @@ msgstr "(ingen overskrift)"
 msgid "(optional)"
 msgstr "(valgfrit)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(påkrævet)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2110,6 +2106,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "Alle modeller"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Alle dine dokumenter, jobansøgninger, API-nøgler og offentlige links slettes permanent. Dette kan ikke fortrydes."
@@ -2998,10 +2998,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Indbygget læser"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Bulgarsk"
@@ -3483,6 +3479,10 @@ msgstr "Vælg farve"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Vælg model"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5152,6 +5152,7 @@ msgid "Deep breath."
 msgstr "Træk vejret dybt."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Standard"
@@ -6131,6 +6132,10 @@ msgstr "Indtast en API-nøgle til denne udbyder."
 msgid "Enter an http:// or https:// base URL."
 msgstr "Indtast en basis-URL, der starter med http:// eller https://."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Indtast et model-ID, som dit slutpunkt understøtter."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Indtast en af dine gemte backup-koder for at få adgang til din konto."
@@ -6273,6 +6278,11 @@ msgstr "Udveksl feedback på CV’er, stil spørgsmål, og vær med til at forme
 msgid "Exit focus mode"
 msgstr "Afslut fokustilstand"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6406,6 +6416,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Hurtig og billigere standardmodel til dagligt arbejde."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6926,6 +6940,10 @@ msgstr "Giv hver rolle og kvalifikation et datointerval."
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Giv historien en titel, før du kan gemme."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Giv historien en titel, og udfyld derefter Situation, Opgave og Handling. Lad Resultat og Refleksion stå tomme, indtil du kan underbygge dem."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8974,7 +8992,7 @@ msgstr "Blandet"
 msgid "mixed format"
 msgstr "blandet format"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -8993,6 +9011,10 @@ msgstr "Mono"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Mere kraftfuld"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9456,6 +9478,10 @@ msgstr "Ingen jobansøgninger endnu. Tilføj først en i jobansøgninger."
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Ingen indbyggede forslag til denne udbyder."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11664,6 +11690,10 @@ msgstr "Seneste"
 msgid "Recipient"
 msgstr "Modtager"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Anbefalede"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "Optag igen"
@@ -13779,10 +13809,6 @@ msgstr "Situation"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Situation, handling, resultat"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Situation, Opgave og Handling er påkrævet. Lad Resultat og Refleksion stå tomme, indtil du kan underbygge dem."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17496,6 +17522,10 @@ msgstr "dine præferencer"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "din udbyder"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Din udbyder kan opkræve betaling på din konto for anmodninger sendt med din API-nøgle."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

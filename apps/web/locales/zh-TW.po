@@ -85,10 +85,6 @@ msgstr "（無標題）"
 msgid "(optional)"
 msgstr "（選填）"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "（必填）"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2110,6 +2106,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "所有模型"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "您的所有文件、應徵紀錄、API 金鑰和公共連結都將永久刪除。此操作無法復原。"
@@ -2998,10 +2998,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "內建閱讀器"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "保加利亞語"
@@ -3483,6 +3479,10 @@ msgstr "選擇顏色"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "選擇模型"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5152,6 +5152,7 @@ msgid "Deep breath."
 msgstr "深呼吸。"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "預設"
@@ -6131,6 +6132,10 @@ msgstr "請輸入此供應商的 API 金鑰。"
 msgid "Enter an http:// or https:// base URL."
 msgstr "請輸入以 http:// 或 https:// 開頭的基礎 URL。"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "輸入端點支援的任意模型 ID。"
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "請輸入其中一組已儲存的備份代碼以存取您的帳戶。"
@@ -6273,6 +6278,11 @@ msgstr "與社群交流履歷回饋、提出問題，並一起打造 Reactive Re
 msgid "Exit focus mode"
 msgstr "退出對焦模式"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6406,6 +6416,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "適合日常工作的快速、低成本預設模型。"
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6926,6 +6940,10 @@ msgstr "為每一段經歷和學歷都標註時間段。"
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "請先為故事加上標題，才能儲存。"
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "先為故事取個標題，再填寫「情境」、「任務」和「行動」。在有足夠依據之前，請將「結果」和「反思」留白。"
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8974,7 +8992,7 @@ msgstr "普通"
 msgid "mixed format"
 msgstr "混合格式"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "模型"
 
@@ -8993,6 +9011,10 @@ msgstr "單核白血球增多症"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "能力更強"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9456,6 +9478,10 @@ msgstr "還沒有工作申請。首先在工作申請中新增一個。"
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "此供應商沒有內建推薦。"
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11664,6 +11690,10 @@ msgstr "最近"
 msgid "Recipient"
 msgstr "收件人"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "推薦"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "重新錄音"
@@ -13779,10 +13809,6 @@ msgstr "情境"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "情境、行動、結果"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "「情境」、「任務」和「行動」為必填。在有足夠依據之前，請將「結果」和「反思」留白。"
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17496,6 +17522,10 @@ msgstr "您的偏好"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "您的提供者"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "供應商可能會向您的帳戶收取使用您的 API 金鑰發起請求的費用。"
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

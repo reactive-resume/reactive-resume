@@ -85,10 +85,6 @@ msgstr "(tidak ada tajuk)"
 msgid "(optional)"
 msgstr "(opsional)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(wajib)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2110,6 +2106,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "Semua model"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "Semua dokumen, lamaran pekerjaan, kunci API, dan tautan publik Anda akan dihapus secara permanen. Hal ini tidak dapat dibatalkan."
@@ -2998,10 +2998,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Pembaca bawaan"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Bulgaria"
@@ -3483,6 +3479,10 @@ msgstr "Pilih warna"
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "Pilih model"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5152,6 +5152,7 @@ msgid "Deep breath."
 msgstr "Tarik napas dalam-dalam."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "Default"
@@ -6131,6 +6132,10 @@ msgstr "Masukkan kunci API untuk penyedia ini."
 msgid "Enter an http:// or https:// base URL."
 msgstr "Masukkan URL dasar yang diawali http:// atau https://."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "Masukkan ID model apa pun yang didukung endpoint Anda."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "Masukkan salah satu kode cadangan tersimpan Anda untuk mengakses akun."
@@ -6273,6 +6278,11 @@ msgstr "Bertukar masukan tentang resume, ajukan pertanyaan, dan bantu membentuk 
 msgid "Exit focus mode"
 msgstr "Keluar dari mode fokus"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6406,6 +6416,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "Model bawaan yang cepat dan lebih hemat untuk pekerjaan sehari-hari."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6926,6 +6940,10 @@ msgstr "Beri setiap peran dan kualifikasi rentang tanggal."
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "Beri judul pada cerita sebelum menyimpan."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "Beri judul pada cerita, lalu isi bagian Situasi, Tugas, dan Tindakan. Biarkan Hasil dan Refleksi kosong sampai Anda dapat mendukungnya dengan bukti."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8974,7 +8992,7 @@ msgstr "Campuran"
 msgid "mixed format"
 msgstr "format campuran"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -8993,6 +9011,10 @@ msgstr "Mono"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "Lebih mumpuni"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9456,6 +9478,10 @@ msgstr "Belum ada lamaran kerja. Tambahkan satu di lamaran pekerjaan terlebih da
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "Tidak ada saran bawaan untuk penyedia ini."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11664,6 +11690,10 @@ msgstr "Terbaru"
 msgid "Recipient"
 msgstr "Penerima"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "Direkomendasikan"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "Rekam lagi"
@@ -13779,10 +13809,6 @@ msgstr "Situasi"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "Situasi, tindakan, hasil"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "Bagian Situasi, Tugas, dan Tindakan wajib diisi. Biarkan Hasil dan Refleksi kosong sampai Anda dapat mendukungnya dengan bukti."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17496,6 +17522,10 @@ msgstr "preferensi Anda"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "penyedia Anda"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "Penyedia Anda dapat membebankan biaya ke akun Anda untuk permintaan yang dibuat dengan kunci API Anda."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

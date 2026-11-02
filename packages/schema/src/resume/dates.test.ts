@@ -67,6 +67,10 @@ describe("inferDateFormat", () => {
 		expect(inferDateFormat(["03/2020 - 06/2021"], "en-US")).toBe("numeric");
 		expect(inferDateFormat(["2020-03 - 2021-06"], "en-US")).toBe("iso");
 	});
+
+	it("counts an expected end date", () => {
+		expect(inferDateFormat(["September 2023 – Expected May 2027"], "en-US")).toBe("long");
+	});
 });
 
 describe("getPresentLabel", () => {
@@ -280,5 +284,39 @@ describe("syncResumeDates", () => {
 		expect(job(data)?.period).toBe("Summer 2016 - 2018");
 		expect(job(data)?.dates?.raw).toBe("Summer 2016 - 2018");
 		expect(data).toEqual(once);
+	});
+});
+
+describe("expected end dates", () => {
+	it("prints an end date still to come as Expected", () => {
+		expect(
+			formatResumeDates({ start: "2023-09", end: "2027-05", present: false, expected: true }, { locale: "en-US" }),
+		).toBe("Sep 2023 – Expected May 2027");
+	});
+
+	it("leaves Expected out while the entry is ongoing or has no end date", () => {
+		expect(formatResumeDates({ start: "2023", end: null, present: true, expected: true }, { locale: "en-US" })).toBe(
+			"2023 – Present",
+		);
+		expect(formatResumeDates({ start: "2023", end: null, present: false, expected: true }, { locale: "en-US" })).toBe(
+			"2023",
+		);
+	});
+});
+
+describe("reading an expected end date back", () => {
+	it("keeps the date and that it's still to come", () => {
+		expect(readLegacyDates("Sep 2023 – Expected May 2027", { locale: "en-US", single: false })).toEqual({
+			start: "2023-09",
+			end: "2027-05",
+			present: false,
+			expected: true,
+		});
+	});
+
+	it("round-trips through the printed text", () => {
+		const dates = { start: "2023-09", end: "2027-05", present: false, expected: true };
+		const text = formatResumeDates(dates, { locale: "en-US" });
+		expect(readLegacyDates(text, { locale: "en-US", single: false })).toEqual(dates);
 	});
 });

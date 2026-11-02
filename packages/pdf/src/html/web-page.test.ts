@@ -97,3 +97,15 @@ describe("right-to-left web page with Latin bullets", () => {
 		expect(rules.some(({ name, body }) => body.includes("--rr-text-direction:ltr") && html.includes(name))).toBe(true);
 	});
 });
+
+describe("a header band in a row", () => {
+	it("keeps growing to the content edge when the page folds on a phone", async () => {
+		const data = structuredClone(sampleResumeData);
+		data.metadata.template = "pikachu";
+		data.basics = { ...data.basics, name: "Sam Lee", headline: "Student", phone: "", location: "", customFields: [] };
+		const { html, css } = await renderResumeWebPage({ data });
+		// Pikachu's coloured header paints its own band, so it fills its row instead of hugging a short name.
+		expect(html).toMatch(/data-region="header" data-fill/);
+		expect(css).toContain(".rr [data-region][data-fill]{flex-grow:1!important}");
+	});
+});

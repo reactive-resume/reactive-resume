@@ -145,7 +145,8 @@ export function AddSectionMenu() {
 	);
 }
 
-const SUGGESTED: ("summary" | SectionType)[] = ["experience", "education", "skills", "summary"];
+// Projects are how someone without a job yet shows their work (Check suggests them when Experience is empty).
+const SUGGESTED: ("summary" | SectionType)[] = ["experience", "education", "projects", "skills", "summary"];
 
 /** A blank resume: the first sections to add, as + chips, and an offer to import instead. */
 export function StartSuggestions({ onImport }: { onImport: () => void }) {

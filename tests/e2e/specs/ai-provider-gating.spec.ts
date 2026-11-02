@@ -35,6 +35,10 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 		if (request.url().includes("models.dev")) thirdParty.push(request.url());
 	});
 	await page.goto("/dashboard/settings/ai");
+	const billing = page.getByText("Your provider may charge your account for requests made with your API key.", {
+		exact: true,
+	});
+	await expect(billing).toBeVisible();
 	await page.getByRole("button", { name: /^Add AI provider/ }).click();
 	const dialog = page.getByRole("dialog");
 	await dialog.getByRole("combobox", { name: "Provider", exact: true }).click();
@@ -53,6 +57,11 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 	await dialog.getByRole("button", { name: "Save and test", exact: true }).click();
 	await consent(page);
 	await expect(dialog).toBeHidden();
+	await expect(billing).toBeVisible();
+	const providerSection = page
+		.locator("section")
+		.filter({ has: page.getByRole("heading", { name: "AI providers", exact: true }) });
+	await providerSection.screenshot({ path: info.outputPath("provider-connected.png") });
 	await page.getByRole("button", { name: "Edit", exact: true }).click();
 	await page.getByRole("switch", { name: "Use this provider" }).click();
 	await expect(page.getByRole("switch", { name: "Use this provider" })).not.toBeChecked();
@@ -69,9 +78,6 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 	await expect(page.getByText("Off", { exact: true })).toBeVisible();
 	expect(thirdParty).toEqual([]);
 	await page.getByRole("heading", { name: "AI providers", exact: true }).scrollIntoViewIfNeeded();
-	const providerSection = page
-		.locator("section")
-		.filter({ has: page.getByRole("heading", { name: "AI providers", exact: true }) });
 	await providerSection.screenshot({ path: info.outputPath("provider-off.png") });
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.emulateMedia({ colorScheme: "light" });

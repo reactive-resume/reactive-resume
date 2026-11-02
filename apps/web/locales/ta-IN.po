@@ -85,10 +85,6 @@ msgstr "(தலைப்பு இல்லை)"
 msgid "(optional)"
 msgstr "(விருப்பத்தேர்வு)"
 
-#: src/features/career/knowledge/stories.tsx
-msgid "(required)"
-msgstr "(கட்டாயம்)"
-
 #. placeholder {0}: applied.length
 #: src/features/resume/editor/proposals/proposals.ts
 msgid "{0, plural, =1 {Edit applied} other {# edits applied}}"
@@ -2110,6 +2106,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "All models"
+msgstr "அனைத்து மாதிரிகளும்"
+
 #: src/features/settings/account/data.tsx
 msgid "All your documents, applications, API keys and public links are deleted for good. This can't be undone."
 msgstr "உங்கள் ஆவணங்கள், வேலை விண்ணப்பங்கள், API விசைகள் மற்றும் பொது இணைப்புகள் அனைத்தும் நிரந்தரமாக நீக்கப்படும். இந்தச் செயலைச் செயல்தவிர்க்க முடியாது."
@@ -2998,10 +2998,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "உள்ளமைக்கப்பட்ட வாசகர்"
 
-#: src/features/settings/ai/provider-fields.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "பல்கேரியன்"
@@ -3483,6 +3479,10 @@ msgstr "நிறத்தைத் தேர்ந்தெடுங்கள�
 #: src/features/documents/new-document-dialog.tsx
 msgid "Choose how to read this file"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "மாதிரியைத் தேர்ந்தெடுக்கவும்"
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Choose saved answers to review. Unavailable evidence or another employer's scope cannot be exported."
@@ -5152,6 +5152,7 @@ msgid "Deep breath."
 msgstr "ஆழ்ந்து மூச்சு விடுங்கள்."
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
+#: src/features/settings/ai/provider-model.tsx
 #: src/features/settings/ai/providers.tsx
 msgid "Default"
 msgstr "இயல்புநிலை"
@@ -6131,6 +6132,10 @@ msgstr "இந்த வழங்குநருக்கான API விசை
 msgid "Enter an http:// or https:// base URL."
 msgstr "http:// அல்லது https:// என்று தொடங்கும் அடிப்படை URL-ஐ உள்ளிடவும்."
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "உங்கள் எண்ட்பாயிண்ட் ஆதரிக்கும் எந்த மாதிரி IDயையும் உள்ளிடவும்."
+
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
 msgstr "உங்கள் கணக்கை அணுக, சேமித்த காப்புக் குறியீடுகளில் ஒன்றை உள்ளிடவும்."
@@ -6273,6 +6278,11 @@ msgstr "ரெஸ்யூமே குறித்த கருத்துக�
 msgid "Exit focus mode"
 msgstr "கவனப் பயன்முறையிலிருந்து வெளியேறு"
 
+#. Switch on an education entry's dates: the end date is still to come
+#: src/features/resume/editor/write/dates-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 #: src/features/homepage/check.tsx
 #: src/features/homepage/sheet.tsx
@@ -6406,6 +6416,10 @@ msgstr ""
 #: src/features/settings/profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "அன்றாடப் பணிக்கான வேகமான, குறைந்த செலவுள்ள இயல்புநிலை மாதிரி."
 
 #: src/features/homepage/footer.tsx
 msgid "Features"
@@ -6926,6 +6940,10 @@ msgstr "ஒவ்வொரு பணிக்கும் தகுதிக்�
 #: src/features/career/knowledge/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "சேமிப்பதற்கு முன் கதைக்கு ஒரு தலைப்பு கொடுக்கவும்."
+
+#: src/features/career/knowledge/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "கதைக்கு ஒரு தலைப்பைக் கொடுங்கள், பின்னர் சூழ்நிலை, பணி, செயல் ஆகியவற்றை நிரப்புங்கள். அவற்றுக்கு ஆதாரம் தர முடியும் வரை முடிவு, பிரதிபலிப்பு ஆகியவற்றைக் காலியாக விடவும்."
 
 #: src/features/settings/profile.tsx
 msgid "Given name"
@@ -8974,7 +8992,7 @@ msgstr "கலவையானது"
 msgid "mixed format"
 msgstr "கலப்பு வடிவம்"
 
-#: src/features/settings/ai/provider-fields.tsx
+#: src/features/settings/ai/provider-model.tsx
 msgid "Model"
 msgstr "மாதிரி"
 
@@ -8993,6 +9011,10 @@ msgstr "மோனோ"
 #: src/features/settings/profile.tsx
 msgid "Month"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "More capable"
+msgstr "அதிகத் திறன் கொண்டது"
 
 #: src/features/resume/editor/chrome/bar.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
@@ -9456,6 +9478,10 @@ msgstr "இதுவரை வேலை விண்ணப்பங்கள் 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "No backup codes either?"
 msgstr ""
+
+#: src/features/settings/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "இந்த வழங்குநருக்கு உள்ளமைந்த பரிந்துரைகள் இல்லை."
 
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
@@ -11664,6 +11690,10 @@ msgstr "சமீபத்தியவை"
 msgid "Recipient"
 msgstr "பெறுநர்"
 
+#: src/features/settings/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "பரிந்துரைக்கப்பட்டவை"
+
 #: src/features/career/workspace/practise.tsx
 msgid "Record again"
 msgstr "மீண்டும் பதிவு செய்"
@@ -13779,10 +13809,6 @@ msgstr "சூழ்நிலை"
 #: src/features/career/workspace/prepare.tsx
 msgid "Situation, action, result"
 msgstr "சூழ்நிலை, செயல், முடிவு"
-
-#: src/features/career/knowledge/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "சூழ்நிலை, பணி, செயல் ஆகியவை கட்டாயம். அவற்றுக்கு ஆதாரம் தர முடியும் வரை முடிவு, பிரதிபலிப்பு ஆகியவற்றைக் காலியாக விடவும்."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -17496,6 +17522,10 @@ msgstr "உங்கள் விருப்பங்கள்"
 #: src/features/assistant/assistant-panel.tsx
 msgid "your provider"
 msgstr "உங்கள் வழங்குநர்"
+
+#: src/features/settings/ai/providers.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "உங்கள் API விசையைப் பயன்படுத்திச் செய்யப்படும் கோரிக்கைகளுக்கு உங்கள் வழங்குநர் உங்கள் கணக்கில் கட்டணம் விதிக்கலாம்."
 
 #: src/features/settings/account/profile.tsx
 msgid "Your public links will change"

@@ -1655,6 +1655,10 @@ msgstr ""
 msgid "All employers"
 msgstr ""
 
+#: src/features/ai/provider-model.tsx
+msgid "All models"
+msgstr "כל המודלים"
+
 #: src/features/check/job-match.tsx
 msgid "All posting terms are covered."
 msgstr "כל המונחים מהמודעה מכוסים."
@@ -2375,10 +2379,6 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "קורא מובנה"
 
-#: src/features/ai/provider-editor.tsx
-msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
-msgstr ""
-
 #: src/features/settings/locale-names.ts
 msgid "Bulgarian"
 msgstr "בולגרית"
@@ -2783,6 +2783,10 @@ msgstr "בחר תאריך"
 #: src/features/settings/profile.tsx
 msgid "Choose from library"
 msgstr "בחר מתוך הספרייה"
+
+#: src/features/ai/provider-model.tsx
+msgid "Choose model"
+msgstr "בחירת מודל"
 
 #: src/features/applications-board/board-screen.tsx
 msgid "Choose outcome"
@@ -4089,6 +4093,7 @@ msgid "Decrease {label}"
 msgstr "הקטנת {label}"
 
 #: src/features/ai/provider-list.tsx
+#: src/features/ai/provider-model.tsx
 #: src/features/write/pickers.tsx
 msgid "Default"
 msgstr "ברירת מחדל"
@@ -4885,6 +4890,10 @@ msgstr "יש להזין מפתח API עבור ספק זה."
 msgid "Enter an http:// or https:// base URL."
 msgstr "יש להזין כתובת URL בסיסית שמתחילה ב-http:// או ב-https://."
 
+#: src/features/ai/provider-model.tsx
+msgid "Enter any model ID supported by your endpoint."
+msgstr "אפשר להזין כל מזהה מודל שנתמך בנקודת הקצה שלך."
+
 #: src/features/career/offer-entry.tsx
 msgid "Enter terms yourself. No AI request is made. Leave unknown amounts blank."
 msgstr "יש להזין את התנאים בעצמך. לא נשלחת בקשה לבינה מלאכותית. יש להשאיר סכומים לא ידועים ריקים."
@@ -4978,6 +4987,10 @@ msgstr ""
 msgid "Exact form URL"
 msgstr ""
 
+#: src/features/write/date-field.tsx
+msgid "Expected"
+msgstr ""
+
 #: src/features/career/facts.tsx
 #: src/features/write/fields.ts
 msgid "Experience"
@@ -5052,6 +5065,10 @@ msgstr ""
 #: src/features/settings/application-profile.tsx
 msgid "Family name"
 msgstr ""
+
+#: src/features/ai/provider-model.tsx
+msgid "Fast, lower-cost default for everyday work."
+msgstr "מודל ברירת מחדל מהיר וזול יותר לעבודה יומיומית."
 
 #: app/(tabs)/settings/preferences.tsx
 msgid "Feedback"
@@ -5403,6 +5420,10 @@ msgstr "תן לכל תפקיד והשכלה טווח תאריכים."
 #: src/features/career/stories.tsx
 msgid "Give the story a title before you can save."
 msgstr "תן לסיפור כותרת כדי שתוכל לשמור."
+
+#: src/features/career/stories.tsx
+msgid "Give the story a title, then fill in Situation, Task and Action. Leave Result and Reflection blank until you can support them."
+msgstr "יש לתת לסיפור כותרת, ואז למלא את „מצב”, „משימה” ו„פעולה”. יש להשאיר את „תוצאה” ו„רפלקציה” ריקים עד שאפשר יהיה לבסס אותם."
 
 #: src/features/settings/application-profile.tsx
 msgid "Given name"
@@ -7003,7 +7024,7 @@ msgstr "רישיון MIT"
 msgid "Mixed"
 msgstr "מעורב"
 
-#: src/features/ai/provider-editor.tsx
+#: src/features/ai/provider-model.tsx
 #: src/features/assistant/provider.tsx
 msgid "Model"
 msgstr "מודל"
@@ -7019,6 +7040,10 @@ msgstr ""
 #: src/features/write/pickers.tsx
 msgid "More"
 msgstr "עוד"
+
+#: src/features/ai/provider-model.tsx
+msgid "More capable"
+msgstr "בעל יכולות גבוהות יותר"
 
 #: src/features/applications/add-sheet.tsx
 msgid "More details"
@@ -7431,6 +7456,10 @@ msgstr ""
 msgid "No applications yet. Add one in Applications first."
 msgstr "עדיין אין מועמדות לעבודה. הוסף תחילה אחד במועמדות לעבודה."
 
+#: src/features/ai/provider-model.tsx
+msgid "No built-in suggestions for this provider."
+msgstr "אין הצעות מובנות לספק הזה."
+
 #: src/features/ats-checker/messages.ts
 msgid "No bullet lists were found."
 msgstr "לא נמצאו רשימות תבליטים."
@@ -7549,6 +7578,7 @@ msgstr "אין מועמדות מקושרת"
 msgid "No location"
 msgstr "אין מיקום"
 
+#: src/features/ai/provider-model.tsx
 #: src/features/documents/library.tsx
 #: src/ui/fields.tsx
 msgid "No matches"
@@ -9190,6 +9220,10 @@ msgstr "שוחזרה מהראיון"
 msgid "Recipient"
 msgstr "נמען"
 
+#: src/features/ai/provider-model.tsx
+msgid "Recommended"
+msgstr "מומלצים"
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "Record again"
 msgstr "הקלט שוב"
@@ -10345,6 +10379,7 @@ msgstr "ראיון מיון"
 
 #: app/_layout.tsx
 #: app/(tabs)/_layout.tsx
+#: src/features/ai/provider-model.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/design/picker.tsx
 #: src/ui/fields.tsx
@@ -11068,10 +11103,6 @@ msgstr "מצב"
 #: src/features/workspace/tabs/prepare.tsx
 msgid "Situation, action, result"
 msgstr "מצב, פעולה, תוצאה"
-
-#: src/features/career/stories.tsx
-msgid "Situation, Task and Action are required. Leave Result and Reflection blank until you can support them."
-msgstr "השדות „מצב”, „משימה” ו„פעולה” הם חובה. יש להשאיר את „תוצאה” ו„רפלקציה” ריקים עד שאפשר יהיה לבסס אותם."
 
 #: src/features/career/stories.tsx
 msgid "Situation, Task, Action, Result, Reflection. Link each story to facts you can support; leave unknown outcomes blank."
@@ -13948,6 +13979,10 @@ msgstr "הפרופיל שלך, המסמכים, המועמדויות ונתוני
 #: src/features/assistant/provider.tsx
 msgid "your provider"
 msgstr "הספק שלך"
+
+#: src/features/ai/provider-list.tsx
+msgid "Your provider may charge your account for requests made with your API key."
+msgstr "הספק שלך עשוי לחייב את החשבון שלך על בקשות שנשלחו באמצעות מפתח ה-API שלך."
 
 #: src/features/settings/profile.tsx
 msgid "Your public links begin with {server}/"
