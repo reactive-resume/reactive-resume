@@ -79,6 +79,29 @@ In the web app, use the tabs above the list to switch views. Your choice is kept
 
 In a narrow phone browser, the web page shows **List**, **Insights** and **Calendar**, and list rows show the company and next step on a second line. **Board** remains available on wider browser layouts. The native mobile app offers all four views on phones and tablets.
 
+## Keyboard triage in List
+
+In the web app, use <kbd>Tab</kbd> to focus an application's role button. Its outline shows which application receives shortcuts. Moving focus outside the row stops bare-key triage. In the native app with a hardware keyboard, choose **Keyboard triage** in List; the outlined row and its role/company identify the current application. Choose **Stop keyboard triage** to turn it off.
+
+| Key                         | Action                                                                                                                                                                                               |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <kbd>j</kbd> / <kbd>k</kbd> | Focus the next / previous displayed application. Stops at the ends; follows sorting, filters and expanded groups.                                                                                    |
+| <kbd>Enter</kbd>            | Open the focused application's details.                                                                                                                                                              |
+| <kbd>1</kbd>–<kbd>5</kbd>   | Move to **Saved**, **Applied**, **Screening**, **Interview** or **Offer**, respectively, using that category's default stage. **Undo** cancels the pending move; a newer stage saved elsewhere wins. |
+| <kbd>x</kbd>                | Toggle the focused application in the existing bulk selection.                                                                                                                                       |
+| <kbd>f</kbd>                | Record **Followed up** for an open application beyond Saved. Sends no message; see [Managing an application](/guides/managing-an-application).                                                       |
+
+Typing in a field or editor, composing text, modifier chords, and open dialogs, menus or sheets do not trigger background triage. Holding a command key does not repeat stage, selection or contact actions. A hidden or removed application cannot receive the next action.
+
+Native bare-key triage requires an updated iOS or Android store build. Older installed binaries retain their existing controls and modifier shortcuts.
+
+<Frame caption="The role button's outline identifies keyboard focus; x selected the same fictional application for bulk actions.">
+  <img
+    src="/images/guides/career/applications-keyboard-triage.png"
+    alt="Fictional Cedar Platform engineer in Interview with an outlined role button, checked selection and one selected in the bulk toolbar"
+  />
+</Frame>
+
 ## Finding applications
 
 Type in **Search applications** to filter the list as you type. Search looks at the role, company, location, contact names and tags. If nothing matches, select **Clear search**.

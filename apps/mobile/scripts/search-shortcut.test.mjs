@@ -48,6 +48,7 @@ const mocks = {
 	"expo-router": { useIsFocused: () => focused },
 	"../../modules/key-commands": {
 		keyCommands: {
+			supportsUnmodifiedCommands: true,
 			setCommands: (next) => (commands = next),
 			addListener: (_event, listener) => (dispatch = listener),
 		},
@@ -169,3 +170,91 @@ header.render();
 assert.deepEqual(commands, [], "An unfocused screen must unregister its search shortcut");
 header.unmount();
 console.log("PASS native collection search focus, retained filter, nested modal suspension and screen lifetime");
+
+// Same key in different modifier families must coexist; eligible metadata follows screen/overlay lifetime.
+focused = true;
+let primaryRuns = 0;
+let bareRuns = 0;
+const register = mount(
+	({ enabled = true }) =>
+		keyCommands.useKeyCommands([
+			{ id: "search", input: "f", title: "Search", run: () => primaryRuns++ },
+			{ id: "follow-up", input: "f", modifier: "none", title: "Followed up", enabled, run: () => bareRuns++ },
+		]),
+	{},
+);
+register.render();
+const followUpId = commands.find((command) => command.modifier === "none").id;
+assert.equal(commands.length, 2);
+assert.deepEqual(
+	keyCommands.getRegisteredKeyCommands().map(({ id, modifier }) => [id, modifier]),
+	[
+		["search", undefined],
+		["follow-up", "none"],
+	],
+);
+dispatch({ id: followUpId });
+dispatch({ id: commands.find((command) => command.modifier !== "none")?.id });
+assert.equal(bareRuns, 1);
+assert.equal(primaryRuns, 1);
+register.render({ enabled: false });
+dispatch({ id: followUpId });
+assert.equal(bareRuns, 1, "Disabled commands reject late native delivery");
+assert.deepEqual(
+	keyCommands.getRegisteredKeyCommands().map(({ id }) => id),
+	["search"],
+);
+register.render({ enabled: true });
+const blocking = mount(({ open }) => keyCommands.useKeyCommandBlocker(open), { open: true });
+blocking.render();
+assert.deepEqual(keyCommands.getRegisteredKeyCommands(), []);
+dispatch({ id: followUpId });
+assert.equal(bareRuns, 1);
+blocking.unmount();
+assert.equal(keyCommands.getRegisteredKeyCommands().length, 2);
+focused = false;
+register.render();
+assert.deepEqual(keyCommands.getRegisteredKeyCommands(), []);
+dispatch({ id: followUpId });
+assert.equal(bareRuns, 1);
+register.unmount();
+focused = true;
+const replacement = mount(
+	() =>
+		keyCommands.useKeyCommands([
+			{ id: "follow-up", input: "f", modifier: "none", title: "Followed up", run: () => bareRuns++ },
+		]),
+	{},
+);
+replacement.render();
+dispatch({ id: followUpId });
+assert.equal(bareRuns, 1, "A queued event for the previous account owner cannot target its replacement");
+dispatch({ id: commands[0].id });
+assert.equal(bareRuns, 2);
+replacement.unmount();
+// Old binary: bare commands are neither advertised nor sent as accidental Cmd shortcuts.
+mocks["../../modules/key-commands"].keyCommands.supportsUnmodifiedCommands = undefined;
+const legacy = load("shell/key-commands.ts");
+const oldRegister = mount(
+	() =>
+		legacy.useKeyCommands(
+			[
+				{ id: "bare", input: "f", modifier: "none", title: "Followed up", run: () => bareRuns++ },
+				{ id: "primary", input: "f", title: "Search", run: () => primaryRuns++ },
+			],
+			"global",
+		),
+	{},
+);
+oldRegister.render();
+assert.deepEqual(
+	legacy.getRegisteredKeyCommands().map(({ id }) => id),
+	["primary"],
+);
+assert.equal(legacy.getRegisteredKeyCommands().length, 1);
+dispatch({ id: "bare" });
+assert.equal(bareRuns, 2);
+oldRegister.unmount();
+console.log(
+	"PASS native command metadata, modifier families, disabled/screen/blocker lifetime and old-binary eligibility",
+);

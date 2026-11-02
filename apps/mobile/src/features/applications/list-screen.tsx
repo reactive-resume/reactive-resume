@@ -1,10 +1,11 @@
 import type { ApplicationSort } from "./list";
+import type { ApplicationSummary } from "./types";
 import type { ApplicationClosedReason } from "@reactive-resume/schema/applications/data";
 import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import Storage from "expo-sqlite/kv-store";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RefreshControl, Pressable, SectionList, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { applicationError } from "./error";
@@ -14,12 +15,13 @@ import { filterApplications, groupApplications, visibleSelection } from "./list"
 import { describeNextStep, getNextStep, needsFollowUp } from "./next-step";
 import { useApplicationDetailPrefetch, useApplicationMutations, useApplications } from "./queries";
 import { offerHintFor, useMoveWithUndo, useOfferHints } from "./stage-actions";
-import { CLOSED_REASONS, getClosedReasonLabel } from "./stages";
-import { useSession } from "@/auth/session";
+import { CLOSED_REASONS, getClosedReasonLabel, PIPELINE } from "./stages";
+import { getAccountScope, useSession } from "@/auth/session";
 import { useNow, useUserTime } from "@/features/application-detail/hooks";
 import { useApplicationSearch } from "@/features/applications-board/search";
 import { ApplicationsViewFrame } from "@/features/applications-board/views";
 import { routes } from "@/routes";
+import { supportsUnmodifiedCommands, useKeyCommands } from "@/shell/key-commands";
 import {
 	Banner,
 	Button,
@@ -59,7 +61,7 @@ export function ApplicationsListScreen() {
 	const { space } = useTheme();
 	// Discard selection/forms when switching servers or leaving the authenticated session.
 	return session.status === "signed-in" ? (
-		<ApplicationsList key={session.server} />
+		<ApplicationsList key={getAccountScope() ?? session.server} />
 	) : (
 		<Screen>{session.status === "loading" ? <Skeleton height={space.s12} /> : <SignedOut />}</Screen>
 	);
@@ -79,7 +81,7 @@ function ApplicationsList() {
 	const pull = usePullRefresh(query.refetch);
 	const firstAppearance = useFirstAppearance(!query.isPending);
 	const { timeZone } = useUserTime();
-	const { bulkUpdate, bulkDelete } = useApplicationMutations();
+	const { bulkUpdate, bulkDelete, logFollowUp } = useApplicationMutations();
 	const offerHints = useOfferHints();
 	const moveWithUndo = useMoveWithUndo();
 	const { search, setSearch, needsYou, clearFilters } = useApplicationSearch();
@@ -89,6 +91,9 @@ function ApplicationsList() {
 	const [sort, setSort] = useState<ApplicationSort>("next");
 	const [direction, setDirection] = useState<"asc" | "desc">("asc");
 	const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+	const listRef = useRef<SectionList<ApplicationSummary>>(null);
+	const [keyboardMode, setKeyboardMode] = useState(false);
+	const [focusedId, setFocusedId] = useState<string | null>(null);
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [selecting, setSelecting] = useState(false);
 	const [filters, setFilters] = useState(false);
@@ -153,6 +158,90 @@ function ApplicationsList() {
 			else next.add(id);
 			return next;
 		});
+	const visibleRows = query.isError ? [] : groups.flatMap((group) => (collapsed.has(group.status) ? [] : group.data));
+	const focusedRow = visibleRows.find((row) => row.id === focusedId);
+	const focusRow = (id: string) => setFocusedId(id);
+	useEffect(() => {
+		if (!keyboardMode || !focusedId) return;
+		const sectionIndex = groups.findIndex((group) => group.data.some((row) => row.id === focusedId));
+		const itemIndex = groups[sectionIndex]?.data.findIndex((row) => row.id === focusedId) ?? -1;
+		const group = groups[sectionIndex];
+		if (group && itemIndex >= 0 && !collapsed.has(group.status))
+			listRef.current?.scrollToLocation({ sectionIndex, itemIndex, animated: false, viewPosition: 0.5 });
+	}, [keyboardMode, focusedId, groups, collapsed]);
+	const step = (direction: number) => {
+		const index = visibleRows.findIndex((row) => row.id === focusedId);
+		const next = visibleRows[index < 0 ? 0 : Math.max(0, Math.min(visibleRows.length - 1, index + direction))];
+		if (next) focusRow(next.id);
+	};
+	useKeyCommands(
+		keyboardMode && !busy && !query.isError
+			? [
+					{ id: "applications-next", input: "j", title: t`Next application`, modifier: "none", run: () => step(1) },
+					{
+						id: "applications-previous",
+						input: "k",
+						title: t`Previous application`,
+						modifier: "none",
+						run: () => step(-1),
+					},
+					{
+						id: "applications-open",
+						input: "enter",
+						title: t`Open application`,
+						modifier: "none",
+						run: () => {
+							if (focusedRow) router.push(routes.applicationDetails(focusedRow.id));
+						},
+					},
+					{
+						id: "applications-select",
+						input: "x",
+						title: t`Toggle selection`,
+						modifier: "none",
+						run: () => {
+							if (focusedRow) {
+								setSelecting(true);
+								toggle(focusedRow.id);
+							}
+						},
+					},
+					{
+						id: "applications-follow-up",
+						input: "f",
+						title: t`Followed up`,
+						modifier: "none",
+						run: () => {
+							if (
+								focusedRow &&
+								focusedRow.status !== "saved" &&
+								focusedRow.status !== "closed" &&
+								!logFollowUp.isPending
+							)
+								logFollowUp.mutate({ id: focusedRow.id });
+						},
+					},
+					...PIPELINE.map((status, index) => ({
+						id: `applications-stage-${status}`,
+						input: `${index + 1}`,
+						modifier: "none" as const,
+						title: t`Moved to ${getLaneLabel(resolveLane(lanes.lanes, { status }))}`,
+						run: () => {
+							if (!focusedRow || !lanes.ready) return;
+							const lane = resolveLane(lanes.lanes, { status });
+							if (resolveLane(lanes.lanes, focusedRow).id === lane.id) return;
+							moveWithUndo({
+								applications: [focusedRow],
+								lane,
+								supported: lanes.supported,
+								message: t`Moved to ${getLaneLabel(lane)}`,
+							});
+						},
+					})),
+				]
+			: [],
+		"screen",
+	);
 	const applyBulk = async () => {
 		if (
 			!lanes.ready ||
@@ -218,6 +307,16 @@ function ApplicationsList() {
 					disabled={busy}
 					onPress={() => setFilters(true)}
 				/>
+				{supportsUnmodifiedCommands && (
+					<Button
+						label={keyboardMode ? t`Stop keyboard triage` : t`Keyboard triage`}
+						variant="secondary"
+						onPress={() => {
+							if (!keyboardMode && !focusedRow && visibleRows[0]) focusRow(visibleRows[0].id);
+							setKeyboardMode(!keyboardMode);
+						}}
+					/>
+				)}
 				{selecting && (
 					<Button
 						label={t`Done selecting`}
@@ -370,6 +469,7 @@ function ApplicationsList() {
 		>
 			<Screen scroll={false} contentStyle={{ padding: 0 }}>
 				<SectionList
+					ref={listRef}
 					sections={
 						query.isError
 							? []
@@ -379,6 +479,10 @@ function ApplicationsList() {
 									data: collapsed.has(group.status) ? [] : group.data,
 								}))
 					}
+					onScrollToIndexFailed={({ averageItemLength, index }) => {
+						listRef.current?.getScrollResponder()?.scrollTo({ y: averageItemLength * index, animated: false });
+					}}
+					extraData={{ keyboardMode, focusedId, selectedIds }}
 					keyExtractor={(item) => item.id}
 					onViewableItemsChanged={onViewableItemsChanged}
 					viewabilityConfig={VIEWABILITY_CONFIG}
@@ -491,6 +595,8 @@ function ApplicationsList() {
 							<Animated.View
 								{...listItemMotion(index, firstAppearance)}
 								style={{
+									borderWidth: keyboardMode && focusedRow?.id === item.id ? 2 : 0,
+									borderColor: colors.accent,
 									borderBottomWidth: 1,
 									borderBottomColor: colors.line,
 									flexDirection: "row",

@@ -1,10 +1,10 @@
 import type { Application, ApplicationSummary } from "@/features/applications/types";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useHotkey } from "@tanstack/react-hotkeys";
+import { HotkeysProvider, useHotkey } from "@tanstack/react-hotkeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, stripSearchParams, useNavigate } from "@tanstack/react-router";
-import { useCallback, useDeferredValue, useEffect, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useId, useRef, useState } from "react";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
@@ -109,6 +109,7 @@ function RouteComponent() {
 	const phone = useBreakpoint() === "mobile";
 	// Typing filters at once; the URL only seeds the search.
 	const [query, setQuery] = useState(q);
+	const overlayScope = `applications-overlay-${useId()}`;
 	const pageRef = useRef<HTMLDivElement>(null);
 	const searchRef = useRef<HTMLInputElement>(null);
 	const [capture, setCapture] = useState(takePostingCapture);
@@ -282,17 +283,22 @@ function RouteComponent() {
 								<Icon name="dots-three" />
 							</DropdownMenuTrigger>
 							<DropdownMenuContent align="end">
-								<DropdownMenuItem onClick={() => setImporting(true)}>
-									<Trans>Import CSV…</Trans>
-								</DropdownMenuItem>
-								<DropdownMenuItem disabled={empty || !applications || exportLoading} onClick={() => void openExport()}>
-									<Trans>Export CSV…</Trans>
-								</DropdownMenuItem>
-								{!lanes.unsupported && (
-									<DropdownMenuItem onClick={() => setManagingLanes(true)}>
-										<Trans>Manage stages…</Trans>
+								<HotkeysProvider scope={`${overlayScope}-more`} exclusive>
+									<DropdownMenuItem onClick={() => setImporting(true)}>
+										<Trans>Import CSV…</Trans>
 									</DropdownMenuItem>
-								)}
+									<DropdownMenuItem
+										disabled={empty || !applications || exportLoading}
+										onClick={() => void openExport()}
+									>
+										<Trans>Export CSV…</Trans>
+									</DropdownMenuItem>
+									{!lanes.unsupported && (
+										<DropdownMenuItem onClick={() => setManagingLanes(true)}>
+											<Trans>Manage stages…</Trans>
+										</DropdownMenuItem>
+									)}
+								</HotkeysProvider>
 							</DropdownMenuContent>
 						</DropdownMenu>
 						{/* The empty state has its own Save job: one primary action, not two. */}
@@ -531,36 +537,42 @@ function RouteComponent() {
 				</>
 			)}
 
-			<AddApplicationDialog
-				open={adding}
-				initialCapture={capture}
-				onOpenChange={(open) => {
-					setAdding(open);
-					if (!open) setCapture(null);
-				}}
-				onAdded={setSelectedId}
-			/>
-			<ApplicationFormSheet
-				open={Boolean(editing)}
-				application={editing}
-				onOpenChange={(open) => !open && setEditing(null)}
-			/>
-			<ImportApplicationsSheet open={importing} onOpenChange={setImporting} />
-			<ManageLanesSheet open={managingLanes} onOpenChange={setManagingLanes} />
-			<ExportApplicationsSheet
-				open={exporting}
-				onOpenChange={setExporting}
-				applications={fullApplications ?? []}
-				filtered={filteredFullApplications.filter((application) => closed || application.status !== "closed")}
-			/>
-			<ApplicationDetailSheet
-				application={selected}
-				onOpenChange={(open) => !open && setSelectedId(null)}
-				onEditDetails={(application) => {
-					setSelectedId(null);
-					setEditing(application);
-				}}
-			/>
+			<HotkeysProvider
+				scope={overlayScope}
+				exclusive
+				enabled={adding || importing || exporting || managingLanes || !!editing || !!selectedId}
+			>
+				<AddApplicationDialog
+					open={adding}
+					initialCapture={capture}
+					onOpenChange={(open) => {
+						setAdding(open);
+						if (!open) setCapture(null);
+					}}
+					onAdded={setSelectedId}
+				/>
+				<ApplicationFormSheet
+					open={Boolean(editing)}
+					application={editing}
+					onOpenChange={(open) => !open && setEditing(null)}
+				/>
+				<ImportApplicationsSheet open={importing} onOpenChange={setImporting} />
+				<ManageLanesSheet open={managingLanes} onOpenChange={setManagingLanes} />
+				<ExportApplicationsSheet
+					open={exporting}
+					onOpenChange={setExporting}
+					applications={fullApplications ?? []}
+					filtered={filteredFullApplications.filter((application) => closed || application.status !== "closed")}
+				/>
+				<ApplicationDetailSheet
+					application={selected}
+					onOpenChange={(open) => !open && setSelectedId(null)}
+					onEditDetails={(application) => {
+						setSelectedId(null);
+						setEditing(application);
+					}}
+				/>
+			</HotkeysProvider>
 		</div>
 	);
 }
