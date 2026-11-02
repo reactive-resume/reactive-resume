@@ -30,7 +30,7 @@ import {
 	workspaceError,
 } from "../hooks";
 import { answersClipboard, answersDocument, countCharacters, countWords, diffWords, shortLabel } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, SaveError, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, CheckRow, SaveError, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { Preparation } from "../preparation";
 import { shareText } from "../share";
 import { WorkspaceScreen } from "../shell";
@@ -576,6 +576,7 @@ function AnswerCard({
 					onPress={() => void ask()}
 				/>
 			) : null}
+			{!readOnly && !proposal ? <GenerateNotice generate={generate} onRetry={() => void ask()} /> : null}
 
 			<Sheet open={menu} onClose={() => setMenu(false)} title={t`Question options`}>
 				<ListRow

@@ -35,7 +35,7 @@ import {
 } from "../hooks";
 import { formatMoney } from "../offer-compare";
 import { OfferEntry } from "../offer-entry";
-import { Swap, useCareerTime, Working, workingSteps } from "../shared";
+import { Swap, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import { getCategoryLane, getDisplayLane, getLaneLabel } from "@/features/applications/lanes";
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
@@ -123,6 +123,7 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 	const generate = useGenerate(application.id);
 	const { provider } = useDefaultProvider();
 	const flush = useDebouncedSave(readOnly || draft.restored ? initial : message, initial, onSave);
+	const read = () => void generate.run({ task: "reply", message: message.trim() }).catch(() => undefined);
 
 	return (
 		<div className="grid gap-3">
@@ -166,16 +167,12 @@ function PasteBox({ application, initial, readOnly, onSave }: PasteBoxProps) {
 						<Trans>Save message without AI</Trans>
 					</Button>
 					{provider && (
-						<Button
-							variant="secondary"
-							loading={generate.isPending}
-							disabled={!message.trim()}
-							onClick={() => void generate.run({ task: "reply", message: message.trim() }).catch(() => undefined)}
-						>
+						<Button variant="secondary" loading={generate.isPending} disabled={!message.trim()} onClick={read}>
 							{!generate.isPending && <Icon name="sparkle" size={18} />}
 							{generate.isPending ? <Working steps={workingSteps("reply")} /> : <Trans>Read it for me</Trans>}
 						</Button>
 					)}
+					<GenerateNotice generate={generate} onRetry={read} />
 				</div>
 			)}
 		</div>
@@ -195,6 +192,9 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const text = readOnly ? reply.data.reply : draft.value;
 	// The employer's language is the default; this is the explicit way back to the words the user reads everything else in.
 	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
+
+	const rewrite = () =>
+		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
 	const copy = async () => {
 		await navigator.clipboard.writeText(text);
@@ -246,21 +246,12 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 							<Trans>You send it from your own email.</Trans>
 						</span>
 						{!readOnly && provider && (
-							<Button
-								variant="ghost"
-								size="sm"
-								className="ms-auto"
-								loading={generate.isPending}
-								onClick={() =>
-									void generate
-										.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale })
-										.catch(() => undefined)
-								}
-							>
+							<Button variant="ghost" size="sm" className="ms-auto" loading={generate.isPending} onClick={rewrite}>
 								<Trans>Write a new reply in {languageName}</Trans>
 							</Button>
 						)}
 					</div>
+					{!readOnly && <GenerateNotice generate={generate} onRetry={rewrite} className="w-fit" />}
 				</>
 			)}
 		</section>

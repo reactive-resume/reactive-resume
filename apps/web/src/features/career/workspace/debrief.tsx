@@ -18,7 +18,7 @@ import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
 import { cn } from "@reactive-resume/utils/style";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useTicks } from "../hooks";
-import { FilterChip, MemoryProposal, useCareerTime, Working, workingSteps } from "../shared";
+import { FilterChip, MemoryProposal, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import { buildIcs } from "@/features/applications/ics";
 import { isInterview } from "@/features/applications/interviews";
@@ -233,6 +233,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 					<Button disabled={!ready || !provider} loading={generate.isPending} onClick={submit}>
 						{generate.isPending ? <Working steps={workingSteps("debrief")} /> : <Trans>Review my answer</Trans>}
 					</Button>
+					<GenerateNotice generate={generate} onRetry={submit} />
 					<AiNotice task="debrief" application={application} interview={Boolean(round)} />
 				</div>
 			)}

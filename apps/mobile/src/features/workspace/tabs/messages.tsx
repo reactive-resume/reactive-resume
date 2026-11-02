@@ -16,7 +16,17 @@ import { offerTermKeys } from "@reactive-resume/schema/career-offer";
 import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { latest, useAutosave, useDraft, useGenerate, useSavedItems, useWorkspace } from "../hooks";
 import { isFixedChange, needsSubmission, openChanges } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, Pill, SaveError, useWorking, workingSteps } from "../parts";
+import {
+	Actions,
+	AiNotice,
+	Block,
+	CheckRow,
+	Pill,
+	SaveError,
+	GenerateNotice,
+	useWorking,
+	workingSteps,
+} from "../parts";
 import { WorkspaceScreen } from "../shell";
 import { createPendingRegistry, dispatchForOrigin } from "../state";
 import { client, orpc } from "@/api/client";
@@ -115,6 +125,7 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 	const provider = useHasAIProvider().defaultProvider;
 	const autosave = useAutosave(readOnly ? initial : message, initial, onSave, draft, fetchServer);
 	const label = useWorking(generate.isPending, workingSteps("reply"), t`Read it for me`);
+	const read = () => void generate.run({ task: "reply", message: message.trim() }).catch(() => undefined);
 	const company = application.company;
 
 	return (
@@ -151,9 +162,10 @@ function PasteBox({ application, initial, readOnly, onSave, fetchServer }: Paste
 							label={label}
 							loading={generate.isPending}
 							disabled={!message.trim()}
-							onPress={() => void generate.run({ task: "reply", message: message.trim() }).catch(() => undefined)}
+							onPress={read}
 						/>
 					) : null}
+					<GenerateNotice generate={generate} onRetry={read} />
 				</View>
 			) : null}
 		</View>
@@ -172,6 +184,8 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 	const text = readOnly ? reply.data.reply : draft.value;
 	// The employer's language is the default; this is the explicit way back to the user's interface language.
 	const languageName = new Intl.DisplayNames([i18n.locale], { type: "language" }).of(i18n.locale) ?? i18n.locale;
+	const rewrite = () =>
+		void generate.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale }).catch(() => undefined);
 
 	const copy = async () => {
 		await Clipboard.setStringAsync(text);
@@ -209,14 +223,11 @@ function ReplyCard({ reply, application, readOnly }: ReplyCardProps) {
 								size="sm"
 								label={t`Write a new reply in ${languageName}`}
 								loading={generate.isPending}
-								onPress={() =>
-									void generate
-										.run({ task: "reply", message: reply.data.message, replyLocale: i18n.locale })
-										.catch(() => undefined)
-								}
+								onPress={rewrite}
 							/>
 						) : null}
 					</Actions>
+					{!readOnly ? <GenerateNotice generate={generate} onRetry={rewrite} /> : null}
 					<Text variant="caption" color="ink3">
 						{t`You send it from your own email.`}
 					</Text>

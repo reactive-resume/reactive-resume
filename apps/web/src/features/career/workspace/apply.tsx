@@ -38,7 +38,7 @@ import {
 	useSessionDraft,
 	useWorkspace,
 } from "../hooks";
-import { CollapseRow, Swap, withUndo, Working, workingSteps } from "../shared";
+import { CollapseRow, Swap, withUndo, GenerateNotice, Working, workingSteps } from "../shared";
 import { AnswerLibrary } from "./answer-library";
 import { AiNotice } from "./fit";
 import { Preparation } from "./preparation";
@@ -648,6 +648,7 @@ function AnswerCard({
 					</Button>
 				)}
 			</div>
+			{!readOnly && !proposal && <GenerateNotice generate={generate} onRetry={() => void ask()} className="w-fit" />}
 		</section>
 	);
 }

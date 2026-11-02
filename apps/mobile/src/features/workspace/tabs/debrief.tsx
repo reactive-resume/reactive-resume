@@ -12,7 +12,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { latest, useDraft, useFacts, useGenerate, useSavedItems, useTicks, workspaceError } from "../hooks";
 import { debriefRound, nextEvening } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, Pill, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, CheckRow, Pill, GenerateNotice, useWorking, workingSteps } from "../parts";
 import { shareText } from "../share";
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
@@ -196,6 +196,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 			{!readOnly ? (
 				<View style={{ gap: space.s2 }}>
 					<Button label={reviewLabel} disabled={!ready || !provider} loading={generate.isPending} onPress={submit} />
+					<GenerateNotice generate={generate} onRetry={submit} />
 					<AiNotice task="debrief" application={application} interview={Boolean(round)} />
 				</View>
 			) : null}

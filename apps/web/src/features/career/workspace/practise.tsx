@@ -23,7 +23,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/com
 import { cn } from "@reactive-resume/utils/style";
 import { useCoachKnowledge } from "../coach-thread";
 import { latest, useDefaultProvider, useGenerate, useSavedItems, useSessionDraft } from "../hooks";
-import { CollapseRow, PrivacyLine, useCareerTime, Working, workingSteps } from "../shared";
+import { CollapseRow, PrivacyLine, useCareerTime, GenerateNotice, Working, workingSteps } from "../shared";
 import { AiNotice } from "./fit";
 import {
 	acceptAudioFile,
@@ -670,6 +670,7 @@ function Session({
 							<Trans>Compared with your stories and the posting.</Trans>
 						</p>
 					</div>
+					<GenerateNotice generate={generate} onRetry={getFeedback} className="w-fit" />
 					<AiNotice task="practice" application={application} interview={interviewId !== null} />
 				</div>
 			</section>
