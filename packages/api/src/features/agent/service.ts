@@ -177,12 +177,13 @@ type AttachmentModelInput = {
 };
 
 type ThreadSummaryRow = AgentThreadRecord & {
-	firstMessage?: UIMessage | null;
+	firstMessage?: string | null;
 	resumeName?: string | null;
 	coverLetterName?: string | null;
 	providerLabel?: string | null;
 };
 
+/** The original request stays discoverable after a proposed task retitles the conversation. */
 function toThreadSummary(row: ThreadSummaryRow) {
 	return {
 		id: row.id,
@@ -723,15 +724,16 @@ function messageText(message: UIMessage) {
 	return textParts.join(" ").trim();
 }
 
-/** The first message names the conversation: up to 57 characters, or 44 in the career coach's list. */
-function buildThreadTitle(message: UIMessage, fallback: string, max = 60) {
-	const text = messageText(message).replace(/\s+/g, " ").trim();
+/** Opening text names new conversations; history uses a longer preview of that same request. */
+function buildThreadTitle(input: string, fallback: string, max = 60) {
+	const text = input.replace(/\s+/g, " ").trim();
 	if (!text) return fallback;
 	if (text.length <= max) return text;
 	// Cut at a word, with one ellipsis character, so the list doesn't add a second.
 	const cut = text.slice(0, max - 1);
 	const space = cut.lastIndexOf(" ");
-	return `${(space > max / 2 ? cut.slice(0, space) : cut).trimEnd()}…`;
+	const bounded = (space > max / 2 ? cut.slice(0, space) : cut).trimEnd();
+	return `${bounded.replace(/[\uD800-\uDBFF]$/u, "")}…`;
 }
 
 /**
@@ -1121,12 +1123,20 @@ function createAgent(input: {
 
 const threadSummarySelection = {
 	...getColumns(schema.agentThread),
-	firstMessage: sql<UIMessage | null>`(
-		select ${schema.agentMessage.uiMessage} from ${schema.agentMessage}
-		where ${schema.agentMessage.threadId} = ${schema.agentThread.id}
-			and ${schema.agentMessage.userId} = ${schema.agentThread.userId}
-			and ${schema.agentMessage.role} = 'user'
-		order by ${schema.agentMessage.sequence} asc limit 1
+	// One extra character preserves truncation detection; full messages stay in PostgreSQL.
+	firstMessage: sql<string | null>`(
+		select left(btrim(regexp_replace(coalesce((
+			select string_agg(part.value ->> 'text', ' ' order by part.position)
+			from jsonb_array_elements(opening.message -> 'parts') with ordinality as part(value, position)
+			where part.value ->> 'type' = 'text'
+		), ''), '[[:space:]]+', ' ', 'g')), 161)
+		from (
+			select ${schema.agentMessage.uiMessage} as message from ${schema.agentMessage}
+			where ${schema.agentMessage.threadId} = ${schema.agentThread.id}
+				and ${schema.agentMessage.userId} = ${schema.agentThread.userId}
+				and ${schema.agentMessage.role} = 'user'
+			order by ${schema.agentMessage.sequence} asc limit 1
+		) opening
 	)`,
 	resumeName: schema.resume.name,
 	coverLetterName: schema.coverLetter.name,
@@ -1564,7 +1574,7 @@ export const agentService = {
 					if ((messageCount?.total ?? 0) === 1) {
 						await db
 							.update(schema.agentThread)
-							.set({ title: buildThreadTitle(userMessage, thread.title, isCareer ? 47 : 60) })
+							.set({ title: buildThreadTitle(messageText(userMessage), thread.title, isCareer ? 47 : 60) })
 							.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
 					}
 				}

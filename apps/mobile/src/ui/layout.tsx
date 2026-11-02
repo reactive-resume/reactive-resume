@@ -30,7 +30,8 @@ const android = Platform.OS === "android";
 
 export type ListRowProps = {
 	title: string;
-	subtitle?: string | undefined;
+	/** Strings use standard subtitle styling; an element owns its text layout. */
+	subtitle?: string | ReactElement | undefined;
 	/** An icon name, or any element (avatar, checkbox, thumbnail). */
 	leading?: IconName | ReactNode;
 	/** A value, switch or badge at the end. */
@@ -53,6 +54,7 @@ export type ListRowProps = {
 	divider?: boolean | undefined;
 };
 
+/** Strings share row typography; elements retain their own layout and truncation. */
 export function ListRow({
 	title,
 	subtitle,
@@ -164,9 +166,13 @@ export function ListRow({
 					{title}
 				</Text>
 				{subtitle ? (
-					<Text variant="callout" color={quiet}>
-						{subtitle}
-					</Text>
+					typeof subtitle === "string" ? (
+						<Text variant="callout" color={quiet}>
+							{subtitle}
+						</Text>
+					) : (
+						subtitle
+					)
 				) : null}
 				{stacked && (value || trailing) ? (
 					<View style={{ alignItems: "flex-start", gap: space.s1, paddingTop: space.s1 }}>{accessory}</View>

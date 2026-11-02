@@ -706,6 +706,7 @@ type ConversationRowProps = {
 	onDelete: () => void;
 };
 
+/** A request remains recognizable even when its proposed edits give the conversation a new title. */
 function ConversationRow({ thread, current, detail, index, onOpen, onDelete }: ConversationRowProps) {
 	return (
 		<li

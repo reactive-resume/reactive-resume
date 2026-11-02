@@ -1,6 +1,7 @@
 import type { ProposeEditsOutput } from "@reactive-resume/ai/tools/agent-tool-contracts";
 import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { UIMessage } from "ai";
+import type { QueryConfig } from "pg";
 import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
@@ -300,13 +301,44 @@ describe.skipIf(!databaseUrl)("document assistant review on PostgreSQL", () => {
 			sequence: 0,
 			uiMessage: {
 				role: "user",
-				parts: [{ type: "text", text: "Research roles and prepare my summary. ".repeat(10) }],
+				parts: [{ type: "text", text: "Research roles and prepare my summary. ".repeat(10_000) }],
 			},
 		});
-		const preview = (await agent.threads.list({ userId })).find((row) => row.id === empty.id)?.firstMessage;
+		// Observe actual PostgreSQL result bytes before the service formats its preview.
+		let databaseBytes = 0;
+		const query: (config: string | QueryConfig, values?: unknown[]) => Promise<{ rows: unknown[] }> =
+			pool.query.bind(pool);
+		const capture = vi.spyOn(pool, "query").mockImplementation((...args) => {
+			const result: ReturnType<typeof query> = Reflect.apply(query, pool, args);
+			return result.then((result) => {
+				databaseBytes += Buffer.byteLength(JSON.stringify(result.rows));
+				return result;
+			});
+		});
+		let preview: string | null | undefined;
+		try {
+			preview = (await agent.threads.list({ userId })).find((row) => row.id === empty.id)?.firstMessage;
+		} finally {
+			capture.mockRestore();
+		}
+		expect(databaseBytes).toBeGreaterThan(0);
+		expect(databaseBytes).toBeLessThan(10_000);
 		expect(preview).toMatch(/^Research roles.*…$/);
 		expect(preview?.length).toBeLessThanOrEqual(160);
 		expect(fixture.prompts).toHaveLength(calls);
+	});
+
+	it("keeps emoji intact at both the initial task-title and history-preview cutoffs", async () => {
+		const thread = await agent.threads.start({ userId, resumeId: copyId });
+		const text = `${"a".repeat(58)}😀${"b".repeat(98)}😀tail`;
+		fixture.plan.push({ text: "Done." });
+		await send(thread.id, {}, { id: randomUUID(), role: "user", parts: [{ type: "text", text }] });
+		const summary = (await agent.threads.list({ userId })).find((row) => row.id === thread.id);
+		expect.soft(summary?.title.isWellFormed()).toBe(true);
+		expect.soft(summary?.firstMessage?.isWellFormed()).toBe(true);
+		expect(summary?.title).not.toContain("\uFFFD");
+		expect(summary?.title.length).toBeLessThanOrEqual(60);
+		expect(summary?.firstMessage?.length).toBeLessThanOrEqual(160);
 	});
 
 	it("never sends or shows a Knowledge reply once sharing is off or the fact is forgotten", async () => {

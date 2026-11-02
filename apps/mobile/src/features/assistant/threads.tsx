@@ -86,18 +86,24 @@ export function PastConversations({ threads, isMine, currentId, onOpen, onDelete
 		<ListRow
 			key={thread.id}
 			title={title(thread)}
-			subtitle={[
-				thread.firstMessage,
-				[
-					time(thread.lastMessageAt),
-					outcome(thread),
-					...(other ? [thread.coverLetterName ?? thread.resumeName ?? ""] : []),
-				]
-					.filter(Boolean)
-					.join(" · "),
-			]
-				.filter(Boolean)
-				.join("\n")}
+			subtitle={
+				<View style={{ gap: 1 }}>
+					{thread.firstMessage ? (
+						<Text variant="callout" color="ink2" numberOfLines={1} ellipsizeMode="tail">
+							{thread.firstMessage}
+						</Text>
+					) : null}
+					<Text variant="callout" color={thread.id === currentId ? "ink2" : "ink3"}>
+						{[
+							time(thread.lastMessageAt),
+							outcome(thread),
+							...(other ? [thread.coverLetterName ?? thread.resumeName ?? ""] : []),
+						]
+							.filter(Boolean)
+							.join(" · ")}
+					</Text>
+				</View>
+			}
 			selected={thread.id === currentId}
 			onPress={() => onOpen(thread)}
 			trailing={<IconButton icon="dots-three" label={t`Delete ${title(thread)}`} onPress={() => remove.ask(thread)} />}
