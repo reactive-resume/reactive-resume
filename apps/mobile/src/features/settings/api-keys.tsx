@@ -18,6 +18,12 @@ import {
 	useFirstAppearance,
 } from "@/ui";
 
+/** Keys without a permission statement predate access choices and can do everything. */
+function isReadOnly(permissions: Record<string, string[]> | null | undefined): boolean {
+	const api = permissions?.api;
+	return Array.isArray(api) && !api.includes("write") && !api.includes("delete");
+}
+
 type ApiKeysProps = { userId: string };
 export function ApiKeys({ userId }: ApiKeysProps) {
 	const { t, i18n } = useLingui();
@@ -72,7 +78,7 @@ export function ApiKeys({ userId }: ApiKeysProps) {
 				<Animated.View key={key.id} {...listItemMotion(index, firstAppearance)} layout={listLayout}>
 					<ListRow
 						title={key.name ?? t`Unnamed key`}
-						subtitle={t`Created ${date(key.createdAt)} · Last used ${date(key.lastRequest)} · Expires ${date(key.expiresAt)}`}
+						subtitle={`${isReadOnly(key.permissions) ? t`Read only` : t`Full access`} · ${t`Created ${date(key.createdAt)} · Last used ${date(key.lastRequest)} · Expires ${date(key.expiresAt)}`}`}
 						leading="key"
 						trailing={<Text color="dangerText">{t`Revoke`}</Text>}
 						accessibilityHint={t`Revoke this API key`}

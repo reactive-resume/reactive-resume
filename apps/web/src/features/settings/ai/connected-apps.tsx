@@ -102,12 +102,12 @@ export function ConnectedAppsSection() {
 											<Trans>Read, change and delete documents and applications (legacy connection).</Trans>
 										</li>
 									)}
-									{connection.scopes.includes("profile") && (
+									{connection.scopes.includes("profile") && !connection.scopes.includes("api:read") && (
 										<li>
 											<Trans>Read your profile information.</Trans>
 										</li>
 									)}
-									{connection.scopes.includes("email") && (
+									{connection.scopes.includes("email") && !connection.scopes.includes("api:read") && (
 										<li>
 											<Trans>Read your email address.</Trans>
 										</li>
