@@ -145,10 +145,20 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 												action: {
 													label: t`Undo`,
 													onPress: () => {
+														// Counted by the server: one already restored elsewhere, or deleted, isn't confirmed.
+														let restored = 0;
 														void pending.current
-															.then(() => operations.run(() => client.documents.restore({ type: "resume", id })))
+															.then(() =>
+																operations.run(async () => {
+																	restored = (
+																		await client.documents.restoreMany({ documents: [{ type: "resume", id }] })
+																	).restored;
+																}),
+															)
 															.then((done) => {
-																if (done) confirmUndone();
+																if (done && restored > 0) confirmUndone();
+																else if (done)
+																	showToast({ message: t`Nothing to undo: it was already restored or deleted.` });
 															});
 													},
 												},

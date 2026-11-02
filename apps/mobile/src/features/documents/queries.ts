@@ -161,21 +161,30 @@ export function useDocumentOperations(enabled = true) {
 					? {
 							label: t`Undo`,
 							onPress: () => {
-								let restored: DocumentSummary[] = [];
+								// The server counts only documents it restored: one already back (another device) or deleted
+								// since isn't counted (web document-actions).
+								let restored = 0;
+								let started = false;
 								void idle.current
 									.then(() =>
 										run(async () => {
-											restored = await batch(done, (document) => client.documents.restore(documentRef(document)), {
-												notify: false,
-											});
+											started = true;
+											for (const group of chunks(done)) {
+												if (getServer() !== session.server) break;
+												try {
+													restored += (await client.documents.restoreMany({ documents: group.map(documentRef) }))
+														.restored;
+												} catch {
+													/* The remaining groups can still succeed. */
+												}
+											}
 										}),
 									)
 									.then(() => {
-										// As on web: "Restored" when everything came back, otherwise how many did.
-										if (restored.length === done.length) return confirmUndone();
-										showToast({
-											message: t`Restored ${restored.length} of ${done.length}. The rest are still in Trash.`,
-										});
+										// A run that couldn't start (offline, signed out) already said why.
+										if (!started) return;
+										if (restored === done.length) return confirmUndone();
+										showToast({ message: t`Restored ${restored} of ${done.length}.` });
 									});
 							},
 						}

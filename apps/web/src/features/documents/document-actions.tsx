@@ -66,6 +66,8 @@ export function useDocumentActions() {
 	const setLocked = useMutation(orpc.documents.setLocked.mutationOptions({ onSettled: refresh }));
 	const trash = useMutation(orpc.documents.trash.mutationOptions({ onSettled: refresh }));
 	const restore = useMutation(orpc.documents.restore.mutationOptions({ onSettled: refresh }));
+	// Undo counts what it brought back: restoring one that's already back (another tab) or gone changes nothing.
+	const restoreMany = useMutation(orpc.documents.restoreMany.mutationOptions({ onSettled: refresh }));
 	const purge = useMutation(orpc.documents.purge.mutationOptions({ onSettled: refresh }));
 	const duplicateResume = useMutation(orpc.resume.duplicate.mutationOptions({ onSettled: refresh }));
 	const duplicateLetter = useMutation(orpc.coverLetters.duplicate.mutationOptions({ onSettled: refresh }));
@@ -115,9 +117,13 @@ export function useDocumentActions() {
 						children: t`Undo`,
 						// The trashed card has gone, and a mutation's own callbacks with it: catch the promise.
 						onClick: () =>
-							void restore
-								.mutateAsync(ref(document))
-								.then(confirmUndone)
+							void restoreMany
+								.mutateAsync({ documents: [ref(document)] })
+								.then(({ restored }) =>
+									restored > 0
+										? confirmUndone()
+										: toast.add({ description: t`Nothing to undo: it was already restored or deleted.` }),
+								)
 								.catch((error: unknown) => toastError(error, t`Couldn't restore the document. Try again.`)),
 					},
 				});
@@ -162,7 +168,6 @@ export function useBatchActions() {
 	const refresh = useRefreshDocuments();
 	const setLocked = useMutation(orpc.documents.setLocked.mutationOptions());
 	const trash = useMutation(orpc.documents.trash.mutationOptions());
-	const restore = useMutation(orpc.documents.restore.mutationOptions());
 	const restoreMany = useMutation(orpc.documents.restoreMany.mutationOptions());
 	const purgeMany = useMutation(orpc.documents.purgeMany.mutationOptions());
 	const emptyTrash = useMutation(orpc.documents.emptyTrash.mutationOptions());
@@ -231,20 +236,24 @@ export function useBatchActions() {
 						: t`Moved ${done.length} of ${documents.length} to Trash. Locked documents were skipped.`,
 				actionProps: {
 					children: t`Undo`,
-					// Confirmed like a single Undo when everything came back; otherwise how many did, and that the rest wait in
-					// Trash.
+					// Confirmed like a single Undo when everything came back; otherwise how many did. The server counts only
+					// documents it restored: one already back (another tab) or deleted since isn't counted.
 					onClick: () =>
-						void run(
-							done,
-							() => true,
-							(document) => restore.mutateAsync({ type: document.type, id: document.id }),
-						).then((restored) => {
-							if (restored.length === done.length) return confirmUndone();
-							toast.add({
-								type: restored.length === 0 ? "error" : undefined,
-								description: t`Restored ${restored.length} of ${done.length}. The rest are still in Trash.`,
-							});
-						}),
+						void (async () => {
+							let restored = 0;
+							let failure: unknown;
+							for (const group of chunks(done)) {
+								try {
+									restored += (await restoreMany.mutateAsync({ documents: group.map(ref) })).restored;
+								} catch (error) {
+									failure = error;
+								}
+							}
+							await refresh();
+							if (restored === done.length) return confirmUndone();
+							if (restored === 0 && failure) return toastError(failure, t`Couldn't restore them. Try again.`);
+							toast.add({ description: t`Restored ${restored} of ${done.length}.` });
+						})(),
 				},
 			});
 		},
