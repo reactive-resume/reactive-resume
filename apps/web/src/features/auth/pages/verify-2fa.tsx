@@ -54,8 +54,9 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 			let { data, error } = backupCode
 				? await authClient.twoFactor.verifyBackupCode(options)
 				: await authClient.twoFactor.verifyTotp(options);
-			// New backup codes are all capitals; older ones mix cases. Typed in lower case, try it in capitals too.
-			if (error && backupCode && code !== code.toUpperCase())
+			// New backup codes are all capitals; older ones mix cases. A lower-case code that didn't match gets one
+			// retry in capitals; other failures (an expired challenge, rate limits) don't spend another attempt.
+			if (error?.code === "INVALID_BACKUP_CODE" && backupCode && code !== code.toUpperCase())
 				({ data, error } = await authClient.twoFactor.verifyBackupCode({ ...options, code: code.toUpperCase() }));
 
 			if (error) {

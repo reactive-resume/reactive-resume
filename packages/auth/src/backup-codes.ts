@@ -23,5 +23,8 @@ function randomCode(): string {
 
 /** Ten new backup codes, for Better Auth's `twoFactor({ backupCodeOptions: { customBackupCodesGenerate } })`. */
 export function generateBackupCodes(amount = 10): string[] {
-	return Array.from({ length: amount }, randomCode);
+	// Using a code removes every matching entry, so a repeat would cost a code: draw until all are distinct.
+	const codes = new Set<string>();
+	while (codes.size < amount) codes.add(randomCode());
+	return [...codes];
 }
