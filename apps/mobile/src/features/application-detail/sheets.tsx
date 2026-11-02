@@ -536,6 +536,9 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 	const remove = (index: number) => {
 		const contact = application.contacts[index];
 		if (!contact) return;
+		// Identical contacts are allowed, so Undo compares how many match, not whether one does.
+		const matches = (list: Contact[]) => list.filter((item) => sameContact(item, contact)).length;
+		const before = matches(application.contacts);
 		if (editing) {
 			setEditing(null);
 			setDraft(EMPTY_CONTACT);
@@ -548,7 +551,7 @@ export function ContactsSheet({ application, open, onClose }: ApplicationContent
 					message: t`Removed ${contact.name}`,
 					undo: () => {
 						const current = latest.current;
-						if (current.some((item) => sameContact(item, contact))) return;
+						if (matches(current) >= before) return;
 						save([...current.slice(0, index), contact, ...current.slice(index)]);
 					},
 				}),

@@ -8,6 +8,7 @@ import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@reactive-resume/ui/components/popover";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { withUndo } from "@/features/career/shared";
 
 const EMPTY_CONTACT = { name: "", role: "", type: "", email: "", phone: "" };
@@ -111,15 +112,24 @@ function ContactList({ contacts, disabled, onChange, removing, onRemoving, lates
 	};
 
 	const remove = (contact: Contact) => {
+		// The list as it was: if it changes before the Undo closes (another tab or device), the removal stops.
+		const snapshot = contacts.map(contactKey).join("\n");
 		onRemoving(contact);
 		withUndo({
 			description: t`Removed ${contact.name}`,
 			onUndo: () => onRemoving(null),
 			commit: () => {
 				const current = latest.current;
-				const at = current.findIndex((item) => item === contact || sameContact(item, contact));
-				if (at !== -1) onChange(current.filter((_, index) => index !== at));
 				onRemoving(null);
+				if (current.map(contactKey).join("\n") !== snapshot) {
+					toast.add({
+						type: "error",
+						description: t`The contacts changed somewhere else, so ${contact.name} wasn't removed. Remove it again.`,
+					});
+					return;
+				}
+				const at = current.indexOf(contact);
+				onChange(current.filter((_, index) => index !== (at === -1 ? contacts.indexOf(contact) : at)));
 			},
 		});
 	};

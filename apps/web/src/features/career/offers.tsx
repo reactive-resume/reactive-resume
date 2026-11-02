@@ -774,7 +774,9 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 
 	const priorities = profile?.priorities.trim() ?? "";
 	// The first sentence keeps the lead-in short; the full text is in Preferences.
-	const said = priorities.length > 160 ? (priorities.split(/(?<=[.!?])\s/)[0] ?? priorities) : priorities;
+	const firstPriority = priorities.length > 160 ? (priorities.split(/(?<=[.!?])\s/)[0] ?? priorities) : priorities;
+	// The quote ends its own sentence: a full stop inside it unless it already has one. Named `said` for translators.
+	const said = firstPriority ? sentence(firstPriority) : "";
 
 	const copy = async () => {
 		try {
@@ -799,11 +801,10 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 			) : (
 				<>
 					<p className="text-[13px] leading-[19px] text-ink-2">
-						{/* The quote ends its own sentence: a full stop inside it unless it already has one. */}
 						{said
 							? offers.filter(isDeciding).length > 1
-								? t`You said: “${sentence(said)}” Ask both companies before deciding.`
-								: t`You said: “${sentence(said)}” Ask before deciding.`
+								? t`You said: “${said}” Ask both companies before deciding.`
+								: t`You said: “${said}” Ask before deciding.`
 							: t`Ask before deciding.`}
 					</p>
 					<ol className="grid gap-2">
