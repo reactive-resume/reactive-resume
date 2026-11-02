@@ -11,18 +11,27 @@ msg({
 	message: "We received a request to reset your {appName} password.",
 	comment: "Password reset email. appName: Reactive Resume",
 });
-msg`Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged.`;
+msg`The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same.`;
 msg`Create new password`;
 msg`For security, only use links from emails sent by Reactive Resume.`;
 msg`Verify your email`;
 msg({ message: "Verify your email for {appName}", comment: "Email preview text. appName: Reactive Resume" });
 msg({
-	message: "Thanks for signing up for {appName}. Verify your email address to continue.",
+	message: "Confirm this is your email address for {appName}. The link works for 1 hour.",
 	comment: "Verification email. appName: Reactive Resume",
 });
 msg`This confirms the address belongs to you, which keeps your account secure.`;
 msg`Verify email`;
-msg`If you did not create this account, you can safely ignore this email.`;
+msg`If you didn't ask for this, you can ignore this email.`;
+msg`Confirm your new email`;
+msg({ message: "Confirm your new {appName} email address", comment: "Email preview text. appName: Reactive Resume" });
+msg`Confirm your new email address`;
+msg({
+	message: "Confirm this address to finish changing your {appName} email. The link works for 1 hour.",
+	comment: "Email sent to a new address to finish an email change. appName: Reactive Resume",
+});
+msg`Confirm email`;
+msg`If you didn't ask for this, ignore this email; your account won't change.`;
 msg`Approve your email change`;
 msg({
 	message: "Approve changing your {appName} email address",

@@ -5,7 +5,7 @@ import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { QRCodeSVG } from "qrcode.react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { match } from "ts-pattern";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
@@ -18,7 +18,6 @@ import {
 } from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Icon } from "@reactive-resume/ui/components/icon";
-import { Input } from "@reactive-resume/ui/components/input";
 import { OTPField } from "@reactive-resume/ui/components/otp-field";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { downloadWithAnchor } from "@reactive-resume/utils/file";
@@ -98,6 +97,11 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 		},
 	});
 
+	const codeRef = useRef<HTMLDivElement>(null);
+	// The code boxes take focus as the verify step opens, so typing the code works at once.
+	useEffect(() => {
+		if (step === "verify") codeRef.current?.querySelector("input")?.focus();
+	}, [step]);
 	const verifyForm = useAppForm({
 		defaultValues: { code: "" },
 		validators: { onSubmit: verifyFormSchema },
@@ -118,6 +122,9 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 					),
 					id: toastId,
 				});
+				// A wrong code is cleared and the first box takes focus again.
+				verifyForm.setFieldValue("code", "");
+				codeRef.current?.querySelector("input")?.focus();
 				return;
 			}
 
@@ -229,22 +236,31 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 					const secret = totpUri ? extractSecretFromTotpUri(totpUri) : null;
 					return (
 						<div className="space-y-4">
+							{/* Most people scan: the QR code leads, centred; the whole key follows as the fallback. */}
 							{totpUri && secret && (
 								<>
-									<div className="flex items-center gap-x-2">
-										<Input readOnly value={secret} className="font-mono text-sm" />
-										<Button size="icon" variant="ghost" type="button" onClick={handleCopySecret}>
-											<span className="sr-only">
-												{t({
-													comment: "Accessible label for the button that copies the two-factor secret key",
-													message: "Copy secret",
-												})}
-											</span>
-											<Icon name="copy" size={16} />
-										</Button>
+									<div className="flex justify-center">
+										<TwoFactorQRCode totpUri={totpUri} />
 									</div>
-
-									<TwoFactorQRCode totpUri={totpUri} />
+									<div className="grid gap-1.5">
+										<p className="text-sm text-ink-2">
+											<Trans>Can't scan? Enter this key in the app:</Trans>
+										</p>
+										<div className="flex items-start gap-x-2">
+											<code className="min-w-0 flex-1 rounded-md bg-sunken px-3 py-2 font-mono text-sm leading-6 break-all">
+												{secret.match(/.{1,4}/g)?.join(" ")}
+											</code>
+											<Button size="icon" variant="ghost" type="button" onClick={handleCopySecret}>
+												<span className="sr-only">
+													{t({
+														comment: "Accessible label for the button that copies the two-factor secret key",
+														message: "Copy secret",
+													})}
+												</span>
+												<Icon name="copy" size={16} />
+											</Button>
+										</div>
+									</div>
 								</>
 							)}
 
@@ -262,7 +278,7 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 							>
 								<verifyForm.Field name="code">
 									{(field) => (
-										<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+										<FormItem ref={codeRef} hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
 											<FormLabel className="sr-only">
 												<Trans>Verification code</Trans>
 											</FormLabel>

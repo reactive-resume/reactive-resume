@@ -286,6 +286,7 @@ test("native account export stays bound to its account through fetch and file wr
 					shareAsync: async () => shares++,
 				},
 				"./export-cache": { clearAccountExportCache() {} },
+				"@reactive-resume/utils/account-zip": { buildAccountZip: () => new Uint8Array([80, 75]) },
 				"@/auth/session": { getAccountScope: () => scope },
 				"@/api/client": {
 					client: {

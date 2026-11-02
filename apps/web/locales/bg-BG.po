@@ -2142,10 +2142,6 @@ msgstr "Всички кандидатури"
 msgid "All applications (including closed)"
 msgstr "Всички кандидатури за работа (включително затворени)"
 
-#: src/features/settings/account/data.tsx
-msgid "All documents and applications as JSON, in one zip"
-msgstr "Всички документи и кандидатури за работа като JSON, в един цип"
-
 #: src/features/documents/trash-page.tsx
 msgid "All documents in Trash will be deleted for good and can't be restored."
 msgstr ""
@@ -3096,6 +3092,10 @@ msgstr "Може ли да ми помогне да се подготвя за �
 msgid "Can software read your resume?"
 msgstr "Може ли софтуерът да прочете вашето резюме?"
 
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Can't scan? Enter this key in the app:"
+msgstr ""
+
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/applications/components/application-form-sheet.tsx
@@ -3264,6 +3264,10 @@ msgstr "Променя само заглавията на секциите и д
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
 msgstr ""
+
+#: src/features/settings/account/profile.tsx
+msgid "Changing it asks your current address to approve, then confirms the new one. Your username is part of every public link."
+msgstr "Промяната му първо иска одобрение от текущия ви адрес, след което потвърждава новия. Вашето потребителско име е част от всяка публична връзка."
 
 #: src/features/settings/account/profile.tsx
 msgid "Changing it sends a confirmation to the new address. Your username is part of every public link."
@@ -3848,6 +3852,10 @@ msgstr "Потвърждаване"
 msgid "Confirm applied"
 msgstr "Потвърдете подаването"
 
+#: src/features/auth/email-text.ts
+msgid "Confirm email"
+msgstr ""
+
 #: src/features/resume/builder/password-dialog.tsx
 msgid "Confirm password"
 msgstr "Потвърди паролата"
@@ -3867,6 +3875,29 @@ msgstr "Потвърдете часа с {contact}, преди да добави
 #: src/features/career/workspace/prepare.tsx
 msgid "Confirm the time, link and who you'll meet. Glance at the resume and letter you sent."
 msgstr "Потвърдете часа, връзката и с кого ще се срещнете. Погледнете автобиографията и писмото, които изпратихте."
+
+#. Email sent to a new address to finish an email change. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this address to finish changing your {appName} email. The link works for 1 hour."
+msgstr ""
+
+#. Verification email. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm this is your email address for {appName}. The link works for 1 hour."
+msgstr ""
+
+#. Email preview text. appName: Reactive Resume
+#: src/features/auth/email-text.ts
+msgid "Confirm your new {appName} email address"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email"
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "Confirm your new email address"
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "Confirms {time} today, by video."
@@ -5649,6 +5680,10 @@ msgstr "Документи за тази работа"
 #: src/features/documents/trash-page.tsx
 msgid "Documents you move here stay for 30 days."
 msgstr "Документите, които преместите тук, остават 30 дни."
+
+#: src/features/settings/account/data.tsx
+msgid "Documents, applications and Career data as JSON, in one zip"
+msgstr ""
 
 #: src/features/homepage/faq.tsx
 msgid "Does it use AI?"
@@ -7500,11 +7535,15 @@ msgid "If you close this dialog, your changes are lost."
 msgstr "Ако затворите този прозорец, промените ви ще бъдат загубени."
 
 #: src/features/auth/email-text.ts
-msgid "If you did not create this account, you can safely ignore this email."
+msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
 msgstr ""
 
 #: src/features/auth/email-text.ts
-msgid "If you did not request this change, ignore this email and change your password. The address on the account will not change without your approval."
+msgid "If you didn't ask for this, ignore this email; your account won't change."
+msgstr ""
+
+#: src/features/auth/email-text.ts
+msgid "If you didn't ask for this, you can ignore this email."
 msgstr ""
 
 #: src/features/auth/pages/verify-2fa.tsx
@@ -12416,10 +12455,6 @@ msgstr ""
 msgid "Reset your password"
 msgstr "Нулирайте паролата си"
 
-#: src/features/auth/email-text.ts
-msgid "Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If this was not you, ignore this message and your password will remain unchanged."
-msgstr ""
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Resetting your password..."
 msgstr "Нулиране на паролата ви..."
@@ -15000,11 +15035,6 @@ msgstr "Тайландски"
 msgid "Thank you for keeping it free."
 msgstr "Благодарим ви, че го поддържате безплатно."
 
-#. Verification email. appName: Reactive Resume
-#: src/features/auth/email-text.ts
-msgid "Thanks for signing up for {appName}. Verify your email address to continue."
-msgstr ""
-
 #: src/features/homepage/remember.tsx
 msgid "Thanks, Sam. Here’s one: at Northwind Labs I led the onboarding redesign, from 14 customer interviews to a shorter setup."
 msgstr "Благодаря, Sam. Ето един: в Northwind Labs ръководих редизайна на онбординга – от 14 интервюта с клиенти до по-кратка настройка."
@@ -15237,6 +15267,10 @@ msgstr "Писмото отново съответства на дизайна �
 #: src/features/resume/editor/write/improve.tsx
 msgid "The line changed since you asked, so it wasn't replaced."
 msgstr "Редът се промени, откакто поискахте, така че не беше заменен."
+
+#: src/features/auth/email-text.ts
+msgid "The link works for 1 hour. Resetting signs you out on every device and removes your passkeys, API keys and connected apps. If you didn't ask for this, ignore this email; your password stays the same."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "the linked cover letter"
