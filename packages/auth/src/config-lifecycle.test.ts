@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
 const mocks = vi.hoisted(() => ({
+	allocateUniqueUsername: vi.fn(async () => "new-user-1"),
 	betterAuth: vi.fn(),
 	delete: vi.fn(() => ({ where: vi.fn(async () => undefined) })),
 	env: { APP_URL: "http://localhost:3000", AUTH_SECRET: "auth-lifecycle-test", FLAG_DISABLE_EMAIL_AUTH: false },
@@ -19,6 +20,11 @@ vi.mock("@reactive-resume/db/client", () => ({
 vi.mock("better-auth/api", async (importOriginal) => ({
 	...(await importOriginal<typeof import("better-auth/api")>()),
 	createAuthMiddleware: (handler: unknown) => handler,
+}));
+vi.mock("./oauth-profile", async (importOriginal) => ({
+	...(await importOriginal<typeof import("./oauth-profile")>()),
+	allocateUniqueUsername: mocks.allocateUniqueUsername,
+	isUsernameReserved: vi.fn(async () => false),
 }));
 vi.mock("@reactive-resume/email/transport", () => ({ sendEmail: vi.fn() }));
 vi.mock("@reactive-resume/env/server", () => ({ env: mocks.env }));
@@ -43,7 +49,14 @@ async function securityHooks() {
 	mocks.betterAuth.mockReturnValue(instance);
 	await (await import("./config")).initializeAuth();
 	const options = mocks.betterAuth.mock.calls[0]?.[0] as {
-		hooks: { before: (ctx: { path: string; request?: Request; headers?: Headers }) => Promise<void> };
+		hooks: {
+			before: (ctx: {
+				path: string;
+				request?: Request;
+				headers?: Headers;
+				body?: Record<string, unknown>;
+			}) => Promise<void>;
+		};
 		emailAndPassword: { onPasswordReset: (input: { user: { id: string; emailVerified: boolean } }) => Promise<void> };
 	};
 	return { instance, options };
@@ -107,5 +120,23 @@ describe("auth initialization lifecycle", () => {
 		await initializeAuth();
 		expect(auth.api).toBe(recovered.api);
 		expect(mocks.betterAuth).toHaveBeenCalledTimes(2);
+	});
+});
+
+describe("email sign-up username", () => {
+	it("makes one from the email address when the person leaves it empty", async () => {
+		const { options } = await securityHooks();
+		const body: Record<string, unknown> = { email: "new-user@example.test", username: "", displayUsername: "" };
+		await options.hooks.before({ path: "/sign-up/email", body });
+		expect(mocks.allocateUniqueUsername).toHaveBeenCalledWith("new-user@example.test");
+		expect(body).toMatchObject({ username: "new-user-1", displayUsername: "new-user-1" });
+	});
+	it("keeps a username the person chose", async () => {
+		mocks.allocateUniqueUsername.mockClear();
+		const { options } = await securityHooks();
+		const body: Record<string, unknown> = { email: "new-user@example.test", username: "chosen" };
+		await options.hooks.before({ path: "/sign-up/email", body });
+		expect(mocks.allocateUniqueUsername).not.toHaveBeenCalled();
+		expect(body.username).toBe("chosen");
 	});
 });

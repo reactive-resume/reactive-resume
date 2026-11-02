@@ -2511,10 +2511,6 @@ msgstr "Arquivado (fecha)"
 msgid "Area of study"
 msgstr "Área de estudo"
 
-#: src/features/ats-checker/checker.tsx
-msgid "As software reads it"
-msgstr "Como o software lê"
-
 #: src/features/command-palette/pages/ask.tsx
 #: src/features/resume/editor/write/improve.tsx
 msgid "Ask"
@@ -2624,6 +2620,11 @@ msgstr "Conversas do assistente"
 #: src/features/settings/ai/web-access.tsx
 msgid "Assistant."
 msgstr "Assistente."
+
+#. Password rule shown under the password field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "At least 8 characters."
+msgstr ""
 
 #: src/features/homepage/prepare.tsx
 msgid "At Northwind Labs I led research for our onboarding redesign. I interviewed 14 customers, found three drop-off points, and we shipped a shorter setup. Activation rose from 31% to 44%."
@@ -3308,10 +3309,6 @@ msgstr "Verifique o seu email"
 msgid "Check your email for a link to reset your password."
 msgstr "Verifique o seu email para obter um link para repor a sua senha."
 
-#: src/features/auth/pages/register.tsx
-msgid "Check your email for a link to verify your account."
-msgstr "Verifique o seu email para obter um link para verificar a sua conta."
-
 #: src/features/homepage/check.tsx
 #: src/features/templates/gallery.tsx
 msgid "Check your resume’s ATS readability"
@@ -3912,12 +3909,10 @@ msgstr "O conteúdo está organizado numa grelha."
 msgid "Content revision: {0}"
 msgstr ""
 
-#. Button label to continue to dashboard after successful registration
 #. Final action button after saving backup codes
 #. Primary action button to proceed to next step in two-factor setup
 #: src/dialogs/auth/enable-two-factor.tsx
 #: src/features/assistant/conversation.tsx
-#: src/features/auth/pages/register.tsx
 #: src/features/career/coach-chat.tsx
 msgid "Continue"
 msgstr "Continuar"
@@ -4170,6 +4165,7 @@ msgid "Couldn't connect. Check the key and try again."
 msgstr "Não foi possível ligar. Verifique a chave e tente novamente."
 
 #: src/features/auth/pages/login.tsx
+#: src/features/homepage/hero.tsx
 msgid "Couldn't continue as a guest. Try again."
 msgstr "Não foi possível continuar como convidado. Tente novamente."
 
@@ -4889,10 +4885,6 @@ msgstr "Cartas de apresentação"
 #: src/features/command-palette/pages/navigation.tsx
 msgid "Create"
 msgstr "Criar"
-
-#: src/features/templates/gallery.tsx
-msgid "Create a free account, then choose your template in Design. Switch layouts anytime without rewriting your content."
-msgstr "Crie uma conta gratuita e escolha o seu modelo em Design. Mude de layout a qualquer momento sem ter de reescrever o seu conteúdo."
 
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Create a new resume"
@@ -7331,6 +7323,10 @@ msgstr "Importe um currículo"
 msgid "Import a resume, start a letter, save a job, copy one for a job, or start blank."
 msgstr ""
 
+#: src/features/ats-checker/checker.tsx
+msgid "Import a Word file instead"
+msgstr ""
+
 #: src/features/applications/components/import-applications-sheet.tsx
 msgid "Import failed. Check the CSV and try again."
 msgstr "Falha na importação. Verifique o CSV e tente novamente."
@@ -7365,8 +7361,8 @@ msgid "Import the one you have, or start blank."
 msgstr ""
 
 #: src/features/ats-checker/checker.tsx
-msgid "Import this file into a free Reactive Resume. Every issue is waiting for you in Check."
-msgstr "Importe este ficheiro para um Reactive Resume gratuito. Cada edição está à sua espera no Check."
+msgid "Import this file into a free Reactive Resume, then keep checking it in Check as you edit. Check reads the resume you're editing, so its findings can differ from this file's."
+msgstr ""
 
 #: src/features/career/workspace/application-packet.tsx
 msgid "Import this file into the browser helper, review the destination and fill report. Unsupported forms use exact PDF downloads and copyable answers below. Native browser integration requires its own verified build."
@@ -10297,6 +10293,11 @@ msgstr ""
 msgid "Optional for local Ollama"
 msgstr "Opcional para Ollama local"
 
+#. Hint under the optional username field on registration form
+#: src/features/auth/pages/register.tsx
+msgid "Optional. Leave it empty and we'll make one from your email. You can change it in Settings."
+msgstr ""
+
 #: src/components/ui/combobox.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/documents/trash-page.tsx
@@ -10351,10 +10352,6 @@ msgstr "Organização"
 #: src/features/resume/editor/write/improve.tsx
 msgid "Original"
 msgstr ""
-
-#: src/features/ats-checker/checker.tsx
-msgid "Original page"
-msgstr "Página original"
 
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 #: src/features/resume/editor/write/rich-text-editor.tsx
@@ -10753,6 +10750,10 @@ msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Phrase and keyword matches are text overlap, not verified salary, workplace or eligibility. AI fit has not been assessed. Track, then open Fit for an optional assessment."
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Pick a template below to start with it, or choose later in Design. Switch layouts anytime without rewriting your content."
 msgstr ""
 
 #: src/features/career/schedule-sheet.tsx
@@ -13947,6 +13948,14 @@ msgstr "Estrelas no GitHub"
 msgid "Start"
 msgstr "Iniciar"
 
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume"
+msgstr ""
+
+#: src/features/ats-checker/checker.tsx
+msgid "Start a blank resume and paste your sections in, or import the Word version from Documents."
+msgstr ""
+
 #: src/features/career/workspace/prepare.tsx
 msgid "Start a debrief"
 msgstr "Iniciar um balanço"
@@ -15035,6 +15044,10 @@ msgstr "Não há nenhum link para um perfil, portefólio ou repositório."
 msgid "There is no summary paragraph."
 msgstr "Não há nenhum parágrafo de resumo."
 
+#: src/features/ats-checker/checker.tsx
+msgid "There's no text here to bring into the editor"
+msgstr ""
+
 #: src/features/career/workspace/apply.tsx
 msgid "These are saved draft answers."
 msgstr ""
@@ -15403,10 +15416,6 @@ msgstr "Este servidor usa as fases predefinidas, pelo que os nomes das fases do 
 msgid "This sign-in attempt expired or was already used. Try again."
 msgstr "Esta tentativa de início de sessão expirou ou já foi utilizada. Tente novamente."
 
-#: src/features/auth/pages/register.tsx
-msgid "This step is optional, but recommended."
-msgstr "Este passo é opcional, mas recomendado."
-
 #: src/features/career/workspace/practise.tsx
 msgid "This story has no facts in use here. Link a fact to it in Knowledge, or switch its facts on, to practice it."
 msgstr ""
@@ -15665,6 +15674,10 @@ msgstr "Tentar novamente com isto"
 
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
+msgstr ""
+
+#: src/features/homepage/hero.tsx
+msgid "Try it without an account"
 msgstr ""
 
 #: src/routes/auth/native-callback.tsx
@@ -16142,6 +16155,10 @@ msgstr "Usar amostra"
 msgid "Use saved version"
 msgstr ""
 
+#: src/features/templates/gallery.tsx
+msgid "Use the {name} template"
+msgstr ""
+
 #: src/features/resume/editor/check/issues.ts
 msgid "Use the standard heading"
 msgstr "Utilize o título padrão"
@@ -16168,6 +16185,10 @@ msgstr "Usar este fornecedor"
 
 #: src/features/career/workspace/fit.tsx
 msgid "Use this resume as evidence"
+msgstr ""
+
+#: src/features/templates/gallery.tsx
+msgid "Use this template"
 msgstr ""
 
 #: src/libs/orpc/ai-consent.ts
@@ -16317,10 +16338,6 @@ msgstr "A verificar código..."
 msgid "Verifying code…"
 msgstr "A verificar código…"
 
-#: src/features/auth/pages/register.tsx
-msgid "Verifying your email confirms that you own this address."
-msgstr "A verificação do seu e-mail confirma que é o proprietário deste endereço."
-
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Version sent {date}"
 msgstr "Versão enviada {date}"
@@ -16458,6 +16475,10 @@ msgstr "Enviamos um link de confirmação para {email}. Abra-o para finalizar a 
 msgid "We sent a link to {currentEmail} to approve the change. Then open the link we send to {email}."
 msgstr "Enviámos uma ligação para {currentEmail} para aprovar a alteração. Depois, abra a ligação que enviaremos para {email}."
 
+#: src/features/auth/pages/register.tsx
+msgid "We sent a link to verify your account. It's optional, and you can resend it from Settings."
+msgstr ""
+
 #. placeholder {0}: user.email
 #: src/features/settings/account/profile.tsx
 msgid "We sent a new verification link to {0}."
@@ -16528,10 +16549,12 @@ msgstr "A ponderar cada requisito"
 msgid "Went well"
 msgstr "Correu bem"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a parser reads"
 msgstr "O que um analisador lê"
 
+#: src/features/ats-checker/checker.tsx
 #: src/features/resume/editor/check/page-layer.tsx
 msgid "What a person sees"
 msgstr "O que uma pessoa vê"
@@ -17080,10 +17103,6 @@ msgstr ""
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "You've reached {MAX_APPLICATION_LANES} stages. Remove one to add another."
 msgstr "Atingiu o limite de {MAX_APPLICATION_LANES} fases. Remova uma para adicionar outra."
-
-#: src/features/auth/pages/register.tsx
-msgid "Your account is ready"
-msgstr ""
 
 #: src/features/settings/account/data.tsx
 msgid "Your account was deleted."

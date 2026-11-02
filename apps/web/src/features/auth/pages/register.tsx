@@ -2,22 +2,18 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link, useRouteContext, useSearch } from "@tanstack/react-router";
-import { useState } from "react";
+import { Link, useNavigate, useRouteContext, useRouter, useSearch } from "@tanstack/react-router";
 import z from "zod";
-import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
 import { toast } from "@reactive-resume/ui/components/toast";
-import { cn } from "@reactive-resume/utils/style";
 import { GuestTransferNote } from "../components/guest-banner";
 import { SocialAuth } from "../components/social-auth";
 import { getAuthRedirectOptions, getOAuthSignInOptions, isOAuthRedirect } from "../redirect";
 import { PasswordInput } from "@/components/input/password-input";
 import { authClient } from "@/libs/auth/client";
-import { ENTER_CLASS } from "@/libs/motion";
 import { sessionQueryKey } from "@/libs/root-context";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -27,15 +23,23 @@ const formSchema = z.object({
 		.trim()
 		.min(1, { error: () => t`Enter your name.` })
 		.max(64, { error: () => t`Use 64 characters or fewer.` }),
+	// Optional: left empty, the server makes one from the email address.
 	username: z
 		.string()
-		.min(3, { error: () => t`Use at least 3 characters.` })
-		.max(64, { error: () => t`Use 64 characters or fewer.` })
 		.trim()
 		.toLowerCase()
-		.regex(/^[a-z0-9._-]+$/, {
-			error: () => t`Use only lowercase letters, numbers, dots, hyphens and underscores.`,
-		}),
+		.pipe(
+			z.union([
+				z.literal(""),
+				z
+					.string()
+					.min(3, { error: () => t`Use at least 3 characters.` })
+					.max(64, { error: () => t`Use 64 characters or fewer.` })
+					.regex(/^[a-z0-9._-]+$/, {
+						error: () => t`Use only lowercase letters, numbers, dots, hyphens and underscores.`,
+					}),
+			]),
+		),
 	email: z.email({ error: () => t`Enter a valid email address.` }).toLowerCase(),
 	password: z
 		.string()
@@ -52,7 +56,10 @@ type Props = {
 export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 	const { callbackURL, reauthenticate } = useSearch({ from: "/auth" });
 	const queryClient = useQueryClient();
-	const [submitted, setSubmitted] = useState(false);
+	const router = useRouter();
+	const navigate = useNavigate();
+	// A server without email sends no verification link, so there's nothing to mention.
+	const smtpEnabled = useRouteContext({ strict: false }).flags?.smtpEnabled ?? false;
 
 	const form = useAppForm({
 		defaultValues: { name: "", username: "", email: "", password: "" },
@@ -66,6 +73,7 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 				name: value.name.trim(),
 				email: value.email,
 				password: value.password,
+				// Empty asks the server to make one from the email address.
 				username: value.username,
 				displayUsername: value.username,
 				callbackURL: callbackURL ?? "/dashboard",
@@ -96,14 +104,22 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 				if (isOAuthRedirect(continuation.data)) return;
 			}
 			await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
-			setSubmitted(true);
-			toast.close(toastId);
+			await router.invalidate();
+			// Straight to the dashboard (or the page that sent them here); verifying the email can wait.
+			if (smtpEnabled)
+				toast.add({
+					id: toastId,
+					type: "success",
+					title: t`Check your email`,
+					description: t`We sent a link to verify your account. It's optional, and you can resend it from Settings.`,
+					timeout: 10_000,
+				});
+			else toast.close(toastId);
+			void navigate(getAuthRedirectOptions(callbackURL));
 		},
 	});
 
 	const isSubmitting = useSelector(form.store, (state) => state.isSubmitting);
-
-	if (submitted) return <PostSignupScreen />;
 
 	return (
 		<>
@@ -199,6 +215,11 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 										/>
 									}
 								/>
+								<FormDescription>
+									<Trans comment="Hint under the optional username field on registration form">
+										Optional. Leave it empty and we'll make one from your email. You can change it in Settings.
+									</Trans>
+								</FormDescription>
 								<FormMessage errors={field.state.meta.errors} />
 							</FormItem>
 						)}
@@ -248,6 +269,11 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 										/>
 									}
 								/>
+								<FormDescription>
+									<Trans comment="Password rule shown under the password field on registration form">
+										At least 8 characters.
+									</Trans>
+								</FormDescription>
 								<FormMessage errors={field.state.meta.errors} />
 							</FormItem>
 						)}
@@ -261,54 +287,5 @@ export function RegisterPage({ disableEmailAuth, isGuest = false }: Props) {
 
 			<SocialAuth />
 		</>
-	);
-}
-
-function PostSignupScreen() {
-	const { callbackURL } = useSearch({ from: "/auth" });
-	const redirectOptions = getAuthRedirectOptions(callbackURL);
-	// A server without email sends no verification link, so there's nothing to check for.
-	const smtpEnabled = useRouteContext({ strict: false }).flags?.smtpEnabled ?? false;
-	return (
-		// Replaces the form in place: fades up into the auth column, with the layout's 24px gap.
-		<div className={cn(ENTER_CLASS, "grid gap-y-6")}>
-			{smtpEnabled ? (
-				<>
-					<div className="space-y-1 text-center">
-						<h1 className="text-[30px] leading-9">
-							<Trans>Check your email</Trans>
-						</h1>
-						<p className="text-ink-3">
-							<Trans>Check your email for a link to verify your account.</Trans>
-						</p>
-					</div>
-
-					<Alert>
-						<AlertTitle>
-							<Trans>This step is optional, but recommended.</Trans>
-						</AlertTitle>
-						<AlertDescription>
-							<Trans>Verifying your email confirms that you own this address.</Trans>
-						</AlertDescription>
-					</Alert>
-				</>
-			) : (
-				<div className="space-y-1 text-center">
-					<h1 className="text-[30px] leading-9">
-						<Trans>Your account is ready</Trans>
-					</h1>
-				</div>
-			)}
-
-			<Button
-				nativeButton={false}
-				render={
-					<Link to={redirectOptions.href} reloadDocument={redirectOptions.reloadDocument} replace>
-						<Trans comment="Button label to continue to dashboard after successful registration">Continue</Trans>{" "}
-						<Icon name="arrow-right" size={16} />
-					</Link>
-				}
-			/>
-		</div>
 	);
 }

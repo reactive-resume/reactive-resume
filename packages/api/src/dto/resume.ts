@@ -5,6 +5,7 @@ import { jsonPatchOperationSchema } from "@reactive-resume/resume/patch";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { slugSchema } from "@reactive-resume/schema/resume/slug";
 import { writableResumeDataSchema } from "@reactive-resume/schema/resume/write";
+import { templateSchema } from "@reactive-resume/schema/templates";
 import { paginationShape } from "../pagination";
 import { proposalApplicationsSchema, proposalSafetySchema } from "./proposals";
 
@@ -93,6 +94,9 @@ export const resumeDto = {
 				.optional()
 				.describe("The slug of the resume. Generated from the name, and made unique, when omitted."),
 			withSampleData: z.boolean().default(false),
+			template: templateSchema
+				.optional()
+				.describe("The template to start in, such as one chosen in the template gallery. The default when omitted."),
 		}),
 		output: z.string().describe("The ID of the created resume."),
 	},
