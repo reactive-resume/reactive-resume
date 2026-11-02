@@ -1917,6 +1917,7 @@ msgstr "התאם גופנים, צבעים, מרווחים וחתכים בבונ�
 msgid "Ads"
 msgstr "מודעות"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "מִתקַדֵם"
@@ -2267,8 +2268,7 @@ msgstr "כל מה שצריך לזכור על העבודה הזו"
 msgid "Anywhere"
 msgstr "בְּכָל מָקוֹם"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "מפתח API"
@@ -2821,10 +2821,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "שכר בסיס"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "כתובת אתר בסיסית"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "כתובת URL בסיסית (חובה)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2971,7 +2974,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "קורא מובנה"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6061,6 +6064,10 @@ msgstr "יש להזין סכום מלא, למשל 95000, או להשאיר רי�
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "הזן סכום מלא, למשל 95000. הסכום הקודם שלך לא השתנה."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "יש להזין מזהה מודל."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "הזן שם, עד 64 תווים."
@@ -6083,6 +6090,14 @@ msgstr "הזן כתובת אימייל חוקית."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "הזן כתובת אינטרנט, כמו example.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "יש להזין מפתח API עבור ספק זה."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "יש להזין כתובת URL בסיסית שמתחילה ב-http:// או ב-https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6820,6 +6835,14 @@ msgstr "קבל מפתח ב-<0>{0}</0>. זה מאוחסן מוצפן ומשמש �
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "קבל תוכנית לראיון, שנבנתה ממודעת הדרושים ומהסיפורים שלך. תרגל בקול, ואז רשום איך זה הלך."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "קבלת מפתח API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "יש לקבל מפתח API ממפעיל נקודת הקצה שלך."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8096,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "השאר לפחות חצי אינץ׳ מסביב לעמוד."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "השאר ריק כדי לשמור את המפתח השמור"
 
@@ -8905,8 +8928,7 @@ msgstr "מעורב"
 msgid "mixed format"
 msgstr "פורמט מעורב"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "מודל"
 
@@ -9114,7 +9136,7 @@ msgstr "התפקיד שלי היה לגלות למה, בלי להוסיף עבו
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "שם"
@@ -10281,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "אופציונלי עבור Ollama המקומי"
 
@@ -14932,11 +14954,11 @@ msgstr "הסקירה לא הצליחה לסיים. נסה שוב."
 msgid "The same line repeats on every page."
 msgstr "אותה שורה חוזרת בכל עמוד."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "המפתח השמור לא נשלח לכתובת אתר בסיס חדשה. הזן שוב את המפתח אם שרת זה דורש מפתח."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "המפתח השמור לא נשלח לכתובת אתר בסיס חדשה. הזן שוב את המפתח."
 

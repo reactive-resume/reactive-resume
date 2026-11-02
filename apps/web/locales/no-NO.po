@@ -1917,6 +1917,7 @@ msgstr "Juster fonter, farger, mellomrom og seksjoner i CV-byggeren. Eksporter d
 msgid "Ads"
 msgstr "Annonser"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Avansert"
@@ -2267,8 +2268,7 @@ msgstr "Alt å huske om denne jobben"
 msgid "Anywhere"
 msgstr "Hvor som helst"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API nøkkel"
@@ -2821,10 +2821,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Grunnlønn"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Basis-URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Basis-URL (påkrevd)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2971,7 +2974,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Innebygd leser"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6061,6 +6064,10 @@ msgstr "Skriv inn hele beløpet, for eksempel 95000, eller la feltet stå tomt."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Skriv inn et fullt beløp, for eksempel 95000. Det forrige beløpet ditt er uendret."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Skriv inn en modell-ID."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Skriv inn et navn, opptil 64 tegn."
@@ -6083,6 +6090,14 @@ msgstr "Skriv inn en gyldig e-postadresse."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Skriv inn en nettadresse, som eksempel.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Skriv inn en API-nøkkel for denne leverandøren."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Skriv inn en basis-URL som starter med http:// eller https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6820,6 +6835,14 @@ msgstr "Hent en nøkkel på <0>{0}</0>. Den lagres kryptert og brukes bare til f
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Få en plan for intervjuet, laget ut fra stillingsannonsen og dine egne historier. Øv høyt, og skriv deretter ned hvordan det gikk."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Få en API-nøkkel"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Få en API-nøkkel fra operatøren av endepunktet ditt."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8096,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "La det være minst en halv tomme margin rundt siden."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "La det stå tomt for å beholde den lagrede nøkkelen"
 
@@ -8905,8 +8928,7 @@ msgstr "Blandet"
 msgid "mixed format"
 msgstr "blandet format"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Modell"
 
@@ -9114,7 +9136,7 @@ msgstr "Jobben min var å finne ut hvorfor, uten å skape mer supportarbeid."
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Navn"
@@ -10281,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Valgfritt for lokale Ollama"
 
@@ -14932,11 +14954,11 @@ msgstr "Anmeldelsen kunne ikke fullføres. Prøv igjen."
 msgid "The same line repeats on every page."
 msgstr "Den samme linjen gjentas på hver side."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Den lagrede nøkkelen sendes ikke til en ny basis-URL. Skriv inn nøkkelen på nytt hvis denne serveren krever en nøkkel."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Den lagrede nøkkelen sendes ikke til en ny basis-URL. Tast inn nøkkelen igjen."
 

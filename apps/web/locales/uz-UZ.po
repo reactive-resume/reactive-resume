@@ -1917,6 +1917,7 @@ msgstr "CV tuzuvchisida shriftlar, ranglar, intervallar va bo'limlarni sozlang. 
 msgid "Ads"
 msgstr "E'lonlar"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Ilg'or"
@@ -2267,8 +2268,7 @@ msgstr "Bu ish haqida eslash kerak bo'lgan hamma narsa"
 msgid "Anywhere"
 msgstr "Hamma joyda"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API kaliti"
@@ -2821,10 +2821,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Asosiy maosh"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "Asosiy URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "Asosiy URL (majburiy)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2971,7 +2974,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "O'rnatilgan o'quvchi"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6061,6 +6064,10 @@ msgstr "95000 kabi to‘liq summani kiriting yoki bo‘sh qoldiring."
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "To'liq summani kiriting, masalan, 95000. Avvalgi summa o'zgarmadi."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Model ID sini kiriting."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 belgigacha bo'lgan nomni kiriting."
@@ -6083,6 +6090,14 @@ msgstr "Yaroqli elektron pochta manzilini kiriting."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Masalan, .com kabi veb-manzilni kiriting"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Bu provayder uchun API kalitini kiriting."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// yoki https:// bilan boshlanadigan asosiy URL kiriting."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6820,6 +6835,14 @@ msgstr "Kalitni <0>{0}</0> orqali oling. U shifrlangan holda saqlanadi va faqat 
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "E'lon va o'z hikoyalaringiz asosida tuzilgan intervyu rejasini oling. Ovoz chiqarib mashq qiling, so'ng qanday o'tganini yozib qo'ying."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API kalitini oling"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Endpointingiz operatoridan API kalitini oling."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8096,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Sahifa atrofida kamida yarim dyuym joy qoldiring."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Saqlangan kalitni saqlash uchun bo'sh qoldiring"
 
@@ -8905,8 +8928,7 @@ msgstr "Aralash"
 msgid "mixed format"
 msgstr "aralash format"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Model"
 
@@ -9114,7 +9136,7 @@ msgstr "Mening vazifam qo'llab-quvvatlash ishini ko'paytirmasdan sababini aniqla
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Ism"
@@ -10281,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Mahalliy Ollama uchun ixtiyoriy"
 
@@ -14932,11 +14954,11 @@ msgstr "Tekshiruv yakunlanmadi. Qayta urinib ko'ring."
 msgid "The same line repeats on every page."
 msgstr "Bir xil qator har bir sahifada takrorlanadi."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Saqlangan kalit yangi asosiy URL manziliga yuborilmaydi. Agar bu server kalit talab qilsa, kalitni yana kiriting."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Saqlangan kalit yangi asosiy URL manziliga yuborilmaydi. Kalitni yana kiriting."
 
