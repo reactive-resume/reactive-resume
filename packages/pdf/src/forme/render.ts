@@ -121,6 +121,79 @@ function unplacedBlocks(layout: RenderWithLayoutResult["layout"]): string[] {
 	return [...missing];
 }
 
+/** Measure stable keep-with-next space; oversized descriptions still split after their first line. */
+function entryPaginationRepairs(layout: RenderWithLayoutResult["layout"], splitItems: ReadonlySet<number>) {
+	const headers = new Map<
+		string,
+		{ page: number; lastPage: number; top: number; bottom: number; height: number; available: number }
+	>();
+	const bodies = new Map<string, { page: number; y: number; height: number; lineHeight: number }>();
+	for (const [pageIndex, page] of layout.pages.entries()) {
+		const visit = (element: ElementInfo, parentSource?: ElementInfo["sourceLocation"]) => {
+			const source = element.sourceLocation ?? parentSource;
+			if (source && !offPage(element.y) && !offPage(element.height)) {
+				const key = source.file.replace(/^(rr-node:|rr-in:)/, "");
+				const item = key.match(/^(.+\/section-items\/item-[^/]+)/)?.[1];
+				if (item && element.kind === "Text" && key.startsWith(`${item}/item-header`)) {
+					const header = headers.get(item);
+					if (!header)
+						headers.set(item, {
+							page: pageIndex,
+							lastPage: pageIndex,
+							top: element.y,
+							bottom: element.y + element.height,
+							height: 0,
+							available: page.contentHeight,
+						});
+					else {
+						if (header.lastPage === pageIndex) {
+							header.top = Math.min(header.top, element.y);
+							header.bottom = Math.max(header.bottom, element.y + element.height);
+						} else {
+							header.height += header.bottom - header.top;
+							header.lastPage = pageIndex;
+							header.top = element.y;
+							header.bottom = element.y + element.height;
+						}
+					}
+				} else if (
+					item &&
+					!key.startsWith(`${item}/item-header`) &&
+					!bodies.has(item) &&
+					(source.column === LIST_ROLE.item || (element.kind === "Text" && source.column !== LIST_ROLE.marker))
+				) {
+					const lineHeight = element.style.fontSize * element.style.lineHeight;
+					bodies.set(item, {
+						page: pageIndex,
+						y: element.y,
+						lineHeight,
+						height:
+							source.column === LIST_ROLE.item && !splitItems.has(source.line - 1)
+								? element.height + element.style.margin.top + element.style.margin.bottom
+								: lineHeight,
+					});
+				}
+			}
+			for (const child of element.children) visit(child, source);
+		};
+		for (const element of page.elements) visit(element);
+	}
+	const presenceAhead = new Map<string, number>();
+	const orphans: string[] = [];
+	for (const [key, header] of headers) {
+		const body = bodies.get(key);
+		if (!body) continue;
+		const headerKey = `${key}/item-header`;
+		const gap = body.page === header.lastPage ? Math.max(0, body.y - header.bottom) : body.lineHeight;
+		const ahead = body.height + gap;
+		if (header.height + header.bottom - header.top + ahead <= header.available) {
+			presenceAhead.set(headerKey, ahead);
+			if (body.page > header.page) orphans.push(headerKey);
+		}
+	}
+	return { orphans, presenceAhead };
+}
+
 const isFixed = (element: ElementInfo): boolean =>
 	element.sourceLocation?.file === FIXED_SOURCE || element.children.some(isFixed);
 
@@ -254,6 +327,7 @@ export async function renderResumeElement(
 	const breakBeforeListItems = new Set<number>();
 	const splitListItems = new Set<number>();
 	const breakBeforeNodes = new Set<string>();
+	const presenceAheadNodes = new Map<string, number>();
 	// Every pass draws the same text, so the fonts are prepared once, from the first pass's document.
 	let formeFonts: typeof fonts | undefined;
 	const layOutOnce = async (keepNestedRowsWhole: boolean) => {
@@ -264,6 +338,7 @@ export async function renderResumeElement(
 				breakBeforeListItems,
 				splitListItems,
 				breakBeforeNodes,
+				presenceAheadNodes,
 				freeFormHeights,
 			});
 		// Forme rewrites the font entries it's given (bytes to base64), so each render gets its own.
@@ -339,15 +414,22 @@ export async function renderResumeElement(
 	};
 
 	let { result, warnings } = await layOut(false);
-	if (misplacesABox(result)) ({ result, warnings } = await layOut(true));
-	// ponytail: three repairs cap rendering cost; remove this workaround when Forme fixes nested pagination.
+	let keepNestedRowsWhole = misplacesABox(result);
+	if (keepNestedRowsWhole) ({ result, warnings } = await layOut(true));
+	// shortcut: three repairs cap rendering cost until Forme supports keep-with-next and reliable nested pagination.
 	for (let pass = 0; pass < 3; pass++) {
 		const first = unplacedBlocks(result.layout).find((key) => !breakBeforeNodes.has(key));
-		if (!first) break;
-		// Retry the first failed block from a fresh page; later failures may recover without extra breaks.
-		breakBeforeNodes.add(first);
-		({ result, warnings } = await layOut(true));
+		const headers = entryPaginationRepairs(result.layout, splitListItems);
+		const reserveHeaders = headers.orphans.length > 0 && presenceAheadNodes.size === 0;
+		if (!first && !reserveHeaders) break;
+		// Reserve all first fragments together: the constraint remains valid after earlier entries move.
+		if (reserveHeaders) for (const [key, height] of headers.presenceAhead) presenceAheadNodes.set(key, height);
+		if (first) breakBeforeNodes.add(first);
+		keepNestedRowsWhole ||= first !== undefined || misplacesABox(result);
+		({ result, warnings } = await layOut(keepNestedRowsWhole));
 	}
+	if (entryPaginationRepairs(result.layout, splitListItems).orphans.length > 0)
+		warnings.push("render defect: the engine couldn't keep an entry header with its content");
 	if (misplacesABox(result))
 		warnings.push("render defect: the engine couldn't place a box; a page may be laid out wrong");
 
