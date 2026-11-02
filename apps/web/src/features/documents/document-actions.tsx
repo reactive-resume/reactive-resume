@@ -95,17 +95,16 @@ export function useDocumentActions() {
 		copyForJob: (document: DocumentSummary) =>
 			openDialog("document.new", { step: "copy", sourceResumeId: document.id }),
 
+		// The menu that called this unmounts on select, and a mutation's per-call callbacks with it: catch the promise.
 		setLocked: (document: DocumentSummary, isLocked: boolean) =>
-			setLocked.mutate(
-				{ ...ref(document), isLocked },
-				{
-					onError: (error) =>
-						toastError(
-							error,
-							isLocked ? t`Couldn't lock the document. Try again.` : t`Couldn't unlock the document. Try again.`,
-						),
-				},
-			),
+			void setLocked
+				.mutateAsync({ ...ref(document), isLocked })
+				.catch((error: unknown) =>
+					toastError(
+						error,
+						isLocked ? t`Couldn't lock the document. Try again.` : t`Couldn't unlock the document. Try again.`,
+					),
+				),
 
 		/** Undoable, so it doesn't ask first. */
 		trash: async (document: DocumentSummary) => {

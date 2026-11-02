@@ -297,6 +297,8 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 								<InputGroupInput
 									ref={searchRef}
 									type="search"
+									// The browser's own clear button is hidden; the one below matches the app's icons.
+									className="[&::-webkit-search-cancel-button]:appearance-none"
 									value={searchText}
 									maxLength={500}
 									aria-label={t`Search documents`}
@@ -309,9 +311,24 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 								<span id={searchHintId} className="sr-only">
 									<Trans>Enter opens the first result. Down arrow moves to the results. Escape clears.</Trans>
 								</span>
-								<InputGroupAddon align="inline-end" className="max-sm:hidden pointer-coarse:hidden">
-									<Kbd>/</Kbd>
-								</InputGroupAddon>
+								{searchText ? (
+									<InputGroupAddon align="inline-end">
+										<IconButton
+											icon="x"
+											size="icon-xs"
+											variant="ghost"
+											label={t`Clear search`}
+											onClick={() => {
+												onSearchChange({ q: "" });
+												searchRef.current?.focus();
+											}}
+										/>
+									</InputGroupAddon>
+								) : (
+									<InputGroupAddon align="inline-end" className="max-sm:hidden pointer-coarse:hidden">
+										<Kbd>/</Kbd>
+									</InputGroupAddon>
+								)}
 							</InputGroup>
 							<div className="w-[150px]">
 								<NativeSelect
@@ -375,7 +392,7 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 						) : (
 							<div className="grid justify-items-center gap-2 py-16 text-center">
 								<Icon name="magnifying-glass" size={28} className="text-ink-3" />
-								<p className="font-semibold">
+								<p className="font-display text-[22px] leading-7">
 									{search.q.trim() ? (
 										<Trans>Nothing matches “{search.q.trim()}”</Trans>
 									) : (
@@ -725,6 +742,15 @@ function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTag
 	const batch = useBatchActions();
 	const [busy, setBusy] = useState(false);
 	const count = selection.length;
+	// Toasts sit bottom centre, where this bar is: lift them above it while it's on screen, so a result never hides it.
+	useEffect(() => {
+		const root = document.documentElement;
+		const phone = window.matchMedia("(max-width: 639px)").matches;
+		root.style.setProperty("--toast-bottom", phone ? "calc(8.25rem + env(safe-area-inset-bottom))" : "5.5rem");
+		return () => {
+			root.style.removeProperty("--toast-bottom");
+		};
+	}, []);
 	const run = async (action: () => Promise<unknown>, { clear = false } = {}) => {
 		if (!selection.length) return;
 		setBusy(true);
@@ -811,7 +837,7 @@ function SelectionBar({ ref, selection, allSelected, onSelectAll, onClear, onTag
 	);
 }
 
-function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
+export function LibrarySkeleton({ view }: { view: "grid" | "list" }) {
 	if (view === "list") {
 		return (
 			<div className="grid">
