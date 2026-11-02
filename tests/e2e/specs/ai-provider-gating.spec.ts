@@ -70,6 +70,8 @@ test("provider retries update one row, Test preserves Off, and no public catalog
 	await page.getByRole("button", { name: "Test", exact: true }).first().click();
 	await consent(page);
 	expect((await retest).ok()).toBe(true);
+	await expect(providerSection.getByRole("button", { name: "Test", exact: true })).toBeVisible();
+	await expect(providerSection.getByRole("status")).toHaveText(/^Connected · \d+ ms$/);
 	const after = await page.request.get("/api/openapi/ai-providers");
 	await expect
 		.poll(async () => (await (await page.request.get("/api/openapi/ai-providers")).json())[0].enabled)

@@ -21,6 +21,7 @@ import { Label } from "@reactive-resume/ui/components/label";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { cn } from "@reactive-resume/utils/style";
+import { SettingsSection } from "../section";
 import { describeTest, keyEnding, providerDefaults, providerLabel, providerOptions } from "./catalog";
 import { ProviderFieldsForm } from "./provider-fields";
 import { providerTestError } from "./test-error";
@@ -35,7 +36,6 @@ type SavedProvider = RouterOutput["aiProviders"]["list"][number];
 const isConfigError = (error: unknown) => error instanceof ORPCError && error.code === "PRECONDITION_FAILED";
 
 export function ProvidersSection() {
-	const id = useId();
 	const { data: providers, isLoading, error } = useQuery(orpc.aiProviders.list.queryOptions());
 	const [adding, setAdding] = useState(false);
 	const [editing, setEditing] = useState<SavedProvider | null>(null);
@@ -46,19 +46,16 @@ export function ProvidersSection() {
 	const makeDefault = useMutation(orpc.aiProviders.setDefault.mutationOptions());
 
 	return (
-		<section aria-labelledby={`${id}-title`} className="overflow-hidden rounded-xl border border-line bg-surface">
-			<header className="grid gap-1 border-b border-line px-5 py-4 max-sm:px-4">
-				<h2 id={`${id}-title`} className="text-[17px] font-semibold">
-					<Trans>AI providers</Trans>
-				</h2>
-				<p className="max-w-[60ch] text-[13px] leading-5 text-ink-3">
-					<Trans>
-						Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick
-						one. Your keys stay encrypted.
-					</Trans>
-				</p>
-			</header>
-			<div className="grid gap-4 p-5">
+		<SettingsSection
+			title={<Trans>AI providers</Trans>}
+			description={
+				<Trans>
+					Writing help, tailored suggestions and the assistant. The default provider is used wherever you don't pick
+					one. Your keys stay encrypted.
+				</Trans>
+			}
+		>
+			<div className="grid gap-4">
 				{managed ? (
 					<div className="flex items-center gap-3">
 						<ProviderLogo provider={managed.provider} className="size-10 rounded-lg bg-sunken" />
@@ -122,7 +119,7 @@ export function ProvidersSection() {
 									<Trans>Add AI provider</Trans>
 								</span>
 								<span className="text-xs text-ink-3">
-									<Trans>Anthropic, Gemini, Ollama, OpenAI-compatible</Trans>
+									<Trans>OpenAI, Anthropic, Gemini, Ollama and more</Trans>
 								</span>
 							</span>
 						</button>
@@ -135,7 +132,7 @@ export function ProvidersSection() {
 				provider={providers?.find((item) => item.id === editing?.id) ?? editing}
 				onClose={() => setEditing(null)}
 			/>
-		</section>
+		</SettingsSection>
 	);
 }
 
@@ -244,25 +241,18 @@ function ProviderRow({ provider, isDefault, onMakeDefault, makingDefault, onEdit
 				</span>
 				<div className="col-start-2 flex flex-wrap items-center gap-2 sm:ms-auto">
 					{onMakeDefault && (
-						<Button size="sm" variant="ghost" loading={makingDefault} onClick={onMakeDefault}>
+						<Button size="sm" variant="secondary" loading={makingDefault} onClick={onMakeDefault}>
 							<Trans>Make default</Trans>
 						</Button>
 					)}
-					<Button
-						size="sm"
-						variant="secondary"
-						aria-live="polite"
-						disabled={test.isPending}
-						className={cn(test.result?.ok && "text-accent-text", test.result && !test.result.ok && "text-danger-text")}
-						onClick={() => void test.run(provider.id)}
-					>
+					<Button size="sm" variant="secondary" disabled={test.isPending} onClick={() => void test.run(provider.id)}>
 						{test.isPending ? (
 							<>
 								<Spinner decorative className="size-3.5" />
 								<Trans>Testing…</Trans>
 							</>
 						) : (
-							(test.result?.label ?? <Trans>Test</Trans>)
+							<Trans>Test</Trans>
 						)}
 					</Button>
 					<Button size="sm" variant="ghost" onClick={onEdit}>
@@ -270,6 +260,11 @@ function ProviderRow({ provider, isDefault, onMakeDefault, makingDefault, onEdit
 					</Button>
 				</div>
 			</div>
+			{test.result?.ok && (
+				<p role="status" className="text-xs text-accent-text">
+					{test.result.label}
+				</p>
+			)}
 			{test.result?.ok && !provider.enabled && (
 				<p className="text-xs text-ink-3">
 					<Trans>The connection works. Turn on Use this provider to use it.</Trans>
@@ -573,6 +568,7 @@ function EditProviderForm({ provider: opened, onClose }: EditProviderFormProps) 
 								!(await confirm(t`Delete “${provider.label}”?`, {
 									description: t`Its saved key is deleted. Conversations using it need another provider.`,
 									confirmText: t`Delete provider`,
+									variant: "danger",
 								}))
 							)
 								return;
