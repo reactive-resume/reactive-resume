@@ -721,9 +721,13 @@ function messageText(message: UIMessage) {
 
 /** The first message names the conversation: up to 57 characters, or 44 in the career coach's list. */
 function buildThreadTitle(message: UIMessage, fallback: string, max = 60) {
-	const text = messageText(message);
+	const text = messageText(message).replace(/\s+/g, " ").trim();
 	if (!text) return fallback;
-	return text.length > max ? `${text.slice(0, max - 3)}...` : text;
+	if (text.length <= max) return text;
+	// Cut at a word, with one ellipsis character, so the list doesn't add a second.
+	const cut = text.slice(0, max - 1);
+	const space = cut.lastIndexOf(" ");
+	return `${(space > max / 2 ? cut.slice(0, space) : cut).trimEnd()}…`;
 }
 
 /**
@@ -824,10 +828,18 @@ async function proposeEdits(input: {
 		posting: input.posting,
 	});
 	if (output.edits.length > 0) {
+		// The first set of edits names the conversation by its task ("Tailor summary to payments roles"), in place of
+		// its first message cut short.
+		const title = output.title.trim().slice(0, 80);
 		await db
 			.update(schema.agentThread)
 			.set({
 				editsProposed: sql`${schema.agentThread.editsProposed} + ${output.edits.length}`,
+				...(title
+					? {
+							title: sql`CASE WHEN ${schema.agentThread.editsProposed} = 0 THEN ${title} ELSE ${schema.agentThread.title} END`,
+						}
+					: {}),
 			})
 			.where(and(eq(schema.agentThread.id, input.threadId), eq(schema.agentThread.userId, input.userId)));
 		const supersedes = await supersedeEarlierEdits(input, output.edits, loaded);
@@ -886,6 +898,8 @@ function createAgent(input: {
 	threadId: string;
 	/** Null when the message leaves the document out. */
 	document: (AssistantDocument & { name: string }) | null;
+	/** The document is locked: the assistant answers and drafts, but proposes no edits until it's unlocked. */
+	locked: boolean;
 	posting: AgentPosting | null;
 	/** The open resume is the copy made for the posting's application, so tailoring can edit it. */
 	jobCopy: boolean;
@@ -943,6 +957,7 @@ function createAgent(input: {
 	}
 	const tools = buildAgentTools({
 		document: document?.kind ?? null,
+		canEdit: !input.locked,
 		// The career coach searches only when the user switched Web research on for this message.
 		externalSearch: input.search && (!input.career || input.career.web),
 		signal: input.signal,
@@ -986,6 +1001,7 @@ function createAgent(input: {
 			),
 			proposeEdits: timedToolHandler("propose_edits", (edits: ProposeEditsInput | ProposeResumeEditsInput) => {
 				if (!document) throw new Error("The document isn't shared with this message.");
+				if (input.locked) throw new Error("The document is locked. Unlock it to get edits.");
 				return proposeEdits({
 					userId: input.userId,
 					threadId: input.threadId,
@@ -1049,6 +1065,7 @@ function createAgent(input: {
 		? buildCareerInstructions(input.career)
 		: buildAgentInstructions({
 				document: document ? { kind: document.kind, name: document.name } : null,
+				locked: input.locked,
 				posting: input.posting ? { ...input.posting, jobCopy: input.jobCopy } : null,
 				knowledge: input.knowledge,
 				searchTool: "search_web" in tools ? "search_web" : null,
@@ -1259,7 +1276,8 @@ export const agentService = {
 				}),
 				attachments: attachments.map(toAttachment),
 				document,
-				isReadOnly: !thread.aiProviderId || (thread.scope === "document" ? !document || document.locked : false),
+				// A locked document still takes questions; only its edits wait until it's unlocked.
+				isReadOnly: !thread.aiProviderId || (thread.scope === "document" ? !document : false),
 				history: { cutoffAt: withheld.cutoffAt, withheld: ids(withheld.rows) },
 				// Replies that ended early (stopped, timed out, failed or cut off by a restart), as their rows record it.
 				interrupted: ids(rows.filter((row) => row.role === "assistant" && row.status === "canceled")),
@@ -1403,11 +1421,8 @@ export const agentService = {
 			)
 				throw new ORPCError("BAD_REQUEST", { message: "Attach files by uploading them." });
 
+			// A locked document still takes questions and drafts: the run gets no edit tool (see createAgent).
 			const loaded = document ? await loadDocument(input.userId, document) : null;
-			if (loaded?.locked)
-				throw new ORPCError("BAD_REQUEST", {
-					message: "Unlock the document to change it.",
-				});
 			const posting =
 				input.context?.posting === false || !document || !loaded
 					? null
@@ -1725,6 +1740,7 @@ export const agentService = {
 					threadId: input.threadId,
 					document:
 						input.context?.document === false || !document || !loaded ? null : { ...document, name: loaded.name },
+					locked: loaded?.locked === true,
 					...(careerContext && isCareer
 						? await (async () => {
 								const shareApplication = input.context?.application !== false;

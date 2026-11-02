@@ -40,6 +40,16 @@ const agentContracts = evaluate(
 	}).outputFiles[0].text,
 	{},
 );
+const wordDiffModule = evaluate(
+	buildSync({
+		entryPoints: [new URL("../../../packages/resume/src/word-diff.ts", import.meta.url).pathname],
+		bundle: true,
+		platform: "node",
+		format: "cjs",
+		write: false,
+	}).outputFiles[0].text,
+	{},
+);
 const { defaultResumeData } = evaluate(
 	buildSync({
 		entryPoints: [mobileRequire.resolve("@reactive-resume/schema/resume/default")],
@@ -156,7 +166,9 @@ const dependencies = {
 		plural: (n, forms) => (n === 1 ? (forms[1] ?? forms.one) : forms.other).replace("#", String(n)),
 		t: (parts) => parts.join(""),
 	},
+	"@lingui/core": { i18n: { locale: "en" } },
 	"@reactive-resume/resume/proposals": shared,
+	"@reactive-resume/resume/word-diff": wordDiffModule,
 	"@/auth/session": { getAccountScope: () => scope },
 	"@/draft": { useResumeStore: resumeStore, useLetterStore: letterStore },
 	"@/draft/adapters": { letterAdapter: { matches: (document, data) => document.content === data.content } },

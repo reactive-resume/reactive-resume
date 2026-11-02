@@ -2,7 +2,7 @@ import type { EditorMode } from "@/features/resume/editor/store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { getRouteApi, Outlet } from "@tanstack/react-router";
-import { Suspense, useEffect } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Tabs, TabsContent } from "@reactive-resume/ui/components/tabs";
 import { cn } from "@reactive-resume/utils/style";
@@ -13,6 +13,7 @@ import { useEditorHotkeys } from "./use-editor-hotkeys";
 import { ResumeAssistant } from "@/features/assistant/dock";
 import { takeAssistantHandoff } from "@/features/assistant/handoff";
 import { openAssistantFrom } from "@/features/assistant/open";
+import { useAssistantInUrl } from "@/features/assistant/use-assistant-url";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { IssueStepper } from "@/features/resume/editor/check/page-layer";
 import { EditorFrame, MobileTabBar, useEditorLayout } from "@/features/resume/editor/chrome/shell";
@@ -86,8 +87,8 @@ function useOpenVersionFromUrl() {
 }
 
 /**
- * `?assistant=` opens the assistant on that conversation; `?ask=` only fills its composer. Both then leave the URL. Text
- * handed over in the app (the coach's Add to resume) fills the composer the same way, without passing through the URL.
+ * The assistant and the URL (see `useAssistantInUrl`). Text handed over in the app (the coach's Add to resume) fills the
+ * composer the same way, without passing through the URL.
  */
 function useOpenAssistantFromUrl() {
 	const { assistant, ask } = routeApi.useSearch();
@@ -100,19 +101,17 @@ function useOpenAssistantFromUrl() {
 		if (handed) openAssistantFrom({ draft: handed });
 	}, [session.user.id, resumeId]);
 
-	useEffect(() => {
-		if (!openAssistantFrom({ assistant, draft: ask })) return;
-		void navigate({
-			to: ".",
-			resetScroll: false,
-			search: (current: ReturnType<typeof routeApi.useSearch>) => ({
-				...current,
-				assistant: undefined,
-				ask: undefined,
+	const setSearch = useCallback(
+		(patch: { assistant?: string | undefined; ask?: string | undefined }) =>
+			void navigate({
+				to: ".",
+				resetScroll: false,
+				search: (current: ReturnType<typeof routeApi.useSearch>) => ({ ...current, ...patch }),
+				replace: true,
 			}),
-			replace: true,
-		});
-	}, [assistant, ask, navigate]);
+		[navigate],
+	);
+	useAssistantInUrl({ assistant, ask }, setSearch);
 }
 
 function EditorHotkeys({ onModeChange }: { onModeChange: (mode: EditorMode) => void }) {

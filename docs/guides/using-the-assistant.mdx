@@ -81,9 +81,13 @@ A request involving fields, entries or sections appears as one card for the enti
   />
 </Frame>
 
-- Select **Accept** to apply a text edit or an entire structural set, or **Reject** to dismiss it.
+- Select **Accept** to apply a text edit or an entire structural set, or **Reject** to dismiss it. A rejected edit shows **Rejected · Undo**; **Undo** makes it undecided again.
+- With more than one edit waiting, **Reject all** dismisses them together.
+- A decided edit folds to one line with its number, where it landed and what happened. Select **Show** to open it again.
 - For text-only suggestions with more than one edit waiting, **Accept all** applies the edits it can still place. The notification counts those edits and tells you how many could not be placed. A structural set has one Accept control for all its changes.
 - With an edit focused, press <kbd>A</kbd> to accept, <kbd>R</kbd> to reject, and <kbd>↑</kbd> <kbd>↓</kbd> to move between edits.
+
+A small wording change marks only the words it changes: removed words struck through, added words highlighted. A rewrite shows the old and new text whole.
 
 Each set is headed by what the edits do together, as the assistant titled it, and how many there are: for example **Tailor to the Lumen posting · 3 proposed edits**. An edit that adds a passage after an existing one shows **Adds after:** and that passage, then the new text, one line per new bullet. An edit whose new text says something your document doesn't, however small, shows **New detail: check it's true**. **Accept all** leaves those out (the button reads **Accept the others**), so you accept each one yourself after checking it.
 
@@ -162,7 +166,7 @@ If a question did not finish or could not be asked, send a new message to contin
 
 ## Choose what's shared with each message
 
-Above the message box, chips show what goes with your next message: the document, and the job posting when the document is linked to an application. Select the **×** on a chip to leave it out, including before your first message. Without the document, the assistant can't read or edit it for that message. The line under the box always says what will be sent and to which provider, and nothing is sent until you press send.
+Above the message box, chips show what goes with your next message: the document, and the job posting when the document is linked to an application. Select the **×** on a chip to leave it out, including before your first message. A chip you left out stays as a dashed outline; select it to send that item again. Without the document, the assistant can't read or edit it for that message. The line under the box always says what will be sent and to which provider, names any attached files, and mentions earlier messages only once there are some. Nothing is sent until you press send. A long pasted message folds to its first lines in the conversation, with **Show all**.
 
 Removing either context chip also leaves earlier conversation history out of the next reply. Pending questions or approvals from a different context cannot resume; send a new message with your current choices.
 
@@ -210,7 +214,7 @@ The conversation shows search/read progress, failures and retrieved **Sources**.
 
 ## Switch models
 
-The model chip in the assistant's header shows the model in use. Select it to choose another connected provider and approve transferring earlier messages on your next send, or choose **Connect another…** to add one in settings.
+The model chip in the assistant's header shows the model in use. Select it to choose another connected provider and approve transferring earlier messages on your next send, or choose **Connect another…** to add one right there, over the conversation. **Back to the conversation** returns with your message as you left it.
 
 <Frame caption="Choose a model available through your provider">
   <img
@@ -223,7 +227,7 @@ The model chip in the assistant's header shows the model in use. Select it to ch
 
 - **Stop a reply** with the stop button that replaces send while the assistant is working, or press <kbd>Esc</kbd> in the message box. If it stopped before proposing anything, you'll see **Stopped. No edits were proposed.** with **Continue**.
 - **When a reply fails**, your message is kept. Select **Retry**. **Switch model** appears when the provider caused the failure, such as a rejected key, a missing model or a rate limit. A lost internet connection says **Couldn't reach Reactive Resume** instead.
-- **Copy transcript** at the end of the conversation copies the messages as plain text, speaker by speaker, without the tool steps, and includes the retrieved source links.
+- **Copy transcript** at the end of the conversation copies the messages as plain text, speaker by speaker, with each proposed edit (where it lands, old and new text, and whether you accepted it), each question with your answer, and the retrieved source links.
 
 A single reply can run for about four minutes. If it hits that limit, the assistant says "Time limit reached. Your progress is saved. Ask me to continue."
 
@@ -238,9 +242,9 @@ Each conversation belongs to one document. Opening the assistant continues that 
   />
 </Frame>
 
-Conversations are titled by your first message and show how many edits you accepted. Conversations about your other documents appear under **Other documents**; opening one takes you to that document. To delete a conversation, hover over it, select **×**, then confirm. Its messages and attachments are deleted, but edits you accepted stay in your document.
+Conversations are titled by the first set of edits the assistant proposed ("Tailor summary to payments roles"), or by your first message until there is one, and show how many edits you accepted. While a conversation is open, its address is in the page's URL, so reloading the page reopens it. Conversations about your other documents appear under **Other documents**; opening one takes you to that document. To delete a conversation, hover over it, select **×**, then confirm. Its messages and attachments are deleted, but edits you accepted stay in your document.
 
-A locked or deleted document keeps its conversation read-only. If a provider is off, broken or deleted, history and pending edits stay readable. You can accept saved edits and undo document changes while sending pauses. Repair the connection through **Set up AI**, or choose another model and approve its destination. The app never moves a conversation automatically.
+On a locked document the assistant still answers questions and writes drafts, such as a follow-up email or interview notes, but proposes no edits. The note above the message box offers **Unlock**. A deleted document keeps its conversation read-only, and an old link to a deleted conversation opens Documents with a note saying so. If a provider is off, broken or deleted, history and pending edits stay readable. You can accept saved edits and undo document changes while sending pauses. Repair the connection through **Set up AI**, or choose another model and approve its destination. The app never moves a conversation automatically.
 
 <Info>
   Replies stream while the conversation is open. On instances without Redis (some self-hosted setups), a reply that's

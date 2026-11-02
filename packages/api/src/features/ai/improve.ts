@@ -14,11 +14,11 @@ export const improveInputSchema = z.object({
 	aiProviderId: z.string().optional(),
 	line: z.string().trim().min(1).max(2_000),
 	action: z.enum(["verb", "result", "shorter", "custom"]),
-	/** The user's own words, for "Ask for something else…". */
+	/** The user's own words: what to change for "Ask for something else…", or the result itself for "Add a result". */
 	request: z.string().trim().max(500).optional(),
 	/** Where the line sits, e.g. "Description · Fieldnote". */
 	where: z.string().trim().max(200).default(""),
-	/** The rest of the field, so a result can come from the lines around it. */
+	/** The rest of the field, for tone and what's already said; its results belong to their own lines. */
 	context: z.string().max(10_000).default(""),
 });
 
@@ -43,9 +43,13 @@ type ImproveServiceInput = ImproveInput & {
 	baseURL: string;
 };
 
-function buildUserPrompt(input: ImproveInput): string {
+export function buildUserPrompt(input: ImproveInput): string {
 	const request =
-		input.action === "custom" ? `Something else: ${input.request || "Improve it."}` : REQUESTS[input.action];
+		input.action === "custom"
+			? `Something else: ${input.request || "Improve it."}`
+			: input.action === "result" && input.request
+				? `${REQUESTS.result}. The user says the result was: ${input.request}`
+				: REQUESTS[input.action];
 	const values: Record<string, string> = {
 		REQUEST: request,
 		WHERE: input.where || "Not given",

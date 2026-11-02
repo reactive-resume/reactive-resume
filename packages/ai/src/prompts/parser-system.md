@@ -39,6 +39,7 @@ You are a strict resume extraction engine for {{FORMAT_HEADER}}. Convert the att
 
 - `basics`, `summary`, `experience`, `education`, `skills`, `projects`, `certifications`, `awards`, `languages`, `volunteer`, `publications`, `references`, `profiles`, `interests`
 - Map based on explicit headings first; use local context only when heading is absent.
+- Section titles: when a heading maps to a known section and says the same thing as its usual name ("EXPERIENCE", "Work Experience"), leave the section's `title` empty so the template's localized default shows. Keep a custom wording, written in sentence case even when the document styles headings in capitals ("SELECTED PROJECTS" becomes "Selected projects").
 
 ## Fallback Rules
 

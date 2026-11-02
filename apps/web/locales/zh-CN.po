@@ -285,6 +285,13 @@ msgstr "{0, plural, other {# 个故事}}"
 msgid "{0, plural, one {Added # fact to Knowledge.} other {Added # facts to Knowledge.}}"
 msgstr "{0, plural, other {已将 # 个事实添加到知识库。}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/conversation.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1336,6 +1343,10 @@ msgstr "有一个网址没有写 https://。"
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/homepage/footer.tsx
 msgid "About"
 msgstr "关于"
@@ -1368,6 +1379,10 @@ msgstr "全部接受"
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1458,6 +1473,7 @@ msgstr "活动"
 #: src/features/career/knowledge/facts.tsx
 #: src/features/career/today.tsx
 #: src/features/resume/editor/write/basics-card.tsx
+#: src/features/resume/editor/write/improve.tsx
 msgid "Add"
 msgstr "添加"
 
@@ -2770,6 +2786,10 @@ msgstr "返回登录"
 #: src/features/career/knowledge/stories.tsx
 msgid "Back to stories"
 msgstr "返回故事"
+
+#: src/features/assistant/assistant-panel.tsx
+msgid "Back to the conversation"
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/knowledge/stories.tsx
@@ -4526,6 +4546,10 @@ msgstr "无法保存该更改。请检查网络连接后重试。"
 msgid "Couldn't save that change. Try again."
 msgstr "无法保存该更改。再试一次。"
 
+#: src/features/assistant/conversation.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
+
 #: src/features/career/workspace/debrief.tsx
 #: src/features/career/workspace/fit.tsx
 msgid "Couldn't save that to Knowledge. Try again."
@@ -5813,6 +5837,14 @@ msgstr "编辑"
 #: src/components/input/chip-input.tsx
 msgid "Edit {chip}"
 msgstr "编辑 {chip}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Edit {number}:"
@@ -7102,6 +7134,11 @@ msgstr "隐藏条款又回来了"
 msgid "Hidden: {hiddenList}"
 msgstr "已隐藏：{hiddenList}"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Hide {title} from the page"
 msgstr "从页面中隐藏 {title}"
@@ -7243,11 +7280,20 @@ msgstr ""
 
 #. placeholder {0}: document.posting.company
 #: src/features/assistant/assistant-panel.tsx
+msgid "I can see this {kind} and the {0} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#. placeholder {0}: document.posting.company
+#: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind} and the {0} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-panel.tsx
 msgid "I can see this {kind}. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/homepage/remember.tsx
@@ -8608,6 +8654,10 @@ msgstr "锁定"
 msgid "Locked · unlock to save"
 msgstr ""
 
+#: src/features/assistant/assistant-panel.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
+
 #: src/features/resume/editor/write/write-panel.tsx
 msgid "Locked. Unlock to edit."
 msgstr "锁定。解锁即可编辑。"
@@ -9761,6 +9811,10 @@ msgstr "Northwind Labs · Lisbon"
 #: src/libs/locale.ts
 msgid "Norwegian"
 msgstr "挪威语"
+
+#: src/features/assistant/question-card.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/career/workspace/messages.tsx
 msgid "Not applied"
@@ -11221,6 +11275,10 @@ msgstr "项目"
 msgid "Promoted to lead, 2021"
 msgstr "2021 年晋升领导"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Proposed changes"
 msgstr "建议的更改"
@@ -11316,6 +11374,10 @@ msgstr "把所有内容放在<0>一页纸上。</0>"
 #: src/features/resume/editor/write/rich-text-editor-field.tsx
 msgid "Put the caret in a line to improve it"
 msgstr "将插入符排成一行以改进它"
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "QR code"
@@ -11774,6 +11836,14 @@ msgstr "大声排练一次与工程团队意见不合的经历，以及最终结
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Reject"
 msgstr "拒绝"
+
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/resume/editor/proposals/proposal-list.tsx
 msgid "Rejected"
@@ -13167,6 +13237,11 @@ msgstr "语义化 CSS 样式表"
 msgid "Send"
 msgstr "发送"
 
+#. placeholder {0}: chip.label
+#: src/features/assistant/conversation.tsx
+msgid "Send {0} again"
+msgstr ""
+
 #. Primary action button label on forgot-password form
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Send reset link"
@@ -13465,6 +13540,11 @@ msgstr "较短"
 msgid "Show"
 msgstr "展示"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "显示“使用 Reactive Resume 制作”"
@@ -13491,6 +13571,11 @@ msgstr "再次显示"
 
 #: src/routes/dashboard/applications/index.tsx
 msgid "Show all"
+msgstr ""
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/conversation.tsx
+msgid "Show all ({0} characters)"
 msgstr ""
 
 #: src/features/command-palette/pages/resumes.tsx
@@ -13521,6 +13606,10 @@ msgstr "显示已关闭的求职申请"
 msgid "Show DNS records"
 msgstr "显示 DNS 记录"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "显示标题"
@@ -13532,6 +13621,10 @@ msgstr "显示图标"
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
 msgstr "在搜索引擎中显示"
+
+#: src/features/assistant/conversation.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/resume/editor/write/fields.tsx
 msgid "Show link in title"
@@ -14627,6 +14720,14 @@ msgstr "谢谢 Sam。举个例子：在 Northwind Labs，我主导了新手引�
 msgid "That account's password changed and it's signed out everywhere. This browser is still signed in as {0}."
 msgstr ""
 
+#: src/routes/agent/$threadId.tsx
+msgid "That conversation isn't available. It may have been deleted."
+msgstr ""
+
+#: src/routes/agent/$threadId.tsx
+msgid "That conversation's document was deleted."
+msgstr ""
+
 #: src/features/ats-checker/checker.tsx
 msgid "That file couldn't be read as a PDF. Choose a PDF file and try again."
 msgstr "无法将该文件读取为 PDF。请选择 PDF 文件后重试。"
@@ -15204,10 +15305,6 @@ msgstr "此描述被剪裁或不完整。在准备之前查看或粘贴完整的
 msgid "This document"
 msgstr "本文件"
 
-#: src/features/assistant/assistant-panel.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "该文档已被锁定。解锁它以获得建议。"
-
 #: src/features/career/workspace/answer-library.tsx
 msgid "This employer"
 msgstr ""
@@ -15717,6 +15814,10 @@ msgstr "再试一次"
 msgid "Try again with this"
 msgstr "用这个再试一次"
 
+#: src/features/resume/editor/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/career/knowledge/facts.tsx
 msgid "Try another word or type."
 msgstr ""
@@ -15914,6 +16015,11 @@ msgstr "下划线链接"
 msgid "Undo"
 msgstr "撤销"
 
+#: src/features/resume/editor/proposals/proposal-list.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Undo resume change"
 msgstr "撤消简历更改"
@@ -15937,6 +16043,7 @@ msgstr "取消链接"
 msgid "Unlink this application"
 msgstr "取消此职位申请的链接"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
 #: src/features/resume/editor/write/write-panel.tsx
@@ -15944,6 +16051,7 @@ msgstr "取消此职位申请的链接"
 msgid "Unlock"
 msgstr "解锁"
 
+#: src/features/assistant/assistant-panel.tsx
 #: src/features/resume/editor/write/write-panel.tsx
 #: src/routes/builder/$resumeId/-components/document-menu.tsx
 #: src/routes/builder/letter/-components/letter-bar.tsx
@@ -16607,6 +16715,10 @@ msgstr "人看到的内容"
 #: src/features/career/coach.tsx
 msgid "What are you working on?"
 msgstr "您在忙什么？"
+
+#: src/features/resume/editor/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "What changed? Leave blank if you can’t support it."

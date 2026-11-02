@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# ಕಥೆ} other {# ಕಥೆಗಳು}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {ಪರಿಶೀಲಿಸಲು # ವಿಷಯ.} other {ಪರಿಶೀಲಿಸಲು # ವಿಷಯಗಳು.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "ವೆಬ್ ವಿಳಾಸವನ್ನು https:// ಇಲ್ಲದೆ 
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "ಮಾತನಾಡಿದಾಗ ಸುಮಾರು 90 ಸೆಕೆಂಡುಗಳು"
@@ -1058,6 +1069,10 @@ msgstr "ಎಲ್ಲವನ್ನೂ ಸ್ವೀಕರಿಸಿ"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "ಸಕ್ರಿಯ"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "ಸೇರಿಸಿ"
 
@@ -3544,6 +3560,10 @@ msgstr "ಮುದ್ರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮ
 msgid "Couldn't propose these edits: {0}"
 msgstr "ಈ ಸಂಪಾದನೆಗಳನ್ನು ಪ್ರಸ್ತಾಪಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "ನಿಮ್ಮ AI ಪೂರೈಕೆದಾರರನ್ನು ತಲುಪಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಅದರ ಕೀಯನ್ನು AI ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಪರಿಶೀಲಿಸಿ."
@@ -3617,6 +3637,10 @@ msgstr "ಆ ಬದಲಾವಣೆಯನ್ನು ಉಳಿಸಲು ಸಾಧ್
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "ಆ ಬದಲಾವಣೆಯನ್ನು ಉಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "ರೆಸ್ಯೂಮ್ ಅನ್‌ಲಾಕ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "ಈ ರೆಸ್ಯೂಮ್ ಅನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
@@ -4627,6 +4651,19 @@ msgstr "ಸಂಪಾದಿಸಿ"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "ಎಡಿಟ್ ಮಾಡಿ {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "ಮರೆಮಾಡಿದ ವಿಭಾಗಗಳು ತಮ್ಮ ವಿಷ
 msgid "Hidden terms are back"
 msgstr "ಗುಪ್ತ ಪದಗಳು ಹಿಂತಿರುಗಿವೆ"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "ಪುಟದಿಂದ {title} ಮರೆಮಾಡಿ"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "ಲಾಕ್ ಮಾಡಲಾಗಿದೆ"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "ಲಾಕ್ ಮಾಡಿದ ದಾಖಲೆಗಳನ್ನು ಬಿಟ್ಟುಬಿಡಲಾಗಿದೆ. ಮೊದಲು ಅವುಗಳನ್ನು ಅನ್ಲಾಕ್ ಮಾಡಿ."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "ಸಾಮಾನ್ಯ"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "ನಾರ್ವೇಜಿಯನ್"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8880,6 +8938,10 @@ msgstr "ಪ್ರಗತಿ ಪಟ್ಟಿ"
 msgid "Projects"
 msgstr "ಯೋಜನೆಗಳು"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "ಪ್ರಸ್ತಾವಿತ ಬದಲಾವಣೆಗಳು"
@@ -8947,6 +9009,10 @@ msgstr "ಪ್ರಕಾಶಕರು"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "ಸರಳ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ಮೊದಲ ಪುಟದ ಮೇಲ್ಭಾಗದ ಬಳಿ ಇರಿಸಿ. ಹೆಚ್ಚಿನ ಸಿಸ್ಟಂಗಳು ಇದರಡಿಯಲ್ಲಿಯೇ ನಿಮ್ಮನ್ನು ಫೈಲ್ ಮಾಡುತ್ತವೆ."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9269,6 +9335,14 @@ msgstr "ಗಟ್ಟಿಯಾಗಿ ತಾಲೀಮು ಮಾಡಿ"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "ತಿರಸ್ಕರಿಸಿ"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10767,6 +10841,11 @@ msgstr "ಚಿಕ್ಕದು"
 msgid "Show"
 msgstr "ತೋರಿಸು"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "“Reactive Resume ನಿಂದ ಮಾಡಲಾಗಿದೆ” ತೋರಿಸಿ"
@@ -10784,6 +10863,11 @@ msgstr "ಪುಟದಲ್ಲಿ {title} ತೋರಿಸಿ"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "ಎಲ್ಲವನ್ನೂ ತೋರಿಸು"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10809,6 +10893,10 @@ msgstr "ವಿವರಗಳನ್ನು ತೋರಿಸಿ"
 msgid "Show DNS records"
 msgstr "DNS ರೆಕಾರ್ಡ್‌ಗಳನ್ನು ತೋರಿಸಿ"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "ಶೀರ್ಷಿಕೆ ತೋರಿಸು"
@@ -10828,6 +10916,10 @@ msgstr "ಸರ್ಚ್ ಎಂಜಿನ್‌ಗಳಲ್ಲಿ ತೋರಿಸ�
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "ಕೀಲಿಯನ್ನು ತೋರಿಸಿ"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12147,10 +12239,6 @@ msgstr "ಈ ಡಾಕ್ಯುಮೆಂಟ್"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "ಈ ಡಾಕ್ಯುಮೆಂಟ್ ಲಾಕ್ ಆಗಿದೆ. ನಿಮ್ಮ ಸಂಪಾದನೆಗಳನ್ನು ಇಲ್ಲಿ ಇರಿಸುವ ಮೊದಲು ಅದನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ ಅಥವಾ ಎರಡನ್ನೂ ಇರಿಸಿ."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "ಈ ಡಾಕ್ಯುಮೆಂಟ್ ಲಾಕ್ ಆಗಿದೆ. ಸಲಹೆಗಳನ್ನು ಪಡೆಯಲು ಅದನ್ನು ಅನ್ಲಾಕ್ ಮಾಡಿ."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "ಈ ಡಾಕ್ಯುಮೆಂಟ್ ಲಾಕ್ ಆಗಿದೆ. ನೀವು ಇನ್ನೂ ಡೌನ್‌ಲೋಡ್ ಮಾಡಬಹುದು ಮತ್ತು ಆವೃತ್ತಿಗಳನ್ನು ಹೆಸರಿಸಬಹುದು. ಸಂಪಾದಿಸಲು ಅಥವಾ ಮರುಸ್ಥಾಪಿಸಲು ಅನ್‌ಲಾಕ್ ಮಾಡಿ."
@@ -12626,6 +12714,10 @@ msgstr "ಇದರೊಂದಿಗೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸ�
 msgid "Try again, or restart the app."
 msgstr "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಅಪ್ಲಿಕೇಶನ್ ಮರುಪ್ರಾರಂಭಿಸಿ."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "ಇನ್ನೊಂದು ಹುಡುಕಾಟವನ್ನು ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ನಿಮ್ಮ ಫಿಲ್ಟರ್‌ಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ."
@@ -12749,6 +12841,11 @@ msgstr "ಲಿಂಕ್‌ಗಳನ್ನು ಅಂಡರ್‌ಲೈನ್ ಮ�
 msgid "Undo"
 msgstr "ರದ್ದುಗೊಳಿಸಿ"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12758,6 +12855,7 @@ msgstr "ತಿಳಿದಿಲ್ಲ"
 msgid "Unlink"
 msgstr "ಅನ್‌ಲಿಂಕ್ ಮಾಡಿ"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12772,6 +12870,7 @@ msgstr "ಸಂಪಾದನೆಯನ್ನು ಅನ್ಲಾಕ್ ಮಾಡಿ"
 msgid "Unlock it first, then try again."
 msgstr "ಮೊದಲು ಅದನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "ಅನ್‌ಲಾಕ್ ಮಾಡಲಾಗುತ್ತಿದೆ..."
@@ -12959,10 +13058,6 @@ msgstr "ರೆಸ್ಯೂಮ್‌ನಿಂದ ವಿವರಗಳನ್ನು �
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "ಎಲ್ಲಾ ಅರ್ಜಿಗಳಿಗೂ ಬಳಸಿ"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13322,6 +13417,10 @@ msgstr "ವ್ಯಕ್ತಿ ನೋಡುವುದು ಏನು"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "ನೀವು ಯಾವುದರ ಮೇಲೆ ಕೆಲಸ ಮಾಡುತ್ತಿದ್ದೀರಿ?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

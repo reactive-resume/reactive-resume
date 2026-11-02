@@ -16,11 +16,13 @@ type QuestionCardProps = {
 	readOnly: boolean;
 	/** A reply is in flight: keep the choices visible but stop a second answer. */
 	busy?: boolean;
+	/** The conversation moved on without an answer: the question is retired, not waiting. */
+	passed?: boolean;
 	onAnswer: (toolCallId: string, answer: string) => void;
 };
 
 /** The assistant asks before writing anything the document doesn't say: an info-soft card with its choices. */
-export function QuestionCard({ part, readOnly, busy = false, onAnswer }: QuestionCardProps) {
+export function QuestionCard({ part, readOnly, busy = false, passed = false, onAnswer }: QuestionCardProps) {
 	const id = useId();
 	const [other, setOther] = useState("");
 	const submitted = useRef(false);
@@ -60,6 +62,10 @@ export function QuestionCard({ part, readOnly, busy = false, onAnswer }: Questio
 				<p role="status" className="text-[13px] opacity-80">
 					<Trans>This question couldn't be asked. Send a new message to continue.</Trans>
 				</p>
+			) : passed && part.state === "input-available" ? (
+				<p className="text-[13px] opacity-80">
+					<Trans>Not answered. The conversation went on below.</Trans>
+				</p>
 			) : canAnswer ? (
 				<>
 					{choices.length > 0 && (
@@ -87,7 +93,7 @@ export function QuestionCard({ part, readOnly, busy = false, onAnswer }: Questio
 							disabled={busy}
 							onChange={(event) => setOther(event.target.value)}
 							placeholder={t`Or in your own words…`}
-							className="h-8 min-w-0 flex-1 rounded-md border border-control-border bg-raised px-2 text-sm text-ink transition-[border-color,box-shadow] outline-none focus:border-accent"
+							className="h-8 min-w-0 flex-1 rounded-md border border-control-border bg-raised px-2 text-sm text-ink transition-[border-color,box-shadow] outline-none focus:border-accent pointer-coarse:h-11 pointer-coarse:text-base"
 						/>
 						<Button type="submit" size="sm" disabled={busy || !other.trim()}>
 							<Trans>Send</Trans>

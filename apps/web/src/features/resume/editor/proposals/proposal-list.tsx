@@ -9,8 +9,9 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { KeyboardEvent, ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
-import { useId, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { additionParts, getProposalState, needsConfirmation, passageLines } from "@reactive-resume/resume/proposals";
+import { wordDiff } from "@reactive-resume/resume/word-diff";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { cn } from "@reactive-resume/utils/style";
@@ -77,6 +78,12 @@ export function ProposalList({ proposals, data, onSuggestAgain }: ProposalListPr
 					"rejected",
 				)
 			}
+			onRestore={(restored) =>
+				setProposalStatus(
+					restored.map((proposal) => proposal.id),
+					"pending",
+				)
+			}
 			onSuggestAgain={onSuggestAgain}
 		/>
 	);
@@ -90,6 +97,8 @@ type ChangeSetProps = {
 	locked: boolean;
 	onAccept: (proposals: readonly Proposal[]) => void;
 	onReject: (proposals: readonly Proposal[]) => void;
+	/** Undo on a rejected edit: it's undecided again. */
+	onRestore?: ((proposals: readonly Proposal[]) => void) | undefined;
 	/** "Suggest again" on an out-of-date proposal. */
 	onSuggestAgain?: (() => void) | undefined;
 	/** The set's title; "n proposed edits" by default. */
@@ -120,6 +129,8 @@ export function ChangeSet(props: ChangeSetProps) {
 		if (allowed.length > 0) onAccept(allowed);
 	};
 	const pending = proposals.filter((proposal, index) => acceptable(proposal, index));
+	// Reject all clears every undecided edit at once, locked or not; wording being edited stays open.
+	const rejectable = proposals.filter((proposal, index) => states[index] === "pending" && !drafting.has(proposal.id));
 	// Edits that add a detail are accepted one by one, after the user checks them.
 	const checked = pending.filter((proposal) => !needsConfirmation(proposal));
 	const toConfirm = pending.length - checked.length;
@@ -162,10 +173,19 @@ export function ChangeSet(props: ChangeSetProps) {
 					{props.resumeId && !locked && checked.length > 0 && (
 						<ProposalPageFit resumeId={props.resumeId} proposals={checked} />
 					)}
-					{checked.length > 1 && (
-						<Button size="sm" disabled={locked} onClick={() => accept(checked)}>
-							{toConfirm > 0 ? <Trans>Accept the others</Trans> : <Trans>Accept all</Trans>}
-						</Button>
+					{(checked.length > 1 || rejectable.length > 1) && (
+						<div className="flex gap-1.5">
+							{rejectable.length > 1 && (
+								<Button size="sm" variant="secondary" onClick={() => onReject(rejectable)}>
+									<Trans>Reject all</Trans>
+								</Button>
+							)}
+							{checked.length > 1 && (
+								<Button size="sm" disabled={locked} onClick={() => accept(checked)}>
+									{toConfirm > 0 ? <Trans>Accept the others</Trans> : <Trans>Accept all</Trans>}
+								</Button>
+							)}
+						</div>
 					)}
 				</div>
 			</header>
@@ -185,6 +205,7 @@ export function ChangeSet(props: ChangeSetProps) {
 						onFocus={() => setFocused(index)}
 						onAccept={() => accept([proposal])}
 						onReject={() => onReject([proposal])}
+						onRestore={props.onRestore ? () => props.onRestore?.([proposal]) : undefined}
 						// A structural change is reviewed as a whole: its wording can't be rewritten here.
 						onEdit={onEdit && !proposal.snapshot ? (text) => onEdit(proposal, text) : undefined}
 						onDrafting={(open) =>
@@ -211,7 +232,10 @@ export function ChangeSet(props: ChangeSetProps) {
 						/>{" "}
 					</>
 				)}
-				<Trans>A accepts and R rejects the focused edit. ↑ and ↓ move between edits.</Trans>
+				{/* Keyboard shortcuts mean nothing on a touch screen. */}
+				<span className="pointer-coarse:hidden">
+					<Trans>A accepts and R rejects the focused edit. ↑ and ↓ move between edits.</Trans>
+				</span>
 			</p>
 		</section>
 	);
@@ -227,6 +251,7 @@ type ProposalItemProps = {
 	onFocus: () => void;
 	onAccept: () => void;
 	onReject: () => void;
+	onRestore?: (() => void) | undefined;
 	onEdit?: ((text: string) => Promise<void>) | undefined;
 	/** The wording opened for editing (true) or closed: saved or cancelled (false). */
 	onDrafting: (open: boolean) => void;
@@ -237,6 +262,11 @@ type ProposalItemProps = {
 function ProposalItem(props: ProposalItemProps) {
 	const { proposal, number, state, index, focusable, locked } = props;
 	const addition = additionParts(proposal);
+	// Wording edits show word by word; structural changes and additions keep their whole-text view.
+	const diff = useMemo(
+		() => (addition || proposal.snapshot ? null : wordDiff(passageText(proposal.before), passageText(proposal.after))),
+		[addition, proposal.snapshot, proposal.before, proposal.after],
+	);
 	const labelId = `proposal-${proposal.id}-location`;
 	const editId = useId();
 	const [draft, setDraftText] = useState<string | null>(null);
@@ -257,6 +287,79 @@ function ProposalItem(props: ProposalItemProps) {
 		}
 	};
 
+	const settled = state === "accepted" || state === "rejected";
+	const [expanded, setExpanded] = useState(false);
+	const undo =
+		state === "rejected" && !proposal.superseded && props.onRestore ? (
+			<button
+				type="button"
+				className="touch-target relative text-ink-2 underline underline-offset-2"
+				onClick={props.onRestore}
+			>
+				<Trans context="Reconsider a rejected edit">Undo</Trans>
+			</button>
+		) : null;
+	const outcome = (
+		<>
+			{state === "accepted" && (
+				<>
+					<Icon name="check" size={16} className={POP_CLASS} />
+					<span>
+						<Trans context="A proposed change has been applied">Applied</Trans>
+					</span>
+				</>
+			)}
+			{state === "rejected" &&
+				(proposal.superseded ? <Trans>Replaced by a newer suggestion</Trans> : <Trans>Rejected</Trans>)}
+			{undo}
+		</>
+	);
+
+	// A decided edit folds to one line, so a long thread doesn't read as a wall of highlights; Show opens it again.
+	if (settled && !expanded)
+		return (
+			<li
+				data-proposal-index={index}
+				// oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Roving focus: one edit in the tab order, ↑ and ↓ move between them.
+				tabIndex={focusable ? 0 : -1}
+				aria-labelledby={labelId}
+				onFocus={props.onFocus}
+				className="flex items-center gap-2 px-3 py-2 text-xs focus-visible:bg-hover focus-visible:-outline-offset-2"
+			>
+				<span
+					aria-hidden="true"
+					className="grid size-5 shrink-0 place-items-center rounded-sm bg-sunken text-[11px] font-bold text-ink-3"
+				>
+					{number}
+				</span>
+				<span id={labelId} className="min-w-0 flex-1 truncate font-mono text-ink-3">
+					<span className="sr-only">
+						<Trans>Edit {number}:</Trans>{" "}
+					</span>
+					{proposal.location}
+				</span>
+				<span
+					key={state}
+					className={cn(
+						ENTER_CLASS,
+						"flex shrink-0 items-center gap-2 font-medium",
+						state === "accepted" ? "text-accent-text" : "text-ink-3",
+					)}
+				>
+					{outcome}
+				</span>
+				<button
+					type="button"
+					aria-expanded={false}
+					aria-label={t`Show edit ${number}`}
+					className="touch-target relative shrink-0 text-ink-3 underline underline-offset-2 hover:text-ink"
+					onClick={() => setExpanded(true)}
+				>
+					<Trans context="Open a folded edit card">Show</Trans>
+				</button>
+			</li>
+		);
+
 	return (
 		<li
 			data-proposal-index={index}
@@ -264,7 +367,7 @@ function ProposalItem(props: ProposalItemProps) {
 			tabIndex={focusable ? 0 : -1}
 			aria-labelledby={labelId}
 			onFocus={props.onFocus}
-			className="grid gap-2 p-3 outline-none focus-visible:bg-hover"
+			className="grid gap-2 p-3 focus-visible:bg-hover focus-visible:-outline-offset-2"
 		>
 			<div className="flex items-center gap-2">
 				<span
@@ -273,7 +376,7 @@ function ProposalItem(props: ProposalItemProps) {
 				>
 					{number}
 				</span>
-				<span id={labelId} className="truncate font-mono text-xs text-ink-3">
+				<span id={labelId} className="line-clamp-2 font-mono text-xs break-words text-ink-3">
 					<span className="sr-only">
 						<Trans>Edit {number}:</Trans>{" "}
 					</span>
@@ -286,13 +389,40 @@ function ProposalItem(props: ProposalItemProps) {
 					<p className="text-ink-3">
 						<Trans>Adds after: {addition.anchor}</Trans>
 					</p>
+				) : diff ? (
+					// Only the changed words are marked, so a one-word fix in a long passage shows at a glance.
+					<p className="text-ink-3">
+						{diff.map((segment, part) =>
+							segment.kind === "removed" ? (
+								<del key={part} className="text-ink-2">
+									{segment.text}
+								</del>
+							) : segment.kind === "same" ? (
+								<span key={part}>{segment.text}</span>
+							) : null,
+						)}
+					</p>
 				) : (
 					<del className="text-ink-3">{proposal.snapshot ? proposal.before : passageText(proposal.before)}</del>
 				)}
 				{draft === null ? (
-					<ins className="rounded-md bg-accent-soft px-1 py-0.5 no-underline">
-						{proposal.snapshot ? proposal.after : (addition?.added ?? passageText(proposal.after))}
-					</ins>
+					diff ? (
+						<p>
+							{diff.map((segment, part) =>
+								segment.kind === "added" ? (
+									<ins key={part} className="rounded-sm bg-accent-soft px-0.5 no-underline">
+										{segment.text}
+									</ins>
+								) : segment.kind === "same" ? (
+									<span key={part}>{segment.text}</span>
+								) : null,
+							)}
+						</p>
+					) : (
+						<ins className="rounded-md bg-accent-soft px-1 py-0.5 no-underline">
+							{proposal.snapshot ? proposal.after : (addition?.added ?? passageText(proposal.after))}
+						</ins>
+					)
 				) : (
 					<span className="grid gap-1">
 						<label htmlFor={editId} className="text-xs font-medium text-ink-2">
@@ -383,14 +513,17 @@ function ProposalItem(props: ProposalItemProps) {
 						state === "stale" && "text-warn-text",
 					)}
 				>
-					{state === "accepted" && (
-						<>
-							<Icon name="check" size={16} className={POP_CLASS} />
-							<Trans context="A proposed change has been applied">Applied</Trans>
-						</>
+					{settled && outcome}
+					{settled && (
+						<button
+							type="button"
+							aria-expanded
+							className="touch-target relative text-ink-3 underline underline-offset-2 hover:text-ink"
+							onClick={() => setExpanded(false)}
+						>
+							<Trans context="Fold an edit card">Hide</Trans>
+						</button>
 					)}
-					{state === "rejected" &&
-						(proposal.superseded ? <Trans>Replaced by a newer suggestion</Trans> : <Trans>Rejected</Trans>)}
 					{state === "stale" && (
 						<>
 							<Trans>Out of date: the text has changed since.</Trans>

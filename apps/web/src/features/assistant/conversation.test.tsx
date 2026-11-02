@@ -22,7 +22,8 @@ vi.mock("@tanstack/react-query", () => ({
 vi.mock("@/features/resume/editor/store", () => ({
 	// Nothing drawn yet: no overflow line under applied sets.
 	useEditorStore: Object.assign(
-		(select: (state: { rendered: { pageCount: number } }) => unknown) => select({ rendered: { pageCount: 0 } }),
+		(select: (state: { rendered: { pageCount: number }; fitRendered: { pageCount: number } }) => unknown) =>
+			select({ rendered: { pageCount: 0 }, fitRendered: { pageCount: 0 } }),
 		{ setState: mocks.publish },
 	),
 }));

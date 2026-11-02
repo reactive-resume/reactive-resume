@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { sanitizeAndParseResumeJson } from "./sanitize";
+import { normalizeImportedSectionTitle, sanitizeAndParseResumeJson } from "./sanitize";
 
 describe("sanitizeAndParseResumeJson", () => {
 	it("strips text before and after the JSON block", () => {
@@ -71,5 +71,27 @@ describe("sanitizeAndParseResumeJson", () => {
 
 	it("throws when input is non-JSON garbage", () => {
 		expect(() => sanitizeAndParseResumeJson("not even close to json")).toThrow();
+	});
+});
+
+describe("normalizeImportedSectionTitle", () => {
+	it("leaves a heading that only names its section to the template", () => {
+		expect(normalizeImportedSectionTitle("experience", "EXPERIENCE")).toBe("");
+		expect(normalizeImportedSectionTitle("summary", " Summary ")).toBe("");
+	});
+
+	it("writes other capitalised headings in sentence case and keeps mixed case as written", () => {
+		expect(normalizeImportedSectionTitle("projects", "SELECTED PROJECTS")).toBe("Selected projects");
+		expect(normalizeImportedSectionTitle("experience", "BERUFSERFAHRUNG")).toBe("Berufserfahrung");
+		expect(normalizeImportedSectionTitle("experience", "Work Experience")).toBe("Work Experience");
+		expect(normalizeImportedSectionTitle("skills", "技能")).toBe("技能");
+	});
+
+	it("applies to parsed resumes", () => {
+		const { data } = sanitizeAndParseResumeJson(
+			JSON.stringify({ summary: { title: "SUMMARY" }, sections: { education: { title: "EDUCATION AND TRAINING" } } }),
+		);
+		expect(data.summary.title).toBe("");
+		expect(data.sections.education.title).toBe("Education and training");
 	});
 });

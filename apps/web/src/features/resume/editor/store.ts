@@ -80,6 +80,11 @@ type EditorStore = {
 	 * counts renders, so Fit can wait for one.
 	 */
 	rendered: { pageCount: number; pageMap: PageMap | undefined; file: Blob | undefined; version: number };
+	/**
+	 * The last render of the resume as it is, without proposed edits marked on it: page fit is measured on this, so
+	 * struck-through old text doesn't count against the page while edits wait.
+	 */
+	fitRendered: { pageCount: number; pageMap: PageMap | undefined };
 	/** Phones: the view on screen; null until one is picked, which shows the current mode. */
 	mobileView: MobileView | null;
 	checkTab: CheckTab;
@@ -106,7 +111,8 @@ type EditorStore = {
 	setAssistantOpen: (open: boolean, instant?: boolean) => void;
 	setSectionOpen: (sectionId: string, open: boolean) => void;
 	markSectionAdded: (sectionId: string) => void;
-	setRendered: (render: { pageCount: number; pageMap: PageMap | undefined; file: Blob }) => void;
+	/** `marked`: the render shows proposed edits (or a template preview), so it doesn't measure fit. */
+	setRendered: (render: { pageCount: number; pageMap: PageMap | undefined; file: Blob }, marked?: boolean) => void;
 	setProposalStatus: (ids: readonly string[], status: Proposal["status"]) => void;
 	reset: () => void;
 };
@@ -144,6 +150,7 @@ const initialState = {
 	previewTemplate: null,
 	styleHighlight: [],
 	rendered: { pageCount: 0, pageMap: undefined, file: undefined, version: 0 },
+	fitRendered: { pageCount: 0, pageMap: undefined },
 	mobileView: null,
 	checkTab: "issues",
 	checkIssue: null,
@@ -173,7 +180,11 @@ export const useEditorStore = create<EditorStore>()((set) => ({
 		set((state) =>
 			state.addedSections.includes(sectionId) ? state : { addedSections: [...state.addedSections, sectionId] },
 		),
-	setRendered: (render) => set((state) => ({ rendered: { ...render, version: state.rendered.version + 1 } })),
+	setRendered: (render, marked = false) =>
+		set((state) => ({
+			rendered: { ...render, version: state.rendered.version + 1 },
+			...(marked ? {} : { fitRendered: { pageCount: render.pageCount, pageMap: render.pageMap } }),
+		})),
 	setProposalStatus: (ids, status) =>
 		set((state) => ({
 			proposals: state.proposals.map((proposal) => (ids.includes(proposal.id) ? { ...proposal, status } : proposal)),

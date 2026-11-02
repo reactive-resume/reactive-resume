@@ -27,13 +27,14 @@ const findNode = (pageMap: PageMap, target: PageMapTarget) =>
 	pageMap.nodes.find((node) => isSameSelection(toTarget(node), target));
 
 /**
- * A marker in the page margin, level with the top of a block: 30px left of it, but never off the page, whose
- * margins can be narrower than the marker. `stack` moves further markers on the same block down.
+ * A marker in the page margin, level with the top of a block: 30px left of it. A margin narrower than the marker
+ * (a scaled-down page) lets it hang past the page edge into the canvas gutter instead of covering the text; phones,
+ * whose gutter is narrow, keep it on the page. `stack` moves further markers on the same block down.
  */
 type Box = Pick<PageMapNode, "x" | "y" | "width" | "height">;
 
-const marginStyle = (node: Box, page: { width: number; height: number }, stack = 0): CSSProperties => ({
-	left: `max(4px, calc(${(node.x / page.width) * 100}% - 30px))`,
+const marginStyle = (node: Box, page: { width: number; height: number }, stack = 0, onPage = false): CSSProperties => ({
+	left: `max(${onPage ? "4px" : "-26px"}, calc(${(node.x / page.width) * 100}% - 30px))`,
 	top: `calc(${(node.y / page.height) * 100}% - 3px + ${stack * 26}px)`,
 });
 
@@ -93,6 +94,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 	const proposals = useEditorStore((state) => state.proposals);
 	const exportCheck = useEditorStore((state) => state.exportCheck);
 	const breakpoint = useBreakpoint();
+	const onPage = breakpoint === "mobile";
 	const page = pageMap?.pages[pageIndex];
 
 	const highlighted = check && highlightTerm && tab === "match" ? targetsMentioning(check.data, highlightTerm) : [];
@@ -174,7 +176,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 							aria-label={t`Issue ${issue.number}: ${issue.title}`}
 							aria-pressed={isSelected}
 							onClick={() => pickIssue(issue)}
-							style={marginStyle(node, page, stack)}
+							style={marginStyle(node, page, stack, onPage)}
 							className={cn(
 								"pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-white bg-warn text-[11px] font-bold text-[oklch(0.22_0.03_80)] shadow-[0_1px_3px_oklch(0_0_0/0.25)]",
 								isSelected && "outline-2 outline-offset-1 outline-warn",
@@ -199,7 +201,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 						aria-label={t`Exported PDF: ${getPdfFindingMessage(finding.code).title}`}
 						title={getPdfFindingMessage(finding.code).title}
 						onClick={() => useEditorStore.setState({ exportReportOpen: true })}
-						style={marginStyle(box, page)}
+						style={marginStyle(box, page, 0, onPage)}
 						className="pointer-events-auto absolute grid size-[22px] place-items-center rounded-sm border-2 border-white bg-info-text text-bg shadow-[0_1px_3px_oklch(0_0_0/0.25)]"
 					>
 						<Icon name="file-pdf" size={13} />
@@ -212,7 +214,7 @@ export function CheckPageLayer({ pageIndex, pageMap }: CheckPageLayerProps) {
 					key={`marker:${number}`}
 					aria-hidden="true"
 					className="absolute grid size-5 place-items-center rounded-sm bg-accent text-[11px] font-bold text-on-accent"
-					style={marginStyle(node, page)}
+					style={marginStyle(node, page, 0, onPage)}
 				>
 					{number}
 				</span>

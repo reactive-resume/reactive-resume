@@ -12,6 +12,8 @@ import type { Proposal } from "@reactive-resume/resume/proposals";
 import type { UIMessage } from "ai";
 import type { ReactNode } from "react";
 import { LegendList } from "@legendapp/list/react-native";
+import { i18n } from "@lingui/core";
+import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -287,6 +289,8 @@ function Conversation(props: ConversationProps) {
 	const { colors, radius, space } = useTheme();
 	const queryClient = useQueryClient();
 	const [rejections, setStatuses] = useState<ReadonlyMap<string, EditStatus>>(new Map());
+	const writes = useRef(0);
+	const owners = useRef(new Map<string, { write: number; previous: EditStatus | undefined }>());
 	const [stopped, setStopped] = useState(false);
 	const [recovering, setRecovering] = useState(props.activeRun);
 
@@ -540,21 +544,42 @@ function Conversation(props: ConversationProps) {
 		if (documentId && document?.kind === "resume") publishProposals(documentId, proposals);
 	}, [documentId, document?.kind, proposals]);
 
+	// Rejections and their Undo are recorded here; an acceptance travels with the document save that applies it.
 	const record = (message: UIMessage, part: ToolPart, changed: readonly Proposal[], next: EditStatus) => {
-		if (!part.toolCallId || next !== "rejected") return;
-		setStatuses((current) => new Map([...current, ...changed.map((proposal) => [proposal.id, next] as const)]));
+		if (!part.toolCallId || next === "accepted") return;
+		// Each id remembers which write set it and what it showed before, so a failed write puts back only what it
+		// still owns: a later Reject or Undo of the same edit keeps its own value (web conversation.tsx).
+		const write = ++writes.current;
+		const ids = changed.map((proposal) => proposal.id);
+		for (const id of ids) owners.current.set(id, { write, previous: rejections.get(id) });
+		setStatuses((current) => new Map([...current, ...ids.map((id) => [id, next] as const)]));
 		void client.agent.messages
 			.setEditStatus(
 				{
 					threadId,
 					messageId: message.id,
 					toolCallId: part.toolCallId,
-					edits: changed.map((proposal) => ({ id: proposal.id, status: next })),
+					edits: ids.map((id) => ({ id, status: next })),
 				},
 				{ context: { scope: props.scope } },
 			)
 			.then(() => refreshThreads(queryClient))
-			.catch(() => undefined);
+			.catch(() => {
+				const mine = ids.flatMap((id) => {
+					const owner = owners.current.get(id);
+					return owner?.write === write ? [[id, owner.previous] as const] : [];
+				});
+				for (const [id] of mine) owners.current.delete(id);
+				setStatuses((current) => {
+					const restored = new Map(current);
+					for (const [id, previous] of mine) {
+						if (previous === undefined) restored.delete(id);
+						else restored.set(id, previous);
+					}
+					return restored;
+				});
+				showToast({ message: t`Couldn't save that decision. Try again.` });
+			});
 	};
 	// The user's wording shows (and Accept uses it) only once the server has it and a fresh read of the receipts shows
 	// it (web conversation.tsx); until then their draft stays open and out of Accept. The reviewed text binds the save.
@@ -623,6 +648,7 @@ function Conversation(props: ConversationProps) {
 						},
 						forJobCopy: (message, part) => forJobCopy(document, message, part),
 						onReject: (message, part, chosen) => recordRef.current(message, part, chosen, "rejected"),
+						onRestore: (message, part, chosen) => recordRef.current(message, part, chosen, "pending"),
 						onEdit: (message, part, proposal, text) => saveWordingRef.current(message, part, proposal, text),
 						factText,
 					}
@@ -655,7 +681,11 @@ function Conversation(props: ConversationProps) {
 	const copyTranscript = async () => {
 		try {
 			await Clipboard.setStringAsync(
-				transcriptOf(messages, { user: t`You`, assistant: props.assistantName, sources: t`Sources` }),
+				transcriptOf(
+					messages,
+					{ user: t`You`, assistant: props.assistantName, sources: t`Sources` },
+					(id) => statuses.get(id)?.status,
+				),
 			);
 			showToast({ message: t`Transcript copied` });
 		} catch {
@@ -869,6 +899,15 @@ function Composer(props: ComposerProps) {
 	// Chips removed while their upload was still running: the finished upload is deleted, not kept.
 	const removedUploads = useRef(new Set<string>());
 	const uploading = attachments.some((attachment) => attachment.busy);
+	// Attached files go with the next message: named, so the user sees exactly what leaves (web conversation.tsx).
+	const names = attachments.map((attachment) => attachment.filename);
+	const files =
+		names.length === 0
+			? ""
+			: plural(names.length, {
+					one: `Also sends ${listFormat(names)}.`,
+					other: `Also sends # files: ${listFormat(names)}.`,
+				});
 	const hasText = text.trim().length > 0;
 
 	const submit = async () => {
@@ -1077,6 +1116,7 @@ function Composer(props: ComposerProps) {
 
 			<Text variant="caption" color="ink3" style={{ paddingHorizontal: space.s1 }}>
 				{props.privacy}
+				{files ? ` ${files}` : ""}
 			</Text>
 		</View>
 	);
@@ -1151,3 +1191,12 @@ export function ContextChip({ icon, label, onRemove, removeLabel, pressed, onPre
 function forJobCopy(document: AssistantDocument, message: UIMessage, part: ToolPart) {
 	return document.kind === "resume" && !tailoringAllows(message, part.output, document.madeFor);
 }
+
+/** "a, b and c" in the reader's language. */
+const listFormat = (items: readonly string[]) => {
+	try {
+		return new Intl.ListFormat(i18n.locale, { type: "conjunction" }).format(items);
+	} catch {
+		return items.join(", ");
+	}
+};

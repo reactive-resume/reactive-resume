@@ -26,6 +26,8 @@ type DocumentKind = "resume" | "letter";
 type BuildAgentToolsInput = {
 	/** The open document's kind, or null when the user left it out of this message. */
 	document: DocumentKind | null;
+	/** False while the document is locked: it can be read, but no edits are proposed. */
+	canEdit?: boolean;
 	externalSearch: boolean;
 	signal: AbortSignal;
 	handlers: {
@@ -43,6 +45,8 @@ const readToolName = (document: DocumentKind) => (document === "letter" ? "read_
 
 type InstructionsInput = {
 	document: { kind: DocumentKind; name: string } | null;
+	/** The document is locked: answer and draft, but propose no edits. */
+	locked?: boolean;
 	posting: {
 		role: string;
 		company: string;
@@ -61,8 +65,13 @@ type InstructionsInput = {
 const NOT_JOB_COPY =
 	"\nThis resume isn't the copy made for this job, so don't propose edits that use the posting: they would change the original that other applications use. Answer questions about the posting, and tell the user to select **Copy for this job** to tailor a copy, or to leave the posting out to edit this resume.\n";
 
+// Said when the document is locked, so the model answers instead of reaching for an edit tool it doesn't have.
+const LOCKED =
+	"\nThe document is locked, so you can't propose edits now. Answer questions, assess fit, and write drafts the user asked for (an email, interview notes, talking points) in your reply. If they ask for changes to the document, say that unlocking it lets you suggest edits, and don't describe edits as if they were proposed.\n";
+
 export function buildAgentInstructions({
 	document,
+	locked = false,
 	posting,
 	knowledge = false,
 	searchTool,
@@ -77,6 +86,7 @@ export function buildAgentInstructions({
 			document?.kind === "resume"
 				? "For resumes, propose typed changes: text rewrites/additional bullets within an existing entry; field edits for names, headlines, section titles and other string fields; entry additions in the matching section; and custom sections with typed entries (use publications for Patents). Read structure and entryTemplates before proposing changes. Hidden summary, sections and entries are excluded; never target their IDs or guess their contents. Create or open cover letters through Documents, never as resume sections. Never put a requested section, entry or field change inside Summary or an unrelated description. For mixed requests, propose each supported change and explain any unsupported part separately. Requests involving fields, entries or sections are accepted together; text-only requests keep individual cards. Whole-resume translation is NOT supported: only text and supported string fields can be translated; keywords, nested fields, generated date labels and page language still require Write or Design. Explain this before proposing partial translation, ask whether the user wants that partial work, and never claim the whole resume is translated. Unsupported fields: route to Write (Basics for name/headline/contact details, relevant section for entries and fields); Design owns page language. Use plain language with users: never explain limitations using tool names, API, passage, exposed or editable-target jargon. If edits are rejected, explain the actual reason and next step; don't claim completion."
 				: "For cover letters, edit the body only. Recipient, sender, greeting and sign-off belong in Write.",
+		LOCKED: document && locked ? LOCKED : "",
 		POSTING: posting
 			? `\n## The job posting\n\nThe user is applying for the role in this posting.\n\n${dataBlock("POSTING", `Role: ${posting.role}\nCompany: ${posting.company}${posting.text ? `\n\n${posting.text}` : ""}`)}${posting.requirements?.length ? `\n\nIts listed requirements, to use word for word in \`requirements\`:\n\n${dataBlock("REQUIREMENTS", posting.requirements.map((item) => `- ${item}`).join("\n"))}` : ""}${posting.notes ? `\n\nThe user's notes on this application:\n\n${dataBlock("NOTES", posting.notes)}` : ""}\n${posting.jobCopy ? "" : NOT_JOB_COPY}`
 			: "",
@@ -109,14 +119,18 @@ export function buildAgentTools(input: BuildAgentToolsInput): ToolSet {
 					inputSchema: z.object({}),
 					execute: input.handlers.readDocument,
 				}),
-				propose_edits: tool({
-					description:
-						input.document === "resume"
-							? "Propose typed resume changes for review: text within existing entries, string fields, new typed entries, or new custom sections. Match visible section IDs/types from read_resume. Hidden content cannot be edited here. Create or open cover letters through Documents. Use separate field/entry/section operations, never describe new sections or entries inside a text edit. A set is accepted together and becomes stale if the resume changes. Whole-resume translation is not supported; explain what remains in Write/Design."
-							: "Propose edits to the letter body for review. Rewrite a passage by its read-tool id, or add a paragraph after it. Nothing changes until accepted.",
-					inputSchema: input.document === "resume" ? proposeResumeEditsInputSchema : proposeEditsInputSchema,
-					execute: input.handlers.proposeEdits,
-				}),
+				...(input.canEdit === false
+					? {}
+					: {
+							propose_edits: tool({
+								description:
+									input.document === "resume"
+										? "Propose typed resume changes for review: text within existing entries, string fields, new typed entries, or new custom sections. Match visible section IDs/types from read_resume. Hidden content cannot be edited here. Create or open cover letters through Documents. Use separate field/entry/section operations, never describe new sections or entries inside a text edit. A set is accepted together and becomes stale if the resume changes. Whole-resume translation is not supported; explain what remains in Write/Design."
+										: "Propose edits to the letter body for review. Rewrite a passage by its read-tool id, or add a paragraph after it. Nothing changes until accepted.",
+								inputSchema: input.document === "resume" ? proposeResumeEditsInputSchema : proposeEditsInputSchema,
+								execute: input.handlers.proposeEdits,
+							}),
+						}),
 			}
 		: {};
 

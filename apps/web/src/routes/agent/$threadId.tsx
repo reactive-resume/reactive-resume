@@ -1,7 +1,9 @@
+import { t } from "@lingui/core/macro";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { orpc } from "@/libs/orpc/client";
 
-// A conversation opens on its document, with the assistant showing it; without the document, Documents.
+// A conversation opens on its document, with the assistant showing it; without one, Documents, saying why.
 export const Route = createFileRoute("/agent/$threadId")({
 	loader: async ({ params, context }) => {
 		const detail = await context.queryClient
@@ -22,6 +24,13 @@ export const Route = createFileRoute("/agent/$threadId")({
 				search: { assistant: params.threadId },
 				replace: true,
 			});
+		// An old link lands on Documents with the reason, instead of silently.
+		toast.add({
+			type: "error",
+			description: detail
+				? t`That conversation's document was deleted.`
+				: t`That conversation isn't available. It may have been deleted.`,
+		});
 		throw redirect({ to: "/dashboard", replace: true });
 	},
 });

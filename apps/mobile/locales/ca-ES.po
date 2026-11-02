@@ -281,6 +281,13 @@ msgstr "{0, plural, one {# història} other {# històries}}"
 msgid "{0, plural, one {# thing to review.} other {# things to review.}}"
 msgstr "{0, plural, one {# element per revisar.} other {# elements per revisar.}}"
 
+#. placeholder {0}: names.length
+#. placeholder {1}: listFormat(names)
+#. placeholder {2}: listFormat(names)
+#: src/features/assistant/chat-view.tsx
+msgid "{0, plural, one {Also sends {1}.} other {Also sends # files: {2}.}}"
+msgstr ""
+
 #. placeholder {0}: step.days
 #: src/features/applications/next-step.ts
 msgid "{0, plural, one {Applied # day ago} other {Applied # days ago}}"
@@ -1026,6 +1033,10 @@ msgstr "Una adreça web està escrita sense https://."
 msgid "a year"
 msgstr ""
 
+#: src/features/assistant/chat.ts
+msgid "A: {answer}"
+msgstr ""
+
 #: src/features/workspace/tabs/practise.tsx
 msgid "About 90 seconds when spoken"
 msgstr "Uns 90 segons en veu alta"
@@ -1058,6 +1069,10 @@ msgstr "Acceptar-ho tot"
 
 #: src/features/assistant/messages.tsx
 msgid "Accept the others"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "accepted"
 msgstr ""
 
 #: src/features/career/offer-entry.tsx
@@ -1112,6 +1127,7 @@ msgid "Active"
 msgstr "Actius"
 
 #: src/features/write/basics-screen.tsx
+#: src/features/write/improve.tsx
 msgid "Add"
 msgstr "Afegeix"
 
@@ -3544,6 +3560,10 @@ msgstr "No s'ha pogut imprimir. Torna-ho a provar."
 msgid "Couldn't propose these edits: {0}"
 msgstr "No s'han pogut proposar aquestes modificacions: {0}"
 
+#: src/features/write/improve.tsx
+msgid "Couldn't reach Reactive Resume. Check your internet connection, then try again."
+msgstr ""
+
 #: src/features/check/writing.tsx
 msgid "Couldn't reach your AI provider. Try again or check its key in AI settings."
 msgstr "No s'ha pogut contactar amb el vostre proveïdor d'IA. Torna-ho a provar o comprova la seva clau a la configuració de l'IA."
@@ -3617,6 +3637,10 @@ msgstr "No s'ha pogut desar aquest canvi. L'element s'ha restaurat; torneu-ho a 
 #: src/features/workspace/preparation.tsx
 msgid "Couldn't save that change. Try again."
 msgstr "No s'ha pogut desar aquest canvi. Torna-ho a provar."
+
+#: src/features/assistant/chat-view.tsx
+msgid "Couldn't save that decision. Try again."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 #: src/features/workspace/tabs/fit.tsx
@@ -3763,7 +3787,7 @@ msgstr ""
 msgid "Couldn't unlock the resume. Try again."
 msgstr "No s'ha pogut desbloquejar el currículum. Torneu-ho a provar."
 
-#: src/features/write/outline.tsx
+#: src/features/write/unlock.ts
 msgid "Couldn't unlock this resume. Try again."
 msgstr "No s'ha pogut desbloquejar aquest currículum vitae. Torna-ho a provar."
 
@@ -4627,6 +4651,19 @@ msgstr "Edita"
 #: src/features/assistant/messages.tsx
 msgid "Edit {0}: {1}"
 msgstr "Edita {0}: {1}"
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: \"{before}\" → \"{after}\" ({outcome})"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "Edit {number} · {location}: added \"{after}\" ({outcome})"
+msgstr ""
+
+#. placeholder {0}: proposal.location
+#: src/features/assistant/messages.tsx
+msgid "Edit {number}: {0}"
+msgstr ""
 
 #: src/features/workspace/preparation.tsx
 msgid "Edit cover letter"
@@ -5528,6 +5565,11 @@ msgstr "Les seccions amagades conserven el seu contingut però no s'imprimeixen 
 msgid "Hidden terms are back"
 msgstr "Els termes ocults han tornat"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Fold an edit card"
+msgid "Hide"
+msgstr ""
+
 #: src/features/write/outline.tsx
 msgid "Hide {title} from the page"
 msgstr "Amaga {title} de la pàgina"
@@ -5656,11 +5698,19 @@ msgid "I can see this letter. Suggestions come back as edits you can review befo
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
+msgid "I can see this resume and the {company} posting. Ask how you fit, or get a follow-up email or interview prep."
+msgstr ""
+
+#: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume and the {company} posting. Suggestions come back as edits you can review before accepting."
 msgstr ""
 
 #: src/features/assistant/assistant-screen.tsx
 msgid "I can see this resume. Suggestions come back as edits you can review before accepting."
+msgstr ""
+
+#: src/features/write/improve.tsx
+msgid "I don't have one yet"
 msgstr ""
 
 #: src/features/workspace/answer-library.tsx
@@ -6666,6 +6716,10 @@ msgstr "Bloquejat"
 #: src/features/documents/document-sheets.tsx
 msgid "Locked documents were skipped. Unlock them first."
 msgstr "Els documents bloquejats s'han omès. Desbloqueja'ls primer."
+
+#: src/features/assistant/assistant-screen.tsx
+msgid "Locked. I can answer questions; unlock to get edits."
+msgstr ""
 
 #: src/features/write/entry-screen.tsx
 #: src/features/write/outline.tsx
@@ -7692,6 +7746,10 @@ msgstr "Normal"
 #: src/features/settings/locale-names.ts
 msgid "Norwegian"
 msgstr "Noruec"
+
+#: src/features/assistant/messages.tsx
+msgid "Not answered. The conversation went on below."
+msgstr ""
 
 #: src/features/workspace/tabs/messages.tsx
 msgid "Not applied"
@@ -8880,6 +8938,10 @@ msgstr "Barra de progrés"
 msgid "Projects"
 msgstr "Projectes"
 
+#: src/features/assistant/chat.ts
+msgid "proposed"
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Proposed changes"
 msgstr "Canvis proposats"
@@ -8947,6 +9009,10 @@ msgstr "Editor"
 #: src/features/ats-checker/messages.ts
 msgid "Put a plain email address near the top of the first page. It is what most systems file you under."
 msgstr "Posa una adreça de correu electrònic senzilla a prop de la part superior de la primera pàgina. És el que la majoria de sistemes fan servir per classificar-te."
+
+#: src/features/assistant/chat.ts
+msgid "Q: {question}"
+msgstr ""
 
 #: src/features/share/link.tsx
 msgid "QR code"
@@ -9269,6 +9335,14 @@ msgstr "Assageu en veu alta"
 #: src/features/check/writing.tsx
 msgid "Reject"
 msgstr "Rebutja"
+
+#: src/features/assistant/messages.tsx
+msgid "Reject all"
+msgstr ""
+
+#: src/features/assistant/chat.ts
+msgid "rejected"
+msgstr ""
 
 #: src/features/assistant/messages.tsx
 #: src/features/check/writing.tsx
@@ -10767,6 +10841,11 @@ msgstr "Més curt"
 msgid "Show"
 msgstr "Mostra"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Open a folded edit card"
+msgid "Show"
+msgstr ""
+
 #: src/features/share/web-page.tsx
 msgid "Show “Made with Reactive Resume”"
 msgstr "Mostra «Fet amb Reactive Resume»"
@@ -10784,6 +10863,11 @@ msgstr "Mostra {title} a la pàgina"
 #: src/features/search/search-screen.tsx
 msgid "Show all"
 msgstr "Mostra-ho tot"
+
+#. placeholder {0}: formatCharacters(text.length)
+#: src/features/assistant/messages.tsx
+msgid "Show all ({0} characters)"
+msgstr ""
 
 #: src/features/search/search-screen.tsx
 msgid "Show all letters"
@@ -10809,6 +10893,10 @@ msgstr "Mostra els detalls"
 msgid "Show DNS records"
 msgstr "Mostra els registres DNS"
 
+#: src/features/assistant/messages.tsx
+msgid "Show edit {number}"
+msgstr ""
+
 #: src/features/write/section-sheet.tsx
 msgid "Show heading"
 msgstr "Mostra l'encapçalament"
@@ -10828,6 +10916,10 @@ msgstr "Mostra als cercadors"
 #: src/features/ai/provider-editor.tsx
 msgid "Show key"
 msgstr "Mostra la clau"
+
+#: src/features/assistant/messages.tsx
+msgid "Show less"
+msgstr ""
 
 #: src/features/write/entry-fields.tsx
 msgid "Show link in title"
@@ -12147,10 +12239,6 @@ msgstr "Aquest document"
 msgid "This document is locked. Unlock it before keeping your edits here, or keep both."
 msgstr "Aquest document està bloquejat. Desbloquegeu-lo abans de mantenir les vostres edicions aquí, o manteniu tots dos."
 
-#: src/features/assistant/assistant-screen.tsx
-msgid "This document is locked. Unlock it to get suggestions."
-msgstr "Aquest document està bloquejat. Desbloqueja'l per rebre suggeriments."
-
 #: src/features/share/export-screen.tsx
 msgid "This document is locked. You can still download and name versions. Unlock to edit or restore."
 msgstr "Aquest document està bloquejat. Encara podeu baixar i anomenar versions. Desbloqueja per editar o restaurar."
@@ -12626,6 +12714,10 @@ msgstr "Torna-ho a provar amb això"
 msgid "Try again, or restart the app."
 msgstr "Torneu-ho a provar o reinicieu l'aplicació."
 
+#: src/features/write/improve.tsx
+msgid "Try another"
+msgstr ""
+
 #: src/features/documents/library.tsx
 msgid "Try another search or clear your filters."
 msgstr "Prova una altra cerca o esborra els teus filtres."
@@ -12749,6 +12841,11 @@ msgstr "Subratlla els enllaços"
 msgid "Undo"
 msgstr "Desfer"
 
+#: src/features/assistant/messages.tsx
+msgctxt "Reconsider a rejected edit"
+msgid "Undo"
+msgstr ""
+
 #: src/features/career/offer-entry.tsx
 #: src/features/settings/application-profile.tsx
 msgid "Unknown"
@@ -12758,6 +12855,7 @@ msgstr "Desconegut"
 msgid "Unlink"
 msgstr "Desenllaça"
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/design/design-pane.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/write/outline.tsx
@@ -12772,6 +12870,7 @@ msgstr "Desbloqueja l'edició"
 msgid "Unlock it first, then try again."
 msgstr "Desbloquegeu-lo primer i torneu-ho a provar."
 
+#: src/features/assistant/assistant-screen.tsx
 #: src/features/write/outline.tsx
 msgid "Unlocking…"
 msgstr "S'està desbloquejant…"
@@ -12959,10 +13058,6 @@ msgstr "Fes servir les dades del currículum"
 #: src/features/career/facts.tsx
 msgid "Use for all applications"
 msgstr "Utilitza per a totes les candidatures"
-
-#: src/features/assistant/assistant-screen.tsx
-msgid "Use Knowledge"
-msgstr ""
 
 #: src/features/document-menu/index.tsx
 #: src/features/share/link.tsx
@@ -13322,6 +13417,10 @@ msgstr "El que veu una persona"
 #: src/features/assistant/coach-screen.tsx
 msgid "What are you working on?"
 msgstr "En què treballeu?"
+
+#: src/features/write/improve.tsx
+msgid "What changed because of this? A number, a time saved, who used it."
+msgstr ""
 
 #: src/features/workspace/tabs/debrief.tsx
 msgid "What did they ask?"

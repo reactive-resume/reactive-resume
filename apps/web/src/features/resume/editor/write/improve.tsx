@@ -3,7 +3,7 @@ import type { Editor } from "@tiptap/react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { Input } from "@reactive-resume/ui/components/input";
@@ -42,10 +42,15 @@ type ImprovePanelProps = {
 export function ImprovePanel({ editor, line, where, onClose, onAccept }: ImprovePanelProps) {
 	const providers = useHasUsableAiProvider();
 	const provider = providers.usableProviders[0];
-	const [asking, setAsking] = useState(false);
+	// "custom" asks what to change; "result" asks what the result was, since only the user knows it.
+	const [asking, setAsking] = useState<"custom" | "result" | null>(null);
 	const [request, setRequest] = useState("");
+	const [result, setResult] = useState("");
+	// The last request sent, with its words, so Try again and Try another send exactly that again.
+	const [last, setLast] = useState<{ action: Action; words: string } | null>(null);
 	const [changed, setChanged] = useState(false);
 	const improve = useMutation(orpc.ai.improve.mutationOptions());
+	const resultId = useId();
 
 	const options: Array<{ action: Action; icon: IconName; label: string }> = [
 		{ action: "verb", icon: "lightning", label: t`Stronger verb` },
@@ -53,16 +58,22 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 		{ action: "shorter", icon: "arrows-in-line-vertical", label: t`Make it shorter` },
 	];
 
-	const run = (action: Action) =>
-		provider &&
+	const run = (
+		action: Action,
+		words = action === "custom" ? request.trim() : action === "result" ? result.trim() : "",
+	) => {
+		if (!provider) return;
+		setLast({ action, words });
 		improve.mutate({
 			aiProviderId: provider.id,
 			action,
 			line: line.text,
 			where,
 			context: editor.getText(),
-			...(action === "custom" ? { request: request.trim() } : {}),
+			...(words ? { request: words } : {}),
 		});
+	};
+	const pick = (action: Action) => (action === "result" ? setAsking("result") : run(action));
 
 	const close = () => {
 		onClose();
@@ -126,6 +137,11 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 						<Button size="sm" variant="secondary" onClick={close}>
 							<Trans>Keep mine</Trans>
 						</Button>
+						{last && !changed && (
+							<Button size="sm" variant="ghost" onClick={() => run(last.action, last.words)}>
+								<Trans>Try another</Trans>
+							</Button>
+						)}
 					</div>
 				</div>
 			) : improve.isPending ? (
@@ -133,7 +149,38 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 					<Icon name="sparkle" size={16} className="animate-pulse motion-reduce:animate-none" />
 					<Trans>Improving…</Trans>
 				</p>
-			) : asking ? (
+			) : asking === "result" ? (
+				<form
+					className="grid gap-1.5 p-1"
+					onSubmit={(event) => {
+						event.preventDefault();
+						run("result");
+					}}
+				>
+					<label htmlFor={resultId} className="text-xs text-ink-2">
+						<Trans>What changed because of this? A number, a time saved, who used it.</Trans>
+					</label>
+					<div className="flex gap-1.5">
+						<Input
+							id={resultId}
+							autoFocus
+							value={result}
+							maxLength={500}
+							onChange={(event) => setResult(event.target.value)}
+						/>
+						<Button type="submit" size="sm" disabled={!result.trim()}>
+							<Trans>Add</Trans>
+						</Button>
+					</div>
+					<button
+						type="button"
+						className="w-fit text-xs text-ink-3 underline underline-offset-2"
+						onClick={() => run("result", "")}
+					>
+						<Trans>I don't have one yet</Trans>
+					</button>
+				</form>
+			) : asking === "custom" ? (
 				<form
 					className="flex gap-1.5 p-1"
 					onSubmit={(event) => {
@@ -161,7 +208,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 							type="button"
 							// oxlint-disable-next-line jsx-a11y/no-autofocus -- the menu opens from the Improve button.
 							autoFocus={index === 0}
-							onClick={() => run(option.action)}
+							onClick={() => pick(option.action)}
 							className="flex h-9 items-center gap-2.5 rounded-md px-2 text-start text-sm transition-colors duration-quick hover:bg-hover"
 						>
 							<Icon name={option.icon} size={18} className="text-ink-2" />
@@ -170,7 +217,7 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 					))}
 					<button
 						type="button"
-						onClick={() => setAsking(true)}
+						onClick={() => setAsking("custom")}
 						className="flex h-9 items-center gap-2.5 rounded-md px-2 text-start text-sm transition-colors duration-quick hover:bg-hover"
 					>
 						<Icon name="chat-text" size={18} className="text-ink-2" />
@@ -184,7 +231,13 @@ export function ImprovePanel({ editor, line, where, onClose, onAccept }: Improve
 					<p role="alert" className="text-xs text-danger-text">
 						{getOrpcErrorMessage(improve.error, { fallback: t`Couldn't get a suggestion. Nothing changed.` })}
 					</p>
-					<Button size="sm" variant="secondary" className="w-fit" onClick={() => improve.reset()}>
+					{/* Sends the same request again; the options stay one step back. */}
+					<Button
+						size="sm"
+						variant="secondary"
+						className="w-fit"
+						onClick={() => (last ? run(last.action, last.words) : improve.reset())}
+					>
 						<Trans>Try again</Trans>
 					</Button>
 				</div>

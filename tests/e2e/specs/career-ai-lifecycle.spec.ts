@@ -577,7 +577,8 @@ test("the builder assistant keeps the reading position when a reply in a reopene
 	await ask("Answer slowly please, part one.");
 	await expect(page.getByText(/word59/)).toBeVisible({ timeout: 30_000 });
 	await page.reload();
-	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	// The open conversation is in the URL, so a reload brings the assistant back on it.
+	await expect(page.getByRole("region", { name: "Assistant" })).toBeVisible();
 	await expect(page.getByText(/word59/)).toBeVisible({ timeout: 20_000 });
 	await ask("Answer slowly please, part two.");
 	await expect(page.getByText(/word20/)).toHaveCount(2, { timeout: 30_000 });
@@ -601,7 +602,8 @@ test("the builder assistant says when its connection is gone and waits for a cho
 	await expect(page.getByText(/word59/)).toBeVisible({ timeout: 30_000 });
 	await expect(await page.request.patch(`/api/openapi/ai-providers/${first}`, { data: { enabled: false } })).toBeOK();
 	await page.reload();
-	await page.getByRole("button", { name: "Assistant", exact: true }).click();
+	// The open conversation is in the URL, so a reload brings the assistant back on it.
+	await expect(page.getByRole("region", { name: "Assistant" })).toBeVisible();
 	await expect(page.getByText(/First connection is off or was removed/)).toBeVisible({ timeout: 20_000 });
 	await expect(composer).toBeDisabled();
 	const providers = (await (await page.request.get("/api/openapi/ai-providers")).json()) as Array<{
