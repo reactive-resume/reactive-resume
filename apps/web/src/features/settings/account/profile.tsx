@@ -284,6 +284,11 @@ export function ProfileSection({ session }: ProfileSectionProps) {
 										<Trans>Cancel</Trans>
 									</button>
 								</>
+							) : !smtpEnabled ? (
+								// Without email delivery neither link can arrive, so don't describe a flow that can't start.
+								<Trans>
+									This server can't send email, so the address can't be changed here. Ask the person who runs it.
+								</Trans>
 							) : // A verified address approves the change first; an unverified one confirms the new address only.
 							user.emailVerified ? (
 								<Trans>
