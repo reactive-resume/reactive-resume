@@ -17,7 +17,7 @@ import { confirmUndone } from "@/lib/undone";
 import { routes } from "@/routes";
 import { useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
-import { Banner, Button, IconButton, ListRow, Sheet, Text, TextField, showToast, useTheme } from "@/ui";
+import { Banner, Button, ChipInput, IconButton, ListRow, Sheet, Text, TextField, showToast, useTheme } from "@/ui";
 
 type DocumentMenuProps = {
 	id: string;
@@ -32,8 +32,9 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 	const draft = useResumeStore();
 	const resume = draft.document?.id === id ? draft.document : null;
 	const operations = useDocumentOperations();
-	const [panel, setPanel] = useState<"menu" | "rename" | "duplicate" | "notes" | "details" | null>(null);
+	const [panel, setPanel] = useState<"menu" | "rename" | "duplicate" | "tags" | "notes" | "details" | null>(null);
 	const [name, setName] = useState("");
+	const [tags, setTags] = useState<string[]>([]);
 	const [slug, setSlug] = useState("");
 	const pending = useRef(Promise.resolve(false));
 	const [printing, setPrinting] = useState(false);
@@ -67,6 +68,7 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 		menu: t`Document options`,
 		rename: t`Rename`,
 		duplicate: t`Duplicate resume`,
+		tags: t`Tags`,
 		notes: t`Notes`,
 		details: t`Resume details`,
 	};
@@ -111,6 +113,15 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 											router.push({ pathname: "/new", params: { step: "copy", sourceResumeId: id } });
 										})
 									}
+								/>
+								<ListRow
+									title={t`Tags…`}
+									leading="tag"
+									disabled={resume.isLocked || operations.busy}
+									onPress={() => {
+										setTags(resume.tags);
+										setPanel("tags");
+									}}
 								/>
 								<ListRow
 									title={resume.isLocked ? t`Unlock editing` : t`Lock editing`}
@@ -201,7 +212,31 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 										void run(async () => {
 											await flushResume(id);
 											useResumeStore.getState().updateDocument((value) => {
+												if (value.id !== id) return;
 												value.name = name.trim();
+											});
+											await flushResume(id);
+										})
+									}
+								/>
+							</>
+						)}
+						{panel === "tags" && (
+							<>
+								<View pointerEvents={operations.busy || resume.isLocked ? "none" : "auto"}>
+									<ChipInput label={t`Tags`} values={tags} onChange={setTags} />
+								</View>
+								<Text variant="caption" color="ink3">{t`Up to 20 tags per document, 40 characters per tag.`}</Text>
+								<Button
+									label={t`Save`}
+									loading={operations.busy}
+									disabled={resume.isLocked || tags.length > 20 || tags.some((tag) => !tag.trim() || tag.length > 40)}
+									onPress={() =>
+										void run(async () => {
+											await flushResume(id);
+											useResumeStore.getState().updateDocument((value) => {
+												if (value.id !== id) return;
+												value.tags = tags;
 											});
 											await flushResume(id);
 										})

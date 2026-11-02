@@ -12,9 +12,9 @@ import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { cn } from "@reactive-resume/utils/style";
 import { DocumentMenuContent, useDocumentActions } from "./document-actions";
 import { daysLeftInTrash } from "./filter";
+import { InlineNameInput } from "./inline-name-input";
 import { useNewDocumentsStore } from "./new-documents";
 import { ResumeThumbnail } from "./resume-thumbnail";
-import { isImeComposing } from "@/libs/keyboard";
 import { formatRelativeTime } from "@/libs/locale";
 import { ENTER_CLASS, stagger } from "@/libs/motion";
 
@@ -88,33 +88,7 @@ function OpenLink({
 /** Enter commits, Esc cancels, and leaving the field commits. */
 function RenameInput({ document, onDone }: { document: DocumentSummary; onDone: () => void }) {
 	const actions = useDocumentActions();
-	const [value, setValue] = useState(document.name);
-	const commit = () => {
-		actions.rename(document, value);
-		onDone();
-	};
-
-	return (
-		<input
-			// oxlint-disable-next-line jsx-a11y/no-autofocus -- renaming starts from the menu, so focus goes straight to the field.
-			autoFocus
-			value={value}
-			maxLength={100}
-			aria-label={t`Name`}
-			onChange={(event) => setValue(event.target.value)}
-			onFocus={(event) => event.target.select()}
-			onBlur={commit}
-			onKeyDown={(event) => {
-				if (isImeComposing(event)) return;
-				if (event.key === "Enter") commit();
-				if (event.key === "Escape") {
-					event.stopPropagation();
-					onDone();
-				}
-			}}
-			className="h-7 w-full min-w-0 rounded-md border border-accent bg-raised px-1.5 text-sm font-semibold ring-3 ring-accent-soft outline-none"
-		/>
-	);
+	return <InlineNameInput name={document.name} onSave={(value) => actions.rename(document, value)} onDone={onDone} />;
 }
 
 /** A letter's page, drawn from lines (letters have no thumbnail render), addressed to its recipient once there is one. */
