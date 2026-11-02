@@ -65,10 +65,12 @@ type TemplateGroupProps = {
  * Template: filter chips, then thumbnails drawn from the user's own content. Hovering or focusing one (holding
  * it, on touch) previews it on the page; leaving the cards or pressing Esc restores the page; a click applies it.
  */
-// When anything last scrolled: a pointer "entering" a card just after is the card sliding under a still pointer.
-let lastScrollAt = 0;
-const SCROLL_SETTLE_MS = 150;
-const scrolledRecently = () => performance.now() - lastScrollAt < SCROLL_SETTLE_MS;
+// Where the pointer was at the last scroll. A pointer "entering" a card from that same spot is the card sliding under a
+// still pointer; one that has moved since entered it on purpose, whenever the scroll was.
+let pointer: { x: number; y: number } | null = null;
+let pointerAtScroll: { x: number; y: number } | null = null;
+const stillSinceScroll = (event: PointerEvent) =>
+	pointerAtScroll !== null && event.screenX === pointerAtScroll.x && event.screenY === pointerAtScroll.y;
 
 export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 	const data = useResumeData();
@@ -77,10 +79,17 @@ export function TemplateGroup({ layout = "grid" }: TemplateGroupProps) {
 	useEffect(() => () => useEditorStore.setState({ previewTemplate: null }), []);
 	useEffect(() => {
 		const onScroll = () => {
-			lastScrollAt = performance.now();
+			pointerAtScroll = pointer;
+		};
+		const onMove = (event: globalThis.PointerEvent) => {
+			pointer = { x: event.screenX, y: event.screenY };
 		};
 		document.addEventListener("scroll", onScroll, { capture: true, passive: true });
-		return () => document.removeEventListener("scroll", onScroll, { capture: true });
+		document.addEventListener("pointermove", onMove, { capture: true, passive: true });
+		return () => {
+			document.removeEventListener("scroll", onScroll, { capture: true });
+			document.removeEventListener("pointermove", onMove, { capture: true });
+		};
 	}, []);
 	if (!data) return null;
 
@@ -184,8 +193,13 @@ function TemplateCard({ id, data, selected, onPreview }: TemplateCardProps) {
 			aria-pressed={selected}
 			onPointerEnter={(event: PointerEvent) => {
 				if (event.pointerType === "touch") return;
-				if (!scrolledRecently()) return onPreview();
-				entered.current = { x: event.screenX, y: event.screenY };
+				if (stillSinceScroll(event)) {
+					entered.current = { x: event.screenX, y: event.screenY };
+					return;
+				}
+				// Entered on purpose: nothing is left waiting to restore a preview Esc dismisses later.
+				entered.current = null;
+				onPreview();
 			}}
 			onPointerMove={(event: PointerEvent) => {
 				const from = entered.current;

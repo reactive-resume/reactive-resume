@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { createRouterClient, ORPCError } from "@orpc/server";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 
 const mocks = vi.hoisted(() => ({
 	create: vi.fn(),
@@ -99,7 +100,7 @@ describe("resume write route validation", () => {
 		// A blank resume also starts with the account's email; a sample keeps its own.
 		const created = mocks.create.mock.calls.at(-1)?.[0] as { data: { basics: { email: string } } };
 		if (!withSampleData) expect(created.data.basics.email).toBe("sam@example.test");
-		else expect(created.data.basics.email).not.toBe("sam@example.test");
+		else expect(created.data.basics.email).toBe(sampleResumeData.basics.email);
 	});
 
 	it("leaves a guest's placeholder address off a new resume", async () => {
@@ -107,7 +108,7 @@ describe("resume write route validation", () => {
 			context: {
 				locale: "en-US",
 				reqHeaders: new Headers(),
-				user: { id: "guest-id", name: "Guest", email: "temp-1@reactive-resume.local" },
+				user: { id: "guest-id", name: "Guest", email: "temp-1@reactive-resume.local", isAnonymous: true },
 			} as never,
 		});
 
@@ -115,6 +116,21 @@ describe("resume write route validation", () => {
 
 		const created = mocks.create.mock.calls.at(-1)?.[0] as { data: { basics: { email: string } } };
 		expect(created.data.basics.email).toBe("");
+	});
+
+	it("keeps a signed-up account's address even on the guest domain", async () => {
+		const client = createRouterClient(crudRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				user: { id: "user-id", name: "Sam", email: "sam@reactive-resume.local", isAnonymous: false },
+			} as never,
+		});
+
+		await client.create({ name: "Untitled", tags: [], withSampleData: false });
+
+		const created = mocks.create.mock.calls.at(-1)?.[0] as { data: { basics: { email: string } } };
+		expect(created.data.basics.email).toBe("sam@reactive-resume.local");
 	});
 
 	it("allows overlong slug on update to reach the service for change-sensitive check", async () => {

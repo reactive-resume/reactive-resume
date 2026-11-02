@@ -112,6 +112,15 @@ const expectedEndPattern = (locale: string) =>
 		"iu",
 	);
 
+/** A period's text without the Expected label before its end, and the label match when there was one. */
+function withoutExpectedLabel(value: string, locale: string) {
+	const expected = expectedEndPattern(locale).exec(value);
+	const unlabeled = expected
+		? value.slice(0, expected.index) + value.slice(expected.index + expected[0].length)
+		: value;
+	return { expected, unlabeled };
+}
+
 export function readLegacyDates(text: string, options: { locale: string; single: boolean }): ResumeDates {
 	const value = text.trim();
 	if (!value) return { ...EMPTY_RESUME_DATES };
@@ -124,10 +133,7 @@ export function readLegacyDates(text: string, options: { locale: string; single:
 	}
 
 	// "Sep 2023 – Expected May 2027", as an expected end date prints: read the date, and keep that it's still to come.
-	const expected = expectedEndPattern(options.locale).exec(value);
-	const unlabeled = expected
-		? value.slice(0, expected.index) + value.slice(expected.index + expected[0].length)
-		: value;
+	const { expected, unlabeled } = withoutExpectedLabel(value, options.locale);
 	const reading = readPeriod(unlabeled, options.locale, [getPresentLabel(options.locale)]);
 	if (!reading?.start) return { ...EMPTY_RESUME_DATES, raw: value };
 
@@ -148,7 +154,9 @@ export function inferDateFormat(texts: readonly string[], locale: string): DateF
 	const votes: Record<DateFormat, number> = { short: 0, long: 0, numeric: 0, iso: 0 };
 
 	for (const text of texts) {
-		const reading = readPeriod(text, locale) ?? { start: readSingleDate(text, locale) ?? undefined };
+		// An expected end ("Sep 2023 – Expected May 2027") votes like any other end date.
+		const { unlabeled } = withoutExpectedLabel(text, locale);
+		const reading = readPeriod(unlabeled, locale) ?? { start: readSingleDate(unlabeled, locale) ?? undefined };
 		for (const endpoint of [reading.start, "end" in reading ? reading.end : undefined]) {
 			const style = endpoint?.style;
 			if (style === "short" || style === "long" || style === "numeric" || style === "iso") votes[style] += 1;

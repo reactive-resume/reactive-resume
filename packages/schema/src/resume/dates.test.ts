@@ -67,6 +67,10 @@ describe("inferDateFormat", () => {
 		expect(inferDateFormat(["03/2020 - 06/2021"], "en-US")).toBe("numeric");
 		expect(inferDateFormat(["2020-03 - 2021-06"], "en-US")).toBe("iso");
 	});
+
+	it("counts an expected end date", () => {
+		expect(inferDateFormat(["September 2023 – Expected May 2027"], "en-US")).toBe("long");
+	});
 });
 
 describe("getPresentLabel", () => {
