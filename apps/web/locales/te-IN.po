@@ -1921,6 +1921,7 @@ msgstr "CV బిల్డర్‌లో ఫాంట్‌లు, రంగు
 msgid "Ads"
 msgstr "ప్రకటనలు"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "అధునాతన"
@@ -2271,8 +2272,7 @@ msgstr "ఈ ఉద్యోగం గురించి ఏదైనా గు�
 msgid "Anywhere"
 msgstr "ఎక్కడైనా"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "API కీ"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "మూల వేతనం"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "బేస్ URL"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "బేస్ URL (అవసరం)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "అంతర్నిర్మిత రీడర్"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "95000 వంటి పూర్తి మొత్తాన్ని న
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "95000 వంటి పూర్తి మొత్తాన్ని నమోదు చేయండి. మీ మునుపటి మొత్తం మారలేదు."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "మోడల్ IDని నమోదు చేయండి."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "64 అక్షరాల వరకు పేరును నమోదు చేయండి."
@@ -6087,6 +6094,14 @@ msgstr "చెల్లుబాటు అయ్యే ఇమెయిల్ చ
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "ఉదాహరణకు.com వంటి వెబ్ చిరునామాను నమోదు చేయండి"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "ఈ ప్రొవైడర్ కోసం API కీని నమోదు చేయండి."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "http:// లేదా https:// తో ప్రారంభమయ్యే బేస్ URLని నమోదు చేయండి."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6824,6 +6839,14 @@ msgstr "<0>{0}</0> వద్ద కీని పొందండి. ఇది �
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "ఉద్యోగ ప్రకటన, మీ సొంత కథల నుండి రూపొందిన ఇంటర్వ్యూ ప్రణాళికను పొందండి. బిగ్గరగా సాధన చేయండి, ఆపై అది ఎలా జరిగిందో రాయండి."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "API కీని పొందండి"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "మీ ఎండ్‌పాయింట్ నిర్వాహకుని నుండి API కీని పొందండి."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8096,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "పేజీ చుట్టూ కనీసం అర అంగుళం వదిలివేయండి."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "సేవ్ చేసిన కీని ఉంచడానికి ఖాళీగా వదిలివేయండి"
 
@@ -8905,8 +8928,7 @@ msgstr "మిశ్రమం"
 msgid "mixed format"
 msgstr "మిశ్రమ ఆకృతి"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "మోడల్"
 
@@ -9114,7 +9136,7 @@ msgstr "సపోర్ట్ పనిని పెంచకుండా, క�
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "పేరు"
@@ -10281,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "స్థానిక Ollama కోసం ఐచ్ఛికం"
 
@@ -14936,11 +14958,11 @@ msgstr "సమీక్ష పూర్తి కాలేదు. మళ్ల�
 msgid "The same line repeats on every page."
 msgstr "అదే లైన్ ప్రతి పేజీలో పునరావృతమవుతుంది."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "సేవ్ చేయబడిన కీ కొత్త బేస్ URLకి పంపబడదు. ఈ సర్వర్‌కి కీ అవసరమైతే మళ్లీ కీని నమోదు చేయండి."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "సేవ్ చేయబడిన కీ కొత్త బేస్ URLకి పంపబడదు. కీని మళ్లీ నమోదు చేయండి."
 

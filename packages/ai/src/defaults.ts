@@ -39,3 +39,45 @@ export const AI_PROVIDER_DEFAULT_BASE_URLS: Record<AIProvider, string> = {
 	ollama: "https://ollama.com/api",
 	"openai-compatible": "",
 };
+
+export type AIProviderSetupFields = { apiKey: string; model: string; baseURL: string };
+
+export const AI_PROVIDER_KEY_URLS: Record<AIProvider, string> = {
+	openai: "https://platform.openai.com/api-keys",
+	anthropic: "https://platform.claude.com/settings/keys",
+	gemini: "https://aistudio.google.com/apikey",
+	"vercel-ai-gateway": "https://vercel.com/dashboard/ai-gateway",
+	openrouter: "https://openrouter.ai/keys",
+	mistral: "https://console.mistral.ai/api-keys",
+	cohere: "https://dashboard.cohere.com/api-keys",
+	xai: "https://console.x.ai/",
+	groq: "https://console.groq.com/keys",
+	deepseek: "https://platform.deepseek.com/api_keys",
+	togetherai: "https://api.together.ai/settings/projects/~current/api-keys",
+	fireworks: "https://app.fireworks.ai/settings/users/api-keys",
+	cerebras: "https://cloud.cerebras.ai/platform",
+	perplexity: "https://console.perplexity.ai/",
+	ollama: "https://ollama.com/settings/keys",
+	"openai-compatible": "",
+};
+
+/** Form syntax only; the server still enforces endpoint policy and saved-key protection. */
+export function getAIProviderSetupProblem(
+	provider: AIProvider,
+	fields: AIProviderSetupFields,
+	hasSavedKey = false,
+): "baseURL" | "apiKey" | "model" | null {
+	const baseURL = fields.baseURL.trim();
+	if (!baseURL && provider === "openai-compatible") return "baseURL";
+	if (baseURL) {
+		try {
+			const url = new URL(baseURL);
+			if (url.protocol !== "https:" && url.protocol !== "http:") return "baseURL";
+		} catch {
+			return "baseURL";
+		}
+	}
+	if (!hasSavedKey && provider !== "ollama" && !fields.apiKey.trim()) return "apiKey";
+	if (!fields.model.trim()) return "model";
+	return null;
+}

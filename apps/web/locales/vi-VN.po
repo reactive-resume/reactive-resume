@@ -1921,6 +1921,7 @@ msgstr "Điều chỉnh phông chữ, màu sắc, khoảng cách và các phần
 msgid "Ads"
 msgstr "Quảng cáo"
 
+#: src/features/settings/ai/provider-fields.tsx
 #: src/routes/builder/$resumeId/-components/design-panel.tsx
 msgid "Advanced"
 msgstr "Trình độ cao"
@@ -2271,8 +2272,7 @@ msgstr "Có điều gì đáng nhớ về công việc này"
 msgid "Anywhere"
 msgstr "mọi nơi"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/ai/web-access.tsx
 msgid "API key"
 msgstr "Phím API"
@@ -2825,10 +2825,13 @@ msgstr ""
 msgid "Base salary"
 msgstr "Lương cơ bản"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Base URL"
 msgstr "URL cơ sở"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Base URL (required)"
+msgstr "URL cơ sở (bắt buộc)"
 
 #: src/features/resume/editor/write/basics-card.tsx
 #: src/libs/resume/section.tsx
@@ -2975,7 +2978,7 @@ msgstr ""
 msgid "Built-in reader"
 msgstr "Trình đọc tích hợp"
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Built-in suggestion. You can enter any model ID supported by your endpoint."
 msgstr ""
 
@@ -6065,6 +6068,10 @@ msgstr "Nhập số tiền đầy đủ, chẳng hạn 95000, hoặc để trố
 msgid "Enter a full amount, such as 95000. Your previous amount is unchanged."
 msgstr "Nhập số tiền đầy đủ, ví dụ 95000. Số tiền trước đó của bạn không thay đổi."
 
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter a model ID."
+msgstr "Nhập ID mô hình."
+
 #: src/features/settings/account/profile.tsx
 msgid "Enter a name, up to 64 characters."
 msgstr "Nhập tên, tối đa 64 ký tự."
@@ -6087,6 +6094,14 @@ msgstr "Nhập địa chỉ email hợp lệ."
 #: src/features/resume/editor/write/fields.tsx
 msgid "Enter a web address, like example.com"
 msgstr "Nhập địa chỉ web, như example.com"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an API key for this provider."
+msgstr "Nhập khóa API cho nhà cung cấp này."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Enter an http:// or https:// base URL."
+msgstr "Nhập URL cơ sở bắt đầu bằng http:// hoặc https://."
 
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account."
@@ -6824,6 +6839,14 @@ msgstr "Nhận chìa khóa tại <0>{0}</0>. Nó được lưu trữ được m�
 #: src/features/homepage/prepare.tsx
 msgid "Get a plan for the interview, built from the posting and your own stories. Practice out loud, then write down how it went."
 msgstr "Nhận kế hoạch cho buổi phỏng vấn, được xây dựng từ tin tuyển dụng và chính câu chuyện của bạn. Luyện tập thành tiếng, rồi ghi lại buổi phỏng vấn đã diễn ra thế nào."
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key"
+msgstr "Lấy khóa API"
+
+#: src/features/settings/ai/provider-fields.tsx
+msgid "Get an API key from your endpoint operator."
+msgstr "Lấy khóa API từ đơn vị vận hành endpoint của bạn."
 
 #: src/features/career/workspace/practise.tsx
 msgid "Get feedback"
@@ -8096,7 +8119,7 @@ msgstr ""
 msgid "Leave at least half an inch around the page."
 msgstr "Chừa ít nhất nửa inch xung quanh trang."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Leave empty to keep the saved key"
 msgstr "Để trống để giữ key đã lưu"
 
@@ -8905,8 +8928,7 @@ msgstr "Lẫn lộn"
 msgid "mixed format"
 msgstr "định dạng hỗn hợp"
 
-#: src/features/assistant/provider-setup.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Model"
 msgstr "Mô hình"
 
@@ -9114,7 +9136,7 @@ msgstr "Nhiệm vụ của tôi là tìm ra nguyên nhân mà không làm tăng 
 #: src/features/resume/editor/write/entries.tsx
 #: src/features/settings/account/profile.tsx
 #: src/features/settings/ai/api-keys.tsx
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 #: src/features/settings/profile.tsx
 msgid "Name"
 msgstr "Tên"
@@ -10281,7 +10303,7 @@ msgstr ""
 msgid "Optional AI sends only this posting to {0} ({1})."
 msgstr ""
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "Optional for local Ollama"
 msgstr "Tùy chọn cho Ollama cục bộ"
 
@@ -14936,11 +14958,11 @@ msgstr "Việc xem xét không thể kết thúc. Hãy thử lại."
 msgid "The same line repeats on every page."
 msgstr "Cùng một dòng lặp lại trên mọi trang."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again if this server needs one."
 msgstr "Khóa đã lưu không được gửi tới URL cơ sở mới. Nhập lại khóa nếu máy chủ này yêu cầu khóa."
 
-#: src/features/settings/ai/providers.tsx
+#: src/features/settings/ai/provider-fields.tsx
 msgid "The saved key isn't sent to a new base URL. Enter it again."
 msgstr "Khóa đã lưu không được gửi tới URL cơ sở mới. Nhập lại khóa."
 
