@@ -7,6 +7,7 @@ import { languageCopyRequest } from "@reactive-resume/ai/tools/agent-tool-contra
 import { handToAssistant } from "./handoff";
 import { client } from "@/api/client";
 import { getAccountScope } from "@/auth/session";
+import { useResumeStore } from "@/draft";
 import { useDocumentOperations } from "@/features/documents/queries";
 import { localeMap } from "@/features/settings/locale-names";
 import { flushResume } from "@/features/share/document";
@@ -21,16 +22,20 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 	const { space } = useTheme();
 	const router = useRouter();
 	const operations = useDocumentOperations();
-	const [locale, setLocale] = useState<Locale>("de-DE");
+	const sourceLocale = useResumeStore((state) =>
+		state.document?.id === resumeId ? state.data?.metadata.page.locale : undefined,
+	);
+	const [locale, setLocale] = useState<Locale>(sourceLocale === "de-DE" ? "en-US" : "de-DE");
 	const active = useRef(false);
 	const create = async () => {
-		if (active.current) return;
+		if (active.current || !sourceLocale || locale === sourceLocale) return;
 		active.current = true;
 		try {
 			await operations.run(async () => {
 				const scope = getAccountScope();
 				if (!scope) return;
 				const source = await flushResume(resumeId);
+				if (source.data.metadata.page.locale === locale) return;
 				const language = i18n._(localeMap[locale]);
 				const copy = await client.resume.duplicate(
 					{ id: resumeId, name: `${source.name} — ${language}`, pageLocale: locale },
@@ -59,12 +64,19 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 					<SelectSheet
 						label={t`Language`}
 						value={locale}
-						options={selectableLocales.map((code) => ({ value: code, label: i18n._(localeMap[code]) }))}
+						options={selectableLocales
+							.filter((code) => code !== sourceLocale)
+							.map((code) => ({ value: code, label: i18n._(localeMap[code]) }))}
 						disabled={operations.busy}
 						searchable
 						onChange={setLocale}
 					/>
-					<Button label={t`Create language copy`} loading={operations.busy} onPress={() => void create()} />
+					<Button
+						label={t`Create language copy`}
+						loading={operations.busy}
+						disabled={!sourceLocale || locale === sourceLocale}
+						onPress={() => void create()}
+					/>
 				</View>
 			</Sheet>
 		</>

@@ -32,17 +32,20 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const languageId = useId();
-	const [locale, setLocale] = useState<Locale>("de-DE");
+	const sourceLocale = useResumeStore((state) =>
+		state.resume?.id === resumeId ? state.resume.data.metadata.page.locale : undefined,
+	);
+	const [locale, setLocale] = useState<Locale>(sourceLocale === "de-DE" ? "en-US" : "de-DE");
 	const [busy, setBusy] = useState(false);
 	const active = useRef(false);
 	const create = async () => {
-		if (active.current) return;
+		if (active.current || !sourceLocale || locale === sourceLocale) return;
 		active.current = true;
 		setBusy(true);
 		try {
 			if (!(await savePendingChanges(resumeId))) throw new Error(t`Save this resume's changes before copying it.`);
 			const source = useResumeStore.getState().resume;
-			if (source?.id !== resumeId) return;
+			if (source?.id !== resumeId || source.data.metadata.page.locale === locale) return;
 			const language = i18n._(localeMap[locale]);
 			const copy = await client.resume.duplicate({
 				id: resumeId,
@@ -87,14 +90,16 @@ export function TranslateResume({ resumeId, onClose }: TranslateResumeProps) {
 					disabled={busy}
 					onChange={(event) => setLocale(event.target.value as Locale)}
 				>
-					{selectableLocales.map((code) => (
-						<option key={code} value={code}>
-							{i18n._(localeMap[code])}
-						</option>
-					))}
+					{selectableLocales
+						.filter((code) => code !== sourceLocale)
+						.map((code) => (
+							<option key={code} value={code}>
+								{i18n._(localeMap[code])}
+							</option>
+						))}
 				</NativeSelect>
 				<DialogFooter>
-					<Button disabled={busy} onClick={() => void create()}>
+					<Button disabled={busy || !sourceLocale || locale === sourceLocale} onClick={() => void create()}>
 						<Trans>Create language copy</Trans>
 					</Button>
 				</DialogFooter>

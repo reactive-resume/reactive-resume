@@ -9,10 +9,11 @@ const { buildSync } = createRequire(serverRequire.resolve("tsx"))("esbuild");
 const jsx = (type, props) => ({ type, props });
 const tag = (parts, ...values) => parts.reduce((text, part, index) => text + part + (values[index] ?? ""), "");
 
-function fixture() {
+function fixture(locale = "en-US") {
 	let state = [];
 	let cursor = 0;
 	let scope = "account-a";
+	let source = { id: "source", name: "Priya Raman", data: { metadata: { page: { locale } } } };
 	const calls = [];
 	let release;
 	const saved = new Promise((resolve) => {
@@ -51,6 +52,7 @@ function fixture() {
 			},
 		},
 		"@/auth/session": { getAccountScope: () => scope },
+		"@/draft": { useResumeStore: (select) => select({ document: source, data: source.data }) },
 		"./handoff": { handToAssistant: (...args) => calls.push(["handoff", ...args]) },
 		"@/features/documents/queries": {
 			useDocumentOperations: () => ({
@@ -62,16 +64,20 @@ function fixture() {
 			}),
 		},
 		"@/features/settings/locale-names": {
-			localeMap: { "de-DE": { message: "German" }, "fr-FR": { message: "French" } },
+			localeMap: {
+				"en-US": { message: "English" },
+				"de-DE": { message: "German" },
+				"fr-FR": { message: "French" },
+			},
 		},
 		"@/features/share/document": {
 			flushResume: async (id) => {
 				calls.push(["flush", id]);
 				await saved;
-				return { name: "Priya Raman" };
+				return source;
 			},
 		},
-		"@/i18n": { selectableLocales: ["de-DE", "fr-FR"] },
+		"@/i18n": { selectableLocales: ["en-US", "de-DE", "fr-FR"] },
 		"@/routes": { routes: { assistant: (id) => `/builder/${id}/assistant` } },
 		"@/ui": {
 			Button: "Button",
@@ -114,6 +120,9 @@ function fixture() {
 		calls,
 		nodes,
 		release,
+		changeSourceLocale: (locale) => {
+			source = { ...source, data: { metadata: { page: { locale } } } };
+		},
 		changeAccount: () => {
 			scope = "account-b";
 		},
@@ -147,6 +156,21 @@ test("native language copy waits for explicit action, flushes once, and hands an
 	assert.deepEqual(handed.slice(1, 3), ["account-a", "copy"]);
 	assert.match(handed[3], /language copy into fr-FR/);
 	assert.equal(f.calls.filter(([kind]) => kind === "duplicate").length, 1);
+});
+
+test("native language copy excludes the source locale and rechecks the saved locale before duplication", async () => {
+	const f = fixture("de-DE");
+	const tree = f.render();
+	const picker = f.nodes(tree).find((node) => node.type === "SelectSheet");
+	assert.equal(picker.props.value, "en-US");
+	assert.ok(picker.props.options.every((option) => option.value !== "de-DE"));
+	f.nodes(tree)
+		.find((node) => node.type === "Button")
+		.props.onPress();
+	f.changeSourceLocale("en-US");
+	f.release();
+	await new Promise((resolve) => setImmediate(resolve));
+	assert.deepEqual(f.calls, [["flush", "source"]]);
 });
 
 test("an account change during a native copy prevents composer handoff and navigation", async () => {

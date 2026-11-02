@@ -119,6 +119,10 @@ test("language copy keeps the source and waits for Send and review before saving
 	await nameChange.getByRole("button", { name: "Reject", exact: true }).click();
 	expect(JSON.parse(await resumeJson(page, copyId)).data.basics.name).toBe("Priya Raman");
 	expect(JSON.parse(await resumeJson(page, sourceId))).toEqual(source);
+	await page.getByRole("button", { name: "Translate into…", exact: true }).click();
+	await expect(dialog.getByLabel("Language")).toHaveValue("en-US");
+	await expect(dialog.getByLabel("Language").locator('option[value="de-DE"]')).toHaveCount(0);
+	await dialog.getByRole("button", { name: "Close", exact: true }).click();
 });
 
 test("history keeps the original opening message beneath its task title without more AI calls", async ({
