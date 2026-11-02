@@ -60,8 +60,8 @@ const searchSchema = z.object({
 type Search = z.output<typeof searchSchema>;
 const defaultSearch: Search = { q: "", view: "list", closed: false, followUp: false, create: false };
 
-// How long the page waits for the lanes before drawing rows in the default order.
-const LANES_WAIT_MS = 800;
+// How long the page waits for the list and lanes before drawing anyway (a skeleton, or rows in the default order).
+const LOADER_WAIT_MS = 1000;
 
 export const Route = createFileRoute("/dashboard/applications/")({
 	head: () => ({ meta: [{ title: getPageTitle(t`Applications`) }] }),
@@ -70,13 +70,16 @@ export const Route = createFileRoute("/dashboard/applications/")({
 	search: { middlewares: [stripSearchParams(defaultSearch)] },
 	// Arrive with the list, as Documents does: a new account sees "Track your first job" at once, not a toolbar and a
 	// skeleton that then vanish. The lanes come with it when they're quick, so rows first draw in the owner's lane order;
-	// slow or failing lanes never hold the page (it shows the defaults and the lanes' own error). A failed list still
+	// slow or failing requests never hold the page (it shows the defaults and the lanes' own error). A failed list still
 	// renders the page, which shows its error and retry.
+	// The two requests can share one batch, so one bound covers both.
 	loader: async ({ context }) => {
-		const lanes = context.queryClient.ensureQueryData(applicationLanesQueryOptions());
-		await Promise.allSettled([
-			context.queryClient.ensureQueryData(applicationsListQueryOptions()),
-			Promise.race([lanes, new Promise((resolve) => setTimeout(resolve, LANES_WAIT_MS))]),
+		await Promise.race([
+			Promise.allSettled([
+				context.queryClient.ensureQueryData(applicationsListQueryOptions()),
+				context.queryClient.ensureQueryData(applicationLanesQueryOptions()),
+			]),
+			new Promise((resolve) => setTimeout(resolve, LOADER_WAIT_MS)),
 		]);
 	},
 });
