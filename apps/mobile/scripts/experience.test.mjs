@@ -930,6 +930,7 @@ const { OfferEntry } = load("features/career/offer-entry.tsx", {
 		}),
 		client: { career: { createOffer: async (input) => calls.push(input) } },
 		useOffers: () => ({ data: savedOffers }),
+		useCareerQueries: () => ({ profile: { data: undefined } }),
 	},
 	"./offer-compare": { formatMoney: (_locale, currency, amount) => `${currency} ${amount}` },
 	"./shared": { EditorSheet: "EditorSheet", LoadState: "LoadState" },
