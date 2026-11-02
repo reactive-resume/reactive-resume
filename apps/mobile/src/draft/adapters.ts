@@ -165,11 +165,24 @@ export const letterAdapter: DraftAdapter<LetterDocument, LetterDocument> = {
 		}
 		const metadata = changedFields(document.style.metadata, baseline.style.metadata);
 		if ("template" in metadata) input.template = document.style.metadata.template;
-		if ("typography" in metadata || "design" in metadata || "page" in metadata)
+		// Language is the letter's own: send it alone so a shared design stays linked, as web's Design does.
+		const page = document.style.metadata.page;
+		const previousPage = baseline.style.metadata.page;
+		const localeChanged = Boolean(page && previousPage && page.locale !== previousPage.locale);
+		const otherPageChanged =
+			Boolean(page && previousPage) &&
+			(page.format !== previousPage.format ||
+				page.marginX !== previousPage.marginX ||
+				page.marginY !== previousPage.marginY ||
+				page.hideIcons !== previousPage.hideIcons ||
+				page.gapX !== previousPage.gapX ||
+				page.gapY !== previousPage.gapY);
+		if (localeChanged && page) input.locale = page.locale;
+		if ("typography" in metadata || "design" in metadata || otherPageChanged)
 			input.metadata = {
 				...("typography" in metadata ? { typography: document.style.metadata.typography } : {}),
 				...("design" in metadata ? { design: document.style.metadata.design } : {}),
-				...("page" in metadata ? { page: document.style.metadata.page } : {}),
+				...("page" in metadata && otherPageChanged ? { page } : {}),
 			};
 		return client.coverLetters.update(input, { context: { scope } });
 	},

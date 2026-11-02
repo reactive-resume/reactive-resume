@@ -93,11 +93,11 @@ function ApplicationCoach({ application, tab }: ApplicationCoachProps) {
 				? t`Nothing is sent until you choose a connection for this conversation.`
 				: earlier > 0
 					? chips.memory
-						? t`Sends your message, earlier messages, this application (posting, notes, documents sent) and Knowledge that's switched on to ${label}.`
-						: t`Sends your message, earlier messages and this application (posting, notes, documents sent) to ${label}.`
+						? t`Sends your message, earlier messages, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${label}.`
+						: t`Sends your message, earlier messages and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`
 					: chips.memory
-						? t`Sends your message, this application (posting, notes, documents sent) and Knowledge that's switched on to ${label}.`
-						: t`Sends your message and this application (posting, notes, documents sent) to ${label}.`,
+						? t`Sends your message, this application (posting, notes, documents, your form answers, the saved offer and recent messages) and Knowledge that's switched on to ${label}.`
+						: t`Sends your message and this application (posting, notes, documents, your form answers, the saved offer and recent messages) to ${label}.`,
 			...(withheld > 0 ? [t`Messages from before Knowledge changed aren't sent.`] : []),
 			...(context.web ? [t`Search terms go to your web search service.`] : []),
 			memory.note,

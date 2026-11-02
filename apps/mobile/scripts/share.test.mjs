@@ -83,7 +83,10 @@ const mocks = {
 	},
 	"@/auth/session": { getServer: () => "https://test.rxresu.me" },
 	"@/draft": { useResumeStore: (selector) => (typeof selector === "function" ? selector({ status: "idle" }) : "idle") },
-	"@/draft/runtime": { draftResume: { refresh: async () => {} } },
+	"@/draft/runtime": {
+		draftResume: { refresh: async () => {} },
+		resume: { refresh: async () => {}, writeMetadata: async (write) => write({}) },
+	},
 	"@/features/documents/queries": {
 		documentError: (err) => String(err),
 		useDocumentOperations: () => ({ busy: false, run: async (fn) => fn() }),

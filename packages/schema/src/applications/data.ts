@@ -19,6 +19,8 @@ export const postingSourceSchema = z.object({
 	providerFetchedAt: z.iso.datetime({ offset: true }).optional(),
 	truncated: z.boolean(),
 	completeness: z.enum(["unknown", "incomplete"]),
+	/** The posting's language (BCP-47), from the page or its structured data; never guessed from the interface. */
+	language: z.string().max(35).optional(),
 	fallbackReason: z
 		.enum([
 			"unsafe-url",

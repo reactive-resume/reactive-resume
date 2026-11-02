@@ -263,7 +263,7 @@ export function ColorGroup() {
 }
 
 /** Page: paper, language (section titles and date words), margins, icons and link underlines. */
-export function PageGroup() {
+export function PageGroup({ showLanguage = true }: { showLanguage?: boolean } = {}) {
 	const { metadata, write } = useDesign();
 	const languageId = useId();
 	if (!metadata) return null;
@@ -301,28 +301,30 @@ export function PageGroup() {
 				</SegmentedControl>
 			</div>
 
-			<div className="grid gap-2">
-				<label htmlFor={languageId} className="text-[13px] font-medium">
-					<Trans>Language</Trans>
-				</label>
-				<Combobox
-					id={languageId}
-					options={getLocaleOptions()}
-					value={page.locale}
-					onValueChange={(locale) =>
-						write(
-							"locale",
-							(draft) => {
-								draft.page.locale = (locale ?? "en-US") as string;
-							},
-							true,
-						)
-					}
-				/>
-				<span className="text-xs text-ink-3">
-					<Trans>Changes section titles and date words only, not your content.</Trans>
-				</span>
-			</div>
+			{showLanguage && (
+				<div className="grid gap-2">
+					<label htmlFor={languageId} className="text-[13px] font-medium">
+						<Trans>Language</Trans>
+					</label>
+					<Combobox
+						id={languageId}
+						options={getLocaleOptions()}
+						value={page.locale}
+						onValueChange={(locale) =>
+							write(
+								"locale",
+								(draft) => {
+									draft.page.locale = (locale ?? "en-US") as string;
+								},
+								true,
+							)
+						}
+					/>
+					<span className="text-xs text-ink-3">
+						<Trans>Changes section titles and date words only, not your content.</Trans>
+					</span>
+				</div>
+			)}
 
 			<div className="grid gap-2">
 				<span className="text-[13px] font-medium">

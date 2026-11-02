@@ -19,7 +19,9 @@ const state = vi.hoisted(() => ({
 }));
 
 vi.mock("@/features/letters/store", () => ({
-	useLetterEditorStore: (selector: (value: typeof state) => unknown) => selector(state),
+	useLetterEditorStore: Object.assign((selector: (value: typeof state) => unknown) => selector(state), {
+		getState: () => state,
+	}),
 	discardLetterDraft: vi.fn(),
 	startLetterDraft: vi.fn(),
 }));

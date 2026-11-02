@@ -25,6 +25,7 @@ import { Skeleton } from "@reactive-resume/ui/components/skeleton";
 import { toast } from "@reactive-resume/ui/components/toast";
 import { formatList } from "@reactive-resume/utils/locale";
 import { cn } from "@reactive-resume/utils/style";
+import { formatDateOnly } from "@reactive-resume/utils/timezone";
 import { CareerLoadError } from "./load-state";
 import { formatMoney, matchingPlace, meetsMinimum, moneyDifference, sameTerms } from "./offer-compare";
 import { OfferEntry, OfferForm } from "./offer-entry";
@@ -337,6 +338,7 @@ function ComparisonTable({ offers, left, right, onChoose, onEdit, onDelete }: Co
 		{ key: "leave", label: t`Leave` },
 		{ key: "learning", label: t`Learning budget` },
 		{ key: "other", label: t`Other benefits` },
+		{ key: "startDate", label: t`Starts` },
 		{ key: "respondBy", label: t`Respond by` },
 	] as const;
 	const columns = [left, right].map((offer, index) => (offer ? cells(offer, index === 0 ? right : left) : undefined));
@@ -680,6 +682,7 @@ function useCells() {
 			leave: text(terms.leave),
 			learning: terms.learning === null ? unknown : { value: money(terms.learning), notes: better("learning") },
 			other: text(terms.other),
+			startDate: terms.startDate ? { value: formatDateOnly(terms.startDate, locale), notes: [] } : unknown,
 			respondBy:
 				respondBy && hoursLeft !== null
 					? {
@@ -757,6 +760,7 @@ function OpenQuestions({ offers }: OpenQuestionsProps) {
 		[t`How many days of leave come with it?`, (terms) => !terms.leave.trim()],
 		[t`Is there a learning budget?`, (terms) => terms.learning === null],
 		[t`Which other benefits come with it, like pension or allowances?`, (terms) => !terms.other.trim()],
+		[t`When would you start?`, (terms) => terms.startDate === null],
 		[t`When do they need your answer?`, (terms) => terms.respondBy === null],
 	];
 	const questions = checks.flatMap(([question, open]) => {

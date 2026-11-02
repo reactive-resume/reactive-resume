@@ -87,6 +87,7 @@ const posting = {
 		company: "ACME",
 		location: "Berlin",
 		description: "Maintain reliable services.",
+		language: "",
 		closesAt: "",
 	},
 	text: "Maintain reliable services.",
@@ -1579,6 +1580,26 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 		await expect(schedule()).resolves.toMatchObject({ enabled: true });
 	});
 
+	it("rejects a briefing lead that has already passed instead of starting an immediate paid run", async () => {
+		const at = new Date(Date.now() + 30 * 60_000);
+		await interviewApplication(at);
+		await expect(
+			jobs.save(
+				"alice",
+				careerScheduleInputSchema.parse({
+					applicationId: "alice-app",
+					interviewId: "interview-round",
+					kind: "prepare",
+					lead: "24h",
+					aiProviderId: "preparation-provider",
+					timezone: "Europe/Berlin",
+					nextRunAt: new Date("2031-01-01T00:00:00Z"),
+				}),
+			),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		expect(await getDb().select().from(tables.careerSchedule)).toEqual([]);
+	});
+
 	it("two overlapping ticks publish only one result and notification for a due search", async () => {
 		await schedule();
 		const started = Promise.withResolvers<void>();
@@ -1670,7 +1691,7 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 	);
 
 	it("runs a briefing at its lead before the interview, through the schedule's own connection", async () => {
-		const at = new Date(Date.now() + 3_600_000);
+		const at = new Date(Date.now() + 5 * 3_600_000);
 		await interviewApplication(at);
 		const saved = await jobs.save(
 			"alice",
@@ -1685,6 +1706,8 @@ AND NOT EXISTS(SELECT 1 FROM career_schedule s WHERE s.user_id=a.user_id AND s.a
 			}),
 		);
 		expect(saved.nextRunAt).toEqual(new Date(at.getTime() - 2 * 3_600_000));
+		// The lead is in the future when saved; make the occurrence due to exercise the run itself.
+		await getDb().update(tables.careerSchedule).set({ nextRunAt: due() });
 		await run();
 		await run();
 		const [job] = await getDb().select().from(tables.careerJob);

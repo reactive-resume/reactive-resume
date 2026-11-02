@@ -176,7 +176,24 @@ export function htmlToText(html: string): string {
 		{
 			allowedTags: [],
 			allowedAttributes: {},
-			nonTextTags: ["script", "style", "noscript", "template", "textarea", "option", "head", "svg", "nav", "footer"],
+			nonTextTags: [
+				"script",
+				"style",
+				"noscript",
+				"template",
+				"textarea",
+				"option",
+				"head",
+				"svg",
+				// An application form, its controls and EEO boilerplate are not the role description.
+				"form",
+				"fieldset",
+				"button",
+				"select",
+				"label",
+				"nav",
+				"footer",
+			],
 		},
 	);
 	return decodeEntities(text)

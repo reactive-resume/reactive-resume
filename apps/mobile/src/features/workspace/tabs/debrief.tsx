@@ -12,7 +12,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { latest, useDraft, useFacts, useGenerate, useSavedItems, useTicks, workspaceError } from "../hooks";
 import { debriefRound, nextEvening } from "../logic";
-import { Actions, AiNotice, Block, CheckRow, Pill, PrivacyLine, useWorking, workingSteps } from "../parts";
+import { Actions, AiNotice, Block, CheckRow, Pill, useWorking, workingSteps } from "../parts";
 import { shareText } from "../share";
 import { WorkspaceScreen } from "../shell";
 import { orpc } from "@/api/client";
@@ -128,7 +128,6 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 	};
 
 	const ready = value.question.trim() !== "" && value.answer.trim() !== "" && value.landed !== null;
-	const providerName = provider?.label ?? t`your AI connection`;
 	const afterRound = {
 		screening: t`After the screening`,
 		technical: t`After the technical interview`,
@@ -184,16 +183,7 @@ function DebriefForm({ application, round, from, readOnly, onReviewed }: Debrief
 			{!readOnly ? (
 				<View style={{ gap: space.s2 }}>
 					<Button label={reviewLabel} disabled={!ready || !provider} loading={generate.isPending} onPress={submit} />
-					{provider ? (
-						<PrivacyLine>
-							{t`Review my answer sends the question, what you said, this posting and your Knowledge to ${providerName}.`}
-						</PrivacyLine>
-					) : (
-						<>
-							<PrivacyLine>{t`Reviewing needs an AI connection. What you write here stays on this device until then.`}</PrivacyLine>
-							<AiNotice />
-						</>
-					)}
+					<AiNotice task="debrief" application={application} interview={Boolean(round)} />
 				</View>
 			) : null}
 		</Block>

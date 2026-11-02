@@ -21,17 +21,19 @@ const REQUESTS: Record<Variant, string> = {
 
 type PromptInput = {
 	variant: Variant;
+	locale: string;
 	job?: string | undefined;
 	posting?: string | undefined;
 	resume?: string | undefined;
 	previous?: string | undefined;
 };
 
-/** The request, the job, the posting, the resume and, for a revision, the draft being revised. */
+/** The request, the letter's language, the job, the posting, the resume and, for a revision, the draft. */
 function buildLetterDraftPrompt(input: PromptInput): string {
 	const previous = input.variant === "draft" ? undefined : input.previous?.trim();
 	return [
 		previous ? REQUESTS[input.variant] : REQUESTS.draft,
+		`## The letter's language\n\nWrite in ${input.locale}. The greeting, sign-off and date on the page are written in it too.`,
 		input.job && `## The job\n\n${input.job}`,
 		input.posting && `## The posting\n\n${dataBlock("POSTING", input.posting)}`,
 		input.resume && `## The resume\n\n${dataBlock("RESUME", input.resume)}`,
@@ -76,6 +78,7 @@ export async function draftLetterBody(
 	});
 	const prompt = buildLetterDraftPrompt({
 		variant: input.variant,
+		locale: letter.style.metadata.page.locale,
 		job: application ? `${application.role} at ${application.company}` : undefined,
 		posting,
 		resume: resume ? buildMarkdown(resume.data) : undefined,

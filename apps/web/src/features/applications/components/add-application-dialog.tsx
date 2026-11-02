@@ -378,6 +378,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					id={`${id}-posting`}
 					rows={4}
 					value={input}
+					className="max-h-72 overflow-y-auto"
 					maxLength={100_000}
 					placeholder="https://…"
 					onChange={(event) => {
@@ -413,6 +414,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							id={`${id}-recovery`}
 							rows={5}
 							value={pastedText}
+							className="max-h-72 overflow-y-auto"
 							maxLength={100_000}
 							onChange={(event) => {
 								setPastedText(event.target.value);
@@ -435,6 +437,11 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					>
 						<Trans>Read posting</Trans>
 					</Button>
+				)}
+				{readable && hasUsableProvider && (
+					<p className="text-xs text-ink-3">
+						<Trans>Sends the posting text to {providerState.usableProviders[0]?.label} to read it.</Trans>
+					</p>
 				)}
 				{(clipped || parsed?.postingSource.completeness === "incomplete") && (
 					<p className="text-xs text-warn-text" role="alert">
@@ -466,6 +473,7 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 							maxLength={MAX_POSTING_CHARS}
 							value={description}
 							onChange={(event) => setDescription(event.target.value)}
+							className="max-h-72 overflow-y-auto"
 						/>
 						{parsed?.postingSource.retrievedAt && (
 							<p className="text-xs text-ink-3">
@@ -750,13 +758,7 @@ type ReadStatusProps = {
 function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadStatusProps) {
 	const base = "flex items-start gap-1.5 text-xs leading-[17px]";
 
-	if (!text) {
-		return (
-			<p className={cn(base, "text-ink-3")}>
-				<Trans>We read the page and save the posting for Check, the assistant and your letter.</Trans>
-			</p>
-		);
-	}
+	// A failure stays above the paste fallback: opening paste must not turn it back into idle "we read it" text.
 	if (pending) {
 		return (
 			<p className={cn(base, "text-ink-2")} role="status">
@@ -769,9 +771,16 @@ function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadSt
 			<p className={cn(base, "text-warn-text")} role="alert">
 				<Icon name="warning-circle" size={16} className="shrink-0" />
 				{getOrpcErrorMessage(error, {
-					byCode: { POSTING_UNREADABLE: t`That link couldn't be read. Paste the posting text instead.` },
+					allowServerMessage: true,
 					fallback: t`The posting couldn't be read. Fill in the role and company.`,
 				})}
+			</p>
+		);
+	}
+	if (!text) {
+		return (
+			<p className={cn(base, "text-ink-3")}>
+				<Trans>We read the page and save the posting for Check, the assistant and your letter.</Trans>
 			</p>
 		);
 	}

@@ -68,6 +68,7 @@ type InputBoxProps = Omit<TextFieldProps, "label" | "helper"> & {
 	hint?: string | undefined;
 	multiline?: boolean | undefined;
 	minHeight?: number | undefined;
+	maxHeight?: number | undefined;
 };
 
 /** The bordered box: 1 pt `lineStrong`, 2 pt `accent` while focused, 2 pt `dangerText` with an error. */
@@ -81,6 +82,7 @@ function InputBox({
 	mono,
 	multiline,
 	minHeight,
+	maxHeight,
 	onFocus,
 	onBlur,
 	...input
@@ -107,6 +109,7 @@ function InputBox({
 				alignItems: multiline ? "flex-start" : "center",
 				gap: space.s2,
 				minHeight: minHeight ?? size.input,
+				...(maxHeight ? { maxHeight } : {}),
 				// The thicker focus border eats into the padding, so the text does not move.
 				paddingHorizontal: space.s3 - (border - 1),
 				paddingVertical: multiline ? space.s3 - (border - 1) : 0,
@@ -133,6 +136,7 @@ function InputBox({
 				selectionColor={colors.accent}
 				cursorColor={colors.accent}
 				multiline={multiline}
+				scrollEnabled={maxHeight ? true : undefined}
 				textAlignVertical={multiline ? "top" : "center"}
 				{...input}
 				onFocus={(event) => {
@@ -175,9 +179,11 @@ export function TextField({ label, helper, error, ...input }: TextFieldProps) {
 export type TextAreaProps = Omit<TextFieldProps, "multiline" | "trailing" | "prefix"> & {
 	/** Visible lines before the field scrolls. Defaults to 4. */
 	minLines?: number | undefined;
+	/** After this many lines the field scrolls inside itself. Undefined grows with the text. */
+	maxLines?: number | undefined;
 };
 
-export function TextArea({ label, helper, error, minLines = 4, ...input }: TextAreaProps) {
+export function TextArea({ label, helper, error, minLines = 4, maxLines, ...input }: TextAreaProps) {
 	const { space, type } = useTheme();
 
 	return (
@@ -189,6 +195,7 @@ export function TextArea({ label, helper, error, minLines = 4, ...input }: TextA
 				error={error}
 				multiline
 				minHeight={type.bodyLarge.lineHeight * minLines + space.s3 * 2}
+				{...(maxLines ? { maxHeight: type.bodyLarge.lineHeight * maxLines + space.s3 * 2 } : {})}
 			/>
 		</Field>
 	);
