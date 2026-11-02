@@ -29,6 +29,7 @@ const react = {
 };
 const calls = [];
 let triageBindings = [];
+let triageEligible = true;
 const routes = {
 	builder: (id, tab) => `/builder/${id}/${tab}`,
 	application: (id, tab) => `/applications/${id}/${tab}`,
@@ -85,6 +86,7 @@ const mocks = {
 		useKeyCommands: (bindings) => {
 			triageBindings = bindings;
 		},
+		useRegisteredKeyCommands: () => (triageEligible ? triageBindings : []),
 	},
 	"@/lib/undone": { confirmUndone: () => calls.push({ message: "Restored", duration: 1500 }) },
 	"@/ui/use-pull-refresh": { usePullRefresh: () => ({ refreshing: false, onRefresh: () => undefined }) },
@@ -2929,6 +2931,24 @@ runTriage("x");
 let triageList = nodes(keyboardTree).find((node) => node.type === "SectionList");
 assert.equal(triageList.props.extraData.focusedId, "alpha");
 assert.deepEqual(triageList.props.extraData.selectedIds, ["alpha"]);
+assert.equal(triageList.props.renderItem({ item: applications[0], index: 0 }).props.style.borderWidth, 2);
+triageEligible = false;
+keyboardTree = listView();
+triageList = nodes(keyboardTree).find((node) => node.type === "SectionList");
+assert.equal(
+	triageList.props.renderItem({ item: applications[0], index: 0 }).props.style.borderWidth,
+	0,
+	"Suspended registry removes the keyboard focus indicator",
+);
+triageEligible = true;
+keyboardTree = listView();
+triageList = nodes(keyboardTree).find((node) => node.type === "SectionList");
+assert.equal(
+	triageList.props.renderItem({ item: applications[0], index: 0 }).props.style.borderWidth,
+	2,
+	"Eligibility restoration preserves row identity",
+);
+
 runTriage("f");
 assert.deepEqual(calls.at(-1), { logFollowUp: { id: "alpha" } });
 runTriage("j");

@@ -6,7 +6,7 @@ import { useLingui } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import Storage from "expo-sqlite/kv-store";
 import { useEffect, useRef, useState } from "react";
-import { RefreshControl, Pressable, SectionList, View } from "react-native";
+import { AccessibilityInfo, RefreshControl, Pressable, SectionList, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { applicationError } from "./error";
 import { useApplicationLanes } from "./lane-queries";
@@ -21,7 +21,7 @@ import { useNow, useUserTime } from "@/features/application-detail/hooks";
 import { useApplicationSearch } from "@/features/applications-board/search";
 import { ApplicationsViewFrame } from "@/features/applications-board/views";
 import { routes } from "@/routes";
-import { supportsUnmodifiedCommands, useKeyCommands } from "@/shell/key-commands";
+import { supportsUnmodifiedCommands, useKeyCommands, useRegisteredKeyCommands } from "@/shell/key-commands";
 import {
 	Banner,
 	Button,
@@ -161,14 +161,7 @@ function ApplicationsList() {
 	const visibleRows = query.isError ? [] : groups.flatMap((group) => (collapsed.has(group.status) ? [] : group.data));
 	const focusedRow = visibleRows.find((row) => row.id === focusedId);
 	const focusRow = (id: string) => setFocusedId(id);
-	useEffect(() => {
-		if (!keyboardMode || !focusedId) return;
-		const sectionIndex = groups.findIndex((group) => group.data.some((row) => row.id === focusedId));
-		const itemIndex = groups[sectionIndex]?.data.findIndex((row) => row.id === focusedId) ?? -1;
-		const group = groups[sectionIndex];
-		if (group && itemIndex >= 0 && !collapsed.has(group.status))
-			listRef.current?.scrollToLocation({ sectionIndex, itemIndex, animated: false, viewPosition: 0.5 });
-	}, [keyboardMode, focusedId, groups, collapsed]);
+
 	const step = (direction: number) => {
 		const index = visibleRows.findIndex((row) => row.id === focusedId);
 		const next = visibleRows[index < 0 ? 0 : Math.max(0, Math.min(visibleRows.length - 1, index + direction))];
@@ -242,6 +235,19 @@ function ApplicationsList() {
 			: [],
 		"screen",
 	);
+	const triageActive = useRegisteredKeyCommands().some((command) => command.id === "applications-next");
+	const focusAnnouncement = focusedRow ? `${focusedRow.role} · ${focusedRow.company}` : "";
+	useEffect(() => {
+		if (triageActive && focusAnnouncement) AccessibilityInfo.announceForAccessibility(focusAnnouncement);
+	}, [triageActive, focusedId, focusAnnouncement]);
+	useEffect(() => {
+		if (!triageActive || !focusedId) return;
+		const sectionIndex = groups.findIndex((group) => group.data.some((row) => row.id === focusedId));
+		const itemIndex = groups[sectionIndex]?.data.findIndex((row) => row.id === focusedId) ?? -1;
+		const group = groups[sectionIndex];
+		if (group && itemIndex >= 0 && !collapsed.has(group.status))
+			listRef.current?.scrollToLocation({ sectionIndex, itemIndex, animated: false, viewPosition: 0.5 });
+	}, [triageActive, focusedId, groups, collapsed]);
 	const applyBulk = async () => {
 		if (
 			!lanes.ready ||
@@ -329,6 +335,7 @@ function ApplicationsList() {
 					/>
 				)}
 			</View>
+			{triageActive && focusedRow && <Text color="ink2">{focusAnnouncement}</Text>}
 			{(search || tag || showClosed) && (
 				<Text color="ink2">
 					{plural(filtered.length, { one: "# match", other: "# matches" })}
@@ -595,7 +602,7 @@ function ApplicationsList() {
 							<Animated.View
 								{...listItemMotion(index, firstAppearance)}
 								style={{
-									borderWidth: keyboardMode && focusedRow?.id === item.id ? 2 : 0,
+									borderWidth: triageActive && focusedRow?.id === item.id ? 2 : 0,
 									borderColor: colors.accent,
 									borderBottomWidth: 1,
 									borderBottomColor: colors.line,
