@@ -84,10 +84,12 @@ export function Section({ title, children }: SectionBlockProps) {
 type StageStepperProps = SectionProps & {
 	onMarkApplied: (lane: ApplicationLane) => void;
 	onCloseLane: (lane: ApplicationLane) => void;
+	/** Opens a new interview; offered after a move to Interview when none is scheduled. */
+	onSchedule?: () => void;
 };
 
 /** Lane identity is independent of canonical progress; the picker accommodates any lane count and label length. */
-export function StageStepper({ application, onMarkApplied, onCloseLane }: StageStepperProps) {
+export function StageStepper({ application, onMarkApplied, onCloseLane, onSchedule }: StageStepperProps) {
 	const { t } = useLingui();
 	const { colors, radius, space } = useTheme();
 	const { update } = useApplicationMutations();
@@ -112,7 +114,12 @@ export function StageStepper({ application, onMarkApplied, onCloseLane }: StageS
 		update.mutate(
 			{ id: application.id, ...laneInput(target, lanes.supported) },
 			{
-				onSuccess: () => stageMoved(application, target),
+				onSuccess: () => {
+					const scheduled = application.activity.some(
+						(entry) => entry.type === "interview" && new Date(entry.at).getTime() > Date.now(),
+					);
+					stageMoved(application, target, scheduled ? undefined : onSchedule);
+				},
 				onError: (error) => showToast({ message: applicationError(error) }),
 			},
 		);
