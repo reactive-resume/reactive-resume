@@ -5,6 +5,8 @@ import { popupSlideClassName } from "@reactive-resume/ui/components/menu-styles"
 import { cn } from "@reactive-resume/utils/style";
 
 const ComboboxRoot = ComboboxPrimitive.Root;
+const ComboboxGroup = ComboboxPrimitive.Group;
+const ComboboxGroupLabel = ComboboxPrimitive.GroupLabel;
 
 const useFilter = ComboboxPrimitive.useFilter;
 
@@ -132,6 +134,8 @@ export {
 	ComboboxClear,
 	ComboboxContent,
 	ComboboxEmpty,
+	ComboboxGroup,
+	ComboboxGroupLabel,
 	ComboboxInput,
 	ComboboxItem,
 	ComboboxList,
