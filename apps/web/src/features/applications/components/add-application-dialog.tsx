@@ -491,7 +491,6 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 					<AiProviderLoadState state={providerState} />
 				) : (
 					<ReadStatus
-						text={text}
 						link={link}
 						readable={readable}
 						pending={read.isPending}
@@ -753,7 +752,6 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 }
 
 type ReadStatusProps = {
-	text: string;
 	link: boolean;
 	readable: boolean;
 	pending: boolean;
@@ -763,10 +761,10 @@ type ReadStatusProps = {
 };
 
 /** What reading the posting found, or why the fields need filling in by hand. */
-function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadStatusProps) {
+function ReadStatus({ link, readable, pending, error, parsed, ai }: ReadStatusProps) {
 	const base = "flex items-start gap-1.5 text-xs leading-[17px]";
 
-	// A failure stays above the paste fallback: opening paste must not turn it back into idle "we read it" text.
+	// Keep the failure visible when opening paste recovery.
 	if (pending) {
 		return (
 			<p className={cn(base, "text-ink-2")} role="status">
@@ -782,13 +780,6 @@ function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadSt
 					allowServerMessage: true,
 					fallback: t`The posting couldn't be read. Fill in the role and company.`,
 				})}
-			</p>
-		);
-	}
-	if (!text) {
-		return (
-			<p className={cn(base, "text-ink-3")}>
-				<Trans>We read the page and save the posting for Check, the assistant and your letter.</Trans>
 			</p>
 		);
 	}
@@ -824,7 +815,7 @@ function ReadStatus({ text, link, readable, pending, error, parsed, ai }: ReadSt
 	return (
 		<p className={cn(base, "text-ink-3")}>
 			{link && readable ? (
-				<Trans>The page had no job details to read. Fill in the role and company.</Trans>
+				<Trans>Read posting to fill the role and company.</Trans>
 			) : ai ? (
 				<Trans>Fill in the role and company. The posting is saved with the application.</Trans>
 			) : (
