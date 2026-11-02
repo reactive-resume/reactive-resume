@@ -9,6 +9,7 @@ import {
 	careerStoryInputSchema,
 	careerWorkspaceSchema,
 	generateTaskSchema,
+	memoryModeSchema,
 	roleSuggestionsInputSchema,
 	roleSuggestionsOutputSchema,
 	offerTermsSchema,
@@ -179,8 +180,10 @@ export const careerRouter = {
 			tags: ["Career"],
 			operationId: "saveCareerProfile",
 			summary: "Save career preferences",
+			description:
+				"Legacy full save: omitted memoryMode and searchRegions retain stored values; other omitted fields use their defaults.",
 		})
-		.input(careerProfileDataSchema)
+		.input(careerProfileDataSchema.extend({ memoryMode: memoryModeSchema.optional() }))
 		.output(careerProfileDataSchema)
 		.handler(({ context, input }) => careerService.saveProfile(context.user.id, input)),
 	updateProfile: protectedProcedure

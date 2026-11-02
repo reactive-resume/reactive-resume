@@ -44,8 +44,11 @@ export const careerProfileUpdateSchema = z
 					.string()
 					.trim()
 					.min(1)
+					.regex(/\S/)
 					.max(200)
-					.describe("Leading and trailing whitespace is removed; whitespace-only values are rejected."),
+					.describe(
+						"Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected.",
+					),
 			)
 			.max(20),
 		locations: z
@@ -54,8 +57,11 @@ export const careerProfileUpdateSchema = z
 					.string()
 					.trim()
 					.min(1)
+					.regex(/\S/)
 					.max(200)
-					.describe("Leading and trailing whitespace is removed; whitespace-only values are rejected."),
+					.describe(
+						"Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected.",
+					),
 			)
 			.max(20),
 		/** "What matters to you", in the user's own words. */

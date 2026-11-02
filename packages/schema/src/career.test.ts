@@ -13,6 +13,10 @@ describe("career profile updates", () => {
 			[field]: ["Platform engineer"],
 		});
 		expect(careerProfileUpdateSchema.safeParse({ [field]: [" \t "] }).success).toBe(false);
+		expect(careerProfileUpdateSchema.parse({ [field]: [` ${"x".repeat(200)} `] })).toEqual({
+			[field]: ["x".repeat(200)],
+		});
+		expect(careerProfileUpdateSchema.safeParse({ [field]: ["x".repeat(201)] }).success).toBe(false);
 	});
 });
 

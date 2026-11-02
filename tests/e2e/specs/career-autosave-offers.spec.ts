@@ -133,13 +133,28 @@ test("Facts owns memory consent and stale Preferences saves preserve it", async 
 		await page.request.patch("/api/openapi/career/profile", { data: { memoryMode: "invalid" } }),
 	).not.toBeOK();
 	expect((await read()).memoryMode).toBe("off");
-	// Older clients retain the existing whole-profile PUT and its defaulting behavior.
+});
+
+test("legacy profile saves preserve omitted memory consent and accept explicit choices", async ({ authPage: page }) => {
+	const read = async () => await (await page.request.get("/api/openapi/career/profile")).json();
+	await expect(await page.request.put("/api/openapi/career/profile", { data: {} })).toBeOK();
+	expect((await read()).memoryMode).toBe("ask");
+	await expect(
+		await page.request.put("/api/openapi/career/profile", {
+			data: { memoryMode: "off", minBase: { amount: 95000, currency: "EUR", period: "year" }, searchRegions: ["DE"] },
+		}),
+	).toBeOK();
 	await expect(await page.request.put("/api/openapi/career/profile", { data: { priorities: "Legacy save" } })).toBeOK();
 	expect(await read()).toMatchObject({
 		priorities: "Legacy save",
-		memoryMode: "ask",
+		memoryMode: "off",
+		searchRegions: ["DE"],
 		minBase: { amount: null, currency: "USD", period: "year" },
 	});
+	for (const memoryMode of ["ask", "auto", "off"]) {
+		await expect(await page.request.put("/api/openapi/career/profile", { data: { memoryMode } })).toBeOK();
+		expect((await read()).memoryMode).toBe(memoryMode);
+	}
 });
 
 test("follow-up writes project to Today and back, and attached PDFs count as sent", async ({

@@ -99,10 +99,16 @@ describe("generateOpenApiSpec", () => {
 			expect(request).not.toHaveProperty("required");
 		}
 		const input = getRequestSchema(view, "/career/profile", "patch");
+		expect(getRequestSchema(view, "/career/profile", "put")).not.toHaveProperty("properties.memoryMode.default");
 		for (const field of ["targetRoles", "locations"]) {
 			expect(input).toHaveProperty(
 				`properties.${field}.items.description`,
 				expect.stringContaining("whitespace-only values are rejected"),
+			);
+			expect(input).toHaveProperty(`properties.${field}.items.pattern`, "\\S");
+			expect(input).toHaveProperty(
+				`properties.${field}.items.description`,
+				expect.stringContaining("limit applies after trimming"),
 			);
 			expect(input).not.toHaveProperty(`properties.${field}.default`);
 		}

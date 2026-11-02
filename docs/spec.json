@@ -43564,7 +43564,8 @@
 																"type": "string",
 																"minLength": 1,
 																"maxLength": 200,
-																"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+																"pattern": "\\S",
+																"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 															},
 															"default": []
 														},
@@ -43575,7 +43576,8 @@
 																"type": "string",
 																"minLength": 1,
 																"maxLength": 200,
-																"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+																"pattern": "\\S",
+																"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 															},
 															"default": []
 														},
@@ -49478,7 +49480,8 @@
 												"type": "string",
 												"minLength": 1,
 												"maxLength": 200,
-												"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+												"pattern": "\\S",
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
@@ -49489,7 +49492,8 @@
 												"type": "string",
 												"minLength": 1,
 												"maxLength": 200,
-												"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+												"pattern": "\\S",
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
@@ -49655,6 +49659,7 @@
 			"put": {
 				"operationId": "saveCareerProfile",
 				"summary": "Save career preferences",
+				"description": "Legacy full save: omitted memoryMode and searchRegions retain stored values; other omitted fields use their defaults.",
 				"tags": [
 					"Career"
 				],
@@ -49672,7 +49677,8 @@
 											"type": "string",
 											"minLength": 1,
 											"maxLength": 200,
-											"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+											"pattern": "\\S",
+											"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 										},
 										"default": []
 									},
@@ -49683,7 +49689,8 @@
 											"type": "string",
 											"minLength": 1,
 											"maxLength": 200,
-											"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+											"pattern": "\\S",
+											"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 										},
 										"default": []
 									},
@@ -49762,8 +49769,7 @@
 											"auto",
 											"off"
 										],
-										"type": "string",
-										"default": "ask"
+										"type": "string"
 									},
 									"searchRegions": {
 										"anyOf": [
@@ -49801,7 +49807,8 @@
 												"type": "string",
 												"minLength": 1,
 												"maxLength": 200,
-												"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+												"pattern": "\\S",
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
@@ -49812,7 +49819,8 @@
 												"type": "string",
 												"minLength": 1,
 												"maxLength": 200,
-												"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+												"pattern": "\\S",
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
@@ -49996,7 +50004,8 @@
 											"type": "string",
 											"minLength": 1,
 											"maxLength": 200,
-											"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+											"pattern": "\\S",
+											"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 										}
 									},
 									"locations": {
@@ -50006,7 +50015,8 @@
 											"type": "string",
 											"minLength": 1,
 											"maxLength": 200,
-											"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+											"pattern": "\\S",
+											"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 										}
 									},
 									"priorities": {
@@ -50114,7 +50124,8 @@
 												"type": "string",
 												"minLength": 1,
 												"maxLength": 200,
-												"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+												"pattern": "\\S",
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
@@ -50125,7 +50136,8 @@
 												"type": "string",
 												"minLength": 1,
 												"maxLength": 200,
-												"description": "Leading and trailing whitespace is removed; whitespace-only values are rejected."
+												"pattern": "\\S",
+												"description": "Trimmed before validation. The 1 to 200 character limit applies after trimming; whitespace-only values are rejected."
 											},
 											"default": []
 										},
