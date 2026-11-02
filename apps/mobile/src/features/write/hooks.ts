@@ -7,6 +7,7 @@ import { sortSectionItemsByPeriod } from "@reactive-resume/resume/section-sort";
 import { SECTION_TITLES } from "./fields";
 import { createEntry, findEntry, getEntries, getSectionObject, readData } from "./model";
 import { useResumeStore } from "@/draft";
+import { confirmUndone } from "@/lib/undone";
 import { showToast } from "@/ui";
 
 /** Reads from the open resume's data. Return stable values (data sub-objects or primitives). */
@@ -70,17 +71,17 @@ export function useUndoToast() {
 					const current = useResumeStore.getState();
 					// The toast can outlive the resume it was about: another one open here is left alone.
 					if (!current.document || current.document.id !== resumeId) return;
-					// "Restored" for a moment shows the press did something.
-					if (changed && current.data === changed) {
+					// "Restored" for a moment shows the press did something, and only when the resume changed back.
+					if (changed && current.data === changed && current.canUndo && !current.locked) {
 						current.undo();
-						return showToast({ message: t`Restored` });
+						if (useResumeStore.getState().data !== changed) return confirmUndone();
 					}
 					if (restore && !current.locked) {
 						let restored = false;
 						edit((draft) => {
 							restored = restore(draft);
 						});
-						if (restored) return showToast({ message: t`Restored` });
+						if (restored) return confirmUndone();
 					}
 					showToast({ message: t`You've made changes since. Use Undo to step back through them.` });
 				},

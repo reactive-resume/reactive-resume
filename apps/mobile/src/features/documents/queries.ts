@@ -8,6 +8,7 @@ import { SUBMITTED_DOCUMENT_LOCKED } from "@reactive-resume/schema/applications/
 import { documentRef } from "./filter";
 import { client, orpc } from "@/api/client";
 import { getServer, useSession } from "@/auth/session";
+import { confirmUndone } from "@/lib/undone";
 import { showToast } from "@/ui";
 
 type BatchOptions = {
@@ -160,9 +161,18 @@ export function useDocumentOperations(enabled = true) {
 					? {
 							label: t`Undo`,
 							onPress: () => {
-								void idle.current.then(() =>
-									run(() => batch(done, (document) => client.documents.restore(documentRef(document)))),
-								);
+								let restored: DocumentSummary[] = [];
+								void idle.current
+									.then(() =>
+										run(async () => {
+											restored = await batch(done, (document) => client.documents.restore(documentRef(document)), {
+												notify: false,
+											});
+										}),
+									)
+									.then(() => {
+										if (restored.length > 0) confirmUndone();
+									});
 							},
 						}
 					: undefined,

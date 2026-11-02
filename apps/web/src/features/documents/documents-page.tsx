@@ -347,20 +347,8 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				</div>
 			)}
 
-			{failed ? null : firstRun && trashCount > 0 ? (
-				// Everything is in Trash (often the last document, just moved there with Undo still on offer): a quiet
-				// "nothing here" with the way back, not the first-run screen for someone who has never started.
-				<EmptyState
-					title={<Trans>No documents</Trans>}
-					description={<Plural value={trashCount} one="Trash has # document." other="Trash has # documents." />}
-					action={
-						<Button variant="secondary" nativeButton={false} render={<Link to="/dashboard/trash" />}>
-							<Trans>Open Trash</Trans>
-						</Button>
-					}
-				/>
-			) : firstRun ? (
-				<FirstRun onFile={(file) => openDialog("document.new", { file })} />
+			{failed ? null : firstRun ? (
+				<FirstRun trashCount={trashCount} onFile={(file) => openDialog("document.new", { file })} />
 			) : (
 				<>
 					{(tags.length > 0 || hasPublic) && (
@@ -523,10 +511,14 @@ function storeView(view: "grid" | "list") {
 	}
 }
 
-type FirstRunProps = { onFile: (file: File) => void };
+type FirstRunProps = {
+	onFile: (file: File) => void;
+	/** Everything may be in Trash (often the last document, just moved there): the way back stays in sight. */
+	trashCount: number;
+};
 
 /** The first visit: import is the filled button here, and only here. Choose a file opens the file picker itself. */
-function FirstRun({ onFile }: FirstRunProps) {
+function FirstRun({ onFile, trashCount }: FirstRunProps) {
 	const { startBlank, trySample, creating } = useStartDocument();
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -590,6 +582,14 @@ function FirstRun({ onFile }: FirstRunProps) {
 					</>
 				}
 			/>
+			{trashCount > 0 && (
+				<p className="mt-4 flex flex-wrap items-center gap-x-2 text-sm text-ink-2">
+					<Plural value={trashCount} one="Trash has # document." other="Trash has # documents." />
+					<Link to="/dashboard/trash" className="font-medium underline underline-offset-2">
+						<Trans>Open Trash</Trans>
+					</Link>
+				</p>
+			)}
 		</section>
 	);
 }

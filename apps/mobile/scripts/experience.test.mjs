@@ -73,6 +73,7 @@ const mocks = {
 	"@/routes": { routes },
 	"@/features/ai/web-access": { WebAccessAttention: "WebAccessAttention" },
 	"@/ui": ui,
+	"@/lib/undone": { confirmUndone: () => calls.push({ message: "Restored", duration: 1500 }) },
 	"@/ui/use-pull-refresh": { usePullRefresh: () => ({ refreshing: false, onRefresh: () => undefined }) },
 	"react-native-reanimated": {
 		View: "Animated.View",

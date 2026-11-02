@@ -38,7 +38,7 @@ import {
 	applicationsListQueryOptions,
 	hydrateApplicationDetail,
 } from "@/features/applications/queries";
-import { useApplicationLanes } from "@/features/applications/use-application-lanes";
+import { applicationLanesQueryOptions, useApplicationLanes } from "@/features/applications/use-application-lanes";
 import { useCareerTime, useNow } from "@/features/career/shared";
 import { toastError } from "@/libs/error-message";
 import { ENTER_CLASS } from "@/libs/motion";
@@ -66,8 +66,13 @@ export const Route = createFileRoute("/dashboard/applications/")({
 	validateSearch: searchSchema,
 	search: { middlewares: [stripSearchParams(defaultSearch)] },
 	// Arrive with the list, as Documents does: a new account sees "Track your first job" at once, not a toolbar and a
-	// skeleton that then vanish. A failed load still renders the page, which shows its error and retry.
-	loader: ({ context }) => context.queryClient.ensureQueryData(applicationsListQueryOptions()).catch(() => undefined),
+	// skeleton that then vanish. The lanes come with it, so rows first draw in the owner's lane order, not the defaults'.
+	// A failed load still renders the page, which shows its error and retry.
+	loader: ({ context }) =>
+		Promise.all([
+			context.queryClient.ensureQueryData(applicationsListQueryOptions()),
+			context.queryClient.ensureQueryData(applicationLanesQueryOptions()),
+		]).catch(() => undefined),
 });
 
 /** Search reads role, company, location, contacts and tags. */

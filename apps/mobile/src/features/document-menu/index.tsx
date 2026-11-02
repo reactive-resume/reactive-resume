@@ -13,6 +13,7 @@ import { useNewDocuments } from "@/features/documents/new-documents";
 import { useDocumentOperations } from "@/features/documents/queries";
 import { flushResume } from "@/features/share/document";
 import { printResume } from "@/features/share/files";
+import { confirmUndone } from "@/lib/undone";
 import { routes } from "@/routes";
 import { useBuilderChrome } from "@/shell/builder-chrome";
 import { useKeyCommands } from "@/shell/key-commands";
@@ -146,9 +147,11 @@ export function DocumentMenu({ id, inChrome = false }: DocumentMenuProps) {
 												action: {
 													label: t`Undo`,
 													onPress: () => {
-														void pending.current.then(() =>
-															operations.run(() => client.documents.restore({ type: "resume", id })),
-														);
+														void pending.current
+															.then(() => operations.run(() => client.documents.restore({ type: "resume", id })))
+															.then((done) => {
+																if (done) confirmUndone();
+															});
 													},
 												},
 											});
