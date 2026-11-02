@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNetworkState } from "expo-network";
 import { useMemo, useRef, useState } from "react";
 import { View } from "react-native";
+import { getDefaultFileName } from "@reactive-resume/utils/file";
 import { letterPageData, useLetterWords } from "./compose";
 import { LetterPages } from "./page";
 import { useResumes } from "./queries";
@@ -172,7 +173,7 @@ function LetterDownload({ letter, offline }: { letter: LetterDocument; offline: 
 				const resumeFile = await exportFile({
 					directory,
 					id: resume.id,
-					name: safeFileName(t`${resume.data.basics.name || resume.name}-Resume`).replaceAll(" ", "-"),
+					name: safeFileName(getDefaultFileName(resume)),
 					format: "pdf",
 					data: resume.data,
 				});

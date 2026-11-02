@@ -29,6 +29,8 @@ export type TextFieldProps = Omit<TextInputProps, "style" | "value" | "onChangeT
 	prefix?: string | undefined;
 	/** Monospace value (keys, URLs, JSON). */
 	mono?: boolean | undefined;
+	/** Left to right in every language: usernames and web addresses, which use Latin letters a–z. */
+	ltr?: boolean | undefined;
 };
 
 type FieldProps = {
@@ -80,6 +82,7 @@ function InputBox({
 	trailing,
 	prefix,
 	mono,
+	ltr: alwaysLtr,
 	multiline,
 	minHeight,
 	maxHeight,
@@ -92,6 +95,7 @@ function InputBox({
 	const [focused, setFocused] = useState(false);
 	const border = error ? 2 : focused ? 2 : 1;
 	const ltr =
+		alwaysLtr === true ||
 		input.keyboardType === "url" ||
 		input.keyboardType === "email-address" ||
 		input.keyboardType === "phone-pad" ||

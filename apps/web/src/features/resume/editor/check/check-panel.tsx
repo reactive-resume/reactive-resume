@@ -392,7 +392,7 @@ function DeepCheck({ data }: { data: ResumeData }) {
 				open={reportOpen && report !== null}
 				onOpenChange={(open) => useEditorStore.setState({ exportReportOpen: open })}
 			>
-				<DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-2xl">
+				<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto sm:max-w-2xl">
 					<DialogHeader>
 						<DialogTitle>
 							<Trans>The exported PDF</Trans>

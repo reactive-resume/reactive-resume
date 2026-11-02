@@ -33,13 +33,15 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
 	);
 }
 
+/** A close button needs a name in the interface language: required whenever the button shows. */
+type CloseButtonProps =
+	| { showCloseButton?: true; /** Accessible name of the close button; pass a translated string. */ closeLabel: string }
+	| { showCloseButton: false; closeLabel?: string };
+
 type DialogContentProps = DialogPrimitive.Popup.Props & {
-	showCloseButton?: boolean;
-	/** Accessible name of the close button; pass a translated string. */
-	closeLabel?: string;
 	/** Skip the open/close transition, for dialogs toggled many times a day (e.g. the command bar). */
 	instant?: boolean;
-};
+} & CloseButtonProps;
 
 /** Centered, 16px radius, fades and scales in from 98% over 200ms. Use for decisions, not for tasks beside the page. */
 function DialogContent({

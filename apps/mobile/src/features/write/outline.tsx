@@ -32,6 +32,7 @@ import {
 	summarizeContent,
 } from "./model";
 import { resolvePictureUrl } from "./picture-screen";
+import { ResumeLanguage } from "./resume-language";
 import { SectionSheet } from "./section-sheet";
 import { useSession } from "@/auth/session";
 import { useIsResumeLocked } from "@/draft";
@@ -122,6 +123,7 @@ export function Outline({ resumeId, imported, initialSection }: OutlineProps) {
 						{imported && !dismissedImport ? (
 							<ImportedBanner data={data} source={imported} onDismiss={() => setDismissedImport(true)} />
 						) : null}
+						<ResumeLanguage locale={data.metadata.page.locale} locked={locked} />
 						<BasicsCard resumeId={resumeId} data={data} />
 						<View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", gap: space.s2 }}>
 							<Text variant="micro" color="ink3">

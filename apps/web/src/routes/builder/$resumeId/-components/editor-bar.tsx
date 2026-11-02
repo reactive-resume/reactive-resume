@@ -85,7 +85,15 @@ const MODE_ICONS = {
 function ModeTabs() {
 	const issueCount = useOpenIssueCount();
 	const isPublic = useCurrentBuilderResumeSelector((resume) => resume.isPublic ?? false);
-	const labels: Record<EditorMode, string> = { write: t`Write`, design: t`Design`, check: t`Check`, share: t`Share` };
+	const labels: Record<EditorMode, string> = {
+		write: t`Write`,
+		design: t`Design`,
+		check: t({
+			comment: "The resume builder mode that reviews the resume for problems. Not the Screening application stage.",
+			message: "Check",
+		}),
+		share: t`Share`,
+	};
 
 	return (
 		<TabsList aria-label={t`Editor mode`} className="h-9" data-mode-switch="">

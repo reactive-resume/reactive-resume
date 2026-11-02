@@ -72,7 +72,7 @@ export function AddApplicationDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-[560px]">
+			<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto sm:max-w-[560px]">
 				<AddApplicationForm
 					initialCapture={initialCapture}
 					key={instance}
@@ -238,6 +238,9 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			toastError(error, t`Couldn't add the application. Try again.`);
 		}
 	};
+
+	// Already applied with the resume that was sent: recording it is the next step, not preparing another one.
+	const logsSentResume = stage !== "saved" && resumeId !== "";
 
 	return (
 		<form
@@ -728,14 +731,19 @@ function AddApplicationForm({ onClose, onAdded, initialCapture, forPicker }: Add
 			<DialogFooter>
 				<Button
 					type="button"
-					variant={forPicker ? "primary" : "secondary"}
+					variant={forPicker || logsSentResume ? "primary" : "secondary"}
 					disabled={!ready || !!duplicate.data}
 					onClick={() => void add(false)}
 				>
 					{stage === "saved" ? <Trans>Save job</Trans> : <Trans>Record application</Trans>}
 				</Button>
 				{!forPicker && (
-					<Button type="button" disabled={!ready || !!duplicate.data} onClick={() => void add(true)}>
+					<Button
+						type="button"
+						variant={logsSentResume ? "secondary" : "primary"}
+						disabled={!ready || !!duplicate.data}
+						onClick={() => void add(true)}
+					>
 						<Trans>Save and prepare resume</Trans>
 					</Button>
 				)}

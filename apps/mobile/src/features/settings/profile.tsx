@@ -19,7 +19,8 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 	const [edit, setEdit] = useState<string | null>(null);
 	const draft = edit ?? value;
 	const [touched, setTouched] = useState(false);
-	const trimmed = draft.trim();
+	// Usernames are lowercase: capitals typed are taken as their lowercase letters rather than refused (web profile).
+	const trimmed = field === "username" ? draft.trim().toLowerCase() : draft.trim();
 	const invalid = field === "name" ? !trimmed || trimmed.length > 64 : !/^[a-z0-9._-]{3,64}$/.test(trimmed);
 	const mutation = useMutation({
 		mutationKey: ["settings", "profile", field],
@@ -52,7 +53,7 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 		touched && invalid
 			? field === "name"
 				? t`Enter a name, up to 64 characters.`
-				: t`Use 3 to 64 lowercase letters, numbers, dots, hyphens and underscores.`
+				: t`Use 3 to 64 Latin letters a–z, numbers, dots, hyphens and underscores.`
 			: mutation.isError
 				? "code" in mutation.error && mutation.error.code === "USERNAME_IS_ALREADY_TAKEN"
 					? t`This username is already taken.`
@@ -72,6 +73,7 @@ function ProfileField({ field, value, server }: ProfileFieldProps) {
 				editable={!mutation.isPending}
 				autoCapitalize={field === "username" ? "none" : "words"}
 				autoCorrect={field !== "username"}
+				ltr={field === "username"}
 				textContentType={field === "name" ? "name" : "username"}
 				returnKeyType="done"
 				error={error}

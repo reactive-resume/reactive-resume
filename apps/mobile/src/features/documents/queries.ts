@@ -37,7 +37,7 @@ export function documentError(error: unknown) {
 			return t`Another resume already uses this address. Choose a different one.`;
 		if (error.code === "RESUME_LOCKED") return t`This resume is locked. Unlock it to make changes.`;
 		if (error.code === "INVALID_SLUG")
-			return `${t`Use at most 64 characters.`} ${t`The address must contain only lowercase letters and numbers, separated by single dashes.`}`;
+			return `${t`Use at most 64 characters.`} ${t`The address must contain only Latin letters a–z and numbers, separated by single dashes.`}`;
 	}
 	return t`Couldn't complete this action. Try again.`;
 }

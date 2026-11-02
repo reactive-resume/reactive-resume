@@ -516,7 +516,7 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 				if (!open) onClose();
 			}}
 		>
-			<DialogContent>
+			<DialogContent closeLabel={t`Close`}>
 				<form
 					className="grid gap-4"
 					onSubmit={(event) => {
@@ -633,7 +633,7 @@ function MarkAppliedDialog({ application, lane, onClose }: MarkAppliedDialogProp
 function PostingDialog({ application, open, onOpenChange }: PostingDialogProps) {
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-xl">
+			<DialogContent closeLabel={t`Close`} className="max-h-[85svh] overflow-y-auto sm:max-w-xl">
 				<DialogHeader>
 					<DialogTitle>
 						{application.role} · {application.company}

@@ -64,7 +64,7 @@ export const sharingRouter = {
 			operationId: "checkResumeSlug",
 			summary: "Check a resume address",
 			description:
-				"Checks whether a slug can be a resume's public address: lowercase letters and numbers in groups joined by single dashes, and not used by another of the user's resumes. When it can't, suggests one that works. Requires authentication.",
+				"Checks whether a slug can be a resume's public address: Latin letters a–z and numbers in groups joined by single dashes, and not used by another of the user's resumes. When it can't, suggests one that works. Requires authentication.",
 			successDescription: "Whether the slug is available, and a suggestion when it isn't.",
 		})
 		.input(resumeDto.checkSlug.input)

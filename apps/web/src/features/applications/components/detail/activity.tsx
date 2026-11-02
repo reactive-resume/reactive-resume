@@ -212,7 +212,7 @@ export function Activity({ application, onOpenInterview }: ActivityProps) {
 				onOpenChange={(open) => !open && setEditing(null)}
 				onOpenChangeComplete={onEditOpenChangeComplete}
 			>
-				<DialogContent className="sm:max-w-sm">
+				<DialogContent closeLabel={t`Close`} className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>
 							{shownEdit?.entry.type === "note" ? <Trans>Edit note</Trans> : <Trans>Edit date</Trans>}
