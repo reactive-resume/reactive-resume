@@ -18249,7 +18249,7 @@
 			"get": {
 				"operationId": "getPriorNoResponseApplications",
 				"summary": "Find prior no-response applications at a company",
-				"description": "Earlier applications at the same company that ended without a response. With `anyOutcome`, every earlier closed application, with its outcome (`closedReason`). Requires authentication.",
+				"description": "Up to the ten most recent earlier applications at the same company that ended without a response. With `anyOutcome`, up to the ten most recent earlier closed applications, with their outcome (`closedReason`). Requires authentication.",
 				"tags": [
 					"Applications"
 				],
@@ -18931,6 +18931,9 @@
 																	]
 																},
 																"canonicalTransition": {
+																	"type": "boolean"
+																},
+																"dateUnknown": {
 																	"type": "boolean"
 																},
 																"writeSequence": {
@@ -20701,6 +20704,9 @@
 																"canonicalTransition": {
 																	"type": "boolean"
 																},
+																"dateUnknown": {
+																	"type": "boolean"
+																},
 																"writeSequence": {
 																	"type": "integer",
 																	"minimum": -9007199254740991,
@@ -21333,6 +21339,9 @@
 																			]
 																		},
 																		"canonicalTransition": {
+																			"type": "boolean"
+																		},
+																		"dateUnknown": {
 																			"type": "boolean"
 																		},
 																		"writeSequence": {
@@ -22107,6 +22116,9 @@
 																]
 															},
 															"canonicalTransition": {
+																"type": "boolean"
+															},
+															"dateUnknown": {
 																"type": "boolean"
 															},
 															"writeSequence": {
@@ -23503,6 +23515,9 @@
 																]
 															},
 															"canonicalTransition": {
+																"type": "boolean"
+															},
+															"dateUnknown": {
 																"type": "boolean"
 															},
 															"writeSequence": {
@@ -24973,6 +24988,9 @@
 															"canonicalTransition": {
 																"type": "boolean"
 															},
+															"dateUnknown": {
+																"type": "boolean"
+															},
 															"writeSequence": {
 																"type": "integer",
 																"minimum": -9007199254740991,
@@ -25558,6 +25576,10 @@
 													]
 												},
 												"stageEnteredAt": {
+													"type": "string",
+													"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+												},
+												"applicationDate": {
 													"type": "string",
 													"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
 												}
@@ -26158,6 +26180,9 @@
 																]
 															},
 															"canonicalTransition": {
+																"type": "boolean"
+															},
+															"dateUnknown": {
 																"type": "boolean"
 															},
 															"writeSequence": {
@@ -26883,6 +26908,9 @@
 																]
 															},
 															"canonicalTransition": {
+																"type": "boolean"
+															},
+															"dateUnknown": {
 																"type": "boolean"
 															},
 															"writeSequence": {
@@ -27632,6 +27660,9 @@
 																]
 															},
 															"canonicalTransition": {
+																"type": "boolean"
+															},
+															"dateUnknown": {
 																"type": "boolean"
 															},
 															"writeSequence": {
@@ -28452,6 +28483,9 @@
 															"canonicalTransition": {
 																"type": "boolean"
 															},
+															"dateUnknown": {
+																"type": "boolean"
+															},
 															"writeSequence": {
 																"type": "integer",
 																"minimum": -9007199254740991,
@@ -29269,6 +29303,9 @@
 															"canonicalTransition": {
 																"type": "boolean"
 															},
+															"dateUnknown": {
+																"type": "boolean"
+															},
 															"writeSequence": {
 																"type": "integer",
 																"minimum": -9007199254740991,
@@ -30083,6 +30120,9 @@
 															"canonicalTransition": {
 																"type": "boolean"
 															},
+															"dateUnknown": {
+																"type": "boolean"
+															},
 															"writeSequence": {
 																"type": "integer",
 																"minimum": -9007199254740991,
@@ -30838,6 +30878,9 @@
 															"canonicalTransition": {
 																"type": "boolean"
 															},
+															"dateUnknown": {
+																"type": "boolean"
+															},
 															"writeSequence": {
 																"type": "integer",
 																"minimum": -9007199254740991,
@@ -31568,6 +31611,9 @@
 																]
 															},
 															"canonicalTransition": {
+																"type": "boolean"
+															},
+															"dateUnknown": {
 																"type": "boolean"
 															},
 															"writeSequence": {
@@ -32320,6 +32366,9 @@
 																]
 															},
 															"canonicalTransition": {
+																"type": "boolean"
+															},
+															"dateUnknown": {
 																"type": "boolean"
 															},
 															"writeSequence": {
@@ -42047,6 +42096,9 @@
 																			]
 																		},
 																		"canonicalTransition": {
+																			"type": "boolean"
+																		},
+																		"dateUnknown": {
 																			"type": "boolean"
 																		},
 																		"writeSequence": {
@@ -149239,6 +149291,10 @@
 													]
 												},
 												"stageEnteredAt": {
+													"type": "string",
+													"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+												},
+												"applicationDate": {
 													"type": "string",
 													"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
 												}

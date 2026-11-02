@@ -10,7 +10,10 @@ import { orpc } from "@/libs/orpc/client";
 
 type PriorNoResponseNoticeProps = { company: string; excludeId?: string };
 
-/** How an earlier application ended, for the notice's list. */
+/**
+ * How an earlier application ended, for the notice's list. A server from before `anyOutcome` returns rows without
+ * `closedReason`, and only no-response ones, so a missing reason reads as "no reply".
+ */
 const outcomeText = (reason: ApplicationClosedReason | null) =>
 	reason === "no-response"
 		? t`no reply`
@@ -52,7 +55,7 @@ export function PriorNoResponseNotice({ company, excludeId }: PriorNoResponseNot
 				{data.map((prior) => (
 					<li key={prior.id}>
 						{prior.role} · {new Date(prior.at).toLocaleDateString(i18n.locale, { dateStyle: "medium" })} ·{" "}
-						{outcomeText(prior.closedReason ?? null)}
+						{outcomeText(prior.closedReason === undefined ? "no-response" : prior.closedReason)}
 					</li>
 				))}
 			</ul>

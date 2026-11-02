@@ -5,12 +5,6 @@ type StageEntry = Extract<ApplicationSummary["activity"][number], { type: "stage
 
 type HistorySource = Pick<ApplicationSummary, "status" | "activity" | "appliedAt" | "laneId">;
 
-/** Lane-only history is useful for placement, never evidence of a submission or employer reply. */
-export const canonicalStageEntries = (application: Pick<HistorySource, "activity">) =>
-	application.activity.filter(
-		(entry): entry is StageEntry => entry.type === "stage" && entry.canonicalTransition !== false,
-	);
-
 export function currentLaneEntry(application: HistorySource, lanes: readonly ApplicationLane[] = []) {
 	const stages = application.activity
 		.filter((entry): entry is StageEntry => entry.type === "stage" && entry.stage === application.status)
@@ -22,5 +16,7 @@ export function currentLaneEntry(application: HistorySource, lanes: readonly App
 	return exact[0] ?? stages.find((entry) => !entry.laneId) ?? latest;
 }
 
-export const laneSince = (application: HistorySource, lanes: readonly ApplicationLane[] = []) =>
-	new Date(currentLaneEntry(application, lanes)?.at ?? application.appliedAt);
+export const laneSince = (application: HistorySource, lanes: readonly ApplicationLane[] = []) => {
+	const entry = currentLaneEntry(application, lanes);
+	return entry?.dateUnknown ? null : new Date(entry?.at ?? application.appliedAt);
+};

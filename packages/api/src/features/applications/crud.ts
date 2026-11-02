@@ -35,7 +35,7 @@ export const crudRouter = {
 			operationId: "getPriorNoResponseApplications",
 			summary: "Find prior no-response applications at a company",
 			description:
-				"Earlier applications at the same company that ended without a response. With `anyOutcome`, every earlier closed application, with its outcome (`closedReason`). Requires authentication.",
+				"Up to the ten most recent earlier applications at the same company that ended without a response. With `anyOutcome`, up to the ten most recent earlier closed applications, with their outcome (`closedReason`). Requires authentication.",
 		})
 		.input(
 			z.object({

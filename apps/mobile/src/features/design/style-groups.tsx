@@ -23,7 +23,7 @@ import {
 	contrastOver,
 	darkenForWhite,
 	hexToRgba,
-	isValidHex,
+	normalizeHex,
 	matchDensity,
 	matchFontPairing,
 	matchMargins,
@@ -354,8 +354,9 @@ export function ColorGroup({ data, write, disabled }: GroupProps) {
 	const current = rgbaToHex(data.metadata.design.colors.primary) ?? "#000000";
 	const [typed, setTyped] = useState<string | null>(null);
 	const hex = typed ?? current;
-	const valid = isValidHex(hex);
-	const normalized = valid ? `#${hex.trim().replace("#", "").toUpperCase()}` : current;
+	const typedHex = normalizeHex(hex);
+	const valid = typedHex !== null;
+	const normalized = typedHex ?? current;
 	const { primary, background } = data.metadata.design.colors;
 	// A typed hex is opaque; the saved colour may carry alpha, which prints lighter over the page background.
 	const ratio = contrastOver(typed !== null && valid ? normalized : primary, background);
@@ -434,7 +435,8 @@ export function ColorGroup({ data, write, disabled }: GroupProps) {
 					maxLength={7}
 					onChangeText={(text) => {
 						setTyped(text);
-						if (isValidHex(text)) setAccent(text, false);
+						const next = normalizeHex(text);
+						if (next) setAccent(next, false);
 					}}
 					onBlur={() => setTyped(null)}
 					style={{
@@ -449,10 +451,18 @@ export function ColorGroup({ data, write, disabled }: GroupProps) {
 						borderColor: colors.lineStrong,
 					}}
 				/>
-				<Text variant="mono" color={tooLight ? "warnText" : "ink3"}>
-					{`${ratio.toFixed(1)}:1`}
-				</Text>
+				{/* An unreadable value has no ratio: the one shown would be the old colour's. */}
+				{valid ? (
+					<Text variant="mono" color={tooLight ? "warnText" : "ink3"}>
+						{`${ratio.toFixed(1)}:1`}
+					</Text>
+				) : null}
 			</View>
+			{valid ? null : (
+				<Text variant="caption" color="dangerText" accessibilityRole="alert">
+					{t`Use a hex color such as #2F5A8A.`}
+				</Text>
+			)}
 
 			{tooLight ? (
 				<View
@@ -520,7 +530,10 @@ export function PageGroup({ data, write, disabled, pick }: GroupProps) {
 				/>
 			</Field>
 
-			<Field label={t`Language`} helper={t`Changes section titles and date words only, not your content.`}>
+			<Field
+				label={t`Language`}
+				helper={t`Sets section titles, date words and text direction. Your content isn't translated.`}
+			>
 				<Pressable
 					accessibilityRole="button"
 					accessibilityLabel={t`Language`}

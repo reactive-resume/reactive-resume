@@ -24,7 +24,7 @@ Your own stages count as the standard stage they belong to (see [Customizing app
 
 - **How far applications get**: For each stage from **Applied** to **Offer**, the number of applications that ever reached it. This uses each application's stage history, so an application that reached **Interview** and was later closed still counts for **Applied**, **Screening** and **Interview**.
 - **heard back**: The share of sent applications that got a reply. A reply means the application moved on to **Screening** or later, or was closed as **Not selected**.
-- **median to first reply**: The typical number of days between sending an application and that first reply. It uses the dates in each application's **Activity**, so correct those dates if you added applications after the fact.
+- **median to first reply**: The typical number of days between sending an application and that first reply. It requires a known sending date and a separate, dated reply in **Activity**. An imported later stage with an unknown date still counts as a reply, but contributes no reply time. A real reply recorded on the sending day counts as zero days. Edit Activity dates when you know what happened.
 - **Tailored vs. base resume**: Compares applications sent with a resume made for that job (with **Tailor a resume** or **Copy for a job…**) against those sent with another resume. It only counts applications with a linked resume. With fewer than 10 of those, it reminds you the numbers are small.
 
 ## The pipeline picture
@@ -54,7 +54,7 @@ Select **Export PNG** to download the picture as `pipeline-flow.png`, a high-res
   />
 </Frame>
 
-- **Applications over time**: How many applications you sent each week over the last 8 weeks, dated by their first move to **Applied** or later. Applications that later closed still count; jobs that never reached **Applied** don't.
+- **Applications over time**: How many applications you sent each week over the last 8 weeks, dated by their first recorded **Applied** date. Imports without a known sending date are left out of weekly totals. Applications that later closed still count; jobs that never reached **Applied** don't.
 - **Where applications come from**: How many applications have each **Source**, such as LinkedIn or Referral. Fill in the source on each application to make this useful. Applications without a source aren't shown.
 
 ## Related guides

@@ -9,6 +9,7 @@ import { semanticNodeKeys } from "../../semantic/node-keys";
 import {
 	CustomFieldContactItem,
 	EmailContactItem,
+	hasContactDetails,
 	LocationContactItem,
 	PhoneContactItem,
 	WebsiteContactItem,
@@ -137,41 +138,43 @@ const Header = ({ styles, colors }: PikachuHeaderProps) => {
 				</View>
 			</SemanticTemplatePartView>
 
-			<SemanticContactListView style={styles.contactList}>
-				<EmailContactItem
-					email={basics.email}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				<PhoneContactItem
-					phone={basics.phone}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				<LocationContactItem
-					location={basics.location}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				<WebsiteContactItem
-					website={basics.website}
-					style={styles.contactItem}
-					textStyle={styles.headerText}
-					iconColor={colors.background}
-				/>
-				{basics.customFields.map((field) => (
-					<CustomFieldContactItem
-						key={field.id}
-						field={field}
+			{hasContactDetails(basics) && (
+				<SemanticContactListView style={styles.contactList}>
+					<EmailContactItem
+						email={basics.email}
 						style={styles.contactItem}
 						textStyle={styles.headerText}
 						iconColor={colors.background}
 					/>
-				))}
-			</SemanticContactListView>
+					<PhoneContactItem
+						phone={basics.phone}
+						style={styles.contactItem}
+						textStyle={styles.headerText}
+						iconColor={colors.background}
+					/>
+					<LocationContactItem
+						location={basics.location}
+						style={styles.contactItem}
+						textStyle={styles.headerText}
+						iconColor={colors.background}
+					/>
+					<WebsiteContactItem
+						website={basics.website}
+						style={styles.contactItem}
+						textStyle={styles.headerText}
+						iconColor={colors.background}
+					/>
+					{basics.customFields.map((field) => (
+						<CustomFieldContactItem
+							key={field.id}
+							field={field}
+							style={styles.contactItem}
+							textStyle={styles.headerText}
+							iconColor={colors.background}
+						/>
+					))}
+				</SemanticContactListView>
+			)}
 		</SemanticHeaderView>
 	);
 };

@@ -11,7 +11,10 @@ import { getAccountScope, getServer } from "@/auth/session";
 import { routes } from "@/routes";
 import { Banner, Button, useTheme } from "@/ui";
 
-/** How an earlier application ended, for the list under the notice. */
+/**
+ * How an earlier application ended, for the list under the notice. A server from before `anyOutcome` returns rows
+ * without `closedReason`, and only no-response ones, so a missing reason reads as "no reply".
+ */
 const outcomeText = (reason: ApplicationClosedReason | null) =>
 	reason === "no-response"
 		? t`no reply`
@@ -71,7 +74,7 @@ export function PriorNoResponse({ company, excludeId, disabled, onOpen }: PriorN
 					key={application.id}
 					variant="link"
 					disabled={disabled}
-					label={`${application.role} · ${application.company} · ${outcomeText(application.closedReason ?? null)}`}
+					label={`${application.role} · ${application.company} · ${outcomeText(application.closedReason === undefined ? "no-response" : application.closedReason)}`}
 					onPress={() => {
 						if (onOpen?.(application.id) === false) return;
 						router.push(routes.applicationDetails(application.id));

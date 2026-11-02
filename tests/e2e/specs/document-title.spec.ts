@@ -1,13 +1,82 @@
 import type { Page } from "@playwright/test";
 import { expect, test } from "../fixtures/test";
 
+test("builder rename stays inline and tags persist without changing the resume body", async ({
+	authPage: page,
+}, testInfo) => {
+	const created = await page.request.post("/api/openapi/resumes", {
+		data: { name: "Fictional Cedar resume", tags: ["base"] },
+	});
+	await expect(created).toBeOK();
+	const id: string = await created.json();
+	await page.goto(`/builder/${id}`);
+	const bodySaved = page.waitForResponse((response) => response.url().endsWith("/resume/update") && response.ok());
+	await page.getByRole("textbox", { name: "Headline", exact: true }).fill("Portfolio designer");
+	await bodySaved;
+	let nameWrites = 0;
+	page.on("request", (request) => {
+		if (request.url().endsWith("/resume/update")) nameWrites++;
+	});
+	await page.getByRole("button", { name: /^Document menu:/ }).click();
+	await page.getByRole("menuitem", { name: "Rename…", exact: true }).click();
+	const name = page.getByRole("textbox", { name: "Name", exact: true });
+	await expect(name).toBeVisible();
+	await expect(page.getByRole("dialog", { name: "Update resume", exact: true })).toHaveCount(0);
+	await name.fill("Cancelled name");
+	await name.press("Escape");
+	await expect(page).toHaveTitle("Fictional Cedar resume | Reactive Resume");
+	await page.getByRole("button", { name: /^Document menu:/ }).click();
+	await page.getByRole("menuitem", { name: "Rename…", exact: true }).click();
+	await name.fill("Fictional Cedar — Product designer");
+	await name.press("Tab");
+	await expect(name).not.toBeVisible();
+	expect(nameWrites).toBe(1);
+	await expect(page).toHaveTitle("Fictional Cedar — Product designer | Reactive Resume");
+	await page.getByRole("button", { name: /^Document menu:/ }).click();
+	await expect(page.getByRole("menuitem", { name: "Copy for a job…", exact: true })).toBeVisible();
+	await page
+		.getByRole("menu", { name: /^Document menu:/ })
+		.screenshot({ path: testInfo.outputPath("builder-document-actions.png"), animations: "disabled" });
+	await page.getByRole("menuitem", { name: "Tags…", exact: true }).click();
+	const tags = page.getByRole("dialog", { name: "Tags", exact: true });
+	await tags.getByPlaceholder("Add a tag…", { exact: true }).fill("portfolio");
+	await tags.getByPlaceholder("Add a tag…", { exact: true }).press("Enter");
+	await expect(tags.getByText("portfolio", { exact: true })).toBeVisible();
+	await tags.screenshot({ path: testInfo.outputPath("builder-tags.png"), animations: "disabled" });
+	await tags.getByRole("button", { name: "Save tags", exact: true }).click();
+	await expect(tags).not.toBeVisible();
+	const saved = await page.request.get(`/api/openapi/resumes/${id}`);
+	await expect(saved).toBeOK();
+	expect(await saved.json()).toMatchObject({
+		name: "Fictional Cedar — Product designer",
+		tags: ["base", "portfolio"],
+		data: { basics: { headline: "Portfolio designer" } },
+	});
+	await page.reload();
+	await expect(page).toHaveTitle("Fictional Cedar — Product designer | Reactive Resume");
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.getByRole("button", { name: /^Document menu:/ }).click();
+	await page.getByRole("menuitem", { name: "Rename…", exact: true }).click();
+	await expect(name).toBeFocused();
+	const bounds = await name.boundingBox();
+	if (!bounds) throw new Error("Inline name is not visible on a phone");
+	expect(bounds.x).toBeGreaterThanOrEqual(0);
+	expect(bounds.x + bounds.width).toBeLessThanOrEqual(390);
+	await name.press("Escape");
+	await page.getByRole("button", { name: /^Document menu:/ }).click();
+	await page.getByRole("menuitem", { name: "Lock editing", exact: true }).click();
+	await page.getByRole("button", { name: /^Document menu:/ }).click();
+	await expect(page.getByRole("menuitem", { name: "Rename…", exact: true })).toBeDisabled();
+	await expect(page.getByRole("menuitem", { name: "Tags…", exact: true })).toBeDisabled();
+});
+
 async function rename(page: Page, kind: "resume" | "letter", name: string) {
 	await page.getByRole("button", { name: /^Document menu:/ }).click();
 	await page.getByRole("menuitem", { name: "Rename…", exact: true }).click();
 	if (kind === "resume") {
-		const dialog = page.getByRole("dialog", { name: "Update resume", exact: true });
-		await dialog.getByRole("textbox", { name: "Name", exact: true }).fill(name);
-		await dialog.getByRole("button", { name: "Save changes", exact: true }).click();
+		const input = page.getByRole("textbox", { name: "Name", exact: true });
+		await input.fill(name);
+		await input.press("Enter");
 	} else {
 		await page.getByRole("textbox", { name: "Rename letter", exact: true }).fill(name);
 		await page.getByRole("button", { name: "Confirm", exact: true }).click();
@@ -47,9 +116,9 @@ for (const kind of ["resume", "letter"] as const) {
 		expect(await page.title()).toBe("Renamed document | Reactive Resume");
 		await page.unroute(updateUrl);
 		if (kind === "resume") {
-			const dialog = page.getByRole("dialog", { name: "Update resume", exact: true });
-			await dialog.getByRole("textbox", { name: "Name", exact: true }).fill("Renamed again");
-			await dialog.getByRole("button", { name: "Save changes", exact: true }).click();
+			const input = page.getByRole("textbox", { name: "Name", exact: true });
+			await input.fill("Renamed again");
+			await input.press("Enter");
 		} else {
 			await page.getByRole("button", { name: "Retry saving", exact: true }).click();
 		}
@@ -111,13 +180,13 @@ test("resume metadata timeout cancels the request and releases stream updates an
 		await rename(page, "resume", "Server accepted rename");
 		await serverCommitted;
 		await cancelled;
-		const dialog = page.getByRole("dialog", { name: "Update resume", exact: true });
-		await expect(dialog.getByRole("button", { name: "Save changes", exact: true })).toBeEnabled();
+		const input = page.getByRole("textbox", { name: "Name", exact: true });
+		await expect(input).toBeEnabled();
 		await expect(page).toHaveTitle("Server accepted rename | Reactive Resume");
 		await page.unroute(updateUrl);
-		await dialog.getByRole("textbox", { name: "Name", exact: true }).fill("Renamed after timeout");
-		await dialog.getByRole("button", { name: "Save changes", exact: true }).click();
-		await expect(dialog).not.toBeVisible();
+		await input.fill("Renamed after timeout");
+		await input.press("Enter");
+		await expect(input).not.toBeVisible();
 		await expect(page).toHaveTitle("Renamed after timeout | Reactive Resume");
 		const saved = page.waitForResponse((response) => response.url().endsWith("/resume/update") && response.ok());
 		await page.getByRole("textbox", { name: "Headline", exact: true }).fill("Saved after timeout");

@@ -53,7 +53,7 @@ export function DownloadTab({ resume, offline }: DownloadProps) {
 		{
 			id: "json",
 			label: t`JSON`,
-			description: t`Complete data backup. Imports back into Reactive Resume or JSON Resume tools.`,
+			description: t`Complete data backup. Imports back into Reactive Resume.`,
 		},
 	];
 	const download = async (chosen: ExportFormat, print = false, includeLetter = withLetter) => {

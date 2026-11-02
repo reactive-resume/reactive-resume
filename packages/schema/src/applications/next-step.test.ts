@@ -129,3 +129,23 @@ it("nudges after silence following the last interview, counted from its end", ()
 	const recent = { ...quiet, activity: [event("interview", "2026-10-01"), interview("2026-10-28T10:00:00Z")] };
 	expect(getNextStep(recent, now).kind).toBe("interview-feedback");
 });
+
+it("keeps an undated imported stage out of elapsed-time and no-reply claims", () => {
+	const application = {
+		status: "applied" as const,
+		appliedAt: new Date("2026-01-01"),
+		followUpAt: null,
+		followUpNote: null,
+		activity: [
+			{
+				id: "imported",
+				type: "stage" as const,
+				stage: "applied" as const,
+				at: new Date("2026-01-01"),
+				dateUnknown: true,
+			},
+		],
+	};
+	expect(applicationStageSince(application)).toBeNull();
+	expect(getNextStep(application, new Date("2026-10-01"))).toEqual({ kind: "waiting", days: null });
+});

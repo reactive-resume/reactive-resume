@@ -313,6 +313,75 @@ describe.skipIf(!databaseUrl)("application lanes: persisted owner and workflow i
 		expect((await read(id)).activity).toHaveLength(2);
 	});
 
+	it("imports independent dates and recovers unknown timing only after an explicit date edit", async () => {
+		const { applicationsRouter } = await import("./router");
+		const client = createRouterClient(applicationsRouter, {
+			context: {
+				locale: "en-US",
+				reqHeaders: new Headers(),
+				authentication: { user: { id: "alice" }, method: "session", permissions: ["read", "write", "delete"] },
+			} as never,
+		});
+		const appliedLane = await addLane("Submitted elsewhere", "applied");
+		await client.import({
+			items: [
+				{ company: "Timing", role: "Undated", status: "offer", applicationDate: "2026-09-30" },
+				{ company: "Timing", role: "Lane only", laneId: appliedLane.id, applicationDate: "2026-09-30" },
+				{ company: "Timing", role: "Saved again", status: "saved", applicationDate: "2026-09-30" },
+				{
+					company: "Timing",
+					role: "Dated",
+					status: "interview",
+					applicationDate: "2026-09-30",
+					stageEnteredAt: "2026-10-05",
+				},
+			],
+		});
+		const rows = await client.list({});
+		const applied = rows.find((row) => row.role === "Lane only");
+		expect(applied).toMatchObject({
+			status: "applied",
+			appliedAt: new Date("2026-09-30T12:00:00Z"),
+			activity: [expect.objectContaining({ stage: "applied", at: new Date("2026-09-30T12:00:00Z") })],
+		});
+		expect(applied?.activity.some((entry) => entry.type === "stage" && entry.dateUnknown)).toBe(false);
+		expect(rows.find((row) => row.role === "Saved again")?.activity).toEqual(
+			expect.arrayContaining([expect.objectContaining({ stage: "applied", at: new Date("2026-09-30T12:00:00Z") })]),
+		);
+		const undated = rows.find((row) => row.role === "Undated");
+		const dated = rows.find((row) => row.role === "Dated");
+		if (!undated || !dated) throw new Error("Import did not persist both applications");
+		expect(undated.appliedAt.toISOString()).toBe("2026-09-30T12:00:00.000Z");
+		expect(dated.appliedAt.toISOString()).toBe("2026-09-30T12:00:00.000Z");
+		const imported = undated.activity.find((entry) => entry.type === "stage" && entry.stage === "offer");
+		if (!imported) throw new Error("Imported stage missing");
+		expect(imported).toMatchObject({ dateUnknown: true, writeSequence: 2 });
+		expect(dated.activity).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ type: "stage", stage: "applied", at: new Date("2026-09-30T12:00:00Z") }),
+				expect.objectContaining({ type: "stage", stage: "interview", at: new Date("2026-10-05T12:00:00Z") }),
+			]),
+		);
+		await client.updateTimelineEntry({ id: undated.id, entryId: imported.id, date: "2026-10-07" });
+		expect((await read(undated.id)).activity.find((entry) => entry.id === imported.id)).toMatchObject({
+			dateUnknown: false,
+		});
+		for (const dates of [
+			{ applicationDate: "2026-10-05", stageEnteredAt: "2026-09-30" },
+			{ applicationDate: "2026-02-31" },
+		]) {
+			await expect(
+				client.import({
+					items: [
+						{ company: "Must not persist", role: "First", status: "offer" },
+						{ company: "Must not persist", role: "Invalid", status: "offer", ...dates },
+					],
+				}),
+			).rejects.toMatchObject({ code: "BAD_REQUEST" });
+			expect((await client.list({})).some((row) => row.company === "Must not persist")).toBe(false);
+		}
+	});
+
 	it("a deferred bulk move through the router leaves rows whose stage changed since, and moves the rest", async () => {
 		const { applicationsRouter } = await import("./router");
 		const { latestStageEntryId } = await import("@reactive-resume/schema/applications/data");

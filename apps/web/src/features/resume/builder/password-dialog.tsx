@@ -11,8 +11,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@reactive-resume/ui/components/dialog";
-import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
+import { cn } from "@reactive-resume/utils/style";
+import { PasswordInput } from "@/components/input/password-input";
 
 type ResumePasswordDialogProps = {
 	onSubmit: (password: string) => Promise<void>;
@@ -24,21 +25,22 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 	const submitting = useRef(false);
 	const [password, setPassword] = useState("");
 	const [confirmation, setConfirmation] = useState("");
+	// Each message sits under the field it's about; a save failure sits under the form.
+	const [passwordError, setPasswordError] = useState("");
+	const [confirmError, setConfirmError] = useState("");
 	const [error, setError] = useState("");
 	const [isPending, setIsPending] = useState(false);
 
 	const submit = async () => {
 		if (submitting.current) return;
-		if (password.length < 6 || password.length > 64) {
-			setError(t`Use between 6 and 64 characters.`);
-			return;
-		}
+		const tooShortOrLong = password.length < 6 || password.length > 64;
 		// Both values are entered in this browser form; no server-held secret is compared.
 		// nosemgrep
-		if (password !== confirmation) {
-			setError(t`Enter the same password in both fields.`);
-			return;
-		}
+		const mismatch = password !== confirmation;
+		setPasswordError(tooShortOrLong ? t`Use between 6 and 64 characters.` : "");
+		setConfirmError(!tooShortOrLong && mismatch ? t`Enter the same password in both fields.` : "");
+		setError("");
+		if (tooShortOrLong || mismatch) return;
 
 		submitting.current = true;
 		setIsPending(true);
@@ -66,7 +68,7 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 						<Trans>Protect your resume with a password</Trans>
 					</DialogTitle>
 					<DialogDescription>
-						<Trans>Anyone who opens the public URL will need this password.</Trans>
+						<Trans>Anyone who opens the public link needs this password.</Trans>
 					</DialogDescription>
 				</DialogHeader>
 				<form
@@ -82,9 +84,8 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 						<Label htmlFor={`${id}-password`}>
 							<Trans>Password</Trans>
 						</Label>
-						<Input
+						<PasswordInput
 							id={`${id}-password`}
-							type="password"
 							autoComplete="new-password"
 							required
 							minLength={6}
@@ -92,20 +93,24 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 							value={password}
 							disabled={isPending}
 							onChange={(event) => setPassword(event.target.value)}
-							aria-invalid={!!error}
-							aria-describedby={`${id}-hint${error ? ` ${id}-error` : ""}`}
+							aria-invalid={!!passwordError}
+							aria-describedby={`${id}-hint`}
 						/>
-						<p id={`${id}-hint`} className="text-sm text-ink-3">
-							<Trans>Use between 6 and 64 characters.</Trans>
+						{/* The hint turns into the error, in place, so the field and its message stay together. */}
+						<p
+							id={`${id}-hint`}
+							role={passwordError ? "alert" : undefined}
+							className={cn("text-sm", passwordError ? "text-danger-text" : "text-ink-3")}
+						>
+							{passwordError || <Trans>Use between 6 and 64 characters.</Trans>}
 						</p>
 					</div>
 					<div className="space-y-2">
 						<Label htmlFor={`${id}-confirmation`}>
 							<Trans>Confirm password</Trans>
 						</Label>
-						<Input
+						<PasswordInput
 							id={`${id}-confirmation`}
-							type="password"
 							autoComplete="new-password"
 							required
 							minLength={6}
@@ -113,9 +118,14 @@ export function ResumePasswordDialog({ onSubmit, onClose }: ResumePasswordDialog
 							value={confirmation}
 							disabled={isPending}
 							onChange={(event) => setConfirmation(event.target.value)}
-							aria-invalid={!!error}
-							aria-describedby={error ? `${id}-error` : undefined}
+							aria-invalid={!!confirmError}
+							aria-describedby={confirmError ? `${id}-confirm-error` : undefined}
 						/>
+						{confirmError && (
+							<p id={`${id}-confirm-error`} role="alert" className="text-sm text-danger-text">
+								{confirmError}
+							</p>
+						)}
 					</div>
 					{error && (
 						<p id={`${id}-error`} role="alert" className="text-sm text-danger-text">

@@ -1658,6 +1658,7 @@ msgid "Add a tag and press Enter…"
 msgstr "Add a tag and press Enter…"
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Add a tag…"
 msgstr "Add a tag…"
 
@@ -2353,8 +2354,8 @@ msgid "Any font, in Advanced"
 msgstr "Any font, in Advanced"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Anyone who opens the public URL will need this password."
-msgstr "Anyone who opens the public URL will need this password."
+msgid "Anyone who opens the public link needs this password."
+msgstr "Anyone who opens the public link needs this password."
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
@@ -2456,6 +2457,7 @@ msgstr "Application closed. Current drafts remain available."
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 msgid "Application date"
 msgstr "Application date"
 
@@ -3306,11 +3308,6 @@ msgstr "Changed your mind? Rename your resume to something more descriptive."
 msgid "Changelog"
 msgstr "Changelog"
 
-#: src/features/resume/editor/design/style-groups.tsx
-#: src/features/resume/editor/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "Changes section titles and date words only, not your content."
-
 #. placeholder {0}: versionLabel(earlier)
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3890,8 +3887,8 @@ msgid "Complete {0} before saving."
 msgstr "Complete {0} before saving."
 
 #: src/features/resume/share/download-tab.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr "Complete data backup. Imports back into Reactive Resume."
 
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
@@ -4705,6 +4702,7 @@ msgid "Couldn't remove the passkey. Try again."
 msgstr "Couldn't remove the passkey. Try again."
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "Couldn't rename the document. Try again."
 
@@ -4796,6 +4794,10 @@ msgstr "Couldn't save the posting. Try again."
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't save the provider. Try again."
 msgstr "Couldn't save the provider. Try again."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't save the QR code as PNG. Try SVG instead."
+msgstr "Couldn't save the QR code as PNG. Try SVG instead."
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't save the story. Try again."
@@ -5883,10 +5885,6 @@ msgstr "Download sample PDF"
 msgid "Download them"
 msgstr "Download them"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "Download totals can include repeat clicks."
-
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
@@ -6050,6 +6048,10 @@ msgstr "Each requirement in the posting is checked against the facts and stories
 #: src/features/assistant/conversation.tsx
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "Each send starts fresh with this message and selected files. Previous conversation history stays here."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Each visitor counts once an hour."
+msgstr "Each visitor counts once an hour."
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -6838,6 +6840,10 @@ msgstr "Fix these in a few minutes"
 msgid "Fix these in the editor"
 msgstr "Fix these in the editor"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr "Fix these values in the CSV, or leave their columns out, before importing."
+
 #: src/features/homepage/remember.tsx
 msgid "Fixing onboarding drop-off at Northwind Labs"
 msgstr "Fixing onboarding drop-off at Northwind Labs"
@@ -7241,6 +7247,11 @@ msgstr "Go to Reactive Resume"
 msgid "Go to…"
 msgstr "Go to…"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/address-field.tsx
+msgid "Goes live at {0} when you publish."
+msgstr "Goes live at {0} when you publish."
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Good luck out there. Reactive Resume stays free because people chip in."
 msgstr "Good luck out there. Reactive Resume stays free because people chip in."
@@ -7591,6 +7602,7 @@ msgid "Icon…"
 msgstr "Icon…"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Icons in contact line"
 msgstr "Icons in contact line"
 
@@ -7729,6 +7741,7 @@ msgstr "Import your current resume and we'll lay out every section for you to re
 msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
 msgstr "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
 
+#: src/features/applications/components/detail/activity.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
 msgid "Imported"
@@ -8209,6 +8222,10 @@ msgstr "Keep my codes"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr "Keep on one page"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Keep password"
+msgstr "Keep password"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -9527,8 +9544,8 @@ msgstr "My job was to find out why, without adding support work."
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/inline-name-input.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/documents/trash-page.tsx
 #: src/features/resume/editor/check/parser-view.tsx
@@ -10230,6 +10247,8 @@ msgstr "Not linked to a job"
 msgid "Not now"
 msgstr "Not now"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/activity.tsx
 #: src/features/career/offers.tsx
 msgid "Not recorded"
 msgstr "Not recorded"
@@ -10617,6 +10636,10 @@ msgstr "Only the search query and search countries go to your server's web searc
 msgid "Only the text to read aloud is sent to this speech model."
 msgstr "Only the text to read aloud is sent to this speech model."
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Only you can see this address. Publish it in Share."
+msgstr "Only you can see this address. Publish it in Share."
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "Only you see these"
@@ -10692,6 +10715,10 @@ msgstr "Open resume"
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
 msgstr "Open sent version"
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Open Share"
+msgstr "Open Share"
 
 #: src/features/career/workspace/prepare.tsx
 msgid "Open story"
@@ -11767,9 +11794,9 @@ msgstr "Publish the web page to count views and downloads. Counts are anonymous,
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "Publish this resume to open it at your short link and custom domain."
 
-#: src/features/resume/share/address-field.tsx
-msgid "Publish to choose an address."
-msgstr "Publish to choose an address."
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link."
+msgstr "Publish this resume to open it at your short link."
 
 #: src/features/resume/editor/write/entries.tsx
 msgid "Publisher"
@@ -13245,6 +13272,10 @@ msgstr "Save name"
 msgid "Save offer"
 msgstr "Save offer"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save PNG"
+msgstr "Save PNG"
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
 msgstr "Save posting"
@@ -13266,7 +13297,12 @@ msgstr "Save schedule"
 msgid "Save story"
 msgstr "Save story"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save SVG"
+msgstr "Save SVG"
+
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save tags"
 msgstr "Save tags"
 
@@ -13952,6 +13988,11 @@ msgstr "Set up your authenticator app"
 msgid "Set your preferences"
 msgstr "Set your preferences"
 
+#: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr "Sets section titles, date words and text direction. Your content isn't translated."
+
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr "Sets the application's follow-up date, in case you haven't heard back by then."
@@ -14044,6 +14085,10 @@ msgstr "Short and direct. Fine if the posting asks for brevity."
 #: src/features/assistant/assistant-panel.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "Short and polite, for the recruiter"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link"
+msgstr "Short link"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
@@ -14141,10 +14186,6 @@ msgstr "Show edit {number}"
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "Show heading"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Show icons"
-msgstr "Show icons"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
@@ -14319,8 +14360,8 @@ msgid "Signing up..."
 msgstr "Signing up..."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "since last view"
-msgstr "since last view"
+msgid "since last counted view"
+msgstr "since last counted view"
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -15036,6 +15077,7 @@ msgstr "Tag"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags"
 msgstr "Tags"
 
@@ -15048,6 +15090,7 @@ msgid "Tags give software an explicit reading order. Enable them when exporting,
 msgstr "Tags give software an explicit reading order. Enable them when exporting, if your tool offers it."
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags group documents in the library; pick one above the grid to filter by it."
 msgstr "Tags group documents in the library; pick one above the grid to filter by it."
 
@@ -15063,6 +15106,7 @@ msgstr "Tags, separated by commas"
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags…"
 msgstr "Tags…"
 
@@ -15788,10 +15832,6 @@ msgstr "These edits are from before the assistant recorded which job posting the
 msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
 msgstr "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
 
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "These rows are left out. Import the rest now, then fix these in the CSV and import them again."
-msgstr "These rows are left out. Import the rest now, then fix these in the CSV and import them again."
-
 #: src/features/applications/components/list-view.tsx
 msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
 msgstr "They and their timelines are deleted permanently. Linked resumes and letters are kept."
@@ -16473,6 +16513,10 @@ msgstr "Turn on two-step verification"
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr "Turn this on to open this resume at your short link and custom domain."
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr "Turn this on to open this resume at your short link."
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Turn this schedule on"
@@ -16701,6 +16745,10 @@ msgstr "Up to 2 minutes. Or <0>choose an audio file</0> up to 2 MB."
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "Up to 2 minutes. Your words appear as you speak."
 
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Up to 20 tags per document, 40 characters per tag."
+msgstr "Up to 20 tags per document, 40 characters per tag."
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
 msgstr "Upcoming"
@@ -16812,6 +16860,10 @@ msgstr "Use 64 characters or fewer."
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "Use a darker shade"
+
+#: src/features/resume/editor/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr "Use a hex color such as #2F5A8A."
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a plain international form, such as +1 555 010 1234."
@@ -18104,8 +18156,8 @@ msgid "Your email address isn't verified with the provider. Verify it there, the
 msgstr "Your email address isn't verified with the provider. Verify it there, then try again."
 
 #: src/features/resume/share/share-panel.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -18315,6 +18367,24 @@ msgstr "Your short link and custom domain point to “{0}”, which isn't publis
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "Your short link and custom domain say this resume isn't shared until you publish it again."
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens “{0}”."
+msgstr "Your short link opens “{0}”."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens this resume."
+msgstr "Your short link opens this resume."
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr "Your short link points to “{0}”, which isn't published."
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr "Your short link says this resume isn't shared until you publish it again."
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."

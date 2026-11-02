@@ -35,6 +35,8 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const updateData = useResumeStore((state) => state.update);
+	// Without custom domains on this server, the copy names only the short link.
+	const domains = flags?.customDomains ?? false;
 	const list = useQuery({ ...orpc.resume.list.queryOptions(), enabled: !offline });
 	const [dialog, setDialog] = useState<"primary" | "password" | "remove-password" | null>(null);
 	const [password, setPassword] = useState("");
@@ -82,25 +84,35 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 				onPress={() => void preview()}
 			/>
 
-			<ListGroup title={t`Short link and domain`}>
+			<ListGroup title={domains ? t`Short link and domain` : t`Short link`}>
 				<ListRow
 					title={t`Primary resume`}
 					subtitle={
 						resume.isPrimary
 							? resume.isPublic
-								? t`Your short link and custom domain open this resume.`
-								: t`Your short link and custom domain say this resume isn't shared until you publish it again.`
+								? domains
+									? t`Your short link and custom domain open this resume.`
+									: t`Your short link opens this resume.`
+								: domains
+									? t`Your short link and custom domain say this resume isn't shared until you publish it again.`
+									: t`Your short link says this resume isn't shared until you publish it again.`
 							: listState === "pending"
 								? t`Checking which resume opens your short link…`
 								: listState === "error"
 									? t`Couldn't check which resume opens your short link. Reopen Share to try again.`
 									: otherPrimary
 										? otherPrimary.isPublic
-											? t`Your short link and custom domain open “${otherPrimary.name}”.`
-											: t`Your short link and custom domain point to “${otherPrimary.name}”, which isn't published.`
+											? domains
+												? t`Your short link and custom domain open “${otherPrimary.name}”.`
+												: t`Your short link opens “${otherPrimary.name}”.`
+											: domains
+												? t`Your short link and custom domain point to “${otherPrimary.name}”, which isn't published.`
+												: t`Your short link points to “${otherPrimary.name}”, which isn't published.`
 										: resume.isPublic
-											? t`Turn this on to open this resume at your short link and custom domain.`
-											: `${t`Publish this resume to open it at your short link and custom domain.`} ${t`If another resume holds Primary, turn it on for this one instead.`}`
+											? domains
+												? t`Turn this on to open this resume at your short link and custom domain.`
+												: t`Turn this on to open this resume at your short link.`
+											: `${domains ? t`Publish this resume to open it at your short link and custom domain.` : t`Publish this resume to open it at your short link.`} ${t`If another resume holds Primary, turn it on for this one instead.`}`
 					}
 					trailing={
 						<Switch
@@ -173,7 +185,7 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 				/>
 				<ListRow
 					title={t`Hide contact details`}
-					subtitle={t`Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results.`}
+					subtitle={t`Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays.`}
 					trailing={
 						<Switch
 							label={t`Hide contact details`}
@@ -274,6 +286,7 @@ export function WebPageSettings({ resume, offline, username, origin, flags, oper
 				title={t`Remove the password?`}
 				message={t`Anyone with the link will be able to view your resume.`}
 				confirmLabel={t`Remove password`}
+				cancelLabel={t`Keep password`}
 				onCancel={() => setDialog(null)}
 				onConfirm={() => {
 					setDialog(null);

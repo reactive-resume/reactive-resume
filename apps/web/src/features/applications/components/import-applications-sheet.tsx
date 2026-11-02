@@ -40,7 +40,7 @@ const NEW_LANE = "new";
 
 const MAX_IMPORT = 500;
 const SAMPLE =
-	"Company,Role,Stage,Stage Date,Location,Salary,Source,Tags,Contact Name,Contact Email,Contact Phone\nStripe,Frontend Engineer,applied,2026-07-01,Remote,$180k,LinkedIn,remote;react,Jane Doe,jane@example.com,+1 555 0100";
+	"Company,Role,Stage,Application Date,Stage Date,Location,Salary,Source,Tags,Contact Name,Contact Email,Contact Phone\nStripe,Frontend Engineer,applied,2026-07-01,2026-07-01,Remote,$180k,LinkedIn,remote;react,Jane Doe,jane@example.com,+1 555 0100";
 
 const fieldLabel = (field: CsvField) =>
 	({
@@ -48,6 +48,7 @@ const fieldLabel = (field: CsvField) =>
 		role: t`Role`,
 		status: t`Stage`,
 		stageEnteredAt: t`Stage date`,
+		applicationDate: t`Application date`,
 		location: t`Location`,
 		salary: t`Salary`,
 		source: t`Source`,
@@ -353,9 +354,7 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 								{result.invalidValues.length > 0 && (
 									<div role="alert" className="grid gap-1 text-warn-text">
 										<p>
-											<Trans>
-												These rows are left out. Import the rest now, then fix these in the CSV and import them again.
-											</Trans>
+											<Trans>Fix these values in the CSV, or leave their columns out, before importing.</Trans>
 										</p>
 										<ul className="list-disc ps-4">
 											{result.invalidValues.map(({ row, field, value }) => (
@@ -444,10 +443,16 @@ export function ImportApplicationsSheet({ open, onOpenChange }: ImportSheetProps
 						<Trans>Cancel</Trans>
 					</Button>
 					<Button
-						disabled={importable.length === 0 || unmatched > 0 || stagesUnresolved || importMutation.isPending}
+						disabled={
+							importable.length === 0 ||
+							(result?.invalidValues.length ?? 0) > 0 ||
+							unmatched > 0 ||
+							stagesUnresolved ||
+							importMutation.isPending
+						}
 						onClick={() => {
-							// Rows with values that couldn't be read are already left out of `importable`.
-							if (unmatched === 0 && !stagesUnresolved) importMutation.mutate();
+							// The file imports whole or not at all: values that can't be read are fixed first.
+							if (!result?.invalidValues.length && unmatched === 0 && !stagesUnresolved) importMutation.mutate();
 						}}
 					>
 						<Plural value={importable.length} one="Import # application" other="Import # applications" />

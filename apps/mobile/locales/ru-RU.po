@@ -2584,11 +2584,6 @@ msgstr "Изменил резюме напрямую (предыдущий ра�
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "Не удалось сохранить изменения. Прежде чем продолжить, повторите попытку."
 
-#: src/features/design/style-groups.tsx
-#: src/features/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "Изменяет только названия разделов и слова даты, но не ваш контент."
-
 #. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3087,8 +3082,8 @@ msgid "Complete {0} before saving."
 msgstr "Заполните {0} перед сохранением."
 
 #: src/features/share/download.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "Полное резервное копирование данных. Импортируется обратно в инструменты Reactive Resume или JSON Resume."
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/workspace/application-packet.tsx
 msgid "Complete the employer form manually in your browser using reviewed answers and approved PDFs."
@@ -4631,10 +4626,6 @@ msgid "Download reviewed packet"
 msgstr ""
 
 #: src/features/share/link.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "Общее количество загрузок может включать повторные клики."
-
-#: src/features/share/link.tsx
 msgid "downloads"
 msgstr "загрузки"
 
@@ -4754,6 +4745,10 @@ msgstr "Здесь хранится каждый ответ, по котором
 #: src/features/workspace/tabs/fit.tsx
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "Каждое требование из вакансии сверяется с фактами и историями в ваших Знаниях. Пробелы отображаются как отсутствие подтверждений, а не отсутствие умений."
+
+#: src/features/share/link.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -5585,6 +5580,10 @@ msgstr ""
 msgid "Go to…"
 msgstr "Перейти к…"
 
+#: src/features/share/link.tsx
+msgid "Goes live at {url} when you publish."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Grade"
 msgstr "Оценка"
@@ -5970,6 +5969,7 @@ msgstr ""
 msgid "Import your current resume, or start fresh with your name."
 msgstr "Импортируйте свое текущее резюме или начните заново, указав свое имя."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/history/history.tsx
 msgid "Imported"
 msgstr "Импортировано"
@@ -6299,6 +6299,10 @@ msgstr "Держи мой"
 #: src/features/write/section-sheet.tsx
 msgid "Keep on one page"
 msgstr "Держите на одной странице"
+
+#: src/features/share/web-page.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -8021,6 +8025,7 @@ msgstr ""
 msgid "Not now"
 msgstr "Не сейчас"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/career/offers.tsx
 msgid "Not recorded"
 msgstr "Не записано"
@@ -9257,8 +9262,8 @@ msgstr "Опубликуйте веб-страницу, чтобы считат�
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "Опубликуйте это резюме, чтобы открывать его по короткой ссылке и на собственном домене."
 
-#: src/features/share/link.tsx
-msgid "Publish to choose an address."
+#: src/features/share/web-page.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/write/fields.ts
@@ -11060,6 +11065,11 @@ msgstr "Настройте веб-поиск в «Настройки» для п
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -11104,6 +11114,10 @@ msgstr "Поделиться данными с {0}?"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
+msgstr ""
+
+#: src/features/share/link.tsx
+msgid "Share image"
 msgstr ""
 
 #: src/features/applications/incoming-posting.tsx
@@ -11156,6 +11170,10 @@ msgstr "Коротко и прямо. Хорошо, если объявлени�
 #: src/features/assistant/assistant-screen.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "Коротко и вежливо, для рекрутера"
+
+#: src/features/share/web-page.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Short link and domain"
@@ -11428,8 +11446,8 @@ msgid "Signed out, but some data on this device couldn't be removed."
 msgstr "Вышел из системы, но некоторые данные на этом устройстве удалить не удалось."
 
 #: src/features/share/link.tsx
-msgid "since last view"
-msgstr "с момента последнего просмотра"
+msgid "since last counted view"
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
@@ -11941,6 +11959,7 @@ msgstr "Добавить теги выбранным заявкам"
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/stories.tsx
+#: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Tags"
 msgstr "Теги"
@@ -11955,6 +11974,7 @@ msgid "Tags were: {0}"
 msgstr ""
 
 #: src/features/applications/list-screen.tsx
+#: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Tags…"
@@ -13121,6 +13141,10 @@ msgstr "Отключайте необязательные лигатуры пр�
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/share/web-page.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "Включить это расписание"
@@ -13266,6 +13290,7 @@ msgstr "Резюме без названия"
 msgid "Up to 2 minutes · 2 MB maximum."
 msgstr "До 2 минут · Максимум 2 МБ."
 
+#: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Up to 20 tags per document, 40 characters per tag."
 msgstr "До 20 тегов на документ, 40 символов на тег."
@@ -13369,6 +13394,10 @@ msgstr "Используйте 6–64 символа."
 #: src/features/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "Используйте более темный оттенок"
+
+#: src/features/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Use a hex value like #3E6B4F or rgba(62, 107, 79, 1)."
@@ -14352,8 +14381,8 @@ msgid "Your email address is broken across pieces of text."
 msgstr "Ваш адрес электронной почты разбит на отдельные фрагменты текста."
 
 #: src/features/share/web-page.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "Эл. почта, телефон, местоположение и другие данные из шапки, а также номера телефонов рекомендателей не попадают на веб-страницу, в ее PDF и в результаты поиска."
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/features/career/knowledge.tsx
 msgid "Your facts, stories and preferences. Editing Knowledge sends nothing to an AI connection."
@@ -14523,6 +14552,24 @@ msgstr ""
 #: src/features/share/web-page.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "По вашей короткой ссылке и на собственном домене будет указано, что доступ к этому резюме закрыт, пока вы снова его не опубликуете."
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/share/web-page.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/share/web-page.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "your stories"

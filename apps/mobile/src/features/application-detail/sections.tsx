@@ -13,6 +13,7 @@ import Storage from "expo-sqlite/kv-store";
 import { openBrowserAsync } from "expo-web-browser";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState, Pressable, View } from "react-native";
+import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { attachmentProblem } from "./attachment";
 import {
 	followUpReminder,
@@ -29,7 +30,7 @@ import { client, orpc } from "@/api/client";
 import { getServer } from "@/auth/session";
 import { getDraftScope } from "@/draft";
 import { applicationError } from "@/features/applications/error";
-import { canonicalStageEntries, currentLaneEntry, laneSince } from "@/features/applications/history";
+import { currentLaneEntry, laneSince } from "@/features/applications/history";
 import { LaneNotice } from "@/features/applications/lane-notice";
 import { useApplicationLanes } from "@/features/applications/lane-queries";
 import {
@@ -42,7 +43,6 @@ import {
 import { describeNextStep, getNextStep } from "@/features/applications/next-step";
 import { useApplicationMutations } from "@/features/applications/queries";
 import { acceptedStage, offerHintFor, useOfferHints, useStageMovedToast } from "@/features/applications/stage-actions";
-import { PIPELINE } from "@/features/applications/stages";
 import { followUpEvent, icsFileName, interviewEvent, shareIcs, zonedParts } from "@/features/reminders";
 import { shareDocumentPdf } from "@/features/share/files";
 import { routes } from "@/routes";
@@ -102,7 +102,8 @@ export function StageStepper({ application, onMarkApplied, onCloseLane, onSchedu
 				? resolveLane(lanes.lanes, { status: update.variables.status })
 				: current;
 	const now = useNow();
-	const days = Math.max(0, Math.floor((now.getTime() - laneSince(application, lanes.lanes).getTime()) / 86_400_000));
+	const since = laneSince(application, lanes.lanes);
+	const days = since ? Math.max(0, Math.floor((now.getTime() - since.getTime()) / 86_400_000)) : null;
 	const next = nextActiveLane(lanes.lanes, application);
 	const stageMoved = useStageMovedToast();
 	const accepted = acceptedStage(lanes.lanes, application);
@@ -136,7 +137,7 @@ export function StageStepper({ application, onMarkApplied, onCloseLane, onSchedu
 					{accepted?.label ?? getLaneLabel(lane)}
 				</Text>
 				<Text color="ink3">
-					{application.status === "closed"
+					{application.status === "closed" || days === null
 						? ""
 						: plural(days, { 0: "· since today", one: "· for # day", other: "· for # days" })}
 				</Text>
@@ -312,15 +313,6 @@ export function NextStepCard({ application, onOpenInterview }: SectionProps & In
 	);
 }
 
-/** When it was sent: its first stage entry at Applied or beyond. */
-function sentOn(application: Application) {
-	const applied = PIPELINE.indexOf("applied");
-	const entry = canonicalStageEntries(application)
-		.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime())
-		.find((item) => item.type === "stage" && PIPELINE.indexOf(item.stage) >= applied);
-	return entry?.at ?? application.appliedAt;
-}
-
 /** WHAT YOU SENT: the linked resume and letter (linked is not the same as submitted), or ways to prepare them. */
 type WhatYouSentProps = SectionProps & {
 	/** Apply tab: a heading, the recorded submission line, and each row's current-draft actions (edit, download PDF). */
@@ -364,7 +356,8 @@ export function WhatYouSent({ application, drafts = false }: WhatYouSentProps) {
 	};
 	const resume = documents.data?.find((item) => item.type === "resume" && item.id === application.resumeId);
 	const letter = documents.data?.find((item) => item.type === "letter" && item.id === application.coverLetterId);
-	const date = utcDay(sentOn(application));
+	const sentDate = applicationSentAt(application);
+	const date = sentDate ? utcDay(sentDate) : "—";
 	const { resumeId, coverLetterId, sentResumeVersionId, sentCoverLetterVersionId } = application;
 
 	const writeLetter = () =>
@@ -621,11 +614,12 @@ const isHttpUrl = (value: string) => {
 	}
 };
 
-/** FACTS: role, company, location, salary, source and posting link edit in place; Applied is the stage date. */
+/** FACTS: role, company, location, salary, source and posting link edit in place; Applied shows the recorded submission date. */
 export function Facts({ application }: SectionProps) {
 	const { t } = useLingui();
 	const { space } = useTheme();
 	const { date } = useUserTime();
+	const appliedDate = applicationSentAt(application) ? application.appliedAt : null;
 	const { update } = useApplicationMutations();
 	const save = (patch: Omit<Parameters<typeof update.mutate>[0], "id">) =>
 		update.mutateAsync({ id: application.id, ...patch });
@@ -653,7 +647,9 @@ export function Facts({ application }: SectionProps) {
 					/>
 					<View style={{ flexDirection: "row", justifyContent: "space-between", minHeight: 44, alignItems: "center" }}>
 						<Text color="ink3">{t`Applied`}</Text>
-						<Text variant="label">{application.status === "saved" ? "—" : date(application.appliedAt)}</Text>
+						<Text variant="label">
+							{application.status === "saved" ? "—" : appliedDate ? date(appliedDate) : t`Not recorded`}
+						</Text>
 					</View>
 				</View>
 			</Card>
@@ -843,7 +839,9 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 		entry.type === "stage"
 			? {
 					dot: resolveLane(lanes.lanes, { status: entry.stage, laneId: entry.laneId }).color,
-					text: t`Moved to ${getLaneHistoryLabel(lanes.lanes, entry)}`,
+					text: entry.dateUnknown
+						? `${t`Imported`} · ${getLaneHistoryLabel(lanes.lanes, entry)}`
+						: t`Moved to ${getLaneHistoryLabel(lanes.lanes, entry)}`,
 				}
 			: entry.type === "note"
 				? { dot: colors.ink3, text: entry.text }
@@ -891,7 +889,13 @@ export function Timeline({ application, onOpenInterview }: SectionProps & Interv
 							key={entry.id}
 							leading={<View style={{ width: 8, height: 8, borderRadius: radius.rSm, backgroundColor: dot }} />}
 							title={text}
-							subtitle={entry.type === "interview" ? when(entry.at) : utcDay(entry.at)}
+							subtitle={
+								entry.type === "stage" && entry.dateUnknown
+									? t`Not recorded`
+									: entry.type === "interview"
+										? when(entry.at)
+										: utcDay(entry.at)
+							}
 							accessibilityHint={entry.type === "interview" ? t`Edit interview` : t`Edit entry`}
 							onPress={() => (entry.type === "interview" ? onOpenInterview(entry) : setEditing(entry))}
 							trailing={

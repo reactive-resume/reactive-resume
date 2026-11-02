@@ -6,6 +6,7 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { applicationSentAt } from "@reactive-resume/schema/applications/outcomes";
 import { Button, buttonVariants } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -16,23 +17,12 @@ import {
 import { Icon } from "@reactive-resume/ui/components/icon";
 import { IconButton } from "@reactive-resume/ui/components/icon-button";
 import { NativeSelect } from "@reactive-resume/ui/components/native-select";
-import { isCanonicalStageEvent } from "../../lanes";
-import { PIPELINE } from "../../stages";
 import { useInvalidateApplications } from "../../use-application-actions";
 import { useDocumentDownload } from "../../use-document-download";
 import { FileAttachmentField } from "../file-attachment-field";
 import { useDialogStore } from "@/dialogs/store";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
-
-/** When the application was sent: its first stage at Applied or beyond. */
-function sentOn(application: Application) {
-	const applied = PIPELINE.indexOf("applied");
-	const entry = [...application.activity]
-		.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime())
-		.find((item) => item.type === "stage" && isCanonicalStageEvent(item) && PIPELINE.indexOf(item.stage) >= applied);
-	return new Date(entry?.at ?? application.appliedAt);
-}
 
 type SentDocumentRowProps = {
 	icon: IconName;
@@ -94,7 +84,8 @@ export function SentDocuments({ application, disabled, variant = "detail" }: Sen
 
 	const resume = documents?.find((document) => document.type === "resume" && document.id === application.resumeId);
 	const letter = documents?.find((document) => document.type === "letter" && document.id === application.coverLetterId);
-	const date = sentOn(application).toLocaleDateString(i18n.locale, { month: "short", day: "numeric" });
+	const date =
+		applicationSentAt(application)?.toLocaleDateString(i18n.locale, { month: "short", day: "numeric" }) ?? "—";
 
 	// A structured letter: the server fills the recipient from the application and makes it the application's letter.
 	const writeLetter = async () => {

@@ -1663,6 +1663,7 @@ msgid "Add a tag and press Enter…"
 msgstr "タグを追加して Enter を押す…"
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Add a tag…"
 msgstr ""
 
@@ -2356,8 +2357,8 @@ msgid "Any font, in Advanced"
 msgstr "任意のフォント（詳細設定）"
 
 #: src/features/resume/builder/password-dialog.tsx
-msgid "Anyone who opens the public URL will need this password."
-msgstr "公開 URL を開く人には、このパスワードが必要になります。"
+msgid "Anyone who opens the public link needs this password."
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Anyone with the link will be able to view your resume."
@@ -2459,6 +2460,7 @@ msgstr ""
 
 #: src/features/applications/components/add-application-dialog.tsx
 #: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
 msgid "Application date"
 msgstr "求職応募日"
 
@@ -3309,11 +3311,6 @@ msgstr "やっぱり変更しますか？レジュメに、よりわかりやす
 msgid "Changelog"
 msgstr "更新履歴"
 
-#: src/features/resume/editor/design/style-groups.tsx
-#: src/features/resume/editor/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "セクションのタイトルと日付の単語のみが変更され、コンテンツは変更されません。"
-
 #. placeholder {0}: versionLabel(earlier)
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3893,8 +3890,8 @@ msgid "Complete {0} before saving."
 msgstr "保存する前に「{0}」を入力してください。"
 
 #: src/features/resume/share/download-tab.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "データのバックアップを完了します。 Reactive Resume または JSON Resume ツールにインポートし直します。"
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Compress or remove large images to keep uploads quick."
@@ -4708,6 +4705,7 @@ msgid "Couldn't remove the passkey. Try again."
 msgstr "パスキーを削除できませんでした。もう一度やり直してください。"
 
 #: src/features/documents/document-actions.tsx
+#: src/features/documents/inline-name-input.tsx
 msgid "Couldn't rename the document. Try again."
 msgstr "書類の名前を変更できませんでした。もう一度お試しください。"
 
@@ -4799,6 +4797,10 @@ msgstr "求人情報を保存できませんでした。もう一度お試しく
 #: src/features/settings/ai/providers.tsx
 msgid "Couldn't save the provider. Try again."
 msgstr "プロバイダーを保存できませんでした。もう一度お試しください。"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Couldn't save the QR code as PNG. Try SVG instead."
+msgstr ""
 
 #: src/features/career/knowledge/stories.tsx
 msgid "Couldn't save the story. Try again."
@@ -5886,10 +5888,6 @@ msgstr "サンプルPDFをダウンロード"
 msgid "Download them"
 msgstr "ダウンロードしてください"
 
-#: src/features/resume/share/share-panel.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "ダウンロードの合計には、繰り返しクリックが含まれる場合があります。"
-
 #: src/features/resume/share/download-tab.tsx
 #: src/routes/builder/letter/-components/download-sheet.tsx
 msgid "Downloaded {file}"
@@ -6053,6 +6051,10 @@ msgstr "求人情報の各要件を、ナレッジ内の事実やストーリー
 #: src/features/assistant/conversation.tsx
 msgid "Each send starts fresh with this message and selected files. Previous conversation history stays here."
 msgstr "各送信は、このメッセージと選択したファイルから新たに開始されます。以前の会話履歴はここに残ります。"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -6841,6 +6843,10 @@ msgstr "数分以内に修正してください"
 msgid "Fix these in the editor"
 msgstr "エディターでこれらを修正してください"
 
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Fix these values in the CSV, or leave their columns out, before importing."
+msgstr ""
+
 #: src/features/homepage/remember.tsx
 msgid "Fixing onboarding drop-off at Northwind Labs"
 msgstr "Northwind Labsでのオンボーディング離脱の改善"
@@ -7244,6 +7250,11 @@ msgstr "Reactive Resume へ移動"
 msgid "Go to…"
 msgstr "… へ移動"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+#: src/features/resume/share/address-field.tsx
+msgid "Goes live at {0} when you publish."
+msgstr ""
+
 #: src/features/resume/share/download-tab.tsx
 msgid "Good luck out there. Reactive Resume stays free because people chip in."
 msgstr "幸運を祈ります。 Reactive Resume は人々が協力してくれるので無料のままです。"
@@ -7594,6 +7605,7 @@ msgid "Icon…"
 msgstr "アイコン…"
 
 #: src/features/resume/editor/design/style-groups.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Icons in contact line"
 msgstr "連絡線のアイコン"
 
@@ -7732,6 +7744,7 @@ msgstr ""
 msgid "Import your current resume and we'll lay out every section for you to refine, or start fresh. Drop a PDF, Word or JSON file anywhere here."
 msgstr ""
 
+#: src/features/applications/components/detail/activity.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/resume/share/format.ts
 msgid "Imported"
@@ -8212,6 +8225,10 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keep on one page"
 msgstr "1 ページにまとめてください"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -9530,8 +9547,8 @@ msgstr "私の役割は、サポートの負担を増やさずに原因を突き
 #: src/features/applications/components/manage-lanes-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/command-palette/pages/navigation.tsx
-#: src/features/documents/document-card.tsx
 #: src/features/documents/documents-page.tsx
+#: src/features/documents/inline-name-input.tsx
 #: src/features/documents/new-document-dialog.tsx
 #: src/features/documents/trash-page.tsx
 #: src/features/resume/editor/check/parser-view.tsx
@@ -10233,6 +10250,8 @@ msgstr ""
 msgid "Not now"
 msgstr "今はしない"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/detail/activity.tsx
 #: src/features/career/offers.tsx
 msgid "Not recorded"
 msgstr ""
@@ -10620,6 +10639,10 @@ msgstr ""
 msgid "Only the text to read aloud is sent to this speech model."
 msgstr ""
 
+#: src/features/resume/share/web-page-text.ts
+msgid "Only you can see this address. Publish it in Share."
+msgstr ""
+
 #: src/features/resume/share/share-panel.tsx
 msgid "Only you see these"
 msgstr "あなただけがこれらを見ます"
@@ -10694,6 +10717,10 @@ msgstr ""
 
 #: src/features/applications/components/detail/sent-documents.tsx
 msgid "Open sent version"
+msgstr ""
+
+#: src/features/resume/share/web-page-text.ts
+msgid "Open Share"
 msgstr ""
 
 #: src/features/career/workspace/prepare.tsx
@@ -11770,8 +11797,8 @@ msgstr "Web ページを公開すると、閲覧数とダウンロード数が�
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "このレジュメを公開すると、ショートリンクとカスタムドメインで開けるようになります。"
 
-#: src/features/resume/share/address-field.tsx
-msgid "Publish to choose an address."
+#: src/features/resume/share/share-panel.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/resume/editor/write/entries.tsx
@@ -13248,6 +13275,10 @@ msgstr "名前を保存"
 msgid "Save offer"
 msgstr "オファーを保存"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save PNG"
+msgstr ""
+
 #: src/features/career/workspace/preparation.tsx
 msgid "Save posting"
 msgstr ""
@@ -13269,7 +13300,12 @@ msgstr "スケジュールを保存"
 msgid "Save story"
 msgstr "ストーリーを保存"
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Save SVG"
+msgstr ""
+
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Save tags"
 msgstr "タグを保存"
 
@@ -13955,6 +13991,11 @@ msgstr "認証アプリを設定"
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/resume/editor/design/style-groups.tsx
+#: src/features/resume/editor/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/career/workspace/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -14047,6 +14088,10 @@ msgstr "短くて直接的。求人情報に簡潔さが求められている場
 #: src/features/assistant/assistant-panel.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "採用担当者向けに短く丁寧に"
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Short link and domain"
@@ -14144,10 +14189,6 @@ msgstr ""
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Show heading"
 msgstr "見出しを表示"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
-msgid "Show icons"
-msgstr "アイコンを表示"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Show in search engines"
@@ -14322,8 +14363,8 @@ msgid "Signing up..."
 msgstr "登録中…"
 
 #: src/features/resume/share/share-panel.tsx
-msgid "since last view"
-msgstr "最後に見たときから"
+msgid "since last counted view"
+msgstr ""
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column ruled form inspired by the Japanese rirekisho: a bordered header of field cells and every section as a table with a solid title bar; dense and fast to scan for engineering, operations, or applications in Japan."
@@ -15039,6 +15080,7 @@ msgstr "タグ"
 #: src/features/applications/components/import-applications-sheet.tsx
 #: src/features/career/knowledge/stories.tsx
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags"
 msgstr "タグ"
 
@@ -15051,6 +15093,7 @@ msgid "Tags give software an explicit reading order. Enable them when exporting,
 msgstr "タグはソフトウェアに明確な読み取り順を伝えます。ツールが対応していれば、エクスポート時に有効にしてください。"
 
 #: src/features/documents/document-actions.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags group documents in the library; pick one above the grid to filter by it."
 msgstr "タグはライブラリ内のドキュメントをグループ化します。グリッドの上にある 1 つを選択してフィルターします。"
 
@@ -15066,6 +15109,7 @@ msgstr "タグ（カンマ区切り）"
 #: src/features/applications/components/list-view.tsx
 #: src/features/documents/document-actions.tsx
 #: src/features/documents/documents-page.tsx
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
 msgid "Tags…"
 msgstr "タグ…"
 
@@ -15791,10 +15835,6 @@ msgstr ""
 msgid "These edits use a job posting, so they go to a copy of this resume made for that job. Copy it for the job and ask again there; this resume stays unchanged."
 msgstr ""
 
-#: src/features/applications/components/import-applications-sheet.tsx
-msgid "These rows are left out. Import the rest now, then fix these in the CSV and import them again."
-msgstr ""
-
 #: src/features/applications/components/list-view.tsx
 msgid "They and their timelines are deleted permanently. Linked resumes and letters are kept."
 msgstr ""
@@ -16476,6 +16516,10 @@ msgstr "二段階認証をオンにする"
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/resume/share/share-panel.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "このスケジュールをオンにする"
@@ -16704,6 +16748,10 @@ msgstr "最大2分。または、2 MBまでの<0>音声ファイルを選択</0>
 msgid "Up to 2 minutes. Your words appear as you speak."
 msgstr "最大2分。話すと文字が表示されます。"
 
+#: src/routes/builder/$resumeId/-components/document-menu.tsx
+msgid "Up to 20 tags per document, 40 characters per tag."
+msgstr "書類ごとに最大 20 個のタグ、1 つのタグあたり 40 文字。"
+
 #: src/features/applications/components/calendar-view.tsx
 msgid "Upcoming"
 msgstr ""
@@ -16815,6 +16863,10 @@ msgstr "64 文字以内で入力してください。"
 #: src/features/resume/editor/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "暗い色合いを使用する"
+
+#: src/features/resume/editor/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/ats-checker/messages.ts
 msgid "Use a plain international form, such as +1 555 010 1234."
@@ -18107,8 +18159,8 @@ msgid "Your email address isn't verified with the provider. Verify it there, the
 msgstr "メールアドレスがプロバイダーで確認されていません。プロバイダーで確認してから、もう一度お試しください。"
 
 #: src/features/resume/share/share-panel.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "メールアドレス、電話番号、所在地などのヘッダー情報と、リファレンスの電話番号は、Web ページ、その PDF、検索結果には表示されません。"
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/routes/dashboard/career/knowledge/route.tsx
 msgid "Your enabled facts, stories and preferences can be sent to your AI connection when you use coaching tools or scheduled interview preparation. In chat, the Knowledge switch controls what is added to each message."
@@ -18318,6 +18370,24 @@ msgstr ""
 #: src/features/resume/share/share-panel.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "再度公開するまで、ショートリンクとカスタムドメインには、このレジュメが共有されていないと表示されます。"
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: current.name
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/resume/share/share-panel.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/applications/components/manage-lanes-sheet.tsx
 msgid "Your stages changed somewhere else. They've been refreshed; try again."

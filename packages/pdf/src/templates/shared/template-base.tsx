@@ -11,6 +11,7 @@ import {
 	EmailContactItem,
 	LocationContactItem,
 	PhoneContactItem,
+	hasContactDetails,
 	WebsiteContactItem,
 } from "./contact-item";
 import { getTemplateMetrics } from "./metrics";
@@ -67,7 +68,7 @@ export const TemplateHeader = ({
 }) => {
 	const { basics, picture } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
-	const contactList = (
+	const contactList = hasContactDetails(basics) && (
 		<SemanticContactListView style={styles.contactList}>
 			<EmailContactItem email={basics.email} style={styles.contactItem} textStyle={styles.contactText} />
 			<PhoneContactItem phone={basics.phone} style={styles.contactItem} textStyle={styles.contactText} />

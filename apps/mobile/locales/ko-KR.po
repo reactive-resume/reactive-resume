@@ -2584,11 +2584,6 @@ msgstr "이력서를 직접 변경함(이전 대화)"
 msgid "Changes couldn't be saved. Retry before continuing."
 msgstr "변경 사항을 저장하지 못했습니다. 계속하기 전에 다시 시도하세요."
 
-#: src/features/design/style-groups.tsx
-#: src/features/write/resume-language.tsx
-msgid "Changes section titles and date words only, not your content."
-msgstr "콘텐츠가 아닌 섹션 제목과 날짜 단어만 변경합니다."
-
 #. placeholder {0}: earlier.data.version === "verbal" ? t`Verbal offer` : t`Written offer`
 #: src/features/career/offers.tsx
 msgid "Changes since {0}"
@@ -3087,8 +3082,8 @@ msgid "Complete {0} before saving."
 msgstr "저장하기 전에 {0} 항목을 작성하세요."
 
 #: src/features/share/download.tsx
-msgid "Complete data backup. Imports back into Reactive Resume or JSON Resume tools."
-msgstr "데이터 백업을 완료하세요. Reactive Resume 또는 JSON Resume 도구로 다시 가져옵니다."
+msgid "Complete data backup. Imports back into Reactive Resume."
+msgstr ""
 
 #: src/features/workspace/application-packet.tsx
 msgid "Complete the employer form manually in your browser using reviewed answers and approved PDFs."
@@ -4631,10 +4626,6 @@ msgid "Download reviewed packet"
 msgstr ""
 
 #: src/features/share/link.tsx
-msgid "Download totals can include repeat clicks."
-msgstr "다운로드 총계에는 반복 클릭이 포함될 수 있습니다."
-
-#: src/features/share/link.tsx
 msgid "downloads"
 msgstr "다운로드"
 
@@ -4754,6 +4745,10 @@ msgstr "피드백을 받은 답변은 모두 최신순으로 여기에 보관됩
 #: src/features/workspace/tabs/fit.tsx
 msgid "Each requirement in the posting is checked against the facts and stories in your Knowledge. Gaps show as missing evidence, never missing ability."
 msgstr "채용 공고의 각 요건을 지식에 있는 사실 및 스토리와 대조합니다. 빈 부분은 능력이 아니라 근거가 부족하다는 뜻으로만 표시됩니다."
+
+#: src/features/share/link.tsx
+msgid "Each visitor counts once an hour."
+msgstr ""
 
 #: src/features/career/today.tsx
 msgid "Earlier discovery result. Search query and posting check time unknown."
@@ -5585,6 +5580,10 @@ msgstr ""
 msgid "Go to…"
 msgstr "…로 이동하세요"
 
+#: src/features/share/link.tsx
+msgid "Goes live at {url} when you publish."
+msgstr ""
+
 #: src/features/write/fields.ts
 msgid "Grade"
 msgstr "성적"
@@ -5970,6 +5969,7 @@ msgstr ""
 msgid "Import your current resume, or start fresh with your name."
 msgstr "현재 이력서를 가져오거나 귀하의 이름으로 새로 시작하세요."
 
+#: src/features/application-detail/sections.tsx
 #: src/features/history/history.tsx
 msgid "Imported"
 msgstr "수입됨"
@@ -6299,6 +6299,10 @@ msgstr "내 것을 지켜라"
 #: src/features/write/section-sheet.tsx
 msgid "Keep on one page"
 msgstr "한 페이지에 계속"
+
+#: src/features/share/web-page.tsx
+msgid "Keep password"
+msgstr ""
 
 #: src/features/document-menu/index.tsx
 msgid "Keep private notes about this resume here. Nobody else can see them."
@@ -8021,6 +8025,7 @@ msgstr ""
 msgid "Not now"
 msgstr "나중에"
 
+#: src/features/application-detail/sections.tsx
 #: src/features/career/offers.tsx
 msgid "Not recorded"
 msgstr "녹음되지 않음"
@@ -9257,8 +9262,8 @@ msgstr "웹 페이지를 게시하면 조회수와 다운로드 수를 집계합
 msgid "Publish this resume to open it at your short link and custom domain."
 msgstr "이 이력서를 게시하면 짧은 링크와 사용자 지정 도메인에서 열 수 있습니다."
 
-#: src/features/share/link.tsx
-msgid "Publish to choose an address."
+#: src/features/share/web-page.tsx
+msgid "Publish this resume to open it at your short link."
 msgstr ""
 
 #: src/features/write/fields.ts
@@ -11060,6 +11065,11 @@ msgstr "역할을 찾으려면 설정에서 웹 검색을 설정하세요."
 msgid "Set your preferences"
 msgstr ""
 
+#: src/features/design/style-groups.tsx
+#: src/features/write/resume-language.tsx
+msgid "Sets section titles, date words and text direction. Your content isn't translated."
+msgstr ""
+
 #: src/features/workspace/tabs/messages.tsx
 msgid "Sets the application's follow-up date, in case you haven't heard back by then."
 msgstr ""
@@ -11104,6 +11114,10 @@ msgstr "{0}와 데이터를 공유하시겠습니까?"
 
 #: src/features/career/role-suggestions.tsx
 msgid "Share enabled shared Knowledge"
+msgstr ""
+
+#: src/features/share/link.tsx
+msgid "Share image"
 msgstr ""
 
 #: src/features/applications/incoming-posting.tsx
@@ -11156,6 +11170,10 @@ msgstr "짧고 직접적입니다. 채용 공고에서 간결성을 요구하는
 #: src/features/assistant/assistant-screen.tsx
 msgid "Short and polite, for the recruiter"
 msgstr "채용 담당자를 위한 짧고 정중한 표현"
+
+#: src/features/share/web-page.tsx
+msgid "Short link"
+msgstr ""
 
 #: src/features/share/web-page.tsx
 msgid "Short link and domain"
@@ -11428,8 +11446,8 @@ msgid "Signed out, but some data on this device couldn't be removed."
 msgstr "로그아웃했지만 이 기기의 일부 데이터를 삭제할 수 없습니다."
 
 #: src/features/share/link.tsx
-msgid "since last view"
-msgstr "마지막으로 본 이후"
+msgid "since last counted view"
+msgstr ""
 
 #: src/features/assistant/tool-approvals.tsx
 #: src/features/career/stories.tsx
@@ -11941,6 +11959,7 @@ msgstr "선택한 지원 내역에 태그 지정"
 #: src/features/application-detail/sections.tsx
 #: src/features/applications/add-sheet.tsx
 #: src/features/career/stories.tsx
+#: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Tags"
 msgstr "태그"
@@ -11955,6 +11974,7 @@ msgid "Tags were: {0}"
 msgstr ""
 
 #: src/features/applications/list-screen.tsx
+#: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 #: src/features/documents/library.tsx
 msgid "Tags…"
@@ -13121,6 +13141,10 @@ msgstr "내보낼 때 임의 합자(리게이처)를 비활성화하세요."
 msgid "Turn this on to open this resume at your short link and custom domain."
 msgstr ""
 
+#: src/features/share/web-page.tsx
+msgid "Turn this on to open this resume at your short link."
+msgstr ""
+
 #: src/features/career/schedule-sheet.tsx
 msgid "Turn this schedule on"
 msgstr "이 스케줄 켜기"
@@ -13266,6 +13290,7 @@ msgstr "제목 없는 이력서"
 msgid "Up to 2 minutes · 2 MB maximum."
 msgstr "최대 2분 · 최대 2MB."
 
+#: src/features/document-menu/index.tsx
 #: src/features/documents/document-sheets.tsx
 msgid "Up to 20 tags per document, 40 characters per tag."
 msgstr "문서당 최대 20개의 태그, 태그당 40자."
@@ -13369,6 +13394,10 @@ msgstr "6~64자를 사용하세요."
 #: src/features/design/style-groups.tsx
 msgid "Use a darker shade"
 msgstr "더 어두운 그늘을 사용하세요"
+
+#: src/features/design/style-groups.tsx
+msgid "Use a hex color such as #2F5A8A."
+msgstr ""
 
 #: src/features/design/advanced.tsx
 msgid "Use a hex value like #3E6B4F or rgba(62, 107, 79, 1)."
@@ -14352,8 +14381,8 @@ msgid "Your email address is broken across pieces of text."
 msgstr "이메일 주소가 여러 텍스트 조각으로 나뉘어 있습니다."
 
 #: src/features/share/web-page.tsx
-msgid "Your email, phone, location and other header details, and references' phone numbers, are left out of the web page, its PDF and search results."
-msgstr "이메일, 전화번호, 위치 및 기타 헤더 정보와 추천인의 전화번호는 웹 페이지, PDF, 검색 결과에서 제외됩니다."
+msgid "Your email, phone, location and extra header fields, and references' phone numbers, are left out of the web page, its PDF and search results. Your website stays."
+msgstr ""
 
 #: src/features/career/knowledge.tsx
 msgid "Your facts, stories and preferences. Editing Knowledge sends nothing to an AI connection."
@@ -14523,6 +14552,24 @@ msgstr ""
 #: src/features/share/web-page.tsx
 msgid "Your short link and custom domain say this resume isn't shared until you publish it again."
 msgstr "다시 게시할 때까지 짧은 링크와 사용자 지정 도메인에는 이 이력서가 공유되지 않았다고 표시됩니다."
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link opens “{0}”."
+msgstr ""
+
+#: src/features/share/web-page.tsx
+msgid "Your short link opens this resume."
+msgstr ""
+
+#. placeholder {0}: otherPrimary.name
+#: src/features/share/web-page.tsx
+msgid "Your short link points to “{0}”, which isn't published."
+msgstr ""
+
+#: src/features/share/web-page.tsx
+msgid "Your short link says this resume isn't shared until you publish it again."
+msgstr ""
 
 #: src/features/assistant/coach-screen.tsx
 msgid "your stories"

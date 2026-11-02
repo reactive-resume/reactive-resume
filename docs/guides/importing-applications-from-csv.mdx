@@ -11,8 +11,8 @@ If you've been tracking your job search in a spreadsheet, you can bring it into 
 
 <Steps>
   <Step title="Open Import from CSV">
-    In **Applications**, select the import/export button (the two arrows next to **Save job**), then **Import from
-    CSV…**. If you have no applications yet, select **Import from CSV** on the empty page.
+    In **Applications**, select **More** next to **Save job**, then **Import CSV…**. If you have no applications yet,
+    select **Import from CSV** on the empty page.
   </Step>
   <Step title="Add your rows">
     Select **Upload .csv** to choose a file, or paste rows into **CSV data**. The first row must be the column headings.
@@ -24,8 +24,8 @@ If you've been tracking your job search in a spreadsheet, you can bring it into 
   </Step>
   <Step title="Review the summary">
     The summary says how many applications are ready to import, and how many rows or contacts will be skipped. Invalid
-    stage, stage-date or posting-source values are listed by row; correct them or choose Leave out for that column
-    before importing.
+    stage, application-date, stage-date or posting-source values are listed by row; correct them or choose Leave out for
+    that column before importing.
   </Step>
   <Step title="Import">Select **Import *n* applications**. They're added to your Applications right away.</Step>
 </Steps>
@@ -57,30 +57,41 @@ Each row becomes one application. Only **Company** and **Role** are required; ro
 
 These are the fields you can match columns to, with the headings that match automatically (capitals and extra spaces don't matter):
 
-| Field                                                                                       | Headings matched automatically                                         | Notes                                                                                                                                                                                                                                                                                                                                                                |
-| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Company**                                                                                 | Company, Employer, Organization                                        | Required.                                                                                                                                                                                                                                                                                                                                                            |
-| **Role**                                                                                    | Role, Title, Position, Job Title                                       | Required.                                                                                                                                                                                                                                                                                                                                                            |
-| **Stage**                                                                                   | Stage, Status                                                          | One of `saved`, `applied`, `screening`, `interview`, `offer` or `closed`. Other trackers' names are read too: Wishlist as Saved, Phone Screen as Screening, Interviewing as Interview; Rejected, Ghosted and Withdrawn as Closed with that outcome. Rows with any other value are left out, and the rest import. Rows without a stage import as **Saved**.           |
-| **Stage date**                                                                              | Applied Date, Date Applied, Applied On, Stage Date, Stage Entered At   | The date the application entered its stage: `YYYY-MM-DD`, `10/15/2026`, `15/10/2026` or `15.10.2026` (a column's slash dates are day-first when one of them can only be). Rows with a date that can't be read are left out. With no stage date, today's date is used. Waiting times, the no-reply reminder and the List's order within a stage count from this date. |
-| **Location**                                                                                | Location                                                               |                                                                                                                                                                                                                                                                                                                                                                      |
-| **Salary**                                                                                  | Salary, Salary Range, Compensation                                     |                                                                                                                                                                                                                                                                                                                                                                      |
-| **Source**                                                                                  | Source                                                                 | Shows in the Insights sources chart.                                                                                                                                                                                                                                                                                                                                 |
-| **Link**                                                                                    | URL, Link, Job URL, Job Posting                                        | The job posting's address.                                                                                                                                                                                                                                                                                                                                           |
-| **Notes**                                                                                   | Notes, Note                                                            |                                                                                                                                                                                                                                                                                                                                                                      |
-| **Tags**                                                                                    | Tags                                                                   | Separate tags with commas, semicolons or vertical bars, such as `remote;unity`.                                                                                                                                                                                                                                                                                      |
-| **Contact name**, **Contact role**, **Contact label**, **Contact email**, **Contact phone** | Contact Name, Contact Role, Contact Type, Contact Email, Contact Phone | One contact per row.                                                                                                                                                                                                                                                                                                                                                 |
-| **Archived (closes it)**                                                                    | Archived                                                               | For files exported from older versions: `true` imports the application as closed.                                                                                                                                                                                                                                                                                    |
+| Field                                                                                       | Headings matched automatically                                         | Notes                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Company**                                                                                 | Company, Employer, Organization                                        | Required.                                                                                                                                                                                                                                                                                                                                                     |
+| **Role**                                                                                    | Role, Title, Position, Job Title                                       | Required.                                                                                                                                                                                                                                                                                                                                                     |
+| **Stage**                                                                                   | Stage, Status                                                          | One of `saved`, `applied`, `screening`, `interview`, `offer` or `closed`. Other trackers' names are read too: Wishlist as Saved, Phone Screen as Screening, Interviewing as Interview; Rejected, Ghosted and Withdrawn as Closed with that outcome. Other nonempty values block import until corrected or left out. Rows without a stage import as **Saved**. |
+| **Outcome**                                                                                 | Closed Reason                                                          | For a closed application: `accepted`, `not-selected`, `withdrew`, `accepted-other` or `no-response`. Ignored for other stages.                                                                                                                                                                                                                                |
+| **Application date**                                                                        | Applied Date, Application Date, Date Applied, Applied On               | The date you sent the application: `YYYY-MM-DD`, `10/15/2026`, `15/10/2026` or `15.10.2026` (a column's slash dates are day-first when one of them can only be). Kept separately from its current stage date. Invalid dates block import.                                                                                                                     |
+| **Stage date**                                                                              | Stage Date, Stage Entered At                                           | The date the application entered its current stage, in the same formats. It cannot be before Application date. Blank means unknown; for Applied, a supplied Application date also dates that stage. Unknown dates do not start a waiting clock or a no-reply reminder.                                                                                        |
+| **Location**                                                                                | Location                                                               |                                                                                                                                                                                                                                                                                                                                                               |
+| **Salary**                                                                                  | Salary, Salary Range, Compensation                                     |                                                                                                                                                                                                                                                                                                                                                               |
+| **Source**                                                                                  | Source                                                                 | Shows in the Insights sources chart.                                                                                                                                                                                                                                                                                                                          |
+| **Link**                                                                                    | URL, Link, Job URL, Job Posting                                        | The job posting's address.                                                                                                                                                                                                                                                                                                                                    |
+| **Notes**                                                                                   | Notes, Note                                                            |                                                                                                                                                                                                                                                                                                                                                               |
+| **Tags**                                                                                    | Tags                                                                   | Separate tags with commas, semicolons or vertical bars, such as `remote;unity`.                                                                                                                                                                                                                                                                               |
+| **Contact name**, **Contact role**, **Contact label**, **Contact email**, **Contact phone** | Contact Name, Contact Role, Contact Type, Contact Email, Contact Phone | One contact per row.                                                                                                                                                                                                                                                                                                                                          |
+| **Archived (closes it)**                                                                    | Archived                                                               | For files exported from older versions: `true` imports the application as closed.                                                                                                                                                                                                                                                                             |
 
 A contact needs a name, and its email must be a valid address. If not, the summary counts it as skipped and the application imports without it.
 
 Here's a small example:
 
 ```csv
-Company,Role,Stage,Stage Date,Location,Source,Tags,Contact Name,Contact Email
-Orchard Lane Games,Gameplay Programmer,applied,2026-09-02,Remote,LinkedIn,remote;unity,Nadia Brooks,nadia@orchardlane.example
-Silverpine Interactive,AI Programmer,screening,2026-08-28,Stockholm,Referral,ai,,
+Company,Role,Stage,Application Date,Stage Date,Location,Source,Tags,Contact Name,Contact Email
+Orchard Lane Games,Gameplay Programmer,applied,2026-09-02,2026-09-02,Remote,LinkedIn,remote;unity,Nadia Brooks,nadia@orchardlane.example
+Silverpine Interactive,AI Programmer,screening,2026-08-24,2026-08-28,Stockholm,Referral,ai,,
 ```
+
+An imported stage with no date appears as **Imported · _stage_** and **Not recorded** in Activity on web and mobile. A known Application date stays in the history as **Applied**. Edit the imported entry when you know its actual date; Insights then uses that date for reply timing.
+
+<Frame caption="The submission date is preserved while the Offer date remains unknown">
+  <img
+    src="/images/guides/career/imported-unknown-stage-date.png"
+    alt="Activity for a fictional application showing Imported · Offer with Not recorded, and Moved to Applied on Sep 30"
+  />
+</Frame>
 
 ## Import large files
 
@@ -94,7 +105,7 @@ Up to 500 applications import at a time. If your file has more, the summary says
 ## Export applications to CSV
 
 <Steps>
-  <Step title="Open Export to CSV">Select the import/export button, then **Export to CSV…**.</Step>
+  <Step title="Open Export to CSV">Select **More**, then **Export CSV…**.</Step>
   <Step title="Choose what to export">
     Under **Applications to export**, choose **Current filters** to export applications matching your search and **Show
     closed** setting. Closed applications are included only when **Show closed applications** is on. Choose **All
@@ -102,7 +113,8 @@ Up to 500 applications import at a time. If your file has more, the summary says
   </Step>
   <Step title="Limit by date, if you like">
     Set **Application date from** and **Application date to** to export only applications from that period. Leave them
-    empty to include every date.
+    empty to include every date. Applications with unknown submission dates are included only when both date limits are
+    empty.
   </Step>
   <Step title="Download">Check the count of applications to export, then select **Download CSV**.</Step>
 </Steps>
@@ -115,6 +127,8 @@ Up to 500 applications import at a time. If your file has more, the summary says
 </Frame>
 
 The file is named `applications-YYYY-MM-DD.csv` and opens in any spreadsheet app. It has these columns: Company, Role, Stage, Lane, Lane Category, Lane Closed Reason, Stage Date, Application Date, Location, Salary, Source, URL, Job Description, Posting Source, Tags, Contacts, Notes, Closed Reason, Stage History, Timeline, Created At and Updated At.
+
+Unknown **Stage Date** and **Application Date** values stay blank in exports; stage history labels unknown dates as **date not recorded**.
 
 **Job Description** contains the saved posting text. **Posting Source** contains its source metadata as JSON, such as how and when it was retrieved and whether it was clipped, when available. The export also includes your contacts, notes and timeline, so treat the downloaded file as private application data and check it before sharing.
 
@@ -134,9 +148,8 @@ You can import an exported file again; most columns match automatically. When a 
     table above.
   </Accordion>
   <Accordion title="A stage or date didn't import">
-    Rows with a stage or date that can't be read are listed and left out; the rest import. Use one of the stage values
-    listed above and a date such as `2026-09-02`, then import those rows again. You can choose **Leave out** for a
-    column when you intentionally want its default instead.
+    Use one of the stage values listed above, and a date in one of the formats above, such as `2026-09-02`. The error
+    names the row to correct. You can choose **Leave out** for a column when you intentionally want its default instead.
   </Accordion>
   <Accordion title="Tags didn't split correctly">
     Separate tags with commas, semicolons or vertical bars. If you use commas, put the whole cell in double quotes, such
