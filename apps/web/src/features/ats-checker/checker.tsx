@@ -190,7 +190,7 @@ function Idle({ error, posting, onPosting, onFile }: IdleProps) {
 				<h1 className="font-display text-[34px] leading-10 font-medium sm:text-[44px] sm:leading-[48px]">
 					<Trans>Can software read your resume?</Trans>
 				</h1>
-				<p className="max-w-[520px] text-base leading-[25px] text-ink-2">
+				<p className="max-w-[520px] font-display text-[clamp(17px,1.4vw,21px)] leading-normal text-pretty text-ink-2">
 					<Trans>
 						Upload a PDF and see the text an applicant tracking system extracts: what's missing, what's out of order,
 						and how to fix it. Free, no account needed.

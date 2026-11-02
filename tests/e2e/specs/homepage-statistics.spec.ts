@@ -6,13 +6,14 @@ type Totals = { users: number; resumes: number };
 // Replace only statistics results; other logical responses in a real streaming batch stay intact.
 async function statistics(page: Page, totals: Totals | null, stars: number | null, gate = Promise.resolve()) {
 	const observed = new Set<string>();
+	const state = { totals, stars };
 	await page.route("**/api/rpc/**", async (route) => {
 		const request = route.request();
 		const batched = new URL(request.url()).pathname.endsWith("/__batch__");
 		const entries: { url: string }[] = batched ? JSON.parse(request.postData() ?? "[]") : [{ url: request.url() }];
 		const values = new Map<string, unknown>([
-			["/api/rpc/statistics/getTotals", totals],
-			["/api/rpc/statistics/github/getStarCount", stars],
+			["/api/rpc/statistics/getTotals", state.totals],
+			["/api/rpc/statistics/github/getStarCount", state.stars],
 		]);
 		const targets = new Map(
 			entries.flatMap((entry, index) => {
@@ -63,7 +64,7 @@ async function statistics(page: Page, totals: Totals | null, stars: number | nul
 			headers: { ...response.headers(), "content-length": String(Buffer.byteLength(body)) },
 		});
 	});
-	return observed;
+	return { observed, state };
 }
 
 for (const scenario of [
@@ -89,11 +90,17 @@ for (const scenario of [
 		stars: 300,
 		labels: ["People using it", "Resumes created", "Stars on GitHub"],
 	},
+	{
+		name: "totals exactly at the threshold",
+		totals: { users: 100, resumes: 100 },
+		stars: 100,
+		labels: ["People using it", "Resumes created", "Stars on GitHub"],
+	},
 ]) {
 	test(`homepage proof handles ${scenario.name}`, async ({ page }, info) => {
 		await page.setViewportSize({ width: 1440, height: 900 });
 		await page.emulateMedia({ reducedMotion: "reduce" });
-		const observed = await statistics(page, scenario.totals, scenario.stars);
+		const { observed } = await statistics(page, scenario.totals, scenario.stars);
 		await page.goto("/");
 		await expect.poll(() => observed.size).toBe(2);
 		await expect(page.getByText("Loading the total", { exact: true })).toHaveCount(0, { timeout: 20000 });
@@ -139,4 +146,32 @@ test("homepage totals announce loading only while their requests are pending", a
 	}
 	await expect(page.getByText("Loading the total", { exact: true })).toHaveCount(0);
 	await expect(page.getByRole("region", { name: "In good company", exact: true }).getByRole("term")).toHaveCount(3);
+});
+
+test("homepage drops cached totals and stars after their refetch fails", async ({ page }) => {
+	const now = Date.now();
+	await page.clock.setFixedTime(new Date(now));
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	const { state } = await statistics(page, { users: 120, resumes: 240 }, 300);
+	await page.goto("/");
+	const proof = page.getByRole("region", { name: "In good company", exact: true });
+	const github = page.getByRole("link", { name: /^Star Reactive Resume on GitHub/ });
+	await expect(proof.getByRole("term")).toHaveCount(3);
+	await expect(github).toHaveAccessibleName("Star Reactive Resume on GitHub, 300 stars");
+	state.totals = null;
+	state.stars = null;
+	// Keep mounted query caches, expire their six-hour freshness, then use the real focus-refetch path.
+	await page.clock.setFixedTime(new Date(now + 7 * 60 * 60 * 1000));
+	await page.evaluate(() => window.dispatchEvent(new Event("visibilitychange")));
+	await expect(proof).toHaveCount(0, { timeout: 20000 });
+	await expect(github).toHaveAccessibleName("Star Reactive Resume on GitHub");
+	await expect(github.locator('[data-slot="icon"]')).toHaveCount(0);
+	state.totals = { users: 120, resumes: 240 };
+	state.stars = 300;
+	await page.clock.setFixedTime(new Date(now + 8 * 60 * 60 * 1000));
+	await page.evaluate(() => window.dispatchEvent(new Event("visibilitychange")));
+	await expect(proof.getByRole("term")).toHaveCount(3);
+	await expect(github).toHaveAccessibleName("Star Reactive Resume on GitHub, 300 stars");
+	await expect(github.locator('[data-slot="icon"]')).toHaveCount(1);
 });

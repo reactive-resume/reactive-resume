@@ -142,7 +142,9 @@ function ParsedTextLive() {
  */
 export function Check() {
 	const sectionRef = useRef<HTMLElement>(null);
-	const check = t`Check your resume’s ATS readability`;
+	// One display word like the other scenes; the keyword sentence stays in the heading for search and screen readers.
+	const check = t({ message: "Check", comment: "Homepage scene title, one word followed by a full stop" });
+	const checkSentence = t`Check your resume’s ATS readability`;
 
 	// The pointer steers the lens while it's over the page; on leaving, the scroll engine takes it back.
 	const moveLens = (event: PointerEvent<HTMLDivElement>) => {
@@ -172,7 +174,11 @@ export function Check() {
 					id="check-title"
 					className="absolute start-(--gutter) top-[10vh] max-w-[90vw] text-[9vw] leading-[1.05] font-normal text-balance text-ink min-[900px]:top-[11vh] min-[900px]:max-w-[45vw] min-[900px]:text-[clamp(40px,4vw,72px)]"
 				>
-					<span className="font-anybody block font-light tracking-[-.03em] [clip-path:inset(calc(var(--sv)*120%-20%)_0_-20%_0)]">
+					<span className="sr-only">{checkSentence}</span>
+					<span
+						aria-hidden="true"
+						className="font-anybody block font-light tracking-[-.03em] [clip-path:inset(calc(var(--sv)*120%-20%)_0_-20%_0)]"
+					>
 						{check}
 						<span className="text-accent">.</span>
 					</span>
@@ -234,7 +240,8 @@ export function Check() {
 						aria-hidden="true"
 						className="font-martian pointer-events-none absolute top-[calc(var(--ly,16%)-14.5cqw)] left-(--lx,50%) -translate-x-1/2 -translate-y-full rounded-sm bg-[oklch(0.2_0.03_160)] px-[9px] py-[5px] text-xs leading-none font-medium whitespace-nowrap text-[oklch(0.88_0.09_150)] opacity-(--lo)"
 					>
-						{t`What software reads`}
+						{/* The same name as the ATS checker and the editor's Check, so the doorway leads into the same world. */}
+						{t`What a parser reads`}
 					</span>
 				</div>
 			</div>
