@@ -5,9 +5,11 @@ import {
 	BuildingsIcon,
 	ChartBarIcon,
 	CheckCircleIcon,
+	FileTextIcon,
 	FunnelSimpleIcon,
 	ListChecksIcon,
 	MagnifyingGlassIcon,
+	PrinterIcon,
 	TrayIcon,
 	UsersIcon,
 	WarningIcon,
@@ -40,6 +42,8 @@ import { SectionIntelligence } from "./section-intelligence";
 import { StudentDetailPanel } from "./student-detail-panel";
 import type { StudentWithResumes } from "./student-resume-table";
 import { StudentResumeTable } from "./student-resume-table";
+import { sectionReportRows, summaryRows } from "./validation-report";
+import { SectionValidationSheet, SummaryValidationSheet } from "./validation-report-sheet";
 
 export type DashboardTab = "overview" | "inbox" | "sections" | "students" | "checklists";
 
@@ -63,6 +67,8 @@ export function SectionMetricsView({
 	const navigate = useNavigate() as any;
 	const activeTab = initialTab;
 	const [filter, setFilter] = useState<OrgUnitFilterValue>(initialFilter);
+	// Which validation report is open, if any.
+	const [reportOpen, setReportOpen] = useState<"section" | "summary" | null>(null);
 	const queryClient = useQueryClient();
 
 	useEffect(() => {
@@ -296,10 +302,14 @@ export function SectionMetricsView({
 	const hasStudents = dashboard.students.length > 0;
 	const review = reviewRate(filteredStudents, scope);
 	const waiting = review.total - review.reviewed;
-	const evaluationRate = detailedStats.withResumes > 0 ? (detailedStats.evaluated / detailedStats.withResumes) * 100 : 0;
+	const evaluationRate =
+		detailedStats.withResumes > 0 ? (detailedStats.evaluated / detailedStats.withResumes) * 100 : 0;
 	const overviewNote =
 		waiting > 0
-			? plural(waiting, { one: "# resume is waiting for your review.", other: "# resumes are waiting for your review." })
+			? plural(waiting, {
+					one: "# resume is waiting for your review.",
+					other: "# resumes are waiting for your review.",
+				})
 			: review.total > 0
 				? t`You're all caught up.`
 				: t`Nothing has been sent to you for review yet.`;
@@ -436,27 +446,11 @@ export function SectionMetricsView({
 			)}
 
 			{/* ══════════════════ INBOX TAB ══════════════════ */}
+			{/* Every student goes in; the inbox decides which stages to show and lets the reviewer
+			    filter. Pre-filtering to a fixed pair of stages here is what left the Placement
+			    Officer's inbox empty while hundreds of submissions sat waiting. */}
 			{activeTab === "inbox" && (
-				<InboxView
-					scope={scope === "admin" ? "po" : scope}
-					students={filteredStudents
-						.filter((s) =>
-							s.resumes.some((r) =>
-								scope === "faculty"
-									? r.reviewStatus === "SUBMITTED_TO_FACULTY"
-									: r.reviewStatus === "SUBMITTED_TO_PO" || r.reviewStatus === "RESUBMITTED_TO_PO",
-							),
-						)
-						.map((s) => ({
-							...s,
-							resumes: s.resumes.filter((r) =>
-								scope === "faculty"
-									? r.reviewStatus === "SUBMITTED_TO_FACULTY"
-									: r.reviewStatus === "SUBMITTED_TO_PO" || r.reviewStatus === "RESUBMITTED_TO_PO",
-							),
-						}))}
-					onReview={openReview}
-				/>
+				<InboxView scope={scope === "admin" ? "po" : scope} students={filteredStudents} onReview={openReview} />
 			)}
 
 			{/* ══════════════════ SECTION DETAIL (drill-down) ══════════════════ */}
@@ -485,12 +479,23 @@ export function SectionMetricsView({
 						});
 					}}
 					onStudentClick={(student) => setSelectedStudent(student)}
+					onOpenReport={() => setReportOpen("section")}
 				/>
 			)}
 
 			{/* ══════════════════ SECTIONS TAB (grid) ══════════════════ */}
 			{activeTab === "sections" && !sectionId && (
 				<div className="space-y-6">
+					<div className="flex justify-end">
+						<button
+							type="button"
+							onClick={() => setReportOpen("summary")}
+							className="flex items-center gap-1.5 rounded-xl bg-card px-3.5 py-2 font-semibold text-foreground text-sm shadow-sm ring-1 ring-border transition-all hover:bg-primary/5 hover:text-primary active:scale-[0.98]"
+						>
+							<FileTextIcon weight="duotone" className="size-4" />
+							{t`CV Validation Status — all sections`}
+						</button>
+					</div>
 					{/* Package filter + search */}
 					<div className="rounded-2xl border border-border bg-card p-4 text-card-foreground shadow-sm">
 						<div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -596,10 +601,16 @@ export function SectionMetricsView({
 							);
 							const isInPOHands = resumesInPOHands.length > 0;
 
-							// PO: all resumes that are in any active PO-managed state (excluding APPROVED — those are done)
+							// PO: everything a student has handed over and nobody has finished with. Restricting
+							// this to PO-managed stages left the Placement Officer with no section-level action
+							// at all here, because faculty verify but never forward — every card read
+							// "Waiting for Faculty" while hundreds of submissions sat in the section.
 							const poSubmittedResumes = sectionStudents.flatMap((s) =>
 								s.resumes
-									.filter((r) => PO_MANAGED.includes(r.reviewStatus ?? "") && r.reviewStatus !== "APPROVED")
+									.filter((r) => {
+										const stage = r.reviewStatus ?? "DRAFT";
+										return stage !== "DRAFT" && stage !== "APPROVED";
+									})
 									.map((r) => ({ id: r.id, studentId: s.engLabsId })),
 							);
 
@@ -792,6 +803,44 @@ export function SectionMetricsView({
 				<ChecklistsTab tenantId={tenantId} onCreateNew={() => setShowChecklistCreator(true)} />
 			)}
 
+			{/* The section's own sheet reads the students already on screen; the summary reads every
+			    section the current package filter leaves in view. */}
+			{reportOpen === "section" && activeSection && (
+				<SectionValidationSheet
+					sectionName={activeSection.name}
+					branch={(activeSection as { parentName?: string | null }).parentName ?? activeSection.name}
+					rows={sectionReportRows(
+						filteredStudents.filter((s) => s.sectionId === sectionId),
+						scope === "faculty" ? "faculty" : "po",
+					)}
+					scope={scope === "faculty" ? "faculty" : "po"}
+					onClose={() => setReportOpen(null)}
+				/>
+			)}
+
+			{reportOpen === "summary" &&
+				(() => {
+					const { rows, totals } = summaryRows(
+						sectionsTabDisplayRows,
+						filteredStudents,
+						scope === "faculty" ? "faculty" : "po",
+					);
+					const packageName =
+						sectionsTabPackageOptions.find((o) => o.value === filter.packageId)?.label ?? t`All packages`;
+					return (
+						<SummaryValidationSheet
+							title={
+								scope === "faculty"
+									? t`Status of CV validation — ${packageName}`
+									: t`Status of CV validation — ${packageName} (Placement Officer)`
+							}
+							rows={rows}
+							totals={totals}
+							onClose={() => setReportOpen(null)}
+						/>
+					);
+				})()}
+
 			{selectedStudent && (
 				<StudentDetailPanel
 					student={{
@@ -857,6 +906,7 @@ type SectionStudentsPageProps = {
 		id: string;
 		name: string;
 		unitType: string;
+		parentName?: string | null;
 		stats: {
 			totalStudents: number;
 			totalResumes: number;
@@ -868,9 +918,18 @@ type SectionStudentsPageProps = {
 	onBack: () => void;
 	onReview: (resumeId: string, engLabsStudentId: string) => void;
 	onStudentClick: (student: StudentWithResumes) => void;
+	/** Opens the printable CV Validation Status sheet for this section. */
+	onOpenReport?: () => void;
 };
 
-function SectionStudentsPage({ section, students, onBack, onReview, onStudentClick }: SectionStudentsPageProps) {
+function SectionStudentsPage({
+	section,
+	students,
+	onBack,
+	onReview,
+	onStudentClick,
+	onOpenReport,
+}: SectionStudentsPageProps) {
 	if (!section) {
 		return (
 			<div className="space-y-6">
@@ -898,6 +957,27 @@ function SectionStudentsPage({ section, students, onBack, onReview, onStudentCli
 	return (
 		<div className="space-y-6">
 			{/* Breadcrumb / back */}
+			{onOpenReport && (
+				<div className="flex flex-wrap gap-2">
+					<button
+						type="button"
+						onClick={onOpenReport}
+						className="flex items-center gap-1.5 rounded-xl bg-card px-3.5 py-2 font-semibold text-foreground text-sm shadow-sm ring-1 ring-border transition-all hover:bg-primary/5 hover:text-primary active:scale-[0.98]"
+					>
+						<FileTextIcon weight="duotone" className="size-4" />
+						{t`View Resume Validation Status`}
+					</button>
+					<button
+						type="button"
+						onClick={onOpenReport}
+						className="flex items-center gap-1.5 rounded-xl bg-card px-3.5 py-2 font-semibold text-foreground text-sm shadow-sm ring-1 ring-border transition-all hover:bg-primary/5 hover:text-primary active:scale-[0.98]"
+					>
+						<PrinterIcon weight="duotone" className="size-4" />
+						{t`Print Resume Validation Status`}
+					</button>
+				</div>
+			)}
+
 			<button
 				type="button"
 				onClick={onBack}
@@ -910,11 +990,7 @@ function SectionStudentsPage({ section, students, onBack, onReview, onStudentCli
 			{/* Highlights */}
 			<StatStrip>
 				<Stat label={t`Total students`} value={stats.totalStudents} />
-				<Stat
-					label={t`With resumes`}
-					value={withResumes}
-					tooltip={t`Students who have created at least one resume`}
-				/>
+				<Stat label={t`With resumes`} value={withResumes} tooltip={t`Students who have created at least one resume`} />
 				<Stat label={t`No resume yet`} value={noResumes} />
 				<Stat
 					label={t`Average score`}
@@ -942,7 +1018,10 @@ function SectionStudentsPage({ section, students, onBack, onReview, onStudentCli
 					<span className="font-semibold text-2xl text-foreground tabular-nums">{verifiedPct.toFixed(0)}%</span>
 				</div>
 				<div className="h-1.5 overflow-hidden rounded-full bg-muted">
-					<div className="h-full rounded-full bg-emerald-500 transition-[width] duration-500" style={{ width: `${verifiedPct}%` }} />
+					<div
+						className="h-full rounded-full bg-emerald-500 transition-[width] duration-500"
+						style={{ width: `${verifiedPct}%` }}
+					/>
 				</div>
 			</div>
 

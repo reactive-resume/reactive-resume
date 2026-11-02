@@ -145,27 +145,26 @@ async function getLatestEvaluationsByResumeIds(resumeIds: string[]) {
 	return latest;
 }
 
-/** Returns true if the most recent history action for a resume is "SUBMITTED" */
-async function getSubmissionStatusByResumeIds(resumeIds: string[]) {
-	if (resumeIds.length === 0) return new Map<string, boolean>();
+/**
+ * When each resume was first submitted, keyed by resume id.
+ *
+ * This used to read only the newest history row and return a boolean, so a resume that was
+ * submitted and then verified reported false — the verdict is the newer row. On this tenant that
+ * marked 245 of 461 submitted resumes as never submitted. The earliest SUBMITTED row is both the
+ * answer to "was it submitted" and the date the validation report prints.
+ */
+export async function getSubmissionDatesByResumeIds(resumeIds: string[]) {
+	if (resumeIds.length === 0) return new Map<string, Date>();
 
 	const history = await db
-		.select({
-			resumeId: schema.resumeHistory.resumeId,
-			action: schema.resumeHistory.action,
-		})
+		.select({ resumeId: schema.resumeHistory.resumeId, createdAt: schema.resumeHistory.createdAt })
 		.from(schema.resumeHistory)
-		.where(inArray(schema.resumeHistory.resumeId, resumeIds))
-		.orderBy(desc(schema.resumeHistory.createdAt));
+		.where(and(inArray(schema.resumeHistory.resumeId, resumeIds), eq(schema.resumeHistory.action, "SUBMITTED")))
+		.orderBy(schema.resumeHistory.createdAt);
 
-	// Only keep the latest entry per resume
-	const statusMap = new Map<string, boolean>();
-	for (const h of history) {
-		if (!statusMap.has(h.resumeId)) {
-			statusMap.set(h.resumeId, h.action === "SUBMITTED");
-		}
-	}
-	return statusMap;
+	const dates = new Map<string, Date>();
+	for (const h of history) if (!dates.has(h.resumeId)) dates.set(h.resumeId, h.createdAt);
+	return dates;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -194,17 +193,17 @@ export const studentDashboard = protectedProcedure
 		const engLabsUser = await getEngLabsUserByEmail(context.user.email);
 
 		const resumeIds = resumes.map((r) => r.id);
-		const [commentCounts, latestScores, submissionStatus, enrollment] = await Promise.all([
+		const [commentCounts, latestScores, submissionDates, enrollment] = await Promise.all([
 			getCommentCountsByResumeIds(resumeIds),
 			getLatestEvaluationsByResumeIds(resumeIds),
-			getSubmissionStatusByResumeIds(resumeIds),
+			getSubmissionDatesByResumeIds(resumeIds),
 			engLabsUser ? getStudentEnrollmentInfo(engLabsUser.id) : Promise.resolve(null),
 		]);
 
 		const resumesWithFeedback = resumes.map((resume) => {
 			const commentCount = commentCounts.get(resume.id) ?? 0;
 			const evaluationScore = latestScores.get(resume.id) ?? null;
-			const isSubmitted = submissionStatus.get(resume.id) ?? false;
+			const isSubmitted = submissionDates.has(resume.id);
 			return {
 				...resume,
 				feedback: {
@@ -289,10 +288,21 @@ function computeUnitStatsRow(
 		].includes((r as { reviewStatus?: string }).reviewStatus ?? "DRAFT"),
 	);
 
+	// Everything a student has handed over, whoever holds it now. SUBMITTED_TO_FACULTY belongs here:
+	// leaving it out made the section cards report resumes sitting with faculty as "in Draft", which
+	// on this tenant is most of them, and hid the backlog the cards exist to show.
 	const finalized = unitResumes.filter((r) =>
-		["FINALIZED_BY_FACULTY", "RESUBMITTED_TO_PO", "APPROVED"].includes(
-			(r as { reviewStatus?: string }).reviewStatus ?? "DRAFT",
-		),
+		[
+			"SUBMITTED_TO_FACULTY",
+			"FACULTY_REVISION_REQUESTED",
+			"FACULTY_VERIFIED",
+			"FINALIZED_BY_FACULTY",
+			"SUBMITTED_TO_PO",
+			"PO_REVISION_REQUESTED",
+			"RESUBMITTED_TO_PO",
+			"PO_VERIFIED",
+			"APPROVED",
+		].includes((r as { reviewStatus?: string }).reviewStatus ?? "DRAFT"),
 	);
 
 	const clearedFaculty = unitResumes.filter((r) =>
@@ -422,9 +432,7 @@ export const sectionsDashboard = protectedProcedure
 					menteeTenantId = (await getTenantIdForOrgUnits(unitSections.map((s) => s.id))) ?? menteeTenantId;
 				}
 				const mentees =
-					menteeTenantId && menteeTenantId !== "default"
-						? await getMenteeStudents(engLabsUser.id, menteeTenantId)
-						: [];
+					menteeTenantId && menteeTenantId !== "default" ? await getMenteeStudents(engLabsUser.id, menteeTenantId) : [];
 
 				facultyStudentIds = new Set(mentees.map((m) => m.id));
 
@@ -705,10 +713,10 @@ export const sectionsDashboard = protectedProcedure
 			const resumeIds = resumes.map((r) => r.id);
 
 			// 9. Get feedback data + submission status
-			const [commentCounts, latestScores, submissionStatus, myComments] = await Promise.all([
+			const [commentCounts, latestScores, submissionDates, myComments] = await Promise.all([
 				getCommentCountsByResumeIds(resumeIds),
 				getLatestEvaluationsByResumeIds(resumeIds),
-				getSubmissionStatusByResumeIds(resumeIds),
+				getSubmissionDatesByResumeIds(resumeIds),
 				getMyCommentStatsByResumeIds(resumeIds, engLabsUser?.id),
 			]);
 
@@ -738,7 +746,8 @@ export const sectionsDashboard = protectedProcedure
 					resumes: userResumes.map((r) => {
 						const score = latestScores.get(r.id) ?? null;
 						const comments = commentCounts.get(r.id) ?? 0;
-						const isSubmitted = submissionStatus.get(r.id) ?? false;
+						const submittedAt = submissionDates.get(r.id) ?? null;
+						const isSubmitted = submittedAt !== null;
 
 						let status: "not_reviewed" | "submitted" | "evaluated" | "has_comments" = "not_reviewed";
 						if (score !== null) status = "evaluated";
@@ -753,6 +762,8 @@ export const sectionsDashboard = protectedProcedure
 							commentCount: comments,
 							myComments: myComments.get(r.id) ?? null,
 							isSubmitted,
+							// When the student first handed it over, for the validation report's date column.
+							submittedAt,
 							status,
 							reviewStatus: (r as any).reviewStatus ?? "DRAFT",
 							locked: (r as any).locked ?? false,
@@ -1007,7 +1018,7 @@ export const studentResumes = protectedProcedure
 				]);
 
 				const latestScore = evaluations[0]?.overallScore ?? null;
-				const isSubmitted = history[0]?.action === "SUBMITTED";
+				const isSubmitted = history.some((h) => h.action === "SUBMITTED");
 
 				return {
 					id: resume.id,
@@ -1288,7 +1299,10 @@ export const bulkUpdateResumes = protectedProcedure
 	)
 	.handler(async ({ context, input }) => {
 		const { bulkUpdateSectionResumes } = await import("@/integrations/drizzle/services/resume-feedback.service");
-		await assertReviewStaff(context.user, input.resumes.map((r) => r.id));
+		await assertReviewStaff(
+			context.user,
+			input.resumes.map((r) => r.id),
+		);
 
 		const actorType =
 			input.status === "APPROVED" || input.status === "PO_VERIFIED" ? "PLACEMENT_OFFICER" : "INSTRUCTOR";

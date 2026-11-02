@@ -1,6 +1,8 @@
 import { t } from "@lingui/core/macro";
 import { ArrowClockwiseIcon, ArrowRightIcon, ClockIcon, TrayIcon } from "@phosphor-icons/react";
+import { useState } from "react";
 import { cn } from "@/utils/style";
+import { QUEUE_STAGES, reviewStageLabel, STAGES_FOR_SCOPE } from "./review-status";
 import type { StudentWithResumes } from "./student-resume-table";
 
 type InboxGroup = {
@@ -34,6 +36,47 @@ type InboxViewProps = {
 	scope: "faculty" | "po";
 	onReview?: (resumeId: string, engLabsStudentId: string) => void;
 };
+
+/** One line telling the reviewer why a stage is in their queue and who it is waiting on. */
+function stageDescription(stage: string, scope: "faculty" | "po"): string {
+	switch (stage) {
+		case "SUBMITTED_TO_FACULTY":
+			return scope === "faculty"
+				? t`Submitted by students, waiting for your review`
+				: t`Submitted by students, also waiting on their faculty`;
+		case "FACULTY_REVISION_REQUESTED":
+			return t`You asked for changes; waiting on the student`;
+		case "FACULTY_VERIFIED":
+			return t`Verified by faculty, not yet sent to the Placement Officer`;
+		case "FINALIZED_BY_FACULTY":
+			return t`Finalised by faculty, ready to go to the Placement Officer`;
+		case "SUBMITTED_TO_PO":
+			return t`Sent on by faculty, awaiting the Placement Officer`;
+		case "RESUBMITTED_TO_PO":
+			return t`Resubmitted after Placement Officer feedback`;
+		case "PO_REVISION_REQUESTED":
+			return t`The Placement Officer asked for changes; waiting on the student`;
+		case "PO_VERIFIED":
+			return t`Verified by the Placement Officer`;
+		case "APPROVED":
+			return t`Approved and ready for placement`;
+		case "DRAFT":
+			return t`Started but never submitted — waiting on the student, not on you`;
+		default:
+			return "";
+	}
+}
+
+/** Colour for a stage's icon tile: amber where someone is being waited on, green once settled. */
+function stageTone(stage: string): { bg: string; text: string } {
+	if (stage === "APPROVED" || stage === "PO_VERIFIED" || stage === "FACULTY_VERIFIED") {
+		return { bg: "bg-emerald-50", text: "text-emerald-600" };
+	}
+	if (stage.includes("REVISION_REQUESTED")) return { bg: "bg-amber-50", text: "text-amber-600" };
+	if (stage === "DRAFT") return { bg: "bg-muted", text: "text-muted-foreground" };
+	if (stage === "SUBMITTED_TO_FACULTY") return { bg: "bg-rose-50", text: "text-rose-600" };
+	return { bg: "bg-orange-50", text: "text-orange-600" };
+}
 
 export function timeAgo(date: Date): string {
 	const now = Date.now();
@@ -69,76 +112,102 @@ export function InboxView({ students, scope, onReview }: InboxViewProps) {
 		})),
 	);
 
-	// Sort newest-first within each group
-	const sorted = [...allItems].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+	// Oldest first: a submission nobody has picked up is the most urgent thing in the queue, and
+	// burying it under today's arrivals is how students end up waiting weeks.
+	const sorted = [...allItems].sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime());
 
-	const groups: InboxGroup[] =
-		scope === "faculty"
-			? [
-					{
-						id: "submissions",
-						label: t`Student Submissions`,
-						description: t`Resumes submitted by students waiting for your review`,
-						iconBg: "bg-blue-50",
-						iconColor: "text-blue-600",
-						icon: <TrayIcon weight="duotone" className="size-5" />,
-						items: sorted.filter((i) => i.reviewStatus === "SUBMITTED_TO_FACULTY"),
-					},
-				]
-			: [
-					{
-						id: "student_submissions",
-						label: t`Student Submissions`,
-						description: t`Resumes submitted by students, also waiting on their faculty`,
-						iconBg: "bg-rose-50",
-						iconColor: "text-rose-600",
-						icon: <ClockIcon weight="duotone" className="size-5" />,
-						// The same queue the student's faculty sees. Either may act; whoever does first
-						// takes it out of the other's queue, and the status guards in updateStatus settle
-						// the case where both act at once.
-						// Oldest first — a submission nobody has picked up is the most urgent thing here.
-						items: sorted.filter((i) => i.reviewStatus === "SUBMITTED_TO_FACULTY").reverse(),
-					},
-					{
-						id: "submitted_to_po",
-						label: t`Submitted to PO`,
-						description: t`Sections submitted by faculty awaiting your review`,
-						iconBg: "bg-orange-50",
-						iconColor: "text-orange-600",
-						icon: <TrayIcon weight="duotone" className="size-5" />,
-						items: sorted.filter((i) => i.reviewStatus === "SUBMITTED_TO_PO"),
-					},
-					{
-						id: "resubmissions",
-						label: t`Resubmitted to PO`,
-						description: t`Sections resubmitted by faculty after your feedback`,
-						iconBg: "bg-amber-50",
-						iconColor: "text-amber-600",
-						icon: <ArrowClockwiseIcon weight="duotone" className="size-5" />,
-						items: sorted.filter((i) => i.reviewStatus === "RESUBMITTED_TO_PO"),
-					},
-				];
+	// Stages this role acts on come first; the rest follow so nothing is unreachable. Only stages
+	// actually present are offered, so every chip returns something.
+	const present = new Set(sorted.map((i) => i.reviewStatus));
+	const ownStages = STAGES_FOR_SCOPE[scope].filter((s) => present.has(s));
+	const otherStages = QUEUE_STAGES.filter((s) => present.has(s) && !ownStages.includes(s));
+	const draftCount = sorted.filter((i) => i.reviewStatus === "DRAFT").length;
+
+	const [stageFilter, setStageFilter] = useState<"all" | string>("all");
+
+	const visible =
+		stageFilter === "all"
+			? // "All" means everything waiting on a person, which is why DRAFT is not in it: those are
+				// waiting on the student. It stays selectable as its own chip.
+				sorted.filter((i) => i.reviewStatus !== "DRAFT")
+			: sorted.filter((i) => i.reviewStatus === stageFilter);
+
+	const groups: InboxGroup[] = [...ownStages, ...otherStages, ...(draftCount > 0 ? (["DRAFT"] as const) : [])]
+		.map((stage) => ({
+			id: stage,
+			label: reviewStageLabel(stage),
+			description: stageDescription(stage, scope),
+			iconBg: stageTone(stage).bg,
+			iconColor: stageTone(stage).text,
+			icon:
+				stage === "DRAFT" ? (
+					<ClockIcon weight="duotone" className="size-5" />
+				) : stage.includes("RESUBMITTED") ? (
+					<ArrowClockwiseIcon weight="duotone" className="size-5" />
+				) : (
+					<TrayIcon weight="duotone" className="size-5" />
+				),
+			items: visible.filter((i) => i.reviewStatus === stage),
+		}))
+		.filter((g) => g.items.length > 0);
 
 	const totalCount = groups.reduce((sum, g) => sum + g.items.length, 0);
 
+	const chips: { id: string; label: string; count: number }[] = [
+		{ id: "all", label: t`All`, count: sorted.filter((i) => i.reviewStatus !== "DRAFT").length },
+		...[...ownStages, ...otherStages].map((s) => ({
+			id: s,
+			label: reviewStageLabel(s),
+			count: sorted.filter((i) => i.reviewStatus === s).length,
+		})),
+		...(draftCount > 0 ? [{ id: "DRAFT", label: reviewStageLabel("DRAFT"), count: draftCount }] : []),
+	];
+
+	const filterBar = (
+		<div className="flex flex-wrap gap-1.5">
+			{chips.map((chip) => (
+				<button
+					key={chip.id}
+					type="button"
+					onClick={() => setStageFilter(chip.id)}
+					className={cn(
+						"rounded-xl px-3 py-2 font-semibold text-xs transition-all active:scale-[0.97]",
+						stageFilter === chip.id
+							? "bg-primary text-white shadow-sm"
+							: "bg-muted text-muted-foreground hover:bg-border",
+					)}
+				>
+					{chip.label}
+					<span className="ml-1.5 opacity-60">{chip.count}</span>
+				</button>
+			))}
+		</div>
+	);
+
 	if (totalCount === 0) {
 		return (
-			<div className="flex flex-col items-center justify-center rounded-2xl border border-border border-dashed bg-muted/50 py-16 text-center">
-				<div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-					<TrayIcon weight="duotone" className="size-7 text-muted-foreground" />
+			<div className="space-y-5">
+				{chips.length > 1 && filterBar}
+				<div className="flex flex-col items-center justify-center rounded-2xl border border-border border-dashed bg-muted/50 py-16 text-center">
+					<div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
+						<TrayIcon weight="duotone" className="size-7 text-muted-foreground" />
+					</div>
+					<p className="font-bold text-base text-foreground">{t`Nothing here`}</p>
+					<p className="mt-1 max-w-xs text-muted-foreground text-sm">
+						{stageFilter === "all"
+							? scope === "faculty"
+								? t`No student submissions are waiting for your review.`
+								: t`No resumes are pending your action.`
+							: t`No resumes at this stage. Pick another filter to see the rest.`}
+					</p>
 				</div>
-				<p className="font-bold text-base text-foreground">{t`Inbox is empty`}</p>
-				<p className="mt-1 max-w-xs text-muted-foreground text-sm">
-					{scope === "faculty"
-						? t`No student submissions are waiting for your review.`
-						: t`No resumes from faculty or student resubmissions are pending your action.`}
-				</p>
 			</div>
 		);
 	}
 
 	return (
 		<div className="space-y-6">
+			{filterBar}
 			{groups
 				.filter((g) => g.items.length > 0)
 				.map((group) => (

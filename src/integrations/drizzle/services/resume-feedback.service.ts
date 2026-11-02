@@ -3,7 +3,7 @@
  * Handles all database operations for resume comments, checklists, and evaluations
  */
 
-import { and, desc, eq, inArray, isNotNull, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNotNull, sql } from "drizzle-orm";
 import { DEFAULT_RESUME_USER_ORG_ID } from "@/integrations/auth/config";
 import { db } from "@/integrations/drizzle/client";
 import {
@@ -18,12 +18,7 @@ import {
 	reviewSnippet,
 	user,
 } from "@/integrations/drizzle/schema";
-import {
-	type CommentAnchor,
-	type CommentSeverity,
-	REVIEW_VERDICTS,
-	STARTER_SNIPPETS,
-} from "@/schema/resume/comment-anchor";
+import { type CommentAnchor, type CommentSeverity, REVIEW_VERDICTS } from "@/schema/resume/comment-anchor";
 
 /**
  * CREATE: Add a comment to a resume
@@ -117,18 +112,23 @@ export async function updateCommentStatus(id: string, status: "OPEN" | "ADDRESSE
 }
 
 /**
- * Comment bank: reusable review comments shared by a tenant's reviewers, most used first.
- * A tenant's first visit seeds the starter set; the unique (tenant, content) index keeps it single.
+ * Comment bank: reusable review comments a tenant's reviewers wrote themselves, most used first.
+ *
+ * It no longer seeds a starter set. The six generic lines it used to plant ("Add more detail
+ * here.") were never used — every one sat at zero — and they competed for the same space as the
+ * section-scoped standard feedback in `review-suggestions.ts`, which tells a student what to
+ * actually change. Deleting the rows was not enough on its own: this function re-seeded them on
+ * the next page load, because it treated an empty bank as a tenant's first visit.
  */
-export async function listSnippets(tenantId: string, organisationId: string) {
-	const rows = await db.select().from(reviewSnippet).where(eq(reviewSnippet.tenantId, tenantId));
-	if (rows.length > 0) return rows.sort((a, b) => b.usageCount - a.usageCount || a.content.localeCompare(b.content));
-
-	await db
-		.insert(reviewSnippet)
-		.values(STARTER_SNIPPETS.map((content) => ({ tenantId, organisationId, content })))
-		.onConflictDoNothing();
-	return db.select().from(reviewSnippet).where(eq(reviewSnippet.tenantId, tenantId));
+export async function listSnippets(tenantId: string, _organisationId: string) {
+	const rows = await db
+		.select()
+		.from(reviewSnippet)
+		// `author_id` is null exactly on the old seeded rows and set on everything a reviewer saved,
+		// so this retires the starter set wherever it was already planted without a data migration —
+		// which this repo could not run anyway, since the schema lives in the eng-labs repo.
+		.where(and(eq(reviewSnippet.tenantId, tenantId), isNotNull(reviewSnippet.authorId)));
+	return rows.sort((a, b) => b.usageCount - a.usageCount || a.content.localeCompare(b.content));
 }
 
 export async function createSnippet(tenantId: string, organisationId: string, authorId: string, content: string) {
@@ -373,10 +373,7 @@ export async function createEvaluation({
 					.select({ id: resumeChecklistItem.id, weight: resumeChecklistItem.weight })
 					.from(resumeChecklistItem)
 					.where(
-						and(
-							eq(resumeChecklistItem.checklistId, checklistId),
-							inArray(resumeChecklistItem.id, checklistItemIds),
-						),
+						and(eq(resumeChecklistItem.checklistId, checklistId), inArray(resumeChecklistItem.id, checklistItemIds)),
 					)
 			: [];
 	const weightByItemId = new Map(checklistWeights.map((row) => [row.id, row.weight ?? 1]));
@@ -540,6 +537,34 @@ async function resumeRefs(resumeId: string) {
 	return { tenantId: owner?.tenantId, organisationId: owner?.organisationId, studentId: student?.id };
 }
 
+/**
+ * What a history row records.
+ *
+ * Every stage of the workflow gets its own action. Three used to share one with something else,
+ * which made the validation reports impossible to compute: a faculty revision request was written
+ * as the generic "UPDATED", a PO verification was written as "FACULTY_VERIFIED" — so the PO's work
+ * was filed under faculty — and "SUBMITTED_TO_PO" was written despite not being a member of this
+ * union at all, which only type-checked because the call sites cast it away.
+ */
+export type ResumeHistoryAction =
+	| "CREATED"
+	| "UPDATED"
+	/** The student edited the resume after a reviewer sent it back. Drives the "Modified" report. */
+	| "RESUME_EDITED"
+	| "COMMENTED"
+	| "EVALUATED"
+	| "FORWARDED"
+	| "SUBMITTED"
+	| "FACULTY_REVISION_REQUESTED"
+	| "FACULTY_VERIFIED"
+	| "FINALIZED"
+	| "SUBMITTED_TO_PO"
+	| "PO_REVISION_REQUESTED"
+	| "PO_VERIFIED"
+	| "PO_APPROVED"
+	| "PO_REJECTED"
+	| "RESUBMITTED";
+
 export async function addToHistory({
 	resumeId,
 	studentId,
@@ -553,19 +578,7 @@ export async function addToHistory({
 	resumeId: string;
 	studentId?: string;
 	tenantId?: string;
-	action:
-		| "CREATED"
-		| "UPDATED"
-		| "COMMENTED"
-		| "EVALUATED"
-		| "FORWARDED"
-		| "SUBMITTED"
-		| "FACULTY_VERIFIED"
-		| "FINALIZED"
-		| "PO_REVISION_REQUESTED"
-		| "PO_APPROVED"
-		| "PO_REJECTED"
-		| "RESUBMITTED";
+	action: ResumeHistoryAction;
 	changedBy: string;
 	actorType: "LEARNER" | "INSTRUCTOR" | "PLACEMENT_OFFICER" | "ADMIN";
 	previousData?: unknown;
@@ -589,6 +602,59 @@ export async function addToHistory({
 		.returning();
 
 	return result[0];
+}
+
+/** The stages that mean the resume is back with the student, waiting on them to make changes. */
+const REVISION_REQUESTED_STATUSES = ["FACULTY_REVISION_REQUESTED", "PO_REVISION_REQUESTED"];
+
+/**
+ * Record that the student acted on a reviewer's revision request.
+ *
+ * This is the only source for the "Modified" column on the validation report: nothing else writes a
+ * row when a student edits, so without this the report can only ever read zero.
+ *
+ * Two things keep the signal clean. It fires only while the resume sits in a revision-requested
+ * stage, so ordinary drafting is not recorded; and only once per request, because the builder
+ * autosaves and a row per keystroke would bury the event it is meant to mark.
+ *
+ * `changed_by` is a foreign key to the eng-labs `users` table, so it needs the eng-labs id — the
+ * caller's session carries a Better Auth id, which would fail the constraint. The resume owner's
+ * eng-labs row is resolved by email here; when there is none, nothing is written. A student saving
+ * their own resume must never fail because an audit row could not be.
+ */
+export async function recordStudentEditAfterRevision(resumeId: string, reviewStatus: string | null) {
+	if (!reviewStatus || !REVISION_REQUESTED_STATUSES.includes(reviewStatus)) return;
+
+	const [lastRequest] = await db
+		.select({ createdAt: resumeHistory.createdAt })
+		.from(resumeHistory)
+		.where(and(eq(resumeHistory.resumeId, resumeId), inArray(resumeHistory.action, REVISION_REQUESTED_STATUSES)))
+		.orderBy(desc(resumeHistory.createdAt))
+		.limit(1);
+	if (!lastRequest) return;
+
+	const [alreadyLogged] = await db
+		.select({ id: resumeHistory.id })
+		.from(resumeHistory)
+		.where(
+			and(
+				eq(resumeHistory.resumeId, resumeId),
+				eq(resumeHistory.action, "RESUME_EDITED"),
+				gt(resumeHistory.createdAt, lastRequest.createdAt),
+			),
+		)
+		.limit(1);
+	if (alreadyLogged) return;
+
+	const refs = await resumeRefs(resumeId);
+	if (!refs.studentId) return;
+
+	await addToHistory({
+		resumeId,
+		action: "RESUME_EDITED",
+		changedBy: refs.studentId,
+		actorType: "LEARNER",
+	});
 }
 
 /**
@@ -642,15 +708,15 @@ export async function updateResumeStatus({
 		.returning();
 
 	// Map status to history action
-	const actionMap: Record<string, string> = {
+	const actionMap: Record<string, ResumeHistoryAction> = {
 		SUBMITTED_TO_FACULTY: "SUBMITTED",
-		FACULTY_REVISION_REQUESTED: "UPDATED",
+		FACULTY_REVISION_REQUESTED: "FACULTY_REVISION_REQUESTED",
 		FACULTY_VERIFIED: "FACULTY_VERIFIED",
 		FINALIZED_BY_FACULTY: "FINALIZED",
 		SUBMITTED_TO_PO: "SUBMITTED_TO_PO",
 		PO_REVISION_REQUESTED: "PO_REVISION_REQUESTED",
 		RESUBMITTED_TO_PO: "RESUBMITTED",
-		PO_VERIFIED: "FACULTY_VERIFIED",
+		PO_VERIFIED: "PO_VERIFIED",
 		APPROVED: "PO_APPROVED",
 	};
 
@@ -659,7 +725,7 @@ export async function updateResumeStatus({
 			resumeId,
 			studentId,
 			tenantId,
-			action: actionMap[status] as any,
+			action: actionMap[status],
 			changedBy,
 			actorType,
 			// A verdict keeps a copy of the resume as reviewed, so the next review can show what changed.
@@ -715,15 +781,15 @@ export async function bulkUpdateSectionResumes({
 		.returning();
 
 	// 2. Map status to history action
-	const actionMap: Record<string, string> = {
+	const actionMap: Record<string, ResumeHistoryAction> = {
 		SUBMITTED_TO_FACULTY: "SUBMITTED",
-		FACULTY_REVISION_REQUESTED: "UPDATED",
+		FACULTY_REVISION_REQUESTED: "FACULTY_REVISION_REQUESTED",
 		FACULTY_VERIFIED: "FACULTY_VERIFIED",
 		FINALIZED_BY_FACULTY: "FINALIZED",
 		SUBMITTED_TO_PO: "SUBMITTED_TO_PO",
 		PO_REVISION_REQUESTED: "PO_REVISION_REQUESTED",
 		RESUBMITTED_TO_PO: "RESUBMITTED",
-		PO_VERIFIED: "FACULTY_VERIFIED",
+		PO_VERIFIED: "PO_VERIFIED",
 		APPROVED: "PO_APPROVED",
 	};
 
@@ -737,7 +803,7 @@ export async function bulkUpdateSectionResumes({
 				studentId: r.studentId,
 				tenantId,
 				organisationId: DEFAULT_RESUME_USER_ORG_ID,
-				action: actionMap[toStatus] as any,
+				action: actionMap[toStatus],
 				changedBy,
 				actorType,
 				createdAt: new Date(),

@@ -6,6 +6,7 @@ import { anchorLabel, severityLabel } from "@/components/resume/review-anchors";
 import { orpc } from "@/integrations/orpc/client";
 import type { CommentAnchor, CommentSeverity } from "@/schema/resume/comment-anchor";
 import type { ResumeData } from "@/schema/resume/data";
+import { SUGGESTION_SECTIONS, suggestionSectionLabel, suggestionsForSection } from "@/schema/resume/review-suggestions";
 import { cn } from "@/utils/style";
 
 // Same colours as the highlighter on the resume.
@@ -23,6 +24,8 @@ type Props = {
 	replyTo: string | null;
 	onCancelReply: () => void;
 	inputRef: RefObject<HTMLTextAreaElement | null>;
+	/** Comment text already sent on this resume, so a standard line is not sent twice. */
+	sentContents: ReadonlySet<string>;
 	isPending: boolean;
 	onSubmit: (input: { content: string; severity?: CommentSeverity; suggestion?: string }) => Promise<unknown>;
 };
@@ -40,6 +43,7 @@ export function CommentComposer({
 	replyTo,
 	onCancelReply,
 	inputRef,
+	sentContents,
 	isPending,
 	onSubmit,
 }: Props) {
@@ -51,6 +55,8 @@ export function CommentComposer({
 	const [managing, setManaging] = useState(false);
 	const [pick, setPick] = useState(0);
 	const [hashClosed, setHashClosed] = useState(false);
+	// Only used for a general comment: with an anchor the section comes from what was clicked.
+	const [pickedSection, setPickedSection] = useState<string | null>(null);
 
 	const listQuery = orpc.resume.reviewSnippets.list.queryOptions();
 	const { data: snippets = [] } = useQuery(listQuery);
@@ -61,6 +67,10 @@ export function CommentComposer({
 
 	const quote = anchor?.quote?.exact;
 	const isReply = !!replyTo;
+
+	// The reviewer is already pointing at a section; that is the only sensible shortlist to show.
+	const shownSection = anchor?.section ?? pickedSection;
+	const sectionSuggestions = useMemo(() => suggestionsForSection(shownSection), [shownSection]);
 
 	// A rewrite belongs to the text it was written for: selecting other text starts without one.
 	const [rewriteFor, setRewriteFor] = useState(quote);
@@ -91,6 +101,16 @@ export function CommentComposer({
 		setContent(joined + after);
 		placeCaret(joined.length);
 		countUse.mutate({ id: snippet.id });
+	};
+
+	/**
+	 * Standard feedback replaces the box rather than appending: these are whole comments, not
+	 * fragments, and the reviewer picks one then edits it.
+	 */
+	const applySuggestion = (suggestion: { content: string; severity: CommentSeverity }) => {
+		setContent(suggestion.content);
+		if (!severity) setSeverity(suggestion.severity);
+		placeCaret(suggestion.content.length);
 	};
 
 	const submit = async () => {
@@ -136,7 +156,9 @@ export function CommentComposer({
 	return (
 		<div className="rounded-2xl bg-muted/50 p-4">
 			<div className="mb-2 flex items-center justify-between">
-				<p className="font-semibold text-foreground text-sm">{isReply ? t`Reply to Thread` : t`Add Feedback Comment`}</p>
+				<p className="font-semibold text-foreground text-sm">
+					{isReply ? t`Reply to Thread` : t`Add Feedback Comment`}
+				</p>
 				{isReply && (
 					<button type="button" onClick={onCancelReply} className="text-primary text-xs hover:underline">
 						{t`Cancel Reply`}
@@ -274,18 +296,80 @@ export function CommentComposer({
 				)}
 			</div>
 
+			{/* Standard feedback for the section being commented on. Stacked rather than chipped:
+			    these are whole sentences, and a pill row truncates them into uselessness. */}
 			{!isReply && !managing && (
-				<div className="mb-3 flex flex-wrap gap-1.5">
-					{snippets.slice(0, CHIP_LIMIT).map((snippet) => (
-						<button
-							key={snippet.id}
-							type="button"
-							onClick={() => insertSnippet(snippet, false)}
-							className="rounded-full bg-card px-2.5 py-1 text-[11px] text-muted-foreground ring-1 ring-border transition-all hover:bg-primary/5 hover:text-primary hover:ring-primary/20"
-						>
-							{snippet.content}
-						</button>
-					))}
+				<div className="mb-3">
+					<div className="mb-1.5 flex items-center gap-2">
+						<span className="font-semibold text-[11px] text-muted-foreground">
+							{shownSection ? t`Suggested for ${suggestionSectionLabel(shownSection)}` : t`Standard feedback`}
+						</span>
+						{!anchor && (
+							<select
+								value={pickedSection ?? ""}
+								onChange={(e) => setPickedSection(e.target.value || null)}
+								aria-label={t`Choose a section`}
+								className="rounded-lg bg-card px-1.5 py-0.5 text-[11px] text-muted-foreground ring-1 ring-border"
+							>
+								<option value="">{t`Choose a section…`}</option>
+								{SUGGESTION_SECTIONS.map((section) => (
+									<option key={section.key} value={section.key}>
+										{section.label}
+									</option>
+								))}
+							</select>
+						)}
+					</div>
+
+					{sectionSuggestions.length > 0 && (
+						<ul className="overflow-hidden rounded-xl bg-card ring-1 ring-border">
+							{sectionSuggestions.map((suggestion) => {
+								const alreadySent = sentContents.has(suggestion.content);
+								return (
+									<li key={suggestion.id} className="border-border border-b last:border-b-0">
+										<button
+											type="button"
+											onClick={() => applySuggestion(suggestion)}
+											className={cn(
+												"flex w-full items-start gap-2 px-3 py-2 text-start transition-colors hover:bg-primary/5",
+												alreadySent && "opacity-55",
+											)}
+										>
+											<span
+												aria-hidden
+												className={cn("mt-1 size-1.5 shrink-0 rounded-full", SEVERITY_DOT[suggestion.severity])}
+											/>
+											<span className="min-w-0 flex-1">
+												<span className="block text-foreground text-xs leading-snug">{suggestion.content}</span>
+												{alreadySent && (
+													<span className="mt-0.5 block text-[10px] text-muted-foreground">
+														{t`Already sent on this resume`}
+													</span>
+												)}
+											</span>
+										</button>
+									</li>
+								);
+							})}
+						</ul>
+					)}
+
+					{/* The reviewer's own snippets stay, below the standard set. */}
+					{snippets.length > 0 && (
+						<div className="mt-2 flex flex-wrap items-center gap-1.5">
+							<span className="text-[11px] text-muted-foreground">{t`My snippets`}</span>
+							{snippets.slice(0, CHIP_LIMIT).map((snippet) => (
+								<button
+									key={snippet.id}
+									type="button"
+									onClick={() => insertSnippet(snippet, false)}
+									className="rounded-full bg-card px-2.5 py-1 text-[11px] text-muted-foreground ring-1 ring-border transition-all hover:bg-primary/5 hover:text-primary hover:ring-primary/20"
+								>
+									{snippet.content}
+								</button>
+							))}
+						</div>
+					)}
 				</div>
 			)}
 

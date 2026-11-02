@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import { CalendarBlankIcon, ChatDotsIcon, MagnifyingGlassIcon, UserIcon } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
 import { cn } from "@/utils/style";
+import { REVIEW_STAGES, reviewStageLabel, stageOf } from "./review-status";
 import { getEvaluationBadgeClass, getStatusBadgeClass } from "./score-helpers";
 
 type ResumeEntry = {
@@ -36,7 +37,14 @@ type StudentResumeTableProps = {
 
 export function StudentResumeTable({ students, onReview, onStudentClick }: StudentResumeTableProps) {
 	const [search, setSearch] = useState("");
-	const [statusFilter, setStatusFilter] = useState<"all" | "not_reviewed" | "evaluated" | "has_comments">("all");
+	const [statusFilter, setStatusFilter] = useState<"all" | string>("all");
+
+	// Only offer stages that are actually present, so the chips describe this cohort rather than the
+	// whole workflow, and every chip is guaranteed to return something.
+	const availableStages = useMemo(() => {
+		const present = new Set(students.flatMap((s) => s.resumes.map(stageOf)));
+		return REVIEW_STAGES.filter((stage) => present.has(stage));
+	}, [students]);
 
 	const filteredStudents = useMemo(() => {
 		const query = search.toLowerCase();
@@ -49,10 +57,16 @@ export function StudentResumeTable({ students, onReview, onStudentClick }: Stude
 
 				if (!matchesSearch) return null;
 
+				// Filter on the resume's review stage. This used to filter on a derived four-value
+				// status with no chip for "submitted", which made the stage most resumes sit in
+				// unreachable from every chip except All.
 				const filteredResumes =
-					statusFilter === "all" ? student.resumes : student.resumes.filter((r) => r.status === statusFilter);
+					statusFilter === "all" ? student.resumes : student.resumes.filter((r) => stageOf(r) === statusFilter);
 
-				if (filteredResumes.length === 0 && student.resumes.length > 0 && statusFilter !== "all") return null;
+				// A stage chip is a work queue, not a roster: a student with nothing in this stage —
+				// including one with no resumes at all — has nothing to show for it. "All" still
+				// lists everyone, so the students yet to start stay one chip away.
+				if (filteredResumes.length === 0 && statusFilter !== "all") return null;
 
 				return { ...student, resumes: filteredResumes };
 			})
@@ -74,26 +88,25 @@ export function StudentResumeTable({ students, onReview, onStudentClick }: Stude
 					/>
 				</div>
 				<div className="flex flex-wrap gap-1.5">
-					{(["all", "not_reviewed", "evaluated", "has_comments"] as const).map((status) => {
-						const labels = {
-							all: t`All`,
-							not_reviewed: t`Not Reviewed`,
-							evaluated: t`Evaluated`,
-							has_comments: t`Has Comments`,
-						};
+					{(["all", ...availableStages] as const).map((stage) => {
+						const count =
+							stage === "all"
+								? students.reduce((n, s) => n + s.resumes.length, 0)
+								: students.reduce((n, s) => n + s.resumes.filter((r) => stageOf(r) === stage).length, 0);
 						return (
 							<button
-								key={status}
+								key={stage}
 								type="button"
-								onClick={() => setStatusFilter(status)}
+								onClick={() => setStatusFilter(stage)}
 								className={cn(
 									"rounded-xl px-3 py-2 font-semibold text-xs transition-all active:scale-[0.97]",
-									statusFilter === status
+									statusFilter === stage
 										? "bg-primary text-white shadow-sm"
 										: "bg-muted text-muted-foreground hover:bg-border",
 								)}
 							>
-								{labels[status]}
+								{stage === "all" ? t`All` : reviewStageLabel(stage)}
+								<span className="ml-1.5 opacity-60">{count}</span>
 							</button>
 						);
 					})}
@@ -108,10 +121,7 @@ export function StudentResumeTable({ students, onReview, onStudentClick }: Stude
 			) : (
 				<div className="space-y-3">
 					{filteredStudents.map((student) => (
-						<div
-							key={student.engLabsId}
-							className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
-						>
+						<div key={student.engLabsId} className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
 							{/* Student Header */}
 							<div className="flex items-center gap-3 border-border border-b bg-muted/50 px-4 py-3">
 								<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-bold text-primary text-sm">

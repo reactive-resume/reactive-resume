@@ -15,6 +15,23 @@ import { generateId } from "@/utils/string";
 import { grantResumeAccess, hasResumeAccess } from "../helpers/resume-access";
 import { getStorageService } from "./storage";
 
+/**
+ * Record a student edit made while a reviewer is waiting on changes, for the "Modified" report.
+ *
+ * Deliberately swallows its own errors: this is an audit row, and the save it describes has
+ * already succeeded. Letting it throw here would turn a logging problem into a student losing
+ * their work.
+ */
+async function noteStudentEdit(resume?: { id: string; reviewStatus: string | null }) {
+	if (!resume) return;
+	try {
+		const { recordStudentEditAfterRevision } = await import("@/integrations/drizzle/services/resume-feedback.service");
+		await recordStudentEditAfterRevision(resume.id, resume.reviewStatus);
+	} catch (error) {
+		console.error("[resume] could not record student edit", error);
+	}
+}
+
 const tags = {
 	list: async (input: { userId: string }) => {
 		const result = await db
@@ -360,6 +377,7 @@ export const resumeService = {
 					hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
 				});
 
+			await noteStudentEdit(resume);
 			return resume;
 		} catch (error) {
 			if (get(error, "cause.constraint") === "resume_slug_user_id_unique") {
@@ -418,6 +436,7 @@ export const resumeService = {
 				hasPassword: sql<boolean>`${schema.resume.password} IS NOT NULL`,
 			});
 
+		await noteStudentEdit(resume);
 		return resume;
 	},
 

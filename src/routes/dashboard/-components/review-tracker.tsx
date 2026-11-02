@@ -7,6 +7,7 @@ import { orpc } from "@/integrations/orpc/client";
 import { cn } from "@/utils/style";
 import { uiSurface } from "@/utils/ui-tokens";
 import { timeAgo } from "./inbox-view";
+import { REVIEWER_STAGE_BUCKETS } from "./review-status";
 import { getStatusBadgeClass } from "./score-helpers";
 import type { StudentWithResumes } from "./student-resume-table";
 
@@ -17,30 +18,14 @@ type Bucket = "review" | "student" | "done";
 
 type Scope = "faculty" | "po" | "admin";
 
-/** Review statuses per reviewer stage: waiting for them, sent back by them, passed by them (APPROVED aside). */
-const STAGES = {
-	faculty: {
-		waiting: ["SUBMITTED_TO_FACULTY"],
-		sentBack: ["FACULTY_REVISION_REQUESTED"],
-		verified: [
-			"FACULTY_VERIFIED",
-			"FINALIZED_BY_FACULTY",
-			"SUBMITTED_TO_PO",
-			"PO_REVISION_REQUESTED",
-			"RESUBMITTED_TO_PO",
-			"PO_VERIFIED",
-		],
-	},
-	po: {
-		waiting: ["SUBMITTED_TO_PO", "RESUBMITTED_TO_PO"],
-		sentBack: ["PO_REVISION_REQUESTED"],
-		verified: ["PO_VERIFIED"],
-	},
-};
-const stageOf = (scope: Scope) => STAGES[scope === "faculty" ? "faculty" : "po"];
+const stageOf = (scope: Scope) => REVIEWER_STAGE_BUCKETS[scope === "faculty" ? "faculty" : "po"];
 
 /** Where a resume stands for this reviewer. Action first, like a code-review inbox; null = nothing to track. */
-function bucketOf(status: string, mine: ResumeEntry["myComments"], stage: (typeof STAGES)["po"]): Bucket | null {
+function bucketOf(
+	status: string,
+	mine: ResumeEntry["myComments"],
+	stage: (typeof REVIEWER_STAGE_BUCKETS)["po"],
+): Bucket | null {
 	if (status === "APPROVED") return "done";
 	if (stage.waiting.includes(status) || mine?.ADDRESSED) return "review";
 	if (stage.sentBack.includes(status) || mine?.OPEN) return "student";
