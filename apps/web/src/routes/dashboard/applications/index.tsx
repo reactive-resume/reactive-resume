@@ -65,6 +65,9 @@ export const Route = createFileRoute("/dashboard/applications/")({
 	component: RouteComponent,
 	validateSearch: searchSchema,
 	search: { middlewares: [stripSearchParams(defaultSearch)] },
+	// Arrive with the list, as Documents does: a new account sees "Track your first job" at once, not a toolbar and a
+	// skeleton that then vanish. A failed load still renders the page, which shows its error and retry.
+	loader: ({ context }) => context.queryClient.ensureQueryData(applicationsListQueryOptions()).catch(() => undefined),
 });
 
 /** Search reads role, company, location, contacts and tags. */
@@ -256,7 +259,7 @@ function RouteComponent() {
 					</>
 				}
 			>
-				{!(isError && !applications) && !empty && (
+				{applications !== undefined && !empty && (
 					<>
 						<Tabs
 							value={shown}

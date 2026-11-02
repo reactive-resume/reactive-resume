@@ -1019,6 +1019,10 @@ msgstr "{total, plural, one {# public link will change} other {# public links wi
 msgid "{trashCount, plural, one {# document} other {# documents}}"
 msgstr "{trashCount, plural, one {# document} other {# documents}}"
 
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+msgstr "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+
 #. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
@@ -6615,10 +6619,6 @@ msgstr "For LibreOffice and other open-source editors. Layout is simplified."
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "For portals or recruiters who ask for Word. Layout is simplified."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr "For security, only use links from emails sent by Reactive Resume."
@@ -7901,8 +7901,8 @@ msgid "Key stored encrypted"
 msgstr "Key stored encrypted"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Keys act as you and can read and edit your documents."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Keys act as you with the access you choose. New keys start read-only."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8157,10 +8157,6 @@ msgstr "Length in minutes"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -9452,6 +9448,10 @@ msgstr "No dates were found."
 msgid "no documents"
 msgstr "no documents"
 
+#: src/features/documents/documents-page.tsx
+msgid "No documents"
+msgstr "No documents"
+
 #: src/features/applications/components/list-view.tsx
 msgid "No documents attached"
 msgstr "No documents attached"
@@ -10233,6 +10233,10 @@ msgstr "Open the schedule"
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Open tracked job"
 msgstr "Open tracked job"
+
+#: src/features/documents/documents-page.tsx
+msgid "Open Trash"
+msgstr "Open Trash"
 
 #: src/features/resume/share/share-panel.tsx
 msgid "Open web page"
@@ -12127,6 +12131,10 @@ msgstr "Restore"
 msgid "Restore this version"
 msgstr "Restore this version"
 
+#: src/libs/undone.ts
+msgid "Restored"
+msgstr "Restored"
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
@@ -13562,6 +13570,10 @@ msgstr "Sidebars are often read last, or mixed into the main column."
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "Sign in"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Sign in from your AI client, or use an API key."
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -17515,11 +17527,3 @@ msgstr "Zoom out"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Keys act as you with the access you choose. New keys start read-only."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Sign in from your AI client, or use an API key."

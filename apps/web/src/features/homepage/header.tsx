@@ -71,7 +71,7 @@ export function LandingHeader() {
 							aria-current={active ? "step" : undefined}
 							onClick={() => goToScene(scene, 0.04)}
 							className={cn(
-								"font-martian flex h-[34px] items-center gap-[7px] rounded-sm px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] transition-opacity duration-300",
+								"font-martian relative flex h-[34px] items-center gap-[7px] rounded-sm px-[11px] text-xs leading-none font-medium font-stretch-[87.5%] transition-opacity duration-300",
 								!active && "opacity-65 hover:opacity-100",
 							)}
 						>
@@ -80,6 +80,14 @@ export function LandingHeader() {
 								className={cn("size-1.5 rounded-sm transition-colors duration-300", active && "bg-accent")}
 							/>
 							{label}
+							{/* How much of the current scene is left: a line that fills with its scroll progress (--sp). */}
+							{active && (
+								<span
+									aria-hidden="true"
+									className="absolute inset-x-[11px] bottom-[3px] h-0.5 origin-left rounded-full bg-accent rtl:origin-right"
+									style={{ transform: "scaleX(var(--sp, 0))" }}
+								/>
+							)}
 						</button>
 					);
 				})}

@@ -266,6 +266,7 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 		let frame = 0;
 		let writtenClock = "";
 		let writtenNight = "";
+		let writtenSceneProgress = "";
 
 		const measure = () => {
 			frame = 0;
@@ -306,6 +307,12 @@ export function useScrollScenes(root: RefObject<HTMLElement | null>) {
 			}
 
 			const at = (scene: number) => progress[scene] ?? 0;
+			// The active scene's progress, on the page, for the header nav's line under the current scene.
+			const sceneProgress = clamp01(at(activeScene)).toFixed(3);
+			if (sceneProgress !== writtenSceneProgress) {
+				container.style.setProperty("--sp", sceneProgress);
+				writtenSceneProgress = sceneProgress;
+			}
 			const scan = clamp01((at(SCENE.check) - 0.06) / 0.8);
 			const prepare = at(SCENE.prepare);
 

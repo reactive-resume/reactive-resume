@@ -70,13 +70,17 @@ export function useUndoToast() {
 					const current = useResumeStore.getState();
 					// The toast can outlive the resume it was about: another one open here is left alone.
 					if (!current.document || current.document.id !== resumeId) return;
-					if (changed && current.data === changed) return current.undo();
+					// "Restored" for a moment shows the press did something.
+					if (changed && current.data === changed) {
+						current.undo();
+						return showToast({ message: t`Restored` });
+					}
 					if (restore && !current.locked) {
 						let restored = false;
 						edit((draft) => {
 							restored = restore(draft);
 						});
-						if (restored) return;
+						if (restored) return showToast({ message: t`Restored` });
 					}
 					showToast({ message: t`You've made changes since. Use Undo to step back through them.` });
 				},

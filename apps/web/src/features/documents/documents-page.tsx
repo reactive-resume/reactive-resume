@@ -159,6 +159,8 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 	const failed = isError && !displayed;
 	const filtered = search.type !== "all" || search.q.trim() !== "" || search.tags.length > 0 || search.public === true;
 	const firstRun = rowsCurrent && !filtered && offset === 0 && pageData?.total === 0;
+	const { data: libraryCounts } = useQuery(orpc.documents.counts.queryOptions());
+	const trashCount = libraryCounts?.trash ?? 0;
 	const tags = displayed?.tags ?? [];
 	const counts = {
 		all: (displayed?.counts.resume ?? 0) + (displayed?.counts.letter ?? 0),
@@ -345,7 +347,19 @@ export function DocumentsPage({ search, onSearchChange }: DocumentsPageProps) {
 				</div>
 			)}
 
-			{failed ? null : firstRun ? (
+			{failed ? null : firstRun && trashCount > 0 ? (
+				// Everything is in Trash (often the last document, just moved there with Undo still on offer): a quiet
+				// "nothing here" with the way back, not the first-run screen for someone who has never started.
+				<EmptyState
+					title={<Trans>No documents</Trans>}
+					description={<Plural value={trashCount} one="Trash has # document." other="Trash has # documents." />}
+					action={
+						<Button variant="secondary" nativeButton={false} render={<Link to="/dashboard/trash" />}>
+							<Trans>Open Trash</Trans>
+						</Button>
+					}
+				/>
+			) : firstRun ? (
 				<FirstRun onFile={(file) => openDialog("document.new", { file })} />
 			) : (
 				<>

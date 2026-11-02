@@ -1024,6 +1024,10 @@ msgstr ""
 msgid "{trashCount, plural, one {# document} other {# documents}}"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+msgstr ""
+
 #. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
@@ -6618,10 +6622,6 @@ msgstr "适用于 LibreOffice 及其他开源编辑器。布局已简化。"
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "对于要求 Word 的门户网站或招聘人员。布局被简化。"
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "适用于脚本、扩展和 MCP 客户端。键充当您的角色，可以读取和编辑您的文档。"
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -7904,8 +7904,8 @@ msgid "Key stored encrypted"
 msgstr "密钥加密存储"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "键充当您的角色，可以读取和编辑您的文档。"
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "密钥以你选择的访问权限代表你操作。新密钥默认为只读权限。"
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8160,10 +8160,6 @@ msgstr "时长（分钟）"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "长度本身不是缺陷，也没有放之四海皆准的一页纸规则。保留那些真正有价值的内容页。"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "使用上面的 API 键，让 Claude 或 Cursor 等 AI 客户端读取和编辑您的简历。"
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -9455,6 +9451,10 @@ msgstr "未找到任何日期。"
 msgid "no documents"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "No documents"
+msgstr ""
+
 #: src/features/applications/components/list-view.tsx
 msgid "No documents attached"
 msgstr "未附加文档"
@@ -10235,6 +10235,10 @@ msgstr "打开定时任务"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Open tracked job"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Open Trash"
 msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
@@ -12130,6 +12134,10 @@ msgstr "恢复"
 msgid "Restore this version"
 msgstr "恢复此版本"
 
+#: src/libs/undone.ts
+msgid "Restored"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
@@ -13565,6 +13573,10 @@ msgstr "侧边栏通常是最后阅读的，或者混合到主栏中。"
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "登录"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "从你的 AI 客户端登录，或使用 API 密钥。"
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -17518,11 +17530,3 @@ msgstr "缩小"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "祖鲁语"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "密钥以你选择的访问权限代表你操作。新密钥默认为只读权限。"
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "从你的 AI 客户端登录，或使用 API 密钥。"

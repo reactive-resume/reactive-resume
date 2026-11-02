@@ -1024,6 +1024,10 @@ msgstr ""
 msgid "{trashCount, plural, one {# document} other {# documents}}"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+msgstr ""
+
 #. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
@@ -6618,10 +6622,6 @@ msgstr "LibreOfficelle ja muille avoimen lähdekoodin editoreille. Asettelu on y
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Portaaleille tai rekrytoijille, jotka pyytävät Word:ta. Asettelu on yksinkertaistettu."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "Skripteille, laajennuksille ja MCP-asiakkaille. Näppäimet toimivat kuten sinä ja voivat lukea ja muokata asiakirjojasi."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -7904,8 +7904,8 @@ msgid "Key stored encrypted"
 msgstr "Avain tallennettu salattuna"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Näppäimet toimivat kuten sinä ja voivat lukea ja muokata asiakirjojasi."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Avaimet toimivat puolestasi valitsemillasi käyttöoikeuksilla. Uusilla avaimilla on aluksi vain lukuoikeus."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8160,10 +8160,6 @@ msgstr "Kesto minuutteina"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Pituus ei ole virhe, eikä yhden sivun sääntö ole yleispätevä. Pidä ne sivut, jotka ansaitsevat paikkansa."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Anna tekoälyasiakkaiden, kuten Claude tai Cursor, lukea ja muokata ansioluettelosi käyttämällä yllä olevaa API-näppäintä."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -9455,6 +9451,10 @@ msgstr "Päivämääriä ei löytynyt."
 msgid "no documents"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "No documents"
+msgstr ""
+
 #: src/features/applications/components/list-view.tsx
 msgid "No documents attached"
 msgstr "Ei liitettyjä asiakirjoja"
@@ -10235,6 +10235,10 @@ msgstr "Avaa ajastus"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Open tracked job"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Open Trash"
 msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
@@ -12130,6 +12134,10 @@ msgstr "Palauttaa"
 msgid "Restore this version"
 msgstr "Palauta tämä versio"
 
+#: src/libs/undone.ts
+msgid "Restored"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
@@ -13565,6 +13573,10 @@ msgstr "Sivupalkit luetaan usein viimeisenä tai sekoitetaan pääsarakkeeseen."
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "Kirjaudu sisään"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Kirjaudu sisään tekoälyasiakasohjelmastasi tai käytä API-avainta."
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -17518,11 +17530,3 @@ msgstr "Loitonna"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulu"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Avaimet toimivat puolestasi valitsemillasi käyttöoikeuksilla. Uusilla avaimilla on aluksi vain lukuoikeus."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Kirjaudu sisään tekoälyasiakasohjelmastasi tai käytä API-avainta."

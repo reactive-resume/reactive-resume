@@ -1024,6 +1024,10 @@ msgstr ""
 msgid "{trashCount, plural, one {# document} other {# documents}}"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "{trashCount, plural, one {Trash has # document.} other {Trash has # documents.}}"
+msgstr ""
+
 #. placeholder {0}: formatRelativeTime(document.editedAt, i18n.locale)
 #: src/features/documents/document-card.tsx
 msgid "{type} · Edited {0}"
@@ -6618,10 +6622,6 @@ msgstr "LibreOffice ir kitoms atvirojo kodo redagavimo programoms. Išdėstymas 
 msgid "For portals or recruiters who ask for Word. Layout is simplified."
 msgstr "Portalams ar įdarbintojams, kurie prašo Word. Išdėstymas supaprastintas."
 
-#: src/features/settings/ai/api-keys.tsx
-msgid "For scripts, extensions and MCP clients. Keys act as you and can read and edit your documents."
-msgstr "Skriptams, plėtiniams ir MCP klientams. Klavišai veikia kaip jūs ir galite skaityti bei redaguoti savo dokumentus."
-
 #: src/features/auth/email-text.ts
 msgid "For security, only use links from emails sent by Reactive Resume."
 msgstr ""
@@ -7904,8 +7904,8 @@ msgid "Key stored encrypted"
 msgstr "Raktas saugomas užšifruotas"
 
 #: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you and can read and edit your documents."
-msgstr "Klavišai veikia kaip jūs ir galite skaityti bei redaguoti savo dokumentus."
+msgid "Keys act as you with the access you choose. New keys start read-only."
+msgstr "Raktai veikia jūsų vardu su pasirinktomis prieigos teisėmis. Nauji raktai iš pradžių turi tik skaitymo prieigą."
 
 #: src/features/resume/editor/write/section-row.tsx
 msgid "Keyword layout"
@@ -8160,10 +8160,6 @@ msgstr "Trukmė minutėmis"
 #: src/features/ats-checker/messages.ts
 msgid "Length is not a defect, and there is no universal one-page rule. Keep the pages that earn their place."
 msgstr "Ilgis nėra trūkumas, ir universalios vieno puslapio taisyklės nėra. Palikite tuos puslapius, kurie to verti."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Let AI clients like Claude or Cursor read and edit your resumes, using an API key above."
-msgstr "Leiskite dirbtinio intelekto klientams, pvz., Claude arba Cursor, skaityti ir redaguoti jūsų gyvenimo aprašymus, naudodami aukščiau pateiktą API klavišą."
 
 #: src/features/assistant/conversation.tsx
 msgid "Let the assistant search facts and stories you share with all applications, read-only"
@@ -9455,6 +9451,10 @@ msgstr "Datų nerasta."
 msgid "no documents"
 msgstr ""
 
+#: src/features/documents/documents-page.tsx
+msgid "No documents"
+msgstr ""
+
 #: src/features/applications/components/list-view.tsx
 msgid "No documents attached"
 msgstr "Nėra pridėtų dokumentų"
@@ -10235,6 +10235,10 @@ msgstr "Atidaryti tvarkaraštį"
 
 #: src/features/applications/components/add-application-dialog.tsx
 msgid "Open tracked job"
+msgstr ""
+
+#: src/features/documents/documents-page.tsx
+msgid "Open Trash"
 msgstr ""
 
 #: src/features/resume/share/share-panel.tsx
@@ -12130,6 +12134,10 @@ msgstr "Atkurti"
 msgid "Restore this version"
 msgstr "Atkurti šią versiją"
 
+#: src/libs/undone.ts
+msgid "Restored"
+msgstr ""
+
 #. placeholder {0}: document.name
 #: src/features/documents/document-actions.tsx
 msgid "Restored “{0}”"
@@ -13565,6 +13573,10 @@ msgstr "Šoninės juostos dažnai skaitomos paskutinės arba įtraukiamos į pag
 #: src/routes/auth/login.tsx
 msgid "Sign in"
 msgstr "Prisijungti"
+
+#: src/features/settings/ai/mcp.tsx
+msgid "Sign in from your AI client, or use an API key."
+msgstr "Prisijunkite iš savo DI kliento arba naudokite API raktą."
 
 #. Call-to-action link from forgot-password page to login page
 #. Call-to-action link from registration page to login page
@@ -17518,11 +17530,3 @@ msgstr "Tolinti"
 #: src/libs/locale.ts
 msgid "Zulu"
 msgstr "Zulų"
-
-#: src/features/settings/ai/api-keys.tsx
-msgid "Keys act as you with the access you choose. New keys start read-only."
-msgstr "Raktai veikia jūsų vardu su pasirinktomis prieigos teisėmis. Nauji raktai iš pradžių turi tik skaitymo prieigą."
-
-#: src/features/settings/ai/mcp.tsx
-msgid "Sign in from your AI client, or use an API key."
-msgstr "Prisijunkite iš savo DI kliento arba naudokite API raktą."

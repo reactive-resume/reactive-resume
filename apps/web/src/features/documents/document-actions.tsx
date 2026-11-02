@@ -36,6 +36,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { authClient } from "@/libs/auth/client";
 import { toastError } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
+import { confirmUndone } from "@/libs/undone";
 
 type Ref = { type: DocumentSummary["type"]; id: string };
 const ref = (document: DocumentSummary): Ref => ({ type: document.type, id: document.id });
@@ -116,6 +117,7 @@ export function useDocumentActions() {
 						onClick: () =>
 							void restore
 								.mutateAsync(ref(document))
+								.then(confirmUndone)
 								.catch((error: unknown) => toastError(error, t`Couldn't restore the document. Try again.`)),
 					},
 				});
