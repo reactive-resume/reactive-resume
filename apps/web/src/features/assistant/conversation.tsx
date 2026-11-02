@@ -908,7 +908,7 @@ function ToolPartView({
  * layout, so the design's own Fit is one click away.
  */
 function StillOverflows() {
-	const rendered = useEditorStore((state) => state.rendered);
+	const rendered = useEditorStore((state) => state.fitRendered);
 	const data = useResumeStore((state) => state.resume?.data);
 	const [fitting, setFitting] = useState(false);
 	const overflow = data && rendered.pageCount > 0 ? measureOverflow(data, rendered) : null;

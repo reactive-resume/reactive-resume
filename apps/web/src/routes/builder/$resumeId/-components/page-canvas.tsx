@@ -87,7 +87,9 @@ function ResumePageCanvas() {
 			: data && marked.length > 0
 				? markProposals(data, marked, applications)
 				: undefined;
-	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, rendered) : null;
+	// Fit is the resume's as it is: a render with edits marked (old and new text both shown) doesn't count.
+	const fitRendered = useEditorStore((state) => state.fitRendered);
+	const overflow = data && !previewTemplate && !viewing ? measureOverflow(data, fitRendered) : null;
 	// Desktop: the page moves 120px aside so it stays visible beside the Download & history sheet.
 	const shifted = sheetOpen && (breakpoint === "desktop" || breakpoint === "wide");
 
@@ -132,7 +134,7 @@ function ResumePageCanvas() {
 						parser && "hidden",
 					)}
 					pageClassName={cn("rounded-none shadow-page", viewing && "outline-2 outline-offset-4 outline-ink")}
-					onRender={setRendered}
+					onRender={(render) => setRendered(render, previewData !== undefined)}
 					renderPageCaption={({ pageNumber }) => (
 						<ResumePageCaption
 							pageNumber={pageNumber}

@@ -517,7 +517,7 @@ function UnlockButton() {
 function EmptyState({ document, disabled, onPick }: EmptyStateProps) {
 	const kind = document.kind === "letter" ? t`letter` : t`resume`;
 	const prepare = useEditorStore((state) => state.assistantSuggestions === "prepare");
-	const rendered = useEditorStore((state) => state.rendered);
+	const rendered = useEditorStore((state) => state.fitRendered);
 	const data = useResumeStore((state) => state.resume?.data);
 	const overflow =
 		document.kind === "resume" && data && rendered.pageCount > 0 ? measureOverflow(data, rendered) : undefined;
